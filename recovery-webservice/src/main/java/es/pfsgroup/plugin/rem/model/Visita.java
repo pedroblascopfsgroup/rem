@@ -112,6 +112,8 @@ public class Visita implements Serializable, Auditable {
     @Column(name="VIS_OBSERVACIONES")
     private String observaciones;
     
+    @Column(name="VIS_FECHA_CONTACTO")
+    private Date fechaContacto; 
     
     
     
@@ -308,6 +310,14 @@ public class Visita implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Date getFechaContacto() {
+		return fechaContacto;
+	}
+
+	public void setFechaContacto(Date fechaContacto) {
+		this.fechaContacto = fechaContacto;
 	}
     
     

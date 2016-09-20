@@ -32,6 +32,12 @@ public class DDEstadosVisita implements Auditable, Dictionary {
 	
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_ALTA="01";
+	public static final String CODIGO_CONTACTO="02";
+	public static final String CODIGO_CONCERTADA="03";
+	public static final String CODIGO_REALIZADA="04";
+	public static final String CODIGO_NO_REALIZADA="05";
 
 	@Id
 	@Column(name = "DD_EVI_ID")

@@ -17,7 +17,7 @@ import net.sf.json.JSONObject;
 
 public class WebcomRequestUtils {
 	
-	private static SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	private static SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 
 	public static JSONObject createRequestJson(ParamsList paramsList) {
 		JSONArray dataArray = new JSONArray();

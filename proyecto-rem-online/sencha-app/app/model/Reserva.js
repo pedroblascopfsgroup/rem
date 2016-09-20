@@ -9,12 +9,24 @@ Ext.define('HreRem.model.Reserva', {
     	'idReserva',
     	'numReserva',
     	'tipoArrasCodigo',
-    	'fechaEvio',
+    	{
+    		name: 'fechaEnvio',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
     	'importe',
     	'estadoReservaDescripcion',
-    	'fechaFirma',
+    	{
+    		name: 'fechaFirma',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
     	'conImpuesto',
-    	'fechaVencimiento'    	
+    	{
+			name: 'fechaVencimiento',
+    		type : 'date',
+			dateFormat: 'c'
+    	}    	
     ],
     
     proxy: {

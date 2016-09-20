@@ -34,6 +34,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
+	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
+	public static final String ACTIVE_OFERTA_APROBADA = "El activo tiene ofertas aprobadas. No se pueden actualizar precios";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -69,12 +71,16 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-			if (!isActiveExists(exc)){
+//			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
+				mapaErrores.put(ACTIVE_PRECIOS_BLOQUEO, getPreciosBloqueadoRows(exc));
+				mapaErrores.put(ACTIVE_OFERTA_APROBADA, getOfertaAprobadaRows(exc));
 				
 				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()){
+					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PRECIOS_BLOQUEO).isEmpty() ||
+							!mapaErrores.get(ACTIVE_OFERTA_APROBADA).isEmpty() ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -84,7 +90,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
+//			}
 		}
 		exc.cerrar();
 		
@@ -161,6 +167,44 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> getPreciosBloqueadoRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		// Validacion que evalua si el activo tiene activo el bloqueo de precios. No pueden actualizarse precios.
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
+				if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> getOfertaAprobadaRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		// Validacion que evalua si el activo tiene ofertas activas. No pueden actualizarse precios.
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
+				if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
 					listaFilas.add(i);
 			}
 			} catch (IllegalArgumentException e) {

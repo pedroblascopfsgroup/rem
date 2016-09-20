@@ -1,13 +1,17 @@
 package es.pfsgroup.plugin.rem.restclient.utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.UnknownWebcomDataTypeException;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataTypeParseException;
 
 public class Converter {
 
@@ -65,7 +69,13 @@ public class Converter {
 				Object data = values.get(field);
 
 				Field f = getFieldToUpdate(equivalence, clazz, field);
-				f.set(objectToUpdate, data);
+				f.setAccessible(true);
+				Class type = f.getType();
+				if (WebcomDataType.class.isAssignableFrom(type)) {
+					f.set(objectToUpdate, WebcomDataType.parse(type, data));
+				} else {
+					f.set(objectToUpdate, data);
+				}
 
 				// checked exception to unchecked exceptions -> JOKE
 			} catch (IllegalArgumentException e) {
@@ -75,6 +85,10 @@ public class Converter {
 			} catch (NoSuchFieldException e) {
 				throw new RuntimeException(e);
 			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			} catch (WebcomDataTypeParseException e) {
+				throw new RuntimeException(e);
+			} catch (UnknownWebcomDataTypeException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -87,9 +101,9 @@ public class Converter {
 		Field f = null;
 
 		if (equivalence != null && equivalence.containsKey(field)) {
-			f = clazz.getField(equivalence.get(field));
+			f = clazz.getDeclaredField(equivalence.get(field));
 		} else {
-			f = clazz.getField(field);
+			f = clazz.getDeclaredField(field);
 		}
 
 		if (f == null) {

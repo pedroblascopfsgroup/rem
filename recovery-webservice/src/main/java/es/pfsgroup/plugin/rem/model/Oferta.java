@@ -140,6 +140,12 @@ public class Oferta implements Serializable, Auditable {
     @Column(name = "OFR_FECHA_NOTIFICACION")
     private Date fechaNotificacion;
     
+	@Column(name="OFR_IMPORTE_APROBADO")
+	private Double importeOfertaAprobado; 
+	
+	@Column(name="OFR_IND_LOTE_RESTRINGIDO")
+	private Integer indicadorLoteRestringido;
+    
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -371,6 +377,22 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setFdv(ActivoProveedor fdv) {
 		this.fdv = fdv;
+	}
+
+	public Double getImporteOfertaAprobado() {
+		return importeOfertaAprobado;
+	}
+
+	public void setImporteOfertaAprobado(Double importeOfertaAprobado) {
+		this.importeOfertaAprobado = importeOfertaAprobado;
+	}
+
+	public Integer getIndicadorLoteRestringido() {
+		return indicadorLoteRestringido;
+	}
+
+	public void setIndicadorLoteRestringido(Integer indicadorLoteRestringido) {
+		this.indicadorLoteRestringido = indicadorLoteRestringido;
 	}
 
 

@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.rem.restclient.webcom.clients;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,10 +24,13 @@ public class ClienteEstadoOferta extends ClienteWebcomBase{
 	@Autowired
 	private HttpClientFacade httpClient;
 	
+	@Resource
+	private Properties appProperties;
+	
 	@Override
 	@AsyncRequestHandler
 	public Map<String, Object> enviaPeticion(ParamsList paramsList) throws ErrorServicioWebcom {
-		return this.send(httpClient, WebcomEndpoint.estadoOferta(), paramsList);
+		return this.send(httpClient, WebcomEndpoint.estadoOferta(appProperties), paramsList);
 	}
 
 	@Override
@@ -32,6 +38,11 @@ public class ClienteEstadoOferta extends ClienteWebcomBase{
 	public void procesaRespuesta(Map<String, Object> respuesta) {
 		this.receive(respuesta);
 		
+	}
+	
+	@Override
+	protected Properties getAppProperties() {
+		return appProperties;
 	}
 
 }

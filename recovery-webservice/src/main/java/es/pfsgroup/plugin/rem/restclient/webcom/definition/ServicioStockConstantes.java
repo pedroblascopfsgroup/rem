@@ -29,7 +29,7 @@ public class ServicioStockConstantes extends ConstantesGenericas{
 	public static final String BANYOS = "banyos";
 	public static final String ASEOS = "aseos";
 	public static final String GARAJES = "garajes";
-	public static final String PUBLICADO = "publicado";
+	public static final String NUEVO = "nuevo";
 	public static final String COD_ESTADO_COMERCIAL = "codEstadoComercial";
 	public static final String COD_TIPO_VENTA = "codTipoVenta";
 	public static final String LAT = "lat";

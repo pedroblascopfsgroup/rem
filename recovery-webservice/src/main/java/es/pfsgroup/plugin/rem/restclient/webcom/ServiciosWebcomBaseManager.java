@@ -31,26 +31,21 @@ public abstract class ServiciosWebcomBaseManager {
 
 	/**
 	 * Inicializa un HashMap de parámetros para invocar a un Servicio Web. Este
-	 * método setea los campos comunes qeu se requieren en todos los Servicios.
+	 * método setea los campos comunes que se requieren en todos los Servicios.
 	 * 
-	 * @param proxyFactory
-	 *            Este método requiere de una instancia de
-	 *            {@link ApiProxyFactory} para obtener el 'usuarioLogado' del
-	 *            sistema.
+	 * @param usuarioId ID del usuario que realiza la petición.
 	 * @return
 	 */
-	protected HashMap<String, Object> createParametersMap(ApiProxyFactory proxyFactory) {
+	protected HashMap<String, Object> createParametersMap(Long usuarioId) {
 		logger.debug("Inicializando HashMap de parámetros");
-		Usuario usuLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		HashMap<String, Object> params = new HashMap<String, Object>();
 
 		String fechaAccion = WebcomRequestUtils.formatDate(new Date());
 		logger.debug(ConstantesGenericas.FECHA_ACCION + " = " + fechaAccion);
 		params.put(ConstantesGenericas.FECHA_ACCION, fechaAccion);
 
-		Long userId = usuLogado.getId();
-		logger.debug(ConstantesGenericas.ID_USUARIO_REM_ACCION + " = " + userId);
-		params.put(ConstantesGenericas.ID_USUARIO_REM_ACCION, userId);
+		logger.debug(ConstantesGenericas.ID_USUARIO_REM_ACCION + " = " + usuarioId);
+		params.put(ConstantesGenericas.ID_USUARIO_REM_ACCION, usuarioId);
 		return params;
 	}
 

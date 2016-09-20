@@ -68,7 +68,7 @@ public class MSVActualizarPreciosActivoBloqueo extends MSVExcelValidatorAbstract
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-			if (!isActiveExists(exc)){
+//			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 
@@ -83,7 +83,7 @@ public class MSVActualizarPreciosActivoBloqueo extends MSVExcelValidatorAbstract
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
+//			}
 		}
 		exc.cerrar();
 		

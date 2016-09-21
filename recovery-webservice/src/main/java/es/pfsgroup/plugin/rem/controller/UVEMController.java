@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +10,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.gfi.webIntegrator.WIException;
 
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
-import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 
 @Controller
 public class UVEMController {
@@ -112,15 +107,6 @@ public class UVEMController {
 		}
 
 		return new ModelAndView("jsonView", model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET, value ="/notificaciones")
-	public ModelAndView saveNotificacion(ModelMap model,RestRequestWrapper request)
-			throws JsonParseException, JsonMappingException, IOException {
-
-		model.put("data", "hola uvem");
-		return new ModelAndView("jsonView", model);
-	}
+	}	
 
 }

@@ -38,6 +38,14 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 //			
 //			return true;		
 //		}
+	},
+	
+	onClickAbrirGastoProveedor: function(grid, rowIndex, colIndex){
+		debugger;
+		var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	me.getView().fireEvent('abrirDetalleGasto', rowIndex);
+		
 	}
 	
 		// Funcion que se ejecuta al hacer click en el botón limpiar

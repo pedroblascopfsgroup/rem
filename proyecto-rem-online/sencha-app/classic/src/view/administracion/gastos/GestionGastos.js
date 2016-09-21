@@ -77,10 +77,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
     	           bind: {
     	           	store: '{gastosAdministracion}'
     	           },
-//    	           listeners:{
-//    	        	   rowdblclick: 'onTramitesListDobleClick'
-//    	           },
-    	           reference: 'listadoTramites',
+    	           listeners:{
+    	        	   rowdblclick: 'onClickAbrirGastoProveedor'
+    	           },
+    	           reference: 'listadoGastos',
     	           columns: [
 	 							{   
 	 								text: HreRem.i18n('header.id.gasto'),

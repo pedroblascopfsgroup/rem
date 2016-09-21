@@ -116,6 +116,12 @@ public abstract class ServiciosWebcomBaseManager {
 			throw new IllegalArgumentException("'paramsList' no puede ser NULL");
 		}
 		
+		if (servicio == null){
+			IllegalArgumentException e = new IllegalArgumentException("El Cliente REST Webcom asociado a este servicio es NULL");
+			logger.fatal("No se va a invocar el servicio porque la implementación del cliente rest no está disponible o es desconocida", e);
+			throw e;
+		}
+		
 		try {
 			
 			logger.debug("Invocando al servicio " + servicio.getClass().getSimpleName()

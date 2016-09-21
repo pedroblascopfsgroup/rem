@@ -19,6 +19,8 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 
 /**
  * Esta clase es un DAO genéfico para obtener registros que han cambiado en BD.
@@ -88,24 +90,37 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			DbIdContextHolder.setDbId(1L);
 			String[] fields = getDtoFields(dtoClass);
 			String columns = columns4Select(fields);
-			String queryString = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales()
-					+ " MINUS SELECT " + columns + " FROM " + infoTablas.nombreTablaDatosHistoricos() + "";
-			
-			logger.debug("Ejecutando: " + queryString);
-			Query query = createQuery(session, queryString);
-			List<Object[]> resultado = query.list();
+			String columIdUsuarioRemAccion = columns4Select(new String[] { ConstantesGenericas.ID_USUARIO_REM_ACCION });
+			String selectFromDatosActuales = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales() + " WHERE " + columIdUsuarioRemAccion + " <> '" + RestApi.REST_LOGGED_USER_USERNAME + "'";
+			String selectFromDatosHistoricos = "SELECT " + columns + " FROM " + infoTablas.nombreTablaDatosHistoricos();
+			String queryString = selectFromDatosActuales + " MINUS " + selectFromDatosHistoricos;
+
+			List<Object[]> resultado = null;
+			try {
+				logger.debug("Ejecutando: " + queryString);
+				Query query = createQuery(session, queryString);
+				resultado = query.list();
+			} catch (Throwable t) {
+				throw new CambiosBDDaoError("Ha ocurrido un error al obtener los registros que difieren", queryString,
+						infoTablas, t);
+			}
 
 			if (resultado != null) {
-				for (Object[] r : resultado) {
-					CambioBD cambio = new CambioBD(fields);
-					cambio.setDatosActuales(r);
-					Object[] historico = (Object[]) session
-							.createSQLQuery("SELECT " + columns + " FROM " + infoTablas.nombreTablaDatosHistoricos()
-									+ " WHERE " + infoTablas.clavePrimaria() + " = " + r[0])
-							.uniqueResult();
-					cambio.setDatosHistoricos(historico);
-					cambios.add(cambio);
+				String selectDatoHistorico = null;
+				try {
+					for (Object[] r : resultado) {
+						CambioBD cambio = new CambioBD(fields);
+						cambio.setDatosActuales(r);
+						selectDatoHistorico = selectFromDatosHistoricos + " WHERE " + infoTablas.clavePrimaria() + " = "
+								+ r[0];
+						Object[] historico = (Object[]) session.createSQLQuery(selectDatoHistorico).uniqueResult();
+						cambio.setDatosHistoricos(historico);
+						cambios.add(cambio);
 
+					}
+				} catch (Throwable t) {
+					throw new CambiosBDDaoError("Ha ocurrido un error al obtener el registro en 'datos historicos'",
+							selectDatoHistorico, infoTablas, t);
 				}
 			}
 		} finally {
@@ -159,21 +174,31 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		Transaction tx = session.beginTransaction();
 		try {
 			String queryDelete = "DELETE FROM " + infoTablas.nombreTablaDatosHistoricos();
-			logger.debug("Ejecutando: " + queryDelete);
-			createQuery(session, queryDelete).executeUpdate();
-			
-			
+			try {
+				logger.debug("Ejecutando: " + queryDelete);
+				createQuery(session, queryDelete).executeUpdate();
+			} catch (Throwable t) {
+				throw new CambiosBDDaoError("Ha ocurrido un error al borrar la tabla de 'datos históricos'",
+						queryDelete, infoTablas, t);
+			}
+
 			String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns
 					+ ") SELECT  FROM " + infoTablas.nombreVistaDatosActuales();
-			logger.debug("Ejecutando: " + queryInsert);
-			createQuery(session, queryInsert).executeUpdate();
-			
+			try {
+				logger.debug("Ejecutando: " + queryInsert);
+				createQuery(session, queryInsert).executeUpdate();
+			} catch (Throwable t) {
+				throw new CambiosBDDaoError("Ha ocurrido un error al insertar registros en 'datos históricos'",
+						queryInsert, infoTablas, t);
+			}
+
 			logger.debug("Comiteando transacción");
 			tx.commit();
-		} catch (Throwable t) {
-			logger.fatal("Error al marcar como enviados los registros de la BD", t);
-			logger.debug("Realizando rollback de la transacción");
+		} catch (CambiosBDDaoError e) {
+			logger.fatal(
+					"Error al marcar como enviados los registros de la BD. Realizando rollback de la transacción.");
 			tx.rollback();
+			throw e;
 		} finally {
 			logger.debug("Cerrando sesión");
 			if (session != null) {
@@ -186,6 +211,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	/**
 	 * Devuelve los nombres de los campos declarados en el DTO.
+	 * 
 	 * @param dtoClass
 	 * @return
 	 */

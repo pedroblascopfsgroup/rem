@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -25,6 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
 import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorCambiosEstadoPeticionTrabajo;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorCambiosStockActivos;
@@ -100,7 +103,7 @@ public class DeteccionCambiosBDTests {
 		assertEquals("El NUEVO no tiene el valor esperado", Boolean.TRUE, stockEnviado.get(0).getNuevo().getValue());
 		assertEquals("El COD_TIPO_VIA no tiene el valor esperado", "ABCDE",
 				stockEnviado.get(0).getCodTipoVia().getValue());
-		assertEquals("El ANTERIOR_IMPORTE no tiene el valor esperado", new Float(1.2),
+		assertEquals("El ANTERIOR_IMPORTE no tiene el valor esperado", new Double(1.2),
 				stockEnviado.get(0).getAnteriorImporte().getValue());
 		assertEquals("El DESDE_IMPORTE no tiene el valor esperado", fecha,
 				stockEnviado.get(0).getDesdeImporte().getValue());
@@ -112,26 +115,71 @@ public class DeteccionCambiosBDTests {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
-	public void testDeteccionCambioEstadoPeticionTrabajo(){
-		
+	public void testDeteccionCambioEstadoPeticionTrabajo() {
+
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, 1L);
 		data.put(EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, "Z");
-		
+
 		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
 		cambiosBD.add(new CambioBDStub(data));
-		when(detectorCambiosDao.listCambios(eq(EstadoTrabajoDto.class),any(InfoTablasBD.class))).thenReturn(cambiosBD);
-		
-		
+		when(detectorCambiosDao.listCambios(eq(EstadoTrabajoDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
+
 		task.detectaCambios();
-		
+
 		ArgumentCaptor<List> argumentCaptor = ArgumentCaptor.forClass(List.class);
 		verify(servicios).enviaActualizacionEstadoTrabajo(argumentCaptor.capture());
-		
+
 		List<EstadoTrabajoDto> dtoList = argumentCaptor.getValue();
 		assertFalse("La lista de cambios enviada al servicio no puede estar vacía", dtoList.isEmpty());
-		assertEquals("El valor de ID_TRABAJO_REM no coincide", new Long(1L), dtoList.get(0).getIdTrabajoRem().getValue());
-		assertEquals("El valor de COD_ESTADO_TRABAJO no coincide", "Z", dtoList.get(0).getCodEstadoTrabajo().getValue());
+		assertEquals("El valor de ID_TRABAJO_REM no coincide", new Long(1L),
+				dtoList.get(0).getIdTrabajoRem().getValue());
+		assertEquals("El valor de COD_ESTADO_TRABAJO no coincide", "Z",
+				dtoList.get(0).getCodEstadoTrabajo().getValue());
+	}
+
+	@Test
+	public void testDeteccionDeCambios_ValoresNullados() {
+		// Simularemos que el detector de cambios nos devuelve campos nullados
+		// para distintos tipos de datos y nos aseguraremos que se ha seteado el
+		// NullDataType adecuado.
+		// Elegimos el SockDto porque tiene muchos campos y muy variados
+		Map<String, Object> data = new HashMap<String, Object>();
+		// StringDataType
+		data.put(ServicioStockConstantes.COD_TIPO_VIA, null);
+		// LongDataType
+		data.put(ServicioStockConstantes.ID_ACTIVO_HAYA, null);
+		// DateDataType
+		data.put(ServicioStockConstantes.DESDE_IMPORTE, null);
+		// FloatDataType
+		data.put(ServicioStockConstantes.SUPERFICIE, null);
+		// BooleanDataType
+		data.put(ServicioStockConstantes.ASCENSOR, null);
+
+		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
+		cambiosBD.add(new CambioBDStub(data));
+		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
+
+		task.detectaCambios();
+
+		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
+		verify(servicios).enviarStock(stockArgumentCaptor.capture());
+		StockDto stock = (StockDto) stockArgumentCaptor.getValue().get(0);
+
+		// NullStringDataType
+		assertTrue("El valor no es un NullDataType", (stock.getCodTipoVia() instanceof NullDataType));
+		// NullLongDataType
+		assertTrue("El valor no es un NullDataType", (stock.getIdActivoHaya() instanceof NullDataType));
+		// NullDateDataType
+		assertTrue("El valor no es un NullDataType", (stock.getDesdeImporte() instanceof NullDataType));
+		// NullFloatDataType
+		assertTrue("El valor no es un NullDataType", (stock.getSuperficie() instanceof NullDataType));
+		// NullBooleanDataType
+		assertTrue("El valor no es un NullDataType", (stock.getAscensor() instanceof NullDataType));
+
+		// Finalmente comprobamos que los campos que no hayamos seteado
+		// explícitamente permanecen a null. Elegimos uno no seteado al azar.
+		assertNull("El campo debería ser null ya que no se ha Nulleado explicitamente", stock.getBanyos());
 	}
 
 }

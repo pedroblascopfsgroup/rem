@@ -47,7 +47,7 @@ public class WebcomRequestUtils {
 		return data;
 	}
 
-	private static Map<String, String> toStringParameters(Map<String, Object> params) {
+	public static Map<String, String> toStringParameters(Map<String, Object> params) {
 		HashMap<String, String> strParams = new HashMap<String, String>();
 		if ((params != null) && (!params.isEmpty())) {
 			for (Entry<String, Object> p : params.entrySet()) {

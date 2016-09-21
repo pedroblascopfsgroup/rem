@@ -3,15 +3,12 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.map.ser.ArraySerializers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +18,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
@@ -49,8 +45,6 @@ import net.sf.json.JSONObject;
 @RunWith(MockitoJUnitRunner.class)
 public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	
-	private static Long USUARIO_REM = 7337L;
-
 	@Mock
 	HttpClientFacade httpClient;
 
@@ -149,10 +143,10 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		StockDto stock1 = setupDto(new StockDto());
 		StockDto stock2 = setupDto(new StockDto());
 
-		float actualImporte = 100.00F;
+		double actualImporte = 100.00;
 		String codigoAgrupacionObraNueva = "ABCDE";
 		
-		stock1.setActualImporte(WebcomDataType.floatDataType(actualImporte));
+		stock1.setActualImporte(WebcomDataType.doubleDataType(actualImporte));
 		// ¿El campo idEstado existirá o no?
 		//stock1.setIdEstado(WebcomDataType.booleanDataType(true));
 		stock2.setCodigoAgrupacionObraNueva(WebcomDataType.stringDataType(codigoAgrupacionObraNueva));
@@ -169,7 +163,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		JSONArray requestData = genericValidation(httpClient, method, charset);
 
 		assertDataBasicContent(requestData, 0);
-		assertDataEquals(requestData, 0, ServicioStockConstantes.ACTUAL_IMPORTE, actualImporte);
+		assertDataEquals(requestData, 0, ServicioStockConstantes.ACTUAL_IMPORTE, "100.00");
 		// ¿El campo idEstado existirá o no?
 		//assertDataEquals(requestData, 0, ServicioStockConstantes.ID_ESTADO, Boolean.TRUE);
 		assertDataEquals(requestData, 1, ServicioStockConstantes.CODIGO_AGRUPACION_OBRA_NUEVA, codigoAgrupacionObraNueva);

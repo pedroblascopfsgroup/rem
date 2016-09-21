@@ -4,6 +4,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 
 public interface WebcomRESTDto {
+	
 
 	LongDataType getIdUsuarioRemAccion();
 	

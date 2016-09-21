@@ -8,4 +8,8 @@ public class WebcomDataTypeParseException extends Exception {
 		super(e);
 	}
 
+	public WebcomDataTypeParseException(String string) {
+		super(string);
+	}
+
 }

@@ -2,11 +2,13 @@ package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.FloatDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 
 public class StockDto implements WebcomRESTDto{
+	
 	private LongDataType idUsuarioRemAccion;
 	private DateDataType fechaAccion;
 	private LongDataType idActivoHaya;
@@ -20,8 +22,10 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codPedania;
 	private StringDataType codProvincia;
 	private StringDataType codigoPostal;
-	private FloatDataType actualImporte;
-	private FloatDataType anteriorImporte;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType actualImporte;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType anteriorImporte;
 	private DateDataType desdeImporte;
 	private DateDataType hastaImporte;
 	private StringDataType codTipoInmueble;
@@ -30,8 +34,10 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codMunicipioRegistro;
 	private StringDataType registro;
 	private StringDataType referenciaCatastral;
-	private FloatDataType superficie;
-	private FloatDataType superficieRegistral;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType superficie;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType superficieRegistral;
 	private BooleanDataType ascensor;
 	private LongDataType dormitorios;
 	private LongDataType banyos;
@@ -40,8 +46,10 @@ public class StockDto implements WebcomRESTDto{
 	private BooleanDataType nuevo;
 	private StringDataType codEstadoComercial;
 	private StringDataType codTipoVenta;
-	private FloatDataType lat;
-	private FloatDataType lng;
+	@DecimalDataTypeFormat(decimals=8)
+	private DoubleDataType lat;
+	@DecimalDataTypeFormat(decimals=8)
+	private DoubleDataType lng;
 	private StringDataType codEstadoConstruccion;
 	private LongDataType terrazas;
 	private StringDataType codEstadoPublicacion;
@@ -129,16 +137,16 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodigoPostal(StringDataType codigoPostal) {
 		this.codigoPostal = codigoPostal;
 	}
-	public FloatDataType getActualImporte() {
+	public DoubleDataType getActualImporte() {
 		return actualImporte;
 	}
-	public void setActualImporte(FloatDataType actualImporte) {
+	public void setActualImporte(DoubleDataType actualImporte) {
 		this.actualImporte = actualImporte;
 	}
-	public FloatDataType getAnteriorImporte() {
+	public DoubleDataType getAnteriorImporte() {
 		return anteriorImporte;
 	}
-	public void setAnteriorImporte(FloatDataType anteriorImporte) {
+	public void setAnteriorImporte(DoubleDataType anteriorImporte) {
 		this.anteriorImporte = anteriorImporte;
 	}
 	public DateDataType getDesdeImporte() {
@@ -189,16 +197,16 @@ public class StockDto implements WebcomRESTDto{
 	public void setReferenciaCatastral(StringDataType referenciaCatastral) {
 		this.referenciaCatastral = referenciaCatastral;
 	}
-	public FloatDataType getSuperficie() {
+	public DoubleDataType getSuperficie() {
 		return superficie;
 	}
-	public void setSuperficie(FloatDataType superficie) {
+	public void setSuperficie(DoubleDataType superficie) {
 		this.superficie = superficie;
 	}
-	public FloatDataType getSuperficieRegistral() {
+	public DoubleDataType getSuperficieRegistral() {
 		return superficieRegistral;
 	}
-	public void setSuperficieRegistral(FloatDataType superficieRegistral) {
+	public void setSuperficieRegistral(DoubleDataType superficieRegistral) {
 		this.superficieRegistral = superficieRegistral;
 	}
 	public BooleanDataType getAscensor() {
@@ -243,16 +251,16 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodTipoVenta(StringDataType codTipoVenta) {
 		this.codTipoVenta = codTipoVenta;
 	}
-	public FloatDataType getLat() {
+	public DoubleDataType getLat() {
 		return lat;
 	}
-	public void setLat(FloatDataType lat) {
+	public void setLat(DoubleDataType lat) {
 		this.lat = lat;
 	}
-	public FloatDataType getLng() {
+	public DoubleDataType getLng() {
 		return lng;
 	}
-	public void setLng(FloatDataType lng) {
+	public void setLng(DoubleDataType lng) {
 		this.lng = lng;
 	}
 	public StringDataType getCodEstadoConstruccion() {

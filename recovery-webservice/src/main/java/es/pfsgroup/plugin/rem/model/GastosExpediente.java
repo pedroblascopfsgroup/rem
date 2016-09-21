@@ -25,6 +25,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 
 
@@ -90,7 +91,11 @@ public class GastosExpediente implements Serializable, Auditable {
     private String pagador;
     
     @Column(name="GEX_APROBADO")
-    private Integer aprobado;   
+    private Integer aprobado;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_DEG_ID")
+	private DDDestinatarioGasto destinatarioGasto;
 
     
       
@@ -224,6 +229,14 @@ public class GastosExpediente implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDDestinatarioGasto getDestinatarioGasto() {
+		return destinatarioGasto;
+	}
+
+	public void setDestinatarioGasto(DDDestinatarioGasto destinatarioGasto) {
+		this.destinatarioGasto = destinatarioGasto;
 	}
 
 

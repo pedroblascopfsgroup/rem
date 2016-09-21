@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -1198,6 +1199,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				gastoExpediente.setAccionGastos(accionGasto);
 				gastoExpediente.setExpediente(nuevoExpediente);
 				
+				DDDestinatarioGasto destinatarioGasto= (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, DDDestinatarioGasto.CODIGO_HAYA);
+				gastoExpediente.setDestinatarioGasto(destinatarioGasto);
 				
 				if(accionGasto.getCodigo().equals(DDAccionGastos.CODIGO_COLABORACION)){
 					if(!Checks.esNulo(oferta.getCustodio())){

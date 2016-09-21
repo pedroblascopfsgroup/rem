@@ -62,9 +62,15 @@ public class RestSecurityFilter implements Filter {
 			SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 
 			RestRequestWrapper restRequest = new RestRequestWrapper((HttpServletRequest) request);
+			
+			
 
 			// obtenemos los datos de la peticion
 			RequestDto datajson = (RequestDto) restRequest.getRequestData(RequestDto.class);
+			
+			logger.debug("Ejecutando request id:".concat(datajson.getId()));
+			
+			logger.debug("Datos de la peticion id:".concat(restRequest.getBody()));
 
 			// obtenemos el workingcode. Si el cliente no lo pasa asumimos valor
 			// por defecto
@@ -341,7 +347,6 @@ public class RestSecurityFilter implements Filter {
 			return null;
 		}
 
-		logger.debug("[INTEGRACION] Authenticando usuario para ws...");
 		UsuarioSecurity user = loadUser(entidad);
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(),
@@ -355,8 +360,7 @@ public class RestSecurityFilter implements Filter {
 		preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
 		Authentication authentication = preAuthenticatedProvider.authenticate(authToken);
 		securityContext.setAuthentication(authentication);
-		logger.debug(String.format("Usuario autenticado [%s]!", authToken.getName()));
-
+		
 		return securityContext;
 	}
 

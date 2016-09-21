@@ -5,6 +5,8 @@ import com.gfi.webIntegrator.WIMetaServiceException;
 
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
+import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
+import es.cajamadrid.servicios.GM.GMPDJB13_INS.VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 
@@ -78,5 +80,34 @@ public interface UvemManagerApi {
 	 * 
 	 */
 	public GMPAJC93_INS resultadoDatosCliente();
+
+	/**
+	 * Servicio REM  UVEM para que a partir del codigoDeOfertaHaya, tipoPropuesta(1Venta/3Contraoferta) y
+	 * indicadorDeFinanciacionCliente(S/N) se determine el comite decisor que debe resolver una oferta/propuesta
+	 * según aplicación de la política de FFDD vigente en Bankia.
+	 */
+	public 	void consultarInstanciaDecision(String codigoDeOfertaHaya,
+											short tipoPropuesta,
+											char indicadorDeFinanciacionCliente) throws WIException;
+	
+	/**
+	 * Servicio REM  UVEM para dar de alta la oferta en el sistema de Bankia,
+	 * a partir del codigoDeOfertaHaya, tipoPropuesta(1Venta/3Contraoferta),
+	 * indicadorDeFinanciacionCliente(S/N) y el vector numeroDeOcurrencias (importe,moneda,impuesto...).
+	 */
+	public 	void altaInstanciaDecision(String codigoDeOfertaHaya,
+			short tipoPropuesta,
+			char indicadorDeFinanciacionCliente,
+			VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroDeOcurrencias) throws WIException;
+	
+	/**
+	 * 
+	 */
+	public GMPDJB13_INS resultadoConsultarInstanciaDecision();
+
+	/**
+	 * 
+	 */
+	public GMPDJB13_INS resultadoAltaInstanciaDecision();
 
 }

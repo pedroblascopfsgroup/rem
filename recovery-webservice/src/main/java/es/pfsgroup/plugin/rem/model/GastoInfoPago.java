@@ -37,7 +37,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
-public class GastoDetalleEconomico implements Serializable, Auditable {
+public class GastoInfoPago implements Serializable, Auditable {
 	
     /**
 	 * 
@@ -47,7 +47,7 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	@Id
     @Column(name = "GDE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoDetalleEconomicoGenerator")
-    @SequenceGenerator(name = "GastoDetalleEconomicoGenerator", sequenceName = "S_GDE_GASTOS_DETALLE_ECO")
+    @SequenceGenerator(name = "GastoDetalleEconomicoGenerator", sequenceName = "GDE_GASTOS_DETALLE_ECO")
     private Long id;
 	
     @ManyToOne

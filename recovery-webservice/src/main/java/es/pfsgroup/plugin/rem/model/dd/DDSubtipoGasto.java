@@ -5,9 +5,12 @@ package es.pfsgroup.plugin.rem.model.dd;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -21,14 +24,14 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de acción de gastos
+ * Modelo que gestiona el diccionario de tipos de gastos
  */
 @Entity
-@Table(name = "DD_ACC_ACCION_GASTOS", schema = "${entity.schema}")
+@Table(name = "DD_STG_SUBTIPOS_GASTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDAccionGastos implements Auditable, Dictionary {
-
+public class DDSubtipoGasto implements Auditable, Dictionary {
+	
 
 	/**
 	 * 
@@ -36,23 +39,23 @@ public class DDAccionGastos implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_ACC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDAccionGastosGenerator")
-	@SequenceGenerator(name = "DDAccionGastosGenerator", sequenceName = "S_DD_ACC_ACCION_GASTOS_")
+	@Column(name = "DD_STG_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDSubTipoGastoGenerator")
+	@SequenceGenerator(name = "DDSubTipoGastoGenerator", sequenceName = "S_DD_STG_SUBTIPOS_GASTO")
 	private Long id;
+	
+	@JoinColumn(name = "DD_TGA_ID")  
+    @ManyToOne(fetch = FetchType.LAZY)
+	private DDTipoGasto tipoGasto;
 	    
-	@Column(name = "DD_ACC_CODIGO")   
+	@Column(name = "DD_STG_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_ACC_DESCRIPCION")   
+	@Column(name = "DD_STG_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_ACC_DESCRIPCION_LARGA")   
+	@Column(name = "DD_STG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	
-	public static final String CODIGO_PRESCRIPCION = "04";
-	public static final String CODIGO_COLABORACION = "05";
-	public static final String CODIGO_DOBLE_PRESCRIPCION = "06";
 	    
 	
 	    
@@ -70,6 +73,14 @@ public class DDAccionGastos implements Auditable, Dictionary {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public DDTipoGasto getTipoGasto() {
+		return tipoGasto;
+	}
+
+	public void setTipoGasto(DDTipoGasto tipoGasto) {
+		this.tipoGasto = tipoGasto;
 	}
 
 	public String getDescripcion() {

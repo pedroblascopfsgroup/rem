@@ -43,7 +43,7 @@ public class OfertaDto implements Serializable {
 	@NotNull
 	private Date fechaAccion;
 	@NotNull
-	private Long idUsuarioRem;
+	private Long idUsuarioRemAccion;
 	
 	
 	
@@ -89,11 +89,11 @@ public class OfertaDto implements Serializable {
 	public void setFechaAccion(Date fechaAccion) {
 		this.fechaAccion = fechaAccion;
 	}
-	public Long getIdUsuarioRem() {
-		return idUsuarioRem;
+	public Long getIdUsuarioRemAccion() {
+		return idUsuarioRemAccion;
 	}
-	public void setIdUsuarioRem(Long idUsuarioRem) {
-		this.idUsuarioRem = idUsuarioRem;
+	public void setIdUsuarioRemAccion(Long idUsuarioRem) {
+		this.idUsuarioRemAccion = idUsuarioRem;
 	}
 	public String getCodEstadoOferta() {
 		return codEstadoOferta;

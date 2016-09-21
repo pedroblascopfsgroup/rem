@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HREOS-788
 --## PRODUCTO=NO
---## Finalidad: Añadir campo ICO_ID_REM.
+--## Finalidad: Añadir campos BIE_ADJ_ID_REM, .
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -40,30 +40,185 @@ DECLARE
 BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ICO_ID_REM... Comprobaciones previas');
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_ADJ_ID_REM... Comprobaciones previas');
 	
 
 	-- Verificar el campo ya existe
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''ICO_ID_REM''';
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''BIE_ADJ_ID_REM''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 	IF V_NUM_TABLAS = 1 THEN
 		
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.ICO_ID_REM Ya existe.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_ADJ_ID_REM Ya existe.');
 		
 	ELSE 
 
-		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ICO_ID_REM NUMBER(16)';
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD BIE_ADJ_ID_REM NUMBER(16)';
 
 		-- Verificar el campo ya existe
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''ICO_ID_REM''';
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''BIE_ADJ_ID_REM''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 		IF V_NUM_TABLAS = 1 THEN
 			
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.ICO_ID_REM creado.');
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_ADJ_ID_REM creado.');
 			
 		ELSE 
 
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.ICO_ID_REM no se ha podido añadir.');
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_ADJ_ID_REM no se ha podido añadir.');
+
+		END IF;
+
+	END IF;
+
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_DREG_ID_REM... Comprobaciones previas');
+	
+
+	-- Verificar el campo ya existe
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''BIE_DREG_ID_REM''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_DREG_ID_REM Ya existe.');
+		
+	ELSE 
+
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD BIE_DREG_ID_REM NUMBER(16)';
+
+		-- Verificar el campo ya existe
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''BIE_DREG_ID_REM''';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+		IF V_NUM_TABLAS = 1 THEN
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_DREG_ID_REM creado.');
+			
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_DREG_ID_REM no se ha podido añadir.');
+
+		END IF;
+
+	END IF;
+
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_LOC_ID_REM... Comprobaciones previas');
+	
+
+	-- Verificar el campo ya existe
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''BIE_LOC_ID_REM''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_LOC_ID_REM Ya existe.');
+		
+	ELSE 
+
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD BIE_LOC_ID_REM NUMBER(16)';
+
+		-- Verificar el campo ya existe
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''BIE_LOC_ID_REM''';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+		IF V_NUM_TABLAS = 1 THEN
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_LOC_ID_REM creado.');
+			
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.BIE_LOC_ID_REM no se ha podido añadir.');
+
+		END IF;
+
+	END IF;
+
+
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.LLV_ID_REM... Comprobaciones previas');
+	
+
+	-- Verificar el campo ya existe
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''LLV_ID_REM''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.LLV_ID_REM Ya existe.');
+		
+	ELSE 
+
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD LLV_ID_REM NUMBER(16)';
+
+		-- Verificar el campo ya existe
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''LLV_ID_REM''';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+		IF V_NUM_TABLAS = 1 THEN
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.LLV_ID_REM creado.');
+			
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.LLV_ID_REM no se ha podido añadir.');
+
+		END IF;
+
+	END IF;
+
+
+
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CFD_ID_REM... Comprobaciones previas');
+	
+
+	-- Verificar el campo ya existe
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''CFD_ID_REM''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.CFD_ID_REM Ya existe.');
+		
+	ELSE 
+
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CFD_ID_REM NUMBER(16)';
+
+		-- Verificar el campo ya existe
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''CFD_ID_REM''';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+		IF V_NUM_TABLAS = 1 THEN
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.CFD_ID_REM creado.');
+			
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.CFD_ID_REM no se ha podido añadir.');
+
+		END IF;
+
+	END IF;
+
+
+
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AGR_ID_REM... Comprobaciones previas');
+	
+
+	-- Verificar el campo ya existe
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''AGR_ID_REM''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.AGR_ID_REM Ya existe.');
+		
+	ELSE 
+
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD AGR_ID_REM NUMBER(16)';
+
+		-- Verificar el campo ya existe
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''AGR_ID_REM''';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+		IF V_NUM_TABLAS = 1 THEN
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.AGR_ID_REM creado.');
+			
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'.AGR_ID_REM no se ha podido añadir.');
 
 		END IF;
 

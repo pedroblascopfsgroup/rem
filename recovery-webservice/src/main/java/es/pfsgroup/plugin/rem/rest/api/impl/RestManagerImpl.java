@@ -97,10 +97,21 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public List<String> validateRequestObject(Serializable obj) {
+		return validateRequestObject(obj, null);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List<String> validateRequestObject(Serializable obj, Class dto) {
 		ArrayList<String> error = new ArrayList<String>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<Serializable>> constraintViolations = validator.validate(obj);
+		Set<ConstraintViolation<Serializable>> constraintViolations = null;
+		if(dto != null){
+			constraintViolations = validator.validate(obj,dto);
+		}else{
+			constraintViolations = validator.validate(obj);
+		}
 		if (!constraintViolations.isEmpty()) {
 			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
 				error.add((visitaFailure.getPropertyPath() + " " + visitaFailure.getMessage()));

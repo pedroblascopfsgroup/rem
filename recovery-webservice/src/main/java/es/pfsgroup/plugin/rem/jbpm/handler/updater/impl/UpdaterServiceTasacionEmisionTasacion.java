@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -46,6 +47,7 @@ public class UpdaterServiceTasacionEmisionTasacion implements
 				filter = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
 				DDEstadoTrabajo estado = genericDao.get(DDEstadoTrabajo.class, filter);
 				trabajo.setEstado(estado);
+				Auditoria.save(trabajo);
 			}
 
 		}

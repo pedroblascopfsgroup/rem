@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -62,6 +63,7 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 							
 							documento.setFechaSolicitud(ft.parse(valor.getValor()));
 							documento.setEstadoDocumento(estadoDocumento);
+							Auditoria.save(documento);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -82,6 +84,7 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 				DDTipoCalidad tipoCalidad = genericDao.get(DDTipoCalidad.class, filtro);
 				trabajo.setTipoCalidad(tipoCalidad);
+				Auditoria.save(trabajo);
 			}
 			
 			//Combo de corrección de documento
@@ -120,6 +123,7 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_EN_TRAMITE);
 					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 					trabajo.setEstado(estadoTrabajo);
+					Auditoria.save(trabajo);
 				}
 			}
 		}

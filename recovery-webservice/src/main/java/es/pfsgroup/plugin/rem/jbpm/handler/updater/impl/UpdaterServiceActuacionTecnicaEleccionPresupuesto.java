@@ -42,7 +42,7 @@ public class UpdaterServiceActuacionTecnicaEleccionPresupuesto implements Update
 			}
 			
 		}
-
+		genericDao.save(Trabajo.class, trabajo);
 	}
 
 	public String[] getCodigoTarea() {

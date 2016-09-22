@@ -25,7 +25,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  *
  */
 @Entity
-@Table(name = "DD_TPD_TIPO_DOCUMENTO_GASTO", schema = "${entity.schema}")
+@Table(name = "DD_TPD_TIPOS_DOCUMENTO_GASTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoDocumentoGasto implements Auditable, Dictionary {
@@ -39,7 +39,7 @@ public class DDTipoDocumentoGasto implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_TPD_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoDocumentoGastoGenerator")
-	@SequenceGenerator(name = "DDTipoDocumentoGastoGenerator", sequenceName = "DD_TPD_TIPO_DOCUMENTO_GASTO")
+	@SequenceGenerator(name = "DDTipoDocumentoGastoGenerator", sequenceName = "S_DD_TPD_TP_DTO_GASTO")
 	private Long id;
 	 
 	@Column(name = "DD_TPD_CODIGO")   

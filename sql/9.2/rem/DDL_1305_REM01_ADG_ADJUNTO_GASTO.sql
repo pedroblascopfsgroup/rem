@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20151102
+--## AUTOR=JOSE VILLEL
+--## FECHA_CREACION=20160920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar la información de los adjuntos. 
+--## Finalidad: Tabla para gestionar la información de los adjuntos DE UN GASTO. 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -123,7 +123,7 @@ BEGIN
 	
 	
 	-- Creamos foreign key DD_TPD_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ADJ_GASTO_DDTPD FOREIGN KEY (DD_TPD_ID) REFERENCES '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO_GASTO (DD_TPD_ID) ON DELETE SET NULL)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ADJ_GASTO_DDTPD FOREIGN KEY (DD_TPD_ID) REFERENCES '||V_ESQUEMA||'.DD_TPD_TIPOS_DOCUMENTO_GASTO (DD_TPD_ID) ON DELETE SET NULL)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ADJ_GASTO_DDTPD... Foreign key creada.');
 	

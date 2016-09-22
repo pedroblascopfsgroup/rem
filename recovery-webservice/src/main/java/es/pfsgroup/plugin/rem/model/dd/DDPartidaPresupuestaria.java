@@ -24,7 +24,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  * Modelo que gestiona el diccionario de partidas presupuestarias
  */
 @Entity
-@Table(name = "DD_PPR_PARTIDAS_PRESUPUESTARIAS", schema = "${entity.schema}")
+@Table(name = "DD_PPR_PDAS_PRESUPUESTARIAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDPartidaPresupuestaria implements Auditable, Dictionary {
@@ -37,7 +37,7 @@ public class DDPartidaPresupuestaria implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_PPR_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDPartidaPresupuestariaGenerator")
-	@SequenceGenerator(name = "DDPartidaPresupuestariaGenerator", sequenceName = "S_DD_PPR_PARTIDAS_PRESUPUESTARIAS")
+	@SequenceGenerator(name = "DDPartidaPresupuestariaGenerator", sequenceName = "S_DD_PPR_PDAS_PRESUPUESTARIAS")
 	private Long id;
 	    
 	@Column(name = "DD_PPR_CODIGO")   

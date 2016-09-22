@@ -50,6 +50,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	public void updaterStates(Activo activo) {
 		this.updaterStateAdmision(activo);
 		this.updaterStateGestion(activo);
+		this.updaterStateDisponibilidadComercial(activo);
 	}
 	
 	private void updaterStateAdmision(Activo activo){
@@ -81,9 +82,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 	}
 	
-	
-	@Override
-	public void updaterStateDisponibilidadComercial(Activo activo) {
+	private void updaterStateDisponibilidadComercial(Activo activo) {
 		
 		String codigoSituacion = this.getCodigoSituacionComercialFromActivo(activo);
 		

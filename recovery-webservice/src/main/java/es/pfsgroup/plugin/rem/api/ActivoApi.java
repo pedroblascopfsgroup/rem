@@ -317,7 +317,7 @@ public interface ActivoApi {
 		 * @param idActivo Activo a comprobar
 		 * @return true si esta dentro del perimetro Haya, false si esta fuera.
 		 */
-		public boolean isActivoDentroPerimetro(Long idActivo);
+		public boolean isActivoIncluidoEnPerimetro(Long idActivo);
 		
 		/**
 		 * HREOS-843. Comrpueba si el activo tiene alguna oferta con el estado pasado por parámetro

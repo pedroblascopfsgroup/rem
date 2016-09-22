@@ -33,7 +33,7 @@ Ext.define('HreRem.ux.util.Utils', {
     * @return {}
     */
    rendererBooleanToSiNo: function(value, metaData, record, rowIndex, colIndex, store, view) {
-   		return value? HreRem.i18n('txt.si') : HreRem.i18n('txt.no')
+   		return value == "true" ? HreRem.i18n('txt.si') : HreRem.i18n('txt.no')
    },
     /**
     * Renderer para convertir resultados de moneda

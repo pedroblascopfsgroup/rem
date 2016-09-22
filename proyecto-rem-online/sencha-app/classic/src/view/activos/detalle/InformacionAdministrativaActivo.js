@@ -526,7 +526,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
    evaluarEdicion: function() {    	
 		var me = this;
 		
-		if(me.lookupController().getViewModel().get('activo').get('dentroPerimetro')=="false") {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
 			me.down('[xtype=gridBaseEditableRow]').setTopBar(false);
 			me.down('[xtype=gridBaseEditableRow]').rowEditing.clearListeners();
 		}

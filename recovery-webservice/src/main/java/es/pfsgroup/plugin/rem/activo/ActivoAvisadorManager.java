@@ -167,7 +167,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		
 		// Aviso 10: Perímetro Haya
-		if(!activoApi.isActivoDentroPerimetro(id)) {
+		if(!activoApi.isActivoIncluidoEnPerimetro(id)) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Fuera del perímetro Haya");
 			dtoAviso.setId(String.valueOf(id));

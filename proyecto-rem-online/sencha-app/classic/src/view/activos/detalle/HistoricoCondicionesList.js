@@ -81,7 +81,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
    evaluarEdicion: function() {    	
 		var me = this;
 		
-		if(me.lookupController().getViewModel().get('activo').get('dentroPerimetro')=="false") {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
 			me.setTopBar(false);
 		}
    }

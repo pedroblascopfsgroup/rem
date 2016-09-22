@@ -115,7 +115,7 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivo', {
 					}
 					
 					//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
-					if(me.lookupController().getViewModel().get('activo').get('dentroPerimetro')=="true") {
+					if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true") {
 						// Si la pestaña recibida no tiene asignados roles de edicion 
 						if(Ext.isEmpty(tab.funPermEdition)) {
 				    		editionEnabled();

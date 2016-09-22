@@ -22,8 +22,8 @@ public class DtoFichaGastoProveedor extends WebDto {
 	
 
 	private Long id;
-	private Long idGastoHaya;
-	private Long idGastoGestoria;
+	private Long numGastoHaya;
+	private Long numGastoGestoria;
 	private String referenciaEmisor;
 	private String tiposGasto;
 	private String subtiposGasto;
@@ -37,6 +37,7 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private String concepto;
 	private String nifPropietario;
 	private String nombrePropietario;
+	private String codigoEmisor;
 	
 	public Long getId() {
 		return id;
@@ -44,17 +45,17 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Long getIdGastoHaya() {
-		return idGastoHaya;
+	public Long getNumGastoHaya() {
+		return numGastoHaya;
 	}
-	public void setIdGastoHaya(Long idGastoHaya) {
-		this.idGastoHaya = idGastoHaya;
+	public void setNumGastoHaya(Long numGastoHaya) {
+		this.numGastoHaya = numGastoHaya;
 	}
-	public Long getIdGastoGestoria() {
-		return idGastoGestoria;
+	public Long getNumGastoGestoria() {
+		return numGastoGestoria;
 	}
-	public void setIdGastoGestoria(Long idGastoGestoria) {
-		this.idGastoGestoria = idGastoGestoria;
+	public void setNumGastoGestoria(Long numGastoGestoria) {
+		this.numGastoGestoria = numGastoGestoria;
 	}
 	public String getReferenciaEmisor() {
 		return referenciaEmisor;
@@ -133,6 +134,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setNombrePropietario(String nombrePropietario) {
 		this.nombrePropietario = nombrePropietario;
+	}
+	public String getCodigoEmisor() {
+		return codigoEmisor;
+	}
+	public void setCodigoEmisor(String codigoEmisor) {
+		this.codigoEmisor = codigoEmisor;
 	}
    	
 }

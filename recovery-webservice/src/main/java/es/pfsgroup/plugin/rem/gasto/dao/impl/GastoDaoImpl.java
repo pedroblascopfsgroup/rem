@@ -12,11 +12,11 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
-import es.pfsgroup.plugin.rem.model.GastosProveedor;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 
 @Repository("GastoDao")
-public class GastoDaoImpl extends AbstractEntityDao<GastosProveedor, Long> implements GastoDao{
+public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implements GastoDao{
 	
 	@SuppressWarnings("unchecked")
 	@Override

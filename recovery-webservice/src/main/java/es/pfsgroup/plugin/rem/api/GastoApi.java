@@ -1,13 +1,8 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.util.List;
-
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.GastosProveedor;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
 public interface GastoApi {
 	
@@ -19,7 +14,7 @@ public interface GastoApi {
      * @param id de la Gasto a consultar
      * @return Oferta
      */
-    public GastosProveedor getGastoById(Long id);
+    public GastoProveedor getGastoById(Long id);
     
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter);
 	

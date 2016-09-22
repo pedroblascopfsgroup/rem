@@ -20,7 +20,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastosProveedor;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -65,10 +65,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 
 	@Override
-	public GastosProveedor findOne(Long id) {
+	public GastoProveedor findOne(Long id) {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-		GastosProveedor gasto = genericDao.get(GastosProveedor.class, filtro);
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtro);
 
 		return gasto;
 	}
@@ -76,7 +76,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	public Object getTabExpediente(Long id, String tab) {
 		
-		GastosProveedor gasto = findOne(id);
+		GastoProveedor gasto = findOne(id);
 		
 		WebDto dto = null;
 
@@ -94,12 +94,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	}
 	
-	private DtoFichaGastoProveedor gastoToDtoFichaGasto(GastosProveedor gasto) {
+	private DtoFichaGastoProveedor gastoToDtoFichaGasto(GastoProveedor gasto) {
 
 		DtoFichaGastoProveedor dto = new DtoFichaGastoProveedor();
 		
 		if(!Checks.esNulo(gasto)){
 			
+			dto.setNumGastoHaya(gasto.getNumGastoHaya());
+			dto.setNumGastoGestoria(gasto.getNumGastoGestoria());
 			dto.setReferenciaEmisor(gasto.getReferenciaEmisor());
 			
 			if(!Checks.esNulo(gasto.getTipoGasto())){
@@ -125,6 +127,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setPeriodicidad(gasto.getTipoPeriocidad().getCodigo());
 			}
 			dto.setConcepto(gasto.getConcepto());
+			dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
 			
 		}
 
@@ -136,7 +139,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long idGasto){
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
-		GastosProveedor gastoProveedor = genericDao.get(GastosProveedor.class, filtro);
+		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
 		
 		try{
 			if(!Checks.esNulo(gastoProveedor)){
@@ -165,7 +168,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
-				genericDao.update(GastosProveedor.class, gastoProveedor);				
+				genericDao.update(GastoProveedor.class, gastoProveedor);				
 			}
 		}
 		catch(Exception e) {

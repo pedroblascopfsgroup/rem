@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastosProveedor;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
 
 public interface GastoProveedorApi {
@@ -11,7 +11,7 @@ public interface GastoProveedorApi {
 	     * @param id Long
 	     * @return ExpedienteComercial
 	     */
-	    public GastosProveedor findOne(Long id);
+	    public GastoProveedor findOne(Long id);
 	    
 
 		/**

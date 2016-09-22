@@ -26,7 +26,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							                {
 							                	xtype: 'textfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.id.gasto.haya'),
-							                	bind:		'{gasto.idGastoHaya}',
+							                	bind:		'{gasto.numGastoHaya}',
 							                	editable: false
 					
 							                },
@@ -49,7 +49,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											{
 												xtype: 'textfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.id.gestoria'),
-												bind:		'{gasto.idGastoGestoria}',
+												bind:		'{gasto.numGastoGestoria}',
 												editable: false
 											},
 											{
@@ -76,7 +76,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											{
 												xtype: 'textfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.id.emisor'),
-												bind:		'{gasto.idEmisor}',
+												bind:		'{gasto.codigoEmisor}',
 												editable: false
 											},
 											{

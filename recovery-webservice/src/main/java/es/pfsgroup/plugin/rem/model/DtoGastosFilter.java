@@ -12,22 +12,32 @@ public class DtoGastosFilter extends WebDto {
 	private static final long serialVersionUID = 0L;
 
 	private Long id;
+	private Long numGastoHaya;
 	private Long numFactura;
 	private String tipo;
 	private String subtipo;
 	private String concepto;
-	private String proveedor;
+	private String idProveedor;
+	private String codigoProveedor;
 	private String fechaEmision;
-	private Double importe;
+	private Double importeTotal;
 	private String fechaTopePago;
 	private String fechaPago;
 	private String periodicidad;
 	private String destinatario;
+	private String idDetalleGasto;
+	
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public Long getNumGastoHaya() {
+		return numGastoHaya;
+	}
+	public void setNumGastoHaya(Long numGastoHaya) {
+		this.numGastoHaya = numGastoHaya;
 	}
 	public Long getNumFactura() {
 		return numFactura;
@@ -53,11 +63,17 @@ public class DtoGastosFilter extends WebDto {
 	public void setConcepto(String concepto) {
 		this.concepto = concepto;
 	}
-	public String getProveedor() {
-		return proveedor;
+	public String getIdProveedor() {
+		return idProveedor;
 	}
-	public void setProveedor(String proveedor) {
-		this.proveedor = proveedor;
+	public void setIdProveedor(String idProveedor) {
+		this.idProveedor = idProveedor;
+	}
+	public String getCodigoProveedor() {
+		return codigoProveedor;
+	}
+	public void setCodigoProveedor(String codigoProveedor) {
+		this.codigoProveedor = codigoProveedor;
 	}
 	public String getFechaEmision() {
 		return fechaEmision;
@@ -65,11 +81,11 @@ public class DtoGastosFilter extends WebDto {
 	public void setFechaEmision(String fechaEmision) {
 		this.fechaEmision = fechaEmision;
 	}
-	public Double getImporte() {
-		return importe;
+	public Double getImporteTotal() {
+		return importeTotal;
 	}
-	public void setImporte(Double importe) {
-		this.importe = importe;
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
 	}
 	public String getFechaTopePago() {
 		return fechaTopePago;
@@ -94,6 +110,12 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setDestinatario(String destinatario) {
 		this.destinatario = destinatario;
+	}
+	public String getIdDetalleGasto() {
+		return idDetalleGasto;
+	}
+	public void setIdDetalleGasto(String idDetalleGasto) {
+		this.idDetalleGasto = idDetalleGasto;
 	}
 
 	

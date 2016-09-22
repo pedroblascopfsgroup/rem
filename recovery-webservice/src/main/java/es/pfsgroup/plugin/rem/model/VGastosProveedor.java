@@ -45,6 +45,25 @@ public class VGastosProveedor implements Serializable {
 	
 	@Column(name = "DD_DEG_DESCRIPCION")
 	private String destinatario;
+	
+	@Column(name = "PVE_COD_UVEM")
+	private String codigoProveedor;
+	
+	@Column(name = "GDE_ID")
+	private Long idDetalleGasto;
+	
+	@Column(name = "GDE_IMPORTE_TOTAL")
+	private Double importeTotal;
+	
+	@Column(name = "GDE_FECHA_PAGO")
+	private String fechaPago;
+	
+	@Column(name = "GDE_FECHA_TOPE_PAGO")
+	private String fechaTopePago;
+	
+	@Column(name = "GPV_NUM_GASTO_HAYA")
+	private Long numGastoHaya;
+	
 
 	public String getId() {
 		return id;
@@ -116,6 +135,54 @@ public class VGastosProveedor implements Serializable {
 
 	public void setDestinatario(String destinatario) {
 		this.destinatario = destinatario;
+	}
+
+	public String getCodigoProveedor() {
+		return codigoProveedor;
+	}
+
+	public void setCodigoProveedor(String codigoProveedor) {
+		this.codigoProveedor = codigoProveedor;
+	}
+
+	public Long getIdDetalleGasto() {
+		return idDetalleGasto;
+	}
+
+	public void setIdDetalleGasto(Long idDetalleGasto) {
+		this.idDetalleGasto = idDetalleGasto;
+	}
+
+	public Double getImporteTotal() {
+		return importeTotal;
+	}
+
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
+	}
+
+	public String getFechaPago() {
+		return fechaPago;
+	}
+
+	public void setFechaPago(String fechaPago) {
+		this.fechaPago = fechaPago;
+	}
+
+	public String getFechaTopePago() {
+		return fechaTopePago;
+	}
+
+	public void setFechaTopePago(String fechaTopePago) {
+		this.fechaTopePago = fechaTopePago;
+	}
+
+	public Long getNumGastoHaya() {
+		return numGastoHaya;
+	}
+
+	public void setNumGastoHaya(Long numGastoHaya) {
+		this.numGastoHaya = numGastoHaya;
 	}
 	
 	 

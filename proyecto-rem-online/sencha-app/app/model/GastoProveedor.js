@@ -7,13 +7,16 @@ Ext.define('HreRem.model.GastoProveedor', {
 
     fields: [ 
     	{
-    		name: 'idGastoHaya'
+    		name: 'numGastoHaya'
    	 	},
    	 	{
-   	 		name: 'idGastoGestoria'
+   	 		name: 'numGastoGestoria'
    	 	},
    	 	{
    	 		name: 'idEmisor'
+   	 	},
+   	 	{
+   	 		name: 'codigoProveedor'
    	 	},
     	{
     		name: 'nifEmisor'

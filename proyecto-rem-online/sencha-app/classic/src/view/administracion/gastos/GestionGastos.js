@@ -119,6 +119,12 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 						        	hidden: true,
 						        	hideable: false
 						       	},
+						       	{   
+						        	dataIndex: 'numGastoHaya',
+						        	flex: 1,
+						        	hidden: true,
+						        	hideable: false
+						       	},
 	    	                     {
 									text: HreRem.i18n('header.num.factura.liquidacion'),
 									dataIndex: 'numFactura',
@@ -143,7 +149,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.proveedor.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'proveedor'
+	    	                    	 dataIndex: 'codigoProveedor'
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.fecha.emision.gasto'),
@@ -154,7 +160,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.importe.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'importe'
+	    	                    	 dataIndex: 'importeTotal'
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.fecha.tope.pago.gasto'),

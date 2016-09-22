@@ -36,7 +36,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 			        	cls: 'fieldsetBase cabecera',
 			        	height: 20,
 			        	bind:{
-			        		title: 'Gasto {gasto.id}'
+			        		title: 'Gasto {gasto.numGastoHaya}'
 			        	},
 			        	scrollable: 'y',
 			        	border: false,			        	

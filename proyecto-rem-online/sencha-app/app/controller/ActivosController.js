@@ -886,7 +886,7 @@ Ext.define('HreRem.controller.ActivosController', {
     
     abrirDetalleGasto: function(record, refLinks) {
     	var me = this,
-    	titulo = "Gasto " + record.get("id"),
+    	titulo = "Gasto " + record.get("numGastoHaya"),
     	id = record.get("id");
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleGastoById(id, titulo, refLinks);    	
@@ -909,7 +909,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	me.logTime("Load gasto success"); 
 		    	me.setLogTime();	    	
 		    	if(Ext.isEmpty(titulo)) {		    		
-		    		titulo = "Gasto " + gasto.get("id");
+		    		titulo = "Gasto " + gasto.get("numGastoHaya");
 		    		tab.setTitle(titulo);
 		    	}
 		    	tab.getViewModel().set("gasto", gasto);

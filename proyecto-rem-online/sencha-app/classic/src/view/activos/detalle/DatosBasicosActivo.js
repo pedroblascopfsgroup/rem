@@ -267,7 +267,207 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 												 
 		               
 					]               
-          }
+          	},
+          	// Perimetros -----------------------------------------------
+            {    
+                
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.perimetros'),
+				items :
+					[
+					{
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.incluido'),
+						bind : '{activo.incluidoEnPerimetro}', 
+						valueToRaw: function(value) { return Utils.rendererBooleanToSiNo(value); },
+						readOnly	: true
+					},
+					{
+						xtype: 'datefieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
+						colspan: 2,
+						bind:		'{activo.fechaAltaActivoRem}',
+						readOnly	: true
+					},					
+		            {    
+		                
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.perimetros.condiciones'),
+						border: true,
+						colspan: 3,
+						layout: {
+							type: 'table',
+							columns: 3
+						},
+						items :
+							[
+							//Fila cabecera
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.modulos.in.ex'),
+								readOnly	: true
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.in.ex'),
+								readOnly	: true
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.motivo.in.ex'),
+								readOnly	: true
+							},
+							
+							//Fila Admision
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.admision'),
+								bind:		'{activo.aplicaTramiteAdmision}'
+							},
+							{
+								xtype: 'datefieldbase',
+								bind:		'{activo.fechaAplicaTramiteAdmision}'
+							},
+							{
+								xtype: 'textfieldbase',
+								bind:		'{activo.motivoAplicaTramiteAdmision}'
+							},
+
+							//Fila gestion
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion'),
+								bind:		'{activo.aplicaGestion}'
+							},
+							{
+								xtype: 'datefieldbase',
+								bind:		'{activo.fechaAplicaGestion}'
+							},
+							{
+								xtype: 'textfieldbase',
+								bind:		'{activo.motivoAplicaGestion}'
+							},
+							
+							//Fila mediador
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.mediador'),
+								bind:		'{activo.aplicaAsignarMediador}'
+							},
+							{
+								xtype: 'datefieldbase',
+								bind:		'{activo.fechaAplicaAsignarMediador}'
+							},
+							{
+								xtype: 'textfieldbase',
+								bind:		'{activo.motivoAplicaAsignarMediador}'
+							},
+							
+							//Fila comercializar
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
+								bind:		'{activo.aplicaComercializar}'
+							},
+							{
+								xtype: 'datefieldbase',
+								bind:		'{activo.fechaAplicaComercializar}'
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								bind: {
+									store: '{comboMotivoAplicaComercializarActivo}',
+									value: '{activo.motivoAplicaComercializarCodigo}'
+								}
+							},
+							
+							//Fila formalizar
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
+								bind:		'{activo.aplicaFormalizar}'
+							},
+							{
+								xtype: 'datefieldbase',
+								bind:		'{activo.fechaAplicaFormalizar}'
+							},
+							{
+								xtype: 'textfieldbase',
+								bind:		'{activo.motivoAplicaFormalizar}'
+							},
+							
+							//Otros
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.comercializacion'),
+								bind: {
+									store: '{comboTipoComercializacionActivo}',
+									value: '{activo.tipoComercializacionCodigo}'
+								}
+							}							
+						]
+					}, //Fin condiciones
+		            {    
+		                
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.bancario'),
+						border: true,
+//						layout: {
+//							type: 'table',
+//							columns: 2
+//						},
+						items :
+							[
+				            {                    
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								border: false,
+								colapsible: false,
+//								layout: {type: 'hbox', align: 'center'},
+								items :
+									[
+									{
+										xtype:'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.bancario.clase')
+									},
+									{
+										xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.num')
+									}
+								]
+							},
+				            {                    
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								border: false,
+								colapsible: false,
+//								layout: {type: 'hbox', align: 'end'},
+								items :
+									[
+									{
+										xtype:'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.bancario.subtipo')
+									},
+									{
+										xtype:'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.bancario.producto.tipo')
+									},
+									
+									{
+										xtype:'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.estado')
+									},
+									{
+										xtype:'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.bancario.incorriente.estado')
+									}
+								]
+							}
+						]
+						
+					} //Fin activo bancario
+				]
+			} //Fin perimetros
             
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });

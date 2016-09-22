@@ -22,6 +22,20 @@ Ext.define('HreRem.ux.util.Utils', {
    		return Ext.isEmpty(value)? "" : value=='1'? HreRem.i18n('txt.si') : HreRem.i18n('txt.no')
    },
     /**
+    * Renderer para convertir un resultado Boolean en Si/No
+    * @param {} value
+    * @param {} metaData
+    * @param {} record
+    * @param {} rowIndex
+    * @param {} colIndex
+    * @param {} store
+    * @param {} view
+    * @return {}
+    */
+   rendererBooleanToSiNo: function(value, metaData, record, rowIndex, colIndex, store, view) {
+   		return value? HreRem.i18n('txt.si') : HreRem.i18n('txt.no')
+   },
+    /**
     * Renderer para convertir resultados de moneda
     * @param {} value
     * @param {} metaData

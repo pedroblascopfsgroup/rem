@@ -29,7 +29,8 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDDestinatarioGasto implements Auditable, Dictionary {
 	
-
+	 public static final String CODIGO_PROPIETARIO = "01";
+	 public static final String CODIGO_HAYA = "02";
 	/**
 	 * 
 	 */

@@ -25,6 +25,19 @@
         </filter>
     </appender>
     
+     <appender name="fileRest" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender"> 
+        <param name="file" value="{DEVON_HOME}/log/rem_rest.log"/>
+        <param name="MaxFileSize" value="2MB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout"> 
+            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/> 
+        </layout> 
+        <filter class="org.apache.log4j.varia.StringMatchFilter">
+            <param name="StringToMatch" value="JBPM_" />
+            <param name="AcceptOnMatch" value="false" />
+        </filter>
+    </appender>
+    
     <!-- Hay que setear la propiedad de sistema log.mail.sendError = true si se quiere el envio de mails -->
    <appender name="email" class="es.capgemini.pfs.utils.log4j.CustomSMTPAppender">
            <param name="BufferSize" value="1" />
@@ -129,6 +142,10 @@
         <appender-ref ref="console" />
         <appender-ref ref="file" />
         <appender-ref ref="email" />
+    </logger>
+    <logger name="es.pfsgroup.plugin.rem.rest" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
     </logger>
     
     

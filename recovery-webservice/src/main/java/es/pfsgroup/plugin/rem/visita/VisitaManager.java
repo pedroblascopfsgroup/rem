@@ -335,10 +335,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					if(!Checks.esNulo(activo)){
 						visita.setActivo(activo);
 					}
-				}
-				if(!Checks.esNulo(visitaDto.getFecha())){
-					visita.setFechaSolicitud(visitaDto.getFecha());
-				}			
+				}		
 				if(!Checks.esNulo(visitaDto.getIdUsuarioRemAccion())){
 					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdUsuarioRemAccion()));							
 					if(!Checks.esNulo(user)){
@@ -499,12 +496,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						visita.setSubEstadoVisita(null);
 					}	
 				}
-				if(((JSONObject)jsonFields).containsKey("fechaAccion")){
-					visita.setFechaVisita(visitaDto.getFechaAccion());
-				}
-				if(((JSONObject)jsonFields).containsKey("fecha")){
-					visita.setFechaSolicitud(visitaDto.getFecha());
-				}
 				if(((JSONObject)jsonFields).containsKey("idUsuarioRemAccion")) {
 					if(!Checks.esNulo(visitaDto.getIdUsuarioRemAccion())){
 						Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdUsuarioRemAccion()));							
@@ -601,17 +592,19 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						visita.setRealizaVisitaApiCustodio(Integer.valueOf(0));
 					}
 				}*/
-				if(!Checks.esNulo(visitaDto.getCodEstadoVisita()) && !Checks.esNulo(visitaDto.getFechaAccion())){
-					if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_ALTA)){
-						visita.setFechaSolicitud(visitaDto.getFechaAccion());
-					}else if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_CONCERTADA)){
-						visita.setFechaConcertacion(visitaDto.getFechaAccion());
-					}else if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_CONTACTO)){
-						visita.setFechaContacto(visitaDto.getFechaAccion());
-					}else if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_REALIZADA)){
-						visita.setFechaVisita(visitaDto.getFechaAccion());
-					}else if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_NO_REALIZADA)){
-						visita.setFechaVisita(visitaDto.getFechaAccion());
+				if(((JSONObject)jsonFields).containsKey("fechaAccion")){
+					if(!Checks.esNulo(visitaDto.getCodEstadoVisita()) && !Checks.esNulo(visitaDto.getFechaAccion())){
+						if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_ALTA)){
+							visita.setFechaSolicitud(visitaDto.getFechaAccion());
+						}else if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_CONCERTADA)){
+							visita.setFechaConcertacion(visitaDto.getFechaAccion());
+						}else if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_CONTACTO)){
+							visita.setFechaContacto(visitaDto.getFechaAccion());
+						}else if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_REALIZADA)){
+							visita.setFechaVisita(visitaDto.getFechaAccion());
+						}else if(visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_NO_REALIZADA)){
+							visita.setFechaVisita(visitaDto.getFechaAccion());
+						}
 					}
 				}
 		

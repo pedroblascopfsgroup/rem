@@ -20,6 +20,7 @@ import com.gfi.webIntegrator.WIService;
 import com.gfi.webIntegrator.datatypes.BindElement;
 
 import es.cajamadrid.servicios.ARQ.ImporteMonetario;
+import es.cajamadrid.servicios.ARQ.Porcentaje9;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraAplicacionGMPAJC11_INS;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraFuncionalPeticion;
@@ -39,9 +40,12 @@ import es.cajamadrid.servicios.GM.GMPETS07_INS.StructGMPETS07_INS_NumeroDeOcurre
 import es.cajamadrid.servicios.GM.GMPETS07_INS.VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.VectorGMPETS07_INS_NumeroDeOcurrenciasnumogt;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
+import es.cm.arq.tda.tiposdedatosbase.Moneda;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import net.sf.json.JSONObject;
 
 @Service("uvemManager")
 public class UvemManager implements UvemManagerApi {
@@ -245,11 +249,67 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	@Override
-	public void consultarInstanciaDecision (String codigoDeOfertaHaya,
-											short tipoPropuesta,
-											char indicadorDeFinanciacionCliente) throws WIException {
+	public void altaInstanciaDecision (InstanciaDecisionDto instanciaDecisionDto) throws WIException {
+		instanciaDecision (instanciaDecisionDto, "ALTA");
+	}
+	
+	@Override
+	public void consultarInstanciaDecision (InstanciaDecisionDto instanciaDecisionDto) throws WIException {
+		instanciaDecision (instanciaDecisionDto, "CONS");
+	}
+	
+	@Override
+	public void modificarInstanciaDecision (InstanciaDecisionDto instanciaDecisionDto) throws WIException {
+		instanciaDecision (instanciaDecisionDto, "MODI");
+	}
+	
+	public void instanciaDecision (InstanciaDecisionDto instanciaDecisionDto, String accion) throws WIException {
 		
-		logger.info("------------ LLAMADA WS consultarInstanciaDecision -----------------");
+		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();		
+		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+		
+		//IdentificadorActivoEspecial
+		if (instanciaDecisionDto.getIdentificadorActivoEspecial() != null) {
+			struct.setIdentificadorActivoEspecialcoacew(instanciaDecisionDto.getIdentificadorActivoEspecial());
+		}		
+
+		//ImporteMonetarioOfertaBISA
+		if (instanciaDecisionDto.getImporteConSigno() == null) {
+			throw new  WIException("El importe con signo no puede estar vacio.");
+		} else {
+			ImporteMonetario importeMonetario = new ImporteMonetario();
+			importeMonetario.setImporteConSigno(instanciaDecisionDto.getImporteConSigno());
+			es.cajamadrid.servicios.ARQ.Moneda moneda = new es.cajamadrid.servicios.ARQ.Moneda();
+			moneda.setDivisa("D");
+			moneda.setDigitoControlDivisa('-');
+			importeMonetario.setMonedaBISA(moneda);
+			importeMonetario.setNumeroDecimalesImporte('-');
+			struct.setImporteMonetarioOfertaBISA(importeMonetario);
+		}
+
+					
+		//TipoDeImpuesto
+		struct.setTipoDeImpuestocotimw(instanciaDecisionDto.getTipoDeImpuesto());
+		
+		//PorcentajeImpuestoBISA
+		Porcentaje9 porcentajeImpuesto = null;
+		porcentajeImpuesto = new Porcentaje9();
+		if (instanciaDecisionDto.getTipoDeImpuesto()==instanciaDecisionDto.TIPO_IMPUESTO_IVA) {
+			porcentajeImpuesto.setPorcentaje(21);
+		} else {
+			porcentajeImpuesto.setPorcentaje(0);
+		}
+		porcentajeImpuesto.setNumDecimales("BC");
+		struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
+		
+		//IndicadorTratamientoImpuesto
+		struct.setIndicadorTratamientoImpuestobitrim('A'); //'A' or 'B' or '\' or '-' <----?????????
+		
+		//Aunque es un array solo usamos el 1er campo
+		numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
+		
+		
+		logger.info("------------ LLAMADA WS InstanciaDecision ("+accion+") -----------------");
 		leerConfiguracion();
 		// parametros iniciales
 		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
@@ -260,7 +320,7 @@ public class UvemManager implements UvemManagerApi {
 		
 		// Creamos cabeceras
 		es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraFuncionalPeticion();
-		cabeceraFuncional.setIDDSAQ("CONS");
+		cabeceraFuncional.setIDDSAQ(accion);
 		es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPDJB13_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPDJB13_INS();
 
@@ -272,84 +332,29 @@ public class UvemManager implements UvemManagerApi {
 		// seteamos parametros
 		logger.info("CodigoObjetoAccesocopace: PRAC0170");
 		servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PRAC0170");
-		logger.info("CodigoDeOfertaHayacoofhx: "+codigoDeOfertaHaya);
-		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(codigoDeOfertaHaya);		
-		logger.info("IndicadorDeFinanciacionClientebificl: "+indicadorDeFinanciacionCliente);
-		servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(indicadorDeFinanciacionCliente);
-		logger.info("TipoPropuestacotprw: "+tipoPropuesta);
-		servicioGMPDJB13_INS.setTipoPropuestacotprw(tipoPropuesta);
-		logger.info("IndicadorDeFinanciacionClientebificl :"+indicadorDeFinanciacionCliente);
-		servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(indicadorDeFinanciacionCliente);
+		logger.info("CodigoDeOfertaHayacoofhx: "+instanciaDecisionDto.getCodigoDeOfertaHaya());
+		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(instanciaDecisionDto.getCodigoDeOfertaHaya());
+		if (instanciaDecisionDto.isFinanciacionCliente()) {
+			logger.info("IndicadorDeFinanciacionClientebificl: "+instanciaDecisionDto.FINANCIACION_CLIENTE_SI);
+			servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_SI);
+		} else {
+			logger.info("IndicadorDeFinanciacionClientebificl: "+instanciaDecisionDto.FINANCIACION_CLIENTE_NO);
+			servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_NO);
+		}
+		if (instanciaDecisionDto.isFinanciacionCliente()) {
+			logger.info("TipoPropuestacotprw: "+instanciaDecisionDto.PROPUESTA_VENTA);
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_VENTA);
+		} else {
+			logger.info("TipoPropuestacotprw: "+instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);			
+		}
 		
-		servicioGMPDJB13_INS.setAlias(ALIAS);
-		servicioGMPDJB13_INS.execute();
-
-	}
-
-	@Override
-	public GMPDJB13_INS resultadoConsultarInstanciaDecision() {
-		return servicioGMPDJB13_INS;
-
-	}
-
-	@Override
-	public void altaInstanciaDecision (String codigoDeOfertaHaya,
-											short tipoPropuesta,
-											char indicadorDeFinanciacionCliente,
-											VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroDeOcurrencias) throws WIException {
-		
-//		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias0 = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();		
-//		for (int i = 0; i < 5; i++) {
-//			StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-//			struct.setIdentificadorActivoEspecialcoacew(new Integer(1));
-//			ImporteMonetario arg0 = new ImporteMonetario();
-//			struct.setImporteMonetarioOfertaBISA(arg0);
-//			numeroOcurrencias0.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
-//		}
-		
-		logger.info("------------ LLAMADA WS altaInstanciaDecision -----------------");
-		leerConfiguracion();
-		// parametros iniciales
-		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
-		htInitParams.put(WIService.WORFLOW_PARAM, URL);
-		htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
-
-		WIService.init(htInitParams);
-		
-		// Creamos cabeceras
-		es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraFuncionalPeticion();
-		cabeceraFuncional.setIDDSAQ("ALTA");
-		es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica();
-		StructCabeceraAplicacionGMPDJB13_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPDJB13_INS();
-
-		// Seteamos cabeceras
-		servicioGMPDJB13_INS.setcabeceraAplicacion(cabeceraAplicacion);
-		servicioGMPDJB13_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
-		servicioGMPDJB13_INS.setcabeceraTecnica(cabeceraTecnica);
-
-		// seteamos parametros
-		logger.info("CodigoObjetoAccesocopace: PRAC0170");
-		servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PRAC0170");
-		logger.info("CodigoDeOfertaHayacoofhx: "+codigoDeOfertaHaya);
-		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(codigoDeOfertaHaya);		
-		logger.info("IndicadorDeFinanciacionClientebificl: "+indicadorDeFinanciacionCliente);
-		servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(indicadorDeFinanciacionCliente);
-		logger.info("TipoPropuestacotprw: "+tipoPropuesta);
-		servicioGMPDJB13_INS.setTipoPropuestacotprw(tipoPropuesta);
-		logger.info("IndicadorDeFinanciacionClientebificl :"+indicadorDeFinanciacionCliente);
-		servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(indicadorDeFinanciacionCliente);
-		logger.info("NumeroDeOcurrenciasnumocu :"+numeroDeOcurrencias.toListString());
-		servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroDeOcurrencias);
+		logger.info("NumeroDeOcurrenciasnumocu :"+ JSONObject.fromObject(numeroOcurrencias));
+		servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
 		
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();
 		
-	}
-	
-	
-	@Override
-	public GMPDJB13_INS resultadoAltaInstanciaDecision(){
-		return servicioGMPDJB13_INS;
 	}
 	
 	

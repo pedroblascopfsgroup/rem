@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar el diccionario de TIPOS de DESTINATARIOS DE UN GASTO
+--## Finalidad: Tabla que contiene los gastos de un activo/trabajo, facturados por un proveedor
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,13 +33,13 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_DEG_DESTINATARIOS_GASTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de destinatarios de un gasto.'; -- Vble. para los comentarios de las tablas
-
+ 
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'GPV_ACT'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que contiene la relación entre gasto y activos'; -- Vble. para los comentarios de las tablas
+	
 BEGIN
-
-
+	
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
 	
@@ -61,24 +61,15 @@ BEGIN
 		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';
 		
 	END IF; 
-	
+
 	
 	-- Creamos la tabla
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		DD_DEG_ID           		NUMBER(16)                  NOT NULL,
-		DD_DEG_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
-		DD_DEG_DESCRIPCION			VARCHAR2(100 CHAR),
-		DD_DEG_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
-		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
-		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
-		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
-		USUARIOMODIFICAR 			VARCHAR2(50 CHAR), 
-		FECHAMODIFICAR 				TIMESTAMP (6), 
-		USUARIOBORRAR 				VARCHAR2(50 CHAR), 
-		FECHABORRAR 				TIMESTAMP (6), 
-		BORRADO 					NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE
+		GPV_ACT_ID						NUMBER(16,0)				NOT NULL,
+		GPV_ID 							NUMBER(16,0)				NOT NULL,
+		ACT_ID							NUMBER(16,0)				NOT NULL
 	)
 	LOGGING 
 	NOCOMPRESS 
@@ -91,13 +82,13 @@ BEGIN
 	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_DEG_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(GPV_ACT_ID) TABLESPACE '||V_TABLESPACE_IDX;			
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_DEG_ID) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (GPV_ACT_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	
@@ -107,16 +98,35 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;		
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
 	
-		
-	-- Creamos comentario	
+	
+	-- Creamos foreign key GPV_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_GPVACT_GPV_ID FOREIGN KEY (GPV_ID) REFERENCES '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR (GPV_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_GPVACT_GPV_ID.. Foreign key creada.');
+	
+	
+		-- Creamos foreign key ACT_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_GPVACT_ACT_ID FOREIGN KEY (ACT_ID) REFERENCES '||V_ESQUEMA||'.ACT_ACTIVO (ACT_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_GPVACT_ACT_ID.. Foreign key creada.');
+	
+	
+	-- Creamos comentario sobre la tabla
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
 	
+	
+	-- Creamos comentarios sobre las columnas
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.GPV_ACT_ID IS ''Código identificador único de la relación.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.GPV_ID IS ''Id del gasto''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_ID IS ''Id del activo''';
+	
+	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
-
-
+	
 	COMMIT;
+
 
 
 EXCEPTION

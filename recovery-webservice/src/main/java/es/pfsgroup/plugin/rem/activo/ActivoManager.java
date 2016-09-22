@@ -172,6 +172,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		// Actualiza los check de Admisión y Gestión
 		updaterState.updaterStates(activo);
+		
+		//Actualiza la disponibilidad comercial del activo
+		updaterState.updaterStateDisponibilidadComercial(activo);
 
 		return true;
 	}

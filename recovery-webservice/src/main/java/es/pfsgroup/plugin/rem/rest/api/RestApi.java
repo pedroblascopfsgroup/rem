@@ -45,6 +45,14 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
+	public List<String> validateRequestObject(Serializable obj,Class dto);
+	
+	/**
+	 * Valida el pojo pasado a la rest api
+	 * @param obj
+	 * @return
+	 */
 	public List<String> validateRequestObject(Serializable obj);
 	
 	/**

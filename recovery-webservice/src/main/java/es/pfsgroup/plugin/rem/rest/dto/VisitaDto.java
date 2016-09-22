@@ -21,7 +21,6 @@ public class VisitaDto implements Serializable {
 	private String codEstadoVisita;
 	@Size(max=20)
 	private String codDetalleEstadoVisita;
-	private Date fechaAccion;
 	@NotNull
 	private Long idProveedorRemPrescriptor;
 	@NotNull
@@ -35,7 +34,7 @@ public class VisitaDto implements Serializable {
 	@Size(max=250)
 	private String observaciones;
 	@NotNull
-	private Date fecha;
+	private Date fechaAccion;
 	@NotNull
 	private Long idUsuarioRemAccion;
 	
@@ -118,12 +117,6 @@ public class VisitaDto implements Serializable {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
-	}
-	public Date getFecha() {
-		return fecha;
-	}
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
 	}
 	public Long getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;

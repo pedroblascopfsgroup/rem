@@ -183,6 +183,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 		}
 		
+		
+		//HREOS-843 Situacion Comercial del activo
+		if(!Checks.esNulo(activo.getSituacionComercial())) {
+			BeanUtils.copyProperty(activoDto, "situacionComercialDescripcion", activo.getSituacionComercial().getDescripcion());
+		}
+		
 		// Perimetros --------------------------------------------------------------------------------------
 		//HREOS-846 Si no esta en el perimetro, el activo se considera SOLO CONSULTA
 		BeanUtils.copyProperty(activoDto, "dentroPerimetro", activoApi.isActivoDentroPerimetro(activo.getId()));

@@ -103,6 +103,8 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoComercializacionCodigo;
 	private String tipoComercializacionDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
+	private String situacionComercialDescripcion;
+
 	// Perimetro: variable para bloqueos de activo -------
 	private Boolean dentroPerimetro; // dentroPerimetro = incluidoEnPerimetro (setter)
 	
@@ -125,6 +127,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private Boolean aplicaFormalizar;
 	private Date fechaAplicaFormalizar;
 	private String motivoAplicaFormalizar;
+
 
 	
 	private int page;
@@ -972,6 +975,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 	public void setMotivoAplicaFormalizar(String motivoAplicaFormalizar) {
 		this.motivoAplicaFormalizar = motivoAplicaFormalizar;
 	}
-	
+
+	public String getSituacionComercialDescripcion() {
+		return situacionComercialDescripcion;
+	}
+
+	public void setSituacionComercialDescripcion(String situacionComercialDescripcion) {
+		this.situacionComercialDescripcion = situacionComercialDescripcion;
+	}
+
 
 }

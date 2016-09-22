@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -171,6 +172,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		// Actualiza los check de Admisión y Gestión
 		updaterState.updaterStates(activo);
+		
+		//Actualiza la disponibilidad comercial del activo
+		updaterState.updaterStateDisponibilidadComercial(activo);
 
 		return true;
 	}
@@ -1189,5 +1193,68 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		else {
 			return false;
 		}
+	}
+	
+	@Override
+	public boolean isActivoConOfertaByEstado(Activo activo, String codEstado) {
+		
+		if(!Checks.estaVacio(activo.getOfertas())) {
+			for(ActivoOferta activoOferta: activo.getOfertas()) {
+				if(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(codEstado)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public boolean isActivoConReservaByEstado(Activo activo, String codEstado) {
+		
+		for(Reserva reserva : this.getReservasByActivo(activo)) {
+			
+			if(!Checks.esNulo(reserva.getEstadoReserva()) && reserva.getEstadoReserva().getCodigo().equals(codEstado)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public List<Reserva> getReservasByActivo(Activo activo) {
+		
+		List<Reserva> reservas = new ArrayList<Reserva>();
+		
+		if(!Checks.estaVacio(activo.getOfertas())) {
+			for(ActivoOferta activoOferta: activo.getOfertas()) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",activoOferta.getPrimaryKey().getOferta().getId());
+				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva())) {
+					reservas.add(expediente.getReserva());
+				}
+			}
+		}
+		
+		return reservas;
+	}
+	
+	@Override
+	public boolean isActivoVendido(Activo activo) {
+		
+		if(!Checks.estaVacio(activo.getOfertas())) {
+			for(ActivoOferta activoOferta: activo.getOfertas()) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",activoOferta.getPrimaryKey().getOferta().getId());
+				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getFormalizacion()) && !Checks.esNulo(expediente.getFormalizacion().getFechaEscritura())) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }

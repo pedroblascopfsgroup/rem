@@ -22,4 +22,18 @@ public interface UpdaterStateApi {
 	 * @param activo
 	 */
 	public void updaterStates(Activo activo);
+	
+	/**
+	 * HREOS-843 Setea la disponibilidad comercial del activo según ciertas características
+	 * Criteríos con orden de prioridad, si el primero no cumple, comprueba el siguiente, y así con el resto
+	 * 	- No comercializable: Check comercializar del perímetro no esta activado
+	 * 	- Disponible venta con oferta: Contiene alguna oferta con estado Aceptada
+	 *  - Disponible venta con reserva: Contiene alguna reserva con estado Firmada
+	 *  - Disponible condicionado: Si algún condicionante esta activo
+	 *  - Disponible venta: Tipo comercializacion del activo = Venta
+	 *  - Disponible venta y alquiler: Tipo comercializacion del activo = Alquiler y venta
+	 *  - Disponible alquiler: Tipo comercializacion del activo = Solo alquiler
+	 * @param activo
+	 */
+	public void updaterStateDisponibilidadComercial(Activo activo);
 }

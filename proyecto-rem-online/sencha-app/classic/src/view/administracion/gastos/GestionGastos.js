@@ -1,8 +1,8 @@
 Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
-    extend		: 'Ext.panel.Panel',
+    extend		: 'HreRem.view.common.FormBase',
     xtype		: 'gestiongastos',
 //    requires	: [],
-	layout: 'fit',
+//	layout: 'fit',
 	scrollable: true,
 	cls	: 'panel-base shadow-panel',
 	scrollable	: 'y',
@@ -15,17 +15,20 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
         var items = [
         
 	        {
-	        	xtype:'fieldsettable',
+	        	xtype:'fieldset',
+	        	collapsible: true,
 				defaultType: 'textfieldbase',
-				cls: 'panel-busqueda-directa',
 				title: HreRem.i18n('title.filtro.gastos'),
+				flex: 1,
 				layout: 'fit',
+//				collapsed: true,
 				scrollable	: 'y',
 				items :
 					[
 		                 {
 				        	xtype:'fieldsettable',
-							defaultType: 'textfieldbase',				
+							defaultType: 'textfieldbase',
+							collapsed: true,
 							title: HreRem.i18n('title.filtro.por.situacion.gasto'),
 							items :
 								[
@@ -36,7 +39,8 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 				        },
 				        {
 				        	xtype:'fieldsettable',
-							defaultType: 'textfieldbase',				
+							defaultType: 'textfieldbase',
+							collapsed: true,
 							title: HreRem.i18n('title.filtro.por.gasto'),
 							items :
 								[
@@ -47,7 +51,8 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 				        },
 				        {
 				        	xtype:'fieldsettable',
-							defaultType: 'textfieldbase',				
+							defaultType: 'textfieldbase',
+							collapsed: true,
 							title: HreRem.i18n('title.filtro.por.proveedor'),
 							items :
 								[
@@ -58,7 +63,8 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 				        },
 				        {
 				        	xtype:'fieldsettable',
-							defaultType: 'textfieldbase',				
+							defaultType: 'textfieldbase',
+							collapsed: true,
 							title: HreRem.i18n('title.filtro.por.activo.agrupacion'),
 							items :
 								[
@@ -66,7 +72,31 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 									
 								]
 				        	
+				        },
+				        {
+				        	xtype:'fieldset',
+							border: false,
+							collapsible: false,
+							items :
+								[
+									{
+										xtype: 'button',
+										text: HreRem.i18n('fieldlabel.gasto.buscar'),
+										margin: '0 0 10 0',
+										//handler: 'onClickBotonFavoritos'
+										disabled: true
+									},
+									{
+										xtype: 'button',
+										text: HreRem.i18n('fieldlabel.gasto.limpiar'),
+										margin: '0 0 10 10',
+										//handler: 'onClickBotonFavoritos'
+										disabled: true
+									}
+								]
 				        }
+				        
+				        
 						
 					]
 	        	

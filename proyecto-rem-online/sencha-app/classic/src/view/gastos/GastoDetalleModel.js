@@ -16,7 +16,50 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
     stores: {
     	
-
+		comboPeriodicidad: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoPeriocidad'}
+			}   
+    	},
+    	
+    	comboTiposGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposGasto'}
+			}   
+    	},
+    	
+    	comboDestinatarios: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'destinatariosGasto'}
+			}   
+    	},
+    	
+    	comboSubtiposGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposGasto'}
+			}   
+    	},
+    	
+    	comboPropietarios: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'propietariosGasto'}
+			}   
+    	}
 	
     }
   

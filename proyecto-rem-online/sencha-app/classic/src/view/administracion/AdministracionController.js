@@ -41,7 +41,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	},
 	
 	onClickAbrirGastoProveedor: function(grid, rowIndex, colIndex){
-		debugger;
 		var me = this,
     	record = grid.getStore().getAt(rowIndex);
     	me.getView().fireEvent('abrirDetalleGasto', rowIndex);

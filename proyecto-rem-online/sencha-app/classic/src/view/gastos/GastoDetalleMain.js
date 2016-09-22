@@ -3,7 +3,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     xtype		: 'gastodetallemain',
 	iconCls		: 'fa fa-folder-open',
 	iconAlign	: 'left',
-//	controller: 'expedientedetalle',
+	controller: 'gastodetalle',
     viewModel: {
         type: 'gastodetalle'
     },
@@ -11,7 +11,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
         type: 'vbox',
         align: 'stretch'
     },
-    requires : ['HreRem.view.gastos.GastoDetalleModel','HreRem.view.gastos.GastoDetalle'],
+    requires : ['HreRem.view.gastos.GastoDetalleModel','HreRem.view.gastos.GastoDetalle','HreRem.view.gastos.GastoDetalleController'],
 
     // NOTA: Añadiendo los items en la función configCmp, y llamando a esta en el callback de la petición de datos del activo, conseguimos que la pestaña se añada casi de inmediato al tabpanel,
 	// renderizando el resto de contenido una vez hecha la petición. Se ha añadido un simple container, que posteriormente se quitará, para que la mascará de carga de la pestaña se muestre correctamante
@@ -30,6 +30,36 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     	if(me.down('[cls=container-mask-background]')) {
     		me.removeAll();
 //    		me.add({xtype: 'cabeceraexpediente'});
+    		me.add(
+    			{
+			    		xtype:'toolfieldset',			   		         						   		        
+			        	cls: 'fieldsetBase cabecera',
+			        	height: 20,
+			        	bind:{
+			        		title: 'Gasto {gasto.id}'
+			        	},
+			        	scrollable: 'y',
+			        	border: false,			        	
+					    layout: {
+						        type: 'hbox'
+					    },
+						tools: [
+								{	xtype: 'tbfill'},
+								{
+									xtype: 'button',
+									margin: '10 6 0 0',
+									cls: 'boton-cabecera',
+									iconCls: 'ico-refrescar',
+									handler	: 'onClickBotonRefrescar',
+									tooltip: HreRem.i18n('btn.refrescar')
+						    	}
+						    	
+						],
+						items: [
+	    						
+						]
+	        		}
+	       	);
     		me.add({xtype: 'gastodetalle', flex: 1});
     	}
     	

@@ -7,13 +7,31 @@ Ext.define('HreRem.model.GastoProveedor', {
 
     fields: [ 
     	{
-    		name: 'numFactura'
+    		name: 'idGastoHaya'
+   	 	},
+   	 	{
+   	 		name: 'idGastoGestoria'
+   	 	},
+   	 	{
+   	 		name: 'idEmisor'
+   	 	},
+    	{
+    		name: 'nifEmisor'
+   		},
+   		{
+   			name: 'nombreEmisor'
+   		},
+    	{
+    		name: 'referenciaEmisor'
     	},
     	{
-    		name: 'tipo'
+    		name: 'propietario'
     	},
     	{
-    		name: 'subtipo'
+    		name: 'tipoGasto'
+    	},
+    	{
+    		name: 'subtipoGasto'
     		
     	},
 		{
@@ -45,6 +63,12 @@ Ext.define('HreRem.model.GastoProveedor', {
 		},
 		{
 			name : 'destinatario'
+		},
+		{
+			name : 'nifPropietario'
+		},
+		{
+			name : 'nombrePropietario'
 		}
     		
     ],
@@ -53,7 +77,8 @@ Ext.define('HreRem.model.GastoProveedor', {
 		type: 'uxproxy',
 		localUrl: 'gastosproveedor.json',
 		api: {
-            read: 'gastosproveedor/getTabExpediente'
+            read: 'gastosproveedor/getTabExpediente',
+            update: 'gastosproveedor/saveGastosProveedor'
         },
 		
         extraParams: {tab: 'ficha'}

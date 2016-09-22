@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160921
+--## AUTOR=CLV
+--## FECHA_CREACION=20160907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_TPE_TIPOS_PERIOCIDAD los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en '||V_TEXT_TABLA||' los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -28,24 +28,20 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	
+	  
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TCE_TIPO_CALIF_ENERGETICA';
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
 
     
     
-    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Aperiódico'	,'Aperiódico'),
-        T_TIPO_DATA('02'	,'Mensual'		,'Mensual'),
-        T_TIPO_DATA('03'	,'Bimestral'	,'Bimestral'),
-        T_TIPO_DATA('04'	,'Trimestral'	,'Trimestral'),
-        T_TIPO_DATA('05'	,'Cuatrimestral','Cuatrimestral'),
-        T_TIPO_DATA('06'	,'Semestral'	,'Semestral'),
-        T_TIPO_DATA('07'	,'Anual'	,'Anual')
-	); 
+    	T_TIPO_DATA('06','F','F'),
+    	T_TIPO_DATA('07','G','G')
+    ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN	
@@ -53,26 +49,26 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    -- LOOP para insertar los valores en DD_TPE_TIPOS_PERIOCIDAD -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TPE_TIPOS_PERIOCIDAD] ');
+    -- LOOP para insertar los valores en DD_EPU_ESTADO_PUBLICACION -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD WHERE DD_TPE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TCE_CODIGO  = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_TPE_TIPOS_PERIOCIDAD '||
-                    'SET DD_TPE_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_TPE_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+                    'SET DD_TCE_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
+					', DD_TCE_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_TPE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					'WHERE DD_TCE_CODIGO  = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
@@ -80,18 +76,23 @@ BEGIN
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TPE_TIPOS_PERIOCIDAD.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TCE_TIPO_CALIF_ENER.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TPE_TIPOS_PERIOCIDAD (' ||
-                      'DD_TPE_ID, DD_TPE_CODIGO, DD_TPE_DESCRIPCION, DD_TPE_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (' ||
+                    'DD_TCE_ID, DD_TCE_CODIGO , DD_TCE_DESCRIPCION, DD_TCE_DESCRIPCION_LARGA,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES' ||
+                    '('|| V_ID || ',				
+					'''||TRIM(V_TMP_TIPO_DATA(1))||''',
+					'''||TRIM(V_TMP_TIPO_DATA(2))||''',
+					'''||TRIM(V_TMP_TIPO_DATA(3))||''', 
+					0, ''DML'',SYSDATE,0 )';
+                       
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TPE_TIPOS_PERIOCIDAD ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO '||V_TEXT_TABLA||' ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION
@@ -111,5 +112,3 @@ END;
 /
 
 EXIT
-
-

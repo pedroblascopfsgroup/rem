@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160921
+--## FECHA_CREACION=20160920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar el diccionario de TIPOS de DESTINATARIOS DE UN GASTO
+--## Finalidad: Tabla para gestionar la información de los adjuntos DE UN GASTO. 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,9 +33,9 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_DEG_DESTINATARIOS_GASTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de destinatarios de un gasto.'; -- Vble. para los comentarios de las tablas
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ADG_ADJUNTOS_GASTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar la información de los adjuntos de gastos.'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
@@ -63,23 +63,31 @@ BEGIN
 	END IF; 
 	
 	
+	
+
 	-- Creamos la tabla
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		DD_DEG_ID           		NUMBER(16)                  NOT NULL,
-		DD_DEG_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
-		DD_DEG_DESCRIPCION			VARCHAR2(100 CHAR),
-		DD_DEG_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
-		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
-		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
-		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
-		USUARIOMODIFICAR 			VARCHAR2(50 CHAR), 
-		FECHAMODIFICAR 				TIMESTAMP (6), 
-		USUARIOBORRAR 				VARCHAR2(50 CHAR), 
-		FECHABORRAR 				TIMESTAMP (6), 
-		BORRADO 					NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE
-	)
+		ADG_ID 							NUMBER(16,0)				NOT NULL,
+		GPV_ID							NUMBER(16,0)				NOT NULL,
+		DD_TPD_ID						NUMBER(16,0)				NOT NULL,
+		ADJ_ID 							NUMBER(16,0),
+		ADG_NOMBRE						VARCHAR2(255 CHAR),
+		ADG_CONTENT_TYPE				VARCHAR2(100 CHAR),
+		ADG_LENGTH						NUMBER(16,0),
+		ADG_DESCRIPCION					VARCHAR2(1024 CHAR),
+		ADG_FECHA_DOCUMENTO				DATE,
+		ADG_ID_DOCUMENTO_REST 			NUMBER(16,0),
+		VERSION 						NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE,
+		USUARIOCREAR 					VARCHAR2(10 CHAR)			NOT NULL ENABLE, 
+		FECHACREAR 						TIMESTAMP (6)				NOT NULL ENABLE, 
+		USUARIOMODIFICAR 				VARCHAR2(10 CHAR), 
+		FECHAMODIFICAR 					TIMESTAMP (6), 
+		USUARIOBORRAR 					VARCHAR2(10 CHAR), 
+		FECHABORRAR 					TIMESTAMP (6), 
+		BORRADO 						NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE
+    )
 	LOGGING 
 	NOCOMPRESS 
 	NOCACHE
@@ -91,13 +99,13 @@ BEGIN
 	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_DEG_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ADG_ID) TABLESPACE '||V_TABLESPACE_IDX;			
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_DEG_ID) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ADG_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	
@@ -106,17 +114,31 @@ BEGIN
 	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
 	EXECUTE IMMEDIATE V_MSQL;		
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+
 	
-		
+	-- Creamos foreign key GPV_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ADJUNTO_GASTO FOREIGN KEY (GPV_ID) REFERENCES '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR (GPV_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ADJUNTO_GASTO... Foreign key creada.');
+	
+	
+	-- Creamos foreign key DD_TPD_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ADJ_GASTO_DDTPD FOREIGN KEY (DD_TPD_ID) REFERENCES '||V_ESQUEMA||'.DD_TPD_TIPOS_DOCUMENTO_GASTO (DD_TPD_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ADJ_GASTO_DDTPD... Foreign key creada.');
+	
+	-- Creamos foreign key ADJ_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ADJUNTOGASTO_ADJUNTO FOREIGN KEY (ADJ_ID) REFERENCES '||V_ESQUEMA||'.ADJ_ADJUNTOS (ADJ_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ADJUNTOGASTO_ADJUNTO... Foreign key creada.');
+	
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
 	
+	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
-
-
-	COMMIT;
 
 
 EXCEPTION

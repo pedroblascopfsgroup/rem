@@ -31,7 +31,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 
 
 /**
- * Modelo que gestiona la informacion de gastos de un expediente
+ * Modelo que gestiona la informacion de gasto de un proveedor
  *  
  * @author Jose Villel
  *
@@ -41,7 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
-public class GastosProveedor implements Serializable, Auditable {
+public class GastoProveedor implements Serializable, Auditable {
 	
     /**
 	 * 
@@ -50,8 +50,8 @@ public class GastosProveedor implements Serializable, Auditable {
 		
 	@Id
     @Column(name = "GPV_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "GastosProveedorGenerator")
-    @SequenceGenerator(name = "GastosProveedorGenerator", sequenceName = "S_GPV_GASTOS_PROVEEDOR")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoProveedorGenerator")
+    @SequenceGenerator(name = "GastoProveedorGenerator", sequenceName = "S_GPV_GASTOS_PROVEEDOR")
     private Long id;
 	
 	@Column(name="GPV_REF_EMISOR")

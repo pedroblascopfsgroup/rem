@@ -13,7 +13,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -32,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 
@@ -318,6 +318,36 @@ public interface ActivoApi {
 		 * @return true si esta dentro del perimetro Haya, false si esta fuera.
 		 */
 		public boolean isActivoDentroPerimetro(Long idActivo);
+		
+		/**
+		 * HREOS-843. Comrpueba si el activo tiene alguna oferta con el estado pasado por parámetro
+		 * @param activo
+		 * @param codEstado
+		 * @return
+		 */
+		public boolean isActivoConOfertaByEstado(Activo activo, String codEstado);
+		
+		/**
+		 * HREOS-843. Comprueba si el activo tiene alguna reserva con el estado pasado por parámetro
+		 * @param activo
+		 * @param codEstado
+		 * @return
+		 */
+		public boolean isActivoConReservaByEstado(Activo activo, String codEstado);
+		
+		/**
+		 * Devuelve una lista de reservas asociadas al activo pasado por parametro
+		 * @param activo
+		 * @return
+		 */
+		public List<Reserva> getReservasByActivo(Activo activo);
+		
+		/**
+		 * HREOS-843. Comrpueba si el activo esta vendido, viendo si tiene fecha de escritura (en Formalizacion)
+		 * @param activo
+		 * @return
+		 */
+		public boolean isActivoVendido(Activo activo);
     }
 
 

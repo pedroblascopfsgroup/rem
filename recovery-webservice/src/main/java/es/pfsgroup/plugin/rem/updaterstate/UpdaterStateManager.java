@@ -5,9 +5,17 @@ import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 @Service("updaterStateManager")
 public class UpdaterStateManager implements UpdaterStateApi{
@@ -18,6 +26,15 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	@Override
 	public Boolean getStateAdmision(Activo activo) {
@@ -33,6 +50,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	public void updaterStates(Activo activo) {
 		this.updaterStateAdmision(activo);
 		this.updaterStateGestion(activo);
+		this.updaterStateDisponibilidadComercial(activo);
 	}
 	
 	private void updaterStateAdmision(Activo activo){
@@ -62,6 +80,66 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				activo.setGestion(!Checks.esNulo(tareaDocGestion.getFechaFin()));
 			}
 		}
+	}
+	
+	/**
+	 * HREOS-843 Setea la disponibilidad comercial del activo según ciertas características
+	 * Criteríos con orden de prioridad, si el primero no cumple, comprueba el siguiente, y así con el resto
+	 * 	- No comercializable: Check comercializar del perímetro no esta activado
+	 * 	- Disponible venta con oferta: Contiene alguna oferta con estado Aceptada
+	 *  - Disponible venta con reserva: Contiene alguna reserva con estado Firmada
+	 *  - Disponible condicionado: Si algún condicionante esta activo
+	 *  - Disponible venta: Tipo comercializacion del activo = Venta
+	 *  - Disponible venta y alquiler: Tipo comercializacion del activo = Alquiler y venta
+	 *  - Disponible alquiler: Tipo comercializacion del activo = Solo alquiler
+	 * @param activo
+	 */
+	private void updaterStateDisponibilidadComercial(Activo activo) {
+		
+		String codigoSituacion = this.getCodigoSituacionComercialFromActivo(activo);
+		
+		if(!Checks.esNulo(codigoSituacion)) {
+			activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigoSituacion));
+		}
+	}
+	
+	private String getCodigoSituacionComercialFromActivo(Activo activo) {
+		
+		String codigo = null;
+		PerimetroActivo perimetro = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
+		if(!Checks.esNulo(perimetro) && perimetro.getAplicaComercializar() == 0) {
+			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
+		}
+		else if(activoApi.isActivoVendido(activo)) {
+			codigo = DDSituacionComercial.CODIGO_VENDIDO;
+		}
+		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
+			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+		}
+		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
+			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
+		}
+		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).isCondicionado()) {
+			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;
+		}
+		else if (!Checks.esNulo(activo.getTipoComercializacion())) {
+			switch(Integer.parseInt(activo.getTipoComercializacion().getCodigo())) {
+				case 1:
+					codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA;
+					break;
+				case 2:
+					codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_ALQUILER;
+					break;
+				case 3:
+					codigo = DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER;
+					break;
+				default:
+					break;
+			}
+		}
+		
+		return codigo;
 	}
 
 }

@@ -103,6 +103,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoComercializacionDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
 	private Boolean dentroPerimetro;
+	private String situacionComercialDescripcion;
 
 	private int page;
 	private int start;
@@ -795,6 +796,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 	public void setDentroPerimetro(Boolean dentroPerimetro) {
 		this.dentroPerimetro = dentroPerimetro;
 	}
-	
+
+	public String getSituacionComercialDescripcion() {
+		return situacionComercialDescripcion;
+	}
+
+	public void setSituacionComercialDescripcion(String situacionComercialDescripcion) {
+		this.situacionComercialDescripcion = situacionComercialDescripcion;
+	}
+
 
 }

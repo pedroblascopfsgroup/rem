@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBK
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.PerimetroApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
@@ -27,11 +28,14 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
@@ -47,6 +51,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private PerimetroApi perimetroApi;
 
 	@Override
 	public String[] getKeys() {
@@ -162,6 +169,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		if(activo.getTipoComercializacion() != null){
+			BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getTipoComercializacion().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getTipoComercializacion().getDescripcion());
 		}
 		if(activo.getAgrupaciones().size() > 0){
@@ -175,9 +183,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 		}
 		
+		// Perimetros --------------------------------------------------------------------------------------
 		//HREOS-846 Si no esta en el perimetro, el activo se considera SOLO CONSULTA
 		BeanUtils.copyProperty(activoDto, "dentroPerimetro", activoApi.isActivoDentroPerimetro(activo.getId()));
 
+		// Datos de perimetro del activo al Dto de datos basicos
+		PerimetroActivo perimetroActivo = activo.getPerimetroActivo();
+		BeanUtils.copyProperties(activoDto, perimetroActivo);
+		
+		if(!Checks.esNulo(activo.getAuditoria()) && !Checks.esNulo(activo.getAuditoria().getFechaCrear())) {
+			BeanUtils.copyProperty(activoDto, "fechaAltaActivoRem", activo.getAuditoria().getFechaCrear());
+		}
+		
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getMotivoAplicaComercializar())) {
+			BeanUtils.copyProperty(activoDto, "motivoAplicaComercializarCodigo", perimetroActivo.getMotivoAplicaComercializar().getCodigo());
+			BeanUtils.copyProperty(activoDto, "motivoAplicaComercializarDescripcion", perimetroActivo.getMotivoAplicaComercializar().getDescripcion());
+		}
+		// ------------
+		
+		
 		return activoDto;	
 	}
 
@@ -334,6 +358,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_MANUAL);
 			genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 			}
+			
+			
+			beanUtilNotNull.copyProperties(activo.getPerimetroActivo(), dto);
+			
+			if (dto.getMotivoAplicaComercializarCodigo() != null) {
+				DDMotivoComercializacion motivoAplicaComercializar = (DDMotivoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class,  dto.getMotivoAplicaComercializarCodigo());
+				activo.getPerimetroActivo().setMotivoAplicaComercializar(motivoAplicaComercializar);
+			}
+			
+			if (dto.getTipoComercializacionCodigo() != null) {
+				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
+				activo.setTipoComercializacion(tipoComercializacion);
+			}
+			
 			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

@@ -344,7 +344,13 @@ public class Activo implements Serializable, Auditable {
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private List<ActivoOferta> ofertas;
+
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private PerimetroActivo perimetroActivo;
     
+    
+    // Indicadores de precios del activo
     @Column(name = "ACT_FECHA_IND_PRECIAR")
     private Date fechaPreciar;
     
@@ -1373,6 +1379,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setOfertas(List<ActivoOferta> ofertas) {
 		this.ofertas = ofertas;
+	}
+
+	public PerimetroActivo getPerimetroActivo() {
+		return perimetroActivo;
+	}
+
+	public void setPerimetroActivo(PerimetroActivo perimetroActivo) {
+		this.perimetroActivo = perimetroActivo;
 	}
 
 	public Date getFechaPreciar() {

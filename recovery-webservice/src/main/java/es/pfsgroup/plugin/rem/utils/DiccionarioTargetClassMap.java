@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -59,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCuota;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
@@ -191,7 +193,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("resultadoProcesoBlanqueo", DDResultadoProcesoBlanqueo.class);
 		mapa.put("motivoRetencionPago", DDMotivoRetencion.class);
 		mapa.put("tipoActivosCartera", DDTipoActivosCartera.class);
-
+		mapa.put("tiposComercializacionActivo", DDTipoComercializacion.class);
+		mapa.put("motivoAplicaComercializarActivo", DDMotivoComercializacion.class);
+		
 		return Collections.unmodifiableMap(mapa);
 	}
 	

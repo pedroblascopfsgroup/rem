@@ -309,7 +309,59 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'estadoPublicacionCodigo'
-    		}
+    		},
+// Perimetro ------
+			{
+				name: 'incluidoEnPerimetro'
+			},
+			{
+				name: 'fechaAltaActivoRem'
+			},
+			{
+				name: 'aplicaTramiteAdmision'
+			},
+			{
+				name: 'fechaAplicaTramiteAdmision'
+			},
+			{
+				name: 'motivoAplicaTramiteAdmision'
+			},
+			{
+				name: 'aplicaGestion'
+			},
+			{
+				name: 'fechaAplicaGestion'
+			},
+			{
+				name: 'motivoAplicaGestion'
+			},
+			{
+				name: 'aplicaAsignarMediador'
+			},
+			{
+				name: 'fechaAplicaAsignarMediador'
+			},
+			{
+				name: 'motivoAplicaAsignarMediador'
+			},
+			{
+				name: 'aplicaComercializar'
+			},
+			{
+				name: 'fechaAplicaComercializar'
+			},
+			{
+				name: 'motivoAplicaComercializarDescripcion'
+			},
+			{
+				name: 'aplicaFormalizar'
+			},
+			{
+				name: 'fechaAplicaFormalizar'
+			},
+			{
+				name: 'motivoAplicaFormalizar'
+			}
     ],
     
 	proxy: {

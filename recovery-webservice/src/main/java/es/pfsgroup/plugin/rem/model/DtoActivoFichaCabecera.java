@@ -100,10 +100,33 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoInfoComercialCodigo;
 	private String estadoPublicacionDescripcion;
 	private String estadoPublicacionCodigo;
+	private String tipoComercializacionCodigo;
 	private String tipoComercializacionDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
-	private Boolean dentroPerimetro;
+	// Perimetro: variable para bloqueos de activo -------
+	private Boolean dentroPerimetro; // dentroPerimetro = incluidoEnPerimetro (setter)
+	
+	//Perimetro datos:
+	private Boolean incluidoEnPerimetro; // incluidoEnPerimetro = dentroPerimetro (setter) 
+	private Date fechaAltaActivoRem;
+	private Boolean aplicaTramiteAdmision;
+	private Date fechaAplicaTramiteAdmision;
+	private String motivoAplicaTramiteAdmision;
+	private Boolean aplicaGestion;
+	private Date fechaAplicaGestion;
+	private String motivoAplicaGestion;
+	private Boolean aplicaAsignarMediador;
+	private Date fechaAplicaAsignarMediador;
+	private String motivoAplicaAsignarMediador;
+	private Boolean aplicaComercializar;
+	private Date fechaAplicaComercializar;
+	private String motivoAplicaComercializarCodigo;
+	private String motivoAplicaComercializarDescripcion;
+	private Boolean aplicaFormalizar;
+	private Date fechaAplicaFormalizar;
+	private String motivoAplicaFormalizar;
 
+	
 	private int page;
 	private int start;
 	private int limit;
@@ -763,6 +786,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 		this.estadoPublicacionDescripcion = estadoPublicacionDescripcion;
 	}
 
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+
 	public String getTipoComercializacionDescripcion() {
 		return tipoComercializacionDescripcion;
 	}
@@ -794,6 +825,152 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setDentroPerimetro(Boolean dentroPerimetro) {
 		this.dentroPerimetro = dentroPerimetro;
+		this.incluidoEnPerimetro = dentroPerimetro;
+	}
+
+	public Boolean getIncluidoEnPerimetro() {
+		return incluidoEnPerimetro;
+	}
+
+	public void setIncluidoEnPerimetro(Boolean incluidoEnPerimetro) {
+		this.incluidoEnPerimetro = incluidoEnPerimetro;
+		this.dentroPerimetro = incluidoEnPerimetro;
+	}
+
+	public Date getFechaAltaActivoRem() {
+		return fechaAltaActivoRem;
+	}
+
+	public void setFechaAltaActivoRem(Date fechaAltaActivoRem) {
+		this.fechaAltaActivoRem = fechaAltaActivoRem;
+	}
+
+	public Boolean getAplicaTramiteAdmision() {
+		return aplicaTramiteAdmision;
+	}
+
+	public void setAplicaTramiteAdmision(Boolean aplicaTramiteAdmision) {
+		this.aplicaTramiteAdmision = aplicaTramiteAdmision;
+	}
+
+	public Date getFechaAplicaTramiteAdmision() {
+		return fechaAplicaTramiteAdmision;
+	}
+
+	public void setFechaAplicaTramiteAdmision(Date fechaAplicaTramiteAdmision) {
+		this.fechaAplicaTramiteAdmision = fechaAplicaTramiteAdmision;
+	}
+
+	public String getMotivoAplicaTramiteAdmision() {
+		return motivoAplicaTramiteAdmision;
+	}
+
+	public void setMotivoAplicaTramiteAdmision(String motivoAplicaTramiteAdmision) {
+		this.motivoAplicaTramiteAdmision = motivoAplicaTramiteAdmision;
+	}
+
+	public Boolean getAplicaGestion() {
+		return aplicaGestion;
+	}
+
+	public void setAplicaGestion(Boolean aplicaGestion) {
+		this.aplicaGestion = aplicaGestion;
+	}
+
+	public Date getFechaAplicaGestion() {
+		return fechaAplicaGestion;
+	}
+
+	public void setFechaAplicaGestion(Date fechaAplicaGestion) {
+		this.fechaAplicaGestion = fechaAplicaGestion;
+	}
+
+	public String getMotivoAplicaGestion() {
+		return motivoAplicaGestion;
+	}
+
+	public void setMotivoAplicaGestion(String motivoAplicaGestion) {
+		this.motivoAplicaGestion = motivoAplicaGestion;
+	}
+
+	public Boolean getAplicaAsignarMediador() {
+		return aplicaAsignarMediador;
+	}
+
+	public void setAplicaAsignarMediador(Boolean aplicaAsignarMediador) {
+		this.aplicaAsignarMediador = aplicaAsignarMediador;
+	}
+
+	public Date getFechaAplicaAsignarMediador() {
+		return fechaAplicaAsignarMediador;
+	}
+
+	public void setFechaAplicaAsignarMediador(Date fechaAplicaAsignarMediador) {
+		this.fechaAplicaAsignarMediador = fechaAplicaAsignarMediador;
+	}
+
+	public String getMotivoAplicaAsignarMediador() {
+		return motivoAplicaAsignarMediador;
+	}
+
+	public void setMotivoAplicaAsignarMediador(String motivoAplicaAsignarMediador) {
+		this.motivoAplicaAsignarMediador = motivoAplicaAsignarMediador;
+	}
+
+	public Boolean getAplicaComercializar() {
+		return aplicaComercializar;
+	}
+
+	public void setAplicaComercializar(Boolean aplicaComercializar) {
+		this.aplicaComercializar = aplicaComercializar;
+	}
+
+	public Date getFechaAplicaComercializar() {
+		return fechaAplicaComercializar;
+	}
+
+	public void setFechaAplicaComercializar(Date fechaAplicaComercializar) {
+		this.fechaAplicaComercializar = fechaAplicaComercializar;
+	}
+
+	public String getMotivoAplicaComercializarCodigo() {
+		return motivoAplicaComercializarCodigo;
+	}
+
+	public void setMotivoAplicaComercializarCodigo(String motivoAplicaComercializarCodigo) {
+		this.motivoAplicaComercializarCodigo = motivoAplicaComercializarCodigo;
+	}
+
+	public String getMotivoAplicaComercializarDescripcion() {
+		return motivoAplicaComercializarDescripcion;
+	}
+
+	public void setMotivoAplicaComercializarDescripcion(String motivoAplicaComercializarDescripcion) {
+		this.motivoAplicaComercializarDescripcion = motivoAplicaComercializarDescripcion;
+	}
+
+	public Boolean getAplicaFormalizar() {
+		return aplicaFormalizar;
+	}
+
+	public void setAplicaFormalizar(Boolean aplicaFormalizar) {
+		this.aplicaFormalizar = aplicaFormalizar;
+	}
+
+	public Date getFechaAplicaFormalizar() {
+		return fechaAplicaFormalizar;
+	}
+
+	public void setFechaAplicaFormalizar(Date fechaAplicaFormalizar) {
+		this.fechaAplicaFormalizar = fechaAplicaFormalizar;
+	}
+
+	public String getMotivoAplicaFormalizar() {
+		return motivoAplicaFormalizar;
+	}
+
+	public void setMotivoAplicaFormalizar(String motivoAplicaFormalizar) {
+		this.motivoAplicaFormalizar = motivoAplicaFormalizar;
 	}
 	
 

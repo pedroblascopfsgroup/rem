@@ -20,15 +20,12 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 		</property>
 	</bean>
 
-	<!-- Cron Trigger, run every 10 seconds -->
+	
 
-<!-- 
 	<bean id="deteccionCambiosTrigger" parent="scheduling.schedulableTrigger">
 		<property name="jobDetail" ref="deteccionCambiosJob" />
 		<property name="cronExpression" value="${rest.client.chrone.rem.time.trigger}" />
 
 	</bean>
-
- -->
 
 </beans>

@@ -9,6 +9,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
@@ -104,56 +105,71 @@ public class InformeMediadorDto implements Serializable {
 
 	@NotNull(groups = Insert.class)
 	private String zona;
-	
-	
+
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDUbicacionActivo.class, message = "El codUbicacion no existe", groups = { Insert.class,
 			Update.class })
 	private String codUbicacion;
-	
-	@NotNull(groups = Insert.class)//<---------------------------------Diccionario???
+
+	@NotNull(groups = Insert.class) // <---------------------------------Diccionario???
 	private String codDistrito;
 
 	@NotNull(groups = Insert.class)
 	private Float lat;
-	
+
 	@NotNull(groups = Insert.class)
 	private Float lng;
-	
+
 	@NotNull(groups = Insert.class)
 	private Date fechaRecepcionLlavesApi;
-	
-	@Diccionary(clase = Localidad.class, message = "El codMunicipioRegistro no existe", groups = { Insert.class, Update.class })
+
+	@Diccionary(clase = Localidad.class, message = "El codMunicipioRegistro no existe", groups = { Insert.class,
+			Update.class })
 	private String codMunicipioRegistro;
-	
+
 	@NotNull(groups = Insert.class)
-	private String codRegimenProteccion;//<---------------------------------Diccionario???
-	
+	private String codRegimenProteccion;// <---------------------------------Diccionario???
+
 	private Float valorMaximoVpo;
-	
+
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoGradoPropiedad.class, message = "El codTipoPropiedad no existe", groups = { Insert.class,
 			Update.class })
-	private String codTipoPropiedad;//<---------------------------------Diccionario???
-	
+	private String codTipoPropiedad;// <---------------------------------Diccionario???
+
 	@NotNull(groups = Insert.class)
 	private Float porcentajePropiedad;
-	
+
 	@NotNull(groups = Insert.class)
 	private Float valorEstimadoVenta;
-	
+
 	@NotNull(groups = Insert.class)
 	private Date fechaValorEstimadoVenta;
-	
+
 	@NotNull(groups = Insert.class)
 	private String justificacionValorEstimadoVenta;
-	
+
 	@NotNull(groups = Insert.class)
 	private Float valorEstimadoRenta;
-	
+
 	@NotNull(groups = Insert.class)
 	private Date fechaValorEstimadoRenta;
+
+	@NotNull(groups = Insert.class)
+	private String justificacionValorEstimadoRenta;
+
+	private Float utilSuperficie;
 	
+	private Float construidaSuperficie;
+	
+	private Float registralSuperficie;
+	
+	private Float parcelaSuperficie;
+	
+	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacion no existe", groups = { Insert.class,
+			Update.class })
+	private String codEstadoConservacion;
+
 	public Long getIdInformeMediadorRem() {
 		return idInformeMediadorRem;
 	}
@@ -465,5 +481,55 @@ public class InformeMediadorDto implements Serializable {
 	public void setFechaValorEstimadoRenta(Date fechaValorEstimadoRenta) {
 		this.fechaValorEstimadoRenta = fechaValorEstimadoRenta;
 	}
+
+	public String getJustificacionValorEstimadoRenta() {
+		return justificacionValorEstimadoRenta;
+	}
+
+	public void setJustificacionValorEstimadoRenta(String justificacionValorEstimadoRenta) {
+		this.justificacionValorEstimadoRenta = justificacionValorEstimadoRenta;
+	}
+
+	public Float getUtilSuperficie() {
+		return utilSuperficie;
+	}
+
+	public void setUtilSuperficie(Float utilSuperficie) {
+		this.utilSuperficie = utilSuperficie;
+	}
+
+	public Float getConstruidaSuperficie() {
+		return construidaSuperficie;
+	}
+
+	public void setConstruidaSuperficie(Float construidaSuperficie) {
+		this.construidaSuperficie = construidaSuperficie;
+	}
+
+	public Float getRegistralSuperficie() {
+		return registralSuperficie;
+	}
+
+	public void setRegistralSuperficie(Float registralSuperficie) {
+		this.registralSuperficie = registralSuperficie;
+	}
+
+	public Float getParcelaSuperficie() {
+		return parcelaSuperficie;
+	}
+
+	public void setParcelaSuperficie(Float parcelaSuperficie) {
+		this.parcelaSuperficie = parcelaSuperficie;
+	}
+
+	public String getCodEstadoConservacion() {
+		return codEstadoConservacion;
+	}
+
+	public void setCodEstadoConservacion(String codEstadoConservacion) {
+		this.codEstadoConservacion = codEstadoConservacion;
+	}
+	
+	
 
 }

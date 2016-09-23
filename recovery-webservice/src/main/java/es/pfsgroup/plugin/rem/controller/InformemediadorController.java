@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDCION;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
@@ -27,6 +28,9 @@ public class InformemediadorController {
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private InformeMediadorApi informeMediadorApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/informemediador")
@@ -44,6 +48,7 @@ public class InformemediadorController {
 				List<String> errorsList = null;
 				if(informe.getIdInformeMediadorRem()==null){
 					 errorsList = restApi.validateRequestObject(informe,TIPO_VALIDCION.INSERT);
+					 informeMediadorApi.validateInformeMediadorDto(informe,informe.getCodTipoActivo() ,errorsList);
 				}else{
 					 errorsList = restApi.validateRequestObject(informe,TIPO_VALIDCION.UPDATE);
 				}

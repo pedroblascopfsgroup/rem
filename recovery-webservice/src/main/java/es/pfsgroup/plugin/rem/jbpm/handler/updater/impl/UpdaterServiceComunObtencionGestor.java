@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -58,6 +59,7 @@ public class UpdaterServiceComunObtencionGestor implements UpdaterService {
 							
 							documento.setFechaEmision(ft.parse(valor.getValor()));
 							documento.setEstadoDocumento(estadoDocumento);
+							Auditoria.save(documento);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -74,6 +76,7 @@ public class UpdaterServiceComunObtencionGestor implements UpdaterService {
 				for(ActivoAdmisionDocumento documento : listaDocumentos){
 					if(subtipoTrabajo.getCodigo().equals(diccionarioTargetClassMap.getSubtipoTrabajo(documento.getConfigDocumento().getTipoDocumentoActivo().getCodigo()))) {
 						documento.setNumDocumento(Integer.parseInt(valor.getValor()));
+						Auditoria.save(documento);
 					}
 				}
 			}
@@ -97,7 +100,8 @@ public class UpdaterServiceComunObtencionGestor implements UpdaterService {
 	            }
             }
             
-		}
+		}	
+		genericDao.save(Trabajo.class, trabajo);
 
 	}
 

@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -35,6 +36,7 @@ public class UpdaterServicePropuestaPreciosCargaProp implements UpdaterService {
 				//Guardado adicional Fecha generación propuesta => trabajo.propuesta precios ->  Fecha carga y Fecha Sancion
 				try {
 					tramite.getTrabajo().getPropuestaPrecio().setFechaSancion(ft.parse(valor.getValor()));
+					Auditoria.save(tramite.getTrabajo().getPropuestaPrecio());
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -47,6 +49,7 @@ public class UpdaterServicePropuestaPreciosCargaProp implements UpdaterService {
 				//Guardado adicional Fecha generación propuesta => trabajo.propuesta precios ->  Fecha carga y Fecha Sancion
 				try {
 					tramite.getTrabajo().getPropuestaPrecio().setFechaCarga(ft.parse(valor.getValor()));
+					Auditoria.save(tramite.getTrabajo().getPropuestaPrecio());
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

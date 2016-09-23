@@ -12,7 +12,7 @@ public class ComisionesDto implements WebcomRESTDto{
 	private LongDataType idUsuarioRemAccion;
 	private LongDataType idOfertaRem;
 	private LongDataType idOfertaWebcom;
-	private BooleanDataType idProveedorRem;
+	private LongDataType idProveedorRem;
 	private BooleanDataType esPrescripcion;
 	private BooleanDataType esColaboracion;
 	private BooleanDataType esResponsable;
@@ -23,8 +23,6 @@ public class ComisionesDto implements WebcomRESTDto{
 	private DoubleDataType importe;
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType porcentaje;
-	
-	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
 	}
@@ -49,10 +47,10 @@ public class ComisionesDto implements WebcomRESTDto{
 	public void setIdOfertaWebcom(LongDataType idOfertaWebcom) {
 		this.idOfertaWebcom = idOfertaWebcom;
 	}
-	public BooleanDataType getIdProveedorRem() {
+	public LongDataType getIdProveedorRem() {
 		return idProveedorRem;
 	}
-	public void setIdProveedorRem(BooleanDataType idProveedorRem) {
+	public void setIdProveedorRem(LongDataType idProveedorRem) {
 		this.idProveedorRem = idProveedorRem;
 	}
 	public BooleanDataType getEsPrescripcion() {
@@ -103,5 +101,8 @@ public class ComisionesDto implements WebcomRESTDto{
 	public void setPorcentaje(DoubleDataType porcentaje) {
 		this.porcentaje = porcentaje;
 	}
+	
+	
+	
 	
 }

@@ -9,6 +9,10 @@ import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
 public interface RestApi {
+	
+	public enum TIPO_VALIDCION{
+		UPDATE,INSERT
+	}
 
 	
 	public static final String CODE_ERROR = "ERROR";
@@ -46,7 +50,7 @@ public interface RestApi {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<String> validateRequestObject(Serializable obj,Class dto);
+	public List<String> validateRequestObject(Serializable obj,TIPO_VALIDCION tipovalidacion);
 	
 	/**
 	 * Valida el pojo pasado a la rest api
@@ -96,3 +100,4 @@ public interface RestApi {
 	
 
 }
+

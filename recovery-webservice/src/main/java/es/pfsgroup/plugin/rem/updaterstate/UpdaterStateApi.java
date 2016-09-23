@@ -18,9 +18,15 @@ public interface UpdaterStateApi {
 	public Boolean getStateGestion(Activo activo);
 	
 	/**
-	 * Actualiza los estados de los check de admisión y gestión de la cabecera de los activos
+	 * Actualiza los estados de los check de admisión y gestión de la cabecera de los activos (y la disponibilidad comercial)
 	 * @param activo
 	 */
 	public void updaterStates(Activo activo);
+	
+	/**
+	 * Actualiza el estado de disponibilidad comercial del activo
+	 * @param activo
+	 */
+	public void updaterStateDisponibilidadComercial(Activo activo);
 	
 }

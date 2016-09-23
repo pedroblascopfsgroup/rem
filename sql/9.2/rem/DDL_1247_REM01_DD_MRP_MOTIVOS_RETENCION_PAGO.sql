@@ -34,7 +34,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_MRP_MOTIVOS_RETENCION_PAGO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_MRP_MOTIVOS_RET_PAGO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de motivos de retención de un pago.'; -- Vble. para los comentarios de las tablas
 
 BEGIN
@@ -57,8 +57,8 @@ BEGIN
 	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_DD_MRP_MOTIVOS_RET_PAGO'' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
 	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_DD_MRP_MOTIVOS_RETENCION_PAGO... Ya existe. Se borrará.');  
-		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_DD_MRP_MOTIVOS_RETENCION_PAGO';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_DD_MRP_MOTIVOS_RET_PAGO... Ya existe. Se borrará.');  
+		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_DD_MRP_MOTIVOS_RET_PAGO';
 		
 	END IF; 
 	
@@ -105,7 +105,7 @@ BEGIN
 	-- Creamos sequence
 	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_DD_MRP_MOTIVOS_RET_PAGO';		
 	EXECUTE IMMEDIATE V_MSQL;		
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_DD_MRP_MOTIVOS_RETENCION_PAGO... Secuencia creada');
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_DD_MRP_MOTIVOS_RET_PAGO... Secuencia creada');
 	
 		
 	-- Creamos comentario	

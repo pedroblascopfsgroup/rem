@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_MRP_MOTIVOS_RETENCION_PAGO los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_MRP_MOTIVOS_RET_PAGO los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -54,22 +54,22 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    -- LOOP para insertar los valores en DD_MRP_MOTIVOS_RETENCION_PAGO -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_MRP_MOTIVOS_RETENCION_PAGO] ');
+    -- LOOP para insertar los valores en DD_MRP_MOTIVOS_RET_PAGO -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_MRP_MOTIVOS_RET_PAGO] ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_MRP_MOTIVOS_RETENCION_PAGO WHERE DD_MRP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_MRP_MOTIVOS_RET_PAGO WHERE DD_MRP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_MRP_MOTIVOS_RETENCION_PAGO '||
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_MRP_MOTIVOS_RET_PAGO '||
                     'SET DD_MRP_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					', DD_MRP_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
@@ -83,7 +83,7 @@ BEGIN
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
           V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_MRP_MOTIVOS_RET_PAGO.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_MRP_MOTIVOS_RETENCION_PAGO (' ||
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_MRP_MOTIVOS_RET_PAGO (' ||
                       'DD_MRP_ID, DD_MRP_CODIGO, DD_MRP_DESCRIPCION, DD_MRP_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
@@ -92,7 +92,7 @@ BEGIN
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_MRP_MOTIVOS_RETENCION_PAGO ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_MRP_MOTIVOS_RET_PAGO ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION

@@ -93,5 +93,27 @@ public class WebcomRequestUtils {
 		SimpleDateFormat f = new SimpleDateFormat(DATETIME_FORMAT);
 		return f.parse(string);
 	}
+	
+	/**
+	 * Busca un elemento en un Array devolviendo su posición. De un modo
+	 * ineficiente pero sirve para arrays pequeños porque no hace falta que
+	 * estén ordenados.
+	 * <p>
+	 * <strong>Si no encuentra el valor devuelve un número negativo</strong>
+	 * </p>
+	 * 
+	 * @param array
+	 * @param valor
+	 * @return 
+	 */
+	public static int buscarEnArray(String[] array, String valor) {
+		String c = valor.trim();
+		for (int i = 0; i < array.length; i++) {
+			if (c.equals(array[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
 }

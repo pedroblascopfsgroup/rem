@@ -20,9 +20,9 @@ public class CambioBDTests {
 
 	@Before
 	public void setUp() {
-		configCambios = new String[] { "campo1", "campo2" };
-		datosHistoricos = new String[] { "valor viejo", "ABCDE" };
-		datosActuales = new String[] { "nuevo valor", "ABCDE" };
+		configCambios = new String[] { "campo1", "campo2", "campo3" };
+		datosHistoricos = new String[] { "valor viejo", "ABCDE", null };
+		datosActuales = new String[] { "nuevo valor", "ABCDE", null };
 
 		cambio = new CambioBD(configCambios);
 	}
@@ -36,8 +36,9 @@ public class CambioBDTests {
 
 		Map<String, Object> cambios = cambio.getCambios();
 
-		assertEquals("nuevo valor", cambios.get("campo1"));
-		assertNull(cambios.get("campo2"));
+		assertEquals("nuevo valor", cambios.get(configCambios[0]));
+		assertFalse(cambios.containsKey(configCambios[1]));
+		assertFalse(cambios.containsKey(configCambios[2]));
 	}
 
 	@Test
@@ -47,7 +48,7 @@ public class CambioBDTests {
 
 		Map<String, Object> cambios = cambio.getCambios();
 
-		assertEquals("Deberían haberse actualizado 2 campos", 2, cambios.size());
+		assertEquals("Deberían haberse actualizado 3 campos", 3, cambios.size());
 
 	}
 
@@ -80,15 +81,38 @@ public class CambioBDTests {
 		// seteamos a null uno de los campos de los historicos
 		datosActuales[0] = datosHistoricos[0];
 		datosActuales[1] = datosHistoricos[1];
-		cambio.setDatosActuales(datosActuales);;
+		cambio.setDatosActuales(datosActuales);
+		
 		datosHistoricos[0] = null;
 		cambio.setDatosHistoricos(datosHistoricos);
-		
+
 		Map<String, Object> cambios = cambio.getCambios();
 		assertEquals("Deberían haberse actualizado 1 campo", 1, cambios.size());
-		assertEquals("El valor del campo actualizado no es el espeado", datosActuales[0], cambios.get(configCambios[0]));
+		assertEquals("El valor del campo actualizado no es el esperado", datosActuales[0],
+				cambios.get(configCambios[0]));
 		cambio.setDatosActuales(datosHistoricos);
 
+	}
+
+	@Test
+	public void testDevolverDatosHistoricos_noHayCambios() {
+		// para que no e devuelvan cambios.
+		cambio.setDatosActuales(datosHistoricos);
+		cambio.setDatosHistoricos(datosHistoricos);
+		Map<String, Object> valores = cambio.getValoresHistoricos(configCambios[1], configCambios[2]);
+
+		assertEquals("No deberían haberse detectado cambios", 0, cambio.getCambios().size());
+		
+		assertFalse("El primer campo no debería haberse devuelto porque no es obligatorio",
+				valores.containsKey(configCambios[0]));
+		
+		assertEquals("El valor del segundo campo no coincide", datosHistoricos[1],
+				valores.get(configCambios[1]));
+		
+		assertTrue("Debería haberse devuelto el tercer campo por ser obligatorio",
+				valores.containsKey(configCambios[2]));
+		
+		assertNull("El tercer campo debería ser null", valores.get(configCambios[2]));
 	}
 
 }

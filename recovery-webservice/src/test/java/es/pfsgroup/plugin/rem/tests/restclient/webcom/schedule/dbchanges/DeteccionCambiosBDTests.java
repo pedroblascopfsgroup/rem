@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -25,18 +26,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
 import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorCambiosEstadoPeticionTrabajo;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorCambiosStockActivos;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorCambiosVentasYComisiones;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.VentasYComisionesConstantes;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common.CambioBDStub;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,12 +59,16 @@ public class DeteccionCambiosBDTests {
 	private DetectorCambiosEstadoPeticionTrabajo deteccionCambiosTrabajo;
 
 	@InjectMocks
+	private DetectorCambiosVentasYComisiones deteccionCambiosVentasYComisiones;
+
+	@InjectMocks
 	private DeteccionCambiosBDTask task;
 
 	@Before
 	public void setUp() {
 		task.addRegistroCambiosBDHandler(deteccionCambiosTrabajo);
 		task.addRegistroCambiosBDHandler(detectorCambiosStock);
+		task.addRegistroCambiosBDHandler(deteccionCambiosVentasYComisiones);
 	}
 
 	@After
@@ -91,7 +99,9 @@ public class DeteccionCambiosBDTests {
 
 		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
 
+		//////////////////////////
 		task.detectaCambios();
+		//////////////////////////
 
 		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
 		verify(servicios).enviarStock(stockArgumentCaptor.capture());
@@ -126,7 +136,9 @@ public class DeteccionCambiosBDTests {
 		cambiosBD.add(new CambioBDStub(data));
 		when(detectorCambiosDao.listCambios(eq(EstadoTrabajoDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
 
+		//////////////////////////
 		task.detectaCambios();
+		//////////////////////////
 
 		ArgumentCaptor<List> argumentCaptor = ArgumentCaptor.forClass(List.class);
 		verify(servicios).enviaActualizacionEstadoTrabajo(argumentCaptor.capture());
@@ -161,7 +173,9 @@ public class DeteccionCambiosBDTests {
 		cambiosBD.add(new CambioBDStub(data));
 		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
 
+		//////////////////////////
 		task.detectaCambios();
+		//////////////////////////
 
 		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
 		verify(servicios).enviarStock(stockArgumentCaptor.capture());
@@ -181,6 +195,57 @@ public class DeteccionCambiosBDTests {
 		// Finalmente comprobamos que los campos que no hayamos seteado
 		// explícitamente permanecen a null. Elegimos uno no seteado al azar.
 		assertNull("El campo debería ser null ya que no se ha Nulleado explicitamente", stock.getBanyos());
+	}
+
+	@Test
+	public void testDeteccionDeCambios_mandarSiempreCamposObligatorios() {
+		/*
+		 * Cogemos por ejemplo el servicio de ventas y comisiones, para el cual
+		 * hay varios datos oblitatorios.
+		 * 
+		 * En este caso el detector de cambios detecta que dichos campos
+		 * obligatorios no han cambiado.
+		 * 
+		 * No obstante, a pesar de que continuan siendo iguales, deben mandarse
+		 * igualmente al servicio, puesto que están marcados como obligatorios.
+		 */
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		// Sólo cambian las observaciones
+		String newValue = "nuevas observaciones";
+		data.put(VentasYComisionesConstantes.OBSERVACIONES, newValue);
+
+		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
+		CambioBDStub stub = new CambioBDStub(data);
+		cambiosBD.add(stub);
+		// El stub debe devolver el map de datos históricos"
+		Map<String, Object> vh = new HashMap<String, Object>();
+		vh.put(VentasYComisionesConstantes.ID_OFERTA_REM, 1L);
+		vh.put(VentasYComisionesConstantes.ES_PRESCRIPCION, Boolean.TRUE);
+		vh.put(VentasYComisionesConstantes.IMPORTE, 100.66);
+		vh.put(VentasYComisionesConstantes.OBSERVACIONES, "observaciones antiguas");
+		stub.setValoresHistoricos(vh);
+		
+		when(detectorCambiosDao.listCambios(eq(ComisionesDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
+
+		//////////////////////////
+		task.detectaCambios();
+		//////////////////////////
+
+		ArgumentCaptor<List> comisionesArtgumentCaptor = ArgumentCaptor.forClass(List.class);
+		verify(servicios).ventasYcomisiones(comisionesArtgumentCaptor.capture());
+		ComisionesDto dto = (ComisionesDto) comisionesArtgumentCaptor.getValue().get(0);
+
+		// Comprobamos algunos de los campos que son obligatorios en este DTO.
+		assertNotNull("Este campo debería venir informado por ser obligatorio", dto.getIdOfertaRem());
+
+		assertNotNull("Este campo debería venir informado por ser obligatorio", dto.getEsPrescripcion());
+
+		assertNotNull("Este campo debería venir informado por ser obligatorio", dto.getImporte());
+		
+		// Comprobamos que el dato histórico está actualziado
+		assertEquals("No se ha actualizado el dato histórico", newValue, dto.getObservaciones().getValue());
+
 	}
 
 }

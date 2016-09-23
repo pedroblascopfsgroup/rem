@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_TPE_TIPOS_PERIOCIDAD los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_MRH_MOTIVOS_RECHAZO_HAYA los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -38,13 +38,12 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Aperiódico'	,'Aperiódico'),
-        T_TIPO_DATA('02'	,'Mensual'		,'Mensual'),
-        T_TIPO_DATA('03'	,'Bimestral'	,'Bimestral'),
-        T_TIPO_DATA('04'	,'Trimestral'	,'Trimestral'),
-        T_TIPO_DATA('05'	,'Cuatrimestral','Cuatrimestral'),
-        T_TIPO_DATA('06'	,'Semestral'	,'Semestral'),
-        T_TIPO_DATA('07'	,'Anual'	,'Anual')
+        T_TIPO_DATA('01'	,'Liquidación a nombre de anterior titular'	,'Liquidación a nombre de anterior titular'),
+        T_TIPO_DATA('02'	,'Liquidación a pagar por nuevo propietario(comprador)'	,'Liquidación a pagar por nuevo propietario(comprador)'),
+		T_TIPO_DATA('03'	,'Importe liquidación no coincide con el teclado'	,'Importe liquidación no coincide con el teclado'),
+		T_TIPO_DATA('04'	,'Error de tecleo'	,'Error de tecleo'),
+		T_TIPO_DATA('05'	,'El recargo no corresponde al propietario'	,'El recargo no corresponde al propietario'),
+		T_TIPO_DATA('06'	,'No procede pago plusvalía'	,'No procede pago plusvalía)
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -53,26 +52,26 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    -- LOOP para insertar los valores en DD_TPE_TIPOS_PERIOCIDAD -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TPE_TIPOS_PERIOCIDAD] ');
+    -- LOOP para insertar los valores en DD_MRH_MOTIVOS_RECHAZO_HAYA -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_MRH_MOTIVOS_RECHAZO_HAYA] ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD WHERE DD_TPE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_MRH_MOTIVOS_RECHAZO_HAYA WHERE DD_MRH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_TPE_TIPOS_PERIOCIDAD '||
-                    'SET DD_TPE_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_TPE_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_MRH_MOTIVOS_RECHAZO_HAYA '||
+                    'SET DD_MRH_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+					', DD_MRH_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_TPE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					'WHERE DD_MRH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
@@ -80,10 +79,10 @@ BEGIN
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TPE_TIPOS_PERIOCIDAD.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_MRH_MOTIVOS_RECHAZO_HAYA.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TPE_TIPOS_PERIOCIDAD (' ||
-                      'DD_TPE_ID, DD_TPE_CODIGO, DD_TPE_DESCRIPCION, DD_TPE_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_MRH_MOTIVOS_RECHAZO_HAYA (' ||
+                      'DD_MRH_ID, DD_MRH_CODIGO, DD_MRH_DESCRIPCION, DD_MRH_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
@@ -91,7 +90,7 @@ BEGIN
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TPE_TIPOS_PERIOCIDAD ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_MRH_MOTIVOS_RECHAZO_HAYA ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION

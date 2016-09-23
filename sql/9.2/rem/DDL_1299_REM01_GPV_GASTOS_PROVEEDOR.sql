@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160920
+--## FECHA_CREACION=20160923
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -77,7 +77,7 @@ BEGIN
 	(
 		GPV_ID 							NUMBER(16,0)				NOT NULL,
 		GPV_NUM_GASTO_HAYA				NUMBER(16,0)				NOT NULL,
-		GPV_NUM_GASTO_GESTORIA			NUMBER(16,2),						
+		GPV_NUM_GASTO_GESTORIA			NUMBER(16,0),						
 		GPV_REF_EMISOR					VARCHAR2(128 CHAR)			NOT NULL,
 		DD_TGA_ID						NUMBER(16,0)				NOT NULL,
 		DD_STG_ID						NUMBER(16,0)				NOT NULL,
@@ -167,6 +167,8 @@ BEGIN
 	
 	-- Creamos comentarios sobre las columnas
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.GPV_ID IS ''Código identificador único del gasto.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.GPV_NUM_GASTO_HAYA IS ''Número identificador rem del gasto.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.GPV_NUM_GASTO_GESTORIA IS ''Número identificador para la gestoria del gasto.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.GPV_REF_EMISOR IS ''Referencia del emisor''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TGA_ID IS ''Tipo de gasto''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_STG_ID IS ''Subtipo de gasto.''';

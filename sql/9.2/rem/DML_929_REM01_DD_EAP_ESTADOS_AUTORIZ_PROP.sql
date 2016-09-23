@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_TPE_TIPOS_PERIOCIDAD los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_EAP_ESTADOS_AUTORIZ_PROP los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -38,13 +38,11 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Aperiódico'	,'Aperiódico'),
-        T_TIPO_DATA('02'	,'Mensual'		,'Mensual'),
-        T_TIPO_DATA('03'	,'Bimestral'	,'Bimestral'),
-        T_TIPO_DATA('04'	,'Trimestral'	,'Trimestral'),
-        T_TIPO_DATA('05'	,'Cuatrimestral','Cuatrimestral'),
-        T_TIPO_DATA('06'	,'Semestral'	,'Semestral'),
-        T_TIPO_DATA('07'	,'Anual'	,'Anual')
+        T_TIPO_DATA('01'	,'Pendiente'	,'Pendiente'),
+        T_TIPO_DATA('02'	,'Rechazado por motivo formal'	,'Rechazado por motivo formal'),
+        T_TIPO_DATA('03'	,'Rechazado por control presupuestario'	,'Rechazado por control presupuestario'),
+        T_TIPO_DATA('04'	,'Rechazado por contabilidad'	,'Rechazado por contabilidad'),
+        T_TIPO_DATA('05'	,'Autorizado'	,'Autorizado')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -53,26 +51,26 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    -- LOOP para insertar los valores en DD_TPE_TIPOS_PERIOCIDAD -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TPE_TIPOS_PERIOCIDAD] ');
+    -- LOOP para insertar los valores en DD_EAP_ESTADOS_AUTORIZ_PROP -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_EAP_ESTADOS_AUTORIZ_PROP] ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD WHERE DD_TPE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_TPE_TIPOS_PERIOCIDAD '||
-                    'SET DD_TPE_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_TPE_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_EAP_ESTADOS_AUTORIZ_PROP '||
+                    'SET DD_EAP_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+					', DD_EAP_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_TPE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					'WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
@@ -80,10 +78,10 @@ BEGIN
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TPE_TIPOS_PERIOCIDAD.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_EAP_ESTADOS_AUTORIZ_PROP.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TPE_TIPOS_PERIOCIDAD (' ||
-                      'DD_TPE_ID, DD_TPE_CODIGO, DD_TPE_DESCRIPCION, DD_TPE_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_EAP_ESTADOS_AUTORIZ_PROP (' ||
+                      'DD_EAP_ID, DD_EAP_CODIGO, DD_EAP_DESCRIPCION, DD_EAP_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
@@ -91,7 +89,7 @@ BEGIN
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TPE_TIPOS_PERIOCIDAD ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_EAP_ESTADOS_AUTORIZ_PROP ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION

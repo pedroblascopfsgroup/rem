@@ -42,7 +42,7 @@ public class UpdaterServiceActuacionTecnicaEleccionProveedor implements UpdaterS
 			}
 			
 		}
-
+		genericDao.save(Trabajo.class, trabajo);
 	}
 
 	public String[] getCodigoTarea() {

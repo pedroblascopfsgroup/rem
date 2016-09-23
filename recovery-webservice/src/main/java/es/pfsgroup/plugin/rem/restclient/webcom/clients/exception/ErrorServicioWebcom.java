@@ -16,12 +16,15 @@ public class ErrorServicioWebcom extends Exception {
 
 	private String errorWebcom;
 	
+	private boolean httpError = false;
+	
 
 	public ErrorServicioWebcom(HttpClientException e) {
 		super(e);
 		if (e.getResponseCode() != null){
 			this.errorWebcom = HTTP_ERROR.replaceAll("%code%", e.getResponseCode().toString());
 		}
+		httpError = true;
 	}
 	
 	
@@ -33,6 +36,11 @@ public class ErrorServicioWebcom extends Exception {
 
 	public String getErrorWebcom() {
 		return this.errorWebcom;
+	}
+
+
+	public boolean isHttpError() {
+		return httpError;
 	}
 
 }

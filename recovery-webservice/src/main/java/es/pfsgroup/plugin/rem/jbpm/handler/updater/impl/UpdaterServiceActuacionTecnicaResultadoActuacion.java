@@ -35,13 +35,14 @@ public class UpdaterServiceActuacionTecnicaResultadoActuacion implements Updater
 	
 	@Transactional
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		
+		Trabajo trabajo = tramite.getTrabajo();
+		
 		for(TareaExternaValor valor : valores){
 			
 			//Fecha Finalización
 			if(FECHA_FINALIZACION.equals(valor.getNombre()))
-			{
-				Trabajo trabajo = tramite.getTrabajo();
-				
+			{		
 				try {
 					trabajo.setFechaEjecucionReal(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
@@ -56,7 +57,7 @@ public class UpdaterServiceActuacionTecnicaResultadoActuacion implements Updater
 				
 			}
 		}
-
+		genericDao.save(Trabajo.class, trabajo);
 	}
 
 	public String[] getCodigoTarea() {

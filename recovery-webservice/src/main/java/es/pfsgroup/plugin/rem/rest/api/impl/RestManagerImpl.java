@@ -23,6 +23,8 @@ import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
 
 @Service("restManager")
@@ -100,15 +102,21 @@ public class RestManagerImpl implements RestApi {
 		return validateRequestObject(obj, null);
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Override
-	public List<String> validateRequestObject(Serializable obj, Class dto) {
+	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDCION tipovalidacion) {
 		ArrayList<String> error = new ArrayList<String>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Serializable>> constraintViolations = null;
-		if(dto != null){
-			constraintViolations = validator.validate(obj,dto);
+		if(tipovalidacion != null){
+			if(tipovalidacion.equals(TIPO_VALIDCION.INSERT)){
+				constraintViolations = validator.validate(obj,Insert.class);
+			}else if(tipovalidacion.equals(TIPO_VALIDCION.UPDATE)){
+				constraintViolations = validator.validate(obj,Update.class);
+			}else{
+				constraintViolations = validator.validate(obj);
+			}
+			
 		}else{
 			constraintViolations = validator.validate(obj);
 		}

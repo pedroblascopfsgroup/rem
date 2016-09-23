@@ -14,6 +14,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -31,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -318,6 +320,24 @@ public interface ActivoApi {
 		 * @return true si esta dentro del perimetro Haya, false si esta fuera.
 		 */
 		public boolean isActivoDentroPerimetro(Long idActivo);
+		
+		/**
+		 * Devuelve el perimetro del ID de un activo dado
+		 * @param idActivo
+		 * @return PerimetroActivo
+		 */
+		public PerimetroActivo getPerimetroByIdActivo(Long idActivo);
+		
+		/**
+		 * Devuelve el perimetro de datos bancarios del ID de un activo dado
+		 * @param idActivo
+		 * @return ActivoBancario
+		 */
+		public ActivoBancario getActivoBancarioByIdActivo(Long idActivo);
+		
+		public PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
+		
+		public ActivoBancario saveOrUpdateActivoBancario(ActivoBancario activoBancario);
 		
 		/**
 		 * HREOS-843. Comrpueba si el activo tiene alguna oferta con el estado pasado por parámetro

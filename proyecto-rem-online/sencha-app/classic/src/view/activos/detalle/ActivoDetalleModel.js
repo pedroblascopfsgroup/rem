@@ -689,6 +689,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'motivoAplicaComercializarActivo'}
 				}
     		},
+
+    		comboClaseActivoBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'claseActivoBancario'}
+				}
+    		},
+    		
+    		comboSubtipoClaseActivoBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoClaseActivo',
+					extraParams: {tipoClaseActivoCodigo: '{activo.claseActivoCodigo}'}
+				}
+    		},
+    		
+    		comboTipoProductoBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoProductoBancario'}
+				}
+    		},
+    		
+    		comboEstadoExpRiesgoBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoExpRiesgoBancario'}
+				}
+    		},
+    		
+    		comboEstadoExpIncorrienteBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoExpIncorrienteBancario'}
+				}
+    		},
     		
     		historicocondiciones: {    
     			pageSize: $AC.getDefaultPageSize(),

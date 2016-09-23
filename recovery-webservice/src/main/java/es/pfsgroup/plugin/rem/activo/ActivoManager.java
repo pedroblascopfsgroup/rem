@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
@@ -1193,6 +1194,77 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		else {
 			return false;
 		}
+	}
+	
+	@Override
+	public PerimetroActivo getPerimetroByIdActivo(Long idActivo) {
+		
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		PerimetroActivo perimetroActivo = (PerimetroActivo) genericDao.get(PerimetroActivo.class, filtroActivo);
+		
+		//Si no existia un registro de activo bancario, crea un nuevo
+		if(Checks.esNulo(perimetroActivo)){
+			perimetroActivo = new PerimetroActivo();
+		}
+		
+		return perimetroActivo;
+		
+	}
+	
+	@Override
+	public ActivoBancario getActivoBancarioByIdActivo(Long idActivo) {
+
+		//Obtiene el registro de ActivoBancario para el activo dado
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoBancario activoBancario = (ActivoBancario) genericDao.get(ActivoBancario.class, filtroActivo);
+		
+		//Si no existia un registro de activo bancario, crea un nuevo
+		if(Checks.esNulo(activoBancario)){
+			activoBancario = new ActivoBancario();
+		}
+		
+		return activoBancario;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo) {
+		try{
+			if (!Checks.esNulo(perimetroActivo.getId())) {
+				// update
+				genericDao.update(PerimetroActivo.class, perimetroActivo);
+			} else {
+				// insert
+				genericDao.save(PerimetroActivo.class, perimetroActivo);
+			}
+
+		}catch(Exception ex){
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+		
+		return perimetroActivo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public ActivoBancario saveOrUpdateActivoBancario(ActivoBancario activoBancario) {
+		try{
+			if (!Checks.esNulo(activoBancario.getId())) {
+				// update
+				genericDao.update(ActivoBancario.class, activoBancario);
+			} else {
+				// insert
+				genericDao.save(ActivoBancario.class, activoBancario);
+			}
+
+		}catch(Exception ex){
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+		
+		return activoBancario;
 	}
 	
 	@Override

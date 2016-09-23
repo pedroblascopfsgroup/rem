@@ -20,22 +20,27 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBK
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.PerimetroApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
@@ -51,9 +56,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
-	
-	@Autowired
-	private PerimetroApi perimetroApi;
 
 	@Override
 	public String[] getKeys() {
@@ -205,8 +207,36 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "motivoAplicaComercializarCodigo", perimetroActivo.getMotivoAplicaComercializar().getCodigo());
 			BeanUtils.copyProperty(activoDto, "motivoAplicaComercializarDescripcion", perimetroActivo.getMotivoAplicaComercializar().getDescripcion());
 		}
-		// ------------
 		
+		// Datos de activo bancario
+		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		
+		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
+			BeanUtils.copyProperty(activoDto, "claseActivoCodigo", activoBancario.getClaseActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "claseActivoDescripcion", activoBancario.getClaseActivo().getDescripcion());
+		}
+		
+		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getSubtipoClaseActivo())) {
+			BeanUtils.copyProperty(activoDto, "subtipoClaseActivoCodigo", activoBancario.getSubtipoClaseActivo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "subtipoClaseActivoDescripcion", activoBancario.getSubtipoClaseActivo().getDescripcion());
+		}
+		
+		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getTipoProducto())) {
+			BeanUtils.copyProperty(activoDto, "tipoProductoCodigo", activoBancario.getTipoProducto().getCodigo());
+			BeanUtils.copyProperty(activoDto, "tipoProductoDescripcion", activoBancario.getTipoProducto().getDescripcion());
+		}
+		
+		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpRiesgo())) {
+			BeanUtils.copyProperty(activoDto, "estadoExpRiesgoCodigo", activoBancario.getEstadoExpRiesgo().getCodigo());
+			BeanUtils.copyProperty(activoDto, "estadoExpRiesgoDescripcion", activoBancario.getEstadoExpRiesgo().getDescripcion());
+		}
+		
+		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpIncorriente())) {
+			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
+			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteDescripcion", activoBancario.getEstadoExpIncorriente().getDescripcion());
+		}
+		// ------------
+
 		
 		return activoDto;	
 	}
@@ -365,9 +395,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 			}
 			
-			
+			// Perimetro -------
 			beanUtilNotNull.copyProperties(activo.getPerimetroActivo(), dto);
-			
+
 			if (dto.getMotivoAplicaComercializarCodigo() != null) {
 				DDMotivoComercializacion motivoAplicaComercializar = (DDMotivoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class,  dto.getMotivoAplicaComercializarCodigo());
 				activo.getPerimetroActivo().setMotivoAplicaComercializar(motivoAplicaComercializar);
@@ -377,6 +407,47 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
 				activo.setTipoComercializacion(tipoComercializacion);
 			}
+			
+			// Perimetro activo bancario
+			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+			
+			beanUtilNotNull.copyProperties(activoBancario, dto);
+
+			if(!Checks.esNulo(activoBancario) && Checks.esNulo(activoBancario.getActivo())) {
+				activoBancario.setActivo(activo);
+			}
+			
+			if(!Checks.esNulo(dto.getClaseActivoCodigo())) {
+				DDClaseActivoBancario claseActivo = (DDClaseActivoBancario) diccionarioApi.dameValorDiccionarioByCod(DDClaseActivoBancario.class, dto.getClaseActivoCodigo());
+				activoBancario.setClaseActivo(claseActivo);
+			} else {
+				DDClaseActivoBancario claseActivo = (DDClaseActivoBancario) diccionarioApi.dameValorDiccionarioByCod(DDClaseActivoBancario.class, DDClaseActivoBancario.CODIGO_INMOBILIARIO);
+				activoBancario.setClaseActivo(claseActivo);
+			}
+			
+			if(!Checks.esNulo(dto.getSubtipoClaseActivoCodigo())) {
+				DDSubtipoClaseActivoBancario subtipoClaseActivo = (DDSubtipoClaseActivoBancario) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoClaseActivoBancario.class, dto.getSubtipoClaseActivoCodigo());
+				activoBancario.setSubtipoClaseActivo(subtipoClaseActivo);
+			}
+
+			if(!Checks.esNulo(dto.getTipoProductoCodigo())) {
+				DDTipoProductoBancario tipoProducto = (DDTipoProductoBancario) diccionarioApi.dameValorDiccionarioByCod(DDTipoProductoBancario.class, dto.getTipoProductoCodigo());
+				activoBancario.setTipoProducto(tipoProducto);
+			}
+			
+			if(!Checks.esNulo(dto.getEstadoExpRiesgoCodigo())) {
+				DDEstadoExpRiesgoBancario estadoExpRiesgo = (DDEstadoExpRiesgoBancario) diccionarioApi.dameValorDiccionarioByCod(DDEstadoExpRiesgoBancario.class, dto.getEstadoExpRiesgoCodigo());
+				activoBancario.setEstadoExpRiesgo(estadoExpRiesgo);
+			}
+
+			if(!Checks.esNulo(dto.getEstadoExpIncorrienteCodigo())) {
+				DDEstadoExpIncorrienteBancario estadoExpIncorriente = (DDEstadoExpIncorrienteBancario) diccionarioApi.dameValorDiccionarioByCod(DDEstadoExpIncorrienteBancario.class, dto.getEstadoExpIncorrienteCodigo());
+				activoBancario.setEstadoExpIncorriente(estadoExpIncorriente);
+			}
+			
+			activoApi.saveOrUpdateActivoBancario(activoBancario);
+			// -----
+			
 			
 			
 		} catch (IllegalAccessException e) {

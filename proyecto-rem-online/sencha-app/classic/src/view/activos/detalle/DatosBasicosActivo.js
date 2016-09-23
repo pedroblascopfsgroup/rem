@@ -296,11 +296,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.perimetros.condiciones'),
 						border: true,
+						colapsible: false,
 						colspan: 3,
-						layout: {
-							type: 'table',
-							columns: 3
-						},
 						items :
 							[
 							//Fila cabecera
@@ -406,62 +403,70 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							}							
 						]
 					}, //Fin condiciones
+					//Datos bancarios
 		            {    
 		                
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.bancario'),
 						border: true,
-//						layout: {
-//							type: 'table',
-//							columns: 2
-//						},
+						colapsible: false,
+						colspan: 3,
 						items :
 							[
-				            {                    
-								xtype:'fieldsettable',
-								defaultType: 'textfieldbase',
-								border: false,
-								colapsible: false,
-//								layout: {type: 'hbox', align: 'center'},
-								items :
-									[
-									{
-										xtype:'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.bancario.clase')
-									},
-									{
-										xtype: 'textfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.num')
-									}
-								]
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.bancario.clase'),
+								reference: 'claseActivoBancarioCombo',
+					        	chainedStore: 'comboSubtipoClaseActivoBancario',
+								chainedReference: 'subtipoClaseActivoBancarioCombo',
+								bind: {
+									store: '{comboClaseActivoBancario}',
+									value: '{activo.claseActivoCodigo}'
+								},
+	    						listeners: {
+				                	select: 'onChangeChainedCombo'
+				            	},
+								allowBlank: false
 							},
-				            {                    
-								xtype:'fieldsettable',
-								defaultType: 'textfieldbase',
-								border: false,
-								colapsible: false,
-//								layout: {type: 'hbox', align: 'end'},
-								items :
-									[
-									{
-										xtype:'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.bancario.subtipo')
-									},
-									{
-										xtype:'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.bancario.producto.tipo')
-									},
-									
-									{
-										xtype:'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.estado')
-									},
-									{
-										xtype:'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.bancario.incorriente.estado')
-									}
-								]
+							{
+								xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.num'),
+								bind: '{activo.numExpRiesgo}'
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.bancario.producto.tipo'),
+								bind: {
+									store: '{comboTipoProductoBancario}',
+									value: '{activo.tipoProductoCodigo}'
+								}
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.bancario.subtipo'),
+								reference: 'subtipoClaseActivoBancarioCombo',
+								bind: {
+									store: '{comboSubtipoClaseActivoBancario}',
+									value: '{activo.subtipoClaseActivoCodigo}',
+									disabled: '{!activo.claseActivoCodigo}'
+								}
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.estado'),
+								bind: {
+									store: '{comboEstadoExpRiesgoBancario}',
+									value: '{activo.estadoExpRiesgoCodigo}'
+								}
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.bancario.incorriente.estado'),
+								bind: {
+									store: '{comboEstadoExpIncorrienteBancario}',
+									value: '{activo.estadoExpIncorrienteCodigo}'
+								}
 							}
 						]
 						

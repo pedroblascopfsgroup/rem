@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -101,7 +102,13 @@ public interface GenericApi {
 	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajoTarificado")
 	public List<DDSubtipoTrabajo> getComboSubtipoTrabajoTarificado(String tipoTrabajoCodigo);	
 	
-	
+	/**
+	 * Devuelve los subtipos de clase bancarios, para un codigo de tipo de clase bancario
+	 * @param tipoClaseActivoCodigo
+	 * @return
+	 */
+	@BusinessOperationDefinition("genericManager.getComboSubtipoClaseActivo")
+	public List<DDSubtipoClaseActivoBancario> getComboSubtipoClaseActivo(String tipoClaseActivoCodigo);
 
 	@BusinessOperationDefinition("genericManager.getComboTipoJuzgadoPlaza")
 	public List<TipoJuzgado> getComboTipoJuzgadoPlaza(Long idPlaza);

@@ -30,6 +30,12 @@ import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
+/**
+ * Filtro para la gestión de las peticiones a la rest-api
+ * 
+ * @author rllinares
+ *
+ */
 public class RestSecurityFilter implements Filter {
 
 	@Autowired

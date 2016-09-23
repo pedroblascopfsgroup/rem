@@ -57,7 +57,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * Inicia la detección de cambios en BD.
 	 */
 	public void detectaCambios() {
-		if (running){
+		if (running) {
 			logger.warn("El detector de cambios en BD ya se está ejecutando");
 			return;
 		}
@@ -98,21 +98,23 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 */
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
-		if (registroCambiosHandlers == null) {
-			registroCambiosHandlers = new ArrayList<DetectorCambiosBD>();
-		}
+		if (event instanceof ContextRefreshedEvent) {
+			if (registroCambiosHandlers == null) {
+				registroCambiosHandlers = new ArrayList<DetectorCambiosBD>();
+			}
 
-		if (registroCambiosHandlers.isEmpty()) {
-			if (event instanceof ContextRefreshedEvent) {
+			if (registroCambiosHandlers.isEmpty()) {
 				ApplicationContext applicationContext = ((ContextRefreshedEvent) event).getApplicationContext();
 				String[] beanNames = applicationContext.getBeanNamesForType(DetectorCambiosBD.class);
 				if ((beanNames != null) && (beanNames.length >= 1)) {
-					DetectorCambiosBD handler = (DetectorCambiosBD) applicationContext.getBean(beanNames[0]);
-					this.addRegistroCambiosBDHandler(handler);
+					for (String name : beanNames) {
+						DetectorCambiosBD handler = (DetectorCambiosBD) applicationContext.getBean(name);
+						this.addRegistroCambiosBDHandler(handler);
+					}
 				}
 
 			}
-		}
+		}// end check event
 
 	}
 

@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule;
+package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
+import es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common.CambioBDStub;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeteccionCambiosBDTests {

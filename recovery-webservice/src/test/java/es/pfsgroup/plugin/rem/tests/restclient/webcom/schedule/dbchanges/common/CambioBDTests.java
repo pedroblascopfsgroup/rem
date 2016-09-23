@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule;
+package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common;
 
 import static org.junit.Assert.*;
 

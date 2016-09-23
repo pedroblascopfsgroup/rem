@@ -80,7 +80,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 					Map<String, Object> map = cambio.getCambios();
 					if (!map.isEmpty()) {
 						T dto = createDtoInstance();
-						logger.debug("Confertimos " + map + " a " + dto.getClass());
+						logger.debug("Convertimos " + map + " a " + dto.getClass());
 						Converter.updateObjectFromHashMap(map, dto, null);
 						listaCambios.add(dto);
 					} else {

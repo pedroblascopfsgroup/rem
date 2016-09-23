@@ -11,6 +11,14 @@ public class CambiosBDDaoError extends RuntimeException {
 		this.infoTablas = infoTablas;
 	}
 
+	public CambiosBDDaoError(String string) {
+		super(string);
+	}
+
+	public CambiosBDDaoError(String string, Throwable e) {
+		super(string, e);
+	}
+
 	private String stringIze(InfoTablasBD infoTablas) {
 		if (infoTablas != null) {
 			StringBuilder b = new StringBuilder("[");

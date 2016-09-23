@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
+@Component
 public class DetectorCambiosEstadoOferta  extends DetectorCambiosBD<EstadoOfertaDto>{
 	
 	@Autowired
@@ -17,17 +18,17 @@ public class DetectorCambiosEstadoOferta  extends DetectorCambiosBD<EstadoOferta
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "AAA";
+		return "REM01.VI_OFERTAS_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "BBB";
+		return "REM01.OWH_OFERTAS_WEBCOM_HIST";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "CCC";
+		return "ID_OFERTA_WEBCOM";
 	}
 
 	@Override

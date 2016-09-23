@@ -68,7 +68,7 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType telefonoGestorComercial;
 	private StringDataType emailGestorComercial;
 	private StringDataType codCee;
-	private DateDataType antiguedad;
+	private LongDataType antiguedad;
 	private StringDataType codCartera;
 	private StringDataType codRatio;
 	public LongDataType getIdActivoHaya() {
@@ -371,10 +371,10 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodCee(StringDataType codCee) {
 		this.codCee = codCee;
 	}
-	public DateDataType getAntiguedad() {
+	public LongDataType getAntiguedad() {
 		return antiguedad;
 	}
-	public void setAntiguedad(DateDataType antiguedad) {
+	public void setAntiguedad(LongDataType antiguedad) {
 		this.antiguedad = antiguedad;
 	}
 	public StringDataType getCodCartera() {

@@ -33,7 +33,7 @@ public class DetectorCambiosStockActivos extends DetectorCambiosBD<StockDto> {
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "REM01.SAW_STOCK_ACTIVOS_WEBCOM";
+		return "REM01.SWH_STOCK_ACT_WEBCOM_HIST";
 	}
 
 	@Override

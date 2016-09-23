@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.Random;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
@@ -17,7 +21,9 @@ import net.sf.json.JSONObject;
 
 public class WebcomRequestUtils {
 	
-	private static SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+	private static final Log logger = LogFactory.getLog(WebcomRequestUtils.class);
+	
+	private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
 
 	public static JSONObject createRequestJson(ParamsList paramsList) {
 		JSONArray dataArray = new JSONArray();
@@ -77,11 +83,15 @@ public class WebcomRequestUtils {
 	}
 
 	public static String formatDate(Date date) {
-		return formaterDate.format(date);
+		logger.debug("Date -> String: " + date);
+		SimpleDateFormat f = new SimpleDateFormat(DATETIME_FORMAT);
+		return f.format(date);
 	}
 
 	public static Date parseDate(String string) throws ParseException {
-		return formaterDate.parse(string);
+		logger.debug("String -> Date: " + string);
+		SimpleDateFormat f = new SimpleDateFormat(DATETIME_FORMAT);
+		return f.parse(string);
 	}
 
 }

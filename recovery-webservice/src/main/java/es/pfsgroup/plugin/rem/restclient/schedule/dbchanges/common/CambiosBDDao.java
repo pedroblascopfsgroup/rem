@@ -2,22 +2,27 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.hibernate.dao.AbstractHibernateDao;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
@@ -54,10 +59,17 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 @Repository
 public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
+	private static final String REST_USER = "REST-USER";
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	private SessionFactoryFacade sesionFactoryFacade;
+
+	@Autowired
+	private HibernateExecutionFacade queryExecutor;
+
+	private Long restUserId;
 
 	/**
 	 * Devuelve los registros que han cambiado en la BD
@@ -91,15 +103,15 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String[] fields = getDtoFields(dtoClass);
 			String columns = columns4Select(fields);
 			String columIdUsuarioRemAccion = columns4Select(new String[] { ConstantesGenericas.ID_USUARIO_REM_ACCION });
-			String selectFromDatosActuales = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales() + " WHERE " + columIdUsuarioRemAccion + " <> '" + RestApi.REST_LOGGED_USER_USERNAME + "'";
+			String selectFromDatosActuales = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales()
+					+ " WHERE " + columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
 			String selectFromDatosHistoricos = "SELECT " + columns + " FROM " + infoTablas.nombreTablaDatosHistoricos();
 			String queryString = selectFromDatosActuales + " MINUS " + selectFromDatosHistoricos;
 
 			List<Object[]> resultado = null;
 			try {
 				logger.debug("Ejecutando: " + queryString);
-				Query query = createQuery(session, queryString);
-				resultado = query.list();
+				resultado = queryExecutor.sqlRunList(session, queryString);
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al obtener los registros que difieren", queryString,
 						infoTablas, t);
@@ -113,8 +125,11 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 						cambio.setDatosActuales(r);
 						selectDatoHistorico = selectFromDatosHistoricos + " WHERE " + infoTablas.clavePrimaria() + " = "
 								+ r[0];
-						Object[] historico = (Object[]) session.createSQLQuery(selectDatoHistorico).uniqueResult();
-						cambio.setDatosHistoricos(historico);
+						logger.debug("Ejecutando: " + selectDatoHistorico);
+						Object[] historico = queryExecutor.sqlRunUniqueResult(session, selectDatoHistorico);
+						if (historico != null) {
+							cambio.setDatosHistoricos(historico);
+						}
 						cambios.add(cambio);
 
 					}
@@ -176,17 +191,17 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String queryDelete = "DELETE FROM " + infoTablas.nombreTablaDatosHistoricos();
 			try {
 				logger.debug("Ejecutando: " + queryDelete);
-				createQuery(session, queryDelete).executeUpdate();
+				queryExecutor.sqlRunExecuteUpdate(session, queryDelete);
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al borrar la tabla de 'datos históricos'",
 						queryDelete, infoTablas, t);
 			}
 
-			String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns
-					+ ") SELECT  FROM " + infoTablas.nombreVistaDatosActuales();
+			String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns + ") SELECT "
+					+ columns + " FROM " + infoTablas.nombreVistaDatosActuales();
 			try {
 				logger.debug("Ejecutando: " + queryInsert);
-				createQuery(session, queryInsert).executeUpdate();
+				queryExecutor.sqlRunExecuteUpdate(session, queryInsert);
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al insertar registros en 'datos históricos'",
 						queryInsert, infoTablas, t);
@@ -245,10 +260,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		return b.toString();
 	}
 
-	private SQLQuery createQuery(Session session, String queryString) {
-		return session.createSQLQuery(queryString);
-	}
-
 	/**
 	 * @param entitySessionFactory
 	 *            SessionFactory
@@ -256,6 +267,31 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	@Resource
 	public void setEntitySessionFactory(SessionFactory entitySessionFactory) {
 		super.setSessionFactory(entitySessionFactory);
+	}
+
+	private Long getIdRestUser(Session session) {
+		logger.debug("Obteniendo el ID para el usuario: " + REST_USER);
+		if (restUserId == null) {
+			try {
+
+				logger.debug("Buscando " + REST_USER + " con criteria");
+				Criteria criteria = queryExecutor
+						.createCriteria(session, Usuario.class)
+						.add(Restrictions.eq("username", REST_USER));
+				Usuario restUser = (Usuario) queryExecutor.criteriaRunUniqueResult(criteria);
+				if (restUser == null) {
+					throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER);
+				}
+				logger.debug("Guardando restUserId en caché");
+				this.restUserId = restUser.getId();
+
+			} catch (Throwable e) {
+				throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER, e);
+			}
+		}
+		logger.debug("Devolviendo restUserId=" + this.restUserId + " de la caché");
+		return this.restUserId;
+
 	}
 
 }

@@ -146,7 +146,7 @@ public class ReservaController {
 					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expC.getId())) {
 						throw new Exception("No se ha podido guardar la reserva entregada en base de datos");
 					}
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getEstado(DDEstadosExpedienteComercial.RESERVADO);
+					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.RESERVADO);
 					if (estadoReservado==null) {
 						throw new Exception("No se ha podido obtener estado RESERVADO de base de datos");
 					}
@@ -166,7 +166,7 @@ public class ReservaController {
 					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expC.getId())) {
 						throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
 					}
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getEstado(DDEstadosExpedienteComercial.ANULADO);
+					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.ANULADO);
 					if (estadoReservado==null) {
 						throw new Exception("No se ha podido obtener estado ANULADO de base de datos");
 					}
@@ -177,7 +177,7 @@ public class ReservaController {
 				}
 
 				if (COBRO_VENTA.equals(reservaDto.getAccion())) {
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getEstado(DDEstadosExpedienteComercial.VENDIDO);
+					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
 					if (estadoReservado==null) {
 						throw new Exception("No se ha podido obtener estado VENDIDO de base de datos");
 					}

@@ -113,7 +113,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Autowired
 	private ReservaDao reservaDao;
 	
-	
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
 	
@@ -1306,20 +1305,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 
 	@Override
-	public DDEstadosExpedienteComercial getEstado(String codigo) {
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
-		DDEstadosExpedienteComercial estado = null;
-		try {
-			estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-		} catch(Exception e) {
-			return null;
-		}
-		
-		return estado;
-	}
-
-	@Override
 	@Transactional(readOnly = false)
 	public boolean saveReserva(DtoReserva dto, Long idExpediente) {
 		
@@ -1576,6 +1561,17 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return true;
 		
 	}
-	
+
+	@Transactional(readOnly = true)
+	public DDEstadosExpedienteComercial getDDEstadosExpedienteComercialByCodigo (String codigo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		DDEstadosExpedienteComercial estado = null;
+		try {
+			estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		} catch(Exception e) {
+			return null;
+		}		
+		return estado;
+	}
 
 }

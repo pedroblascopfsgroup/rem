@@ -310,57 +310,92 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'estadoPublicacionCodigo'
     		},
-// Perimetro ------
 			{
-				name: 'incluidoEnPerimetro'
+				name: 'incluidoEnPerimetro',
+				type: 'boolean'
 			},
 			{
-				name: 'fechaAltaActivoRem'
+				name: 'fechaAltaActivoRem',
+    			type:'date',
+    			dateFormat: 'c'
 			},
 			{
-				name: 'aplicaTramiteAdmision'
+				name: 'aplicaTramiteAdmision',
+				type: 'boolean'
 			},
 			{
-				name: 'fechaAplicaTramiteAdmision'
+				name: 'fechaAplicaTramiteAdmision',
+    			type:'date',
+    			dateFormat: 'c'
 			},
 			{
 				name: 'motivoAplicaTramiteAdmision'
 			},
 			{
-				name: 'aplicaGestion'
+				name: 'aplicaGestion',
+				type: 'boolean'
 			},
 			{
-				name: 'fechaAplicaGestion'
+				name: 'fechaAplicaGestion',
+    			type:'date',
+    			dateFormat: 'c'
 			},
 			{
 				name: 'motivoAplicaGestion'
 			},
 			{
-				name: 'aplicaAsignarMediador'
+				name: 'aplicaAsignarMediador',
+				type: 'boolean'
 			},
 			{
-				name: 'fechaAplicaAsignarMediador'
+				name: 'fechaAplicaAsignarMediador',
+    			type:'date',
+    			dateFormat: 'c'
 			},
 			{
 				name: 'motivoAplicaAsignarMediador'
 			},
 			{
-				name: 'aplicaComercializar'
+				name: 'aplicaComercializar',
+				type: 'boolean'
 			},
 			{
-				name: 'fechaAplicaComercializar'
+				name: 'fechaAplicaComercializar',
+    			type:'date',
+    			dateFormat: 'c'
 			},
 			{
 				name: 'motivoAplicaComercializarDescripcion'
 			},
 			{
-				name: 'aplicaFormalizar'
+				name: 'aplicaFormalizar',
+				type: 'boolean'
 			},
 			{
-				name: 'fechaAplicaFormalizar'
+				name: 'fechaAplicaFormalizar',
+    			type:'date',
+    			dateFormat: 'c'
 			},
 			{
 				name: 'motivoAplicaFormalizar'
+			},
+			{
+				name: 'claseActivoCodigo'
+			},
+			{
+				name: 'subtipoClaseActivoCodigo'
+			},
+			{
+				name: 'numExpRiesgo'
+			},
+			{
+				name: 'tipoProducto'
+			},
+			{
+				name: 'estadoExpRiesgo'
+			},
+			{
+				name: 'estadoExpIncorriente'
 			}
     ],
     

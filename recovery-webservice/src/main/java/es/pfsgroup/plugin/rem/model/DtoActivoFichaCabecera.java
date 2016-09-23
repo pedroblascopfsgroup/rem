@@ -3,6 +3,11 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
@@ -125,6 +130,18 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private Date fechaAplicaFormalizar;
 	private String motivoAplicaFormalizar;
 
+	//Activo Bancarico datos:
+	private String claseActivoCodigo;
+	private String claseActivoDescripcion;
+	private String subtipoClaseActivoCodigo;
+	private String subtipoClaseActivoDescripcion;
+	private String numExpRiesgo;
+	private String tipoProductoCodigo;
+	private String tipoProductoDescripcion;
+	private String estadoExpRiesgoCodigo;
+	private String estadoExpRiesgoDescripcion;
+	private String estadoExpIncorrienteCodigo;
+	private String estadoExpIncorrienteDescripcion;
 
 	
 	private int page;
@@ -969,6 +986,94 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setSituacionComercialDescripcion(String situacionComercialDescripcion) {
 		this.situacionComercialDescripcion = situacionComercialDescripcion;
+	}
+
+	public String getClaseActivoCodigo() {
+		return claseActivoCodigo;
+	}
+
+	public void setClaseActivoCodigo(String claseActivoCodigo) {
+		this.claseActivoCodigo = claseActivoCodigo;
+	}
+
+	public String getClaseActivoDescripcion() {
+		return claseActivoDescripcion;
+	}
+
+	public void setClaseActivoDescripcion(String claseActivoDescripcion) {
+		this.claseActivoDescripcion = claseActivoDescripcion;
+	}
+
+	public String getSubtipoClaseActivoCodigo() {
+		return subtipoClaseActivoCodigo;
+	}
+
+	public void setSubtipoClaseActivoCodigo(String subtipoClaseActivoCodigo) {
+		this.subtipoClaseActivoCodigo = subtipoClaseActivoCodigo;
+	}
+
+	public String getSubtipoClaseActivoDescripcion() {
+		return subtipoClaseActivoDescripcion;
+	}
+
+	public void setSubtipoClaseActivoDescripcion(String subtipoClaseActivoDescripcion) {
+		this.subtipoClaseActivoDescripcion = subtipoClaseActivoDescripcion;
+	}
+
+	public String getNumExpRiesgo() {
+		return numExpRiesgo;
+	}
+
+	public void setNumExpRiesgo(String numExpRiesgo) {
+		this.numExpRiesgo = numExpRiesgo;
+	}
+
+	public String getTipoProductoCodigo() {
+		return tipoProductoCodigo;
+	}
+
+	public void setTipoProductoCodigo(String tipoProductoCodigo) {
+		this.tipoProductoCodigo = tipoProductoCodigo;
+	}
+
+	public String getTipoProductoDescripcion() {
+		return tipoProductoDescripcion;
+	}
+
+	public void setTipoProductoDescripcion(String tipoProductoDescripcion) {
+		this.tipoProductoDescripcion = tipoProductoDescripcion;
+	}
+
+	public String getEstadoExpRiesgoCodigo() {
+		return estadoExpRiesgoCodigo;
+	}
+
+	public void setEstadoExpRiesgoCodigo(String estadoExpRiesgoCodigo) {
+		this.estadoExpRiesgoCodigo = estadoExpRiesgoCodigo;
+	}
+
+	public String getEstadoExpRiesgoDescripcion() {
+		return estadoExpRiesgoDescripcion;
+	}
+
+	public void setEstadoExpRiesgoDescripcion(String estadoExpRiesgoDescripcion) {
+		this.estadoExpRiesgoDescripcion = estadoExpRiesgoDescripcion;
+	}
+
+	public String getEstadoExpIncorrienteCodigo() {
+		return estadoExpIncorrienteCodigo;
+	}
+
+	public void setEstadoExpIncorrienteCodigo(String estadoExpIncorrienteCodigo) {
+		this.estadoExpIncorrienteCodigo = estadoExpIncorrienteCodigo;
+	}
+
+	public String getEstadoExpIncorrienteDescripcion() {
+		return estadoExpIncorrienteDescripcion;
+	}
+
+	public void setEstadoExpIncorrienteDescripcion(String estadoExpIncorrienteDescripcion) {
+		this.estadoExpIncorrienteDescripcion = estadoExpIncorrienteDescripcion;
 	}
 
 

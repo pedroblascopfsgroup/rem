@@ -5,17 +5,24 @@ import java.lang.reflect.TypeVariable;
 import java.text.ParseException;
 import java.util.Date;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 
 public abstract class WebcomDataType<T> {
+
+	private static final String SEPARDOR_DECIMALES = ".";
 
 	public abstract T getValue();
 
 	/*
 	 * Wrapper para Long
 	 */
-	public static LongDataType longDataType(long l) {
-		return new LongDataType(l);
+	public static LongDataType longDataType(Long l) {
+		if (l != null) {
+			return new LongDataType(l);
+		} else {
+			return nullLongDataType();
+		}
 	}
 
 	public static NullLongDataType nullLongDataType() {
@@ -26,7 +33,12 @@ public abstract class WebcomDataType<T> {
 	 * Wrapper para Date
 	 */
 	public static DateDataType dateDataType(Date d) {
-		return new DateDataType(d);
+		if (d != null) {
+			return new DateDataType(d);
+		} else {
+			return nullDateDataType();
+		}
+
 	}
 
 	public static NullDateDataType nullDateDataType() {
@@ -37,7 +49,11 @@ public abstract class WebcomDataType<T> {
 	 * Wrapper para String
 	 */
 	public static StringDataType stringDataType(String s) {
-		return new StringDataType(s);
+		if (s != null) {
+			return new StringDataType(s);
+		} else {
+			return nullStringDataType();
+		}
 	}
 
 	public static NullStringDataType nullStringDataType() {
@@ -47,19 +63,27 @@ public abstract class WebcomDataType<T> {
 	/*
 	 * Wrapper para Float
 	 */
-	public static FloatDataType floatDataType(float f) {
-		return new FloatDataType(f);
+	public static DoubleDataType doubleDataType(Double f) {
+		if (f != null) {
+			return new DoubleDataType(f);
+		} else {
+			return nullDoubleDataType();
+		}
 	}
 
-	public static NullFloatDataType nullFloatDataType() {
-		return new NullFloatDataType();
+	public static NullDoubleDataType nullDoubleDataType() {
+		return new NullDoubleDataType();
 	}
 
 	/*
 	 * Wrapper para Boolean
 	 */
-	public static BooleanDataType booleanDataType(boolean b) {
-		return new BooleanDataType(b);
+	public static BooleanDataType booleanDataType(Boolean b) {
+		if (b != null) {
+			return new BooleanDataType(b);
+		} else {
+			return nullBooleanDataType();
+		}
 	}
 
 	public static NullBooleanDataType nullBooleanDataType() {
@@ -76,48 +100,101 @@ public abstract class WebcomDataType<T> {
 
 	public static Object valueOf(Object o) {
 		if (o instanceof WebcomDataType) {
-			return ((WebcomDataType) o).getValue();
+			Object value = ((WebcomDataType) o).getValue();
+			if ((value == null) && (!(o instanceof NullDataType))) {
+				throw new IllegalArgumentException("getValue() es NULL. ¿Debería " + o.getClass().getName()
+						+ " implementar " + NullDataType.class.getName() + "?");
+			}
+			return value;
 		} else {
 			return o;
 		}
 	}
 
-	public static <E extends WebcomDataType> E parse(Class<E> type, Object data) throws WebcomDataTypeParseException, UnknownWebcomDataTypeException {
-		if (data != null) {
-			try {
-				if (LongDataType.class.equals(type)) {
-					return (E) longDataType(Long.parseLong(data.toString()));
-					
-				} else if (BooleanDataType.class.equals(type)) {
-					return (E) booleanDataType(Boolean.parseBoolean(data.toString()));
-					
-				} else if (DateDataType.class.equals(type)) {
-					Date parseDate = null;{
-						if (data instanceof Date){
-							parseDate = (Date) data;
-						}else{
-							 parseDate = WebcomRequestUtils.parseDate(data.toString());
-						}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <E extends WebcomDataType> E parse(Class<E> type, Object data)
+			throws WebcomDataTypeParseException, UnknownWebcomDataTypeException {
+
+		try {
+			if (LongDataType.class.equals(type)) {
+				return (E) longDataType(data != null ? Long.parseLong(data.toString()) : null);
+
+			} else if (BooleanDataType.class.equals(type)) {
+				return (E) booleanDataType(data != null ? Boolean.parseBoolean(data.toString()) : null);
+
+			} else if (DateDataType.class.equals(type)) {
+				Date parseDate = null;
+				if (data != null) {
+					if (data instanceof Date) {
+						parseDate = (Date) data;
+					} else {
+						parseDate = WebcomRequestUtils.parseDate(data.toString());
 					}
-					return (E) dateDataType(parseDate);
-					
-				} else if (FloatDataType.class.equals(type)) {
-					return (E) floatDataType(Float.parseFloat(data.toString()));
-				
-				} else if (StringDataType.class.equals(type)) {
-					return (E) stringDataType(data.toString());
-					
-				} else {
-					throw new UnknownWebcomDataTypeException(type);
 				}
-			} catch (IllegalArgumentException e) {
-				throw new WebcomDataTypeParseException(e);
-			} catch (SecurityException e) {
-				throw new WebcomDataTypeParseException(e);
-			} catch (ParseException e) {
-				throw new WebcomDataTypeParseException(e);
+				return (E) dateDataType(parseDate);
+
+			} else if (DoubleDataType.class.equals(type)) {
+				return (E) doubleDataType(data != null ? Double.parseDouble(data.toString()) : null);
+
+			} else if (StringDataType.class.equals(type)) {
+				return (E) stringDataType(data != null ? data.toString() : null);
+
+			} else {
+				throw new UnknownWebcomDataTypeException(type);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new WebcomDataTypeParseException(e);
+		} catch (SecurityException e) {
+			throw new WebcomDataTypeParseException(e);
+		} catch (ParseException e) {
+			throw new WebcomDataTypeParseException(e);
+		}
+
+	}
+
+	public static Object valueOf(Object o, DecimalDataTypeFormat format) throws WebcomDataTypeParseException {
+		Object val = valueOf(o);
+		if ((val != null) && (val instanceof Number) && (format != null)) {
+			String[] split = val.toString().split("\\" + SEPARDOR_DECIMALES);
+			if (split.length > 1) {
+				String parteentera = split[0];
+				if (split.length == 2) {
+					String partedecimal = split[1];
+					val = parteentera + SEPARDOR_DECIMALES
+							+ recorta(partedecimal,format.decimals());
+
+				} else {
+					throw new WebcomDataTypeParseException("No es un formato numérico válido o reconocible" + o);
+				}
 			}
 		}
-		return null;
+		return val;
+	}
+
+	/**
+	 * Recorta una cadana para que tenga una longitud determinada
+	 * 
+	 * @param string
+	 * @param count Si es <= 0 no se limita
+	 *           
+	 * @return
+	 */
+	private static String recorta(String string, int count) {
+		if (string != null) {
+			char[] c = string.toCharArray();
+			StringBuilder b = new StringBuilder();
+			
+			int maximo = (count > 0 ? count : 0);
+			for (int i = 0; i < maximo; i++) {
+				if (i < c.length) {
+					b.append(c[i]);
+				} else {
+					b.append(0);
+				}
+			}
+			return b.toString();
+		} else {
+			return null;
+		}
 	}
 }

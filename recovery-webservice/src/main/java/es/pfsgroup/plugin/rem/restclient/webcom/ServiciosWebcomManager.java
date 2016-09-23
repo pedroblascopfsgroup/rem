@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.restclient.webcom;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,14 +12,24 @@ import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
+import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoNotificacion;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteVentasYComisiones;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoNotificacionConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.VentasYComisionesConstantes;
 
 @Service
 public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implements ServiciosWebcomApi {
@@ -38,72 +49,87 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	private ClienteEstadoOferta estadoOfertaService;
 
 	@Autowired
+	private ClienteEstadoNotificacion estadoNotificacionService;
+
+	@Autowired
+	private ClienteVentasYComisiones ventasYcomsionesService;
+
+	@Autowired
 	private ClienteStock stockService;
 
 	@Override
-	public void enviaActualizacionEstadoTrabajo(Long usuarioId, Long idRem, Long idWebcom, String codEstado,
-			String motivoRechazo) {
+	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo) {
 		logger.info("Invocando servicio Webcom: Estado Trabajo");
-		HashMap<String, Object> params = createParametersMap(usuarioId);
-		params.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem);
-		params.put(EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom);
-		params.put(EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, codEstado);
 
-		compruebaObligatorios(params, EstadoTrabajoConstantes.ID_TRABAJO_REM, EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM,
-				EstadoTrabajoConstantes.COD_ESTADO_TRABAJO);
+		ParamsList paramsList = createParamsList(estadoTrabajo, EstadoTrabajoConstantes.ID_TRABAJO_REM,
+				EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, EstadoTrabajoConstantes.COD_ESTADO_TRABAJO);
 
-		if (motivoRechazo != null && (!"".equals(motivoRechazo))) {
-			params.put(EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, estadoTrabajoService);
+		} else {
+			logger.debug("ParamsList vacío. Nada qeu enviar");
 		}
-		ParamsList paramsList = new ParamsList();
-		paramsList.add(params);
-		invocarServicioRestWebcom(paramsList, estadoTrabajoService);
 	}
 
 	@Override
-	public void enviaActualizacionEstadoOferta(Long usuarioId, Long idRem, Long idWebcom, String codEstadoOferta,
-			Long idActivoHaya, String codEstadoExpediente, Boolean vendido) {
+	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta) {
 		logger.info("Invocando servicio Webcom: Estado Oferta");
-		HashMap<String, Object> params = createParametersMap(usuarioId);
 
-		params.put(EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);
-		params.put(EstadoOfertaConstantes.ID_OFERTA_REM, idRem);
-		params.put(EstadoOfertaConstantes.COD_ESTADO_OFERTA, codEstadoOferta);
+		ParamsList paramsList = createParamsList(estadoOferta, EstadoOfertaConstantes.ID_OFERTA_WEBCOM,
+				EstadoOfertaConstantes.ID_OFERTA_REM, EstadoOfertaConstantes.COD_ESTADO_OFERTA);
 
-		compruebaObligatorios(params, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, EstadoOfertaConstantes.ID_OFERTA_REM,
-				EstadoOfertaConstantes.COD_ESTADO_OFERTA);
-
-		if (idActivoHaya != null) {
-			params.put(EstadoOfertaConstantes.ID_ACTIVO_HAYA, idActivoHaya);
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, estadoOfertaService);
+		} else {
+			logger.debug("ParamsList vacío. Nada qeu enviar");
 		}
-
-		if (codEstadoExpediente != null) {
-			params.put(EstadoOfertaConstantes.COD_ESTADO_EXPEDIENTE, codEstadoExpediente);
-		}
-
-		if (vendido != null) {
-			params.put(EstadoOfertaConstantes.VENDIDO, vendido);
-		}
-
-		ParamsList paramsList = new ParamsList();
-		paramsList.add(params);
-		invocarServicioRestWebcom(paramsList, estadoOfertaService);
 
 	}
 
 	@Override
-	public void enviarStock(Long usuarioId, List<StockDto> stock) {
+	public void enviarStock(List<StockDto> stock) {
 		logger.info("Invocando servicio Webcom: Stock");
 
-		ParamsList paramsList = new ParamsList();
-		if ((stock != null) && (!stock.isEmpty())) {
-			for (StockDto dto : stock) {
-				HashMap<String, Object> params = createParametersMap(usuarioId);
-				params.putAll(Converter.dtoToMap(dto));
-				paramsList.add(params);
-			}
+		ParamsList paramsList = createParamsList(stock);
 
+		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, stockService);
+		} else {
+			logger.debug("ParamsList vacío. Nada qeu enviar");
+		}
+
+	}
+
+	@Override
+	public void estadoNotificacion(List<NotificacionDto> notificaciones) {
+		logger.info("Invocando servicio Webcom: Estado notificaciones");
+
+		ParamsList paramsList = createParamsList(notificaciones, EstadoNotificacionConstantes.ID_NOTIFICACION_REM,
+				EstadoNotificacionConstantes.ID_ACTIVO_HAYA);
+
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, estadoNotificacionService);
+		} else {
+			logger.debug("ParamsList vacío. Nada qeu enviar");
+		}
+
+	}
+
+	@Override
+	public void ventasYcomisiones(List<ComisionesDto> comisiones) {
+		logger.info("Invocando servicio Webcom: Ventas y Comisiones");
+
+		ParamsList paramsList = createParamsList(comisiones, VentasYComisionesConstantes.ID_OFERTA_REM,
+				VentasYComisionesConstantes.ID_OFERTA_WEBCOM, VentasYComisionesConstantes.ID_PROVEEDOR_REM,
+				VentasYComisionesConstantes.ES_PRESCRIPCION, VentasYComisionesConstantes.ES_COLABORACION,
+				VentasYComisionesConstantes.ES_RESPONSABLE, VentasYComisionesConstantes.ES_FDV,
+				VentasYComisionesConstantes.ES_DOBLE_PRESCRIPCION, VentasYComisionesConstantes.IMPORTE,
+				VentasYComisionesConstantes.PORCENTAJE);
+
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, ventasYcomsionesService);
+		} else {
+			logger.debug("ParamsList vacío. Nada qeu enviar");
 		}
 
 	}
@@ -119,6 +145,33 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	@Override
 	protected MessageBroker getMessageBroker() {
 		return this.messageBroker;
+	}
+
+	/**
+	 * Crea un objeto ParamList para invocar al web service a partir de una
+	 * lista de DTO's. Este método también hará una comprobación de que los
+	 * campos obligatorios estén presentes.
+	 * 
+	 * @param dtoList
+	 *            Lista de DTO's que queremos mandar al servicio
+	 * @param camposObligatorios
+	 *            Lista variable de campos obligatorios.
+	 * @return
+	 */
+	private <T extends WebcomRESTDto> ParamsList createParamsList(List<T> dtoList, String... camposObligatorios) {
+		ParamsList paramsList = new ParamsList();
+		if (dtoList != null) {
+			logger.debug("Convirtiendo dtoList -> ParamsList");
+			for (WebcomRESTDto dto : dtoList) {
+				HashMap<String, Object> params = createParametersMap(dto);
+				params.putAll(Converter.dtoToMap(dto));
+				compruebaObligatorios(params, camposObligatorios);
+				paramsList.add(params);
+			}
+		} else {
+			logger.debug("'dtoList' es NULL");
+		}
+		return paramsList;
 	}
 
 }

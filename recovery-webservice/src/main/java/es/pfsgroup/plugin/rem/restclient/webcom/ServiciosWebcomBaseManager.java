@@ -13,6 +13,11 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosException;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomBase;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
@@ -33,16 +38,32 @@ public abstract class ServiciosWebcomBaseManager {
 	 * Inicializa un HashMap de parámetros para invocar a un Servicio Web. Este
 	 * método setea los campos comunes que se requieren en todos los Servicios.
 	 * 
-	 * @param usuarioId ID del usuario que realiza la petición.
+	 *@param dto DTO que contiene los datos que queremos enviar.
 	 * @return
 	 */
-	protected HashMap<String, Object> createParametersMap(Long usuarioId) {
+	protected HashMap<String, Object> createParametersMap(WebcomRESTDto dto) {
+		
+		if (dto == null){
+			throw new IllegalArgumentException("'dto' no puede ser NULL");
+		}
+		
+		LongDataType usuarioId = dto.getIdUsuarioRemAccion();
+		if ((usuarioId == null) || (usuarioId instanceof NullDataType)){
+			throw new IllegalArgumentException("El dto no está bien conformado: 'idUsuarioRemAccion' no puede ser null");
+		}
+		
+		DateDataType fechaAccion = dto.getFechaAccion();
+		if ((fechaAccion == null) || (fechaAccion instanceof NullDataType)){
+			throw new IllegalArgumentException("El dto no está bien conformado: 'fechaAccion' no puede ser null");
+		}
+		
 		logger.debug("Inicializando HashMap de parámetros");
+		
 		HashMap<String, Object> params = new HashMap<String, Object>();
 
-		String fechaAccion = WebcomRequestUtils.formatDate(new Date());
-		logger.debug(ConstantesGenericas.FECHA_ACCION + " = " + fechaAccion);
-		params.put(ConstantesGenericas.FECHA_ACCION, fechaAccion);
+		String strFechaAccion = WebcomRequestUtils.formatDate(fechaAccion.getValue());
+		logger.debug(ConstantesGenericas.FECHA_ACCION + " = " + strFechaAccion);
+		params.put(ConstantesGenericas.FECHA_ACCION, strFechaAccion);
 
 		logger.debug(ConstantesGenericas.ID_USUARIO_REM_ACCION + " = " + usuarioId);
 		params.put(ConstantesGenericas.ID_USUARIO_REM_ACCION, usuarioId);
@@ -95,6 +116,12 @@ public abstract class ServiciosWebcomBaseManager {
 			throw new IllegalArgumentException("'paramsList' no puede ser NULL");
 		}
 		
+		if (servicio == null){
+			IllegalArgumentException e = new IllegalArgumentException("El Cliente REST Webcom asociado a este servicio es NULL");
+			logger.fatal("No se va a invocar el servicio porque la implementación del cliente rest no está disponible o es desconocida", e);
+			throw e;
+		}
+		
 		try {
 			
 			logger.debug("Invocando al servicio " + servicio.getClass().getSimpleName()
@@ -108,11 +135,12 @@ public abstract class ServiciosWebcomBaseManager {
 		} catch (ErrorServicioWebcom e) {
 			logger.error("Error al invocar " + servicio.getClass().getSimpleName() + ".enviarPeticion con parámetros "
 					+ paramsList.toString(), e);
-			if (ErrorServicioWebcom.INVALID_SIGNATURE.equals(e.getErrorWebcom())) {
+			if (! e.isHttpError()) {
+				logger.fatal("Se ha producido un error no-reintentable en la llamada a servicio REST de Webcom", e);
 				// TODO Loguear errores de las llamadas que no se deban
 				// reintentar
 			} else {
-				logger.info("Se va a reintentar la invocación a " + servicio.getClass().getSimpleName()
+				logger.error("Se va a reintentar la invocación a " + servicio.getClass().getSimpleName()
 						+ ".enviarPeticion con parámetros " + paramsList.toString());
 				// TODO Configuración de colas para gestionar los reintentos
 				MessageBroker mb = this.getMessageBroker();
@@ -122,8 +150,9 @@ public abstract class ServiciosWebcomBaseManager {
 					logger.warn("MESSAGE BROKER no está disponible");
 				}
 			}
-		}
+		} 
 	}
+
 
 	/**
 	 * Comprueba si un determinado campo existe en el HashMap

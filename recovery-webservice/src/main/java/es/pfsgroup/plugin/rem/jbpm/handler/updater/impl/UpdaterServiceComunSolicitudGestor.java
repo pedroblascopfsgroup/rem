@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -84,6 +85,7 @@ public class UpdaterServiceComunSolicitudGestor implements UpdaterService {
 						
 						documento.setFechaSolicitud(ft.parse(valor.getValor()));
 						documento.setEstadoDocumento(estadoDocumento);
+						Auditoria.save(documento);
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

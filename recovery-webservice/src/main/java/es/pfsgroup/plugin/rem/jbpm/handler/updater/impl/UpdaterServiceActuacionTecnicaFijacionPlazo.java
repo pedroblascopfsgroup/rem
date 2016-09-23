@@ -73,11 +73,10 @@ public class UpdaterServiceActuacionTecnicaFijacionPlazo implements UpdaterServi
 					trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
 					trabajo.setFechaTope(null); //Análogo al caso anterior
 			}
-
-			
 			
 		}
-
+		
+		genericDao.save(Trabajo.class, trabajo);
 	}
 
 	public String[] getCodigoTarea() {

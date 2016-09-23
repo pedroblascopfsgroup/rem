@@ -48,10 +48,11 @@ public class InformemediadorController {
 				List<String> errorsList = null;
 				if(informe.getIdInformeMediadorRem()==null){
 					 errorsList = restApi.validateRequestObject(informe,TIPO_VALIDCION.INSERT);
+					 informeMediadorApi.validateInformeMediadorDto(informe,informe.getCodTipoActivo() ,errorsList);
 				}else{
 					 errorsList = restApi.validateRequestObject(informe,TIPO_VALIDCION.UPDATE);
 				}
-				informeMediadorApi.validateInformeMediadorDto(informe,informe.getCodTipoActivo() ,errorsList);
+				
 				if (errorsList.size() == 0) {
 					
 					if(informe.getIdInformeMediadorRem()==null){

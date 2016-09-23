@@ -44,7 +44,7 @@ DECLARE
         T_TIPO_DATA('04'	,'Sin cuenta bancaria a nombre de Entidad'	,'Sin cuenta bancaria a nombre de Entidad'),
         T_TIPO_DATA('05'	,'Falta documentación mínima'	,'Falta documentación mínima'),
         T_TIPO_DATA('06'	,'Gasto impugnado'	,'Gasto impugnado'),
-        T_TIPO_DATA('07'	,'Otro'	,'Otro'),
+        T_TIPO_DATA('07'	,'Otro'	,'Otro')
                   
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

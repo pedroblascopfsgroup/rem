@@ -120,7 +120,18 @@ public abstract class WebcomDataType<T> {
 				return (E) longDataType(data != null ? Long.parseLong(data.toString()) : null);
 
 			} else if (BooleanDataType.class.equals(type)) {
-				return (E) booleanDataType(data != null ? Boolean.parseBoolean(data.toString()) : null);
+				Boolean parseBoolean = null;
+				if (data != null) {
+					String d = data.toString().trim();
+					if ("1".equals(d)) {
+						parseBoolean = Boolean.TRUE;
+					} else if ("0".equals(d)) {
+						parseBoolean = Boolean.FALSE;
+					} else {
+						parseBoolean = Boolean.parseBoolean(d);
+					}
+				}
+				return (E) booleanDataType(parseBoolean);
 
 			} else if (DateDataType.class.equals(type)) {
 				Date parseDate = null;
@@ -160,8 +171,7 @@ public abstract class WebcomDataType<T> {
 				String parteentera = split[0];
 				if (split.length == 2) {
 					String partedecimal = split[1];
-					val = parteentera + SEPARDOR_DECIMALES
-							+ recorta(partedecimal,format.decimals());
+					val = parteentera + SEPARDOR_DECIMALES + recorta(partedecimal, format.decimals());
 
 				} else {
 					throw new WebcomDataTypeParseException("No es un formato numérico válido o reconocible" + o);
@@ -175,15 +185,16 @@ public abstract class WebcomDataType<T> {
 	 * Recorta una cadana para que tenga una longitud determinada
 	 * 
 	 * @param string
-	 * @param count Si es <= 0 no se limita
-	 *           
+	 * @param count
+	 *            Si es <= 0 no se limita
+	 * 
 	 * @return
 	 */
 	private static String recorta(String string, int count) {
 		if (string != null) {
 			char[] c = string.toCharArray();
 			StringBuilder b = new StringBuilder();
-			
+
 			int maximo = (count > 0 ? count : 0);
 			for (int i = 0; i < maximo; i++) {
 				if (i < c.length) {

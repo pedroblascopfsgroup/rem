@@ -17,6 +17,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -34,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -561,6 +563,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		activoOferta.setPrimaryKey(pk);
 		activoOferta.setImporteActivoOferta(importe);
 		return activoOferta;
+	}
+
+	@Override
+	public DDEstadoOferta getDDEstadosOfertaByCodigo(String codigo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		return genericDao.get(DDEstadoOferta.class, filtro);
 	}
 	
 	

@@ -1,11 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -13,36 +9,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.EntregaReserva;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
-import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
-import es.pfsgroup.plugin.rem.rest.dto.ReservaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
-import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 
 @Controller
 public class ResolucionComiteController {
+	
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
 	public ModelAndView resolucionComite(ModelMap model, RestRequestWrapper request) {
 		
-		final String RESOLUCION_APROBADA = "1";
-		final String RESOLUCION_DENEGADA = "3";
-		final String RESOLUCION_CONTRAOFERTA = "4";
+		final Log logger = LogFactory.getLog(getClass());
+		
+		final Long RESOLUCION_APROBADA = new Long(1);
+		final Long RESOLUCION_DENEGADA = new Long(3);
+		final Long RESOLUCION_CONTRAOFERTA = new Long(4);
 		
 		final String COMITE_DGVIER = "2";
 		final String COMITE_PLATAFORMA = "3";
@@ -80,10 +77,37 @@ public class ResolucionComiteController {
 			jsonData = (ResolucionComiteRequestDto) request.getRequestData(ResolucionComiteRequestDto.class);
 			resolucionComiteDto = jsonData.getData();
 			
+			if( Checks.esNulo(jsonData) || resolucionComiteDto == null) {
+				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+			}
+			
+//			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(resolucionComiteDto.getOfertaHRE());
+//			ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta (oferta.getId());
+			
+			if (RESOLUCION_APROBADA.equals(resolucionComiteDto.getCodigoResolucion())) {
+//				DDEstadosExpedienteComercial estadoAprobado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
+//				expedienteComercial.setEstado(estadoAprobado);
+				logger.warn("RESOLUCION_APROBADA: CodigoComite="+resolucionComiteDto.getCodigoComite()+" CodigoResolucion="+resolucionComiteDto.getCodigoResolucion());
+				//TODO: Falta hacer BPM de RESOLUCION_APROBADA
+			} else if (RESOLUCION_DENEGADA.equals(resolucionComiteDto.getCodigoResolucion())) {
+//				DDEstadoOferta ofertaDenegada = ofertaApi.getDDEstadosOfertaByCodigo(DDEstadoOferta.CODIGO_RECHAZADA);
+//				oferta.setEstadoOferta(ofertaDenegada);
+//				DDEstadosExpedienteComercial estadoDenegado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.DENEGADO);
+//				expedienteComercial.setEstado(estadoDenegado);
+				logger.warn("RESOLUCION_DENEGADA: CodigoComite="+resolucionComiteDto.getCodigoComite()+" CodigoDenegacion="+resolucionComiteDto.getCodigoDenegacion());
+				//TODO: Falta hacer BPM de RESOLUCION_DENEGADA
+			} else if (RESOLUCION_CONTRAOFERTA.equals(resolucionComiteDto.getCodigoResolucion())) {
+//				DDEstadosExpedienteComercial estadoContraofertado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.CONTRAOFERTADO);
+//				expedienteComercial.setEstado(estadoContraofertado);
+				logger.warn("RESOLUCION_CONTRAOFERTA: CodigoComite="+resolucionComiteDto.getCodigoComite()+" ImporteContraoferta="+resolucionComiteDto.getImporteContraoferta());
+				//TODO: Falta hacer BPM de RESOLUCION_CONTRAOFERTA
+			}
+			model.put("id", jsonData.getId());	
+			
 		} catch (Exception e) {
+			
 			e.printStackTrace();
 			model.put("id", jsonData.getId());	
-			model.put("data", "");
 			model.put("error", e.getMessage());
 		}
 	

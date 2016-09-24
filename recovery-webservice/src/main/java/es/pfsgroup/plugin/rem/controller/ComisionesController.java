@@ -61,6 +61,7 @@ public class ComisionesController {
 	public ModelAndView updateAceptacionGasto(ModelMap model, RestRequestWrapper request) {
 		ComisionRequestDto jsonData = null;
 		List<String> errorsList = null;
+		List<GastosExpediente> listaGastos = null;
 		GastosExpediente gasto = null;
 		
 		ComisionDto comisionDto = null;
@@ -86,12 +87,20 @@ public class ComisionesController {
 					map = new HashMap<String, Object>();
 					comisionDto = listaComisionDto.get(i);
 					
-					gasto = gastosExpedienteApi.findOne(comisionDto.getIdHonorarioRem());		
-					if(Checks.esNulo(gasto)){
-						errorsList.add("No existe en REM el idHonorarioRem: " + comisionDto.getIdHonorarioRem() + ". No se actualizará.");
+					//gasto = gastosExpedienteApi.findOne(comisionDto.getIdHonorarioRem());		
+					listaGastos = gastosExpedienteApi.getListaGastosExpediente(comisionDto);	
+					if(Checks.esNulo(listaGastos) || (!Checks.esNulo(listaGastos) && listaGastos.size() != 1)){
+						errorsList.add("No existe en REM la comisión con los siguientes datos: idOfertaRem-" + comisionDto.getIdOfertaRem() + 
+								" idOfertaWebcom-" + comisionDto.getIdOfertaWebcom() +
+								" idProveedorRem-" + comisionDto.getIdProveedorRem() + 
+								" esPrescripcion-" + comisionDto.getEsPrescripcion() + 
+								" esColaboracion-" + comisionDto.getEsColaboracion() + 
+								" esResponsable-" + comisionDto.getEsResponsable() +
+								" esFdv-" + comisionDto.getEsFdv() +
+								". No se actualizará la comisión.");
 
 					}else{
-						errorsList = gastosExpedienteApi.updateAceptacionGasto(gasto, comisionDto, jsonFields.getJSONArray("data").get(i));
+						errorsList = gastosExpedienteApi.updateAceptacionGasto(listaGastos.get(0), comisionDto, jsonFields.getJSONArray("data").get(i));
 						/*if(!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(comisionDto.getAceptacion()) && !comisionDto.getAceptacion()){
 							//Si no aceptada -> comunicarlo al gestor comercial del activo para que actúe en consecuencia mediante una tarea
 					       
@@ -119,13 +128,13 @@ public class ComisionesController {
 				        }*/
 					}
 														
-					if(!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(gasto)){	
-						map.put("idHonorarioWebcom", gasto.getIdWebCom());
-						map.put("idHonorarioRem", gasto.getId());
+					if(!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(listaGastos)){	
+						map.put("idOfertaWebcom", listaGastos.get(0).getExpediente().getOferta().getIdWebCom());
+						map.put("idOfertaRem", listaGastos.get(0).getExpediente().getOferta().getNumOferta());
 						map.put("success", true);
 					}else{
-						map.put("idHonorarioWebcom", comisionDto.getIdHonorarioWebcom());
-						map.put("idHonorarioRem", comisionDto.getIdHonorarioRem());
+						map.put("idOfertaWebcom", comisionDto.getIdOfertaWebcom());
+						map.put("idOfertaRem", comisionDto.getIdOfertaRem());
 						map.put("success", false);
 						map.put("errorMessages", errorsList);
 					}					

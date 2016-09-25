@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -63,6 +64,7 @@ public class GastoGestion implements Serializable, Auditable {
     @Column(name="GGE_AUTORIZACION_PROPIETARIO")
     private Integer autorizaPropietario;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="DD_MAP_ID")
     private DDMotivoAutorizacionPropietario motivoAutorizacionPropietario;
     
@@ -72,21 +74,26 @@ public class GastoGestion implements Serializable, Auditable {
     @Column(name="GGE_FECHA_ALTA")
     private Date fechaAlta;
     
-    @Column(name="USU_ID_ALTA")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="USU_ID_ALTA")
     private Usuario usuarioAlta;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="DD_EAH_ID")
     private DDEstadoAutorizacionHaya estadoAutorizacionHaya;
     
     @Column(name="GGE_FECHA_EAH")
     private Date fechaEstadoAutorizacionHaya;
     
-    @Column(name="USU_ID_EAH")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="USU_ID_EAH")
     private Usuario usuarioEstadoAutorizacionHaya;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="DD_MRH_ID")
     private DDMotivoRechazoAutorizacionHaya motivoRechazoAutorizacionHaya;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="DD_EAP_ID")
     private DDEstadoAutorizacionPropietario estadoAutorizacionPropietario;
     
@@ -102,15 +109,18 @@ public class GastoGestion implements Serializable, Auditable {
     @JoinColumn(name="USU_ID_ANULACION")
     private Usuario usuarioAnulacion;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="DD_MAG_ID")
     private DDMotivoAnulacionGasto motivoAnulacion;
     
     @Column(name="GGE_FECHA_RP")
     private Date fechaRetencionPago;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USU_ID_RP")
     private Usuario usuarioRetencionPago;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="DD_MRP_ID")
     private DDMotivoRetencionPago motivoRetencionPago;
     

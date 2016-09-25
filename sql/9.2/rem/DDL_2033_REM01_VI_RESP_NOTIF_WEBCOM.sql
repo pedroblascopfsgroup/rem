@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para almacentar el historico de los trabajos enviadas a webcom
+--## Finalidad: Tabla para almacentar el historico de las respuestas de las notificaciones enviadas a webcom.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -31,10 +31,10 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
-    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_TRABAJOS_WEBCOM'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TWH_TRABAJOS_WEBCOM_HIST'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_RESP_NOTIF_WEBCOM'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'NWH_RESP_NOTIF_WEBCOM_HIST'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_MSQL VARCHAR2(4000 CHAR); 
-	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para almacentar el historico de los trabajos enviadas a webcom.'; -- Vble. para los comentarios de las tablas
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para almacentar el historico de las respuestas de las notificaciones enviadas a webcom.'; -- Vble. para los comentarios de las tablas
 
     CUENTA NUMBER;
     
@@ -84,18 +84,35 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Crear nueva vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'..');
   	EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
 	AS
+		
 		SELECT 
-		CAST(TBJ.TBJ_WEBCOM_ID AS NUMBER(16,0)) 												AS ID_TRABAJO_WEBCOM,
-		CAST(TBJ.TBJ_NUM_TRABAJO AS NUMBER(16,0)) 												AS ID_TRABAJO_REM,  
-	    CAST(DDEST.DD_EST_CODIGO AS VARCHAR2(5 CHAR)) 											AS COD_ESTADO_OFERTA,
-	    CAST(TBJ.TBJ_MOTIVO_RECHAZO AS VARCHAR2(250 CHAR))                      				AS MOTIVO_RECHAZO,
-	    CAST(TO_CHAR(TBJ.FECHAMODIFICAR,''YYYY-MM-DD'') ||
-			''T'' ||TO_CHAR(TBJ.FECHAMODIFICAR,''HH24:MI:SS'') AS VARCHAR2(50 CHAR))			AS FECHA_ACCION,
-		CAST((SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU
-			WHERE USU.USU_USERNAME = TBJ.USUARIOMODIFICAR) AS NUMBER(16,0))						AS ID_USUARIO_REM_ACCION
-		FROM  '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ
-		LEFT JOIN '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO DDEST ON DDEST.DD_EST_ID = TBJ.DD_EST_ID
-   	 	WHERE TBJ.TBJ_WEBCOM_ID IS NOT NULL AND TBJ.USUARIOMODIFICAR IS NOT NULL AND TBJ.USUARIOMODIFICAR != ''REST-USER''';
+			CAST(REG.IDTAREA AS NUMBER(16,0))                                                                       AS ID_NOTIFICACION_REM,
+			CAST((SELECT M2.IRG_VALOR 
+				FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO M2
+				WHERE M2.REG_ID = REG.REG_ID 
+				AND M2.IRG_CLAVE = ''ID_TAREA_WEBCOM'') AS NUMBER(16,0))                                  			ID_NOTIFICACION_WEBCOM,
+			CAST(MEJ.TRG_EIN_ID AS NUMBER(16,0))   				     	                                			ID_ACTIVO_HAYA,
+			CAST((SELECT M2.IRG_VALOR 
+				FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO M2
+				WHERE M2.REG_ID = REG.REG_ID 
+				AND M2.IRG_CLAVE = ''DESCRIPCION_TAREA'') AS VARCHAR2(250 CHAR))                               		DESCRIPCION,
+			CAST((SELECT TO_CHAR(M2.FECHACREAR,''YYYY-MM-DD'') 
+			    || ''T'' ||TO_CHAR(M2.FECHACREAR,''HH24:MI:SS'')  
+				FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO M2 
+				WHERE M2.REG_ID = REG.REG_ID 
+				AND M2.IRG_CLAVE = ''FECHA_RESP_TAREA'') AS VARCHAR2(50 CHAR))                                      FECHA_ACCION,
+			CAST((SELECT USU.USU_ID
+				FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO M2, '||V_ESQUEMA_M||'.USU_USUARIOS USU
+				WHERE M2.REG_ID = REG.REG_ID AND M2.IRG_CLAVE = ''FECHA_RESP_TAREA''
+				AND USU.USU_USERNAME = M2.USUARIOCREAR) AS NUMBER(16,0))                                            ID_USUARIO_REM_ACCION
+		FROM '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR
+		INNER JOIN (SELECT INFO.REG_ID,INFO.IRG_VALOR AS IDTAREA
+		            FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO INFO 
+		            WHERE INFO.IRG_CLAVE = ''ID_TAREA'') REG ON REG.IDTAREA = TAR.TAR_ID
+		INNER JOIN '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO REG2 
+					ON REG2.REG_ID = REG.REG_ID AND REG2.IRG_CLAVE = ''FECHA_RESP_TAREA''
+		INNER JOIN '||V_ESQUEMA||'.MEJ_REG_REGISTRO MEJ ON MEJ.REG_ID = REG.REG_ID 
+		WHERE TAR.USUARIOCREAR = ''REST-USER''';  	
 		
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
@@ -108,12 +125,12 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
 
 		-- Creamos indice	
-		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ID_TRABAJO_WEBCOM) TABLESPACE '||V_TABLESPACE_IDX;		
+		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ID_NOTIFICACION_REM) TABLESPACE '||V_TABLESPACE_IDX;		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX... Indice creado.');	
 	
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ID_TRABAJO_WEBCOM) USING INDEX)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ID_NOTIFICACION_REM) USING INDEX)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
 	

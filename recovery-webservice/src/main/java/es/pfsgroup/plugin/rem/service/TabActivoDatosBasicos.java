@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -196,7 +197,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto, "incluidoEnPerimetro", activoApi.isActivoIncluidoEnPerimetro(activo.getId()));
 
 		// Datos de perimetro del activo al Dto de datos basicos
-		PerimetroActivo perimetroActivo = activo.getPerimetroActivo();
+		PerimetroActivo perimetroActivo = this.getOrCreatePerimetroActivo(activo);
 		BeanUtils.copyProperties(activoDto, perimetroActivo);
 		
 		if(!Checks.esNulo(activo.getAuditoria()) && !Checks.esNulo(activo.getAuditoria().getFechaCrear())) {
@@ -397,6 +398,22 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			// Perimetro -------
 			beanUtilNotNull.copyProperties(activo.getPerimetroActivo(), dto);
+			// Conversion manual. En el dto son booleanos y en la entidad Integer
+			if(dto.getAplicaAsignarMediador() != null) {
+				activo.getPerimetroActivo().setAplicaAsignarMediador(dto.getAplicaAsignarMediador() ? 1 : 0);
+			}
+			if(dto.getAplicaComercializar() != null) {
+				activo.getPerimetroActivo().setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
+			}
+			if(dto.getAplicaFormalizar() != null) {
+				activo.getPerimetroActivo().setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
+			}
+			if(dto.getAplicaGestion() != null) {
+				activo.getPerimetroActivo().setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
+			}
+			if(dto.getAplicaTramiteAdmision() != null) {
+				activo.getPerimetroActivo().setAplicaTramiteAdmision(dto.getAplicaTramiteAdmision() ? 1 : 0);
+			}
 
 			if (dto.getMotivoAplicaComercializarCodigo() != null) {
 				DDMotivoComercializacion motivoAplicaComercializar = (DDMotivoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class,  dto.getMotivoAplicaComercializarCodigo());
@@ -460,5 +477,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		
 	}
+	
+	private PerimetroActivo getOrCreatePerimetroActivo(Activo activo) {
+		
+		PerimetroActivo perimetroActivo = activo.getPerimetroActivo();
+		
+		if(Checks.esNulo(perimetroActivo)) {
+			perimetroActivo = new PerimetroActivo();
+			perimetroActivo.setActivo(activo);
+			perimetroActivo.setIncluidoEnPerimetro(1);
+			
+			perimetroActivo = activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+		}
+		
+		return perimetroActivo;
+	}
+
 
 }

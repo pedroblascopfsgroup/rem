@@ -102,6 +102,8 @@ public class WebcomRequestUtils {
 	 * <strong>Si no encuentra el valor devuelve un número negativo</strong>
 	 * </p>
 	 * 
+	 * <p><i>La ineficiencia me la pela</i></p>
+	 * 
 	 * @param array
 	 * @param valor
 	 * @return 

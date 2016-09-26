@@ -100,7 +100,7 @@ public abstract class ClienteWebcomBase {
 			Map<String, String> headers = new HashMap<String, String>();
 			headers.put("signature", signature);
 			JSONObject response = httpClient.processRequest(endpoint.getEndpointUrl(), endpoint.getHttpMethod(),
-					headers, requestBody, endpoint.getTimeout(), endpoint.getCharset());
+					headers, requestBody, (endpoint.getTimeout() * 1000), endpoint.getCharset());
 
 			logger.debug("Respuesta recibida " + response);
 

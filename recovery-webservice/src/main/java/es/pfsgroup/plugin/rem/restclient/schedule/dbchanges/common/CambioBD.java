@@ -46,9 +46,11 @@ public class CambioBD implements Serializable {
 
 		if (datosActuales != null) {
 			for (int i = 0; i < datosActuales.length; i++) {
-				Object datoActual = datosActuales[i];
-				if ((datosHistoricos == null) || (!sonIguales(datoActual, datosHistoricos[i]))) {
-					cambios.put(configCambios[i], datoActual);
+				if (i < configCambios.length) {
+					Object datoActual = datosActuales[i];
+					if ((datosHistoricos == null) || (!sonIguales(datoActual, datosHistoricos[i]))) {
+						cambios.put(configCambios[i], datoActual);
+					}
 				}
 			}
 		} else {
@@ -93,7 +95,7 @@ public class CambioBD implements Serializable {
 
 		ArrayList<String> missing = new ArrayList<String>();
 
-		if (camposObligatorios != null) {
+		if ((datosHistoricos != null) && (camposObligatorios != null)) {
 			for (String campo : camposObligatorios) {
 				int pos = WebcomRequestUtils.buscarEnArray(configCambios, campo);
 				if (pos >= 0) {

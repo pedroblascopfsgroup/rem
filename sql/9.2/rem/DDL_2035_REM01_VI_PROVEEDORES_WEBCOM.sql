@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para almacentar el historico de los usuarios enviadas a webcom.
+--## Finalidad: Tabla para almacentar el historico de los proveedores enviadas a webcom.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -31,10 +31,10 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
-    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_USUARIOS_WEBCOM'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'UWH_USUARIOS_WEBCOM_HIST'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_PROVEEDOR_WEBCOM'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'PWH_PROVEEDOR_WEBCOM_HIST'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_MSQL VARCHAR2(4000 CHAR); 
-	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para almacentar el historico de los usuarios enviadas a webcom.'; -- Vble. para los comentarios de las tablas
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para almacentar el historico de los proveedores enviadas a webcom.'; -- Vble. para los comentarios de las tablas
 
     CUENTA NUMBER;
     
@@ -84,30 +84,63 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Crear nueva vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'..');
   	EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
 	AS
-	
 		SELECT 
-		CAST(USU.USU_ID AS NUMBER(16,0))                                          	AS ID_USUARIO_REM,
-		CAST(PVC.PVE_ID AS NUMBER(16,0))                                          	AS ID_PROVEEDOR_REM,
-		CAST(USU.USU_USERNAME AS VARCHAR2(60 CHAR))                               	AS USUARIO_LDAP,
-		CAST(PVC.PVC_NOMBRE AS VARCHAR2(60 CHAR))                                 	AS NOMBRE,
-		CAST(PVC.PVC_APELLID01 || '' '' || PVC.PVC_APELLID02 AS VARCHAR2(60 CHAR))  	AS APELLIDOS,
-		CAST(PVC.PVC_TELF1 AS VARCHAR2(14 CHAR))                                  	AS TELEFONO1,
-		CAST(PVC.PVC_TELF2 AS VARCHAR2(14 CHAR))                                  	AS TELEFONO2,
-		CAST(PVC.PVC_EMAIL AS VARCHAR2(40 CHAR))                                  	AS EMAIL,
-		CASE WHEN (USU.BORRADO = ''1'') 
-					THEN CAST(0 AS NUMBER(1,0))
-					ELSE CAST(1 AS NUMBER(1,0))
-		END 																		ACTIVO,
-		CAST(TO_CHAR(PVC.FECHACREAR,''YYYY-MM-DD'') || 
-		    ''T'' ||TO_CHAR(PVC.FECHACREAR,''HH24:MI:SS'') AS VARCHAR2(50 CHAR))    AS FECHA_ACCION,
-		CAST((SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU 
-		    WHERE USU.USU_USERNAME = PVC.USUARIOCREAR) AS NUMBER(16,0))         	AS ID_USUARIO_REM_ACCION
-		FROM '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC
-		INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = PVC.PVE_ID
-		INNER JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = PVC.USU_ID
+		CAST(PVE.PVE_ID AS NUMBER(16,0))                                          				AS ID_PROVEEDOR_REM,
+		CAST(PVE.PVE_COD_UVEM AS VARCHAR2(10 CHAR))                               				AS CODIGO_PROVEEDOR,
+		CAST(DDTPR.DD_TPR_CODIGO AS VARCHAR2(5 CHAR))                             				AS COD_TIPO_PROVEEDOR,
+		CAST(PVE.PVE_NOMBRE AS VARCHAR2(60 CHAR))                                 				AS NOMBRE,
+		CAST(NULL AS VARCHAR2(60 CHAR)) 														AS APELLIDOS,
+		CAST(NULL AS VARCHAR2(5 CHAR))                                           				AS COD_TIPO_VIA,
+		CAST(PVE.PVE_DIRECCION AS VARCHAR2(100 CHAR))                             				AS NOMBRE_CALLE,
+		CAST(NULL AS VARCHAR2(100 CHAR))                                           				AS NUMERO_CALLE,
+		CAST(NULL AS VARCHAR2(10 CHAR))                                           				AS ESCALERA,
+		CAST(NULL AS VARCHAR2(11 CHAR))                                           				AS PLANTA,
+		CAST(NULL AS VARCHAR2(17 CHAR))                                           				AS PUERTA,
+		CAST(DDLOC.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))                                			AS COD_MUNICIPIO,
+		CAST(NULL AS VARCHAR2(5 CHAR))                                              			AS COD_PEDANIA,
+		CAST(DDPRV.DD_PRV_CODIGO AS VARCHAR2(5 CHAR))                                  			AS COD_PROVINCIA,
+		CAST(PVE.PVE_CP AS VARCHAR2(40 CHAR)) 													AS CODIGO_POSTAL,
+		CAST(PVE.PVE_TELF1 AS VARCHAR2(14 CHAR)) 												AS TELEFONO1,
+		CAST(PVE.PVE_TELF2 AS VARCHAR2(14 CHAR)) 												AS TELEFONO2,
+		CAST(PVE.PVE_EMAIL AS VARCHAR2(40 CHAR)) 												AS EMAIL,
+		CAST(NULL AS VARCHAR2(5 CHAR))                                                			AS DD,
+		CAST(NULL AS VARCHAR2(5 CHAR))                                                			AS DZ,
+		CAST(NULL AS VARCHAR2(5 CHAR))                                                			AS DT,
+		CAST(NULL AS VARCHAR2(5 CHAR))                                                			AS MODIFICAR_INFORMES,
+		CASE WHEN (PVE.BORRADO = ''1'') 
+		    THEN CAST(0 AS NUMBER(1,0))
+		    ELSE CAST(1 AS NUMBER(1,0))
+		END 																		           	ACTIVO,
+		CAST(NULL AS NUMBER(1,0))                                                  				AS ABIERTA,
+	    CAST(PRD.PRD_ID AS NUMBER(16,0))                                                		AS DEL_ID_DELEGACION,  
+	    CAST(DDTVI.DD_TVI_CODIGO AS VARCHAR2(20 CHAR))                                 			AS DEL_COD_TIPO_VIA,
+	    CAST(PRD.PRD_NOMBRE AS VARCHAR2(100 CHAR))                                      		AS DEL_NOMBRE_CALLE,
+	    CAST(PRD.PRD_NUM AS VARCHAR2(100 CHAR))                                         		AS DEL_NUMERO_CALLE,
+	    CAST(PRD.PRD_ESCALERA AS VARCHAR2(10 CHAR))                                     		AS DEL_ESCALERA,
+	    CAST(PRD.PRD_PLANTA AS VARCHAR2(11 CHAR))                                       		AS DEL_PLANTA,
+	    CAST(PRD.PRD_PTA AS VARCHAR2(17 CHAR))                                          		AS DEL_PUERTA,
+	    CAST(DDLOC2.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))                                   		AS DEL_COD_MUNICIPIO,
+	    CAST(DDUPO.DD_UPO_CODIGO AS VARCHAR2(5 CHAR))                                   		AS DEL_COD_PEDANIA,
+	    CAST(DDPRV2.DD_PRV_CODIGO AS VARCHAR2(5 CHAR))                                  		AS DEL_COD_PROVINCIA,
+	    CAST(PRD.PRD_CP AS VARCHAR2(40 CHAR))                                           		AS DEL_CODIGO_POSTAL,
+	    CAST(PRD.PRD_TELEFONO AS VARCHAR2(14 CHAR))                                     		AS DEL_TELEFONO1,
+	    CAST(PRD.PRD_TELEFONO2 AS VARCHAR2(14 CHAR))                                    		AS DEL_TELEFONO2,
+	    CAST(PRD.PRD_EMAIL AS VARCHAR2(40 CHAR))                                        		AS DEL_EMAIL,
+		CAST(TO_CHAR(PVE.FECHACREAR,''YYYY-MM-DD'') || 
+		    ''T'' ||TO_CHAR(PVE.FECHACREAR,''HH24:MI:SS'') AS VARCHAR2(50 CHAR))    			AS FECHA_ACCION,
+		CAST((SELECT USU.USU_ID FROM REMMASTER.USU_USUARIOS USU 
+		    WHERE USU.USU_USERNAME = PVE.USUARIOCREAR) AS NUMBER(16,0))         				AS ID_USUARIO_REM_ACCION
+		FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
+		LEFT JOIN '||V_ESQUEMA||'.ACT_PRD_PROVEEDOR_DIRECCION PRD ON PRD.PVE_ID = PVE.PVE_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR DDTPR ON DDTPR.DD_TPR_ID = PVE.DD_TPR_ID
+		LEFT JOIN '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA DDTVI ON DDTVI.DD_TVI_ID = PRD.DD_TVI_ID
+    	LEFT JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA DDPRV ON DDPRV.DD_PRV_ID = PVE.DD_PRV_ID
+    	LEFT JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA DDPRV2 ON DDPRV2.DD_PRV_ID = PRD.DD_PRV_ID
+		LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD DDLOC ON DDLOC.DD_LOC_ID = PVE.DD_LOC_ID
+    	LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD DDLOC2 ON DDLOC2.DD_LOC_ID = PRD.DD_LOC_ID
+		LEFT JOIN '||V_ESQUEMA_M||'.DD_UPO_UNID_POBLACIONAL DDUPO ON DDUPO.DD_UPO_ID = PRD.DD_UPO_ID
 		WHERE DDTPR.DD_TPR_CODIGO = ''04''';
-
+   
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 
@@ -119,12 +152,12 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
 
 		-- Creamos indice	
-		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ID_USUARIO_REM) TABLESPACE '||V_TABLESPACE_IDX;		
+		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ID_PROVEEDOR_REM) TABLESPACE '||V_TABLESPACE_IDX;		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX... Indice creado.');	
 	
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ID_USUARIO_REM) USING INDEX)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ID_PROVEEDOR_REM) USING INDEX)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
 	

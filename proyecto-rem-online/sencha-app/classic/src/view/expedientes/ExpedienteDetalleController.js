@@ -767,7 +767,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
 			var importeOferta = parseFloat(me.getViewModel().get('expediente.importe')).toFixed(2);
 			honorarios.setValue((importeOferta*importeCalculoHonorario)/100);
-			importeField.setMaxValue(100);//maxValue: '100',
+			importeField.setMaxValue(100);//maxValue: '100';
 		}
 		
 		else if(tipoCalculo=='Importe fijo'){

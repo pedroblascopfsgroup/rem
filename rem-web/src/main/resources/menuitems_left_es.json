@@ -86,6 +86,14 @@
 		                "iconCls": "app-menu-ico ico-configuracion",
 		                "cls": "app-menu-item",
 		                "routeId": "configuracion"
+		            },
+		            {
+		                "text":   "Administración",
+		                "view":   "administracion.AdministracionMainMenu",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-publicacion",
+		                "cls": "app-menu-item",
+		                "routeId": "administracion"
 		            }
             
             

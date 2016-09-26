@@ -4,14 +4,20 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class EstadoOfertaDto implements WebcomRESTDto{
 	
+	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
+	@WebcomRequired
 	private DateDataType fechaAccion;
+	@WebcomRequired
 	private LongDataType idOfertaWebcom;
+	@WebcomRequired
 	private LongDataType idOfertaRem;
 	private LongDataType idActivoHaya;
+	@WebcomRequired
 	private StringDataType codEstadoOferta;
 	private StringDataType codEstadoExpediente;
 	private BooleanDataType vendido;

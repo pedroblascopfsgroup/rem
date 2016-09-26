@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 
 /**
@@ -77,11 +79,15 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 			if (listCambios != null) {
 				for (CambioBD cambio : listCambios) {
 					logger.debug("Obtenemos los cambios registros cambiados en BD");
-					Map<String, Object> map = cambio.getCambios();
-					if (!map.isEmpty()) {
+					Map<String, Object> camposActualizados = cambio.getCambios();
+					if (!camposActualizados.isEmpty()) {
 						T dto = createDtoInstance();
-						logger.debug("Convertimos " + map + " a " + dto.getClass());
-						Converter.updateObjectFromHashMap(map, dto, null);
+						Map<String, Object> datos = cambio.getValoresHistoricos(camposObligatorios(dto));
+						logger.debug("Valores historicos: " + datos);
+						logger.debug("Campos actualizados: " + camposActualizados);
+						datos.putAll(camposActualizados);
+						logger.debug("Relenamos el dto "+ dto.getClass() + " con " + camposActualizados );
+						Converter.updateObjectFromHashMap(datos, dto, null);
 						listaCambios.add(dto);
 					} else {
 						logger.debug("Map de cambios vacío, nada que notificar");
@@ -98,6 +104,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 		}
 
 	}
+
 
 	/**
 	 * Marca los registros de BD como enviados.
@@ -134,6 +141,25 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 */
 	public Class getDtoClass() {
 		return this.createDtoInstance().getClass();
+	}
+	
+	/**
+	 * Devuelve una lista de campos marcados como obligatorios mediante la anotacion @WebcomRequired en el DTO.
+	 * @param dto
+	 * @return
+	 */
+	private String[] camposObligatorios(T dto) {
+		ArrayList<String> result = new ArrayList<String>();
+		Field[] fields = dto.getClass().getDeclaredFields();
+		if (fields != null){
+			for (Field f : fields){
+				if (f.getAnnotation(WebcomRequired.class) != null){
+					result.add(f.getName());
+				}
+			}
+		}
+		
+		return result.toArray(new String[]{});
 	}
 
 }

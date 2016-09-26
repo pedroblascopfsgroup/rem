@@ -90,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -333,9 +334,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 					
 					if(!listaVisitasCliente.isEmpty()) {
-						oferta.setVisita(listaVisitasCliente.get(0));			
-						genericDao.save(Oferta.class, oferta);
+						oferta.setVisita(listaVisitasCliente.get(0));
+						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_REALIZADA);
+						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
+					} else {
+						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_PENDIENTE);
+						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
 					}
+					
+					genericDao.save(Oferta.class, oferta);
 
 				}
 			}

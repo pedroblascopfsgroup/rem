@@ -3,13 +3,18 @@ package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class NotificacionDto implements WebcomRESTDto{
 	
+	@WebcomRequired
 	private DateDataType fechaAccion;
+	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
 	private LongDataType idNotificacionWebcom;
+	@WebcomRequired
 	private LongDataType idNotificacionRem;
+	@WebcomRequired
 	private LongDataType idActivoHaya;
 	private StringDataType descripcion;
 	

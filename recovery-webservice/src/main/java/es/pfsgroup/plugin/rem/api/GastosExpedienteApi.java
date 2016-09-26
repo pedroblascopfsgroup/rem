@@ -15,13 +15,19 @@ public interface GastosExpedienteApi {
      */
     public GastosExpediente findOne(Long id);
     
-    
+    /**
+	 * Devuelve una lista de GastosExpediente aplicando el filtro que recibe.
+	 * @param ComisionDto con los parametros de filtro
+	 * @return List<GastosExpediente> 
+	 */
+	public List<GastosExpediente> getListaGastosExpediente(ComisionDto ComisionDto);
+	
     /**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de las peticiones POST.
 	 * @param ComisionDto con los parametros de entrada
 	 * @return List<String> 
 	 */
-    public List<String> validateComisionPostRequestData(ComisionDto comisionDto);
+    public List<String> validateComisionPostRequestData(ComisionDto ComisionDto);
     
     /**
      * Actualiza un GastosExpediente a partir de la información pasada por parámetro.

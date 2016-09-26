@@ -89,13 +89,6 @@ public interface ExpedienteComercialApi {
 	     * @return
 	     */
 		public boolean update(ExpedienteComercial expedienteComercial);
-		
-		/**
-	     * Recupera el estado expediente asociado a un determinado codigo
-	     * @param codigo
-	     * @return
-	     */
-		public DDEstadosExpedienteComercial getEstado(String codigo);
 
 		/**
 		 * Método que recupera las observaciones del expediente comercial
@@ -279,5 +272,13 @@ public interface ExpedienteComercialApi {
 		 */		
 		public ExpedienteComercial expedienteComercialPorOferta (Long idOferta);
 	   
+
+		/**
+		 * Método que obtiene uno de los estados posibles del ExpedienteComercial 
+		 * relacionado con una determinado código
+		 * @param codigo
+		 * @return
+		 */	
+		public DDEstadosExpedienteComercial getDDEstadosExpedienteComercialByCodigo (String codigo);
 }
 

@@ -25,6 +25,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 
 /**
@@ -58,6 +59,8 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
  */
 @Repository
 public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
+
+	public static final String SEPARADOR_COLUMNAS = ", ";
 
 	private static final String REST_USER = "REST-USER";
 
@@ -101,8 +104,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		try {
 			DbIdContextHolder.setDbId(1L);
 			String[] fields = getDtoFields(dtoClass);
-			String columns = columns4Select(fields);
-			String columIdUsuarioRemAccion = columns4Select(new String[] { ConstantesGenericas.ID_USUARIO_REM_ACCION });
+			String columns = columns4Select(fields, infoTablas.clavePrimaria());
+			String columIdUsuarioRemAccion = field2column(ConstantesGenericas.ID_USUARIO_REM_ACCION);
 			String selectFromDatosActuales = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales()
 					+ " WHERE " + columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
 			String selectFromDatosHistoricos = "SELECT " + columns + " FROM " + infoTablas.nombreTablaDatosHistoricos();
@@ -119,12 +122,13 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			if (resultado != null) {
 				String selectDatoHistorico = null;
+				int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
 				try {
 					for (Object[] r : resultado) {
 						CambioBD cambio = new CambioBD(fields);
 						cambio.setDatosActuales(r);
 						selectDatoHistorico = selectFromDatosHistoricos + " WHERE " + infoTablas.clavePrimaria() + " = "
-								+ r[0];
+								+ r[posPk];
 						logger.debug("Ejecutando: " + selectDatoHistorico);
 						Object[] historico = queryExecutor.sqlRunUniqueResult(session, selectDatoHistorico);
 						if (historico != null) {
@@ -182,7 +186,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 
 		String[] fields = getDtoFields(dtoClass);
-		String columns = columns4Select(fields);
+		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
 		Session session = this.sesionFactoryFacade.getSession(this);
 		logger.debug("Inicando transacción");
@@ -246,18 +250,49 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * Para ello inserta "_" como separador y convierte todo a mayúsculas
 	 * </p>
 	 * 
+	 *
 	 * @param fields
+	 * @param clavePrimaria
 	 * @return
 	 */
-	private String columns4Select(String[] fields) {
+	public String columns4Select(String[] fields, String clavePrimaria) {
 		StringBuilder b = new StringBuilder();
 		String separador = "";
+		boolean pkfound = false;
 		for (String s : fields) {
-			String s2 = s.replaceAll("([A-Z])", "_$1").toUpperCase();
+			String s2 = field2column(s);
+			pkfound = pkfound || s2.equals(clavePrimaria);
 			b.append(separador).append(s2);
-			separador = ", ";
+			separador = SEPARADOR_COLUMNAS;
+		}
+		if (!pkfound) {
+			b.append(separador).append(clavePrimaria);
 		}
 		return b.toString();
+	}
+
+	/**
+	 * Nos dice la posición que ocupa una columna en el array de campos del DTO
+	 * 
+	 * @param columnas
+	 *            String con las columnas separadas por comas.
+	 * @param columna
+	 *            Nombre de la columna, en formato COLUMNA_DE_BD
+	 * @return
+	 */
+	private int posicionColumna(String columnas, String columna) {
+		String[] cols = columnas.split(SEPARADOR_COLUMNAS);
+		int pos = WebcomRequestUtils.buscarEnArray(cols, columna);
+		if (pos >= 0) {
+			return pos;
+		} else {
+			throw new CambiosBDDaoError(
+					"No se ha podido encontrar la clave primaria [pk=" + columna + ", cols=" + columnas);
+		}
+	}
+
+	private String field2column(String s) {
+		return s.replaceAll("([A-Z])", "_$1").toUpperCase();
 	}
 
 	/**
@@ -275,8 +310,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			try {
 
 				logger.debug("Buscando " + REST_USER + " con criteria");
-				Criteria criteria = queryExecutor
-						.createCriteria(session, Usuario.class)
+				Criteria criteria = queryExecutor.createCriteria(session, Usuario.class)
 						.add(Restrictions.eq("username", REST_USER));
 				Usuario restUser = (Usuario) queryExecutor.criteriaRunUniqueResult(criteria);
 				if (restUser == null) {

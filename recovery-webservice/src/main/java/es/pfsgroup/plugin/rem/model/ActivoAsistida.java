@@ -21,7 +21,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAsistida;
 
 
 /**
@@ -50,19 +50,19 @@ public class ActivoAsistida extends ActivoAgrupacion implements Serializable {
     private Localidad localidad; 
     
     @ManyToOne
-    @JoinColumn(name = "DD_EON_ID")
-	private DDEstadoObraNueva estadoObraNueva;
+    @JoinColumn(name = "DD_EAS_ID")
+	private DDEstadoAsistida estadoAsistida;
     
-    @Column(name = "ONV_DIRECCION")
+    @Column(name = "ASI_DIRECCION")
 	private String direccion;
     
-    @Column(name = "ONV_CP")
+    @Column(name = "ASI_CP")
 	private String codigoPostal;
 	
-	@Column(name = "ONV_ACREEDOR_PDV")
+	@Column(name = "ASI_ACREEDOR_PDV")
 	private String acreedorPDV;
 	
-	@OneToMany(mappedBy = "obraNueva", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "asistida", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoSubdivision> subdivision;
@@ -83,12 +83,12 @@ public class ActivoAsistida extends ActivoAgrupacion implements Serializable {
 		this.localidad = localidad;
 	}
 
-	public DDEstadoObraNueva getEstadoObraNueva() {
-		return estadoObraNueva;
+	public DDEstadoAsistida getEstadoAsistida() {
+		return estadoAsistida;
 	}
 
-	public void setEstadoObraNueva(DDEstadoObraNueva estadoObraNueva) {
-		this.estadoObraNueva = estadoObraNueva;
+	public void setEstadoAsistida(DDEstadoAsistida estadoAsistida) {
+		this.estadoAsistida = estadoAsistida;
 	}
 
 	public String getDireccion() {

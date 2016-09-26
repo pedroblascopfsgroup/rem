@@ -126,7 +126,13 @@ public class ActivoAgrupacion implements Serializable, Auditable {
     @JoinColumn(name = "AGR_ID")
     private List<Oferta> ofertas;
     
-    @Version   
+	@Column(name = "AGR_INI_VIGENCIA")
+	private Date fechaInicioVigencia;
+	
+	@Column(name = "AGR_FIN_VIGENCIA")
+	private Date fechaFinVigencia;
+
+	@Version   
 	private Long version;
 
 	@Embedded
@@ -309,6 +315,22 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 
 	public void setFotos(List<ActivoFoto> fotos) {
 		this.fotos = fotos;
+	}
+	
+    public Date getFechaInicioVigencia() {
+		return fechaInicioVigencia;
+	}
+
+	public void setFechaInicioVigencia(Date fechaInicioVigencia) {
+		this.fechaInicioVigencia = fechaInicioVigencia;
+	}
+
+	public Date getFechaFinVigencia() {
+		return fechaFinVigencia;
+	}
+
+	public void setFechaFinVigencia(Date fechaFinVigencia) {
+		this.fechaFinVigencia = fechaFinVigencia;
 	}
 
 }

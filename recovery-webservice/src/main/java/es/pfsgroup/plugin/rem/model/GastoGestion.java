@@ -54,7 +54,7 @@ public class GastoGestion implements Serializable, Auditable {
 	@Id
     @Column(name = "GGE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoGestionGenerator")
-    @SequenceGenerator(name = "GastoDetalleEconomicoGenerator", sequenceName = "S_GDE_GASTOS_DETALLE_ECO")
+    @SequenceGenerator(name = "GastoGestionGenerator", sequenceName = "S_GDE_GASTOS_DETALLE_ECO")
     private Long id;
 	
     @ManyToOne

@@ -8,8 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.jamonapi.utils.Logger;
 
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -50,6 +54,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_MOTIVO_SIN_COMERCIAL = 6;
 	public static final int COL_NUM_TIPO_COMERCIALIZACION = 7;
 
+    protected final Log logger = LogFactory.getLog(getClass());
+    
 	@Autowired
 	private MSVExcelParser excelParser;
 	
@@ -110,6 +116,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 					}
 				} catch (Exception e) {
+					logger.error(e.getMessage());
 					e.printStackTrace();
 				}
 //			}
@@ -162,6 +169,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();
 		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
@@ -174,10 +182,10 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					return false;
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return true;
@@ -192,10 +200,10 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return listaFilas;
@@ -210,15 +218,16 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			Integer codigoTipoComercial = 0;
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				codigoTipoComercial = Integer.valueOf(exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION));
+				codigoTipoComercial = exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION).isEmpty()? Integer.valueOf(0) : 
+					Integer.valueOf(exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION));
 				if(codigoTipoComercial < 0 || codigoTipoComercial > 4)
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return listaFilas;
@@ -232,15 +241,16 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			Integer codigoMotivoConComercial = 0;
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				codigoMotivoConComercial = Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL));
+				codigoMotivoConComercial = exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL).isEmpty() ? Integer.valueOf(0) :
+						Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL));
 				if(codigoMotivoConComercial < 0 || codigoMotivoConComercial > 3)
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return listaFilas;
@@ -254,15 +264,16 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			Integer codigoMotivoSinComercial = 0;
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				codigoMotivoSinComercial = Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL));
+				codigoMotivoSinComercial = exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL).isEmpty() ? Integer.valueOf(0) :
+					Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL));
 				if(codigoMotivoSinComercial < 0 || codigoMotivoSinComercial > 63)
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return listaFilas;
@@ -285,17 +296,17 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN);
 				valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN);
 				if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro))
-						|| !("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro))
-						|| !("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro))
+						|| !("S".equals(valorConGestion) || "N".equals(valorConGestion))
+						|| !("S".equals(valorConComercial) || "N".equals(valorConComercial))
 						)
 					listaFilas.add(i);
 			
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return listaFilas;

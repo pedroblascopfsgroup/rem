@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 @Component
 public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 
+    protected final Log logger = LogFactory.getLog(getClass());
+    
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 		
@@ -64,64 +68,72 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 			
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
+		
+		try{
+			// Recorre y procesa todas las filas del fichero excel
+			for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
+				
+				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+				
+				//Evalua si ha encontrado un registro de perimetro para el activo dado. 
+				//En caso de que no exista, crea uno nuevo relacionado sin datos
+				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 	
-//		Usuario gestorBloqueoPrecio = adapter.getUsuarioLogado();
+				//Variables temporales para asignar valores de filas excel
+				Integer tmpIncluidoEnPerimetro = "S".equals(exc.dameCelda(fila, 1))? Integer.valueOf(1) : Integer.valueOf(0);
+				Integer tmpAplicaGestion = "S".equals(exc.dameCelda(fila, 2))? Integer.valueOf(1) : Integer.valueOf(0);
+				String  tmpMotivoAplicaGestion = exc.dameCelda(fila, 3);
+				Integer tmpAplicaComercializar = "S".equals(exc.dameCelda(fila, 4))? Integer.valueOf(1) : Integer.valueOf(0);
+				String  tmpMotivoComercializacion = exc.dameCelda(fila, 5);
+				String  tmpMotivoNoComercializacion = exc.dameCelda(fila, 6);
+				String  tmpTipoComercializacion = exc.dameCelda(fila, 7);
+				
+	
+				perimetroActivo.setActivo(activo);
+				//Incluido en perimetro
+				if(!Checks.esNulo(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
+				//Aplica gestion
+				if(!Checks.esNulo(tmpAplicaGestion)){
+					perimetroActivo.setAplicaGestion(tmpAplicaGestion);
+					perimetroActivo.setFechaAplicaGestion(new Date());					
+				}
+				if(!Checks.esNulo(tmpMotivoAplicaGestion)) perimetroActivo.setMotivoAplicaGestion(tmpMotivoAplicaGestion);
+				//Aplica comercializacion
+				if(!Checks.esNulo(tmpAplicaComercializar)){
+					perimetroActivo.setAplicaComercializar(tmpAplicaComercializar);
+					perimetroActivo.setFechaAplicaComercializar(new Date());
+				}
+				//Motivo para Si comercializar
+				if(!Checks.esNulo(tmpMotivoComercializacion))
+					perimetroActivo.setMotivoAplicaComercializar((DDMotivoComercializacion)
+						utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class, tmpMotivoComercializacion));
+				
+				//Motivo para No comercializar
+				if(!Checks.esNulo(tmpMotivoNoComercializacion))
+					perimetroActivo.setMotivoNoAplicaComercializar((DDMotivoNoComercializacion)
+						utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoNoComercializacion.class, tmpMotivoNoComercializacion));
+				
+				//Tipo de comercializacion en el activo
+				if(!Checks.esNulo(tmpTipoComercializacion))
+				activo.setTipoComercializacion((DDTipoComercializacion)
+						utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpTipoComercializacion));
+				
+				//Persiste los datos, creando el registro de perimetro
+				if(!Checks.esNulo(tmpTipoComercializacion)) activoApi.saveOrUpdate(activo);
+				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+	
+			} //Fin for
+			
+			return true;
+			
+		} catch (Exception e){
+			
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			return false;
+			
+		}
 
-		// Recorre y procesa todas las filas del fichero excel
-		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
-			
-			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-			
-			//Evalua si ha encontrado un registro de perimetro para el activo dado. 
-			//En caso de que no exista, crea uno nuevo relacionado sin datos
-			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
-
-			//Variables temporales para asignar valores de filas excel
-			Integer tmpIncluidoEnPerimetro = Integer.parseInt(exc.dameCelda(fila, 1));
-			Integer tmpAplicaGestion = Integer.parseInt(exc.dameCelda(fila, 2));
-			String  tmpMotivoAplicaGestion = exc.dameCelda(fila, 3);
-			Integer tmpAplicaComercializar = Integer.parseInt(exc.dameCelda(fila, 4));
-			String  tmpMotivoComercializacion = exc.dameCelda(fila, 5);
-			String  tmpMotivoNoComercializacion = exc.dameCelda(fila, 6);
-			String  tmpTipoComercializacion = exc.dameCelda(fila, 7);
-			
-
-			perimetroActivo.setActivo(activo);
-			//Incluido en perimetro
-			if(!Checks.esNulo(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
-			//Aplica gestion
-			if(!Checks.esNulo(tmpAplicaGestion)){
-				perimetroActivo.setAplicaGestion(tmpAplicaGestion);
-				perimetroActivo.setFechaAplicaGestion(new Date());					
-			}
-			if(!Checks.esNulo(tmpMotivoAplicaGestion)) perimetroActivo.setMotivoAplicaGestion(tmpMotivoAplicaGestion);
-			//Aplica comercializacion
-			if(!Checks.esNulo(tmpAplicaComercializar)){
-				perimetroActivo.setAplicaComercializar(tmpAplicaComercializar);
-				perimetroActivo.setFechaAplicaComercializar(new Date());
-			}
-			//Motivo para Si comercializar
-			if(!Checks.esNulo(tmpMotivoComercializacion))
-				perimetroActivo.setMotivoAplicaComercializar((DDMotivoComercializacion)
-					utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class, tmpMotivoComercializacion));
-			
-			//Motivo para No comercializar
-			if(!Checks.esNulo(tmpMotivoNoComercializacion))
-				perimetroActivo.setMotivoNoAplicaComercializar((DDMotivoNoComercializacion)
-					utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoNoComercializacion.class, tmpMotivoNoComercializacion));
-			
-			//Tipo de comercializacion en el activo
-			if(!Checks.esNulo(tmpTipoComercializacion))
-			activo.setTipoComercializacion((DDTipoComercializacion)
-					utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpTipoComercializacion));
-			
-			//Persiste los datos, creando el registro de perimetro
-			if(!Checks.esNulo(tmpTipoComercializacion)) activoApi.saveOrUpdate(activo);
-			activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
-
-		} //Fin for
-
-		return true;
 	}
 
 }

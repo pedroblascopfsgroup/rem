@@ -935,6 +935,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setTipoAgrupacionDescripcion(trabajo.getAgrupacion().getTipoAgrupacion().getDescripcion());
 		}
 		
+		// HREOS-860 Administracion
+		if(!Checks.esNulo(trabajo.getGastoTrabajo())) {
+			dtoTrabajo.setFechaEmisionFactura(trabajo.getGastoTrabajo().getGastoProveedor().getFechaEmision());
+		}
+		
 		return dtoTrabajo;
 		
 	}

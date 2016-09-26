@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -39,6 +40,7 @@ public class UpdaterServiceInformeEmisionInforme implements UpdaterService {
 				//Guardado adicional Fecha emisión informe => trabajo ->  Fecha finalización
 				try {
 					tramite.getTrabajo().setFechaFin(ft.parse(valor.getValor()));
+					Auditoria.save(tramite.getTrabajo());
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -58,11 +60,13 @@ public class UpdaterServiceInformeEmisionInforme implements UpdaterService {
 					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_FALLIDO);
 					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 					tramite.getTrabajo().setEstado(estadoTrabajo);
+					Auditoria.save(tramite.getTrabajo());
 				}else{
 					//EMITIDO = SI => Trabajo -> estado ->  FINALIZADO PDE VALIDACION
 					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION);
 					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 					tramite.getTrabajo().setEstado(estadoTrabajo);
+					Auditoria.save(tramite.getTrabajo());
 				}
 
 			}

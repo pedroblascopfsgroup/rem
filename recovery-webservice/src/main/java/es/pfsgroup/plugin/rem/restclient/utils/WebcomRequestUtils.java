@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.Random;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
@@ -17,7 +21,9 @@ import net.sf.json.JSONObject;
 
 public class WebcomRequestUtils {
 	
-	private static SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	private static final Log logger = LogFactory.getLog(WebcomRequestUtils.class);
+	
+	private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
 
 	public static JSONObject createRequestJson(ParamsList paramsList) {
 		JSONArray dataArray = new JSONArray();
@@ -47,7 +53,7 @@ public class WebcomRequestUtils {
 		return data;
 	}
 
-	private static Map<String, String> toStringParameters(Map<String, Object> params) {
+	public static Map<String, String> toStringParameters(Map<String, Object> params) {
 		HashMap<String, String> strParams = new HashMap<String, String>();
 		if ((params != null) && (!params.isEmpty())) {
 			for (Entry<String, Object> p : params.entrySet()) {
@@ -77,11 +83,37 @@ public class WebcomRequestUtils {
 	}
 
 	public static String formatDate(Date date) {
-		return formaterDate.format(date);
+		logger.debug("Date -> String: " + date);
+		SimpleDateFormat f = new SimpleDateFormat(DATETIME_FORMAT);
+		return f.format(date);
 	}
 
 	public static Date parseDate(String string) throws ParseException {
-		return formaterDate.parse(string);
+		logger.debug("String -> Date: " + string);
+		SimpleDateFormat f = new SimpleDateFormat(DATETIME_FORMAT);
+		return f.parse(string);
+	}
+	
+	/**
+	 * Busca un elemento en un Array devolviendo su posición. De un modo
+	 * ineficiente pero sirve para arrays pequeños porque no hace falta que
+	 * estén ordenados.
+	 * <p>
+	 * <strong>Si no encuentra el valor devuelve un número negativo</strong>
+	 * </p>
+	 * 
+	 * @param array
+	 * @param valor
+	 * @return 
+	 */
+	public static int buscarEnArray(String[] array, String valor) {
+		String c = valor.trim();
+		for (int i = 0; i < array.length; i++) {
+			if (c.equals(array[i])) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 }

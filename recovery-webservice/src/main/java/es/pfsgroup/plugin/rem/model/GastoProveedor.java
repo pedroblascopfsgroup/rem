@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.cm.arq.mad.confentorno.PropiedadesEntorno;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -75,6 +76,10 @@ public class GastoProveedor implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_EMISOR")
 	private ActivoProveedor proveedor;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRO_ID")
+	private ActivoPropietario propietario;
 	
 	@Column(name="GPV_FECHA_EMISION")
 	private Date fechaEmision;

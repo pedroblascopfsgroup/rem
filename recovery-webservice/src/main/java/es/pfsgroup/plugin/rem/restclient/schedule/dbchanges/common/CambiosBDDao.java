@@ -117,13 +117,13 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			List<Object[]> resultado = null;
 			
-//			try{
-//				logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
-//				queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
-//			} catch (Throwable t) {
-//				throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews,
-//						infoTablas, t);
-//			}
+			try{
+				logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+				queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
+			} catch (Throwable t) {
+				throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews,
+						infoTablas, t);
+			}
 			
 			try {
 				logger.debug("Ejecutando: " + queryString);

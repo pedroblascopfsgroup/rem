@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20160921
+--## FECHA_CREACION=20160926
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar la información de las agrupaciones de tipo asistidas.
+--## Finalidad: Tabla para gestionar el diccionario de subcarteras.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -15,6 +15,7 @@
 --*/
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
@@ -32,16 +33,17 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_ASI_ASISTIDA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar la información de las agrupaciones de tipo asistida de los activos.'; -- Vble. para los comentarios de las tablas
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_SCR_SUBCARTERA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de subcarteras.'; -- Vble. para los comentarios de las tablas
 
 BEGIN
-	
+
+
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
 	
-
+	
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
@@ -59,19 +61,26 @@ BEGIN
 		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';
 		
 	END IF; 
-
 	
+
 	-- Creamos la tabla
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		AGR_ID           						NUMBER(16,0)                NOT NULL,
-		DD_PRV_ID 								NUMBER(16,0),		
-		DD_LOC_ID								NUMBER(16,0),
-		DD_EAS_ID								NUMBER(16,0),
-		ASI_DIRECCION							VARCHAR2(255 CHAR),
-		ASI_CP									NUMBER(8,0),
-		ASI_ACREEDOR_PDV						VARCHAR2(255 CHAR)
+		DD_SCR_ID           		NUMBER(16)                  NOT NULL,
+		DD_CRA_ID					NUMBER(16)					NOT NULL,
+		DD_SCR_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
+		DD_SCR_CIF					VARCHAR2(20 CHAR),
+		DD_SCR_DESCRIPCION       	VARCHAR2(100 CHAR),
+		DD_SCR_DESCRIPCION_LARGA  	VARCHAR2(250 CHAR),
+		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
+		USUARIOCREAR 				VARCHAR2(10 CHAR) 			NOT NULL ENABLE, 
+		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
+		USUARIOMODIFICAR 			VARCHAR2(10 CHAR), 
+		FECHAMODIFICAR 				TIMESTAMP (6), 
+		USUARIOBORRAR 				VARCHAR2(10 CHAR), 
+		FECHABORRAR 				TIMESTAMP (6), 
+		BORRADO 					NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE
 	)
 	LOGGING 
 	NOCOMPRESS 
@@ -84,56 +93,44 @@ BEGIN
 	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(AGR_ID) TABLESPACE '||V_TABLESPACE_IDX;			
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_SCR_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (AGR_ID) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_SCR_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	
-		
-	-- Creamos foreign key AGR_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ASISTIDA_AGRUP FOREIGN KEY (AGR_ID) REFERENCES '||V_ESQUEMA||'.ACT_AGR_AGRUPACION (AGR_ID) ON DELETE SET NULL)';
+	-- Creamos foreign key DD_CRA_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_SCR_CRA_ID FOREIGN KEY (DD_CRA_ID) REFERENCES '||V_ESQUEMA||'.DD_CRA_CARTERA (DD_CRA_ID) ON DELETE SET NULL)';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ASISTIDA_AGRUP... Foreign key creada.');	
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_SCR_CRA_ID... Foreign key creada.');	
 	
-	-- Creamos foreign key DD_PRV_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ASISTIDA_PROVINCIA FOREIGN KEY (DD_PRV_ID) REFERENCES '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA (DD_PRV_ID) ON DELETE SET NULL)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ASISTIDA_PROVINCIA... Foreign key creada.');
-	
-	-- Creamos foreign key DD_LOC_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ASISTIDA_LOCALIDAD FOREIGN KEY (DD_LOC_ID) REFERENCES '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD (DD_LOC_ID) ON DELETE SET NULL)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ASISTIDA_LOCALIDAD... Foreign key creada.');
-	
-	-- Creamos foreign key DD_EON_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ASISTIDA_DDESTADO_ASIS FOREIGN KEY (DD_EAS_ID) REFERENCES '||V_ESQUEMA||'.DD_EAS_ESTADO_ASISTIDA (DD_EAS_ID) ON DELETE SET NULL)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ASISTIDA_DDESTADO_ASIS... Foreign key creada.');
-	
+	-- Creamos sequence
+	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+	EXECUTE IMMEDIATE V_MSQL;		
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+
 	
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
 	
-	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
-	
-COMMIT;
 
+
+	COMMIT;
 
 
 EXCEPTION
-     WHEN OTHERS THEN
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
           err_num := SQLCODE;
           err_msg := SQLERRM;
 
-          DBMS_OUTPUT.PUT_LINE('KO no modificada');
           DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);

@@ -18,7 +18,7 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstant
 public class ConverterTests {
 
 	@Test
-	public void toDtoMap_formateoDeFloatDataType() {
+	public void toDtoMap_formateoDeDoubleDataType() {
 		/*
 		 * Vamos a convertir un DTO anotado con DecimalDataTypeFormat a Map y
 		 * vamos a comprobar que el valor se transforma a String correctamente

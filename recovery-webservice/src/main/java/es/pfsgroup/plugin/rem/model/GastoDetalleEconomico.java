@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -23,6 +24,9 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPago;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 
@@ -91,7 +95,7 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     @Column(name="GDE_IMP_IND_CUOTA")
     private Double impuestoIndirectoCuota;
     
-    @Column(name="GDE_IRPF_TIPO")
+    @Column(name="GDE_IRPF_TIPO_IMPOSITIVO")
     private Double irpfTipoImpositivo;
     
     @Column(name="GDE_IRPF_CUOTA")
@@ -100,7 +104,29 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     @Column(name="GDE_IMPORTE_TOTAL")
     private Double importeTotal;
     
+    @Column(name="GDE_FECHA_TOPE_PAGO")
+    private Date fehcaTopePago;
     
+    @Column(name="GDE_REPERCUTIBLE_INQUILINO")
+    private Integer repercutibleInquilino;
+    
+    @Column(name="GDE_IMPORTE_PAGADO")
+    private Double importePagado;
+    
+    @Column(name="GDE_FECHA_PAGO")
+    private Date fechaPago;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPA_ID")
+    private DDTipoPagador tipoPagador;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPP_ID")
+    private DDTipoPago tipoPago;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_DEP_ID")
+    private DDDestinatarioPago destinatariosPago;   
     
     
 	@Version   
@@ -263,11 +289,5 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-    
 
-
-
-     
-    
-   
 }

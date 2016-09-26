@@ -84,14 +84,6 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	
-	public String getCif() {
-		return cif;
-	}
-
-	public void setCif(String cif) {
-		this.cif = cif;
-	}
 
 	public String getDescripcion() {
 		return descripcion;

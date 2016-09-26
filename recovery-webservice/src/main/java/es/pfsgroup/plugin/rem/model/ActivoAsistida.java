@@ -61,11 +61,6 @@ public class ActivoAsistida extends ActivoAgrupacion implements Serializable {
 	
 	@Column(name = "ASI_ACREEDOR_PDV")
 	private String acreedorPDV;
-	
-	@OneToMany(mappedBy = "asistida", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "AGR_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private List<ActivoSubdivision> subdivision;
 
 	public DDProvincia getProvincia() {
 		return provincia;
@@ -113,14 +108,6 @@ public class ActivoAsistida extends ActivoAgrupacion implements Serializable {
 
 	public void setAcreedorPDV(String acreedorPDV) {
 		this.acreedorPDV = acreedorPDV;
-	}
-
-	public List<ActivoSubdivision> getSubdivision() {
-		return subdivision;
-	}
-
-	public void setSubdivision(List<ActivoSubdivision> subdivision) {
-		this.subdivision = subdivision;
 	}
 	
 	public Integer getIncluidos() {

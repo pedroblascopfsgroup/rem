@@ -319,7 +319,7 @@ public interface ActivoApi {
 		 * @param idActivo Activo a comprobar
 		 * @return true si esta dentro del perimetro Haya, false si esta fuera.
 		 */
-		public boolean isActivoDentroPerimetro(Long idActivo);
+		public boolean isActivoIncluidoEnPerimetro(Long idActivo);
 		
 		/**
 		 * Devuelve el perimetro del ID de un activo dado

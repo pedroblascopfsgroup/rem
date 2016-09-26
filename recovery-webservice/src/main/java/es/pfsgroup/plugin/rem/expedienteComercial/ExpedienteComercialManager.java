@@ -34,6 +34,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -121,6 +122,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -947,9 +951,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			reserva.setNumReserva(reservaDao.getNextNumReservaRem());
 			
 			genericDao.save(Reserva.class, reserva);
-		} else {
 			
-		}
+			//Actualiza la disponibilidad comercial del activo
+			ofertaApi.updateStateDispComercialActivosByOferta(expedienteComercial.getOferta());
+		} 
 		
 		return true;
 		

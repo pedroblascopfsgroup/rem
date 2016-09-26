@@ -657,7 +657,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onTramitesListDobleClick : function(grid,record) {
     	var me = this;
     	//HREOS-846 Si el activo esta fuera del perimetro Haya, no debe poder abrir tramites desde el activo
-    	if(me.getViewModel().get('activo').get('dentroPerimetro')=="false") {
+    	if(me.getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.activo.fuera.perimetro.abrir.tramite.ko"));
    		}
     	else {

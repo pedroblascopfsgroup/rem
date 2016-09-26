@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements  OfertaApi {
@@ -59,7 +60,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private OfertaDao ofertaDao;
-
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
+	
 	@Override
 	public String managerName() {
 		return "ofertaManager";
@@ -424,8 +428,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						oferta.setUsuarioAccion(user);			
 					}
 				}
+				DDEstadoOferta estadoOfr = null;
 				if(!Checks.esNulo(ofertaDto.getCodEstadoOferta())){
-					DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
+					estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
 					if(!Checks.esNulo(estadoOfr)){
 						oferta.setEstadoOferta(estadoOfr);
 					}
@@ -481,7 +486,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					oferta.setTitularesAdicionales(listaTit);
 				}				
-				ofertaDao.save(oferta);	
+				ofertaDao.save(oferta);
+				
+				//Si la oferta tiene estado, hay que actualizar la disposicion comercial del activo
+				if(!Checks.esNulo(estadoOfr)){
+					this.updateStateDispComercialActivosByOferta(oferta);
+				}
 			}
 
 		}catch (Exception e){
@@ -511,10 +521,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(((JSONObject)jsonFields).containsKey("importeContraoferta")){
 					oferta.setImporteContraOferta(ofertaDto.getImporteContraoferta());
 				}
-				
+				DDEstadoOferta estadoOfr = null;
 				if(((JSONObject)jsonFields).containsKey("codEstadoOferta")){
 					if(!Checks.esNulo(ofertaDto.getCodEstadoOferta())){
-						DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
+						estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
 						if(!Checks.esNulo(estadoOfr)){
 							oferta.setEstadoOferta(estadoOfr);
 						}
@@ -524,6 +534,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				
 				ofertaDao.saveOrUpdate(oferta);
+				
+				//Si la oferta tiene estado, hay que actualizar la disposicion comercial del activo
+				if(!Checks.esNulo(estadoOfr)){
+					this.updateStateDispComercialActivosByOferta(oferta);
+				}
 			}
 
 		}catch (Exception e){
@@ -546,6 +561,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		activoOferta.setPrimaryKey(pk);
 		activoOferta.setImporteActivoOferta(importe);
 		return activoOferta;
+	}
+	
+	@Override
+	@Transactional
+	public void updateStateDispComercialActivosByOferta(Oferta oferta) {
+		
+		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
+			Activo activo = activoOferta.getPrimaryKey().getActivo();
+			updaterState.updaterStateDisponibilidadComercial(activo);
+		}
 	}
 	
 	

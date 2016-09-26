@@ -400,7 +400,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									store: '{comboTipoComercializacionActivo}',
 									value: '{activo.tipoComercializacionCodigo}'
 								}
-							}							
+							},
+							{
+								xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('title.publicaciones.estadoDisponibilidadComercial'),
+								bind : '{activo.situacionComercialDescripcion}', 
+								readOnly	: true
+							}	
 						]
 					}, //Fin condiciones
 					//Datos bancarios

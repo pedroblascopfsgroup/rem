@@ -193,7 +193,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		// Perimetros --------------------------------------------------------------------------------------
 		//HREOS-846 Si no esta en el perimetro, el activo se considera SOLO CONSULTA
-		BeanUtils.copyProperty(activoDto, "dentroPerimetro", activoApi.isActivoDentroPerimetro(activo.getId()));
+		BeanUtils.copyProperty(activoDto, "incluidoEnPerimetro", activoApi.isActivoIncluidoEnPerimetro(activo.getId()));
 
 		// Datos de perimetro del activo al Dto de datos basicos
 		PerimetroActivo perimetroActivo = activo.getPerimetroActivo();

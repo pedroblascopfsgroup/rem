@@ -171,11 +171,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean saveOrUpdate(Activo activo) {
 		activoDao.saveOrUpdate(activo);
 
-		// Actualiza los check de Admisión y Gestión
+		// Actualiza los check de Admisión, Gestión y Situacion Comercial del activo
 		updaterState.updaterStates(activo);
-		
-		//Actualiza la disponibilidad comercial del activo
-		updaterState.updaterStateDisponibilidadComercial(activo);
 
 		return true;
 	}
@@ -1180,7 +1177,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public boolean isActivoDentroPerimetro(Long idActivo) {
+	public boolean isActivoIncluidoEnPerimetro(Long idActivo) {
 		
 		List<PerimetroActivo> perimetros = new ArrayList<PerimetroActivo>();
 		

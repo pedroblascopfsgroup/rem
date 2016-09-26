@@ -109,12 +109,9 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoComercializacionDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
 	private String situacionComercialDescripcion;
-
-	// Perimetro: variable para bloqueos de activo -------
-	private Boolean dentroPerimetro; // dentroPerimetro = incluidoEnPerimetro (setter)
 	
 	//Perimetro datos:
-	private Boolean incluidoEnPerimetro; // incluidoEnPerimetro = dentroPerimetro (setter) 
+	private Boolean incluidoEnPerimetro;
 	private Date fechaAltaActivoRem;
 	private Boolean aplicaTramiteAdmision;
 	private Date fechaAplicaTramiteAdmision;
@@ -839,22 +836,12 @@ public class DtoActivoFichaCabecera extends WebDto {
 		this.pertenceAgrupacionRestringida = pertenceAgrupacionRestringida;
 	}
 
-	public Boolean getDentroPerimetro() {
-		return dentroPerimetro;
-	}
-
-	public void setDentroPerimetro(Boolean dentroPerimetro) {
-		this.dentroPerimetro = dentroPerimetro;
-		this.incluidoEnPerimetro = dentroPerimetro;
-	}
-
 	public Boolean getIncluidoEnPerimetro() {
 		return incluidoEnPerimetro;
 	}
 
 	public void setIncluidoEnPerimetro(Boolean incluidoEnPerimetro) {
 		this.incluidoEnPerimetro = incluidoEnPerimetro;
-		this.dentroPerimetro = incluidoEnPerimetro;
 	}
 
 	public Date getFechaAltaActivoRem() {

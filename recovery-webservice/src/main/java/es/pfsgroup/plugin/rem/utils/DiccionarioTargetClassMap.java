@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoNoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -205,6 +206,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoProductoBancario", DDTipoProductoBancario.class);
 		mapa.put("estadoExpRiesgoBancario", DDEstadoExpRiesgoBancario.class);
 		mapa.put("estadoExpIncorrienteBancario", DDEstadoExpIncorrienteBancario.class);
+		mapa.put("motivoNoAplicaComercializarActivo", DDMotivoNoComercializacion.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

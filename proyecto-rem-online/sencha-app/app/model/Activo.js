@@ -367,6 +367,9 @@ Ext.define('HreRem.model.Activo', {
 				name: 'motivoAplicaComercializarDescripcion'
 			},
 			{
+				name: 'motivoNoAplicaComercializarDescripcion'
+			},
+			{
 				name: 'aplicaFormalizar',
 				type: 'boolean'
 			},

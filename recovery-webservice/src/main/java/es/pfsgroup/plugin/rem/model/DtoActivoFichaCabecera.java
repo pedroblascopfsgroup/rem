@@ -126,6 +126,8 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private Date fechaAplicaComercializar;
 	private String motivoAplicaComercializarCodigo;
 	private String motivoAplicaComercializarDescripcion;
+	private String motivoNoAplicaComercializarCodigo;
+	private String motivoNoAplicaComercializarDescripcion;
 	private Boolean aplicaFormalizar;
 	private Date fechaAplicaFormalizar;
 	private String motivoAplicaFormalizar;
@@ -954,6 +956,22 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setMotivoAplicaComercializarDescripcion(String motivoAplicaComercializarDescripcion) {
 		this.motivoAplicaComercializarDescripcion = motivoAplicaComercializarDescripcion;
+	}
+	
+	public String getMotivoNoAplicaComercializarCodigo() {
+		return motivoNoAplicaComercializarCodigo;
+	}
+
+	public void setMotivoNoAplicaComercializarCodigo(String motivoNoAplicaComercializarCodigo) {
+		this.motivoNoAplicaComercializarCodigo = motivoNoAplicaComercializarCodigo;
+	}
+
+	public String getMotivoNoAplicaComercializarDescripcion() {
+		return motivoNoAplicaComercializarDescripcion;
+	}
+
+	public void setMotivoNoAplicaComercializarDescripcion(String motivoNoAplicaComercializarDescripcion) {
+		this.motivoNoAplicaComercializarDescripcion = motivoNoAplicaComercializarDescripcion;
 	}
 
 	public Boolean getAplicaFormalizar() {

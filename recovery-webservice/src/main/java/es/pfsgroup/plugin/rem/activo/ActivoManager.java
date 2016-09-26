@@ -1228,11 +1228,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo) {
 		try{
+
 			if (!Checks.esNulo(perimetroActivo.getId())) {
 				// update
+				perimetroActivo.getAuditoria().setFechaModificar(new Date());
+				perimetroActivo.getAuditoria().setUsuarioModificar(adapter.getUsuarioLogado().getUsername());
 				genericDao.update(PerimetroActivo.class, perimetroActivo);
 			} else {
 				// insert
+				perimetroActivo.getAuditoria().setFechaCrear(new Date());
+				perimetroActivo.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
 				genericDao.save(PerimetroActivo.class, perimetroActivo);
 			}
 
@@ -1250,9 +1255,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try{
 			if (!Checks.esNulo(activoBancario.getId())) {
 				// update
+				activoBancario.getAuditoria().setFechaModificar(new Date());
+				activoBancario.getAuditoria().setUsuarioModificar(adapter.getUsuarioLogado().getUsername());
 				genericDao.update(ActivoBancario.class, activoBancario);
 			} else {
 				// insert
+				activoBancario.getAuditoria().setFechaCrear(new Date());
+				activoBancario.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
 				genericDao.save(ActivoBancario.class, activoBancario);
 			}
 

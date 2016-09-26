@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoNoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -207,6 +208,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getMotivoAplicaComercializar())) {
 			BeanUtils.copyProperty(activoDto, "motivoAplicaComercializarCodigo", perimetroActivo.getMotivoAplicaComercializar().getCodigo());
 			BeanUtils.copyProperty(activoDto, "motivoAplicaComercializarDescripcion", perimetroActivo.getMotivoAplicaComercializar().getDescripcion());
+		}
+		
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getMotivoNoAplicaComercializar())) {
+			BeanUtils.copyProperty(activoDto, "motivoNoAplicaComercializarCodigo", perimetroActivo.getMotivoNoAplicaComercializar().getCodigo());
+			BeanUtils.copyProperty(activoDto, "motivoNoAplicaComercializarDescripcion", perimetroActivo.getMotivoNoAplicaComercializar().getDescripcion());
 		}
 		
 		// Datos de activo bancario
@@ -418,6 +424,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (dto.getMotivoAplicaComercializarCodigo() != null) {
 				DDMotivoComercializacion motivoAplicaComercializar = (DDMotivoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class,  dto.getMotivoAplicaComercializarCodigo());
 				activo.getPerimetroActivo().setMotivoAplicaComercializar(motivoAplicaComercializar);
+			}
+			
+			if (dto.getMotivoNoAplicaComercializarCodigo() != null) {
+				DDMotivoNoComercializacion motivoNoAplicaComercializar = (DDMotivoNoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoNoComercializacion.class,  dto.getMotivoNoAplicaComercializarCodigo());
+				activo.getPerimetroActivo().setMotivoNoAplicaComercializar(motivoNoAplicaComercializar);
 			}
 			
 			if (dto.getTipoComercializacionCodigo() != null) {

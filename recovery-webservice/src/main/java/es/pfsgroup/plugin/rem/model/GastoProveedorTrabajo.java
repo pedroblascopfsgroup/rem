@@ -3,13 +3,10 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -18,10 +15,6 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
-
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 
 
 /**
@@ -32,9 +25,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Entity
 @Table(name = "GPV_TBJ", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Where(clause = Auditoria.UNDELETED_RESTICTION)
-@Inheritance(strategy=InheritanceType.JOINED)
-public class GastoProveedorTrabajo implements Serializable, Auditable {
+public class GastoProveedorTrabajo implements Serializable {
 	
     /**
 	 * 
@@ -82,10 +73,6 @@ public class GastoProveedorTrabajo implements Serializable, Auditable {
 
 	@Version   
 	private Long version;
-
-	@Embedded
-	private Auditoria auditoria;
-
 	
 
 	public Long getVersion() {
@@ -94,20 +81,7 @@ public class GastoProveedorTrabajo implements Serializable, Auditable {
 
 	public void setVersion(Long version) {
 		this.version = version;
-	}
-
-	public Auditoria getAuditoria() {
-		return auditoria;
-	}
-
-	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-	}
-    
-
-
-
-     
+	}    
     
    
 }

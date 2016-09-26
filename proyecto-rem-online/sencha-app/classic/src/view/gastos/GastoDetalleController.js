@@ -60,7 +60,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 
 	onSaveFormularioCompleto: function(btn, form) {
-		debugger;
 		var me = this;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && form.disableValidation) {

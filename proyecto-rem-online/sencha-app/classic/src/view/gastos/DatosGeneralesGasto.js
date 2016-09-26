@@ -12,6 +12,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     
     requires: ['HreRem.model.GastoProveedor'],
     
+    listeners: {
+		boxready:'cargarTabData'
+	},
+    
     initComponent: function () {
 
         var me = this;
@@ -20,6 +24,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
        
 	    						{   
 									xtype:'fieldsettable',
+//									bind: {
+//					        			disabled: '{conEmisor}'
+//			            			},
 									title: HreRem.i18n('title.gasto.datos.generales'),
 									items :
 										[
@@ -33,9 +40,40 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							                {
 							                	xtype: 'textfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.emisor'),
-							                	bind:		'{gasto.nifEmisor}',
-							                	editable: false
+							                	reference: 'nifEmisorGasto',
+							                	bind:	{
+							                		value: '{gasto.nifEmisor}',
+							                		editable: '{!getConEmisor}',
+							                		hidden: '{!getConEmisor}'
+							                	},
+							                	editable: false,
+							                	allowBlank: false
 					
+							                },
+							                {
+												xtype: 'textfieldbase',
+												fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.emisor'),
+												reference: 'buscadorNifEmisorField',
+												flex: 2,
+												bind: {
+													value: '{gasto.buscadorNifEmisor}',
+													hidden: '{getConEmisor}'
+												},
+												allowBlank: false,
+												
+												triggers: {
+													
+													foo: {
+											            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+											            handler: 'buscarProveedorBoton'
+											        }
+												},
+												cls: 'searchfield-input sf-con-borde',
+												emptyText: 'Buscar proveedor...',
+												enableKeyEvents: true,
+										        listeners: {
+										        	specialKey: 'onSpecialKeyProveedor'
+										        }
 							                },
 							                {
 									        	xtype:'datefieldbase',
@@ -54,6 +92,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											},
 											{
 												xtype: 'textfieldbase',
+												reference: 'nombreEmisorGasto',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.emisor'),
 												bind:		'{gasto.nombreEmisor}',
 												editable: false
@@ -75,6 +114,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											},
 											{
 												xtype: 'textfieldbase',
+												reference: 'codigoEmisorGasto',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.id.emisor'),
 												bind:		'{gasto.codigoEmisor}',
 												editable: false
@@ -108,7 +148,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.destinatario'),
 										      	bind: {
 									           		store: '{comboDestinatarios}',
-									           		value: '{gasto.destinatario}'
+									           		value: '{gasto.destinatario}',
+									           		hidden: '{conPropietario}'
 									         	},
 									         	allowBlank: false
 										    },
@@ -127,26 +168,51 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 //										    },
 										    {
 												xtype: 'textfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.gasto.propietario'),
-												bind:		'{gasto.propietario}',
-												editable: true,
-												listeners: {
-									         		change: 'onHaCambiadoComboPropietario'
-									         	}
-											},
-										    {
-												xtype: 'textfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.propietario'),
 												bind:		'{gasto.nifPropietario}',
 												reference: 'nifPropietarioRef',
-												disabled: true
+												bind: {
+					        						editable: '{!getConPropietario}',
+					        						value: '{gasto.nifPropietario}',
+					        						hidden: '{!getConPropietario}'
+			                					},
+			                					editable: false,
+			                					allowBlank: false
 											},
+											{
+												xtype: 'textfieldbase',
+												fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),
+												reference: 'buscadorNifPropietarioField',
+												flex: 2,
+												bind: {
+													value: '{gasto.buscadorNifPropietario}',
+													hidden: '{getConPropietario}'
+												},
+												allowBlank: false,
+												triggers: {
+													
+													foo: {
+											            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+											            handler: 'buscarPropietarioBoton'
+											        }
+												},
+												cls: 'searchfield-input sf-con-borde',
+												emptyText: 'Buscar propietario...',
+												enableKeyEvents: true,
+										        listeners: {
+										        	specialKey: 'onSpecialKeyPropietario'
+										        }
+							                },
 										    {
 												xtype: 'textfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.propietario'),
 												bind:		'{gasto.nombrePropietario}',
 												reference: 'nombrePropietarioRef',
-												disabled: true
+												bind:{
+//													disabled: '{conPropietario}',
+													value: '{gasto.nombrePropietario}'													
+												},
+												editable: false
 											},
 										    {
 										    	

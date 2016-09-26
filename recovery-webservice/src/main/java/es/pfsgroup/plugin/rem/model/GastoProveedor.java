@@ -24,7 +24,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.cm.arq.mad.confentorno.PropiedadesEntorno;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -200,6 +199,14 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public String getObservaciones() {
 		return observaciones;
+	}
+
+	public ActivoPropietario getPropietario() {
+		return propietario;
+	}
+
+	public void setPropietario(ActivoPropietario propietario) {
+		this.propietario = propietario;
 	}
 
 	public void setObservaciones(String observaciones) {

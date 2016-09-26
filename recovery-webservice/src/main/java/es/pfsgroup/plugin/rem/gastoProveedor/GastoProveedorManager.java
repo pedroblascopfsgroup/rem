@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.gastoProveedor;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,6 +21,8 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -113,8 +117,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			if(!Checks.esNulo(gasto.getProveedor())){
 				dto.setNifEmisor(gasto.getProveedor().getDocIdentificativo());
+				dto.setBuscadorNifEmisor(gasto.getProveedor().getDocIdentificativo());
 				dto.setNombreEmisor(gasto.getProveedor().getNombre());
 				dto.setIdEmisor(gasto.getProveedor().getId());
+				dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
+			}
+			
+			if(!Checks.esNulo(gasto.getPropietario())){
+				dto.setNifPropietario(gasto.getPropietario().getDocIdentificativo());
+				dto.setNombrePropietario(gasto.getPropietario().getNombre());
 			}
 			
 			if(!Checks.esNulo(gasto.getDestinatarioGasto())){
@@ -127,7 +138,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setPeriodicidad(gasto.getTipoPeriocidad().getCodigo());
 			}
 			dto.setConcepto(gasto.getConcepto());
-			dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
+			
 			
 		}
 
@@ -145,6 +156,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if(!Checks.esNulo(gastoProveedor)){
 				try {
 					beanUtilNotNull.copyProperties(gastoProveedor, dto);
+					
+					if(!Checks.esNulo(dto.getBuscadorNifEmisor())){
+						Filter filtroNifEmisor = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifEmisor());
+						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroNifEmisor);
+						gastoProveedor.setProveedor(proveedor);
+					}
+					
+					if(!Checks.esNulo(dto.getNifPropietario())){
+						Filter filtroNifPropietario= genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getNifPropietario());
+						ActivoPropietario propietario= genericDao.get(ActivoPropietario.class, filtroNifPropietario);
+						gastoProveedor.setPropietario(propietario);
+					}
 					
 					if(!Checks.esNulo(dto.getTiposGasto())){
 						DDTipoGasto tipoGasto = (DDTipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoGasto.class, dto.getTiposGasto());
@@ -177,6 +200,32 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return true;
 		
+	}
+	
+	@Override
+	public ActivoProveedor searchProveedorNif(String nifProveedor) {
+		
+		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nifProveedor);
+		listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
+
+		if(!Checks.estaVacio(listaProveedores)){
+			return listaProveedores.get(0);
+		}
+		return null;
+	}
+	
+	@Override
+	public ActivoPropietario searchPropietarioNif(String nifPropietario) {
+		
+		List<ActivoPropietario> listaPropietarios= new ArrayList<ActivoPropietario>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nifPropietario);
+		listaPropietarios = genericDao.getList(ActivoPropietario.class, filtro);
+
+		if(!Checks.estaVacio(listaPropietarios)){
+			return listaPropietarios.get(0);
+		}
+		return null;
 	}
 
 	

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
@@ -129,6 +130,43 @@ public class GastosProveedorController {
 		return createModelAndViewJson(model);
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchProveedorNif(@RequestParam String nifProveedor) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gastoProveedorApi.searchProveedorNif(nifProveedor));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchPropietarioNif(@RequestParam String nifPropietario) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gastoProveedorApi.searchPropietarioNif(nifPropietario));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
+		
+	}
+	
 
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {

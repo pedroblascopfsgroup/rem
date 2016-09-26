@@ -30,6 +30,20 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long idGasto);
+
+		/**
+		 * Método que recupera un proveedor según su NIF
+		 * @param nifProveedor
+		 * @return Object
+		 */
+		public Object searchProveedorNif(String nifProveedor);
+		
+		/**
+		 * Método que recupera un propietario según su NIF
+		 * @param nifPropietario
+		 * @return Object
+		 */
+		public Object searchPropietarioNif(String nifPropietario);
 	   
 }
 

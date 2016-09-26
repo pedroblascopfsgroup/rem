@@ -22,6 +22,9 @@ Ext.define('HreRem.model.GastoProveedor', {
     		name: 'nifEmisor'
    		},
    		{
+   			name: 'buscadorNifEmisor'
+   		},
+   		{
    			name: 'nombreEmisor'
    		},
     	{

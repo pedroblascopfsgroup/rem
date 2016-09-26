@@ -373,10 +373,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'comboboxfieldbase',
 								bind: {
 									store: '{comboMotivoAplicaComercializarActivo}',
-									value: '{activo.motivoAplicaComercializarCodigo}'
+									value: '{activo.motivoAplicaComercializarCodigo}',
+									visible: '{activo.aplicaComercializar}'
 								}
 							},
-							
+							{
+								xtype: 'comboboxfieldbase',
+								visible: false,
+								bind: {
+									store: '{comboMotivoNoAplicaComercializarActivo}',
+									value: '{activo.motivoNoAplicaComercializarCodigo}',
+									visible: '{!activo.aplicaComercializar}'
+								}
+							},
 							//Fila formalizar
 							{
 								xtype:'checkboxfieldbase',

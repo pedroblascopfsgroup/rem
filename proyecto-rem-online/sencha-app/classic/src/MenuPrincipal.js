@@ -21,7 +21,7 @@ Ext.define('HreRem.MenuPrincipal', {
    requires: ['HreRem.view.dashboard.DashBoardMain', 'HreRem.view.agenda.AgendaMain', 'HreRem.view.activos.ActivosMain', 'HreRem.view.agrupaciones.AgrupacionesMain',
 	'HreRem.view.trabajos.TrabajosMain', 'HreRem.view.masivo.MasivoMain', 'HreRem.view.agenda.AgendaAlertasMain', 'HreRem.view.agenda.AgendaAvisosMain',
 	'HreRem.view.precios.PreciosMain', 'HreRem.view.publicacion.PublicacionMain', 'HreRem.view.comercial.ComercialMainMenu',
-	'HreRem.view.configuracion.ConfiguracionMain'],
+	'HreRem.view.configuracion.ConfiguracionMain', 'HreRem.view.administracion.AdministracionMainMenu'],
     
     viewModel: {
         type: 'mainviewport'

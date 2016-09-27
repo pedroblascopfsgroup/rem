@@ -13,6 +13,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 /**
  * Task de Quartz que comprueba si ha habido algún cambio en BD que requiera de
@@ -73,7 +74,16 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 					if ((listPendientes != null) && (!listPendientes.isEmpty())) {
 						logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
-						handler.invocaServicio(listPendientes);
+						try {
+							handler.invocaServicio(listPendientes);
+						} catch (ErrorServicioWebcom e) {
+							if (e.isReintentable()){
+								logger.error("Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada", e);
+								return;
+							}else{
+								logger.fatal("Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable", e);
+							}
+						}
 
 						logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
 						handler.marcaComoEnviados(control);

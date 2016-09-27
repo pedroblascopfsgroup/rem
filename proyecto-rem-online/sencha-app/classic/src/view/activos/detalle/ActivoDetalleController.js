@@ -34,7 +34,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("activo.id");
-		
+
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),
@@ -656,7 +656,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onTramitesListDobleClick : function(grid,record) {
     	var me = this;
-    	me.getView().fireEvent('abrirDetalleTramite', grid,record);
+    	//HREOS-846 Si el activo esta fuera del perimetro Haya, no debe poder abrir tramites desde el activo
+    	if(me.getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.activo.fuera.perimetro.abrir.tramite.ko"));
+   		}
+    	else {
+    		me.getView().fireEvent('abrirDetalleTramite', grid,record);
+		}
     },
     
     onComboGestoresClick: function(btn){

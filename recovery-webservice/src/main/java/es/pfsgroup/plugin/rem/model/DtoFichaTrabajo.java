@@ -119,6 +119,8 @@ public class DtoFichaTrabajo {
     
     private Long idProceso;
     
+    private Date fechaEmisionFactura;
+    
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -561,5 +563,13 @@ public class DtoFichaTrabajo {
 	
 	public void setIdProceso(Long idProceso) {
 		this.idProceso = idProceso;
+	}
+
+	public Date getFechaEmisionFactura() {
+		return fechaEmisionFactura;
+	}
+
+	public void setFechaEmisionFactura(Date fechaEmisionFactura) {
+		this.fechaEmisionFactura = fechaEmisionFactura;
 	}
 }

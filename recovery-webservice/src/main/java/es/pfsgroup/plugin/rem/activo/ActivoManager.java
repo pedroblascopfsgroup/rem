@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
@@ -56,7 +57,6 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -80,7 +80,9 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -90,6 +92,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -172,7 +175,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean saveOrUpdate(Activo activo) {
 		activoDao.saveOrUpdate(activo);
 
-		// Actualiza los check de Admisión y Gestión
+		// Actualiza los check de Admisión, Gestión y Situacion Comercial del activo
 		updaterState.updaterStates(activo);
 
 		return true;
@@ -333,9 +336,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 					
 					if(!listaVisitasCliente.isEmpty()) {
-						oferta.setVisita(listaVisitasCliente.get(0));			
-						genericDao.save(Oferta.class, oferta);
+						oferta.setVisita(listaVisitasCliente.get(0));
+						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_REALIZADA);
+						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
+					} else {
+						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_PENDIENTE);
+						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
 					}
+					
+					genericDao.save(Oferta.class, oferta);
 
 				}
 			}
@@ -1180,6 +1189,169 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
+
+	@Override
+	public boolean isActivoIncluidoEnPerimetro(Long idActivo) {
+		
+		List<PerimetroActivo> perimetros = new ArrayList<PerimetroActivo>();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		perimetros = genericDao.getListOrdered(PerimetroActivo.class,order,filtro);
+		
+		if(Checks.estaVacio(perimetros) || perimetros.get(0).getIncluidoEnPerimetro() == 1) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	@Override
+	public PerimetroActivo getPerimetroByIdActivo(Long idActivo) {
+		
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		PerimetroActivo perimetroActivo = (PerimetroActivo) genericDao.get(PerimetroActivo.class, filtroActivo);
+		
+		//Si no existia un registro de activo bancario, crea un nuevo
+		if(Checks.esNulo(perimetroActivo)){
+			perimetroActivo = new PerimetroActivo();
+			perimetroActivo.setAuditoria(new Auditoria());
+		}
+		
+		return perimetroActivo;
+		
+	}
+	
+	@Override
+	public ActivoBancario getActivoBancarioByIdActivo(Long idActivo) {
+
+		//Obtiene el registro de ActivoBancario para el activo dado
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoBancario activoBancario = (ActivoBancario) genericDao.get(ActivoBancario.class, filtroActivo);
+		
+		//Si no existia un registro de activo bancario, crea un nuevo
+		if(Checks.esNulo(activoBancario)){
+			activoBancario = new ActivoBancario();
+			activoBancario.setAuditoria(new Auditoria());
+		}
+		
+		return activoBancario;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo) {
+		try{
+
+			if (!Checks.esNulo(perimetroActivo.getId())) {
+				// update
+				perimetroActivo.getAuditoria().setFechaModificar(new Date());
+				perimetroActivo.getAuditoria().setUsuarioModificar(adapter.getUsuarioLogado().getUsername());
+				genericDao.update(PerimetroActivo.class, perimetroActivo);
+			} else {
+				// insert
+				perimetroActivo.getAuditoria().setFechaCrear(new Date());
+				perimetroActivo.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
+				genericDao.save(PerimetroActivo.class, perimetroActivo);
+			}
+
+		}catch(Exception ex){
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+		
+		return perimetroActivo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public ActivoBancario saveOrUpdateActivoBancario(ActivoBancario activoBancario) {
+		try{
+			if (!Checks.esNulo(activoBancario.getId())) {
+				// update
+				activoBancario.getAuditoria().setFechaModificar(new Date());
+				activoBancario.getAuditoria().setUsuarioModificar(adapter.getUsuarioLogado().getUsername());
+				genericDao.update(ActivoBancario.class, activoBancario);
+			} else {
+				// insert
+				activoBancario.getAuditoria().setFechaCrear(new Date());
+				activoBancario.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
+				genericDao.save(ActivoBancario.class, activoBancario);
+			}
+
+		}catch(Exception ex){
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+		
+		return activoBancario;
+	}
+	
+	@Override
+	public boolean isActivoConOfertaByEstado(Activo activo, String codEstado) {
+		
+		if(!Checks.estaVacio(activo.getOfertas())) {
+			for(ActivoOferta activoOferta: activo.getOfertas()) {
+				if(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(codEstado)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public boolean isActivoConReservaByEstado(Activo activo, String codEstado) {
+		
+		for(Reserva reserva : this.getReservasByActivo(activo)) {
+			
+			if(!Checks.esNulo(reserva.getEstadoReserva()) && reserva.getEstadoReserva().getCodigo().equals(codEstado)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public List<Reserva> getReservasByActivo(Activo activo) {
+		
+		List<Reserva> reservas = new ArrayList<Reserva>();
+		
+		if(!Checks.estaVacio(activo.getOfertas())) {
+			for(ActivoOferta activoOferta: activo.getOfertas()) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",activoOferta.getPrimaryKey().getOferta().getId());
+				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva())) {
+					reservas.add(expediente.getReserva());
+				}
+			}
+		}
+		
+		return reservas;
+	}
+	
+	@Override
+	public boolean isActivoVendido(Activo activo) {
+		
+		if(!Checks.estaVacio(activo.getOfertas())) {
+			for(ActivoOferta activoOferta: activo.getOfertas()) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",activoOferta.getPrimaryKey().getOferta().getId());
+				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getFormalizacion()) && !Checks.esNulo(expediente.getFormalizacion().getFechaEscritura())) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
 	public boolean crearGastosExpediente(ExpedienteComercial nuevoExpediente, Oferta oferta){
 		
 		try{

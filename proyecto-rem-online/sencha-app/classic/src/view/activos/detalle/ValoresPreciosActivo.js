@@ -4,7 +4,11 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
     scrollable	: 'y',
     
     listeners: {
-		boxready:'cargarTabData'
+    	boxready: function() {
+    		me = this;
+    		me.lookupController().cargarTabData(me);
+    		me.evaluarEdicion();
+    	}
     },
     
     refreshAfterSave: true,
@@ -455,6 +459,15 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 		var me = this; 
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
+   },
+   
+ //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar
+   evaluarEdicion: function() {    	
+		var me = this;
+	
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			me.down('[reference=gridPreciosVigentes]').rowEditing.clearListeners()
+		}
    }
     
 });

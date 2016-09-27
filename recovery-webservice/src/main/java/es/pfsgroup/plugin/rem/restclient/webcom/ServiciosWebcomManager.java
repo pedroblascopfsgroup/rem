@@ -2,15 +2,12 @@ package es.pfsgroup.plugin.rem.restclient.webcom;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
@@ -18,14 +15,14 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
-import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoNotificacion;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteVentasYComisiones;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoNotificacionConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
@@ -37,10 +34,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
-	private HttpClientFacade httpClient;
-
-	@Autowired(required = false)
-	private MessageBroker messageBroker;
+	private RegistroLlamadasManager registroLlamadas;
 
 	@Autowired
 	private ClienteEstadoTrabajo estadoTrabajoService;
@@ -58,7 +52,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	private ClienteStock stockService;
 
 	@Override
-	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo) {
+	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom{
 		logger.info("Invocando servicio Webcom: Estado Trabajo");
 
 		ParamsList paramsList = createParamsList(estadoTrabajo, EstadoTrabajoConstantes.ID_TRABAJO_REM,
@@ -72,7 +66,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta) {
+	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom{
 		logger.info("Invocando servicio Webcom: Estado Oferta");
 
 		ParamsList paramsList = createParamsList(estadoOferta, EstadoOfertaConstantes.ID_OFERTA_WEBCOM,
@@ -87,7 +81,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void enviarStock(List<StockDto> stock) {
+	public void enviarStock(List<StockDto> stock) throws ErrorServicioWebcom {
 		logger.info("Invocando servicio Webcom: Stock");
 
 		ParamsList paramsList = createParamsList(stock);
@@ -101,7 +95,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void estadoNotificacion(List<NotificacionDto> notificaciones) {
+	public void estadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom{
 		logger.info("Invocando servicio Webcom: Estado notificaciones");
 
 		ParamsList paramsList = createParamsList(notificaciones, EstadoNotificacionConstantes.ID_NOTIFICACION_REM,
@@ -116,7 +110,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void ventasYcomisiones(List<ComisionesDto> comisiones) {
+	public void ventasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom{
 		logger.info("Invocando servicio Webcom: Ventas y Comisiones");
 
 		ParamsList paramsList = createParamsList(comisiones, VentasYComisionesConstantes.ID_OFERTA_REM,
@@ -142,10 +136,6 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 
 	}
 
-	@Override
-	protected MessageBroker getMessageBroker() {
-		return this.messageBroker;
-	}
 
 	/**
 	 * Crea un objeto ParamList para invocar al web service a partir de una
@@ -172,6 +162,11 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 			logger.debug("'dtoList' es NULL");
 		}
 		return paramsList;
+	}
+
+	@Override
+	protected RegistroLlamadasManager getRegistroLlamadas() {
+		return this.registroLlamadas;
 	}
 
 }

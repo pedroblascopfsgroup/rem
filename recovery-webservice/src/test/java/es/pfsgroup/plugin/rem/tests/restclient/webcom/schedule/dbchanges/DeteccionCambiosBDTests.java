@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.VentasYComisionesConstantes;
@@ -79,7 +80,7 @@ public class DeteccionCambiosBDTests {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
-	public void testDeteccionCambiosStock() {
+	public void testDeteccionCambiosStock() throws ErrorServicioWebcom {
 
 		Map<String, Object> data1 = new HashMap<String, Object>();
 		data1.put(ServicioStockConstantes.ID_ACTIVO_HAYA, "1");
@@ -126,7 +127,7 @@ public class DeteccionCambiosBDTests {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
-	public void testDeteccionCambioEstadoPeticionTrabajo() {
+	public void testDeteccionCambioEstadoPeticionTrabajo() throws ErrorServicioWebcom {
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, 1L);
@@ -152,7 +153,7 @@ public class DeteccionCambiosBDTests {
 	}
 
 	@Test
-	public void testDeteccionDeCambios_ValoresNullados() {
+	public void testDeteccionDeCambios_ValoresNullados() throws ErrorServicioWebcom {
 		// Simularemos que el detector de cambios nos devuelve campos nullados
 		// para distintos tipos de datos y nos aseguraremos que se ha seteado el
 		// NullDataType adecuado.
@@ -198,7 +199,7 @@ public class DeteccionCambiosBDTests {
 	}
 
 	@Test
-	public void testDeteccionDeCambios_mandarSiempreCamposObligatorios() {
+	public void testDeteccionDeCambios_mandarSiempreCamposObligatorios() throws ErrorServicioWebcom {
 		/*
 		 * Cogemos por ejemplo el servicio de ventas y comisiones, para el cual
 		 * hay varios datos oblitatorios.

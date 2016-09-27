@@ -35,13 +35,13 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements  OfertaApi {
@@ -61,7 +61,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private OfertaDao ofertaDao;
-
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
+	
 	@Override
 	public String managerName() {
 		return "ofertaManager";
@@ -431,8 +434,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						oferta.setUsuarioAccion(user);			
 					}
 				}
+				DDEstadoOferta estadoOfr = null;
 				if(!Checks.esNulo(ofertaDto.getCodEstadoOferta())){
-					DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
+					estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
 					if(!Checks.esNulo(estadoOfr)){
 						oferta.setEstadoOferta(estadoOfr);
 					}
@@ -487,14 +491,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}						
 					}
 					oferta.setTitularesAdicionales(listaTit);
-				}		
+
+				}
+				
 				if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE)){
 					oferta.setFechaAlta(ofertaDto.getFechaAccion());
 				}else if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)){
 					oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion());
 				}
-					
-				ofertaDao.save(oferta);	
+				
+				ofertaDao.save(oferta);
+				
+				//Si la oferta tiene estado, hay que actualizar la disposicion comercial del activo
+				if(!Checks.esNulo(estadoOfr)){
+					this.updateStateDispComercialActivosByOferta(oferta);
+				}
+
 			}
 
 		}catch (Exception e){
@@ -524,10 +536,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(((JSONObject)jsonFields).containsKey("importeContraoferta")){
 					oferta.setImporteContraOferta(ofertaDto.getImporteContraoferta());
 				}
-				
+				DDEstadoOferta estadoOfr = null;
 				if(((JSONObject)jsonFields).containsKey("codEstadoOferta")){
 					if(!Checks.esNulo(ofertaDto.getCodEstadoOferta())){
-						DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
+						estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
 						if(!Checks.esNulo(estadoOfr)){
 							oferta.setEstadoOferta(estadoOfr);
 						}
@@ -541,6 +553,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion());
 				}
 				ofertaDao.saveOrUpdate(oferta);
+				
+				//Si la oferta tiene estado, hay que actualizar la disposicion comercial del activo
+				if(!Checks.esNulo(estadoOfr)){
+					this.updateStateDispComercialActivosByOferta(oferta);
+				}
 			}
 
 		}catch (Exception e){
@@ -569,6 +586,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public DDEstadoOferta getDDEstadosOfertaByCodigo(String codigo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 		return genericDao.get(DDEstadoOferta.class, filtro);
+	}
+	
+	@Override
+	@Transactional
+	public void updateStateDispComercialActivosByOferta(Oferta oferta) {
+		
+		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
+			Activo activo = activoOferta.getPrimaryKey().getActivo();
+			updaterState.updaterStateDisponibilidadComercial(activo);
+		}
 	}
 	
 	

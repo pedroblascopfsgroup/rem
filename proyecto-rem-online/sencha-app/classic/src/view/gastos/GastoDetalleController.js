@@ -485,6 +485,30 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			}
 		}
 
+    },
+    
+    onCambiaBuscadorActivo: function(field, value){
+    	var me= this;
+    	if(!Ext.isEmpty(value)){
+    		me.lookupReference('botonIncluirActivoRef').setDisabled(false);
+    	}else{
+    		me.lookupReference('botonIncluirActivoRef').setDisabled(true);
+    	}
+    },
+    
+    onCambiaBuscadorAgrupacion: function(field, value){
+    	var me= this;
+    	if(!Ext.isEmpty(value)){
+    		me.lookupReference('botonIncluirAgrupacionRef').setDisabled(false);
+    	}else{
+    		me.lookupReference('botonIncluirAgrupacionRef').setDisabled(true);
+    	}
+    },
+    
+    onClickBotonCancelarGastoActivo: function(btn){
+    	var me = this,
+		window = btn.up('window');
+    	window.close();
     }
 	
 

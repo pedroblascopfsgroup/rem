@@ -244,6 +244,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												allowBlank: true											
 											},
 											{
+												xtype: 'box'
 											},
 											{
 									        	xtype:'datefieldbase',
@@ -257,8 +258,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										       	maxValue: null
 										    },
 										    {
+										    	xtype: 'box'
 											},
 											{
+												xtype: 'box'
 											},
 											{ 
 												xtype: 'comboboxfieldbase',

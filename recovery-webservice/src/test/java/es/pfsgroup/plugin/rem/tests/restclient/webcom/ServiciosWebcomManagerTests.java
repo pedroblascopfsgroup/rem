@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.web.servlet.ModelAndView;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
@@ -28,6 +29,8 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
+import es.pfsgroup.plugin.rem.controller.ResolucionComiteController;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
@@ -63,6 +66,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	@InjectMocks
 	private ServiciosWebcomManager manager;
 	
+	@InjectMocks
+	private ResolucionComiteController resolucionComiteController;
 	
 
 	@Before

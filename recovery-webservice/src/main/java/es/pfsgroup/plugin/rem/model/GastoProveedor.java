@@ -24,7 +24,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.cm.arq.mad.confentorno.PropiedadesEntorno;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -97,6 +96,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_OBSERVACIONES")
 	private String observaciones;
 	
+	@Column(name="GPV_NUM_GASTO_HAYA")
+	private Long numGastoHaya;
+	
+	@Column(name="GPV_NUM_GASTO_GESTORIA")
+	private Long numGastoGestoria;
 	
     
 	@Version   
@@ -197,6 +201,14 @@ public class GastoProveedor implements Serializable, Auditable {
 		return observaciones;
 	}
 
+	public ActivoPropietario getPropietario() {
+		return propietario;
+	}
+
+	public void setPropietario(ActivoPropietario propietario) {
+		this.propietario = propietario;
+	}
+
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
@@ -216,11 +228,21 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Long getNumGastoHaya() {
+		return numGastoHaya;
+	}
+
+	public void setNumGastoHaya(Long numGastoHaya) {
+		this.numGastoHaya = numGastoHaya;
+	}
+
+	public Long getNumGastoGestoria() {
+		return numGastoGestoria;
+	}
+
+	public void setNumGastoGestoria(Long numGastoGestoria) {
+		this.numGastoGestoria = numGastoGestoria;
+	}
     
-
-
-
-     
-    
-   
 }

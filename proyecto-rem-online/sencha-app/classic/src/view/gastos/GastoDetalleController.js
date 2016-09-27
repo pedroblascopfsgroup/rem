@@ -390,7 +390,103 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    		     
 		    });
 		}
-	}
+	},
+	
+	onHaCambiadoComboDestinatario: function(combo, value){
+		var me= this;
+		if(CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] == value){
+			me.lookupReference('nifPropietarioRef').setDisabled(false);
+			me.lookupReference('nombrePropietarioRef').setDisabled(false);
+			me.lookupReference('nifPropietarioRef').allowBlank= false;
+		}
+		else{
+			me.lookupReference('nifPropietarioRef').setDisabled(true);
+			me.lookupReference('nombrePropietarioRef').setDisabled(true);
+		}
+		
+	},
+	
+	onCambiaImportePrincipalSujeto: function(field, e){
+		var me= this;
+		if(!Ext.isEmpty(field.getValue())){
+			me.lookupReference('importePrincipalNoSujeto').allowBlank= true;
+		}else{
+			me.lookupReference('importePrincipalNoSujeto').allowBlank= false;
+		}
+	},
+	
+	onCambiaImportePrincipalNoSujeto: function(field, e){
+		var me= this;
+		if(!Ext.isEmpty(field.getValue())){
+			me.lookupReference('importePrincipalSujeto').allowBlank= true;
+		}else{
+			me.lookupReference('importePrincipalSujeto').allowBlank= false;
+		}
+	},
+	
+	onHaCambiadoFechaTopePago: function(field, value){
+		var me= this;
+		var fechaPago= me.lookupReference('fechaPago').getValue();
+		if(!Ext.isEmpty(me.lookupReference('destinatariosPago'))){
+			if(fechaPago<value){
+				me.lookupReference('destinatariosPago').setDisabled(false);
+				me.lookupReference('destinatariosPago').allowBlank= false;
+			}else{
+				me.lookupReference('destinatariosPago').setDisabled(true);
+				me.lookupReference('destinatariosPago').allowBlank= true;
+			}
+		}
+	},
+	
+	onHaCambiadoFechaPago: function(field, value){
+		var me= this;
+		var fechaTopePago= me.lookupReference('fechaTopePago').getValue();
+		if(!Ext.isEmpty(me.lookupReference('destinatariosPago'))){
+			if(fechaTopePago<value){
+				me.lookupReference('destinatariosPago').setDisabled(false);
+				me.lookupReference('destinatariosPago').allowBlank= false;
+			}
+			else{
+				me.lookupReference('destinatariosPago').setDisabled(true);
+				me.lookupReference('destinatariosPago').allowBlank= true;
+			}
+		}
+	},
+	
+	onChangeChainedCombo: function(combo) {
+    	var me = this,
+    	chainedCombo = me.lookupReference(combo.chainedReference);   
+    	
+    	me.getViewModel().notify();
+    	
+    	if(!Ext.isEmpty(chainedCombo.getValue())) {
+			chainedCombo.clearValue();
+    	}
+		
+		chainedCombo.getStore().load({ 			
+			callback: function(records, operation, success) {
+   				if(!Ext.isEmpty(records) && records.length > 0) {
+   					if (chainedCombo.selectFirst == true) {
+	   					chainedCombo.setSelection(1);
+	   				};
+   					chainedCombo.setDisabled(false);
+   				} else {
+   					chainedCombo.setDisabled(true);
+   				}
+			}
+		});
+		
+		if (me.lookupReference(chainedCombo.chainedReference) != null) {
+			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+
+    }
+	
 
 });
 

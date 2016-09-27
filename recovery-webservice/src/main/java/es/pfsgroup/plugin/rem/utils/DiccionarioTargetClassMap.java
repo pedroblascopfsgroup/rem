@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesFinancieras;
@@ -70,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
@@ -199,6 +201,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposGasto", DDTipoGasto.class);
 		mapa.put("destinatariosGasto", DDDestinatarioGasto.class);
 		mapa.put("subtiposGasto", DDSubtipoGasto.class);
+		mapa.put("tipoPagador", DDTipoPagador.class);
+		mapa.put("destinataioPago", DDDestinatarioPago.class);
 //		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 
 		return Collections.unmodifiableMap(mapa);

@@ -73,8 +73,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'subtiposGasto'}
+				remoteUrl: 'generic/getComboSubtipoGasto',
+				extraParams: {codigoTipoGasto: '{gasto.tiposGasto}'}
 			}   
     	},
     	
@@ -85,6 +85,33 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'propietariosGasto'}
 			}   
+    	},
+    	
+    	comboPagadoPor: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoPagador'}
+			}  
+    	},
+    	
+    	comboDestinatarioPago: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'destinataioPago'}
+			}  
+    	},
+    	
+    	comboTipoImpuesto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposImpuestos'}
+			}
     	}
 	
     }

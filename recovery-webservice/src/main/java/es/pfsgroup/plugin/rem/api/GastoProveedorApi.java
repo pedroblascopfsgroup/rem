@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
@@ -44,6 +45,15 @@ public interface GastoProveedorApi {
 		 * @return Object
 		 */
 		public Object searchPropietarioNif(String nifPropietario);
+		
+		/**
+		 * Método que guarda la información de la pestaña Detalle económico del gasto
+		 * @param dto
+		 * @param idGasto
+		 * @return
+		 */
+		boolean saveDetalleEconomico(DtoDetalleEconomicoGasto dto, Long idGasto);
+		
 	   
 }
 

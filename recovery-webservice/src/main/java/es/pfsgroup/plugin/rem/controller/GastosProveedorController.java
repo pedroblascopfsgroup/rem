@@ -24,10 +24,10 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
-import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 
 
@@ -166,6 +166,24 @@ public class GastosProveedorController {
 		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDetalleEconomico(DtoDetalleEconomicoGasto dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("data", gastoProveedorApi.saveDetalleEconomico(dto, id));
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
 	
 
 	

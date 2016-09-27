@@ -105,7 +105,7 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     private Double importeTotal;
     
     @Column(name="GDE_FECHA_TOPE_PAGO")
-    private Date fehcaTopePago;
+    private Date fechaTopePago;
     
     @Column(name="GDE_REPERCUTIBLE_INQUILINO")
     private Integer repercutibleInquilino;
@@ -288,6 +288,62 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Date getFechaTopePago() {
+		return fechaTopePago;
+	}
+
+	public void setFechaTopePago(Date fechaTopePago) {
+		this.fechaTopePago = fechaTopePago;
+	}
+
+	public Integer getRepercutibleInquilino() {
+		return repercutibleInquilino;
+	}
+
+	public void setRepercutibleInquilino(Integer repercutibleInquilino) {
+		this.repercutibleInquilino = repercutibleInquilino;
+	}
+
+	public Double getImportePagado() {
+		return importePagado;
+	}
+
+	public void setImportePagado(Double importePagado) {
+		this.importePagado = importePagado;
+	}
+
+	public Date getFechaPago() {
+		return fechaPago;
+	}
+
+	public void setFechaPago(Date fechaPago) {
+		this.fechaPago = fechaPago;
+	}
+
+	public DDTipoPagador getTipoPagador() {
+		return tipoPagador;
+	}
+
+	public void setTipoPagador(DDTipoPagador tipoPagador) {
+		this.tipoPagador = tipoPagador;
+	}
+
+	public DDTipoPago getTipoPago() {
+		return tipoPago;
+	}
+
+	public void setTipoPago(DDTipoPago tipoPago) {
+		this.tipoPago = tipoPago;
+	}
+
+	public DDDestinatarioPago getDestinatariosPago() {
+		return destinatariosPago;
+	}
+
+	public void setDestinatariosPago(DDDestinatarioPago destinatariosPago) {
+		this.destinatariosPago = destinatariosPago;
 	}
 
 }

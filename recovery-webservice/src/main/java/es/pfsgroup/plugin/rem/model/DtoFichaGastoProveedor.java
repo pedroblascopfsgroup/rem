@@ -29,6 +29,7 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private String subtiposGasto;
 	private String nifEmisor;
 	private String buscadorNifEmisor;
+	private String buscadorNifPropietario;
 	private String nombreEmisor;
 	private Long idEmisor;
 	private String destinatario;
@@ -147,6 +148,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setCodigoEmisor(String codigoEmisor) {
 		this.codigoEmisor = codigoEmisor;
+	}
+	public String getBuscadorNifPropietario() {
+		return buscadorNifPropietario;
+	}
+	public void setBuscadorNifPropietario(String buscadorNifPropietario) {
+		this.buscadorNifPropietario = buscadorNifPropietario;
 	}
    	
 }

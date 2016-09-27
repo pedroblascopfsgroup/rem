@@ -128,18 +128,26 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											{ 
 												xtype: 'comboboxfieldbase',
 								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.gasto'),
+								               	reference: 'tipoGasto',
+				        						chainedStore: 'comboSubtipoGasto',
+												chainedReference: 'subtipoGastoCombo',
 										      	bind: {
 									           		store: '{comboTiposGasto}',
 									           		value: '{gasto.tiposGasto}'
 									         	},
+									         	listeners: {
+								                	select: 'onChangeChainedCombo'
+								            	},
 									         	allowBlank: false
 										    },
 										    { 
 												xtype: 'comboboxfieldbase',
 								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
+								               	reference: 'subtipoGastoCombo',
 										      	bind: {
 									           		store: '{comboSubtiposGasto}',
-									           		value: '{gasto.subtiposGasto}'
+									           		value: '{gasto.subtiposGasto}',
+									           		disabled: '{!gasto.tiposGasto}'
 									         	},
 									         	allowBlank: false
 										    },
@@ -150,6 +158,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									           		store: '{comboDestinatarios}',
 									           		value: '{gasto.destinatario}',
 									           		hidden: '{conPropietario}'
+									         	},
+									         	listeners:{
+									         		change: 'onHaCambiadoComboDestinatario'
 									         	},
 									         	allowBlank: false
 										    },
@@ -177,8 +188,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 					        						hidden: '{!getConPropietario}'
 			                					},
 			                					editable: false,
-			                					allowBlank: false
-											},
+			                					allowBlank: false	
+			                				},
 											{
 												xtype: 'textfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),

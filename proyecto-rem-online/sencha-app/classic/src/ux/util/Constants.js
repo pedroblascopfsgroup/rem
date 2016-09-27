@@ -76,6 +76,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	FIJO: '02'
     },
     
+    TIPOS_DESTINATARIO_GASTO: {
+    	PROPIETARIO: '01',
+    	HAYA: '02'
+    },
+    
     
     MAP_TAB_ACTIVO_XTYPE: {
 		FICHA:			'datosgeneralesactivo',

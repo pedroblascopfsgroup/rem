@@ -25,6 +25,9 @@ Ext.define('HreRem.model.GastoProveedor', {
    			name: 'buscadorNifEmisor'
    		},
    		{
+   			name: 'buscadorNifPropietario'
+   		},
+   		{
    			name: 'nombreEmisor'
    		},
     	{

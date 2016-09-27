@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -107,6 +108,9 @@ public interface GenericApi {
 	public List<TipoJuzgado> getComboTipoJuzgadoPlaza(Long idPlaza);
 
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedor(String codigoTipoProveedor);
+	
+	@BusinessOperationDefinition("genericManager.getComboSubtipoGasto")
+	public List<DDSubtipoGasto> getComboSubtipoGasto(String codigoTipoGasto);
 
 }
 

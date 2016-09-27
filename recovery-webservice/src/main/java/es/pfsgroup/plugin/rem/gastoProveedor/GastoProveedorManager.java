@@ -23,12 +23,17 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 
@@ -38,6 +43,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	protected static final Log logger = LogFactory.getLog(GastoProveedorManager.class);
 	
 	public final String PESTANA_FICHA = "ficha";
+	public final String PESTANA_DETALLE_ECONOMICO = "detalleEconomico";
 //	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
 //	public final String PESTANA_RESERVA = "reserva";
 //	public final String PESTANA_CONDICIONES = "condiciones";
@@ -89,6 +95,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if(PESTANA_FICHA.equals(tab)){
 				dto = gastoToDtoFichaGasto(gasto);
 			}
+			if(PESTANA_DETALLE_ECONOMICO.equals(tab)){
+				dto= detalleEconomicoToDtoDetalleEconomico(gasto);
+			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -125,6 +134,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			if(!Checks.esNulo(gasto.getPropietario())){
 				dto.setNifPropietario(gasto.getPropietario().getDocIdentificativo());
+				dto.setBuscadorNifPropietario(gasto.getPropietario().getDocIdentificativo());
 				dto.setNombrePropietario(gasto.getPropietario().getNombre());
 			}
 			
@@ -163,8 +173,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gastoProveedor.setProveedor(proveedor);
 					}
 					
-					if(!Checks.esNulo(dto.getNifPropietario())){
-						Filter filtroNifPropietario= genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getNifPropietario());
+					if(!Checks.esNulo(dto.getBuscadorNifPropietario())){
+						Filter filtroNifPropietario= genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifPropietario());
 						ActivoPropietario propietario= genericDao.get(ActivoPropietario.class, filtroNifPropietario);
 						gastoProveedor.setPropietario(propietario);
 					}
@@ -227,6 +237,134 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		return null;
 	}
+	
+	private DtoDetalleEconomicoGasto detalleEconomicoToDtoDetalleEconomico(GastoProveedor gasto) {
+
+		DtoDetalleEconomicoGasto dto = new DtoDetalleEconomicoGasto();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+		GastoDetalleEconomico detalleGasto= genericDao.get(GastoDetalleEconomico.class, filtro);
+		
+		if(!Checks.esNulo(detalleGasto)){
+			
+			dto.setImportePrincipalSujeto(detalleGasto.getImportePrincipalSujeto());
+			dto.setImportePrincipalNoSujeto(detalleGasto.getImportePrincipalNoSujeto());
+			dto.setImporteRecargo(detalleGasto.getImporteRecargo());
+			dto.setImporteInteresDemora(detalleGasto.getImporteInteresDemora());
+			dto.setImporteCostas(detalleGasto.getImporteCostas());
+			dto.setImporteOtrosIncrementos(detalleGasto.getImporteOtrosIncrementos());
+			dto.setImporteProvisionesSuplidos(detalleGasto.getImporteProvisionesSuplidos());
+			
+			if(!Checks.esNulo(detalleGasto.getImpuestoIndirectoTipo())){
+				dto.setImpuestoIndirectoTipo(detalleGasto.getImpuestoIndirectoTipo().getCodigo());
+			}
+			
+			if(!Checks.esNulo(detalleGasto.getImpuestoIndirectoExento())){
+				if(detalleGasto.getImpuestoIndirectoExento().equals(1)){
+					dto.setImpuestoIndirectoExento(true);
+				}
+				if(detalleGasto.getImpuestoIndirectoExento().equals(0)){
+					dto.setImpuestoIndirectoExento(false);
+				}
+				
+			}
+			
+			if(!Checks.esNulo(detalleGasto.getRenunciaExencionImpuestoIndirecto())){
+				if(detalleGasto.getRenunciaExencionImpuestoIndirecto().equals(1)){
+					dto.setRenunciaExencionImpuestoIndirecto(true);
+				}
+				if(detalleGasto.getRenunciaExencionImpuestoIndirecto().equals(0)){
+					dto.setRenunciaExencionImpuestoIndirecto(false);
+				}
+				
+			}
+			
+			dto.setImpuestoIndirectoTipoImpositivo(detalleGasto.getImpuestoIndirectoTipoImpositivo());
+			dto.setImpuestoIndirectoCuota(detalleGasto.getImpuestoIndirectoCuota());
+			
+			dto.setIrpfTipoImpositivo(detalleGasto.getIrpfCuota());
+			dto.setIrpfCuota(detalleGasto.getIrpfCuota());
+			//TIPO IMPUESTO DIRECTO
+			
+			dto.setImporteTotal(detalleGasto.getImporteTotal());
+			
+			dto.setFechaTopePago(detalleGasto.getFechaTopePago());
+			dto.setRepercutibleInquilino(detalleGasto.getRepercutibleInquilino());
+			dto.setImportePagado(detalleGasto.getImportePagado());
+			dto.setFechaPago(detalleGasto.getFechaPago());
+			if(!Checks.esNulo(detalleGasto.getTipoPagador())){
+				dto.setTipoPagador(detalleGasto.getTipoPagador().getCodigo());
+			}
+			if(!Checks.esNulo(detalleGasto.getDestinatariosPago())){
+				dto.setDestinatariosPago(detalleGasto.getDestinatariosPago().getCodigo());
+			}
+			
+		}
+		
+
+		return dto;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveDetalleEconomico(DtoDetalleEconomicoGasto dto, Long idGasto){
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		GastoDetalleEconomico detalleGasto= genericDao.get(GastoDetalleEconomico.class, filtro);
+		
+		try{
+			if(!Checks.esNulo(detalleGasto)){
+				try {
+					beanUtilNotNull.copyProperties(detalleGasto, dto);
+					
+					if(!Checks.esNulo(dto.getImpuestoIndirectoExento())){
+						if(dto.getImpuestoIndirectoExento()){
+							detalleGasto.setImpuestoIndirectoExento(1);
+						}
+						if(!dto.getImpuestoIndirectoExento()){
+							detalleGasto.setImpuestoIndirectoExento(0);
+						}
+					}
+					
+					if(!Checks.esNulo(dto.getRenunciaExencionImpuestoIndirecto())){
+						if(dto.getRenunciaExencionImpuestoIndirecto()){
+							detalleGasto.setRenunciaExencionImpuestoIndirecto(1);
+						}
+						if(!dto.getRenunciaExencionImpuestoIndirecto()){
+							detalleGasto.setRenunciaExencionImpuestoIndirecto(0);
+						}
+					}
+					
+					if(!Checks.esNulo(dto.getImpuestoIndirectoTipo())){
+						DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipo());
+						detalleGasto.setImpuestoIndirectoTipo(tipoImpuesto);
+					}
+					
+					if(!Checks.esNulo(dto.getDestinatariosPago())){
+						DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class, dto.getDestinatariosPago());
+						detalleGasto.setDestinatariosPago(destinatarioPago);
+					}
+					if(!Checks.esNulo(dto.getTipoPagador())){
+						DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagador());
+						detalleGasto.setTipoPagador(tipoPagador);
+					}
+					
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				genericDao.update(GastoDetalleEconomico.class, detalleGasto);				
+			}
+		}
+		catch(Exception e) {
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
 
 	
 

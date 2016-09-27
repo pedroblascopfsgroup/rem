@@ -309,7 +309,96 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'estadoPublicacionCodigo'
-    		}
+    		},
+			{
+				name: 'incluidoEnPerimetro'
+			},
+			{
+				name: 'fechaAltaActivoRem',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'aplicaTramiteAdmision',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaAplicaTramiteAdmision',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'motivoAplicaTramiteAdmision'
+			},
+			{
+				name: 'aplicaGestion',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaAplicaGestion',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'motivoAplicaGestion'
+			},
+			{
+				name: 'aplicaAsignarMediador',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaAplicaAsignarMediador',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'motivoAplicaAsignarMediador'
+			},
+			{
+				name: 'aplicaComercializar',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaAplicaComercializar',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'motivoAplicaComercializarDescripcion'
+			},
+			{
+				name: 'motivoNoAplicaComercializarDescripcion'
+			},
+			{
+				name: 'aplicaFormalizar',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaAplicaFormalizar',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'motivoAplicaFormalizar'
+			},
+			{
+				name: 'claseActivoCodigo'
+			},
+			{
+				name: 'subtipoClaseActivoCodigo'
+			},
+			{
+				name: 'numExpRiesgo'
+			},
+			{
+				name: 'tipoProducto'
+			},
+			{
+				name: 'estadoExpRiesgo'
+			},
+			{
+				name: 'estadoExpIncorriente'
+			}
     ],
     
 	proxy: {

@@ -12,6 +12,9 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
     	beforerender:'cargarTabFotos',
     	afterrender: function() {
     		this.dragDrop();
+    	},
+    	boxready: function (tabPanel) { 
+    		tabPanel.evaluarEdicion();
     	}
 
     },
@@ -271,7 +274,18 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 			}
 		});
 
-	}/*,
+	},
+    
+    //HREOS-846 Si NO esta dentro del perimetro, ocultamos las opciones de agregar/eliminar imagenes
+    evaluarEdicion: function() {    	
+		var me = this;
+		
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			me.down('[xtype=toolbar]').hide();
+		}
+    }
+    
+    /*,
 	
 	funcionRecargar: function() {
 		var me = this; 

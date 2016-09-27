@@ -56,6 +56,9 @@ public class RestLlamada implements Serializable, Auditable {
 	@Column(name = "RST_LLAMADA_RESPONSE")
 	private String response;
 	
+	@Column(name = "RST_LLAMADA_EXCEPTION")
+	private String exception;
+	
 	
 	@Embedded
 	private Auditoria auditoria;
@@ -149,6 +152,14 @@ public class RestLlamada implements Serializable, Auditable {
 
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
+	}
+
+	public String getException() {
+		return exception;
+	}
+
+	public void setException(String exception) {
+		this.exception = exception;
 	}
 
 	

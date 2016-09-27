@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -300,6 +301,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	}
 	
+	@Override
+	@BusinessOperationDefinition("genericManager.getComboSubtipoClaseActivo")
+	public List<DDSubtipoClaseActivoBancario> getComboSubtipoClaseActivo(String tipoClaseActivoCodigo) {
+		
+		//Generar una lista de todos los subtipos de clase bancarios relacionados con el tipo de clase bancario
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");			
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "claseActivo.codigo", tipoClaseActivoCodigo);
+
+		return (List<DDSubtipoClaseActivoBancario>) 
+				genericDao.getListOrdered(DDSubtipoClaseActivoBancario.class, order, filter);
+
+	}
+		
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoJuzgadoPlaza")
 	public List<TipoJuzgado> getComboTipoJuzgadoPlaza(Long idPlaza){

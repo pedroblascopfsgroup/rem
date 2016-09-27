@@ -21,7 +21,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 				me.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
             	tabPanel.evaluarBotonesEdicion(tab);
-			}		  					
+			}
 		},
 			    	
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {
@@ -116,13 +116,16 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
-
-		// Si la pestaña recibida no tiene asignadas funciones de edicion 
-		if(Ext.isEmpty(tab.funPermEdition)) {
-    		editionEnabled();
-    	} else {
-    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
-    	} 
+		
+		//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true") {
+			// Si la pestaña recibida no tiene asignadas funciones de edicion 
+			if(Ext.isEmpty(tab.funPermEdition)) {
+	    		editionEnabled();
+	    	} else {
+	    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+	    	} 
+		}
     }
     
 });

@@ -6,6 +6,13 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     reference: 'documentosactivoref',
     scrollable	: 'y',
     requires: ['HreRem.model.AdjuntoActivo', 'Ext.data.Store'],
+    
+	listeners: { 	
+    	boxready: function (tabPanel) { 
+    		tabPanel.evaluarEdicion();
+    	}
+    },
+    
     initComponent: function () {
     	
     	 var me = this;
@@ -138,6 +145,15 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load(grid.loadCallbackFunction);
   		});
+    },
+    
+    //HREOS-846 Si NO esta dentro del perimetro, ocultamos los botones de agregar/eliminar
+    evaluarEdicion: function() {    	
+		var me = this;
+
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			me.down('[xtype=toolbar]').hide();
+		}
     }
 
 

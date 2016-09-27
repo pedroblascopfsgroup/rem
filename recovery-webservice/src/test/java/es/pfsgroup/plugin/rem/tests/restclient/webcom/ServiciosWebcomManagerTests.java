@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.tests.restclient.webcom;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -33,6 +34,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
+import es.pfsgroup.plugin.rem.controller.ResolucionComiteController;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
@@ -69,13 +71,10 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 	@InjectMocks
 	private ServiciosWebcomManager manager;
-<<<<<<< HEAD
 	
 	@InjectMocks
 	private ResolucionComiteController resolucionComiteController;
 	
-=======
->>>>>>> 7698ffdd9df0b1b93a7c7c64595a8159a98eac62
 
 	@Before
 	public void setup() {
@@ -199,8 +198,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	@Test
 	public void reintentosSiErrorHttpTest() {
 		Mockito.reset(httpClient);
+		HttpClientException exception = new HttpClientException("error!!", 404);
 		try {
-			HttpClientException exception = new HttpClientException("", 404);
 			Mockito.when(httpClient.processRequest(anyString(), anyString(), anyMap(), any(JSONObject.class), anyInt(),
 					anyString())).thenThrow(exception);
 
@@ -218,6 +217,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 					registro.getErrorDesc().contains("404"));
 
 			assertNull("La respuesta logada debería ser nula", registro.getResponse());
+			
+			assertNotNull("La excepción no se ha logado correctamente", registro.getException());
 		}
 
 	}
@@ -252,7 +253,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		if (dto == null) {
 			throw new IllegalArgumentException("'dto' no puede ser NULL. Debes pasarme una instancia.");
 		}
-		;
 
 		dto.setFechaAccion(DateDataType.dateDataType(new Date()));
 		dto.setIdUsuarioRemAccion(LongDataType.longDataType(1234L));
@@ -292,6 +292,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		compruebaInfoBasicaRegistro(registro);
 		assertNull("No se debería loguear ningún código de error", registro.getErrorDesc());
 		assertNotNull("Se debería haber logueado la respuesta a la llamada", registro.getResponse());
+		assertNull("No se debería haber logado ninguna excepción", registro.getException());
 	}
 
 }

@@ -1,34 +1,30 @@
 package es.pfsgroup.plugin.rem.restclient.webcom;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosException;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomBase;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 public abstract class ServiciosWebcomBaseManager {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	protected abstract MessageBroker getMessageBroker();
+	protected abstract RegistroLlamadasManager getRegistroLlamadas();
 
 	public ServiciosWebcomBaseManager() {
 		super();
@@ -110,8 +106,9 @@ public abstract class ServiciosWebcomBaseManager {
 	 * @param servicio
 	 *            Implementación del servicio. Debe extender la clase
 	 *            {@link ClienteWebcomBase}.
+	 * @throws ErrorServicioWebcom 
 	 */
-	protected void invocarServicioRestWebcom(ParamsList paramsList, ClienteWebcomBase servicio) {
+	protected void invocarServicioRestWebcom(ParamsList paramsList, ClienteWebcomBase servicio) throws ErrorServicioWebcom {
 		if (paramsList == null){
 			throw new IllegalArgumentException("'paramsList' no puede ser NULL");
 		}
@@ -122,11 +119,12 @@ public abstract class ServiciosWebcomBaseManager {
 			throw e;
 		}
 		
+		RestLlamada registroLlamada = new RestLlamada();
 		try {
 			
 			logger.debug("Invocando al servicio " + servicio.getClass().getSimpleName()
 					+ ".enviarPeticion con parámetros " + paramsList.toString());
-			Map<String, Object> respuesta = servicio.enviaPeticion(paramsList);
+			Map<String, Object> respuesta = servicio.enviaPeticion(paramsList, registroLlamada);
 
 			logger.debug(
 					"Procesando respuesta" + servicio.getClass().getSimpleName() + ".procesarRespuesta " + respuesta);
@@ -137,20 +135,18 @@ public abstract class ServiciosWebcomBaseManager {
 					+ paramsList.toString(), e);
 			if (! e.isHttpError()) {
 				logger.fatal("Se ha producido un error no-reintentable en la llamada a servicio REST de Webcom", e);
-				// TODO Loguear errores de las llamadas que no se deban
-				// reintentar
+				e.setReintentable(false);
 			} else {
 				logger.error("Se va a reintentar la invocación a " + servicio.getClass().getSimpleName()
 						+ ".enviarPeticion con parámetros " + paramsList.toString());
-				// TODO Configuración de colas para gestionar los reintentos
-				MessageBroker mb = this.getMessageBroker();
-				if (mb != null) {
-					mb.sendAsync(servicio.getClass(), paramsList);
-				} else {
-					logger.warn("MESSAGE BROKER no está disponible");
-				}
+				//getRegistroLlamadas().guardaRegistroLlamada(registroLlamada);
+				e.setReintentable(true);
 			}
-		} 
+			
+			throw e;
+		}finally{
+			getRegistroLlamadas().guardaRegistroLlamada(registroLlamada);
+		}
 	}
 
 

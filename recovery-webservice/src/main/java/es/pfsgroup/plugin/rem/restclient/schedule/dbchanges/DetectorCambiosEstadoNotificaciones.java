@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Component
 public class DetectorCambiosEstadoNotificaciones extends DetectorCambiosBD<NotificacionDto> {
@@ -36,7 +37,7 @@ public class DetectorCambiosEstadoNotificaciones extends DetectorCambiosBD<Notif
 	}
 
 	@Override
-	public void invocaServicio(List<NotificacionDto> data) {
+	public void invocaServicio(List<NotificacionDto> data) throws ErrorServicioWebcom {
 		this.serviciosWebcom.estadoNotificacion(data);
 
 	}

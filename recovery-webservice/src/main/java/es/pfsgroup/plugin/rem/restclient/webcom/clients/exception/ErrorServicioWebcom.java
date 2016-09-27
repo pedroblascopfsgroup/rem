@@ -18,6 +18,8 @@ public class ErrorServicioWebcom extends Exception {
 	
 	private boolean httpError = false;
 	
+	private boolean reintentable;
+	
 
 	public ErrorServicioWebcom(HttpClientException e) {
 		super(e);
@@ -41,6 +43,16 @@ public class ErrorServicioWebcom extends Exception {
 
 	public boolean isHttpError() {
 		return httpError;
+	}
+
+
+	public boolean isReintentable() {
+		return reintentable;
+	}
+
+
+	public void setReintentable(boolean reintentable) {
+		this.reintentable = reintentable;
 	}
 
 }

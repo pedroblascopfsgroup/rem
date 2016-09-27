@@ -21,6 +21,10 @@ import net.sf.json.JSONObject;
 
 public class WebcomRequestUtils {
 	
+	public static final String JSON_PROPERTY_DATA = "data";
+
+	public static final String JSON_PROPERTY_ID = "id";
+
 	private static final Log logger = LogFactory.getLog(WebcomRequestUtils.class);
 	
 	private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
@@ -34,8 +38,8 @@ public class WebcomRequestUtils {
 		}
 
 		JSONObject json = new JSONObject();
-		json.put("id", computeRequestId());
-		json.put("data", dataArray);
+		json.put(JSON_PROPERTY_ID, computeRequestId());
+		json.put(JSON_PROPERTY_DATA, dataArray);
 		return json;
 	}
 

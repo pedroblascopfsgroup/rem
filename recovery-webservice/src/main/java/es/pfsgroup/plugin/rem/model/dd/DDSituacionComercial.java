@@ -30,10 +30,15 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSituacionComercial implements Auditable, Dictionary {
 
-	public static final String CODIGO_VENDIDO = "05";
+	public static final String CODIGO_NO_COMERCIALIZABLE = "01";
 	public static final String CODIGO_DISPONIBLE_VENTA = "02";
 	public static final String CODIGO_DISPONIBLE_VENTA_OFERTA = "03";
 	public static final String CODIGO_DISPONIBLE_VENTA_RESERVA = "04";
+	public static final String CODIGO_VENDIDO = "05";
+	public static final String CODIGO_TRASPASADO = "06";
+	public static final String CODIGO_DISPONIBLE_ALQUILER = "07";
+	public static final String CODIGO_DISPONIBLE_VENTA_ALQUILER = "08";
+	public static final String CODIGO_DISPONIBLE_CONDICIONADO = "09";
 
 	/**
 	 * 

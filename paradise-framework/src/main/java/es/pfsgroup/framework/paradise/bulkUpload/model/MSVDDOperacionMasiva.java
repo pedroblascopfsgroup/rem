@@ -43,7 +43,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE="ADPA";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_BLOQUEO="BBPA";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_DESBLOQUEO="DBPA";
-		  
+	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO="ACPA";
 		  
 	private static final long serialVersionUID = 5938440720826995243L;
 

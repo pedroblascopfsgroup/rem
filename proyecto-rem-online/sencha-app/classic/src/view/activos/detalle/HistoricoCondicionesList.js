@@ -7,6 +7,13 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
     bind: {
         store: '{historicocondiciones}'
     },
+
+    listeners: {
+    	boxready: function() {
+    		me = this;
+    		me.evaluarEdicion();
+    	}
+    },
     
     initComponent: function () {
      	
@@ -68,6 +75,15 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		    
 		    
 		    me.callParent();
+   },
+   
+   //HREOS-846 Si NO esta dentro del perimetro, ocultamos los botones de agregar/quitar del grid
+   evaluarEdicion: function() {    	
+		var me = this;
+		
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			me.setTopBar(false);
+		}
    }
 
 });

@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
+import es.pfsgroup.plugin.rem.controller.ResolucionComiteController;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
@@ -70,6 +71,10 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 	@InjectMocks
 	private ServiciosWebcomManager manager;
+	
+	@InjectMocks
+	private ResolucionComiteController resolucionComiteController;
+	
 
 	@Before
 	public void setup() {

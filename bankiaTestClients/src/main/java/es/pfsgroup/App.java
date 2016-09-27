@@ -14,7 +14,7 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 public class App {
 	public static void main(String[] args) {
 		if (args.length < 1) {
-			System.out.println("Indique el cliente a ejecutar: tasaciones,infoCliente");
+			System.out.println("Indique el cliente a ejecutar: tasaciones,infoCliente, instanciaDecision");
 			System.exit(1);
 		}
 
@@ -24,9 +24,11 @@ public class App {
 				System.out.println("Ejecutando servicio tasaciones");
 				if (args.length == 4) {
 					Long idBien = Long.valueOf(args[1]);
-					uvemManager.ejecutarSolicitarTasacion(idBien, args[2], args[3]);
+					Integer respValue = uvemManager.ejecutarSolicitarTasacion(idBien, args[2], args[3]);
+					System.out.println("Resultado llamada tasaciones: " + respValue);
+					
 				} else {
-					System.out.println("Número de parametros incorrectos: ejem: sh run.sh tasaciones 22 nombreGestor BANKIA/HAYA"+args.length);
+					System.out.println("Número de parametros incorrectos: ejem: sh run.sh tasaciones 22 nombreGestor BANKIA/HAYA");
 					System.exit(1);
 				}
 			} else if (args[0].equals("infoCliente")) {
@@ -34,11 +36,13 @@ public class App {
 				if (args.length == 3) {
 					uvemManager.ejecutarNumCliente(args[1], args[2], "00000");
 					GMPAJC11_INS numclienteIns = uvemManager.resultadoNumCliente();
+					System.out.println("Resultado llamada resultadoNumCliente: " + numclienteIns.getnumeroCliente());
 					uvemManager.ejecutarDatosCliente(numclienteIns.getnumeroCliente(), "00000");
 					GMPAJC93_INS datosClienteIns = uvemManager.resultadoDatosCliente();
+					System.out.println("Resultado llamada resultadoDatosCliente: " + datosClienteIns.getName());
 					
 				} else {
-					System.out.println("Número de parametros incorrectos: ejem: sh run.sh infoCliente 20036188Z 1"+args.length);
+					System.out.println("Número de parametros incorrectos: ejem: sh run.sh infoCliente 20036188Z 1");
 					System.exit(1);
 				}
 

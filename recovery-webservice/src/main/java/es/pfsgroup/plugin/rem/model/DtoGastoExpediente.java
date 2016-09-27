@@ -20,15 +20,13 @@ public class DtoGastoExpediente extends WebDto {
 	
 
 	private Long id;
-	private String colaborador;
-	private String tipoProveedor;
+	private String codigoId;
+	private String participacion;
 	private String proveedor;
-	private String domicilio;
 	private String tipoCalculo;
 	private Double importeCalculo;
 	private Double honorarios;
-	private String telefono;
-	private String email;
+	private String observaciones;
 	
 	public Long getId() {
 		return id;
@@ -36,29 +34,23 @@ public class DtoGastoExpediente extends WebDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getColaborador() {
-		return colaborador;
+	public String getCodigoId() {
+		return codigoId;
 	}
-	public void setColaborador(String colaborador) {
-		this.colaborador = colaborador;
+	public void setCodigoId(String codigoId) {
+		this.codigoId = codigoId;
 	}
-	public String getTipoProveedor() {
-		return tipoProveedor;
+	public String getParticipacion() {
+		return participacion;
 	}
-	public void setTipoProveedor(String tipoProveedor) {
-		this.tipoProveedor = tipoProveedor;
+	public void setParticipacion(String participacion) {
+		this.participacion = participacion;
 	}
 	public String getProveedor() {
 		return proveedor;
 	}
 	public void setProveedor(String proveedor) {
 		this.proveedor = proveedor;
-	}
-	public String getDomicilio() {
-		return domicilio;
-	}
-	public void setDomicilio(String domicilio) {
-		this.domicilio = domicilio;
 	}
 	public String getTipoCalculo() {
 		return tipoCalculo;
@@ -78,18 +70,13 @@ public class DtoGastoExpediente extends WebDto {
 	public void setHonorarios(Double honorarios) {
 		this.honorarios = honorarios;
 	}
-	public String getTelefono() {
-		return telefono;
+	public String getObservaciones() {
+		return observaciones;
 	}
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
+
 	
 	
    		

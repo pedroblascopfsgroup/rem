@@ -3,15 +3,21 @@ package es.pfsgroup.plugin.rem.restclient.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.UnknownWebcomDataTypeException;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataTypeParseException;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 
 public class Converter {
 
@@ -35,6 +41,12 @@ public class Converter {
 
 						Object val = f.get(dto);
 						if (val != null) {
+							
+							DecimalDataTypeFormat format = f.getAnnotation(DecimalDataTypeFormat.class);
+							if (format != null) {
+								
+								val = WebcomDataType.valueOf(val, format);
+							}
 							map.put(f.getName(), val);
 						}
 
@@ -43,6 +55,9 @@ public class Converter {
 					logger.error("No se puede transformar el Dto a un Map: [" + dto.toString() + "]", e);
 					throw new ConverterError(dto, e);
 				} catch (IllegalAccessException e) {
+					logger.error("No se puede transformar el Dto a un Map: [" + dto.toString() + "]", e);
+					throw new ConverterError(dto, e);
+				} catch (WebcomDataTypeParseException e) {
 					logger.error("No se puede transformar el Dto a un Map: [" + dto.toString() + "]", e);
 					throw new ConverterError(dto, e);
 				}

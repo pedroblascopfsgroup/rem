@@ -311,8 +311,7 @@ Ext.define('HreRem.model.Activo', {
     			name: 'estadoPublicacionCodigo'
     		},
 			{
-				name: 'incluidoEnPerimetro'/*,
-				type: 'boolean'*/
+				name: 'incluidoEnPerimetro'
 			},
 			{
 				name: 'fechaAltaActivoRem',

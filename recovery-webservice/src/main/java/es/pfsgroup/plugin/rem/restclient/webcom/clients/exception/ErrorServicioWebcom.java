@@ -16,12 +16,17 @@ public class ErrorServicioWebcom extends Exception {
 
 	private String errorWebcom;
 	
+	private boolean httpError = false;
+	
+	private boolean reintentable;
+	
 
 	public ErrorServicioWebcom(HttpClientException e) {
 		super(e);
 		if (e.getResponseCode() != null){
 			this.errorWebcom = HTTP_ERROR.replaceAll("%code%", e.getResponseCode().toString());
 		}
+		httpError = true;
 	}
 	
 	
@@ -33,6 +38,21 @@ public class ErrorServicioWebcom extends Exception {
 
 	public String getErrorWebcom() {
 		return this.errorWebcom;
+	}
+
+
+	public boolean isHttpError() {
+		return httpError;
+	}
+
+
+	public boolean isReintentable() {
+		return reintentable;
+	}
+
+
+	public void setReintentable(boolean reintentable) {
+		this.reintentable = reintentable;
 	}
 
 }

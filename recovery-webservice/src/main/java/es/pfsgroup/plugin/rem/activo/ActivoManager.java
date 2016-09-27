@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
@@ -86,9 +87,12 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -332,9 +336,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 					
 					if(!listaVisitasCliente.isEmpty()) {
-						oferta.setVisita(listaVisitasCliente.get(0));			
-						genericDao.save(Oferta.class, oferta);
+						oferta.setVisita(listaVisitasCliente.get(0));
+						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_REALIZADA);
+						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
+					} else {
+						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_PENDIENTE);
+						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
 					}
+					
+					genericDao.save(Oferta.class, oferta);
 
 				}
 			}
@@ -344,8 +354,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoExpediente.setEstado(estadoExpediente);
 			nuevoExpediente.setNumExpediente(activoDao.getNextNumOferta());
 			nuevoExpediente.setTrabajo(trabajo);
+			
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 			
+			crearGastosExpediente(nuevoExpediente,oferta);
+					
 		}catch(Exception ex) {
 			logger.error(ex.getMessage());
 			return false;
@@ -1176,6 +1189,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
+
 	@Override
 	public boolean isActivoIncluidoEnPerimetro(Long idActivo) {
 		
@@ -1202,6 +1216,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//Si no existia un registro de activo bancario, crea un nuevo
 		if(Checks.esNulo(perimetroActivo)){
 			perimetroActivo = new PerimetroActivo();
+			perimetroActivo.setAuditoria(new Auditoria());
 		}
 		
 		return perimetroActivo;
@@ -1218,6 +1233,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//Si no existia un registro de activo bancario, crea un nuevo
 		if(Checks.esNulo(activoBancario)){
 			activoBancario = new ActivoBancario();
+			activoBancario.setAuditoria(new Auditoria());
 		}
 		
 		return activoBancario;
@@ -1334,5 +1350,66 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+
+	public boolean crearGastosExpediente(ExpedienteComercial nuevoExpediente, Oferta oferta){
+		
+		try{
+			List<DDAccionGastos> accionesGastos= new ArrayList<DDAccionGastos>();
+			DDAccionGastos accionGastoPrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_PRESCRIPCION);
+			DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+			DDAccionGastos accionGastoDoblePrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_DOBLE_PRESCRIPCION);
+			accionesGastos.add(accionGastoPrescripcion);
+			accionesGastos.add(accionGastoColaboracion);
+			
+			if(!Checks.esNulo(oferta.getApiResponsable())){
+				accionesGastos.add(accionGastoDoblePrescripcion);
+			}
+			
+			for(DDAccionGastos accionGasto: accionesGastos){
+				GastosExpediente gastoExpediente= new GastosExpediente();
+				gastoExpediente.setAccionGastos(accionGasto);
+				gastoExpediente.setExpediente(nuevoExpediente);
+				
+				DDDestinatarioGasto destinatarioGasto= (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, DDDestinatarioGasto.CODIGO_HAYA);
+				gastoExpediente.setDestinatarioGasto(destinatarioGasto);
+				
+				if(accionGasto.getCodigo().equals(DDAccionGastos.CODIGO_COLABORACION)){
+					if(!Checks.esNulo(oferta.getCustodio())){
+						gastoExpediente.setNombre(oferta.getCustodio().getNombre());
+						gastoExpediente.setCodigo(oferta.getCustodio().getCodProveedorUvem());
+						gastoExpediente.setProveedor(oferta.getCustodio());
+					}
+					else if(!Checks.esNulo(oferta.getFdv())){
+						gastoExpediente.setNombre(oferta.getFdv().getNombre());
+						gastoExpediente.setCodigo(oferta.getFdv().getCodProveedorUvem());
+						gastoExpediente.setProveedor(oferta.getFdv());
+					}
+				}
+				
+				else if(accionGasto.getCodigo().equals(DDAccionGastos.CODIGO_PRESCRIPCION)){
+					if(!Checks.esNulo(oferta.getPrescriptor())){
+						gastoExpediente.setNombre(oferta.getPrescriptor().getNombre());
+						gastoExpediente.setCodigo(oferta.getPrescriptor().getCodProveedorUvem());
+						gastoExpediente.setProveedor(oferta.getPrescriptor());
+					}
+				}
+				
+				else if(accionGasto.getCodigo().equals(DDAccionGastos.CODIGO_DOBLE_PRESCRIPCION)){
+					if(!Checks.esNulo(oferta.getApiResponsable())){
+						gastoExpediente.setNombre(oferta.getApiResponsable().getNombre());
+						gastoExpediente.setCodigo(oferta.getApiResponsable().getCodProveedorUvem());
+						gastoExpediente.setProveedor(oferta.getApiResponsable());
+					}
+				}
+				
+				genericDao.save(GastosExpediente.class, gastoExpediente);
+			}
+		}catch(Exception ex) {
+			logger.error(ex.getMessage());
+			return false;
+		}
+		
+		return true;
 	}
 }

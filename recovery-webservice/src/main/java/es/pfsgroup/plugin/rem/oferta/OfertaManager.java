@@ -17,6 +17,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -273,16 +274,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						listaErrores.add("No existe el activo en REM especificado en el campo idActivoHaya: " + ofertaDto.getIdActivoHaya());
 					}
 				}
-				if(!Checks.esNulo(ofertaDto.getIdUsuarioRem())){
-					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRem()));							
+				if(!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())){
+					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));							
 					if(Checks.esNulo(user)){
-						listaErrores.add("No existe el usuario en REM especificado en el campo idUsuarioRem: " + ofertaDto.getIdUsuarioRem());
+						listaErrores.add("No existe el usuario en REM especificado en el campo idUsuarioRem: " + ofertaDto.getIdUsuarioRemAccion());
 					}
 				}
 				if(!Checks.esNulo(ofertaDto.getCodEstadoOferta())){
 					DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
 					if(Checks.esNulo(estadoOfr)){
 						listaErrores.add("No existe el código del estado de la oferta especificado en el campo codEstadoOferta: " + ofertaDto.getCodEstadoOferta());
+					}else{
+						if(!ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE) && !ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)){
+							listaErrores.add("Código de estado no permitido. Valores permitidos: ".concat(DDEstadoOferta.CODIGO_PENDIENTE).concat(",").concat(DDEstadoOferta.CODIGO_RECHAZADA));
+						}
 					}
 				}				
 				if(!Checks.esNulo(ofertaDto.getCodTipoOferta())){
@@ -326,6 +331,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}
+				
 			}
 			
 		}catch (Exception e){
@@ -422,8 +428,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}		
-				if(!Checks.esNulo(ofertaDto.getIdUsuarioRem())){
-					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRem()));							
+				if(!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())){
+					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));							
 					if(!Checks.esNulo(user)){
 						oferta.setUsuarioAccion(user);			
 					}
@@ -485,13 +491,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}						
 					}
 					oferta.setTitularesAdicionales(listaTit);
-				}				
+
+				}
+				
+				if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE)){
+					oferta.setFechaAlta(ofertaDto.getFechaAccion());
+				}else if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)){
+					oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion());
+				}
+				
 				ofertaDao.save(oferta);
 				
 				//Si la oferta tiene estado, hay que actualizar la disposicion comercial del activo
 				if(!Checks.esNulo(estadoOfr)){
 					this.updateStateDispComercialActivosByOferta(oferta);
 				}
+
 			}
 
 		}catch (Exception e){
@@ -532,7 +547,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						oferta.setEstadoOferta(null);
 					}
 				}
-				
+				if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE)){
+					oferta.setFechaAlta(ofertaDto.getFechaAccion());
+				}else if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)){
+					oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion());
+				}
 				ofertaDao.saveOrUpdate(oferta);
 				
 				//Si la oferta tiene estado, hay que actualizar la disposicion comercial del activo
@@ -561,6 +580,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		activoOferta.setPrimaryKey(pk);
 		activoOferta.setImporteActivoOferta(importe);
 		return activoOferta;
+	}
+
+	@Override
+	public DDEstadoOferta getDDEstadosOfertaByCodigo(String codigo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		return genericDao.get(DDEstadoOferta.class, filtro);
 	}
 	
 	@Override

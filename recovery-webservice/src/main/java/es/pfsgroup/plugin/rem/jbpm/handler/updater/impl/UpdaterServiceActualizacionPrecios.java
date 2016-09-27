@@ -57,6 +57,7 @@ public class UpdaterServiceActualizacionPrecios implements UpdaterService {
 			}
 
 		}
+		genericDao.save(Trabajo.class, trabajo);
 
 	}
 

@@ -10,7 +10,6 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
-import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -22,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesFinancieras;
@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -71,11 +72,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFachada;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
@@ -90,6 +93,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposCompareciente;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
@@ -180,7 +184,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoProveedor", DDEstadoProveedor.class);
 		mapa.put("tipoProveedor", DDEntidadProveedor.class);
 		mapa.put("subtipoProveedor", DDTipoProveedor.class);
-		mapa.put("tipoPersona", DDTipoPersona.class);
+		mapa.put("tipoPersona", DDTiposPersona.class);
 		mapa.put("municipio", Localidad.class);
 		mapa.put("tiposDocumentos", DDTipoDocumento.class);
 		mapa.put("tiposDocumentoExpediente", DDTipoDocumentoExpediente.class);
@@ -207,7 +211,13 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoExpRiesgoBancario", DDEstadoExpRiesgoBancario.class);
 		mapa.put("estadoExpIncorrienteBancario", DDEstadoExpIncorrienteBancario.class);
 		mapa.put("motivoNoAplicaComercializarActivo", DDMotivoNoComercializacion.class);
-		
+		mapa.put("tipoPeriocidad", DDTipoPeriocidad.class);
+		mapa.put("tiposGasto", DDTipoGasto.class);
+		mapa.put("destinatariosGasto", DDDestinatarioGasto.class);
+		mapa.put("subtiposGasto", DDSubtipoGasto.class);
+//		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
+
+
 		return Collections.unmodifiableMap(mapa);
 	}
 	

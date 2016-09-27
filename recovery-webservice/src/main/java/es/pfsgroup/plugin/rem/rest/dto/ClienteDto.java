@@ -14,6 +14,10 @@ public class ClienteDto implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@NotNull
+	private Date fechaAccion;
+	@NotNull
+	private Long idUsuarioRemAccion;
+	@NotNull
 	private Long idClienteWebcom;
 	private Long idClienteRem;
 	@Size(max=50)
@@ -24,10 +28,6 @@ public class ClienteDto implements Serializable{
 	@NotNull
 	@Size(max=50)
 	private String apellidos;
-	@NotNull
-	private Date fechaAccion;
-	@NotNull
-	private Long idUsuarioRem;
 	@Size(max=20)
 	private String codTipoDocumento;
 	@Size(max=14)
@@ -42,8 +42,8 @@ public class ClienteDto implements Serializable{
 	private String telefono2;
 	@Size(max=50)
 	private String email;
-	@Size(max=20)
-	private String codTipoPrescriptor;
+	//@Size(max=20)
+	//private String codTipoPrescriptor;
 	private Long idProveedorRemPrescriptor;
 	private Long idProveedorRemResponsable;
 	@Size(max=20)
@@ -58,18 +58,30 @@ public class ClienteDto implements Serializable{
 	private String planta;
 	@Size(max=17)
 	private String puerta;
-	@Size(max=5)
-	private String codigoPostal;
 	@Size(max=20)
 	private String codMunicipio;
 	@Size(max=20)
 	private String codProvincia;
 	@Size(max=20)
 	private String codPedania;
+	@Size(max=5)
+	private String codigoPostal;
 	@Size(max=250)
 	private String observaciones;
 	
 	
+	public Date getFechaAccion() {
+		return fechaAccion;
+	}
+	public void setFechaAccion(Date fechaAccion) {
+		this.fechaAccion = fechaAccion;
+	}
+	public Long getIdUsuarioRemAccion() {
+		return idUsuarioRemAccion;
+	}
+	public void setIdUsuarioRemAccion(Long idUsuarioRemAccion) {
+		this.idUsuarioRemAccion = idUsuarioRemAccion;
+	}
 	public Long getIdClienteWebcom() {
 		return idClienteWebcom;
 	}
@@ -99,18 +111,6 @@ public class ClienteDto implements Serializable{
 	}
 	public void setApellidos(String apellidos) {
 		this.apellidos = apellidos;
-	}
-	public Date getFechaAccion() {
-		return fechaAccion;
-	}
-	public void setFechaAccion(Date fechaAccion) {
-		this.fechaAccion = fechaAccion;
-	}
-	public Long getIdUsuarioRem() {
-		return idUsuarioRem;
-	}
-	public void setIdUsuarioRem(Long idUsuarioRem) {
-		this.idUsuarioRem = idUsuarioRem;
 	}
 	public String getCodTipoDocumento() {
 		return codTipoDocumento;
@@ -154,12 +154,6 @@ public class ClienteDto implements Serializable{
 	}
 	public void setEmail(String email) {
 		this.email = email;
-	}
-	public String getCodTipoPrescriptor() {
-		return codTipoPrescriptor;
-	}
-	public void setCodTipoPrescriptor(String codTipoPrescriptor) {
-		this.codTipoPrescriptor = codTipoPrescriptor;
 	}
 	public Long getIdProveedorRemPrescriptor() {
 		return idProveedorRemPrescriptor;
@@ -209,11 +203,11 @@ public class ClienteDto implements Serializable{
 	public void setPuerta(String puerta) {
 		this.puerta = puerta;
 	}
-	public String getCodigoPostal() {
-		return codigoPostal;
+	public String getCodMunicipio() {
+		return codMunicipio;
 	}
-	public void setCodigoPostal(String codigoPostal) {
-		this.codigoPostal = codigoPostal;
+	public void setCodMunicipio(String codMunicipio) {
+		this.codMunicipio = codMunicipio;
 	}
 	public String getCodProvincia() {
 		return codProvincia;
@@ -221,17 +215,17 @@ public class ClienteDto implements Serializable{
 	public void setCodProvincia(String codProvincia) {
 		this.codProvincia = codProvincia;
 	}
-	public String getCodMunicipio() {
-		return codMunicipio;
-	}
-	public void setCodMunicipio(String codMunicipio) {
-		this.codMunicipio = codMunicipio;
-	}
 	public String getCodPedania() {
 		return codPedania;
 	}
 	public void setCodPedania(String codPedania) {
 		this.codPedania = codPedania;
+	}
+	public String getCodigoPostal() {
+		return codigoPostal;
+	}
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
 	}
 	public String getObservaciones() {
 		return observaciones;
@@ -239,5 +233,7 @@ public class ClienteDto implements Serializable{
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
+	
+	
 	
 }

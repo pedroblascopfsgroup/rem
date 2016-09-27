@@ -2,37 +2,62 @@ package es.pfsgroup.plugin.rem.api.services.webcom;
 
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 public interface ServiciosWebcomApi {
-	
+
 	/**
 	 * Envia a WEBCOM una actualización del estado del Trabajo
-	 * @param usuarioId ID del usuario que realiza la petición
-	 * @param idRem ID del Trabajo en REM (obligatorio)
-	 * @param idWebcom ID del Trabajo en WEBCOM (obligatorio)
-	 * @param codEstado Estado del Trabajo (obligatorio)
-	 * @param motivoRechazo Motivo de rechazo del trabajo.
+	 * 
+	 * @param estadoTrabajo
+	 *            Lista de DTO's con los cambios de estado que queremos
+	 *            notificar
+	 *            
+	 *            @throws ErrorServicioWebcom 
 	 */
-	public void enviaActualizacionEstadoTrabajo(Long usuarioId, Long idRem, Long idWebcom, String codEstado, String motivoRechazo);
-	
+	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom;
+
 	/**
 	 * Envia a WEBCOM una actualización del estado de una Oferta.
-	 * @param usuarioId ID del usuario que realiza la petición
-	 * @param idRem ID de la Oferta en REM (obligatorio)
-	 * @param idWebcom ID de la Oferta en WEBCOM (obligatorio)
-	 * @param codEstadoOferta  (obligatorio)
-	 * @param idActivoHaya ID del Activo 
-	 * @param codEstadoExpediente ID del estado del Expediente
-	 * @param vendido Flag que indica si el activo está vendido.
+	 * 
+	 * @param estadoOferta
+	 *            Lista de DTO's con los cambios de estado que queremos
+	 *            notificar.
+	 * @throws ErrorServicioWebcom 
 	 */
-	public void enviaActualizacionEstadoOferta(Long usuarioId, Long idRem, Long idWebcom, String codEstadoOferta, Long idActivoHaya, String codEstadoExpediente, Boolean vendido);
-	
+	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom;
+
 	/**
 	 * Envia a WEBCOM una actualización del stock de activos
-	 * @param usuarioId ID del usuario que realiza la petición
-	 * @param stock Stock de activos (alta/modificación)
+	 * 
+	 * @param stock
+	 *            Stock de activos (alta/modificación)
 	 */
-	public void enviarStock(Long usuarioId, List<StockDto> stock);
+	public void enviarStock(List<StockDto> stock) throws ErrorServicioWebcom;
+
+	/**
+	 * Honorarios asociados a una oferta una vez se apruebe ésta, también viaja
+	 * las observaciones del gestor comercial a la NO aceptación de los mismos
+	 * por el mediador.
+	 * 
+	 * @param notificaciones
+	 * @throws ErrorServicioWebcom 
+	 */
+	public void estadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom;
+
+	/**
+	 * Honorarios asociados a una oferta una vez se apruebe ésta, también viaja
+	 * las observaciones del gestor comercial a la NO aceptación de los mismos
+	 * por el mediador.
+	 * 
+	 * @param comisiones
+	 * @throws ErrorServicioWebcom 
+	 */
+	public void ventasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom;
 
 }

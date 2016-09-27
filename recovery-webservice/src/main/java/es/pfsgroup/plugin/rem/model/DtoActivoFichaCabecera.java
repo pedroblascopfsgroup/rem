@@ -3,11 +3,6 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 
 /**
  * Dto para la pestaña cabecera de la ficha de Activo

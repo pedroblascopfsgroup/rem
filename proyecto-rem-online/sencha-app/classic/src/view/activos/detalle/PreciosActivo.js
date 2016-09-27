@@ -112,13 +112,17 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivo', {
 					me.down("[itemId=botoneditar]").setVisible(false);
 					var editionEnabled = function() {
 						me.down("[itemId=botoneditar]").setVisible(true);
-					}			
-					// Si la pestaña recibida no tiene asignados roles de edicion 
-					if(Ext.isEmpty(tab.funPermEdition)) {
-			    		editionEnabled();
-			    	} else {
-			    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
-			    	}
+					}
+					
+					//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
+					if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true") {
+						// Si la pestaña recibida no tiene asignados roles de edicion 
+						if(Ext.isEmpty(tab.funPermEdition)) {
+				    		editionEnabled();
+				    	} else {
+				    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+				    	}
+					}
 				 }
 			}   	
     	];

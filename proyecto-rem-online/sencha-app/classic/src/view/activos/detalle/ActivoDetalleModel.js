@@ -519,7 +519,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	          	 },
 	          	 groupField: 'descripcionTipo'
     		},
-    		
+
     		historicoTrabajos: {
 				pageSize: $AC.getDefaultPageSize(),
 		    	model: 'HreRem.model.BusquedaTrabajo',
@@ -669,6 +669,78 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'acabadosCarpinteria'}
+				}
+    		},
+    		
+    		comboTipoComercializacionActivo: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposComercializacionActivo'}
+				}
+    		},
+    		
+    		comboMotivoAplicaComercializarActivo: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'motivoAplicaComercializarActivo'}
+				}
+    		},
+    		
+    		comboMotivoNoAplicaComercializarActivo: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'motivoNoAplicaComercializarActivo'}
+				}
+    		},
+
+    		comboClaseActivoBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'claseActivoBancario'}
+				}
+    		},
+    		
+    		comboSubtipoClaseActivoBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoClaseActivo',
+					extraParams: {tipoClaseActivoCodigo: '{activo.claseActivoCodigo}'}
+				}
+    		},
+    		
+    		comboTipoProductoBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoProductoBancario'}
+				}
+    		},
+    		
+    		comboEstadoExpRiesgoBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoExpRiesgoBancario'}
+				}
+    		},
+    		
+    		comboEstadoExpIncorrienteBancario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoExpIncorrienteBancario'}
 				}
     		},
     		

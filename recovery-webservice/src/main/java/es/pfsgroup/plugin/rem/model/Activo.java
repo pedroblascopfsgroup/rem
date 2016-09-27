@@ -345,6 +345,8 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     private List<ActivoOferta> ofertas;
     
+    
+    // Indicadores de precios del activo
     @Column(name = "ACT_FECHA_IND_PRECIAR")
     private Date fechaPreciar;
     

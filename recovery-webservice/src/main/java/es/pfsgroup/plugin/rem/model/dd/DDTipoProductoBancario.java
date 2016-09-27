@@ -19,53 +19,40 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de los tipos de estado de una reserva
+ * Modelo que gestiona el diccionario de tipo producto bancario.
  * 
- * @author Jose Villel
+ * @author Bender
  *
  */
 @Entity
-@Table(name = "DD_ERE_ESTADOS_RESERVA", schema = "${entity.schema}")
+@Table(name = "DD_TIP_TIPO_PRODUCTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadosReserva implements Auditable, Dictionary {
-	
+public class DDTipoProductoBancario implements Auditable, Dictionary {
 
-	public static final String CODIGO_PENDIENTE_FIRMA = "01";
-	public static final String CODIGO_FIRMADA = "02";
-	public static final String CODIGO_RESUELTA = "03";
-	public static final String CODIGO_ANULADA = "04";
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2307957295534774606L;
+	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_ERE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadosReservaGenerator")
-	@SequenceGenerator(name = "DDEstadosReservaGenerator", sequenceName = "S_DD_ERE_ESTADOS_RESERVA")
+	@Column(name = "DD_TIP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTIPBancarioGenerator")
+	@SequenceGenerator(name = "DDTIPBancarioGenerator", sequenceName = "S_DD_TIP_TIPO_PRODUCTO")
 	private Long id;
-	
-	@Column(name = "DD_ERE_CODIGO")   
+	    
+	@Column(name = "DD_TIP_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_ERE_DESCRIPCION")   
+	@Column(name = "DD_TIP_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_ERE_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	    
-	
-	    
+	@Column(name = "DD_TIP_DESCRIPCION_LARGA")   
+	private String descripcionLarga;	    
+
 	@Version   
 	private Long version;
-	
+
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
-	
 	public Long getId() {
 		return id;
 	}
@@ -114,8 +101,4 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
-	 
-	
-	
-	
 }

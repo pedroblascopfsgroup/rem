@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 
+/**
+ * Para un Handler específico, extender de ActivoGenericEnterActionHandler / ActivoGenericLeaveActionHandler
+ */
 @Component
 public abstract class ActivoGenericActionHandler extends ActivoBaseActionHandler implements ApplicationContextAware{
 	

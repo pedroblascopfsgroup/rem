@@ -100,9 +100,47 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoInfoComercialCodigo;
 	private String estadoPublicacionDescripcion;
 	private String estadoPublicacionCodigo;
+	private String tipoComercializacionCodigo;
 	private String tipoComercializacionDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
+	private String situacionComercialDescripcion;
+	
+	//Perimetro datos:
+	private Boolean incluidoEnPerimetro;
+	private Date fechaAltaActivoRem;
+	private Boolean aplicaTramiteAdmision;
+	private Date fechaAplicaTramiteAdmision;
+	private String motivoAplicaTramiteAdmision;
+	private Boolean aplicaGestion;
+	private Date fechaAplicaGestion;
+	private String motivoAplicaGestion;
+	private Boolean aplicaAsignarMediador;
+	private Date fechaAplicaAsignarMediador;
+	private String motivoAplicaAsignarMediador;
+	private Boolean aplicaComercializar;
+	private Date fechaAplicaComercializar;
+	private String motivoAplicaComercializarCodigo;
+	private String motivoAplicaComercializarDescripcion;
+	private String motivoNoAplicaComercializarCodigo;
+	private String motivoNoAplicaComercializarDescripcion;
+	private Boolean aplicaFormalizar;
+	private Date fechaAplicaFormalizar;
+	private String motivoAplicaFormalizar;
 
+	//Activo Bancarico datos:
+	private String claseActivoCodigo;
+	private String claseActivoDescripcion;
+	private String subtipoClaseActivoCodigo;
+	private String subtipoClaseActivoDescripcion;
+	private String numExpRiesgo;
+	private String tipoProductoCodigo;
+	private String tipoProductoDescripcion;
+	private String estadoExpRiesgoCodigo;
+	private String estadoExpRiesgoDescripcion;
+	private String estadoExpIncorrienteCodigo;
+	private String estadoExpIncorrienteDescripcion;
+
+	
 	private int page;
 	private int start;
 	private int limit;
@@ -762,6 +800,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 		this.estadoPublicacionDescripcion = estadoPublicacionDescripcion;
 	}
 
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+
 	public String getTipoComercializacionDescripcion() {
 		return tipoComercializacionDescripcion;
 	}
@@ -786,6 +832,262 @@ public class DtoActivoFichaCabecera extends WebDto {
 			Boolean pertenceAgrupacionRestringida) {
 		this.pertenceAgrupacionRestringida = pertenceAgrupacionRestringida;
 	}
+
+	public Boolean getIncluidoEnPerimetro() {
+		return incluidoEnPerimetro;
+	}
+
+	public void setIncluidoEnPerimetro(Boolean incluidoEnPerimetro) {
+		this.incluidoEnPerimetro = incluidoEnPerimetro;
+	}
+
+	public Date getFechaAltaActivoRem() {
+		return fechaAltaActivoRem;
+	}
+
+	public void setFechaAltaActivoRem(Date fechaAltaActivoRem) {
+		this.fechaAltaActivoRem = fechaAltaActivoRem;
+	}
+
+	public Boolean getAplicaTramiteAdmision() {
+		return aplicaTramiteAdmision;
+	}
+
+	public void setAplicaTramiteAdmision(Boolean aplicaTramiteAdmision) {
+		this.aplicaTramiteAdmision = aplicaTramiteAdmision;
+	}
+
+	public Date getFechaAplicaTramiteAdmision() {
+		return fechaAplicaTramiteAdmision;
+	}
+
+	public void setFechaAplicaTramiteAdmision(Date fechaAplicaTramiteAdmision) {
+		this.fechaAplicaTramiteAdmision = fechaAplicaTramiteAdmision;
+	}
+
+	public String getMotivoAplicaTramiteAdmision() {
+		return motivoAplicaTramiteAdmision;
+	}
+
+	public void setMotivoAplicaTramiteAdmision(String motivoAplicaTramiteAdmision) {
+		this.motivoAplicaTramiteAdmision = motivoAplicaTramiteAdmision;
+	}
+
+	public Boolean getAplicaGestion() {
+		return aplicaGestion;
+	}
+
+	public void setAplicaGestion(Boolean aplicaGestion) {
+		this.aplicaGestion = aplicaGestion;
+	}
+
+	public Date getFechaAplicaGestion() {
+		return fechaAplicaGestion;
+	}
+
+	public void setFechaAplicaGestion(Date fechaAplicaGestion) {
+		this.fechaAplicaGestion = fechaAplicaGestion;
+	}
+
+	public String getMotivoAplicaGestion() {
+		return motivoAplicaGestion;
+	}
+
+	public void setMotivoAplicaGestion(String motivoAplicaGestion) {
+		this.motivoAplicaGestion = motivoAplicaGestion;
+	}
+
+	public Boolean getAplicaAsignarMediador() {
+		return aplicaAsignarMediador;
+	}
+
+	public void setAplicaAsignarMediador(Boolean aplicaAsignarMediador) {
+		this.aplicaAsignarMediador = aplicaAsignarMediador;
+	}
+
+	public Date getFechaAplicaAsignarMediador() {
+		return fechaAplicaAsignarMediador;
+	}
+
+	public void setFechaAplicaAsignarMediador(Date fechaAplicaAsignarMediador) {
+		this.fechaAplicaAsignarMediador = fechaAplicaAsignarMediador;
+	}
+
+	public String getMotivoAplicaAsignarMediador() {
+		return motivoAplicaAsignarMediador;
+	}
+
+	public void setMotivoAplicaAsignarMediador(String motivoAplicaAsignarMediador) {
+		this.motivoAplicaAsignarMediador = motivoAplicaAsignarMediador;
+	}
+
+	public Boolean getAplicaComercializar() {
+		return aplicaComercializar;
+	}
+
+	public void setAplicaComercializar(Boolean aplicaComercializar) {
+		this.aplicaComercializar = aplicaComercializar;
+	}
+
+	public Date getFechaAplicaComercializar() {
+		return fechaAplicaComercializar;
+	}
+
+	public void setFechaAplicaComercializar(Date fechaAplicaComercializar) {
+		this.fechaAplicaComercializar = fechaAplicaComercializar;
+	}
+
+	public String getMotivoAplicaComercializarCodigo() {
+		return motivoAplicaComercializarCodigo;
+	}
+
+	public void setMotivoAplicaComercializarCodigo(String motivoAplicaComercializarCodigo) {
+		this.motivoAplicaComercializarCodigo = motivoAplicaComercializarCodigo;
+	}
+
+	public String getMotivoAplicaComercializarDescripcion() {
+		return motivoAplicaComercializarDescripcion;
+	}
+
+	public void setMotivoAplicaComercializarDescripcion(String motivoAplicaComercializarDescripcion) {
+		this.motivoAplicaComercializarDescripcion = motivoAplicaComercializarDescripcion;
+	}
 	
+	public String getMotivoNoAplicaComercializarCodigo() {
+		return motivoNoAplicaComercializarCodigo;
+	}
+
+	public void setMotivoNoAplicaComercializarCodigo(String motivoNoAplicaComercializarCodigo) {
+		this.motivoNoAplicaComercializarCodigo = motivoNoAplicaComercializarCodigo;
+	}
+
+	public String getMotivoNoAplicaComercializarDescripcion() {
+		return motivoNoAplicaComercializarDescripcion;
+	}
+
+	public void setMotivoNoAplicaComercializarDescripcion(String motivoNoAplicaComercializarDescripcion) {
+		this.motivoNoAplicaComercializarDescripcion = motivoNoAplicaComercializarDescripcion;
+	}
+
+	public Boolean getAplicaFormalizar() {
+		return aplicaFormalizar;
+	}
+
+	public void setAplicaFormalizar(Boolean aplicaFormalizar) {
+		this.aplicaFormalizar = aplicaFormalizar;
+	}
+
+	public Date getFechaAplicaFormalizar() {
+		return fechaAplicaFormalizar;
+	}
+
+	public void setFechaAplicaFormalizar(Date fechaAplicaFormalizar) {
+		this.fechaAplicaFormalizar = fechaAplicaFormalizar;
+	}
+
+	public String getMotivoAplicaFormalizar() {
+		return motivoAplicaFormalizar;
+	}
+
+	public void setMotivoAplicaFormalizar(String motivoAplicaFormalizar) {
+		this.motivoAplicaFormalizar = motivoAplicaFormalizar;
+	}
+
+	public String getSituacionComercialDescripcion() {
+		return situacionComercialDescripcion;
+	}
+
+	public void setSituacionComercialDescripcion(String situacionComercialDescripcion) {
+		this.situacionComercialDescripcion = situacionComercialDescripcion;
+	}
+
+	public String getClaseActivoCodigo() {
+		return claseActivoCodigo;
+	}
+
+	public void setClaseActivoCodigo(String claseActivoCodigo) {
+		this.claseActivoCodigo = claseActivoCodigo;
+	}
+
+	public String getClaseActivoDescripcion() {
+		return claseActivoDescripcion;
+	}
+
+	public void setClaseActivoDescripcion(String claseActivoDescripcion) {
+		this.claseActivoDescripcion = claseActivoDescripcion;
+	}
+
+	public String getSubtipoClaseActivoCodigo() {
+		return subtipoClaseActivoCodigo;
+	}
+
+	public void setSubtipoClaseActivoCodigo(String subtipoClaseActivoCodigo) {
+		this.subtipoClaseActivoCodigo = subtipoClaseActivoCodigo;
+	}
+
+	public String getSubtipoClaseActivoDescripcion() {
+		return subtipoClaseActivoDescripcion;
+	}
+
+	public void setSubtipoClaseActivoDescripcion(String subtipoClaseActivoDescripcion) {
+		this.subtipoClaseActivoDescripcion = subtipoClaseActivoDescripcion;
+	}
+
+	public String getNumExpRiesgo() {
+		return numExpRiesgo;
+	}
+
+	public void setNumExpRiesgo(String numExpRiesgo) {
+		this.numExpRiesgo = numExpRiesgo;
+	}
+
+	public String getTipoProductoCodigo() {
+		return tipoProductoCodigo;
+	}
+
+	public void setTipoProductoCodigo(String tipoProductoCodigo) {
+		this.tipoProductoCodigo = tipoProductoCodigo;
+	}
+
+	public String getTipoProductoDescripcion() {
+		return tipoProductoDescripcion;
+	}
+
+	public void setTipoProductoDescripcion(String tipoProductoDescripcion) {
+		this.tipoProductoDescripcion = tipoProductoDescripcion;
+	}
+
+	public String getEstadoExpRiesgoCodigo() {
+		return estadoExpRiesgoCodigo;
+	}
+
+	public void setEstadoExpRiesgoCodigo(String estadoExpRiesgoCodigo) {
+		this.estadoExpRiesgoCodigo = estadoExpRiesgoCodigo;
+	}
+
+	public String getEstadoExpRiesgoDescripcion() {
+		return estadoExpRiesgoDescripcion;
+	}
+
+	public void setEstadoExpRiesgoDescripcion(String estadoExpRiesgoDescripcion) {
+		this.estadoExpRiesgoDescripcion = estadoExpRiesgoDescripcion;
+	}
+
+	public String getEstadoExpIncorrienteCodigo() {
+		return estadoExpIncorrienteCodigo;
+	}
+
+	public void setEstadoExpIncorrienteCodigo(String estadoExpIncorrienteCodigo) {
+		this.estadoExpIncorrienteCodigo = estadoExpIncorrienteCodigo;
+	}
+
+	public String getEstadoExpIncorrienteDescripcion() {
+		return estadoExpIncorrienteDescripcion;
+	}
+
+	public void setEstadoExpIncorrienteDescripcion(String estadoExpIncorrienteDescripcion) {
+		this.estadoExpIncorrienteDescripcion = estadoExpIncorrienteDescripcion;
+	}
+
 
 }

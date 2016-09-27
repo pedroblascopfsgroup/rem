@@ -30,8 +30,20 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	
-
-	private static final long serialVersionUID = 1L;
+	//public final static String EN_TRAMITACION = "01";
+	public final static String ANULADO = "02";
+	//public final static String FIRMADO = "03";
+	
+	public final static String PTE_SANCION = "10";
+	public final static String APROBADO = "11";
+	public final static String DENEGADO = "12";
+	public final static String CONTRAOFERTADO = "04";
+	
+	public final static String BLOQUEO_ADM = "05";
+	public final static String RESERVADO = "06";
+	public final static String POSICIONADO = "07";
+	public final static String VENDIDO = "08";
+	public final static String RESUELTO = "09";
 
 	@Id
 	@Column(name = "DD_EEC_ID")

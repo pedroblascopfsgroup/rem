@@ -38,13 +38,14 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 	
 	@Transactional
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		
+		Trabajo trabajo = tramite.getTrabajo();
+		
 		for(TareaExternaValor valor : valores){
 			
 			//Fecha Solicitud
 			if(FECHA_VALIDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-			{
-				Trabajo trabajo = tramite.getTrabajo();
-				
+			{				
 				try {
 					trabajo.setFechaValidacion(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
@@ -54,8 +55,7 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 			}
 			//Combo de valoración
 			if(COMBO_VALORACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-				Trabajo trabajo = tramite.getTrabajo();
-				
+			
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 				DDTipoCalidad tipoCalidad = genericDao.get(DDTipoCalidad.class, filtro);
 				trabajo.setTipoCalidad(tipoCalidad);
@@ -63,9 +63,7 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 			
 			//Combo de ejecución
 			if(COMBO_EJECUTADO.equals(valor.getNombre())){
-				
-				Trabajo trabajo = tramite.getTrabajo();
-				
+
 				if(DDSiNo.SI.equals(valor.getValor())){
 					/*
 					 * Si es actuación técnica, subtipo tapiado o colocación de puertas, y el combo de ejecutado es SI, entonces guardamos la fecha de ejecución en la fecha
@@ -101,6 +99,7 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 			}
 			
 		}
+		genericDao.save(Trabajo.class, trabajo);
 
 	}
 

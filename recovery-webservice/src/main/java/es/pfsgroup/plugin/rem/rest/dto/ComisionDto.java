@@ -14,12 +14,14 @@ public class ComisionDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@NotNull
+	/*@NotNull
 	private Long idHonorarioWebcom;
 	@NotNull
-	private Long idHonorarioRem;
+	private Long idHonorarioRem;*/
 	@NotNull
 	private Long idOfertaRem;
+	@NotNull
+	private Long idOfertaWebcom;
 	@NotNull
 	private Long idProveedorRem;
 	@NotNull
@@ -42,7 +44,7 @@ public class ComisionDto implements Serializable {
 	private Long idUsuarioRemAccion;
 	
 	
-	
+	/*
 	public Long getIdHonorarioWebcom() {
 		return idHonorarioWebcom;
 	}
@@ -54,12 +56,18 @@ public class ComisionDto implements Serializable {
 	}
 	public void setIdHonorarioRem(Long idHonorarioRem) {
 		this.idHonorarioRem = idHonorarioRem;
-	}
+	}*/
 	public Long getIdOfertaRem() {
 		return idOfertaRem;
 	}
 	public void setIdOfertaRem(Long idOfertaRem) {
 		this.idOfertaRem = idOfertaRem;
+	}	
+	public Long getIdOfertaWebcom() {
+		return idOfertaWebcom;
+	}
+	public void setIdOfertaWebcom(Long idOfertaWebcom) {
+		this.idOfertaWebcom = idOfertaWebcom;
 	}
 	public Long getIdProveedorRem() {
 		return idProveedorRem;

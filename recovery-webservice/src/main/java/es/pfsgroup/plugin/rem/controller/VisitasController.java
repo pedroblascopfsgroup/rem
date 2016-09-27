@@ -56,7 +56,7 @@ public class VisitasController {
 	 * signature - sdgsdgsdgsdg
 	 * 
 	 * BODY:
-	 * {"id":"111111112113","data": [{"idVisitaWebcom": "1", "idClienteRem": "2", "idActivoHaya": "0", "codEstadoVisita": "04","codDetalleEstadoVisita": "04", "fecha": "2016-01-01T10:10:10", "idUsuarioRem": "1", "idProveedorRemPrescriptor": "5045",  "idProveedorRemCustodio": "1010", "idProveedorRemResponsable": "1010", "idProveedorRemFdv": "1010" , "idProveedorRemVisita": "1010", "observaciones": "updated1" }]}
+	 * {"id":"111111112112","data": [{"idVisitaWebcom": "1", "idClienteRem": "2", "idActivoHaya": "0", "codEstadoVisita": "05","codDetalleEstadoVisita": "07", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRemAccion": "1",  "idProveedorRemPrescriptor": "5045",  "idProveedorRemCustodio": "1010", "idProveedorRemResponsable": "1010", "idProveedorRemFdv": "1010" , "idProveedorRemVisita": "1010", "observaciones": "Observaciones" }]}
 	 * 
 	 * @param model
 	 * @param request

@@ -145,6 +145,9 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_IND_LOTE_RESTRINGIDO")
 	private Integer indicadorLoteRestringido;
+	
+	@Column(name="OFR_FECHA_RECHAZO")
+	private Date fechaRechazoOferta;
     
 
 	public Date getFechaAlta() {
@@ -395,5 +398,13 @@ public class Oferta implements Serializable, Auditable {
 		this.indicadorLoteRestringido = indicadorLoteRestringido;
 	}
 
+	public Date getFechaRechazoOferta() {
+		return fechaRechazoOferta;
+	}
+
+	public void setFechaRechazoOferta(Date fechaRechazoOferta) {
+		this.fechaRechazoOferta = fechaRechazoOferta;
+	}
+	
 
 }

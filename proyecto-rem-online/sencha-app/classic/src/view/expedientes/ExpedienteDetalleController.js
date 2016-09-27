@@ -747,6 +747,36 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
 			field.setValue('');
 		}
+	},
+	
+	onHaCambiadoImporteCalculo: function(field, value, oldValue){
+		var me= this;
+		var tipoCalculoField= me.lookupReference('tipoCalculoHonorario')
+		var importeField= me.lookupReference('importeCalculoHonorario')
+		var tipoCalculo= me.lookupReference('tipoCalculoHonorario').value;
+		
+		if(CONST.TIPOS_CALCULO['FIJO'] == tipoCalculo){//importe fijo
+			var honorarios= me.lookupReference('honorarios');
+			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
+			honorarios.setValue(importeCalculoHonorario);
+			importeField.setMaxValue(null);
+		}
+		
+		else if(CONST.TIPOS_CALCULO['PORCENTAJE'] == tipoCalculo){//porcentaje
+			var honorarios= me.lookupReference('honorarios');
+			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
+			var importeOferta = parseFloat(me.getViewModel().get('expediente.importe')).toFixed(2);
+			honorarios.setValue((importeOferta*importeCalculoHonorario)/100);
+			importeField.setMaxValue(100);//maxValue: '100';
+		}
+		
+		else if(tipoCalculo=='Importe fijo'){
+			tipoCalculoField.setValue(CONST.TIPOS_CALCULO['FIJO']);
+		}
+		else if(tipoCalculo=='Porcentaje'){
+			tipoCalculoField.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
+		}
+		
 	}
 
 });

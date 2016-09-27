@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
@@ -59,12 +60,14 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 							documento.setFechaObtencion(ft.parse(valor.getValor())); // Cédula : fecha de obtención = fecha de validación
 							documento.setFechaVerificado(ft.parse(valor.getValor()));
 							documento.setEstadoDocumento(estadoDocumento);
+							genericDao.save(ActivoAdmisionDocumento.class, documento);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 				}
+				
 			}
 			
 			//Número de referencia
@@ -75,6 +78,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 				for(ActivoAdmisionDocumento documento : listaDocumentos){
 					if(subtipoTrabajo.getCodigo().equals(diccionarioTargetClassMap.getSubtipoTrabajo(documento.getConfigDocumento().getTipoDocumentoActivo().getCodigo()))) {
 						documento.setNumDocumento(Integer.parseInt(valor.getValor()));
+						genericDao.save(ActivoAdmisionDocumento.class, documento);
 					}
 				}
 			}
@@ -99,6 +103,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
             }
             
 		}
+		genericDao.save(Trabajo.class, trabajo);
 
 	}
 

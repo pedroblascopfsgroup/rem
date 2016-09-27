@@ -46,8 +46,8 @@ public class EntregaReserva implements Serializable, Auditable {
 		
 	@Id
     @Column(name = "ERE_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "EntregasReservaGenerator")
-    @SequenceGenerator(name = "EntregasReservaGenerator", sequenceName = "S_ERE_ENTREGAS_RESERVA")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "EntregaReservaGenerator")
+    @SequenceGenerator(name = "EntregaReservaGenerator", sequenceName = "S_ERE_ENTREGAS_RESERVA")
     private Long id;
 	
     @Column(name="ERE_FECHA_ENTREGA")

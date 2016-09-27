@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
@@ -683,6 +684,25 @@ public class ExpedienteComercialController {
 			e.printStackTrace();
 			model.put("success", false);
 		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveHonorario(DtoGastoExpediente dtoGastoExpediente){
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.saveHonorario(dtoGastoExpediente);
+			model.put("success", success);			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
 		
 		return createModelAndViewJson(model);
 		

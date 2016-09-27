@@ -190,6 +190,11 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'idProceso'
+    		},
+    		{
+    			name: 'fechaEmisionFactura',
+    			type:'date',
+    			dateFormat: 'c'
     		}
     ],
     

@@ -94,7 +94,6 @@ public class NotificacionesController {
 			model.put("data", listaRespuesta);
 			model.put("error", "");
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);

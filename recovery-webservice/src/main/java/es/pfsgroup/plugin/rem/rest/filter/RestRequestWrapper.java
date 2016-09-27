@@ -98,8 +98,6 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 			}else if(!json.getJSONArray("data").isArray()){
 				throw new Exception("No se han podido recuperar los datos de la petición. El campo data no es un array.");	
 				
-			}else {			
-				logger.info("Petición correcta.");
 			}
 			
 		}catch (Exception e) {

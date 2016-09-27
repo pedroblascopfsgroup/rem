@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Controller
 public class WebcomController {
@@ -38,10 +39,11 @@ public class WebcomController {
 	 * @param idNotificacionRem
 	 * @param idNotificacionWebcom
 	 * @return
+	 * @throws ErrorServicioWebcom 
 	 */
 	@RequestMapping
 	public String notificaciones(Long idUsuarioRemAccion, String descripcion, Long idActivoHaya, Long idNotificacionRem,
-			Long idNotificacionWebcom) {
+			Long idNotificacionWebcom) throws ErrorServicioWebcom {
 		NotificacionDto dto = new NotificacionDto();
 
 		dto.setIdUsuarioRemAccion(LongDataType.longDataType(idUsuarioRemAccion));
@@ -76,11 +78,12 @@ public class WebcomController {
 	 * @param observaciones
 	 * @param porcentaje
 	 * @return
+	 * @throws ErrorServicioWebcom 
 	 */
 	@RequestMapping
 	public String comisiones(Long idUsuarioRemAccion, Boolean esColaboracion, Boolean esDoblePrescripcion,
 			Boolean esFdv, Boolean esPrescripcion, Boolean esResponsable, Long idOfertaRem, Long idOfertaWebcom,
-			Long idProveedorRem, Double importe, String observaciones, Double porcentaje) {
+			Long idProveedorRem, Double importe, String observaciones, Double porcentaje) throws ErrorServicioWebcom {
 		ComisionesDto dto = new ComisionesDto();
 		dto.setIdUsuarioRemAccion(LongDataType.longDataType(idUsuarioRemAccion));
 		dto.setFechaAccion(DateDataType.dateDataType(new Date()));
@@ -116,10 +119,11 @@ public class WebcomController {
 	 * @param puerta
 	 * @param idUsuarioRemAccion
 	 * @return
+	 * @throws ErrorServicioWebcom 
 	 */
 	@RequestMapping
 	public String stock(Long idActivoHaya, String codTipoVia, String nombreCalle, String numeroCalle, String escalera,
-			String planta, String puerta, Long idUsuarioRemAccion) {
+			String planta, String puerta, Long idUsuarioRemAccion) throws ErrorServicioWebcom {
 
 		StockDto dto = new StockDto();
 		dto.setFechaAccion(DateDataType.dateDataType(new Date()));
@@ -153,10 +157,11 @@ public class WebcomController {
 	 * @param codEstadoExpediente
 	 * @param vendido
 	 * @return
+	 * @throws ErrorServicioWebcom 
 	 */
 	@RequestMapping
 	public String ofertas(Long idUsuarioRemAccion, Long idOfertaWebcom, Long idOfertaRem, Long idActivoHaya,
-			String codEstadoOferta, String codEstadoExpediente, Boolean vendido) {
+			String codEstadoOferta, String codEstadoExpediente, Boolean vendido) throws ErrorServicioWebcom {
 		EstadoOfertaDto dto = new EstadoOfertaDto();
 		dto.setFechaAccion(DateDataType.dateDataType(new Date()));
 		dto.setIdUsuarioRemAccion(LongDataType.longDataType(idUsuarioRemAccion));
@@ -185,10 +190,11 @@ public class WebcomController {
 	 * @param codEstadoTrabajo
 	 * @param motivoRechazo
 	 * @return
+	 * @throws ErrorServicioWebcom 
 	 */
 	@RequestMapping
 	public String trabajos(Long idUsuarioRemAccion, Long idTrabajoWebcom, Long idTrabajoRem, String codEstadoTrabajo,
-			String motivoRechazo) {
+			String motivoRechazo) throws ErrorServicioWebcom {
 		EstadoTrabajoDto dto = new EstadoTrabajoDto();
 		dto.setFechaAccion(DateDataType.dateDataType(new Date()));
 		dto.setIdUsuarioRemAccion(LongDataType.longDataType(idUsuarioRemAccion));

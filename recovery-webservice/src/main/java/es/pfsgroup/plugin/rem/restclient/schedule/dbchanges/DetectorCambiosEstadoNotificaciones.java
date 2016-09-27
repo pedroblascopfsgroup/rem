@@ -3,30 +3,32 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoNotificacionConstantes;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
-public class DetectorCambiosEstadoNotificaciones extends DetectorCambiosBD<NotificacionDto>{
-	
+@Component
+public class DetectorCambiosEstadoNotificaciones extends DetectorCambiosBD<NotificacionDto> {
+
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "AAAAa";
+		return "REM01.VI_RESP_NOTIF_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "BBBBB";
+		return "REM01.NWH_RESP_NOTIF_WEBCOM_HIST";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "CCCCCC";
+		return "ID_NOTIFICACION_REM";
 	}
 
 	@Override
@@ -35,9 +37,9 @@ public class DetectorCambiosEstadoNotificaciones extends DetectorCambiosBD<Notif
 	}
 
 	@Override
-	public void invocaServicio(List<NotificacionDto> data) {
+	public void invocaServicio(List<NotificacionDto> data) throws ErrorServicioWebcom {
 		this.serviciosWebcom.estadoNotificacion(data);
-		
+
 	}
 
 }

@@ -21,11 +21,10 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 	</bean>
 
 	
-<!-- DESHABILITAMOS EL TRIGGER DE DETECCIÓN DE CAMBIOS 
 	<bean id="deteccionCambiosTrigger" parent="scheduling.schedulableTrigger">
 		<property name="jobDetail" ref="deteccionCambiosJob" />
 		<property name="cronExpression" value="${rest.client.chrone.rem.time.trigger}" />
 
 	</bean>
--->
+
 </beans>

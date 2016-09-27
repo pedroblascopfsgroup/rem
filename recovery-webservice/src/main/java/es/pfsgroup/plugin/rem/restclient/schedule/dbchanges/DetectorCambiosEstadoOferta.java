@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Component
 public class DetectorCambiosEstadoOferta  extends DetectorCambiosBD<EstadoOfertaDto>{
@@ -37,7 +38,7 @@ public class DetectorCambiosEstadoOferta  extends DetectorCambiosBD<EstadoOferta
 	}
 
 	@Override
-	public void invocaServicio(List<EstadoOfertaDto> data) {
+	public void invocaServicio(List<EstadoOfertaDto> data) throws ErrorServicioWebcom {
 		serviciosWebcom.enviaActualizacionEstadoOferta(data);
 	}
 

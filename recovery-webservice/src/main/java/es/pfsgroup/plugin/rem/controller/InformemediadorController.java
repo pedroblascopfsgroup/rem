@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDCION;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.dto.InformemediadorRequestDto;
+import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 
 @Controller
@@ -51,6 +52,17 @@ public class InformemediadorController {
 					 informeMediadorApi.validateInformeMediadorDto(informe,informe.getCodTipoActivo() ,errorsList);
 				}else{
 					 errorsList = restApi.validateRequestObject(informe,TIPO_VALIDCION.UPDATE);
+				}
+				if(informe.getPlantas()!=null){
+					for(PlantaDto planta: informe.getPlantas()){
+						List<String> errorsListPlanta = null;
+						if(informe.getIdInformeMediadorRem()==null){
+							errorsListPlanta = restApi.validateRequestObject(planta,TIPO_VALIDCION.INSERT);
+						}else{
+							errorsListPlanta = restApi.validateRequestObject(planta,TIPO_VALIDCION.UPDATE);
+						}
+						errorsList.addAll(errorsListPlanta);
+					}
 				}
 				
 				if (errorsList.size() == 0) {

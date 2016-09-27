@@ -134,7 +134,7 @@ public abstract class ClienteWebcomBase {
 			if (response.containsKey("error")) {
 				String error = response.getString("error");
 				registroLlamada.setErrorDesc(error);
-				if ((error != null) && (!"".equals(error))) {
+				if ((error != null) && (!"".equals(error)) && (!"null".equals(error))) {
 					logger.error("Webcom ha respondido con un código de error: " + error);
 					throw new ErrorServicioWebcom(error);
 				}

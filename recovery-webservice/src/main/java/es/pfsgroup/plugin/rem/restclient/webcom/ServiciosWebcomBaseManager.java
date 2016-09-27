@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -142,6 +143,8 @@ public abstract class ServiciosWebcomBaseManager {
 				//getRegistroLlamadas().guardaRegistroLlamada(registroLlamada);
 				e.setReintentable(true);
 			}
+			
+			registroLlamada.setException(ExceptionUtils.getFullStackTrace(e));
 			
 			throw e;
 		}finally{

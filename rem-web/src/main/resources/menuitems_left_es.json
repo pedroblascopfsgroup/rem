@@ -69,7 +69,15 @@
 		                "iconCls": "app-menu-ico ico-comercializacion",
 		                "cls": "app-menu-item",
 		                "routeId": "comercial"
-		            },            
+		            },
+		            {
+		                "text":   "Administración",
+		                "view":   "administracion.AdministracionMainMenu",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-administracion",
+		                "cls": "app-menu-item",
+		                "routeId": "administracion"
+		            },       
 		            {
 		                "text":   "Carga Masiva",
 		                "view":   "masivo.MasivoMain",
@@ -86,14 +94,6 @@
 		                "iconCls": "app-menu-ico ico-configuracion",
 		                "cls": "app-menu-item",
 		                "routeId": "configuracion"
-		            },
-		            {
-		                "text":   "Administración",
-		                "view":   "administracion.AdministracionMainMenu",
-		                "leaf":   true,
-		                "iconCls": "app-menu-ico ico-publicacion",
-		                "cls": "app-menu-item",
-		                "routeId": "administracion"
 		            }
             
             

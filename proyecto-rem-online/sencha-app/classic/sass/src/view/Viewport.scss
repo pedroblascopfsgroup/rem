@@ -305,114 +305,119 @@
 .app-menu .x-treelist-toolstrip {
 	margin: 105px 0 0 0;
 }
-
+//----------------- DASHBOARD
 .app-menu-ico.ico-dashboard {  
-  background: url(images/ico_dashboard_actdes.svg) center center no-repeat;
+  background: url(images/ico_dashboard_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-dashboard:hover {  
-  background: url(images/ico_dashboard_actdes.svg) center center no-repeat;
+  background: url(images/ico_dashboard_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 
 }
 .app-menu-ico.x-treelist-item-selected.ico-dashboard {  
-  //background: url(images/ico_dashboard_actdes.svg) center center no-repeat;
+  background: url(images/ico_dashboard_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-dashboard:hover {  
-  background: url(images/ico_dashboard_actdes.svg) center center no-repeat;
+  background: url(images/ico_dashboard_des.svg) center center no-repeat;
 }
-
+//------------------ AGENDA
 .app-menu-ico.ico-diary {  
-  background: url(images/ico_tareas_actdes.svg) center center no-repeat;
+  background: url(images/ico_tareas_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-diary:hover {  
-  background: url(images/ico_tareas_actdes.svg) center center no-repeat;
+  background: url(images/ico_tareas_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 
 }
 .app-menu-ico.x-treelist-item-selected.ico-diary {  
-  //background: url(images/ico_tareas_active.svg) center center no-repeat;
+  background: url(images/ico_tareas_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-diary:hover {  
-  background: url(images/ico_tareas_actdes.svg) center center no-repeat;
+  background: url(images/ico_tareas_des.svg) center center no-repeat;
 }
 
+//----------------- ACTIVOS
 .app-menu-ico.ico-home {  
-  background: url(images/ico_activosLateral_actdes.svg) center center no-repeat;
+  background: url(images/ico_activos_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-home:hover {  
-  background: url(images/ico_activosLateral_actdes.svg) center center no-repeat;
+  background: url(images/ico_activos_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 
 }
 .app-menu-ico.x-treelist-item-selected.ico-home {  
-  //background: url(images/ico_activosLateral_actdes.svg) center center no-repeat;
+  background: url(images/ico_activos_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-home:hover {  
-  background: url(images/ico_activosLateral_actdes.svg) center center no-repeat;
+  background: url(images/ico_activos_des.svg) center center no-repeat;
 }
 
+//----------------- AGRUPACIONES
 .app-menu-ico.ico-agrupaciones {  
-  background: url(images/ico_agrupaciones_actdes.svg) center center no-repeat;
+  background: url(images/ico_agrupaciones_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-agrupaciones:hover {  
-  background: url(images/ico_agrupaciones_actdes.svg) center center no-repeat;
+  background: url(images/ico_agrupaciones_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 
 }
 .app-menu-ico.x-treelist-item-selected.ico-agrupaciones {  
-  //background: url(images/ico_agrupaciones_active.svg) center center no-repeat;
+  background: url(images/ico_agrupaciones_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-agrupaciones:hover {  
-  background: url(images/ico_agrupaciones_actdes.svg) center center no-repeat;
+  background: url(images/ico_agrupaciones_des.svg) center center no-repeat;
 }
 
+//----------------- TRABAJOS
 .app-menu-ico.ico-trabajos {  
-  background: url(images/ico_trabajos_actdes.svg) center center no-repeat;
+  background: url(images/ico_trabajos_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-trabajos:hover {  
-  background: url(images/ico_trabajos_actdes.svg) center center no-repeat;
+  background: url(images/ico_trabajos_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 
 }
 .app-menu-ico.x-treelist-item-selected.ico-trabajos {  
-  //background: url(images/ico_trabajos_active.svg) center center no-repeat;
+  background: url(images/ico_trabajos_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-trabajos:hover {  
-  background: url(images/ico_trabajos_actdes.svg) center center no-repeat;
+  background: url(images/ico_trabajos_des.svg) center center no-repeat;
 }
 
+//----------------- OFERTAS
 .app-menu-ico.ico-oferta {  
-  background: url(images/ico_ofertas_actdes.svg) center center no-repeat;
+  background: url(images/ico_ofertas_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-oferta:hover {  
-  background: url(images/ico_ofertas_actdes.svg) center center no-repeat;
+  background: url(images/ico_ofertas_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 }
 .app-menu-ico.x-treelist-item-selected.ico-oferta {  
-  //background: url(images/ico_ofertas_active.svg) center center no-repeat;
+  background: url(images/ico_ofertas_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-oferta:hover {  
-  background: url(images/ico_ofertas_actdes.svg) center center no-repeat;
+  background: url(images/ico_ofertas_des.svg) center center no-repeat;
 }
 
+//----------------- MASIVO
 .app-menu-ico.ico-masivo {  
   background: url(images/ico_cargamasiva_des.svg) center center no-repeat;
 }
@@ -423,64 +428,68 @@
   border-bottom: 2px solid  $color-blue-soft;
 }
 .app-menu-ico.x-treelist-item-selected.ico-masivo {  
-  //background: url(images/ico_cargamasiva_act.svg) center center no-repeat;
+  background: url(images/ico_cargamasiva_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-masivo:hover {  
-  background: url(images/ico_cargamasiva_act.svg) center center no-repeat;
+  background: url(images/ico_cargamasiva_des.svg) center center no-repeat;
 }
 
+//----------------- PRECIOS
 .app-menu-ico.ico-precios {  
-  background: url(images/ico_precios_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_precios_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-precios:hover {  
-  background: url(images/ico_precios_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_precios_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 }
 .app-menu-ico.x-treelist-item-selected.ico-precios {  
-  //background: url(images/ico_precios_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_precios_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-precios:hover {  
-  background: url(images/ico_precios_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_precios_des.svg) center center no-repeat;
 }
 
+//----------------- PUBLICACION
 .app-menu-ico.ico-publicacion {  
-  background: url(images/ico_publicacion_desactivado_hover.svg) center center no-repeat;
+  background: url(images/ico_publicacion_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-publicacion:hover {  
-  background: url(images/ico_publicacion_desactivado_hover.svg) center center no-repeat;
+  background: url(images/ico_publicacion_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 }
 .app-menu-ico.x-treelist-item-selected.ico-publicacion {  
-  //background: url(images/ico_publicacion_activado.svg) center center no-repeat;
+  background: url(images/ico_publicacion_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-publicacion:hover {  
-  background: url(images/ico_publicacion_activado.svg) center center no-repeat;
+  background: url(images/ico_publicacion_des.svg) center center no-repeat;
 }
 
+//----------------- COMERCIALIZACION
 .app-menu-ico.ico-comercializacion {  
-  background: url(images/ico_modulocomercial_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_modulocomercial_des.svg) center center no-repeat;
 }
 .app-menu-ico.ico-comercializacion:hover {  
-  background: url(images/ico_modulocomercial_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_modulocomercial_des.svg) center center no-repeat;
   background-color: $color-blue-soft;
   border-top: 2px solid   $color-blue-soft;
   border-bottom: 2px solid  $color-blue-soft;
 }
 .app-menu-ico.x-treelist-item-selected.ico-comercializacion {  
-  //background: url(images/ico_modulocomercial_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_modulocomercial_act.svg) center center no-repeat;
   background-color: #054664 !important;
 }
 .app-menu-ico.x-treelist-item-selected.ico-comercializacion:hover {  
-  background: url(images/ico_modulocomercial_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_modulocomercial_des.svg) center center no-repeat;
 }
 
+//----------------- CONFIGURACION
 .app-menu-ico.ico-configuracion {  
   background: url(images/ico_configuracion_actdeshover.svg) center center no-repeat;
 }
@@ -491,12 +500,33 @@
   border-bottom: 2px solid  $color-blue-soft;
 }
 .app-menu-ico.x-treelist-item-selected.ico-configuracion {  
-  //background: url(images/ico_configuracion_actdeshover.svg) center center no-repeat;
+  background: url(images/ico_configuracion_actdeshover.svg) center center no-repeat;
   background-color: #054664 !important;
 }
-.app-menu-ico.x-treelist-item-selected.ico-precios:hover {  
+.app-menu-ico.x-treelist-item-selected.ico-configuracion:hover {  
   background: url(images/ico_configuracion_actdeshover.svg) center center no-repeat;
 }
+
+//----------------- ADMINISTRACION
+.app-menu-ico.ico-administracion {  
+  background: url(images/ico_administracion_des.svg) center center no-repeat;
+}
+.app-menu-ico.ico-administracion:hover {  
+  background: url(images/ico_administracion_des.svg) center center no-repeat;
+  background-color: $color-blue-soft;
+  border-top: 2px solid   $color-blue-soft;
+  border-bottom: 2px solid  $color-blue-soft;
+}
+.app-menu-ico.x-treelist-item-selected.ico-administracion {  
+  background: url(images/ico_administracion_act.svg) center center no-repeat;
+  background-color: #054664 !important;
+}
+.app-menu-ico.x-treelist-item-selected.ico-administracion:hover {  
+  background: url(images/ico_administracion_des.svg) center center no-repeat;
+}
+
+//-----------------------------------------
+
 
 .app-menu-item.x-treelist-floater {
 	  width: 120px !important;
@@ -552,18 +582,17 @@
 	background-color: $color-blue;
 }
 
+
 .app-menu-item.x-treelist-item-floated.x-treelist-item-selected .x-treelist-item-text,
 .app-menu-item.x-treelist-item-floated.x-treelist-item-selected .x-treelist-item-text:hover  {
 	color: #fff !important;
-	font-size: 14px;
-	font-weight: bold;
-	
+	font-weight: bold;	
 }
 
 .app-menu-item.x-treelist-item-floated .x-treelist-item-text,
 .app-menu-item.x-treelist-item-floated .x-treelist-item-text:hover {
 	color: $color-blue-medium !important;
-	font-size: 14px;
+	font-size: 13px;
 	font-weight: bold;
 }
 

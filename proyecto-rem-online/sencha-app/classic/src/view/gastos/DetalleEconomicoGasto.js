@@ -106,7 +106,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											               	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.tipo.impuesto.indirecto'),
 													      	bind: {
 												           		store: '{comboTipoImpuesto}',
-												           		value: '{detalleeconomico.impuestoIndirectoTipo}'
+												           		value: '{detalleeconomico.impuestoIndirectoTipoCodigo}'
 												         	},
 												         	allowBlank: false
 													    },
@@ -239,7 +239,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											    reference: 'destinatariosPago',
 												bind: {
 													store: '{comboDestinatarioPago}',
-												    value: '{detalleeconomico.destinatariosPago}'
+												    value: '{detalleeconomico.destinatariosPagoCodigo}'
 												},
 												allowBlank: true											
 											},
@@ -268,7 +268,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.responsable.pagado.por'),
 												bind: {
 													store: '{comboPagadoPor}',
-												    value: '{detalleeconomico.tipoPagador}'
+												    value: '{detalleeconomico.tipoPagadorCodigo}'
 												}
 											}
 										

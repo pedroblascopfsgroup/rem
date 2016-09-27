@@ -256,7 +256,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setImporteProvisionesSuplidos(detalleGasto.getImporteProvisionesSuplidos());
 			
 			if(!Checks.esNulo(detalleGasto.getImpuestoIndirectoTipo())){
-				dto.setImpuestoIndirectoTipo(detalleGasto.getImpuestoIndirectoTipo().getCodigo());
+				dto.setImpuestoIndirectoTipoCodigo(detalleGasto.getImpuestoIndirectoTipo().getCodigo());
 			}
 			
 			if(!Checks.esNulo(detalleGasto.getImpuestoIndirectoExento())){
@@ -293,10 +293,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setImportePagado(detalleGasto.getImportePagado());
 			dto.setFechaPago(detalleGasto.getFechaPago());
 			if(!Checks.esNulo(detalleGasto.getTipoPagador())){
-				dto.setTipoPagador(detalleGasto.getTipoPagador().getCodigo());
+				dto.setTipoPagadorCodigo(detalleGasto.getTipoPagador().getCodigo());
 			}
 			if(!Checks.esNulo(detalleGasto.getDestinatariosPago())){
-				dto.setDestinatariosPago(detalleGasto.getDestinatariosPago().getCodigo());
+				dto.setDestinatariosPagoCodigo(detalleGasto.getDestinatariosPago().getCodigo());
 			}
 			
 		}
@@ -335,17 +335,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 					}
 					
-					if(!Checks.esNulo(dto.getImpuestoIndirectoTipo())){
-						DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipo());
+					if(!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())){
+						DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipoCodigo());
 						detalleGasto.setImpuestoIndirectoTipo(tipoImpuesto);
 					}
 					
-					if(!Checks.esNulo(dto.getDestinatariosPago())){
-						DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class, dto.getDestinatariosPago());
+					if(!Checks.esNulo(dto.getDestinatariosPagoCodigo())){
+						DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class, dto.getDestinatariosPagoCodigo());
 						detalleGasto.setDestinatariosPago(destinatarioPago);
 					}
-					if(!Checks.esNulo(dto.getTipoPagador())){
-						DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagador());
+					if(!Checks.esNulo(dto.getTipoPagadorCodigo())){
+						DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagadorCodigo());
 						detalleGasto.setTipoPagador(tipoPagador);
 					}
 					

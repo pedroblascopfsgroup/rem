@@ -33,6 +33,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDSubcartera implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	public static final String CODIGO_CAJ_ASISTIDA = "01";
+	public static final String CODIGO_SAR_ASISTIDA = "02";
+	public static final String CODIGO_BAN_ASISTIDA = "03";
 
 	@Id
 	@Column(name = "DD_SCR_ID")

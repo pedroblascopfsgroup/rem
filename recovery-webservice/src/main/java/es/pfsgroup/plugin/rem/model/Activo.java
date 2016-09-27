@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -136,6 +137,10 @@ public class Activo implements Serializable, Auditable {
     private DDCartera cartera;  
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SCR_ID")
+    private DDSubcartera subcartera;
+
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ENO_ID")
     private DDEntidadOrigen entidadOrigen;  
     
@@ -1206,6 +1211,14 @@ public class Activo implements Serializable, Auditable {
 		this.cartera = cartera;
 	}
 
+    public DDSubcartera getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(DDSubcartera subcartera) {
+		this.subcartera = subcartera;
+	}
+	
 	public DDEntidadOrigen getEntidadOrigen() {
 		return entidadOrigen;
 	}

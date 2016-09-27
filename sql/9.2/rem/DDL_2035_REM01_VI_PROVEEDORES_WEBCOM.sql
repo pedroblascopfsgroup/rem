@@ -85,6 +85,7 @@ BEGIN
   	EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
 	AS
 		SELECT 
+		CAST(PVE.PVE_ID || ''0000'' || PRD.PRD_ID AS NUMBER(16,0))                              AS ID_PROV_DELEGACION,
 		CAST(PVE.PVE_ID AS NUMBER(16,0))                                          				AS ID_PROVEEDOR_REM,
 		CAST(PVE.PVE_COD_UVEM AS VARCHAR2(10 CHAR))                               				AS CODIGO_PROVEEDOR,
 		CAST(DDTPR.DD_TPR_CODIGO AS VARCHAR2(5 CHAR))                             				AS COD_TIPO_PROVEEDOR,
@@ -112,20 +113,19 @@ BEGIN
 		    ELSE CAST(1 AS NUMBER(1,0))
 		END 																		           	ACTIVO,
 		CAST(NULL AS NUMBER(1,0))                                                  				AS ABIERTA,
-	    CAST(PRD.PRD_ID AS NUMBER(16,0))                                                		AS DEL_ID_DELEGACION,  
-	    CAST(DDTVI.DD_TVI_CODIGO AS VARCHAR2(20 CHAR))                                 			AS DEL_COD_TIPO_VIA,
-	    CAST(PRD.PRD_NOMBRE AS VARCHAR2(100 CHAR))                                      		AS DEL_NOMBRE_CALLE,
-	    CAST(PRD.PRD_NUM AS VARCHAR2(100 CHAR))                                         		AS DEL_NUMERO_CALLE,
-	    CAST(PRD.PRD_ESCALERA AS VARCHAR2(10 CHAR))                                     		AS DEL_ESCALERA,
-	    CAST(PRD.PRD_PLANTA AS VARCHAR2(11 CHAR))                                       		AS DEL_PLANTA,
-	    CAST(PRD.PRD_PTA AS VARCHAR2(17 CHAR))                                          		AS DEL_PUERTA,
-	    CAST(DDLOC2.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))                                   		AS DEL_COD_MUNICIPIO,
-	    CAST(DDUPO.DD_UPO_CODIGO AS VARCHAR2(5 CHAR))                                   		AS DEL_COD_PEDANIA,
-	    CAST(DDPRV2.DD_PRV_CODIGO AS VARCHAR2(5 CHAR))                                  		AS DEL_COD_PROVINCIA,
-	    CAST(PRD.PRD_CP AS VARCHAR2(40 CHAR))                                           		AS DEL_CODIGO_POSTAL,
-	    CAST(PRD.PRD_TELEFONO AS VARCHAR2(14 CHAR))                                     		AS DEL_TELEFONO1,
-	    CAST(PRD.PRD_TELEFONO2 AS VARCHAR2(14 CHAR))                                    		AS DEL_TELEFONO2,
-	    CAST(PRD.PRD_EMAIL AS VARCHAR2(40 CHAR))                                        		AS DEL_EMAIL,
+	    CAST(DDTVI.DD_TVI_CODIGO AS VARCHAR2(20 CHAR))                                 			AS DELEGACIONES_COD_TIPO_VIA,
+	    CAST(PRD.PRD_NOMBRE AS VARCHAR2(100 CHAR))                                      		AS DELEGACIONES_NOMBRE_CALLE,
+	    CAST(PRD.PRD_NUM AS VARCHAR2(100 CHAR))                                         		AS DELEGACIONES_NUMERO_CALLE,
+	    CAST(PRD.PRD_ESCALERA AS VARCHAR2(10 CHAR))                                     		AS DELEGACIONES_ESCALERA,
+	    CAST(PRD.PRD_PLANTA AS VARCHAR2(11 CHAR))                                       		AS DELEGACIONES_PLANTA,
+	    CAST(PRD.PRD_PTA AS VARCHAR2(17 CHAR))                                          		AS DELEGACIONES_PUERTA,
+	    CAST(DDLOC2.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))                                   		AS DELEGACIONES_COD_MUNICIPIO,
+	    CAST(DDUPO.DD_UPO_CODIGO AS VARCHAR2(5 CHAR))                                   		AS DELEGACIONES_COD_PEDANIA,
+	    CAST(DDPRV2.DD_PRV_CODIGO AS VARCHAR2(5 CHAR))                                  		AS DELEGACIONES_COD_PROVINCIA,
+	    CAST(PRD.PRD_CP AS VARCHAR2(40 CHAR))                                           		AS DELEGACIONES_CODIGO_POSTAL,
+	    CAST(PRD.PRD_TELEFONO AS VARCHAR2(14 CHAR))                                     		AS DELEGACIONES_TELEFONO1,
+	    CAST(PRD.PRD_TELEFONO2 AS VARCHAR2(14 CHAR))                                    		AS DELEGACIONES_TELEFONO2,
+	    CAST(PRD.PRD_EMAIL AS VARCHAR2(40 CHAR))                                        		AS DELEGACIONES_EMAIL,
 		CAST(TO_CHAR(PVE.FECHACREAR,''YYYY-MM-DD'') || 
 		    ''T'' ||TO_CHAR(PVE.FECHACREAR,''HH24:MI:SS'') AS VARCHAR2(50 CHAR))    			AS FECHA_ACCION,
 		CAST((SELECT USU.USU_ID FROM REMMASTER.USU_USUARIOS USU 
@@ -139,7 +139,7 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD DDLOC ON DDLOC.DD_LOC_ID = PVE.DD_LOC_ID
     	LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD DDLOC2 ON DDLOC2.DD_LOC_ID = PRD.DD_LOC_ID
 		LEFT JOIN '||V_ESQUEMA_M||'.DD_UPO_UNID_POBLACIONAL DDUPO ON DDUPO.DD_UPO_ID = PRD.DD_UPO_ID
-		WHERE DDTPR.DD_TPR_CODIGO = ''04''';
+		WHERE DDTPR.DD_TPR_CODIGO = ''04'' AND PVE.PVE_COD_UVEM IS NOT NULL';
    
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
@@ -152,12 +152,12 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
 
 		-- Creamos indice	
-		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ID_PROVEEDOR_REM) TABLESPACE '||V_TABLESPACE_IDX;		
+		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ID_PROV_DELEGACION) TABLESPACE '||V_TABLESPACE_IDX;		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_IDX... Indice creado.');	
 	
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ID_PROVEEDOR_REM) USING INDEX)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ID_PROV_DELEGACION) USING INDEX)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
 	

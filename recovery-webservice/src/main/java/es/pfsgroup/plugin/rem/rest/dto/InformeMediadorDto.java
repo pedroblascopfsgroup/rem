@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -13,6 +14,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.rest.validator.Diccionary;
@@ -159,17 +162,51 @@ public class InformeMediadorDto implements Serializable {
 	private String justificacionValorEstimadoRenta;
 
 	private Float utilSuperficie;
-	
+
 	private Float construidaSuperficie;
-	
+
 	private Float registralSuperficie;
-	
+
 	private Float parcelaSuperficie;
-	
-	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacion no existe", groups = { Insert.class,
-			Update.class })
+
+	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacion no existe", groups = {
+			Insert.class, Update.class })
 	private String codEstadoConservacion;
 
+	private Long anyoConstruccion;
+
+	private Long anyoRehabilitacion;
+
+	private Boolean ultimaPlanta;
+
+	private Boolean ocupado;
+
+	private Long numeroPlantas;
+
+	@Diccionary(clase = DDTipoOrientacion.class, message = "El codOrientacion no existe", groups = { Insert.class,
+			Update.class })
+	private String codOrientacion;
+
+	@Diccionary(clase = DDTipoRenta.class, message = "El codNivelRenta no existe", groups = { Insert.class,
+			Update.class })
+	private String codNivelRenta;
+	
+	private List<PlantaDto> plantas;
+	
+	private Long numeroTerrazasDescubiertas;
+
+	private String descripcionTerrazasDescubiertas;
+	
+	private Long numeroTerrazasCubiertas;
+	
+	private String descripcionTerrazasCubiertas;
+	
+	private Boolean despensaOtrasDependencias;
+	
+	private Boolean lavaderoOtrasDependencias;
+	
+	private Boolean azoteaOtrasDependencias;
+	
 	public Long getIdInformeMediadorRem() {
 		return idInformeMediadorRem;
 	}
@@ -529,7 +566,126 @@ public class InformeMediadorDto implements Serializable {
 	public void setCodEstadoConservacion(String codEstadoConservacion) {
 		this.codEstadoConservacion = codEstadoConservacion;
 	}
-	
+
+	public Long getAnyoConstruccion() {
+		return anyoConstruccion;
+	}
+
+	public void setAnyoConstruccion(Long anyoConstruccion) {
+		this.anyoConstruccion = anyoConstruccion;
+	}
+
+	public Long getAnyoRehabilitacion() {
+		return anyoRehabilitacion;
+	}
+
+	public void setAnyoRehabilitacion(Long anyoRehabilitacion) {
+		this.anyoRehabilitacion = anyoRehabilitacion;
+	}
+
+	public String getCodOrientacion() {
+		return codOrientacion;
+	}
+
+	public void setCodOrientacion(String codOrientacion) {
+		this.codOrientacion = codOrientacion;
+	}
+
+	public Boolean getUltimaPlanta() {
+		return ultimaPlanta;
+	}
+
+	public void setUltimaPlanta(Boolean ultimaPlanta) {
+		this.ultimaPlanta = ultimaPlanta;
+	}
+
+	public Boolean getOcupado() {
+		return ocupado;
+	}
+
+	public void setOcupado(Boolean ocupado) {
+		this.ocupado = ocupado;
+	}
+
+	public Long getNumeroPlantas() {
+		return numeroPlantas;
+	}
+
+	public void setNumeroPlantas(Long numeroPlantas) {
+		this.numeroPlantas = numeroPlantas;
+	}
+
+	public String getCodNivelRenta() {
+		return codNivelRenta;
+	}
+
+	public void setCodNivelRenta(String codNivelRenta) {
+		this.codNivelRenta = codNivelRenta;
+	}
+
+	public List<PlantaDto> getPlantas() {
+		return plantas;
+	}
+
+	public void setPlantas(List<PlantaDto> plantas) {
+		this.plantas = plantas;
+	}
+
+	public Long getNumeroTerrazasDescubiertas() {
+		return numeroTerrazasDescubiertas;
+	}
+
+	public void setNumeroTerrazasDescubiertas(Long numeroTerrazasDescubiertas) {
+		this.numeroTerrazasDescubiertas = numeroTerrazasDescubiertas;
+	}
+
+	public String getDescripcionTerrazasDescubiertas() {
+		return descripcionTerrazasDescubiertas;
+	}
+
+	public void setDescripcionTerrazasDescubiertas(String descripcionTerrazasDescubiertas) {
+		this.descripcionTerrazasDescubiertas = descripcionTerrazasDescubiertas;
+	}
+
+	public Long getNumeroTerrazasCubiertas() {
+		return numeroTerrazasCubiertas;
+	}
+
+	public void setNumeroTerrazasCubiertas(Long numeroTerrazasCubiertas) {
+		this.numeroTerrazasCubiertas = numeroTerrazasCubiertas;
+	}
+
+	public String getDescripcionTerrazasCubiertas() {
+		return descripcionTerrazasCubiertas;
+	}
+
+	public void setDescripcionTerrazasCubiertas(String descripcionTerrazasCubiertas) {
+		this.descripcionTerrazasCubiertas = descripcionTerrazasCubiertas;
+	}
+
+	public Boolean getDespensaOtrasDependencias() {
+		return despensaOtrasDependencias;
+	}
+
+	public void setDespensaOtrasDependencias(Boolean despensaOtrasDependencias) {
+		this.despensaOtrasDependencias = despensaOtrasDependencias;
+	}
+
+	public Boolean getLavaderoOtrasDependencias() {
+		return lavaderoOtrasDependencias;
+	}
+
+	public void setLavaderoOtrasDependencias(Boolean lavaderoOtrasDependencias) {
+		this.lavaderoOtrasDependencias = lavaderoOtrasDependencias;
+	}
+
+	public Boolean getAzoteaOtrasDependencias() {
+		return azoteaOtrasDependencias;
+	}
+
+	public void setAzoteaOtrasDependencias(Boolean azoteaOtrasDependencias) {
+		this.azoteaOtrasDependencias = azoteaOtrasDependencias;
+	}
 	
 
 }

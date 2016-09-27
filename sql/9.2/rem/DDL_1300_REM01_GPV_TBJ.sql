@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160923
+--## FECHA_CREACION=20160924
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -69,7 +69,8 @@ BEGIN
 	(
 		GPV_TBJ_ID						NUMBER(16,0)				NOT NULL,
 		GPV_ID 							NUMBER(16,0)				NOT NULL,
-		TBJ_ID							NUMBER(16,0)				NOT NULL
+		TBJ_ID							NUMBER(16,0)				NOT NULL,
+		VERSION 						NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE
 	)
 	LOGGING 
 	NOCOMPRESS 

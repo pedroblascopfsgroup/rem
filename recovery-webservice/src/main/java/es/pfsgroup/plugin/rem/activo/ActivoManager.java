@@ -1202,6 +1202,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//Si no existia un registro de activo bancario, crea un nuevo
 		if(Checks.esNulo(perimetroActivo)){
 			perimetroActivo = new PerimetroActivo();
+			perimetroActivo.setAuditoria(new Auditoria());
 		}
 		
 		return perimetroActivo;
@@ -1218,6 +1219,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//Si no existia un registro de activo bancario, crea un nuevo
 		if(Checks.esNulo(activoBancario)){
 			activoBancario = new ActivoBancario();
+			activoBancario.setAuditoria(new Auditoria());
 		}
 		
 		return activoBancario;

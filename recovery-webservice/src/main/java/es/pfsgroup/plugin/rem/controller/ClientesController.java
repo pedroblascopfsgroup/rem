@@ -7,6 +7,8 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -29,6 +32,7 @@ public class ClientesController {
 	@Autowired
 	private ClienteComercialApi clienteComercialApi;
 	
+	private final Log logger = LogFactory.getLog(getClass());
 	
 	/**
 	 * Inserta o actualiza una lista de clienteComercial Ejem: IP:8080/pfs/rest/clientes
@@ -60,10 +64,10 @@ public class ClientesController {
 			jsonData = (ClienteRequestDto) request.getRequestData(ClienteRequestDto.class);
 			List<ClienteDto> listaClienteDto = jsonData.getData();			
 			jsonFields = request.getJsonObject();
-
+			logger.debug("PETICIÓN: " + jsonFields);
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
-				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
 				for(int i=0; i < listaClienteDto.size();i++){
@@ -91,7 +95,7 @@ public class ClientesController {
 						map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 						map.put("idClienteRem", clienteDto.getIdClienteRem());
 						map.put("success", false);
-						map.put("errorMessages", errorsList);
+						//map.put("errorMessages", errorsList);
 					}					
 					listaRespuesta.add(map);	
 					
@@ -99,14 +103,18 @@ public class ClientesController {
 			
 				model.put("id", jsonData.getId());	
 				model.put("data", listaRespuesta);
-				model.put("error", "");
+				model.put("error", "null");
+	
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
+		} finally {
+			logger.debug("RESPUESTA: " + model);
+			logger.debug("ERRORES: " + errorsList);
 		}
 
 		return new ModelAndView("jsonView", model);
@@ -173,7 +181,7 @@ public class ClientesController {
 			model.put("error", "");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());

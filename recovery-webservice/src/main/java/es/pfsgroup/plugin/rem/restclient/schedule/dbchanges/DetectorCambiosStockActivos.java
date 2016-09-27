@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Component
 public class DetectorCambiosStockActivos extends DetectorCambiosBD<StockDto> {
@@ -21,7 +22,7 @@ public class DetectorCambiosStockActivos extends DetectorCambiosBD<StockDto> {
 	}
 
 	@Override
-	public void invocaServicio(List<StockDto> data) {
+	public void invocaServicio(List<StockDto> data) throws ErrorServicioWebcom {
 		serviciosWebcom.enviarStock(data);
 		
 	}

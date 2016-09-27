@@ -97,7 +97,7 @@ public class WebcomEndpoint {
 	/**
 	 * Timeout para la conexión con el endpoint
 	 * 
-	 * @return
+	 * @return Devuelve el timeout en segundos
 	 */
 	public int getTimeout() {
 		return this.timeout;

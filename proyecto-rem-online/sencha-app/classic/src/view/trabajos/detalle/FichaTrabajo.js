@@ -428,6 +428,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.pago'),
 									bind: '{trabajo.fechaPago}',
 									readOnly: true
+								},
+								{
+									xtype: 'datefieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.factura'),
+									bind: '{trabajo.fechaEmisionFactura}',
+									readOnly: true
 								}
 
 							]

@@ -105,6 +105,10 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			DbIdContextHolder.setDbId(1L);
 			String[] fields = getDtoFields(dtoClass);
 			String columns = columns4Select(fields, infoTablas.clavePrimaria());
+
+			String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + infoTablas.nombreVistaDatosActuales()
+					+ "','C'); end;";
+
 			String columIdUsuarioRemAccion = field2column(ConstantesGenericas.ID_USUARIO_REM_ACCION);
 			String selectFromDatosActuales = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales()
 					+ " WHERE " + columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
@@ -112,6 +116,15 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String queryString = selectFromDatosActuales + " MINUS " + selectFromDatosHistoricos;
 
 			List<Object[]> resultado = null;
+			
+			try{
+				logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+				queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
+			} catch (Throwable t) {
+				throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews,
+						infoTablas, t);
+			}
+			
 			try {
 				logger.debug("Ejecutando: " + queryString);
 				resultado = queryExecutor.sqlRunList(session, queryString);

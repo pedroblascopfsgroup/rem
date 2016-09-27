@@ -9,7 +9,8 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
     'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
     'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu',
-    'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleTabPanel'],
+    'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleTabPanel', 
+    'HreRem.view.gastos.GastoDetalleMain', 'HreRem.model.GastoProveedor'],
 
     
     refs: [
@@ -171,6 +172,9 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'configuracionmain': {
     		abrirDetalleProveedor: 'abrirDetalleProveedor'
+    	},
+    	'administraciongastosmain': {
+    		abrirDetalleGasto: 'abrirDetalleGasto'
     	}
 
     },
@@ -872,6 +876,55 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	tab.getViewModel().set("proveedor", proveedor);
 		    	tab.configCmp(proveedor);
 
+				tab.unmask();
+
+		    	me.logTime("Fin Set values"); 
+		    }
+		});
+
+    },
+    
+    abrirDetalleGasto: function(record, refLinks) {
+    	var me = this,
+    	titulo = "Gasto " + record.get("numGastoHaya"),
+    	id = record.get("id");
+		me.redirectTo('activos', true);    	
+    	me.abrirDetalleGastoById(id, titulo, refLinks);    	
+    	
+    },
+    
+    abrirDetalleGastoById: function(id, titulo, refLinks) {
+    	var me = this,
+    	cfg = {}, 
+    	tab=null;
+
+    	cfg.title = titulo;
+    	tab = me.createTab (me.getActivosMain(), 'gasto', "gastodetallemain",  id, cfg);
+    	tab.mask(HreRem.i18n('msg.mask.loading'));
+    	me.setLogTime(); 
+    	
+    	HreRem.model.GastoProveedor.load(id, {
+    		scope: this,
+		    success: function(gasto) {
+		    	me.logTime("Load gasto success"); 
+		    	me.setLogTime();	    	
+		    	if(Ext.isEmpty(titulo)) {		    		
+		    		titulo = "Gasto " + gasto.get("numGastoHaya");
+		    		tab.setTitle(titulo);
+		    	}
+		    	tab.getViewModel().set("gasto", gasto);
+		    	tab.configCmp(gasto);
+		    					
+				
+				/* Selector de subPestanyas del Trabajo:
+		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
+		    	 * para evitar el uso de Notify() si no hay activacion de pesta�as (refLinks != null)
+		    	 */
+		    	if (refLinks != null){
+		    		tab.getViewModel().notify();
+					me.seleccionarTabByXtype(tab, refLinks);
+				}
+				
 				tab.unmask();
 
 		    	me.logTime("Fin Set values"); 

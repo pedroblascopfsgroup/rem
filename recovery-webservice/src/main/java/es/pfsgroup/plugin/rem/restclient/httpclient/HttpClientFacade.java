@@ -87,7 +87,11 @@ public class HttpClientFacade {
 			String respBody = getResponseBody(method);// See details Below
 			logger.debug("-- RESPONSE BODY --");
 			logger.debug(respBody);
-
+			
+			if (respBody.trim().isEmpty()){
+				throw new HttpClientException("Empty response", responseCode);
+			}
+			
 			return JSONObject.fromObject(respBody);
 		} catch (Exception e) {
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + ",PARAMS:"

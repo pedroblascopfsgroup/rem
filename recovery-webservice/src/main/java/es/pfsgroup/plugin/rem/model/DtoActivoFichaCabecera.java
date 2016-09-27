@@ -139,6 +139,9 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String estadoExpRiesgoDescripcion;
 	private String estadoExpIncorrienteCodigo;
 	private String estadoExpIncorrienteDescripcion;
+	
+	//Activo integrado en agrupación asistida
+	private Boolean integradoEnAgrupacionAsistida;
 
 	
 	private int page;
@@ -1087,6 +1090,15 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setEstadoExpIncorrienteDescripcion(String estadoExpIncorrienteDescripcion) {
 		this.estadoExpIncorrienteDescripcion = estadoExpIncorrienteDescripcion;
+	}
+
+	public Boolean getIntegradoEnAgrupacionAsistida() {
+		return integradoEnAgrupacionAsistida;
+	}
+
+	public void setIntegradoEnAgrupacionAsistida(
+			Boolean integradoEnAgrupacionAsistida) {
+		this.integradoEnAgrupacionAsistida = integradoEnAgrupacionAsistida;
 	}
 
 

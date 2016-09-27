@@ -29,8 +29,12 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo'})}, 'TAB_ACTIVO_FOTOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'documentosactivo'})}, 'TAB_ACTIVO_DOCUMENTOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo'})}, 'TAB_ACTIVO_AGRUPACIONES');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo'})}, 'TAB_ACTIVO_ADMISION');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo'})}, 'TAB_ACTIVO_GESTION');
+    	// Si el activo esta en agrupacion asistida, se ocultan estas dos pestanyas
+    	if(me.lookupController().getViewModel().get('activo').get('integradoEnAgrupacionAsistida')=="false") {
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo'})}, 'TAB_ACTIVO_ADMISION');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo'})}, 'TAB_ACTIVO_GESTION');
+    	}
+    	
     	me.add({xtype: 'preciosactivo'});
     	me.add({xtype: 'publicacionactivo'});
     	me.add({xtype: 'comercialactivo'});

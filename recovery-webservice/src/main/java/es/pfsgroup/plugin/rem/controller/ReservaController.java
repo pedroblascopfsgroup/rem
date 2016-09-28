@@ -88,10 +88,14 @@ public class ReservaController {
 				if (condExp!=null) {
 					if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva()) ) {
 						importeReserva = condExp.getPorcentajeReserva()*oferta.getImporteOferta();
-						ofertaUVEM.setImporteReserva(importeReserva.toString());
+						if (importeReserva != null) {
+							ofertaUVEM.setImporteReserva(importeReserva.toString());
+						}
 					} else {
 						importeReserva = condExp.getImporteReserva();
-						ofertaUVEM.setImporteReserva(importeReserva.toString());
+						if (importeReserva != null) {
+							ofertaUVEM.setImporteReserva(importeReserva.toString());
+						}						
 					}
 				}
 				if (oferta.getImporteOferta()!=null) {

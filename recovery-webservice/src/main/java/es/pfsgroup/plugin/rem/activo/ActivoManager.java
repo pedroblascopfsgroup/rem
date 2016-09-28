@@ -1273,6 +1273,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public Activo updateActivoAsistida(Activo activo){
 		//Actualizamos el perímetro
 		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
+		
+		if(Checks.esNulo(perimetro.getActivo()))
+			perimetro.setActivo(activo);
+		
 		updatePerimetroAsistida(perimetro);
 		
 		//Bloqueamos los precios para que el activo no salga en los procesos automáticos. Esto podría ir en un proceso al dar de alta el activo.

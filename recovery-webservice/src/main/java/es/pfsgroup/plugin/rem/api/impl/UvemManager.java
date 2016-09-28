@@ -381,6 +381,11 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPDJB13_INS.execute();
 
 	}
+	
+	@Override
+	public GMPDJB13_INS resultadoInstanciaDecision(){
+		return servicioGMPDJB13_INS;
+	}
 
 	@Override
 	public void ejecutarDatosCliente(Long idclow, String qcenre) throws WIException {

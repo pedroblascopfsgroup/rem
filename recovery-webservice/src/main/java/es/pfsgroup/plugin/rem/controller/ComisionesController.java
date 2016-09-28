@@ -7,6 +7,8 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,7 +42,7 @@ public class ComisionesController {
 	@Autowired
 	private RestApi restApi;
 
-	
+	private final Log logger = LogFactory.getLog(getClass());
 	
 	
 	/**
@@ -62,7 +64,6 @@ public class ComisionesController {
 		ComisionRequestDto jsonData = null;
 		List<String> errorsList = null;
 		List<GastosExpediente> listaGastos = null;
-		GastosExpediente gasto = null;
 		
 		ComisionDto comisionDto = null;
 		Map<String, Object> map = null;
@@ -74,10 +75,10 @@ public class ComisionesController {
 			jsonData = (ComisionRequestDto) request.getRequestData(ComisionRequestDto.class);
 			List<ComisionDto> listaComisionDto = jsonData.getData();			
 			jsonFields = request.getJsonObject();
-
+			logger.debug("PETICIÓN: " + jsonFields);
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
-				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
 				
@@ -90,14 +91,16 @@ public class ComisionesController {
 					//gasto = gastosExpedienteApi.findOne(comisionDto.getIdHonorarioRem());		
 					listaGastos = gastosExpedienteApi.getListaGastosExpediente(comisionDto);	
 					if(Checks.esNulo(listaGastos) || (!Checks.esNulo(listaGastos) && listaGastos.size() != 1)){
-						errorsList.add("No existe en REM la comisión con los siguientes datos: idOfertaRem-" + comisionDto.getIdOfertaRem() + 
+						throw new Exception(RestApi.REST_MSG_UNKNOWN_KEY);
+						
+						/*errorsList.add("No existe en REM la comisión con los siguientes datos: idOfertaRem-" + comisionDto.getIdOfertaRem() + 
 								" idOfertaWebcom-" + comisionDto.getIdOfertaWebcom() +
 								" idProveedorRem-" + comisionDto.getIdProveedorRem() + 
 								" esPrescripcion-" + comisionDto.getEsPrescripcion() + 
 								" esColaboracion-" + comisionDto.getEsColaboracion() + 
 								" esResponsable-" + comisionDto.getEsResponsable() +
 								" esFdv-" + comisionDto.getEsFdv() +
-								". No se actualizará la comisión.");
+								". No se actualizará la comisión.");*/
 
 					}else{
 						errorsList = gastosExpedienteApi.updateAceptacionGasto(listaGastos.get(0), comisionDto, jsonFields.getJSONArray("data").get(i));
@@ -136,7 +139,7 @@ public class ComisionesController {
 						map.put("idOfertaWebcom", comisionDto.getIdOfertaWebcom());
 						map.put("idOfertaRem", comisionDto.getIdOfertaRem());
 						map.put("success", false);
-						map.put("errorMessages", errorsList);
+						//map.put("errorMessages", errorsList);
 					}					
 					listaRespuesta.add(map);	
 					
@@ -144,15 +147,18 @@ public class ComisionesController {
 			
 				model.put("id", jsonData.getId());	
 				model.put("data", listaRespuesta);
-				model.put("error", "");
+				model.put("error", "null");
 				
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
+		} finally {
+			logger.debug("RESPUESTA: " + model);
+			logger.debug("ERRORES: " + errorsList);
 		}
 
 		return new ModelAndView("jsonView", model);

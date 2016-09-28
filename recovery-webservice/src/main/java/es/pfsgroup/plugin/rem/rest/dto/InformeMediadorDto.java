@@ -384,6 +384,63 @@ public class InformeMediadorDto implements Serializable {
 	
 	private Boolean existenTeatros;
 	
+	private String teatros;
+	
+	private Boolean existenSalasDeCine;
+	
+	private String  salasDeCine;
+	
+	private Boolean existenInstalacionesDeportivas;
+	
+	private String instalacionesDeportivas;
+	
+	private Boolean existenCentrosComerciales;
+	
+	private String centrosComerciales;
+	
+	private String otrosOcio;
+	
+	private Boolean existenCentrosEducativos;
+	
+	private Boolean existenEscuelasInfantiles;
+	
+	private String escuelasInfantiles;
+	
+	private Boolean existenColegios;
+	
+	private String colegios;
+	
+	private Boolean existenInstitutos;
+	
+	private String institutos;
+	
+	private Boolean existenUniversidades;
+	
+	private String universidades;
+	
+	private String otrosCentrosEducativos;
+	
+	private Boolean existenCentrosSanitarios;
+	
+	private Boolean existenCentrosDeSalud;
+	
+	private String centrosDeSalud;
+	
+	private Boolean existenClinicas;
+	
+	private String clinicas;
+	
+	private Boolean existenHospitales;
+	
+	private String hospitales;
+	
+	private Boolean existenOtrosCentrosSanitarios;
+	
+	private String otrosCentrosSanitarios;
+	
+	private String codTipoAparcamientoEnSuperficie;//<-------------------------dicionario??
+	
+	
 	public Long getIdInformeMediadorRem() {
 		return idInformeMediadorRem;
 	}
@@ -1526,6 +1583,262 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setComunicacionesEntornoEdificio(String comunicacionesEntornoEdificio) {
 		this.comunicacionesEntornoEdificio = comunicacionesEntornoEdificio;
+	}
+
+	public Boolean getExisteOcio() {
+		return existeOcio;
+	}
+
+	public void setExisteOcio(Boolean existeOcio) {
+		this.existeOcio = existeOcio;
+	}
+
+	public Boolean getExistenHoteles() {
+		return existenHoteles;
+	}
+
+	public void setExistenHoteles(Boolean existenHoteles) {
+		this.existenHoteles = existenHoteles;
+	}
+
+	public String getHoteles() {
+		return hoteles;
+	}
+
+	public void setHoteles(String hoteles) {
+		this.hoteles = hoteles;
+	}
+
+	public Boolean getExistenTeatros() {
+		return existenTeatros;
+	}
+
+	public void setExistenTeatros(Boolean existenTeatros) {
+		this.existenTeatros = existenTeatros;
+	}
+
+	public String getTeatros() {
+		return teatros;
+	}
+
+	public void setTeatros(String teatros) {
+		this.teatros = teatros;
+	}
+
+	public Boolean getExistenSalasDeCine() {
+		return existenSalasDeCine;
+	}
+
+	public void setExistenSalasDeCine(Boolean existenSalasDeCine) {
+		this.existenSalasDeCine = existenSalasDeCine;
+	}
+
+	public String getSalasDeCine() {
+		return salasDeCine;
+	}
+
+	public void setSalasDeCine(String salasDeCine) {
+		this.salasDeCine = salasDeCine;
+	}
+
+	public Boolean getExistenInstalacionesDeportivas() {
+		return existenInstalacionesDeportivas;
+	}
+
+	public void setExistenInstalacionesDeportivas(Boolean existenInstalacionesDeportivas) {
+		this.existenInstalacionesDeportivas = existenInstalacionesDeportivas;
+	}
+
+	public String getInstalacionesDeportivas() {
+		return instalacionesDeportivas;
+	}
+
+	public void setInstalacionesDeportivas(String instalacionesDeportivas) {
+		this.instalacionesDeportivas = instalacionesDeportivas;
+	}
+
+	public Boolean getExistenCentrosComerciales() {
+		return existenCentrosComerciales;
+	}
+
+	public void setExistenCentrosComerciales(Boolean existenCentrosComerciales) {
+		this.existenCentrosComerciales = existenCentrosComerciales;
+	}
+
+	public String getCentrosComerciales() {
+		return centrosComerciales;
+	}
+
+	public void setCentrosComerciales(String centrosComerciales) {
+		this.centrosComerciales = centrosComerciales;
+	}
+
+	public String getOtrosOcio() {
+		return otrosOcio;
+	}
+
+	public void setOtrosOcio(String otrosOcio) {
+		this.otrosOcio = otrosOcio;
+	}
+
+	public Boolean getExistenCentrosEducativos() {
+		return existenCentrosEducativos;
+	}
+
+	public void setExistenCentrosEducativos(Boolean existenCentrosEducativos) {
+		this.existenCentrosEducativos = existenCentrosEducativos;
+	}
+
+	public Boolean getExistenEscuelasInfantiles() {
+		return existenEscuelasInfantiles;
+	}
+
+	public void setExistenEscuelasInfantiles(Boolean existenEscuelasInfantiles) {
+		this.existenEscuelasInfantiles = existenEscuelasInfantiles;
+	}
+
+	public String getEscuelasInfantiles() {
+		return escuelasInfantiles;
+	}
+
+	public void setEscuelasInfantiles(String escuelasInfantiles) {
+		this.escuelasInfantiles = escuelasInfantiles;
+	}
+
+	public Boolean getExistenColegios() {
+		return existenColegios;
+	}
+
+	public void setExistenColegios(Boolean existenColegios) {
+		this.existenColegios = existenColegios;
+	}
+
+	public String getColegios() {
+		return colegios;
+	}
+
+	public void setColegios(String colegios) {
+		this.colegios = colegios;
+	}
+
+	public Boolean getExistenInstitutos() {
+		return existenInstitutos;
+	}
+
+	public void setExistenInstitutos(Boolean existenInstitutos) {
+		this.existenInstitutos = existenInstitutos;
+	}
+
+	public String getInstitutos() {
+		return institutos;
+	}
+
+	public void setInstitutos(String institutos) {
+		this.institutos = institutos;
+	}
+
+	public Boolean getExistenUniversidades() {
+		return existenUniversidades;
+	}
+
+	public void setExistenUniversidades(Boolean existenUniversidades) {
+		this.existenUniversidades = existenUniversidades;
+	}
+
+	public String getUniversidades() {
+		return universidades;
+	}
+
+	public void setUniversidades(String universidades) {
+		this.universidades = universidades;
+	}
+
+	public String getOtrosCentrosEducativos() {
+		return otrosCentrosEducativos;
+	}
+
+	public void setOtrosCentrosEducativos(String otrosCentrosEducativos) {
+		this.otrosCentrosEducativos = otrosCentrosEducativos;
+	}
+
+	public Boolean getExistenCentrosSanitarios() {
+		return existenCentrosSanitarios;
+	}
+
+	public void setExistenCentrosSanitarios(Boolean existenCentrosSanitarios) {
+		this.existenCentrosSanitarios = existenCentrosSanitarios;
+	}
+
+	public Boolean getExistenCentrosDeSalud() {
+		return existenCentrosDeSalud;
+	}
+
+	public void setExistenCentrosDeSalud(Boolean existenCentrosDeSalud) {
+		this.existenCentrosDeSalud = existenCentrosDeSalud;
+	}
+
+	public String getCentrosDeSalud() {
+		return centrosDeSalud;
+	}
+
+	public void setCentrosDeSalud(String centrosDeSalud) {
+		this.centrosDeSalud = centrosDeSalud;
+	}
+
+	public Boolean getExistenClinicas() {
+		return existenClinicas;
+	}
+
+	public void setExistenClinicas(Boolean existenClinicas) {
+		this.existenClinicas = existenClinicas;
+	}
+
+	public String getClinicas() {
+		return clinicas;
+	}
+
+	public void setClinicas(String clinicas) {
+		this.clinicas = clinicas;
+	}
+
+	public Boolean getExistenHospitales() {
+		return existenHospitales;
+	}
+
+	public void setExistenHospitales(Boolean existenHospitales) {
+		this.existenHospitales = existenHospitales;
+	}
+
+	public String getHospitales() {
+		return hospitales;
+	}
+
+	public void setHospitales(String hospitales) {
+		this.hospitales = hospitales;
+	}
+
+	public Boolean getExistenOtrosCentrosSanitarios() {
+		return existenOtrosCentrosSanitarios;
+	}
+
+	public void setExistenOtrosCentrosSanitarios(Boolean existenOtrosCentrosSanitarios) {
+		this.existenOtrosCentrosSanitarios = existenOtrosCentrosSanitarios;
+	}
+
+	public String getOtrosCentrosSanitarios() {
+		return otrosCentrosSanitarios;
+	}
+
+	public void setOtrosCentrosSanitarios(String otrosCentrosSanitarios) {
+		this.otrosCentrosSanitarios = otrosCentrosSanitarios;
+	}
+
+	public String getCodTipoAparcamientoEnSuperficie() {
+		return codTipoAparcamientoEnSuperficie;
+	}
+
+	public void setCodTipoAparcamientoEnSuperficie(String codTipoAparcamientoEnSuperficie) {
+		this.codTipoAparcamientoEnSuperficie = codTipoAparcamientoEnSuperficie;
 	}
 	
 

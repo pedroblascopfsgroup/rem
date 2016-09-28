@@ -7,6 +7,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 public interface ServiciosWebcomApi {
 
@@ -16,8 +17,10 @@ public interface ServiciosWebcomApi {
 	 * @param estadoTrabajo
 	 *            Lista de DTO's con los cambios de estado que queremos
 	 *            notificar
+	 *            
+	 *            @throws ErrorServicioWebcom 
 	 */
-	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo);
+	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom;
 
 	/**
 	 * Envia a WEBCOM una actualización del estado de una Oferta.
@@ -25,8 +28,9 @@ public interface ServiciosWebcomApi {
 	 * @param estadoOferta
 	 *            Lista de DTO's con los cambios de estado que queremos
 	 *            notificar.
+	 * @throws ErrorServicioWebcom 
 	 */
-	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta);
+	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom;
 
 	/**
 	 * Envia a WEBCOM una actualización del stock de activos
@@ -34,7 +38,7 @@ public interface ServiciosWebcomApi {
 	 * @param stock
 	 *            Stock de activos (alta/modificación)
 	 */
-	public void enviarStock(List<StockDto> stock);
+	public void enviarStock(List<StockDto> stock) throws ErrorServicioWebcom;
 
 	/**
 	 * Honorarios asociados a una oferta una vez se apruebe ésta, también viaja
@@ -42,8 +46,9 @@ public interface ServiciosWebcomApi {
 	 * por el mediador.
 	 * 
 	 * @param notificaciones
+	 * @throws ErrorServicioWebcom 
 	 */
-	public void estadoNotificacion(List<NotificacionDto> notificaciones);
+	public void estadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom;
 
 	/**
 	 * Honorarios asociados a una oferta una vez se apruebe ésta, también viaja
@@ -51,7 +56,8 @@ public interface ServiciosWebcomApi {
 	 * por el mediador.
 	 * 
 	 * @param comisiones
+	 * @throws ErrorServicioWebcom 
 	 */
-	public void ventasYcomisiones(List<ComisionesDto> comisiones);
+	public void ventasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom;
 
 }

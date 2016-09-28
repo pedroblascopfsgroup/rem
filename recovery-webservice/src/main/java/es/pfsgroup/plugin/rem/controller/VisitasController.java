@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -47,7 +49,7 @@ public class VisitasController {
 	@Autowired 
     private VisitaApi visitaApi;
 	
-	
+	private final Log logger = LogFactory.getLog(getClass());
 	
 	/**
 	 * Inserta o actualiza una lista de Visitas Ejem: IP:8080/pfs/rest/clientes
@@ -74,15 +76,16 @@ public class VisitasController {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
 		
+		
 		try {
 
 			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
 			List<VisitaDto> listaVisitaDto = jsonData.getData();			
 			jsonFields = request.getJsonObject();
-
+			logger.debug("PETICIÓN: " + jsonFields);
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
-				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
 				
@@ -111,7 +114,7 @@ public class VisitasController {
 						map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
 						map.put("idVisitaRem", visitaDto.getIdVisitaRem());
 						map.put("success", false);
-						map.put("errorMessages", errorsList);
+						//map.put("errorMessages", errorsList);
 					}					
 					listaRespuesta.add(map);	
 					
@@ -119,15 +122,18 @@ public class VisitasController {
 			
 				model.put("id", jsonData.getId());	
 				model.put("data", listaRespuesta);
-				model.put("error", "");
+				model.put("error", "null");
 				
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
+		} finally {
+			logger.debug("RESPUESTA: " + model);
+			logger.debug("ERRORES: " + errorsList);
 		}
 
 		return new ModelAndView("jsonView", model);

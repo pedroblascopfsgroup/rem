@@ -256,6 +256,22 @@ public class Formalizacion implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Date getFechaEscritura() {
+		return fechaEscritura;
+	}
+
+	public void setFechaEscritura(Date fechaEscritura) {
+		this.fechaEscritura = fechaEscritura;
+	}
+
+	public Date getFechaContabilizacion() {
+		return fechaContabilizacion;
+	}
+
+	public void setFechaContabilizacion(Date fechaContabilizacion) {
+		this.fechaContabilizacion = fechaContabilizacion;
+	}
     
     
     

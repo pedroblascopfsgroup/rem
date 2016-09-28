@@ -4,10 +4,19 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class WebcomSignatureUtils {
 	
+	private static final Log logger = LogFactory.getLog(WebcomSignatureUtils.class);
+	
 	public static String computeSignatue(String apiKey, String ipAddress, String body) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-		String firma = (apiKey.concat(ipAddress).concat(body)).toLowerCase();
+		logger.debug("Cálculo del sginature");
+		logger.debug("------------- INICIO FIRMA -----------------");
+		String firma = (apiKey.concat(ipAddress).concat(body));
+		logger.debug(firma);
+		logger.debug("-------------  FIN FIRMA   -----------------");
 		byte[] bytesOfMessage = firma.getBytes("UTF-8");
 
 		MessageDigest md = MessageDigest.getInstance("MD5");

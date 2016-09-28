@@ -12,7 +12,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.pfsgroup.commons.utils.Checks;
 
 
 
@@ -165,6 +165,16 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 
 	public void setDivHorizontalNoInscrita(Boolean divHorizontalNoInscrita) {
 		this.divHorizontalNoInscrita = divHorizontalNoInscrita;
+	}
+	
+	public Boolean isCondicionado() {
+		if(ruina || pendienteInscripcion || obraNuevaSinDeclarar || sinTomaPosesionInicial || proindiviso || obraNuevaEnConstruccion || 
+				 ocupadoConTitulo || tapiado || ocupadoSinTitulo || divHorizontalNoInscrita || !Checks.esNulo(otro)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 }

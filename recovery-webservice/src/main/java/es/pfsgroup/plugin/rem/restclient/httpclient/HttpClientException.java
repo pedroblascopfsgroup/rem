@@ -21,4 +21,9 @@ public class HttpClientException extends Exception {
 		return responseCode;
 	}
 
+	@Override
+	public String getMessage() {
+		return super.getMessage() + "[errCode= " + responseCode + "]";
+	}
+
 }

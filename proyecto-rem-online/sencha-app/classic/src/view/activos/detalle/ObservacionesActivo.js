@@ -3,6 +3,13 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
     xtype: 'observacionesactivo',    
     reference: 'observacionesactivoref',
 	layout: 'fit',
+	
+	listeners: { 	
+    	boxready: function (tabPanel) { 
+    		tabPanel.evaluarEdicion();
+    	}
+    },
+    
     initComponent: function () {
 
         var me = this;
@@ -106,6 +113,15 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
+    },
+    
+  //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar
+    evaluarEdicion: function() {    	
+		var me = this;
+		
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			me.down('[xtype=gridBaseEditableRow]').setTopBar(false);
+		}
     }
 
 

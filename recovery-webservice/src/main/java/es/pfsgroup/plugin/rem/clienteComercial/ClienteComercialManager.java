@@ -27,7 +27,6 @@ import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
 

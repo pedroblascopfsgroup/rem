@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 import es.pfsgroup.plugin.rem.rest.validator.Diccionary;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -206,6 +207,182 @@ public class InformeMediadorDto implements Serializable {
 	private Boolean lavaderoOtrasDependencias;
 	
 	private Boolean azoteaOtrasDependencias;
+	
+	private String otrosOtrasDependencias;
+	
+	private Boolean instalacionElectricidadInstalaciones;
+	
+	private Boolean contadorElectricidadInstalaciones;
+	
+	private Boolean instalacionAguaInstalaciones;
+	
+	private Boolean contadorAguaInstalaciones;
+	
+	private Boolean gasInstalaciones;
+	
+	private Boolean contadorGasInstalacion;
+	
+	private Boolean exteriorCarpinteriaReformasNecesarias;
+	
+	private Boolean interiorCarpinteriaReformasNecesarias;
+	
+	private Boolean cocinaReformasNecesarias;
+	
+	private Boolean suelosReformasNecesarias;
+	
+	private Boolean pinturaReformasNecesarias;
+	
+	private Boolean integralReformasNecesarias;
+	
+	private Boolean banyosReformasNecesarias;
+	
+	private String otrasReformasNecesarias;
+	
+	private Float otrasReformasNecesariasImporteAproximado;
+	
+	private List<Long> activosVinculados;
+	
+	private String distribucionInterior;
+	
+	private Boolean divisible;
+	
+	private Boolean ascensor;
+	
+	private Long numeroAscensores;
+	
+	private String descripcionPlantas;
+	
+	private String otrasCaracteristicas;
+	
+	private Boolean fachadaReformasNecesarias;
+	
+	private Boolean escaleraReformasNecesarias;
+	
+	private Boolean portalReformasNecesarias;
+	
+	private Boolean ascensorReformasNecesarias;
+	
+	private Boolean cubierta;
+	
+	private Boolean otrasZonasComunesReformasNecesarias;
+	
+	private String otrosReformasNecesarias;
+	
+	private String descripcionEdificio;
+	
+	private String infraestructurasEntorno;
+	
+	private String comunicacionesEntorno;
+	
+	private String idoneoUso;
+	
+	private Boolean existeAnteriorUso;
+	
+	private String anteriorUso;
+	
+	private Long numeroEstancias;
+	
+	private Long numeroBanyos;
+	
+	private long numeroAseos;
+	
+	private Float metrosLinealesFachadaPrincipal;
+	
+	private Float altura;
+	
+	private Long numeroPlazasGaraje;
+	
+	private Float superficiePlazasGaraje;
+	
+	private String codSubtipoPlazasGaraje;//<-------------------------------------diccionario?
+	
+	private Boolean salidaHumosOtrasCaracteristicas;
+	
+	private Boolean salidaEmergenciaOtrasCaracteristicas;
+	
+	private Boolean accesoMinusvalidosOtrasCaracteristicas;
+	
+	private String otrosOtrasCaracteristicas;
+	
+	private String codTipoVario;//<-------------------------------------diccionario?
+	
+	private Float ancho;
+	
+	private Float alto;
+	
+	private Float largo;
+	
+	@Diccionary(clase = DDUsosActivo.class, message = "El codUso no existe", groups = { Insert.class,
+			Update.class })
+	private String codUso;
+	
+	private String codManiobrabilidad;//<-------------------------------------diccionario?
+	
+	private Boolean licenciaOtrasCaracteristicas;
+	
+	private Boolean servidumbreOtrasCaracteristicas;
+	
+	private Boolean ascensorOMontacargasOtrasCaracteristicas;
+	
+	private Boolean columnasOtrasCaracteristicas;
+	
+	private Boolean seguridadOtrasCaracteristicas;
+	
+	private Boolean buenEstadoInstalacionElectricidadInstalaciones;
+	
+	private Boolean buenEstadoContadorElectricidadInstalaciones;
+	
+	private Boolean buenEstadoInstalacionAguaInstalaciones;
+	
+	private Boolean buenEstadoContadorAguaInstalaciones;
+	
+	private Boolean buenEstadoGasInstalaciones;
+	
+	private Boolean buenEstadoContadorGasInstalacion;
+	
+	private Boolean buenEstadoConservacionEdificio;
+	
+	private Date anyoRehabilitacionEdificio;
+	
+	private Long numeroPlantasEdificio;
+	
+	private Boolean ascensorEdificio;
+	
+	private Long numeroAscensoresEdificio;
+	
+	private Boolean existeComunidadEdificio;
+	
+	private Float cuotaComunidadEdificio;
+	
+	private String nombrePresidenteComunidadEdificio;
+	
+	private String telefonoPresidenteComunidadEdificio;
+	
+	private String nombreAdministradorComunidadEdificio;
+	
+	private String telefonoAdministradorComunidadEdificio;
+	
+	private String descripcionDerramaComunidadEdificio;
+	
+	private Boolean ascensorReformasNecesariasEdificio;
+	
+	private Boolean cubiertaReformasNecesariasEdificio;
+	
+	private Boolean otrasZonasComunesReformasNecesariasEdificio;
+	
+	private String otrosReformasNecesariasEdificio;
+	
+	private String infraestructurasEntornoEdificio;
+	
+	private String comunicacionesEntornoEdificio;
+	
+	private Boolean existeOcio;
+	
+	private Boolean existenHoteles;
+	
+	private String hoteles;
+	
+	private Boolean existenTeatros;
 	
 	public Long getIdInformeMediadorRem() {
 		return idInformeMediadorRem;
@@ -685,6 +862,670 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setAzoteaOtrasDependencias(Boolean azoteaOtrasDependencias) {
 		this.azoteaOtrasDependencias = azoteaOtrasDependencias;
+	}
+
+	public String getOtrosOtrasDependencias() {
+		return otrosOtrasDependencias;
+	}
+
+	public void setOtrosOtrasDependencias(String otrosOtrasDependencias) {
+		this.otrosOtrasDependencias = otrosOtrasDependencias;
+	}
+
+	public Boolean getInstalacionElectricidadInstalaciones() {
+		return instalacionElectricidadInstalaciones;
+	}
+
+	public void setInstalacionElectricidadInstalaciones(Boolean instalacionElectricidadInstalaciones) {
+		this.instalacionElectricidadInstalaciones = instalacionElectricidadInstalaciones;
+	}
+
+	public Boolean getContadorElectricidadInstalaciones() {
+		return contadorElectricidadInstalaciones;
+	}
+
+	public void setContadorElectricidadInstalaciones(Boolean contadorElectricidadInstalaciones) {
+		this.contadorElectricidadInstalaciones = contadorElectricidadInstalaciones;
+	}
+
+	public Boolean getInstalacionAguaInstalaciones() {
+		return instalacionAguaInstalaciones;
+	}
+
+	public void setInstalacionAguaInstalaciones(Boolean instalacionAguaInstalaciones) {
+		this.instalacionAguaInstalaciones = instalacionAguaInstalaciones;
+	}
+
+	public Boolean getContadorAguaInstalaciones() {
+		return contadorAguaInstalaciones;
+	}
+
+	public void setContadorAguaInstalaciones(Boolean contadorAguaInstalaciones) {
+		this.contadorAguaInstalaciones = contadorAguaInstalaciones;
+	}
+
+	public Boolean getGasInstalaciones() {
+		return gasInstalaciones;
+	}
+
+	public void setGasInstalaciones(Boolean gasInstalaciones) {
+		this.gasInstalaciones = gasInstalaciones;
+	}
+
+	public Boolean getContadorGasInstalacion() {
+		return contadorGasInstalacion;
+	}
+
+	public void setContadorGasInstalacion(Boolean contadorGasInstalacion) {
+		this.contadorGasInstalacion = contadorGasInstalacion;
+	}
+
+	public Boolean getExteriorCarpinteriaReformasNecesarias() {
+		return exteriorCarpinteriaReformasNecesarias;
+	}
+
+	public void setExteriorCarpinteriaReformasNecesarias(Boolean exteriorCarpinteriaReformasNecesarias) {
+		this.exteriorCarpinteriaReformasNecesarias = exteriorCarpinteriaReformasNecesarias;
+	}
+
+	public Boolean getInteriorCarpinteriaReformasNecesarias() {
+		return interiorCarpinteriaReformasNecesarias;
+	}
+
+	public void setInteriorCarpinteriaReformasNecesarias(Boolean interiorCarpinteriaReformasNecesarias) {
+		this.interiorCarpinteriaReformasNecesarias = interiorCarpinteriaReformasNecesarias;
+	}
+
+	public Boolean getCocinaReformasNecesarias() {
+		return cocinaReformasNecesarias;
+	}
+
+	public void setCocinaReformasNecesarias(Boolean cocinaReformasNecesarias) {
+		this.cocinaReformasNecesarias = cocinaReformasNecesarias;
+	}
+
+	public Boolean getSuelosReformasNecesarias() {
+		return suelosReformasNecesarias;
+	}
+
+	public void setSuelosReformasNecesarias(Boolean suelosReformasNecesarias) {
+		this.suelosReformasNecesarias = suelosReformasNecesarias;
+	}
+
+	public Boolean getPinturaReformasNecesarias() {
+		return pinturaReformasNecesarias;
+	}
+
+	public void setPinturaReformasNecesarias(Boolean pinturaReformasNecesarias) {
+		this.pinturaReformasNecesarias = pinturaReformasNecesarias;
+	}
+
+	public Boolean getIntegralReformasNecesarias() {
+		return integralReformasNecesarias;
+	}
+
+	public void setIntegralReformasNecesarias(Boolean integralReformasNecesarias) {
+		this.integralReformasNecesarias = integralReformasNecesarias;
+	}
+
+	public Boolean getBanyosReformasNecesarias() {
+		return banyosReformasNecesarias;
+	}
+
+	public void setBanyosReformasNecesarias(Boolean banyosReformasNecesarias) {
+		this.banyosReformasNecesarias = banyosReformasNecesarias;
+	}
+
+	public String getOtrasReformasNecesarias() {
+		return otrasReformasNecesarias;
+	}
+
+	public void setOtrasReformasNecesarias(String otrasReformasNecesarias) {
+		this.otrasReformasNecesarias = otrasReformasNecesarias;
+	}
+
+	public Float getOtrasReformasNecesariasImporteAproximado() {
+		return otrasReformasNecesariasImporteAproximado;
+	}
+
+	public void setOtrasReformasNecesariasImporteAproximado(Float otrasReformasNecesariasImporteAproximado) {
+		this.otrasReformasNecesariasImporteAproximado = otrasReformasNecesariasImporteAproximado;
+	}
+
+	public List<Long> getActivosVinculados() {
+		return activosVinculados;
+	}
+
+	public void setActivosVinculados(List<Long> activosVinculados) {
+		this.activosVinculados = activosVinculados;
+	}
+
+	public String getDistribucionInterior() {
+		return distribucionInterior;
+	}
+
+	public void setDistribucionInterior(String distribucionInterior) {
+		this.distribucionInterior = distribucionInterior;
+	}
+
+	public Boolean getDivisible() {
+		return divisible;
+	}
+
+	public void setDivisible(Boolean divisible) {
+		this.divisible = divisible;
+	}
+
+	public Boolean getAscensor() {
+		return ascensor;
+	}
+
+	public void setAscensor(Boolean ascensor) {
+		this.ascensor = ascensor;
+	}
+
+	public Long getNumeroAscensores() {
+		return numeroAscensores;
+	}
+
+	public void setNumeroAscensores(Long numeroAscensores) {
+		this.numeroAscensores = numeroAscensores;
+	}
+
+	public String getDescripcionPlantas() {
+		return descripcionPlantas;
+	}
+
+	public void setDescripcionPlantas(String descripcionPlantas) {
+		this.descripcionPlantas = descripcionPlantas;
+	}
+
+	public String getOtrasCaracteristicas() {
+		return otrasCaracteristicas;
+	}
+
+	public void setOtrasCaracteristicas(String otrasCaracteristicas) {
+		this.otrasCaracteristicas = otrasCaracteristicas;
+	}
+
+	public Boolean getFachadaReformasNecesarias() {
+		return fachadaReformasNecesarias;
+	}
+
+	public void setFachadaReformasNecesarias(Boolean fachadaReformasNecesarias) {
+		this.fachadaReformasNecesarias = fachadaReformasNecesarias;
+	}
+
+	public Boolean getEscaleraReformasNecesarias() {
+		return escaleraReformasNecesarias;
+	}
+
+	public void setEscaleraReformasNecesarias(Boolean escaleraReformasNecesarias) {
+		this.escaleraReformasNecesarias = escaleraReformasNecesarias;
+	}
+
+	public Boolean getPortalReformasNecesarias() {
+		return portalReformasNecesarias;
+	}
+
+	public void setPortalReformasNecesarias(Boolean portalReformasNecesarias) {
+		this.portalReformasNecesarias = portalReformasNecesarias;
+	}
+
+	public Boolean getAscensorReformasNecesarias() {
+		return ascensorReformasNecesarias;
+	}
+
+	public void setAscensorReformasNecesarias(Boolean ascensorReformasNecesarias) {
+		this.ascensorReformasNecesarias = ascensorReformasNecesarias;
+	}
+
+	public Boolean getCubierta() {
+		return cubierta;
+	}
+
+	public void setCubierta(Boolean cubierta) {
+		this.cubierta = cubierta;
+	}
+
+	public Boolean getOtrasZonasComunesReformasNecesarias() {
+		return otrasZonasComunesReformasNecesarias;
+	}
+
+	public void setOtrasZonasComunesReformasNecesarias(Boolean otrasZonasComunesReformasNecesarias) {
+		this.otrasZonasComunesReformasNecesarias = otrasZonasComunesReformasNecesarias;
+	}
+
+	public String getOtrosReformasNecesarias() {
+		return otrosReformasNecesarias;
+	}
+
+	public void setOtrosReformasNecesarias(String otrosReformasNecesarias) {
+		this.otrosReformasNecesarias = otrosReformasNecesarias;
+	}
+
+	public String getDescripcionEdificio() {
+		return descripcionEdificio;
+	}
+
+	public void setDescripcionEdificio(String descripcionEdificio) {
+		this.descripcionEdificio = descripcionEdificio;
+	}
+
+	public String getInfraestructurasEntorno() {
+		return infraestructurasEntorno;
+	}
+
+	public void setInfraestructurasEntorno(String infraestructurasEntorno) {
+		this.infraestructurasEntorno = infraestructurasEntorno;
+	}
+
+	public String getComunicacionesEntorno() {
+		return comunicacionesEntorno;
+	}
+
+	public void setComunicacionesEntorno(String comunicacionesEntorno) {
+		this.comunicacionesEntorno = comunicacionesEntorno;
+	}
+
+	public String getIdoneoUso() {
+		return idoneoUso;
+	}
+
+	public void setIdoneoUso(String idoneoUso) {
+		this.idoneoUso = idoneoUso;
+	}
+
+	public Boolean getExisteAnteriorUso() {
+		return existeAnteriorUso;
+	}
+
+	public void setExisteAnteriorUso(Boolean existeAnteriorUso) {
+		this.existeAnteriorUso = existeAnteriorUso;
+	}
+
+	public String getAnteriorUso() {
+		return anteriorUso;
+	}
+
+	public void setAnteriorUso(String anteriorUso) {
+		this.anteriorUso = anteriorUso;
+	}
+
+	public Long getNumeroEstancias() {
+		return numeroEstancias;
+	}
+
+	public void setNumeroEstancias(Long numeroEstancias) {
+		this.numeroEstancias = numeroEstancias;
+	}
+
+	public Long getNumeroBanyos() {
+		return numeroBanyos;
+	}
+
+	public void setNumeroBanyos(Long numeroBanyos) {
+		this.numeroBanyos = numeroBanyos;
+	}
+
+	public long getNumeroAseos() {
+		return numeroAseos;
+	}
+
+	public void setNumeroAseos(long numeroAseos) {
+		this.numeroAseos = numeroAseos;
+	}
+
+	public Float getMetrosLinealesFachadaPrincipal() {
+		return metrosLinealesFachadaPrincipal;
+	}
+
+	public void setMetrosLinealesFachadaPrincipal(Float metrosLinealesFachadaPrincipal) {
+		this.metrosLinealesFachadaPrincipal = metrosLinealesFachadaPrincipal;
+	}
+
+	public Float getAltura() {
+		return altura;
+	}
+
+	public void setAltura(Float altura) {
+		this.altura = altura;
+	}
+
+	public Long getNumeroPlazasGaraje() {
+		return numeroPlazasGaraje;
+	}
+
+	public void setNumeroPlazasGaraje(Long numeroPlazasGaraje) {
+		this.numeroPlazasGaraje = numeroPlazasGaraje;
+	}
+
+	public Float getSuperficiePlazasGaraje() {
+		return superficiePlazasGaraje;
+	}
+
+	public void setSuperficiePlazasGaraje(Float superficiePlazasGaraje) {
+		this.superficiePlazasGaraje = superficiePlazasGaraje;
+	}
+
+	public String getCodSubtipoPlazasGaraje() {
+		return codSubtipoPlazasGaraje;
+	}
+
+	public void setCodSubtipoPlazasGaraje(String codSubtipoPlazasGaraje) {
+		this.codSubtipoPlazasGaraje = codSubtipoPlazasGaraje;
+	}
+
+	public Boolean getSalidaHumosOtrasCaracteristicas() {
+		return salidaHumosOtrasCaracteristicas;
+	}
+
+	public void setSalidaHumosOtrasCaracteristicas(Boolean salidaHumosOtrasCaracteristicas) {
+		this.salidaHumosOtrasCaracteristicas = salidaHumosOtrasCaracteristicas;
+	}
+
+	public Boolean getSalidaEmergenciaOtrasCaracteristicas() {
+		return salidaEmergenciaOtrasCaracteristicas;
+	}
+
+	public void setSalidaEmergenciaOtrasCaracteristicas(Boolean salidaEmergenciaOtrasCaracteristicas) {
+		this.salidaEmergenciaOtrasCaracteristicas = salidaEmergenciaOtrasCaracteristicas;
+	}
+
+	public Boolean getAccesoMinusvalidosOtrasCaracteristicas() {
+		return accesoMinusvalidosOtrasCaracteristicas;
+	}
+
+	public void setAccesoMinusvalidosOtrasCaracteristicas(Boolean accesoMinusvalidosOtrasCaracteristicas) {
+		this.accesoMinusvalidosOtrasCaracteristicas = accesoMinusvalidosOtrasCaracteristicas;
+	}
+
+	public String getOtrosOtrasCaracteristicas() {
+		return otrosOtrasCaracteristicas;
+	}
+
+	public void setOtrosOtrasCaracteristicas(String otrosOtrasCaracteristicas) {
+		this.otrosOtrasCaracteristicas = otrosOtrasCaracteristicas;
+	}
+
+	public String getCodTipoVario() {
+		return codTipoVario;
+	}
+
+	public void setCodTipoVario(String codTipoVario) {
+		this.codTipoVario = codTipoVario;
+	}
+
+	public Float getAncho() {
+		return ancho;
+	}
+
+	public void setAncho(Float ancho) {
+		this.ancho = ancho;
+	}
+
+	public Float getAlto() {
+		return alto;
+	}
+
+	public void setAlto(Float alto) {
+		this.alto = alto;
+	}
+
+	public Float getLargo() {
+		return largo;
+	}
+
+	public void setLargo(Float largo) {
+		this.largo = largo;
+	}
+
+	public String getCodUso() {
+		return codUso;
+	}
+
+	public void setCodUso(String codUso) {
+		this.codUso = codUso;
+	}
+
+	public String getCodManiobrabilidad() {
+		return codManiobrabilidad;
+	}
+
+	public void setCodManiobrabilidad(String codManiobrabilidad) {
+		this.codManiobrabilidad = codManiobrabilidad;
+	}
+
+	public Boolean getLicenciaOtrasCaracteristicas() {
+		return licenciaOtrasCaracteristicas;
+	}
+
+	public void setLicenciaOtrasCaracteristicas(Boolean licenciaOtrasCaracteristicas) {
+		this.licenciaOtrasCaracteristicas = licenciaOtrasCaracteristicas;
+	}
+
+	public Boolean getServidumbreOtrasCaracteristicas() {
+		return servidumbreOtrasCaracteristicas;
+	}
+
+	public void setServidumbreOtrasCaracteristicas(Boolean servidumbreOtrasCaracteristicas) {
+		this.servidumbreOtrasCaracteristicas = servidumbreOtrasCaracteristicas;
+	}
+
+	public Boolean getAscensorOMontacargasOtrasCaracteristicas() {
+		return ascensorOMontacargasOtrasCaracteristicas;
+	}
+
+	public void setAscensorOMontacargasOtrasCaracteristicas(Boolean ascensorOMontacargasOtrasCaracteristicas) {
+		this.ascensorOMontacargasOtrasCaracteristicas = ascensorOMontacargasOtrasCaracteristicas;
+	}
+
+	public Boolean getColumnasOtrasCaracteristicas() {
+		return columnasOtrasCaracteristicas;
+	}
+
+	public void setColumnasOtrasCaracteristicas(Boolean columnasOtrasCaracteristicas) {
+		this.columnasOtrasCaracteristicas = columnasOtrasCaracteristicas;
+	}
+
+	public Boolean getSeguridadOtrasCaracteristicas() {
+		return seguridadOtrasCaracteristicas;
+	}
+
+	public void setSeguridadOtrasCaracteristicas(Boolean seguridadOtrasCaracteristicas) {
+		this.seguridadOtrasCaracteristicas = seguridadOtrasCaracteristicas;
+	}
+
+	public Boolean getBuenEstadoInstalacionElectricidadInstalaciones() {
+		return buenEstadoInstalacionElectricidadInstalaciones;
+	}
+
+	public void setBuenEstadoInstalacionElectricidadInstalaciones(Boolean buenEstadoInstalacionElectricidadInstalaciones) {
+		this.buenEstadoInstalacionElectricidadInstalaciones = buenEstadoInstalacionElectricidadInstalaciones;
+	}
+
+	public Boolean getBuenEstadoContadorElectricidadInstalaciones() {
+		return buenEstadoContadorElectricidadInstalaciones;
+	}
+
+	public void setBuenEstadoContadorElectricidadInstalaciones(Boolean buenEstadoContadorElectricidadInstalaciones) {
+		this.buenEstadoContadorElectricidadInstalaciones = buenEstadoContadorElectricidadInstalaciones;
+	}
+
+	public Boolean getBuenEstadoInstalacionAguaInstalaciones() {
+		return buenEstadoInstalacionAguaInstalaciones;
+	}
+
+	public void setBuenEstadoInstalacionAguaInstalaciones(Boolean buenEstadoInstalacionAguaInstalaciones) {
+		this.buenEstadoInstalacionAguaInstalaciones = buenEstadoInstalacionAguaInstalaciones;
+	}
+
+	public Boolean getBuenEstadoContadorAguaInstalaciones() {
+		return buenEstadoContadorAguaInstalaciones;
+	}
+
+	public void setBuenEstadoContadorAguaInstalaciones(Boolean buenEstadoContadorAguaInstalaciones) {
+		this.buenEstadoContadorAguaInstalaciones = buenEstadoContadorAguaInstalaciones;
+	}
+
+	public Boolean getBuenEstadoGasInstalaciones() {
+		return buenEstadoGasInstalaciones;
+	}
+
+	public void setBuenEstadoGasInstalaciones(Boolean buenEstadoGasInstalaciones) {
+		this.buenEstadoGasInstalaciones = buenEstadoGasInstalaciones;
+	}
+
+	public Boolean getBuenEstadoContadorGasInstalacion() {
+		return buenEstadoContadorGasInstalacion;
+	}
+
+	public void setBuenEstadoContadorGasInstalacion(Boolean buenEstadoContadorGasInstalacion) {
+		this.buenEstadoContadorGasInstalacion = buenEstadoContadorGasInstalacion;
+	}
+
+	public Boolean getBuenEstadoConservacionEdificio() {
+		return buenEstadoConservacionEdificio;
+	}
+
+	public void setBuenEstadoConservacionEdificio(Boolean buenEstadoConservacionEdificio) {
+		this.buenEstadoConservacionEdificio = buenEstadoConservacionEdificio;
+	}
+
+	public Date getAnyoRehabilitacionEdificio() {
+		return anyoRehabilitacionEdificio;
+	}
+
+	public void setAnyoRehabilitacionEdificio(Date anyoRehabilitacionEdificio) {
+		this.anyoRehabilitacionEdificio = anyoRehabilitacionEdificio;
+	}
+
+	public Long getNumeroPlantasEdificio() {
+		return numeroPlantasEdificio;
+	}
+
+	public void setNumeroPlantasEdificio(Long numeroPlantasEdificio) {
+		this.numeroPlantasEdificio = numeroPlantasEdificio;
+	}
+
+	public Boolean getAscensorEdificio() {
+		return ascensorEdificio;
+	}
+
+	public void setAscensorEdificio(Boolean ascensorEdificio) {
+		this.ascensorEdificio = ascensorEdificio;
+	}
+
+	public Long getNumeroAscensoresEdificio() {
+		return numeroAscensoresEdificio;
+	}
+
+	public void setNumeroAscensoresEdificio(Long numeroAscensoresEdificio) {
+		this.numeroAscensoresEdificio = numeroAscensoresEdificio;
+	}
+
+	public Boolean getExisteComunidadEdificio() {
+		return existeComunidadEdificio;
+	}
+
+	public void setExisteComunidadEdificio(Boolean existeComunidadEdificio) {
+		this.existeComunidadEdificio = existeComunidadEdificio;
+	}
+
+	public Float getCuotaComunidadEdificio() {
+		return cuotaComunidadEdificio;
+	}
+
+	public void setCuotaComunidadEdificio(Float cuotaComunidadEdificio) {
+		this.cuotaComunidadEdificio = cuotaComunidadEdificio;
+	}
+
+	public String getNombrePresidenteComunidadEdificio() {
+		return nombrePresidenteComunidadEdificio;
+	}
+
+	public void setNombrePresidenteComunidadEdificio(String nombrePresidenteComunidadEdificio) {
+		this.nombrePresidenteComunidadEdificio = nombrePresidenteComunidadEdificio;
+	}
+
+	public String getTelefonoPresidenteComunidadEdificio() {
+		return telefonoPresidenteComunidadEdificio;
+	}
+
+	public void setTelefonoPresidenteComunidadEdificio(String telefonoPresidenteComunidadEdificio) {
+		this.telefonoPresidenteComunidadEdificio = telefonoPresidenteComunidadEdificio;
+	}
+
+	public String getNombreAdministradorComunidadEdificio() {
+		return nombreAdministradorComunidadEdificio;
+	}
+
+	public void setNombreAdministradorComunidadEdificio(String nombreAdministradorComunidadEdificio) {
+		this.nombreAdministradorComunidadEdificio = nombreAdministradorComunidadEdificio;
+	}
+
+	public String getTelefonoAdministradorComunidadEdificio() {
+		return telefonoAdministradorComunidadEdificio;
+	}
+
+	public void setTelefonoAdministradorComunidadEdificio(String telefonoAdministradorComunidadEdificio) {
+		this.telefonoAdministradorComunidadEdificio = telefonoAdministradorComunidadEdificio;
+	}
+
+	public String getDescripcionDerramaComunidadEdificio() {
+		return descripcionDerramaComunidadEdificio;
+	}
+
+	public void setDescripcionDerramaComunidadEdificio(String descripcionDerramaComunidadEdificio) {
+		this.descripcionDerramaComunidadEdificio = descripcionDerramaComunidadEdificio;
+	}
+
+	public Boolean getAscensorReformasNecesariasEdificio() {
+		return ascensorReformasNecesariasEdificio;
+	}
+
+	public void setAscensorReformasNecesariasEdificio(Boolean ascensorReformasNecesariasEdificio) {
+		this.ascensorReformasNecesariasEdificio = ascensorReformasNecesariasEdificio;
+	}
+
+	public Boolean getCubiertaReformasNecesariasEdificio() {
+		return cubiertaReformasNecesariasEdificio;
+	}
+
+	public void setCubiertaReformasNecesariasEdificio(Boolean cubiertaReformasNecesariasEdificio) {
+		this.cubiertaReformasNecesariasEdificio = cubiertaReformasNecesariasEdificio;
+	}
+
+	public Boolean getOtrasZonasComunesReformasNecesariasEdificio() {
+		return otrasZonasComunesReformasNecesariasEdificio;
+	}
+
+	public void setOtrasZonasComunesReformasNecesariasEdificio(Boolean otrasZonasComunesReformasNecesariasEdificio) {
+		this.otrasZonasComunesReformasNecesariasEdificio = otrasZonasComunesReformasNecesariasEdificio;
+	}
+
+	public String getOtrosReformasNecesariasEdificio() {
+		return otrosReformasNecesariasEdificio;
+	}
+
+	public void setOtrosReformasNecesariasEdificio(String otrosReformasNecesariasEdificio) {
+		this.otrosReformasNecesariasEdificio = otrosReformasNecesariasEdificio;
+	}
+
+	public String getInfraestructurasEntornoEdificio() {
+		return infraestructurasEntornoEdificio;
+	}
+
+	public void setInfraestructurasEntornoEdificio(String infraestructurasEntornoEdificio) {
+		this.infraestructurasEntornoEdificio = infraestructurasEntornoEdificio;
+	}
+
+	public String getComunicacionesEntornoEdificio() {
+		return comunicacionesEntornoEdificio;
+	}
+
+	public void setComunicacionesEntornoEdificio(String comunicacionesEntornoEdificio) {
+		this.comunicacionesEntornoEdificio = comunicacionesEntornoEdificio;
 	}
 	
 

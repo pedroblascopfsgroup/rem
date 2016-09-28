@@ -91,7 +91,9 @@ public class RestSecurityFilter implements Filter {
 			String signature = ((HttpServletRequest) request).getHeader("signature");
 			String id = datajson.getId();
 			peticion.setToken(id);
-			String ipClient = ((HttpServletRequest) request).getRemoteAddr();
+			String ipClient = restApi.getClientIpAddr(((HttpServletRequest) request));
+			
+			((HttpServletRequest) request).getHeader("X-Forwarded-For");  
 
 			Broker broker = restApi.getBrokerByIp(ipClient);
 			if (broker == null) {

@@ -382,6 +382,14 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public boolean isActivoVendido(Activo activo);
+		
+		/**
+		 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo Asistida (PDV)
+		 * 
+		 * @param activo
+		 * @return
+		 */
+		public boolean isIntegradoAgrupacionAsistida(Activo activo);
     }
 
 

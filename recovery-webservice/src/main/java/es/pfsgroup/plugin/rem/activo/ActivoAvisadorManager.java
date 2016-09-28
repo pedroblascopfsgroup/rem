@@ -77,11 +77,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
+		boolean asistida = false;
 		
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
+		//Aviso 11: Integrado en Agrupación tipo PDV (Asistida)
 			restringida = activoApi.isIntegradoAgrupacionRestringida(id, usuarioLogado);
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
+			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -98,6 +101,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setDescripcion("Incluido en agrupación de obra nueva");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
+		}
+		
+		if(asistida) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Incluido en agrupación asistida");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);	
 		}
 		
 		//Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
@@ -173,6 +183,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);	
 		}
+		
 		
 		return listaAvisos;
 		//activoDao.getListActivos(id, usuarioLogado);

@@ -2077,6 +2077,7 @@ public class ActivoAdapter {
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "tipoAgrupacionCodigo", activo.getAgrupaciones().get(i).getAgrupacion().getTipoAgrupacion().getCodigo());
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "idAgrupacion", activo.getAgrupaciones().get(i).getAgrupacion().getId());
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "numActivos", activo.getAgrupaciones().get(i).getAgrupacion().getActivos().size());
+					BeanUtils.copyProperty(dtoActivoAgrupaciones, "numActivosPublicados", activoApi.getNumActivosPublicadosByAgrupacion(activo.getAgrupaciones().get(i).getAgrupacion().getActivos()));
 
 					
 				} catch (IllegalAccessException e) {

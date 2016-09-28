@@ -33,6 +33,21 @@ Ext.define('HreRem.model.AgrupacionesActivo', {
     	},
     	{
     		name: 'tipoAgrupacionCodigo'
+    	},
+    	{
+    		name : 'fechaBaja',
+    		type : 'date',
+    		dateFormat: 'c'
+    	},
+    	{
+    		name: 'fechaInicioVigencia',
+    		type : 'date',
+    		dateFormat: 'c'
+    	},
+    	{
+    		name: 'fechaFinVigencia',
+    		type : 'date',
+    		dateFormat: 'c'
     	}
     	
 

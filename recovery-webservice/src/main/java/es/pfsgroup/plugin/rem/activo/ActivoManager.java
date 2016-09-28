@@ -1475,4 +1475,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return false;
 	}
+	
+	@Override
+	public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos) {
+		
+		Integer contador = 0;
+		
+		for(ActivoAgrupacionActivo activoAgrupacion : activos) {
+			if(!Checks.esNulo(activoAgrupacion.getActivo().getEstadoPublicacion())) {
+				
+				String codEstadoPublicacion = activoAgrupacion.getActivo().getEstadoPublicacion().getCodigo();
+				if(codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO) ||
+					codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO) ||
+					codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)) 
+				{
+					contador++;
+				}
+			}	
+		}
+		
+		return contador;
+	}
 }

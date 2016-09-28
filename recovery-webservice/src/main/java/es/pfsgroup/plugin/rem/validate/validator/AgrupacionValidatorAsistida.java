@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
@@ -86,6 +87,10 @@ public class AgrupacionValidatorAsistida extends AgrupacionValidatorCommonImpl i
 		}else{
 			return ERROR_NOT_ASISTIDA;
 		}
+		
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
+		if(perimetro.getIncluidoEnPerimetro()==1)
+			return ERROR_IS_PERIMETRO;
 				
 
 		

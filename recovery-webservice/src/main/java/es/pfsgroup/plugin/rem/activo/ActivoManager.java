@@ -93,6 +93,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -1261,6 +1262,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
+		
+		return perimetroActivo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Activo updateActivoAsistida(Activo activo){
+		//Actualizamos el perímetro
+		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
+		updatePerimetroAsistida(perimetro);
+		
+		//Bloqueamos los precios para que el activo no salga en los procesos automáticos. Esto podría ir en un proceso al dar de alta el activo.
+		activo.setBloqueoPrecioFechaIni(new Date());
+		activo.setGestorBloqueoPrecio(adapter.getUsuarioLogado());
+		
+		saveOrUpdate(activo);
+		return activo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PerimetroActivo updatePerimetroAsistida(PerimetroActivo perimetroActivo){
+		perimetroActivo.setIncluidoEnPerimetro(1);
+		perimetroActivo.setAplicaAsignarMediador(0);
+		perimetroActivo.setAplicaComercializar(1);
+		perimetroActivo.setAplicaFormalizar(1);
+		perimetroActivo.setAplicaGestion(0);
+		perimetroActivo.setAplicaTramiteAdmision(0);
+		perimetroActivo.setFechaAplicaComercializar(new Date());
+		perimetroActivo.setFechaAplicaFormalizar(new Date());
+		
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoComercializacion.CODIGO_ASISTIDA);
+		DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, filtro);
+		perimetroActivo.setMotivoAplicaComercializar(motivoComercializacion);
+		
+		saveOrUpdatePerimetroActivo(perimetroActivo);
 		
 		return perimetroActivo;
 	}

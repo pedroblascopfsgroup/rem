@@ -337,6 +337,20 @@ public interface ActivoApi {
 		
 		public PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 		
+		/**
+		 * Actualiza el activo cuando se incluye en una agrupación asistida.
+		 * @param activo
+		 * @return Activo
+		 */
+		public Activo updateActivoAsistida(Activo activo);
+		
+		/**
+		 * Actualiza los valores del perímetro del activo con los valores para un activo asistido.
+		 * @param perimetroActivo
+		 * @return PerimetroActivo
+		 */
+		public PerimetroActivo updatePerimetroAsistida(PerimetroActivo perimetroActivo);
+		
 		public ActivoBancario saveOrUpdateActivoBancario(ActivoBancario activoBancario);
 		
 		/**

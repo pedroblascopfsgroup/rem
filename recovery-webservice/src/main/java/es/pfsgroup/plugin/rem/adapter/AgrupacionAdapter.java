@@ -366,6 +366,11 @@ public class AgrupacionAdapter {
 			activoAgrupacionActivo.setFechaInclusion(today);
 			
 			activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+			
+			//En asistidas hay que hacer una serie de actualizaciones 'especiales'.
+			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()))
+				activoApi.updateActivoAsistida(activo);
+				
 		} catch (JsonViewerException jve) {
 		    throw jve;
 		} catch (Exception e) {

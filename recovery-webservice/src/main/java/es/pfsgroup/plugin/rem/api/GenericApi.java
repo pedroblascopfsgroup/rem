@@ -75,7 +75,7 @@ public interface GenericApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered();
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(Long idActivo);
 	
 	/**
 	 * Devuelve los subtipos de trabajo del tipo que recibe

@@ -215,6 +215,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				}
     		},
     		
+    		comboTipoTrabajoCreaFiltered: {
+	    		model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
+					extraParams: {idActivo: 'activo.id'}
+				}
+    		},
+    		
     		comboProveedor: {    		
 				model: 'HreRem.model.ComboBase',
 				proxy: {

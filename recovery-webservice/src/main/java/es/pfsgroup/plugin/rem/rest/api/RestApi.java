@@ -50,7 +50,6 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public List<String> validateRequestObject(Serializable obj,TIPO_VALIDCION tipovalidacion);
 	
 	/**

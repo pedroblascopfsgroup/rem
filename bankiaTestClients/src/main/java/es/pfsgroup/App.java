@@ -33,46 +33,72 @@ public class App {
 				}
 			} else if (args[0].equals("infoCliente")) {
 				System.out.println("Ejecutando servicio infoCliente");
-				if (args.length == 3) {
-					uvemManager.ejecutarNumCliente(args[1], args[2], "00000");
+				if (args.length == 4) {
+					uvemManager.ejecutarNumCliente(args[1], args[2], args[3]);
 					GMPAJC11_INS numclienteIns = uvemManager.resultadoNumCliente();
 					System.out.println("Resultado llamada resultadoNumCliente: " + numclienteIns.getnumeroCliente());
-					uvemManager.ejecutarDatosCliente(numclienteIns.getnumeroCliente(), "00000");
+					uvemManager.ejecutarDatosCliente(numclienteIns.getnumeroCliente(), args[3]);
 					GMPAJC93_INS datosClienteIns = uvemManager.resultadoDatosCliente();
 					System.out.println("Resultado llamada resultadoDatosCliente: " + datosClienteIns.getName());
 					
 				} else {
-					System.out.println("Número de parametros incorrectos: ejem: sh run.sh infoCliente 20036188Z 1");
+					System.out.println("Número de parametros incorrectos: ejem: sh run.sh infoCliente 20036188Z 1 00000/05021");
 					System.exit(1);
 				}
 
 			}else if(args[0].equals("instanciaDecision")){
 				InstanciaDecisionDto dto = new InstanciaDecisionDto();
-				if(!args[1].equals("ALTA") || !args[1].equals("CONS") || !args[1].equals("MODI")){
-					System.out.println("Acciones disponibles: ALTA|CONS|MODI");
+				if (args.length > 1) {
+					if(!args[1].equals("ALTA") && !args[1].equals("CONS") && !args[1].equals("MODI")){
+						System.out.println(args[1]);
+						System.out.println("Acciones disponibles: ALTA|CONS|MODI");		
+						System.exit(1);
+					}
+					
+					if(args[1].equals("ALTA")){
+						if(args.length == 7){
+							dto.setCodigoDeOfertaHaya(args[2]);
+							dto.setFinanciacionCliente(Boolean.getBoolean(args[3]));
+							dto.setIdentificadorActivoEspecial(Integer.valueOf(args[4]));
+							dto.setImporteConSigno(Long.valueOf(args[5]));
+							dto.setTipoDeImpuesto(Short.valueOf(args[6]));
+							//dto.setContraoferta(Boolean.getBoolean(args[2])); <-- ¿No se setea en el manager?					
+						}else{
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA <idOfertaHAYA> <finCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
+							System.exit(1);			
+						}
+						
+					}else if(args[1].equals("CONS")){
+					
+						if(args.length == 3){
+							dto.setCodigoDeOfertaHaya(args[2]);	
+						}else{
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS <idOfertaHAYA>");
+							System.exit(1);			
+						}
+						
+					}else if(args[1].equals("MODI")){
+					
+						if(args.length == 7){	
+							dto.setCodigoDeOfertaHaya(args[2]);
+							dto.setFinanciacionCliente(Boolean.getBoolean(args[3]));
+							dto.setIdentificadorActivoEspecial(Integer.valueOf(args[4]));
+							dto.setImporteConSigno(Long.valueOf(args[5]));
+							dto.setTipoDeImpuesto(Short.valueOf(args[6]));	
+							//dto.setContraoferta(Boolean.getBoolean(args[2]));<-- ¿No se setea en el manager?
+						}else{
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA <idOfertaHAYA> <finCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
+							System.exit(1);			
+						}
+					}
+					
+					uvemManager.instanciaDecision(dto, args[1]);
+				
+					
+				}else{
+					System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA/CONS/MODI");
 					System.exit(1);
 				}
-				
-				if(args[1].equals("ALTA")){
-					//dto.setCodigoDeOfertaHaya(args[2]);
-					dto.setContraoferta(Boolean.getBoolean(args[2]));
-					dto.setFinanciacionCliente(Boolean.getBoolean(args[3]));
-					dto.setIdentificadorActivoEspecial(Integer.valueOf(args[4]));
-					dto.setImporteConSigno(Long.valueOf(args[5]));
-					dto.setTipoDeImpuesto(Short.valueOf(args[6]));
-					
-				}else if(args[1].equals("CONS")){
-					dto.setCodigoDeOfertaHaya(args[2]);
-				}if(args[1].equals("MODI")){
-					dto.setCodigoDeOfertaHaya(args[2]);
-					dto.setContraoferta(Boolean.getBoolean(args[3]));
-					dto.setFinanciacionCliente(Boolean.getBoolean(args[4]));
-					dto.setIdentificadorActivoEspecial(Integer.valueOf(args[5]));
-					dto.setImporteConSigno(Long.valueOf(args[6]));
-					dto.setTipoDeImpuesto(Short.valueOf(args[7]));
-				}
-				
-				uvemManager.instanciaDecision(dto, args[1]);
 				
 			}else {
 				System.out.println("Servicios admintidos: tasaciones,infoCliente,instanciaDecision");

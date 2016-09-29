@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.rest.validator;
+package es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+
+import es.pfsgroup.plugin.rem.rest.validator.DiccionaryValidator;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

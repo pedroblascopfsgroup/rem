@@ -32,7 +32,10 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
+import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -53,6 +56,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	public final String PESTANA_FICHA = "ficha";
 	public final String PESTANA_DETALLE_ECONOMICO = "detalleEconomico";
+	public final String PESTANA_CONTABILIDAD = "contabilidad";
 //	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
 //	public final String PESTANA_RESERVA = "reserva";
 //	public final String PESTANA_CONDICIONES = "condiciones";
@@ -106,6 +110,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			if(PESTANA_DETALLE_ECONOMICO.equals(tab)){
 				dto= detalleEconomicoToDtoDetalleEconomico(gasto);
+			}
+			if(PESTANA_CONTABILIDAD.equals(tab)){
+				dto= infoContabilidadToDtoInfoContabilidad(gasto);
 			}
 
 		} catch (Exception e) {
@@ -481,6 +488,77 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		return true;
+		
+	}
+	
+	public DtoInfoContabilidadGasto infoContabilidadToDtoInfoContabilidad(GastoProveedor gasto){
+		
+		DtoInfoContabilidadGasto dto= new DtoInfoContabilidadGasto();
+		
+		if(!Checks.esNulo(gasto)){
+		
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
+			
+			if(!Checks.esNulo(contabilidadGasto)){
+				if(!Checks.esNulo(contabilidadGasto.getEjercicio())){
+					dto.setEjercicioImputaGasto(contabilidadGasto.getEjercicio().getAnyo());
+				}
+				if(!Checks.esNulo(gasto.getTipoPeriocidad())){
+					dto.setPeriodicidadDescripcion(gasto.getTipoPeriocidad().getDescripcion());
+				}
+				if(!Checks.esNulo(contabilidadGasto.getPartidaPresupuestaria())){
+					dto.setPartidaPresupuestariaDescripcion(contabilidadGasto.getPartidaPresupuestaria().getDescripcion());
+				}
+				if(!Checks.esNulo(contabilidadGasto.getCuentaContable())){
+					dto.setCuentaContableDescripcion(contabilidadGasto.getCuentaContable().getDescripcion());
+				}
+				
+				dto.setFechaDevengo(contabilidadGasto.getFechaDevengoEspecial());
+				if(!Checks.esNulo(contabilidadGasto.getTipoPeriocidadEspecial())){
+					dto.setPeriodicidadEspecialDescripcion(contabilidadGasto.getTipoPeriocidadEspecial().getDescripcion());
+				}
+				if(!Checks.esNulo(contabilidadGasto.getPartidaPresupuestariaEspecial())){
+					dto.setPartidaPresupuestariaEspecialDescripcion(contabilidadGasto.getPartidaPresupuestariaEspecial().getDescripcion());
+				}
+				if(!Checks.esNulo(contabilidadGasto.getCuentaContableEspecial())){
+					dto.setCuentaContableEspecialDescripcion(contabilidadGasto.getCuentaContableEspecial().getDescripcion());
+				}
+				
+				dto.setFechaContabilizacion(contabilidadGasto.getFechaContabilizacion());
+				if(!Checks.esNulo(contabilidadGasto.getContabilizadoPor())){
+					dto.setContabilizadoPorDescripcion(contabilidadGasto.getContabilizadoPor().getDescripcion());
+				}
+			}
+			
+		}
+
+		return dto;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto){
+		
+		try{
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getId());
+			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
+			
+			if(!Checks.esNulo(dtoContabilidadGasto.getEjercicioImputaGasto())){
+				Ejercicio ejercicio= contabilidadGasto.getEjercicio();
+				if(!Checks.esNulo(ejercicio)){
+					ejercicio.setAnyo(dtoContabilidadGasto.getEjercicioImputaGasto());
+					genericDao.update(Ejercicio.class, ejercicio);
+				}
+			}
+			
+			return true;
+			
+		}catch(Exception e) {
+			return false;
+		}
+		
 		
 	}
 	

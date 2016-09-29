@@ -38,6 +38,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		     	
 		     	return true;
 	     	}
+	     },
+	     
+	     esGestorAdministracion: function(get){
+	     	var me= this;
+	     	return true;
 	     }
   		
 		

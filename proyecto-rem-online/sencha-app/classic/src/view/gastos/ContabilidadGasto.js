@@ -6,15 +6,15 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
     disableValidation: true,
     reference: 'contabilidadgastoref',
     scrollable	: 'y',
-//	recordName: "contabilidad",
-//	
-//	recordClass: "HreRem.model.ContabilidadGasto",
-//    
-//    requires: ['HreRem.model.ContabilidadGasto'],
-//    
-//    listeners: {
-//		boxready:'cargarTabData'
-//	},
+	recordName: "contabilidad",
+	
+	recordClass: "HreRem.model.GastoContabilidad",
+    
+    requires: ['HreRem.model.GastoContabilidad'],
+    
+    listeners: {
+		boxready:'cargarTabData'
+	},
     
     initComponent: function () {
 
@@ -39,24 +39,27 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 												items :
 													[
 														{ 
-															xtype: 'displayfieldbase',
+															xtype: 'numberfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
-											                bind: '{contabilidad.ejercicioImputaGasto}'
+											                bind: {
+											                	value: '{contabilidad.ejercicioImputaGasto}',
+											                	readOnly: '{!esGestorAdministracion}'
+											                }
 														},
 														{ 
 															xtype: 'displayfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad'),
-											                bind: '{contabilidad.periodicidad}'
+											                bind: '{contabilidad.periodicidadDescripcion}'
 														},
 														{ 
 															xtype: 'displayfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
-											                bind: '{contabilidad.partidaPresupuestaria}'
+											                bind: '{contabilidad.partidaPresupuestariaDescripcion}'
 														},
 														{ 
 															xtype: 'displayfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
-											                bind: '{contabilidad.cuentaContable}'
+											                bind: '{contabilidad.cuentaContableDescripcion}'
 														}
 													
 													]
@@ -71,25 +74,25 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													[
 														{
 															xtype: 'datefieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.devengo'),
-															colspan: 2,
+															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.contabilizacion'),
 															bind:		'{contabilidad.fechaDevengo}',
-															readOnly	: true
-														},	
+															formatter: 'date("d/m/Y")',
+															readOnly: true
+														},
 													    { 
 															xtype: 'displayfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad.especial'),
-											                bind: '{contabilidad.periodicidadEspecial}'
+											                bind: '{contabilidad.periodicidadEspecialDescripcion}'
 														},
 					                					{ 
 															xtype: 'displayfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partida.presupuestaria.especial'),
-											                bind: '{contabilidad.partidaPresupuestariaEspecial}'
+											                bind: '{contabilidad.partidaPresupuestariaEspecialDescripcion}'
 														},
 					                					{ 
 															xtype: 'displayfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable.especial'),
-											                bind: '{contabilidad.cuentaContableEspecial}'
+											                bind: '{contabilidad.cuentaContableEspecialDescripcion}'
 														}
 														
 													
@@ -106,14 +109,14 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														{
 															xtype: 'datefieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.contabilizacion'),
-															colspan: 2,
 															bind:		'{contabilidad.fechaContabilizacion}',
-															readOnly	: true
+															formatter: 'date("d/m/Y")',
+															readOnly: true
 														},
 														{ 
 															xtype: 'displayfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.contabilizado.por'),
-											                bind: '{contabilidad.contabilizadoPor}'
+											                bind: '{contabilidad.contabilizadoPorDescripcion}'
 														}
 													
 													]

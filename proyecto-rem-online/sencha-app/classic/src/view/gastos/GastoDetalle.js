@@ -96,7 +96,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		        	
 		        },
 		        {
-		        	xtype: 'contabilidadgasto', ocultarBotonesEdicion: true
+		        	xtype: 'contabilidadgasto'
 		        	
 		        }
 		       

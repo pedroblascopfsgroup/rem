@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'gestiongastos',
-//    requires	: [],
+    requires	: ['HreRem.view.administracion.gastos.AnyadirNuevoGasto'],
 //	layout: 'fit',
 	scrollable: true,
 	cls	: 'panel-base shadow-panel',
@@ -100,18 +100,20 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 						
 					]
 	        	
-	        },
-        
-        			
-	        {xtype: 'gridBase',
-    	           bind: {
+	        },        			
+	        {
+	        	xtype: 'gridBaseEditableRow',
+	        	topBar: true,
+	        	removeButton: false,
+	        	editOnSelect: false,
+	        	bind: {
     	           	store: '{gastosAdministracion}'
-    	           },
-    	           listeners:{
-    	        	   rowdblclick: 'onClickAbrirGastoProveedor'
-    	           },
-    	           reference: 'listadoGastos',
-    	           columns: [
+    	        },
+    	        listeners:{
+    	           rowdblclick: 'onClickAbrirGastoProveedor'
+    	        },
+    	        reference: 'listadoGastos',
+    	        columns: [
 	 							{   
 	 								text: HreRem.i18n('header.id.gasto'),
 						        	dataIndex: 'id',
@@ -184,8 +186,8 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 	    	                    	 flex: 1,
 	    	                    	 dataIndex: 'destinatario'
 	    	                     }
-    	                    ],
-    	                     dockedItems : [
+				],
+    	        dockedItems : [
 					        {
 					            xtype: 'pagingtoolbar',
 					            dock: 'bottom',
@@ -194,7 +196,14 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
 					                store: '{gastosAdministracion}'
 					            }
 					        }
-					    ]}
+				],
+				
+				onAddClick: function (btn) {
+					var me = this,
+					parent= me.up('gestiongastos');
+					Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent}).show();				    				    	
+				}
+			}
         
         ];
         

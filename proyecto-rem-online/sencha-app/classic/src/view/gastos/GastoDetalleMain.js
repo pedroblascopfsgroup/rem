@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'gastodetallemain',
-	iconCls		: 'fa fa-folder-open',
+	iconCls		: 'ico-pestana-gasto',
 	iconAlign	: 'left',
 	controller: 'gastodetalle',
     viewModel: {

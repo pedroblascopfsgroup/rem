@@ -1,5 +1,6 @@
 Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleTabPanel', {
     extend		: 'Ext.tab.Panel',
+    iconCls		: 'x-fa fa-user',
     xtype		: 'proveedoresdetalletabpanel',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
 	flex		: 1,

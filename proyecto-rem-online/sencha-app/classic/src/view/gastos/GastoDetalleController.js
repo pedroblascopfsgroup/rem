@@ -1,7 +1,6 @@
 Ext.define('HreRem.view.gastos.GastoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gastodetalle',  
-//    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador'],
 	
 	
 	cargarTabData: function (form) {
@@ -58,20 +57,24 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	
 	},
+	
 
-	onSaveFormularioCompleto: function(btn, form) {
+	onSaveFormularioCompleto: function(btn, form, success) {
+		
 		var me = this;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		if(form.isFormValid() && form.disableValidation) {
+		if(form.isFormValid() && !form.disableValidation || form.disableValidation) {
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 			);
-					
-			btn.hide();
-			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
-			btn.up('tabbar').down('button[itemId=botoneditar]').show();
-			me.getViewModel().set("editing", false);
+			
+			if(!Ext.isEmpty(btn)) {
+				btn.hide();
+				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+				btn.up('tabbar').down('button[itemId=botoneditar]').show();
+				me.getViewModel().set("editing", false);
+			}
 			
 			if (!form.saveMultiple) {
 				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
@@ -79,15 +82,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					
 					form.getBindRecord().save({
-						success: function (a, operation, c) {
-							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-							me.getView().unmask();
-							me.refrescarGasto(form.refreshAfterSave);
-			            },
-				            
+						success: success,				            
 			            failure: function (a, operation) {
-			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-							 me.getView().unmask();
+			            	var data = {};
+                            try {
+                            	data = Ext.decode(operation._response.responseText);
+                            }
+                            catch (e){ };
+                            if (!Ext.isEmpty(data.msg)) {
+                            	me.fireEvent("errorToast", data.msg);
+                            } else {
+                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                            }
+							me.getView().unmask();
 			            }
 					});
 				}
@@ -147,8 +154,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
+		var me = this;
+		
+		var success = function (a, operation, c) {
+							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							me.getView().unmask();
+							me.refrescarGasto(form.refreshAfterSave);
+		};
+		
+		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab(), success);				
 	},
 	
 	onClickBotonCancelar: function(btn) {
@@ -201,18 +215,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
-  		var buscadorNifEmisor= me.lookupReference('buscadorNifEmisorField').getValue();
-  		var buscadorNifPropietario= me.lookupReference('buscadorNifPropietarioField').getValue();
-    	if(!Ext.isEmpty(buscadorNifEmisor)){
-    		me.lookupReference('buscadorNifEmisorField').setHidden(true);
-    		me.lookupReference('nifEmisorGasto').setHidden(false);
-    		me.lookupReference('nifEmisorGasto').setEditable(false);
+  		var buscadorNifEmisor= activeTab.down('[name=buscadorNifEmisorField]').getValue();
+  		var buscadorNifPropietario= activeTab.down('[name=buscadorNifPropietarioField]').getValue();
+    	/*if(!Ext.isEmpty(buscadorNifEmisor)){
+    		activeTab.down('[name=buscadorNifEmisorField]').setHidden(true);
+    		//activeTab.down('[name=nifEmisor]').setHidden(false);
     	}
     	if(!Ext.isEmpty(buscadorNifPropietario)){
-    		me.lookupReference('buscadorNifPropietarioField').setHidden(true);
-    		me.lookupReference('nifPropietarioRef').setHidden(false);
-    		me.lookupReference('nifPropietarioRef').setEditable(false);
-    	}
+    		activeTab.down('[name=buscadorNifPropietarioField]').setHidden(true);
+    		//activeTab.down('[name=nifPropietario]').setHidden(false);
+    	}*/
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {
@@ -229,34 +241,53 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
-	onSpecialKeyProveedor: function(field, e){
+	buscarProveedor: function(field, e){
 		var me= this;
-		if(!Ext.isEmpty(field.getValue())){
-			if (e.getKey() === e.ENTER || e.id== 'foo') {
-				var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorNif');
-				var nifProveedor= field.getValue();
-				var data;
-				Ext.Ajax.request({
+		var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorNif');
+		var nifProveedor= field.getValue();
+		var data;
+		
+		Ext.Ajax.request({
 		    			
 		    		     url: url,
 		    		     params: {nifProveedor : nifProveedor},
 		    		
 		    		     success: function(response, opts) {
 		    		    	 data = Ext.decode(response.responseText);
-		    		    	 if(!isEmptyJSON(data.data)){
+		    		    	 var emisorGastoField = field.up('formBase').down('[name=nifEmisor]');
+		    		    	 buscadorNifEmisor = field.up('formBase').down('[name=buscadorNifEmisorField]'),
+		    		    	 nombreEmisorGasto = field.up('formBase').down('[name=nombreEmisor]'),
+		    		    	 codigoEmisorGasto = field.up('formBase').down('[name=codigoEmisor]');
+		    		    	 
+		    		    	 if(!Utils.isEmptyJSON(data.data)){
 		    		    	 	var id= data.data.id;
 		    		    	 	var nombreEmisor= data.data.nombre;
-		    		    	 	var codigoEmisor= data.data.codProveedorUvem;
+		    		    	 	var codigoEmisor= data.data.codProveedorUvem;	    		    	 	
 		    		    	 	
-		    		    	 	me.lookupReference('nifEmisorGasto').setValue(nifProveedor);
-		    		    	 	me.lookupReference('buscadorNifEmisorField').setValue(nifProveedor);
-		    		    	 	me.lookupReference('nombreEmisorGasto').setValue(nombreEmisor);
-		    		    	 	me.lookupReference('codigoEmisorGasto').setValue(codigoEmisor);
+		    		    	 	if(!Ext.isEmpty(emisorGastoField)) {
+		    		    	 		emisorGastoField.setValue(nifProveedor);
+		    		    	 	}
+		    		    	 	
+		    		    	 	if(!Ext.isEmpty(buscadorNifEmisor)) {
+		    		    	 		buscadorNifEmisor.setValue(nifProveedor);
+		    		    	 	}
+		    		    	 	
+		    		    	 	if(!Ext.isEmpty(nombreEmisorGasto)) {
+		    		    	 		nombreEmisorGasto.setValue(nombreEmisor);
+		    		    	 	}
+		    		    	 	
+		    		    	 	if(!Ext.isEmpty(codigoEmisorGasto)) {
+		    		    	 		codigoEmisorGasto.setValue(codigoEmisor);
+		    		    	 	}
 		
 		    		    	 }
 		    		    	 else{
-		    		    	 	me.lookupReference('nombreEmisorGasto').setValue('');
-		    		    	 	me.lookupReference('codigoEmisorGasto').setValue('');
+		    		    	 	if(!Ext.isEmpty(nombreEmisorGasto)) {
+		    		    	 		nombreEmisorGasto.setValue('');
+		    		    	 	}
+		    		    	 	if(!Ext.isEmpty(codigoEmisorGasto)) {
+		    		    	 		codigoEmisorGasto.setValue('');
+		    		    	 	}
 		    		    	 	me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor"));
 		    		    	 }
 		    		    	 
@@ -267,117 +298,46 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    		     callback: function(options, success, response){
 		    		     }
 		    		     
-		    		 });
-			}
-            
-        }
-	},
-	
-	buscarProveedorBoton: function(field, e){
-		if(!Ext.isEmpty(field.getValue())){
-			var me= this;
-			var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorNif');
-				var nifProveedor= field.getValue();
-				var data;
-				Ext.Ajax.request({
-		    			
-		    		     url: url,
-		    		     params: {nifProveedor : nifProveedor},
-		    		
-		    		     success: function(response, opts) {
-		    		    	 data = Ext.decode(response.responseText);
-		    		    	 if(!isEmptyJSON(data.data)){
-		    		    	 	var id= data.data.id;
-		    		    	 	var nombreEmisor= data.data.nombre;
-		    		    	 	var codigoEmisor= data.data.codProveedorUvem;
-		    		    	 	
-		    		    	 	me.lookupReference('nifEmisorGasto').setValue(nifProveedor);
-		    		    	 	me.lookupReference('buscadorNifEmisorField').setValue(nifProveedor);
-		    		    	 	me.lookupReference('nombreEmisorGasto').setValue(nombreEmisor);
-		    		    	 	me.lookupReference('codigoEmisorGasto').setValue(codigoEmisor);
+		});
 		
-		    		    	 }
-		    		    	 else{
-		    		    	 	me.lookupReference('nombreEmisorGasto').setValue('');
-		    		    	 	me.lookupReference('codigoEmisorGasto').setValue('');
-		    		    	 	me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor"));
-		    		    	 }
-		    		    	 
-		    		     },
-		    		     failure: function(response) {
-							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    		     },
-		    		     callback: function(options, success, response){
-		    		     }
-		    		     
-		    		 });
-		}
 	},
 	
-		onSpecialKeyPropietario: function(field, e){
-		var me= this;
-		if(!Ext.isEmpty(field.getValue())){
-			if (e.getKey() === e.ENTER || e.id== 'foo') {
-				var url =  $AC.getRemoteUrl('gastosproveedor/searchPropietarioNif');
-				var nifPropietario= field.getValue();
-				var data;
-				Ext.Ajax.request({
-		    			
-		    		     url: url,
-		    		     params: {nifPropietario : nifPropietario},
-		    		
-		    		     success: function(response, opts) {
-		    		    	 data = Ext.decode(response.responseText);
-		    		    	 if(!isEmptyJSON(data.data)){
-		    		    	 	var id= data.data.id;
-		    		    	 	var nombrePropietario= data.data.nombre;
-//		    		    	 	
-		    		    	 	me.lookupReference('nifPropietarioRef').setValue(nifPropietario);
-		    		    	 	me.lookupReference('buscadorNifPropietarioField').setValue(nifPropietario);
-		    		    	 	me.lookupReference('nombrePropietarioRef').setValue(nombrePropietario);
+	buscarPropietario: function(field, e){
 		
-		    		    	 }
-		    		    	 else{
-		    		    	 	me.lookupReference('nombrePropietarioRef').setValue('');
-		    		    	 	me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.propietario"));
-		    		    	 }
-		    		    	 
-		    		     },
-		    		     failure: function(response) {
-							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    		     },
-		    		     callback: function(options, success, response){
-		    		     }
-		    		     
-		    		 });
-			}
-            
-        }
-	},
-	
-	buscarPropietarioBoton: function(field, e){
-		if(!Ext.isEmpty(field.getValue())){
 		var me= this;
 		var url =  $AC.getRemoteUrl('gastosproveedor/searchPropietarioNif');
-			var nifPropietario= field.getValue();
-			var data;
-			Ext.Ajax.request({
+		var nifPropietario= field.getValue();
+		var data;
+		
+		Ext.Ajax.request({
 		    			
 		 		url: url,
 		   		params: {nifPropietario : nifPropietario},
 		    		
 		    	success: function(response, opts) {
 			    	data = Ext.decode(response.responseText);
-			    	if(!isEmptyJSON(data.data)){
+			    	//var propietarioGastoField = field.up('formBase').down('[name=nifPropietario]')
+		    		var buscadorNifPropietario = field.up('formBase').down('[name=buscadorNifPropietarioField]'),
+		    		nombrePropietarioGasto = field.up('formBase').down('[name=nombrePropietario]');
+		    		
+			    	if(!Utils.isEmptyJSON(data.data)){
 						var id= data.data.id;
 		    		    var nombrePropietario= data.data.nombre;
-		    		    	 	
-		    		    me.lookupReference('nifPropietarioRef').setValue(nifPropietario);
-		    		    me.lookupReference('buscadorNifPropietarioField').setValue(nifPropietario);
-		    		    me.lookupReference('nombrePropietarioRef').setValue(nombrePropietario);
+		    		    /*if(!Ext.isEmpty(propietarioGastoField)) {
+		    		    	propietarioGastoField.setValue(nifPropietario);
+		    		    }*/
+		    		    if(!Ext.isEmpty(buscadorNifPropietario)) {
+		    		    	buscadorNifPropietario.setValue(nifPropietario);
+		    		    }
+		    		    if(!Ext.isEmpty(nombrePropietarioGasto)) {
+		    		    	nombrePropietarioGasto.setValue(nombrePropietario);
+		    		    }
+		    		    
 			    	}
 			    	else{
-			    		me.lookupReference('nombrePropietarioRef').setValue('');
+			    		if(!Ext.isEmpty(nombrePropietarioGasto)) {
+		    		    	nombrePropietarioGasto.setValue('');
+		    		    }
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.propietario"));
 			    	}
 		    		    	 
@@ -388,21 +348,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    	callback: function(options, success, response){
 				}
 		    		     
-		    });
-		}
+		  });
+		
 	},
 	
 	onHaCambiadoComboDestinatario: function(combo, value){
 		var me= this;
-		if(CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] == value){
-			me.lookupReference('nifPropietarioRef').setDisabled(false);
-			me.lookupReference('nombrePropietarioRef').setDisabled(false);
-			me.lookupReference('nifPropietarioRef').allowBlank= false;
+		/*if(CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] == value){
+			me.getView().down('[name=nifPropietario]').setVisible(false);
+			me.getView().down('[name=nombrePropietario]').setVisible(false);
+			me.getView().down('[name=buscadorNifPropietarioField]').setVisible(false);
+			me.getView().down('[name=nifPropietario]').allowBlank= false;
 		}
 		else{
-			me.lookupReference('nifPropietarioRef').setDisabled(true);
-			me.lookupReference('nombrePropietarioRef').setDisabled(true);
-		}
+			me.getView().down('[name=nifPropietario]').setDisabled(true);
+			me.getView().down('[name=nombrePropietario]').setDisabled(true);
+		}*/
 		
 	},
 	
@@ -485,12 +446,37 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			}
 		}
 
-    }
+    },
+    
+    onClickBotonCancelarGasto: function(btn) {	
+		var me = this,
+		window = btn.up('window');
+    	window.destroy();
+	},
 	
+	onClickBotonGuardarGasto: function(btn){
+		var me =this;
+		var window= btn.up('window'),
+		form= window.down('formBase');
+	
+		var success = function(record, operation) {
+			me.getView().unmask();
+	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	window.parent.funcionRecargar();
+	    	var data = {};
+            try {
+            	data = Ext.decode(operation._response.responseText);
+            }
+            catch (e){ };
+            
+            record.set("id", data.id);
+            
+	    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
+	    	
+	    	window.destroy();  		
+		};
+		
+		me.onSaveFormularioCompleto(null, form, success);		
+	}
 
 });
-
-function isEmptyJSON(obj) {
- 	for(var i in obj) { return false; }
- 	return true;
-}

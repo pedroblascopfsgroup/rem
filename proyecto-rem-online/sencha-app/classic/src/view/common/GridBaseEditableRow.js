@@ -7,6 +7,19 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	 * @type Boolean
 	 */
 	topBar: false,
+	
+	/**
+	 * Para mostrar en la botonera el boton de añadir
+	 * @type Boolean
+	 */
+	addButton: true,
+	
+	/**
+	 * Para mostrar en la botonera el boton de eliminar
+	 * @type Boolean
+	 */
+	removeButton: true,
+	
 	idPrincipal: null,
 	
 	/**
@@ -154,8 +167,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 		
 		if(me.topBar) {
 
-			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this };
-			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true };
+			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this, hidden: !me.addButton  };
+			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true, hidden: !me.removeButton };
 			
 			if(!Ext.isEmpty(me.buttonSecurity)) {
 				

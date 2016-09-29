@@ -24,11 +24,13 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
 
 @Controller
@@ -117,11 +119,17 @@ public class GastosProveedorController {
 	}
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveGastosProveedor(DtoFichaGastoProveedor dto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveGastosProveedor(DtoFichaGastoProveedor dto, ModelMap model) {
 		try {		
 			
-			model.put("success", gastoProveedorApi.saveGastosProveedor(dto, id));
+			GastoProveedor gasto = gastoProveedorApi.saveGastosProveedor(dto);
 			
+			model.put("id", gasto.getId() );
+			model.put("success", true );
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);

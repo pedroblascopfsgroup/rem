@@ -12,9 +12,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     getConEmisor: function(get){
 	     	var me= this;
 	     	var gasto= me.getData().gasto;
-	     	var nifEmisor= gasto.get('nifEmisor');
-	     	var nombreEmisor= gasto.get('nombreEmisor');
-	     	var codigoEmisor= gasto.get('codigoEmisor');
+	     	if(Ext.isEmpty(gasto)) {
+	     		return false
+	     	} else {
+		     	var nifEmisor= gasto.get('nifEmisor');
+		     	var nombreEmisor= gasto.get('nombreEmisor');
+		     	var codigoEmisor= gasto.get('codigoEmisor');
+	     	}
 	     	
 	     	if(Ext.isEmpty(nifEmisor) && Ext.isEmpty(nombreEmisor) && Ext.isEmpty(codigoEmisor)){
 	     		return false
@@ -26,8 +30,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     getConPropietario: function(get){
 	     	var me= this;
 	     	var gasto= me.getData().gasto;
-	     	var nifPropietario= gasto.get('nifPropietario');
-	     	var nombrePropietario= gasto.get('nombrePropietario');
+	     	if(Ext.isEmpty(gasto)) {
+	     		return false;
+	     	} else {
+		     	var nifPropietario= gasto.get('nifPropietario');
+		     	var nombrePropietario= gasto.get('nombrePropietario');
+	     	}
 	     	
 	     	if(Ext.isEmpty(nifPropietario) && Ext.isEmpty(nombrePropietario)){
 	     		return false
@@ -74,7 +82,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboSubtipoGasto',
-				extraParams: {codigoTipoGasto: '{gasto.tiposGasto}'}
+				extraParams: {codigoTipoGasto: '{gasto.tipoGastoCodigo}'}
+			}   
+    	},
+    	
+    	comboSubtiposNuevoGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubtipoGasto',
+				extraParams: {codigoTipoGasto: '{gastoNuevo.tipoGastoCodigo}'}
 			}   
     	},
     	
@@ -112,7 +129,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposImpuestos'}
 			}
-    	}
+    	}   	
 	
     }
   

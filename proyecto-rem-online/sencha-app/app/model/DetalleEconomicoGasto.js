@@ -82,7 +82,7 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		type: 'uxproxy',
 		localUrl: 'detalleeconomicogasto.json',
 		api: {
-            read: 'gastosproveedor/getTabExpediente',
+            read: 'gastosproveedor/getTabExpediente',/*getTabGasto*/
             update: 'gastosproveedor/saveDetalleEconomico'
         },
 		

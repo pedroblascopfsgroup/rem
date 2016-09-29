@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.gasto.dao.impl;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -32,6 +33,16 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		return new DtoPage(ofertas, pageVisitas.getTotalCount());
 		
 	}
+
+	@Override
+	public Long getNextNumGasto() {
+
+		String sql = "SELECT S_GPV_NUM_GASTO_HAYA.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		
+	}
+	
+	
 
 
 	

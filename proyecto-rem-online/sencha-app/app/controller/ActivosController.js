@@ -886,8 +886,10 @@ Ext.define('HreRem.controller.ActivosController', {
     
     abrirDetalleGasto: function(record, refLinks) {
     	var me = this,
-    	titulo = "Gasto " + record.get("numGastoHaya"),
-    	id = record.get("id");
+    	numGasto = record.get("numGastoHaya"),
+    	id = record.get("id"),
+    	titulo = Ext.isEmpty(numGasto)? null : 'Gasto ' + numGasto;
+    	
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleGastoById(id, titulo, refLinks);    	
     	

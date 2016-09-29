@@ -3,9 +3,12 @@
  */
 Ext.define('HreRem.model.GastoProveedor', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
 
     fields: [ 
+    
+    	{	
+    		name: 'idGasto'
+    	},
     	{
     		name: 'numGastoHaya'
    	 	},
@@ -37,10 +40,10 @@ Ext.define('HreRem.model.GastoProveedor', {
     		name: 'propietario'
     	},
     	{
-    		name: 'tipoGasto'
+    		name: 'tipoGastoCodigo'
     	},
     	{
-    		name: 'subtipoGasto'
+    		name: 'subtipoGastoCodigo'
     		
     	},
 		{
@@ -78,6 +81,9 @@ Ext.define('HreRem.model.GastoProveedor', {
 		},
 		{
 			name : 'nombrePropietario'
+		},
+		{
+			name : 'destinatarioGastoCodigo'
 		}
     		
     ],
@@ -87,7 +93,8 @@ Ext.define('HreRem.model.GastoProveedor', {
 		localUrl: 'gastosproveedor.json',
 		api: {
             read: 'gastosproveedor/getTabExpediente',
-            update: 'gastosproveedor/saveGastosProveedor'
+            update: 'gastosproveedor/saveGastosProveedor',
+            create: 'gastosproveedor/saveGastosProveedor'
         },
 		
         extraParams: {tab: 'ficha'}

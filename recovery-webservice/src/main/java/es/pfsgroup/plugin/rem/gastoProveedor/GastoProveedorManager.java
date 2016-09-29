@@ -17,25 +17,25 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
-import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
+import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {
@@ -53,23 +53,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	private GenericAdapter genericAdapter;
-	
-	@Autowired
-	private OfertaDao ofertaDao;
-	
-	@Autowired
-	private ReservaDao reservaDao;
-	
-	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
-	
-	@Autowired
 	private UploadAdapter uploadAdapter;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private GastoDao gastoDao;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -113,15 +103,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		if(!Checks.esNulo(gasto)){
 			
+			dto.setIdGasto(gasto.getId());
 			dto.setNumGastoHaya(gasto.getNumGastoHaya());
 			dto.setNumGastoGestoria(gasto.getNumGastoGestoria());
 			dto.setReferenciaEmisor(gasto.getReferenciaEmisor());
 			
 			if(!Checks.esNulo(gasto.getTipoGasto())){
-				dto.setTiposGasto(gasto.getTipoGasto().getCodigo());
+				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
 			}
 			if(!Checks.esNulo(gasto.getSubtipoGasto())){
-				dto.setSubtiposGasto(gasto.getSubtipoGasto().getCodigo());
+				dto.setSubtipoGastoCodigo(gasto.getSubtipoGasto().getCodigo());
 			}
 			
 			if(!Checks.esNulo(gasto.getProveedor())){
@@ -157,61 +148,125 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long idGasto){
+	public GastoProveedor saveGastosProveedor(DtoFichaGastoProveedor dto){
 		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
-		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
+		GastoProveedor gastoProveedor = null;
 		
-		try{
-			if(!Checks.esNulo(gastoProveedor)){
-				try {
-					beanUtilNotNull.copyProperties(gastoProveedor, dto);
-					
-					if(!Checks.esNulo(dto.getBuscadorNifEmisor())){
-						Filter filtroNifEmisor = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifEmisor());
-						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroNifEmisor);
-						gastoProveedor.setProveedor(proveedor);
-					}
-					
-					if(!Checks.esNulo(dto.getBuscadorNifPropietario())){
-						Filter filtroNifPropietario= genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifPropietario());
-						ActivoPropietario propietario= genericDao.get(ActivoPropietario.class, filtroNifPropietario);
-						gastoProveedor.setPropietario(propietario);
-					}
-					
-					if(!Checks.esNulo(dto.getTiposGasto())){
-						DDTipoGasto tipoGasto = (DDTipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoGasto.class, dto.getTiposGasto());
-						gastoProveedor.setTipoGasto(tipoGasto);
-					}
-					if(!Checks.esNulo(dto.getSubtiposGasto())){
-						DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtiposGasto());
-						gastoProveedor.setSubtipoGasto(subtipoGasto);
-					}
-					if(!Checks.esNulo(dto.getDestinatario())){
-						DDDestinatarioGasto destinatario = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, dto.getDestinatario());
-						gastoProveedor.setDestinatarioGasto(destinatario);
-					}
-					if(!Checks.esNulo(dto.getPeriodicidad())){
-						DDTipoPeriocidad periodicidad = (DDTipoPeriocidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPeriocidad.class, dto.getPeriodicidad());
-						gastoProveedor.setTipoPeriocidad(periodicidad);
-					}
-					
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				}
-				genericDao.update(GastoProveedor.class, gastoProveedor);				
+		DDDestinatarioGasto destinatarioGasto = null;		
+		
+		if(Checks.esNulo(dto.getIdGasto())) {
+			
+
+			// TODO Ver si es necesario añadir más datos al nuevo gasto.
+			gastoProveedor = new GastoProveedor();
+			
+			gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
+			
+			if(!Checks.esNulo(dto.getNifEmisor())){				
+				ActivoProveedor proveedor = searchProveedorNif(dto.getNifEmisor());
+				gastoProveedor.setProveedor(proveedor);
 			}
-		}
-		catch(Exception e) {
-			return false;
+			
+			if(!Checks.esNulo(dto.getDestinatarioGastoCodigo())){
+				destinatarioGasto = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, dto.getDestinatarioGastoCodigo());
+				gastoProveedor.setDestinatarioGasto(destinatarioGasto);
+			}
+			
+			
+			
+			if(!Checks.esNulo(dto.getTipoGastoCodigo())){
+				DDTipoGasto tipoGasto = (DDTipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoGasto.class, dto.getTipoGastoCodigo());
+				gastoProveedor.setTipoGasto(tipoGasto);
+			}
+			if(!Checks.esNulo(dto.getSubtipoGastoCodigo())){
+				DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
+				gastoProveedor.setSubtipoGasto(subtipoGasto);
+			}
+			
+			gastoProveedor.setFechaEmision(dto.getFechaEmision());
+			gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
+			
+			// Primero comprobamos que el gasto no está dado de alta.
+			boolean existeGasto  = existeGasto(gastoProveedor);
+				
+			if(existeGasto) {
+				throw new JsonViewerException("Gasto ya dado de alta");			
+			} else {
+				// Creamos el gasto
+				genericDao.save(GastoProveedor.class, gastoProveedor);	
+				GastoGestion gestion = new GastoGestion();
+				DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
+				gestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+				gestion.setGastoProveedor(gastoProveedor);	
+				
+				genericDao.save(GastoGestion.class, gestion);			
+			}
+			
+		} else {
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdGasto());
+			gastoProveedor = genericDao.get(GastoProveedor.class, filtro);			
+			
+			try {
+				
+				beanUtilNotNull.copyProperties(gastoProveedor, dto);
+				
+			} catch (Exception  ex) {
+				logger.error(ex.getCause());
+			}
+			
+			if(!Checks.esNulo(dto.getBuscadorNifEmisor())){
+				Filter filtroNifEmisor = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifEmisor());
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroNifEmisor);
+				gastoProveedor.setProveedor(proveedor);
+			}
+			
+			if(!Checks.esNulo(dto.getBuscadorNifPropietario())){
+				Filter filtroNifPropietario= genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifPropietario());
+				ActivoPropietario propietario= genericDao.get(ActivoPropietario.class, filtroNifPropietario);
+				gastoProveedor.setPropietario(propietario);
+			}
+			
+			if(!Checks.esNulo(dto.getTipoGastoCodigo())){
+				DDTipoGasto tipoGasto = (DDTipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoGasto.class, dto.getTipoGastoCodigo());
+				gastoProveedor.setTipoGasto(tipoGasto);
+			}
+			if(!Checks.esNulo(dto.getSubtipoGastoCodigo())){
+				DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
+				gastoProveedor.setSubtipoGasto(subtipoGasto);
+			}
+			if(!Checks.esNulo(dto.getDestinatario())){
+				DDDestinatarioGasto destinatario = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, dto.getDestinatario());
+				gastoProveedor.setDestinatarioGasto(destinatario);
+			}
+			if(!Checks.esNulo(dto.getPeriodicidad())){
+				DDTipoPeriocidad periodicidad = (DDTipoPeriocidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPeriocidad.class, dto.getPeriodicidad());
+				gastoProveedor.setTipoPeriocidad(periodicidad);
+			}
+			
+			genericDao.update(GastoProveedor.class, gastoProveedor);	
+			
 		}
 		
-		return true;
+		return gastoProveedor;
 		
 	}
 	
+	public boolean existeGasto(GastoProveedor gasto) {
+		
+		Filter filtroReferencia = genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", gasto.getReferenciaEmisor());
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.id", gasto.getTipoGasto().getId());
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", gasto.getSubtipoGasto().getId());
+		Filter filtroEmisor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", gasto.getProveedor().getId());
+		Filter filtroFechaEmision = genericDao.createFilter(FilterType.EQUALS, "fechaEmision", gasto.getFechaEmision());
+		Filter filtroDestinatario = genericDao.createFilter(FilterType.EQUALS, "destinatarioGasto.id", gasto.getDestinatarioGasto().getId());
+		
+		List<GastoProveedor> lista = genericDao.getList(GastoProveedor.class, filtroReferencia, filtroTipo, filtroSubtipo, filtroEmisor, filtroFechaEmision ,filtroDestinatario);
+		
+		
+		return !Checks.esNulo(lista) && !lista.isEmpty();
+	}
+
 	@Override
 	public ActivoProveedor searchProveedorNif(String nifProveedor) {
 		

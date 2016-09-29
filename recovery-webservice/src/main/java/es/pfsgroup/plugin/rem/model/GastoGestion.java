@@ -54,7 +54,7 @@ public class GastoGestion implements Serializable, Auditable {
 	@Id
     @Column(name = "GGE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoGestionGenerator")
-    @SequenceGenerator(name = "GastoGestionGenerator", sequenceName = "S_GDE_GASTOS_DETALLE_ECO")
+    @SequenceGenerator(name = "GastoGestionGenerator", sequenceName = "S_GGE_GASTOS_GESTION")
     private Long id;
 	
     @ManyToOne
@@ -106,6 +106,7 @@ public class GastoGestion implements Serializable, Auditable {
     @Column(name="GGE_FECHA_ANULACION")
     private Date fechaAnulacionGasto;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USU_ID_ANULACION")
     private Usuario usuarioAnulacion;
     

@@ -6,6 +6,7 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.messagebroker.annotations.AsyncRequestHandler;
 import es.pfsgroup.plugin.messagebroker.annotations.AsyncResponseHandler;
@@ -14,6 +15,7 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
+@Component
 public class ClienteEnvioProveedores extends ClienteWebcomBase{
 	
 	@Autowired

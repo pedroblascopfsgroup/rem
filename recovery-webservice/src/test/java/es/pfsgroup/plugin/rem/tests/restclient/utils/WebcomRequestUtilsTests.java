@@ -40,14 +40,16 @@ public class WebcomRequestUtilsTests {
 	@Test
 	public void camposObligatorios_DTOs_anidados() {
 		String[] camposObligatorios = WebcomRequestUtils.camposObligatorios(ExampleDto.class);
-		// Hay cuatro campos anotados con @WebcomRequired en ExampleDto y otro en
-		// ExampleSubDto
-		assertEquals("No coincide la cantidad de campos obligatorios", 5, camposObligatorios.length);
+		// Hay 4 campos anotados con @WebcomRequired en ExampleDto y otro cada uno de los 2
+		// ExampleSubDto 
+		assertEquals("No coincide la cantidad de campos obligatorios", 6, camposObligatorios.length);
 
 		assertTrue("El campo obligado del DTO principal no aparece  correctamente identificado",
 				Arrays.asList(camposObligatorios).contains("campoObligatorio"));
 		assertTrue("El campo obligado del SubDto no aparece  correctamente identificado",
-				Arrays.asList(camposObligatorios).contains("listado.campoObligatorio"));
+				Arrays.asList(camposObligatorios).contains("listado1.campoObligatorio"));
+		assertTrue("El campo obligado del SubDto no aparece  correctamente identificado",
+				Arrays.asList(camposObligatorios).contains("listado2.campoObligatorio"));
 	}
 
 	@Test

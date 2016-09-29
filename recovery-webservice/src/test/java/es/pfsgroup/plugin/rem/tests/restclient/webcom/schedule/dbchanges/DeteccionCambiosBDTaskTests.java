@@ -2,10 +2,9 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -27,19 +26,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
 import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorCambiosEstadoPeticionTrabajo;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorCambiosStockActivos;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorCambiosVentasYComisiones;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomEstadoPeticionTrabajo;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomStock;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomVentasYcomisiones;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.VentasYComisionesConstantes;
@@ -55,13 +54,13 @@ public class DeteccionCambiosBDTaskTests {
 	private CambiosBDDao detectorCambiosDao;
 
 	@InjectMocks
-	private DetectorCambiosStockActivos detectorCambiosStock;
+	private DetectorWebcomStock detectorCambiosStock;
 
 	@InjectMocks
-	private DetectorCambiosEstadoPeticionTrabajo deteccionCambiosTrabajo;
+	private DetectorWebcomEstadoPeticionTrabajo deteccionCambiosTrabajo;
 
 	@InjectMocks
-	private DetectorCambiosVentasYComisiones deteccionCambiosVentasYComisiones;
+	private DetectorWebcomVentasYcomisiones deteccionCambiosVentasYComisiones;
 
 	@InjectMocks
 	private DeteccionCambiosBDTask task;
@@ -106,7 +105,7 @@ public class DeteccionCambiosBDTaskTests {
 		//////////////////////////
 
 		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).enviarStock(stockArgumentCaptor.capture());
+		verify(servicios).webcomRestStock(stockArgumentCaptor.capture());
 
 		List<StockDto> stockEnviado = stockArgumentCaptor.getValue();
 		assertEquals("No se ha enviado la cantidad de elementos esparada", 2, stockEnviado.size());
@@ -143,7 +142,7 @@ public class DeteccionCambiosBDTaskTests {
 		//////////////////////////
 
 		ArgumentCaptor<List> argumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).enviaActualizacionEstadoTrabajo(argumentCaptor.capture());
+		verify(servicios).webcomRestEstadoPeticionTrabajo(argumentCaptor.capture());
 
 		List<EstadoTrabajoDto> dtoList = argumentCaptor.getValue();
 		assertFalse("La lista de cambios enviada al servicio no puede estar vacía", dtoList.isEmpty());
@@ -180,7 +179,7 @@ public class DeteccionCambiosBDTaskTests {
 		//////////////////////////
 
 		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).enviarStock(stockArgumentCaptor.capture());
+		verify(servicios).webcomRestStock(stockArgumentCaptor.capture());
 		StockDto stock = (StockDto) stockArgumentCaptor.getValue().get(0);
 
 		// NullStringDataType
@@ -235,7 +234,7 @@ public class DeteccionCambiosBDTaskTests {
 		//////////////////////////
 
 		ArgumentCaptor<List> comisionesArtgumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).ventasYcomisiones(comisionesArtgumentCaptor.capture());
+		verify(servicios).webcomRestVentasYcomisiones(comisionesArtgumentCaptor.capture());
 		ComisionesDto dto = (ComisionesDto) comisionesArtgumentCaptor.getValue().get(0);
 
 		// Comprobamos algunos de los campos que son obligatorios en este DTO.

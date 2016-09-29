@@ -21,35 +21,39 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Neste
  * @author bruno
  *
  */
-public class FusionCambios implements Iterable<Map<String, Object>>{
+public class FusionCambios implements Iterable<Map<String, Object>> {
 
-	private String groupByField;
-	
-	private String containerFieldName;
+	private List<String> containers = new ArrayList<String>();
 
 	private Map<Integer, Map<String, Object>> data = new HashMap<Integer, Map<String, Object>>();
+
+	private String groupByField;
 
 	/**
 	 * Crea una instancia del fusionador
 	 * 
-	 * @param groupContainer
-	 *            Field que espera contener los DTOs anidados.
+	 * @param containers
+	 *            Colección de objetos {@link Field} que esperan contener los
+	 *            DTOs anidados.
 	 *            <p>
-	 *            <strong>Debe ser una instancia de java.util.List</strong>
+	 *            <strong>Deben ser instancias de java.util.List</strong>
 	 *            <p>
 	 */
-	public FusionCambios(Field groupContainer) {
-		if (groupContainer == null){
-			throw new IllegalArgumentException("'groupContainer' no puede se NULL");
+	public FusionCambios(List<Field> containers) {
+		if (containers == null) {
+			throw new IllegalArgumentException("'containers' no puede se NULL");
 		}
-		this.containerFieldName = groupContainer.getName();
-		
-		NestedDto annotation = groupContainer.getAnnotation(NestedDto.class);
-		if (annotation == null) {
-			throw new IllegalArgumentException("Debe estar anotado con @NestedDto: " + groupContainer.toString());
-		}
+		for (Field container : containers) {
+			NestedDto annotation = container.getAnnotation(NestedDto.class);
+			if (annotation == null) {
+				throw new IllegalArgumentException("Debe estar anotado con @NestedDto: " + container.toString());
+			}
+			if (groupByField == null) {
+				groupByField = annotation.groupBy();
+			}
 
-		this.groupByField = annotation.groupBy();
+			this.containers.add(container.getName());
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -60,28 +64,44 @@ public class FusionCambios implements Iterable<Map<String, Object>>{
 				throw new FusionCambiosError("No se ha encontrado la clave '" + groupByField + "' en " + datos);
 			}
 			// Obtenemos o creamos el map principal
-			Map<String, Object> mainMap = this.data.get(groupValue.hashCode());
-			if (mainMap == null) {
-				mainMap = new HashMap<String, Object>();
-				mainMap.put(containerFieldName, new ArrayList<Map<String, Object>>());
-				this.data.put(groupValue.hashCode(), mainMap);
+			Map<String, Object> globalMainMap = this.data.get(groupValue.hashCode());
+
+			// Contenedor de nestedMaps locales. Añadiremos los nestedMaps a
+			// this.data al final, si no están vacíos..
+			Map<String, Map<String, Object>> localNestedMaps = new HashMap<String, Map<String, Object>>();
+			if (globalMainMap == null) {
+				globalMainMap = new HashMap<String, Object>();
+				for (String container : containers) {
+					globalMainMap.put(container, new ArrayList<Map<String, Object>>());
+				}
+				this.data.put(groupValue.hashCode(), globalMainMap);
 			}
 
-			// Creamos el mapa anidado
-			Map<String, Object> nestedMap = new HashMap<String, Object>();
-
-			// Poblamos el map principal y el anidado
+			// Poblamos el map principal y los anidados
 			for (Entry<String, Object> e : datos.entrySet()) {
 				String[] split = e.getKey().split("\\.");
 				if (split.length == 1) {
-					mainMap.put(e.getKey(), e.getValue());
+					globalMainMap.put(e.getKey(), e.getValue());
 				} else {
-					nestedMap.put(split[1], e.getValue());
+					// Guardamos el valor localmente. Obtenemos o creamos el
+					// nestedMap local
+					Map<String, Object> localMap = localNestedMaps.get(split[0]);
+					if (localMap == null) {
+						localMap = new HashMap<String, Object>();
+						localNestedMaps.put(split[0], localMap);
+					}
+					localMap.put(split[1], e.getValue());
 				}
 			}
 
-			// Anidamos los maps
-			((List) mainMap.get(containerFieldName)).add(nestedMap);
+			// Guardamos los nestedMaps locales en el mainMap global, si no
+			// están vacíos
+			for (Entry<String, Map<String, Object>> e : localNestedMaps.entrySet()) {
+				Map<String, Object> localNestedMap = e.getValue();
+				if (!localNestedMap.isEmpty()) {
+					((List) globalMainMap.get(e.getKey())).add(localNestedMap);
+				}
+			}
 		}
 	}
 
@@ -91,7 +111,6 @@ public class FusionCambios implements Iterable<Map<String, Object>>{
 	}
 
 	public boolean contieneDatos() {
-		return ! this.data.isEmpty();
+		return !this.data.isEmpty();
 	}
-
 }

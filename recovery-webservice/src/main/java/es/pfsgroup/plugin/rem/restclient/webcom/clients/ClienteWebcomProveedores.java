@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.messagebroker.annotations.AsyncRequestHandler;
 import es.pfsgroup.plugin.messagebroker.annotations.AsyncResponseHandler;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Component
-public class ClienteVentasYComisiones extends ClienteWebcomBase {
+public class ClienteWebcomProveedores extends ClienteWebcomBase{
 	
 	@Autowired
 	private HttpClientFacade httpClient;
@@ -26,8 +26,9 @@ public class ClienteVentasYComisiones extends ClienteWebcomBase {
 
 	@Override
 	@AsyncRequestHandler
-	public Map<String, Object> enviaPeticion(ParamsList paramsList,  RestLlamada registroLlamada) throws ErrorServicioWebcom {
-		return send(httpClient,WebcomEndpoint.ventasYcomisiones(appProperties), paramsList, registroLlamada);
+	public Map<String, Object> enviaPeticion(ParamsList paramsList, RestLlamada registroLlamada)
+			throws ErrorServicioWebcom {
+		return send(httpClient,WebcomEndpoint.proveedores(appProperties), paramsList, registroLlamada);
 	}
 
 	@Override
@@ -41,5 +42,7 @@ public class ClienteVentasYComisiones extends ClienteWebcomBase {
 	protected Properties getAppProperties() {
 		return appProperties;
 	}
+	
+	
 
 }

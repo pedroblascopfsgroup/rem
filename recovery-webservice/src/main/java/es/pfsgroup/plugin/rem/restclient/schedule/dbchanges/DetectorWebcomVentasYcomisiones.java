@@ -5,41 +5,41 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Component
-public class DetectorCambiosEstadoNotificaciones extends DetectorCambiosBD<NotificacionDto> {
-
+public class DetectorWebcomVentasYcomisiones extends DetectorCambiosBD<ComisionesDto>{
+	
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "REM01.VI_RESP_NOTIF_WEBCOM";
+		return "REM01.VI_COMISIONES_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "REM01.NWH_RESP_NOTIF_WEBCOM_HIST";
+		return "REM01.CWH_COMISIONES_WEBCOM_HIST";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "ID_NOTIFICACION_REM";
+		return "ID_HONORARIO_REM";
 	}
 
 	@Override
-	protected NotificacionDto createDtoInstance() {
-		return new NotificacionDto();
+	protected ComisionesDto createDtoInstance() {
+		return new ComisionesDto();
 	}
 
 	@Override
-	public void invocaServicio(List<NotificacionDto> data) throws ErrorServicioWebcom {
-		this.serviciosWebcom.estadoNotificacion(data);
-
+	public void invocaServicio(List<ComisionesDto> data) throws ErrorServicioWebcom {
+		this.serviciosWebcom.webcomRestVentasYcomisiones(data);
+		
 	}
 
 }

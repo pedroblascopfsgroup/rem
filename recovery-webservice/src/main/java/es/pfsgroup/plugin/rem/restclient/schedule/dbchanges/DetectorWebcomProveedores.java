@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Component
-public class DetectorCambiosProveedores extends DetectorCambiosBD<ProveedorDto> {
+public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 	
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
@@ -38,7 +38,7 @@ public class DetectorCambiosProveedores extends DetectorCambiosBD<ProveedorDto> 
 
 	@Override
 	public void invocaServicio(List<ProveedorDto> data) throws ErrorServicioWebcom {
-		serviciosWebcom.enviaProveedores(data);
+		serviciosWebcom.webcomRestProveedores(data);
 		
 	}
 	

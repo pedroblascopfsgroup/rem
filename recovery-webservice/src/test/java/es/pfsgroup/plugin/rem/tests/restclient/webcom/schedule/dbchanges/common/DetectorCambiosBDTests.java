@@ -45,17 +45,19 @@ public class DetectorCambiosBDTests {
 		/*
 		 * En este ejemplo, el dao va a devolver 3 registros cambiados.
 		 * 
-		 * Dos de ellos deben agruparse en un mismo DTO (con 2 sub-dtos). El otro debe dar lugar a otro DTO diferente
+		 * Dos de ellos deben agruparse en un mismo DTO (con 2 sub-dtos). El
+		 * otro debe dar lugar a otro DTO diferente
 		 * 
 		 */
 		// Campos cambiados en el primer resgistro
 		Map<String, Object> data1 = new HashMap<String, Object>();
-		data1.put("listado.campoObligatorio", CAMPO_OBLIGATORIO);
+		data1.put("listado1.campoObligatorio", CAMPO_OBLIGATORIO);
+		data1.put("listado2.campoObligatorio", CAMPO_OBLIGATORIO);
 
 		// Campos cambiados en el segundo resgistro
 		Map<String, Object> data2 = new HashMap<String, Object>();
-		data2.put("listado.campoObligatorio", StringDataType.nullStringDataType());
-		
+		data2.put("listado1.campoObligatorio", StringDataType.nullStringDataType());
+
 		// Campos cambiados en el tercer registro
 		Map<String, Object> data3 = new HashMap<String, Object>();
 
@@ -65,24 +67,44 @@ public class DetectorCambiosBDTests {
 
 		when(dao.listCambios(any(Class.class), any(InfoTablasBD.class))).thenReturn(cambios);
 
+		////////////////////////
 		List<ExampleDto> lista = detector.listPendientes(ExampleDto.class);
+		////////////////////////
 
 		assertEquals("No se han creado la cantidad de DTOS esperada", 2, lista.size());
+		/*
+		 * Validación del primer DTO
+		 */
 		ExampleDto dto = lista.get(0);
 		assertEquals(CAMPO_OBLIGATORIO, dto.getCampoObligatorio());
-		assertEquals(CAMPO_OBLIGATORIO, dto.getListado().get(0).getCampoObligatorio());
-		assertNull(dto.getListado().get(1).getCampoObligatorio().getValue());
+		// Tiene que tener 2 sub-stos en listado1 y 1 sub-dto en listado2
+		assertEquals("La cantidad de sub-dtos no es la esperada", 2,dto.getListado1().size());
+		assertEquals("La cantidad de sub-dtos no es la esperada", 1,dto.getListado2().size());
+		// Validamos el contenido del primer DTO de listado1
+		assertEquals(CAMPO_OBLIGATORIO, dto.getListado1().get(0).getCampoObligatorio());
+		// Validamos el contenido del segundo DTO de listado1
+		assertNull(dto.getListado1().get(1).getCampoObligatorio().getValue());
+		// Validamos el contenido del primer DTO de listado2
+		assertEquals(CAMPO_OBLIGATORIO, dto.getListado2().get(0).getCampoObligatorio());
+		
+		/*
+		 * Validación del segundo DTO
+		 */
+		// Comprobamos que los dos listados están vacíos
+		dto = lista.get(1);
+		assertEquals("La cantidad de sub-dtos no es la esperada", 0,dto.getListado1().size());
+		assertEquals("La cantidad de sub-dtos no es la esperada", 0,dto.getListado2().size());
 
 	}
 
 	private CambioBD creaMock(long idObjeto, Map<String, Object> data) {
 		CambioBD mock = mock(CambioBD.class);
-		
+
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		dataMap.putAll(data);
 		dataMap.put(ExampleDto.GROUP_BY_FIELD, LongDataType.longDataType(idObjeto));
 		dataMap.put("campoObligatorio", CAMPO_OBLIGATORIO);
-		
+
 		when(mock.getCambios()).thenReturn(dataMap);
 		when(mock.getValoresHistoricos((String[]) anyVararg())).thenReturn(new HashMap<String, Object>());
 		return mock;

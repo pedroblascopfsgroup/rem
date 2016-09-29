@@ -35,7 +35,10 @@ public class ExampleDto implements WebcomRESTDto{
 	private StringDataType campoOpcional;
 	
 	@NestedDto(type=ExampleSubDto.class, groupBy=GROUP_BY_FIELD)
-	private List<ExampleSubDto> listado;
+	private List<ExampleSubDto> listado1;
+	
+	@NestedDto(type=ExampleSubDto.class, groupBy=GROUP_BY_FIELD)
+	private List<ExampleSubDto> listado2;
 
 
 	public LongDataType getIdUsuarioRemAccion() {
@@ -78,13 +81,34 @@ public class ExampleDto implements WebcomRESTDto{
 	}
 
 
-	public List<ExampleSubDto> getListado() {
-		return listado;
+	public LongDataType getIdObjeto() {
+		return idObjeto;
 	}
 
 
-	public void setListado(List<ExampleSubDto> listado) {
-		this.listado = listado;
+	public void setIdObjeto(LongDataType idObjeto) {
+		this.idObjeto = idObjeto;
 	}
+
+
+	public List<ExampleSubDto> getListado1() {
+		return listado1;
+	}
+
+
+	public void setListado1(List<ExampleSubDto> listado1) {
+		this.listado1 = listado1;
+	}
+
+
+	public List<ExampleSubDto> getListado2() {
+		return listado2;
+	}
+
+
+	public void setListado2(List<ExampleSubDto> listado2) {
+		this.listado2 = listado2;
+	}
+
 
 }

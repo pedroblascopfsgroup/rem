@@ -72,7 +72,7 @@ public class InformemediadorController {
 				if (errorsList.size() == 0) {
 
 					if (informe.getIdInformeMediadorRem() == null) {
-						// insertamos
+						restApi.saveDtoToBbdd(informe, InformeMediadorDto.class);
 					} else {
 						// actualizamos
 					}

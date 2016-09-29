@@ -19,95 +19,74 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 	initComponent : function() {
 
 		var me = this;
+		
+		var catastroStore = Ext.create('Ext.data.Store',{model: 'HreRem.model.ComboBase', autoload:false});
+		
 		me.setTitle(HreRem.i18n('title.gasto.activos.afectados'));
 		var items = [
-				
-				{
-					xtype : 'fieldsettable',
-					border: false,
-					collapsible: false,
-					// bind: {
-					// disabled: '{conEmisor}'
-					// },
-					items : [
-		
-						{
-							xtype : 'textfieldbase',
-							fieldLabel : HreRem.i18n('fieldlabel.activos.afectados.activo.id'),
-							reference : 'buscadorActivoField',
-							flex : 1,
-							bind : {
-								value : '{idBuscadorActivo}'
-							},
-							emptyText : 'Buscar Activo...',
-							listeners : {
-								change : 'onCambiaBuscadorActivo'
-							}
-						},
-			
-						{
-							xtype : 'button',
-							text : HreRem
-									.i18n('fieldlabel.activos.afectados.incluir.activo'),
-							margin : '0 0 10 0',
-							reference: 'botonIncluirActivoRef',
-							// handler: 'onClickBotonFavoritos'
-							disabled : true
-						},
-						{
-						},
-						
-						{
-							xtype : 'textfieldbase',
-							fieldLabel : HreRem.i18n('fieldlabel.activos.afectados.agrupacion.id'),
-							reference : 'buscadorAgrupacionField',
-							flex : 1,
-							bind : {
-								value : '{idBuscadorAgrupacion}'
-							},
-							emptyText : 'Buscar agrupación...',
-							listeners : {
-								change : 'onCambiaBuscadorAgrupacion'
-							}
-						},
-						{
-							xtype: 'button',
-							text: HreRem.i18n('fieldlabel.activos.afectados.incluir.agrupacion'),
-							margin: '0 0 10 0',
-							reference: 'botonIncluirAgrupacionRef',
-							// handler: 'onClickBotonFavoritos'
-							disabled: true
-						}
-					]
-				},
-				
 
 				{
 					xtype : 'gridBaseEditableRow',
-					// title: HreRem.i18n('title.notario'),
 					reference : 'listadoActivosAfectadosRef',
 					cls : 'panel-base shadow-panel',
+					idPrincipal : 'id',
 					topBar: true,
 					bind : {
 						store : '{storeActivosAfectados}'
 					},
 
-					columns : [{
+					columns : [
+							
+							{
+								dataIndex : 'id',
+								flex : 1,
+								hidden : true,
+								hideable : false
+							},
+							{
 								dataIndex : 'idActivo',
 								flex : 1,
 								hidden : true,
 								hideable : false
 							}, {
 								text : HreRem.i18n('header.activos.afectados.id.activo'),
-								dataIndex : 'numActivo',
-								flex : 1
+								xtype: 'actioncolumn',
+					        	dataIndex: 'numActivo',
+						        items: [{
+						            tooltip: HreRem.i18n('fieldlabel.ver.activo'),
+						            getClass: function(v, metadata, record ) {
+						            	return "app-list-ico ico-ver-activov2";
+						            				            	
+						            },
+						            handler: 'onEnlaceActivosClick'
+						        }],
+						        renderer: function(value, metadata, record) {
+						        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>'
+						        	
+						        },
+					            flex     : 1,            
+					            align: 'left',
+			//		            menuDisabled: true,
+					            hideable: false,
+					            sortable: true
 							}, {
 								text : HreRem.i18n('header.activos.afectados.referencia.catastral'),
 								dataIndex : 'referenciaCatastral',
+								editor: {
+									xtype: 'comboboxfieldbase',
+									reference: 'comboReferenciaEditar',
+									store: catastroStore,
+									displayField: 'descripcion',
+									addUxReadOnlyEditFieldPlugin: false,
+			    					valueField: 'codigo'		
+								},
+								renderer: function(value, a, record, e) {
+									return value;
+								},
 								flex : 1
 							}, {
 								text : HreRem.i18n('header.activos.afectados.subtipo.activo'),
-								dataIndex : 'subtipoActivo',
+								dataIndex : 'subtipoDescripcion',
 								flex : 1
 							}, {
 								text : HreRem.i18n('header.activos.afectados.direccion'),
@@ -116,20 +95,24 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 							}, {
 								text : HreRem.i18n('header.activos.afectados.porcentaje.participacion.gasto'),
 								dataIndex : 'participacionGasto',
-								flex : 1
+								flex : 1,
+								editor: {
+									xtype:'numberfield'
+								}
 							}, {
 								text : HreRem.i18n('header.activos.afectados.importe.proporcional.total'),
-								dataIndex : 'importeProporcionalTotal',
+								dataIndex : 'importeProporcinalTotal',
 								flex : 1
 							}
 
 					],
+					
 					dockedItems : [{
 								xtype : 'pagingtoolbar',
 								dock : 'bottom',
 								displayInfo : true,
 								bind : {
-									store : '{storeActivosAfectos}'
+									store : '{storeActivosAfectados}'
 								}
 							}],
 						onAddClick: function(btn){
@@ -144,13 +127,41 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 									break;
 								}
 							}
+							var parent= me.up('activosafectadosgasto');
+							Ext.create('HreRem.view.gastos.AnyadirNuevoGastoActivo',{idGasto: idGasto, parent: parent}).show();
 							
-							Ext.create('HreRem.view.gastos.AnyadirNuevoGastoActivo',{idGasto: idGasto}).show();
-							
-					    }
-					// listeners: {
-					// rowdblclick: 'onNotarioDblClick'
-					// }
+					    },
+					    
+					   	saveSuccessFn: function () {
+							var me = this;
+							return true;
+						},
+						listeners : {
+							beforeedit : function(editor, e) {
+								var me = this;
+								var record = e.record;
+								var columnas = me.getColumns();
+								for (var i = 0; i < columnas.length; i++) {
+									if (columnas[i].dataIndex == 'referenciaCatastral') {
+										var columna = columnas[i];
+									}
+								}
+								var combo = columna.getEditor();
+			
+								var objetoStore = [];
+								var objeto = null;
+								var data = record.get("referenciasCatastrales").split(",");
+								for (var i = 0; i < data.length; i++) {
+									objeto = {
+										descripcion : '' + data[i] + '',
+										codigo : '' + data[i] + ''
+									};
+									objetoStore.push(objeto);
+								};
+								combo.getStore().setData(objetoStore);
+							}
+						}
+
 				}
 
 		];

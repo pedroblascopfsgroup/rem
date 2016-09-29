@@ -60,7 +60,7 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivo', {
     resetWindow: function() {
     	var me = this,    	
     	form = me.down('formBase');
-		form.setBindRecord(me.oferta);
+		form.setBindRecord(me.gasto);
 	
     }
     

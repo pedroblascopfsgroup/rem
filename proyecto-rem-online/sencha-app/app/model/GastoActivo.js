@@ -3,11 +3,15 @@
  */
 Ext.define('HreRem.model.GastoActivo', {
     extend: 'HreRem.model.Base',
+    idProperty: 'id',
 
     fields: [    
   
             {
             	name:'id'
+            },
+            {
+            	name: 'idGasto'
             },
             {
             	name:'idActivo'
@@ -20,6 +24,30 @@ Ext.define('HreRem.model.GastoActivo', {
             },
             {
             	name:'numAgrupacion'
+            },
+            {
+            	name: 'idGastoActivo'	
+            },
+            {
+            	name: 'direccion'
+            },
+            {
+            	name: 'participacionGasto'
+            },
+            {
+            	name: 'importeProporcinalTotal'
+            },
+            {
+            	name: 'referenciasCatastrales'
+            },
+            {
+            	name: 'referenciaCatastral'
+            },
+            {
+            	name: 'subtipoCodigo'
+            },
+            {
+            	name: 'subtipoDescripcion'
             }
     ],
     
@@ -29,8 +57,8 @@ Ext.define('HreRem.model.GastoActivo', {
 		api: {
             read: '',
             create: 'gastosproveedor/createGastoActivo',
-            update: '',
-            destroy: ''
+            update: 'gastosproveedor/updateGastoActivo',
+            destroy: 'gastosproveedor/deleteGastoActivo'
         }
 
     }    

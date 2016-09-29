@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.gastodetalle',
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase'],
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo'],
     
     data: {
     	gasto: null
@@ -116,6 +116,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposImpuestos'}
 			}
+    	},
+
+    	storeActivosAfectados: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.GastoActivo',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'gastosproveedor/getListActivosGastos',
+		        extraParams: {idGasto: '{gasto.id}'}
+	    	 }
     	}
 	
     }

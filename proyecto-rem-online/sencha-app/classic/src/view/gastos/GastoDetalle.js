@@ -92,7 +92,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		        	
 		        },
 		        {
-		        	xtype: 'activosafectadosgasto'
+		        	xtype: 'activosafectadosgasto', ocultarBotonesEdicion: true
 		        	
 		        }
 		       

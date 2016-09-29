@@ -175,10 +175,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													]
 											},
 											{
-											},
-											{
-											},
-											{
 												xtype: 'numberfieldbase',
 												style: {
 													backgroundColor: '#E5F6FE'
@@ -241,10 +237,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													store: '{comboDestinatarioPago}',
 												    value: '{detalleeconomico.destinatariosPagoCodigo}'
 												},
-												allowBlank: true											
-											},
-											{
-												xtype: 'box'
+												allowBlank: true,
+												colspan: 2
 											},
 											{
 									        	xtype:'datefieldbase',

@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -68,8 +69,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCuota;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFachada;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -203,6 +206,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("resultadoProcesoBlanqueo", DDResultadoProcesoBlanqueo.class);
 		mapa.put("motivoRetencionPago", DDMotivoRetencion.class);
 		mapa.put("tipoActivosCartera", DDTipoActivosCartera.class);
+		mapa.put("tipoDireccionProveedor", DDTipoDireccionProveedor.class);
+		mapa.put("cargoProveedor", DDCargoProveedorContacto.class);
+		mapa.put("tipoDocumentoProveedor", DDTipoDocumentoProveedor.class);
 		mapa.put("tiposComercializacionActivo", DDTipoComercializacion.class);
 		mapa.put("motivoAplicaComercializarActivo", DDMotivoComercializacion.class);
 		mapa.put("claseActivoBancario", DDClaseActivoBancario.class);
@@ -216,7 +222,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("destinatariosGasto", DDDestinatarioGasto.class);
 		mapa.put("subtiposGasto", DDSubtipoGasto.class);
 //		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
-
 
 		return Collections.unmodifiableMap(mapa);
 	}

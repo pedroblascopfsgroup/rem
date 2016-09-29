@@ -1,12 +1,16 @@
 Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaProveedor', {
     extend: 'HreRem.view.common.FormBase',
-    xtype: 'fichaproveedor',    
+    xtype: 'fichaproveedor',
+    reference: 'fichaProveedorRef',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     scrollable	: 'y',
     recordName: "proveedor",
 	recordClass: "HreRem.model.FichaProveedorModel",
-    requires: ['HreRem.model.FichaProveedorModel'],
+    requires: ['HreRem.model.FichaProveedorModel', 'HreRem.view.common.ItemSelectorBase',
+               'HreRem.view.configuracion.administracion.proveedores.detalle.DireccionesDelegacionesList',
+               'HreRem.view.configuracion.administracion.proveedores.detalle.PersonasContactoList',
+               'HreRem.view.configuracion.administracion.proveedores.detalle.ActivosIntegradosList'],
 
     initComponent: function () {
         var me = this;
@@ -68,10 +72,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								     bind : {
 								       store : '{comboTipoProveedor}',
 								       value : '{proveedor.tipoProveedorCodigo}'
-								    },
-								    listeners: {
-					                	select: 'onChangeChainedCombo'
-					            	}
+								     },
+								     listeners: {
+					                   select: 'onChangeChainedCombo'
+					            	 }
 								},
 						        { 
 				                	xtype: 'textfieldbase',
@@ -156,37 +160,51 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.proveedor.ambito'),
 									collapsible: false,
-									disabled: true,
+									bind: {
+										hidden: '{!proveedor.isProveedor}'
+									},
 									colspan: 3,
 									items :
 										[
 											{
-												xtype : 'comboboxfieldbase',
-											    fieldLabel : HreRem.i18n('fieldlabel.proveedor.territorial'),
-											    reference: 'cbProveedorTerritorial',
-											    multiSelect: true,
-											    bind : {
-											      store : '{comboTerritorial}',
-											      value : '{proveedor.territorialCodigo}'
+											    xtype: 'itemselectorbase',
+											    reference: 'itemselTerritorial',
+											    fieldLabel: HreRem.i18n('fieldlabel.proveedor.territorial'),
+											    store: {
+											    	model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'provincias'}
+													},
+													autoLoad: true
+											    },
+											    bind: {
+											    	value: '{proveedor.territorialCodigo}'
 											    }
 											},
 											{
-												xtype : 'comboboxfieldbase',
-											    fieldLabel : HreRem.i18n('fieldlabel.cartera'),
-											    reference: 'cbProveedorCartera',
-											    multiSelect: true/*,
-											    bind : {
-											      store : '{comboCartera}',
-											      value : '{proveedor.carteraCodigo}'
-											    },
-											    listeners: {
-											    	afterRender: 'loadMultiCartera'
-											    }*/
-											},
+									            xtype: 'itemselectorbase',
+									            reference: 'itemselCartera',
+									            fieldLabel: HreRem.i18n('fieldlabel.cartera'),
+									            store: {
+									            	model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'entidadesPropietarias'}
+													},
+													autoLoad: true
+									            },
+									            bind: {
+									            	value: '{proveedor.carteraCodigo}'
+									            }
+									        },
 											{
 												xtype : 'comboboxfieldbase',
 											    fieldLabel : HreRem.i18n('fieldlabel.proveedores.subcartera'),
 											    reference: 'cbProveedorSubcartera',
+											    disabled: true,
 											    bind : {
 											      store : '{comboSubcartera}',
 											      value : '{proveedor.subcarteraCodigo}'
@@ -200,6 +218,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.mediador'),
 									collapsible: false,
+									bind: {
+										hidden: '{!proveedor.isMediador}'
+									},
 									colspan: 3,
 									items :
 										[
@@ -330,26 +351,18 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						defaultType: 'textfieldbase',						
 						title: HreRem.i18n('title.datos.contacto'),
 						collapsible: false,
-						layout: {
-							type : 'table',
-							columns: 1
-						},
 						items :
 							[
-							 // Fila 0 (Direcciones y Delegaciones)
+							// Fila 0 (Direcciones y Delegaciones)
 							 {
 								 xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.direcciones.delegaciones'),
 									collapsible: false,
-									disabled: true,
-									layout: {
-										type : 'table',
-										columns: 1
-									},
+									colspan: 3,
 									items :
 										[
-										 //{xtype: direccionesdelegacioneslist}
+										 {xtype: 'direccionesdelegacioneslist'}
 										]
 							 },
 							// Fila 1 (Personas de Contacto)
@@ -358,14 +371,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.personas.contacto'),
 									collapsible: false,
-									disabled: true,
-									layout: {
-										type : 'table',
-										columns: 1
-									},
+									colspan: 3,
 									items :
 										[
-										 //{xtype: personascontactolist}
+										 {xtype: 'personascontactolist'}
 										]
 							 }
 							]
@@ -376,14 +385,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 							defaultType: 'textfieldbase',						
 							title: HreRem.i18n('title.activos.integrados'),
 							collapsible: false,
-							disabled: true,
-							layout: {
-								type : 'table',
-								columns: 1
+							bind: {
+								hidden: '{!proveedor.isEntidadOrAdministracionOrMediador}'
 							},
+							colspan: 3,
 							items :
 								[
-								 //{xtype: activosintegradoslist}
+								 {xtype: 'activosintegradoslist'}
 								]
 		            },
 // Control PBC
@@ -392,6 +400,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 							defaultType: 'textfieldbase',						
 							title: HreRem.i18n('title.control.pbc'),
 							collapsible: false,
+							bind: {
+								hidden: '{!proveedor.isProveedor}'
+							},
 							items :
 								[
 								 {

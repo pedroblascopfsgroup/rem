@@ -2,23 +2,29 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -58,11 +64,7 @@ public class ActivoProveedor implements Serializable, Auditable {
     @Column(name = "PVE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoProveedorGenerator")
     @SequenceGenerator(name = "ActivoProveedorGenerator", sequenceName = "S_ACT_PVE_PROVEEDOR")
-    private Long id;	
-/*    
-    @OneToOne
-    @JoinColumn(name = "USU_ID")
-    private Usuario usuario;*/
+    private Long id;
     
     @ManyToOne
     @JoinColumn(name = "DD_TPR_ID")
@@ -196,6 +198,11 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_TAC_ID")
 	private DDTipoActivosCartera tipoActivosCartera;
+	
+	@OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<ActivoAdjuntoProveedor> adjuntos;
 
 	@Version   
 	private Long version;
@@ -214,14 +221,30 @@ public class ActivoProveedor implements Serializable, Auditable {
 		this.id = id;
 	}
 
-/*	public Usuario getUsuario() {
-		return usuario;
-	}
+	/**
+     * Agrega un adjunto al proveedor.
+     */
+    public void addAdjunto(FileItem fileItem) {
+		ActivoAdjuntoProveedor adjuntoProveedor = new ActivoAdjuntoProveedor(fileItem);
+		adjuntoProveedor.setProveedor(this);
+        Auditoria.save(adjuntoProveedor);
+        getAdjuntos().add(adjuntoProveedor);
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-*/
+    }
+    
+    /**
+     * Devuelve el adjunto por Id.
+     * 
+     * @param id : id.
+     * @return adjunto.
+     */
+    public ActivoAdjuntoProveedor getAdjunto(Long id) {
+        for (ActivoAdjuntoProveedor adj : getAdjuntos()) {
+            if (adj.getId().equals(id)) { return adj; }
+        }
+        return null;
+    }
+	
 	public DDTipoProveedor getTipoProveedor() {
 		return tipoProveedor;
 	}
@@ -559,6 +582,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setTipoActivosCartera(DDTipoActivosCartera tipoActivosCartera) {
 		this.tipoActivosCartera = tipoActivosCartera;
+	}
+
+	public List<ActivoAdjuntoProveedor> getAdjuntos() {
+		return adjuntos;
+	}
+
+	public void setAdjuntos(List<ActivoAdjuntoProveedor> adjuntos) {
+		this.adjuntos = adjuntos;
 	}
 	
 	

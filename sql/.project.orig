@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+<<<<<<< HEAD
+	<name>sql</name>
+	<comment>Scripts de BD de las diferentes versiones de recovery.</comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.sonarlint.eclipse.core.sonarlintBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+	</natures>
+=======
+  <name>sql</name>
+  <comment>Scripts de BD de las diferentes versiones de recovery.</comment>
+  <projects/>
+>>>>>>> desarrollo-rem
+</projectDescription>

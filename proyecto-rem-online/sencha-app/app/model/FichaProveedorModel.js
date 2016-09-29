@@ -104,7 +104,47 @@ Ext.define('HreRem.model.FichaProveedorModel', {
 		    },
 		    {
 		    	name: 'resultadoBlanqueoCodigo'
-		    }
+		    },
+            {
+            	name: 'isEntidad',
+            	calculate: function(data) {
+        			return data.tipoProveedorCodigo == CONST.TIPOS_PROVEEDOR['ENTIDAD'];
+        		},
+        		depends: 'tipoProveedorCodigo'
+            },
+            {
+            	name: 'isAdministracion',
+            	calculate: function(data) {
+        			return data.tipoProveedorCodigo == CONST.TIPOS_PROVEEDOR['ADMINISTRACION'];
+        		},
+        		depends: 'tipoProveedorCodigo'
+            },
+            {
+            	name: 'isProveedor',
+            	calculate: function(data) {
+        			return data.tipoProveedorCodigo == CONST.TIPOS_PROVEEDOR['PROVEEDOR'];
+        		},
+        		depends: 'tipoProveedorCodigo'
+            },
+            {
+            	name: 'isMediador',
+            	calculate: function(data) {
+        			return data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['MEDIADOR'];
+        		},
+        		depends: 'subtipoProveedorCodigo'
+            },
+            {
+            	name: 'isEntidadOrAdministracionOrMediador',
+            	calculate: function(data) {
+            		if(data.tipoProveedorCodigo == CONST.TIPOS_PROVEEDOR['ENTIDAD'] ||
+            		   data.tipoProveedorCodigo == CONST.TIPOS_PROVEEDOR['ADMINISTRACION'] ||
+            		   data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['MEDIADOR']){
+            			return true;
+            		}
+        			return false;
+        		},
+        		depends: 'tipoProveedorCodigo'
+            }
     ],
     
 	proxy: {

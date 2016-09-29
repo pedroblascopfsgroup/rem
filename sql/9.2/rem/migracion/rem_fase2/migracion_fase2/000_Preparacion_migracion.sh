@@ -12,19 +12,19 @@ cd ../../../../../../
 pwd=$(pwd)
 echo "Directorio raiz de recovery: "$pwd
 
-#echo "[1/4] Generando empaquetado 01_PREV que contiene DDLs y DMLs de creación de tablas auxiliares e inserción de datos en diccionarios."
+echo "[1/4] Generando empaquetado 01_PREV que contiene DDLs y DMLs de creación de tablas auxiliares e inserción de datos en diccionarios."
 
-#nohup ./sql/tool/package-scripts-from-tag-and-folder.sh rem_mig_fase2_v0.1 REM migracion
+nohup ./sql/pitertul/package-scripts-from-tag-and-folder.sh rem_mig_fase2_v0.1 REM migracion/rem_fase2
 
 pkg=$pwd"/sql/pitertul/tmp/package"
 
-#echo "Directorio raiz de empaquetado: "$pkg
+echo "Directorio raiz de empaquetado: "$pkg
 
-#cd $pkg/DB/
+cd $pkg/DB/
 
-#rm -r $dir/01_PREV/*
+rm -r $dir/01_PREV/*
 
-#cp -r * $dir/01_PREV
+cp -r * $dir/01_PREV
 
 #02_TABLAS_MIG
 #------------

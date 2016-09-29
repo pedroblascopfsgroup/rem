@@ -70,10 +70,14 @@ public class App {
 						
 					}else if(args[1].equals("CONS")){
 					
-						if(args.length == 3){
+						if(args.length == 7){
 							dto.setCodigoDeOfertaHaya(args[2]);	
+							dto.setFinanciacionCliente(Boolean.getBoolean(args[3]));
+							dto.setIdentificadorActivoEspecial(Integer.valueOf(args[4]));
+							dto.setImporteConSigno(Long.valueOf(args[5]));
+							dto.setTipoDeImpuesto(Short.valueOf(args[6]));
 						}else{
-							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS <idOfertaHAYA>");
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS <idOfertaHAYA> <finCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
 							System.exit(1);			
 						}
 						

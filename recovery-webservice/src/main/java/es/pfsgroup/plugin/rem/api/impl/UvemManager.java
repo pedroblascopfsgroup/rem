@@ -349,6 +349,8 @@ public class UvemManager implements UvemManagerApi {
 		es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPDJB13_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPDJB13_INS();
 
+		servicioGMPDJB13_INS = new GMPDJB13_INS();		
+		
 		// Seteamos cabeceras
 		servicioGMPDJB13_INS.setcabeceraAplicacion(cabeceraAplicacion);
 		servicioGMPDJB13_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
@@ -373,9 +375,20 @@ public class UvemManager implements UvemManagerApi {
 			logger.info("TipoPropuestacotprw: " + instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);
 			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);
 		}
+		
+		if (numeroOcurrencias!=null) {
+			logger.info("NumeroDeOcurrenciasnumocu :" + numeroOcurrencias.toListString());
+			servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
+		}
 
-		logger.info("NumeroDeOcurrenciasnumocu :" + JSONObject.fromObject(numeroOcurrencias));
-		servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
+		// Requeridos por el servicio
+		servicioGMPDJB13_INS.setnumeroCliente(0);
+		servicioGMPDJB13_INS.setnumeroUsuario("");
+		HttpServletRequest request = null;
+//		if (RequestContextHolder.getRequestAttributes() != null) {
+//			request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//		}
+		servicioGMPDJB13_INS.setidSesionWL("");
 
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();

@@ -70,6 +70,7 @@ public class UvemManager implements UvemManagerApi {
 	// O-RB-FFDD - servicio GMPDJB13
 	private GMPDJB13_INS servicioGMPDJB13_INS;
 
+
 	@Resource
 	private Properties appProperties;
 
@@ -348,6 +349,8 @@ public class UvemManager implements UvemManagerApi {
 		es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPDJB13_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPDJB13_INS();
 
+		servicioGMPDJB13_INS = new GMPDJB13_INS();		
+		
 		// Seteamos cabeceras
 		servicioGMPDJB13_INS.setcabeceraAplicacion(cabeceraAplicacion);
 		servicioGMPDJB13_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
@@ -372,13 +375,29 @@ public class UvemManager implements UvemManagerApi {
 			logger.info("TipoPropuestacotprw: " + instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);
 			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);
 		}
+		
+		if (numeroOcurrencias!=null) {
+			logger.info("NumeroDeOcurrenciasnumocu :" + numeroOcurrencias.toListString());
+			servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
+		}
 
-		logger.info("NumeroDeOcurrenciasnumocu :" + JSONObject.fromObject(numeroOcurrencias));
-		servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
+		// Requeridos por el servicio
+		servicioGMPDJB13_INS.setnumeroCliente(0);
+		servicioGMPDJB13_INS.setnumeroUsuario("");
+		HttpServletRequest request = null;
+//		if (RequestContextHolder.getRequestAttributes() != null) {
+//			request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//		}
+		servicioGMPDJB13_INS.setidSesionWL("");
 
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();
 
+	}
+	
+	@Override
+	public GMPDJB13_INS resultadoInstanciaDecision(){
+		return servicioGMPDJB13_INS;
 	}
 
 	@Override
@@ -422,6 +441,48 @@ public class UvemManager implements UvemManagerApi {
 	public GMPAJC93_INS resultadoDatosCliente() {
 		return servicioGMPAJC93_INS;
 
+	}
+
+	@Override
+	public void consultaDatosPrestamo(String numExpedienteRiesgo, int tipoRiesgo) throws WIException {
+		
+		logger.info("------------ LLAMADA WS ConsultaDatosPrestamo -----------------");
+		leerConfiguracion();
+		// parametros iniciales
+		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
+		htInitParams.put(WIService.WORFLOW_PARAM, URL);
+		htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
+
+		WIService.init(htInitParams);
+
+		// instanciamos el servicio
+		servicioGMPAJC34_INS = new GMPAJC34_INS();
+
+		// Creamos cabeceras
+		es.cajamadrid.servicios.GM.GMPAJC34_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPAJC34_INS.StructCabeceraFuncionalPeticion();
+		es.cajamadrid.servicios.GM.GMPAJC34_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPAJC34_INS.StructCabeceraTecnica();
+		StructCabeceraAplicacionGMPAJC34_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC34_INS();
+
+		// Seteamos cabeceras
+		servicioGMPAJC34_INS.setcabeceraAplicacion(cabeceraAplicacion);
+		servicioGMPAJC34_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
+		servicioGMPAJC34_INS.setcabeceraTecnica(cabeceraTecnica);
+		
+		// seteamos parametros
+		logger.info("CodigoObjetoAccesocopace: CACL0000");
+		servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("CACL0000");
+		logger.info("numExpedienteRiesgo: "+numExpedienteRiesgo);
+		servicioGMPAJC34_INS.setNumeroExpedienteDeRiesgoNumericonuidow(numExpedienteRiesgo);
+		logger.info("tipoRiesgo: "+tipoRiesgo);
+		servicioGMPAJC34_INS.setTipoRiesgoClaseProductoUrsusCotirx(tipoRiesgo);
+		servicioGMPAJC34_INS.setAlias(ALIAS);
+		servicioGMPAJC34_INS.execute();
+		
+	}
+	
+	@Override
+	public GMPAJC34_INS resultadoConsultaDatosPrestamo() {
+		return servicioGMPAJC34_INS;
 	}
 
 }

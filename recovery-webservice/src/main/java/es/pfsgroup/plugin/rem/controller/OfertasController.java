@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -46,6 +48,8 @@ public class OfertasController {
 
 	@Autowired
 	private RestApi restApi;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 	
 
 	@SuppressWarnings("unchecked")
@@ -126,10 +130,10 @@ public class OfertasController {
 			jsonData = (OfertaRequestDto) request.getRequestData(OfertaRequestDto.class);
 			List<OfertaDto> listaOfertaDto = jsonData.getData();				
 			jsonFields = request.getJsonObject();
-
+			logger.debug("PETICIÓN: " + jsonFields);
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
-				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
 				
@@ -158,7 +162,7 @@ public class OfertasController {
 						map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());
 						map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
 						map.put("success", false);
-						map.put("errorMessages", errorsList);
+						//map.put("errorMessages", errorsList);
 					}					
 					listaRespuesta.add(map);	
 					
@@ -166,15 +170,18 @@ public class OfertasController {
 			
 				model.put("id", jsonData.getId());	
 				model.put("data", listaRespuesta);
-				model.put("error", "");
+				model.put("error", "null");
 				
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
+		} finally {
+			logger.debug("RESPUESTA: " + model);
+			logger.debug("ERRORES: " + errorsList);
 		}
 
 		return new ModelAndView("jsonView", model);

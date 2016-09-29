@@ -8,25 +8,25 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoNotificacion;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteVentasYComisiones;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoNotificacionConstantes;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.VentasYComisionesConstantes;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomProveedores;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoNotificacion;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoOferta;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoPeticionTrabajo;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoInformeMediador;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomStock;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomVentasYcomisiones;
 
 @Service
 public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implements ServiciosWebcomApi {
@@ -37,51 +37,55 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	private RegistroLlamadasManager registroLlamadas;
 
 	@Autowired
-	private ClienteEstadoTrabajo estadoTrabajoService;
+	private ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService;
 
 	@Autowired
-	private ClienteEstadoOferta estadoOfertaService;
+	private ClienteWebcomEstadoOferta estadoOfertaService;
 
 	@Autowired
-	private ClienteEstadoNotificacion estadoNotificacionService;
+	private ClienteWebcomEstadoNotificacion estadoNotificacionService;
 
 	@Autowired
-	private ClienteVentasYComisiones ventasYcomsionesService;
+	private ClienteWebcomVentasYcomisiones ventasYcomsionesService;
+	
+	@Autowired
+	private ClienteWebcomProveedores proveedoresService;
+	
+	@Autowired
+	private ClienteWebcomEstadoInformeMediador informeMediadorService;
 
 	@Autowired
-	private ClienteStock stockService;
+	private ClienteWebcomStock stockService;
 
 	@Override
-	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom{
+	public void webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom{
 		logger.info("Invocando servicio Webcom: Estado Trabajo");
 
-		ParamsList paramsList = createParamsList(estadoTrabajo, EstadoTrabajoConstantes.ID_TRABAJO_REM,
-				EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, EstadoTrabajoConstantes.COD_ESTADO_TRABAJO);
+		ParamsList paramsList = createParamsList(estadoTrabajo);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, estadoTrabajoService);
 		} else {
-			logger.debug("ParamsList vacío. Nada qeu enviar");
+			logger.debug("ParamsList vacío. Nada que enviar");
 		}
 	}
 
 	@Override
-	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom{
+	public void webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom{
 		logger.info("Invocando servicio Webcom: Estado Oferta");
 
-		ParamsList paramsList = createParamsList(estadoOferta, EstadoOfertaConstantes.ID_OFERTA_WEBCOM,
-				EstadoOfertaConstantes.ID_OFERTA_REM, EstadoOfertaConstantes.COD_ESTADO_OFERTA);
+		ParamsList paramsList = createParamsList(estadoOferta);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, estadoOfertaService);
 		} else {
-			logger.debug("ParamsList vacío. Nada qeu enviar");
+			logger.debug("ParamsList vacío. Nada que enviar");
 		}
 
 	}
 
 	@Override
-	public void enviarStock(List<StockDto> stock) throws ErrorServicioWebcom {
+	public void webcomRestStock(List<StockDto> stock) throws ErrorServicioWebcom {
 		logger.info("Invocando servicio Webcom: Stock");
 
 		ParamsList paramsList = createParamsList(stock);
@@ -89,50 +93,75 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, stockService);
 		} else {
-			logger.debug("ParamsList vacío. Nada qeu enviar");
+			logger.debug("ParamsList vacío. Nada que enviar");
 		}
 
 	}
 
 	@Override
-	public void estadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom{
+	public void webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom{
 		logger.info("Invocando servicio Webcom: Estado notificaciones");
 
-		ParamsList paramsList = createParamsList(notificaciones, EstadoNotificacionConstantes.ID_NOTIFICACION_REM,
-				EstadoNotificacionConstantes.ID_ACTIVO_HAYA);
+		ParamsList paramsList = createParamsList(notificaciones);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, estadoNotificacionService);
 		} else {
-			logger.debug("ParamsList vacío. Nada qeu enviar");
+			logger.debug("ParamsList vacío. Nada que enviar");
 		}
 
 	}
 
 	@Override
-	public void ventasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom{
+	public void webcomRestVentasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom{
 		logger.info("Invocando servicio Webcom: Ventas y Comisiones");
 
-		ParamsList paramsList = createParamsList(comisiones, VentasYComisionesConstantes.ID_OFERTA_REM,
-				VentasYComisionesConstantes.ID_OFERTA_WEBCOM, VentasYComisionesConstantes.ID_PROVEEDOR_REM,
-				VentasYComisionesConstantes.ES_PRESCRIPCION, VentasYComisionesConstantes.ES_COLABORACION,
-				VentasYComisionesConstantes.ES_RESPONSABLE, VentasYComisionesConstantes.ES_FDV,
-				VentasYComisionesConstantes.ES_DOBLE_PRESCRIPCION, VentasYComisionesConstantes.IMPORTE,
-				VentasYComisionesConstantes.PORCENTAJE);
+		ParamsList paramsList = createParamsList(comisiones);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, ventasYcomsionesService);
 		} else {
-			logger.debug("ParamsList vacío. Nada qeu enviar");
+			logger.debug("ParamsList vacío. Nada que enviar");
 		}
 
 	}
+	
+	@Override
+	public void webcomRestProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom {
+		logger.info("Invocando servicio Webcom: Envio datos Proveedores");
+		
+		ParamsList paramsList = createParamsList(proveedores);
+		
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, proveedoresService);
+		} else {
+			logger.debug("ParamsList vacío. Nada que enviar");
+		}
+		
+	}
+	
+	@Override
+	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom {
+		logger.info("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
+		
+		ParamsList paramsList = createParamsList(informes);
+		
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, informeMediadorService);
+		} else {
+			logger.debug("ParamsList vacío. Nada que enviar");
+		}
+		
+	}
 
-	public void setWebServiceClients(ClienteEstadoTrabajo estadoTrabajoService, ClienteEstadoOferta estadoOfertaService,
-			ClienteStock stockService) {
+
+	public void setWebServiceClients(ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService, ClienteWebcomEstadoOferta estadoOfertaService,
+			ClienteWebcomStock stockService, ClienteWebcomProveedores proveedoresService, ClienteWebcomEstadoInformeMediador informeMediadorService) {
 		this.estadoTrabajoService = estadoTrabajoService;
 		this.estadoOfertaService = estadoOfertaService;
 		this.stockService = stockService;
+		this.proveedoresService = proveedoresService;
+		this.informeMediadorService = informeMediadorService;
 
 	}
 
@@ -148,14 +177,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	 *            Lista variable de campos obligatorios.
 	 * @return
 	 */
-	private <T extends WebcomRESTDto> ParamsList createParamsList(List<T> dtoList, String... camposObligatorios) {
+	private <T extends WebcomRESTDto> ParamsList createParamsList(List<T> dtoList) {
 		ParamsList paramsList = new ParamsList();
 		if (dtoList != null) {
 			logger.debug("Convirtiendo dtoList -> ParamsList");
 			for (WebcomRESTDto dto : dtoList) {
 				HashMap<String, Object> params = createParametersMap(dto);
 				params.putAll(Converter.dtoToMap(dto));
-				compruebaObligatorios(params, camposObligatorios);
+				compruebaObligatorios(dto.getClass(), params);
 				paramsList.add(params);
 			}
 		} else {

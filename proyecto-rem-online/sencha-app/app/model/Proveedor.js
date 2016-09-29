@@ -88,9 +88,8 @@ Ext.define('HreRem.model.Proveedor', {
 	proxy: {
 		type: 'uxproxy',
 		api: {
-            read: 'proveedor/getProveedores',
-            create: 'proveedor/createProveedores',
-            destroy: 'proveedor/deleteProveedores'
+            read: 'proveedores/getProveedores',
+            create: 'proveedores/createProveedor'
 		}
 
     }

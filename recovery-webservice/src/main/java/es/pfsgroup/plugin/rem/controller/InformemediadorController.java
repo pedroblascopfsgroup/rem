@@ -1,9 +1,13 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,22 +28,22 @@ import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 
 @Controller
 public class InformemediadorController {
-	
+
 	private final Log logger = LogFactory.getLog(getClass());
-	
+
 	@Autowired
 	private RestApi restApi;
-	
+
 	@Autowired
 	private InformeMediadorApi informeMediadorApi;
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/informemediador")
-	public ModelAndView saveInformeMediador(ModelMap model, RestRequestWrapper request){
+	public ModelAndView saveInformeMediador(ModelMap model, RestRequestWrapper request) {
 		Map<String, Object> map = null;
 		InformemediadorRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		
+
 		try {
 			jsonData = (InformemediadorRequestDto) request.getRequestData(InformemediadorRequestDto.class);
 			List<InformeMediadorDto> informes = jsonData.getData();
@@ -47,54 +51,54 @@ public class InformemediadorController {
 			for (InformeMediadorDto informe : informes) {
 				map = new HashMap<String, Object>();
 				List<String> errorsList = null;
-				if(informe.getIdInformeMediadorRem()==null){
-					 errorsList = restApi.validateRequestObject(informe,TIPO_VALIDCION.INSERT);
-					 informeMediadorApi.validateInformeMediadorDto(informe,informe.getCodTipoActivo() ,errorsList);
-				}else{
-					 errorsList = restApi.validateRequestObject(informe,TIPO_VALIDCION.UPDATE);
+				if (informe.getIdInformeMediadorRem() == null) {
+					errorsList = restApi.validateRequestObject(informe, TIPO_VALIDCION.INSERT);
+					informeMediadorApi.validateInformeMediadorDto(informe, informe.getCodTipoActivo(), errorsList);
+				} else {
+					errorsList = restApi.validateRequestObject(informe, TIPO_VALIDCION.UPDATE);
 				}
-				if(informe.getPlantas()!=null){
-					for(PlantaDto planta: informe.getPlantas()){
+				if (informe.getPlantas() != null) {
+					for (PlantaDto planta : informe.getPlantas()) {
 						List<String> errorsListPlanta = null;
-						if(informe.getIdInformeMediadorRem()==null){
-							errorsListPlanta = restApi.validateRequestObject(planta,TIPO_VALIDCION.INSERT);
-						}else{
-							errorsListPlanta = restApi.validateRequestObject(planta,TIPO_VALIDCION.UPDATE);
+						if (informe.getIdInformeMediadorRem() == null) {
+							errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDCION.INSERT);
+						} else {
+							errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDCION.UPDATE);
 						}
 						errorsList.addAll(errorsListPlanta);
 					}
 				}
-				
+
 				if (errorsList.size() == 0) {
-					
-					if(informe.getIdInformeMediadorRem()==null){
-						 //insertamos
-					}else{
-						 //actualizamos
+
+					if (informe.getIdInformeMediadorRem() == null) {
+						restApi.saveDtoToBbdd(informe, InformeMediadorDto.class);
+					} else {
+						// actualizamos
 					}
-					
+
 					map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 					map.put("success", true);
-				}else{
+				} else {
 					map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 					map.put("success", false);
 					map.put("errorMessages", errorsList);
 				}
-				
+
 				listaRespuesta.add(map);
 			}
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
 			model.put("error", "");
-		} catch (Exception  e) {
+		} catch (Exception e) {
 			logger.error(e);
-			if(jsonData!=null){
+			if (jsonData != null) {
 				model.put("id", jsonData.getId());
-			}				
+			}
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
 		}
-		
+
 		return new ModelAndView("jsonView", model);
 
 	}

@@ -33,6 +33,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -113,7 +114,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		try {
 			scan = new Scanner(menuItemsJsonFile).useDelimiter("#");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -150,26 +150,53 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", codigoProvincia);
 		
 		return (List<Localidad>) genericDao.getListOrdered(Localidad.class, order, filter);
+	}
+	
+	@Override
+	public List<Localidad> getComboMunicipioSinFiltro() {
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		
+		return (List<Localidad>) genericDao.getListOrdered(Localidad.class, order);
+	}
+
+	@Override
+	public List<DDUnidadPoblacional> getUnidadPoblacionalByProvincia(String codigoProvincia) {
+		List<Localidad> localidades = this.getComboMunicipio(codigoProvincia);
+		
+		List<DDUnidadPoblacional> unidadesPoblacionales = new ArrayList<DDUnidadPoblacional>();
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		
+		for(Localidad l : localidades) {
+			Filter filterUnidadPoblacional = genericDao.createFilter(FilterType.EQUALS, "localidad.id", l.getId());
+			List<DDUnidadPoblacional> lista = (List<DDUnidadPoblacional>) genericDao.getListOrdered(DDUnidadPoblacional.class, order, filterUnidadPoblacional);
+			
+			if(!Checks.estaVacio(lista)) {
+				unidadesPoblacionales.addAll(lista);
+			}
+		}
+		
+		
+		return unidadesPoblacionales;
 	}
 	
 	@Override
 	@BusinessOperationDefinition("genericManager.getDiccionarioTipoProveedor")//DDTipoProveedor
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedor(String codigoTipoProveedor) {
-		Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoProveedor);
-		DDEntidadProveedor tipo = (DDEntidadProveedor) genericDao.get(DDEntidadProveedor.class, filterTipo);
+		List<DDTipoProveedor> listaTipoProveedor = new ArrayList<DDTipoProveedor>();
 		
-		String codigoTipo = null;
-		
-		if(!Checks.esNulo(tipo)) {
-			codigoTipo = tipo.getCodigo();
+		if(!Checks.esNulo(codigoTipoProveedor)){
+			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoProveedor);
+			DDEntidadProveedor tipo = (DDEntidadProveedor) genericDao.get(DDEntidadProveedor.class, filterTipo);
+
+			if(!Checks.esNulo(tipo)) {
+				Order order = new Order(GenericABMDao.OrderType.ASC, "id");
+				Filter filterSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoEntidadProveedor.codigo", tipo.getCodigo());
+				listaTipoProveedor = (List<DDTipoProveedor>) genericDao.getListOrdered(DDTipoProveedor.class, order, filterSubtipo);
+			}
 		}
 		
-		Order order = new Order(GenericABMDao.OrderType.ASC, "id");
-		Filter filterSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoEntidadProveedor.codigo", codigoTipo);
-		
-		return (List<DDTipoProveedor>) genericDao.getListOrdered(DDTipoProveedor.class, order, filterSubtipo);
-		
+		return listaTipoProveedor;
 	}
 
 	@Override
@@ -209,10 +236,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					beanUtilNotNull.copyProperty(seguroDD, "id", seguro.getId());
 					beanUtilNotNull.copyProperty(seguroDD, "descripcion", seguro.getNombre());
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				listaDD.add(seguroDD);

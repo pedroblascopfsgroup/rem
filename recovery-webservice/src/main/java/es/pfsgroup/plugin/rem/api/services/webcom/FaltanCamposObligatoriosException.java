@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.services.webcom;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FaltanCamposObligatoriosException extends RuntimeException {
 
@@ -26,5 +27,9 @@ public class FaltanCamposObligatoriosException extends RuntimeException {
 	}
 
 	private static final long serialVersionUID = -1547175880208075313L;
+
+	public List<String> getMissingFields() {
+		return missingFields;
+	}
 
 }

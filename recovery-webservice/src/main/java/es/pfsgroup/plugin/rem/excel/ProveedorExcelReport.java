@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.excel;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 
@@ -16,11 +17,11 @@ public class ProveedorExcelReport extends AbstractExcelReport implements ExcelRe
 	private static final String CAB_NOMBRE_COMERCIAL = "Nombre Comercial";
 	private static final String CAB_ESTADO = "Estado";
 	private static final String CAB_OBSERVACIONES = "Observaciones";
-	private List<VBusquedaProveedor> listaProveedores;
+	private List<DtoProveedorFilter> listaProveedores;
 
 	
-	public ProveedorExcelReport(List<VBusquedaProveedor> listaProveedores) {
-		this.listaProveedores = listaProveedores;
+	public ProveedorExcelReport(List<DtoProveedorFilter> listaProveedores2) {
+		this.listaProveedores = listaProveedores2;
 	}
 		
 
@@ -43,7 +44,7 @@ public class ProveedorExcelReport extends AbstractExcelReport implements ExcelRe
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		
-		for(VBusquedaProveedor proveedor: listaProveedores){
+		for(DtoProveedorFilter proveedor: listaProveedores){
 			List<String> fila = new ArrayList<String>();
 			fila.add(String.valueOf(proveedor.getId()));
 			fila.add(proveedor.getTipoProveedorDescripcion());

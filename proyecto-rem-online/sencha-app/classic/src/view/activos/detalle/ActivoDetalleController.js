@@ -1354,7 +1354,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     	grid.setSelection(record);
 
-    	me.getView().fireEvent('abrirDetalleActivo', record.get('activoVinculadoID'), "Activo " + record.get("activoVinculadoNumero"));
+    	me.getView().fireEvent('abrirDetalleActivo', record.get('idActivo'), "Activo " + record.get("numActivo"));
 	}
 	
 });

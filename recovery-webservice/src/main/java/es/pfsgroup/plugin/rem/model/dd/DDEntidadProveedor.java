@@ -31,6 +31,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDEntidadProveedor implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	public static final String TIPO_ENTIDAD_CODIGO= "01";
+	public static final String TIPO_ADMINISTRACION_CODIGO= "02";
+	public static final String TIPO_PROVEEDOR_CODIGO= "03";
 
 	@Id
 	@Column(name = "DD_TEP_ID")

@@ -5,6 +5,8 @@ import java.lang.reflect.TypeVariable;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.jdom.IllegalDataException;
+
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 
@@ -115,7 +117,16 @@ public abstract class WebcomDataType<T> {
 	public static <E extends WebcomDataType> E parse(Class<E> type, Object data)
 			throws WebcomDataTypeParseException, UnknownWebcomDataTypeException {
 
+		if (type == null) {
+			throw new WebcomDataTypeParseException("Type es NULL");
+		}
+
+		if ((data != null) && (type.isAssignableFrom(data.getClass()))) {
+			return (E) data;
+		}
+
 		try {
+
 			if (LongDataType.class.equals(type)) {
 				return (E) longDataType(data != null ? Long.parseLong(data.toString()) : null);
 
@@ -208,4 +219,26 @@ public abstract class WebcomDataType<T> {
 			return null;
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		if (getValue() != null) {
+			return getValue().hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if ((obj instanceof WebcomDataType) && (getValue() != null)) {
+			return getValue().equals(((WebcomDataType) obj).getValue());
+		} else {
+			return super.equals(obj);
+		}
+	}
+
 }

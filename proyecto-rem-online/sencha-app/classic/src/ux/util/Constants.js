@@ -80,6 +80,16 @@ Ext.define('HreRem.ux.util.Constants', {
     	PROPIETARIO: '01',
     	HAYA: '02'
     },
+
+	TIPOS_PROVEEDOR: {
+    	ENTIDAD: '01',
+    	ADMINISTRACION: '02',
+    	PROVEEDOR: '03'
+    },
+    
+    SUBTIPOS_PROVEEDOR: {
+    	MEDIADOR: '20'
+    },
     
     
     MAP_TAB_ACTIVO_XTYPE: {

@@ -9,6 +9,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacadeInternalError;
@@ -16,7 +17,6 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
 import net.sf.json.JSONObject;
 
@@ -134,7 +134,7 @@ public abstract class ClienteWebcomBase {
 			if (response.containsKey("error")) {
 				String error = response.getString("error");
 				registroLlamada.setErrorDesc(error);
-				if ((error != null) && (!"".equals(error))) {
+				if ((error != null) && (!"".equals(error)) && (!"null".equals(error))) {
 					logger.error("Webcom ha respondido con un código de error: " + error);
 					throw new ErrorServicioWebcom(error);
 				}

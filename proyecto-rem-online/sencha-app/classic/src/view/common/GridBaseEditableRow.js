@@ -38,6 +38,9 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	
 	editPosition: null,
 	
+	// Esta opcion permite no habilitar nunca el boton de borrar.
+	disabledDeleteBtn: false,
+	
 	//sortableColumns: false,
 	
 	/**
@@ -301,7 +304,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     	
     	var me = this;
     	
-    	if (me.topBar) {
+    	if (me.topBar && !me.disabledDeleteBtn) {
     		me.down('#removeButton').setDisabled(disabled);    		
     	}
     },

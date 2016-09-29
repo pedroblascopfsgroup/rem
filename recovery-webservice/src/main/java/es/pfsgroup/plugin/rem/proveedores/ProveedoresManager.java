@@ -19,6 +19,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -777,6 +778,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 		try {
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dtoProveedorFilter.getNifProveedor());
+			
+			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, "15"); // Tipo NIF.
+			if(!Checks.esNulo(tipoDocumento)) {
+				beanUtilNotNull.copyProperty(proveedor, "tipoDocIdentificativo", tipoDocumento);
+			}
 
 			if(!Checks.esNulo(dtoProveedorFilter.getSubtipoProveedorDescripcion())) {
 				// El Subtipo de proveedor (FASE 2) es el tipo de proveedor (FASE 1).

@@ -402,7 +402,7 @@ public class ProveedoresController {
 			model.put("success", success);
 		} catch(Exception ex) {
 			if(ex.getMessage().equals(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE)) {
-				model.put("errores", ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_MESSAGE);
+				model.put("msg", ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_MESSAGE);
 				model.put("success", false);
 			} else {
 				ex.printStackTrace();

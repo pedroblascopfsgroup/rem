@@ -137,7 +137,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 
 	onClickBotonEditar: function(btn) {
-		
 		var me = this;
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').show();

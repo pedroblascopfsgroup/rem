@@ -34,6 +34,8 @@ import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+
 
 @Controller
 public class GastosProveedorController {
@@ -254,6 +256,23 @@ public class GastosProveedorController {
 		try {		
 			
 			boolean success = gastoProveedorApi.deleteGastoActivo(dtoActivoGasto);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidad, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.updateGastoContabilidad(dtoContabilidad);
 			model.put("success", success);
 			
 		} catch (Exception e) {

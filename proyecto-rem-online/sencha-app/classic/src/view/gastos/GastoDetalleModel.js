@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.gastodetalle',
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase'],
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo'],
     
     data: {
     	gasto: null
@@ -42,7 +42,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	}
 	     	
 	     	return true;
-	     }
+	     },
+
+     	esGestorAdministracion: function(get){
+	     	var me= this;
+	     	return true;
+	    }
+
   		
 		
 	 },

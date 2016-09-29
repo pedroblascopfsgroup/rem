@@ -5,6 +5,7 @@ import java.util.List;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 
@@ -81,5 +82,12 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		boolean deleteGastoActivo(DtoActivoGasto dtoActivoGasto);
+		
+		/**
+		 * Método que actualiza la la contabilidad de un gasto
+		 * @return
+		 */
+		boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto);
+		
 }
 

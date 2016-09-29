@@ -87,8 +87,8 @@ public class ServiciosWebcomTestsBase {
 	
 	
 	protected void assertDataBasicContent(JSONArray requestData, int idx){
-		assertDataContains(requestData, 0, EstadoTrabajoConstantes.FECHA_ACCION);
-		assertDataContains(requestData, 0, EstadoTrabajoConstantes.ID_USUARIO_REM_ACCION);
+		assertDataContains(requestData, idx, EstadoTrabajoConstantes.FECHA_ACCION);
+		assertDataContains(requestData, idx, EstadoTrabajoConstantes.ID_USUARIO_REM_ACCION);
 	}
 	
 

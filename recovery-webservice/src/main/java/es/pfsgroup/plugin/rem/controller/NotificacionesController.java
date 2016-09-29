@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.rem.notificaciones.NotificacionesWsManager;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -62,44 +66,57 @@ public class NotificacionesController {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = null;
 		List<String> errorsList = null;
-
+		JSONObject jsonFields = null;
+		
 		try {
-			jsonData = (NotificacionRequestDto) request.getRequestData(NotificacionRequestDto.class);
+			
+			jsonData = (NotificacionRequestDto) request.getRequestData(NotificacionRequestDto.class);		
+			jsonFields = request.getJsonObject();
+			logger.debug("PETICIÓN: " + jsonFields);
+			
+			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+				
+			}else{
 
-			List<NotificacionDto> notificaciones = jsonData.getData();
-
-			for (NotificacionDto notificacion : notificaciones) {
-				map = new HashMap<String, Object>();
-				errorsList = notifWsManager.validateNotificacionRequest(notificacion);
-				if (errorsList.size() == 0) {
-					Notificacion notificacionBbdd = new Notificacion();
-					notificacionBbdd.setIdActivo(notificacion.getIdActivoHaya());
-					notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
-					notificacionBbdd.setTitulo(notificacion.getTitulo());
-					notificacionBbdd.setDescripcion(notificacion.getDescripcion());
-					notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
-					Notificacion notifrem = notificacionAdapter.saveNotificacion(notificacionBbdd);
-					map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
-					map.put("idNotificacionRem", notifrem.getIdsNotificacionCreada().get(0));
-					map.put("success", true);
-					map.put("errorMessages", errorsList);
-				} else {
-					map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
-					map.put("success", false);
-					map.put("errorMessages", errorsList);
+				List<NotificacionDto> notificaciones = jsonData.getData();
+	
+				for (NotificacionDto notificacion : notificaciones) {
+					map = new HashMap<String, Object>();
+					errorsList = notifWsManager.validateNotificacionRequest(notificacion);
+					if (errorsList.size() == 0) {
+						Notificacion notificacionBbdd = new Notificacion();
+						notificacionBbdd.setIdActivo(notificacion.getIdActivoHaya());
+						notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
+						notificacionBbdd.setTitulo(notificacion.getTitulo());
+						notificacionBbdd.setDescripcion(notificacion.getDescripcion());
+						notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
+						Notificacion notifrem = notificacionAdapter.saveNotificacion(notificacionBbdd);
+						map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
+						map.put("idNotificacionRem", notifrem.getIdsNotificacionCreada().get(0));
+						map.put("success", true);
+						//map.put("errorMessages", errorsList);
+					} else {
+						map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
+						map.put("success", false);
+						//map.put("errorMessages", errorsList);
+					}
+					listaRespuesta.add(map);
 				}
-				listaRespuesta.add(map);
 			}
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
-			model.put("error", "");
+			model.put("error", "null");
+			
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
 			map.put("success", false);
+		} finally {
+			logger.debug("RESPUESTA: " + model);
+			logger.debug("ERRORES: " + errorsList);
 		}
 		return new ModelAndView("jsonView", model);
 	}

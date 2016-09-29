@@ -185,7 +185,13 @@ public class GenericController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboSubtipoTrabajoTarificado(String tipoTrabajoCodigo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajoTarificado(tipoTrabajoCodigo)));	
-	}	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboSubtipoClaseActivo(String tipoClaseActivoCodigo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoClaseActivo(tipoClaseActivoCodigo)));	
+	}
+	
 		
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 		return new ModelAndView("jsonView", model);

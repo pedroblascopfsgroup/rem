@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -23,6 +24,8 @@ import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
 
 @Service("restManager")
@@ -77,6 +80,26 @@ public class RestManagerImpl implements RestApi {
 		Broker broker = brokerDao.getBrokerByIp(ip);
 		return broker;
 	}
+	
+	public  String getClientIpAddr(HttpServletRequest request) {  
+        String ip = request.getHeader("X-Forwarded-For");  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("Proxy-Client-IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("WL-Proxy-Client-IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("HTTP_CLIENT_IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getRemoteAddr();  
+        }  
+        return ip;  
+    } 
 
 	@Override
 	public Broker getBrokerDefault(String queryString) {
@@ -97,10 +120,27 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public List<String> validateRequestObject(Serializable obj) {
+		return validateRequestObject(obj, null);
+	}
+	
+	@Override
+	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDCION tipovalidacion) {
 		ArrayList<String> error = new ArrayList<String>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<Serializable>> constraintViolations = validator.validate(obj);
+		Set<ConstraintViolation<Serializable>> constraintViolations = null;
+		if(tipovalidacion != null){
+			if(tipovalidacion.equals(TIPO_VALIDCION.INSERT)){
+				constraintViolations = validator.validate(obj,Insert.class);
+			}else if(tipovalidacion.equals(TIPO_VALIDCION.UPDATE)){
+				constraintViolations = validator.validate(obj,Update.class);
+			}else{
+				constraintViolations = validator.validate(obj);
+			}
+			
+		}else{
+			constraintViolations = validator.validate(obj);
+		}
 		if (!constraintViolations.isEmpty()) {
 			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
 				error.add((visitaFailure.getPropertyPath() + " " + visitaFailure.getMessage()));

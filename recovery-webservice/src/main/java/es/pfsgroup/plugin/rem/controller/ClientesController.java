@@ -7,6 +7,8 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,15 +32,7 @@ public class ClientesController {
 	@Autowired
 	private ClienteComercialApi clienteComercialApi;
 	
-	@Autowired
-	private RestApi restApi;
-	
-	
-	
-	
-	
-	
-
+	private final Log logger = LogFactory.getLog(getClass());
 	
 	/**
 	 * Inserta o actualiza una lista de clienteComercial Ejem: IP:8080/pfs/rest/clientes
@@ -47,7 +41,7 @@ public class ClientesController {
 	 * signature - sdgsdgsdgsdg
 	 * 
 	 * BODY:
-	 * {"id":"111111111111","data": [{ "idClienteWebcom": "1", "idClienteRem": "1", "razonSocial": "Razon Social", "nombre": "Nombre","apellidos": "Apellidos", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRem": "1", "codTipoDocumento": "01", "documento": "123456789B", "codTipoDocumentoRepresentante": "01", "documentoRepresentante": "123456789B", "telefono1": "919876543", "telefono2": "919876543", "email": "email@email.com", "codTipoPrescriptor": "04", "idProveedorRemPrescriptor": "5045", "idProveedorRemResponsable": "1010",  "codTipoVia":"CL", "direccion": "Dirección", "numeroCalle":"10", "escalera":"A", "planta":"7",  "puerta":"20", "codMunicipio": "46250", "codigoPostal": "12312", "codProvincia": "46", "codPedania": "462500000", "observaciones": "Observaciones" }]}
+	 * {"id":"111111111111","data": [{ "idClienteWebcom": "1", "razonSocial":"Razon Social", "nombre": "Nombre","apellidos": "Apellidos", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRem": "1", "codTipoDocumento": "01", "documento": "123456789B", "codTipoDocumentoRepresentante": "01", "documentoRepresentante": "123456789B", "telefono1": "919876543", "telefono2": "919876543", "email": "email@email.com", "codTipoPrescriptor": "04", "idProveedorRemPrescriptor": "5045", "idProveedorRemResponsable": "1010",  "codTipoVia":"CL", "direccion": "Dirección", "numeroCalle":"10", "escalera":"A", "planta":"7",  "puerta":"20", "codMunicipio": "46250", "codigoPostal": "12312", "codProvincia": "46", "codPedania": "462500000", "observaciones": "Observaciones","idUsuarioRemAccion":"29468" }]}
 	 *  
 	 * @param model
 	 * @param request
@@ -70,10 +64,10 @@ public class ClientesController {
 			jsonData = (ClienteRequestDto) request.getRequestData(ClienteRequestDto.class);
 			List<ClienteDto> listaClienteDto = jsonData.getData();			
 			jsonFields = request.getJsonObject();
-
+			logger.debug("PETICIÓN: " + jsonFields);
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
-				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
 				for(int i=0; i < listaClienteDto.size();i++){
@@ -101,7 +95,7 @@ public class ClientesController {
 						map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 						map.put("idClienteRem", clienteDto.getIdClienteRem());
 						map.put("success", false);
-						map.put("errorMessages", errorsList);
+						//map.put("errorMessages", errorsList);
 					}					
 					listaRespuesta.add(map);	
 					
@@ -109,14 +103,18 @@ public class ClientesController {
 			
 				model.put("id", jsonData.getId());	
 				model.put("data", listaRespuesta);
-				model.put("error", "");
+				model.put("error", "null");
+	
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
+		} finally {
+			logger.debug("RESPUESTA: " + model);
+			logger.debug("ERRORES: " + errorsList);
 		}
 
 		return new ModelAndView("jsonView", model);
@@ -183,7 +181,7 @@ public class ClientesController {
 			model.put("error", "");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
@@ -194,6 +192,10 @@ public class ClientesController {
 	}
 	
 	
+	
+	
+	
+
 
 	
 }

@@ -2,7 +2,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
     extend: 'Ext.container.Container',
     xtype: 'cabeceraactivo',
     requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito'],
-    layout: 'fit',
+    layout: 'fit', 
     initComponent: function () {
     
 	    var me = this;
@@ -25,16 +25,19 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
         		{
         			text: HreRem.i18n('btn.nueva.notificacion'),
 		            handler: 'onNotificacionClick',
-		            secFunPermToShow: 'BOTON_CREAR_NOTIFICACION'
+		            secFunPermToShow: 'BOTON_CREAR_NOTIFICACION',
+		            hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
         		},
         		{
         			text: HreRem.i18n('btn.nuevo.tramite'),
         			handler: 'onTramiteClick',
-        			secFunPermToShow: 'BOTON_CREAR_TRAMITE'
+        			secFunPermToShow: 'BOTON_CREAR_TRAMITE',
+		            hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
         		},
         		{
         			text: 'Lanzar T. de Publicacion (sólo pruebas)',
-        			handler: 'onTramitePublicacionClick'
+        			handler: 'onTramitePublicacionClick',
+		            hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
         		}
 	    		
 	    	]
@@ -103,7 +106,8 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 									iconCls: 'ico-crear-trabajo',
 				        			tooltip: HreRem.i18n('btn.nueva.peticion.trabajo'),
 				        			handler: 'onClickCrearTrabajo',
-				        			secFunPermToShow: 'BOTON_CREAR_TRABAJO'
+				        			secFunPermToShow: 'BOTON_CREAR_TRABAJO',
+						            hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
 						    	},
 						    	{
 									xtype: 'button',

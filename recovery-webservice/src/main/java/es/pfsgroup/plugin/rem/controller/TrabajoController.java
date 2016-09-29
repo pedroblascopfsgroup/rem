@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
@@ -67,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -95,6 +98,8 @@ public class TrabajoController {
 	
 	@Autowired
 	ExcelReportGeneratorApi excelReportGeneratorApi;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -1036,10 +1041,10 @@ public class TrabajoController {
 			jsonData = (TrabajoRequestDto) request.getRequestData(TrabajoRequestDto.class);
 			List<TrabajoDto> listaTrabajoDto = jsonData.getData();			
 			jsonFields = request.getJsonObject();
-
+			logger.debug("PETICIÓN: " + jsonFields);
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
-				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
 				for(int i=0; i < listaTrabajoDto.size();i++){
@@ -1074,7 +1079,7 @@ public class TrabajoController {
 						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
 						map.put("idTrabajoRem", "");
 						map.put("success", false);
-						map.put("errorMessages", errorsList);
+						//map.put("errorMessages", errorsList);
 					}
 					listaRespuesta.add(map);
 					
@@ -1082,14 +1087,17 @@ public class TrabajoController {
 			
 				model.put("id", jsonData.getId());	
 				model.put("data", listaRespuesta);
-				model.put("error", "");
+				model.put("error", "null");
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
+		} finally {
+			logger.debug("RESPUESTA: " + model);
+			logger.debug("ERRORES: " + errorsList);
 		}
 
 		return new ModelAndView("jsonView", model);

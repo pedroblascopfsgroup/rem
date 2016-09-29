@@ -1184,6 +1184,16 @@
 		</dependency>
 		<dependency>
 			<groupId>es.bankia</groupId>
+			<artifactId>GMPAJC34_INS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
+			<artifactId>GMPDJB13_INS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
 			<artifactId>GMJC11_INS</artifactId>
 			<version>1.0.0</version>
 		</dependency>

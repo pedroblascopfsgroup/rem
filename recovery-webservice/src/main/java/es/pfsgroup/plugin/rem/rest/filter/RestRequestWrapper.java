@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 public class RestRequestWrapper extends HttpServletRequestWrapper {
 	private final String body;
@@ -90,20 +91,18 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 			json = JSONObject.fromObject(body);
 			
 			if(Checks.esNulo(json)){
-				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");	
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);	
 				
 			}else if(!json.containsKey("data") ){
-				throw new Exception("No se han podido recuperar los datos de la petición. Falta campo data.");	
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);	
 				
 			}else if(!json.getJSONArray("data").isArray()){
-				throw new Exception("No se han podido recuperar los datos de la petición. El campo data no es un array.");	
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);	
 				
-			}else {			
-				logger.info("Petición correcta.");
 			}
 			
 		}catch (Exception e) {
-			throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");			
+			throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);			
 		}
 		return json;
 	}

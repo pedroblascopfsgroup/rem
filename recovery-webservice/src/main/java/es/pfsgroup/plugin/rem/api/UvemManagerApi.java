@@ -4,9 +4,13 @@ import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
+import es.cajamadrid.servicios.GM.GMPAJC34_INS.GMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
+import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
+import es.cajamadrid.servicios.GM.GMPDJB13_INS.VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 
 /**
  * Interface operaciones UVEM
@@ -78,5 +82,27 @@ public interface UvemManagerApi {
 	 * 
 	 */
 	public GMPAJC93_INS resultadoDatosCliente();
+
+	/**
+	 * Servicio REM  UVEM para que se determine el comite decisor que debe resolver una oferta/propuesta
+	 * según aplicación de la política de FFDD vigente en Bankia.
+	 */
+	public void consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+	
+	/**
+	 * Servicio REM  UVEM para dar de alta la oferta en el sistema de Bankia.
+	 */
+	public void altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+
+	public GMPDJB13_INS resultadoInstanciaDecision();
+	
+	/**
+	 * Servicio REM  UVEM para modificar la oferta en el sistema de Bankia.
+	 */
+	public void modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+	
+	public void consultaDatosPrestamo(String numExpedienteRiesgo, int tipoRiesgo) throws WIException;
+
+	public GMPAJC34_INS resultadoConsultaDatosPrestamo();
 
 }

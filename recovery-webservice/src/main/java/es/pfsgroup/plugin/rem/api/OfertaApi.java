@@ -5,6 +5,7 @@ import java.util.List;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 public interface OfertaApi {
@@ -82,6 +83,21 @@ public interface OfertaApi {
 	 * @return List<String> con la lista de errores detectados
 	 */
 	public List<String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields);
+	
+	
+	/**
+	 * Actualizar el estado de disponibilidad comercial en los activos
+	 * @param oferta
+	 */
+	public void updateStateDispComercialActivosByOferta(Oferta oferta);
+
+	/**
+	 * Método que obtiene uno de los estados posibles de la oferta
+	 * relacionado con una determinado código
+	 * @param codigo
+	 * @return
+	 */	
+	public DDEstadoOferta getDDEstadosOfertaByCodigo (String codigo);
 	
 
 }

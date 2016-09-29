@@ -320,7 +320,7 @@ public class Activo implements Serializable, Auditable {
     private List<ActivoAdjuntoActivo> adjuntos;    
     
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USU_ID")
+	@JoinColumn(name = "ACT_BLOQUEO_PRECIO_USU_ID")
 	private Usuario gestorBloqueoPrecio;
 	
     @ManyToOne(fetch = FetchType.LAZY)
@@ -345,6 +345,8 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     private List<ActivoOferta> ofertas;
     
+    
+    // Indicadores de precios del activo
     @Column(name = "ACT_FECHA_IND_PRECIAR")
     private Date fechaPreciar;
     

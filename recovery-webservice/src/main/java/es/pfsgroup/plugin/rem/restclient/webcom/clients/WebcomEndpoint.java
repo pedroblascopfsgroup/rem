@@ -64,6 +64,36 @@ public class WebcomEndpoint {
 		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ACTUALIZAR_STOCK_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
+	
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío de ventas y comisiones.
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint ventasYcomisiones(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.VENTAS_Y_COMISIONES_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
+	
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío cambios de estado en notificaciones.
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint estadoNotificacion(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_NOTIFICACION_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
+	
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío de proveedores.
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint proveedores(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_PROVEEDORES, UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
 
 	/**
 	 * Charset que debemos usar para conectarnos.
@@ -77,7 +107,7 @@ public class WebcomEndpoint {
 	/**
 	 * Timeout para la conexión con el endpoint
 	 * 
-	 * @return
+	 * @return Devuelve el timeout en segundos
 	 */
 	public int getTimeout() {
 		return this.timeout;
@@ -129,5 +159,9 @@ public class WebcomEndpoint {
 		String apiKey = WebcomRESTDevonProperties.extractDevonProperty(appProperties, WebcomRESTDevonProperties.SERVER_API_KEY, DEFAULT_API_KEY);
 		return new WebcomEndpoint("POST", url, Integer.parseInt(timeout), apiKey);
 	}
+
+
+	
+
 
 }

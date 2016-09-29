@@ -14,7 +14,7 @@ echo "Directorio raiz de recovery: "$pwd
 
 echo "[1/4] Generando empaquetado 01_PREV que contiene DDLs y DMLs de creación de tablas auxiliares e inserción de datos en diccionarios."
 
-nohup ./sql/pitertul/package-scripts-from-tag-and-folder.sh rem_mig_fase2_v0.1 REM migracion/rem_fase2
+nohup ./sql/pitertul/package-scripts-from-tag-and-folder.sh rem_mig_fase2_v0.1 REM migracion/rem_fase2/migracion_fase2/PRE_MIGRACION
 
 pkg=$pwd"/sql/pitertul/tmp/package"
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -42,10 +43,10 @@ import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioW
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.VentasYComisionesConstantes;
-import es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common.CambioBDStub;
+import es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common.utilities.CambioBDStub;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DeteccionCambiosBDTests {
+public class DeteccionCambiosBDTaskTests {
 
 	@Mock
 	private ServiciosWebcomManager servicios;

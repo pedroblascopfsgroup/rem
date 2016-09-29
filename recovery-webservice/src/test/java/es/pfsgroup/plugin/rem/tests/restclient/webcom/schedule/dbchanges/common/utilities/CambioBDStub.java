@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common;
+package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common.utilities;
 
 import java.util.HashMap;
 import java.util.Map;

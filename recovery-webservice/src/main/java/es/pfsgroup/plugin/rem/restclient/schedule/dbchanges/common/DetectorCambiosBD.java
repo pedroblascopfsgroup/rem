@@ -10,8 +10,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
+import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 /**
@@ -50,7 +52,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 * 
 	 * @param data
 	 *            Lista de DTO's que se queren mandar al servicio.
-	 * @throws ErrorServicioWebcom 
+	 * @throws ErrorServicioWebcom
 	 */
 	public abstract void invocaServicio(List<T> data) throws ErrorServicioWebcom;
 
@@ -79,20 +81,47 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 			List<T> listaCambios = new ArrayList<T>();
 
 			if (listCambios != null) {
+
+				/*
+				 * Si el DTO contiene la anotación @NestedDto quiere decir que
+				 * deberemso fusionar varios cambios en un mismo dto.
+				 * 
+				 * Si fusionCambios != null quiere decir que deberemos fusionar
+				 * cambios
+				 */
+				FusionCambios fusionCambios = necesitaFusionarCambios(dtoClass);
+
+				// main loop
 				for (CambioBD cambio : listCambios) {
 					logger.debug("Obtenemos los cambios registros cambiados en BD");
 					Map<String, Object> camposActualizados = cambio.getCambios();
 					if (!camposActualizados.isEmpty()) {
-						T dto = createDtoInstance();
-						Map<String, Object> datos = cambio.getValoresHistoricos(camposObligatorios(dto));
+					
+						// Obtenemos el contenido que debe tener el DTO
+						Map<String, Object> datos = cambio
+								.getValoresHistoricos(WebcomRequestUtils.camposObligatorios(dtoClass));
 						logger.debug("Valores historicos: " + datos);
 						logger.debug("Campos actualizados: " + camposActualizados);
 						datos.putAll(camposActualizados);
-						logger.debug("Relenamos el dto "+ dto.getClass() + " con " + camposActualizados );
-						Converter.updateObjectFromHashMap(datos, dto, null);
-						listaCambios.add(dto);
+						
+						if (fusionCambios == null) {
+							// Poblamos directamente el DTO y lo añadimos a la lista
+							T dto = creaYRellenaDto(dtoClass, datos);
+							listaCambios.add(dto);
+						}else{
+							// Dejamos el poblado del DTO al fusionador de cambios
+							fusionCambios.addDataMap(datos);
+						}
 					} else {
 						logger.debug("Map de cambios vacío, nada que notificar");
+					}
+				} // fin main loop
+				
+				// Si era necesario fusionar los cambios obtenemos ahora el resultado
+				if ((fusionCambios != null) && (fusionCambios.contieneDatos())){
+					for (Map<String, Object> map : fusionCambios){
+						T dto = creaYRellenaDto(dtoClass, map);
+						listaCambios.add(dto);
 					}
 				}
 			}
@@ -144,24 +173,29 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	public Class getDtoClass() {
 		return this.createDtoInstance().getClass();
 	}
-	
+
 	/**
-	 * Devuelve una lista de campos marcados como obligatorios mediante la anotacion @WebcomRequired en el DTO.
-	 * @param dto
+	 * Si dtoClass contiene la anotación @NestedDto en su definición necesitaremos fusionar los cambios.
+	 * <p>
+	 * Devolvemos una instancia del {@link FusionCambios} si necesitamos fusionar o NULL en caso contrario
+	 * </p>
+	 * @param dtoClass
 	 * @return
 	 */
-	private String[] camposObligatorios(T dto) {
-		ArrayList<String> result = new ArrayList<String>();
-		Field[] fields = dto.getClass().getDeclaredFields();
-		if (fields != null){
-			for (Field f : fields){
-				if (f.getAnnotation(WebcomRequired.class) != null){
-					result.add(f.getName());
-				}
+	private FusionCambios necesitaFusionarCambios(Class dtoClass) {
+		for (Field f : dtoClass.getDeclaredFields()){
+			NestedDto nested = f.getAnnotation(NestedDto.class);
+			if (nested != null){
+				return new FusionCambios(f);
 			}
 		}
-		
-		return result.toArray(new String[]{});
+		return null;
 	}
-
+	
+	private T creaYRellenaDto(Class dtoClass, Map<String, Object> datos) {
+		T dto = createDtoInstance();
+		logger.debug("Relenamos el dto " + dtoClass + " con " + datos);
+		Converter.updateObjectFromHashMap(datos, dto, null);
+		return dto;
+	}
 }

@@ -92,9 +92,9 @@ Ext.define('HreRem.model.GastoProveedor', {
 		type: 'uxproxy',
 		localUrl: 'gastosproveedor.json',
 		api: {
-            read: 'gastosproveedor/getTabExpediente',
+            read: 'gastosproveedor/getTabGasto',
             update: 'gastosproveedor/saveGastosProveedor',
-            create: 'gastosproveedor/saveGastosProveedor'
+			create: 'gastosproveedor/saveGastosProveedor'
         },
 		
         extraParams: {tab: 'ficha'}

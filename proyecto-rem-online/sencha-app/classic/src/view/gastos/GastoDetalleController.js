@@ -57,7 +57,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	
 	},
-	
 
 	onSaveFormularioCompleto: function(btn, form, success) {
 		
@@ -95,6 +94,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                             }
 							me.getView().unmask();
+							me.refrescarGasto(form.refreshAfterSave);
 			            }
 					});
 				}
@@ -448,7 +448,106 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
     },
     
-    onClickBotonCancelarGasto: function(btn) {	
+    onCambiaBuscadorActivo: function(field, value){
+    	var me= this;
+    	if(!Ext.isEmpty(value)){
+    		me.lookupReference('botonIncluirActivoRef').setDisabled(false);
+    	}else{
+    		me.lookupReference('botonIncluirActivoRef').setDisabled(true);
+    	}
+    },
+    
+    onCambiaBuscadorAgrupacion: function(field, value){
+    	var me= this;
+    	if(!Ext.isEmpty(value)){
+    		me.lookupReference('botonIncluirAgrupacionRef').setDisabled(false);
+    	}else{
+    		me.lookupReference('botonIncluirAgrupacionRef').setDisabled(true);
+    	}
+    },
+    
+    onClickBotonCancelarGastoActivo: function(btn){
+    	var me = this,
+		window = btn.up('window');
+    	window.close();
+    },
+    
+    onClickBotonGuardarGastoActivo: function(btn){
+    	var me= this;
+    	var window = btn.up('window');
+    	var form= window.down('formBase');
+    	var detalle= btn.up().up().down('anyadirnuevogastoactivodetalle');
+    	var idGasto = detalle.up().idGasto;
+    	if(!Ext.isEmpty(detalle.getBindRecord())){
+	    	
+	    	var numeroActivo= detalle.getBindRecord().numActivo;
+	    	var numeroAgrupacion= detalle.getBindRecord().numAgrupacion;
+	    	
+	    	if(!Ext.isEmpty(numeroActivo) && !Ext.isEmpty(numeroAgrupacion)){
+	    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.no.posible"));
+	    	}
+	    	else if(!Ext.isEmpty(numeroActivo)){
+	    		if(Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)){
+	    			detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
+	    			detalle.getModelInstance().getProxy().extraParams.numActivo = numeroActivo;
+	    			detalle.getModelInstance().getProxy().extraParams.numAgrupacion = null;
+	    			detalle.getModelInstance().save({
+	    				success: function(a, operation, c){
+	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    				},
+	    				failure: function(a, operation){
+	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    				},
+	    				callback: function(records, operation, success) {
+	    					form.reset();
+	    					window.parent.funcionRecargar();
+	    					window.close();
+	    				}
+	    				
+	    			})
+	    		}
+	    	}
+	    	else if(!Ext.isEmpty(numeroAgrupacion)){
+	    		if(Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)){
+	    			detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
+	    			detalle.getModelInstance().getProxy().extraParams.numActivo = null;
+	    			detalle.getModelInstance().getProxy().extraParams.numAgrupacion = numeroAgrupacion;
+	    			detalle.getModelInstance().save({
+	    				success: function(a, operation, c){
+	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    				},
+	    				failure: function(a, operation){
+	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    				},
+	    				callback: function(records, operation, success) {
+	    					form.reset();
+	    					window.parent.funcionRecargar();
+	    					window.close();
+	    				}
+	    				
+	    			})
+	    		}
+	    	}
+    	}
+    	else{
+    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.campos.vacios"));
+    	}
+    	
+    	
+    	
+    },
+    
+   	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
+   		var me = this;
+		var grid = tableView.up('grid');
+	    var record = grid.store.getAt(indiceFila);
+	    grid.setSelection(record);
+	    var idActivo = record.get("idActivo");
+	    me.redirectTo('activos', true);
+	    me.getView().fireEvent('abrirDetalleActivo', record);
+    	
+    },
+	onClickBotonCancelarGasto: function(btn) {	
 		var me = this,
 		window = btn.up('window');
     	window.destroy();
@@ -478,5 +577,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 		me.onSaveFormularioCompleto(null, form, success);		
 	}
+	
 
 });

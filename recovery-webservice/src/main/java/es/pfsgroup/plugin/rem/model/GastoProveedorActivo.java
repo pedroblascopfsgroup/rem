@@ -46,6 +46,12 @@ public class GastoProveedorActivo implements Serializable {
     @ManyToOne
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
+    
+    @Column(name = "GPV_PARTICIPACION_GASTO")
+    private Double participacionGasto;
+    
+    @Column(name="GPV_REFERENCIA_CATASTRAL")
+    private String referenciaCatastral;
 
 	   
 	public Long getId() {
@@ -71,6 +77,24 @@ public class GastoProveedorActivo implements Serializable {
 	public void setActivo(Activo activo) {
 		this.activo = activo;
 	}
+
+	public Double getParticipacionGasto() {
+		return participacionGasto;
+	}
+
+	public void setParticipacionGasto(Double participacionGasto) {
+		this.participacionGasto = participacionGasto;
+	}
+
+	public String getReferenciaCatastral() {
+		return referenciaCatastral;
+	}
+
+	public void setReferenciaCatastral(String referenciaCatastral) {
+		this.referenciaCatastral = referenciaCatastral;
+	}
+
+
 
 	@Version   
 	private Long version;

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,10 +29,11 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 
 @Controller
 public class GastosProveedorController {
@@ -105,10 +107,10 @@ public class GastosProveedorController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTabExpediente(Long id, String tab, ModelMap model) {
+	public ModelAndView getTabGasto(Long id, String tab, ModelMap model) {
 
 		try {
-			model.put("data", gastoProveedorApi.getTabExpediente(id, tab));
+			model.put("data", gastoProveedorApi.getTabGasto(id, tab));
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
@@ -192,8 +194,77 @@ public class GastosProveedorController {
 		
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListActivosGastos(@RequestParam Long idGasto, ModelMap model) {
+		
+	try {
+		
+		List<VBusquedaGastoActivo> lista  =  gastoProveedorApi.getListActivosGastos(idGasto);
+		
+		model.put("data", lista);
+		model.put("success", true);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		model.put("success", false);
+	}
 
+		return createModelAndViewJson(model);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createGastoActivo(@RequestParam Long idGasto, @RequestParam Long numActivo, @RequestParam Long numAgrupacion, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.createGastoActivo(idGasto, numActivo, numAgrupacion);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateGastoActivo(DtoActivoGasto dtoActivoGasto, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.updateGastoActivo(dtoActivoGasto);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteGastoActivo(DtoActivoGasto dtoActivoGasto, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.deleteGastoActivo(dtoActivoGasto);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

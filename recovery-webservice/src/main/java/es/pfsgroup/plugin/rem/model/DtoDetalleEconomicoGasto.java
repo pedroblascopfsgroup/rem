@@ -30,7 +30,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Double importeCostas;
 	private Double importeOtrosIncrementos;
 	private Double importeProvisionesSuplidos;
-	private String impuestoIndirectoTipo;
+	private String impuestoIndirectoTipoCodigo;
 	private Boolean impuestoIndirectoExento;
 	private Boolean renunciaExencionImpuestoIndirecto;
 	private Double impuestoIndirectoTipoImpositivo;
@@ -42,9 +42,9 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Integer repercutibleInquilino;
 	private Double importePagado;
 	private Date fechaPago;
-	private String tipoPagador;
+	private String tipoPagadorCodigo;
 	private String tipoPago;
-	private String destinatariosPago;
+	private String destinatariosPagoCodigo;
 	public Long getId() {
 		return id;
 	}
@@ -99,11 +99,11 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setImporteProvisionesSuplidos(Double importeProvisionesSuplidos) {
 		this.importeProvisionesSuplidos = importeProvisionesSuplidos;
 	}
-	public String getImpuestoIndirectoTipo() {
-		return impuestoIndirectoTipo;
+	public String getImpuestoIndirectoTipoCodigo() {
+		return impuestoIndirectoTipoCodigo;
 	}
-	public void setImpuestoIndirectoTipo(String impuestoIndirectoTipo) {
-		this.impuestoIndirectoTipo = impuestoIndirectoTipo;
+	public void setImpuestoIndirectoTipoCodigo(String impuestoIndirectoTipoCodigo) {
+		this.impuestoIndirectoTipoCodigo = impuestoIndirectoTipoCodigo;
 	}
 	public Boolean getImpuestoIndirectoExento() {
 		return impuestoIndirectoExento;
@@ -173,24 +173,24 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setFechaPago(Date fechaPago) {
 		this.fechaPago = fechaPago;
 	}
-	public String getTipoPagador() {
-		return tipoPagador;
-	}
-	public void setTipoPagador(String tipoPagador) {
-		this.tipoPagador = tipoPagador;
-	}
 	public String getTipoPago() {
 		return tipoPago;
 	}
 	public void setTipoPago(String tipoPago) {
 		this.tipoPago = tipoPago;
 	}
-	public String getDestinatariosPago() {
-		return destinatariosPago;
+	public String getTipoPagadorCodigo() {
+		return tipoPagadorCodigo;
 	}
-	public void setDestinatariosPago(String destinatariosPago) {
-		this.destinatariosPago = destinatariosPago;
+	public void setTipoPagadorCodigo(String tipoPagadorCodigo) {
+		this.tipoPagadorCodigo = tipoPagadorCodigo;
 	}
-	
+	public String getDestinatariosPagoCodigo() {
+		return destinatariosPagoCodigo;
+	}
+	public void setDestinatariosPagoCodigo(String destinatariosPagoCodigo) {
+		this.destinatariosPagoCodigo = destinatariosPagoCodigo;
+	}
+
    	
 }

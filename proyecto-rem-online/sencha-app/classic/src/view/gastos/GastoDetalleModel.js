@@ -27,7 +27,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	return true;
 	     },
 	     
-	     getConPropietario: function(get){
+		getConPropietario: function(get){
 	     	var me= this;
 	     	var gasto= me.getData().gasto;
 	     	if(Ext.isEmpty(gasto)) {
@@ -82,10 +82,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboSubtipoGasto',
-				extraParams: {codigoTipoGasto: '{gasto.tipoGastoCodigo}'}
+				extraParams: {codigoTipoGasto: '{gasto.tiposGasto}'}
 			}   
     	},
-    	
+
     	comboSubtiposNuevoGasto: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -129,7 +129,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposImpuestos'}
 			}
-    	}   	
+    	},
+
+    	storeActivosAfectados: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.GastoActivo',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'gastosproveedor/getListActivosGastos',
+		        extraParams: {idGasto: '{gasto.id}'}
+	    	 }
+    	}
 	
     }
   

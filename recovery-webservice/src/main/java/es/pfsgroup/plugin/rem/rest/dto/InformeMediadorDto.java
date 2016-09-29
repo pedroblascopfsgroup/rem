@@ -175,7 +175,7 @@ public class InformeMediadorDto implements Serializable {
 			Insert.class, Update.class })
 	private String codEstadoConservacion;
 
-	@EntityDefinition(entityName = "es.pfsgroup.plugin.rem.model.ActivoInfoComercial", propertyName = "anyoConstruccion")
+	//@EntityDefinition(entityName = "es.pfsgroup.plugin.rem.model.ActivoInfoComercial", propertyName = "anyoConstruccion")
 	private Integer anyoConstruccion;
 
 	private Long anyoRehabilitacion;

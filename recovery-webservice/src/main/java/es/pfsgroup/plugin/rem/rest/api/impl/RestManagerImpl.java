@@ -174,7 +174,7 @@ public class RestManagerImpl implements RestApi {
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException {
 		Field[] fields = claseDto.getDeclaredFields();
-		if (fields != null) {
+		/*if (fields != null) {
 			for (Field f : fields) {
 				if (f.getAnnotation(EntityDefinition.class) != null) {
 					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
@@ -191,7 +191,7 @@ public class RestManagerImpl implements RestApi {
 				}
 				if (f.getAnnotation(Diccionary.class) != null) {
 			}
-		}
+		}*/
 
 	}
 

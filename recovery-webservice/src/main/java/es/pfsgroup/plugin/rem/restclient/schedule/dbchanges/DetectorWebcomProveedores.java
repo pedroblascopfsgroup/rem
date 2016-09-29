@@ -11,7 +11,7 @@ import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambi
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
 @Component
-public class DetectorCambiosProveedores extends DetectorCambiosBD<ProveedorDto> {
+public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 	
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
@@ -38,7 +38,7 @@ public class DetectorCambiosProveedores extends DetectorCambiosBD<ProveedorDto> 
 
 	@Override
 	public void invocaServicio(List<ProveedorDto> data) throws ErrorServicioWebcom {
-		serviciosWebcom.enviaProveedores(data);
+		serviciosWebcom.webcomRestProveedores(data);
 		
 	}
 	

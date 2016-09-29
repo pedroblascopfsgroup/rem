@@ -16,7 +16,7 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 
 @Component
-public class ClienteEstadoOferta extends ClienteWebcomBase{
+public class ClienteWebcomEstadoOferta extends ClienteWebcomBase{
 	
 	
 	@Autowired

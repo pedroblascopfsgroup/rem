@@ -16,7 +16,8 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 
 @Component
-public class ClienteEnvioProveedores extends ClienteWebcomBase{
+public class ClienteWebcomEstadoPeticionTrabajo extends ClienteWebcomBase {
+	
 	
 	@Autowired
 	private HttpClientFacade httpClient;
@@ -26,11 +27,10 @@ public class ClienteEnvioProveedores extends ClienteWebcomBase{
 
 	@Override
 	@AsyncRequestHandler
-	public Map<String, Object> enviaPeticion(ParamsList paramsList, RestLlamada registroLlamada)
-			throws ErrorServicioWebcom {
-		return send(httpClient,WebcomEndpoint.proveedores(appProperties), paramsList, registroLlamada);
+	public Map<String, Object> enviaPeticion(ParamsList paramsList,  RestLlamada registroLlamada) throws ErrorServicioWebcom {
+		return send(httpClient,WebcomEndpoint.estadoPeticionTrabajo(appProperties), paramsList, registroLlamada);
 	}
-
+	
 	@Override
 	@AsyncResponseHandler
 	public void procesaRespuesta(Map<String, Object> respuesta) {
@@ -42,7 +42,5 @@ public class ClienteEnvioProveedores extends ClienteWebcomBase{
 	protected Properties getAppProperties() {
 		return appProperties;
 	}
-	
-	
 
 }

@@ -36,7 +36,7 @@ public class WebcomEndpoint {
 	 * 
 	 * @return
 	 */
-	public static WebcomEndpoint estadoTrabajo(Properties appProperties) {
+	public static WebcomEndpoint estadoPeticionTrabajo(Properties appProperties) {
 		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_TRABAJO_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
@@ -100,7 +100,7 @@ public class WebcomEndpoint {
 	 * 
 	 * @return
 	 */
-	public static WebcomEndpoint informeMediador(Properties appProperties) {
+	public static WebcomEndpoint estadoInformeMediador(Properties appProperties) {
 		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_INFORME_MEDIADOR, UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}

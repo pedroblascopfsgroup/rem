@@ -11,7 +11,7 @@ import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambi
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
 @Component
-public class DetectorCambiosEstadoNotificaciones extends DetectorCambiosBD<NotificacionDto> {
+public class DetectorWebcomEstadoNotificacion extends DetectorCambiosBD<NotificacionDto> {
 
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
@@ -38,7 +38,7 @@ public class DetectorCambiosEstadoNotificaciones extends DetectorCambiosBD<Notif
 
 	@Override
 	public void invocaServicio(List<NotificacionDto> data) throws ErrorServicioWebcom {
-		this.serviciosWebcom.estadoNotificacion(data);
+		this.serviciosWebcom.webcomRestEstadoNotificacion(data);
 
 	}
 

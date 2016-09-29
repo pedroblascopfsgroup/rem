@@ -16,7 +16,7 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 
 @Component
-public class ClienteEstadoNotificacion extends ClienteWebcomBase {
+public class ClienteWebcomVentasYcomisiones extends ClienteWebcomBase {
 	
 	@Autowired
 	private HttpClientFacade httpClient;
@@ -26,8 +26,8 @@ public class ClienteEstadoNotificacion extends ClienteWebcomBase {
 
 	@Override
 	@AsyncRequestHandler
-	public Map<String, Object> enviaPeticion(ParamsList paramsList, RestLlamada registroLlamada) throws ErrorServicioWebcom {
-		return send(httpClient,WebcomEndpoint.estadoNotificacion(appProperties), paramsList, registroLlamada);
+	public Map<String, Object> enviaPeticion(ParamsList paramsList,  RestLlamada registroLlamada) throws ErrorServicioWebcom {
+		return send(httpClient,WebcomEndpoint.ventasYcomisiones(appProperties), paramsList, registroLlamada);
 	}
 
 	@Override

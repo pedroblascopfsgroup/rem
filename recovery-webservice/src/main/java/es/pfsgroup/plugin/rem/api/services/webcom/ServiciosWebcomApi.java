@@ -13,7 +13,9 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 public interface ServiciosWebcomApi {
 
 	/**
-	 * Envia a WEBCOM una actualización del estado del Trabajo
+	 * REM - WEBCOM: Contiene la información del resultado de los trabajos
+	 * solicitados, bien la denegación o bien la aceptación y finalización de
+	 * los mismos, todo ello generará un correo a dichos mediadores
 	 * 
 	 * @param estadoTrabajo
 	 *            Lista de DTO's con los cambios de estado que queremos
@@ -21,45 +23,51 @@ public interface ServiciosWebcomApi {
 	 * 
 	 * @throws ErrorServicioWebcom
 	 */
-	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom;
+	public void webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom;
 
 	/**
-	 * Envia a WEBCOM una actualización del estado de una Oferta.
+	 * REM - WEBCOM: Contiene la información del resultado de las ofertas
+	 * presentadas desde los canales WEB, WEBCOM tendrá que actualizar dicha
+	 * información para que las oficinas y mediadores sean conscientes del
+	 * resultado de las mismas. REM actualiza siempre el estado de la oferta
+	 * hacia Webcom.
 	 * 
 	 * @param estadoOferta
 	 *            Lista de DTO's con los cambios de estado que queremos
 	 *            notificar.
 	 * @throws ErrorServicioWebcom
 	 */
-	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom;
+	public void webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom;
 
 	/**
-	 * Envia a WEBCOM una actualización del stock de activos
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
+	 * de TODO el stock de activos de REM, los activos vendidos tendrán su
+	 * ultimo envío el día de la venta, este stock lo dará de alta WEBCOM en sus
+	 * BBDD
 	 * 
 	 * @param stock
 	 *            Stock de activos (alta/modificación)
 	 */
-	public void enviarStock(List<StockDto> stock) throws ErrorServicioWebcom;
+	public void webcomRestStock(List<StockDto> stock) throws ErrorServicioWebcom;
 
 	/**
-	 * Honorarios asociados a una oferta una vez se apruebe ésta, también viaja
-	 * las observaciones del gestor comercial a la NO aceptación de los mismos
-	 * por el mediador.
+	 * REM - WEBCOM: Contiene la información de las contestaciones del gestor
+	 * correspondiente a las notificaciones realizadas por los mediadores
 	 * 
 	 * @param notificaciones
 	 * @throws ErrorServicioWebcom
 	 */
-	public void estadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom;
+	public void webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom;
 
 	/**
-	 * Honorarios asociados a una oferta una vez se apruebe ésta, también viaja
-	 * las observaciones del gestor comercial a la NO aceptación de los mismos
-	 * por el mediador.
+	 * REM - WEBCOM: Contiene la información de los honorarios asociados a una
+	 * oferta una vez se apruebe esta, también viaja las observaciones del
+	 * gestor comercial a la NO aceptación de los mismos por el mediador
 	 * 
 	 * @param comisiones
 	 * @throws ErrorServicioWebcom
 	 */
-	public void ventasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom;
+	public void webcomRestVentasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom;
 
 	/**
 	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
@@ -70,7 +78,7 @@ public interface ServiciosWebcomApi {
 	 * @param proveedores
 	 * @throws ErrorServicioWebcom
 	 */
-	public void enviaProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom;
+	public void webcomRestProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom;
 
 	/**
 	 * REM - WEBCOM: Contiene la información existente en REM para consolidarla
@@ -80,6 +88,6 @@ public interface ServiciosWebcomApi {
 	 * @param informes
 	 * @throws ErrorServicioWebcom
 	 */
-	public void enviarEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom;
+	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom;
 
 }

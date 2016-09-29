@@ -9,7 +9,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
-public class DetectorCambiosInformeMediador  extends DetectorCambiosBD<InformeMediadorDto> {
+public class DetectorWebcomEstadoInformeMediador  extends DetectorCambiosBD<InformeMediadorDto> {
 
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
@@ -36,7 +36,7 @@ public class DetectorCambiosInformeMediador  extends DetectorCambiosBD<InformeMe
 
 	@Override
 	public void invocaServicio(List<InformeMediadorDto> data) throws ErrorServicioWebcom {
-		this.serviciosWebcom.enviarEstadoInformeMediador(data);
+		this.serviciosWebcom.webcomRestEstadoInformeMediador(data);
 		
 	}
 

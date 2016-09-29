@@ -6,40 +6,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
 @Component
-public class DetectorCambiosStockActivos extends DetectorCambiosBD<StockDto> {
+public class DetectorWebcomEstadoPeticionTrabajo extends DetectorCambiosBD<EstadoTrabajoDto>{
 	
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
 
 	@Override
-	public StockDto createDtoInstance() {
-		return new StockDto();
+	protected EstadoTrabajoDto createDtoInstance() {
+		return new EstadoTrabajoDto();
 	}
 
 	@Override
-	public void invocaServicio(List<StockDto> data) throws ErrorServicioWebcom {
-		serviciosWebcom.enviarStock(data);
+	public void invocaServicio(List<EstadoTrabajoDto> data) throws ErrorServicioWebcom {
+		this.serviciosWebcom.webcomRestEstadoPeticionTrabajo(data);
 		
 	}
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "REM01.VI_STOCK_ACTIVOS_WEBCOM";
+		return "REM01.VI_TRABAJOS_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "REM01.SWH_STOCK_ACT_WEBCOM_HIST";
+		return "REM01.TWH_TRABAJOS_WEBCOM_HIST";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "ID_ACTIVO_HAYA";
+		return "ID_TRABAJO_REM";
 	}
 
 }

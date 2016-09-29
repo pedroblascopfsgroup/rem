@@ -16,19 +16,19 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 
 @Component
-public class ClienteInformeMediador extends ClienteWebcomBase{
-
+public class ClienteWebcomProveedores extends ClienteWebcomBase{
+	
 	@Autowired
 	private HttpClientFacade httpClient;
 	
 	@Resource
 	private Properties appProperties;
-	
+
 	@Override
 	@AsyncRequestHandler
 	public Map<String, Object> enviaPeticion(ParamsList paramsList, RestLlamada registroLlamada)
 			throws ErrorServicioWebcom {
-		return send(httpClient,WebcomEndpoint.informeMediador(appProperties), paramsList, registroLlamada);
+		return send(httpClient,WebcomEndpoint.proveedores(appProperties), paramsList, registroLlamada);
 	}
 
 	@Override
@@ -43,4 +43,6 @@ public class ClienteInformeMediador extends ClienteWebcomBase{
 		return appProperties;
 	}
 	
+	
+
 }

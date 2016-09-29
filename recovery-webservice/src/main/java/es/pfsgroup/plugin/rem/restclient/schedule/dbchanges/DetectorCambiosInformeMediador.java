@@ -3,44 +3,41 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
-@Component
-public class DetectorCambiosProveedores extends DetectorCambiosBD<ProveedorDto> {
-	
+public class DetectorCambiosInformeMediador  extends DetectorCambiosBD<InformeMediadorDto> {
+
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "REM01.VI_PROVEEDOR_WEBCOM";
+		return "VISTA DESCONOCIDA";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "REM01.PWH_PROVEEDOR_WEBCOM_HIST";
+		return "TABLA DESCONOCIDA";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "ID_PROV_DELEGACION";
+		return "CLAVE_PRIMARIA_DESCONCIDA";
 	}
 
 	@Override
-	protected ProveedorDto createDtoInstance() {
-		return new ProveedorDto();
+	protected InformeMediadorDto createDtoInstance() {
+		return new InformeMediadorDto();
 	}
 
 	@Override
-	public void invocaServicio(List<ProveedorDto> data) throws ErrorServicioWebcom {
-		serviciosWebcom.enviaProveedores(data);
+	public void invocaServicio(List<InformeMediadorDto> data) throws ErrorServicioWebcom {
+		this.serviciosWebcom.enviarEstadoInformeMediador(data);
 		
 	}
-	
 
 }

@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.restclient.webcom.clients.exception;
+package es.pfsgroup.plugin.rem.api.services.webcom;
 
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 

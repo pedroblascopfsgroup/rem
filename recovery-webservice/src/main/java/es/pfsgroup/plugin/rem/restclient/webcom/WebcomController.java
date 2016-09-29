@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
@@ -18,7 +19,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Controller
 public class WebcomController {

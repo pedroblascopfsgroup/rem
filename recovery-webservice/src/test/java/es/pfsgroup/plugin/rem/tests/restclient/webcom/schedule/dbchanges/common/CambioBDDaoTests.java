@@ -156,16 +156,18 @@ public class CambioBDDaoTests {
 	public void getDtoFields_DTOs_anidados(){
 		List<String> campos = Arrays.asList(dao.getDtoFields(ExampleDto.class));
 		
-		// El DTO tiene 5 campos y el subdto tiene 2 mas
-		assertEquals("El número de campos no coincide", 7, campos.size());
+		// El DTO tiene 5 campos y además 2 sub-dtos con 2 campos cada uno
+		assertEquals("El número de campos no coincide", 9, campos.size());
 
 		assertTrue(campos.contains("idObjeto"));
 		assertTrue(campos.contains("idUsuarioRemAccion"));
 		assertTrue(campos.contains("fechaAccion"));
 		assertTrue(campos.contains("campoObligatorio"));
 		assertTrue(campos.contains("campoOpcional"));
-		assertTrue(campos.contains("listado.campoObligatorio"));
-		assertTrue(campos.contains("listado.campoOpcional"));
+		assertTrue(campos.contains("listado1.campoObligatorio"));
+		assertTrue(campos.contains("listado1.campoOpcional"));
+		assertTrue(campos.contains("listado2.campoObligatorio"));
+		assertTrue(campos.contains("listado2.campoOpcional"));
 	}
 	
 	@Test

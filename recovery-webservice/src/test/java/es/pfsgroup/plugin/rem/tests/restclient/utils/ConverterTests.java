@@ -25,7 +25,7 @@ import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleSubDto;
 
 public class ConverterTests {
 	
-	private static final String LISTADO_KEY = "listado";
+	private static final String LISTADO1_KEY = "listado1";
 	private static final String CAMPO_OPCIONAL_KEY = "campoOpcional";
 	private static final String CAMPO_OBLIGATORIO_KEY = "campoObligatorio";
 	private static final StringDataType CAMPO_OBLIGATORIO = StringDataType.stringDataType(CAMPO_OBLIGATORIO_KEY);
@@ -77,7 +77,7 @@ public class ConverterTests {
 		sub2.setCampoObligatorio(CAMPO_OBLIGATORIO);
 		sub2.setCampoOpcional(CAMPO_OPCIONAL);
 		
-		dto.setListado((List<ExampleSubDto>) Arrays.asList(new ExampleSubDto[]{sub1, sub2}));
+		dto.setListado1((List<ExampleSubDto>) Arrays.asList(new ExampleSubDto[]{sub1, sub2}));
 		
 		// Convertimos a MAP
 		Map<String, Object> map  = Converter.dtoToMap(dto);
@@ -87,7 +87,7 @@ public class ConverterTests {
 		assertEquals(CAMPO_OPCIONAL, map.get(CAMPO_OPCIONAL_KEY));
 		
 		// Validamos que existe la lista de DTO's
-		Object listado = map.get(LISTADO_KEY);
+		Object listado = map.get(LISTADO1_KEY);
 		assertTrue("'listado' debería ser una List", List.class.isAssignableFrom(listado.getClass()));
 		
 		// Comprobamos el contenido de la lista de DTOs
@@ -122,7 +122,7 @@ public class ConverterTests {
 		subMap2.put(CAMPO_OPCIONAL_KEY, CAMPO_OPCIONAL);
 		list.add(subMap2);
 		
-		mainMap.put(LISTADO_KEY, list);
+		mainMap.put(LISTADO1_KEY, list);
 		
 		// Rellenamos el DTO
 		ExampleDto dto = new ExampleDto();
@@ -132,11 +132,11 @@ public class ConverterTests {
 		assertEquals(CAMPO_OBLIGATORIO, dto.getCampoObligatorio());
 		assertEquals(CAMPO_OPCIONAL, dto.getCampoOpcional());
 		
-		assertEquals("El listado no tiene el número de DTO's esperado", 2, dto.getListado().size());
-		assertEquals(CAMPO_OBLIGATORIO, dto.getListado().get(0).getCampoObligatorio());
-		assertEquals(CAMPO_OPCIONAL, dto.getListado().get(0).getCampoOpcional());
+		assertEquals("El listado no tiene el número de DTO's esperado", 2, dto.getListado1().size());
+		assertEquals(CAMPO_OBLIGATORIO, dto.getListado1().get(0).getCampoObligatorio());
+		assertEquals(CAMPO_OPCIONAL, dto.getListado1().get(0).getCampoOpcional());
 		
-		assertEquals(CAMPO_OBLIGATORIO, dto.getListado().get(1).getCampoObligatorio());
-		assertEquals(CAMPO_OPCIONAL, dto.getListado().get(1).getCampoOpcional());
+		assertEquals(CAMPO_OBLIGATORIO, dto.getListado1().get(1).getCampoObligatorio());
+		assertEquals(CAMPO_OPCIONAL, dto.getListado1().get(1).getCampoOpcional());
 	}
 }

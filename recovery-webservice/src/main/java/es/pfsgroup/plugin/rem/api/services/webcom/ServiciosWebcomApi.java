@@ -5,10 +5,10 @@ import java.util.List;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 public interface ServiciosWebcomApi {
 
@@ -71,5 +71,15 @@ public interface ServiciosWebcomApi {
 	 * @throws ErrorServicioWebcom
 	 */
 	public void enviaProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom;
+
+	/**
+	 * REM - WEBCOM: Contiene la información existente en REM para consolidarla
+	 * en WEBCOM y así tener integridad de datos, WEBCOM tendrá que darla de
+	 * alta en sus BBDD
+	 * 
+	 * @param informes
+	 * @throws ErrorServicioWebcom
+	 */
+	public void enviarEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom;
 
 }

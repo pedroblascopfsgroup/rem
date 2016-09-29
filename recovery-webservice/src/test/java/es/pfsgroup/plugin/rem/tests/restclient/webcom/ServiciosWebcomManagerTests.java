@@ -27,10 +27,14 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosException;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoVinculadoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.DelegacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.PlantaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
@@ -48,8 +52,8 @@ import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEnvioProveedores;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteInformeMediador;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioProveedoresConstantes;
@@ -76,6 +80,9 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	@InjectMocks
 	private ClienteEnvioProveedores proveedoresService;
 
+	@InjectMocks
+	private ClienteInformeMediador informeMediadorService;
+
 	@Mock
 	private RegistroLlamadasManager registroLlamadas;
 
@@ -85,7 +92,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	@Before
 	public void setup() {
 		initMocks(httpClient);
-		manager.setWebServiceClients(estadoTrabajoService, estadoOfertaService, stockService, proveedoresService);
+		manager.setWebServiceClients(estadoTrabajoService, estadoOfertaService, stockService, proveedoresService,
+				informeMediadorService);
 
 	}
 
@@ -240,12 +248,12 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 		// Validamos el dato de la delegación para el proveedor 1
 		int idxProveedor = 0;
-		int idxDelegcion= 0;
+		int idxDelegcion = 0;
 		JSONObject jsonDelegacion1 = requestData.getJSONObject(idxProveedor)
 				.getJSONArray(ServicioProveedoresConstantes.DELEGACIONES).getJSONObject(idxDelegcion);
 		assertEquals(jsonDelegacion1.get(ServicioProveedoresConstantes.DELEGACION_COD_TIPO_VIA), "cod");
 		assertEquals(jsonDelegacion1.get(ServicioProveedoresConstantes.DELEGACION_NOMBRE_CALLE), "calle1");
-		
+
 		idxDelegcion = 1;
 		JSONObject jsonDelegacion2 = requestData.getJSONObject(idxProveedor)
 				.getJSONArray(ServicioProveedoresConstantes.DELEGACIONES).getJSONObject(idxDelegcion);
@@ -255,14 +263,59 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		// Validamos el dato de la delegación para el proveedor 2
 		idxProveedor = 1;
 		idxDelegcion = 0;
-		jsonDelegacion1 = requestData.getJSONObject(idxProveedor).getJSONArray(ServicioProveedoresConstantes.DELEGACIONES)
-				.getJSONObject(idxDelegcion);
+		jsonDelegacion1 = requestData.getJSONObject(idxProveedor)
+				.getJSONArray(ServicioProveedoresConstantes.DELEGACIONES).getJSONObject(idxDelegcion);
 		assertEquals(jsonDelegacion1.get(ServicioProveedoresConstantes.DELEGACION_COD_TIPO_VIA), "cod");
 		assertEquals(jsonDelegacion1.get(ServicioProveedoresConstantes.DELEGACION_NOMBRE_CALLE), "calle1");
 
-		assertEquals("El segundo proveedor no tiene una segunda delegación", 1, requestData.getJSONObject(idxProveedor).getJSONArray(ServicioProveedoresConstantes.DELEGACIONES)
-				.size());
+		assertEquals("El segundo proveedor no tiene una segunda delegación", 1, requestData.getJSONObject(idxProveedor)
+				.getJSONArray(ServicioProveedoresConstantes.DELEGACIONES).size());
 
+	}
+
+	@Test
+	public void testEnviaInformeMediador() throws ErrorServicioWebcom {
+		String method = "POST";
+		String charset = "UTF-8";
+		
+		PlantaDto planta = new PlantaDto();
+		planta.setNumero(LongDataType.longDataType(1L));
+		
+		ActivoVinculadoDto activoVinculado = new ActivoVinculadoDto();
+		activoVinculado.setIdActivoHaya(LongDataType.longDataType(3L));
+		
+		InformeMediadorDto informe = new InformeMediadorDto();
+		informe.setIdUsuarioRemAccion(LongDataType.longDataType(100L));
+		informe.setFechaAccion(DateDataType.dateDataType(new Date()));
+		informe.setIdActivoHaya(LongDataType.longDataType(200L));
+		informe.setIdInformeMediadorWebcom(LongDataType.longDataType(300L));
+		informe.setPlantas(Arrays.asList(new PlantaDto[]{planta}));
+		
+		informe.setActivosVinculados(Arrays.asList(new ActivoVinculadoDto[]{activoVinculado}));
+		
+
+		List<InformeMediadorDto> informes = new ArrayList<InformeMediadorDto>();
+		informes.add(informe);
+		///////////
+		manager.enviarEstadoInformeMediador(informes);
+		///////////
+
+		JSONArray requestData = genericValidation(httpClient, method, charset);
+		assertDataBasicContent(requestData, 0);
+		
+		assertDataContains(requestData, 0, "idUsuarioRemAccion");
+		assertDataContains(requestData, 0, "fechaAccion");
+		assertDataContains(requestData, 0, "idActivoHaya");
+		assertDataContains(requestData, 0, "idInformeMediadorWebcom");
+		
+		JSONObject jsonPlanta = requestData.getJSONObject(0)
+				.getJSONArray("plantas").getJSONObject(0);
+		assertTrue(jsonPlanta.containsKey("numero"));
+		
+		JSONObject jsonActivoVinculado = requestData.getJSONObject(0)
+				.getJSONArray("activosVinculados").getJSONObject(0);
+		assertTrue(jsonActivoVinculado.containsKey("idActivoHaya"));
+		
 	}
 
 	@Test
@@ -296,7 +349,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	@Test
 	public void noReintentarSiErrorControladoWebcom() {
 		ClienteEstadoTrabajo mockServicio = Mockito.spy(estadoTrabajoService);
-		manager.setWebServiceClients(mockServicio, estadoOfertaService, stockService, proveedoresService);
+		manager.setWebServiceClients(mockServicio, estadoOfertaService, stockService, proveedoresService,
+				informeMediadorService);
 
 		ErrorServicioWebcom error = new ErrorServicioWebcom(ErrorServicioWebcom.MISSING_REQUIRED_FIELDS);
 
@@ -334,7 +388,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		HashMap<String, Object> subDto1 = new HashMap<String, Object>();
 		subDto1.put("campoObligatorio", "value");
 		HashMap<String, Object> subDto2 = new HashMap<String, Object>();
-		params.put("listado", Arrays.asList(new Map[] { subDto1, subDto2 }));
+		params.put("listado1", Arrays.asList(new Map[] { subDto1, subDto2 }));
 		// Probamos primero que se queja de que faltan 2 campos
 		try {
 			manager.compruebaObligatorios(ExampleDto.class, params);
@@ -345,8 +399,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 			List<String> missing = e.getMissingFields();
 			assertEquals("La cantidad de campos obligatorios que faltan no coincide", 2, missing.size());
 			assertTrue("Falta por indica rque falta campoObligatorio", missing.contains("campoObligatorio"));
-			assertTrue("Falta por indica rque falta listado.campoObligatorio",
-					missing.contains("listado.campoObligatorio"));
+			assertTrue("Falta por indicar que falta listado.campoObligatorio",
+					missing.contains("listado1.campoObligatorio"));
 
 		}
 

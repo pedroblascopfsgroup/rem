@@ -8,27 +8,25 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEnvioProveedores;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoNotificacion;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEnvioProveedores;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteInformeMediador;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteVentasYComisiones;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoNotificacionConstantes;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.VentasYComisionesConstantes;
 
 @Service
 public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implements ServiciosWebcomApi {
@@ -52,6 +50,9 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	
 	@Autowired
 	private ClienteEnvioProveedores proveedoresService;
+	
+	@Autowired
+	private ClienteInformeMediador informeMediadorService;
 
 	@Autowired
 	private ClienteStock stockService;
@@ -138,14 +139,29 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 		}
 		
 	}
+	
+	@Override
+	public void enviarEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom {
+		logger.info("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
+		
+		ParamsList paramsList = createParamsList(informes);
+		
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, informeMediadorService);
+		} else {
+			logger.debug("ParamsList vacío. Nada que enviar");
+		}
+		
+	}
 
 
 	public void setWebServiceClients(ClienteEstadoTrabajo estadoTrabajoService, ClienteEstadoOferta estadoOfertaService,
-			ClienteStock stockService, ClienteEnvioProveedores proveedoresService) {
+			ClienteStock stockService, ClienteEnvioProveedores proveedoresService, ClienteInformeMediador informeMediadorService) {
 		this.estadoTrabajoService = estadoTrabajoService;
 		this.estadoOfertaService = estadoOfertaService;
 		this.stockService = stockService;
 		this.proveedoresService = proveedoresService;
+		this.informeMediadorService = informeMediadorService;
 
 	}
 

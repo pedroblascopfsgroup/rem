@@ -2,10 +2,9 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -27,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
@@ -39,7 +39,6 @@ import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.VentasYComisionesConstantes;

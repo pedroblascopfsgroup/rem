@@ -2,8 +2,8 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common
 
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 
 /**

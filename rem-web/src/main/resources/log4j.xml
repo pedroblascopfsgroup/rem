@@ -143,6 +143,14 @@
         <appender-ref ref="file" />
         <appender-ref ref="email" />
     </logger>
+    
+    <logger name="es.pfsgroup.plugin.rem.utils" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    
     <logger name="es.pfsgroup.plugin.rem.restclient" additivity="false">
         <level value="debug"/>
         <appender-ref ref="console" />
@@ -180,7 +188,7 @@
    
     <!-- root -->
     <root>
-        <priority value="warn" />
+        <priority value="debug" />
         <appender-ref ref="console" />
         <appender-ref ref="file" />
         <appender-ref ref="email" />

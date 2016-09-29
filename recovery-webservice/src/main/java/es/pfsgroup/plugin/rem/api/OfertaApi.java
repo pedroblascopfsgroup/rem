@@ -84,6 +84,13 @@ public interface OfertaApi {
 	 */
 	public List<String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields);
 	
+	
+	/**
+	 * Actualizar el estado de disponibilidad comercial en los activos
+	 * @param oferta
+	 */
+	public void updateStateDispComercialActivosByOferta(Oferta oferta);
+
 	/**
 	 * Método que obtiene uno de los estados posibles de la oferta
 	 * relacionado con una determinado código

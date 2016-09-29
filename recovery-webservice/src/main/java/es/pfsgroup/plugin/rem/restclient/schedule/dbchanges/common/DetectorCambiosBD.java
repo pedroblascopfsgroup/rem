@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 /**
  * Clase abstracta para desarrollar detectores de cambios.
@@ -49,8 +50,9 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 * 
 	 * @param data
 	 *            Lista de DTO's que se queren mandar al servicio.
+	 * @throws ErrorServicioWebcom 
 	 */
-	public abstract void invocaServicio(List<T> data);
+	public abstract void invocaServicio(List<T> data) throws ErrorServicioWebcom;
 
 	/**
 	 * Devuelve la lisa de cambios detectados ya convertidos al DTO

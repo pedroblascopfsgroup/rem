@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
@@ -50,7 +52,6 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public List<String> validateRequestObject(Serializable obj,TIPO_VALIDCION tipovalidacion);
 	
 	/**
@@ -99,6 +100,8 @@ public interface RestApi {
 	 */	
 	public PeticionRest getLastPeticionByToken(String token);
 	
+	
+	public String getClientIpAddr(HttpServletRequest request);
 
 }
 

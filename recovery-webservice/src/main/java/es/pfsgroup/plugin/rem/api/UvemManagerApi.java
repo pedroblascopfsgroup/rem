@@ -4,6 +4,7 @@ import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
+import es.cajamadrid.servicios.GM.GMPAJC34_INS.GMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu;
@@ -92,11 +93,16 @@ public interface UvemManagerApi {
 	 * Servicio REM  UVEM para dar de alta la oferta en el sistema de Bankia.
 	 */
 	public void altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+
+	public GMPDJB13_INS resultadoInstanciaDecision();
 	
 	/**
 	 * Servicio REM  UVEM para modificar la oferta en el sistema de Bankia.
 	 */
 	public void modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
 	
+	public void consultaDatosPrestamo(String numExpedienteRiesgo, int tipoRiesgo) throws WIException;
+
+	public GMPAJC34_INS resultadoConsultaDatosPrestamo();
 
 }

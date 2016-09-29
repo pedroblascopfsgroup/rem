@@ -84,7 +84,6 @@ public class RestSecurityFilter implements Filter {
 			RequestDto datajson = (RequestDto) restRequest.getRequestData(RequestDto.class);
 			logger.debug("Ejecutando request id:".concat(datajson.getId()));
 			logger.debug("Datos de la peticion id:".concat(restRequest.getBody()));
-			
 
 			doSessionConfig(response, WORKINGCODE);
 
@@ -92,9 +91,10 @@ public class RestSecurityFilter implements Filter {
 			String signature = ((HttpServletRequest) request).getHeader("signature");
 			String id = datajson.getId();
 			peticion.setToken(id);
-			String ipClient = ((HttpServletRequest) request).getRemoteAddr();
-			logger.debug("IP de la petición:".concat(ipClient));
+			String ipClient = restApi.getClientIpAddr(((HttpServletRequest) request));
 			
+			((HttpServletRequest) request).getHeader("X-Forwarded-For");  
+
 			Broker broker = restApi.getBrokerByIp(ipClient);
 			if (broker == null) {
 				broker = restApi.getBrokerDefault("");

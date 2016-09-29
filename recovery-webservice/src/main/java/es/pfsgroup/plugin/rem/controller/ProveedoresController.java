@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,15 +25,23 @@ import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateR
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
-import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.utils.FileUtils;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.ProveedorExcelReport;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
+import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedor;
+import es.pfsgroup.plugin.rem.proveedores.ProveedoresManager;
 
 
 @Controller
@@ -44,6 +53,8 @@ public class ProveedoresController {
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
+	@Autowired
+	private UploadAdapter uploadAdapter;
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
@@ -87,14 +98,10 @@ public class ProveedoresController {
         f.setMinimumFractionDigits(2);
         binder.registerCustomEditor(double.class, new CustomNumberEditor(Double.class, f, true));
         binder.registerCustomEditor(Double.class, new CustomNumberEditor(Double.class, f, true));
-       
         
         /*binder.registerCustomEditor(Float.class, new CustomNumberEditor(Float.class, true));
         binder.registerCustomEditor(Long.class, new CustomNumberEditor(Long.class, true));
         binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));*/
-
-        
-        
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -126,8 +133,7 @@ public class ProveedoresController {
 		dtoProveedorFiltro.setStart(excelReportGeneratorApi.getStart());
 		dtoProveedorFiltro.setLimit(excelReportGeneratorApi.getLimit());
 		
-		@SuppressWarnings("unchecked")
-		List<VBusquedaProveedor> listaProveedores = (List<VBusquedaProveedor>) proveedoresApi.getProveedores(dtoProveedorFiltro).getResults();
+		List<DtoProveedorFilter> listaProveedores = (List<DtoProveedorFilter>) proveedoresApi.getProveedores(dtoProveedorFiltro);
 
 		ExcelReport report = new ProveedorExcelReport(listaProveedores);
 		
@@ -138,10 +144,14 @@ public class ProveedoresController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getProveedores(DtoProveedorFilter dtoProveedorFiltro, ModelMap model) {
 		try {
-			Page page = proveedoresApi.getProveedores(dtoProveedorFiltro);
+			List<DtoProveedorFilter> resultados = proveedoresApi.getProveedores(dtoProveedorFiltro);
 
-			model.put("data", page.getResults());
-			model.put("totalCount", page.getTotalCount());
+			model.put("data", resultados);
+			if(!Checks.estaVacio(resultados)) {
+				model.put("totalCount", resultados.get(0).getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
 			model.put("success", true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -151,4 +161,256 @@ public class ProveedoresController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDireccionesDelegacionesByProveedor(DtoDireccionDelegacion dtoDireccionDelegacion, ModelMap model) {
+		
+		try{
+			List<DtoDireccionDelegacion> resultados = proveedoresApi.getDireccionesDelegacionesByProveedor(dtoDireccionDelegacion);
+			model.put("data", resultados);
+			if(!Checks.estaVacio(resultados)) {
+				model.put("totalCount", resultados.get(0).getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createDireccionDelegacion(DtoDireccionDelegacion dtoDireccionDelegacion, ModelMap model) {
+		
+		try{
+			boolean success = proveedoresApi.createDireccionDelegacion(dtoDireccionDelegacion);
+			model.put("success", success);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateDireccionDelegacion(DtoDireccionDelegacion dtoDireccionDelegacion, ModelMap model) {
+		
+		try{
+			boolean success = proveedoresApi.updateDireccionDelegacion(dtoDireccionDelegacion);
+			model.put("success", success);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteDireccionDelegacion(DtoDireccionDelegacion dtoDireccionDelegacion, ModelMap model) {
+		
+		try{
+			boolean success = proveedoresApi.deleteDireccionDelegacion(dtoDireccionDelegacion);
+			model.put("success", success);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPersonasContactoByProveedor(DtoPersonaContacto dtoPersonaContacto, ModelMap model) {
+
+		try{
+			List<DtoPersonaContacto> resultados = proveedoresApi.getPersonasContactoByProveedor(dtoPersonaContacto);
+			model.put("data", resultados);
+			if(!Checks.estaVacio(resultados)) {
+				model.put("totalCount", resultados.get(0).getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+	
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView savePersonasContacto(DtoPersonaContacto dtoPersonaContacto, ModelMap model) {
+		
+		try{
+			boolean success = proveedoresApi.savePersonasContacto(dtoPersonaContacto);
+			model.put("success", success);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deletePersonasContacto(DtoPersonaContacto dtoPersonaContacto, ModelMap model) {
+		
+		try{
+			boolean success = proveedoresApi.deletePersonasContacto(dtoPersonaContacto);
+			model.put("success", success);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView setPersonaContactoPrincipal(DtoPersonaContacto dtoPersonaContacto, ModelMap model) {
+		
+		try{
+			boolean success = proveedoresApi.setPersonaContactoPrincipal(dtoPersonaContacto);
+			model.put("success", success);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivosIntegradosByProveedor(DtoActivoIntegrado dtoActivoIntegrado, ModelMap model) {
+		
+		try{
+			List<DtoActivoIntegrado> resultados = proveedoresApi.getActivoIntegradoByProveedor(dtoActivoIntegrado);
+			model.put("data", resultados);
+			if(!Checks.estaVacio(resultados)) {
+				model.put("totalCount", resultados.get(0).getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAdjuntos(Long id, ModelMap model){
+		model.put("data", proveedoresApi.getAdjuntos(id));
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+    public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto, ModelMap model) {
+
+		try {
+			boolean success = proveedoresApi.deleteAdjunto(dtoAdjunto);
+			model.put("success", success);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			model.put("success", false);
+		}
+    	
+    	return createModelAndViewJson(model);
+    }
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView upload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelMap model = new ModelMap();
+		
+		try {
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			
+			String errores = proveedoresApi.upload(fileItem);			
+
+			model.put("errores", errores);
+			model.put("success", errores==null);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errores", e.getCause());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoProveedor (HttpServletRequest request, HttpServletResponse response) {
+		DtoAdjunto dtoAdjunto = new DtoAdjunto();
+		
+		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
+		
+       	FileItem fileItem = proveedoresApi.getFileItemAdjunto(dtoAdjunto);
+		
+       	try { 
+       		ServletOutputStream salida = response.getOutputStream();
+       			
+       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+       		response.setHeader("Cache-Control", "max-age=0");
+       		response.setHeader("Expires", "0");
+       		response.setHeader("Pragma", "public");
+       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+       		response.setContentType(fileItem.getContentType());
+       		
+       		// Write
+       		FileUtils.copy(fileItem.getInputStream(), salida);
+       		salida.flush();
+       		salida.close();
+       		
+       	} catch (Exception e) { 
+       		e.printStackTrace();
+       	}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createProveedor(DtoProveedorFilter dtoProveedorFilter, ModelMap model){
+		
+		try {
+			boolean success = proveedoresApi.createProveedor(dtoProveedorFilter);
+			model.put("success", success);
+		} catch(Exception ex) {
+			if(ex.getMessage().equals(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE)) {
+				model.put("errores", ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_MESSAGE);
+				model.put("success", false);
+			} else {
+				ex.printStackTrace();
+				model.put("success", false);
+			}
+		}
+		
+		return createModelAndViewJson(model);
+	}
+
 }

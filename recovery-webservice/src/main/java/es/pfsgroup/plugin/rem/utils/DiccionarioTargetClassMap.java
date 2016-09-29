@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
@@ -60,8 +61,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCuota;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFachada;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
@@ -191,6 +194,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("resultadoProcesoBlanqueo", DDResultadoProcesoBlanqueo.class);
 		mapa.put("motivoRetencionPago", DDMotivoRetencion.class);
 		mapa.put("tipoActivosCartera", DDTipoActivosCartera.class);
+		mapa.put("tipoDireccionProveedor", DDTipoDireccionProveedor.class);
+		mapa.put("cargoProveedor", DDCargoProveedorContacto.class);
+		mapa.put("tipoDocumentoProveedor", DDTipoDocumentoProveedor.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

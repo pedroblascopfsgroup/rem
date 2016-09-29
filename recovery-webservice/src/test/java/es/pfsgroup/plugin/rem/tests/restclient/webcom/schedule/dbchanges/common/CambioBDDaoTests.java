@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -21,12 +22,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.HibernateExecutionFacade;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
+import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CambioBDDaoTests {
@@ -149,6 +152,34 @@ public class CambioBDDaoTests {
 		
 	}
 	
+	@Test
+	public void getDtoFields_DTOs_anidados(){
+		List<String> campos = Arrays.asList(dao.getDtoFields(ExampleDto.class));
+		
+		// El DTO tiene 5 campos y además 2 sub-dtos con 2 campos cada uno
+		assertEquals("El número de campos no coincide", 9, campos.size());
+
+		assertTrue(campos.contains("idObjeto"));
+		assertTrue(campos.contains("idUsuarioRemAccion"));
+		assertTrue(campos.contains("fechaAccion"));
+		assertTrue(campos.contains("campoObligatorio"));
+		assertTrue(campos.contains("campoOpcional"));
+		assertTrue(campos.contains("listado1.campoObligatorio"));
+		assertTrue(campos.contains("listado1.campoOpcional"));
+		assertTrue(campos.contains("listado2.campoObligatorio"));
+		assertTrue(campos.contains("listado2.campoOpcional"));
+	}
+	
+	@Test
+	public void columns4select_DTOs_anidados(){
+		List<String> columnas = Arrays.asList(dao.columns4Select(new String[]{"campo", "miCampo", "listado.miCampo"}, null).split(","));
+		assertEquals("La cantidad de columans no es la esperada", 3, columnas.size());
+		
+		assertTrue(columnas.contains("CAMPO"));
+		assertTrue(columnas.contains("MI_CAMPO"));
+		assertTrue("El campo anidado no se ha devuelto correctamente", columnas.contains("LISTADO_MI_CAMPO"));
+		
+	}
 	
 	
 	private void hibernateExecutionFacadeBehaviour() {

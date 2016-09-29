@@ -2,7 +2,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.proveedordetalle',
 
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase'],
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.DireccionesDelegacionesModel',
+                'HreRem.model.PersonasContactoModel', 'HreRem.model.ActivosIntegradosModel', 'HreRem.model.AdjuntoProveedor',
+                'HreRem.model.ComboLocalidadBase', 'HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor'],
     
     data: {
     	proveedor: null
@@ -24,7 +26,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoProveedor'}
 				},
-				autoload: true
+				autoLoad: true
 		},
 		comboSubtipoProveedor: {
 			model: 'HreRem.model.ComboBase',
@@ -33,7 +35,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 					remoteUrl: 'generic/getDiccionarioSubtipoProveedor',
 					extraParams: {codigoTipoProveedor: '{proveedor.tipoProveedorCodigo}'}
 				},
-				autoload: true
+				autoLoad: true
 		},
 		comboTipoPersona: {
 			model: 'HreRem.model.ComboBase',
@@ -90,7 +92,66 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'provincias'}
-			}
+			},
+			autoLoad: true
+		},
+		direccionesDelegaciones: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.DireccionesDelegacionesModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getDireccionesDelegacionesByProveedor',
+				extraParams: {id: '{proveedor.id}'}
+			},
+			autoLoad: true
+		},
+		personasContacto: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.PersonasContactoModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getPersonasContactoByProveedor',
+				extraParams: {id: '{proveedor.id}'}
+			},
+			autoLoad: true
+		},
+		activosIntegrados: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ActivosIntegradosModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getActivosIntegradosByProveedor',
+				extraParams: {id: '{proveedor.id}'}
+			},
+			autoLoad: true
+		},
+		comboTipoDireccionProveedor: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoDireccionProveedor'}
+			},
+			autoLoad: true
+		},
+		comboCargo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'cargoProveedor'}
+			},
+			autoLoad: true
+		},
+		storeDocumentosProveedor: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AdjuntoProveedor',
+     	     proxy: {
+     	        type: 'uxproxy',
+     	        remoteUrl: 'proveedores/getListAdjuntos',
+     	        extraParams: {id: '{proveedor.id}'}
+         	 },
+         	 groupField: 'descripcionTipo'
 		}
     }
     

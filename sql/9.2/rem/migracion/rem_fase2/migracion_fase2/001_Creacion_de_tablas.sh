@@ -3,11 +3,11 @@
 dir=$(pwd)
 echo "Directorio raiz de migración: "$dir
 
-#cd ./01_PREV
+cd ./01_PREV
  
-#echo "[1/2] Creando tablas previas. Realizando ajustes previos."
+echo "[1/2] Creando tablas previas. Realizando ajustes previos."
 
-#./DB-scripts.sh $1 $1
+./DB-scripts.sh $1 $1
 
 cd $dir
 

@@ -19,10 +19,9 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos de dirección de proveedor.
+ * Modelo que gestiona el diccionario de tipos de cargo del proveedor (tipo entidad).
  * 
  * @author Daniel Gutiérrez
- *
  */
 @Entity
 @Table(name = "DD_CPC_CARGO_PROV_CONTACTO", schema = "${entity.schema}")

@@ -84,7 +84,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													[
 														{
 															xtype: 'datefieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.contabilizacion'),
+															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.devengo'),
 															bind:		'{contabilidad.fechaDevengo}',
 															formatter: 'date("d/m/Y")',
 															readOnly: true

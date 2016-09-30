@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.oferta;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -19,6 +22,7 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
@@ -49,6 +53,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	protected static final Log logger = LogFactory.getLog(OfertaManager.class);
 	
+	@Resource
+    MessageService messageServices;
 	
 	@Autowired
 	private RestApi restApi;
@@ -64,6 +70,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
 	
 	@Override
 	public String managerName() {
@@ -281,6 +290,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				if(!Checks.esNulo(ofertaDto.getCodEstadoOferta())){
+					//Perimetros: NO se pueden ACEPTAR Ofertas en activos que no tengan condicion comercial en el perimetro
+					// Se valida lo primero pq debe hacerse aunque el diccionario tenga borrado logico del estado aceptada
+					if(DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta())){
+						listaErrores.add(messageServices.getMessage("oferta.validacion.errorMensaje.perimetroSinComercial"));
+					}
 					DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
 					if(Checks.esNulo(estadoOfr)){
 						listaErrores.add("No existe el código del estado de la oferta especificado en el campo codEstadoOferta: " + ofertaDto.getCodEstadoOferta());
@@ -331,7 +345,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}
-				
 			}
 			
 		}catch (Exception e){

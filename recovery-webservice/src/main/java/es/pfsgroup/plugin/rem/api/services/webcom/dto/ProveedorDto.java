@@ -11,7 +11,9 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Webco
 
 public class ProveedorDto implements WebcomRESTDto {
 
+	@WebcomRequired
 	private DateDataType fechaAccion;
+	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
 
 	@WebcomRequired

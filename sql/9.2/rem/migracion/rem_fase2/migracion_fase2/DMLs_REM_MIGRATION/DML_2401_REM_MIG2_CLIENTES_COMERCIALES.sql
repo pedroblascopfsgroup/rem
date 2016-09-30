@@ -80,7 +80,7 @@ BEGIN
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
             WHERE NOT EXISTS (
               SELECT 1 
-              FROM '||V_ESQUEMA_MASTER||'.USU_USUARIO USU
+              FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
               WHERE MIG2.CLC_COD_USUARIO_LDAP_ACCION = USU.USU_USERNAME
             )
           )
@@ -89,7 +89,7 @@ BEGIN
           MIG2.CLC_COD_USUARIO_LDAP_ACCION    						      OFA_COD_OFERTA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN USERNAME_NOT_EXISTS ON USERNAME_NOT_EXISTS.USU_USERNAME = MIG2.CLC_COD_USUARIO_LDAP_ACCION
+          INNER JOIN USERNAME_NOT_EXISTS ON USERNAME_NOT_EXISTS.CLC_COD_USUARIO_LDAP_ACCION = MIG2.CLC_COD_USUARIO_LDAP_ACCION
           '
           ;
           
@@ -203,6 +203,8 @@ BEGIN
           0                                                                                                           AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           INNER JOIN CLIENTE_WEBCOM CW ON CW.CLC_COD_CLIENTE_WEBCOM = MIG2.CLC_COD_CLIENTE_WEBCOM
+          LEFT JOIN '||V_ESQUEMA||'.MIG2_USU_NOT_EXISTS UNOT ON UNOT.USU_USERNAME = MIG2.CLC_COD_USUARIO_LDAP_ACCION
+          WHERE UNOT.USU_USERNAME IS NULL
         ) AUX
       '
       ;

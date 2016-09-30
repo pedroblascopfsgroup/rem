@@ -112,7 +112,8 @@ public interface RestApi {
 	 */
 	public String getClientIpAddr(HttpServletRequest request);
 
-	public void saveDtoToBbdd(Object dto, Class claseDto)
+	@SuppressWarnings("rawtypes")
+	public void saveDtoToBbdd(Object dto, Class entity)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException;
 

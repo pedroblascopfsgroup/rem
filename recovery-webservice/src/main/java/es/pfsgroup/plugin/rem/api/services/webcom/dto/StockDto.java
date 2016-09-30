@@ -6,11 +6,14 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class StockDto implements WebcomRESTDto{
-	
+	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
+	@WebcomRequired
 	private DateDataType fechaAccion;
+	
 	private LongDataType idActivoHaya;
 	private StringDataType codTipoVia;
 	private StringDataType nombreCalle;

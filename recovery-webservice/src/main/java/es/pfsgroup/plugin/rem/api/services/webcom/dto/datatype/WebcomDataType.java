@@ -27,8 +27,8 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
-	public static NullLongDataType nullLongDataType() {
-		return new NullLongDataType();
+	public static LongDataType nullLongDataType() {
+		return new LongDataType(null);
 	}
 
 	/*
@@ -43,8 +43,8 @@ public abstract class WebcomDataType<T> {
 
 	}
 
-	public static NullDateDataType nullDateDataType() {
-		return new NullDateDataType();
+	public static DateDataType nullDateDataType() {
+		return new DateDataType(null);
 	}
 
 	/*
@@ -58,8 +58,8 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
-	public static NullStringDataType nullStringDataType() {
-		return new NullStringDataType();
+	public static StringDataType nullStringDataType() {
+		return new StringDataType(null);
 	}
 
 	/*
@@ -73,8 +73,8 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
-	public static NullDoubleDataType nullDoubleDataType() {
-		return new NullDoubleDataType();
+	public static DoubleDataType nullDoubleDataType() {
+		return new DoubleDataType(null);
 	}
 
 	/*
@@ -88,26 +88,17 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
-	public static NullBooleanDataType nullBooleanDataType() {
-		return new NullBooleanDataType();
+	public static BooleanDataType nullBooleanDataType() {
+		return new BooleanDataType(null);
 	}
 
 	public String toString() {
-		if (this instanceof NullDataType) {
-			return "NullDataType";
-		} else {
-			return "DataType <".concat((getValue() != null ? getValue().toString() : "empty")).concat(">");
-		}
+		return "DataType <".concat((getValue() != null ? getValue().toString() : "empty")).concat(">");
 	}
 
 	public static Object valueOf(Object o) {
 		if (o instanceof WebcomDataType) {
-			Object value = ((WebcomDataType) o).getValue();
-			if ((value == null) && (!(o instanceof NullDataType))) {
-				throw new IllegalArgumentException("getValue() es NULL. ¿Debería " + o.getClass().getName()
-						+ " implementar " + NullDataType.class.getName() + "?");
-			}
-			return value;
+			return ((WebcomDataType) o).getValue();
 		} else {
 			return o;
 		}

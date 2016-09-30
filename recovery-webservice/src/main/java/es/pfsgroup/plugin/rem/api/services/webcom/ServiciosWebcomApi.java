@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.api.services.webcom;
 
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
@@ -89,5 +91,26 @@ public interface ServiciosWebcomApi {
 	 * @throws ErrorServicioWebcom
 	 */
 	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom;
+
+	/**
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
+	 * de las cabeceras (divisiones) de las distintas Obras para que WEBCOM
+	 * pueda gestionar su publicación en los distintos portales
+	 * 
+	 * @param cabeceras
+	 * @throws ErrorServicioWebcom
+	 */
+	public void webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras) throws ErrorServicioWebcom;
+
+	/**
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la relación
+	 * entre los activos y las distintas obras nuevas o campañas (activos que
+	 * las componen) para que WEBCOM pueda gestionar su publicación en los
+	 * distintos portales
+	 * 
+	 * @param activos
+	 * @throws ErrorServicioWebcom
+	 */
+	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom;
 
 }

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
@@ -20,11 +22,13 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomProveedores;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomActivosObrasNuevas;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomCabecerasObrasNuevas;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoInformeMediador;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoNotificacion;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoPeticionTrabajo;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoInformeMediador;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomProveedores;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomStock;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomVentasYcomisiones;
 
@@ -47,18 +51,24 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 
 	@Autowired
 	private ClienteWebcomVentasYcomisiones ventasYcomsionesService;
-	
+
 	@Autowired
 	private ClienteWebcomProveedores proveedoresService;
-	
+
 	@Autowired
 	private ClienteWebcomEstadoInformeMediador informeMediadorService;
+	
+	@Autowired
+	private ClienteWebcomCabecerasObrasNuevas cabecerasObrasNuevasService;
+	
+	@Autowired
+	private ClienteWebcomActivosObrasNuevas activosObrasNuevasService;
 
 	@Autowired
 	private ClienteWebcomStock stockService;
 
 	@Override
-	public void webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom{
+	public void webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom {
 		logger.info("Invocando servicio Webcom: Estado Trabajo");
 
 		ParamsList paramsList = createParamsList(estadoTrabajo);
@@ -71,7 +81,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom{
+	public void webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom {
 		logger.info("Invocando servicio Webcom: Estado Oferta");
 
 		ParamsList paramsList = createParamsList(estadoOferta);
@@ -99,7 +109,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom{
+	public void webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom {
 		logger.info("Invocando servicio Webcom: Estado notificaciones");
 
 		ParamsList paramsList = createParamsList(notificaciones);
@@ -113,7 +123,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void webcomRestVentasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom{
+	public void webcomRestVentasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom {
 		logger.info("Invocando servicio Webcom: Ventas y Comisiones");
 
 		ParamsList paramsList = createParamsList(comisiones);
@@ -125,38 +135,67 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 		}
 
 	}
-	
+
 	@Override
 	public void webcomRestProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom {
 		logger.info("Invocando servicio Webcom: Envio datos Proveedores");
-		
+
 		ParamsList paramsList = createParamsList(proveedores);
-		
+
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, proveedoresService);
 		} else {
 			logger.debug("ParamsList vacío. Nada que enviar");
 		}
-		
+
 	}
-	
+
 	@Override
 	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom {
 		logger.info("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
-		
+
 		ParamsList paramsList = createParamsList(informes);
-		
+
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, informeMediadorService);
 		} else {
 			logger.debug("ParamsList vacío. Nada que enviar");
 		}
-		
+
 	}
 
+	@Override
+	public void webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras) throws ErrorServicioWebcom {
+		logger.info("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
 
-	public void setWebServiceClients(ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService, ClienteWebcomEstadoOferta estadoOfertaService,
-			ClienteWebcomStock stockService, ClienteWebcomProveedores proveedoresService, ClienteWebcomEstadoInformeMediador informeMediadorService) {
+		ParamsList paramsList = createParamsList(cabeceras);
+
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, cabecerasObrasNuevasService);
+		} else {
+			logger.debug("ParamsList vacío. Nada que enviar");
+		}
+
+	}
+
+	@Override
+	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom {
+		logger.info("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
+
+		ParamsList paramsList = createParamsList(activos);
+
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, activosObrasNuevasService);
+		} else {
+			logger.debug("ParamsList vacío. Nada que enviar");
+		}
+
+	}
+
+	public void setWebServiceClients(ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService,
+			ClienteWebcomEstadoOferta estadoOfertaService, ClienteWebcomStock stockService,
+			ClienteWebcomProveedores proveedoresService, ClienteWebcomEstadoInformeMediador informeMediadorService) {
+		// Este método sirve sólamente para que el test (JUnit) pueda inyectar mocks a la clase.
 		this.estadoTrabajoService = estadoTrabajoService;
 		this.estadoOfertaService = estadoOfertaService;
 		this.stockService = stockService;
@@ -164,7 +203,6 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 		this.informeMediadorService = informeMediadorService;
 
 	}
-
 
 	/**
 	 * Crea un objeto ParamList para invocar al web service a partir de una

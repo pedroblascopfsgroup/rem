@@ -20,7 +20,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 import com.gfi.webIntegrator.WIService;
-import com.gfi.webIntegrator.datatypes.BindElement;
 
 import es.cajamadrid.servicios.ARQ.ImporteMonetario;
 import es.cajamadrid.servicios.ARQ.Porcentaje9;
@@ -43,12 +42,10 @@ import es.cajamadrid.servicios.GM.GMPETS07_INS.StructGMPETS07_INS_NumeroDeOcurre
 import es.cajamadrid.servicios.GM.GMPETS07_INS.VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.VectorGMPETS07_INS_NumeroDeOcurrenciasnumogt;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
-import es.cm.arq.tda.tiposdedatosbase.Moneda;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
-import net.sf.json.JSONObject;
 
 @Service("uvemManager")
 public class UvemManager implements UvemManagerApi {
@@ -90,6 +87,15 @@ public class UvemManager implements UvemManagerApi {
 				? appProperties.getProperty("rest.client.uvem.alias.integrador") : "";
 	}
 
+
+	/**
+	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
+	 * 
+	 * @param bienId
+	 * @param nombreGestor
+	 * @param gestion
+	 * @return
+	 */
 	public Integer ejecutarSolicitarTasacion(Long bienId, String nombreGestor, String gestion)
 			throws WIMetaServiceException, WIException, TipoDeDatoException {
 
@@ -121,7 +127,7 @@ public class UvemManager implements UvemManagerApi {
 		es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraFuncionalPeticion();
 		es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPETS07_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPETS07_INS();
-
+		
 		// Seteamos cabeceras
 		servicioGMPETS07_INS.setcabeceraAplicacion(cabeceraAplicacion);
 		servicioGMPETS07_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
@@ -217,6 +223,20 @@ public class UvemManager implements UvemManagerApi {
 		return servicioGMPETS07_INS;
 	}
 
+	
+	
+	
+	
+	
+	
+	/**
+	 * Invoca al servicio GMPAJC11_INS de BANKIA para solicitar los datos de un cliente
+	 * 
+	 * @param nudnio
+	 * @param cocldo
+	 * @param qcenre
+	 * @return
+	 */
 	@Override
 	public void ejecutarNumCliente(String nudnio, String cocldo, String qcenre) throws WIException {
 
@@ -236,8 +256,25 @@ public class UvemManager implements UvemManagerApi {
 		es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new StructCabeceraFuncionalPeticion();
 		es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraTecnica cabeceraTecnica = new StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPAJC11_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC11_INS();
+		
 		cabeceraFuncional.setIDDSAQ("CLDC");
 		System.out.println("CLDC: " + cabeceraFuncional.getIDDSAQ());
+		
+		cabeceraFuncional.setCOFRAQ("168"); 
+		System.out.println("COFRAQ: " + cabeceraFuncional.getCOFRAQ());
+		
+		cabeceraFuncional.setCOSFAQ("00");
+		System.out.println("COSFAQ: " + cabeceraFuncional.getCOSFAQ());
+		
+		cabeceraFuncional.setCOAQAQ("AQ");
+		System.out.println("COAQAQ: " + cabeceraFuncional.getCOAQAQ());
+		
+		cabeceraFuncional.setCORPAQ("WW0071");
+		System.out.println("CORPAQ: " + cabeceraFuncional.getCORPAQ());
+
+		cabeceraTecnica.setCLORAQ("71");
+		System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());	
+		
 		
 		// Seteamos cabeceras
 		servicioGMPAJC11_INS.setcabeceraAplicacion(cabeceraAplicacion);
@@ -275,21 +312,121 @@ public class UvemManager implements UvemManagerApi {
 		return servicioGMPAJC11_INS;
 	}
 
+	
+	
+	
+	
+
+	
+	
+	
+	/**
+	 * Invoca al servicio GMPAJC93_INS de BANKIA para obtener un cliente a partir de un idclienteUrsus
+	 * 
+	 * @param instanciaDecisionDto
+	 * @return
+	 */
+	@Override
+	public void ejecutarDatosCliente(Long idclow, String qcenre) throws WIException {
+		logger.info("------------ LLAMADA WS DatosCliente -----------------");
+		leerConfiguracion();
+		// parametros iniciales
+		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
+		htInitParams.put(WIService.WORFLOW_PARAM, URL);
+		htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
+
+		WIService.init(htInitParams);
+
+		// instanciamos el servicio
+		servicioGMPAJC93_INS = new GMPAJC93_INS();
+
+		// Creamos cabeceras
+		es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraFuncionalPeticion();
+		es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica();
+		StructCabeceraAplicacionGMPAJC93_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC93_INS();
+		
+		cabeceraFuncional.setIDDSAQ("CLDC");
+		System.out.println("CLDC: " + cabeceraFuncional.getIDDSAQ());
+		
+		cabeceraFuncional.setCOFRAQ("168"); 
+		System.out.println("COFRAQ: " + cabeceraFuncional.getCOFRAQ());
+		
+		cabeceraFuncional.setCOSFAQ("00");
+		System.out.println("COSFAQ: " + cabeceraFuncional.getCOSFAQ());
+		
+		cabeceraFuncional.setCOAQAQ("AQ");
+		System.out.println("COAQAQ: " + cabeceraFuncional.getCOAQAQ());
+		
+		cabeceraFuncional.setCORPAQ("WW0071");
+		System.out.println("CORPAQ: " + cabeceraFuncional.getCORPAQ());
+
+		cabeceraTecnica.setCLORAQ("71");
+		System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());	
+		
+		
+		// Seteamos cabeceras
+		servicioGMPAJC93_INS.setcabeceraAplicacion(cabeceraAplicacion);
+		servicioGMPAJC93_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
+		servicioGMPAJC93_INS.setcabeceraTecnica(cabeceraTecnica);
+
+		// seteamos parametros
+		logger.info("CodigoObjetoAccesocopace: CACL0000");
+		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("CACL0000");
+		logger.info("IdentificadorDiscriminadorFuncioniddsfu: DF01");
+		servicioGMPAJC93_INS.setIdentificadorDiscriminadorFuncioniddsfu("DF01");
+		logger.info("CodEntidadRepresntClienteUrsusqcenre: ".concat(qcenre));
+		servicioGMPAJC93_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
+
+		servicioGMPAJC93_INS.setAlias(ALIAS);
+		servicioGMPAJC93_INS.execute();
+
+	}
+
+	@Override
+	public GMPAJC93_INS resultadoDatosCliente() {
+		return servicioGMPAJC93_INS;
+
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para dar de alta un instancia de decisión de una oferta
+	 * 
+	 * @param instanciaDecisionDto
+	 * @return
+	 */
 	@Override
 	public void altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException {
 		instanciaDecision(instanciaDecisionDto, "ALTA");
 	}
 
+	/**
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para consultar una instancia de decisión de una oferta
+	 * 
+	 * @param instanciaDecisionDto
+	 * @return
+	 */
 	@Override
 	public void consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException {
 		instanciaDecision(instanciaDecisionDto, "CONS");
 	}
 
+	/**
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de decisión de una oferta
+	 * 
+	 * @param instanciaDecisionDto
+	 * @return
+	 */
 	@Override
 	public void modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException {
 		instanciaDecision(instanciaDecisionDto, "MODI");
 	}
 
+	
 	public void instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion) throws WIException {
 
 		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
@@ -402,51 +539,18 @@ public class UvemManager implements UvemManagerApi {
 		return servicioGMPDJB13_INS;
 	}
 
-	@Override
-	public void ejecutarDatosCliente(Long idclow, String qcenre) throws WIException {
-		logger.info("------------ LLAMADA WS DatosCliente -----------------");
-		leerConfiguracion();
-		// parametros iniciales
-		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
-		htInitParams.put(WIService.WORFLOW_PARAM, URL);
-		htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
+	
+	
 
-		WIService.init(htInitParams);
 
-		// instanciamos el servicio
-		servicioGMPAJC93_INS = new GMPAJC93_INS();
-
-		// Creamos cabeceras
-		es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraFuncionalPeticion();
-		es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica();
-		StructCabeceraAplicacionGMPAJC93_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC93_INS();
-		cabeceraFuncional.setIDDSAQ("CLDC");
-		System.out.println("CLDC: " + cabeceraFuncional.getIDDSAQ());
-		
-		// Seteamos cabeceras
-		servicioGMPAJC93_INS.setcabeceraAplicacion(cabeceraAplicacion);
-		servicioGMPAJC93_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
-		servicioGMPAJC93_INS.setcabeceraTecnica(cabeceraTecnica);
-
-		// seteamos parametros
-		logger.info("CodigoObjetoAccesocopace: CACL0000");
-		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("CACL0000");
-		logger.info("IdentificadorDiscriminadorFuncioniddsfu: DF01");
-		servicioGMPAJC93_INS.setIdentificadorDiscriminadorFuncioniddsfu("DF01");
-		logger.info("CodEntidadRepresntClienteUrsusqcenre: ".concat(qcenre));
-		servicioGMPAJC93_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
-
-		servicioGMPAJC93_INS.setAlias(ALIAS);
-		servicioGMPAJC93_INS.execute();
-
-	}
-
-	@Override
-	public GMPAJC93_INS resultadoDatosCliente() {
-		return servicioGMPAJC93_INS;
-
-	}
-
+	
+	/**
+	 * Invoca al servicio GMPAJC34_INS de BANKIA para consultar los datos de un prestamo
+	 * 
+	 * @param numExpedienteRiesgo
+	 * @param tipoRiesgo
+	 * @return
+	 */
 	@Override
 	public void consultaDatosPrestamo(String numExpedienteRiesgo, int tipoRiesgo) throws WIException {
 		

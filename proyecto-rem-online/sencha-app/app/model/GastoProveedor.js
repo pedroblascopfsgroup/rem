@@ -94,7 +94,7 @@ Ext.define('HreRem.model.GastoProveedor', {
 		api: {
             read: 'gastosproveedor/getTabGasto',
             update: 'gastosproveedor/saveGastosProveedor',
-			create: 'gastosproveedor/saveGastosProveedor'
+			create: 'gastosproveedor/createGastosProveedor'
         },
 		
         extraParams: {tab: 'ficha'}

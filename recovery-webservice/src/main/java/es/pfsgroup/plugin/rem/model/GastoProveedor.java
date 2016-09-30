@@ -102,6 +102,8 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_NUM_GASTO_GESTORIA")
 	private Long numGastoGestoria;
 	
+	
+	
     
 	@Version   
 	private Long version;

@@ -33,9 +33,9 @@ public interface GastoProveedorApi {
 		 * Método que guarda la información de la pestaña Datos generales del gasto
 		 * @param dto
 		 * @param idGasto
-		 * @return GastoProveedor
+		 * @return boolean
 		 */
-	    GastoProveedor saveGastosProveedor(DtoFichaGastoProveedor dto);
+	    boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long id);
 
 		/**
 		 * Método que recupera un proveedor según su NIF
@@ -88,6 +88,13 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto);
+
+		/**
+		 * crea un gasto
+		 * @param dto
+		 * @return
+		 */
+		GastoProveedor createGastoProveedor(DtoFichaGastoProveedor dto);
 		
 }
 

@@ -180,65 +180,63 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
-	public GastoProveedor saveGastosProveedor(DtoFichaGastoProveedor dto){
+	@Transactional(readOnly=false)
+	public GastoProveedor createGastoProveedor(DtoFichaGastoProveedor dto) {
 		
-		GastoProveedor gastoProveedor = null;
+		GastoProveedor gastoProveedor = new GastoProveedor();
 		
-		DDDestinatarioGasto destinatarioGasto = null;		
-		
-		if(Checks.esNulo(dto.getIdGasto())) {
+		gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
 			
+		if(!Checks.esNulo(dto.getNifEmisor())){				
+			ActivoProveedor proveedor = searchProveedorNif(dto.getNifEmisor());
+			gastoProveedor.setProveedor(proveedor);
+		}
+		
+		if(!Checks.esNulo(dto.getDestinatarioGastoCodigo())){
+			DDDestinatarioGasto destinatarioGasto  = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, dto.getDestinatarioGastoCodigo());
+			gastoProveedor.setDestinatarioGasto(destinatarioGasto);
+		}
 
-			// TODO Ver si es necesario añadir más datos al nuevo gasto.
-			gastoProveedor = new GastoProveedor();
+		if(!Checks.esNulo(dto.getTipoGastoCodigo())){
+			DDTipoGasto tipoGasto = (DDTipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoGasto.class, dto.getTipoGastoCodigo());
+			gastoProveedor.setTipoGasto(tipoGasto);
+		}
+		if(!Checks.esNulo(dto.getSubtipoGastoCodigo())){
+			DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
+			gastoProveedor.setSubtipoGasto(subtipoGasto);
+		}
 			
-			gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
+		gastoProveedor.setFechaEmision(dto.getFechaEmision());
+		gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
+		
+		// Primero comprobamos que el gasto no está dado de alta.
+		boolean existeGasto  = existeGasto(gastoProveedor);
 			
-			if(!Checks.esNulo(dto.getNifEmisor())){				
-				ActivoProveedor proveedor = searchProveedorNif(dto.getNifEmisor());
-				gastoProveedor.setProveedor(proveedor);
-			}
-			
-			if(!Checks.esNulo(dto.getDestinatarioGastoCodigo())){
-				destinatarioGasto = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, dto.getDestinatarioGastoCodigo());
-				gastoProveedor.setDestinatarioGasto(destinatarioGasto);
-			}
-			
-			
-			
-			if(!Checks.esNulo(dto.getTipoGastoCodigo())){
-				DDTipoGasto tipoGasto = (DDTipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoGasto.class, dto.getTipoGastoCodigo());
-				gastoProveedor.setTipoGasto(tipoGasto);
-			}
-			if(!Checks.esNulo(dto.getSubtipoGastoCodigo())){
-				DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
-				gastoProveedor.setSubtipoGasto(subtipoGasto);
-			}
-			
-			gastoProveedor.setFechaEmision(dto.getFechaEmision());
-			gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
-			
-			// Primero comprobamos que el gasto no está dado de alta.
-			boolean existeGasto  = existeGasto(gastoProveedor);
-				
-			if(existeGasto) {
-				throw new JsonViewerException("Gasto ya dado de alta");			
-			} else {
-				// Creamos el gasto
-				genericDao.save(GastoProveedor.class, gastoProveedor);	
-				GastoGestion gestion = new GastoGestion();
-				DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
-				gestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
-				gestion.setGastoProveedor(gastoProveedor);	
-				
-				genericDao.save(GastoGestion.class, gestion);			
-			}
-			
+		if(existeGasto) {
+			throw new JsonViewerException("Gasto ya dado de alta");			
 		} else {
+			// Creamos el gasto
+			genericDao.save(GastoProveedor.class, gastoProveedor);
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdGasto());
-			gastoProveedor = genericDao.get(GastoProveedor.class, filtro);			
+			GastoGestion gestion = new GastoGestion();
+			DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
+			gestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+			gestion.setGastoProveedor(gastoProveedor);	
+			
+			genericDao.save(GastoGestion.class, gestion);			
+		}
+		
+		return gastoProveedor;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long id){
+		
+
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id );
+			GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtro);			
 			
 			try {
 				
@@ -279,9 +277,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			genericDao.update(GastoProveedor.class, gastoProveedor);	
 			
-		}
 		
-		return gastoProveedor;
+		
+		return true;
 		
 	}
 	

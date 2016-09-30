@@ -32,9 +32,9 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
-import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 
 
 @Controller
@@ -121,12 +121,13 @@ public class GastosProveedorController {
 
 		return createModelAndViewJson(model);
 	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveGastosProveedor(DtoFichaGastoProveedor dto, ModelMap model) {
-		try {		
+	public ModelAndView createGastosProveedor(DtoFichaGastoProveedor dto, ModelMap model) {
+		try {	
 			
-			GastoProveedor gasto = gastoProveedorApi.saveGastosProveedor(dto);
+			GastoProveedor gasto = gastoProveedorApi.createGastoProveedor(dto);
 			
 			model.put("id", gasto.getId() );
 			model.put("success", true );
@@ -134,6 +135,24 @@ public class GastosProveedorController {
 		} catch (JsonViewerException ex) {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}		
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveGastosProveedor(DtoFichaGastoProveedor dto, @RequestParam Long id,  ModelMap model) {
+		try {		
+			
+			boolean respuesta = gastoProveedorApi.saveGastosProveedor(dto, id);
+			model.put("success", respuesta );
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);

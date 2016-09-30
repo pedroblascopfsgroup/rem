@@ -78,11 +78,16 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 													width: 		'100%',
 													colspan: 1,
 										        	bind: {
-									            		store: '{comboTipoTrabajo}',
+									            		store: '{comboTipoTrabajoCreaFiltered}',
 									            		value: '{trabajo.tipoTrabajoCodigo}'
 									            	},
 						    						listeners: {
-									                	select: 'onChangeChainedCombo'
+									                	select: 'onChangeChainedCombo',
+														expand: function() {
+														      this.store.removeAll();
+														      this.store.load();
+														      this.show();
+														}
 									            	},
 									            	allowBlank: false
 									            	
@@ -666,7 +671,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 		
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
-    	
+
+		me.getViewModel().set('idActivo', me.idActivo);
+		    	
     	me.down("[reference=checkFechaConcreta]").setValue(false);
     	me.down("[reference=checkFechaTope]").setValue(false);
     	me.down("[reference=checkFechaContinuado]").setValue(false);

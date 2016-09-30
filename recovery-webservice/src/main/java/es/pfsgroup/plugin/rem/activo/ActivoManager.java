@@ -1299,6 +1299,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if(Checks.esNulo(perimetroActivo)){
 			perimetroActivo = new PerimetroActivo();
 			perimetroActivo.setAuditoria(new Auditoria());
+			//Si no existia perimetro en BBDD, se deben tomar todas las condiciones marcadas
+			perimetroActivo.setAplicaTramiteAdmision(1);
+			perimetroActivo.setAplicaGestion(1);
+			perimetroActivo.setAplicaAsignarMediador(1);
+			perimetroActivo.setAplicaComercializar(1);
+			perimetroActivo.setAplicaFormalizar(1);
 		}
 		
 		return perimetroActivo;

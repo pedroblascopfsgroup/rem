@@ -37,11 +37,10 @@ public class WebcomEndpoint {
 	 * @return
 	 */
 	public static WebcomEndpoint estadoPeticionTrabajo(Properties appProperties) {
-		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_TRABAJO_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_TRABAJO_ENDPOINT,
+				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
-
-	
 
 	/**
 	 * Método factoría para obtener el endpoint para el servicio de
@@ -50,7 +49,8 @@ public class WebcomEndpoint {
 	 * @return
 	 */
 	public static WebcomEndpoint estadoOferta(Properties appProperties) {
-		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_OFERTA_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_OFERTA_ENDPOINT,
+				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
 
@@ -61,47 +61,102 @@ public class WebcomEndpoint {
 	 * @return
 	 */
 	public static WebcomEndpoint stock(Properties appProperties) {
-		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ACTUALIZAR_STOCK_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ACTUALIZAR_STOCK_ENDPOINT,
+				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
-	
+
 	/**
-	 * Método factoría para obtener el endpoint para el servicio de envío de ventas y comisiones.
+	 * Método factoría para obtener el endpoint para el servicio de envío de
+	 * ventas y comisiones.
 	 * 
 	 * @return
 	 */
 	public static WebcomEndpoint ventasYcomisiones(Properties appProperties) {
-		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.VENTAS_Y_COMISIONES_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.VENTAS_Y_COMISIONES_ENDPOINT,
+				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
-	
+
 	/**
-	 * Método factoría para obtener el endpoint para el servicio de envío cambios de estado en notificaciones.
+	 * Método factoría para obtener el endpoint para el servicio de envío
+	 * cambios de estado en notificaciones.
 	 * 
 	 * @return
 	 */
 	public static WebcomEndpoint estadoNotificacion(Properties appProperties) {
-		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_NOTIFICACION_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_NOTIFICACION_ENDPOINT,
+				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
-	
+
 	/**
-	 * Método factoría para obtener el endpoint para el servicio de envío de proveedores.
+	 * Método factoría para obtener el endpoint para el servicio de envío de
+	 * proveedores.
 	 * 
 	 * @return
 	 */
 	public static WebcomEndpoint proveedores(Properties appProperties) {
-		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_PROVEEDORES, UNKNOWN_ENDPOINT_VALUE);
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_PROVEEDORES,
+				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
-	
+
 	/**
-	 * Método factoría para obtener el endpoint para el servicio de envío de cambios de estado en el Informe del Mediador.
+	 * Método factoría para obtener el endpoint para el servicio de envío de
+	 * cambios de estado en el Informe del Mediador.
 	 * 
 	 * @return
 	 */
 	public static WebcomEndpoint estadoInformeMediador(Properties appProperties) {
-		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_INFORME_MEDIADOR, UNKNOWN_ENDPOINT_VALUE);
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_INFORME_MEDIADOR,
+				UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
+
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío de
+	 * cabeceras de agrupaciones de obras nuevas (de).
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint cabecerasObrasNuevas(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_CABECERAS_OBRAS_NUEVAS,
+				UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
+
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío de
+	 * activos de agrupaciones de obras nuevas (nunca hay demasiados des).
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint activosObrasNuevas(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_ACTIVOS_OBRAS_NUEVAS,
+				UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
+	
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío de usarios.
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint usuarios(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_USUARIOS,
+				UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
+	
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío Obras Nuevas Campanyas.
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint obrasNuevasCampanyas(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_OBRAS_NUEVAS_CAMPANYAS,
+				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
 
@@ -156,24 +211,20 @@ public class WebcomEndpoint {
 		return "WebcomEndpoint [" + httpMethod + " => " + this.getEndpointUrl() + "]";
 	}
 
-
 	private static String createEndpointUrl(Properties appProperties, String key, String defaultValue) {
-		String endpoint = (appProperties != null ? appProperties.getProperty(key, defaultValue)
-				: defaultValue);
-		
-		String url = WebcomRESTDevonProperties.extractDevonProperty(appProperties, WebcomRESTDevonProperties.BASE_URL, HTTP_UNKNOWN) + endpoint;
+		String endpoint = (appProperties != null ? appProperties.getProperty(key, defaultValue) : defaultValue);
+
+		String url = WebcomRESTDevonProperties.extractDevonProperty(appProperties, WebcomRESTDevonProperties.BASE_URL,
+				HTTP_UNKNOWN) + endpoint;
 		return url;
 	}
-	
+
 	private static WebcomEndpoint createWebcomEndpointInstance(Properties appProperties, String url) {
-		String timeout = WebcomRESTDevonProperties.extractDevonProperty(appProperties, WebcomRESTDevonProperties.TIMEOUT_CONEXION, DEFAULT_TIMEOUT);
-		String apiKey = WebcomRESTDevonProperties.extractDevonProperty(appProperties, WebcomRESTDevonProperties.SERVER_API_KEY, DEFAULT_API_KEY);
+		String timeout = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.TIMEOUT_CONEXION, DEFAULT_TIMEOUT);
+		String apiKey = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.CLIENT_API_KEY, DEFAULT_API_KEY);
 		return new WebcomEndpoint("POST", url, Integer.parseInt(timeout), apiKey);
 	}
-
-	
-
-	
-
 
 }

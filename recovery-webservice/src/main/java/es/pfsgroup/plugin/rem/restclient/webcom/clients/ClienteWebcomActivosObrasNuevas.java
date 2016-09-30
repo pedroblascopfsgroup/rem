@@ -14,28 +14,28 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 
 @Component
-public class ClienteWebcomStock extends ClienteWebcomBase{
+public class ClienteWebcomActivosObrasNuevas extends ClienteWebcomBase {
 	
 	@Autowired
 	private HttpClientFacade httpClient;
-	
+
 	@Resource
 	private Properties appProperties;
 
 	@Override
-	public Map<String, Object> enviaPeticion(ParamsList paramsList,  RestLlamada registroLlamada) throws ErrorServicioWebcom {
-		return this.send(httpClient, WebcomEndpoint.stock(appProperties), paramsList, registroLlamada);
+	public Map<String, Object> enviaPeticion(ParamsList paramsList, RestLlamada registroLlamada)
+			throws ErrorServicioWebcom {
+		return send(httpClient, WebcomEndpoint.activosObrasNuevas(appProperties), paramsList, registroLlamada);
 	}
 
 	@Override
 	public void procesaRespuesta(Map<String, Object> respuesta) {
 		this.receive(respuesta);
-		
+
 	}
-	
+
 	@Override
 	protected Properties getAppProperties() {
 		return appProperties;
 	}
-
 }

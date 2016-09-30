@@ -8,7 +8,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EntityDefinition {
-	String propertyName();
-	Class entity();
+	String propertyName() default "";
+	@SuppressWarnings("rawtypes")
+	Class classObj() default Object.class;
+	String foreingField() default "codigo";
+	boolean procesar() default true;
 
 }

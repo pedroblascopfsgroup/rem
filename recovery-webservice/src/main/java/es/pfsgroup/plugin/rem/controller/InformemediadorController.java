@@ -1,13 +1,9 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
+import es.pfsgroup.plugin.rem.model.ActivoVivienda;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDCION;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
@@ -37,7 +37,7 @@ public class InformemediadorController {
 	@Autowired
 	private InformeMediadorApi informeMediadorApi;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping(method = RequestMethod.POST, value = "/informemediador")
 	public ModelAndView saveInformeMediador(ModelMap model, RestRequestWrapper request) {
 		Map<String, Object> map = null;
@@ -72,7 +72,20 @@ public class InformemediadorController {
 				if (errorsList.size() == 0) {
 
 					if (informe.getIdInformeMediadorRem() == null) {
-						restApi.saveDtoToBbdd(informe, InformeMediadorDto.class);
+						
+						Class entity = ActivoInfoComercial.class;
+						if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)){
+							entity = ActivoLocalComercial.class;
+						}else if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)){
+						}else if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)){
+						}else if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)){
+						}else if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)){
+						}else if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)){
+						}else if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)){
+							entity = ActivoVivienda.class;
+						}
+						
+						restApi.saveDtoToBbdd(informe,entity);
 					} else {
 						// actualizamos
 					}

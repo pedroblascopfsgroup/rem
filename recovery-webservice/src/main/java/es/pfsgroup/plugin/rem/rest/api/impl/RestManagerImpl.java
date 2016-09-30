@@ -21,10 +21,14 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -48,6 +52,11 @@ public class RestManagerImpl implements RestApi {
 
 	@Resource
 	private Properties appProperties;
+
+	@Autowired
+	private GenericABMDao genericDao;
+
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public boolean validateSignature(Broker broker, String signature, String peticion)
@@ -170,29 +179,47 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void saveDtoToBbdd(Object dto, Class claseDto)
+	public void saveDtoToBbdd(Object dto, Class entity)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException {
-		Field[] fields = claseDto.getDeclaredFields();
-		/*if (fields != null) {
+		Field[] fields = dto.getClass().getDeclaredFields();
+		if (fields != null) {
 			for (Field f : fields) {
 				if (f.getAnnotation(EntityDefinition.class) != null) {
 					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
-					System.out.println("!!!!!!!!!!!!!!!!!!!!! " + annotation.entityName());
-					System.out.println("!!!!!!!!!!!!!!!!!!!!! " + annotation.propertyName());
-					Class clase = Class.forName(annotation.entityName());
-					Object objeto = clase.newInstance();
-					String propertyName = annotation.propertyName().substring(0, 1).toUpperCase()
-							+ annotation.propertyName().substring(1);
-					Method metodo = objeto.getClass()
-							.getMethod("set".concat(propertyName), f.getType());
-					metodo.invoke(objeto, this.getValue(dto, claseDto, "get".concat(propertyName)));
-
+					if (annotation.procesar()) {
+						Object objetoEntity = entity.newInstance();
+						String propertyEntityName = annotation.propertyName().substring(0, 1).toUpperCase()
+								+ annotation.propertyName().substring(1);
+						String propertyName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+						if (annotation.classObj().equals(Object.class)) {
+							Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
+									f.getType());
+							metodo.invoke(objetoEntity, this.getValue(dto, dto.getClass(), "get".concat(propertyName)));
+						} else {
+							Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
+									annotation.classObj());
+							Object object = genericDao.get(annotation.classObj(),
+									genericDao.createFilter(FilterType.EQUALS, annotation.foreingField(),
+											(String) this.getValue(dto, dto.getClass(), "get".concat(propertyName))));
+							metodo.invoke(objetoEntity, object);
+						}
+					}
+				} else {
+					String propertyEntityName = null;
+					try {
+						Object objetoEntity = entity.newInstance();
+						propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+						String propertyName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+						Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
+								f.getType());
+						metodo.invoke(objetoEntity, this.getValue(dto, dto.getClass(), "get".concat(propertyName)));
+					} catch (Exception e) {
+						System.out.println(propertyEntityName.concat(" no se podido setear en la entidad"));
+					}
 				}
-				if (f.getAnnotation(Diccionary.class) != null) {
 			}
-		}*/
-
+		}
 	}
 
 	@SuppressWarnings("rawtypes")

@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -1020,7 +1021,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo){
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Order order = new Order(OrderType.ASC, "id");
+		Order order = new Order(OrderType.DESC, "id");
 		List<ActivoInformeComercialHistoricoMediador> listaHistoricoMediador = genericDao
 				.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, filtro);
 		
@@ -1029,7 +1030,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for (ActivoInformeComercialHistoricoMediador historico : listaHistoricoMediador) {
 			DtoHistoricoMediador dtoHistoricoMediador = new DtoHistoricoMediador();
 			try {
-				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "id", idActivo);
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "id", historico.getId());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "idActivo", idActivo);
 				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaDesde", historico.getFechaDesde());
 				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaHasta", historico.getFechaHasta());
 				if(!Checks.esNulo(historico.getMediadorInforme())){
@@ -1048,6 +1050,52 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return listaDtoHistoricoMediador;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean createHistoricoMediador(DtoHistoricoMediador dto) {
+		ActivoInformeComercialHistoricoMediador historicoMediador = new ActivoInformeComercialHistoricoMediador();
+		Activo activo = null;
+		
+		if(!Checks.esNulo(dto.getIdActivo())) {
+			activo = activoDao.get(dto.getIdActivo());
+		}
+		
+		try {
+			// Terminar periodo de vigencia del último proveedor (fecha hasta).
+			if(!Checks.esNulo(activo)) {
+				Filter activoIDFiltro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Order order = new Order(OrderType.DESC, "id");
+				List<ActivoInformeComercialHistoricoMediador> historicoMediadorlist = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoIDFiltro);
+				if(!Checks.estaVacio(historicoMediadorlist)) {
+					ActivoInformeComercialHistoricoMediador historicoAnteriorMediador = historicoMediadorlist.get(0); // El primero es el de ID más alto (el último).
+					beanUtilNotNull.copyProperty(historicoAnteriorMediador, "fechaHasta", new Date());
+					genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoAnteriorMediador);
+				}
+			}
+
+			// Generar la nueva entrada de HistoricoMediador.
+			beanUtilNotNull.copyProperty(historicoMediador, "fechaDesde", new Date());
+			beanUtilNotNull.copyProperty(historicoMediador, "activo", activo);
+			
+			if(!Checks.esNulo(dto.getMediador())) {
+				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getMediador()));
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
+				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
+			}
+
+			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
+			
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
 	}
 
 	@Override

@@ -15,8 +15,11 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 @Repository("ProveedoresDao")
@@ -111,6 +114,19 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.docIdentificativo", nifProveedor);
 
 		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+
+	@Override
+	public List<ActivoProveedor> getMediadorListFiltered(Activo activo, DtoMediador dto) {
+		HQLBuilder hb = new HQLBuilder("select proveedor from ActivoProveedor proveedor, EntidadProveedor entidad, ProveedorTerritorial territorial");
+		hb.appendWhere("proveedor.id = entidad.proveedor.id and proveedor.id = territorial.proveedor.id");
+		if(!Checks.esNulo(activo.getCartera())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "entidad.cartera.codigo", activo.getCartera().getCodigo());
+		}
+		hb.appendWhere("proveedor.tipoProveedor.codigo = " + DDTipoProveedor.COD_MEDIADOR);
+		hb.appendWhere("territorial.provincia.codigo in (select loc.provincia.codigo from Localidad loc where loc.codigo = " + activo.getMunicipio() + ")");
+		
+		return HibernateQueryUtils.list(this, hb);
 	}
 
 }

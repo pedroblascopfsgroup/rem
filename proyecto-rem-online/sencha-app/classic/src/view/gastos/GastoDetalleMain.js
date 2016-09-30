@@ -35,9 +35,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 			    		xtype:'toolfieldset',			   		         						   		        
 			        	cls: 'fieldsetBase cabecera',
 			        	height: 20,
-			        	bind:{
-			        		title: 'Gasto {gasto.numGastoHaya}'
-			        	},
+//			        	bind:{
+//			        		title: 'Gasto {gasto.numGastoHaya}'
+//			        	},
 			        	scrollable: 'y',
 			        	border: false,			        	
 					    layout: {

@@ -145,6 +145,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		        remoteUrl: 'gastosproveedor/getListActivosGastos',
 		        extraParams: {idGasto: '{gasto.id}'}
 	    	 }
+    	},
+    	
+    	comboEjercicioContabilidad: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboEjercicioContabilidad'
+			}
     	}
 	
     }

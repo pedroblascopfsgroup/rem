@@ -1,7 +1,13 @@
 package es.pfsgroup.plugin.rem.rest.api.impl;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
+import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
@@ -80,26 +89,26 @@ public class RestManagerImpl implements RestApi {
 		Broker broker = brokerDao.getBrokerByIp(ip);
 		return broker;
 	}
-	
-	public  String getClientIpAddr(HttpServletRequest request) {  
-        String ip = request.getHeader("X-Forwarded-For");  
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("Proxy-Client-IP");  
-        }  
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("WL-Proxy-Client-IP");  
-        }  
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("HTTP_CLIENT_IP");  
-        }  
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");  
-        }  
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getRemoteAddr();  
-        }  
-        return ip;  
-    } 
+
+	public String getClientIpAddr(HttpServletRequest request) {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("HTTP_CLIENT_IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		return ip;
+	}
 
 	@Override
 	public Broker getBrokerDefault(String queryString) {
@@ -122,23 +131,23 @@ public class RestManagerImpl implements RestApi {
 	public List<String> validateRequestObject(Serializable obj) {
 		return validateRequestObject(obj, null);
 	}
-	
+
 	@Override
 	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDCION tipovalidacion) {
 		ArrayList<String> error = new ArrayList<String>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Serializable>> constraintViolations = null;
-		if(tipovalidacion != null){
-			if(tipovalidacion.equals(TIPO_VALIDCION.INSERT)){
-				constraintViolations = validator.validate(obj,Insert.class);
-			}else if(tipovalidacion.equals(TIPO_VALIDCION.UPDATE)){
-				constraintViolations = validator.validate(obj,Update.class);
-			}else{
+		if (tipovalidacion != null) {
+			if (tipovalidacion.equals(TIPO_VALIDCION.INSERT)) {
+				constraintViolations = validator.validate(obj, Insert.class);
+			} else if (tipovalidacion.equals(TIPO_VALIDCION.UPDATE)) {
+				constraintViolations = validator.validate(obj, Update.class);
+			} else {
 				constraintViolations = validator.validate(obj);
 			}
-			
-		}else{
+
+		} else {
 			constraintViolations = validator.validate(obj);
 		}
 		if (!constraintViolations.isEmpty()) {
@@ -158,6 +167,46 @@ public class RestManagerImpl implements RestApi {
 	@Override
 	public PeticionRest getLastPeticionByToken(String token) {
 		return peticionDao.getLastPeticionByToken(token);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void saveDtoToBbdd(Object dto, Class claseDto)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
+			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException {
+		Field[] fields = claseDto.getDeclaredFields();
+		/*if (fields != null) {
+			for (Field f : fields) {
+				if (f.getAnnotation(EntityDefinition.class) != null) {
+					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
+					System.out.println("!!!!!!!!!!!!!!!!!!!!! " + annotation.entityName());
+					System.out.println("!!!!!!!!!!!!!!!!!!!!! " + annotation.propertyName());
+					Class clase = Class.forName(annotation.entityName());
+					Object objeto = clase.newInstance();
+					String propertyName = annotation.propertyName().substring(0, 1).toUpperCase()
+							+ annotation.propertyName().substring(1);
+					Method metodo = objeto.getClass()
+							.getMethod("set".concat(propertyName), f.getType());
+					metodo.invoke(objeto, this.getValue(dto, claseDto, "get".concat(propertyName)));
+
+				}
+				if (f.getAnnotation(Diccionary.class) != null) {
+			}
+		}*/
+
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Object getValue(Object dto, Class claseDto, String methodName)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+		Object obj = null;
+		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(InformeMediadorDto.class)
+				.getPropertyDescriptors()) {
+			if (propertyDescriptor.getReadMethod().getName().equals(methodName)) {
+				obj = propertyDescriptor.getReadMethod().invoke(dto);
+				break;
+			}
+		}
+		return obj;
 	}
 
 }

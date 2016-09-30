@@ -11,6 +11,7 @@ public class WebcomRESTDevonProperties {
 	public static final String ESTADO_NOTIFICACION_ENDPOINT = "rest.client.webcom.endpoint.notificacion";
 	public static final String VENTAS_Y_COMISIONES_ENDPOINT = "rest.client.webcom.endpoint.comision";
 	public static final String ENVIO_PROVEEDORES = "rest.client.webcom.endpoint.proveedor";
+	public static final String ENVIO_INFORME_MEDIADOR = "rest.client.webcom.endpoint.informeMediador";
 	public static final String TIMEOUT_CONEXION = "rest.client.webcom.timeout.seconds";
 	public static final String SERVER_API_KEY = "rest.server.rem.api.key";
 	public static final String SERVER_PUBLIC_ADDRESS = "rest.client.rem.public.ip";

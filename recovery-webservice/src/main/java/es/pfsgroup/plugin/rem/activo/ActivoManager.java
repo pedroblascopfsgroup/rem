@@ -808,14 +808,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for (ActivoCondicionEspecifica condicion : listaCondicionesEspecificas) {
 			DtoCondicionEspecifica dtoCondicionEspecifica = new DtoCondicionEspecifica();
 			try {
-				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "idActivo", condicion.getActivo().getId());
+				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "id", condicion.getId());
+				if(!Checks.esNulo(condicion.getActivo())) {
+					beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "idActivo", condicion.getActivo().getId());
+				}
 				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "texto", condicion.getTexto());
 				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "fechaDesde", condicion.getFechaDesde());
 				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "fechaHasta", condicion.getFechaHasta());
-				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioAlta",
-						!Checks.esNulo(condicion.getUsuarioAlta()) ? condicion.getUsuarioAlta().getUsername() : "");
-				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioBaja",
-						!Checks.esNulo(condicion.getUsuarioBaja()) ? condicion.getUsuarioBaja().getUsername() : "");
+				if(!Checks.esNulo(condicion.getUsuarioAlta())){
+					beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioAlta",condicion.getUsuarioAlta().getUsername());
+				}
+				if(!Checks.esNulo(condicion.getUsuarioBaja())){
+					beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioBaja",condicion.getUsuarioBaja().getUsername());
+				}
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
@@ -829,18 +834,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean createCondicionEspecifica(Long idActivo, DtoCondicionEspecifica dtoCondicionEspecifica) {
+	public Boolean createCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica) {
 		ActivoCondicionEspecifica condicionEspecifica = new ActivoCondicionEspecifica();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoCondicionEspecifica.getIdActivo());
 
 		Activo activo = genericDao.get(Activo.class, filtro);
 
 		try {
 			beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
 			beanUtilNotNull.copyProperty(condicionEspecifica, "fechaDesde", new Date());
-			condicionEspecifica.setUsuarioAlta(adapter.getUsuarioLogado());
-			condicionEspecifica.setActivo(activo);
-			ActivoCondicionEspecifica condicionAnterior = activoDao.getUltimaCondicion(idActivo);
+			beanUtilNotNull.copyProperty(condicionEspecifica, "usuarioAlta", adapter.getUsuarioLogado());
+			beanUtilNotNull.copyProperty(condicionEspecifica, "activo", activo);
+			
+			// Actualizar la fehca de la anterior condición.
+			ActivoCondicionEspecifica condicionAnterior = activoDao.getUltimaCondicion(dtoCondicionEspecifica.getIdActivo());
 			if (!Checks.esNulo(condicionAnterior)) {
 				beanUtilNotNull.copyProperty(condicionAnterior, "fechaHasta", new Date());
 				condicionAnterior.setUsuarioBaja(adapter.getUsuarioLogado());
@@ -861,21 +868,48 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica) {
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoCondicionEspecifica.getId()));
 		ActivoCondicionEspecifica condicionEspecifica = genericDao.get(ActivoCondicionEspecifica.class, filtro);
 
-		try {
-			beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		if(!Checks.esNulo(condicionEspecifica)) {
+			try {
+				beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	
+			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+	
+			return true;
+		} else {
+			return false;
 		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoCondicionEspecifica.getId()));
+		ActivoCondicionEspecifica condicionEspecifica = genericDao.get(ActivoCondicionEspecifica.class, filtro);
 
-		genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
-
-		return true;
+		if(!Checks.esNulo(condicionEspecifica)) {
+			try {
+				beanUtilNotNull.copyProperty(condicionEspecifica, "fechaHasta", new Date());
+				beanUtilNotNull.copyProperty(condicionEspecifica, "usuarioBaja", adapter.getUsuarioLogado());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	
+			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+	
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -1412,4 +1446,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return true;
 	}
+	
 }

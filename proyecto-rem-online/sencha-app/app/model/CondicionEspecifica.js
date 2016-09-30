@@ -1,11 +1,14 @@
 /**
- * This view is used to present the details of a single AgendaItem.
+ * This view is used to present the details of a condicion especifica.
  */
 Ext.define('HreRem.model.CondicionEspecifica', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
 
-    fields: [    
+    fields: [
+            {
+            	name: 'id' 
+            },
     		{
     			name:'idActivo'
     		},
@@ -24,19 +27,15 @@ Ext.define('HreRem.model.CondicionEspecifica', {
     		{
     			name:'usuarioBaja'
     		}
-	
     ],
     
 	proxy: {
 		type: 'uxproxy',
-		//localUrl: 'activos.json',
-		remoteUrl: 'activo/getCondicionEspecificaByActivo',
-
 		api: {
             read: 'activo/getCondicionEspecificaByActivo',
             create: 'activo/createCondicionEspecifica',
             update: 'activo/saveCondicionEspecifica',
-            destroy: 'activo/getCondicionEspecificaByActivo'
+            destroy: 'activo/darDeBajaCondicionEspecifica'
         }
 
     }

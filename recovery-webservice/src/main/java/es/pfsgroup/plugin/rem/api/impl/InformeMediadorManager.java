@@ -751,7 +751,52 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		HashMap<String, Boolean> codTipoAparcamientoEnSuperficie = new HashMap<String, Boolean>();
 		codTipoAparcamientoEnSuperficie.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("codtipoaparcamientoensuperficie", codTipoAparcamientoEnSuperficie);
+		
+		//existenComunicaciones
+		HashMap<String, Boolean> existenComunicaciones = new HashMap<String, Boolean>();
+		existenComunicaciones.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("existencomunicaciones", existenComunicaciones);
+		
+		//existeFacilAccesoPorCarretera
+		HashMap<String, Boolean> existeFacilAccesoPorCarretera = new HashMap<String, Boolean>();
+		existeFacilAccesoPorCarretera.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("existefacilaccesoporcarretera", existeFacilAccesoPorCarretera);
+		
+		//facilAccesoPorCarretera
+		HashMap<String, Boolean> facilAccesoPorCarretera = new HashMap<String, Boolean>();
+		facilAccesoPorCarretera.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("facilaccesoporcarretera", facilAccesoPorCarretera);
+		
+		//existeLineasDeAutobus
+		HashMap<String, Boolean> existeLineasDeAutobus = new HashMap<String, Boolean>();
+		existeLineasDeAutobus.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("existelineasdeautobus", existeLineasDeAutobus);
+		
+		//lineasDeAutobus
+		HashMap<String, Boolean> lineasDeAutobus = new HashMap<String, Boolean>();
+		lineasDeAutobus.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("lineasdeautobus", lineasDeAutobus);
+		
+		//existeMetro
+		HashMap<String, Boolean> existeMetro = new HashMap<String, Boolean>();
+		existeMetro.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("existemetro", existeMetro);
+		
+		//metro
+		HashMap<String, Boolean> metro = new HashMap<String, Boolean>();
+		metro.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("metro", metro);
 
+		//existeEstacionesDeTren
+		HashMap<String, Boolean> existeEstacionesDeTren = new HashMap<String, Boolean>();
+		existeEstacionesDeTren.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("existeestacionesdetren", existeEstacionesDeTren);
+		
+		//estacionesDeTren
+		HashMap<String, Boolean> estacionesDeTren = new HashMap<String, Boolean>();
+		estacionesDeTren.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("estacionesdetren", estacionesDeTren);
+		
 	}
 
 	@Override

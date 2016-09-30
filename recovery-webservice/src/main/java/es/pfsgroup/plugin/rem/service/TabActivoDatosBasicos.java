@@ -219,14 +219,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "motivoNoAplicaComercializarDescripcion", perimetroActivo.getMotivoNoAplicaComercializar().getDescripcion());
 		}
 		
-		// Si no exite perimetro, por defecto se marcan los checkbox.
-		if(Checks.esNulo(perimetroActivo.getActivo())) {
-			BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision",true);
-			BeanUtils.copyProperty(activoDto,"aplicaGestion",true);
-			BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador",true);
-			BeanUtils.copyProperty(activoDto,"aplicaComercializar",true);
-			BeanUtils.copyProperty(activoDto,"aplicaFormalizar",true);
-		}
+		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
+		// y por tanto, por defecto se marcan los checkbox.
+//		if(Checks.esNulo(perimetroActivo.getActivo())) {
+		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", perimetroActivo.getAplicaTramiteAdmision() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaGestion", perimetroActivo.getAplicaGestion() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", perimetroActivo.getAplicaAsignarMediador() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaComercializar", perimetroActivo.getAplicaComercializar() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", perimetroActivo.getAplicaComercializar() == 1? true: false);
+//		}
 		// ----------
 		
 		

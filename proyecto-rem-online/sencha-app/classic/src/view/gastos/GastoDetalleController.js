@@ -156,9 +156,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this;
 		
 		var success = function (a, operation, c) {
-							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-							me.getView().unmask();
-							me.refrescarGasto(form.refreshAfterSave);
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().unmask();
+					me.refrescarGasto(btn.up('tabpanel').getActiveTab().refreshAfterSave);
 		};
 		
 		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab(), success);				

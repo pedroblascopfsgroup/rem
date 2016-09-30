@@ -38,7 +38,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
-public class ProvisionGastoS implements Serializable, Auditable {
+public class ProvisionGastos implements Serializable, Auditable {
 	
     /**
 	 * 
@@ -62,7 +62,7 @@ public class ProvisionGastoS implements Serializable, Auditable {
 	private Date fechaAlta;
 	
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRV_ID_GESTORIA")
+    @JoinColumn(name = "PVE_ID_GESTORIA")
     private ActivoProveedor gestoria;
 	
 	@Column(name="PRG_FECHA_ENVIO")

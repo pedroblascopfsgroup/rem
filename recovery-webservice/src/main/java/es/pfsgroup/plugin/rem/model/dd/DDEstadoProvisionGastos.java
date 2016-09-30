@@ -36,7 +36,7 @@ public class DDEstadoProvisionGastos implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_EPR_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadosProvisionGenerator")
-	@SequenceGenerator(name = "DDEstadosProvisionGenerator", sequenceName = "S_DD_EPR_ESTADOS_PROVISION_GASTO")
+	@SequenceGenerator(name = "DDEstadosProvisionGenerator", sequenceName = "S_DD_ESTADOS_PROVISION_GASTO")
 	private Long id;
 	    
 	@Column(name = "DD_EPR_CODIGO")   

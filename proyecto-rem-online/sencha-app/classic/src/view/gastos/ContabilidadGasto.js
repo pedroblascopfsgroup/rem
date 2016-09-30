@@ -38,14 +38,24 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 				        						margin: '0 10 10 0',
 												items :
 													[
+//														{ 
+//															xtype: 'numberfieldbase',
+//															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
+//											                bind: {
+//											                	value: '{contabilidad.ejercicioImputaGasto}',
+//											                	readOnly: '{!esGestorAdministracion}'
+//											                }
+//														},
 														{ 
-															xtype: 'numberfieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
-											                bind: {
-											                	value: '{contabilidad.ejercicioImputaGasto}',
-											                	readOnly: '{!esGestorAdministracion}'
-											                }
-														},
+															xtype:'comboboxfieldbase',
+															fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
+											        		bind: {
+										            			store: '{comboEjercicioContabilidad}',
+										            			value: '{contabilidad.ejercicioImputaGasto}'
+										            		},
+										            		displayField	: 'anyo',  
+   															valueField		: 'id'
+												        },
 														{ 
 															xtype: 'displayfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad'),

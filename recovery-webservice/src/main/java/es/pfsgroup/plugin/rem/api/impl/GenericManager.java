@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -355,6 +356,15 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");			
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", codigoTipoGasto);
 		return (List<DDSubtipoGasto>) genericDao.getListOrdered(DDSubtipoGasto.class, order, filter);
+		
+	}
+	
+	@Override
+	@BusinessOperationDefinition("genericManager.getComboEjercicioContabilidad")
+	public List<Ejercicio> getComboEjercicioContabilidad(){
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "anyo");			
+		return (List<Ejercicio>) genericDao.getListOrdered(Ejercicio.class, order);
 		
 	}
 		

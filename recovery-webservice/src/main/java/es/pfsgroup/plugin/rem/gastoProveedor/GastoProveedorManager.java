@@ -578,7 +578,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			if(!Checks.esNulo(contabilidadGasto)){
 				if(!Checks.esNulo(contabilidadGasto.getEjercicio())){
-					dto.setEjercicioImputaGasto(contabilidadGasto.getEjercicio().getAnyo());
+					dto.setEjercicioImputaGasto(contabilidadGasto.getEjercicio().getId());
 				}
 				if(!Checks.esNulo(gasto.getTipoPeriocidad())){
 					dto.setPeriodicidadDescripcion(gasto.getTipoPeriocidad().getDescripcion());
@@ -622,11 +622,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
 			
 			if(!Checks.esNulo(dtoContabilidadGasto.getEjercicioImputaGasto())){
-				Ejercicio ejercicio= contabilidadGasto.getEjercicio();
-				if(!Checks.esNulo(ejercicio)){
-					ejercicio.setAnyo(dtoContabilidadGasto.getEjercicioImputaGasto());
-					genericDao.update(Ejercicio.class, ejercicio);
-				}
+				
+				Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getEjercicioImputaGasto());
+				Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
+				
+				contabilidadGasto.setEjercicio(ejercicio);
+				
+				genericDao.update(GastoInfoContabilidad.class, contabilidadGasto);
+				
 			}
 			
 			return true;

@@ -22,7 +22,7 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	
 
 	private Long id;
-	private String ejercicioImputaGasto;
+	private Long ejercicioImputaGasto;
 	private String periodicidadDescripcion;
 	private String partidaPresupuestariaDescripcion;
 	private String cuentaContableDescripcion;
@@ -38,10 +38,10 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getEjercicioImputaGasto() {
+	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
 	}
-	public void setEjercicioImputaGasto(String ejercicioImputaGasto) {
+	public void setEjercicioImputaGasto(Long ejercicioImputaGasto) {
 		this.ejercicioImputaGasto = ejercicioImputaGasto;
 	}
 	public String getPeriodicidadDescripcion() {

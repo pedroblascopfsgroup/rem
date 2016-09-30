@@ -14,7 +14,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosExcept
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
@@ -47,13 +46,13 @@ public abstract class ServiciosWebcomBaseManager {
 		}
 
 		LongDataType usuarioId = dto.getIdUsuarioRemAccion();
-		if ((usuarioId == null) || (usuarioId instanceof NullDataType)) {
+		if ((usuarioId == null) || (usuarioId.getValue() == null)) {
 			throw new IllegalArgumentException(
 					"El dto no está bien conformado: 'idUsuarioRemAccion' no puede ser null");
 		}
 
 		DateDataType fechaAccion = dto.getFechaAccion();
-		if ((fechaAccion == null) || (fechaAccion instanceof NullDataType)) {
+		if ((fechaAccion == null) || (fechaAccion.getValue() == null)) {
 			throw new IllegalArgumentException("El dto no está bien conformado: 'fechaAccion' no puede ser null");
 		}
 

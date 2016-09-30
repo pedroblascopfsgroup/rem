@@ -1,11 +1,13 @@
 Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
-    extend		: 'HreRem.view.common.GridBase',
+    extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'historicomediadorgrid',
-	topBar: false,
+	topBar		: true,
 	idPrincipal : 'activo.id',
+	editOnSelect: false,
+	disabledDeleteBtn: true,
 	
     bind: {
-        store: '{historicoMediador}'
+        store: '{storeHistoricoMediador}'
     },
     
     initComponent: function () {
@@ -27,13 +29,22 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		        },
 		        {
 		            dataIndex: 'codigo',
-		            text: HreRem.i18n('title.publicaciones.mediador.codigo'),
-		            flex: 1
+		            text: HreRem.i18n('title.publicaciones.mediador.id'),
+		            flex: 0.5
 		        },
 		        {
 		            dataIndex: 'mediador',
 		            text: HreRem.i18n('title.publicaciones.mediador.mediador'),
-		            flex: 1
+		            flex: 1,
+		            editor: {
+		            	xtype: 'combobox',
+			            displayField: 'nombreProveedor',
+			            valueField: 'idProveedor',
+			            bind: {
+			            	store: '{storeMediadorListFiltered}'
+			            },
+			            reference: 'cbDDColMediador'
+		            }
 		        },
 		        {
 		            dataIndex: 'telefono',
@@ -45,8 +56,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		            text: HreRem.i18n('title.publicaciones.mediador.email'),
 		            flex: 1
 		        }
-		
 		    ];
+		
 		    me.dockedItems = [
 		        {
 		            xtype: 'pagingtoolbar',
@@ -55,17 +66,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		            inputItemWidth: 60,
 		            displayInfo: true,
 		            bind: {
-		                store: '{historicoMediador}'
+		                store: '{storeHistoricoMediador}'
 		            }
 		        }
 		    ];
 		    
-		    
 		    me.callParent();
-   },
-   
-   onGridBaseSelectionChange: function(grid, records) {
-	   //Se sobreescribe para que no deje eliminar.
    }
-
 });

@@ -1,6 +1,6 @@
-Ext.define('HreRem.model.HistoricoMediador', {
+Ext.define('HreRem.model.HistoricoMediadorModel', {
     extend: 'HreRem.model.Base',
-    idProperty: 'idActivo',
+    idProperty: 'id',
 
     fields: [
     		{
@@ -26,9 +26,8 @@ Ext.define('HreRem.model.HistoricoMediador', {
 	proxy: {
 		type: 'uxproxy',
 		api: {
-            read: 'activo/getHistoricoMediadorByActivo'
+            read: 'activo/getHistoricoMediadorByActivo',
+            create: 'activo/createHistoricoMediador'
         }
-
     }
-
 });

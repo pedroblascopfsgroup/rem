@@ -18,6 +18,7 @@ public class WebcomRESTDevonProperties {
 	public static final String ENVIO_OBRAS_NUEVAS_CAMPANYAS = "rest.client.webcom.endpoint.obrasNuevasCampanyas";
 	public static final String TIMEOUT_CONEXION = "rest.client.webcom.timeout.seconds";
 	public static final String SERVER_API_KEY = "rest.server.rem.api.key";
+	public static final String CLIENT_API_KEY = "rest.client.rem.api.key";
 	public static final String SERVER_PUBLIC_ADDRESS = "rest.client.rem.public.ip";
 
 	// Esta property se usa en el fichero de configuración de Spring

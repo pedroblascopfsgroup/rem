@@ -223,7 +223,7 @@ public class WebcomEndpoint {
 		String timeout = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
 				WebcomRESTDevonProperties.TIMEOUT_CONEXION, DEFAULT_TIMEOUT);
 		String apiKey = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.SERVER_API_KEY, DEFAULT_API_KEY);
+				WebcomRESTDevonProperties.CLIENT_API_KEY, DEFAULT_API_KEY);
 		return new WebcomEndpoint("POST", url, Integer.parseInt(timeout), apiKey);
 	}
 

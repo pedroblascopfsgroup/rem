@@ -213,9 +213,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this,
 		
 		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
-		activeTab = me.getView().down("tabpanel").getActiveTab();		
-  		var buscadorNifEmisor= activeTab.down('[name=buscadorNifEmisorField]').getValue();
-  		var buscadorNifPropietario= activeTab.down('[name=buscadorNifPropietarioField]').getValue();
+		activeTab = me.getView().down("tabpanel").getActiveTab();
+		if(!Ext.isEmpty(activeTab.down('[name=buscadorNifEmisorField]'))){
+  			var buscadorNifEmisor= activeTab.down('[name=buscadorNifEmisorField]').getValue();
+		}
+		if(!Ext.isEmpty(activeTab.down('[name=buscadorNifPropietarioField]'))){
+  			var buscadorNifPropietario= activeTab.down('[name=buscadorNifPropietarioField]').getValue();
+		}
     	/*if(!Ext.isEmpty(buscadorNifEmisor)){
     		activeTab.down('[name=buscadorNifEmisorField]').setHidden(true);
     		//activeTab.down('[name=nifEmisor]').setHidden(false);

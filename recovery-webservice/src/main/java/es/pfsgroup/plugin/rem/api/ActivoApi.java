@@ -394,6 +394,15 @@ public interface ActivoApi {
 		 * @return Devuelve si la operación ha sido satisfactoria, o no.
 		 */
 		public Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
+
+		/**
+		 * Este método alamcena en la DDBB un nuevo proveedor de tipo mediador en el historico de medidador
+		 * del informe comercial.
+		 * 
+		 * @param dto : dto con los datos del mediador a almacenar.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public Boolean createHistoricoMediador(DtoHistoricoMediador dto);
     }
 
 

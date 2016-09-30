@@ -88,7 +88,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboSubtipoGasto',
-				extraParams: {codigoTipoGasto: '{gasto.tiposGasto}'}
+				extraParams: {codigoTipoGasto: '{gasto.tipoGastoCodigo}'}
 			}   
     	},
 

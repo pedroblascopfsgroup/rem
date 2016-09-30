@@ -220,7 +220,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
-					extraParams: {idActivo: 'activo.id'}
+					extraParams: {idActivo: '{idActivo}'}
 				}
     		},
     		

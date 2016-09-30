@@ -71,11 +71,12 @@ public interface GenericApi {
 	public List<EXTDDTipoGestor> getComboTipoGestor();
 
 	/**
-	 * Devuelve los tipos de trabajo, filtrando los del tipo que no deben crearse
+	 * Devuelve los tipos de trabajo, filtrando los del tipo que no deben crearse para un activo dado
+	 * Si no se pasa ningun activo, devuelve la lista completa de tipos.
 	 * @return
 	 */
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(Long idActivo);
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo);
 	
 	/**
 	 * Devuelve los subtipos de trabajo del tipo que recibe

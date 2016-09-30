@@ -36,6 +36,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
@@ -236,29 +237,39 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(Long idActivo) {
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo) {
 		
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>)(List)adapter.getDiccionario("tiposTrabajo"));
-		
-		for(DDTipoTrabajo tipoTrabajo : tiposTrabajo){
-
-			// No se pueden crear tipos de trabajo ACTUACION TECNICA ni OBTENCION DOCUMENTAL
-			// cuando el activo no tiene condicion de gestion en el perimetro (check gestion = false)
-			if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
-					|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())){
-				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(idActivo);
+				
+		if(!Checks.esNulo(idActivo)){
+			Long activo = Long.parseLong(idActivo);
 			
-				if(!Checks.esNulo(perimetroActivo.getAplicaGestion()) && perimetroActivo.getAplicaGestion() == 1){
-					// Activo con Gestion en perimetro
+			for(DDTipoTrabajo tipoTrabajo : tiposTrabajo){
+	
+				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni OBTENCION DOCUMENTAL
+				// cuando el activo no tiene condicion de gestion en el perimetro (check gestion = false)
+				if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
+						|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())){
+					// Si no hay registro en BBDD de perimetro, el get nos devuelve un PerimetroActivo nuevo
+					// con todas las condiciones de perimetro activas
+					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo);
+				
+					if(!Checks.esNulo(perimetroActivo.getAplicaGestion()) && perimetroActivo.getAplicaGestion() == 1){
+						// Activo con Gestion en perimetro
+						tiposTrabajoFiltered.add(tipoTrabajo);
+					}
+				} else {
+					// El resto de tipos si se pueden crear
 					tiposTrabajoFiltered.add(tipoTrabajo);
 				}
 			}
+			
+			return tiposTrabajoFiltered;
+		} else {
+			return tiposTrabajo;
 		}
-		
-		return tiposTrabajoFiltered;
-
 	}
 	
 	@Override

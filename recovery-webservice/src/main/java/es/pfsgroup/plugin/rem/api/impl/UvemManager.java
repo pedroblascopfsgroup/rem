@@ -236,7 +236,9 @@ public class UvemManager implements UvemManagerApi {
 		es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new StructCabeceraFuncionalPeticion();
 		es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraTecnica cabeceraTecnica = new StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPAJC11_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC11_INS();
-
+		cabeceraFuncional.setIDDSAQ("CLDC");
+		System.out.println("CLDC: " + cabeceraFuncional.getIDDSAQ());
+		
 		// Seteamos cabeceras
 		servicioGMPAJC11_INS.setcabeceraAplicacion(cabeceraAplicacion);
 		servicioGMPAJC11_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
@@ -418,7 +420,9 @@ public class UvemManager implements UvemManagerApi {
 		es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraFuncionalPeticion();
 		es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPAJC93_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC93_INS();
-
+		cabeceraFuncional.setIDDSAQ("CLDC");
+		System.out.println("CLDC: " + cabeceraFuncional.getIDDSAQ());
+		
 		// Seteamos cabeceras
 		servicioGMPAJC93_INS.setcabeceraAplicacion(cabeceraAplicacion);
 		servicioGMPAJC93_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);

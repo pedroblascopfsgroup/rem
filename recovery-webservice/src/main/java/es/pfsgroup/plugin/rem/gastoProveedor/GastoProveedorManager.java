@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.gastoProveedor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -38,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
+import es.pfsgroup.plugin.rem.model.GastoImpugnacion;
 import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
@@ -215,15 +217,29 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(existeGasto) {
 			throw new JsonViewerException("Gasto ya dado de alta");			
 		} else {
-			// Creamos el gasto
+			// Creamos el gasto y las entidades relacionadas
 			genericDao.save(GastoProveedor.class, gastoProveedor);
+			
+			GastoDetalleEconomico detalleEconomico = new GastoDetalleEconomico();						
+			detalleEconomico.setGastoProveedor(gastoProveedor);				
+			genericDao.save(GastoDetalleEconomico.class, detalleEconomico);
 			
 			GastoGestion gestion = new GastoGestion();
 			DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
 			gestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
-			gestion.setGastoProveedor(gastoProveedor);	
+			gestion.setGastoProveedor(gastoProveedor);			
+			genericDao.save(GastoGestion.class, gestion);
 			
-			genericDao.save(GastoGestion.class, gestion);			
+			GastoInfoContabilidad contabilidad = new GastoInfoContabilidad();			
+			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", new GregorianCalendar().get(GregorianCalendar.YEAR));
+			Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);			
+			contabilidad.setEjercicio(ejercicio);
+			contabilidad.setGastoProveedor(gastoProveedor);			
+			genericDao.save(GastoInfoContabilidad.class, contabilidad);
+			
+			GastoImpugnacion impugnacion = new GastoImpugnacion();						
+			impugnacion.setGastoProveedor(gastoProveedor);				
+			genericDao.save(GastoImpugnacion.class, impugnacion);
 		}
 		
 		return gastoProveedor;

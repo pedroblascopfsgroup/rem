@@ -62,6 +62,9 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name = "VAL_NETO_CONTABLE")
 	private Double importeNetoContable;	
 	
+	@Column(name = "VAL_IMPORTE_DESCUENTO_PUBLICO")
+	private Double importeDescuentoPublicado;
+	
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "propietario")
 	private ActivoPropietario propietario;
@@ -93,6 +96,9 @@ public class VActivosAgrupacion implements Serializable {
 	
 	@Column(name="BIE_LOC_PUERTA")
 	private String puerta;
+	
+	@Column(name="PUBLICADO")
+	private Boolean publicado;
 
 
 	public Long getId() {
@@ -270,6 +276,24 @@ public class VActivosAgrupacion implements Serializable {
 	public Long getNumActivoRem() {
 		return numActivoRem;
 	}
+
+	public Double getImporteDescuentoPublicado() {
+		return importeDescuentoPublicado;
+	}
+
+	public void setImporteDescuentoPublicado(Double importeDescuentoPublicado) {
+		this.importeDescuentoPublicado = importeDescuentoPublicado;
+	}
+
+	public Boolean getPublicado() {
+		return publicado;
+	}
+
+	public void setPublicado(Boolean publicado) {
+		this.publicado = publicado;
+	}
+	
+	
 
 
 }

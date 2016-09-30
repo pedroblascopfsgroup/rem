@@ -384,10 +384,6 @@ public class UvemManager implements UvemManagerApi {
 		// Requeridos por el servicio
 		servicioGMPDJB13_INS.setnumeroCliente(0);
 		servicioGMPDJB13_INS.setnumeroUsuario("");
-		HttpServletRequest request = null;
-//		if (RequestContextHolder.getRequestAttributes() != null) {
-//			request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-//		}
 		servicioGMPDJB13_INS.setidSesionWL("");
 
 		servicioGMPDJB13_INS.setAlias(ALIAS);
@@ -475,6 +471,12 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC34_INS.setNumeroExpedienteDeRiesgoNumericonuidow(numExpedienteRiesgo);
 		logger.info("tipoRiesgo: "+tipoRiesgo);
 		servicioGMPAJC34_INS.setTipoRiesgoClaseProductoUrsusCotirx(tipoRiesgo);
+		
+		// Requeridos por el servicio
+		servicioGMPDJB13_INS.setnumeroCliente(0);
+		servicioGMPDJB13_INS.setnumeroUsuario("");
+		servicioGMPDJB13_INS.setidSesionWL("");
+
 		servicioGMPAJC34_INS.setAlias(ALIAS);
 		servicioGMPAJC34_INS.execute();
 		

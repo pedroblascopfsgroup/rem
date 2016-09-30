@@ -15,6 +15,7 @@ public class WebcomRESTDevonProperties {
 	public static final String ENVIO_CABECERAS_OBRAS_NUEVAS = "rest.client.webcom.endpoint.obrasNuevasCabeceras";
 	public static final String ENVIO_ACTIVOS_OBRAS_NUEVAS = "rest.client.webcom.endpoint.obrasNuevasActivos";
 	public static final String ENVIO_USUARIOS = "rest.client.webcom.endpoint.usuario";
+	public static final String ENVIO_OBRAS_NUEVAS_CAMPANYAS = "rest.client.webcom.endpoint.obrasNuevasCampanyas";
 	public static final String TIMEOUT_CONEXION = "rest.client.webcom.timeout.seconds";
 	public static final String SERVER_API_KEY = "rest.server.rem.api.key";
 	public static final String SERVER_PUBLIC_ADDRESS = "rest.client.rem.public.ip";

@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.CampanyaObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
@@ -29,6 +30,7 @@ import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoInfor
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoNotificacion;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoPeticionTrabajo;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomObrasNuevasCampanyas;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomProveedores;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomStock;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomUsuarios;
@@ -65,6 +67,9 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	
 	@Autowired
 	private ClienteWebcomActivosObrasNuevas activosObrasNuevasService;
+	
+	@Autowired
+	private ClienteWebcomObrasNuevasCampanyas obrasNuevasCampanyasService;
 	
 	@Autowired
 	private ClienteWebcomUsuarios usuariosService;
@@ -209,6 +214,19 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 			logger.debug("ParamsList vacío. Nada que enviar");
 		}
 		
+	}
+	
+	@Override
+	public void webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas) throws ErrorServicioWebcom {
+		logger.info("Invocando servicio Webcom: Envio Obras Nuevas Campanyas");
+
+		ParamsList paramsList = createParamsList(campanyas);
+
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, obrasNuevasCampanyasService);
+		} else {
+			logger.debug("ParamsList vacío. Nada que enviar");
+		}
 	}
 
 	public void setWebServiceClients(ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService,

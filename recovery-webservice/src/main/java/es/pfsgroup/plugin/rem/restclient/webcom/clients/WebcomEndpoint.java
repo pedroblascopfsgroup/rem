@@ -148,6 +148,18 @@ public class WebcomEndpoint {
 				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
+	
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío Obras Nuevas Campanyas.
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint obrasNuevasCampanyas(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_OBRAS_NUEVAS_CAMPANYAS,
+				UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
+
 
 	/**
 	 * Charset que debemos usar para conectarnos.

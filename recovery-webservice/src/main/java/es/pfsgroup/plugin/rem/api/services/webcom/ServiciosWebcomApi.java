@@ -4,6 +4,7 @@ import java.util.List;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.CampanyaObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
@@ -122,6 +123,16 @@ public interface ServiciosWebcomApi {
 	 * @param usuarios
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom;;
+	public void webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom;
+
+	/**
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
+	 * de las agrupaciones de Obras Nuevas o Campañas creadas en REM para que
+	 * WEBCOM pueda gestionar su publicación en los distintos portales
+	 * 
+	 * @param campanyas
+	 * @throws ErrorServicioWebcom
+	 */
+	public void webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas) throws ErrorServicioWebcom;
 
 }

@@ -137,6 +137,17 @@ public class WebcomEndpoint {
 				UNKNOWN_ENDPOINT_VALUE);
 		return createWebcomEndpointInstance(appProperties, url);
 	}
+	
+	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío de usarios.
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint usuarios(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ENVIO_USUARIOS,
+				UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
+	}
 
 	/**
 	 * Charset que debemos usar para conectarnos.

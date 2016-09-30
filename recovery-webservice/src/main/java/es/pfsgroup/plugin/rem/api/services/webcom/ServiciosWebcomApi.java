@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.UsuarioDto;
 
 public interface ServiciosWebcomApi {
 
@@ -112,5 +113,15 @@ public interface ServiciosWebcomApi {
 	 * @throws ErrorServicioWebcom
 	 */
 	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom;
+
+	/**
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
+	 * de los usuarios asociados a los proveedores anteriores que pueden acceder
+	 * o no a la herramienta de mediadores o de oficinas
+	 * 
+	 * @param usuarios
+	 * @throws ErrorServicioWebcom
+	 */
+	public void webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom;;
 
 }

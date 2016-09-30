@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.UsuarioDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
@@ -30,6 +31,7 @@ import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoOfert
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoPeticionTrabajo;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomProveedores;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomStock;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomUsuarios;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomVentasYcomisiones;
 
 @Service
@@ -63,6 +65,9 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	
 	@Autowired
 	private ClienteWebcomActivosObrasNuevas activosObrasNuevasService;
+	
+	@Autowired
+	private ClienteWebcomUsuarios usuariosService;
 
 	@Autowired
 	private ClienteWebcomStock stockService;
@@ -166,7 +171,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 
 	@Override
 	public void webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
+		logger.info("Invocando servicio Webcom: Envio Cabeceras Obras Nuevas");
 
 		ParamsList paramsList = createParamsList(cabeceras);
 
@@ -180,7 +185,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 
 	@Override
 	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
+		logger.info("Invocando servicio Webcom: Envio Activos Obras Nuevas");
 
 		ParamsList paramsList = createParamsList(activos);
 
@@ -190,6 +195,20 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 			logger.debug("ParamsList vacío. Nada que enviar");
 		}
 
+	}
+	
+	@Override
+	public void webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom {
+		logger.info("Invocando servicio Webcom: Envio Usuarios");
+
+		ParamsList paramsList = createParamsList(usuarios);
+
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, usuariosService);
+		} else {
+			logger.debug("ParamsList vacío. Nada que enviar");
+		}
+		
 	}
 
 	public void setWebServiceClients(ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService,

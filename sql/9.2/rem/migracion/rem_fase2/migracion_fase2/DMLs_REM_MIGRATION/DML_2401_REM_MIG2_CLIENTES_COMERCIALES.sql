@@ -89,7 +89,7 @@ BEGIN
           MIG2.CLC_COD_USUARIO_LDAP_ACCION    						      OFA_COD_OFERTA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN USERNAME_NOT_EXISTS ON OFR_NUM_OFERTA.OFA_COD_OFERTA = MIG.OFA_COD_OFERTA
+          INNER JOIN USERNAME_NOT_EXISTS ON USERNAME_NOT_EXISTS.USU_USERNAME = MIG2.CLC_COD_USUARIO_LDAP_ACCION
           '
           ;
           

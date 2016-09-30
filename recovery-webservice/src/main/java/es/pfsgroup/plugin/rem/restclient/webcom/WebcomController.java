@@ -53,7 +53,7 @@ public class WebcomController {
 		dto.setIdNotificacionRem(LongDataType.longDataType(idNotificacionRem));
 		dto.setIdNotificacionWebcom(LongDataType.longDataType(idNotificacionWebcom));
 
-		servicios.estadoNotificacion(Arrays.asList(new NotificacionDto[] { dto }));
+		servicios.webcomRestEstadoNotificacion(Arrays.asList(new NotificacionDto[] { dto }));
 
 		return "default";
 	}
@@ -99,7 +99,7 @@ public class WebcomController {
 		dto.setObservaciones(StringDataType.stringDataType(observaciones));
 		dto.setPorcentaje(DoubleDataType.doubleDataType(porcentaje));
 
-		servicios.ventasYcomisiones(Arrays.asList(new ComisionesDto[] { dto }));
+		servicios.webcomRestVentasYcomisiones(Arrays.asList(new ComisionesDto[] { dto }));
 		return "default";
 	}
 
@@ -136,7 +136,7 @@ public class WebcomController {
 		dto.setPlanta(StringDataType.stringDataType(planta));
 		dto.setPuerta(StringDataType.stringDataType(puerta));
 
-		servicios.enviarStock(Arrays.asList(new StockDto[] { dto }));
+		servicios.webcomRestStock(Arrays.asList(new StockDto[] { dto }));
 
 		return "default";
 
@@ -172,7 +172,7 @@ public class WebcomController {
 		dto.setCodEstadoExpediente(StringDataType.stringDataType(codEstadoExpediente));
 		dto.setVendido(BooleanDataType.booleanDataType(vendido));
 
-		servicios.enviaActualizacionEstadoOferta(Arrays.asList(new EstadoOfertaDto[] { dto }));
+		servicios.webcomRestEstadoOferta(Arrays.asList(new EstadoOfertaDto[] { dto }));
 
 		return "default";
 	}
@@ -203,7 +203,7 @@ public class WebcomController {
 		dto.setCodEstadoTrabajo(StringDataType.stringDataType(codEstadoTrabajo));
 		dto.setMotivoRechazo(StringDataType.stringDataType(motivoRechazo));
 
-		servicios.enviaActualizacionEstadoTrabajo(Arrays.asList(new EstadoTrabajoDto[] { dto }));
+		servicios.webcomRestEstadoPeticionTrabajo(Arrays.asList(new EstadoTrabajoDto[] { dto }));
 
 		return "default";
 	}

@@ -24,6 +24,9 @@ public class DtoCondicionEspecifica {
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
 	}
+	public void setIdEntidad(Long idEntidad) {
+		this.idActivo = idEntidad;
+	}
 	public String getTexto() {
 		return texto;
 	}

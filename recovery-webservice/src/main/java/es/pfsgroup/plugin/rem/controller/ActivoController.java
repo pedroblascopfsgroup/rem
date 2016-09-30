@@ -1756,9 +1756,17 @@ public class ActivoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createCondicionEspecifica(Long idEntidad, DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
+	public ModelAndView createCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
 
-		model.put("success", activoApi.createCondicionEspecifica(idEntidad,dtoCondicionEspecifica));
+		model.put("success", activoApi.createCondicionEspecifica(dtoCondicionEspecifica));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView darDeBajaCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
+
+		model.put("success", activoApi.darDeBajaCondicionEspecifica(dtoCondicionEspecifica));
 		return createModelAndViewJson(model);
 	}
 	

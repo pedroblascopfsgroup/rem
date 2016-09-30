@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'historicocondicioneslist',
-	topBar: true,
+	topBar		: true,
 	idPrincipal : 'activo.id',
 	
     bind: {
@@ -12,17 +12,21 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
     	boxready: function() {
     		me = this;
     		me.evaluarEdicion();
-    	}
+    	},
+    	rowclick: 'onGridCondicionesEspecificasRowClick'
     },
     
     initComponent: function () {
      	
      	var me = this;
-		
+     	
+     	me.deleteSuccessFn = function(){
+    		this.getStore().load()
+    		this.setSelection(0);
+    	}
 	    
 		me.columns = [
 		        {
-		        	
 		            dataIndex: 'idActivo',
 		            text: HreRem.i18n('title.publicaciones.condiciones.idactivo'),
 		            flex: 0.5,
@@ -39,24 +43,24 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		        {
 		            dataIndex: 'fechaDesde',
 		            text: HreRem.i18n('title.publicaciones.condiciones.fechadesde'),
-		            flex: 1,
+		            flex: 0.5,
 		            formatter: 'date("d/m/Y")'
 		        },
 		        {
 		            dataIndex: 'fechaHasta',
 		            text: HreRem.i18n('title.publicaciones.condiciones.fechahasta'),
-		            flex: 1,
+		            flex: 0.5,
 		            formatter: 'date("d/m/Y")'
 		        },
 		        {
 		            dataIndex: 'usuarioAlta',
 		            text: HreRem.i18n('title.publicaciones.condiciones.usuarioalta'),
-		            flex: 1
+		            flex: 0.5
 		        },
 		        {
 		            dataIndex: 'usuarioBaja',
 		            text: HreRem.i18n('title.publicaciones.condiciones.usuariobaja'),
-		            flex: 1
+		            flex: 0.5
 		        }
 		
 		    ];

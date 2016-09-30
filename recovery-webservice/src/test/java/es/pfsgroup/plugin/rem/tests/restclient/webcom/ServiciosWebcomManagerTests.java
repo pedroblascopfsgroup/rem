@@ -49,11 +49,11 @@ import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEnvioProveedores;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteInformeMediador;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomProveedores;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoOferta;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoPeticionTrabajo;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoInformeMediador;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomStock;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioProveedoresConstantes;
@@ -69,19 +69,19 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	HttpClientFacade httpClient;
 
 	@InjectMocks
-	private ClienteEstadoTrabajo estadoTrabajoService;
+	private ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService;
 
 	@InjectMocks
-	private ClienteEstadoOferta estadoOfertaService;
+	private ClienteWebcomEstadoOferta estadoOfertaService;
 
 	@InjectMocks
-	private ClienteStock stockService;
+	private ClienteWebcomStock stockService;
 
 	@InjectMocks
-	private ClienteEnvioProveedores proveedoresService;
+	private ClienteWebcomProveedores proveedoresService;
 
 	@InjectMocks
-	private ClienteInformeMediador informeMediadorService;
+	private ClienteWebcomEstadoInformeMediador informeMediadorService;
 
 	@Mock
 	private RegistroLlamadasManager registroLlamadas;
@@ -114,7 +114,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		dto.setMotivoRechazo(WebcomDataType.stringDataType(motivoRechazo));
 
 		///////////
-		manager.enviaActualizacionEstadoTrabajo(Arrays.asList(new EstadoTrabajoDto[] { dto }));
+		manager.webcomRestEstadoPeticionTrabajo(Arrays.asList(new EstadoTrabajoDto[] { dto }));
 		///////////
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
@@ -149,7 +149,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		dto.setVendido(BooleanDataType.booleanDataType(vendido));
 
 		///////////
-		manager.enviaActualizacionEstadoOferta(Arrays.asList(new EstadoOfertaDto[] { dto }));
+		manager.webcomRestEstadoOferta(Arrays.asList(new EstadoOfertaDto[] { dto }));
 		///////////
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
@@ -189,7 +189,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		stock.add(stock2);
 
 		///////////
-		manager.enviarStock(stock);
+		manager.webcomRestStock(stock);
 		///////////
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
@@ -235,7 +235,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		proveedores.add(prov2);
 
 		///////////
-		manager.enviaProveedores(proveedores);
+		manager.webcomRestProveedores(proveedores);
 		///////////
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
@@ -297,7 +297,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		List<InformeMediadorDto> informes = new ArrayList<InformeMediadorDto>();
 		informes.add(informe);
 		///////////
-		manager.enviarEstadoInformeMediador(informes);
+		manager.webcomRestEstadoInformeMediador(informes);
 		///////////
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
@@ -326,7 +326,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 			Mockito.when(httpClient.processRequest(anyString(), anyString(), anyMap(), any(JSONObject.class), anyInt(),
 					anyString())).thenThrow(exception);
 
-			manager.enviaActualizacionEstadoTrabajo(createEstadoDtoList());
+			manager.webcomRestEstadoPeticionTrabajo(createEstadoDtoList());
 			fail("Debería haberse lanzado una excepción");
 		} catch (Exception e) {
 			assertTrue("La excepción no es la esperada", e instanceof ErrorServicioWebcom);
@@ -348,7 +348,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 	@Test
 	public void noReintentarSiErrorControladoWebcom() {
-		ClienteEstadoTrabajo mockServicio = Mockito.spy(estadoTrabajoService);
+		ClienteWebcomEstadoPeticionTrabajo mockServicio = Mockito.spy(estadoTrabajoService);
 		manager.setWebServiceClients(mockServicio, estadoOfertaService, stockService, proveedoresService,
 				informeMediadorService);
 
@@ -357,7 +357,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		try {
 			Mockito.doThrow(error).when(mockServicio).enviaPeticion(Mockito.any(ParamsList.class),
 					any(RestLlamada.class));
-			manager.enviaActualizacionEstadoTrabajo(createEstadoDtoList());
+			manager.webcomRestEstadoPeticionTrabajo(createEstadoDtoList());
 
 			Mockito.verify(mockServicio).enviaPeticion(any(ParamsList.class), any(RestLlamada.class));
 		} catch (Exception e) {

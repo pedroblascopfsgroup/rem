@@ -1355,6 +1355,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	grid.setSelection(record);
 
     	me.getView().fireEvent('abrirDetalleActivo', record.get('idActivo'), "Activo " + record.get("numActivo"));
+	},
+	
+	// Este método comprueba si el campo fechaHasta o UsuarioBaja tiene datos, lo que supone que el registro
+	// ya se encuentra dado de baja y no se permite volver a dar de baja.
+	onGridCondicionesEspecificasRowClick: function(grid , record , tr , rowIndex) {
+		if(!Ext.isEmpty(record.getData().fechaHasta) || !Ext.isEmpty(record.getData().usuarioBaja)){
+			grid.up().disableRemoveButton(true);
+		}
 	}
 	
 });

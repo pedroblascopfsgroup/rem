@@ -40,33 +40,12 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							bind		: {
 											store: '{storePreciosVigentes}'
 							},
-							/*viewConfig: { 
-								getRowClass: function(record) { 
-									
-									var fechaFin = record.get("fechaFin");
-									var cssClass = Ext.isEmpty(fechaFin) || record.get("fechaFin") >= $AC.getCurrentDate()? '' : 'grid-warning-row';
-						            return cssClass; 
-						        }
-							},*/
 							columns		: {
 											defaults: {
 							    				menuDisabled: true,
 							    				sortable: false
 							    			},
 											items:[
-											
-												/*{
-									    			xtype: 'actioncolumn',
-									    			cls: 'grid-no-seleccionable-primera-col',
-											        handler: 'onPasarPrecioHistoricoClick',
-											        items: [{
-											            tooltip: 'Pasar a historico',
-											            iconCls: 'x-fa fa-history'
-											        }],
-										            flex     : 0.3,            
-										            align: 'center',
-										            hideable: false
-										       },*/
 											   {
 												dataIndex: 'descripcionTipoPrecio',
 												cls: 'grid-no-seleccionable-primera-col',
@@ -146,12 +125,11 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						    				]
 							},
 							saveSuccessFn: function() {
-								me.down("[reference=gridHistoricoPrecios]").getStore().load();								
+								this.up('valorespreciosactivo').funcionRecargar();
 							}
 					},
 					{
 						xtype: 'container',
-						//colspan: 3,
 						style: {
 							backgroundColor: '#E5F6FE'
 						},
@@ -379,8 +357,6 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								items:[
 								   {   
 									   text: HreRem.i18n('header.descripcion'),
-									   //dataIndex: 'descripcionTipoPrecio',
-									   //sortable: true,
 									   flex: 0.4
 							       },
 								   {
@@ -424,21 +400,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 									flex: 1
 								   }
 			    				]
-
-							}/* HREOS-627 Paginación eliminada
-							,
-							dockedItems : [
-						        {
-						            xtype: 'pagingtoolbar',
-						            dock: 'bottom',
-						            itemId: 'historicoPreciosToolbar',
-						            inputItemWidth: 100,
-						            displayInfo: true,
-						            bind: {
-						                store: '{storeHistoricoValoresPrecios}'
-						            }
-						        }
-							]	*/					 
+							}
 						}
 				]
             }
@@ -446,19 +408,21 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
         
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
-    	
    }, 
    
    	afterLoad: function() {
 		var me = this;
-		me.lookupController().getViewModel().get("storePreciosVigentes").load();
-		me.lookupController().getViewModel().get("storeHistoricoValoresPrecios").load();
+		me.lookupController().getViewModel().getData().storePreciosVigentes.load();
+		me.lookupController().getViewModel().getData().storeHistoricoValoresPrecios.load();
 	},
    
    funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+		});
    },
    
  //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar

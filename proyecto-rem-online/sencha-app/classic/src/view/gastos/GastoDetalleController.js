@@ -7,7 +7,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this,
 		id = me.getViewModel().get("gasto.id"),
 		model = form.getModelInstance();
-		
 		form.up("tabpanel").mask(HreRem.i18n("msg.mask.loading"));	
 		
 		model.setId(id);

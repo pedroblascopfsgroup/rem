@@ -10,13 +10,13 @@ Ext.define('HreRem.model.GestionGasto', {
     		name: 'necesariaAutorizacionPropietario'
    	 	},
    	 	{
-   	 		name: 'motivoAutorizacionPropietario'
+   	 		name: 'comboMotivoAutorizacionPropietario'
    	 	},
    	 	{
    	 		name: 'gestoria'
    	 	},
    	 	{
-   	 		name: 'idProvision'
+   	 		name: 'numProvision'
    	 	},
     	{
     		name: 'observaciones'
@@ -32,10 +32,20 @@ Ext.define('HreRem.model.GestionGasto', {
    		},
    		{
    			name: 'fechaYGestorAltaRem',
-   			convert: function(value, record){
-   				
+   			calculate: function(record){
+   				var res='';
+   				if(!Ext.isEmpty(record.fechaAltaRem)){
+   					var date= new Date(record.fechaAltaRem);
+   					res= res + date.getDate() + "/"+ (date.getMonth()+1) + "/" + date.getFullYear();
+   				}
+   				if(!Ext.isEmpty(record.gestorAltaRem)){
+   					res= res + " - " + record.gestorAltaRem;
+   				}
+   				return res;
    			}
+   			,depends: ['gestorAltaRem', 'fechaAltaRem']
    		},
+   		
    		//////////////////
    		{
    			name: 'comboEstadoAutorizacionHaya'
@@ -50,9 +60,18 @@ Ext.define('HreRem.model.GestionGasto', {
    		},
     	{
     		name: 'fechaYGestorAutorizacionHaya',
-    		convert: function(value, record){
-   				
+    		calculate: function(record){
+   				var res='';
+   				if(!Ext.isEmpty(record.fechaAutorizacionHaya)){
+   					var date= new Date(record.fechaAutorizacionHaya);
+   					res= res + date.getDate() + "/"+ (date.getMonth()+1) + "/" + date.getFullYear();
+   				}
+   				if(!Ext.isEmpty(record.gestorAutorizacionHaya)){
+   					res= res + " - " + record.gestorAutorizacionHaya;
+   				}
+   				return res;
    			}
+   			,depends: ['gestorAutorizacionHaya', 'fechaAutorizacionHaya']
     	},
     	{
     		name: 'comboMotivoAutorizacionHaya'
@@ -71,12 +90,21 @@ Ext.define('HreRem.model.GestionGasto', {
    		},
     	{
     		name: 'fechaYGestorAutorizacionPropietario',
-    		convert: function(value, record){
-   				
+    		calculate: function(record){
+   				var res='';
+   				if(!Ext.isEmpty(record.fechaAutorizacionPropietario)){
+   					var date= new Date(record.fechaAutorizacionPropietario);
+   					res= res + date.getDate() + "/"+ (date.getMonth()+1) + "/" + date.getFullYear();
+   				}
+   				if(!Ext.isEmpty(record.gestorAutorizacionPropietario)){
+   					res= res + " - " + record.gestorAutorizacionPropietario;
+   				}
+   				return res;
    			}
+   			,depends: ['fechaAutorizacionPropietario', 'gestorAutorizacionPropietario']
     	},
 		{
-			name : 'comboMotivoAutorizacionPropietario'
+			name : 'motivoRechazoAutorizacionPropietario'
 		},
 		///////////
 		{
@@ -89,9 +117,18 @@ Ext.define('HreRem.model.GestionGasto', {
    		},
 		{
 			name : 'fechaYGestorAnulado',
-			convert: function(value, record){
-   				
+			calculate: function(record){
+   				var res='';
+   				if(!Ext.isEmpty(record.fechaAnulado)){
+   					var date= new Date(record.fechaAnulado);
+   					res= res + date.getDate() + "/"+ (date.getMonth()+1) + "/" + date.getFullYear();
+   				}
+   				if(!Ext.isEmpty(record.gestorAnulado)){
+   					res= res + " - " + record.gestorAnulado;
+   				}
+   				return res;
    			}
+   			,depends: ['fechaAnulado', 'gestorAnulado']
 		},
 		{
 			name : 'comboMotivoAnulado'
@@ -107,9 +144,18 @@ Ext.define('HreRem.model.GestionGasto', {
    		},
 		{
 			name : 'fechaYGestorRetenerPago',
-			convert: function(value, record){
-   				
+			calculate: function(record){
+   				var res='';
+   				if(!Ext.isEmpty(record.fechaRetenerPago)){
+   					var date= new Date(record.fechaRetenerPago);
+   					res= res + date.getDate() + "/"+ (date.getMonth()+1) + "/" + date.getFullYear();
+   				}
+   				if(!Ext.isEmpty(record.gestorRetenerPago)){
+   					res= res + " - " + record.gestorRetenerPago;
+   				}
+   				return res;
    			}
+   			,depends: ['fechaRetenerPago', 'gestorRetenerPago']
 		},
 		{
 			name: 'comboMotivoRetenerPago'
@@ -120,7 +166,7 @@ Ext.define('HreRem.model.GestionGasto', {
 		type: 'uxproxy',
 		localUrl: 'gestiongasto.json',
 		api: {
-            read: 'gastosproveedor/getTabGestion',
+            read: 'gastosproveedor/getTabGasto',
             update: 'gastosproveedor/updateGestionGasto'
         },
 		

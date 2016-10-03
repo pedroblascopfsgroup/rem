@@ -1,21 +1,21 @@
 Ext.define('HreRem.view.gastos.ImpugnacionGasto', {
     extend: 'HreRem.view.common.FormBase',
-    xtype: 'impugnaciongasto',    
+    xtype: 'impugnaciongasto',   
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     disableValidation: true,
-    reference: 'gestiongastoref',
+    reference: 'impugnaciongastoref',
     scrollable	: 'y',
-//	recordName: "impugnacion",
-//	
-//	recordClass: "HreRem.model.ImpugnacionGasto",
-//    
-//    requires: ['HreRem.model.ImpugnacionGasto'],
-//    
-//    listeners: {
-//		boxready:'cargarTabData'
-//	},
-//    
+	recordName: "impugnacion",
+	
+	recordClass: "HreRem.model.ImpugnacionGasto",
+    
+    requires: ['HreRem.model.ImpugnacionGasto'],
+    
+    listeners: {
+		boxready:'cargarTabData'
+	},
+    
     initComponent: function () {
 
         var me = this;
@@ -24,7 +24,7 @@ Ext.define('HreRem.view.gastos.ImpugnacionGasto', {
        
 	    	{   
 				xtype:'fieldsettable',
-//				collapsible: false,
+				collapsible: false,
 				items :
 					[
 						{
@@ -32,7 +32,7 @@ Ext.define('HreRem.view.gastos.ImpugnacionGasto', {
 							formatter: 'date("d/m/Y")',
 							reference: 'fechaTopeImpugnacion',
 							fieldLabel: HreRem.i18n('fieldlabel.gasto.impugnacion.fecha.tope.impugnacion'),
-							bind: '{impugnacion.fechaTopeImpugnacion}',
+							bind: '{impugnacion.fechaTope}',
 							maxValue: null
 						},
 						{
@@ -40,7 +40,7 @@ Ext.define('HreRem.view.gastos.ImpugnacionGasto', {
 							formatter: 'date("d/m/Y")',
 							reference: 'fechaPresentacionImpugnacion',
 							fieldLabel: HreRem.i18n('fieldlabel.gasto.impugnacion.fecha.presentacion.impugnacion'),
-							bind: '{impugnacion.fechaPresentacionImpugnacion}',
+							bind: '{impugnacion.fechaPresentacion}',
 							maxValue: null
 						},
 						{
@@ -48,16 +48,15 @@ Ext.define('HreRem.view.gastos.ImpugnacionGasto', {
 							formatter: 'date("d/m/Y")',
 							reference: 'fechaResolucionImpugnacion',
 							fieldLabel: HreRem.i18n('fieldlabel.gasto.impugnacion.fecha.resolucion.impugnacion'),
-							bind: '{impugnacion.fechaResolucionImpugnacion}',
+							bind: '{impugnacion.fechaResolucion}',
 							maxValue: null
 						},
 						{ 
 							xtype:'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.gasto.impugnacion.resultado'),
-							readOnly:true,
 							bind: {
 								store: '{comboResultadoImpugnacion}',
-								value: '{impugnacion.resultado}'
+								value: '{impugnacion.resultadoCodigo}'
 							}
 						},
 						{ 

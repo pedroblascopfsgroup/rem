@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
+import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -310,6 +311,23 @@ public class GastosProveedorController {
 		try {		
 			
 			boolean success = gastoProveedorApi.updateGestionGasto(dtoGestion);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateImpugnacionGasto(DtoImpugnacionGasto dtoImpugnacion, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.updateImpugnacionGasto(dtoImpugnacion);
 			model.put("success", success);
 			
 		} catch (Exception e) {

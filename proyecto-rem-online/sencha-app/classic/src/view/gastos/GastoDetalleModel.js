@@ -201,6 +201,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivosRetenerPago'}
 			}
+    	},
+    	
+    	comboResultadoImpugnacion: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'resultadosImpugnacion'}
+			}
     	}
     	
 	

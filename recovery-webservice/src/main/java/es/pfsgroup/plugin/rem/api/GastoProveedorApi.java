@@ -6,6 +6,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
+import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -102,6 +103,12 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		boolean updateGestionGasto(DtoGestionGasto dto);
+		
+		/**
+		 * Método que actualiza la impugnación de un gasto
+		 * @return
+		 */
+		boolean updateImpugnacionGasto(DtoImpugnacionGasto dto);
 		
 }
 

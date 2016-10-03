@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -239,6 +240,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosAutorizacionPropietario", DDEstadoAutorizacionPropietario.class);
 		mapa.put("motivosAnulados", DDMotivoAnulacionGasto.class);
 		mapa.put("motivosRetenerPago", DDMotivoRetencionPago.class);
+		mapa.put("resultadosImpugnacion", DDResultadoImpugnacionGasto.class);
 //		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 		return Collections.unmodifiableMap(mapa);
 	}

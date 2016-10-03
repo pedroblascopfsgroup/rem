@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
+import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
@@ -52,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
@@ -69,10 +71,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public final String PESTANA_DETALLE_ECONOMICO = "detalleEconomico";
 	public final String PESTANA_CONTABILIDAD = "contabilidad";
 	public final String PESTANA_GESTION = "gestion";
-//	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
-//	public final String PESTANA_RESERVA = "reserva";
-//	public final String PESTANA_CONDICIONES = "condiciones";
-//	public final String PESTANA_FORMALIZACION= "formalizacion";
+	public final String PESTANA_IMPUGNACION = "impugnacion";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -131,6 +130,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			if(PESTANA_GESTION.equals(tab)){
 				dto= gestionToDtoGestion(gasto);
+			}
+			if(PESTANA_IMPUGNACION.equals(tab)){
+				dto= impugnaciontoDtoImpugnacion(gasto);
 			}
 
 		} catch (Exception e) {
@@ -795,6 +797,59 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return false;
 		
 	}
+	
+	public DtoImpugnacionGasto impugnaciontoDtoImpugnacion(GastoProveedor gasto){
+		
+		DtoImpugnacionGasto dtoImpugnacion= new DtoImpugnacionGasto();
+		
+		if(!Checks.esNulo(gasto)){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoImpugnacion gastoImpugnacion = genericDao.get(GastoImpugnacion.class, filtro);
+			
+			dtoImpugnacion.setFechaTope(gastoImpugnacion.getFechaTope());
+			dtoImpugnacion.setFechaPresentacion(gastoImpugnacion.getFechaPresentacion());
+			dtoImpugnacion.setFechaResolucion(gastoImpugnacion.getFechaResolucion());
+			
+			if(!Checks.esNulo(gastoImpugnacion.getResultadoImpugnacion())){
+				dtoImpugnacion.setResultadoCodigo(gastoImpugnacion.getResultadoImpugnacion().getCodigo());
+			}
+			dtoImpugnacion.setObservaciones(gastoImpugnacion.getObservaciones());
+		}
+		
+		return dtoImpugnacion;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean updateImpugnacionGasto(DtoImpugnacionGasto dto){
+		
+		try{
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", dto.getId());
+			GastoImpugnacion gastoImpugnacion = genericDao.get(GastoImpugnacion.class, filtro);
+			
+			if(!Checks.esNulo(gastoImpugnacion)){
+				beanUtilNotNull.copyProperties(gastoImpugnacion, dto);
+				
+				if(!Checks.esNulo(dto.getResultadoCodigo())){
+					DDResultadoImpugnacionGasto resultado= (DDResultadoImpugnacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoImpugnacionGasto.class, dto.getResultadoCodigo());
+					gastoImpugnacion.setResultadoImpugnacion(resultado);
+				}
+				
+				genericDao.update(GastoImpugnacion.class, gastoImpugnacion);
+				return true;
+				
+			}
+			
+			
+		}catch(Exception e) {
+			return false;
+		}
+		
+		return false;
+		
+	}
+	
+	
 	
 
 	

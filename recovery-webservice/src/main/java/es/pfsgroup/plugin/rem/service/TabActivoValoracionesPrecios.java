@@ -145,6 +145,10 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 			
 			
 		}
+
+		beanUtilNotNull.copyProperty(valoracionesDto, "vpo", !Checks.esNulo(activo.getVpo()) && activo.getVpo() == 1 ? true : false);
+		
+		
 		return valoracionesDto;	
 	}
 

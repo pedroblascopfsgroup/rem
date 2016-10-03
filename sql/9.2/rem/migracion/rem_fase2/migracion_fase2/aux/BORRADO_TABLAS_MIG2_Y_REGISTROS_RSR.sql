@@ -1,0 +1,66 @@
+--/*
+--#########################################
+--## AUTOR=MANUEL RODRIGUEZ
+--## FECHA_CREACION=20160929
+--## 
+--## Finalidad: Proceso de borrado de las tablas de MIG2
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_SQL VARCHAR2(32000 CHAR);
+V_COUNT NUMBER(16) := 0;
+
+CURSOR TABLES_CURSOR IS
+    SELECT DISTINCT 'DROP TABLE '||V_ESQUEMA||'.'||TABLE_NAME|| ' PURGE' 
+    FROM ALL_TAB_COLUMNS 
+    WHERE TABLE_NAME LIKE 'MIG2%'
+    AND OWNER = ''||V_ESQUEMA||''
+;
+
+BEGIN
+    
+    OPEN TABLES_CURSOR;
+    
+    DBMS_OUTPUT.PUT_LINE('[INICIO] COMIENZA EL PROCESO DE BORRADO DE TABLAS MIG2 Y REGISTROS DE LA RSR');
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] BORRANDO DE TABLAS MIG2...');
+    LOOP
+        FETCH TABLES_CURSOR INTO V_SQL;
+        EXIT WHEN TABLES_CURSOR%NOTFOUND;    
+            EXECUTE IMMEDIATE V_SQL;
+            V_COUNT := V_COUNT + 1;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('[INFO] TABLAS ELIMINADAS - '||V_COUNT);
+    
+    CLOSE TABLES_CURSOR;
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] BORRANDO DE REGISTROS DE LA RSR...');
+    EXECUTE IMMEDIATE 'DELETE FROM REM01.RSR_REGISTRO_SQLS WHERE RSR_NOMBRE_SCRIPT LIKE ''%MIG2%''';
+    DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS DE LA RSR ELIMINADOS - '||SQL%ROWCOUNT);
+    
+    DBMS_OUTPUT.PUT_LINE('[FIN] FINALIZA EL PROCESO DE BORRADO DE TABLAS MIG2 Y REGISTROS DE LA RSR');
+    
+    COMMIT;
+  
+EXCEPTION
+      WHEN OTHERS THEN
+            DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+            DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+            DBMS_OUTPUT.put_line(SQLERRM);
+            ROLLBACK;
+            RAISE;
+END;
+
+/
+
+EXIT;

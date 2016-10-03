@@ -128,6 +128,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			            flex: 0.5
 			        },
 			        {
+			            dataIndex: 'publicado',
+			            text: HreRem.i18n('header.publicado'),
+			            flex: 0.5,
+			            renderer: Utils.rendererBooleanToSiNo
+			        },
+			        {
+			            dataIndex: 'situacionComercial',
+			            text: HreRem.i18n('header.disponibilidad.comercial'),
+			            flex: 1
+			        },
+			        {
 			            dataIndex: 'importeMinimoAutorizado',
 			            text: HreRem.i18n('header.valor.web'),
 			            flex: 1,
@@ -139,6 +150,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			        {
 			            dataIndex: 'importeAprobadoVenta',
 			            text: HreRem.i18n('header.valor.aprobado.venta'),
+			            flex: 1,
+			            renderer: function(value) {
+			        		return Ext.util.Format.currency(value);
+			        	},
+			            sortable: false		            
+			        },
+			        {
+			            dataIndex: 'importeDescuentoPublicado',
+			            text: HreRem.i18n('header.valor.descuento.publicado'),
 			            flex: 1,
 			            renderer: function(value) {
 			        		return Ext.util.Format.currency(value);

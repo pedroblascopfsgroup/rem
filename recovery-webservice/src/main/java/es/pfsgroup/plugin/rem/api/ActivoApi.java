@@ -14,6 +14,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -397,6 +398,13 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public boolean isActivoAsistido(Activo activo);
+		
+		/**
+		 * Obtiene el numero de activos PUBLICADOS de la agrupacion.
+		 * PUBLICADOS - DD_EPU (Publicado, forzado, oculto, precio oculto y forzado con precio oculto)
+		 * 
+		 * @param activos
+		 * @return
+		 */
+		public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos);
     }
-
-

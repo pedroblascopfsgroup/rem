@@ -249,7 +249,10 @@ public class AgrupacionAdapter {
 		return dtoAgrupacion;
 		
 	}
-
+	
+	public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem){
+		return activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(numAgrupRem);
+	}
 	
 	public Page getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id) {
 		

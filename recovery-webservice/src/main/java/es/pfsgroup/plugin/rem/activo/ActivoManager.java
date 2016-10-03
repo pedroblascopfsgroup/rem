@@ -1484,6 +1484,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					|| DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo()))
 						return true;
-		return false;	
+		return false;
+	}
+
+	public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos) {
+		
+		Integer contador = 0;
+		
+		for(ActivoAgrupacionActivo activoAgrupacion : activos) {
+			if(!Checks.esNulo(activoAgrupacion.getActivo().getEstadoPublicacion())) {
+				
+				String codEstadoPublicacion = activoAgrupacion.getActivo().getEstadoPublicacion().getCodigo();
+				if(codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO) ||
+					codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO) ||
+					codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)) 
+				{
+					contador++;
+				}
+			}	
+		}
+		
+		return contador;
 	}
 }

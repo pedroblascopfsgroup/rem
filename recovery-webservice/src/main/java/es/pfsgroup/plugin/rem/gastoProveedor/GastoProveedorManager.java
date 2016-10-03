@@ -240,7 +240,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			genericDao.save(GastoGestion.class, gestion);
 			
 			GastoInfoContabilidad contabilidad = new GastoInfoContabilidad();			
-			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", new GregorianCalendar().get(GregorianCalendar.YEAR));
+			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", String.valueOf(new GregorianCalendar().get(GregorianCalendar.YEAR)));
 			Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);			
 			contabilidad.setEjercicio(ejercicio);
 			contabilidad.setGastoProveedor(gastoProveedor);			

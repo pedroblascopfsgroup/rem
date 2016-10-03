@@ -94,7 +94,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                             }
 							me.getView().unmask();
-							me.refrescarGasto(form.refreshAfterSave);
+							//me.refrescarGasto(form.refreshAfterSave);
 			            }
 					});
 				}

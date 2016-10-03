@@ -25,6 +25,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		
 		HQLBuilder hb = new HQLBuilder(" from VGastosProveedor vgasto");
 		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
 	
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		

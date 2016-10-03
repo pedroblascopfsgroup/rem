@@ -2,23 +2,12 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.administracion',
 
-	//Funcion que se ejecuta al hacer click en el botón buscar
-//	onSearchClick: function(btn) {
-//		var initialData = {};
-//
-//		var searchForm = btn.up('formBase');
-//		
-//		if (searchForm.isValid()) {
-//			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-//			
-//			Ext.Object.each(criteria, function(key, val) {
-//				if (Ext.isEmpty(val)) {
-//					delete criteria[key];
-//				}
-//			});
-//			this.lookupReference('visitasComercialList').getStore().loadPage(1);
-//        }
-//	},
+	//Funcion que se ejecuta al hacer click en el botón buscar provisiones
+	onClickProvisionesSearch: function(btn) {
+		var me = this;
+		this.lookupReference('provisionesGastosList').collapse();
+		this.lookupReference('provisionesList').getStore().loadPage(1);
+	},
 	
 	paramLoading: function(store, operation, opts) {
 //		var initialData = {};
@@ -45,7 +34,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		
     	me.getView().fireEvent('abrirDetalleGasto', record);
 		
-	}
+	},
 	
 		// Funcion que se ejecuta al hacer click en el botón limpiar
 //	onCleanFiltersClick: function(btn) {			
@@ -92,5 +81,43 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 //	    me.getView().fireEvent('abrirDetalleActivo', record);
 //    	
 //    }
+
+	onRowClickProvisionesList: function(gridView,record) {
+		
+		var me = this;    		
+		me.getViewModel().set("provisionSeleccionada", record);
+		me.getViewModel().notify();
+		
+		me.lookupReference('provisionesGastosList').expand();	
+		this.lookupReference('provisionesGastosList').getStore().loadPage(1);
+    },
+
+	paramLoadingProvisiones: function(store, operation, opts) {
+		var me = this;
+		
+		var me = this,		
+		searchForm = this.lookupReference('provisionesSearch');
+		
+		if (searchForm.isValid()) {				
+			store.getProxy().extraParams = me.getFormCriteria(searchForm);			
+			return true;		
+		}
+		
+	},
+	    
+    getFormCriteria: function(form) {
+    	
+    	var me = this, initialData = {};
+    	
+		var criteria = Ext.apply(initialData, form ? form.getValues() : {});
+		
+		Ext.Object.each(criteria, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete criteria[key];
+			}
+		});
+
+		return criteria;
+    }
 
 });

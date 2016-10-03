@@ -195,8 +195,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												xtype: 'button',
 												text: HreRem.i18n('fieldlabel.gasto.incluir.trabajos.rem'),
 											    margin: '0 0 10 0',
-						//					    handler: 'onClickBotonFavoritos'
-											    disabled: true
+											    handler: 'onClickBotonIncluirTrabajosGasto'
 											}
 											
 										]

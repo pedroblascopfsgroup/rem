@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.administracion.AdministracionModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.administracion',
-    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto'],
+    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision'],
     
     stores: {
     	
@@ -20,58 +20,46 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	        listeners : {
 	            beforeload : 'paramLoading'
 	        }
+    	},
+    	
+    	provisiones: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Provision',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/provision.json',
+		        remoteUrl: 'provisiongastos/findAll'
+	    	},
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,
+	        listeners : {
+	            beforeload : 'paramLoadingProvisiones'
+	        }
+    		
+    	},
+    	
+    	provisionGastos: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Gasto',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/provision.json',
+		        remoteUrl: 'gasto/getListGastos',
+		        extraParams: {idProvision: '{provisionSeleccionada.id}'}
+	    	}
+    		
+    	},
+    	
+    	comboEstadosProvision: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosProvision'}
+			}   
     	}
     	
-//    	visitasComercial: {
-//			pageSize: $AC.getDefaultPageSize(),
-//	    	model: 'HreRem.model.Visitas',
-//	    	proxy: {
-//		        type: 'uxproxy',
-//		        localUrl: '/visitas.json',
-//		        remoteUrl: 'visitas/getListVisitas'
-//	    	},
-//	    	autoLoad: true,
-//	    	session: true,
-//	    	remoteSort: true,
-//	    	remoteFilter: true,
-//	        listeners : {
-//	            beforeload : 'paramLoading'
-//	        }
-//    	},
-//    	
-//    	ofertasComercial: {
-//    		pageSize: $AC.getDefaultPageSize(),
-//	    	model: 'HreRem.model.Ofertas',
-//	    	proxy: {
-//		        type: 'uxproxy',
-//		        localUrl: '/ofertas.json',
-//		        remoteUrl: 'ofertas/getListOfertas'
-//	    	},
-//	    	autoLoad: true,
-//	    	session: true,
-//	    	remoteSort: true,
-//	    	remoteFilter: true,
-//	        listeners : {
-//	            beforeload : 'paramLoading'
-//	        }
-//    	},
-//    	
-//    	comboTipoOferta: {
-//				model: 'HreRem.model.ComboBase',
-//					proxy: {
-//						type: 'uxproxy',
-//						remoteUrl: 'generic/getDiccionario',
-//						extraParams: {diccionario: 'tiposOfertas'}
-//					}
-//    	},
-//    	comboEstadoOferta: {
-//				model: 'HreRem.model.ComboBase',
-//					proxy: {
-//						type: 'uxproxy',
-//						remoteUrl: 'generic/getDiccionario',
-//						extraParams: {diccionario: 'estadosOfertas'}
-//					}
-//    	}
     		
     }
 });

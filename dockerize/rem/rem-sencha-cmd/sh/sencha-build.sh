@@ -17,6 +17,8 @@ rm -Rf /output/*
 
 cd /input
 
+echo "[WARNING ] vamos a eliminar el repo remoto 'sencha'"
+sencha package repo remove sencha
 CONST_DEV=dev
 # Esta comparación tan extraña es para ignorar mayúsculas y minúsculas
 if [[ "${OP,,}" == "${CONST_DEV,,}" ]]; then

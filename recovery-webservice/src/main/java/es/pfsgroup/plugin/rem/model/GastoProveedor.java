@@ -102,6 +102,10 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_NUM_GASTO_GESTORIA")
 	private Long numGastoGestoria;
 	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRG_ID")
+    private ProvisionGastos provisionGastos;
+	
 	
 	
     
@@ -245,6 +249,14 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setNumGastoGestoria(Long numGastoGestoria) {
 		this.numGastoGestoria = numGastoGestoria;
+	}
+
+	public ProvisionGastos getProvisionGastos() {
+		return provisionGastos;
+	}
+
+	public void setProvisionGastos(ProvisionGastos provisionGastos) {
+		this.provisionGastos = provisionGastos;
 	}
     
 }

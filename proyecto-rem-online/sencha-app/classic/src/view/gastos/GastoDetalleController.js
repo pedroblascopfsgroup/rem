@@ -2,6 +2,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gastodetalle',  
 	
+    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto'],
 	
 	cargarTabData: function (form) {
 		var me = this,
@@ -579,6 +580,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		};
 		
 		me.onSaveFormularioCompleto(null, form, success);		
+	},
+	
+	onClickBotonIncluirTrabajosGasto: function(btn) {
+		
+		var me = this;
+    	var idGasto = me.getViewModel().get("gasto.id");
+    	me.getView().fireEvent('openModalWindow',"HreRem.view.gastos.SeleccionTrabajosGasto",{idGAsto: idGasto, parent: me.getView()});
 	}
 	
 

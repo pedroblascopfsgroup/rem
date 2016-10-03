@@ -2,7 +2,7 @@ Ext.define('HreRem.view.administracion.gastos.AdministracionGastosMain', {
 	extend		: 'Ext.tab.Panel',
 	cls: 'panel-base shadow-panel, tabPanel-segundo-nivel',
     xtype		: 'administraciongastosmain',
-    requires	: ['HreRem.view.administracion.gastos.GestionGastos', 'HreRem.view.administracion.gastos.GestionSolicitudesProvisionesFondosBankia','HreRem.view.administracion.AdministracionModel',
+    requires	: ['HreRem.view.administracion.gastos.GestionGastos', 'HreRem.view.administracion.gastos.GestionProvisiones','HreRem.view.administracion.AdministracionModel',
     				'HreRem.view.administracion.AdministracionController'],
     layout: {
         type: 'vbox',
@@ -26,8 +26,8 @@ Ext.define('HreRem.view.administracion.gastos.AdministracionGastosMain', {
         			reference: 'gestiongastosref'        				
         		},
         		{	
-        			xtype: 'gestionsolicitudesprovisionesfondosbankia',
-        			reference: 'gestionsolicitudesprovisionesfondosbankiaref'        				
+        			xtype: 'gestionprovisiones',
+        			reference: 'gestionprovisionesref'        				
         		}
         
         ];

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20160929
+--## FECHA_CREACION=20160930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -42,14 +42,17 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 							CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_GIP_DD_DEG',				'DD_DEG_ID_CONTABILIZA',		V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO',			'DD_DEG_ID'			)
+    	T_FK(	'FK_GIP_DD_DEG',				'DD_DEG_ID_CONTABILIZA',		V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO',			'DD_DEG_ID'			),
+    	T_FK(	'FK_GIP_GPV',					'GPV_ID',						V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR',					'GPV_ID'			),
+    	T_FK(	'FK_GIP_EJE',					'EJE_ID',						V_ESQUEMA||'.ACT_EJE_EJERCICIO',					'EJE_ID'			)
     );
     V_T_FK T_FK;
+       
     
     
 BEGIN
 
-	-- Comprobamos si existe columna CLC_FECHA_ACCION y la renombramos por CLC_FECHA_ALTA
+	-- Comprobamos si existe columna DD_DES_ID_CONTABILIZA
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_DES_ID_CONTABILIZA'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	

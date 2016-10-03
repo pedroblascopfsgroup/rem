@@ -41,6 +41,8 @@ public class DtoActivoValoraciones extends WebDto{
     private Integer bloqueoPrecio;
     private Date bloqueoPrecioFechaIni;
     private String gestorBloqueoPrecio;
+    
+    private Boolean vpo = false;
 	
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -177,5 +179,13 @@ public class DtoActivoValoraciones extends WebDto{
 	public void setValorEstimadoRenta(String valorEstimadoRenta) {
 		this.valorEstimadoRenta = valorEstimadoRenta;
 	}
+	public Boolean getVpo() {
+		return vpo;
+	}
+	public void setVpo(Boolean vpo) {
+		this.vpo = vpo;
+	}
+	
+	
 
 }

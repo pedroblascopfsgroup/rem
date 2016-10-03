@@ -111,9 +111,6 @@ import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
-
-	private final String ESTADO_PORTALES_EXTERNOS_PUBLICADO = "Ha estado publicado";
-	private final String ESTADO_PORTALES_EXTERNOS_NO_PUBLICADO = "No ha estado publicado";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -1138,7 +1135,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public DtoDatosPublicacion getDatosPublicacionByActivo(Long idActivo) {
 		// Obtener los estados y sumar los dias de cada fase aplicando criterio de funcional además comprobar
-		// si alguno de ellos es de publicación/publicación forzada y especificar estado publicación en portales externos.
+		// si alguno de ellos es de publicación/publicación forzada.
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Order order = new Order(OrderType.ASC, "id");
 		List<ActivoHistoricoEstadoPublicacion> listaEstadosPublicacion = genericDao
@@ -1146,16 +1143,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		int dias = 0;
 		boolean despublicado = false;
-		boolean estadoPublicacionPortalesExternos = false;
 		
 		for (ActivoHistoricoEstadoPublicacion estado : listaEstadosPublicacion) {
 			if(!Checks.esNulo(estado.getEstadoPublicacion())){
-				if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo()) || 
-						DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())){
-					// Comprobar si ha estado publicado en algún estado para especificarlo en estado publicación portales externos.
-					estadoPublicacionPortalesExternos = true;
-				}
-				
 				if(despublicado && (DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo()) || 
 						DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo()))){
 					// Si el estado anterior es despublicado y el actual es publicado, se reinicia el contador de días.
@@ -1188,11 +1178,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		DtoDatosPublicacion dto = new DtoDatosPublicacion();
 		dto.setIdActivo(idActivo);
 		dto.setTotalDiasPublicado(dias);
-		if(estadoPublicacionPortalesExternos){
-			dto.setPortalesExternos(this.ESTADO_PORTALES_EXTERNOS_PUBLICADO);
-		} else {
-			dto.setPortalesExternos(this.ESTADO_PORTALES_EXTERNOS_NO_PUBLICADO);
-		}
+		
 		return dto;
 	}
 

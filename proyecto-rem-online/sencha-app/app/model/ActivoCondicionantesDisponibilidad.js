@@ -31,6 +31,20 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     			name:'otro'
     		},
     		{
+    			name: 'portalesExternos'
+    		},
+    		{
+    			name: 'portalesExternosDescripcion',
+				calculate: function(data){
+					if(data.portalesExternos){
+						return HreRem.i18n('fieldlabel.estado.portal.externo.publicado');
+					} else {
+						return HreRem.i18n('fieldlabel.estado.portal.externo.no.publicado');
+					}
+				},
+				depends: 'portalesExternos'
+    		},
+    		{
     			name:'ocupadoSinTitulo'
     		},
     		{

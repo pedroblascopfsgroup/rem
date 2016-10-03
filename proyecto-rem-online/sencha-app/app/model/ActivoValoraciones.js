@@ -120,6 +120,10 @@ Ext.define('HreRem.model.ActivoValoraciones', {
     		},
     		{
     			name:'vacbe'
+    		},
+    		{
+    			name:'vpo',
+    			type: 'boolean'
     		}
     		
     ],

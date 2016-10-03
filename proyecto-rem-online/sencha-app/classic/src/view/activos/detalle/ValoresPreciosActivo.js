@@ -234,25 +234,29 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.neto.contable'),
-							   bind:  '{valoraciones.vnc}'
+							   bind:  '{valoraciones.vnc}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='01')
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.de.referencia'),
-							   bind:  '{valoraciones.valorReferencia}'
+							   bind:  '{valoraciones.valorReferencia}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')  
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.asesoramiento.liquidativo'),
-							   bind:  '{valoraciones.valorAsesoramientoLiquidativo}'
+							   bind:  '{valoraciones.valorAsesoramientoLiquidativo}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.vacbe'),
-							   bind:  '{valoraciones.vacbe}'
+							   bind:  '{valoraciones.vacbe}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='02')
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
@@ -318,7 +322,10 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.vpo'),
-							   bind:  '{valoraciones.valorLegalVpo}'
+							   bind: {
+			                		value: '{valoraciones.valorLegalVpo}',
+				    				hidden: '{!valoraciones.vpo}'
+			                	}
 							 },
 							 {
 							   xtype: 'currencyfieldbase',

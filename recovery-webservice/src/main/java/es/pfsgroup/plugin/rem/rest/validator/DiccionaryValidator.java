@@ -8,11 +8,12 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 
 public class DiccionaryValidator implements ConstraintValidator<Diccionary, String> {
 
 	private Diccionary diccionario;
-	
+
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -31,7 +32,8 @@ public class DiccionaryValidator implements ConstraintValidator<Diccionary, Stri
 			resultado = true;
 		} else {
 
-			Object object = genericDao.get(diccionario.clase(), genericDao.createFilter(FilterType.EQUALS, "codigo", value));
+			Object object = genericDao.get(diccionario.clase(),
+					genericDao.createFilter(FilterType.EQUALS, diccionario.foreingField(), value));
 
 			if (object != null) {
 				resultado = true;

@@ -1,7 +1,9 @@
 Ext.define('HreRem.view.activos.detalle.HistoricoEstadosList', {
     extend		: 'HreRem.view.common.GridBase',
     xtype		: 'historicoestadoslist',
-	topBar: false,
+	topBar		: false,
+	allowDeselect: true,
+	allowBlank	: true,
 	idPrincipal : 'activo.id',
 	
     bind: {

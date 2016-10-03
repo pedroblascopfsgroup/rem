@@ -10,6 +10,9 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -19,7 +22,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
-import es.pfsgroup.plugin.rem.rest.validator.Diccionary;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -28,6 +30,7 @@ public class InformeMediadorDto implements Serializable {
 	/**
 	 * 
 	 */
+	@EntityDefinition(procesar = false)
 	private static final long serialVersionUID = 1L;
 
 	@NotNull(groups = { Insert.class, Update.class })
@@ -37,6 +40,7 @@ public class InformeMediadorDto implements Serializable {
 	private Long idInformeMediadorRem;
 
 	@NotNull(groups = { Insert.class, Update.class })
+	@EntityDefinition(propertyName = "fechaEmisionInforme")
 	private Date fechaAccion;
 
 	@NotNull(groups = { Insert.class, Update.class })
@@ -45,6 +49,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoActivo.class, message = "El codTipoActivo no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "tipoActivo", classObj = DDTipoActivo.class)
 	private String codTipoActivo;
 
 	@NotNull(groups = { Insert.class, Update.class })
@@ -54,6 +59,7 @@ public class InformeMediadorDto implements Serializable {
 	private Long idProveedorRemAnterior;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "id")
 	private Long idProveedorRem;
 
 	@NotNull(groups = Insert.class)
@@ -172,12 +178,16 @@ public class InformeMediadorDto implements Serializable {
 
 	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacion no existe", groups = {
 			Insert.class, Update.class })
+	@EntityDefinition(propertyName = "estadoConservacion", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacion;
 
-	private Long anyoConstruccion;
+	@EntityDefinition(propertyName = "anyoConstruccion")
+	private Integer anyoConstruccion;
 
-	private Long anyoRehabilitacion;
+	@EntityDefinition(propertyName = "anyoRehabilitacion")
+	private Integer anyoRehabilitacion;
 
+	@EntityDefinition(propertyName = "ultimaPlanta")
 	private Boolean ultimaPlanta;
 
 	private Boolean ocupado;
@@ -191,256 +201,272 @@ public class InformeMediadorDto implements Serializable {
 	@Diccionary(clase = DDTipoRenta.class, message = "El codNivelRenta no existe", groups = { Insert.class,
 			Update.class })
 	private String codNivelRenta;
-	
+
 	private List<PlantaDto> plantas;
-	
+
 	private Long numeroTerrazasDescubiertas;
 
 	private String descripcionTerrazasDescubiertas;
-	
+
 	private Long numeroTerrazasCubiertas;
-	
+
 	private String descripcionTerrazasCubiertas;
-	
+
 	private Boolean despensaOtrasDependencias;
-	
+
 	private Boolean lavaderoOtrasDependencias;
-	
+
 	private Boolean azoteaOtrasDependencias;
-	
+
 	private String otrosOtrasDependencias;
-	
+
 	private Boolean instalacionElectricidadInstalaciones;
-	
+
 	private Boolean contadorElectricidadInstalaciones;
-	
+
 	private Boolean instalacionAguaInstalaciones;
-	
+
 	private Boolean contadorAguaInstalaciones;
-	
+
 	private Boolean gasInstalaciones;
-	
+
 	private Boolean contadorGasInstalacion;
-	
+
 	private Boolean exteriorCarpinteriaReformasNecesarias;
-	
+
 	private Boolean interiorCarpinteriaReformasNecesarias;
-	
+
 	private Boolean cocinaReformasNecesarias;
-	
+
 	private Boolean suelosReformasNecesarias;
-	
+
 	private Boolean pinturaReformasNecesarias;
-	
+
 	private Boolean integralReformasNecesarias;
-	
+
 	private Boolean banyosReformasNecesarias;
-	
+
 	private String otrasReformasNecesarias;
-	
+
 	private Float otrasReformasNecesariasImporteAproximado;
-	
+
 	private List<Long> activosVinculados;
-	
+
 	private String distribucionInterior;
-	
+
 	private Boolean divisible;
-	
+
 	private Boolean ascensor;
-	
+
 	private Long numeroAscensores;
-	
+
 	private String descripcionPlantas;
-	
+
 	private String otrasCaracteristicas;
-	
+
 	private Boolean fachadaReformasNecesarias;
-	
+
 	private Boolean escaleraReformasNecesarias;
-	
+
 	private Boolean portalReformasNecesarias;
-	
+
 	private Boolean ascensorReformasNecesarias;
-	
+
 	private Boolean cubierta;
-	
+
 	private Boolean otrasZonasComunesReformasNecesarias;
-	
+
 	private String otrosReformasNecesarias;
-	
+
 	private String descripcionEdificio;
-	
+
 	private String infraestructurasEntorno;
-	
+
 	private String comunicacionesEntorno;
-	
+
 	private String idoneoUso;
-	
+
 	private Boolean existeAnteriorUso;
-	
+
 	private String anteriorUso;
-	
+
 	private Long numeroEstancias;
-	
+
 	private Long numeroBanyos;
-	
+
 	private long numeroAseos;
-	
+
 	private Float metrosLinealesFachadaPrincipal;
-	
+
 	private Float altura;
-	
+
 	private Long numeroPlazasGaraje;
-	
+
 	private Float superficiePlazasGaraje;
-	
-	private String codSubtipoPlazasGaraje;//<-------------------------------------diccionario?
-	
+
+	private String codSubtipoPlazasGaraje;// <-------------------------------------diccionario?
+
 	private Boolean salidaHumosOtrasCaracteristicas;
-	
+
 	private Boolean salidaEmergenciaOtrasCaracteristicas;
-	
+
 	private Boolean accesoMinusvalidosOtrasCaracteristicas;
-	
+
 	private String otrosOtrasCaracteristicas;
-	
-	private String codTipoVario;//<-------------------------------------diccionario?
-	
+
+	private String codTipoVario;// <-------------------------------------diccionario?
+
 	private Float ancho;
-	
+
 	private Float alto;
-	
+
 	private Float largo;
-	
-	@Diccionary(clase = DDUsosActivo.class, message = "El codUso no existe", groups = { Insert.class,
-			Update.class })
+
+	@Diccionary(clase = DDUsosActivo.class, message = "El codUso no existe", groups = { Insert.class, Update.class })
 	private String codUso;
-	
-	private String codManiobrabilidad;//<-------------------------------------diccionario?
-	
+
+	private String codManiobrabilidad;// <-------------------------------------diccionario?
+
 	private Boolean licenciaOtrasCaracteristicas;
-	
+
 	private Boolean servidumbreOtrasCaracteristicas;
-	
+
 	private Boolean ascensorOMontacargasOtrasCaracteristicas;
-	
+
 	private Boolean columnasOtrasCaracteristicas;
-	
+
 	private Boolean seguridadOtrasCaracteristicas;
-	
+
 	private Boolean buenEstadoInstalacionElectricidadInstalaciones;
-	
+
 	private Boolean buenEstadoContadorElectricidadInstalaciones;
-	
+
 	private Boolean buenEstadoInstalacionAguaInstalaciones;
-	
+
 	private Boolean buenEstadoContadorAguaInstalaciones;
-	
+
 	private Boolean buenEstadoGasInstalaciones;
-	
+
 	private Boolean buenEstadoContadorGasInstalacion;
-	
+
 	private Boolean buenEstadoConservacionEdificio;
-	
+
 	private Date anyoRehabilitacionEdificio;
-	
+
 	private Long numeroPlantasEdificio;
-	
+
 	private Boolean ascensorEdificio;
-	
+
 	private Long numeroAscensoresEdificio;
-	
+
 	private Boolean existeComunidadEdificio;
-	
+
 	private Float cuotaComunidadEdificio;
-	
+
 	private String nombrePresidenteComunidadEdificio;
-	
+
 	private String telefonoPresidenteComunidadEdificio;
-	
+
 	private String nombreAdministradorComunidadEdificio;
-	
+
 	private String telefonoAdministradorComunidadEdificio;
-	
+
 	private String descripcionDerramaComunidadEdificio;
-	
+
 	private Boolean ascensorReformasNecesariasEdificio;
-	
+
 	private Boolean cubiertaReformasNecesariasEdificio;
-	
+
 	private Boolean otrasZonasComunesReformasNecesariasEdificio;
-	
+
 	private String otrosReformasNecesariasEdificio;
-	
+
 	private String infraestructurasEntornoEdificio;
-	
+
 	private String comunicacionesEntornoEdificio;
-	
+
 	private Boolean existeOcio;
-	
+
 	private Boolean existenHoteles;
-	
+
 	private String hoteles;
-	
+
 	private Boolean existenTeatros;
-	
+
 	private String teatros;
-	
+
 	private Boolean existenSalasDeCine;
-	
-	private String  salasDeCine;
-	
+
+	private String salasDeCine;
+
 	private Boolean existenInstalacionesDeportivas;
-	
+
 	private String instalacionesDeportivas;
-	
+
 	private Boolean existenCentrosComerciales;
-	
+
 	private String centrosComerciales;
-	
+
 	private String otrosOcio;
-	
+
 	private Boolean existenCentrosEducativos;
-	
+
 	private Boolean existenEscuelasInfantiles;
-	
+
 	private String escuelasInfantiles;
-	
+
 	private Boolean existenColegios;
-	
+
 	private String colegios;
-	
+
 	private Boolean existenInstitutos;
-	
+
 	private String institutos;
-	
+
 	private Boolean existenUniversidades;
-	
+
 	private String universidades;
-	
+
 	private String otrosCentrosEducativos;
-	
+
 	private Boolean existenCentrosSanitarios;
-	
+
 	private Boolean existenCentrosDeSalud;
-	
+
 	private String centrosDeSalud;
-	
+
 	private Boolean existenClinicas;
-	
+
 	private String clinicas;
-	
+
 	private Boolean existenHospitales;
-	
+
 	private String hospitales;
-	
+
 	private Boolean existenOtrosCentrosSanitarios;
-	
+
 	private String otrosCentrosSanitarios;
-	
-	private String codTipoAparcamientoEnSuperficie;//<-------------------------dicionario??
-	
-	
+
+	private String codTipoAparcamientoEnSuperficie;// <-------------------------dicionario??
+
+	private Boolean existenComunicaciones;
+
+	private Boolean existeFacilAccesoPorCarretera;
+
+	private String facilAccesoPorCarretera;
+
+	private Boolean existeLineasDeAutobus;
+
+	private String lineasDeAutobus;
+
+	private Boolean existeMetro;
+
+	private String metro;
+
+	private Boolean existeEstacionesDeTren;
+
+	private String estacionesDeTren;
+
 	public Long getIdInformeMediadorRem() {
 		return idInformeMediadorRem;
 	}
@@ -801,19 +827,19 @@ public class InformeMediadorDto implements Serializable {
 		this.codEstadoConservacion = codEstadoConservacion;
 	}
 
-	public Long getAnyoConstruccion() {
+	public Integer getAnyoConstruccion() {
 		return anyoConstruccion;
 	}
 
-	public void setAnyoConstruccion(Long anyoConstruccion) {
+	public void setAnyoConstruccion(Integer anyoConstruccion) {
 		this.anyoConstruccion = anyoConstruccion;
 	}
 
-	public Long getAnyoRehabilitacion() {
+	public Integer getAnyoRehabilitacion() {
 		return anyoRehabilitacion;
 	}
 
-	public void setAnyoRehabilitacion(Long anyoRehabilitacion) {
+	public void setAnyoRehabilitacion(Integer anyoRehabilitacion) {
 		this.anyoRehabilitacion = anyoRehabilitacion;
 	}
 
@@ -1397,7 +1423,8 @@ public class InformeMediadorDto implements Serializable {
 		return buenEstadoInstalacionElectricidadInstalaciones;
 	}
 
-	public void setBuenEstadoInstalacionElectricidadInstalaciones(Boolean buenEstadoInstalacionElectricidadInstalaciones) {
+	public void setBuenEstadoInstalacionElectricidadInstalaciones(
+			Boolean buenEstadoInstalacionElectricidadInstalaciones) {
 		this.buenEstadoInstalacionElectricidadInstalaciones = buenEstadoInstalacionElectricidadInstalaciones;
 	}
 
@@ -1840,6 +1867,77 @@ public class InformeMediadorDto implements Serializable {
 	public void setCodTipoAparcamientoEnSuperficie(String codTipoAparcamientoEnSuperficie) {
 		this.codTipoAparcamientoEnSuperficie = codTipoAparcamientoEnSuperficie;
 	}
-	
+
+	public Boolean getExistenComunicaciones() {
+		return existenComunicaciones;
+	}
+
+	public void setExistenComunicaciones(Boolean existenComunicaciones) {
+		this.existenComunicaciones = existenComunicaciones;
+	}
+
+	public Boolean getExisteFacilAccesoPorCarretera() {
+		return existeFacilAccesoPorCarretera;
+	}
+
+	public void setExisteFacilAccesoPorCarretera(Boolean existeFacilAccesoPorCarretera) {
+		this.existeFacilAccesoPorCarretera = existeFacilAccesoPorCarretera;
+	}
+
+	public String getFacilAccesoPorCarretera() {
+		return facilAccesoPorCarretera;
+	}
+
+	public void setFacilAccesoPorCarretera(String facilAccesoPorCarretera) {
+		this.facilAccesoPorCarretera = facilAccesoPorCarretera;
+	}
+
+	public Boolean getExisteLineasDeAutobus() {
+		return existeLineasDeAutobus;
+	}
+
+	public void setExisteLineasDeAutobus(Boolean existeLineasDeAutobus) {
+		this.existeLineasDeAutobus = existeLineasDeAutobus;
+	}
+
+	public String getLineasDeAutobus() {
+		return lineasDeAutobus;
+	}
+
+	public void setLineasDeAutobus(String lineasDeAutobus) {
+		this.lineasDeAutobus = lineasDeAutobus;
+	}
+
+	public Boolean getExisteMetro() {
+		return existeMetro;
+	}
+
+	public void setExisteMetro(Boolean existeMetro) {
+		this.existeMetro = existeMetro;
+	}
+
+	public String getMetro() {
+		return metro;
+	}
+
+	public void setMetro(String metro) {
+		this.metro = metro;
+	}
+
+	public Boolean getExisteEstacionesDeTren() {
+		return existeEstacionesDeTren;
+	}
+
+	public void setExisteEstacionesDeTren(Boolean existeEstacionesDeTren) {
+		this.existeEstacionesDeTren = existeEstacionesDeTren;
+	}
+
+	public String getEstacionesDeTren() {
+		return estacionesDeTren;
+	}
+
+	public void setEstacionesDeTren(String estacionesDeTren) {
+		this.estacionesDeTren = estacionesDeTren;
+	}
 
 }

@@ -93,15 +93,16 @@ public interface UvemManagerApi {
 	 * Servicio REM  UVEM para dar de alta la oferta en el sistema de Bankia.
 	 */
 	public void altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+
+	public GMPDJB13_INS resultadoInstanciaDecision();
 	
 	/**
 	 * Servicio REM  UVEM para modificar la oferta en el sistema de Bankia.
 	 */
 	public void modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
 	
-	
-	
 	public void consultaDatosPrestamo(String numExpedienteRiesgo, int tipoRiesgo) throws WIException;
 
 	public GMPAJC34_INS resultadoConsultaDatosPrestamo();
+
 }

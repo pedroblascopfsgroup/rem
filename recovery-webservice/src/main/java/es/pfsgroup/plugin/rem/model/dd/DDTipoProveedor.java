@@ -41,6 +41,7 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	 */
 	private static final long serialVersionUID = 1L;
 	public static final String COD_ASEGURADORA = "03";
+	public static final String COD_MEDIADOR = "20";
 
 	@Id
 	@Column(name = "DD_TPR_ID")

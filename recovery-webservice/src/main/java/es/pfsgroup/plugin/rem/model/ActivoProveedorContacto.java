@@ -109,6 +109,10 @@ public class ActivoProveedorContacto implements Serializable, Auditable {
 	@Column(name = "PVC_CARGO")
 	private String cargo;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PRD_ID")
+	private ActivoProveedorDireccion delegacion;
+	
 	@Column(name = "PVC_FECHA_ALTA")
 	private Date fechaAlta;
 	
@@ -123,8 +127,6 @@ public class ActivoProveedorContacto implements Serializable, Auditable {
 	
 	@Embedded
 	private Auditoria auditoria;
-
-	
 	
 
 	public Long getId() {
@@ -294,6 +296,5 @@ public class ActivoProveedorContacto implements Serializable, Auditable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	
-	
+
 }

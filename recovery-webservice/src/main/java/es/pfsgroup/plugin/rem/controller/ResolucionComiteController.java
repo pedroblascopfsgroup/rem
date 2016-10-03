@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.impl.ResolucionComiteManager;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -19,6 +21,9 @@ public class ResolucionComiteController {
 	
 	@Autowired
 	private ResolucionComiteApi resolucionComiteApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
@@ -33,6 +38,16 @@ public class ResolucionComiteController {
 			
 			if( Checks.esNulo(jsonData) || resolucionComiteDto == null) {
 				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+			}
+			
+			Long ofertaHRE = resolucionComiteDto.getOfertaHRE();
+			if (ofertaHRE == null) {
+				throw new Exception("No se han podido recuperar los datos de la petición. El valor de ofertaHRE es vacio.");
+			} else {
+				Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(ofertaHRE);
+				if (oferta==null) {
+					throw new Exception("No se han podido recuperar los datos de la petición. El valor de ofertaHRE no coincide con ninguna Oferta.");
+				}
 			}
 
 			if (resolucionComiteApi.RESOLUCION_APROBADA.equals(resolucionComiteDto.getCodigoResolucion())) {

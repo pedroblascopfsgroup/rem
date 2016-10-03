@@ -57,7 +57,7 @@ public class ActivoIntegrado implements Serializable, Auditable {
 	private ActivoProveedor proveedor;
 	
 	@Column(name = "AIN_PARTICIPACION")
-	private Long participacion;
+	private Double participacion;
 	
 	@Column(name = "AIN_FECHA_INCLUSION")
 	private Date fechaInclusion;
@@ -99,11 +99,11 @@ public class ActivoIntegrado implements Serializable, Auditable {
 		this.proveedor = proveedor;
 	}
 
-	public Long getParticipacion() {
+	public Double getParticipacion() {
 		return participacion;
 	}
 
-	public void setParticipacion(Long participacion) {
+	public void setParticipacion(Double participacion) {
 		this.participacion = participacion;
 	}
 

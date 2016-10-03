@@ -97,8 +97,14 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     },
     
     items: [
-    		{	xtype: 'fichaproveedor'},
-    		{	xtype: 'documentosproveedor', ocultarBotonesEdicion: true}
+    		{xtype: 'fichaproveedor'},
+    		{	
+    			xtype: 'documentosproveedor',
+    			ocultarBotonesEdicion: true,
+    			bind:{
+    				disabled: '{proveedor.isAdministracion}'
+    			}
+    		}
     ],
     
     evaluarBotonesEdicion: function(tab) {    	

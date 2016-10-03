@@ -46,6 +46,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'activosmain' : {    		
     		abrirDetalleActivo : 'abrirDetalleActivo',
+    		abrirDetalleActivoById: 'abrirDetalleActivoById',
     		onSaveFormularioCompleto: 'onSaveFormularioCompleto',
     		cerrarTodas: 'cerrarTodas'
     	},

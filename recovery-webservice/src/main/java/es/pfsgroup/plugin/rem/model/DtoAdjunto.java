@@ -3,19 +3,12 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.util.Date;
 
-
-
 /**
- * Modelo que gestiona la informacion de los adjuntos
-
- *
+ * Modelo que gestiona la informacion de los adjuntos.
  */
 
 public class DtoAdjunto implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7785802535778510517L;
 
     private Long id;
@@ -23,6 +16,8 @@ public class DtoAdjunto implements Serializable{
     private Long idActivo;
     
     private Long idTrabajo;
+    
+    private Long idProveedor;
     
     private String codigoTipo;
 
@@ -127,8 +122,12 @@ public class DtoAdjunto implements Serializable{
 	public void setGestor(String gestor) {
 		this.gestor = gestor;
 	}
-	
-	
-	
 
+	public Long getIdProveedor() {
+		return idProveedor;
+	}
+
+	public void setIdProveedor(Long idProveedor) {
+		this.idProveedor = idProveedor;
+	}
 }

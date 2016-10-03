@@ -6,6 +6,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -71,11 +72,12 @@ public interface GenericApi {
 	public List<EXTDDTipoGestor> getComboTipoGestor();
 
 	/**
-	 * Devuelve los tipos de trabajo, filtrando los del tipo que no deben crearse
+	 * Devuelve los tipos de trabajo, filtrando los del tipo que no deben crearse para un activo dado
+	 * Si no se pasa ningun activo, devuelve la lista completa de tipos.
 	 * @return
 	 */
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered();
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo);
 	
 	/**
 	 * Devuelve los subtipos de trabajo del tipo que recibe
@@ -114,6 +116,22 @@ public interface GenericApi {
 	public List<TipoJuzgado> getComboTipoJuzgadoPlaza(Long idPlaza);
 
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedor(String codigoTipoProveedor);
+
+	/**
+	 * Este método recibe un código de provincia y obtiene una lista de unidades poblacionales
+	 * filtradas por la localidad de la provincia.
+	 * 
+	 * @param codigoProvincia : codigo de la provincia.
+	 * @return Devuelve una lista de unidades poblacionales.
+	 */
+	public List<DDUnidadPoblacional> getUnidadPoblacionalByProvincia(String codigoProvincia);
+
+	/**
+	 * Este método obtiene una lista completa de todas las localidades sin filtrar.
+	 * 
+	 * @return Devuelve una lista de localidades.
+	 */
+	public List<Localidad> getComboMunicipioSinFiltro();
 
 }
 

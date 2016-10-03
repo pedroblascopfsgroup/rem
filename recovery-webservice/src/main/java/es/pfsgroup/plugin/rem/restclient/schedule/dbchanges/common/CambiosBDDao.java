@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
@@ -60,7 +62,7 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 @Repository
 public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
-	public static final String SEPARADOR_COLUMNAS = ", ";
+	public static final String SEPARADOR_COLUMNAS = ",";
 
 	private static final String REST_USER = "REST-USER";
 
@@ -116,15 +118,15 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String queryString = selectFromDatosActuales + " MINUS " + selectFromDatosHistoricos;
 
 			List<Object[]> resultado = null;
-			
-			try{
+
+			try {
 				logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
 				queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews,
 						infoTablas, t);
 			}
-			
+
 			try {
 				logger.debug("Ejecutando: " + queryString);
 				resultado = queryExecutor.sqlRunList(session, queryString);
@@ -247,11 +249,24 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @param dtoClass
 	 * @return
 	 */
-	private String[] getDtoFields(Class dtoClass) {
+	public String[] getDtoFields(Class dtoClass) {
 		ArrayList<String> fields = new ArrayList<String>();
 
 		for (Field f : dtoClass.getDeclaredFields()) {
-			fields.add(f.getName());
+			// check si static
+			if (!Modifier.isStatic(f.getModifiers())) {
+				NestedDto nested = f.getAnnotation(NestedDto.class);
+				if (nested == null) {
+					fields.add(f.getName());
+				} else {
+					String[] nestedFields = getDtoFields(nested.type());
+					if (nestedFields != null) {
+						for (String s : nestedFields) {
+							fields.add(f.getName() + "." + s);
+						}
+					}
+				}
+			} // fin check si static
 		}
 
 		return fields.toArray(new String[] {});
@@ -278,7 +293,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			b.append(separador).append(s2);
 			separador = SEPARADOR_COLUMNAS;
 		}
-		if (!pkfound) {
+		if ((clavePrimaria != null) && (!pkfound)) {
 			b.append(separador).append(clavePrimaria);
 		}
 		return b.toString();
@@ -305,7 +320,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	}
 
 	private String field2column(String s) {
-		return s.replaceAll("([A-Z])", "_$1").toUpperCase();
+		return s.replaceAll("([A-Z])", "_$1").replaceAll("\\.", "_").toUpperCase();
 	}
 
 	/**

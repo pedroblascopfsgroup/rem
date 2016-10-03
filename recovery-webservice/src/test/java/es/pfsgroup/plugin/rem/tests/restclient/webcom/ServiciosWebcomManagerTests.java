@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.rem.tests.restclient.webcom;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -13,7 +13,9 @@ import static org.mockito.Matchers.anyString;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +27,15 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosException;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoVinculadoDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.DelegacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.PlantaDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
@@ -34,20 +43,22 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
-import es.pfsgroup.plugin.rem.controller.ResolucionComiteController;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomProveedores;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoOferta;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoPeticionTrabajo;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoInformeMediador;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomStock;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioProveedoresConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
+import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -58,28 +69,31 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	HttpClientFacade httpClient;
 
 	@InjectMocks
-	private ClienteEstadoTrabajo estadoTrabajoService;
+	private ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService;
 
 	@InjectMocks
-	private ClienteEstadoOferta estadoOfertaService;
+	private ClienteWebcomEstadoOferta estadoOfertaService;
 
 	@InjectMocks
-	private ClienteStock stockService;
+	private ClienteWebcomStock stockService;
+
+	@InjectMocks
+	private ClienteWebcomProveedores proveedoresService;
+
+	@InjectMocks
+	private ClienteWebcomEstadoInformeMediador informeMediadorService;
 
 	@Mock
 	private RegistroLlamadasManager registroLlamadas;
 
 	@InjectMocks
 	private ServiciosWebcomManager manager;
-	
-	@InjectMocks
-	private ResolucionComiteController resolucionComiteController;
-	
 
 	@Before
 	public void setup() {
 		initMocks(httpClient);
-		manager.setWebServiceClients(estadoTrabajoService, estadoOfertaService, stockService);
+		manager.setWebServiceClients(estadoTrabajoService, estadoOfertaService, stockService, proveedoresService,
+				informeMediadorService);
 
 	}
 
@@ -99,7 +113,9 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		String motivoRechazo = "Mi Motivo";
 		dto.setMotivoRechazo(WebcomDataType.stringDataType(motivoRechazo));
 
-		manager.enviaActualizacionEstadoTrabajo(Arrays.asList(new EstadoTrabajoDto[] { dto }));
+		///////////
+		manager.webcomRestEstadoPeticionTrabajo(Arrays.asList(new EstadoTrabajoDto[] { dto }));
+		///////////
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
 
@@ -109,9 +125,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, codEstado);
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
 
-		
 		verificaRegistroPeticionOK();
-		
+
 	}
 
 	@Test
@@ -133,7 +148,9 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		Boolean vendido = Boolean.TRUE;
 		dto.setVendido(BooleanDataType.booleanDataType(vendido));
 
-		manager.enviaActualizacionEstadoOferta(Arrays.asList(new EstadoOfertaDto[] { dto }));
+		///////////
+		manager.webcomRestEstadoOferta(Arrays.asList(new EstadoOfertaDto[] { dto }));
+		///////////
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
 
@@ -145,7 +162,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_EXPEDIENTE, codEstadoExpediente);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.VENDIDO, vendido);
 
-		
 		verificaRegistroPeticionOK();
 	}
 
@@ -172,11 +188,14 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		stock.add(stock1);
 		stock.add(stock2);
 
-		manager.enviarStock(stock);
+		///////////
+		manager.webcomRestStock(stock);
+		///////////
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
-
 		assertDataBasicContent(requestData, 0);
+		assertDataBasicContent(requestData, 1);
+
 		assertDataEquals(requestData, 0, ServicioStockConstantes.ACTUAL_IMPORTE, "100.00");
 		// ¿El campo idEstado existirá o no?
 		// assertDataEquals(requestData, 0, ServicioStockConstantes.ID_ESTADO,
@@ -191,8 +210,112 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		// Comprobamos que algunos de los campos no informados no estén en el
 		// JSON
 		assertDataIsMissing(requestData, 0, ServicioStockConstantes.ANTIGUEDAD);
-		
+
 		verificaRegistroPeticionOK();
+	}
+
+	@Test
+	public void enviaProveedores() throws ErrorServicioWebcom {
+		String method = "POST";
+		String charset = "UTF-8";
+
+		DelegacionDto deleg1 = new DelegacionDto();
+		deleg1.setCodTipoVia(StringDataType.stringDataType("cod"));
+		deleg1.setNombreCalle(StringDataType.stringDataType("calle1"));
+
+		DelegacionDto deleg2 = new DelegacionDto();
+		deleg2.setCodTipoVia(StringDataType.stringDataType("cod"));
+		deleg2.setNombreCalle(StringDataType.stringDataType("calle2"));
+
+		ProveedorDto prov1 = createDtoProveedor(1L, deleg1, deleg2);
+		ProveedorDto prov2 = createDtoProveedor(2L, deleg1);
+
+		List<ProveedorDto> proveedores = new ArrayList<ProveedorDto>();
+		proveedores.add(prov1);
+		proveedores.add(prov2);
+
+		///////////
+		manager.webcomRestProveedores(proveedores);
+		///////////
+
+		JSONArray requestData = genericValidation(httpClient, method, charset);
+		assertDataBasicContent(requestData, 0);
+		assertDataBasicContent(requestData, 1);
+
+		assertDataEquals(requestData, 0, ServicioProveedoresConstantes.COD_TIPO_PROVEEDOR, "cod");
+		assertDataEquals(requestData, 0, ServicioProveedoresConstantes.ID_PROVEEDOR_REM, "1");
+		assertDataEquals(requestData, 0, ServicioProveedoresConstantes.CODIGO_PROVEEDOR, "cod");
+
+		// Validamos el dato de la delegación para el proveedor 1
+		int idxProveedor = 0;
+		int idxDelegcion = 0;
+		JSONObject jsonDelegacion1 = requestData.getJSONObject(idxProveedor)
+				.getJSONArray(ServicioProveedoresConstantes.DELEGACIONES).getJSONObject(idxDelegcion);
+		assertEquals(jsonDelegacion1.get(ServicioProveedoresConstantes.DELEGACION_COD_TIPO_VIA), "cod");
+		assertEquals(jsonDelegacion1.get(ServicioProveedoresConstantes.DELEGACION_NOMBRE_CALLE), "calle1");
+
+		idxDelegcion = 1;
+		JSONObject jsonDelegacion2 = requestData.getJSONObject(idxProveedor)
+				.getJSONArray(ServicioProveedoresConstantes.DELEGACIONES).getJSONObject(idxDelegcion);
+		assertEquals(jsonDelegacion2.get(ServicioProveedoresConstantes.DELEGACION_COD_TIPO_VIA), "cod");
+		assertEquals(jsonDelegacion2.get(ServicioProveedoresConstantes.DELEGACION_NOMBRE_CALLE), "calle2");
+
+		// Validamos el dato de la delegación para el proveedor 2
+		idxProveedor = 1;
+		idxDelegcion = 0;
+		jsonDelegacion1 = requestData.getJSONObject(idxProveedor)
+				.getJSONArray(ServicioProveedoresConstantes.DELEGACIONES).getJSONObject(idxDelegcion);
+		assertEquals(jsonDelegacion1.get(ServicioProveedoresConstantes.DELEGACION_COD_TIPO_VIA), "cod");
+		assertEquals(jsonDelegacion1.get(ServicioProveedoresConstantes.DELEGACION_NOMBRE_CALLE), "calle1");
+
+		assertEquals("El segundo proveedor no tiene una segunda delegación", 1, requestData.getJSONObject(idxProveedor)
+				.getJSONArray(ServicioProveedoresConstantes.DELEGACIONES).size());
+
+	}
+
+	@Test
+	public void testEnviaInformeMediador() throws ErrorServicioWebcom {
+		String method = "POST";
+		String charset = "UTF-8";
+		
+		PlantaDto planta = new PlantaDto();
+		planta.setNumero(LongDataType.longDataType(1L));
+		
+		ActivoVinculadoDto activoVinculado = new ActivoVinculadoDto();
+		activoVinculado.setIdActivoHaya(LongDataType.longDataType(3L));
+		
+		InformeMediadorDto informe = new InformeMediadorDto();
+		informe.setIdUsuarioRemAccion(LongDataType.longDataType(100L));
+		informe.setFechaAccion(DateDataType.dateDataType(new Date()));
+		informe.setIdActivoHaya(LongDataType.longDataType(200L));
+		informe.setIdInformeMediadorWebcom(LongDataType.longDataType(300L));
+		informe.setPlantas(Arrays.asList(new PlantaDto[]{planta}));
+		
+		informe.setActivosVinculados(Arrays.asList(new ActivoVinculadoDto[]{activoVinculado}));
+		
+
+		List<InformeMediadorDto> informes = new ArrayList<InformeMediadorDto>();
+		informes.add(informe);
+		///////////
+		manager.webcomRestEstadoInformeMediador(informes);
+		///////////
+
+		JSONArray requestData = genericValidation(httpClient, method, charset);
+		assertDataBasicContent(requestData, 0);
+		
+		assertDataContains(requestData, 0, "idUsuarioRemAccion");
+		assertDataContains(requestData, 0, "fechaAccion");
+		assertDataContains(requestData, 0, "idActivoHaya");
+		assertDataContains(requestData, 0, "idInformeMediadorWebcom");
+		
+		JSONObject jsonPlanta = requestData.getJSONObject(0)
+				.getJSONArray("plantas").getJSONObject(0);
+		assertTrue(jsonPlanta.containsKey("numero"));
+		
+		JSONObject jsonActivoVinculado = requestData.getJSONObject(0)
+				.getJSONArray("activosVinculados").getJSONObject(0);
+		assertTrue(jsonActivoVinculado.containsKey("idActivoHaya"));
+		
 	}
 
 	@Test
@@ -203,7 +326,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 			Mockito.when(httpClient.processRequest(anyString(), anyString(), anyMap(), any(JSONObject.class), anyInt(),
 					anyString())).thenThrow(exception);
 
-			manager.enviaActualizacionEstadoTrabajo(createEstadoDtoList());
+			manager.webcomRestEstadoPeticionTrabajo(createEstadoDtoList());
 			fail("Debería haberse lanzado una excepción");
 		} catch (Exception e) {
 			assertTrue("La excepción no es la esperada", e instanceof ErrorServicioWebcom);
@@ -217,24 +340,24 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 					registro.getErrorDesc().contains("404"));
 
 			assertNull("La respuesta logada debería ser nula", registro.getResponse());
-			
+
 			assertNotNull("La excepción no se ha logado correctamente", registro.getException());
 		}
 
 	}
 
-
 	@Test
 	public void noReintentarSiErrorControladoWebcom() {
-		ClienteEstadoTrabajo mockServicio = Mockito.spy(estadoTrabajoService);
-		manager.setWebServiceClients(mockServicio, estadoOfertaService, stockService);
+		ClienteWebcomEstadoPeticionTrabajo mockServicio = Mockito.spy(estadoTrabajoService);
+		manager.setWebServiceClients(mockServicio, estadoOfertaService, stockService, proveedoresService,
+				informeMediadorService);
 
 		ErrorServicioWebcom error = new ErrorServicioWebcom(ErrorServicioWebcom.MISSING_REQUIRED_FIELDS);
 
 		try {
 			Mockito.doThrow(error).when(mockServicio).enviaPeticion(Mockito.any(ParamsList.class),
 					any(RestLlamada.class));
-			manager.enviaActualizacionEstadoTrabajo(createEstadoDtoList());
+			manager.webcomRestEstadoPeticionTrabajo(createEstadoDtoList());
 
 			Mockito.verify(mockServicio).enviaPeticion(any(ParamsList.class), any(RestLlamada.class));
 		} catch (Exception e) {
@@ -245,6 +368,51 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 			// El método que rellena el objeto RestLlamada está stubeado, por lo
 			// tanto no podemos comprobar si la hemos rellenado bien aquí
 
+		}
+
+	}
+
+	@Test
+	public void testCompruebaCamposObligatorios_DTOs_anidados() {
+		// Usaremos ExampleDto que tienne la suficiente variedad apara probar
+
+		Map<String, Object> params = new HashMap<String, Object>();
+
+		// Informamos sólo dos de los campos obligatorios
+		params.put("idObjeto", LongDataType.longDataType(1L));
+		params.put("fechaAccion", new Date());
+		params.put("idUsuarioRemAccion", 1L);
+
+		// Pondremos dos DTOs en el listado, en el primero rellenaremos el campo
+		// obligatorio, en el segundo no.
+		HashMap<String, Object> subDto1 = new HashMap<String, Object>();
+		subDto1.put("campoObligatorio", "value");
+		HashMap<String, Object> subDto2 = new HashMap<String, Object>();
+		params.put("listado1", Arrays.asList(new Map[] { subDto1, subDto2 }));
+		// Probamos primero que se queja de que faltan 2 campos
+		try {
+			manager.compruebaObligatorios(ExampleDto.class, params);
+			fail("Se debería haber lanzado una excepción");
+		} catch (FaltanCamposObligatoriosException e) {
+			// Nos queda por informar un campo obligatorio de ExampleDto y otro
+			// en ExampleSubDto.
+			List<String> missing = e.getMissingFields();
+			assertEquals("La cantidad de campos obligatorios que faltan no coincide", 2, missing.size());
+			assertTrue("Falta por indica rque falta campoObligatorio", missing.contains("campoObligatorio"));
+			assertTrue("Falta por indicar que falta listado.campoObligatorio",
+					missing.contains("listado1.campoObligatorio"));
+
+		}
+
+		// Informamos ahora los campos que faltan
+		params.put("campoObligatorio", "value");
+		subDto2.put("campoObligatorio", "value");
+
+		// params.put("listado.campoObligatorio", "value");
+		try {
+			manager.compruebaObligatorios(ExampleDto.class, params);
+		} catch (FaltanCamposObligatoriosException e) {
+			fail("No debería haberse lanzado esta excepción");
 		}
 
 	}
@@ -268,7 +436,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 		return Arrays.asList(new EstadoTrabajoDto[] { setupDto(dto) });
 	}
-	
+
 	private RestLlamada compruebaSeGuardaRegistro() {
 		ArgumentCaptor<RestLlamada> llamadaCaptor = ArgumentCaptor.forClass(RestLlamada.class);
 		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture());
@@ -286,13 +454,25 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertNotNull("Se debería haber logado el signature generado", registro.getSignature());
 		assertNotNull("Se debería haber logado la petición", registro.getRequest());
 	}
-	
+
 	private void verificaRegistroPeticionOK() {
 		RestLlamada registro = compruebaSeGuardaRegistro();
 		compruebaInfoBasicaRegistro(registro);
 		assertNull("No se debería loguear ningún código de error", registro.getErrorDesc());
 		assertNotNull("Se debería haber logueado la respuesta a la llamada", registro.getResponse());
 		assertNull("No se debería haber logado ninguna excepción", registro.getException());
+	}
+
+	private ProveedorDto createDtoProveedor(long idProveedor, DelegacionDto... delegaciones) {
+		ProveedorDto p = new ProveedorDto();
+		p.setIdUsuarioRemAccion(LongDataType.longDataType(100L));
+		p.setFechaAccion(DateDataType.dateDataType(new Date()));
+
+		p.setCodTipoProveedor(StringDataType.stringDataType("cod"));
+		p.setIdProveedorRem(LongDataType.longDataType(idProveedor));
+		p.setCodigoProveedor(StringDataType.stringDataType("cod"));
+		p.setDelegaciones(Arrays.asList(delegaciones));
+		return p;
 	}
 
 }

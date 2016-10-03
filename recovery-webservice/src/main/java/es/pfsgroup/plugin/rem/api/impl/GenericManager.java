@@ -33,11 +33,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -59,6 +63,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
     
     @Autowired
     private GenericAdapter adapter;
+    
+    @Autowired
+    private ActivoApi activoApi;
     
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();    
 
@@ -112,7 +119,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		try {
 			scan = new Scanner(menuItemsJsonFile).useDelimiter("#");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -135,7 +141,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				menuItemsPerm.add(item);
 			}
 		}
-	
+		
 			
 		return menuItemsPerm;		
 		
@@ -144,31 +150,57 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboMunicipio")
 	public List<Localidad> getComboMunicipio(String codigoProvincia) {
-		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", codigoProvincia);
 		
 		return (List<Localidad>) genericDao.getListOrdered(Localidad.class, order, filter);
+	}
+	
+	@Override
+	public List<Localidad> getComboMunicipioSinFiltro() {
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		
+		return (List<Localidad>) genericDao.getListOrdered(Localidad.class, order);
+	}
+
+	@Override
+	public List<DDUnidadPoblacional> getUnidadPoblacionalByProvincia(String codigoProvincia) {
+		List<Localidad> localidades = this.getComboMunicipio(codigoProvincia);
+		
+		List<DDUnidadPoblacional> unidadesPoblacionales = new ArrayList<DDUnidadPoblacional>();
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		
+		for(Localidad l : localidades) {
+			Filter filterUnidadPoblacional = genericDao.createFilter(FilterType.EQUALS, "localidad.id", l.getId());
+			List<DDUnidadPoblacional> lista = (List<DDUnidadPoblacional>) genericDao.getListOrdered(DDUnidadPoblacional.class, order, filterUnidadPoblacional);
+			
+			if(!Checks.estaVacio(lista)) {
+				unidadesPoblacionales.addAll(lista);
+			}
+		}
+		
+		
+		return unidadesPoblacionales;
 	}
 	
 	@Override
 	@BusinessOperationDefinition("genericManager.getDiccionarioTipoProveedor")//DDTipoProveedor
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedor(String codigoTipoProveedor) {
-		Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoProveedor);
-		DDEntidadProveedor tipo = (DDEntidadProveedor) genericDao.get(DDEntidadProveedor.class, filterTipo);
+		List<DDTipoProveedor> listaTipoProveedor = new ArrayList<DDTipoProveedor>();
 		
-		String codigoTipo = null;
-		
-		if(!Checks.esNulo(tipo)) {
-			codigoTipo = tipo.getCodigo();
+		if(!Checks.esNulo(codigoTipoProveedor)){
+			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoProveedor);
+			DDEntidadProveedor tipo = (DDEntidadProveedor) genericDao.get(DDEntidadProveedor.class, filterTipo);
+
+			if(!Checks.esNulo(tipo)) {
+				Order order = new Order(GenericABMDao.OrderType.ASC, "id");
+				Filter filterSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoEntidadProveedor.codigo", tipo.getCodigo());
+				listaTipoProveedor = (List<DDTipoProveedor>) genericDao.getListOrdered(DDTipoProveedor.class, order, filterSubtipo);
+			}
 		}
 		
-		Order order = new Order(GenericABMDao.OrderType.ASC, "id");
-		Filter filterSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoEntidadProveedor.codigo", codigoTipo);
-		
-		return (List<DDTipoProveedor>) genericDao.getListOrdered(DDTipoProveedor.class, order, filterSubtipo);
-		
+		return listaTipoProveedor;
 	}
 
 	@Override
@@ -208,10 +240,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					beanUtilNotNull.copyProperty(seguroDD, "id", seguro.getId());
 					beanUtilNotNull.copyProperty(seguroDD, "descripcion", seguro.getNombre());
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				listaDD.add(seguroDD);
@@ -231,20 +261,39 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered() {
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo) {
 		
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>)(List)adapter.getDiccionario("tiposTrabajo"));
-		
-		for(DDTipoTrabajo tipoTrabajo : tiposTrabajo){
-			if(!DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())){
-				tiposTrabajoFiltered.add(tipoTrabajo);
+				
+		if(!Checks.esNulo(idActivo)){
+			Long activo = Long.parseLong(idActivo);
+			
+			for(DDTipoTrabajo tipoTrabajo : tiposTrabajo){
+	
+				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni OBTENCION DOCUMENTAL
+				// cuando el activo no tiene condicion de gestion en el perimetro (check gestion = false)
+				if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
+						|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())){
+					// Si no hay registro en BBDD de perimetro, el get nos devuelve un PerimetroActivo nuevo
+					// con todas las condiciones de perimetro activas
+					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo);
+				
+					if(!Checks.esNulo(perimetroActivo.getAplicaGestion()) && perimetroActivo.getAplicaGestion() == 1){
+						// Activo con Gestion en perimetro
+						tiposTrabajoFiltered.add(tipoTrabajo);
+					}
+				} else {
+					// El resto de tipos si se pueden crear
+					tiposTrabajoFiltered.add(tipoTrabajo);
+				}
 			}
+			
+			return tiposTrabajoFiltered;
+		} else {
+			return tiposTrabajo;
 		}
-		
-		return tiposTrabajoFiltered;
-
 	}
 	
 	@Override
@@ -270,6 +319,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			if(!DDTipoTrabajo.CODIGO_PRECIOS.equals(subtipo.getCodigoTipoTrabajo())) {
 					return listaSubtipos;
 			}
+			// Solo se pueden crear por la pantalla de crear trabajo estos subtipos relacionados con precios
 			else if(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS.equals(subtipo.getCodigo()) 
 					|| DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())
 					|| DDSubtipoTrabajo.CODIGO_PRECIOS_DESBLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())) {
@@ -320,7 +370,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "plaza.id", idPlaza);
 		return (List<TipoJuzgado>) genericDao.getListOrdered(TipoJuzgado.class, order, filter);
-	}
-		
+	}	
 	
 }

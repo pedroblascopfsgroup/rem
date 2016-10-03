@@ -24,16 +24,18 @@ import javax.validation.ValidatorFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
+import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -55,6 +57,9 @@ public class RestManagerImpl implements RestApi {
 
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private GenericaRestDaoImp genericaRestDaoImp;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -142,15 +147,15 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDCION tipovalidacion) {
+	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion) {
 		ArrayList<String> error = new ArrayList<String>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Serializable>> constraintViolations = null;
 		if (tipovalidacion != null) {
-			if (tipovalidacion.equals(TIPO_VALIDCION.INSERT)) {
+			if (tipovalidacion.equals(TIPO_VALIDACION.INSERT)) {
 				constraintViolations = validator.validate(obj, Insert.class);
-			} else if (tipovalidacion.equals(TIPO_VALIDCION.UPDATE)) {
+			} else if (tipovalidacion.equals(TIPO_VALIDACION.UPDATE)) {
 				constraintViolations = validator.validate(obj, Update.class);
 			} else {
 				constraintViolations = validator.validate(obj);
@@ -179,36 +184,77 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void saveDtoToBbdd(Object dto, Class entity)
+	@Transactional(readOnly = false)
+	public Serializable saveDtoToBbdd(Object dto, Class entity, Long activoId)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException {
 		Field[] fields = dto.getClass().getDeclaredFields();
+		
+		Serializable objetoEntity = null;
+		Activo activo = null;
+		
+		if(activoId != null){
+			activo = (Activo)genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", activoId));
+			if(activo != null){
+				objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+			}else{
+				 objetoEntity = (Serializable) entity.newInstance();
+			}
+			
+		}else{
+			 objetoEntity = (Serializable) entity.newInstance();
+		}
+		if(objetoEntity == null){
+			objetoEntity = (Serializable) entity.newInstance();
+		}
 		if (fields != null) {
 			for (Field f : fields) {
 				if (f.getAnnotation(EntityDefinition.class) != null) {
 					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
 					if (annotation.procesar()) {
-						Object objetoEntity = entity.newInstance();
 						String propertyEntityName = annotation.propertyName().substring(0, 1).toUpperCase()
 								+ annotation.propertyName().substring(1);
 						String propertyName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
 						if (annotation.classObj().equals(Object.class)) {
+							Class claseObjeto = f.getType();
+							if (annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
+								claseObjeto = Integer.class;
+							}
 							Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
-									f.getType());
-							metodo.invoke(objetoEntity, this.getValue(dto, dto.getClass(), "get".concat(propertyName)));
+									claseObjeto);
+							Object object = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
+							if (annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
+								if ((Boolean) object) {
+									object = 1;
+								} else {
+									object = 0;
+								}
+							}
+							metodo.invoke(objetoEntity, object);
 						} else {
+
+							Class claseObjeto = annotation.classObj();
+							if (annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
+								claseObjeto = Integer.class;
+							}
 							Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
-									annotation.classObj());
+									claseObjeto);
 							Object object = genericDao.get(annotation.classObj(),
 									genericDao.createFilter(FilterType.EQUALS, annotation.foreingField(),
-											(String) this.getValue(dto, dto.getClass(), "get".concat(propertyName))));
+											this.getValue(dto, dto.getClass(), "get".concat(propertyName))));
+							if (annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
+								if ((Boolean) object) {
+									object = 1;
+								} else {
+									object = 0;
+								}
+							}
 							metodo.invoke(objetoEntity, object);
 						}
 					}
 				} else {
 					String propertyEntityName = null;
 					try {
-						Object objetoEntity = entity.newInstance();
 						propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
 						String propertyName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
 						Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
@@ -220,6 +266,17 @@ public class RestManagerImpl implements RestApi {
 				}
 			}
 		}
+		try {
+			genericaRestDaoImp.saveOrUpdate(objetoEntity);
+			if(activo!=null){
+				objetoEntity =  genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+			}
+
+		} catch (Exception e) {
+			logger.error("Error guardando la entidad");
+			e.printStackTrace();
+		}
+		return objetoEntity;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -235,5 +292,7 @@ public class RestManagerImpl implements RestApi {
 		}
 		return obj;
 	}
+
+	
 
 }

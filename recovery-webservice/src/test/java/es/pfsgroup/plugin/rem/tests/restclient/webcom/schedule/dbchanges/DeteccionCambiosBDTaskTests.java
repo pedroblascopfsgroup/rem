@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -30,7 +29,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
 import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomEstadoPeticionTrabajo;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomStock;
@@ -183,15 +181,15 @@ public class DeteccionCambiosBDTaskTests {
 		StockDto stock = (StockDto) stockArgumentCaptor.getValue().get(0);
 
 		// NullStringDataType
-		assertTrue("El valor no es un NullDataType", (stock.getCodTipoVia() instanceof NullDataType));
+		assertNull("El valor no es un NullDataType", (stock.getCodTipoVia().getValue()));
 		// NullLongDataType
-		assertTrue("El valor no es un NullDataType", (stock.getIdActivoHaya() instanceof NullDataType));
+		assertNull("El valor no es un NullDataType", (stock.getIdActivoHaya().getValue()));
 		// NullDateDataType
-		assertTrue("El valor no es un NullDataType", (stock.getDesdeImporte() instanceof NullDataType));
+		assertNull("El valor no es un NullDataType", (stock.getDesdeImporte().getValue()));
 		// NullFloatDataType
-		assertTrue("El valor no es un NullDataType", (stock.getSuperficie() instanceof NullDataType));
+		assertNull("El valor no es un NullDataType", (stock.getSuperficie().getValue()));
 		// NullBooleanDataType
-		assertTrue("El valor no es un NullDataType", (stock.getAscensor() instanceof NullDataType));
+		assertNull("El valor no es un NullDataType", (stock.getAscensor().getValue()));
 
 		// Finalmente comprobamos que los campos que no hayamos seteado
 		// explícitamente permanecen a null. Elegimos uno no seteado al azar.

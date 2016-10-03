@@ -13,7 +13,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
     	xtype: 'fieldsettable',
     	deafaultType: 'textfieldbase'
     },
-    
+
     initComponent: function () {
         
         var me = this;
@@ -23,6 +23,17 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
         me.buttons = [{ text: 'Buscar', handler: 'onSearchManualClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];
         me.buttonAlign = 'left';
         
+        //Store personalizado (tipoPropuesta) por el dato correspondiente a Todos
+        var comboTipoPropuestaManual = new Ext.data.Store({
+			data : 
+				[
+					{"codigo":"01", "descripcion": HreRem.i18n("comboItem.precios.preciar")},
+					{"codigo":"02", "descripcion": HreRem.i18n("comboItem.precios.repreciar")},
+					{"codigo":"03", "descripcion": HreRem.i18n("comboItem.precios.descuento")},
+					{"codigo":null, "descripcion": HreRem.i18n("comboItem.precios.todos")}
+			    ]
+    	});
+        
         var items = [
         
        {
@@ -31,26 +42,54 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
 		    	xtype: 'textfieldbase',
 		    	addUxReadOnlyEditFieldPlugin: false
 		    }, 
+		    layout: {
+			    type: 'table',
+				columns: 2,
+				tdAttrs: {width: '50%'},
+				tableAttrs: {
+		            style: {width: '100%'}
+		        }
+			},
         	items: [
 					{ 
 					    xtype: 'comboboxfieldbase',
 					    editable: true,
 						fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 						name: 'entidadPropietariaCodigo',
+						reference: 'entidadPropietariaCodigoRef',
+						publishes: 'value',
 						bind: {
 							store: '{comboEntidadPropietaria}'
-						}
+						},
+		            	allowBlank: false
 					},
 					{
 						xtype: 'comboboxfieldbase',
 						editable: true,
 						fieldLabel: HreRem.i18n('fieldlabel.tipo.propuesta'),
 						name: 'tipoPropuestaCodigo',
-		            	bind: {
+						store: comboTipoPropuestaManual,
+		            	allowBlank: false
+						/*bind: {
 		            		store: '{comboTiposPropuesta}'
-		            	}
+		            	}*/
+					},
+					{ 
+					    xtype: 'comboboxfieldbase',
+					    editable: true,
+						fieldLabel: HreRem.i18n('fieldlabel.propietario'),
+						name: 'propietario',
+						bind: {
+							store: '{comboActivoPropietario}',
+							disabled: '{!entidadPropietariaCodigoRef.value}',
+							filters: {
+				                property: 'codigo',
+				                value: '{entidadPropietariaCodigoRef.value}'
+				            }
+						},
+		            	allowBlank: false,
+		            	valueField: 'id'
 					}
-
         	]
         },
         

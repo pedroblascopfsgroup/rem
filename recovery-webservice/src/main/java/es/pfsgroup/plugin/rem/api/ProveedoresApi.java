@@ -4,10 +4,12 @@ import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
+import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 
@@ -155,5 +157,14 @@ public interface ProveedoresApi {
 	 * @throws Exception 
 	 */
 	public boolean createProveedor(DtoProveedorFilter dtoProveedorFilter) throws Exception;
+
+	/**
+	 * Este método obtiene una lista de proveedores de tipo mediador filtrados por la cartera y
+	 * la localidad del ID del activo.
+	 * 
+	 * @param dto : dto con los datos a filtrar.
+	 * @return Devulve una lista de proveedores de tipo mediador mapeada en el DTO.
+	 */
+	public List<DtoMediador> getMediadorListFiltered(DtoMediador dto);
 
 }

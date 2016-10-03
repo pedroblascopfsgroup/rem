@@ -77,45 +77,55 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		DDEstadoPublicacion estadoPublicacion= null;
 		String motivo = null;
 		
+		// Establecer la fecha de hoy en el campo 'Fecha Hasta' del anterior/último histórico y el usuario que lo ha modificado.
+		// Situado al principio en caso de que todavía no existan historicos para el el Activo en concreto.
+		ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
+		if(!Checks.esNulo(ultimoHistorico)){
+			Date ahora = new Date(System.currentTimeMillis());
+			ultimoHistorico.setFechaHasta(ahora);
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			ultimoHistorico.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
+		}
+		
 		if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionForzada()) && dtoCambioEstadoPublicacion.getOcultacionForzada()) { // Publicación oculto.
-			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)){
+			if(!Checks.esNulo(activo.getEstadoPublicacion()) && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)){
 				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
 			motivo = dtoCambioEstadoPublicacion.getMotivoOcultacionForzada();
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionPrecio()) && dtoCambioEstadoPublicacion.getOcultacionPrecio()) { // Publicación precio oculto.
 			if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(activo.getEstadoPublicacion().getCodigo())){ // Si viene de publicación forzada.
-				if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)){
+				if(!Checks.esNulo(activo.getEstadoPublicacion()) && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)){
 					return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 				}
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO);
 			} else { // Si viene de publicación ordinaria.
-				if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)){
+				if(!Checks.esNulo(activo.getEstadoPublicacion()) && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)){
 					return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 				}
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO);
 			}
 			motivo = dtoCambioEstadoPublicacion.getMotivoOcultacionPrecio();
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getDespublicacionForzada()) && dtoCambioEstadoPublicacion.getDespublicacionForzada()) { // Despublicación forzada.
-			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)){
+			if(!Checks.esNulo(activo.getEstadoPublicacion()) && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)){
 				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_DESPUBLICADO);
 			motivo = dtoCambioEstadoPublicacion.getMotivoDespublicacionForzada();
 		
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionForzada()) && dtoCambioEstadoPublicacion.getPublicacionForzada()) { // Publicación forzada.
-			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO)){
+			if(!Checks.esNulo(activo.getEstadoPublicacion()) && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO)){
 				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO);
 			motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) && dtoCambioEstadoPublicacion.getPublicacionOrdinaria()){ // Publicación ordinaria.
-			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)){
+			if(!Checks.esNulo(activo.getEstadoPublicacion()) && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)){
 				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO);
 		} else { // Deseleccionada cualquier opción.
-			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO)){
+			if(!Checks.esNulo(activo.getEstadoPublicacion()) && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO)){
 				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
@@ -129,15 +139,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		
 		activoHistoricoEstadoPublicacion.setActivo(activo);
-
-		// Establecer la fecha de hoy en el campo 'Fecha Hasta' del anterior/último histórico y el usuario que lo ha modificado.
-		ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
-		if(!Checks.esNulo(ultimoHistorico)){
-			Date ahora = new Date(System.currentTimeMillis());
-			ultimoHistorico.setFechaHasta(ahora);
-			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-			ultimoHistorico.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
-		}
 		
 		try {
 			if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionForzada()) && dtoCambioEstadoPublicacion.getPublicacionForzada()) {

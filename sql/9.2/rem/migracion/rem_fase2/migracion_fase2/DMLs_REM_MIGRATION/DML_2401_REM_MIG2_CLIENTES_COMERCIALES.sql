@@ -80,7 +80,7 @@ BEGIN
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
             WHERE NOT EXISTS (
               SELECT 1 
-              FROM '||V_ESQUEMA_MASTER||'.USU_USUARIO USU
+              FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
               WHERE MIG2.CLC_COD_USUARIO_LDAP_ACCION = USU.USU_USERNAME
             )
           )
@@ -89,7 +89,7 @@ BEGIN
           MIG2.CLC_COD_USUARIO_LDAP_ACCION    						      OFA_COD_OFERTA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN USERNAME_NOT_EXISTS ON OFR_NUM_OFERTA.OFA_COD_OFERTA = MIG.OFA_COD_OFERTA
+          INNER JOIN USERNAME_NOT_EXISTS ON USERNAME_NOT_EXISTS.CLC_COD_USUARIO_LDAP_ACCION = MIG2.CLC_COD_USUARIO_LDAP_ACCION
           '
           ;
           
@@ -243,7 +243,7 @@ BEGIN
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' CLIENTES_COMERCIALES, comprobar la MIG2_USU_NOT_EXISTS.';
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' CLIENTES_COMERCIALES, comprobar CLC_COD_CLIENTE_WEBCOM duplicados en la MIG2';
       END IF;
       
       EXECUTE IMMEDIATE '

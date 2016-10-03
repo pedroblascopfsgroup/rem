@@ -9,8 +9,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Webco
 public class UsuarioDto implements WebcomRESTDto{
 
 	@WebcomRequired
-	private LongDataType id;
-	@WebcomRequired
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
@@ -28,12 +26,6 @@ public class UsuarioDto implements WebcomRESTDto{
 	@WebcomRequired
 	private BooleanDataType activo;
 	
-	public LongDataType getId() {
-		return id;
-	}
-	public void setId(LongDataType id) {
-		this.id = id;
-	}
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
 	}

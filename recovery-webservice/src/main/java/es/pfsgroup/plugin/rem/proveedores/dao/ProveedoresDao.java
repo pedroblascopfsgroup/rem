@@ -2,9 +2,10 @@ package es.pfsgroup.plugin.rem.proveedores.dao;
 
 import java.util.List;
 
-import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
@@ -14,5 +15,7 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	public ActivoProveedor getProveedorById(Long id);
 
 	public ActivoProveedor getProveedorByNIF(String nifProveedor);
+
+	public List<ActivoProveedor> getMediadorListFiltered(Activo activo, DtoMediador dto);
 
 }

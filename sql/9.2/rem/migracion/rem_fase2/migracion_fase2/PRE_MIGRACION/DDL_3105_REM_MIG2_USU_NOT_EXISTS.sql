@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pablo Meseguer
+--## AUTOR=MANUEL RODRIGUEZ
 --## FECHA_CREACION=20160929
---## ARTEFACTO=online
+--## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-855
 --## PRODUCTO=NO
 --## Finalidad: Tabla para registrar los usuarios (USU_USERNAME) inexistentes en USU_USUARIOS que vienen provistos en las interfaces. FASE 2
 --##           

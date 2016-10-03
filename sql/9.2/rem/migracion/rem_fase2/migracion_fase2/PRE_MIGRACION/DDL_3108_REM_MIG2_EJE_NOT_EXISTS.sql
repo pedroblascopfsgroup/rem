@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-855
 --## PRODUCTO=NO
---## Finalidad: Tabla para registrar los usuarios (GPV_NUM_GASTO_GESTORIA) inexistentes en GPV_GASTOS_PROVEEDOR que vienen provistos en las interfaces. FASE 2
+--## Finalidad: Tabla para registrar los usuarios (EJE_ANYO) inexistentes en ACT_EJE_EJERCICIO que vienen provistos en las interfaces. FASE 2
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -30,33 +30,33 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para registrar los usuarios (GPV_NUM_GASTO_GESTORIA) inexistentes en GPV_GASTOS_PROVEEDOR que vienen provistos en las interfaces. FASE 2'; -- Vble. para los comentarios de las tablas
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para registrar los usuarios (EJE_ANYO) inexistentes en ACT_EJE_EJERCICIO que vienen provistos en las interfaces. FASE 2'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
 
-	DBMS_OUTPUT.PUT_LINE('******** MIG2_GPV_NOT_EXISTS ********'); 
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_USU_NOT_EXISTS... Comprobaciones previas');
+	DBMS_OUTPUT.PUT_LINE('******** MIG2_EJE_NOT_EXISTS ********'); 
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS... Comprobaciones previas');
 	
 
 	-- Verificar si la tabla nueva ya existe
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG2_GPV_NOT_EXISTS'' and owner = '''||V_ESQUEMA||'''';
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG2_EJE_NOT_EXISTS'' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	
 	IF V_NUM_TABLAS = 1 THEN
   
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG2_GPV_NOT_EXISTS... Ya existe. Se borrará.');
-		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS CASCADE CONSTRAINTS';
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG2_EJE_NOT_EXISTS... Ya existe. Se borrará.');
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS CASCADE CONSTRAINTS';
 		
 	END IF;
 	
 	
 	-- Creamos la tabla
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.MIG2_GPV_NOT_EXISTS...');
-	V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.MIG2_EJE_NOT_EXISTS...');
+	V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS
 	(
 		TABLA_MIG 					VARCHAR2(30 CHAR),
-		GPV_NUM_GASTO_GESTORIA		NUMBER(16,0),
+		EJE_ANYO					NUMBER(16,0),
 		FECHA_COMPROBACION 			DATE
 	)
 	LOGGING 
@@ -66,14 +66,14 @@ BEGIN
 	NOMONITORING
 	';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS... Tabla creada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS... Tabla creada.');
 	
 	-- Creamos comentario	
-	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS IS '''||V_COMMENT_TABLE||'''';		
+	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS... Comentario creado.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS... Comentario creado.');
 	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS... OK');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS... OK');
 
 
 	COMMIT;

@@ -22,7 +22,12 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
     initComponent: function () {
 
         var me = this;
+        
+        me.startValidityDate = '';
+        me.endValidityDate = '';
+        
         me.setTitle(HreRem.i18n('title.valoraciones.precios'));
+        
         var items= [
             {
 				xtype:'fieldsettable',
@@ -59,7 +64,10 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												dataIndex: 'importe',
 												renderer: Utils.rendererCurrency,
 									        	editor: {
-									        		xtype:'numberfield', 
+									        		xtype:'numberfield',
+									        		maskRe: /[0-9.]/,
+									        		allowNegative: false,
+									        		minValue: 0,
 									        		hideTrigger: true,
 									        		keyNavEnable: false,
 									        		mouseWheelEnable: false,
@@ -90,10 +98,26 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								        		tdCls: 'grid-no-seleccionable-td',												
 												dataIndex: 'fechaInicio',
 												formatter: 'date("d/m/Y")',
-									        	editor: {
-									        		xtype: 'datefield'
-									        	},
-												flex: 1
+												flex: 1,
+												editor:{
+						                            xtype: 'datefield',
+						                            maxValue: Ext.Date.format(new Date(),'d/m/Y'),
+						                            maxText: 'No se puede establecer la fecha en el futuro',
+						                            validationEvent: 'change',
+						                            reference: 'dateFieldStartDate',
+						                            validator: function(value){
+						                                me.startValidityDate=value;
+						                                if(typeof me.endValidityDate !== 'undefined' && !Ext.isEmpty(me.endValidityDate)) {
+						                                    if(!Ext.isEmpty(me.startValidityDate) && me.startValidityDate <= me.endValidityDate) {
+						                                        return true;
+						                                    } else {
+						                                        return false;
+						                                    }
+						                                } else {
+						                                    return true;
+						                                }
+						                            }
+												  }
 											   },
 											   {
 												text: HreRem.i18n('header.fecha.fin'),
@@ -101,10 +125,17 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								        		tdCls: 'grid-no-seleccionable-td',												
 												dataIndex: 'fechaFin',
 												formatter: 'date("d/m/Y")',
-									        	editor: {
-									        		xtype: 'datefield'
-									        	},
-												flex: 1
+												flex: 1,
+												editor: {
+						                            xtype: 'datefield',
+						                            minValue: Ext.Date.format(new Date(),'d/m/Y'),
+						                            minText: 'No se puede establecer la fecha en el pasado',
+						                            validationEvent: 'change',
+						                            validator: function(value){
+						                            	me.endValidityDate=value;
+						                            	return true;
+						                            }
+						                          }
 											   },
 											   {
 												text: HreRem.i18n('header.gestor'),

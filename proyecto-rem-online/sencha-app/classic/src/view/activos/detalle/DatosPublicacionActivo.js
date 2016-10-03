@@ -403,7 +403,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 						        	fieldLabel: HreRem.i18n('title.publicaciones.estado.portalesExternos'),
 						        	reference: 'textfieldportalesexternos',
 						        	bind:{
-						        		value: '{datosPublicacion.portalesExternos}'
+						        		value: '{activoCondicionantesDisponibilidad.portalesExternosDescripcion}'
 						        	},
 				                	readOnly: true
 								}

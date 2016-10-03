@@ -203,8 +203,6 @@ BEGIN
           0                                                                                                           AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           INNER JOIN CLIENTE_WEBCOM CW ON CW.CLC_COD_CLIENTE_WEBCOM = MIG2.CLC_COD_CLIENTE_WEBCOM
-          LEFT JOIN '||V_ESQUEMA||'.MIG2_USU_NOT_EXISTS UNOT ON UNOT.USU_USERNAME = MIG2.CLC_COD_USUARIO_LDAP_ACCION
-          WHERE UNOT.USU_USERNAME IS NULL
         ) AUX
       '
       ;
@@ -245,7 +243,7 @@ BEGIN
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' CLIENTES_COMERCIALES, comprobar la MIG2_USU_NOT_EXISTS.';
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' CLIENTES_COMERCIALES, comprobar CLC_COD_CLIENTE_WEBCOM duplicados en la MIG2';
       END IF;
       
       EXECUTE IMMEDIATE '

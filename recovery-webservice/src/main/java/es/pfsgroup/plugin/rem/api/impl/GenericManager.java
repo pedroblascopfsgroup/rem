@@ -37,7 +37,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
-import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
@@ -247,6 +247,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				listaDD.add(seguroDD);
 			}
 		}
+		else if(diccionario.equals("DDPropietario")) {
+			listaDD = this.getListDtoPropietarioDiccionario();
+		}
+		
 		return listaDD;
 	}
 	
@@ -370,6 +374,37 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "plaza.id", idPlaza);
 		return (List<TipoJuzgado>) genericDao.getListOrdered(TipoJuzgado.class, order, filter);
-	}	
+	}
+	
+	/**
+	 * Devuelve una lista de ActivoPropietario parseado en DtoDiccionario
+	 * @return
+	 */
+	private List<DtoDiccionario> getListDtoPropietarioDiccionario() {
+		
+		List<DtoDiccionario> listaDD = new ArrayList<DtoDiccionario>();
+		
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order order = new Order(OrderType.ASC, "nombre");
+		List<ActivoPropietario> listaPropietarios = genericDao.getListOrdered(ActivoPropietario.class, order, filtroBorrado);
+		
+		for(ActivoPropietario propietario: listaPropietarios){
+			DtoDiccionario propietarioDD = new DtoDiccionario();;
+			try {
+				beanUtilNotNull.copyProperty(propietarioDD, "id", propietario.getId());
+				beanUtilNotNull.copyProperty(propietarioDD, "descripcion", propietario.getFullName());
+				beanUtilNotNull.copyProperty(propietarioDD, "codigo", propietario.getCartera().getCodigo());
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			listaDD.add(propietarioDD);
+		}
+		
+		return listaDD;
+	}
 	
 }

@@ -129,7 +129,6 @@ public class GenericController {
 	 */
 	@RequestMapping(method = RequestMethod.GET) 
 	public ModelAndView registerUser(){
-
 		adapter.registerUser();	
 		
 		return new ModelAndView("jsonView",  new ModelMap("success", true));
@@ -137,7 +136,17 @@ public class GenericController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboMunicipio(String codigoProvincia){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboMunicipio(codigoProvincia)));		
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboMunicipio(codigoProvincia)));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboMunicipioSinFiltro(){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboMunicipioSinFiltro()));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getUnidadPoblacionalByProvincia(String codigoProvincia){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getUnidadPoblacionalByProvincia(codigoProvincia)));		
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -145,18 +154,17 @@ public class GenericController {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivo(codigoTipoActivo)));	
 	}	
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoGestor(WebDto webDto, ModelMap model){
-		
 		model.put("data", genericApi.getComboTipoGestor());
 		
 		return new ModelAndView("jsonView", model);
-		
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboTipoTrabajoCreaFiltered(){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoTrabajoCreaFiltered()));	
+	public ModelAndView getComboTipoTrabajoCreaFiltered(String idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoTrabajoCreaFiltered(idActivo)));	
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -189,9 +197,9 @@ public class GenericController {
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTextosInformativos(ModelMap model){
-		
 		model.put("texto", "texto de prueba");
 		
 		return new ModelAndView("jsonView", model);

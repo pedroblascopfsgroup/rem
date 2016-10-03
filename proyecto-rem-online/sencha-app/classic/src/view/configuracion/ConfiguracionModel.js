@@ -45,6 +45,13 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 				},
 				autoload: true
 		},
+		comboNewSubtipoProveedor: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionarioSubtipoProveedor'
+			}
+		},
 		comboTipoPersona: {
 			model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -59,7 +66,8 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'entidadesPropietarias'}
-				}
+				},
+				autoLoad: true
 		},
 // No es un diccionario, la clase es: ActivoPropietario
 //		comboPropietario: {

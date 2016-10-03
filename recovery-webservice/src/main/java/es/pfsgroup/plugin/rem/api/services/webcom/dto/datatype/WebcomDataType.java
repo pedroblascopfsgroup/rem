@@ -5,6 +5,8 @@ import java.lang.reflect.TypeVariable;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.jdom.IllegalDataException;
+
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 
@@ -25,8 +27,8 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
-	public static NullLongDataType nullLongDataType() {
-		return new NullLongDataType();
+	public static LongDataType nullLongDataType() {
+		return new LongDataType(null);
 	}
 
 	/*
@@ -41,8 +43,8 @@ public abstract class WebcomDataType<T> {
 
 	}
 
-	public static NullDateDataType nullDateDataType() {
-		return new NullDateDataType();
+	public static DateDataType nullDateDataType() {
+		return new DateDataType(null);
 	}
 
 	/*
@@ -56,8 +58,8 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
-	public static NullStringDataType nullStringDataType() {
-		return new NullStringDataType();
+	public static StringDataType nullStringDataType() {
+		return new StringDataType(null);
 	}
 
 	/*
@@ -71,8 +73,8 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
-	public static NullDoubleDataType nullDoubleDataType() {
-		return new NullDoubleDataType();
+	public static DoubleDataType nullDoubleDataType() {
+		return new DoubleDataType(null);
 	}
 
 	/*
@@ -86,26 +88,17 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
-	public static NullBooleanDataType nullBooleanDataType() {
-		return new NullBooleanDataType();
+	public static BooleanDataType nullBooleanDataType() {
+		return new BooleanDataType(null);
 	}
 
 	public String toString() {
-		if (this instanceof NullDataType) {
-			return "NullDataType";
-		} else {
-			return "DataType <".concat((getValue() != null ? getValue().toString() : "empty")).concat(">");
-		}
+		return "DataType <".concat((getValue() != null ? getValue().toString() : "empty")).concat(">");
 	}
 
 	public static Object valueOf(Object o) {
 		if (o instanceof WebcomDataType) {
-			Object value = ((WebcomDataType) o).getValue();
-			if ((value == null) && (!(o instanceof NullDataType))) {
-				throw new IllegalArgumentException("getValue() es NULL. ¿Debería " + o.getClass().getName()
-						+ " implementar " + NullDataType.class.getName() + "?");
-			}
-			return value;
+			return ((WebcomDataType) o).getValue();
 		} else {
 			return o;
 		}
@@ -115,7 +108,16 @@ public abstract class WebcomDataType<T> {
 	public static <E extends WebcomDataType> E parse(Class<E> type, Object data)
 			throws WebcomDataTypeParseException, UnknownWebcomDataTypeException {
 
+		if (type == null) {
+			throw new WebcomDataTypeParseException("Type es NULL");
+		}
+
+		if ((data != null) && (type.isAssignableFrom(data.getClass()))) {
+			return (E) data;
+		}
+
 		try {
+
 			if (LongDataType.class.equals(type)) {
 				return (E) longDataType(data != null ? Long.parseLong(data.toString()) : null);
 
@@ -208,4 +210,26 @@ public abstract class WebcomDataType<T> {
 			return null;
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		if (getValue() != null) {
+			return getValue().hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if ((obj instanceof WebcomDataType) && (getValue() != null)) {
+			return getValue().equals(((WebcomDataType) obj).getValue());
+		} else {
+			return super.equals(obj);
+		}
+	}
+
 }

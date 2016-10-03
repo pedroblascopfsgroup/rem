@@ -192,8 +192,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "situacionComercialDescripcion", activo.getSituacionComercial().getDescripcion());
 		}
 		
-		// Perimetros --------------------------------------------------------------------------------------		
+		// Perimetros ------------------		
 		// Datos de perimetro del activo al Dto de datos basicos
+		// - Puede no existir registro de perimetros en la tabla. Esto no producira errores de carga/guardado
+		// - En caso de no haber registro relacionado con el activo, no se habilitaran validaciones/bloqueos 
+		//   relacionados con el perimetro.
+		// - Aunque no haya registro de perimetros, en estos activos aparecerán todos los checks activos de la pantalla
+		//   de datos basicos (para indicar que se incluyen todos los modulos del activo y no hay bloqueos)
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 		BeanUtils.copyProperties(activoDto, perimetroActivo);
 		
@@ -214,16 +219,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "motivoNoAplicaComercializarDescripcion", perimetroActivo.getMotivoNoAplicaComercializar().getDescripcion());
 		}
 		
-		// Si no exite perimetro, por defecto se marcan los checkbox.
-		if(Checks.esNulo(perimetroActivo.getActivo())) {
-			BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision",true);
-			BeanUtils.copyProperty(activoDto,"aplicaGestion",true);
-			BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador",true);
-			BeanUtils.copyProperty(activoDto,"aplicaComercializar",true);
-			BeanUtils.copyProperty(activoDto,"aplicaFormalizar",true);
-		}
+		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
+		// y por tanto, por defecto se marcan los checkbox.
+//		if(Checks.esNulo(perimetroActivo.getActivo())) {
+		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", perimetroActivo.getAplicaTramiteAdmision() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaGestion", perimetroActivo.getAplicaGestion() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", perimetroActivo.getAplicaAsignarMediador() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaComercializar", perimetroActivo.getAplicaComercializar() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", perimetroActivo.getAplicaComercializar() == 1? true: false);
+//		}
+		// ----------
 		
-		// Datos de activo bancario
+		
+		// Datos de activo bancario -----------------
+		// Datos de activo bancario del activo al Dto de datos basicos
+		// - Puede no existir registro de activo bancario en la tabla. Esto no producira errores de carga/guardado
 		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
 		
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
@@ -417,6 +427,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 
 			// Perimetro -------
+			// Solo se guardan los datos si el usuario ha cambiado algun campo de perimetros
+			// El control de cambios se realiza revisando los datos que transporta el dto
+			// Solo se modifican/crean nuevos registros de perimetros si hay guardado de datos
 			if(
 				dto.getAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || dto.getAplicaFormalizar() != null || 
 				dto.getAplicaGestion() != null  || dto.getAplicaTramiteAdmision() != null || dto.getMotivoAplicaComercializarCodigo() != null ||
@@ -479,9 +492,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 			}
+			// ---------
 			
-			
-			// Activo bancario
+			// Activo bancario -------------
+			// Solo se guardan los datos si el usuario ha cambiado algun campo del activo bancario.
+			// El control de cambios se realiza revisando los datos que transporta el dto
+			// Solo se modifican/crean nuevos registros de activo bancario si hay guardado de datos
 			if(
 				dto.getClaseActivoCodigo() != null || 
 				dto.getClaseActivoDescripcion() != null || 

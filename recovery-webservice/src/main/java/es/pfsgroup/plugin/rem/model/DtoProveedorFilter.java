@@ -18,6 +18,8 @@ public class DtoProveedorFilter extends WebDto {
 	private String subtipoProveedorCodigo;
 	private String nifProveedor;
 	private String nombreProveedor;
+	private String nifPersonaContacto;
+	private String nombrePersonaContacto;
 	private String nombreComercialProveedor;
 	private String estadoProveedorDescripcion;
 	private String estadoProveedorCodigo;
@@ -38,6 +40,7 @@ public class DtoProveedorFilter extends WebDto {
 	private String propietario;
 	private String subCartera;
 	private String nombrePersContacto;
+	private int totalCount;
 	
 	
 	public String getId() {
@@ -70,17 +73,17 @@ public class DtoProveedorFilter extends WebDto {
 	public void setSubtipoProveedorCodigo(String subtipoProveedorCodigo) {
 		this.subtipoProveedorCodigo = subtipoProveedorCodigo;
 	}
-	public String getNifProveedor() {
-		return nifProveedor;
+	public String getNifPersonaContacto() {
+		return nifPersonaContacto;
 	}
-	public void setNifProveedor(String nifProveedor) {
-		this.nifProveedor = nifProveedor;
+	public void setNifPersonaContacto(String nifPersonaContacto) {
+		this.nifPersonaContacto = nifPersonaContacto;
 	}
-	public String getNombreProveedor() {
-		return nombreProveedor;
+	public String getNombrePersonaContacto() {
+		return nombrePersonaContacto;
 	}
-	public void setNombreProveedor(String nombreProveedor) {
-		this.nombreProveedor = nombreProveedor;
+	public void setNombrePersonaContacto(String nombrePersonaContacto) {
+		this.nombrePersonaContacto = nombrePersonaContacto;
 	}
 	public String getNombreComercialProveedor() {
 		return nombreComercialProveedor;
@@ -204,6 +207,24 @@ public class DtoProveedorFilter extends WebDto {
 	}
 	public Integer getHomologadoCodigo() {
 		return homologadoCodigo;
+	}
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+	public String getNifProveedor() {
+		return nifProveedor;
+	}
+	public void setNifProveedor(String nifProveedor) {
+		this.nifProveedor = nifProveedor;
+	}
+	public String getNombreProveedor() {
+		return nombreProveedor;
+	}
+	public void setNombreProveedor(String nombreProveedor) {
+		this.nombreProveedor = nombreProveedor;
 	}
 	
 }

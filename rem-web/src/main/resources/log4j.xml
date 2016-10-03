@@ -145,14 +145,14 @@
     </logger>
     
     <logger name="es.pfsgroup.plugin.rem.utils" additivity="false">
-        <level value="error"/>
+        <level value="debug"/>
         <appender-ref ref="console" />
         <appender-ref ref="file" />
         <appender-ref ref="email" />
     </logger>
     
     <logger name="es.pfsgroup.plugin.rem.restclient" additivity="false">
-        <level value="debug"/>
+        <level value="error"/>
         <appender-ref ref="console" />
         <appender-ref ref="file" />
         <appender-ref ref="email" />

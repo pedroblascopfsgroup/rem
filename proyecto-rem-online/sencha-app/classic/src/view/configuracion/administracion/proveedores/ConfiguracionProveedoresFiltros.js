@@ -94,8 +94,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 														disabled: '{!proveedor.tipoProveedorCodigo}'
 													},
 									            	displayField: 'descripcion',
-													valueField: 'codigo',
-													colspan: 2
+													valueField: 'codigo'
+												},
+												{
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nif'),
+													name: 'nifProveedor'
 												},
 												{ 
 													xtype: 'datefield',
@@ -107,7 +110,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 													xtype: 'combo',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.tipopersona'),
 													name: 'tipoPersonaCodigo',
-													disabled: true,
 													bind: {
 														store: '{comboTipoPersona}'			            		
 													},
@@ -125,15 +127,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 													valueField: 'codigo'
 												},
 												{
-													xtype: 'combo',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.propietario'),
-													name: 'propietario',
-													disabled: true,
-													bind: {
-														store: '{comboPropietario}'			            		
-													},
-									            	displayField: 'descripcion',
-													valueField: 'codigo'
+													name: 'propietario'
 												},
 												// Fila 4
 												{ 
@@ -206,19 +201,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											       	 // fila 0
 													{ 
 														fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nif'),
-									                	name:		'nifProveedor'
+									                	name:		'nifPersonaContacto'
 											        },
 													{ 
-														xtype: 'combo',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nombre'),
-											        	disabled: true,
-											        	name: 'nombrePersContacto',
-											        	bind: {
-										            		store: '{comboContacto}'
-										            	},
-														colspan: 2,
-										            	displayField: 'descripcion',
-														valueField: 'codigo'
+											        	name: 'nombrePersonaContacto',
+														colspan: 2
 											        }
 											]
 							                

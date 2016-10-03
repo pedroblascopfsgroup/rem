@@ -12,7 +12,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
         me.setTitle(HreRem.i18n('title.documentos'));
     	var items= [
     	
-    	          /*{			
+    	          {			
 					    xtype		: 'gridBase',
 					    topBar		: true,
 					    features: [{ftype:'grouping'}],
@@ -20,9 +20,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storeDocumentosProveedor}'
-						},
-						buttonSecurity: {
-							secFunPermToEnable : 'PROVEEDOR_DOCUMENTOS_ADD'
 						},
 						columns: [
 						
@@ -88,12 +85,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        	hideable: false
 					        }
 					    ]
-    	          }*/
+    	          }
     	];
 
     	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
-
     },
     
     funcionRecargar: function() {
@@ -103,8 +99,4 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
   			grid.getStore().load();
   		});
     }
-
-
-    
-
 });

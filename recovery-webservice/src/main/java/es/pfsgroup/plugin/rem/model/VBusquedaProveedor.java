@@ -72,11 +72,11 @@ public class VBusquedaProveedor implements Serializable {
 	@Column(name = "CODIGO_POSTAL_PROVEEDOR")
 	private Integer codigoPostalProveedor;
 
-	@Column(name = "CONTACTO_NIF_PROVEEDOR")
-	private String contactoNIFProveedor;
+	@Column(name = "NIF_PERSONA_CONTACTO")
+	private String nifPersonaContacto;
 
-	@Column(name = "CONTACTO_NOMBRE_PROVEEDOR")
-	private String contactoNombreProveedor;
+	@Column(name = "NOMBRE_PERSONA_CONTACTO")
+	private String nombrePersonaContacto;
 
 	@Column(name = "HOMOLOGADO_PROVEEDOR")
 	private Integer homologadoProveedor;
@@ -87,6 +87,9 @@ public class VBusquedaProveedor implements Serializable {
 	@Column(name = "TOP_PROVEEDOR")
 	private Integer topProveedor;
 
+	@Column(name = "PROPIETARIO_ACTIVO_VINCULADO")
+	private String propietarioActivoVinculado;
+	
 	public Long getId() {
 		return id;
 	}
@@ -239,20 +242,28 @@ public class VBusquedaProveedor implements Serializable {
 		this.codigoPostalProveedor = codigoPostalProveedor;
 	}
 
-	public String getContactoNIFProveedor() {
-		return contactoNIFProveedor;
+	public String getNifPersonaContacto() {
+		return nifPersonaContacto;
 	}
 
-	public void setContactoNIFProveedor(String contactoNIFProveedor) {
-		this.contactoNIFProveedor = contactoNIFProveedor;
+	public void setNifPersonaContacto(String nifPersonaContacto) {
+		this.nifPersonaContacto = nifPersonaContacto;
 	}
 
-	public String getContactoNombreProveedor() {
-		return contactoNombreProveedor;
+	public String getNombrePersonaContacto() {
+		return nombrePersonaContacto;
 	}
 
-	public void setContactoNombreProveedor(String contactoNombreProveedor) {
-		this.contactoNombreProveedor = contactoNombreProveedor;
+	public void setNombrePersonaContacto(String nombrePersonaContacto) {
+		this.nombrePersonaContacto = nombrePersonaContacto;
+	}
+
+	public String getPropietarioActivoVinculado() {
+		return propietarioActivoVinculado;
+	}
+
+	public void setPropietarioActivoVinculado(String propietarioActivoVinculado) {
+		this.propietarioActivoVinculado = propietarioActivoVinculado;
 	}
 
 	public Integer getHomologadoProveedor() {

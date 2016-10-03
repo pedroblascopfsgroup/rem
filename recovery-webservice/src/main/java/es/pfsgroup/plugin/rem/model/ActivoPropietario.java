@@ -24,6 +24,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 /**
  * Modelo que gestiona los propietarios de los activos
@@ -124,6 +125,10 @@ public class ActivoPropietario implements Serializable, Auditable {
 	 
 	 @Column(name = "PRO_OBSERVACIONES")
 	 private String observaciones;
+	 
+	 @ManyToOne
+     @JoinColumn(name = "DD_CRA_ID")
+	 private DDCartera cartera;
 	 
 	 
 	 
@@ -363,8 +368,14 @@ public class ActivoPropietario implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	 
 
+	public DDCartera getCartera() {
+		return cartera;
+	}
+
+	public void setCartera(DDCartera cartera) {
+		this.cartera = cartera;
+	}
 
 }
 

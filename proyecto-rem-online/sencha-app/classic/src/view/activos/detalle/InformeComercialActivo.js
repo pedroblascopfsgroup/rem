@@ -467,7 +467,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										xtype: 'comboboxfieldbase',
 										editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion'),
-										allowBlank: false,
 										bind: {
 											store: '{comboEstadoConservacion}',
 											value: '{informeComercial.estadoConservacionCodigo}'
@@ -699,7 +698,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						{
 							xtype : 'comboboxfieldbase',
 						    fieldLabel : HreRem.i18n('fieldlabel.comunidad.propietarios.constituida'),
-						    allowBlank: false,
 						    bind : {
 						      store : '{comboSiNoRem}',
 						      value : '{informeComercial.inscritaComunidad}'
@@ -716,7 +714,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							decimalPrecision: 2,
 							renderer: Ext.util.Format.numberRenderer('0,000.00'),
 							fieldLabel : HreRem.i18n('fieldlabel.cuota.orientativa'),
-							allowBlank: false,
 							bind : '{informeComercial.cuotaOrientativaComunidad}'
 						},
 						{

@@ -14,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -102,12 +103,9 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_NUM_GASTO_GESTORIA")
 	private Long numGastoGestoria;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRG_ID")
-    private ProvisionGastos provisionGastos;
-	
-	
-	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="PRG_ID")
+	private ProvisionGastos provision;
     
 	@Version   
 	private Long version;
@@ -251,12 +249,14 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.numGastoGestoria = numGastoGestoria;
 	}
 
-	public ProvisionGastos getProvisionGastos() {
-		return provisionGastos;
+
+	public ProvisionGastos getProvision() {
+		return provision;
 	}
 
-	public void setProvisionGastos(ProvisionGastos provisionGastos) {
-		this.provisionGastos = provisionGastos;
+	public void setProvision(ProvisionGastos provision) {
+		this.provision = provision;
 	}
+
     
 }

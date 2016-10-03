@@ -1,10 +1,11 @@
 Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.gastodetalle',
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo'],
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto'],
     
     data: {
-    	gasto: null
+    	gasto: null,
+    	gestion: null
     },
     
     formulas: {   
@@ -42,14 +43,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	}
 	     	
 	     	return true;
-	     },
-
-     	esGestorAdministracion: function(get){
-	     	var me= this;
-	     	return true;
-	    }
-
-  		
+	     }  		
 		
 	 },
 
@@ -153,7 +147,62 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboEjercicioContabilidad'
 			}
+    	},
+    	
+    	comboMotivoAutorizacion: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivosAutorizacionPropietaro'}
+			}
+    	},
+    	
+    	comboEstadoAutorizacionHaya: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosAutorizacionHaya'}
+			}
+    	},
+    	
+    	comboMotivoAutorizacionHaya: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivosAutorizacionHaya'}
+			}
+    	},
+    	
+    	comboEstadoAutorizacionPropietario: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosAutorizacionPropietario'}
+			}
+    	},
+    	
+    	comboMotivoAnulado: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivosAnulados'}
+			}
+    	},
+    	
+    	comboMotivoRetenerPago: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivosRetenerPago'}
+			}
     	}
+    	
 	
     }
   

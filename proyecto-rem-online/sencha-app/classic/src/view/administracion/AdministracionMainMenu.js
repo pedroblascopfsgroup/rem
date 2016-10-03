@@ -16,13 +16,13 @@ Ext.define('HreRem.view.administracion.AdministracionMainMenu', {
         me.items = [
 		    {	
 				xtype: 'administraciongastosmain', reference: 'administracionGastosMain'
-			},
+			}/*,
 			{	
 				xtype: 'administracionprevisionmain', reference: 'administracionPrevisionMain'
 			},
 			{	
 				xtype: 'administracionconfiguracionmain', reference: 'administracionConfiguracionMain', disabled: true
-			}
+			}*/
         ];
         
         me.callParent(); 

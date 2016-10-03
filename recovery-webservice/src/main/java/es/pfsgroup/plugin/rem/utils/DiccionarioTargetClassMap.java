@@ -29,6 +29,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesFinancieras;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDisponibilidadComercial;
@@ -49,9 +51,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoNoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -227,7 +233,13 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoPagador", DDTipoPagador.class);
 		mapa.put("destinataioPago", DDDestinatarioPago.class);
 		mapa.put("estadosProvision", DDEstadoProvisionGastos.class);
-
+		mapa.put("motivosAutorizacionPropietaro", DDMotivoAutorizacionPropietario.class);
+		mapa.put("estadosAutorizacionHaya", DDEstadoAutorizacionHaya.class);
+		mapa.put("motivosAutorizacionHaya", DDMotivoRechazoAutorizacionHaya.class);
+		mapa.put("estadosAutorizacionPropietario", DDEstadoAutorizacionPropietario.class);
+		mapa.put("motivosAnulados", DDMotivoAnulacionGasto.class);
+		mapa.put("motivosRetenerPago", DDMotivoRetencionPago.class);
+//		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 		return Collections.unmodifiableMap(mapa);
 	}
 	

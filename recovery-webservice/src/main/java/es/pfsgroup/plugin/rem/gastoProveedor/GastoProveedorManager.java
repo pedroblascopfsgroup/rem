@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
@@ -47,6 +48,10 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
@@ -63,6 +68,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public final String PESTANA_FICHA = "ficha";
 	public final String PESTANA_DETALLE_ECONOMICO = "detalleEconomico";
 	public final String PESTANA_CONTABILIDAD = "contabilidad";
+	public final String PESTANA_GESTION = "gestion";
 //	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
 //	public final String PESTANA_RESERVA = "reserva";
 //	public final String PESTANA_CONDICIONES = "condiciones";
@@ -122,6 +128,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			if(PESTANA_CONTABILIDAD.equals(tab)){
 				dto= infoContabilidadToDtoInfoContabilidad(gasto);
+			}
+			if(PESTANA_GESTION.equals(tab)){
+				dto= gestionToDtoGestion(gasto);
 			}
 
 		} catch (Exception e) {
@@ -652,6 +661,138 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return false;
 		}
 		
+		
+	}
+	
+	public DtoGestionGasto gestionToDtoGestion(GastoProveedor gasto){
+		DtoGestionGasto dtoGestion= new DtoGestionGasto();
+		
+		if(!Checks.esNulo(gasto)){
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoGestion gastoGestion = genericDao.get(GastoGestion.class, filtro);
+			
+			if(!Checks.esNulo(gastoGestion)){
+				
+				dtoGestion.setNecesariaAutorizacionPropietario(gastoGestion.getAutorizaPropietario());
+				if(!Checks.esNulo(gastoGestion.getMotivoAutorizacionPropietario())){
+					dtoGestion.setComboMotivoAutorizacionPropietario(gastoGestion.getMotivoAutorizacionPropietario().getCodigo());
+				}
+				if(!Checks.esNulo(gasto.getProvision())){
+					if(!Checks.esNulo(gasto.getProvision().getGestoria())){
+						dtoGestion.setGestoria(gasto.getProvision().getGestoria().getNombre());
+					}
+					dtoGestion.setNumProvision(gasto.getProvision().getNumProvision());
+				}
+				dtoGestion.setObservaciones(gastoGestion.getObservaciones());
+				//////
+				dtoGestion.setFechaAltaRem(gastoGestion.getFechaAlta());
+				
+				if(!Checks.esNulo(gastoGestion.getUsuarioAlta())){
+					dtoGestion.setGestorAltaRem(gastoGestion.getUsuarioAlta().getApellidoNombre());
+				}
+				////
+				
+				if(!Checks.esNulo(gastoGestion.getEstadoAutorizacionHaya())){
+					dtoGestion.setComboEstadoAutorizacionHaya(gastoGestion.getEstadoAutorizacionHaya().getCodigo());
+				}
+				
+				dtoGestion.setFechaAutorizacionHaya(gastoGestion.getFechaEstadoAutorizacionHaya());
+				
+				if(!Checks.esNulo(gastoGestion.getUsuarioEstadoAutorizacionHaya())){
+					dtoGestion.setGestorAutorizacionHaya(gastoGestion.getUsuarioEstadoAutorizacionHaya().getApellidoNombre());
+				}
+				if(!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionHaya())){
+					dtoGestion.setComboMotivoAutorizacionHaya(gastoGestion.getMotivoRechazoAutorizacionHaya().getCodigo());;
+				}
+				////
+				
+				if(!Checks.esNulo(gastoGestion.getEstadoAutorizacionPropietario())){
+					dtoGestion.setComboEstadoAutorizacionPropietario(gastoGestion.getEstadoAutorizacionPropietario().getCodigo());
+				}
+				
+				dtoGestion.setFechaAutorizacionPropietario(gastoGestion.getFechaEstadoAutorizacionPropietario());
+				
+				if(!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionPropietario())){
+					dtoGestion.setMotivoRechazoAutorizacionPropietario(gastoGestion.getMotivoRechazoAutorizacionPropietario());
+				}
+				
+				////////////////
+				
+				dtoGestion.setFechaAnulado(gastoGestion.getFechaAnulacionGasto());
+				
+				if(!Checks.esNulo(gastoGestion.getUsuarioAnulacion())){
+					dtoGestion.setGestorAnulado(gastoGestion.getUsuarioAnulacion().getApellidoNombre());
+				}
+				if(!Checks.esNulo(gastoGestion.getMotivoAnulacion())){
+					dtoGestion.setComboMotivoAnulado(gastoGestion.getMotivoAnulacion().getCodigo());
+				}
+				////////////////
+				
+				dtoGestion.setFechaRetenerPago(gastoGestion.getFechaRetencionPago());
+				
+				if(!Checks.esNulo(gastoGestion.getUsuarioRetencionPago())){
+					dtoGestion.setGestorRetenerPago(gastoGestion.getUsuarioRetencionPago().getApellidoNombre());
+				}
+				if(!Checks.esNulo(gastoGestion.getMotivoRetencionPago())){
+					dtoGestion.setComboMotivoRetenerPago(gastoGestion.getMotivoRetencionPago().getCodigo());
+				}
+			}
+		}
+		return dtoGestion;
+		
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean updateGestionGasto(DtoGestionGasto dtoGestionGasto){
+		
+		try{
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoGestionGasto.getId());
+			GastoGestion gestionGasto = genericDao.get(GastoGestion.class, filtro);
+			
+			if(!Checks.esNulo(gestionGasto)){
+				
+				beanUtilNotNull.copyProperties(gestionGasto, dtoGestionGasto);
+				
+				if(!Checks.esNulo(dtoGestionGasto.getNecesariaAutorizacionPropietario())){
+					gestionGasto.setAutorizaPropietario(dtoGestionGasto.getNecesariaAutorizacionPropietario());
+				}
+				if(dtoGestionGasto.getComboMotivoAutorizacionPropietario().equals("")){
+					gestionGasto.setMotivoAutorizacionPropietario(null);
+				}
+				if(!Checks.esNulo(dtoGestionGasto.getComboMotivoAutorizacionPropietario()) || dtoGestionGasto.getComboMotivoAutorizacionPropietario().equals("")){
+					DDMotivoAutorizacionPropietario motivoAutoPro= (DDMotivoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAutorizacionPropietario.class, dtoGestionGasto.getComboMotivoAutorizacionPropietario());
+					gestionGasto.setMotivoAutorizacionPropietario(motivoAutoPro);
+				}
+				if(!Checks.esNulo(dtoGestionGasto.getComboEstadoAutorizacionHaya())){
+					DDEstadoAutorizacionHaya estadoAutoHaya= (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, dtoGestionGasto.getComboEstadoAutorizacionHaya());
+					gestionGasto.setEstadoAutorizacionHaya(estadoAutoHaya);
+				}
+				if(!Checks.esNulo(dtoGestionGasto.getComboMotivoAutorizacionHaya())){
+					DDMotivoRechazoAutorizacionHaya motivoAutoHaya= (DDMotivoRechazoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAutorizacionHaya.class, dtoGestionGasto.getComboMotivoAutorizacionHaya());
+					gestionGasto.setMotivoRechazoAutorizacionHaya(motivoAutoHaya);
+				}
+				if(!Checks.esNulo(dtoGestionGasto.getComboMotivoAnulado())){
+					DDMotivoAnulacionGasto motivoAnulacion= (DDMotivoAnulacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionGasto.class, dtoGestionGasto.getComboMotivoAnulado());
+					gestionGasto.setMotivoAnulacion(motivoAnulacion);
+				}
+				if(!Checks.esNulo(dtoGestionGasto.getComboMotivoRetenerPago())){
+					DDMotivoRetencionPago retenerPago= (DDMotivoRetencionPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencionPago.class, dtoGestionGasto.getComboMotivoRetenerPago());
+					gestionGasto.setMotivoRetencionPago(retenerPago);
+				}
+				
+				genericDao.update(GastoGestion.class, gestionGasto);
+				
+				
+				return true;
+			}
+			
+		}catch(Exception e) {
+			return false;
+		}
+		
+		return false;
 		
 	}
 	

@@ -14,7 +14,7 @@
         <intercept-url pattern="/public/**" filters="none" />
         <intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
         <intercept-url pattern="/services/**" access="ROLE_ANONYMOUS" />
-        <intercept-url pattern="/rest/**" access="ROLE_ANONYMOUS" />
+        <intercept-url pattern="/rem/**" access="ROLE_ANONYMOUS" />
         <intercept-url pattern="/**" access="ROLE_USER" />
         <logout/>
         <anonymous/>

@@ -65,7 +65,7 @@
 
 	<filter-mapping>
 		<filter-name>restSecurityFilterChain</filter-name>
-		<url-pattern>/rest/*</url-pattern>
+		<url-pattern>/rem/*</url-pattern>
 	</filter-mapping>
 
 	<!-- - Hibernate Open Session In View -->
@@ -220,7 +220,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>REST Servlet</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
+		<url-pattern>/rem/*</url-pattern>
 	</servlet-mapping>
 
 

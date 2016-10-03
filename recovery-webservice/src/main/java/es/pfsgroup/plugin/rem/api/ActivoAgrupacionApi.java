@@ -21,6 +21,9 @@ public interface ActivoAgrupacionApi {
      */
     @BusinessOperationDefinition("activoAgrupacionManager.get")
     public ActivoAgrupacion get(Long id);
+
+    @BusinessOperationDefinition("activoAgrupacionManager.getAgrupacionIdByNumAgrupRem")
+    public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem);
     
     @BusinessOperationDefinition("activoAgrupacionManager.saveOrUpdate")
     public boolean saveOrUpdate(ActivoAgrupacion activoAgrupacion);

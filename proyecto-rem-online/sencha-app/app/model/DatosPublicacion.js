@@ -5,9 +5,6 @@ Ext.define('HreRem.model.DatosPublicacion', {
     fields: [
     		{
     			name:'totalDiasPublicado'
-    		},
-    		{
-    			name:'portalesExternos'
     		}
     ],
 
@@ -16,7 +13,5 @@ Ext.define('HreRem.model.DatosPublicacion', {
 		api: {
             read: 'activo/getDatosPublicacionByActivo'
         }
-
     }
-
 });

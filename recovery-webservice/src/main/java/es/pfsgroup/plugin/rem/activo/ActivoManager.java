@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
@@ -57,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -93,8 +95,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -106,9 +111,6 @@ import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
-
-	private final String ESTADO_PORTALES_EXTERNOS_PUBLICADO = "Ha estado publicado";
-	private final String ESTADO_PORTALES_EXTERNOS_NO_PUBLICADO = "No ha estado publicado";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -808,14 +810,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for (ActivoCondicionEspecifica condicion : listaCondicionesEspecificas) {
 			DtoCondicionEspecifica dtoCondicionEspecifica = new DtoCondicionEspecifica();
 			try {
-				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "idActivo", condicion.getActivo().getId());
+				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "id", condicion.getId());
+				if(!Checks.esNulo(condicion.getActivo())) {
+					beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "idActivo", condicion.getActivo().getId());
+				}
 				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "texto", condicion.getTexto());
 				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "fechaDesde", condicion.getFechaDesde());
 				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "fechaHasta", condicion.getFechaHasta());
-				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioAlta",
-						!Checks.esNulo(condicion.getUsuarioAlta()) ? condicion.getUsuarioAlta().getUsername() : "");
-				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioBaja",
-						!Checks.esNulo(condicion.getUsuarioBaja()) ? condicion.getUsuarioBaja().getUsername() : "");
+				if(!Checks.esNulo(condicion.getUsuarioAlta())){
+					beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioAlta",condicion.getUsuarioAlta().getUsername());
+				}
+				if(!Checks.esNulo(condicion.getUsuarioBaja())){
+					beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioBaja",condicion.getUsuarioBaja().getUsername());
+				}
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
@@ -829,18 +836,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean createCondicionEspecifica(Long idActivo, DtoCondicionEspecifica dtoCondicionEspecifica) {
+	public Boolean createCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica) {
 		ActivoCondicionEspecifica condicionEspecifica = new ActivoCondicionEspecifica();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoCondicionEspecifica.getIdActivo());
 
 		Activo activo = genericDao.get(Activo.class, filtro);
 
 		try {
 			beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
 			beanUtilNotNull.copyProperty(condicionEspecifica, "fechaDesde", new Date());
-			condicionEspecifica.setUsuarioAlta(adapter.getUsuarioLogado());
-			condicionEspecifica.setActivo(activo);
-			ActivoCondicionEspecifica condicionAnterior = activoDao.getUltimaCondicion(idActivo);
+			beanUtilNotNull.copyProperty(condicionEspecifica, "usuarioAlta", adapter.getUsuarioLogado());
+			beanUtilNotNull.copyProperty(condicionEspecifica, "activo", activo);
+			
+			// Actualizar la fehca de la anterior condición.
+			ActivoCondicionEspecifica condicionAnterior = activoDao.getUltimaCondicion(dtoCondicionEspecifica.getIdActivo());
 			if (!Checks.esNulo(condicionAnterior)) {
 				beanUtilNotNull.copyProperty(condicionAnterior, "fechaHasta", new Date());
 				condicionAnterior.setUsuarioBaja(adapter.getUsuarioLogado());
@@ -861,21 +870,48 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica) {
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoCondicionEspecifica.getId()));
 		ActivoCondicionEspecifica condicionEspecifica = genericDao.get(ActivoCondicionEspecifica.class, filtro);
 
-		try {
-			beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		if(!Checks.esNulo(condicionEspecifica)) {
+			try {
+				beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	
+			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+	
+			return true;
+		} else {
+			return false;
 		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoCondicionEspecifica.getId()));
+		ActivoCondicionEspecifica condicionEspecifica = genericDao.get(ActivoCondicionEspecifica.class, filtro);
 
-		genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
-
-		return true;
+		if(!Checks.esNulo(condicionEspecifica)) {
+			try {
+				beanUtilNotNull.copyProperty(condicionEspecifica, "fechaHasta", new Date());
+				beanUtilNotNull.copyProperty(condicionEspecifica, "usuarioBaja", adapter.getUsuarioLogado());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	
+			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+	
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -986,7 +1022,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo){
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Order order = new Order(OrderType.ASC, "id");
+		Order order = new Order(OrderType.DESC, "id");
 		List<ActivoInformeComercialHistoricoMediador> listaHistoricoMediador = genericDao
 				.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, filtro);
 		
@@ -995,7 +1031,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for (ActivoInformeComercialHistoricoMediador historico : listaHistoricoMediador) {
 			DtoHistoricoMediador dtoHistoricoMediador = new DtoHistoricoMediador();
 			try {
-				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "id", idActivo);
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "id", historico.getId());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "idActivo", idActivo);
 				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaDesde", historico.getFechaDesde());
 				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaHasta", historico.getFechaHasta());
 				if(!Checks.esNulo(historico.getMediadorInforme())){
@@ -1014,6 +1051,52 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return listaDtoHistoricoMediador;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean createHistoricoMediador(DtoHistoricoMediador dto) {
+		ActivoInformeComercialHistoricoMediador historicoMediador = new ActivoInformeComercialHistoricoMediador();
+		Activo activo = null;
+		
+		if(!Checks.esNulo(dto.getIdActivo())) {
+			activo = activoDao.get(dto.getIdActivo());
+		}
+		
+		try {
+			// Terminar periodo de vigencia del último proveedor (fecha hasta).
+			if(!Checks.esNulo(activo)) {
+				Filter activoIDFiltro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Order order = new Order(OrderType.DESC, "id");
+				List<ActivoInformeComercialHistoricoMediador> historicoMediadorlist = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoIDFiltro);
+				if(!Checks.estaVacio(historicoMediadorlist)) {
+					ActivoInformeComercialHistoricoMediador historicoAnteriorMediador = historicoMediadorlist.get(0); // El primero es el de ID más alto (el último).
+					beanUtilNotNull.copyProperty(historicoAnteriorMediador, "fechaHasta", new Date());
+					genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoAnteriorMediador);
+				}
+			}
+
+			// Generar la nueva entrada de HistoricoMediador.
+			beanUtilNotNull.copyProperty(historicoMediador, "fechaDesde", new Date());
+			beanUtilNotNull.copyProperty(historicoMediador, "activo", activo);
+			
+			if(!Checks.esNulo(dto.getMediador())) {
+				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getMediador()));
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
+				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
+			}
+
+			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
+			
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
 	}
 
 	@Override
@@ -1052,7 +1135,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public DtoDatosPublicacion getDatosPublicacionByActivo(Long idActivo) {
 		// Obtener los estados y sumar los dias de cada fase aplicando criterio de funcional además comprobar
-		// si alguno de ellos es de publicación/publicación forzada y especificar estado publicación en portales externos.
+		// si alguno de ellos es de publicación/publicación forzada.
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Order order = new Order(OrderType.ASC, "id");
 		List<ActivoHistoricoEstadoPublicacion> listaEstadosPublicacion = genericDao
@@ -1060,16 +1143,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		int dias = 0;
 		boolean despublicado = false;
-		boolean estadoPublicacionPortalesExternos = false;
 		
 		for (ActivoHistoricoEstadoPublicacion estado : listaEstadosPublicacion) {
 			if(!Checks.esNulo(estado.getEstadoPublicacion())){
-				if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo()) || 
-						DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())){
-					// Comprobar si ha estado publicado en algún estado para especificarlo en estado publicación portales externos.
-					estadoPublicacionPortalesExternos = true;
-				}
-				
 				if(despublicado && (DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo()) || 
 						DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo()))){
 					// Si el estado anterior es despublicado y el actual es publicado, se reinicia el contador de días.
@@ -1102,11 +1178,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		DtoDatosPublicacion dto = new DtoDatosPublicacion();
 		dto.setIdActivo(idActivo);
 		dto.setTotalDiasPublicado(dias);
-		if(estadoPublicacionPortalesExternos){
-			dto.setPortalesExternos(this.ESTADO_PORTALES_EXTERNOS_PUBLICADO);
-		} else {
-			dto.setPortalesExternos(this.ESTADO_PORTALES_EXTERNOS_NO_PUBLICADO);
-		}
+		
 		return dto;
 	}
 
@@ -1217,6 +1289,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if(Checks.esNulo(perimetroActivo)){
 			perimetroActivo = new PerimetroActivo();
 			perimetroActivo.setAuditoria(new Auditoria());
+			//Si no existia perimetro en BBDD, se deben tomar todas las condiciones marcadas
+			perimetroActivo.setAplicaTramiteAdmision(1);
+			perimetroActivo.setAplicaGestion(1);
+			perimetroActivo.setAplicaAsignarMediador(1);
+			perimetroActivo.setAplicaComercializar(1);
+			perimetroActivo.setAplicaFormalizar(1);
 		}
 		
 		return perimetroActivo;
@@ -1261,6 +1339,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
+		
+		return perimetroActivo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Activo updateActivoAsistida(Activo activo){
+		//Actualizamos el perímetro
+		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
+		
+		if(Checks.esNulo(perimetro.getActivo()))
+			perimetro.setActivo(activo);
+		
+		updatePerimetroAsistida(perimetro);
+		
+		//Bloqueamos los precios para que el activo no salga en los procesos automáticos. Esto podría ir en un proceso al dar de alta el activo.
+		activo.setBloqueoPrecioFechaIni(new Date());
+		activo.setGestorBloqueoPrecio(adapter.getUsuarioLogado());
+		
+		saveOrUpdate(activo);
+		return activo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PerimetroActivo updatePerimetroAsistida(PerimetroActivo perimetroActivo){
+		perimetroActivo.setIncluidoEnPerimetro(1);
+		perimetroActivo.setAplicaAsignarMediador(0);
+		perimetroActivo.setAplicaComercializar(1);
+		perimetroActivo.setAplicaFormalizar(1);
+		perimetroActivo.setAplicaGestion(0);
+		perimetroActivo.setAplicaTramiteAdmision(0);
+		perimetroActivo.setFechaAplicaComercializar(new Date());
+		perimetroActivo.setFechaAplicaFormalizar(new Date());
+		
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoComercializacion.CODIGO_ASISTIDA);
+		DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, filtro);
+		perimetroActivo.setMotivoAplicaComercializar(motivoComercializacion);
+		
+		saveOrUpdatePerimetroActivo(perimetroActivo);
 		
 		return perimetroActivo;
 	}
@@ -1411,5 +1530,55 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return true;
+	}
+	
+	@Override
+	public boolean isIntegradoAgrupacionAsistida(Activo activo) {
+
+		for(ActivoAgrupacionActivo agrupacionActivo : activo.getAgrupaciones()) {
+
+			Date fechaFinVigencia = agrupacionActivo.getAgrupacion().getFechaFinVigencia();
+			fechaFinVigencia = !Checks.esNulo(fechaFinVigencia) ? new Date(fechaFinVigencia.getTime()) : null;
+			
+			if(!Checks.esNulo(agrupacionActivo.getAgrupacion().getTipoAgrupacion()) && 
+				agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA) &&
+				!Checks.esNulo(fechaFinVigencia) && fechaFinVigencia.after(new Date())) 
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public boolean isActivoAsistido(Activo activo){
+		if(!Checks.esNulo(activo.getSubcartera()))
+			if(DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo()))
+						return true;
+		return false;
+	}
+
+	@Override
+	public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos) {
+		
+		Integer contador = 0;
+		
+		for(ActivoAgrupacionActivo activoAgrupacion : activos) {
+			if(!Checks.esNulo(activoAgrupacion.getActivo().getEstadoPublicacion())) {
+				
+				String codEstadoPublicacion = activoAgrupacion.getActivo().getEstadoPublicacion().getCodigo();
+				if(codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO) ||
+					codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO) ||
+					codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)) 
+				{
+					contador++;
+				}
+			}	
+		}
+		
+		return contador;
 	}
 }

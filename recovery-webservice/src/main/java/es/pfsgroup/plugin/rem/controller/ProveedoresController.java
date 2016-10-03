@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
+import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.proveedores.ProveedoresManager;
@@ -410,6 +411,21 @@ public class ProveedoresController {
 			}
 		}
 		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getMediadorListFiltered(DtoMediador dto, ModelMap model){
+		
+		try {
+			model.put("data", proveedoresApi.getMediadorListFiltered(dto));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
 		return createModelAndViewJson(model);
 	}
 

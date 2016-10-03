@@ -7,7 +7,8 @@ import java.util.Date;
  *
  */
 public class DtoHistoricoMediador {
-	private Long id;
+	private String id;
+	private Long idActivo;
 	private Date fechaDesde;
 	private Date fechaHasta;
 	private String codigo;
@@ -16,10 +17,10 @@ public class DtoHistoricoMediador {
 	private String email;
 	
 	
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public Date getFechaDesde() {
@@ -58,6 +59,14 @@ public class DtoHistoricoMediador {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+	public void setIdEntidad(Long idEntidad) {
+		this.idActivo = idEntidad;
+	}
 	
 }

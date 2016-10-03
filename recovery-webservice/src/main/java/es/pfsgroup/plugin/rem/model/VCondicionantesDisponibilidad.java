@@ -64,6 +64,9 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	@Column(name = "OTRO")
 	private String otro;
 	
+	@Column(name = "ESTADO_PORTAL_EXTERNO")
+	private Boolean portalesExternos;
+	
 	@Column(name = "OCUPADO_SINTITULO")
 	private Boolean ocupadoSinTitulo;
 	
@@ -175,6 +178,14 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 		else {
 			return false;
 		}
+	}
+
+	public Boolean getPortalesExternos() {
+		return portalesExternos;
+	}
+
+	public void setPortalesExternos(Boolean portalesExternos) {
+		this.portalesExternos = portalesExternos;
 	}
 	
 }

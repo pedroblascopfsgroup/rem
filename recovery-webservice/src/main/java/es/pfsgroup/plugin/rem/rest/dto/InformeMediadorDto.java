@@ -12,6 +12,8 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -21,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -29,6 +32,7 @@ public class InformeMediadorDto implements Serializable {
 	/**
 	 * 
 	 */
+	@EntityDefinition(procesar = false)
 	private static final long serialVersionUID = 1L;
 
 	@NotNull(groups = { Insert.class, Update.class })
@@ -38,6 +42,7 @@ public class InformeMediadorDto implements Serializable {
 	private Long idInformeMediadorRem;
 
 	@NotNull(groups = { Insert.class, Update.class })
+	@EntityDefinition(propertyName = "fechaEmisionInforme")
 	private Date fechaAccion;
 
 	@NotNull(groups = { Insert.class, Update.class })
@@ -46,15 +51,18 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoActivo.class, message = "El codTipoActivo no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "tipoActivo", classObj = DDTipoActivo.class)
 	private String codTipoActivo;
 
 	@NotNull(groups = { Insert.class, Update.class })
+	@EntityDefinition(propertyName = "activo", classObj = Activo.class,foreingField="numActivo", unique = true)
 	private Long idActivoHaya;
 
 	@NotNull(groups = Insert.class)
 	private Long idProveedorRemAnterior;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "id")
 	private Long idProveedorRem;
 
 	@NotNull(groups = Insert.class)
@@ -173,13 +181,16 @@ public class InformeMediadorDto implements Serializable {
 
 	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacion no existe", groups = {
 			Insert.class, Update.class })
+	@EntityDefinition(propertyName = "estadoConservacion", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacion;
 
-	//@EntityDefinition(entityName = "es.pfsgroup.plugin.rem.model.ActivoInfoComercial", propertyName = "anyoConstruccion")
+	@EntityDefinition(propertyName = "anyoConstruccion")
 	private Integer anyoConstruccion;
 
-	private Long anyoRehabilitacion;
+	@EntityDefinition(propertyName = "anyoRehabilitacion")
+	private Integer anyoRehabilitacion;
 
+	@EntityDefinition(propertyName = "ultimaPlanta", transform= TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ultimaPlanta;
 
 	private Boolean ocupado;
@@ -827,11 +838,11 @@ public class InformeMediadorDto implements Serializable {
 		this.anyoConstruccion = anyoConstruccion;
 	}
 
-	public Long getAnyoRehabilitacion() {
+	public Integer getAnyoRehabilitacion() {
 		return anyoRehabilitacion;
 	}
 
-	public void setAnyoRehabilitacion(Long anyoRehabilitacion) {
+	public void setAnyoRehabilitacion(Integer anyoRehabilitacion) {
 		this.anyoRehabilitacion = anyoRehabilitacion;
 	}
 

@@ -21,6 +21,8 @@ public interface ActivoAgrupacionDao extends AbstractDao<ActivoAgrupacion, Long>
 	Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuLogado);
 	
 	Long getNextNumAgrupacionRemManual();
+	
+	Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem);
 
 	Long haveActivoPrincipal(Long id);
 

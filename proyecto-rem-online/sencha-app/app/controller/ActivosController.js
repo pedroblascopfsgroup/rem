@@ -346,10 +346,12 @@ Ext.define('HreRem.controller.ActivosController', {
     },
     
     abrirDetalleAgrupacion: function(record) {
+    	
     	var me = this,
     	titulo = "Agrupación " + record.get("numAgrupacionRem"),
     	id = record.get("id");		
-		me.redirectTo('activos', true);    	
+		me.redirectTo('activos', true);   
+		
     	me.abrirDetalleAgrupacionById(id, titulo);    	
     	
     },
@@ -399,7 +401,7 @@ Ext.define('HreRem.controller.ActivosController', {
     //FIXME: Unir con el método abrirDetalleAgrupacion cuando se modifique para que no traiga objetos a la vista
     
     abrirDetalleAgrupacionActivo: function(record) {
-
+    	
     	var me = this,
     	titulo = "Agrupación " + record.get("numAgrupRem"),
     	id = record.get("idAgrupacion");
@@ -435,6 +437,16 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	
 		    	tab.getViewModel().set("agrupacionficha", agrupacion);
 		    	tab.configCmp(agrupacion);
+		    	
+		    	HreRem.model.AgrupacionAviso.load(id, {
+		    		scope: this,
+				    success: function(avisos) {
+				    	if (tab != null && tab.getViewModel() != null)
+				    		tab.getViewModel().set("avisos", avisos);
+				    	
+				    }
+				});
+		    	
 		    	me.getActivosMain().unmask();
 		    	me.logTime("Fin Set values"); 
 		    }

@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
+import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -248,7 +249,10 @@ public class AgrupacionAdapter {
 		return dtoAgrupacion;
 		
 	}
-
+	
+	public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem){
+		return activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(numAgrupRem);
+	}
 	
 	public Page getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id) {
 		
@@ -347,6 +351,10 @@ public class AgrupacionAdapter {
 				throw new JsonViewerException("El activo no existe");
 			}
 			
+			// Si la agrupación es asistida, el activo además de existir tiene que ser asistido.
+			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && activoApi.isActivoAsistido(activo))
+				throw new JsonViewerException("El activo no es asistido");
+			
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos
 			if ( num == 0 ) {
 				
@@ -365,6 +373,11 @@ public class AgrupacionAdapter {
 			activoAgrupacionActivo.setFechaInclusion(today);
 			
 			activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+			
+			//En asistidas hay que hacer una serie de actualizaciones 'especiales'.
+			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()))
+				activoApi.updateActivoAsistida(activo);
+				
 		} catch (JsonViewerException jve) {
 		    throw jve;
 		} catch (Exception e) {
@@ -405,7 +418,8 @@ public class AgrupacionAdapter {
 		if ( Checks.esNulo(pobl.getCodPostal()) ) throw new JsonViewerException(BusinessValidators.ERROR_CP_NULL);
 		if ( Checks.esNulo(pobl.getProvincia()) ) throw new JsonViewerException(BusinessValidators.ERROR_PROV_NULL);
 		
-		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA) 
+				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 
 			if ( Checks.esNulo(activo.getCartera()) ) throw new JsonViewerException(BusinessValidators.ERROR_CARTERA_NULL);					
 			
@@ -437,6 +451,13 @@ public class AgrupacionAdapter {
 			restringida.setActivoPrincipal(activo);
 			
 			return restringida;
+			
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
+			asistida.setLocalidad(pobl.getLocalidad()); 					
+			asistida.setProvincia(pobl.getProvincia());					
+			asistida.setCodigoPostal(pobl.getCodPostal());
+			return asistida;
 		}
 		
 		return agrupacion;		
@@ -603,6 +624,19 @@ public class AgrupacionAdapter {
 
 			genericDao.save(ActivoRestringida.class, restringida);
 			
+		// Si es ASISTIDA	
+		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+				
+			ActivoAsistida asistida = new ActivoAsistida();
+
+			asistida.setDescripcion(dtoAgrupacion.getDescripcion());
+			asistida.setNombre(dtoAgrupacion.getNombre());
+			asistida.setTipoAgrupacion(tipoAgrupacion);
+			asistida.setFechaAlta(new Date());
+			asistida.setNumAgrupRem(numAgrupacionRem);
+
+			genericDao.save(ActivoAsistida.class, asistida);
+				
 		}
 
 		return true;

@@ -1,13 +1,9 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,8 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
+import es.pfsgroup.plugin.rem.model.ActivoVivienda;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDCION;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.dto.InformemediadorRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
@@ -37,7 +37,7 @@ public class InformemediadorController {
 	@Autowired
 	private InformeMediadorApi informeMediadorApi;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping(method = RequestMethod.POST, value = "/informemediador")
 	public ModelAndView saveInformeMediador(ModelMap model, RestRequestWrapper request) {
 		Map<String, Object> map = null;
@@ -52,18 +52,18 @@ public class InformemediadorController {
 				map = new HashMap<String, Object>();
 				List<String> errorsList = null;
 				if (informe.getIdInformeMediadorRem() == null) {
-					errorsList = restApi.validateRequestObject(informe, TIPO_VALIDCION.INSERT);
+					errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.INSERT);
 					informeMediadorApi.validateInformeMediadorDto(informe, informe.getCodTipoActivo(), errorsList);
 				} else {
-					errorsList = restApi.validateRequestObject(informe, TIPO_VALIDCION.UPDATE);
+					errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.UPDATE);
 				}
 				if (informe.getPlantas() != null) {
 					for (PlantaDto planta : informe.getPlantas()) {
 						List<String> errorsListPlanta = null;
 						if (informe.getIdInformeMediadorRem() == null) {
-							errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDCION.INSERT);
+							errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
 						} else {
-							errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDCION.UPDATE);
+							errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.UPDATE);
 						}
 						errorsList.addAll(errorsListPlanta);
 					}
@@ -71,13 +71,20 @@ public class InformemediadorController {
 
 				if (errorsList.size() == 0) {
 
-					if (informe.getIdInformeMediadorRem() == null) {
-						restApi.saveDtoToBbdd(informe, InformeMediadorDto.class);
-					} else {
-						// actualizamos
+					Class entity = ActivoInfoComercial.class;
+					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
+						entity = ActivoLocalComercial.class;
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)) {
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
+						entity = ActivoVivienda.class;
 					}
-
+					ActivoInfoComercial informeResultado = (ActivoInfoComercial)restApi.saveDtoToBbdd(informe, entity,informe.getIdActivoHaya());
 					map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
+					map.put("idinformeMediadorRem", informeResultado.getId());
 					map.put("success", true);
 				} else {
 					map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());

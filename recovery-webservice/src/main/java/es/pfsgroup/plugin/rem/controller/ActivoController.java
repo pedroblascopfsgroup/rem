@@ -82,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
@@ -1756,9 +1757,17 @@ public class ActivoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createCondicionEspecifica(Long idEntidad, DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
+	public ModelAndView createCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
 
-		model.put("success", activoApi.createCondicionEspecifica(idEntidad,dtoCondicionEspecifica));
+		model.put("success", activoApi.createCondicionEspecifica(dtoCondicionEspecifica));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView darDeBajaCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
+
+		model.put("success", activoApi.darDeBajaCondicionEspecifica(dtoCondicionEspecifica));
 		return createModelAndViewJson(model);
 	}
 	
@@ -1795,6 +1804,13 @@ public class ActivoController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoMediadorByActivo(Long id, ModelMap model) {
 		model.put("data", activoApi.getHistoricoMediadorByActivo(id));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createHistoricoMediador(DtoHistoricoMediador dto, ModelMap model) {
+		model.put("success", activoApi.createHistoricoMediador(dto));
 		return createModelAndViewJson(model);
 	}
 	
@@ -1965,4 +1981,5 @@ public class ActivoController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
 }

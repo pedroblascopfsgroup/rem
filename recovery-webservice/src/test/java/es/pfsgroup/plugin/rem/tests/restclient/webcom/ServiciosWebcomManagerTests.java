@@ -49,11 +49,8 @@ import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomProveedores;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoOferta;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoPeticionTrabajo;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomEstadoInformeMediador;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomStock;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomGenerico;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.WebcomEndpoint;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioProveedoresConstantes;
@@ -68,23 +65,11 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	@Mock
 	HttpClientFacade httpClient;
 
-	@InjectMocks
-	private ClienteWebcomEstadoPeticionTrabajo estadoTrabajoService;
-
-	@InjectMocks
-	private ClienteWebcomEstadoOferta estadoOfertaService;
-
-	@InjectMocks
-	private ClienteWebcomStock stockService;
-
-	@InjectMocks
-	private ClienteWebcomProveedores proveedoresService;
-
-	@InjectMocks
-	private ClienteWebcomEstadoInformeMediador informeMediadorService;
-
 	@Mock
 	private RegistroLlamadasManager registroLlamadas;
+	
+	@InjectMocks
+	private ClienteWebcomGenerico clienteWebcom;
 
 	@InjectMocks
 	private ServiciosWebcomManager manager;
@@ -92,8 +77,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	@Before
 	public void setup() {
 		initMocks(httpClient);
-		manager.setWebServiceClients(estadoTrabajoService, estadoOfertaService, stockService, proveedoresService,
-				informeMediadorService);
+		manager.setClienteWebcom(clienteWebcom);
 
 	}
 
@@ -348,18 +332,16 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 	@Test
 	public void noReintentarSiErrorControladoWebcom() {
-		ClienteWebcomEstadoPeticionTrabajo mockServicio = Mockito.spy(estadoTrabajoService);
-		manager.setWebServiceClients(mockServicio, estadoOfertaService, stockService, proveedoresService,
-				informeMediadorService);
+		ClienteWebcomGenerico mockServicio = Mockito.spy(clienteWebcom);
+		manager.setClienteWebcom(mockServicio);
 
 		ErrorServicioWebcom error = new ErrorServicioWebcom(ErrorServicioWebcom.MISSING_REQUIRED_FIELDS);
 
 		try {
-			Mockito.doThrow(error).when(mockServicio).enviaPeticion(Mockito.any(ParamsList.class),
-					any(RestLlamada.class));
+			Mockito.doThrow(error).when(mockServicio).send(Mockito.any(WebcomEndpoint.class),Mockito.any(ParamsList.class), Mockito.any(RestLlamada.class));
 			manager.webcomRestEstadoPeticionTrabajo(createEstadoDtoList());
 
-			Mockito.verify(mockServicio).enviaPeticion(any(ParamsList.class), any(RestLlamada.class));
+			Mockito.verify(mockServicio).send(Mockito.any(WebcomEndpoint.class),Mockito.any(ParamsList.class), Mockito.any(RestLlamada.class));
 		} catch (Exception e) {
 			assertTrue("La excepción no es la esperada", e instanceof ErrorServicioWebcom);
 			assertFalse("El error no debe ser reintentable", ((ErrorServicioWebcom) e).isReintentable());

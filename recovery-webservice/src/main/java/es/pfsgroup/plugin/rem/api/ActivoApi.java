@@ -14,6 +14,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -212,10 +213,28 @@ public interface ActivoApi {
 		 */
 		public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo);
 		
+		/**
+		 * Este método obtiene una lista de condiciones específicas por el ID del activo.
+		 * 
+		 * @param idActivo : ID del activo para filtrar condiciones.
+		 * @return Devuelve una lista de condiciones específicas.
+		 */
 		public List<DtoCondicionEspecifica> getCondicionEspecificaByActivo(Long idActivo);
 		
-		public Boolean createCondicionEspecifica(Long idActivo, DtoCondicionEspecifica dtoCondicionEspecifica);
+		/**
+		 * Este método crea una condición específica nueva y establece la anterior como dada de baja.
+		 * 
+		 * @param dtoCondicionEspecifica : dto con el idActivo para generar una nueva condición específica.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public Boolean createCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 		
+		/**
+		 * Este método guarda los cambios en la condición específica por el ID de la condición específica.
+		 * 
+		 * @param dtoCondicionEspecifica : dto con los cambios a almacenar en la DDBB.
+		 * @return Devuelve su la operación ha sido satisfactoria, o no.
+		 */
 		public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 		
 		/**
@@ -337,6 +356,20 @@ public interface ActivoApi {
 		
 		public PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 		
+		/**
+		 * Actualiza el activo cuando se incluye en una agrupación asistida.
+		 * @param activo
+		 * @return Activo
+		 */
+		public Activo updateActivoAsistida(Activo activo);
+		
+		/**
+		 * Actualiza los valores del perímetro del activo con los valores para un activo asistido.
+		 * @param perimetroActivo
+		 * @return PerimetroActivo
+		 */
+		public PerimetroActivo updatePerimetroAsistida(PerimetroActivo perimetroActivo);
+		
 		public ActivoBancario saveOrUpdateActivoBancario(ActivoBancario activoBancario);
 		
 		/**
@@ -368,6 +401,45 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public boolean isActivoVendido(Activo activo);
+		
+		/**
+		 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo Asistida (PDV)
+		 * 
+		 * @param activo
+		 * @return
+		 */
+		public boolean isIntegradoAgrupacionAsistida(Activo activo);
+
+		/**
+		 * Este método da de baja un condicionante por su ID.
+		 * 
+		 * @param dtoCondicionEspecifica : dto con el ID del condicionante para dar de baja.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
+
+		/**
+		 * Este método alamcena en la DDBB un nuevo proveedor de tipo mediador en el historico de medidador
+		 * del informe comercial.
+		 * 
+		 * @param dto : dto con los datos del mediador a almacenar.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public Boolean createHistoricoMediador(DtoHistoricoMediador dto);
+
+		/**
+		 * Comprueba si el activo es asistido
+		 * @param activo
+		 * @return
+		 */
+		public boolean isActivoAsistido(Activo activo);
+		
+		/**
+		 * Obtiene el numero de activos PUBLICADOS de la agrupacion.
+		 * PUBLICADOS - DD_EPU (Publicado, forzado, oculto, precio oculto y forzado con precio oculto)
+		 * 
+		 * @param activos
+		 * @return
+		 */
+		public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos);
     }
-
-

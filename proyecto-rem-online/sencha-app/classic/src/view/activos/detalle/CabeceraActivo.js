@@ -225,6 +225,14 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 															fieldLabel: HreRem.i18n('fieldlabel.origen'),
 															cls: 'cabecera-info-field',
 										                	bind:		'{activo.tipoTitulo}'
+										                },
+										                { 
+															fieldLabel: HreRem.i18n('fieldlabel.clase'),
+															cls: 'cabecera-info-field',
+										                	bind:{		
+										                		value: 	'{activo.claseActivoDescripcion}',
+										                		hidden:	'{!activo.claseActivoDescripcion}'	
+										                	}
 										                }
 										      ]
 										},

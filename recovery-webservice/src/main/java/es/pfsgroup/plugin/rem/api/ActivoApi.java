@@ -390,6 +390,13 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public boolean isIntegradoAgrupacionAsistida(Activo activo);
+
+		/**
+		 * Comprueba si el activo es asistido
+		 * @param activo
+		 * @return
+		 */
+		public boolean isActivoAsistido(Activo activo);
     }
 
 

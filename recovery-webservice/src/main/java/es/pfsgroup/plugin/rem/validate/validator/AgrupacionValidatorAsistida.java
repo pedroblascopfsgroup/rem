@@ -79,15 +79,6 @@ public class AgrupacionValidatorAsistida extends AgrupacionValidatorCommonImpl i
 			return ERROR_CARTERA_NOT_EQUAL;
 		}		
 		
-		if(!Checks.esNulo(activo.getSubcartera())){
-			if(!DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo())
-					|| !DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
-					|| !DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo()))
-						return ERROR_NOT_ASISTIDA;
-		}else{
-			return ERROR_NOT_ASISTIDA;
-		}
-		
 		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 		if(perimetro.getIncluidoEnPerimetro()==1)
 			return ERROR_IS_PERIMETRO;

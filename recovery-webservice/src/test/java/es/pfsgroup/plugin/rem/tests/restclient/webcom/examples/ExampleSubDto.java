@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.tests.restclient.webcom.examples;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 /**
@@ -9,12 +11,17 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Webco
  *
  */
 public class ExampleSubDto{
+	
+	public static final String SHORT_COLUMN_NAME = "SHORT_COLUMN";
 
 	@WebcomRequired
 	private StringDataType campoObligatorio;
 	
 	
 	private StringDataType campoOpcional;
+	
+	@MappedColumn(SHORT_COLUMN_NAME)
+	private LongDataType esteEsOtroCampoLargoQueNoSeDeberiaMapearTalcual;
 
 
 	public StringDataType getCampoObligatorio() {
@@ -34,6 +41,17 @@ public class ExampleSubDto{
 
 	public void setCampoOpcional(StringDataType campoOpcional) {
 		this.campoOpcional = campoOpcional;
+	}
+
+
+	public LongDataType getEsteEsOtroCampoLargoQueNoSeDeberiaMapearTalcual() {
+		return esteEsOtroCampoLargoQueNoSeDeberiaMapearTalcual;
+	}
+
+
+	public void setEsteEsOtroCampoLargoQueNoSeDeberiaMapearTalcual(
+			LongDataType esteEsOtroCampoLargoQueNoSeDeberiaMapearTalcual) {
+		this.esteEsOtroCampoLargoQueNoSeDeberiaMapearTalcual = esteEsOtroCampoLargoQueNoSeDeberiaMapearTalcual;
 	}
 	
 }

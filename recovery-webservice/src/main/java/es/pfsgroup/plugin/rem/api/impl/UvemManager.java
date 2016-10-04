@@ -559,13 +559,13 @@ public class UvemManager implements UvemManagerApi {
 		
 		
 		//logueamos la respuesta
-		logger.info("\nRespuesta NUMCLIENTE:");	
+		logger.info("\nRespuesta DATOSCLIENTE:");	
 		logger.info("getDniNifDelTitularDeLaOfertanudnio: " + servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio());	
 		logger.info("getNombreYApellidosTitularnotio1: " + servicioGMPAJC93_INS.getNombreYApellidosTitularnotio1());	
 		logger.info("getNombreYApellidosTitularDeOfertanotiof: " + servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof());	
 		logger.info("getNombreDelClientenoclie: " + servicioGMPAJC93_INS.getNombreDelClientenoclie());	
 
-		System.out.println("\nRespuesta NUMCLIENTE:");
+		System.out.println("\nRespuesta DATOSCLIENTE:");
 		System.out.println("getDniNifDelTitularDeLaOfertanudnio: " + servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio());	
 		System.out.println("getNombreYApellidosTitularnotio1: " + servicioGMPAJC93_INS.getNombreYApellidosTitularnotio1());	
 		System.out.println("getNombreYApellidosTitularDeOfertanotiof: " + servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof());	

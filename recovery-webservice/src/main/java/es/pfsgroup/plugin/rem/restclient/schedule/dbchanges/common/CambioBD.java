@@ -22,9 +22,15 @@ public class CambioBD implements Serializable {
 
 	private Object[] datosActuales;
 
-	public CambioBD(String[] configCambios) {
+	public CambioBD(FieldInfo[] configCambios) {
 		super();
-		this.configCambios = configCambios;
+		if (configCambios != null) {
+			ArrayList<String> list = new ArrayList<String>();
+			for (FieldInfo fi : configCambios){
+				list.add(fi.getFieldName());
+			}
+			this.configCambios = list.toArray(new String[]{});
+		}
 	}
 
 	public void setDatosHistoricos(Object[] datosHistoricos) {

@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,17 +14,18 @@ import org.junit.Test;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
 
 public class CambioBDTests {
 
-	private String[] configCambios;
+	private FieldInfo[] configCambios;
 	private String[] datosHistoricos;
 	private String[] datosActuales;
 	private CambioBD cambio;
 
 	@Before
 	public void setUp() {
-		configCambios = new String[] { "campo1", "campo2", "campo3" };
+		configCambios = new FieldInfo[] { new FieldInfo("campo1"), new FieldInfo("campo2"), new FieldInfo("campo3") };
 		datosHistoricos = new String[] { "valor viejo", "ABCDE", null };
 		datosActuales = new String[] { "nuevo valor", "ABCDE", null };
 
@@ -36,14 +40,16 @@ public class CambioBDTests {
 		cambio.setDatosActuales(datosActuales);
 
 		Map<String, Object> cambios = cambio.getCambios();
-		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(configCambios);
+		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(arrayOfStrings(configCambios));
 
-		assertEquals("nuevo valor", cambios.get(configCambios[0]));
+		assertEquals("nuevo valor", cambios.get(configCambios[0].getFieldName()));
 		assertFalse(cambios.containsKey(configCambios[1]));
 		assertFalse(cambios.containsKey(configCambios[2]));
-		
-		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3, valoresHistoricos.size());
+
+		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3,
+				valoresHistoricos.size());
 	}
+
 
 	@Test
 	public void testDatosActualesContieneUnRegistroNuevo() {
@@ -51,7 +57,7 @@ public class CambioBDTests {
 		cambio.setDatosActuales(datosActuales);
 
 		Map<String, Object> cambios = cambio.getCambios();
-		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(configCambios);
+		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(arrayOfStrings(configCambios));
 
 		assertEquals("Deberían haberse actualizado 3 campos", 3, cambios.size());
 		assertTrue("El map de valores históricos debería estar vacío", valoresHistoricos.isEmpty());
@@ -63,11 +69,12 @@ public class CambioBDTests {
 		cambio.setDatosHistoricos(datosHistoricos);
 
 		Map<String, Object> cambios = cambio.getCambios();
-		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(configCambios);
+		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(arrayOfStrings(configCambios));
 
 		assertEquals("No debería haber ningún cambio", 0, cambios.size());
-		
-		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3, valoresHistoricos.size());
+
+		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3,
+				valoresHistoricos.size());
 	}
 
 	@Test
@@ -78,13 +85,14 @@ public class CambioBDTests {
 		cambio.setDatosActuales(datosActuales);
 
 		Map<String, Object> cambios = cambio.getCambios();
-		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(configCambios);
-		
+		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(arrayOfStrings(configCambios));
+
 		assertEquals("Deberían haberse actualizado 1 campo", 1, cambios.size());
-		assertTrue("El campo cambiado no es el correcto", cambios.containsKey(configCambios[1]));
+		assertTrue("El campo cambiado no es el correcto", cambios.containsKey(configCambios[1].getFieldName()));
 		assertNull("El valor del campo debería ser null", cambios.get(configCambios[1]));
-		
-		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3, valoresHistoricos.size());
+
+		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3,
+				valoresHistoricos.size());
 
 	}
 
@@ -100,13 +108,14 @@ public class CambioBDTests {
 		cambio.setDatosHistoricos(datosHistoricos);
 
 		Map<String, Object> cambios = cambio.getCambios();
-		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(configCambios);
-		
+		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(arrayOfStrings(configCambios));
+
 		assertEquals("Deberían haberse actualizado 1 campo", 1, cambios.size());
 		assertEquals("El valor del campo actualizado no es el esperado", datosActuales[0],
-				cambios.get(configCambios[0]));
+				cambios.get(configCambios[0].getFieldName()));
 		cambio.setDatosActuales(datosHistoricos);
-		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3, valoresHistoricos.size());
+		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3,
+				valoresHistoricos.size());
 
 	}
 
@@ -115,8 +124,8 @@ public class CambioBDTests {
 		// para que no e devuelvan cambios.
 		cambio.setDatosActuales(datosHistoricos);
 		cambio.setDatosHistoricos(datosHistoricos);
-		Map<String, Object> valores = cambio.getValoresHistoricos(configCambios[1], configCambios[2]);
-		
+		Map<String, Object> valores = cambio.getValoresHistoricos(arrayOfStrings(configCambios[1], configCambios[2]));
+
 		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 2, valores.size());
 
 		assertEquals("No deberían haberse detectado cambios", 0, cambio.getCambios().size());
@@ -124,10 +133,10 @@ public class CambioBDTests {
 		assertFalse("El primer campo no debería haberse devuelto porque no es obligatorio",
 				valores.containsKey(configCambios[0]));
 
-		assertEquals("El valor del segundo campo no coincide", datosHistoricos[1], valores.get(configCambios[1]));
+		assertEquals("El valor del segundo campo no coincide", datosHistoricos[1], valores.get(configCambios[1].getFieldName()));
 
 		assertTrue("Debería haberse devuelto el tercer campo por ser obligatorio",
-				valores.containsKey(configCambios[2]));
+				valores.containsKey(configCambios[2].getFieldName()));
 
 		assertNull("El tercer campo debería ser null", valores.get(configCambios[2]));
 	}
@@ -147,10 +156,11 @@ public class CambioBDTests {
 		cambio.setDatosHistoricos(dh.toArray());
 
 		Map<String, Object> cambios = cambio.getCambios();
-		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(configCambios);
+		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(arrayOfStrings(configCambios));
 
 		assertEquals("El número de cambios esperado no coincide", 1, cambios.size());
-		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3, valoresHistoricos.size());
+		assertEquals("El map de valores históricos no tiene el número de elementos esperado", 3,
+				valoresHistoricos.size());
 
 	}
 
@@ -165,11 +175,22 @@ public class CambioBDTests {
 		cambio.setDatosActuales(da.toArray());
 
 		Map<String, Object> cambios = cambio.getCambios();
-		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(configCambios);
+		Map<String, Object> valoresHistoricos = cambio.getValoresHistoricos(arrayOfStrings(configCambios));
 
 		assertEquals("El número de cambios esperado no coincide", 3, cambios.size());
 		assertTrue("El map de valores históricos debería estar vacío", valoresHistoricos.isEmpty());
 
+	}
+	
+	
+	private String[] arrayOfStrings(FieldInfo... fields) {
+		ArrayList<String> list = new ArrayList<String>();
+		if (fields != null){
+			for (FieldInfo fi : fields){
+				list.add(fi.getFieldName());
+			}
+		}
+		return list.toArray(new String[]{});
 	}
 
 }

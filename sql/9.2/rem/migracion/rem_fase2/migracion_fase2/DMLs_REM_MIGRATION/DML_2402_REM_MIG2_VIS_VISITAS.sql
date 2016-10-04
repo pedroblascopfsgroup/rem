@@ -39,7 +39,7 @@ V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
 
-	  --COMPROBACIONES PREVIAS - CLIENTE_COMERCIAL
+	  --COMPROBACIONES PREVIAS - CLIENTE_COMERCIAL (CLC_WEBCOM_ID)
       DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO CLIENTE_COMERCIAL...');
       
       V_SENTENCIA := '
@@ -75,7 +75,8 @@ BEGIN
           EXECUTE IMMEDIATE '
           INSERT INTO '||V_ESQUEMA||'.MIG2_CLC_NOT_EXISTS (
             TABLA_MIG,
-            CLC_COD_CLIENTE_WEBCOM,            
+            CODIGO_RECHAZADO,
+            CAMPO_CLC_MOTIVO_RECHAZO,            
             FECHA_COMPROBACION
           )
           WITH NOT_EXISTS AS (
@@ -89,7 +90,8 @@ BEGIN
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.VIS_COD_CLIENTE_WEBCOM    						      			  CLC_COD_CLIENTE_WEBCOM,          
+          MIG2.VIS_COD_CLIENTE_WEBCOM                                             CODIGO_RECHAZADO,
+          ''CLC_WEBCOM_ID''         		                                      CAMPO_CLC_MOTIVO_RECHAZO,
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.VIS_COD_CLIENTE_WEBCOM = MIG2.VIS_COD_CLIENTE_WEBCOM

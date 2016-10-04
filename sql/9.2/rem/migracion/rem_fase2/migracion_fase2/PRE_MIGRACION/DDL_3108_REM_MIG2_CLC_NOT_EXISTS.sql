@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad:  Tabla para registrar los clientes comerciales (VIS_COD_CLIENTE_WEBCOM) inexistentes en CLC_CLIENTE_COMERCIAL que vienen provistas en las interfaces. FASE 2
+--## Finalidad:  Tabla para registrar los clientes comerciales inexistentes en CLC_CLIENTE_COMERCIAL que vienen provistas en las interfaces. FASE 2
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -30,7 +30,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para registrar los clientes comerciales (VIS_COD_CLIENTE_WEBCOM) inexistentes en CLC_CLIENTE_COMERCIAL que vienen provistas en las interfaces. FASE 2'; -- Vble. para los comentarios de las tablas
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para registrar los clientes comerciales inexistentes en CLC_CLIENTE_COMERCIAL que vienen provistas en las interfaces. FASE 2'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
@@ -56,7 +56,8 @@ BEGIN
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.MIG2_CLC_NOT_EXISTS
 	(
 		TABLA_MIG 					VARCHAR2(30 CHAR),
-		CLC_COD_CLIENTE_WEBCOM		NUMBER(16,0),
+		CODIGO_RECHAZADO			NUMBER(16,0),
+		CAMPO_CLC_MOTIVO_RECHAZO	VARCHAR2(30 CHAR),
 		FECHA_COMPROBACION 			DATE
 	)
 	LOGGING 

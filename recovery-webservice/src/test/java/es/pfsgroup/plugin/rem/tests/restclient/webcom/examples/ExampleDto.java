@@ -7,6 +7,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
@@ -19,6 +20,8 @@ public class ExampleDto implements WebcomRESTDto{
 	
 	public static final String GROUP_BY_FIELD = "idObjeto";
 
+	public static final String SHORT_COLUMN_NAME = "SHORT_COLUMN";
+
 	@WebcomRequired
 	private LongDataType idUsuarioRemAccion = LongDataType.longDataType(1L);
 	
@@ -30,6 +33,9 @@ public class ExampleDto implements WebcomRESTDto{
 
 	@WebcomRequired
 	private StringDataType campoObligatorio;
+	
+	@MappedColumn(SHORT_COLUMN_NAME)
+	private StringDataType esteEsUnNombreDeCampoTanYTanLargoQueNosepeudeMapearTalcualAunaColumnaDeBaseDeDatos;
 	
 	
 	private StringDataType campoOpcional;
@@ -108,6 +114,17 @@ public class ExampleDto implements WebcomRESTDto{
 
 	public void setListado2(List<ExampleSubDto> listado2) {
 		this.listado2 = listado2;
+	}
+
+
+	public StringDataType getEsteEsUnNombreDeCampoTanYTanLargoQueNosepeudeMapearTalcualAunaColumnaDeBaseDeDatos() {
+		return esteEsUnNombreDeCampoTanYTanLargoQueNosepeudeMapearTalcualAunaColumnaDeBaseDeDatos;
+	}
+
+
+	public void setEsteEsUnNombreDeCampoTanYTanLargoQueNosepeudeMapearTalcualAunaColumnaDeBaseDeDatos(
+			StringDataType esteEsUnNombreDeCampoTanYTanLargoQueNosepeudeMapearTalcualAunaColumnaDeBaseDeDatos) {
+		this.esteEsUnNombreDeCampoTanYTanLargoQueNosepeudeMapearTalcualAunaColumnaDeBaseDeDatos = esteEsUnNombreDeCampoTanYTanLargoQueNosepeudeMapearTalcualAunaColumnaDeBaseDeDatos;
 	}
 
 

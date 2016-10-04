@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Ampliar la tabla que contiene los datos del informe comercial
+--## Finalidad: Ampliar la tabla que contiene los datos de las plazas de aparcamiento.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,7 +35,7 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_ICO_INFO_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_APR_PLAZA_APARCAMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     
@@ -44,9 +44,15 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'DD_DIS_ID',		 				'NUMBER(16,0)',						'Distrito del Activo.'	),
-    	T_ALTER(  'ICO_WEBCOM_ID',		 			'NUMBER(16,0)',						'Distrito del Activo.'	)
-    	
+    	T_ALTER(  'DD_TPV_ID',		 				'NUMBER(16,0)',						'Catalogación del tipo vario.'),
+    	T_ALTER(  'APR_ALTURA',		 				'NUMBER(16,2)',						'Longitud en metros de la altura del aparcamiento.'	),
+    	T_ALTER(  'DD_SPG_ID',						'NUMBER(16,0)',						'Tipo de uso.'	),
+    	T_ALTER(  'APR_LICENCIA',					'NUMBER(1,0)',						'Indicador de si tiene licencia'),
+    	T_ALTER(  'APR_SERVIDUMBRE',				'NUMBER(1,0)',						'Indicador de si tiene servidumbre.'),
+    	T_ALTER(  'APR_ASCENSOR_MONTACARGA',		'NUMBER(1,0)',						'Indicador de si tiene ascensor o montacarga.'),
+    	T_ALTER(  'APR_COLUMNAS',					'NUMBER(1,0)',						'Indicador de si tiene columnas .'),
+    	T_ALTER(  'APR_SEGURIDAD',					'NUMBER(1,0)',						'Indicador de si tiene seguridad.')
+	
 		);
     V_T_ALTER T_ALTER;
     
@@ -56,10 +62,10 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 							CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_INFORME_DISTRITO',				'DD_DIS_ID',		V_ESQUEMA||'.DD_DIS_DISTRITO',					'DD_DIS_ID'			)
+    	T_FK(	'FK_APAR_DDTIPOVARIO',					'DD_TPV_ID',		V_ESQUEMA||'.DD_TPV_TIPO_VARIO',			'DD_TPV_ID'			),
+    	T_FK(	'FK_APAR_SUBTIPO_PLAZA',				'DD_SPG_ID',		V_ESQUEMA||'.DD_SPG_SUBTIPO_PLAZA_GARAJE',	'DD_SPG_ID'			)
     );
     V_T_FK T_FK;
-
 
 
 
@@ -99,7 +105,6 @@ BEGIN
 	END LOOP;
 
 
-	
 	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
 	IF V_CREAR_FK = 'SI' THEN
 
@@ -137,6 +142,7 @@ BEGIN
 		END LOOP;
 
 	END IF;
+	
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKs ... OK *************************************************');
 	COMMIT;

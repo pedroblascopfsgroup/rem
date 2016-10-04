@@ -2,6 +2,7 @@ package es.pfsgroup;
 
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
+import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.pfsgroup.plugin.rem.api.impl.UvemManager;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 
@@ -34,11 +35,10 @@ public class App {
 			} else if (args[0].equals("infoCliente")) {
 				System.out.println("Ejecutando servicio infoCliente");
 				if (args.length == 4) {
-					uvemManager.ejecutarNumCliente(args[1], args[2], args[3]);
-					GMPAJC11_INS numclienteIns = uvemManager.resultadoNumCliente();
+					GMPAJC11_INS numclienteIns = uvemManager.ejecutarNumCliente(args[1], args[2], args[3]);
 					System.out.println("Resultado llamada resultadoNumCliente: " + numclienteIns.getnumeroCliente());
-					uvemManager.ejecutarDatosCliente(numclienteIns.getnumeroCliente(), args[3]);
-					GMPAJC93_INS datosClienteIns = uvemManager.resultadoDatosCliente();
+					
+					GMPAJC93_INS datosClienteIns = uvemManager.ejecutarDatosCliente(numclienteIns, args[3]);
 					System.out.println("Resultado llamada resultadoDatosCliente: " + datosClienteIns.getName());
 					
 				} else {
@@ -96,8 +96,8 @@ public class App {
 						}
 					}
 					
-					uvemManager.instanciaDecision(dto, args[1]);
-				
+					GMPDJB13_INS instancia = uvemManager.instanciaDecision(dto, args[1]);
+					System.out.println("Resultado llamada instanciaDecision: " + instancia.getCodigoDeOfertaHayacoofhx());
 					
 				}else{
 					System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA/CONS/MODI");

@@ -1,9 +1,13 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 
@@ -13,6 +17,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Override
+	public String getOneNumActivoAgrupacionRaw(String numAgrupacion){
+		return rawDao.getExecuteSQL("SELECT TO_NUMBER(act.ACT_NUM_ACTIVO) "
+				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
+				+ "			    ACT_AGR_AGRUPACION agr, "
+				+ "			    ACT_ACTIVO act "
+				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
+				+ "			    AND act.act_id   = aga.act_id "
+				+ "			    AND agr.AGR_NUM_AGRUP_REM  = '"+numAgrupacion+"' "
+				+ "			    AND DECODE(aga.BORRADO, null, 0, aga.BORRADO)  = 0 "
+				+ "			    AND DECODE(agr.BORRADO, null, 0, agr.BORRADO)  = 0 "
+				+ "			    AND DECODE(act.BORRADO, null, 0, act.BORRADO)  = 0 "
+				+ "				AND ROWNUM = 1 ");
+	}
 	
 	public String getCarteraLocationByNumAgr (String numAgr) {		
 		String tagId = rawDao.getExecuteSQL("SELECT DD_TAG_ID "
@@ -98,12 +117,37 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	
 	@Override
-	public Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR_ID) "
-				+ "		  FROM ACT_AGA_AGRUPACION_ACTIVO WHERE"
-				+ " 		ACT_ID = "+idActivo+" "
-				+ " 		AND AGR_ID = "+idAgrupacion+" "
-				+ "			AND BORRADO = 0");
+	public Boolean esActivoEnAgrupacion(Long numActivo, Long numAgrupacion) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
+				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
+				+ "			    ACT_AGR_AGRUPACION agr, "
+				+ "			    ACT_ACTIVO act "
+				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
+				+ "			    AND act.act_id   = aga.act_id "
+				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			    AND agr.AGR_NUM_AGRUP_REM  = "+numAgrupacion+" "
+				+ "			    AND aga.BORRADO  = 0 "
+				+ "			    AND agr.BORRADO  = 0 "
+				+ "			    AND act.BORRADO  = 0 ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
+				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
+				+ "			    ACT_AGR_AGRUPACION agr, "
+				+ "			    ACT_ACTIVO act "
+				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
+				+ "			    AND act.act_id   = aga.act_id "
+				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			    AND agr.AGR_NUM_AGRUP_REM  <> "+numAgrupacion+" "
+				+ "			    AND aga.BORRADO  = 0 "
+				+ "			    AND agr.BORRADO  = 0 "
+				+ "			    AND act.BORRADO  = 0 ");
 		if("0".equals(resultado))
 			return false;
 		else
@@ -245,6 +289,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+
+	public Boolean esActivoConVentaOferta(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
+				+ "			  ACT_ACTIVO act "
+				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
+				+ "			  AND scm.dd_scm_codigo = '03' "
+				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.borrado       = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 	
 	public Boolean esActivoIncluidoPerimetro(String numActivo){
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -258,6 +316,36 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		else
 			return true;
+	}
+	
+	@Override
+	public Boolean esActivosMismaLocalizacion (String inSqlNumActivosRem){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(COUNT(act.ACT_ID)) "
+				+ "			  FROM ACT_ACTIVO act, BIE_LOCALIZACION loc "
+				+ "			WHERE act.BIE_ID = loc.BIE_ID "
+				+ "			  AND act.ACT_NUM_ACTIVO IN ("+inSqlNumActivosRem+") "
+				+ "			  AND act.BORRADO = 0 "
+				+ "			  AND loc.BORRADO = 0 "
+				+ "			GROUP BY act.DD_CRA_ID, loc.DD_PRV_ID, loc.DD_LOC_ID, loc.BIE_LOC_COD_POST");
+		if("1".equals(resultado))
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public Boolean esActivosMismoPropietario (String inSqlNumActivosRem){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(pac.PRO_ID) "
+				+ "			    FROM ACT_PAC_PROPIETARIO_ACTIVO pac, "
+				+ "			    ACT_ACTIVO act "
+				+ "			    WHERE act.act_id       = pac.act_id "
+				+ "			    AND act.ACT_NUM_ACTIVO IN ("+inSqlNumActivosRem+") "
+				+ "			    AND pac.BORRADO  = 0 "
+				+ "			    AND act.BORRADO  = 0 ");
+		if("1".equals(resultado))
+			return true;
+		else
+			return false;
 	}
 		
 }

@@ -17,6 +17,7 @@ public @interface EntityDefinition {
 	Class classObj() default Object.class;
 	String foreingField() default "codigo";
 	boolean procesar() default true;
+	String motivo() default "";
 	boolean unique() default false;
 	TRANSFORM_TYPE transform() default TRANSFORM_TYPE.NONE;
 

@@ -3,13 +3,19 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 
@@ -17,6 +23,9 @@ import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 public class InformeMediadorManager implements InformeMediadorApi {
 
 	private HashMap<String, HashMap<String, Boolean>> obligatorios;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	public InformeMediadorManager() {
 		obligatorios = new HashMap<String, HashMap<String, Boolean>>();
@@ -823,6 +832,27 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 		}
 
+	}
+
+	@Override
+	public boolean existeInformemediadorActivo(Long numActivo) {
+		Activo activo;
+		Serializable objetoEntity = null;
+		boolean resultado = false;
+		
+		if (numActivo != null) {
+			activo = (Activo) genericDao.get(Activo.class,
+					genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo));
+			if (activo != null) {
+				objetoEntity = genericDao.get(ActivoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+			}
+
+		}
+		if (objetoEntity != null) {
+			resultado = true;
+		}
+		return resultado;
+		
 	}
 
 }

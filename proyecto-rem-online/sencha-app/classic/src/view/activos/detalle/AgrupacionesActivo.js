@@ -64,14 +64,37 @@ Ext.define('HreRem.view.activos.detalle.AgrupacionesActivo', {
 					        flex	: 1
 					    },
 					    {   
+			            	text	 : HreRem.i18n('header.fecha.baja.agrupacion'),
+			                dataIndex: 'fechaBaja',
+					        formatter: 'date("d/m/Y")',
+					        flex	: 1
+					    },
+					    {   
 			            	text	 : HreRem.i18n('header.fecha.inclusion.activo'),
 			                dataIndex: 'fechaInclusion',
 			                flex	: 1,
 					        formatter: 'date("d/m/Y")'
 					    },
 					    {   
+			            	text	 : HreRem.i18n('header.fecha.inicio.vigencia'),
+			                dataIndex: 'fechaInicioVigencia',
+			                flex	: 1,
+					        formatter: 'date("d/m/Y")'
+					    },
+					    {   
+			            	text	 : HreRem.i18n('header.fecha.fin.vigencia'),
+			                dataIndex: 'fechaFinVigencia',
+			                flex	: 1,
+					        formatter: 'date("d/m/Y")'
+					    },
+					    {   
 			            	text	 : HreRem.i18n('header.num.activos.agrupacion'),
 			                dataIndex: 'numActivos',
+			                flex	: 1
+					    },
+					    {   
+			            	text	 : HreRem.i18n('header.num.activos.publicados'),
+			                dataIndex: 'numActivosPublicados',
 			                flex	: 1
 					    }
 		

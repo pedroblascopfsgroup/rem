@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20161003
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-855
 --## PRODUCTO=NO
 --## Finalidad: Tabla para registrar los usuarios (GPV_NUM_GASTO_GESTORIA) inexistentes en GPV_GASTOS_PROVEEDOR que vienen provistos en las interfaces. FASE 2
 --##           

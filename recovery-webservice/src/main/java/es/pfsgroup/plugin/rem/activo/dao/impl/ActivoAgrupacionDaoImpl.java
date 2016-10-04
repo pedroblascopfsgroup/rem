@@ -98,6 +98,18 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	}
 
     @Override
+    public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem){
+    	try {
+    		HQLBuilder hb = new HQLBuilder("select agr.id from ActivoAgrupacion agr where agr.numAgrupRem = " + numAgrupRem + " ");
+    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
+    
+    @Override
    	public Long haveActivoPrincipal(Long id) {
 
     	try {

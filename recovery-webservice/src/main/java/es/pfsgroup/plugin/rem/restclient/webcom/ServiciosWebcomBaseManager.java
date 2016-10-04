@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.restclient.webcom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -16,8 +17,10 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
+import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomBase;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomGenerico;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.WebcomEndpoint;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 
 public abstract class ServiciosWebcomBaseManager {
@@ -26,6 +29,8 @@ public abstract class ServiciosWebcomBaseManager {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	protected abstract RegistroLlamadasManager getRegistroLlamadas();
+
+	protected abstract ClienteWebcomGenerico getClienteWebcom();
 
 	public ServiciosWebcomBaseManager() {
 		super();
@@ -139,21 +144,26 @@ public abstract class ServiciosWebcomBaseManager {
 
 	/**
 	 * Método genérico que invoca Servicios Web de WebCom
-	 * 
+	 *
+	 * @param endpoint
+	 *            Endpoint al que nos queremos conectar.
 	 * @param paramsList
 	 *            Parámetros que queremos enviarle al servicio.
-	 * @param servicio
-	 *            Implementación del servicio. Debe extender la clase
-	 *            {@link ClienteWebcomBase}.
+	 *
 	 * @throws ErrorServicioWebcom
 	 */
-	protected void invocarServicioRestWebcom(ParamsList paramsList, ClienteWebcomBase servicio)
+	protected void invocarServicioRestWebcom(WebcomEndpoint endpoint, ParamsList paramsList)
 			throws ErrorServicioWebcom {
+		
+		if (endpoint == null) {
+			throw new IllegalArgumentException("'endpoint' no puede ser NULL");
+		}
+		
 		if (paramsList == null) {
 			throw new IllegalArgumentException("'paramsList' no puede ser NULL");
 		}
 
-		if (servicio == null) {
+		if (getClienteWebcom() == null) {
 			IllegalArgumentException e = new IllegalArgumentException(
 					"El Cliente REST Webcom asociado a este servicio es NULL");
 			logger.fatal(
@@ -165,24 +175,19 @@ public abstract class ServiciosWebcomBaseManager {
 		RestLlamada registroLlamada = new RestLlamada();
 		try {
 
-			logger.debug("Invocando al servicio " + servicio.getClass().getSimpleName()
-					+ ".enviarPeticion con parámetros " + paramsList.toString());
-			Map<String, Object> respuesta = servicio.enviaPeticion(paramsList, registroLlamada);
-
-			logger.debug(
-					"Procesando respuesta" + servicio.getClass().getSimpleName() + ".procesarRespuesta " + respuesta);
-			servicio.procesaRespuesta(respuesta);
+			logger.debug("Invocando al servicio " + endpoint);
+			getClienteWebcom().send(endpoint, paramsList, registroLlamada);
+			logger.debug("Respuesta recibida " + endpoint);
 
 		} catch (ErrorServicioWebcom e) {
-			logger.error("Error al invocar " + servicio.getClass().getSimpleName() + ".enviarPeticion con parámetros "
+			logger.error("Error al invocar " + endpoint + " con parámetros "
 					+ paramsList.toString(), e);
 			if (!e.isHttpError()) {
 				logger.fatal("Se ha producido un error no-reintentable en la llamada a servicio REST de Webcom", e);
 				e.setReintentable(false);
 			} else {
-				logger.error("Se va a reintentar la invocación a " + servicio.getClass().getSimpleName()
-						+ ".enviarPeticion con parámetros " + paramsList.toString());
-				// getRegistroLlamadas().guardaRegistroLlamada(registroLlamada);
+				logger.error("Se va a reintentar la invocación a " + endpoint
+						+ " con parámetros " + paramsList.toString());
 				e.setReintentable(true);
 			}
 
@@ -244,31 +249,59 @@ public abstract class ServiciosWebcomBaseManager {
 	 * @return Si complexObject es null o es una colección vacía devuelve NULL.
 	 */
 	private String checkMissingInNestedObject(Object complexObject, String f) {
-		if ((complexObject != null) && (f != null)){
-			if (Collection.class.isAssignableFrom(complexObject.getClass())){
+		if ((complexObject != null) && (f != null)) {
+			if (Collection.class.isAssignableFrom(complexObject.getClass())) {
 				// Si se trata de una colección de objetos
 				String missing = null;
-				for (Object o : ((Collection) complexObject)){
-					// Volvemos a llamar recursivamente por cada uno de los objetos
+				for (Object o : ((Collection) complexObject)) {
+					// Volvemos a llamar recursivamente por cada uno de los
+					// objetos
 					missing = checkMissingInNestedObject(o, f);
 				}
 				return missing;
-			}else {
+			} else {
 				// Si se trata de un Map ... ¿lo comprobamos primero?
-				if (Map.class.isAssignableFrom(complexObject.getClass())){
+				if (Map.class.isAssignableFrom(complexObject.getClass())) {
 					String[] split = f.split(REGEXP_4_DOT);
 					String key = split[split.length - 1];
-					if (! fieldExists((Map) complexObject, key)){
+					if (!fieldExists((Map) complexObject, key)) {
 						return f;
 					}
-				}else{
+				} else {
 					// si no es un map, decimos que el campo falta.
 					return f;
 				}
-				
+
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Crea un objeto ParamList para invocar al web service a partir de una
+	 * lista de DTO's. Este método también hará una comprobación de que los
+	 * campos obligatorios estén presentes.
+	 * 
+	 * @param dtoList
+	 *            Lista de DTO's que queremos mandar al servicio
+	 * @param camposObligatorios
+	 *            Lista variable de campos obligatorios.
+	 * @return
+	 */
+	protected <T extends WebcomRESTDto> ParamsList createParamsList(List<T> dtoList) {
+		ParamsList paramsList = new ParamsList();
+		if (dtoList != null) {
+			logger.debug("Convirtiendo dtoList -> ParamsList");
+			for (WebcomRESTDto dto : dtoList) {
+				HashMap<String, Object> params = createParametersMap(dto);
+				params.putAll(Converter.dtoToMap(dto));
+				compruebaObligatorios(dto.getClass(), params);
+				paramsList.add(params);
+			}
+		} else {
+			logger.debug("'dtoList' es NULL");
+		}
+		return paramsList;
 	}
 
 }

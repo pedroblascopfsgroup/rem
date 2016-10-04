@@ -27,7 +27,9 @@ public class DtoAgrupacionesActivo {
 	private String municipioDescripcion;
 	private String provinciaDescripcion;
 	private String numActivos;
-	
+	private Date fechaInicioVigencia;
+	private Date fechaFinVigencia;
+	private String numActivosPublicados;
 	
 	
 	
@@ -109,6 +111,24 @@ public class DtoAgrupacionesActivo {
 	}
 	public void setNumActivos(String numActivos) {
 		this.numActivos = numActivos;
+	}
+	public Date getFechaInicioVigencia() {
+		return fechaInicioVigencia;
+	}
+	public void setFechaInicioVigencia(Date fechaInicioVigencia) {
+		this.fechaInicioVigencia = fechaInicioVigencia;
+	}
+	public Date getFechaFinVigencia() {
+		return fechaFinVigencia;
+	}
+	public void setFechaFinVigencia(Date fechaFinVigencia) {
+		this.fechaFinVigencia = fechaFinVigencia;
+	}
+	public String getNumActivosPublicados() {
+		return numActivosPublicados;
+	}
+	public void setNumActivosPublicados(String numActivosPublicados) {
+		this.numActivosPublicados = numActivosPublicados;
 	}
 
 	

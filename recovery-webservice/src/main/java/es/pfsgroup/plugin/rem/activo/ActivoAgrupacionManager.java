@@ -66,6 +66,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		return activoAgrupacionDao.get(id);
 	}
 	
+	public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem){
+		return activoAgrupacionDao.getAgrupacionIdByNumAgrupRem(numAgrupRem);
+	}
+	
 	@Override
 	@BusinessOperation(overrides = "activoAgrupacionManager.saveOrUpdate")
 	@Transactional

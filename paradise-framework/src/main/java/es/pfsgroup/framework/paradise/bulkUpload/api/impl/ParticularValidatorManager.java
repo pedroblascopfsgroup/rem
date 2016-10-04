@@ -72,12 +72,42 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
+	public Boolean esMismaCarteraLocationByNumAgrupRem (String numAgrupRem){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.ACT_ID) " 
+							+ "		  FROM ACT_AGA_AGRUPACION_ACTIVO aga, ACT_AGR_AGRUPACION agr, ACT_ACTIVO act, BIE_LOCALIZACION loc "
+							+ "		  WHERE  "
+							+ "		  aga.AGR_ID = agr.AGR_ID "
+							+ "		  AND aga.ACT_ID = act.ACT_ID "
+							+ "		  AND act.BIE_ID = loc.BIE_ID "
+							+ "		  AND agr.AGR_NUM_AGRUP_REM = "+numAgrupRem+" "
+							+ "		  GROUP BY act.DD_CRA_ID, loc.DD_PRV_ID, loc.DD_LOC_ID, loc.BIE_LOC_COD_POST ");
+		if("1".equals(resultado))
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion) {
 		return rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		  FROM ACT_AGA_AGRUPACION_ACTIVO WHERE"
 				+ " 		ACT_ID = "+idActivo+" "
 				+ " 		AND AGR_ID = "+idAgrupacion+" "
 				+ "			AND BORRADO = 0");
+	}
+	
+	
+	@Override
+	public Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR_ID) "
+				+ "		  FROM ACT_AGA_AGRUPACION_ACTIVO WHERE"
+				+ " 		ACT_ID = "+idActivo+" "
+				+ " 		AND AGR_ID = "+idAgrupacion+" "
+				+ "			AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
 	}
 	
 	@Override
@@ -210,6 +240,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			AND ACT.BORRADO = 0"
 				+ "			AND OFR.BORRADO = 0"
 				+ "			AND ACT.ACT_BLOQUEO_PRECIO_FECHA_INI IS NOT NULL");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	public Boolean esActivoIncluidoPerimetro(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO act "
+				+ "		INNER JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
+				+ "		ON act.ACT_ID            = pac.ACT_ID "
+				+ "		WHERE " 
+				+ "		pac.PAC_INCLUIDO         = 1 "
+				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
 		if("0".equals(resultado))
 			return false;
 		else

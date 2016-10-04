@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
@@ -94,8 +95,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -435,12 +439,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteValoracionPrecio(Long id) {
-
+		
+		return deleteValoracionPrecioConGuardadoEnHistorico(id,true);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico) {
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		ActivoValoraciones activoValoracion = genericDao.get(ActivoValoraciones.class, filtro);
-		saveActivoValoracionHistorico(activoValoracion);
-		// genericDao.deleteById(ActivoValoraciones.class, id);
-		activoDao.deleteValoracionById(id);
+		
+		if(guardadoEnHistorico) {
+			saveActivoValoracionHistorico(activoValoracion);
+			activoDao.deleteValoracionById(id);
+		}
+		else if(!Checks.esNulo(activoValoracion.getGestor()) && !adapter.getUsuarioLogado().equals(activoValoracion.getGestor())) {
+			//Si el usuario logado es distinto al que ha creado la valoracion, no puede borrarla sin historico
+			return false;
+		}
+		else {
+			//Al anular el precio vigente, se hace un borrado lógico, y no se inserta en el histórico
+			genericDao.deleteById(ActivoValoraciones.class, id);
+		}
 
 		return true;
 	}
@@ -1341,6 +1362,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	@Transactional(readOnly = false)
+	public Activo updateActivoAsistida(Activo activo){
+		//Actualizamos el perímetro
+		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
+		
+		if(Checks.esNulo(perimetro.getActivo()))
+			perimetro.setActivo(activo);
+		
+		updatePerimetroAsistida(perimetro);
+		
+		//Bloqueamos los precios para que el activo no salga en los procesos automáticos. Esto podría ir en un proceso al dar de alta el activo.
+		activo.setBloqueoPrecioFechaIni(new Date());
+		activo.setGestorBloqueoPrecio(adapter.getUsuarioLogado());
+		
+		saveOrUpdate(activo);
+		return activo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PerimetroActivo updatePerimetroAsistida(PerimetroActivo perimetroActivo){
+		perimetroActivo.setIncluidoEnPerimetro(1);
+		perimetroActivo.setAplicaAsignarMediador(0);
+		perimetroActivo.setAplicaComercializar(1);
+		perimetroActivo.setAplicaFormalizar(1);
+		perimetroActivo.setAplicaGestion(0);
+		perimetroActivo.setAplicaTramiteAdmision(0);
+		perimetroActivo.setFechaAplicaComercializar(new Date());
+		perimetroActivo.setFechaAplicaFormalizar(new Date());
+		
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoComercializacion.CODIGO_ASISTIDA);
+		DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, filtro);
+		perimetroActivo.setMotivoAplicaComercializar(motivoComercializacion);
+		
+		saveOrUpdatePerimetroActivo(perimetroActivo);
+		
+		return perimetroActivo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
 	public ActivoBancario saveOrUpdateActivoBancario(ActivoBancario activoBancario) {
 		try{
 			if (!Checks.esNulo(activoBancario.getId())) {
@@ -1487,4 +1549,53 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return true;
 	}
 	
+	@Override
+	public boolean isIntegradoAgrupacionAsistida(Activo activo) {
+
+		for(ActivoAgrupacionActivo agrupacionActivo : activo.getAgrupaciones()) {
+
+			Date fechaFinVigencia = agrupacionActivo.getAgrupacion().getFechaFinVigencia();
+			fechaFinVigencia = !Checks.esNulo(fechaFinVigencia) ? new Date(fechaFinVigencia.getTime()) : null;
+			
+			if(!Checks.esNulo(agrupacionActivo.getAgrupacion().getTipoAgrupacion()) && 
+				agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA) &&
+				!Checks.esNulo(fechaFinVigencia) && fechaFinVigencia.after(new Date())) 
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public boolean isActivoAsistido(Activo activo){
+		if(!Checks.esNulo(activo.getSubcartera()))
+			if(DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo()))
+						return true;
+		return false;
+	}
+
+	@Override
+	public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos) {
+		
+		Integer contador = 0;
+		
+		for(ActivoAgrupacionActivo activoAgrupacion : activos) {
+			if(!Checks.esNulo(activoAgrupacion.getActivo().getEstadoPublicacion())) {
+				
+				String codEstadoPublicacion = activoAgrupacion.getActivo().getEstadoPublicacion().getCodigo();
+				if(codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO) ||
+					codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO) ||
+					codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)) 
+				{
+					contador++;
+				}
+			}	
+		}
+		
+		return contador;
+	}
 }

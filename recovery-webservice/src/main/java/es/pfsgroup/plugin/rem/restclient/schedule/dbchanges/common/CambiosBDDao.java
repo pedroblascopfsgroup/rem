@@ -103,13 +103,10 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		Session session = this.sesionFactoryFacade.getSession(this);
 		ArrayList<CambioBD> cambios = new ArrayList<CambioBD>();
 
+		String[] fields = getDtoFields(dtoClass);
+		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 		try {
 			DbIdContextHolder.setDbId(1L);
-			String[] fields = getDtoFields(dtoClass);
-			String columns = columns4Select(fields, infoTablas.clavePrimaria());
-
-			String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + infoTablas.nombreVistaDatosActuales()
-					+ "','C'); end;";
 
 			String columIdUsuarioRemAccion = field2column(ConstantesGenericas.ID_USUARIO_REM_ACCION);
 			String selectFromDatosActuales = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales()
@@ -119,13 +116,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			List<Object[]> resultado = null;
 
-			try {
-				logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
-				queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
-			} catch (Throwable t) {
-				throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews,
-						infoTablas, t);
-			}
+			refreshMaterializedView(infoTablas, session);
 
 			try {
 				logger.debug("Ejecutando: " + queryString);
@@ -168,6 +159,54 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 		return cambios;
 
+	}
+
+	public List<CambioBD> listDatosActuales(Class dtoClass, InfoTablasBD infoTablas) {
+		if (dtoClass == null) {
+			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+		}
+
+		if (infoTablas == null) {
+			throw new IllegalArgumentException("'infoTablas' no puede ser NULL");
+		}
+
+		Session session = this.sesionFactoryFacade.getSession(this);
+		ArrayList<CambioBD> cambios = new ArrayList<CambioBD>();
+
+		String[] fields = getDtoFields(dtoClass);
+		String columns = columns4Select(fields, infoTablas.clavePrimaria());
+
+		String queryString = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales();
+		try {
+			DbIdContextHolder.setDbId(1L);
+			List<Object[]> resultado = null;
+			refreshMaterializedView(infoTablas, session);
+
+			try {
+				logger.debug("Ejecutando: " + queryString);
+				resultado = queryExecutor.sqlRunList(session, queryString);
+				if (resultado != null) {
+					for (Object[] r : resultado) {
+						CambioBD cambio = new CambioBD(fields);
+						cambio.setDatosActuales(r);
+						cambios.add(cambio);
+					}
+				}
+			} catch (Throwable t) {
+				throw new CambiosBDDaoError("Ha ocurrido un error al obtener los registros que difieren", queryString,
+						infoTablas, t);
+			}
+
+		} finally {
+			logger.debug("Cerrando sesión");
+			if (session != null) {
+				if (session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+
+		return cambios;
 	}
 
 	/**
@@ -354,6 +393,18 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		logger.debug("Devolviendo restUserId=" + this.restUserId + " de la caché");
 		return this.restUserId;
 
+	}
+
+	private void refreshMaterializedView(InfoTablasBD infoTablas, Session session) {
+		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + infoTablas.nombreVistaDatosActuales()
+				+ "','C'); end;";
+		try {
+			logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+			queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
+		} catch (Throwable t) {
+			throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews, infoTablas,
+					t);
+		}
 	}
 
 }

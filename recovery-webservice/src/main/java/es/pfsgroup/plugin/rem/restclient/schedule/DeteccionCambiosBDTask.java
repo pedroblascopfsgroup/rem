@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomStock;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 
 /**
@@ -52,16 +53,66 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
+	public void enviaInformacionCompleta(DetectorCambiosBD handler) {
+		if (handler == null) {
+			throw new IllegalArgumentException("'handler' no puede ser NULL");
+		}
+
+		if (running) {
+			logger.debug("Este proceso está bloqueado por otro hilo de ejecución. Esperando a que finalice");
+
+			int times = 0;
+			while (running && (times < 6)) {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					logger.warn("Se ha abortado la espera");
+				}
+				times++;
+			}
+		}
+
+		Class control = handler.getDtoClass();
+
+		if (running) {
+			logger.fatal("Ha cadudado el tiempo de espera y el proceso aún está bloqueado");
+			throw new RuntimeException("AAFADFALLKAFA");
+		}
+		synchronized (this) {
+			running = true;
+			this.notifyAll();
+		}
+
+		logger.info("[inicio] Envío de información completa a WEBCOM mediante REST");
+		try {
+
+			logger.debug(handler.getClass().getName() + ": obtenemos toda la información de la  BD");
+			List listPendientes = handler.listDatosCompletos(control);
+
+			ejecutaTarea(handler, listPendientes, control);
+
+		} finally {
+			running = false;
+			logger.info("[fin] Envío de información completa a WEBCOM mediante REST");
+		}
+	}
+
 	/**
 	 * Inicia la detección de cambios en BD.
+	 * 
+	 * @param class1
 	 */
 	public void detectaCambios() {
 		if (running) {
 			logger.warn("El detector de cambios en BD ya se está ejecutando");
 			return;
 		}
-		running = true;
-		logger.info("[inicio] Detección de cambios en BD y envío de las modificaciones a WEBCOM mediante REST");
+		synchronized (this) {
+			running = true;
+			this.notifyAll();
+		}
+
+		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST");
 		try {
 			if ((registroCambiosHandlers != null) && (!registroCambiosHandlers.isEmpty())) {
 				for (DetectorCambiosBD handler : registroCambiosHandlers) {
@@ -70,34 +121,44 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 					Class control = handler.getDtoClass();
 					List listPendientes = handler.listPendientes(control);
 
-					if ((listPendientes != null) && (!listPendientes.isEmpty())) {
-						logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
-						try {
-							handler.invocaServicio(listPendientes);
-						} catch (ErrorServicioWebcom e) {
-							if (e.isReintentable()){
-								logger.error("Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada", e);
-								return;
-							}else{
-								logger.fatal("Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable", e);
-							}
-						}
+					ejecutaTarea(handler, listPendientes, control);
 
-						logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
-						handler.marcaComoEnviados(control);
-
-					} else {
-						logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
-					}
 				}
 			} else {
 				logger.warn("El registro de cambios en BD aún no está disponible");
 			}
 		} finally {
 			running = false;
-			logger.info("[fin] Detección de cambios en BD y envío de las modificaciones a WEBCOM mediante REST");
+			logger.info("[fin] Detección de cambios en BD  WEBCOM mediante REST");
 		}
 
+	}
+
+	public void ejecutaTarea(DetectorCambiosBD handler, List listPendientes, Class control) {
+
+		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
+			logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
+			try {
+				handler.invocaServicio(listPendientes);
+			} catch (ErrorServicioWebcom e) {
+				if (e.isReintentable()) {
+					logger.error(
+							"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
+							e);
+					return;
+				} else {
+					logger.fatal(
+							"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
+							e);
+				}
+			} 
+
+			logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+			handler.marcaComoEnviados(control);
+
+		} else {
+			logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
+		}
 	}
 
 	/**
@@ -122,7 +183,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				}
 
 			}
-		}// end check event
+		} // end check event
 
 	}
 

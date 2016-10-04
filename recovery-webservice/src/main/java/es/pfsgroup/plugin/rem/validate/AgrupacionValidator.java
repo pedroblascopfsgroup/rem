@@ -23,7 +23,9 @@ public interface AgrupacionValidator extends GenericService{
 	public static final String ERROR_CARTERA_NULL = "La cartera esta vacia y no se puede comparar con la agrupación.";
 	public static final String ERROR_CARTERA_NOT_EQUAL = "La cartera del activo y la agrupación no coinciden.";	
 	public static final String ERROR_TIPO_NULL = "El tipo (alquiler/venta) esta vacio y no se puede comparar con la agrupación.";
-	public static final String ERROR_TIPO_NOT_EQUAL = "El tipo (alquiler/venta) del activo y la agrupación no coinciden.";	
+	public static final String ERROR_TIPO_NOT_EQUAL = "El tipo (alquiler/venta) del activo y la agrupación no coinciden.";
+	public static final String ERROR_NOT_ASISTIDA = "El activo no es asistido.";
+	public static final String ERROR_IS_PERIMETRO = "El activo está en el perímetro.";
 	
 	
 	/**

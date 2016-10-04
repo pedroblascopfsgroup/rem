@@ -133,6 +133,9 @@ public class VBusquedaActivosPrecios implements Serializable {
     @Column(name="FECHA_DESCUENTO")
     private Date fechaDescuento;
     
+    @Column(name="PRO_ID")
+    private String idPropietario;
+    
 
 	public String getId() {
 		return id;
@@ -414,6 +417,14 @@ public class VBusquedaActivosPrecios implements Serializable {
 
 	public void setFechaDescuento(Date fechaDescuento) {
 		this.fechaDescuento = fechaDescuento;
+	}
+
+	public String getIdPropietario() {
+		return idPropietario;
+	}
+
+	public void setIdPropietario(String idPropietario) {
+		this.idPropietario = idPropietario;
 	}
 
 

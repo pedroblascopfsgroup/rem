@@ -325,6 +325,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoProvincia", dto.getProvinciaCodigo());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.municipio", dto.getMunicipio(), true);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPostal", dto.getCodPostal());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
    		
    		if(!Checks.esNulo(dto.getConFsvVenta())) {
    			if(BooleanUtils.toBoolean(dto.getConFsvVenta())) {

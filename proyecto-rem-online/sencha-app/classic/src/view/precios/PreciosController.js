@@ -4,10 +4,16 @@ Ext.define('HreRem.view.precios.PreciosController', {
 
 	onSearchManualClick: function(btn) {
 		
-		var me = this;
-		me.lookupReference('generacionPropuestasActivosList').expand();	
-		this.lookupReference('generacionPropuestasActivosList').getStore().loadPage(1);
-        
+		var me = this,
+		searchForm = this.lookupReference('generacionPropuestasManual');
+		
+		if(searchForm.isValid()) {
+			me.lookupReference('generacionPropuestasActivosList').expand();	
+			this.lookupReference('generacionPropuestasActivosList').getStore().loadPage(1);
+		}
+		else {
+			me.fireEvent("errorToast", HreRem.i18n("msg.busqueda.invalida"));
+		}
 	},
 	
 	onSearchHistoricoClick: function(btn) {

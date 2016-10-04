@@ -22,7 +22,12 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
     initComponent: function () {
 
         var me = this;
+        
+        me.startValidityDate = '';
+        me.endValidityDate = '';
+        
         me.setTitle(HreRem.i18n('title.valoraciones.precios'));
+        
         var items= [
             {
 				xtype:'fieldsettable',
@@ -40,33 +45,12 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							bind		: {
 											store: '{storePreciosVigentes}'
 							},
-							/*viewConfig: { 
-								getRowClass: function(record) { 
-									
-									var fechaFin = record.get("fechaFin");
-									var cssClass = Ext.isEmpty(fechaFin) || record.get("fechaFin") >= $AC.getCurrentDate()? '' : 'grid-warning-row';
-						            return cssClass; 
-						        }
-							},*/
 							columns		: {
 											defaults: {
 							    				menuDisabled: true,
 							    				sortable: false
 							    			},
 											items:[
-											
-												/*{
-									    			xtype: 'actioncolumn',
-									    			cls: 'grid-no-seleccionable-primera-col',
-											        handler: 'onPasarPrecioHistoricoClick',
-											        items: [{
-											            tooltip: 'Pasar a historico',
-											            iconCls: 'x-fa fa-history'
-											        }],
-										            flex     : 0.3,            
-										            align: 'center',
-										            hideable: false
-										       },*/
 											   {
 												dataIndex: 'descripcionTipoPrecio',
 												cls: 'grid-no-seleccionable-primera-col',
@@ -80,7 +64,10 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												dataIndex: 'importe',
 												renderer: Utils.rendererCurrency,
 									        	editor: {
-									        		xtype:'numberfield', 
+									        		xtype:'numberfield',
+									        		maskRe: /[0-9.]/,
+									        		allowNegative: false,
+									        		minValue: 0,
 									        		hideTrigger: true,
 									        		keyNavEnable: false,
 									        		mouseWheelEnable: false,
@@ -111,10 +98,26 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								        		tdCls: 'grid-no-seleccionable-td',												
 												dataIndex: 'fechaInicio',
 												formatter: 'date("d/m/Y")',
-									        	editor: {
-									        		xtype: 'datefield'
-									        	},
-												flex: 1
+												flex: 1,
+												editor:{
+						                            xtype: 'datefield',
+						                            maxValue: Ext.Date.format(new Date(),'d/m/Y'),
+						                            maxText: 'No se puede establecer la fecha en el futuro',
+						                            validationEvent: 'change',
+						                            reference: 'dateFieldStartDate',
+						                            validator: function(value){
+						                                me.startValidityDate=value;
+						                                if(typeof me.endValidityDate !== 'undefined' && !Ext.isEmpty(me.endValidityDate)) {
+						                                    if(!Ext.isEmpty(me.startValidityDate) && me.startValidityDate <= me.endValidityDate) {
+						                                        return true;
+						                                    } else {
+						                                        return false;
+						                                    }
+						                                } else {
+						                                    return true;
+						                                }
+						                            }
+												  }
 											   },
 											   {
 												text: HreRem.i18n('header.fecha.fin'),
@@ -122,10 +125,17 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								        		tdCls: 'grid-no-seleccionable-td',												
 												dataIndex: 'fechaFin',
 												formatter: 'date("d/m/Y")',
-									        	editor: {
-									        		xtype: 'datefield'
-									        	},
-												flex: 1
+												flex: 1,
+												editor: {
+						                            xtype: 'datefield',
+						                            minValue: Ext.Date.format(new Date(),'d/m/Y'),
+						                            minText: 'No se puede establecer la fecha en el pasado',
+						                            validationEvent: 'change',
+						                            validator: function(value){
+						                            	me.endValidityDate=value;
+						                            	return true;
+						                            }
+						                          }
 											   },
 											   {
 												text: HreRem.i18n('header.gestor'),
@@ -146,12 +156,11 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						    				]
 							},
 							saveSuccessFn: function() {
-								me.down("[reference=gridHistoricoPrecios]").getStore().load();								
+								this.up('valorespreciosactivo').funcionRecargar();
 							}
 					},
 					{
 						xtype: 'container',
-						//colspan: 3,
 						style: {
 							backgroundColor: '#E5F6FE'
 						},
@@ -256,25 +265,29 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.neto.contable'),
-							   bind:  '{valoraciones.vnc}'
+							   bind:  '{valoraciones.vnc}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='01')
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.de.referencia'),
-							   bind:  '{valoraciones.valorReferencia}'
+							   bind:  '{valoraciones.valorReferencia}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')  
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.asesoramiento.liquidativo'),
-							   bind:  '{valoraciones.valorAsesoramientoLiquidativo}'
+							   bind:  '{valoraciones.valorAsesoramientoLiquidativo}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.vacbe'),
-							   bind:  '{valoraciones.vacbe}'
+							   bind:  '{valoraciones.vacbe}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='02')
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
@@ -340,7 +353,10 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.vpo'),
-							   bind:  '{valoraciones.valorLegalVpo}'
+							   bind: {
+			                		value: '{valoraciones.valorLegalVpo}',
+				    				hidden: '{!valoraciones.vpo}'
+			                	}
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
@@ -379,8 +395,6 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								items:[
 								   {   
 									   text: HreRem.i18n('header.descripcion'),
-									   //dataIndex: 'descripcionTipoPrecio',
-									   //sortable: true,
 									   flex: 0.4
 							       },
 								   {
@@ -424,21 +438,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 									flex: 1
 								   }
 			    				]
-
-							}/* HREOS-627 Paginación eliminada
-							,
-							dockedItems : [
-						        {
-						            xtype: 'pagingtoolbar',
-						            dock: 'bottom',
-						            itemId: 'historicoPreciosToolbar',
-						            inputItemWidth: 100,
-						            displayInfo: true,
-						            bind: {
-						                store: '{storeHistoricoValoresPrecios}'
-						            }
-						        }
-							]	*/					 
+							}
 						}
 				]
             }
@@ -446,19 +446,21 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
         
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
-    	
    }, 
    
    	afterLoad: function() {
 		var me = this;
-		me.lookupController().getViewModel().get("storePreciosVigentes").load();
-		me.lookupController().getViewModel().get("storeHistoricoValoresPrecios").load();
+		me.lookupController().getViewModel().getData().storePreciosVigentes.load();
+		me.lookupController().getViewModel().getData().storeHistoricoValoresPrecios.load();
 	},
    
    funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+		});
    },
    
  //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar

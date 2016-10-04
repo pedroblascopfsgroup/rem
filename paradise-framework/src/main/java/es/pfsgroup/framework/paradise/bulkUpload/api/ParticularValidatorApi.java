@@ -7,8 +7,12 @@ public interface  ParticularValidatorApi {
 	public String getCarteraLocationByNumAct (String numActive);
 	
 	public String getCarteraLocationTipPatrimByNumAct (String numActive);
+	
+	public Boolean esMismaCarteraLocationByNumAgrupRem (String numAgrupRem);
 
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
+	
+	public Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 	
 	public Boolean existeActivo(String numActivo);
 	
@@ -29,5 +33,7 @@ public interface  ParticularValidatorApi {
 	public Boolean existeBloqueoPreciosActivo(String numActivo);
 	
 	public Boolean existeOfertaAprobadaActivo(String numActivo);
+	
+	public Boolean esActivoIncluidoPerimetro(String numActivo);
 	
 }

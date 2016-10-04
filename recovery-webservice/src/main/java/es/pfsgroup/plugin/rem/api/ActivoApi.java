@@ -14,6 +14,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -355,6 +356,20 @@ public interface ActivoApi {
 		
 		public PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 		
+		/**
+		 * Actualiza el activo cuando se incluye en una agrupación asistida.
+		 * @param activo
+		 * @return Activo
+		 */
+		public Activo updateActivoAsistida(Activo activo);
+		
+		/**
+		 * Actualiza los valores del perímetro del activo con los valores para un activo asistido.
+		 * @param perimetroActivo
+		 * @return PerimetroActivo
+		 */
+		public PerimetroActivo updatePerimetroAsistida(PerimetroActivo perimetroActivo);
+		
 		public ActivoBancario saveOrUpdateActivoBancario(ActivoBancario activoBancario);
 		
 		/**
@@ -386,6 +401,14 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public boolean isActivoVendido(Activo activo);
+		
+		/**
+		 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo Asistida (PDV)
+		 * 
+		 * @param activo
+		 * @return
+		 */
+		public boolean isIntegradoAgrupacionAsistida(Activo activo);
 
 		/**
 		 * Este método da de baja un condicionante por su ID.
@@ -403,6 +426,20 @@ public interface ActivoApi {
 		 * @return Devuelve si la operación ha sido satisfactoria, o no.
 		 */
 		public Boolean createHistoricoMediador(DtoHistoricoMediador dto);
+
+		/**
+		 * Comprueba si el activo es asistido
+		 * @param activo
+		 * @return
+		 */
+		public boolean isActivoAsistido(Activo activo);
+		
+		/**
+		 * Obtiene el numero de activos PUBLICADOS de la agrupacion.
+		 * PUBLICADOS - DD_EPU (Publicado, forzado, oculto, precio oculto y forzado con precio oculto)
+		 * 
+		 * @param activos
+		 * @return
+		 */
+		public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos);
     }
-
-

@@ -31,11 +31,11 @@ public class App {
 					System.out.println("Número de parametros incorrectos: ejem: sh run.sh tasaciones 22 nombreGestor BANKIA/HAYA");
 					System.exit(1);
 				}
-			} else if (args[0].equals("infoCliente")) {
+			} else if (args[0].equals("infoCliente")) { 
 				System.out.println("Ejecutando servicio infoCliente");
 				if (args.length == 4) {
-					//GMPAJC11_INS numclienteIns = uvemManager.obtenerClientesUrsus(args[1], args[2], args[3]);
-					//System.out.println("Resultado llamada resultadoNumCliente: " + numclienteIns.getDniNifDelTitularDeLaOfertanudnio() + "\n");
+					Integer numcliente = uvemManager.obtenerNumClienteUrsus(args[1], args[2], args[3]);
+					System.out.println("Resultado llamada resultadoNumCliente: " + numcliente + "\n");
 					
 					GMPAJC93_INS datosClienteIns = uvemManager.obtenerDatosClienteUrsus(args[1], args[2], args[3]);
 					System.out.println("Resultado llamada resultadoDatosCliente: " + datosClienteIns.getNombreDelClientenoclie()+ "\n");

@@ -104,8 +104,17 @@ public class App {
 					System.exit(1);
 				}
 				
-			}else {
-				System.out.println("Servicios admintidos: tasaciones,infoCliente,instanciaDecision");
+			} if (args[0].equals("consultaDatosPrestamo")) {
+				System.out.println("Ejecutando servicio consultaDatosPrestamo");
+				if (args.length == 3) {
+					uvemManager.consultaDatosPrestamo(args[1], new Integer(args[2]).intValue());
+				} else {
+					System.out.println("Número de parametros incorrectos: ejem: sh run.sh consultaDatosPrestamo <numExpedienteRiesgo> <tipoRiesgo>");
+					System.exit(1);
+				}
+			}
+				else {			
+				System.out.println("Servicios admintidos: tasaciones,infoCliente,instanciaDecision,consultaDatosPrestamo");
 				System.exit(1);
 			}
 		} catch (Exception e) {

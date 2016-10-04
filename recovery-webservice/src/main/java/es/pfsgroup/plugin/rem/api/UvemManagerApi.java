@@ -55,9 +55,20 @@ public interface UvemManagerApi {
 /*******************************************CLIENTES URSUS***************************************************/
 	
 	/**
+	 * Devuelve los clientes Ursus a partir de los datos pasados por parámetro
+	 * 
+	 * @param nDocumento: documento identificativo del cliente a consultar
+	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
+	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
+	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
+	 *            Otros persona física. J Otros persona jurídica.
+	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
+	 */
+	public GMPAJC11_INS obtenerClientesUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException;
+	
+	
+	/**
 	 * Devuelve los datos de un cliente Ursus a partir de los datos pasados por parámetro
-	 * los datos del mismo, tanto identificativos como de cara a poder dar
-	 * cumplimiento a la normativa relativa a PBC.
 	 * 
 	 * @param nDocumento: documento identificativo del cliente a consultar
 	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
@@ -69,8 +80,7 @@ public interface UvemManagerApi {
 	public GMPAJC93_INS obtenerDatosClienteUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException;
 	
 
-	
-	
+		
 	/**
 	 * Servicio GMPAJC11_INS que a partir del nº y tipo de documento, así como Entidad del
 	 * Cliente (y tipo) devolverá el/los nº cliente/s Ursus coincidentes

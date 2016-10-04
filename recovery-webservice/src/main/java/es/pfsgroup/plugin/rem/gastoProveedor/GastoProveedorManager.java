@@ -412,6 +412,65 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setDestinatariosPagoCodigo(detalleGasto.getDestinatariosPago().getCodigo());
 			}
 			
+			if(!Checks.esNulo(detalleGasto.getReembolsoTercero())){
+				dto.setReembolsoTercero(detalleGasto.getReembolsoTercero()== 1 ? true : false);
+			}
+			if(!Checks.esNulo(detalleGasto.getIncluirPagoProvision())){
+				dto.setIncluirPagoProvision(detalleGasto.getIncluirPagoProvision()== 1 ? true : false);
+			}
+			if(!Checks.esNulo(detalleGasto.getAbonoCuenta())){
+				dto.setAbonoCuenta(detalleGasto.getAbonoCuenta() == 1 ? true : false);
+			}
+			
+			
+			if(!Checks.esNulo(detalleGasto.getIbanAbonar())){
+				String ibanCompleto= detalleGasto.getIbanAbonar();
+				String iban1="";
+				String iban2="";
+				String iban3="";
+				String iban4="";
+				String iban5="";
+				String iban6="";
+				for(int i=0; i<ibanCompleto.length();i++){
+					if(i<=3){
+						iban1= iban1+ibanCompleto.charAt(i);
+					}
+					else if(i>3 && i<=7){
+						iban2= iban2+ibanCompleto.charAt(i);
+					}
+					else if(i>7 && i<=11){
+						iban3= iban3+ibanCompleto.charAt(i);
+					}
+					else if(i>11 && i<=15){
+						iban4= iban4+ibanCompleto.charAt(i);
+					}
+					else if(i>15 && i<=19){
+						iban5= iban5+ibanCompleto.charAt(i);
+					}
+					else if(i>19 && i<=23){
+						iban6= iban6+ibanCompleto.charAt(i);
+					}
+					
+				}
+				dto.setIban1(iban1);
+				dto.setIban2(iban2);
+				dto.setIban3(iban3);
+				dto.setIban4(iban4);
+				dto.setIban5(iban5);
+				dto.setIban6(iban6);
+			}
+			
+			dto.setIban(detalleGasto.getIbanAbonar());
+			dto.setTitularCuenta(detalleGasto.getTitularCuentaAbonar());
+			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
+			
+			if(!Checks.esNulo(detalleGasto.getPagadoConexionBankia())){
+				dto.setPagadoConexionBankia(detalleGasto.getPagadoConexionBankia() == 1 ? true : false);
+			}
+			dto.setOficina(detalleGasto.getOficinaBankia());
+			dto.setNumeroConexion(detalleGasto.getNumeroConexionBankia());
+			
+			
 		}
 		
 
@@ -461,6 +520,41 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagadorCodigo());
 						detalleGasto.setTipoPagador(tipoPagador);
 					}
+					
+					if(!Checks.esNulo(dto.getReembolsoTercero())){
+						detalleGasto.setReembolsoTercero(dto.getReembolsoTercero() ? 1 : 0);
+					}
+					
+					
+						if(!Checks.esNulo(dto.getIncluirPagoProvision())){
+							detalleGasto.setIncluirPagoProvision(dto.getIncluirPagoProvision() ? 1 : 0);
+						}
+						
+						if(!Checks.esNulo(dto.getAbonoCuenta())){
+							detalleGasto.setAbonoCuenta(dto.getAbonoCuenta() ? 1 : 0);
+						}
+						if(!Checks.esNulo(dto.getIban())){
+							detalleGasto.setIbanAbonar(dto.getIban());
+						}
+						if(!Checks.esNulo(dto.getTitularCuenta())){
+							detalleGasto.setTitularCuentaAbonar(dto.getTitularCuenta());
+						}
+						if(!Checks.esNulo(dto.getNifTitularCuenta())){
+							detalleGasto.setNifTitularCuentaAbonar(dto.getNifTitularCuenta());
+						}
+					
+						if(!Checks.esNulo(dto.getPagadoConexionBankia())){
+							detalleGasto.setPagadoConexionBankia(dto.getPagadoConexionBankia() ? 1 : 0);
+						}
+						if(!Checks.esNulo(dto.getOficina())){
+							detalleGasto.setOficinaBankia(dto.getOficina());
+						}
+						if(!Checks.esNulo(dto.getNumeroConexion())){
+							detalleGasto.setNumeroConexionBankia(dto.getNumeroConexion());
+						}
+							
+						
+					
 					
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();

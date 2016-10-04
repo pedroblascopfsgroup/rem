@@ -94,7 +94,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                             }
 							me.getView().unmask();
-							//me.refrescarGasto(form.refreshAfterSave);
+							me.refrescarGasto(form.refreshAfterSave);
 			            }
 					});
 				}
@@ -635,6 +635,99 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		return criteria;
 	}
     
+	haCambiadoIban: function(field, value){
+		var me= this;
+		
+		var ibanfield= me.lookupReference('iban');
+		var iban1= me.lookupReference('iban1').getValue();
+		var iban2= me.lookupReference('iban2').getValue();
+		var iban3= me.lookupReference('iban3').getValue();
+		var iban4= me.lookupReference('iban4').getValue();
+		var iban5= me.lookupReference('iban5').getValue();
+		var iban6= me.lookupReference('iban6').getValue();
+		
+		ibanfield.setValue(iban1+iban2+iban3+iban4+iban5+iban6);
+		
+	},
 	
+	haCambiadoAbonoCuenta: function(field, value){
+		var me= this;
+		if(value){
+			me.lookupReference('ibanRef').setDisabled(false);
+			me.lookupReference('titularCuentaRef').setDisabled(false);
+			me.lookupReference('nifTitularCuentaRef').setDisabled(false);
+//			
+			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
+			me.lookupReference('incluirPagoProvisionRef').setValue(false);
+			me.lookupReference('oficinaRef').setDisabled(true);
+			me.lookupReference('numeroConexionRef').setDisabled(true);
+			
+			
+			
+		}
+		else{
+			me.lookupReference('titularCuentaRef').setDisabled(true);
+			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
+			me.lookupReference('ibanRef').setDisabled(true);
+		}
+		
+	},
+	
+	haCambiadoPagadoBankia: function(field, value){
+		var me= this;
+		if(value){
+			me.lookupReference('oficinaRef').setDisabled(false);
+			me.lookupReference('numeroConexionRef').setDisabled(false);
+//			
+			me.lookupReference('abonoCuentaRef').setValue(false);
+			me.lookupReference('incluirPagoProvisionRef').setValue(false);
+			me.lookupReference('titularCuentaRef').setDisabled(true);
+			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
+			me.lookupReference('ibanRef').setDisabled(true);
+			
+
+		}
+		else{
+			me.lookupReference('oficinaRef').setDisabled(true);
+			me.lookupReference('numeroConexionRef').setDisabled(true);
+
+		}
+	},
+	
+	haCambiadoPagadoProvision: function(field, value){
+		var me= this;
+		if(value){
+			me.lookupReference('abonoCuentaRef').setValue(false);
+			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
+			me.lookupReference('titularCuentaRef').setDisabled(true);
+			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
+			me.lookupReference('ibanRef').setDisabled(true);
+			me.lookupReference('oficinaRef').setDisabled(true);
+			me.lookupReference('numeroConexionRef').setDisabled(true);
+			
+		}
+		else{
+
+		}
+	},
+	
+	haCambiadoReembolsarPagoTercero: function(field, value){
+		var me= this;
+		if(value){
+			me.lookupReference('fieldSetSuplido').setDisabled(false);
+			me.lookupReference('incluirPagoProvisionRef').setDisabled(false);
+			me.lookupReference('abonoCuentaRef').setDisabled(false);
+//			me.lookupReference('ibanRef').setDisabled(false);
+			me.lookupReference('pagadoConexionBankiaRef').setDisabled(false);
+			
+		}
+		else{
+			me.lookupReference('fieldSetSuplido').setDisabled(true);
+//			me.lookupReference('ibanRef').setDisabled(true);
+			me.lookupReference('abonoCuentaRef').setValue(false);
+			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
+			me.lookupReference('incluirPagoProvisionRef').setValue(false);
+		}
+	}
 
 });

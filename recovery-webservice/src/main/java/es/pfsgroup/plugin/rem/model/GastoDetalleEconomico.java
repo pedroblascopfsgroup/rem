@@ -126,8 +126,35 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_DEP_ID")
-    private DDDestinatarioPago destinatariosPago;   
+    private DDDestinatarioPago destinatariosPago;
     
+    @Column(name="GDE_REEMBOLSO_TERCERO")
+    private Integer reembolsoTercero;
+    
+    @Column(name="GDE_INCLUIR_PAGO_PROVISION")
+    private Integer incluirPagoProvision;
+    
+    @Column(name="GDE_ABONO_CUENTA")
+    private Integer abonoCuenta;
+    
+    @Column(name="GDE_IBAN")
+    private String ibanAbonar;
+    
+    @Column(name="GDE_TITULAR_CUENTA")
+    private String titularCuentaAbonar;
+    
+    @Column(name="GDE_NIF_TITULAR_CUENTA")
+    private String nifTitularCuentaAbonar;
+    
+    @Column(name="GDE_PAGADO_CONEXION_BANKIA")
+    private Integer pagadoConexionBankia;
+    
+    @Column(name="GDE_NUMERO_CONEXION")
+    private String numeroConexionBankia;
+    
+    @Column(name="GDE_OFICINA_BANKIA")
+    private String oficinaBankia;
+
     
 	@Version   
 	private Long version;
@@ -345,5 +372,78 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	public void setDestinatariosPago(DDDestinatarioPago destinatariosPago) {
 		this.destinatariosPago = destinatariosPago;
 	}
+
+	public Integer getReembolsoTercero() {
+		return reembolsoTercero;
+	}
+
+	public void setReembolsoTercero(Integer reembolsoTercero) {
+		this.reembolsoTercero = reembolsoTercero;
+	}
+
+	public Integer getIncluirPagoProvision() {
+		return incluirPagoProvision;
+	}
+
+	public void setIncluirPagoProvision(Integer incluirPagoProvision) {
+		this.incluirPagoProvision = incluirPagoProvision;
+	}
+
+	public Integer getAbonoCuenta() {
+		return abonoCuenta;
+	}
+
+	public void setAbonoCuenta(Integer abonoCuenta) {
+		this.abonoCuenta = abonoCuenta;
+	}
+
+	public String getIbanAbonar() {
+		return ibanAbonar;
+	}
+
+	public void setIbanAbonar(String ibanAbonar) {
+		this.ibanAbonar = ibanAbonar;
+	}
+
+	public String getTitularCuentaAbonar() {
+		return titularCuentaAbonar;
+	}
+
+	public void setTitularCuentaAbonar(String titularCuentaAbonar) {
+		this.titularCuentaAbonar = titularCuentaAbonar;
+	}
+
+	public String getNifTitularCuentaAbonar() {
+		return nifTitularCuentaAbonar;
+	}
+
+	public void setNifTitularCuentaAbonar(String nifTitularCuentaAbonar) {
+		this.nifTitularCuentaAbonar = nifTitularCuentaAbonar;
+	}
+
+	public Integer getPagadoConexionBankia() {
+		return pagadoConexionBankia;
+	}
+
+	public void setPagadoConexionBankia(Integer pagadoConexionBankia) {
+		this.pagadoConexionBankia = pagadoConexionBankia;
+	}
+
+	public String getNumeroConexionBankia() {
+		return numeroConexionBankia;
+	}
+
+	public void setNumeroConexionBankia(String numeroConexionBankia) {
+		this.numeroConexionBankia = numeroConexionBankia;
+	}
+
+	public String getOficinaBankia() {
+		return oficinaBankia;
+	}
+
+	public void setOficinaBankia(String oficinaBankia) {
+		this.oficinaBankia = oficinaBankia;
+	}
+
 
 }

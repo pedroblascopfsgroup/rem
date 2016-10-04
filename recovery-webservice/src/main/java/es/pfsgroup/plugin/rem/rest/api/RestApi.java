@@ -21,7 +21,7 @@ public interface RestApi {
 	}
 
 	public enum TRANSFORM_TYPE {
-		NONE, BOOLEAN_TO_INTEGER
+		NONE, BOOLEAN_TO_INTEGER, FLOAT_TO_BIGDECIMAL
 	}
 
 	public static final String CODE_ERROR = "ERROR";
@@ -118,10 +118,13 @@ public interface RestApi {
 	 */
 	public String getClientIpAddr(HttpServletRequest request);
 
-	@SuppressWarnings("rawtypes")
 	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto, Class entity, Long activoId)
+	public Serializable saveDtoToBbdd(Object dto,Serializable... objetoEntity)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException;
+
+	@SuppressWarnings("rawtypes")
+	public Serializable obtenerObjetoEntity(Long activoId, Class entity,String fieldActivo)
+			throws InstantiationException, IllegalAccessException;
 
 }

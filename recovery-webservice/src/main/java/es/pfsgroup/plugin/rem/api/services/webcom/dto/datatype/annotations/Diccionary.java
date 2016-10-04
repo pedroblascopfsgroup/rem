@@ -24,6 +24,7 @@ public @interface Diccionary {
 
 	Class<? extends Payload>[] payload() default {};
 	
-	String foreingField() default "codigo";
+	String foreingField() default "codigo";	
+	
 
 }

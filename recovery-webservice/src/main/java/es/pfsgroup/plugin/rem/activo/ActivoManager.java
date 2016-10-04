@@ -439,12 +439,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteValoracionPrecio(Long id) {
-
+		
+		return deleteValoracionPrecioConGuardadoEnHistorico(id,true);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico) {
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		ActivoValoraciones activoValoracion = genericDao.get(ActivoValoraciones.class, filtro);
-		saveActivoValoracionHistorico(activoValoracion);
-		// genericDao.deleteById(ActivoValoraciones.class, id);
-		activoDao.deleteValoracionById(id);
+		
+		if(guardadoEnHistorico) {
+			saveActivoValoracionHistorico(activoValoracion);
+			activoDao.deleteValoracionById(id);
+		}
+		else if(!Checks.esNulo(activoValoracion.getGestor()) && !adapter.getUsuarioLogado().equals(activoValoracion.getGestor())) {
+			//Si el usuario logado es distinto al que ha creado la valoracion, no puede borrarla sin historico
+			return false;
+		}
+		else {
+			//Al anular el precio vigente, se hace un borrado lógico, y no se inserta en el histórico
+			genericDao.deleteById(ActivoValoraciones.class, id);
+		}
 
 		return true;
 	}

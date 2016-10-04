@@ -161,7 +161,45 @@
         <level value="debug"/>
         <appender-ref ref="fileRest" />
     </logger>
-    
+        <logger name="es.pfsgroup.plugin.rem.controller.ClientesController" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
+    </logger>
+    </logger>
+        <logger name="es.pfsgroup.plugin.rem.controller.VisitasController" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
+    </logger>
+    </logger>
+        <logger name="es.pfsgroup.plugin.rem.controller.OfertasController" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
+    </logger>
+    </logger>
+        <logger name="es.pfsgroup.plugin.rem.controller.TrabajoController" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
+    </logger>
+    </logger>
+        <logger name="es.pfsgroup.plugin.rem.controller.ComisionesController" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
+    </logger>
+    </logger>
+        <logger name="es.pfsgroup.plugin.rem.controller.NotificacionesController" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
+    </logger>
+    </logger>
+        <logger name="es.pfsgroup.plugin.rem.controller.InformemediadorController" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
+    </logger>
+    </logger>
+        <logger name="es.pfsgroup.plugin.rem.controller.Portales" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="fileRest" />
+    </logger>
     
     <!-- Descomentar para Ver las SQL	-->
     <!--<logger name="org.hibernate.SQL" additivity="false">

@@ -412,7 +412,7 @@ public class UvemManager implements UvemManagerApi {
 		es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPAJC93_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC93_INS();
 		
-		cabeceraFuncional.setIDDSAQ("CLDC");
+		cabeceraFuncional.setIDDSAQ("CONS");
 		logger.info("IDDSAQ: " + cabeceraFuncional.getIDDSAQ());	
 		System.out.println("IDDSAQ: " + cabeceraFuncional.getIDDSAQ());	
 		cabeceraFuncional.setCOFRAQ("168"); 

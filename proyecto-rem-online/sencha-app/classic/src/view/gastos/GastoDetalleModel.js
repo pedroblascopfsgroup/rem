@@ -1,7 +1,8 @@
 Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.gastodetalle',
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto'],
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto',
+    			'HreRem.model.BusquedaTrabajo'],
     
     data: {
     	gasto: null,
@@ -210,6 +211,34 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'resultadosImpugnacion'}
 			}
+    	},
+    	
+    	filtroComboSubtipoTrabajo: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposTrabajo'}
+			}		
+    		
+    	},
+    	
+    	seleccionTrabajosGasto: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.BusquedaTrabajo',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/trabajosgasto.json',
+		        remoteUrl: 'trabajo/findAll',
+		        actionMethods: {read: 'POST'}
+	    	},
+	    	remoteSort: true,
+	    	remoteFilter: true,
+	        listeners : {
+	            beforeload : 'paramLoading'
+	        }
+    		
+    		
     	}
     	
 	

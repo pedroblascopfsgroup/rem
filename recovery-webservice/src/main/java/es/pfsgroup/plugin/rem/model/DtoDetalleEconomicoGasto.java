@@ -21,7 +21,6 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
-	private Long id;
 	private Long gastoProveedor;
 	private Double importePrincipalSujeto;
 	private Double importePrincipalNoSujeto;
@@ -45,12 +44,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private String tipoPagadorCodigo;
 	private String tipoPago;
 	private String destinatariosPagoCodigo;
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+
 	public Long getGastoProveedor() {
 		return gastoProveedor;
 	}

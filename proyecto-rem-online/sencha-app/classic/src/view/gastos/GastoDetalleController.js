@@ -584,9 +584,57 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickBotonIncluirTrabajosGasto: function(btn) {
 		
 		var me = this;
-    	var idGasto = me.getViewModel().get("gasto.id");
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.gastos.SeleccionTrabajosGasto",{idGAsto: idGasto, parent: me.getView()});
+    	var gasto = me.getViewModel().get("gasto");
+    	Ext.create("HreRem.view.gastos.SeleccionTrabajosGasto",{gasto: gasto, parent: me.getView()}).show();
+	},
+	
+	onClickBotonCancelarSeleccionTrabajos: function(btn) {
+		btn.up('window').destroy();
+	},
+	
+	onSearchClick: function(btn) {
+		
+		var me = this;
+		this.lookupReference('seleccionTrabajosGastoList').getStore().loadPage(1);
+        
+	},
+	
+		// Funcion que se ejecuta al hacer click en el botón limpiar
+	onCleanFiltersClick: function(btn) {
+
+		btn.up('panel').getForm().reset();
+			
+	},
+	
+	paramLoading: function(store, operation, opts) {
+		
+		var me = this;
+		
+		var searchForm = me.lookupReference('seleccionTrabajosGastoSearch');
+		if (searchForm.isValid()) {
+			
+			var criteria = me.getFormCriteria(searchForm);
+			store.getProxy().extraParams = criteria;
+			
+			return true;		
+		}
+	},
+	
+	getFormCriteria: function(form) {
+    	
+    	var me = this, initialData = {};
+    	
+		var criteria = Ext.apply(initialData, form ? form.getValues() : {});
+		
+		Ext.Object.each(criteria, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete criteria[key];
+			}
+		});
+
+		return criteria;
 	}
+    
 	
 
 });

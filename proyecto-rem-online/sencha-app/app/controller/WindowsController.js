@@ -33,7 +33,7 @@ Ext.define('HreRem.controller.WindowsController', {
     
     control: {   	
 
-    	'activosmain, activosdetallemain, trabajosdetalle, agrupacionesdetallemain, formBase' : {    		
+    	'activosmain, activosdetallemain, trabajosdetalle, agrupacionesdetallemain, formBase, gastodetallemain' : {    		
     		openModalWindow : 'openModalWindow'
 
     	}

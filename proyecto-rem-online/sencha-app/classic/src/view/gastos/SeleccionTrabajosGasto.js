@@ -7,17 +7,15 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGasto', {
         align : 'stretch',
         pack  : 'start'
     },
-    width	: Ext.Element.getViewportWidth() / 1.1,    
-    //height	: Ext.Element.getViewportHeight() > 600 ? 600 : Ext.Element.getViewportHeight() - 50 ,
-    closable: true,		
-    closeAction: 'hide',
+    width	: Ext.Element.getViewportWidth() / 1.2,    
+    height	: Ext.Element.getViewportHeight() > 600 ? 600 : Ext.Element.getViewportHeight() - 50 ,
     		
     controller: 'gastodetalle',
     viewModel: {
         type: 'gastodetalle'
     },
     
-    idGasto: null,
+    gasto: null,
     
     parent: null, 
     
@@ -35,13 +33,18 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGasto', {
     	var me = this;
     	
     	me.setTitle(HreRem.i18n('title.seleccion.trabajos'));
+    	
+    	me.buttons = [ { itemId: 'btnGuardar', text: 'Añadir selección', handler: 'onClickBotonAnyadirSeleccionTrabajos', disabled: true},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarSeleccionTrabajos'}];
+    	
     	me.items = [
     	
     	{
-    		xtype: 'trabajosgastosearch'
+    		xtype: 'selecciontrabajosgastosearch',
+    		reference: 'seleccionTrabajosGastoSearch'
     	},
     	{
-    		xtype: 'trabajosgastolist'
+    		xtype: 'selecciontrabajosgastolist',
+    		reference: 'seleccionTrabajosGastoList'
     	}
     		  
     	];
@@ -51,7 +54,12 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGasto', {
     
     resetWindow: function() {
     	var me = this;
-    	me.getViewModel().set('gasto.idGasto', me.idGasto);
+    	me.getViewModel().set('gasto', me.gasto);
+    	me.getViewModel().notify();
+    	
+    	Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().loadPage(1);
+  		});	
 
     }
 });

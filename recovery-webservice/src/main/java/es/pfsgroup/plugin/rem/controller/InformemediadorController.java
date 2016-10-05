@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,8 @@ import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
+import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -73,40 +76,46 @@ public class InformemediadorController {
 				if (errorsList.size() == 0) {
 
 					ActivoInfoComercial informeEntity = null;
+					
+					ActivoPropietarioActivo activoPropietarioActivo = (ActivoPropietarioActivo) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+							ActivoPropietarioActivo.class,"activo");
 
+					ArrayList<Serializable> entitys = new ArrayList<Serializable>();
 					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 						informeEntity = (ActivoLocalComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoLocalComercial.class,"activo");
-						informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, informeEntity);
+						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
 						ActivoEdificio edificioEntity = (ActivoEdificio) restApi
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoEdificio.class,"infoComercial.activo");
 						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class,"activo");
 						edificioEntity.setInfoComercial(informeEntity);
-						informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, informeEntity,edificioEntity);
+						entitys.add(informeEntity);
+						entitys.add(edificioEntity);
+						
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
 						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class,"activo");
-						informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, informeEntity);
+						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)) {
 						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class,"activo");
-						informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, informeEntity);
+						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
-						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
-								ActivoInfoComercial.class,"activo");
-						informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, informeEntity);
+						informeEntity = (ActivoPlazaAparcamiento) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoPlazaAparcamiento.class,"activo");
+						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
 						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class,"activo");
-						informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, informeEntity);
+						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
 						informeEntity = (ActivoVivienda) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoVivienda.class,"activo");
-						informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, informeEntity);
 					}
-
+					entitys.add(activoPropietarioActivo);
+					informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, entitys);
 					
 					if(informeEntity.getId()==null){
 						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
@@ -114,10 +123,10 @@ public class InformemediadorController {
 					}
 					map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 					map.put("idinformeMediadorRem", informeEntity.getId());
-					map.put("success", true);
+					map.put("success", new Boolean(true));
 				} else {
 					map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
-					map.put("success", false);
+					map.put("success", new Boolean(false));
 					map.put("errorMessages", errorsList);
 				}
 
@@ -127,6 +136,7 @@ public class InformemediadorController {
 			model.put("data", listaRespuesta);
 			model.put("error", "");
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e);
 			if (jsonData != null) {
 				model.put("id", jsonData.getId());

@@ -28,7 +28,6 @@ import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraAplicacionGMPAJC11_
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraFuncionalPeticion;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraTecnica;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu;
-import es.cajamadrid.servicios.GM.GMPAJC11_INS.VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu;
 import es.cajamadrid.servicios.GM.GMPAJC34_INS.GMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC34_INS.StructCabeceraAplicacionGMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;

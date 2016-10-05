@@ -2,7 +2,17 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'tasacionesactivo',    
     scrollable	: 'y',
+    requires: ['HreRem.model.TasacionBankiaModel'],
+    recordName: "tasacionBankia",
+	recordClass: "HreRem.model.TasacionBankiaModel",
 
+	listeners: {
+    	boxready: function() {
+    		me = this;
+    		me.lookupController().cargarTabData(me);
+    	}
+    },
+	
     initComponent: function () {
 
         var me = this;
@@ -34,6 +44,47 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 								bind:		'{valoraciones.tipoTasacionDescripcion}',
 								readOnly: true
 						    }
+				]
+            },
+            {
+				xtype:'fieldsettable',
+				title: HreRem.i18n('title.solicitud.tasacion.bankia'),
+				bind: {
+					hidden: '{!activo.isCarteraBankia}'
+				},
+				items :	[
+						    {
+								xtype: 'datefieldbase',
+								formatter: 'date("d/m/Y")',
+								fieldLabel: HreRem.i18n('fieldlabel.fecha.ultima.solicitud'),
+								width:		250,
+								bind:		'{tasacionBankia.fechaSolicitudTasacion}',
+								readOnly: true
+						    },
+						    {
+						    	xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.id.ultima.solicitud'),
+								width:		250,
+								bind:		'{tasacionBankia.externoID}',
+								readOnly: true
+						    },
+						    {
+						    	xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.gestor.solicitante'),
+								width:		250,
+								bind:		'{tasacionBankia.gestorSolicitud}',
+								readOnly: true
+						    },
+						    {
+			                	xtype: 'button',
+			                	reference: 'btnSolicitarTasacionBankia',
+			                	text: HreRem.i18n('btn.solicitar.tasacion.bankia'),
+			                	handler: 'onClickSolicitarTasacionBankia',
+			                	bind: {
+			                		disabled: '{tasacionBankia.deshabilitarBtnSolicitud}'
+			                	},
+			                	margin: '0 0 15 0'
+			                }
 				]
             },
             {

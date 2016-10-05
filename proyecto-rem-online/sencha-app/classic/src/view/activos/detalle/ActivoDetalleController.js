@@ -1363,6 +1363,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(!Ext.isEmpty(record.getData().fechaHasta) || !Ext.isEmpty(record.getData().usuarioBaja)){
 			grid.up().disableRemoveButton(true);
 		}
-	}
+	},
 	
+	onClickSolicitarTasacionBankia: function(btn) {
+		var me = this;
+    	var idActivo = me.getViewModel().get("activo.id");
+    	var url = $AC.getRemoteUrl('activo/solicitarTasacion');
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
+		
+		Ext.Ajax.request({
+    		url: url,
+    		params: {idActivo : idActivo},
+    		
+    		success: function(response, opts){
+    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    			debugger;
+    			btn.up('tasacionesactivo').funcionRecargar();
+    		},
+    		
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    },
+		    
+		    callback: function(record, operation) {
+    			me.getView().unmask();
+		    }
+    	});
+	}
+
 });

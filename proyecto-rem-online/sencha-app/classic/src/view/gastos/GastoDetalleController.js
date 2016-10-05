@@ -2,8 +2,23 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gastodetalle',  
 	
-    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto'],
+    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto'],
 	
+        control: {
+    	
+         'documentosgasto gridBase': {
+             abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
+             onClickRemove: 'borrarDocumentoAdjunto',
+             download: 'downloadDocumentoAdjunto',
+             afterupload: function(grid) {
+             	grid.getStore().load();
+             },
+             afterdelete: function(grid) {
+             	grid.getStore().load();
+             }
+         }
+     },
+    
 	cargarTabData: function (form) {
 		var me = this,
 		id = me.getViewModel().get("gasto.id"),
@@ -728,6 +743,44 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
 			me.lookupReference('incluirPagoProvisionRef').setValue(false);
 		}
+	},
+	
+	abrirFormularioAdjuntarDocumentos: function(grid) {
+		
+		var me = this,
+		idGasto = me.getViewModel().get("gasto.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoGasto", {entidad: 'gastos', idEntidad: idGasto, parent: grid}).show();
+		
+	},
+	
+	borrarDocumentoAdjunto: function(grid, record) {
+		var me = this;
+		idGasto = me.getViewModel().get("gasto.id");
+
+		record.erase({
+			params: {idGasto: idGasto},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 grid.fireEvent("afterdelete", grid);
+            },
+            failure: function(record, operation) {
+                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                  grid.fireEvent("afterdelete", grid);
+            }
+            
+        });	
+	},
+	
+	downloadDocumentoAdjunto: function(grid, record) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"gastosproveedor/bajarAdjuntoGasto."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idGasto=record.get("idGasto");
+		
+		me.fireEvent("downloadFile", config);
 	}
 
 });

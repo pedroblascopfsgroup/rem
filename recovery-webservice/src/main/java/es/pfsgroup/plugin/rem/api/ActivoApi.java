@@ -442,4 +442,16 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos);
+		
+		/**
+	     * Sirve para que después de guardar un fichero en el servicio de RestClient
+	     * guarde el identificador obtenido en base de datos 
+	     * 
+	     * @param webFileItem
+	     * @param idDocRestClient
+	     * @return
+	     * @throws Exception
+	     */
+	    @BusinessOperationDefinition("activoManager.uploadDocumento")
+		String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula) throws Exception;
     }

@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCuota;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFachada;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
@@ -241,6 +242,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivosAnulados", DDMotivoAnulacionGasto.class);
 		mapa.put("motivosRetenerPago", DDMotivoRetencionPago.class);
 		mapa.put("resultadosImpugnacion", DDResultadoImpugnacionGasto.class);
+		mapa.put("tiposDocumentosGasto", DDTipoDocumentoGasto.class);
 //		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 		return Collections.unmodifiableMap(mapa);
 	}

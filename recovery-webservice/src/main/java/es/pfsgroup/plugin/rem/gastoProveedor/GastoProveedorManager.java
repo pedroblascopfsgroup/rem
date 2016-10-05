@@ -2,17 +2,25 @@ package es.pfsgroup.plugin.rem.gastoProveedor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -22,29 +30,38 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoImpugnacion;
 import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
@@ -55,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -97,6 +115,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private GastoDao gastoDao;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -943,7 +964,141 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 	}
 	
+	@Override
+    @BusinessOperationDefinition("gastoProveedorManager.getAdjuntosGasto")
+	public List<DtoAdjunto> getAdjuntos(Long id) {
+		
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
+		try{
+			
+			GastoProveedor gasto = findOne(id);
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", id);
+			List<AdjuntoGasto> adjuntosGasto = genericDao.getList(AdjuntoGasto.class, filtro);
+
+
+			for (AdjuntoGasto adjunto : adjuntosGasto) {
+				DtoAdjunto dto = new DtoAdjunto();
+				
+				BeanUtils.copyProperties(dto, adjunto);
+				dto.setIdGasto(gasto.getId());
+				dto.setDescripcionTipo(adjunto.getTipoDocumentoGasto().getDescripcion());
+				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());				
+				
+				listaAdjuntos.add(dto);
+				
+			}
+		
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+
+		return listaAdjuntos;
+	}
 	
+	@Override
+	@BusinessOperation(overrides = "gastoProveedorManager.upload")
+	@Transactional(readOnly = false)
+	public String upload(WebFileItem fileItem) throws Exception {
+
+			ActivoAdjuntoActivo adjuntoActivo= null;
+			GastoProveedor gasto= findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
+			
+			Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+			
+			AdjuntoGasto adjuntoGasto= new AdjuntoGasto();
+			adjuntoGasto.setAdjunto(adj);
+			
+			adjuntoGasto.setGastoProveedor(gasto);
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+			DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao.get(DDTipoDocumentoGasto.class, filtro);
+			adjuntoGasto.setTipoDocumentoGasto(tipoDocumento);
+			
+			adjuntoGasto.setContentType(fileItem.getFileItem().getContentType());
+			
+			adjuntoGasto.setTamanyo(fileItem.getFileItem().getLength());
+			
+			adjuntoGasto.setNombre(fileItem.getFileItem().getFileName());
+
+			adjuntoGasto.setDescripcion(fileItem.getParameter("descripcion"));			
+			
+			adjuntoGasto.setFechaDocumento(new Date());
+
+			Auditoria.save(adjuntoGasto);
+	        
+			genericDao.save(AdjuntoGasto.class, adjuntoGasto);
+			
+			for(GastoProveedorActivo g: gasto.getActivos() ){
+				
+				if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto())){
+					activoAdapter.uploadDocumento(fileItem, g.getActivo(), adjuntoGasto.getTipoDocumentoGasto().getMatricula());
+					adjuntoActivo= g.getActivo().getAdjuntos().get(g.getActivo().getAdjuntos().size()-1);
+				}
+				
+			}
+			
+			if(!Checks.esNulo(adjuntoActivo)){
+				adjuntoGasto.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
+				genericDao.update(AdjuntoGasto.class, adjuntoGasto);
+			}
+			
+			//Copia de adjunto al Activo
+//			ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+//
+//			adjuntoActivo.setAdjunto(adj);
+//			adjuntoActivo.setActivo(trabajo.getActivo());
+//			adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+//			adjuntoActivo.setContentType(fileItem.getFileItem().getContentType());
+//			adjuntoActivo.setTamanyo(fileItem.getFileItem().getLength());
+//			adjuntoActivo.setNombre(fileItem.getFileItem().getFileName());
+//			adjuntoActivo.setDescripcion(fileItem.getParameter("descripcion"));			
+//			adjuntoActivo.setFechaDocumento(new Date());
+//			Auditoria.save(adjuntoActivo);
+//			trabajo.getActivo().getAdjuntos().add(adjuntoActivo);
+			
+	        
+		return null;
+
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "gastoProveedorManager.deleteAdjunto")
+	@Transactional(readOnly = false)
+    public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		
+		try{
+			GastoProveedor gasto= findOne(dtoAdjunto.getIdGasto());
+			AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
+			
+			
+			
+		    if (adjuntoGasto == null) { return false; }
+		    gasto.getAdjuntos().remove(adjuntoGasto);
+		    genericDao.save(GastoProveedor.class, gasto);
+		    
+		}catch (Exception e) {
+			e.printStackTrace();
+		} 
+	    
+	    
+	    return true;
+	}
+	
+	@Override
+    @BusinessOperationDefinition("gastoProveedorManager.getFileItemAdjunto")
+	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
+		
+		GastoProveedor gasto= findOne(dtoAdjunto.getIdGasto());
+		AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
+		
+		FileItem fileItem = adjuntoGasto.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoGasto.getContentType());
+		fileItem.setFileName(adjuntoGasto.getNombre());
+		
+		return adjuntoGasto.getAdjunto().getFileItem();
+	}
 	
 
 	

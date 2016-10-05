@@ -30,7 +30,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 
 
 @Component
-public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
+public class MSVActualizadorPreciosFSVActivoImporte implements MSVLiberator {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -49,7 +49,7 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 	@Override
 	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
 		if (!Checks.esNulo(tipoOperacion)){
-			if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE.equals(tipoOperacion.getCodigo())){
+			if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_FSV_ACTIVO_IMPORTE.equals(tipoOperacion.getCodigo())){
 				return true;
 			}else {
 				return false;
@@ -69,50 +69,24 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 			for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				
-				//Si hay Valoracion = Precio Aprobado venta para actualizar o crear
+				//Si hay Valoracion = Precio FSV Venta
 				if(!Checks.esNulo(exc.dameCelda(fila, 1))){
 					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA, 
+							DDTipoPrecio.CODIGO_TPC_FSV_VENTA, 
 							Double.parseDouble(exc.dameCelda(fila, 1)),
-							exc.dameCelda(fila, 2),
-							exc.dameCelda(fila, 3));
+							null,
+							null);
 				}
 				
-				//Si hay Valoracion = Precio Minimo para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 4))){
+				//Si hay Valoracion = Precio FSV Renta
+				if(!Checks.esNulo(exc.dameCelda(fila, 2))){
 					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO, 
-							Double.parseDouble(exc.dameCelda(fila, 4)),
-							exc.dameCelda(fila, 5),
-							exc.dameCelda(fila, 6));
+							DDTipoPrecio.CODIGO_TPC_FSV_RENTA, 
+							Double.parseDouble(exc.dameCelda(fila, 2)),
+							null,
+							null);
 				}
 				
-				//Si hay Valoracion = Precio Aprobado renta para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 7))){
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA, 
-							Double.parseDouble(exc.dameCelda(fila, 7)),
-							exc.dameCelda(fila, 8),
-							exc.dameCelda(fila, 9));
-				}
-				
-				//Si hay Valoracion = Precio de Descuento Aprobado para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 10))){
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_DESC_APROBADO, 
-							Double.parseDouble(exc.dameCelda(fila, 10)),
-							exc.dameCelda(fila, 11),
-							exc.dameCelda(fila, 12));
-				}
-				
-				//Si hay Valoracion = Precio de Descuento Publicado para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 13))){
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO, 
-							Double.parseDouble(exc.dameCelda(fila, 13)),
-							exc.dameCelda(fila, 14),
-							exc.dameCelda(fila, 15));
-				}
 			}
 
 		} catch (ParseException e) {

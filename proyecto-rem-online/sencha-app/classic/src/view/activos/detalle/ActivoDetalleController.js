@@ -1420,6 +1420,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("infoToast", HreRem.i18n("msg.info.seleccionar.precio"));
 		}
 
-	}
+	},
 	
+	// Método que es llamado cuando se solicita la tasaciónb del activo desde Bankia.
+	onClickSolicitarTasacionBankia: function(btn) {
+		var me = this;
+    	var idActivo = me.getViewModel().get("activo.id");
+    	var url = $AC.getRemoteUrl('activo/solicitarTasacion');
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
+		
+		Ext.Ajax.request({
+    		url: url,
+    		params: {idActivo : idActivo},
+    		
+    		success: function(response, opts){
+    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    			btn.up('tasacionesactivo').funcionRecargar();
+    		},
+    		
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    },
+		    
+		    callback: function(record, operation) {
+    			me.getView().unmask();
+		    }
+    	});
+	}
+
 });

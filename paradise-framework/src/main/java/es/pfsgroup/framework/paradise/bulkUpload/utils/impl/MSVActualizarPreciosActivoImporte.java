@@ -74,13 +74,13 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 //			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				mapaErrores.put(ACTIVE_PRECIOS_BLOQUEO, getPreciosBloqueadoRows(exc));
-				mapaErrores.put(ACTIVE_OFERTA_APROBADA, getOfertaAprobadaRows(exc));
+
+// TODO: En cargas de valores y precios, no hay que validar nada. Solo habria que aplicar las limitaciones de importes entre precios				
+//				mapaErrores.put(ACTIVE_PRECIOS_BLOQUEO, getPreciosBloqueadoRows(exc));
+//				mapaErrores.put(ACTIVE_OFERTA_APROBADA, getOfertaAprobadaRows(exc));
 				
 				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRECIOS_BLOQUEO).isEmpty() ||
-							!mapaErrores.get(ACTIVE_OFERTA_APROBADA).isEmpty() ){
+					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);

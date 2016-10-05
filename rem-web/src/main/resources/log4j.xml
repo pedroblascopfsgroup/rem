@@ -198,6 +198,24 @@
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
 	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.ReservaController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.ResolucionComiteController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.api.impl.UvemManager"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+
+
+
 
 	<!-- Descomentar para Ver las SQL -->
 	<!--<logger name="org.hibernate.SQL" additivity="false"> <level value="debug"/> 

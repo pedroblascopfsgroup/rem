@@ -285,19 +285,24 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// Validacion que evalua si el registro de perimetro tiene columnas con una respuesta correcta de SN.
 		// Codigos validos S (Si) N (No) 
 		try{
-			String valorEnPerimetro = " ";
-			String valorConGestion = " ";
-			String valorConComercial = " ";
+			String valorEnPerimetro = "-";
+			String valorConGestion = "-";
+			String valorConComercial = "-";
 			
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				
 				//Columnas EN_PERIMETRO, CON_GESTION, CON_COMERCIAL
-				valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN);
-				valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN);
-				valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN);
-				if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro))
-						|| !("S".equals(valorConGestion) || "N".equals(valorConGestion))
-						|| !("S".equals(valorConComercial) || "N".equals(valorConComercial))
+				// Si la celda no tiene valor, debe validarse correctamente
+				// Si la S o la N van en minusculas, deben ser valores validos
+				// No deben tenerse en cuenta espacios en blanco
+				valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
+				valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
+				valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
+				
+				// Valida valores correctos de los campos S/N/<nulo>
+				if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
+						|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))
+						|| !("S".equals(valorConComercial) || "N".equals(valorConComercial) || "-".equals(valorConComercial))
 						)
 					listaFilas.add(i);
 			

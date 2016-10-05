@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('ACPF', 'Actualizar valores FSV de los activos', 'VALORES_FSV_ACTUALIZAR', 'nD*,i,i')
+	  T_FUNCION('ACPF', 'Actualizar valores FSV de los activos', 'Actualizar valores FSV de los activos', 'VALORES_FSV_ACTUALIZAR', 'nD*,i,i')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

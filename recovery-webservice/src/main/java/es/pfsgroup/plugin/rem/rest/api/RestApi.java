@@ -5,17 +5,24 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
 public interface RestApi {
 
-	public enum TIPO_VALIDCION {
+	public enum TIPO_VALIDACION {
 		UPDATE, INSERT
+	}
+
+	public enum TRANSFORM_TYPE {
+		NONE, BOOLEAN_TO_INTEGER, FLOAT_TO_BIGDECIMAL
 	}
 
 	public static final String CODE_ERROR = "ERROR";
@@ -53,7 +60,7 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDCION tipovalidacion);
+	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
 
 	/**
 	 * Valida el pojo pasado a la rest api
@@ -112,8 +119,13 @@ public interface RestApi {
 	 */
 	public String getClientIpAddr(HttpServletRequest request);
 
-	public void saveDtoToBbdd(Object dto, Class claseDto)
+	@Transactional(readOnly = false)
+	public Serializable saveDtoToBbdd(Object dto,ArrayList<Serializable> objetoEntity)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException;
+
+	@SuppressWarnings("rawtypes")
+	public Serializable obtenerObjetoEntity(Long activoId, Class entity,String fieldActivo)
+			throws InstantiationException, IllegalAccessException;
 
 }

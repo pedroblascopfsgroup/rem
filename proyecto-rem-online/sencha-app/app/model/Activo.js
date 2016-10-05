@@ -1,5 +1,5 @@
 /**
- * This view is used to present the details of a single AgendaItem.
+ * This view is used to present the details of an Activo.
  */
 Ext.define('HreRem.model.Activo', {
     extend: 'HreRem.model.Base',
@@ -21,6 +21,13 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name:'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'isCarteraBankia',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['BANKIA'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
     		},
     		{
     			name:'entidadPropietariaDescripcion'
@@ -398,6 +405,9 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'estadoExpIncorriente'
+			},
+			{
+				name: 'claseActivoDescripcion'
 			}
     ],
     

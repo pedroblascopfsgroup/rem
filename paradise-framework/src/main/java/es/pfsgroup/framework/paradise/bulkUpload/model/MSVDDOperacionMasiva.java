@@ -32,6 +32,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	// CODIGO POR TIPOS DE PROCESIMIENTOS MASIVO
 	public static final String CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED="AGAR";
 	public static final String CODE_FILE_BULKUPLOAD_NEW_BUILDING="AGAN";
+	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_ASISTIDA="AGAA";
 	public static final String CODE_FILE_BULKUPLOAD_LISTAACTIVOS="LACT";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR="APUB";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO="AOAC";
@@ -41,6 +42,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR="ADPU";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION="AEME";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE="ADPA";
+	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_FSV_ACTIVO_IMPORTE="ACPF";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_BLOQUEO="BBPA";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_DESBLOQUEO="DBPA";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO="ACPA";

@@ -78,6 +78,15 @@ Ext.define('HreRem.view.precios.PreciosModel', {
     	    	session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true
+    		},
+
+    		comboActivoPropietario: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboEspecial',
+					extraParams: {diccionario: 'DDPropietario'}
+				}
     		}
     }
 });

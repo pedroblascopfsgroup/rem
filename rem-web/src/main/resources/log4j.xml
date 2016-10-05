@@ -2,197 +2,242 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <appender name="console" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %p [%c] - %m%n" />
-        </layout>
-        <filter class="org.apache.log4j.varia.StringMatchFilter">
-            <param name="StringToMatch" value="JBPM_" />
-            <param name="AcceptOnMatch" value="false" />
-        </filter>
-    </appender>
-    
-    <appender name="file" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender"> 
-        <param name="file" value="{DEVON_HOME}/log/pfs_web.log"/>
-        <param name="MaxFileSize" value="2MB"/>
-        <param name="MaxBackupIndex" value="10"/>
-        <layout class="org.apache.log4j.PatternLayout"> 
-            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/> 
-        </layout> 
-        <filter class="org.apache.log4j.varia.StringMatchFilter">
-            <param name="StringToMatch" value="JBPM_" />
-            <param name="AcceptOnMatch" value="false" />
-        </filter>
-    </appender>
-    
-     <appender name="fileRest" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender"> 
-        <param name="file" value="{DEVON_HOME}/log/rem_rest.log"/>
-        <param name="MaxFileSize" value="2MB"/>
-        <param name="MaxBackupIndex" value="10"/>
-        <layout class="org.apache.log4j.PatternLayout"> 
-            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/> 
-        </layout> 
-        <filter class="org.apache.log4j.varia.StringMatchFilter">
-            <param name="StringToMatch" value="JBPM_" />
-            <param name="AcceptOnMatch" value="false" />
-        </filter>
-    </appender>
-    
-    <!-- Hay que setear la propiedad de sistema log.mail.sendError = true si se quiere el envio de mails -->
-   <appender name="email" class="es.capgemini.pfs.utils.log4j.CustomSMTPAppender">
-           <param name="BufferSize" value="1" />
-           <param name="SMTPHost" value="{log.mail.SMTPHost}" />
-           <param name="From" value="{log.mail.From}" />
-           <param name="To" value="{log.mail.To}" />
-           <param name="Subject" value="{log.mail.Subject}" />
-           <layout class="org.apache.log4j.PatternLayout">
-             <param name="ConversionPattern" value="%d %p [%c] - %m%n"/> 
-           </layout>
-           <filter class="org.apache.log4j.varia.LevelRangeFilter">
-             <param name="LevelMin" value="error" />
-             <param name="LevelMax" value="fatal" />
-           </filter>
-	  </appender>
- 
-    <!-- DEVON -->
-    <logger name="es.capgemini.devon" additivity="false">
-        <level value="info"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    <!-- PFS -->
-    <logger name="es.capgemini.pfs" additivity="false">
-        <level value="info"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    
-    <!-- Spring -->
-    <logger name="org.springframework.aop.framework.Cglib2AopProxy" additivity="false">
-        <level value="error"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    <!-- 
-    <logger name="org.springframework" additivity="false">
-        <level value="warn"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-    </logger>
-    <logger name="org.springframework.binding.mapping" additivity="false">
-        <level value="warn"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-    </logger>
-    <logger name="org.springframework.webflow" additivity="false">
-        <level value="warn"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-    </logger>
-     -->
-    <logger name="org.springframework.security.ldap" additivity="false">
-        <level value="warn"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-    </logger>
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%c] - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="JBPM_" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+	</appender>
+
+	<appender name="file"
+		class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/pfs_web.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%c] - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="JBPM_" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+	</appender>
+
+	<appender name="fileRest"
+		class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/rem_rest.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%c] - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="JBPM_" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+	</appender>
+
+	<!-- Hay que setear la propiedad de sistema log.mail.sendError = true si 
+		se quiere el envio de mails -->
+	<appender name="email"
+		class="es.capgemini.pfs.utils.log4j.CustomSMTPAppender">
+		<param name="BufferSize" value="1" />
+		<param name="SMTPHost" value="{log.mail.SMTPHost}" />
+		<param name="From" value="{log.mail.From}" />
+		<param name="To" value="{log.mail.To}" />
+		<param name="Subject" value="{log.mail.Subject}" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%c] - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="error" />
+			<param name="LevelMax" value="fatal" />
+		</filter>
+	</appender>
+
+	<!-- DEVON -->
+	<logger name="es.capgemini.devon" additivity="false">
+		<level value="info" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+	<!-- PFS -->
+	<logger name="es.capgemini.pfs" additivity="false">
+		<level value="info" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+
+	<!-- Spring -->
+	<logger name="org.springframework.aop.framework.Cglib2AopProxy"
+		additivity="false">
+		<level value="error" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+	<!-- <logger name="org.springframework" additivity="false"> <level value="warn"/> 
+		<appender-ref ref="console" /> <appender-ref ref="file" /> </logger> <logger 
+		name="org.springframework.binding.mapping" additivity="false"> <level value="warn"/> 
+		<appender-ref ref="console" /> <appender-ref ref="file" /> </logger> <logger 
+		name="org.springframework.webflow" additivity="false"> <level value="warn"/> 
+		<appender-ref ref="console" /> <appender-ref ref="file" /> </logger> -->
+	<logger name="org.springframework.security.ldap" additivity="false">
+		<level value="warn" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</logger>
 
 	<!-- Hibernate -->
-    <logger name="org.hibernate.event.def.AbstractFlushingEventListener" additivity="false">
-        <level value="fatal"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    
-    <logger name="org.hibernate.cache" additivity="false">
-        <level value="warn"/>
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    <logger name="org.hibernate.cache.CacheFactory" additivity="false">
-        <level value="error"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    <logger name="org.hibernate.cache.EhCacheProvider" additivity="false">
-        <level value="error"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    <logger name="org.hibernate.engine.StatefulPersistenceContext" additivity="false">
-        <level value="error"/> 
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    <logger name="org.jbpm" additivity="false">
-        <level value="warn"/>
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    <logger name="es.pfsgroup.plugin.gestorDocumental" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    
-    <logger name="es.pfsgroup.plugin.rem.utils" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    
-    <logger name="es.pfsgroup.plugin.rem.restclient" additivity="false">
-        <level value="error"/>
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </logger>
-    <logger name="es.pfsgroup.plugin.rem.rest" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="fileRest" />
-    </logger>
-    
-    
-    <!-- Descomentar para Ver las SQL	-->
-    <!--<logger name="org.hibernate.SQL" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="console" />
-    </logger>-->
- 
-     
-     
-     <!-- Descomentar para Ver las SQL que ejecuta la aplicacion, el Thread, la session y la transaccion en al que se ejecutan-->
-     <!-- 
-    <logger name="es.capgemini.pfs.utils.hibernate.HibernateEntitySqlInterceptor" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="file" />
-        <appender-ref ref="console" />
-    </logger>
-    
-    <logger name="es.capgemini.pfs.utils.hibernate.HibernateMasterSqlInterceptor" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="file" />
-        <appender-ref ref="console" />
-    </logger>
-    -->
-   
-    <!-- root -->
-    <root>
-        <priority value="warn" />
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
-        <appender-ref ref="email" />
-    </root>
-    
+	<logger name="org.hibernate.event.def.AbstractFlushingEventListener"
+		additivity="false">
+		<level value="fatal" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+
+	<logger name="org.hibernate.cache" additivity="false">
+		<level value="warn" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+	<logger name="org.hibernate.cache.CacheFactory" additivity="false">
+		<level value="error" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+	<logger name="org.hibernate.cache.EhCacheProvider" additivity="false">
+		<level value="error" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+	<logger name="org.hibernate.engine.StatefulPersistenceContext"
+		additivity="false">
+		<level value="error" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+	<logger name="org.jbpm" additivity="false">
+		<level value="warn" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.gestorDocumental" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+
+	<logger name="es.pfsgroup.plugin.rem.utils" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+
+	<logger name="es.pfsgroup.plugin.rem.restclient" additivity="false">
+		<level value="error" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.rest" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.ClientesController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+
+	<logger name="es.pfsgroup.plugin.rem.controller.VisitasController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.OfertasController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.TrabajoController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.ComisionesController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.NotificacionesController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.InformemediadorController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.Portales"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.ReservaController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.ResolucionComiteController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.api.impl.UvemManager"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+	</logger>
+
+
+
+
+	<!-- Descomentar para Ver las SQL -->
+	<!--<logger name="org.hibernate.SQL" additivity="false"> <level value="debug"/> 
+		<appender-ref ref="console" /> </logger> -->
+
+
+
+	<!-- Descomentar para Ver las SQL que ejecuta la aplicacion, el Thread, 
+		la session y la transaccion en al que se ejecutan -->
+	<!-- <logger name="es.capgemini.pfs.utils.hibernate.HibernateEntitySqlInterceptor" 
+		additivity="false"> <level value="debug"/> <appender-ref ref="file" /> <appender-ref 
+		ref="console" /> </logger> <logger name="es.capgemini.pfs.utils.hibernate.HibernateMasterSqlInterceptor" 
+		additivity="false"> <level value="debug"/> <appender-ref ref="file" /> <appender-ref 
+		ref="console" /> </logger> -->
+
+	<!-- root -->
+	<root>
+		<priority value="warn" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="email" />
+	</root>
+
 </log4j:configuration> 
 

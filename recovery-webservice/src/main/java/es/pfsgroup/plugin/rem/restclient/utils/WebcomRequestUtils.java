@@ -9,13 +9,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Random;
-
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
@@ -53,14 +51,14 @@ public class WebcomRequestUtils {
 		if (params != null) {
 			for (Entry<String, Object> e : params.entrySet()) {
 				if (e.getValue() != null) {
-					if (! Collection.class.isAssignableFrom(e.getValue().getClass())){
+					if (!Collection.class.isAssignableFrom(e.getValue().getClass())) {
 						// Añadimos un valor simple
-						data.put(e.getKey(), convertToStringIfNecessary(e.getValue()));	
-					}else{
+						data.put(e.getKey(), convertToStringIfNecessary(e.getValue()));
+					} else {
 						// Añadimos un list de datas
 						JSONArray array = new JSONArray();
-						for (Object o : ((Collection) e.getValue())){
-							if (Map.class.isAssignableFrom(o.getClass())){
+						for (Object o : ((Collection) e.getValue())) {
+							if (Map.class.isAssignableFrom(o.getClass())) {
 								array.add(createJSONData((Map) o));
 							}
 						}
@@ -72,30 +70,30 @@ public class WebcomRequestUtils {
 		return data;
 	}
 
-	private static Map<String, String> toStringParameters(Map<String, Object> params) {
-		HashMap<String, String> strParams = new HashMap<String, String>();
-		if ((params != null) && (!params.isEmpty())) {
-			for (Entry<String, Object> p : params.entrySet()) {
-				Object value = p.getValue();
-				if (value != null) {
-
-					if (value instanceof NullDataType) {
-						strParams.put(p.getKey(), null);
-					} else {
-						Object valueOf = WebcomDataType.valueOf(value);
-						if (valueOf instanceof Date) {
-							strParams.put(p.getKey(), formatDate((Date) valueOf));
-						} else {
-							strParams.put(p.getKey(), valueOf.toString());
-						}
-					}
-
-				}
-
-			}
-		}
-		return strParams;
-	}
+//	private static Map<String, String> toStringParameters(Map<String, Object> params) {
+//		HashMap<String, String> strParams = new HashMap<String, String>();
+//		if ((params != null) && (!params.isEmpty())) {
+//			for (Entry<String, Object> p : params.entrySet()) {
+//				Object value = p.getValue();
+//				if (value != null) {
+//
+//					Object valueOf = WebcomDataType.valueOf(value);
+//					if (valueOf != null) {
+//						if (valueOf instanceof Date) {
+//							strParams.put(p.getKey(), formatDate((Date) valueOf));
+//						} else {
+//							strParams.put(p.getKey(), valueOf.toString());
+//						}
+//					} else {
+//						strParams.put(p.getKey(), null);
+//					}
+//
+//				}
+//
+//			}
+//		}
+//		return strParams;
+//	}
 
 	private static String computeRequestId() {
 		long timestamp = ((Date) new Date()).getTime();
@@ -178,19 +176,21 @@ public class WebcomRequestUtils {
 
 		return result.toArray(new String[] {});
 	}
-	
 
 	private static Object convertToStringIfNecessary(Object value) {
 		if (value != null) {
-			if (value instanceof NullDataType) {
-				return JSONNull.getInstance();
-			} else {
-				Object valueOf = WebcomDataType.valueOf(value);
+
+			Object valueOf = WebcomDataType.valueOf(value);
+			if (valueOf != null) {
 				if (valueOf instanceof Date) {
 					return formatDate((Date) valueOf);
+				}else if (valueOf instanceof Boolean){
+					return valueOf;
 				} else {
 					return valueOf.toString();
 				}
+			} else {
+				return JSONNull.getInstance();
 			}
 
 		}

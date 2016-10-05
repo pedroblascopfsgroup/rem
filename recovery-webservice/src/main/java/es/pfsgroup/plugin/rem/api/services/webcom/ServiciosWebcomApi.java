@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.rem.api.services.webcom;
 
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.CampanyaObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
@@ -9,6 +12,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.UsuarioDto;
 
 public interface ServiciosWebcomApi {
 
@@ -89,5 +93,46 @@ public interface ServiciosWebcomApi {
 	 * @throws ErrorServicioWebcom
 	 */
 	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom;
+
+	/**
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
+	 * de las cabeceras (divisiones) de las distintas Obras para que WEBCOM
+	 * pueda gestionar su publicación en los distintos portales
+	 * 
+	 * @param cabeceras
+	 * @throws ErrorServicioWebcom
+	 */
+	public void webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras) throws ErrorServicioWebcom;
+
+	/**
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la relación
+	 * entre los activos y las distintas obras nuevas o campañas (activos que
+	 * las componen) para que WEBCOM pueda gestionar su publicación en los
+	 * distintos portales
+	 * 
+	 * @param activos
+	 * @throws ErrorServicioWebcom
+	 */
+	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom;
+
+	/**
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
+	 * de los usuarios asociados a los proveedores anteriores que pueden acceder
+	 * o no a la herramienta de mediadores o de oficinas
+	 * 
+	 * @param usuarios
+	 * @throws ErrorServicioWebcom
+	 */
+	public void webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom;
+
+	/**
+	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
+	 * de las agrupaciones de Obras Nuevas o Campañas creadas en REM para que
+	 * WEBCOM pueda gestionar su publicación en los distintos portales
+	 * 
+	 * @param campanyas
+	 * @throws ErrorServicioWebcom
+	 */
+	public void webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas) throws ErrorServicioWebcom;
 
 }

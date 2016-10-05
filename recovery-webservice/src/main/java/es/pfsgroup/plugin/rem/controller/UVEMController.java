@@ -21,7 +21,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 public class UVEMController {
 
 	@Autowired
-	private UvemManagerApi uvemManager;
+	private UvemManagerApi uvemManagerApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -42,8 +42,8 @@ public class UVEMController {
 	public ModelAndView solicitarTasacion(ModelMap model, @RequestParam(required = true) Long bienId,
 			@RequestParam(required = true) String nombreGestor, @RequestParam(required = false) String gestion) {
 		try {
-			uvemManager.ejecutarSolicitarTasacion(bienId, nombreGestor, gestion);
-			int numeroIdentificadorTasacion = uvemManager.resultadoSolicitarTasacion()
+			uvemManagerApi.ejecutarSolicitarTasacion(bienId, nombreGestor, gestion);
+			int numeroIdentificadorTasacion = uvemManagerApi.resultadoSolicitarTasacion()
 					.getNumeroIdentificadorDeTasacionlnuita2();
 			model.put("numeroIdentificadorTasacion", numeroIdentificadorTasacion);
 		} catch (WIException e) {
@@ -57,6 +57,7 @@ public class UVEMController {
 		return new ModelAndView("jsonView", model);
 	}
 
+	
 	/**
 	 * Servicio que a partir del nº y tipo de documento, así como Entidad del
 	 * Cliente (y tipo) devolverá el/los nº cliente/s Ursus coincidentes
@@ -90,11 +91,10 @@ public class UVEMController {
 
 			// obtenemos el n de cliente interno dado su documento y tipo de
 			// documento
-			uvemManager.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-			GMPAJC11_INS numclienteIns = uvemManager.resultadoNumCliente();
+			Integer numcliente = uvemManagerApi.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
 
-			uvemManager.ejecutarDatosCliente(numclienteIns.getnumeroCliente(), qcenre);
-			GMPAJC93_INS datosClienteIns = uvemManager.resultadoDatosCliente();
+
+			GMPAJC93_INS datosClienteIns = uvemManagerApi.ejecutarDatosCliente(numcliente, qcenre);
 			
 			//edad
 			model.put("edad", datosClienteIns.getEdadDelClientenuedaw());

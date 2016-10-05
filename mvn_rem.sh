@@ -1,1 +1,1 @@
-mvn -Prem -Dmaven.test.skip=true -pl proyecto-rem-online,recovery-webservice,paradise-framework,recovery-gestordocumentalREM-plugin,recovery-message-broker,rem-web $*
+mvn -Prem -Dmaven.test.skip=true -pl proyecto-rem-online,recovery-webservice,paradise-framework,recovery-gestordocumentalREM-plugin,rem-web $*

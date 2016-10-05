@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common.utilities.DetectorCambiosEjemplo;

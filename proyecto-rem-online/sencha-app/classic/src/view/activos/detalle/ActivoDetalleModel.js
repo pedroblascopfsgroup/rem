@@ -4,8 +4,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Gestor', 'HreRem.model.GestorActivo', 
     'HreRem.model.AdmisionDocumento', 'HreRem.model.AdjuntoActivo', 'HreRem.model.BusquedaTrabajo',
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
-    'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo','HreRem.model.OfertaActivo',
-    'HreRem.model.PropuestaActivosVinculados'],
+    'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
+    'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel',
+    'HreRem.model.MediadorModel'],
     
     data: {
     	activo: null,
@@ -776,14 +777,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				autoload: true
     		},
     		
-    		historicoMediador:{
+    		storeHistoricoMediador:{
     			pageSize: $AC.getDefaultPageSize(),
-    			model: 'HreRem.model.HistoricoMediador',
+    			model: 'HreRem.model.HistoricoMediadorModel',
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getHistoricoMediadorByActivo',
     				extraParams: {id: '{activo.id}'}
     			},
+				autoload: true
+    		},
+    		
+    		storeMediadorListFiltered: {
+    			model: 'HreRem.model.MediadorModel',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'proveedores/getMediadorListFiltered',
+					extraParams: {idActivo : '{activo.id}'}
+				},
 				autoload: true
     		},
     		

@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +22,21 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
+import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -48,6 +55,14 @@ public class RestManagerImpl implements RestApi {
 
 	@Resource
 	private Properties appProperties;
+
+	@Autowired
+	private GenericABMDao genericDao;
+
+	@Autowired
+	private GenericaRestDaoImp genericaRestDaoImp;
+
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public boolean validateSignature(Broker broker, String signature, String peticion)
@@ -133,15 +148,15 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDCION tipovalidacion) {
+	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion) {
 		ArrayList<String> error = new ArrayList<String>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Serializable>> constraintViolations = null;
 		if (tipovalidacion != null) {
-			if (tipovalidacion.equals(TIPO_VALIDCION.INSERT)) {
+			if (tipovalidacion.equals(TIPO_VALIDACION.INSERT)) {
 				constraintViolations = validator.validate(obj, Insert.class);
-			} else if (tipovalidacion.equals(TIPO_VALIDCION.UPDATE)) {
+			} else if (tipovalidacion.equals(TIPO_VALIDACION.UPDATE)) {
 				constraintViolations = validator.validate(obj, Update.class);
 			} else {
 				constraintViolations = validator.validate(obj);
@@ -169,30 +184,159 @@ public class RestManagerImpl implements RestApi {
 		return peticionDao.getLastPeticionByToken(token);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void saveDtoToBbdd(Object dto, Class claseDto)
+	@SuppressWarnings("rawtypes")
+	@Transactional(readOnly = false)
+	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntitys)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException {
-		Field[] fields = claseDto.getDeclaredFields();
-		/*if (fields != null) {
-			for (Field f : fields) {
-				if (f.getAnnotation(EntityDefinition.class) != null) {
+
+		if (dto.getClass().getDeclaredFields() != null) {
+			for (Field f : dto.getClass().getDeclaredFields()) {
+				if (f.getAnnotation(EntityDefinition.class) != null
+						&& f.getAnnotation(EntityDefinition.class).propertyName() != null
+						&& !f.getAnnotation(EntityDefinition.class).propertyName().isEmpty()) {
 					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
-					System.out.println("!!!!!!!!!!!!!!!!!!!!! " + annotation.entityName());
-					System.out.println("!!!!!!!!!!!!!!!!!!!!! " + annotation.propertyName());
-					Class clase = Class.forName(annotation.entityName());
-					Object objeto = clase.newInstance();
-					String propertyName = annotation.propertyName().substring(0, 1).toUpperCase()
+					String propertyEntityName = annotation.propertyName().substring(0, 1).toUpperCase()
 							+ annotation.propertyName().substring(1);
-					Method metodo = objeto.getClass()
-							.getMethod("set".concat(propertyName), f.getType());
-					metodo.invoke(objeto, this.getValue(dto, claseDto, "get".concat(propertyName)));
+					String propertyName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+					if (annotation.classObj().equals(Object.class)) {
+						Class claseObjeto = f.getType();
+						claseObjeto = transformClass(annotation, claseObjeto);
+						Object object = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
+						this.setProperty(propertyEntityName, claseObjeto, annotation, null, object, objetoEntitys);
+					} else {
+						Class claseObjeto = annotation.classObj();
+						claseObjeto = transformClass(annotation, claseObjeto);
+						Object oFiltro = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
+						this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, null, objetoEntitys);
+					}
+				} else {
+					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
+					String propertyEntityName = null;
+					propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+					this.setProperty(propertyEntityName, f.getType(), annotation, null,
+							this.getValue(dto, dto.getClass(), "get".concat(propertyEntityName)), objetoEntitys);
 
 				}
-				if (f.getAnnotation(Diccionary.class) != null) {
 			}
-		}*/
+		}
+		guardarEntity(objetoEntitys);
+		return objetoEntitys.get(0);
+	}
 
+	@SuppressWarnings("rawtypes")
+	private Class transformClass(EntityDefinition annotation, Class claseObjeto) {
+		if (annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
+			claseObjeto = Integer.class;
+		} else if (annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
+			claseObjeto = BigDecimal.class;
+		}
+		return claseObjeto;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
+			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys) {
+		boolean resultado = false;
+		if ((annotation != null && annotation.procesar()) || annotation == null) {
+			if (oFiltro != null && annotation != null) {
+				object = genericDao.get(annotation.classObj(),
+						genericDao.createFilter(FilterType.EQUALS, annotation.foreingField(), oFiltro));
+			}
+
+			if (object != null) {
+				if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
+					if ((Boolean) object) {
+						object = 1;
+					} else {
+						object = 0;
+					}
+				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
+					object = new BigDecimal((Float) object);
+				}
+
+				for (Serializable objetoEntity : objetoEntitys) {
+					try {
+						Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
+								claseObjeto);
+						metodo.invoke(objetoEntity, object);
+						resultado = true;
+						System.out.println("OK --------------->" + propertyEntityName + " seteada en la entidad "
+								+ objetoEntity.getClass().getName());
+					} catch (NoSuchMethodException e) {
+						// intentamos setear el objeto en las diferentes
+						// entidades
+						continue;
+					} catch (InvocationTargetException e) {
+						System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
+					} catch (IllegalAccessException e) {
+						System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
+					}
+				}
+				if (!resultado && annotation == null) {
+					System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
+				}
+			}
+		} else if (annotation != null && !annotation.procesar()) {
+			resultado = true;
+			if (!annotation.motivo().isEmpty()) {
+				System.out.println("SKIP  --------------->"
+						.concat(propertyEntityName.concat(" motivo: ").concat(annotation.motivo())));
+			}
+		}
+		return resultado;
+
+	}
+
+	private void guardarEntity(ArrayList<Serializable> objetoEntitys) throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+		for (Serializable objetoEntity : objetoEntitys) {
+			Object primary = this.findPrimaryKey(objetoEntity);
+			if (primary == null) {
+				objetoEntity = genericaRestDaoImp.save(objetoEntity);
+			} else {
+				genericaRestDaoImp.update(objetoEntity);
+			}
+			
+		}
+
+	}
+
+	private Object findPrimaryKey(Serializable objetoEntity) throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+		Object result = null;
+		for (Field f : objetoEntity.getClass().getDeclaredFields()) {
+			if (f.getAnnotation(javax.persistence.Id.class) != null) {
+				result = this.getValue(objetoEntity, objetoEntity.getClass(), f.getName());
+				break;
+			}
+
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Serializable obtenerObjetoEntity(Long activoId, Class entity, String fieldActivo)
+			throws InstantiationException, IllegalAccessException {
+		Activo activo;
+		Serializable objetoEntity;
+		if (activoId != null) {
+			activo = (Activo) genericDao.get(Activo.class,
+					genericDao.createFilter(FilterType.EQUALS, "numActivo", activoId));
+			if (activo != null) {
+				objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, activo));
+			} else {
+				objetoEntity = (Serializable) entity.newInstance();
+			}
+
+		} else {
+			objetoEntity = (Serializable) entity.newInstance();
+		}
+		if (objetoEntity == null) {
+			objetoEntity = (Serializable) entity.newInstance();
+		}
+		return objetoEntity;
 	}
 
 	@SuppressWarnings("rawtypes")

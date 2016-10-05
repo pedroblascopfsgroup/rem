@@ -1436,7 +1436,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		
     		success: function(response, opts){
     			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-    			debugger;
     			btn.up('tasacionesactivo').funcionRecargar();
     		},
     		

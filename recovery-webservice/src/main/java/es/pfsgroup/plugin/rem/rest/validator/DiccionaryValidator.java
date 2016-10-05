@@ -10,7 +10,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 
-public class DiccionaryValidator implements ConstraintValidator<Diccionary, String> {
+public class DiccionaryValidator implements ConstraintValidator<Diccionary, Object> {
 
 	private Diccionary diccionario;
 
@@ -26,12 +26,11 @@ public class DiccionaryValidator implements ConstraintValidator<Diccionary, Stri
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean isValid(String value, ConstraintValidatorContext context) {
+	public boolean isValid(Object value, ConstraintValidatorContext context) {
 		boolean resultado = false;
 		if (value == null) {
 			resultado = true;
 		} else {
-
 			Object object = genericDao.get(diccionario.clase(),
 					genericDao.createFilter(FilterType.EQUALS, diccionario.foreingField(), value));
 

@@ -205,7 +205,8 @@ public class MSVHojaExcel {
 			for(int i = 0; i < mapaErrores.get(error).size(); i++){
 				addTexto(hoja, columna, mapaErrores.get(error).get(i), error);
 			}
-			columna++;
+			if(!mapaErrores.get(error).isEmpty())
+				columna++;
 		}
 		
 		copy.write();

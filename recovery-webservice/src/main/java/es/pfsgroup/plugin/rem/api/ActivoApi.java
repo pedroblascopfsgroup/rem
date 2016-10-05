@@ -206,6 +206,14 @@ public interface ActivoApi {
 		public boolean deleteValoracionPrecio(Long id);
 		
 		/**
+		 * Borrado físico de una valoración, indicando si se ha de guardar en el histórico o no
+		 * @param id
+		 * @param guardadoEnHistorico
+		 * @return
+		 */
+		public boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico);
+		
+		/**
 		 * Este método obtiene un objeto con los condicionantes del activo.
 		 * 
 		 * @param idActivo: ID del activo a filtrar los datos.

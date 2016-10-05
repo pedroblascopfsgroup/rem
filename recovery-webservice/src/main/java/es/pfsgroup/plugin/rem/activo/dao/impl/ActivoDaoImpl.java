@@ -24,12 +24,14 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 
 @Repository("ActivoDao")
@@ -516,5 +518,22 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		hb.appendWhere("activosVinculados.id = " + id);
 		
 		return (PropuestaActivosVinculados) getSession().createQuery(hb.toString()).uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActivoTasacion getActivoTasacion(Long id){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
+		hb.appendWhere(" tas.activo.id = " + id);
+		hb.appendWhere(" tas.fechaRecepcionTasacion is null");
+		hb.orderBy("tas.id", HQLBuilder.ORDER_DESC);
+		
+		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) getSession().createQuery(hb.toString()).list();
+		
+		if(!Checks.estaVacio(activoTasacionList)) {
+			return activoTasacionList.get(0);
+		}
+		
+		return null;
 	}
 }

@@ -93,6 +93,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
@@ -120,7 +121,7 @@ public class ActivoController {
 	
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
-	
+
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 	
@@ -1996,6 +1997,25 @@ public class ActivoController {
 			e.printStackTrace();
 			model.put("success", false);		
 		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model){
+
+		model.put("success", activoApi.solicitarTasacion(idActivo));
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSolicitudTasacionBankia(Long id, ModelMap model){
+
+		model.put("data", activoApi.getSolicitudTasacionBankia(id));
+		model.put("success", true);
+		
 		return createModelAndViewJson(model);
 	}
 	

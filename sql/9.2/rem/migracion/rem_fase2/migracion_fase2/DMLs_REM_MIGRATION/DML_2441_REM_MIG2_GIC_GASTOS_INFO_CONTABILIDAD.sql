@@ -24,7 +24,8 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
+TABLE_COUNT_1 NUMBER(10,0) := 0;
+TABLE_COUNT_2 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_TABLA VARCHAR2(40 CHAR) := 'GIC_GASTOS_INFO_CONTABILIDAD';
@@ -51,15 +52,15 @@ BEGIN
       )
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
+      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_1;
       
-      IF TABLE_COUNT = 0 THEN
+      IF TABLE_COUNT_1 = 0 THEN
       
           DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS GASTOS_PROVEEDOR EXISTEN EN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR');
       
       ELSE
       
-          DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' GASTOS_PROVEEDOR INEXISTENTES EN GPV_GASTOS_PROVEEDOR. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS.');
+          DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_1||' GASTOS_PROVEEDOR INEXISTENTES EN GPV_GASTOS_PROVEEDOR. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS.');
           
           --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
           
@@ -112,15 +113,15 @@ BEGIN
       )
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
+      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_2;
       
-      IF TABLE_COUNT = 0 THEN
+      IF TABLE_COUNT_2 = 0 THEN
       
           DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS EJERCICIOS EXISTEN EN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO');
       
       ELSE
       
-          DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' EJERCICIOS INEXISTENTES EN ACT_EJE_EJERCICIO. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS.');
+          DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_2||' EJERCICIOS INEXISTENTES EN ACT_EJE_EJERCICIO. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS.');
           
           --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
           
@@ -183,45 +184,29 @@ BEGIN
           )
           SELECT
             '||V_ESQUEMA||'.S_GIC_GASTOS_INFO_CONTABILIDAD.NEXTVAL                                                    AS GIC_ID,
-            (SELECT GPV.GPV_ID
-              FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-              WHERE GPV.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_INFO_CONTABIL
-              AND BORRADO = 0)                                                                                                  AS GPV_ID,
-            (SELECT EJE.EJE_ID
-              FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE
-              WHERE EJE.EJE_ANYO = MIG2.GIC_EJERCICIO 
-              AND BORRADO = 0)                                                                                                  AS EJE_ID,
-            (SELECT PPR.DD_PPR_ID
-              FROM '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR
-              WHERE PPR.DD_PPR_CODIGO = MIG2.GIC_COD_PARTIDA_PRESUPUES
-              AND BORRADO = 0)                                                                                                  AS DD_PPR_ID,
-            (SELECT CCO.DD_CCO_ID
-              FROM '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO
-              WHERE CCO.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONTABLE
-              AND BORRADO = 0)                                                                                                  AS DD_CCO_ID,
+            GPV.GPV_ID                                                                                                                AS GPV_ID,
+            EJE.EJE_ID                                                                                                  AS EJE_ID,
+            PPR.DD_PPR_ID                                                                                                AS DD_PPR_ID,
+            CCO.DD_CCO_ID                                                                                                  AS DD_CCO_ID,
             MIG2.GIC_FECHA_CONTABILIZACION                                                                              AS GIC_FECHA_CONTABILIZACION,
-            (SELECT DEP.DD_DEP_ID
-              FROM '||V_ESQUEMA||'.DD_DEP_DESTINATARIOS_PAGO DEP
-              WHERE DEP.DD_DEP_CODIGO = MIG2.GIC_COD_DESTINA_CONTABILIZA
-              AND BORRADO = 0)                                                                                                  AS DD_DES_ID_CONTABILIZA,
+            DEP.DD_DEP_ID                                                                                                  AS DD_DES_ID_CONTABILIZA,
             MIG2.GIC_FECHA_DEVENGO_ESPECIAL                                                                           AS GIC_FECHA_DEVENGO_ESPECIAL,
-            (SELECT TPE.DD_TPE_ID
-              FROM '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE
-              WHERE TPE.DD_TPE_CODIGO = MIG2.GIC_COD_PERIODICIDAD_ESPECIAL
-              AND BORRADO = 0)                                                                                                  AS DD_TPE_ID_ESPECIAL,
-            (SELECT PPR.DD_PPR_ID
-              FROM '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR
-              WHERE PPR.DD_PPR_CODIGO = MIG2.GIC_COD_PAR_PRESUP_ESPECIAL
-              AND BORRADO = 0)                                                                                                  AS DD_PPR_ID_ESPECIAL,
-            (SELECT CCO.DD_CCO_ID
-              FROM '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO
-              WHERE CCO.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONT_ESPECIAL
-              AND BORRADO = 0)                                                                                                  AS DD_CCO_ID_ESPECIAL,
+            TPE.DD_TPE_ID                                                                                                 AS DD_TPE_ID_ESPECIAL,
+            PPR2.DD_PPR_ID                                                                                                AS DD_PPR_ID_ESPECIAL,
+            CCO2.DD_CCO_ID                                                                                                  AS DD_CCO_ID_ESPECIAL,
             0                                                                                                                                AS VERSION,
             ''MIG2''                                                                                                                         AS USUARIOCREAR,
             SYSDATE                                                                                                                    AS FECHACREAR,
             0                                                                                                                                AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
+          LEFT JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_INFO_CONTABIL AND GPV.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ANYO = MIG2.GIC_EJERCICIO AND EJE.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR ON PPR.DD_PPR_CODIGO = MIG2.GIC_COD_PARTIDA_PRESUPUES AND PPR.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO ON CCO.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONTABLE AND CCO.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_DEP_DESTINATARIOS_PAGO DEP ON DEP.DD_DEP_CODIGO = MIG2.GIC_COD_DESTINA_CONTABILIZA AND DEP.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = MIG2.GIC_COD_PERIODICIDAD_ESPECIAL AND TPE.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR2 ON PPR2.DD_PPR_CODIGO = MIG2.GIC_COD_PAR_PRESUP_ESPECIAL AND PPR2.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO2 ON CCO2.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONT_ESPECIAL AND CCO2.BORRADO = 0          
           LEFT JOIN '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS EJE_NOT ON EJE_NOT.EJE_ANYO = MIG2.GIC_EJERCICIO
           LEFT JOIN '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS GPV_NOT ON GPV_NOT.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_INFO_CONTABIL
           WHERE EJE_NOT.EJE_ANYO IS NULL
@@ -265,7 +250,7 @@ BEGIN
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' GASTOS_PROVEEDOR, comprobar la MIG2_GPV_NOT_EXISTS y la MIG2_EJE_NOT_EXISTS.';
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' GASTOS_PROVEEDOR, hay '||TABLE_COUNT_1||' GASTOS_PROVEEDORES inexistentes y '||TABLE_COUNT_2||' EJERCICIOS inexistentes.';
       END IF;
       
       EXECUTE IMMEDIATE '

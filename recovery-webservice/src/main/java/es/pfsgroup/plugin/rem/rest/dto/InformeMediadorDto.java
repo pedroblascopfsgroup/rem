@@ -35,11 +35,9 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private static final long serialVersionUID = 1L;
 
+	@EntityDefinition(procesar = false)
 	@NotNull(groups = { Insert.class, Update.class })
 	private Long idInformeMediadorWebcom;
-
-	@NotNull(groups = { Update.class })
-	private Long idInformeMediadorRem;
 
 	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(propertyName = "fechaEmisionInforme")
@@ -55,9 +53,12 @@ public class InformeMediadorDto implements Serializable {
 	private String codTipoActivo;
 
 	@NotNull(groups = { Insert.class, Update.class })
-	@EntityDefinition(propertyName = "activo", classObj = Activo.class,foreingField="numActivo", unique = true)
+	@Diccionary(clase = Activo.class, message = "El activo no existe", foreingField = "numActivo", groups = {
+			Insert.class, Update.class })
+	@EntityDefinition(propertyName = "activo", classObj = Activo.class, foreingField = "numActivo", unique = true)
 	private Long idActivoHaya;
 
+	// ?
 	@NotNull(groups = Insert.class)
 	private Long idProveedorRemAnterior;
 
@@ -65,118 +66,166 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "id")
 	private Long idProveedorRem;
 
+	// ?ACT_HIC_EST_INF_COMER_HIST
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(procesar = false, motivo = "ACT_HIC_EST_INF_COMER_HIST no relacionado con InformeComercial")
 	private Boolean posibleInforme;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(procesar = false, motivo = "ACT_HIC_EST_INF_COMER_HIST no relacionado con InformeComercial")
 	private String motivoNoPosibleInforme;
+	// fin ACT_HIC_EST_INF_COMER_HIST
 
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDSubtipoActivo.class, message = "El codSubtipoImueble no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "subtipoActivo", classObj = DDSubtipoActivo.class)
 	private String codSubtipoImueble;
 
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoVivienda.class, message = "El codTpoVivienda de activo no existe", groups = {
 			Insert.class, Update.class })
+	@EntityDefinition(propertyName = "tipoVivienda", classObj = DDTipoVivienda.class)
 	private String codTpoVivienda;
 
+	// ok
 	@NotNull(groups = Insert.class)
 	private Date fechaUltimaVisita;
 
 	@Diccionary(clase = DDTipoVia.class, message = "El codTpoVivienda de activo no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "tipoVia", classObj = DDTipoVia.class)
 	private String codTipoVia;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(propertyName = "nombreVia")
 	private String nombreCalle;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(propertyName = "numeroVia")
 	private String numeroCalle;
 
+	// ok
 	private String escalera;
 
+	// ok
 	private String planta;
 
+	// ok
 	private String puerta;
 
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = Localidad.class, message = "El codMunicipio no existe", groups = { Insert.class, Update.class })
+	@EntityDefinition(propertyName = "localidad", classObj = Localidad.class)
 	private String codMunicipio;
 
 	@Diccionary(clase = DDUnidadPoblacional.class, message = "El codPedania no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "unidadPoblacional", classObj = DDUnidadPoblacional.class)
 	private String codPedania;
 
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDProvincia.class, message = "El codProvincia no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "provincia", classObj = DDProvincia.class)
 	private String codProvincia;
 
+	// ok
 	@NotNull(groups = Insert.class)
 	private String codigoPostal;
 
+	// ok
 	@NotNull(groups = Insert.class)
 	private String zona;
 
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDUbicacionActivo.class, message = "El codUbicacion no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "ubicacionActivo", classObj = DDUbicacionActivo.class)
 	private String codUbicacion;
 
 	@NotNull(groups = Insert.class) // <---------------------------------Diccionario???
+	@EntityDefinition(propertyName = "distrito")
 	private String codDistrito;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(propertyName = "latitud", transform = TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)
 	private Float lat;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(propertyName = "longitud", transform = TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)
 	private Float lng;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(propertyName = "fechaRecepcionLlaves")
 	private Date fechaRecepcionLlavesApi;
 
+	// ? ACT_ICO_INF_COMERCIAL DD_LOC_REGISTRO_ID
 	@Diccionary(clase = Localidad.class, message = "El codMunicipioRegistro no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(procesar = false, motivo = "No Existe entity para ACT_INFO_ADMINISTRATIVA")
 	private String codMunicipioRegistro;
 
+	// ? ACT_INFO_ADMINISTRATIVA DD_TVP_ID
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(procesar = false, motivo = "No Existe entity para ACT_INFO_ADMINISTRATIVA")
 	private String codRegimenProteccion;// <---------------------------------Diccionario???
 
+	// ?
+	@EntityDefinition(procesar = false)
 	private Float valorMaximoVpo;
 
+	// activo.propietariosActivo[].tipoGradoPropiedad
+	// no se actualiza
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoGradoPropiedad.class, message = "El codTipoPropiedad no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoPropiedad;// <---------------------------------Diccionario???
 
+	// activo.propietariosActivo[].porcPropiedad
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(procesar = false)
 	private Float porcentajePropiedad;
 
+	// activo.valoracion.importe
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(procesar = false, motivo = "No estamos actualizando las valoraciones")
 	private Float valorEstimadoVenta;
 
+	// activo.valoracion.fechaInicio
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(procesar = false, motivo = "No estamos actualizando las valoraciones")
 	private Date fechaValorEstimadoVenta;
 
+	// activo.valoracion.observaciones
+	@EntityDefinition(procesar = false, motivo = "No estamos actualizando las valoraciones")
 	@NotNull(groups = Insert.class)
 	private String justificacionValorEstimadoVenta;
 
+	// activo.valoracion.importe
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(procesar = false, motivo = "No estamos actualizando las valoraciones")
 	private Float valorEstimadoRenta;
 
+	// activo.valoracion.fechaInicio
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(procesar = false, motivo = "No estamos actualizando las valoraciones")
 	private Date fechaValorEstimadoRenta;
 
 	@NotNull(groups = Insert.class)
+	@EntityDefinition(propertyName = "justificacionRenta")
 	private String justificacionValorEstimadoRenta;
 
+	@EntityDefinition(procesar = false, motivo = "No existe entity ACT_REG_DATOS_REGISTRALES")
 	private Float utilSuperficie;
 
+	@EntityDefinition(procesar = false, motivo = "No existe entity ACT_REG_DATOS_REGISTRALES")
 	private Float construidaSuperficie;
 
+	@EntityDefinition(procesar = false, motivo = "No existe entity ACT_REG_DATOS_REGISTRALES")
 	private Float registralSuperficie;
 
+	@EntityDefinition(procesar = false, motivo = "No existe entity ACT_REG_DATOS_REGISTRALES")
 	private Float parcelaSuperficie;
 
 	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacion no existe", groups = {
@@ -184,35 +233,50 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "estadoConservacion", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacion;
 
+	// ok
 	@EntityDefinition(propertyName = "anyoConstruccion")
 	private Integer anyoConstruccion;
 
 	@EntityDefinition(propertyName = "anyoRehabilitacion")
 	private Integer anyoRehabilitacion;
 
-	@EntityDefinition(propertyName = "ultimaPlanta", transform= TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "ultimaPlanta", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ultimaPlanta;
 
+	@EntityDefinition(procesar = false, motivo = "No existe entity ACT_SPS_SITUACION_POSESORIA")
 	private Boolean ocupado;
 
-	private Long numeroPlantas;
+	@EntityDefinition(propertyName = "numPlantasInter")
+	private Integer numeroPlantas;
 
 	@Diccionary(clase = DDTipoOrientacion.class, message = "El codOrientacion no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "tipoOrientacion", classObj = DDTipoOrientacion.class)
 	private String codOrientacion;
 
 	@Diccionary(clase = DDTipoRenta.class, message = "El codNivelRenta no existe", groups = { Insert.class,
 			Update.class })
+	@EntityDefinition(propertyName = "tipoRenta", classObj = DDTipoRenta.class)
 	private String codNivelRenta;
 
+	// ?
+	@EntityDefinition(procesar = false, motivo = "No existe modelo para las plantas")
 	private List<PlantaDto> plantas;
 
+	// ?
+	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
 	private Long numeroTerrazasDescubiertas;
 
+	// ?
+	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
 	private String descripcionTerrazasDescubiertas;
 
+	// ?
+	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
 	private Long numeroTerrazasCubiertas;
 
+	// ?
+	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
 	private String descripcionTerrazasCubiertas;
 
 	private Boolean despensaOtrasDependencias;
@@ -235,72 +299,107 @@ public class InformeMediadorDto implements Serializable {
 
 	private Boolean contadorGasInstalacion;
 
+	@EntityDefinition(propertyName = "reformaCarpExt")
 	private Boolean exteriorCarpinteriaReformasNecesarias;
 
+	@EntityDefinition(propertyName = "reformaCarpInt")
 	private Boolean interiorCarpinteriaReformasNecesarias;
 
+	@EntityDefinition(propertyName = "reformaCocina")
 	private Boolean cocinaReformasNecesarias;
 
+	@EntityDefinition(propertyName = "reformaSuelo")
 	private Boolean suelosReformasNecesarias;
 
+	@EntityDefinition(propertyName = "reformaPintura")
 	private Boolean pinturaReformasNecesarias;
 
+	@EntityDefinition(propertyName = "reformaIntegral")
 	private Boolean integralReformasNecesarias;
 
+	@EntityDefinition(propertyName = "reformaBanyo")
 	private Boolean banyosReformasNecesarias;
 
+	@EntityDefinition(propertyName = "reformaOtroDesc")
 	private String otrasReformasNecesarias;
 
-	private Float otrasReformasNecesariasImporteAproximado;
+	@EntityDefinition(propertyName = "reformaPresupuesto")
+	private Double otrasReformasNecesariasImporteAproximado;
 
+	// activosVinculados
+	@EntityDefinition(propertyName = "activosVinculados", procesar = false, motivo = "Falta procesar listas")
 	private List<Long> activosVinculados;
 
+	@EntityDefinition(propertyName = "infoDistribucionInterior")
 	private String distribucionInterior;
 
+	@EntityDefinition(procesar=false,motivo="No existe la columna EDI_DIVISIBLE en ACT_EDI_EDIFICIO")
 	private Boolean divisible;
 
+	@EntityDefinition(propertyName="ascensor")
 	private Boolean ascensor;
 
+	@EntityDefinition(procesar=false,motivo="No existe la columna EDI_NUM_ASCENSORES en ACT_EDI_EDIFICIO")
 	private Long numeroAscensores;
 
+	@EntityDefinition(procesar=false,motivo="No existe la columna EDI_DESC_PLANTAS en ACT_EDI_EDIFICIO")
 	private String descripcionPlantas;
 
+	@EntityDefinition(procesar=false,motivo="No existe la columna EDI_OTRAS_CARACTERISTICAS en ACT_EDI_EDIFICIO")
 	private String otrasCaracteristicas;
 
+	@EntityDefinition(propertyName="reformaFachada")
 	private Boolean fachadaReformasNecesarias;
 
+	@EntityDefinition(propertyName="reformaEscalera")
 	private Boolean escaleraReformasNecesarias;
 
+	@EntityDefinition(propertyName="reformaPortal")
 	private Boolean portalReformasNecesarias;
 
+	@EntityDefinition(propertyName="reformaAscensor")
 	private Boolean ascensorReformasNecesarias;
 
+	@EntityDefinition(propertyName="reformaCubierta")
 	private Boolean cubierta;
 
+	@EntityDefinition(propertyName="reformaOtraZona")
 	private Boolean otrasZonasComunesReformasNecesarias;
 
+	@EntityDefinition(propertyName="reformaOtroDescEdificio")
 	private String otrosReformasNecesarias;
 
+	@EntityDefinition(propertyName="ediDescripcion")
 	private String descripcionEdificio;
 
+	@EntityDefinition(propertyName="entornoInfraestructura")
 	private String infraestructurasEntorno;
 
+	@EntityDefinition(propertyName="EDI_ENTORNO_COMUNICACION")
 	private String comunicacionesEntorno;
 
+	@EntityDefinition(propertyName="usuIdoneo")
 	private String idoneoUso;
 
+	@EntityDefinition(procesar=false,motivo="No se procesa a nivel bbdd")
 	private Boolean existeAnteriorUso;
 
+	@EntityDefinition(propertyName="usuAnterior")
 	private String anteriorUso;
 
+	@EntityDefinition(procesar=false,motivo="No existe la columna LCO_NUMERO_ESTANCIAS en ACT_LCO_LOCAL_COMERCIAL")
 	private Long numeroEstancias;
 
+	@EntityDefinition(procesar=false,motivo="No existe la columna LCO_NUMERO_BANYOS en ACT_LCO_LOCAL_COMERCIAL")
 	private Long numeroBanyos;
 
+	@EntityDefinition(procesar=false,motivo="No existe la columna LCO_NUMERO_ASEOS en ACT_LCO_LOCAL_COMERCIAL")
 	private long numeroAseos;
 
+	@EntityDefinition(propertyName="mtsFachadaPpal")
 	private Float metrosLinealesFachadaPrincipal;
 
+	@EntityDefinition(propertyName="mtsAlturaLibre")
 	private Float altura;
 
 	private Long numeroPlazasGaraje;
@@ -469,14 +568,6 @@ public class InformeMediadorDto implements Serializable {
 	private Boolean existeEstacionesDeTren;
 
 	private String estacionesDeTren;
-
-	public Long getIdInformeMediadorRem() {
-		return idInformeMediadorRem;
-	}
-
-	public void setIdInformeMediadorRem(Long idInformeMediadorRem) {
-		this.idInformeMediadorRem = idInformeMediadorRem;
-	}
 
 	public Long getIdInformeMediadorWebcom() {
 		return idInformeMediadorWebcom;
@@ -870,11 +961,11 @@ public class InformeMediadorDto implements Serializable {
 		this.ocupado = ocupado;
 	}
 
-	public Long getNumeroPlantas() {
+	public Integer getNumeroPlantas() {
 		return numeroPlantas;
 	}
 
-	public void setNumeroPlantas(Long numeroPlantas) {
+	public void setNumeroPlantas(Integer numeroPlantas) {
 		this.numeroPlantas = numeroPlantas;
 	}
 
@@ -1070,11 +1161,11 @@ public class InformeMediadorDto implements Serializable {
 		this.otrasReformasNecesarias = otrasReformasNecesarias;
 	}
 
-	public Float getOtrasReformasNecesariasImporteAproximado() {
+	public Double getOtrasReformasNecesariasImporteAproximado() {
 		return otrasReformasNecesariasImporteAproximado;
 	}
 
-	public void setOtrasReformasNecesariasImporteAproximado(Float otrasReformasNecesariasImporteAproximado) {
+	public void setOtrasReformasNecesariasImporteAproximado(Double otrasReformasNecesariasImporteAproximado) {
 		this.otrasReformasNecesariasImporteAproximado = otrasReformasNecesariasImporteAproximado;
 	}
 

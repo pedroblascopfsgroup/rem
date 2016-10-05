@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160914
+--## FECHA_CREACION=20160920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -44,7 +44,9 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'DD_DIS_ID',		 				'NUMBER(16,0)',						'Distrito del Activo.'	)
+    	T_ALTER(  'DD_DIS_ID',		 				'NUMBER(16,0)',						'Distrito del Activo.'	),
+    	T_ALTER(  'ICO_WEBCOM_ID',		 			'NUMBER(16,0)',						'Distrito del Activo.'	)
+    	
 		);
     V_T_ALTER T_ALTER;
     

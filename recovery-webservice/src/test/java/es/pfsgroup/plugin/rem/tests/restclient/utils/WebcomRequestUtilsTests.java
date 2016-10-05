@@ -40,8 +40,9 @@ public class WebcomRequestUtilsTests {
 	@Test
 	public void camposObligatorios_DTOs_anidados() {
 		String[] camposObligatorios = WebcomRequestUtils.camposObligatorios(ExampleDto.class);
-		// Hay 4 campos anotados con @WebcomRequired en ExampleDto y otro cada uno de los 2
-		// ExampleSubDto 
+		// Hay 4 campos anotados con @WebcomRequired en ExampleDto y otro cada
+		// uno de los 2
+		// ExampleSubDto
 		assertEquals("No coincide la cantidad de campos obligatorios", 6, camposObligatorios.length);
 
 		assertTrue("El campo obligado del DTO principal no aparece  correctamente identificado",
@@ -54,16 +55,14 @@ public class WebcomRequestUtilsTests {
 
 	@Test
 	public void createRequestJson_DTOs_anidados() {
-	
+
 		// Contenido del DTO principal
 		Map<String, Object> dtoPrincipal = new HashMap<String, Object>();
 		// Contenido del sub-dto
 		Map<String, Object> simpleData = new HashMap<String, Object>();
 		// Lista de sub-dtos
-		ArrayList<Map<String, Object>> subDtoList = new ArrayList<Map<String,Object>>();
-		
-		
-		
+		ArrayList<Map<String, Object>> subDtoList = new ArrayList<Map<String, Object>>();
+
 		dtoPrincipal.put("value", "my value");
 		// seteamos la lista de sub-dtos en el dto principal
 		dtoPrincipal.put("subDtoList", subDtoList);
@@ -71,11 +70,10 @@ public class WebcomRequestUtilsTests {
 		subDtoList.add(simpleData);
 		// seteamos un valor en el sub-dto
 		simpleData.put("name", "my name");
-		
-		
+
 		ParamsList paramsList = new ParamsList();
 		paramsList.add(dtoPrincipal);
-		
+
 		// Vamos a intentar recuperar el valor del sub-dto
 		JSONObject json = WebcomRequestUtils.createRequestJson(paramsList);
 		// en el JSON debe existir un array 'data' con un elemento.
@@ -86,9 +84,27 @@ public class WebcomRequestUtilsTests {
 		JSONArray list = data1.getJSONArray("subDtoList");
 		// Obtenemos el primer sub-dto
 		JSONObject object = list.getJSONObject(0);
-		
+
 		// Comprobamos el estado del sub-dto
 		assertEquals("El estado de 'object' no es el esperado", "my name", object.get("name"));
+	}
+
+	@Test
+	public void createRequestJson_ValoresBooleanos() {
+		/*
+		 * El propósito de este test es comprobar que no estemos mandando los
+		 * 'trues' y 'falses' entrecomillados.
+		 * 
+		 * Para ello vamso a comprobar que un Objeto Boolean en ParamsList es
+		 * devuelto como tal en el JSON.
+		 */
+		ParamsList paramsList = new ParamsList();
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("bool", Boolean.TRUE);
+		paramsList.add(data);
+		JSONObject json = WebcomRequestUtils.createRequestJson(paramsList);
+		assertTrue("El valor 'bool' no se está mandando como Boolean",
+				json.getJSONArray("data").getJSONObject(0).get("bool") instanceof Boolean);
 	}
 
 }

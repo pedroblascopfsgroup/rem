@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.restclient.registro;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -17,10 +18,16 @@ public class RegistroLlamadasManager {
 	@Autowired
 	private RestLlamadaDao llamadaDao;
 	
-	@Transactional(readOnly = false, noRollbackFor=ErrorServicioWebcom.class)
+	
+	
+	@Transactional(readOnly = false, noRollbackFor=ErrorServicioWebcom.class,propagation=Propagation.NEVER)
 	public void guardaRegistroLlamada(RestLlamada llamada){
 		logger.debug("Guardando traza de la llamada en BD");
-		llamadaDao.saveOrUpdate(llamada);
+		
+		
+		llamadaDao.guardaRegistro(llamada);
+		
+		
 	}
 
 }

@@ -181,7 +181,7 @@ BEGIN
                 COE_COD_TEXTO AS COE_TEXTO,
                 COE_FECHA_DESDE,
                 COE_FECHA_HASTA,
-                nvl(USU_ALTA.USU_ID, select usu_id from '||V_ESQUEMA_MASTER||'.USU_USUARIOS where USU_USERNAME = ''MIGRACION'') AS COE_USUARIO_ALTA,
+                nvl(USU_ALTA.USU_ID, (select usu_id from '||V_ESQUEMA_MASTER||'.USU_USUARIOS where USU_USERNAME = ''MIGRACION'' AND BORRADO = 0)) AS COE_USUARIO_ALTA,
                 USU_BAJA.USU_ID AS COE_USUARIO_BAJA,
                 0 AS VERSION,
                 ''MIG2''           AS USUARIOCREAR,

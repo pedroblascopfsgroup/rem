@@ -31,6 +31,10 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 
     protected final Log logger = LogFactory.getLog(getClass());
     
+    private static final Integer CHECK_VALOR_SI = 1;
+    private static final Integer CHECK_VALOR_NO = 0;
+    private static final Integer CHECK_NO_CAMBIAR = -1;
+    
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 		
@@ -62,6 +66,23 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 			return false;
 		}
 	}
+	
+	/**
+	 * Método que evalua el valor de un check en funcion de las columnas S/N/<nulo>
+	 * @param cellValue
+	 * @return
+	 */
+	private Integer getCheckValue(String cellValue){
+		if(!Checks.esNulo(cellValue)){
+			if("S".equalsIgnoreCase(cellValue))
+				return CHECK_VALOR_SI;
+			else
+				return CHECK_VALOR_NO;					
+		}
+		
+		return CHECK_NO_CAMBIAR;
+		
+	}
 
 	@Override
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
@@ -80,10 +101,10 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 	
 				//Variables temporales para asignar valores de filas excel
-				Integer tmpIncluidoEnPerimetro = "S".equals(exc.dameCelda(fila, 1))? Integer.valueOf(1) : Integer.valueOf(0);
-				Integer tmpAplicaGestion = "S".equals(exc.dameCelda(fila, 2))? Integer.valueOf(1) : Integer.valueOf(0);
+				Integer tmpIncluidoEnPerimetro = getCheckValue(exc.dameCelda(fila, 1));
+				Integer tmpAplicaGestion = getCheckValue(exc.dameCelda(fila, 2));
 				String  tmpMotivoAplicaGestion = exc.dameCelda(fila, 3);
-				Integer tmpAplicaComercializar = "S".equals(exc.dameCelda(fila, 4))? Integer.valueOf(1) : Integer.valueOf(0);
+				Integer tmpAplicaComercializar = getCheckValue(exc.dameCelda(fila, 4));
 				String  tmpMotivoComercializacion = exc.dameCelda(fila, 5);
 				String  tmpMotivoNoComercializacion = exc.dameCelda(fila, 6);
 				String  tmpTipoComercializacion = exc.dameCelda(fila, 7);
@@ -91,15 +112,17 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	
 				perimetroActivo.setActivo(activo);
 				//Incluido en perimetro
-				if(!Checks.esNulo(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
+				if(!CHECK_NO_CAMBIAR.equals(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
+				
 				//Aplica gestion
-				if(!Checks.esNulo(tmpAplicaGestion)){
+				if(!CHECK_NO_CAMBIAR.equals(tmpAplicaGestion)){
 					perimetroActivo.setAplicaGestion(tmpAplicaGestion);
 					perimetroActivo.setFechaAplicaGestion(new Date());					
 				}
 				if(!Checks.esNulo(tmpMotivoAplicaGestion)) perimetroActivo.setMotivoAplicaGestion(tmpMotivoAplicaGestion);
+				
 				//Aplica comercializacion
-				if(!Checks.esNulo(tmpAplicaComercializar)){
+				if(!CHECK_NO_CAMBIAR.equals(tmpAplicaComercializar)){
 					perimetroActivo.setAplicaComercializar(tmpAplicaComercializar);
 					perimetroActivo.setFechaAplicaComercializar(new Date());
 				}
@@ -119,6 +142,7 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 						utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpTipoComercializacion));
 				
 				//Persiste los datos, creando el registro de perimetro
+				// Todos los datos son de PerimetroActivo, a excepcion del tipo comercializacion que es del Activo
 				if(!Checks.esNulo(tmpTipoComercializacion)) activoApi.saveOrUpdate(activo);
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 	

@@ -104,8 +104,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		JSONArray requestData = genericValidation(httpClient, method, charset);
 
 		assertDataBasicContent(requestData, 0);
-		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom);
-		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem);
+		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom.toString());
+		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem.toString());
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, codEstado);
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
 
@@ -139,9 +139,9 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		JSONArray requestData = genericValidation(httpClient, method, charset);
 
 		assertDataBasicContent(requestData, 0);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_REM, idRem);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ACTIVO_HAYA, idActivoHaya);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom.toString());
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_REM, idRem.toString());
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ACTIVO_HAYA, idActivoHaya.toString());
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_OFERTA, codEstadoOferta);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_EXPEDIENTE, codEstadoExpediente);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.VENDIDO, vendido);

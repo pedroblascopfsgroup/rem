@@ -32,6 +32,11 @@ import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
  *            va a usar para invocar al servicio
  */
 public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements InfoTablasBD {
+	
+	
+	private static interface DataAccessOperation{
+		public List<CambioBD> getDatabaseChanges();
+	}
 
 	@Autowired
 	private CambiosBDDao dao;
@@ -73,9 +78,80 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 		if (dtoClass == null) {
 			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
 		}
+		
+		final List<CambioBD> cambios = dao.listCambios(dtoClass, this);
+
+		return extractDtos(dtoClass, new DataAccessOperation() {
+			@Override
+			public List<CambioBD> getDatabaseChanges() {
+				return cambios;
+			}
+		});
+
+	}
+
+	
+	public List<T> listDatosCompletos(Class dtoClass) {
+		
+		if (dtoClass == null) {
+			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+		}
+		
+		final List<CambioBD> cambios = dao.listDatosActuales(dtoClass, this);
+
+		return extractDtos(dtoClass, new DataAccessOperation() {
+			@Override
+			public List<CambioBD> getDatabaseChanges() {
+				return cambios;
+			}
+		});
+		
+	}
+
+	/**
+	 * Marca los registros de BD como enviados.
+	 * 
+	 * @param dtoClass
+	 *            que implementa el DTO asociado a este detector de cambios.
+	 *            Este parámetro debe pasársele al método como control de que
+	 *            esamos invocando el handler correcto. Para ello, la clase que
+	 *            invoca ester método debe obtener este valor usando el método
+	 *            getDtoClass()
+	 */
+	public void marcaComoEnviados(Class dtoClass) {
+		if (dtoClass == null) {
+			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+		}
 
 		if (dtoClass.equals(getDtoClass())) {
-			List<CambioBD> listCambios = dao.listCambios(dtoClass, this);
+			dao.marcaComoEnviados(dtoClass, this);
+		} else {
+			logger.warn("No coincide la clase con el DTO asociado al detctor. Se esperaba " + getDtoClass().getName()
+					+ " pero se ha especificado " + dtoClass.getName());
+			logger.warn(
+					"Esto puede significar que no se está usando el handler correcto, por lo tanto no se van a marcar los registros de BD como enviados.");
+		}
+
+	}
+
+	/**
+	 * Devuelve la clase que implementa el DTO asociado al detector de cambios.
+	 * Este método se usa para como método de control para verificar que
+	 * ejecutamos el método listPendientes() sobre el handler apropiado.
+	 * 
+	 * @return
+	 */
+	public Class getDtoClass() {
+		return this.createDtoInstance().getClass();
+	}
+	
+	
+	private List<T> extractDtos(Class dtoClass, DataAccessOperation dao) {
+		if (dao == null){
+			throw new IllegalArgumentException("Data Access Operation is not defined");
+		}
+		if (dtoClass.equals(getDtoClass())) {
+			List<CambioBD> listCambios = dao.getDatabaseChanges();
 
 			List<T> listaCambios = new ArrayList<T>();
 
@@ -135,45 +211,8 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 					"Esto puede significar que no se está usando el handler correcto, por lo tanto no se van a devolver resultados.");
 			return null;
 		}
-
 	}
-
-	/**
-	 * Marca los registros de BD como enviados.
-	 * 
-	 * @param dtoClass
-	 *            que implementa el DTO asociado a este detector de cambios.
-	 *            Este parámetro debe pasársele al método como control de que
-	 *            esamos invocando el handler correcto. Para ello, la clase que
-	 *            invoca ester método debe obtener este valor usando el método
-	 *            getDtoClass()
-	 */
-	public void marcaComoEnviados(Class dtoClass) {
-		if (dtoClass == null) {
-			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
-		}
-
-		if (dtoClass.equals(getDtoClass())) {
-			dao.marcaComoEnviados(dtoClass, this);
-		} else {
-			logger.warn("No coincide la clase con el DTO asociado al detctor. Se esperaba " + getDtoClass().getName()
-					+ " pero se ha especificado " + dtoClass.getName());
-			logger.warn(
-					"Esto puede significar que no se está usando el handler correcto, por lo tanto no se van a marcar los registros de BD como enviados.");
-		}
-
-	}
-
-	/**
-	 * Devuelve la clase que implementa el DTO asociado al detector de cambios.
-	 * Este método se usa para como método de control para verificar que
-	 * ejecutamos el método listPendientes() sobre el handler apropiado.
-	 * 
-	 * @return
-	 */
-	public Class getDtoClass() {
-		return this.createDtoInstance().getClass();
-	}
+	
 
 	/**
 	 * Si dtoClass contiene la anotación @NestedDto en su definición

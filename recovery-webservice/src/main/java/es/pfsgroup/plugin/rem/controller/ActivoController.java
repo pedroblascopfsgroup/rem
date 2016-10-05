@@ -559,6 +559,23 @@ public class ActivoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deletePrecioVigenteSinGuardadoHistorico(DtoPrecioVigente precioVigenteDto, ModelMap model) {
+	
+		try {
+			boolean success = activoApi.deleteValoracionPrecioConGuardadoEnHistorico(precioVigenteDto.getIdPrecioVigente(),false);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	} 
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView savePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 
 		try {

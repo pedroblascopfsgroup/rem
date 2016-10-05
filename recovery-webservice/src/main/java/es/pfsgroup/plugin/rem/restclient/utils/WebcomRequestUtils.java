@@ -184,6 +184,8 @@ public class WebcomRequestUtils {
 			if (valueOf != null) {
 				if (valueOf instanceof Date) {
 					return formatDate((Date) valueOf);
+				}else if (valueOf instanceof Boolean){
+					return valueOf;
 				} else {
 					return valueOf.toString();
 				}

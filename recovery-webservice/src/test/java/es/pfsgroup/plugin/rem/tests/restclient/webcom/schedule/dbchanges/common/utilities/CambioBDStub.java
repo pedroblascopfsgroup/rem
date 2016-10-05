@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
 
 public class CambioBDStub extends CambioBD{
 

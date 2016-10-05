@@ -958,7 +958,7 @@ function run_scripts {
 	      echo " OK : DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.sql"
 	  fi
 	fi
-	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.sql" "REM01" "JOSE VILLEL" "online"  "9.1" "20160817" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.sql" "REM01" "JOSEVI JIMENEZ" "online"  "9.2" "20161003" "0" "NO"
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.log
 	exit | sqlplus -s -l $1 @./scripts/DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS-REM01-reg3.1.sql > DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.log
 	echo " -- : DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.sql"
@@ -988,12 +988,12 @@ function run_scripts {
 	exit | sqlplus -s -l $1 @./scripts/DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION-REM01-reg3.1.sql > DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION.log
 	echo " -- : DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION.sql"
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION.log
-	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160810" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160902" "0" "NO"
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.log
 	exit | sqlplus -s -l $1 @./scripts/DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA-REM01-reg3.1.sql > DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.log
 	echo " -- : DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.sql"
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.log
-	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160811" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160914" "0" "NO"
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.log
 	exit | sqlplus -s -l $1 @./scripts/DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO-REM01-reg3.1.sql > DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.log
 	echo " -- : DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.sql"
@@ -1003,6 +1003,41 @@ function run_scripts {
 	exit | sqlplus -s -l $1 @./scripts/DDL_017_REM01_VI_BUSQUEDA_TRABAJOS-REM01-reg3.1.sql > DDL_017_REM01_VI_BUSQUEDA_TRABAJOS.log
 	echo " -- : DDL_017_REM01_VI_BUSQUEDA_TRABAJOS.sql"
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_017_REM01_VI_BUSQUEDA_TRABAJOS.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_018_REM01_VI_BUSQUEDA_COMPRADORES_EXPEDIENTE.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160831" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_018_REM01_VI_BUSQUEDA_COMPRADORES_EXPEDIENTE.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_018_REM01_VI_BUSQUEDA_COMPRADORES_EXPEDIENTE-REM01-reg3.1.sql > DDL_018_REM01_VI_BUSQUEDA_COMPRADORES_EXPEDIENTE.log
+	echo " -- : DDL_018_REM01_VI_BUSQUEDA_COMPRADORES_EXPEDIENTE.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_018_REM01_VI_BUSQUEDA_COMPRADORES_EXPEDIENTE.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_018_REM01_VI_BUSQUEDA_PROVEEDORES.sql" "REM01" "Kevin Fernández" "online"  "9.2" "20160912" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_018_REM01_VI_BUSQUEDA_PROVEEDORES.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_018_REM01_VI_BUSQUEDA_PROVEEDORES-REM01-reg3.1.sql > DDL_018_REM01_VI_BUSQUEDA_PROVEEDORES.log
+	echo " -- : DDL_018_REM01_VI_BUSQUEDA_PROVEEDORES.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_018_REM01_VI_BUSQUEDA_PROVEEDORES.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_019_REM01_VI_BUSQUEDA_DATOS_COMPRADOR_EXP.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160906" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_019_REM01_VI_BUSQUEDA_DATOS_COMPRADOR_EXP.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_019_REM01_VI_BUSQUEDA_DATOS_COMPRADOR_EXP-REM01-reg3.1.sql > DDL_019_REM01_VI_BUSQUEDA_DATOS_COMPRADOR_EXP.log
+	echo " -- : DDL_019_REM01_VI_BUSQUEDA_DATOS_COMPRADOR_EXP.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_019_REM01_VI_BUSQUEDA_DATOS_COMPRADOR_EXP.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_020_REM01_SP_ACTUALIZA_ACT_IND_PRECIOS.sql" "REM01" "CLV" "online"  "9.2" "20160907" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_020_REM01_SP_ACTUALIZA_ACT_IND_PRECIOS.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_020_REM01_SP_ACTUALIZA_ACT_IND_PRECIOS-REM01-reg3.1.sql > DDL_020_REM01_SP_ACTUALIZA_ACT_IND_PRECIOS.log
+	echo " -- : DDL_020_REM01_SP_ACTUALIZA_ACT_IND_PRECIOS.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_020_REM01_SP_ACTUALIZA_ACT_IND_PRECIOS.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_021_REM01_SP_ACT_CHECK_INFO.sql" "REM01" "CLV" "online"  "9.2" "20160907" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_021_REM01_SP_ACT_CHECK_INFO.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_021_REM01_SP_ACT_CHECK_INFO-REM01-reg3.1.sql > DDL_021_REM01_SP_ACT_CHECK_INFO.log
+	echo " -- : DDL_021_REM01_SP_ACT_CHECK_INFO.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_021_REM01_SP_ACT_CHECK_INFO.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_023_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR.sql" "REM01" "Luis Caballero" "online"  "9.1" "20160921" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_023_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_023_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR-REM01-reg3.1.sql > DDL_023_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR.log
+	echo " -- : DDL_023_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_023_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_024_ENTITY01_SP_UPA_UPDATE_ACTIVES_UVEM.sql" "REM01" "David Gonzalez" "online"  "9.1" "20160927" "HREOS-788" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_024_ENTITY01_SP_UPA_UPDATE_ACTIVES_UVEM.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_024_ENTITY01_SP_UPA_UPDATE_ACTIVES_UVEM-REM01-reg3.1.sql > DDL_024_ENTITY01_SP_UPA_UPDATE_ACTIVES_UVEM.log
+	echo " -- : DDL_024_ENTITY01_SP_UPA_UPDATE_ACTIVES_UVEM.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_024_ENTITY01_SP_UPA_UPDATE_ACTIVES_UVEM.log
 }
 
 run_scripts "$@" | tee output.log

@@ -375,7 +375,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "usuIdoneo")
 	private String idoneoUso;
 
-	@EntityDefinition(procesar = false, motivo = "No se procesa a nivel bbdd")
+	@EntityDefinition(procesar = false)
 	private Boolean existeAnteriorUso;
 
 	@EntityDefinition(propertyName = "usuAnterior")

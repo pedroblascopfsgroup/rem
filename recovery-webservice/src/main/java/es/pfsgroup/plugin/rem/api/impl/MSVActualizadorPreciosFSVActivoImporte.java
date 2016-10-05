@@ -79,7 +79,7 @@ public class MSVActualizadorPreciosFSVActivoImporte implements MSVLiberator {
 				}
 				
 				//Si hay Valoracion = Precio FSV Renta
-				if(!Checks.esNulo(exc.dameCelda(fila, 4))){
+				if(!Checks.esNulo(exc.dameCelda(fila, 2))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_FSV_RENTA, 
 							Double.parseDouble(exc.dameCelda(fila, 2)),

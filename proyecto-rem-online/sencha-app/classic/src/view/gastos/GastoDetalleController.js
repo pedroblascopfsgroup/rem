@@ -633,7 +633,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		});
 
 		return criteria;
-	}
+	},
     
 	haCambiadoIban: function(field, value){
 		var me= this;

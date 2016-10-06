@@ -71,7 +71,9 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
@@ -82,8 +84,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -272,11 +276,47 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		Oferta oferta = expedienteComercial.getOferta();
 		
-		if(!Checks.esNulo(dto.getEstadoVisitaOfertaCodigo())) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoVisitaOfertaCodigo());
-			DDEstadosVisitaOferta estado = genericDao.get(DDEstadosVisitaOferta.class, filtro);	
-			oferta.setEstadoVisitaOferta(estado);	
+		if(!Checks.esNulo(dto.getEstadoCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo());
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);	
+			oferta.setEstadoOferta(estado);;	
 		}
+		
+		if(!Checks.esNulo(dto.getTipoOfertaCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoOfertaCodigo());
+			DDTipoOferta tipoOferta = genericDao.get(DDTipoOferta.class, filtro);	
+			oferta.setTipoOferta(tipoOferta);
+		}
+		
+		if(!Checks.esNulo(dto.getEstadoVisitaOfertaCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoVisitaOfertaCodigo());
+			DDEstadosVisitaOferta estadoVisitaOferta = genericDao.get(DDEstadosVisitaOferta.class, filtro);	
+			oferta.setEstadoVisitaOferta(estadoVisitaOferta);
+		}
+		
+		if(!Checks.esNulo(dto.getCanalPrescripcionCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCanalPrescripcionCodigo());
+			DDCanalPrescripcion canalPrescripcion = genericDao.get(DDCanalPrescripcion.class, filtro);	
+			oferta.setCanalPrescripcion(canalPrescripcion);
+		}
+		if(("").equals(dto.getCanalPrescripcionCodigo())){
+			oferta.setCanalPrescripcion(null);
+		}
+		
+		try {
+			beanUtilNotNull.copyProperties(oferta, dto);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		oferta.setFechaAlta(dto.getFechaAlta());
+//		oferta.setImporteOferta(dto.getImporteOferta());
+//		oferta.setFechaNotificacion(dto.getFechaNotificacion());
+//		oferta.setImporteContraOferta(dto.getImporteContraoferta());
 		
 		expedienteComercial.setOferta(oferta);
 		
@@ -403,17 +443,19 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		dto.setNumOferta(oferta.getNumOferta());
 		if(!Checks.esNulo(oferta.getTipoOferta())) {
 			dto.setTipoOfertaDescripcion(oferta.getTipoOferta().getDescripcion());
+			dto.setTipoOfertaCodigo(oferta.getTipoOferta().getCodigo());
 		}
 		dto.setFechaNotificacion(oferta.getFechaNotificacion());
 		dto.setFechaAlta(oferta.getFechaAlta());
 		if(!Checks.esNulo(oferta.getEstadoOferta())) {
 			dto.setEstadoDescripcion(oferta.getEstadoOferta().getDescripcion());
+			dto.setEstadoCodigo(oferta.getEstadoOferta().getCodigo());
 		}
-		if(!Checks.esNulo(oferta.getPrescriptor()) && !Checks.esNulo(oferta.getPrescriptor().getTipoColaborador())) {
-			dto.setPrescriptorDescripcion(oferta.getPrescriptor().getTipoColaborador().getDescripcion());
+		if(!Checks.esNulo(oferta.getPrescriptor())) {
+			dto.setPrescriptor(oferta.getPrescriptor().getNombre());
 		}
 		dto.setImporteOferta(oferta.getImporteOferta());
-		dto.setImporteContraoferta(oferta.getImporteContraOferta());
+		dto.setImporteContraOferta(oferta.getImporteContraOferta());
 		
 		// TODO Comités sin definir
 		//dto.setComite();
@@ -425,6 +467,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(oferta.getEstadoVisitaOferta())) {
 			dto.setEstadoVisitaOfertaCodigo(oferta.getEstadoVisitaOferta().getCodigo());
 			dto.setEstadoVisitaOfertaDescripcion(oferta.getEstadoVisitaOferta().getDescripcion());
+		}
+		
+		if(!Checks.esNulo(oferta.getCanalPrescripcion())){
+			dto.setCanalPrescripcionCodigo(oferta.getCanalPrescripcion().getCodigo());
+			dto.setCanalPrescripcionDescripcion(oferta.getCanalPrescripcion().getDescripcion());
 		}
 		
 				

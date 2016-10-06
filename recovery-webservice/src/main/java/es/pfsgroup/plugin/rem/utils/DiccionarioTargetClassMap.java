@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -105,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposCompareciente;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -243,6 +245,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivosRetenerPago", DDMotivoRetencionPago.class);
 		mapa.put("resultadosImpugnacion", DDResultadoImpugnacionGasto.class);
 		mapa.put("tiposDocumentosGasto", DDTipoDocumentoGasto.class);
+		mapa.put("tiposColaborador", DDTiposColaborador.class);
+		mapa.put("canalesPrescripcion", DDCanalPrescripcion.class);
 //		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 		return Collections.unmodifiableMap(mapa);
 	}

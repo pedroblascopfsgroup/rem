@@ -389,7 +389,44 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getHonorarios',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
-		}
+		},
+		
+		comboTipoOferta: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+			}
+	    },
+	    
+	    comboEstadoOferta: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosOfertas'}
+			}
+	    },
+	    
+	    comboColaboradorPrescriptor: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposColaborador'}
+			}
+	    },
+	    
+	    comboCanalPrescripcion: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'canalesPrescripcion'}
+			}
+	    },
+	    
 	
     }
   

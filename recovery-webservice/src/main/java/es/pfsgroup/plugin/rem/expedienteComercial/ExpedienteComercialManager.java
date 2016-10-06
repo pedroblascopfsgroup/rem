@@ -501,6 +501,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
 				dto.setImporte(expediente.getCondicionante().getImporteReserva());
 			}
+			dto.setMotivoAnulacion(reserva.getMotivoAnulacion());
+			dto.setFechaAnulacion(reserva.getFechaAnulacion());
 		}
 		
 		

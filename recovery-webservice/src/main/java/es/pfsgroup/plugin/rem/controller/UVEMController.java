@@ -91,10 +91,10 @@ public class UVEMController {
 
 			// obtenemos el n de cliente interno dado su documento y tipo de
 			// documento
-			GMPAJC11_INS numclienteIns = uvemManagerApi.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
+			Integer numcliente = uvemManagerApi.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
 
 
-			GMPAJC93_INS datosClienteIns = uvemManagerApi.ejecutarDatosCliente(numclienteIns, qcenre);
+			GMPAJC93_INS datosClienteIns = uvemManagerApi.ejecutarDatosCliente(numcliente, qcenre);
 			
 			//edad
 			model.put("edad", datosClienteIns.getEdadDelClientenuedaw());

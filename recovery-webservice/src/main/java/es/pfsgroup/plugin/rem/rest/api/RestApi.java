@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -119,7 +120,7 @@ public interface RestApi {
 	public String getClientIpAddr(HttpServletRequest request);
 
 	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto,Serializable... objetoEntity)
+	public Serializable saveDtoToBbdd(Object dto,ArrayList<Serializable> objetoEntity)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException;
 

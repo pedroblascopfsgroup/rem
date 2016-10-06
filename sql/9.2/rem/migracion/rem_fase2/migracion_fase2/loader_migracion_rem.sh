@@ -63,6 +63,11 @@ $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_IMPUGNACIONES.ctl		
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_INFORMACION_CONTABILIDAD.ctl	log=./CTLs_DATs/logs/GASTOS_INFORMACION_CONTABILIDAD.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVOS.ctl							log=./CTLs_DATs/logs/ACTIVOS.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PERIMETRO_ACTIVOS.ctl					log=./CTLs_DATs/logs/PERIMETRO_ACTIVOS.log
+#Alquiler
+#Agrupaciones
+$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVO_PLANDINVENTAS.ctl				log=./CTLs_DATs/logs/ACTIVO_PLANDINVENTAS.log
+$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROPIETARIOS.ctl						log=./CTLs_DATs/logs/PROPIETARIOS.log
+$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROPIETARIOS_HISTORICO.ctl			log=./CTLs_DATs/logs/PROPIETARIOS_HISTORICO.log
 
 #$ORACLE_HOME/bin/sqlplus REM01/$1 @aux/Mig_estadisticas.sql > ./CTLs_DATs/logs/$0.log
 #if [ $? != 0 ] ; then echo -e "\n\n======>>> "Error en @aux/Mig_estadisticas.sql >> ./CTLs_DATs/logs/$0.log ; exit 1 ; fi

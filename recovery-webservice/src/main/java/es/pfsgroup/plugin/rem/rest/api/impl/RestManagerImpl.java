@@ -186,7 +186,7 @@ public class RestManagerImpl implements RestApi {
 
 	@SuppressWarnings("rawtypes")
 	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto, Serializable... objetoEntitys)
+	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntitys)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
 			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException {
 
@@ -214,14 +214,14 @@ public class RestManagerImpl implements RestApi {
 					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
 					String propertyEntityName = null;
 					propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
-					this.setProperty(propertyEntityName, f.getType(), null, annotation,
+					this.setProperty(propertyEntityName, f.getType(), annotation, null,
 							this.getValue(dto, dto.getClass(), "get".concat(propertyEntityName)), objetoEntitys);
 
 				}
 			}
 		}
 		guardarEntity(objetoEntitys);
-		return objetoEntitys[0];
+		return objetoEntitys.get(0);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -236,7 +236,7 @@ public class RestManagerImpl implements RestApi {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
-			Object oFiltro, Object object, Serializable... objetoEntitys) {
+			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys) {
 		boolean resultado = false;
 		if ((annotation != null && annotation.procesar()) || annotation == null) {
 			if (oFiltro != null && annotation != null) {
@@ -263,31 +263,57 @@ public class RestManagerImpl implements RestApi {
 						resultado = true;
 						System.out.println("OK --------------->" + propertyEntityName + " seteada en la entidad "
 								+ objetoEntity.getClass().getName());
-					} catch (Exception e) {
+					} catch (NoSuchMethodException e) {
 						// intentamos setear el objeto en las diferentes
 						// entidades
 						continue;
+					} catch (InvocationTargetException e) {
+						System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
+					} catch (IllegalAccessException e) {
+						System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
 					}
 				}
-				if (!resultado) {
+				if (!resultado && annotation == null) {
 					System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
 				}
 			}
 		} else if (annotation != null && !annotation.procesar()) {
 			resultado = true;
 			if (!annotation.motivo().isEmpty()) {
-				System.out.println("SKIP ".concat(propertyEntityName.concat(" motivo: ").concat(annotation.motivo())));
+				System.out.println("SKIP  --------------->"
+						.concat(propertyEntityName.concat(" motivo: ").concat(annotation.motivo())));
 			}
 		}
 		return resultado;
 
 	}
 
-	private void guardarEntity(Serializable... objetoEntitys) {
+	private void guardarEntity(ArrayList<Serializable> objetoEntitys) throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
 		for (Serializable objetoEntity : objetoEntitys) {
-			genericaRestDaoImp.saveOrUpdate(objetoEntity);
+			Object primary = this.findPrimaryKey(objetoEntity);
+			if (primary == null) {
+				objetoEntity = genericaRestDaoImp.save(objetoEntity);
+			} else {
+				genericaRestDaoImp.update(objetoEntity);
+			}
+			
 		}
 
+	}
+
+	private Object findPrimaryKey(Serializable objetoEntity) throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+		Object result = null;
+		for (Field f : objetoEntity.getClass().getDeclaredFields()) {
+			if (f.getAnnotation(javax.persistence.Id.class) != null) {
+				result = this.getValue(objetoEntity, objetoEntity.getClass(), f.getName());
+				break;
+			}
+
+		}
+
+		return result;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

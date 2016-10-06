@@ -31,9 +31,37 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T001_VerificarEstadoPosesorio" name="avanzaBPM"></transition>
+		<transition to="T001_CheckingInformacionDecision" name="avanzaBPM"></transition>
 	</state>
 
+	<decision name ="T001_CheckingInformacionDecision" expression="#{T001_CheckingInformacionDecision}">
+		<transition to="T001_VerificarEstadoPosesorio" name="NoComercializable"></transition>
+		<transition to="T001_DesignarMediador" name="Comercializable"></transition>
+	</decision>
+	
+	<state name="T001_DesignarMediador">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T001_VerificarEstadoPosesorio" name="avanzaBPM"></transition>
+	</state>
+	
+	
 	<state name="T001_VerificarEstadoPosesorio">
 		<event type="node-enter">
 			<action name="miTarea"

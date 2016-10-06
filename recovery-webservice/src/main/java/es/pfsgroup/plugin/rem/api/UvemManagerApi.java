@@ -64,7 +64,7 @@ public interface UvemManagerApi {
 	 *            Otros persona física. J Otros persona jurídica.
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	public GMPAJC11_INS obtenerClientesUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException;
+	public Integer obtenerNumClienteUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException;
 	
 	
 	/**
@@ -92,7 +92,7 @@ public interface UvemManagerApi {
 	 *            Otros persona física. J Otros persona jurídica.
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	public GMPAJC11_INS ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws WIException;
+	public Integer ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws WIException;
 
 
 	/**
@@ -100,10 +100,10 @@ public interface UvemManagerApi {
 	 * los datos del mismo, tanto identificativos como de cara a poder dar
 	 * cumplimiento a la normativa relativa a PBC.
 	 * 
-	 * @param numclienteIns: Instancia de un Cliente Oferta
+	 * @param numcliente: numero cliente Ursus (idclow)
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	public GMPAJC93_INS ejecutarDatosCliente(GMPAJC11_INS numclienteIns, String qcenre)  throws WIException;
+	public GMPAJC93_INS ejecutarDatosCliente(Integer numcliente, String qcenre)  throws WIException;
 
 	
 	

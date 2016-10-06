@@ -314,19 +314,22 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								readOnly	: true
 							},
 							
-							//Fila Admision
+							//Fila Admision (Siempre oculto por el momento)
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.admision'),
-								bind:		'{activo.aplicaTramiteAdmision}'
+								bind:		'{activo.aplicaTramiteAdmision}',
+								hidden: true
 							},
 							{
 								xtype: 'datefieldbase',
-								bind:		'{activo.fechaAplicaTramiteAdmision}'
+								bind:		'{activo.fechaAplicaTramiteAdmision}',
+								hidden: true
 							},
 							{
 								xtype: 'textfieldbase',
-								bind:		'{activo.motivoAplicaTramiteAdmision}'
+								bind:		'{activo.motivoAplicaTramiteAdmision}',
+								hidden: true
 							},
 
 							//Fila gestion
@@ -344,19 +347,22 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind:		'{activo.motivoAplicaGestion}'
 							},
 							
-							//Fila mediador
+							//Fila mediador (Siempre oculto por el momento)
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.mediador'),
-								bind:		'{activo.aplicaAsignarMediador}'
+								bind:		'{activo.aplicaAsignarMediador}',
+								hidden: true
 							},
 							{
 								xtype: 'datefieldbase',
-								bind:		'{activo.fechaAplicaAsignarMediador}'
+								bind:		'{activo.fechaAplicaAsignarMediador}',
+								hidden: true
 							},
 							{
 								xtype: 'textfieldbase',
-								bind:		'{activo.motivoAplicaAsignarMediador}'
+								bind:		'{activo.motivoAplicaAsignarMediador}',
+								hidden: true
 							},
 							
 							//Fila comercializar

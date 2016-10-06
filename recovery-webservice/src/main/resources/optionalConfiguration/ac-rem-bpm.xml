@@ -326,6 +326,14 @@
 				def activoTramiteManager = ctx.getBean("activoTramiteManager");
             	return activoTramiteManager.existeAdjuntoUGValidacionCadena(tareaExterna, cadenaDAUG);
             }
+            def comprobarActivoComercializable = {
+            	def activoManager = ctx.getBean("activoManager");
+            	return activoManager.comprobarActivoComercializable(idActivo);
+            }
+            def comprobarObligatoriosDesignarMediador = {
+            	def activoManager = ctx.getBean("activoManager");
+                return activoManager.comprobarObligatoriosDesignarMediador(idActivo);
+            }
 
   			 ]]></value>
   		</list>

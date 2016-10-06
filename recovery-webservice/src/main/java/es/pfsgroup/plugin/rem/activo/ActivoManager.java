@@ -1108,6 +1108,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
+				
+				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.
+				if(!Checks.esNulo(activo.getInfoComercial())) {
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorInforme", proveedor);
+					genericDao.save(Activo.class, activo);
+				}
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);

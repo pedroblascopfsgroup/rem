@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -99,5 +100,25 @@ public interface OfertaApi {
 	 */	
 	public DDEstadoOferta getDDEstadosOfertaByCodigo (String codigo);
 	
+	/**
+	 * Método que obtiene la oferta aceptada de un activo en caso de haberla.
+	 * @param activo
+	 * @return Oferta
+	 */
+	public Oferta getOfertaAceptadaByActivo(Activo activo);
+	
+	/**
+	 * Método que comprueba si un activo tiene reserva.
+	 * @param idActivo
+	 * @return true si tiene reserva, false si no la tiene.
+	 */
+	public boolean checkReserva(Long idActivo);
 
+	/**
+	 * Método que comprueba si la oferta viene de una oferta de tanteo de la Generalitat
+	 * @param idActivo
+	 * @return true si viene, false si es nueva
+	 */
+	public boolean checkDeDerechoTanteo(Long idActivo);
+	
 }

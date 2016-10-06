@@ -26,6 +26,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -35,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -73,6 +76,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Override
 	public String managerName() {
@@ -611,5 +620,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 	
+	@Override
+	public Oferta getOfertaAceptadaByActivo(Activo activo){
+		List<ActivoOferta> listaOfertas = activo.getOfertas();
+		
+		for(ActivoOferta activoOferta : listaOfertas){
+			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta()))
+					return oferta;
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean checkDeDerechoTanteo(Long idActivo){
+		return false;
+	}
+	
+	
+	@Override
+	public boolean checkReserva(Long idActivo){
+		Activo activo = activoApi.get(idActivo);
+		Oferta ofertaAceptada = getOfertaAceptadaByActivo(activo);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		return !Checks.esNulo(expediente.getReserva());
+	}
 	
 }

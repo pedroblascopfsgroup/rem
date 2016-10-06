@@ -25,7 +25,6 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 		},
 		
 		activate: function(tabPanel) {
-			debugger;
 			var me = this;
 			
 			var muestraEdicion = me.up('activosdetallemain').getViewModel().getData().activo.getData().aplicaComercializar;

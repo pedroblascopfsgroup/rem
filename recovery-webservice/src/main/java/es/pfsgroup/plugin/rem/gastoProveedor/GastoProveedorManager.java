@@ -8,15 +8,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -27,19 +34,23 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
@@ -66,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -111,6 +123,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private GastoDao gastoDao;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -438,6 +453,65 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setDestinatariosPagoCodigo(detalleGasto.getDestinatariosPago().getCodigo());
 			}
 			
+			if(!Checks.esNulo(detalleGasto.getReembolsoTercero())){
+				dto.setReembolsoTercero(detalleGasto.getReembolsoTercero()== 1 ? true : false);
+			}
+			if(!Checks.esNulo(detalleGasto.getIncluirPagoProvision())){
+				dto.setIncluirPagoProvision(detalleGasto.getIncluirPagoProvision()== 1 ? true : false);
+			}
+			if(!Checks.esNulo(detalleGasto.getAbonoCuenta())){
+				dto.setAbonoCuenta(detalleGasto.getAbonoCuenta() == 1 ? true : false);
+			}
+			
+			
+			if(!Checks.esNulo(detalleGasto.getIbanAbonar())){
+				String ibanCompleto= detalleGasto.getIbanAbonar();
+				String iban1="";
+				String iban2="";
+				String iban3="";
+				String iban4="";
+				String iban5="";
+				String iban6="";
+				for(int i=0; i<ibanCompleto.length();i++){
+					if(i<=3){
+						iban1= iban1+ibanCompleto.charAt(i);
+					}
+					else if(i>3 && i<=7){
+						iban2= iban2+ibanCompleto.charAt(i);
+					}
+					else if(i>7 && i<=11){
+						iban3= iban3+ibanCompleto.charAt(i);
+					}
+					else if(i>11 && i<=15){
+						iban4= iban4+ibanCompleto.charAt(i);
+					}
+					else if(i>15 && i<=19){
+						iban5= iban5+ibanCompleto.charAt(i);
+					}
+					else if(i>19 && i<=23){
+						iban6= iban6+ibanCompleto.charAt(i);
+					}
+					
+				}
+				dto.setIban1(iban1);
+				dto.setIban2(iban2);
+				dto.setIban3(iban3);
+				dto.setIban4(iban4);
+				dto.setIban5(iban5);
+				dto.setIban6(iban6);
+			}
+			
+			dto.setIban(detalleGasto.getIbanAbonar());
+			dto.setTitularCuenta(detalleGasto.getTitularCuentaAbonar());
+			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
+			
+			if(!Checks.esNulo(detalleGasto.getPagadoConexionBankia())){
+				dto.setPagadoConexionBankia(detalleGasto.getPagadoConexionBankia() == 1 ? true : false);
+			}
+			dto.setOficina(detalleGasto.getOficinaBankia());
+			dto.setNumeroConexion(detalleGasto.getNumeroConexionBankia());
+			
+			
 		}
 		
 
@@ -487,6 +561,41 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagadorCodigo());
 						detalleGasto.setTipoPagador(tipoPagador);
 					}
+					
+					if(!Checks.esNulo(dto.getReembolsoTercero())){
+						detalleGasto.setReembolsoTercero(dto.getReembolsoTercero() ? 1 : 0);
+					}
+					
+					
+						if(!Checks.esNulo(dto.getIncluirPagoProvision())){
+							detalleGasto.setIncluirPagoProvision(dto.getIncluirPagoProvision() ? 1 : 0);
+						}
+						
+						if(!Checks.esNulo(dto.getAbonoCuenta())){
+							detalleGasto.setAbonoCuenta(dto.getAbonoCuenta() ? 1 : 0);
+						}
+						if(!Checks.esNulo(dto.getIban())){
+							detalleGasto.setIbanAbonar(dto.getIban());
+						}
+						if(!Checks.esNulo(dto.getTitularCuenta())){
+							detalleGasto.setTitularCuentaAbonar(dto.getTitularCuenta());
+						}
+						if(!Checks.esNulo(dto.getNifTitularCuenta())){
+							detalleGasto.setNifTitularCuentaAbonar(dto.getNifTitularCuenta());
+						}
+					
+						if(!Checks.esNulo(dto.getPagadoConexionBankia())){
+							detalleGasto.setPagadoConexionBankia(dto.getPagadoConexionBankia() ? 1 : 0);
+						}
+						if(!Checks.esNulo(dto.getOficina())){
+							detalleGasto.setOficinaBankia(dto.getOficina());
+						}
+						if(!Checks.esNulo(dto.getNumeroConexion())){
+							detalleGasto.setNumeroConexionBankia(dto.getNumeroConexion());
+						}
+							
+						
+					
 					
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
@@ -947,6 +1056,141 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 	}
 	
+	@Override
+    @BusinessOperationDefinition("gastoProveedorManager.getAdjuntosGasto")
+	public List<DtoAdjunto> getAdjuntos(Long id) {
+		
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
+		try{
+			
+			GastoProveedor gasto = findOne(id);
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", id);
+			List<AdjuntoGasto> adjuntosGasto = genericDao.getList(AdjuntoGasto.class, filtro);
+
+
+			for (AdjuntoGasto adjunto : adjuntosGasto) {
+				DtoAdjunto dto = new DtoAdjunto();
+				
+				BeanUtils.copyProperties(dto, adjunto);
+				dto.setIdGasto(gasto.getId());
+				dto.setDescripcionTipo(adjunto.getTipoDocumentoGasto().getDescripcion());
+				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());				
+				
+				listaAdjuntos.add(dto);
+				
+			}
+		
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+
+		return listaAdjuntos;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "gastoProveedorManager.upload")
+	@Transactional(readOnly = false)
+	public String upload(WebFileItem fileItem) throws Exception {
+
+			ActivoAdjuntoActivo adjuntoActivo= null;
+			GastoProveedor gasto= findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
+			
+			Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+			
+			AdjuntoGasto adjuntoGasto= new AdjuntoGasto();
+			adjuntoGasto.setAdjunto(adj);
+			
+			adjuntoGasto.setGastoProveedor(gasto);
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+			DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao.get(DDTipoDocumentoGasto.class, filtro);
+			adjuntoGasto.setTipoDocumentoGasto(tipoDocumento);
+			
+			adjuntoGasto.setContentType(fileItem.getFileItem().getContentType());
+			
+			adjuntoGasto.setTamanyo(fileItem.getFileItem().getLength());
+			
+			adjuntoGasto.setNombre(fileItem.getFileItem().getFileName());
+
+			adjuntoGasto.setDescripcion(fileItem.getParameter("descripcion"));			
+			
+			adjuntoGasto.setFechaDocumento(new Date());
+
+			Auditoria.save(adjuntoGasto);
+	        
+			genericDao.save(AdjuntoGasto.class, adjuntoGasto);
+			
+			for(GastoProveedorActivo g: gasto.getGastoProveedorActivos()){
+				
+				if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto())){
+					activoAdapter.uploadDocumento(fileItem, g.getActivo(), adjuntoGasto.getTipoDocumentoGasto().getMatricula());
+					adjuntoActivo= g.getActivo().getAdjuntos().get(g.getActivo().getAdjuntos().size()-1);
+				}
+				
+			}
+			
+			if(!Checks.esNulo(adjuntoActivo)){
+				adjuntoGasto.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
+				genericDao.update(AdjuntoGasto.class, adjuntoGasto);
+			}
+			
+			//Copia de adjunto al Activo
+//			ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+//
+//			adjuntoActivo.setAdjunto(adj);
+//			adjuntoActivo.setActivo(trabajo.getActivo());
+//			adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+//			adjuntoActivo.setContentType(fileItem.getFileItem().getContentType());
+//			adjuntoActivo.setTamanyo(fileItem.getFileItem().getLength());
+//			adjuntoActivo.setNombre(fileItem.getFileItem().getFileName());
+//			adjuntoActivo.setDescripcion(fileItem.getParameter("descripcion"));			
+//			adjuntoActivo.setFechaDocumento(new Date());
+//			Auditoria.save(adjuntoActivo);
+//			trabajo.getActivo().getAdjuntos().add(adjuntoActivo);
+			
+	        
+		return null;
+
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "gastoProveedorManager.deleteAdjunto")
+	@Transactional(readOnly = false)
+    public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		
+		try{
+			GastoProveedor gasto= findOne(dtoAdjunto.getIdGasto());
+			AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
+			
+			
+			
+		    if (adjuntoGasto == null) { return false; }
+		    gasto.getAdjuntos().remove(adjuntoGasto);
+		    genericDao.save(GastoProveedor.class, gasto);
+		    
+		}catch (Exception e) {
+			e.printStackTrace();
+		} 
+	    
+	    
+	    return true;
+	}
+	
+	@Override
+    @BusinessOperationDefinition("gastoProveedorManager.getFileItemAdjunto")
+	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
+		
+		GastoProveedor gasto= findOne(dtoAdjunto.getIdGasto());
+		AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
+		
+		FileItem fileItem = adjuntoGasto.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoGasto.getContentType());
+		fileItem.setFileName(adjuntoGasto.getNombre());
+		
+		return adjuntoGasto.getAdjunto().getFileItem();
+	}
 	
 	@Override
 	@Transactional(readOnly = false)
@@ -1001,7 +1245,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);
 		List<VBusquedaGastoTrabajos> gastoTrabajos= genericDao.getList(VBusquedaGastoTrabajos.class, filtro);
 		
-		return gastoTrabajos;	
+		return gastoTrabajos;
 	}
 	
 	private GastoProveedor calcularImportesDetalleEconomicoGasto(GastoProveedor gasto) {

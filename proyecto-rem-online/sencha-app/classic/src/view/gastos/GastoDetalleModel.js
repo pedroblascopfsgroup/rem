@@ -2,7 +2,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.gastodetalle',
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto',
-    			'HreRem.model.BusquedaTrabajo', 'HreRem.model.BusquedaTrabajo'],
+    			'HreRem.model.BusquedaTrabajo', 'HreRem.model.AdjuntoGasto'],
+
     
     data: {
     	gasto: null,
@@ -54,7 +55,39 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     ocultarIncluirActivos: function(get) {
 	     	
 	     	return get('gasto.autorizado') || get('gasto.asignadoATrabajos');
+	     },
 
+
+	     esReembolsoPago: function(get){
+	     	var me= this;
+	     	if(get('detalleeconomico.reembolsoTercero')=="true" || get('detalleeconomico.reembolsoTercero')==true){
+	     		return true;
+	     	}
+	     	else{
+	     		return false;
+	     	}
+//	     	var esReembolsoPago= Ext.isEmpty(get('detalleeconomico.reembolsoTercero')) || get('detalleeconomico.reembolsoTercero')==0 ? false : true 
+//	     	return esReembolsoPago;
+	     },
+	     
+	     seleccionadoAbonar: function(get){
+	     	var me= this;
+	     	if(get('detalleeconomico.abonoCuenta')=="true" || get('detalleeconomico.abonoCuenta')==true){
+	     		return true;
+	     	}
+	     	else{
+	     		return false;
+	     	}
+	     },
+	     
+	     seleccionadoPagadoBankia: function(get){
+	     	var me= this;
+	     	if(get('detalleeconomico.pagadoConexionBankia')=="true" || get('detalleeconomico.pagadoConexionBankia')==true){
+	     		return true;
+	     	}
+	     	else{
+	     		return false;
+	     	}
 	     }
 		
 	 },
@@ -258,10 +291,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	    	remoteFilter: true,
 	        listeners : {
 	            beforeload : 'paramLoading'
-	        }
+
+	        }    	
+    	},
+    	
+    	storeDocumentosGasto: {
+    			 pageSize: $AC.getDefaultPageSize(),
+    			 model: 'HreRem.model.AdjuntoGasto',
+	      	     proxy: {
+	      	        type: 'uxproxy',
+	      	        remoteUrl: 'gastosproveedor/getListAdjuntos',
+	      	        extraParams: {idGasto: '{gasto.id}'}
+	          	 },
+	          	 groupField: 'descripcionTipo'
+    		}
     	}
     	
-	
-    }
   
 });

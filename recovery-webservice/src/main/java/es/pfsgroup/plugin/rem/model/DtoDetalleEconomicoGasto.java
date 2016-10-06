@@ -21,6 +21,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
+	private Long id;
 	private Long gastoProveedor;
 	private Double importePrincipalSujeto;
 	private Double importePrincipalNoSujeto;
@@ -44,7 +45,28 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private String tipoPagadorCodigo;
 	private String tipoPago;
 	private String destinatariosPagoCodigo;
-
+	private Boolean reembolsoTercero;
+	private Boolean incluirPagoProvision;
+	private Boolean abonoCuenta;
+	private String iban;
+	private String iban1;
+	private String iban2;
+	private String iban3;
+	private String iban4;
+	private String iban5;
+	private String iban6;
+	private String titularCuenta;
+	private String nifTitularCuenta;
+	private Boolean pagadoConexionBankia;
+	private String oficina;
+	private String numeroConexion;
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public Long getGastoProveedor() {
 		return gastoProveedor;
 	}
@@ -184,6 +206,96 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	}
 	public void setDestinatariosPagoCodigo(String destinatariosPagoCodigo) {
 		this.destinatariosPagoCodigo = destinatariosPagoCodigo;
+	}
+	public Boolean getReembolsoTercero() {
+		return reembolsoTercero;
+	}
+	public void setReembolsoTercero(Boolean reembolsoTercero) {
+		this.reembolsoTercero = reembolsoTercero;
+	}
+	public Boolean getIncluirPagoProvision() {
+		return incluirPagoProvision;
+	}
+	public void setIncluirPagoProvision(Boolean incluirPagoProvision) {
+		this.incluirPagoProvision = incluirPagoProvision;
+	}
+	public Boolean getAbonoCuenta() {
+		return abonoCuenta;
+	}
+	public void setAbonoCuenta(Boolean abonoCuenta) {
+		this.abonoCuenta = abonoCuenta;
+	}
+	public String getIban() {
+		return iban;
+	}
+	public void setIban(String iban) {
+		this.iban = iban;
+	}
+	public String getIban1() {
+		return iban1;
+	}
+	public void setIban1(String iban1) {
+		this.iban1 = iban1;
+	}
+	public String getIban2() {
+		return iban2;
+	}
+	public void setIban2(String iban2) {
+		this.iban2 = iban2;
+	}
+	public String getIban3() {
+		return iban3;
+	}
+	public void setIban3(String iban3) {
+		this.iban3 = iban3;
+	}
+	public String getIban4() {
+		return iban4;
+	}
+	public void setIban4(String iban4) {
+		this.iban4 = iban4;
+	}
+	public String getIban5() {
+		return iban5;
+	}
+	public void setIban5(String iban5) {
+		this.iban5 = iban5;
+	}
+	public String getIban6() {
+		return iban6;
+	}
+	public void setIban6(String iban6) {
+		this.iban6 = iban6;
+	}
+	public String getTitularCuenta() {
+		return titularCuenta;
+	}
+	public void setTitularCuenta(String titularCuenta) {
+		this.titularCuenta = titularCuenta;
+	}
+	public String getNifTitularCuenta() {
+		return nifTitularCuenta;
+	}
+	public void setNifTitularCuenta(String nifTitularCuenta) {
+		this.nifTitularCuenta = nifTitularCuenta;
+	}
+	public Boolean getPagadoConexionBankia() {
+		return pagadoConexionBankia;
+	}
+	public void setPagadoConexionBankia(Boolean pagadoConexionBankia) {
+		this.pagadoConexionBankia = pagadoConexionBankia;
+	}
+	public String getOficina() {
+		return oficina;
+	}
+	public void setOficina(String oficina) {
+		this.oficina = oficina;
+	}
+	public String getNumeroConexion() {
+		return numeroConexion;
+	}
+	public void setNumeroConexion(String numeroConexion) {
+		this.numeroConexion = numeroConexion;
 	}
 
    	

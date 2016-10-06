@@ -264,8 +264,261 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													store: '{comboPagadoPor}',
 												    value: '{detalleeconomico.tipoPagadorCodigo}'
 												}
+											},
+											{		                
+											    xtype: 'checkboxfieldbase',
+											    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.reembolsar.pago'),
+											    bind: {
+										        	value: '{detalleeconomico.reembolsoTercero}'
+							            		},
+							            		listeners: {
+							            			change: 'haCambiadoReembolsarPagoTercero'
+							            		},
+							            		reference: 'reembolsarPagoRef',
+							            		colspan: 3
+					                		},
+											
+											{   
+												xtype:'fieldsettable',
+												reference: 'fieldSetSuplido',
+												colspan: 3,
+												defaultType: 'textfieldbase',				
+												title: HreRem.i18n('title.gasto.detalle.economico.suplido'),
+												items :
+													[
+														{   
+															xtype:'fieldset',
+															defaultType: 'textfieldbase',
+															bind: {
+																disabled: '{!esReembolsoPago}'
+															},
+															reference: 'fieldGestoria',
+															margin: '10 0 0 0',
+															height: 175,
+															items :
+																[
+																	{		                
+																	    xtype: 'checkboxfieldbase',
+																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.incluir.pago.provision'),
+																	    bind: {
+																        	value: '{detalleeconomico.incluirPagoProvision}'
+													            		},
+													            		listeners: {
+													            			change: 'haCambiadoPagadoProvision'
+													            		},
+													            		reference: 'incluirPagoProvisionRef'
+											                		}
+											                	]
+														},
+														{   
+															xtype:'fieldset',
+															defaultType: 'textfieldbase',
+															reference: 'fieldAbonar',
+															bind: {
+																disabled: '{!esReembolsoPago}'
+															},
+															margin: '10 0 0 0',
+															height: 175,
+															width: 450,
+															items :
+																[
+																	{		                
+																	    xtype: 'checkboxfieldbase',
+																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.abonar.cuenta'),
+																	    bind: {
+																        	value: '{detalleeconomico.abonoCuenta}'
+													            		},
+													            		listeners: {
+													            			change: 'haCambiadoAbonoCuenta'
+													            		},
+													            		reference: 'abonoCuentaRef',
+													            		colspan: 3
+											                		},
+											                		{				                	
+																		xtype      : 'fieldcontainer',
+																		fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.iban'),
+																		name : 	'iban',
+																		reference: 'ibanRef',
+																		bind: {disabled: '{!seleccionadoAbonar}'},
+																		defaults: {
+																			flex: 1
+																		},
+																		colspan: 3,
+																		layout: 'hbox',
+																		items: [
+																			{		                
+																			    xtype: 'textfieldbase',
+																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.iban'),
+																			    reference: 'iban',
+																			    bind: {
+																		        	value: '{detalleeconomico.iban}'
+															            		},
+															            		hidden: true
+													                		},
+																			{
+																				xtype: 'textfieldbase',
+																				reference: 'iban1',
+																				style: {
+																					backgroundColor: '#E5F6FE'
+																				},
+																				width: 55,
+																				maxLength: 4,
+																				minLengthText: 'Debe tener 4 digitos',
+																				bind: {
+																		        	value: '{detalleeconomico.iban1}'
+															            		},
+															            		listeners: {
+															            			change: 'haCambiadoIban'
+															            		}
+																			},
+																			{
+																				xtype: 'textfieldbase',
+																				reference: 'iban2',
+																				style: {
+																					backgroundColor: '#E5F6FE'
+																				},
+																				width: 55,
+																				maxLength: 4,
+																				bind: {
+																		        	value: '{detalleeconomico.iban2}'
+															            		},
+															            		listeners: {
+															            			change: 'haCambiadoIban'
+															            		}
+																			},
+																			{
+																				xtype: 'textfieldbase',
+																				reference: 'iban3',
+																				style: {
+																					backgroundColor: '#E5F6FE'
+																				},
+																				width: 55,
+																				maxLength: 4,
+																				bind: {
+																		        	value: '{detalleeconomico.iban3}'
+															            		},
+															            		listeners: {
+															            			change: 'haCambiadoIban'
+															            		}
+															           
+																			},
+																			{
+																				xtype: 'textfieldbase',
+																				reference: 'iban4',
+																				style: {
+																					backgroundColor: '#E5F6FE'
+																				},
+																				width: 55,
+																				maxLength: 4,
+																				bind: {
+																		        	value: '{detalleeconomico.iban4}'
+															            		}
+																			},
+																			{
+																				xtype: 'textfieldbase',
+																				reference: 'iban5',
+																				style: {
+																					backgroundColor: '#E5F6FE'
+																				},
+																				width: 55,
+																				maxLength: 4,
+																				bind: {
+																		        	value: '{detalleeconomico.iban5}'
+															            		},
+															            		listeners: {
+															            			change: 'haCambiadoIban'
+															            		}
+																			},
+																			{
+																				xtype: 'textfieldbase',
+																				reference: 'iban6',
+																				style: {
+																					backgroundColor: '#E5F6FE'
+																				},
+																				width: 55,
+																				maxLength: 4,
+																				bind: {
+																		        	value: '{detalleeconomico.iban6}'
+															            		},
+															            		listeners: {
+															            			change: 'haCambiadoIban'
+															            		}
+																			}
+																		]
+																	},
+											                		{		                
+																	    xtype: 'textfieldbase',
+																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.titular.cuenta'),
+																	    bind: {
+																        	value: '{detalleeconomico.titularCuenta}',
+																        	disabled: '{!seleccionadoAbonar}'
+													            		},
+													            		reference: 'titularCuentaRef',
+													            		colspan: 3
+											                		},
+											                		{		                
+																	    xtype: 'textfieldbase',
+																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.nif.titular.cuenta'),
+																	    bind: {
+																        	value: '{detalleeconomico.nifTitularCuenta}',
+																        	disabled: '{!seleccionadoAbonar}'
+													            		},
+													            		reference: 'nifTitularCuentaRef',
+													            		colspan: 3
+											                		}
+											                	]
+														},
+														{   
+															xtype:'fieldset',
+															defaultType: 'textfieldbase',
+															reference: 'fieldBankia',
+															bind: {
+																disabled: '{!esReembolsoPago}'
+															},
+															margin: '10 0 0 0',
+															height: 175,
+															
+															items :
+																[
+																	{		                
+																	    xtype: 'checkboxfieldbase',
+																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.pagado.bankia'),
+																	    bind: {
+																        	value: '{detalleeconomico.pagadoConexionBankia}'
+													            		},
+													            		listeners: {
+													            			change: 'haCambiadoPagadoBankia'
+													            			
+													            		},
+													            		reference: 'pagadoConexionBankiaRef',
+													            		colspan: 3
+											                		},
+											                		{ 
+																		xtype: 'textfieldbase',
+																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.oficina'),
+																		bind: {
+																		    value: '{detalleeconomico.oficina}',
+																		    disabled: '{!seleccionadoPagadoBankia}'
+																		},
+																		reference: 'oficinaRef'
+																		
+																	},
+											                		{		                
+																	    xtype: 'textfieldbase',
+																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.numero.conexion'),
+																	    bind: {
+																        	value: '{detalleeconomico.numeroConexion}',
+																        	disabled: '{!seleccionadoPagadoBankia}'
+													            		},
+													            		reference: 'numeroConexionRef'
+											                		}
+											                	]
+														}
+								                		
+								                		
+													
+													]
 											}
-										
 										]
 								}
 						

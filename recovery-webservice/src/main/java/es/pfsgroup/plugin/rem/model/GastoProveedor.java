@@ -120,6 +120,11 @@ public class GastoProveedor implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="PRG_ID")
 	private ProvisionGastos provision;
+	
+    @OneToMany(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<AdjuntoGasto> adjuntos;
     
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
@@ -313,6 +318,25 @@ public class GastoProveedor implements Serializable, Auditable {
 			List<GastoProveedorActivo> gastoProveedorActivos) {
 		this.gastoProveedorActivos = gastoProveedorActivos;
 	}
+	public List<AdjuntoGasto> getAdjuntos() {
+		return adjuntos;
+	}
+
+	public void setAdjuntos(List<AdjuntoGasto> adjuntos) {
+		this.adjuntos = adjuntos;
+	}
+	
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public AdjuntoGasto getAdjunto(Long id) {
+        for (AdjuntoGasto adj : getAdjuntos()) {
+            if (adj.getId().equals(id)) { return adj; }
+        }
+        return null;
+    }
 
     
 }

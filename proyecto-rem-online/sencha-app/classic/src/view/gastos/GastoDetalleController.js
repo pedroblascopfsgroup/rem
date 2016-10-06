@@ -1,8 +1,8 @@
 Ext.define('HreRem.view.gastos.GastoDetalleController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.gastodetalle',  
-	
-    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto'],
+    alias: 'controller.gastodetalle',
+    
+    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto'],
     
     control: {
     	
@@ -14,10 +14,23 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     			var disabled = Ext.isEmpty(persistedSelection);
     			button.setDisabled(disabled);    			
     		}
-    	}
+    	},
+    	
+    	'documentosgasto gridBase': {
+             abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
+             onClickRemove: 'borrarDocumentoAdjunto',
+             download: 'downloadDocumentoAdjunto',
+             afterupload: function(grid) {
+             	grid.getStore().load();
+             },
+             afterdelete: function(grid) {
+             	grid.getStore().load();
+             }
+         }
     	
     },
-	
+
+    
 	cargarTabData: function (form) {
 		var me = this,
 		id = me.getViewModel().get("gasto.id"),
@@ -748,8 +761,139 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onRowDblClickListadoTrabajosGasto: function(view, record) {
 		var me = this;
 		me.getView().fireEvent('abrirDetalleTrabajo', record);
-	}
+	},
     
+	haCambiadoIban: function(field, value){
+		var me= this;
+		
+		var ibanfield= me.lookupReference('iban');
+		var iban1= me.lookupReference('iban1').getValue();
+		var iban2= me.lookupReference('iban2').getValue();
+		var iban3= me.lookupReference('iban3').getValue();
+		var iban4= me.lookupReference('iban4').getValue();
+		var iban5= me.lookupReference('iban5').getValue();
+		var iban6= me.lookupReference('iban6').getValue();
+		
+		ibanfield.setValue(iban1+iban2+iban3+iban4+iban5+iban6);
+		
+	},
 	
+	haCambiadoAbonoCuenta: function(field, value){
+		var me= this;
+		if(value){
+			me.lookupReference('ibanRef').setDisabled(false);
+			me.lookupReference('titularCuentaRef').setDisabled(false);
+			me.lookupReference('nifTitularCuentaRef').setDisabled(false);
+//			
+			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
+			me.lookupReference('incluirPagoProvisionRef').setValue(false);
+			me.lookupReference('oficinaRef').setDisabled(true);
+			me.lookupReference('numeroConexionRef').setDisabled(true);
+			
+			
+			
+		}
+		else{
+			me.lookupReference('titularCuentaRef').setDisabled(true);
+			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
+			me.lookupReference('ibanRef').setDisabled(true);
+		}
+		
+	},
+	
+	haCambiadoPagadoBankia: function(field, value){
+		var me= this;
+		if(value){
+			me.lookupReference('oficinaRef').setDisabled(false);
+			me.lookupReference('numeroConexionRef').setDisabled(false);
+//			
+			me.lookupReference('abonoCuentaRef').setValue(false);
+			me.lookupReference('incluirPagoProvisionRef').setValue(false);
+			me.lookupReference('titularCuentaRef').setDisabled(true);
+			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
+			me.lookupReference('ibanRef').setDisabled(true);
+			
+
+		}
+		else{
+			me.lookupReference('oficinaRef').setDisabled(true);
+			me.lookupReference('numeroConexionRef').setDisabled(true);
+
+		}
+	},
+	
+	haCambiadoPagadoProvision: function(field, value){
+		var me= this;
+		if(value){
+			me.lookupReference('abonoCuentaRef').setValue(false);
+			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
+			me.lookupReference('titularCuentaRef').setDisabled(true);
+			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
+			me.lookupReference('ibanRef').setDisabled(true);
+			me.lookupReference('oficinaRef').setDisabled(true);
+			me.lookupReference('numeroConexionRef').setDisabled(true);
+			
+		}
+		else{
+
+		}
+	},
+	
+	haCambiadoReembolsarPagoTercero: function(field, value){
+		var me= this;
+		if(value){
+			me.lookupReference('fieldSetSuplido').setDisabled(false);
+			me.lookupReference('incluirPagoProvisionRef').setDisabled(false);
+			me.lookupReference('abonoCuentaRef').setDisabled(false);
+//			me.lookupReference('ibanRef').setDisabled(false);
+			me.lookupReference('pagadoConexionBankiaRef').setDisabled(false);
+			
+		}
+		else{
+			me.lookupReference('fieldSetSuplido').setDisabled(true);
+//			me.lookupReference('ibanRef').setDisabled(true);
+			me.lookupReference('abonoCuentaRef').setValue(false);
+			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
+			me.lookupReference('incluirPagoProvisionRef').setValue(false);
+		}
+	},
+	
+	abrirFormularioAdjuntarDocumentos: function(grid) {
+		
+		var me = this,
+		idGasto = me.getViewModel().get("gasto.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoGasto", {entidad: 'gastos', idEntidad: idGasto, parent: grid}).show();
+		
+	},
+	
+	borrarDocumentoAdjunto: function(grid, record) {
+		var me = this;
+		idGasto = me.getViewModel().get("gasto.id");
+
+		record.erase({
+			params: {idGasto: idGasto},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 grid.fireEvent("afterdelete", grid);
+            },
+            failure: function(record, operation) {
+                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                  grid.fireEvent("afterdelete", grid);
+            }
+            
+        });	
+	},
+	
+	downloadDocumentoAdjunto: function(grid, record) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"gastosproveedor/bajarAdjuntoGasto."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idGasto=record.get("idGasto");
+		
+		me.fireEvent("downloadFile", config);
+	}
 
 });

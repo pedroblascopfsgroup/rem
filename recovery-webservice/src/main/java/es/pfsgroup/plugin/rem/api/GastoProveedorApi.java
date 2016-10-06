@@ -2,8 +2,12 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
@@ -151,5 +155,36 @@ public interface GastoProveedorApi {
 		 */
 		public boolean deleteGastoProveedor(Long id);
 		
+		/**
+    	 * 
+    	 * @param id
+    	 * @return
+    	 */
+	    @BusinessOperationDefinition("gastoProveedorManager.getAdjuntosGasto")
+		public Object getAdjuntos(Long id);
+	    
+	    /**
+		 * 
+		 * @param fileItem
+		 * @return
+		 */
+	    @BusinessOperationDefinition("gastoProveedorManager.upload")
+		public String upload(WebFileItem fileItem) throws Exception;
+	    
+	    /**
+	     * 
+	     * @param dtoAdjunto
+	     * @return
+	     */
+	    @BusinessOperationDefinition("gastoProveedorManager.deleteAdjunto")
+		public boolean deleteAdjunto(DtoAdjunto dtoAdjunto);
+	    
+		/**
+		 * 
+		 * @param dtoAdjunto
+		 * @return
+		 */
+	    @BusinessOperationDefinition("gastoProveedorManager.getFileItemAdjunto")
+		public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto);
 }
 

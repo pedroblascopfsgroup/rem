@@ -1108,6 +1108,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
+				
+				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.
+				if(!Checks.esNulo(activo.getInfoComercial())) {
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorInforme", proveedor);
+					genericDao.save(Activo.class, activo);
+				}
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
@@ -1606,6 +1612,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return contador;
 	}
 
+
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean solicitarTasacion(Long idActivo) {
@@ -1661,5 +1668,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return dtoTasacion;
+	}
+	
+	@Override
+	@BusinessOperationDefinition("activoManager.comprobarActivoComercializable")
+	public Boolean comprobarActivoComercializable(Long idActivo) {
+		PerimetroActivo perimetro = this.getPerimetroByIdActivo(idActivo);
+		
+		return perimetro.getAplicaComercializar() == 1 ? true : false;
+	}
+   
+	@Override
+	@BusinessOperationDefinition("activoManager.comprobarObligatoriosDesignarMediador")
+	public String comprobarObligatoriosDesignarMediador(Long idActivo) throws Exception {
+
+		Activo activo = this.get(idActivo);
+		String mensaje = new String();
+
+		// Validaciones datos obligatorios correspondientes a Publicacion / Informe comercial
+		// del activo
+		// Validación mediador
+		if (Checks.esNulo(activo.getInfoComercial()) || Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+			mensaje = mensaje.concat(
+					messageServices.getMessage("tramite.admision.DesignarMediador.validacionPre.mediador"));
+		}
+
+		if (!Checks.esNulo(mensaje)) {
+			mensaje = messageServices.getMessage("tramite.admision.DesignarMediador.validacionPre.debeInformar")
+					.concat(mensaje);
+		}
+
+		return mensaje;
 	}
 }

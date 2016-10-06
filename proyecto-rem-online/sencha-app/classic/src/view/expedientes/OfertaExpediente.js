@@ -4,25 +4,24 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
     xtype		: 'ofertaexpediente',
     reference	: 'ofertaexpedienteref',
     layout		: 'fit',
-    requires: ['HreRem.view.expedientes.DatosBasicosOferta'],    
-    
+    requires: ['HreRem.view.expedientes.DatosBasicosOferta'],
+
 	listeners: {
-			    	
-    	boxready: function (tabPanel) {   		
-    		
+
+    	boxready: function (tabPanel) {
+
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
-			
+
 	   		// Si la pestaña necesita botones de edicion
 			if(tab.ocultarBotonesEdicion) {
-				me.down("[itemId=botoneditar]").setVisible(false);
+				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {
 				tabPanel.evaluarBotonesEdicion(tab);
-			}
-   					  		
-			
+			}	  		
+
 		},
 		
 		beforetabchange: function (tabPanel, tabNext, tabCurrent) {

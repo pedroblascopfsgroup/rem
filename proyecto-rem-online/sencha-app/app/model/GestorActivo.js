@@ -4,7 +4,6 @@
 Ext.define('HreRem.model.GestorActivo', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',    
-    
 
     fields: [
     		{
@@ -15,11 +14,13 @@ Ext.define('HreRem.model.GestorActivo', {
     		},
     		{
     			name:'fechaDesde',
-    			type: 'date'
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'fechaHasta',
-    			type:'date'
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'telefono'

@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.activos.detalle.Publicacion', {
-    extend: 'Ext.tab.Panel',
+    extend		: 'Ext.tab.Panel',
 	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     xtype		: 'publicacionactivo',
     reference	: 'publicacionactivoref',
@@ -9,7 +9,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     
 	listeners: {
 			    	
-    	boxready: function (tabPanel) {   		
+    	boxready: function (tabPanel) {
     		
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 				var tab = tabPanel.items.items[0];
@@ -17,11 +17,24 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 			}
 			
 			if(tab.ocultarBotonesEdicion) {
-				me.down("[itemId=botoneditar]").setVisible(false);
+				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
             	tabPanel.evaluarBotonesEdicion(tab);
 			}
 			
+		},
+		
+		activate: function(tabPanel) {
+			var me = this;
+			
+			var muestraEdicion = me.up('activosdetallemain').getViewModel().getData().activo.getData().aplicaComercializar;
+			var pestañaInformeComercial = me.down('informecomercialactivo');
+			var pestañaDatosPublicacion = me.down('datospublicacionactivo');
+			
+			pestañaInformeComercial.ocultarBotonesEdicion = !muestraEdicion;
+			pestañaDatosPublicacion.ocultarBotonesEdicion = !muestraEdicion;
+			
+			//me.evaluarBotonesEdicion(me);
 		},
 			    	
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {

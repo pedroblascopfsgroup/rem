@@ -1,30 +1,28 @@
 Ext.define('HreRem.view.activos.gestores.GestoresList', {
-    extend: 'HreRem.view.common.GridBase',
+    extend: 'HreRem.view.common.GridBaseEditableRowSinEdicion',
     xtype: 'gestoreslist',
 	bind: {
 		store: '{storeGestores}'
 	},
 	reference: 'listadoGestores',
-	
+
 	initComponent: function() {
-		
+
 		var me = this;
-		
+
 		var coloredRender = function (value, meta, record) {
     		var fechaHasta = record.get('fechaHasta');
     		if(value){
-	    		if (fechaHasta){
-	    			//return '<span style="color: #DF0101; font-weight: bold;">'+value+'</span>';
+	    		if (fechaHasta) {
 	    			return '<span style="color: #DF0101;">'+value+'</span>';
+	    		} else {
+	    			return value;
 	    		}
-	    		else {
-	    			return '<span style="color: #000000;">'+value+'</span>';
-	    		}
-    		}else{
+    		} else {
 	    		return '-';
 	    	}
     	};
-    	
+
     	var dateColoredRender = function (value, meta, record) {
     		var valor = dateRenderer(value);
     		return coloredRender(valor, meta, record);
@@ -39,9 +37,7 @@ Ext.define('HreRem.view.activos.gestores.GestoresList', {
 				return value;
 			}
 		}
-		
-		
-		
+
 		me.columns = [
             {
             	text	 : 'Descripcion',
@@ -82,7 +78,7 @@ Ext.define('HreRem.view.activos.gestores.GestoresList', {
             }
 		 
 		];
-		 
+
 		me.dockedItems = [
 			{
 	            xtype: 'pagingtoolbar',
@@ -95,13 +91,8 @@ Ext.define('HreRem.view.activos.gestores.GestoresList', {
 	
 	        }	
 		];
-		
-		 
-		
-		me.callParent();
-		
-		
-	}
 
-    
+		me.callParent();
+
+	}
 });

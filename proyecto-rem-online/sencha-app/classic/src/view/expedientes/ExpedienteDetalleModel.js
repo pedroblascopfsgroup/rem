@@ -425,7 +425,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'canalesPrescripcion'}
 			}
-	    },
+	    }
 	    
 	
     }

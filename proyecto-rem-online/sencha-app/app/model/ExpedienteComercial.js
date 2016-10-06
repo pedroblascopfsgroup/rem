@@ -31,6 +31,27 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 		    {
 		    	name: 'numEntidad'
 		    },
+		    {
+		    	name: 'fechaAnulacion',
+    			type:'date',
+    			dateFormat: 'c'
+		    },
+		    {
+		    	name: 'fechaDevolucionEntregas',
+    			type:'date',
+    			dateFormat: 'c'
+		    },
+		    {
+		    	name: 'fechaContabilizacionPropietario',
+    			type:'date',
+    			dateFormat: 'c'
+		    },
+		    {
+		    	name: 'fechaPosicionamiento',
+    			type:'date',
+    			dateFormat: 'c'
+		    },
+		    
     		{
     			name: 'fechaAlta',
     			type:'date',
@@ -126,7 +147,8 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 		localUrl: 'expedienteComercial.json',
 		
 		api: {
-            read: 'expedientecomercial/getTabExpediente'
+            read: 'expedientecomercial/getTabExpediente',
+            update: 'expedientecomercial/saveFichaExpediente'
         },
 		
         extraParams: {tab: 'ficha'}

@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
@@ -280,5 +281,13 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */	
 		public DDEstadosExpedienteComercial getDDEstadosExpedienteComercialByCodigo (String codigo);
+		
+		/**
+		 * Método que guarda la información de la pestaña Ficha del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente);
 }
 

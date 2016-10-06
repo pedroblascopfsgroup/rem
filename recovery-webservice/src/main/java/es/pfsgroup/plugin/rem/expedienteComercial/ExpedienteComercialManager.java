@@ -75,8 +75,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -87,7 +87,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -1624,6 +1623,41 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			return null;
 		}		
 		return estado;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente){
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+
+		if(!Checks.esNulo(expedienteComercial)){
+			
+			try {
+				
+				beanUtilNotNull.copyProperties(expedienteComercial, dto);			
+				
+				if(!Checks.esNulo(expedienteComercial.getReserva()) && !Checks.esNulo(dto.getFechaReserva())){
+					expedienteComercial.getReserva().setFechaEnvio(dto.getFechaReserva());
+				}
+				if(!Checks.esNulo(expedienteComercial.getUltimoPosicionamiento()) && !Checks.esNulo(dto.getFechaPosicionamiento())){
+					expedienteComercial.getUltimoPosicionamiento().setFechaPosicionamiento(dto.getFechaPosicionamiento());
+				}
+				
+				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				
+				
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}			
+			
+		}
+		
+		
+		return true;
+		
 	}
 
 }

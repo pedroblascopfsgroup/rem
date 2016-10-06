@@ -67,7 +67,7 @@ $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PERIMETRO_ACTIVOS.ctl					
 #Agrupaciones
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVO_PLANDINVENTAS.ctl				log=./CTLs_DATs/logs/ACTIVO_PLANDINVENTAS.log
 #propietario
-#propietario_historico
+$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROPIETARIOS_HISTORICO.ctl				log=./CTLs_DATs/logs/PROPIETARIOS_HISTORICO.log
 
 #$ORACLE_HOME/bin/sqlplus REM01/$1 @aux/Mig_estadisticas.sql > ./CTLs_DATs/logs/$0.log
 #if [ $? != 0 ] ; then echo -e "\n\n======>>> "Error en @aux/Mig_estadisticas.sql >> ./CTLs_DATs/logs/$0.log ; exit 1 ; fi

@@ -3,6 +3,20 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     alias: 'controller.gastodetalle',  
 	
     requires: ['HreRem.view.gastos.SeleccionTrabajosGasto'],
+    
+    control: {
+    	
+    	'selecciontrabajosgastolist' : {
+    		
+    		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
+    			var me = this;
+    			var button = grid.up('window').down('button[itemId=btnGuardar]');
+    			var disabled = Ext.isEmpty(persistedSelection);
+    			button.setDisabled(disabled);    			
+    		}
+    	}
+    	
+    },
 	
 	cargarTabData: function (form) {
 		var me = this,
@@ -94,7 +108,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                             }
 							me.getView().unmask();
-							//me.refrescarGasto(form.refreshAfterSave);
+							me.refrescarGasto(form.refreshAfterSave);
 			            }
 					});
 				}
@@ -211,23 +225,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	refrescarGasto: function(refrescarPestañaActiva) {
 		var me = this,
+		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva;
 		
-		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
-		activeTab = me.getView().down("tabpanel").getActiveTab();
-		if(!Ext.isEmpty(activeTab.down('[name=buscadorNifEmisorField]'))){
-  			var buscadorNifEmisor= activeTab.down('[name=buscadorNifEmisorField]').getValue();
-		}
-		if(!Ext.isEmpty(activeTab.down('[name=buscadorNifPropietarioField]'))){
-  			var buscadorNifPropietario= activeTab.down('[name=buscadorNifPropietarioField]').getValue();
-		}
-    	/*if(!Ext.isEmpty(buscadorNifEmisor)){
-    		activeTab.down('[name=buscadorNifEmisorField]').setHidden(true);
-    		//activeTab.down('[name=nifEmisor]').setHidden(false);
-    	}
-    	if(!Ext.isEmpty(buscadorNifPropietario)){
-    		activeTab.down('[name=buscadorNifPropietarioField]').setHidden(true);
-    		//activeTab.down('[name=nifPropietario]').setHidden(false);
-    	}*/
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {
@@ -236,11 +235,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
   		});
   		
   		// Actualizamos la pestaña actual si tiene función de recargar 
-		if(refrescarPestañaActiva && activeTab.funcionRecargar) {
-  			activeTab.funcionRecargar();
+		if(refrescarPestañaActiva) {
+			var activeTab = me.getView().down("tabpanel").getActiveTab();
+			if(activeTab.funcionRecargar) {
+  				activeTab.funcionRecargar();
+			}
 		}
-		
-		me.getView().fireEvent("refrescarGasto", me.getView());
 		
 	},
 	
@@ -499,7 +499,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    				},
 	    				failure: function(a, operation){
-	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    					var data = {};
+			                try {
+			                	data = Ext.decode(operation._response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
 	    				},
 	    				callback: function(records, operation, success) {
 	    					form.reset();
@@ -520,7 +529,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    				},
 	    				failure: function(a, operation){
-	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    					var data = {};
+			                try {
+			                	data = Ext.decode(operation._response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
 	    				},
 	    				callback: function(records, operation, success) {
 	    					form.reset();
@@ -585,7 +603,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 		var me = this;
     	var gasto = me.getViewModel().get("gasto");
-    	Ext.create("HreRem.view.gastos.SeleccionTrabajosGasto",{gasto: gasto, parent: me.getView()}).show();
+    	Ext.create("HreRem.view.gastos.SeleccionTrabajosGasto",{gasto: gasto, parent: btn.up('formBase')}).show();
 	},
 	
 	onClickBotonCancelarSeleccionTrabajos: function(btn) {
@@ -633,6 +651,103 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		});
 
 		return criteria;
+	},
+	
+	onClickBotonAnyadirSeleccionTrabajos: function(btn) {
+		
+		var me = this,
+		ventanaSeleccionTrabajos = btn.up('window'),
+		trabajos = ventanaSeleccionTrabajos.down('selecciontrabajosgastolist').getPersistedSelection(),
+		idGasto = ventanaSeleccionTrabajos.gasto.get("id"),
+		url =  $AC.getRemoteUrl('gastosproveedor/asignarTrabajos'),		
+		idTrabajos = [];
+		
+		// Recuperamos todos los ids de los trabajos seleccionados
+		Ext.Array.each(trabajos, function(trabajo, index) {
+		    idTrabajos.push(trabajo.get("id"));
+		});
+
+		ventanaSeleccionTrabajos.mask(HreRem.i18n("msg.mask.loading"));
+
+		Ext.Ajax.request({
+	    			
+		     url: url,
+		     params: {idGasto: idGasto, trabajos: idTrabajos},
+		
+		     success: function(response, opts) {
+		         ventanaSeleccionTrabajos.unmask();		         
+		         ventanaSeleccionTrabajos.destroy();
+		         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		         ventanaSeleccionTrabajos.parent.funcionRecargar();
+		         
+		     },
+		     failure: function(response) {
+		     	ventanaSeleccionTrabajos.unmask();
+	     		var data = {};
+                try {
+                	data = Ext.decode(operation._response.responseText);
+                }
+                catch (e){ };
+                if (!Ext.isEmpty(data.msg)) {
+                	me.fireEvent("errorToast", data.msg);
+                } else {
+                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                }
+		     }
+	    		     
+	    });
+	},
+	
+	onClickBotonQuitarTrabajosGasto: function(btn) {
+		
+		var me = this,
+		grid = btn.up('grid'),
+		trabajos = grid.getSelection(),
+		url =  $AC.getRemoteUrl('gastosproveedor/quitarTrabajos'),	
+		idGasto = me.getViewModel().get("gasto.id"),
+		idTrabajos = [];
+		
+		if(!Ext.isEmpty(trabajos)) {
+			// Recuperamos todos los ids de los trabajos seleccionados
+			Ext.Array.each(trabajos, function(trabajo, index) {
+			    idTrabajos.push(trabajo.get("id"));
+			});		
+			
+			grid.mask(HreRem.i18n("msg.mask.loading"));
+			
+			Ext.Ajax.request({
+		    			
+			     url: url,
+			     params: {idGasto: idGasto, trabajos: idTrabajos},
+			
+			     success: function(response, opts) {
+			         grid.unmask();		         
+			         grid.getStore().load();		         
+			     },
+			     
+			     failure: function(response) {
+			     	grid.unmask();
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(operation._response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+		    		     
+		    });
+		}
+		
+		
+	},
+	
+	onRowDblClickListadoTrabajosGasto: function(view, record) {
+		var me = this;
+		me.getView().fireEvent('abrirDetalleTrabajo', record);
 	}
     
 	

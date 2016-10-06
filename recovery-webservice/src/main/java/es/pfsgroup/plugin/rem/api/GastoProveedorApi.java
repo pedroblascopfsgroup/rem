@@ -2,14 +2,17 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 
 
 public interface GastoProveedorApi {
@@ -20,6 +23,14 @@ public interface GastoProveedorApi {
 	     * @return ExpedienteComercial
 	     */
 	    public GastoProveedor findOne(Long id);
+	    
+		
+		/**
+		 * Devuelve una lista de gastos aplicando el filtro que recibe.
+		 * @param dtoGastosFilter con los parametros de filtro
+		 * @return DtoPage 
+		 */
+		public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter);
 	    
 
 		/**
@@ -109,6 +120,36 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		boolean updateImpugnacionGasto(DtoImpugnacionGasto dto);
+
+		/**
+		 * Método que asigna los trabajos que recibe a un gasto
+		 * @param trabajos
+		 * @return
+		 */
+		public boolean asignarTrabajos(Long idGasto, Long[] trabajos);
+
+
+		/**
+		 * Devuelve los trabajos asociados a un gasto
+		 * @param idGasto
+		 * @return
+		 */
+		public List<VBusquedaGastoTrabajos> getListTrabajosGasto(Long idGasto);
+
+		/**
+		 * Método que desasigna los trabajos que recibe a un gasto
+		 * @param trabajos
+		 * @return
+		 */
+		public boolean quitarTrabajos(Long idGasto, Long[] trabajos);
+
+		
+		/**
+		 * Elimina un gasto por su id
+		 * @param id
+		 * @return
+		 */
+		public boolean deleteGastoProveedor(Long id);
 		
 }
 

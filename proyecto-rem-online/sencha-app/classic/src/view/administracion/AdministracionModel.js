@@ -11,7 +11,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/gasto.json',
-		        remoteUrl: 'gasto/getListGastos'
+		        remoteUrl: 'gastosproveedor/getListGastos'
 	    	},
 	    	autoLoad: true,
 	    	session: true,
@@ -45,7 +45,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/provision.json',
-		        remoteUrl: 'gasto/getListGastos',
+		        remoteUrl: 'gastosproveedor/getListGastos',
 		        extraParams: {idProvision: '{provisionSeleccionada.id}'}
 	    	}
     		
@@ -57,6 +57,62 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosProvision'}
+			}   
+    	},
+    	
+    	comboEstadoAutorizacionHaya: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosAutorizacionHaya'}
+			}
+    	},
+    	
+    	comboEstadoAutorizacionPropietario: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosAutorizacionPropietario'}
+			}
+    	},
+    	
+    	comboTipoGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposGasto'}
+			}		
+    		
+    	},
+    	
+    	comboSubtipoGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposGasto'}
+			}		
+    		
+    	},
+    	
+    	comboPeriodicidad: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoPeriocidad'}
+			}   
+    	},
+    	
+    	comboDestinatarios: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'destinatariosGasto'}
 			}   
     	}
     	

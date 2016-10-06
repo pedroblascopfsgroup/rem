@@ -14,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -57,7 +58,7 @@ public class GastoGestion implements Serializable, Auditable {
     @SequenceGenerator(name = "GastoGestionGenerator", sequenceName = "S_GGE_GASTOS_GESTION")
     private Long id;
 	
-    @ManyToOne
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor;
     

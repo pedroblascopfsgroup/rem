@@ -190,13 +190,13 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												},
 												readOnly: true,
 												colspan: 2
-											},
+											}/*,
 										   	{
 												xtype: 'button',
 												text: HreRem.i18n('fieldlabel.gasto.incluir.trabajos.rem'),
 											    margin: '0 0 10 0',
 											    handler: 'onClickBotonIncluirTrabajosGasto'
-											}
+											}*/
 											
 										]
 					           },
@@ -209,13 +209,23 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										[
 											{
 										    xtype		: 'gridBase',
-					//					    title: HreRem.i18n('title.notario'),
 										    reference: 'listadoTrabajosIncluidosFactura',
 											cls	: 'panel-base shadow-panel',
 											bind: {
-												store: '{storeTrabajosIncluidosFactura}'
-											},									
-											
+												store: '{storeTrabajosAfectados}'
+											},
+											listeners: {
+
+												rowdblclick: 'onRowDblClickListadoTrabajosGasto'
+	    									},
+											tbar : {
+      												xtype: 'toolbar',
+      												dock: 'top',
+      												items: [
+      														{itemId: 'addButton',iconCls:'x-fa fa-plus', handler: 'onClickBotonIncluirTrabajosGasto', bind: {hidden: '{ocultarIncluirTrabajos}'}}/*,
+      														{itemId: 'removeButton',iconCls:'x-fa fa-minus', handler: 'onClickBotonQuitarTrabajosGasto', bind: {hidden: '{ocultarIncluirTrabajos}'}}*/
+      												]
+											},
 											columns: [
 											   {    text: HreRem.i18n('header.gasto.id.trabajo'),
 										        	dataIndex: 'idTrabajo',
@@ -223,55 +233,33 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										        	hidden: true,
 											        hideable: false
 										       },
+										       {
+									            	text	 : HreRem.i18n('header.numero.trabajo'),
+									                flex	 : 1,
+									                dataIndex: 'numTrabajo'
+									           },  
 											   {
-										            text: HreRem.i18n('header.gasto.subtipo.trabajo'),
-										            dataIndex: 'subtipoTrabajo',
+										            text: HreRem.i18n('header.subtipo'),
+										            dataIndex: 'descripcionSubtipo',
 										            flex: 1
 											   },
 											   {
-											   		text: HreRem.i18n('header.gasto.fecha.ejecucion'),
-										            dataIndex: 'fechaEjecucion',
+											   		text: HreRem.i18n('header.fecha.ejecutado'),
+										            dataIndex: 'fechaEjecutado',
+										            formatter: 'date("d/m/Y")',
 										            flex: 1
 											   },						   
 											   {
 											   		text: HreRem.i18n('header.gasto.cubierto.seguro'),
-										            dataIndex: 'cubiertoSeguro',
+										            dataIndex: 'cubreSeguro',
 										            flex: 1	
 											   },
 											   {
-											   		text: HreRem.i18n('header.gasto.importe.tarifa'),
-										            dataIndex: 'importeTarifa',
-										            flex: 1						   
-											   },
-											   {
-											   		text: HreRem.i18n('header.gasto.importe.penalizacion'),
-										            dataIndex: 'importePenalizacion',
-										            flex: 1						   
-											   },
-											   {
-											   		text: HreRem.i18n('header.gasto.importe.recargo'),
-										            dataIndex: 'importeRecargo',
-										            flex: 1						   
-											   },
-											   {
-											   		text: HreRem.i18n('header.gasto.provisiones.suplidos'),
-										            dataIndex: 'provisionesSuplidos',
+											   		text: HreRem.i18n('header.importe.total'),
+										            dataIndex: 'importeTotal',
 										            flex: 1						   
 											   }
-										    ],
-										    dockedItems : [
-										        {
-										            xtype: 'pagingtoolbar',
-										            dock: 'bottom',
-										            displayInfo: true,
-										            bind: {
-										                store: '{storeTrabajosIncluidosFactura}'
-										            }
-										        }
 										    ]
-					//					    listeners: {
-					//					    	rowdblclick: 'onNotarioDblClick'
-					//					    }
 										}
 										
 										]
@@ -292,6 +280,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     	var me = this; 
 		me.recargar = false;		
 		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});	
     	
     }
 });

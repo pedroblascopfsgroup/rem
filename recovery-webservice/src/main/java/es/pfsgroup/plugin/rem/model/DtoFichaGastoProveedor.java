@@ -41,6 +41,9 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private String nombrePropietario;
 	private String codigoEmisor;
 	private String destinatarioGastoCodigo;
+	private boolean autorizado;
+	private boolean asignadoATrabajos;
+	private boolean asignadoAActivos;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -163,5 +166,23 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setDestinatarioGastoCodigo(String destinatarioGastoCodigo) {
 		this.destinatarioGastoCodigo = destinatarioGastoCodigo;
 	}
-   	
+	public void setAutorizado(boolean autorizado) {
+		this.autorizado = autorizado;
+		
+	}
+   	public boolean getAutorizado() {
+   		return this.autorizado;
+   	}
+	public boolean getAsignadoATrabajos() {
+		return asignadoATrabajos;
+	}
+	public void setAsignadoATrabajos(boolean asignadoATrabajos) {
+		this.asignadoATrabajos = asignadoATrabajos;
+	}
+	public boolean getAsignadoAActivos() {
+		return asignadoAActivos;
+	}
+	public void setAsignadoAActivos(boolean asignadoAActivos) {
+		this.asignadoAActivos = asignadoAActivos;
+	}
 }

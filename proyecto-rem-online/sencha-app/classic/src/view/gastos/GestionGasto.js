@@ -7,7 +7,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
     reference: 'gestiongastoref',
     scrollable	: 'y',
 	recordName: "gestion",
-	
+	refreshAfterSave: true,	
 	recordClass: "HreRem.model.GestionGasto",
     
     requires: ['HreRem.model.GestionGasto'],
@@ -136,10 +136,10 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						
 						{ 
 							xtype: 'comboboxfieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.gasto.motivo'),
+							fieldLabel:  HreRem.i18n('fieldlabel.motivo.rechazo'),
 							bind: {
-								store: '{comboMotivoAutorizacionHaya}',
-								value: '{gestion.comboMotivoAutorizacionHaya}'
+								store: '{comboMotivoRechazoHaya}',
+								value: '{gestion.comboMotivoRechazoHaya}'
 							}
 						},
 						
@@ -163,7 +163,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						
 						{
 							xtype: 'textfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.gasto.motivo'),
+							fieldLabel: HreRem.i18n('fieldlabel.motivo.rechazo'),
 							bind:		'{gestion.motivoRechazoAutorizacionPropietario}'
 						},
 						

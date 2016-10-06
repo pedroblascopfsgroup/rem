@@ -59,8 +59,9 @@ public class DtoTrabajoFilter extends WebDto {
 	
 	private Long idProveedor;
 	
+	private Integer conCierreEconomico;
 	
-	
+	private Integer facturado;
 
 	public String getIdTrabajo() {
 		return idTrabajo;
@@ -236,6 +237,22 @@ public class DtoTrabajoFilter extends WebDto {
 
 	public void setIdProveedor(Long idProveedor) {
 		this.idProveedor = idProveedor;
+	}
+
+	public Integer getConCierreEconomico() {
+		return conCierreEconomico;
+	}
+
+	public void setConCierreEconomico(Integer conCierreEconomico) {
+		this.conCierreEconomico = conCierreEconomico;
+	}
+
+	public Integer getFacturado() {
+		return facturado;
+	}
+
+	public void setFacturado(Integer facturado) {
+		this.facturado = facturado;
 	}
 
 }

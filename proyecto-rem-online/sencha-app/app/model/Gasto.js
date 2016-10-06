@@ -52,7 +52,11 @@ Ext.define('HreRem.model.Gasto', {
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'gasto.json',
-		remoteUrl: 'gasto/getGastoById'
+		api: {
+            update: 'gastosproveedor/saveGastosProveedor',
+			create: 'gastosproveedor/createGastosProveedor',
+			destroy: 'gastosproveedor/deleteGastosProveedor'
+        }
     }
 
 });

@@ -2,11 +2,21 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.administracion',
 
+    //Funcion que se ejecuta al hacer click en el botón buscar gastos
+	onClickGastosSearch: function(btn) {
+		var me = this;
+	},
+    
 	//Funcion que se ejecuta al hacer click en el botón buscar provisiones
 	onClickProvisionesSearch: function(btn) {
 		var me = this;
 		this.lookupReference('provisionesGastosList').collapse();
 		this.lookupReference('provisionesList').getStore().loadPage(1);
+	},
+	
+	// Funcion que se ejecuta al hacer click en el botón limpiar
+	onCleanFiltersClick: function(btn) {			
+		btn.up('form').getForm().reset();				
 	},
 	
 	paramLoading: function(store, operation, opts) {
@@ -35,11 +45,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	me.getView().fireEvent('abrirDetalleGasto', record);
 		
 	},
-	
-		// Funcion que se ejecuta al hacer click en el botón limpiar
-//	onCleanFiltersClick: function(btn) {			
-//		btn.up('form').getForm().reset();				
-//	},
 	
 //	onClickDescargarExcel: function(btn) {
 //		

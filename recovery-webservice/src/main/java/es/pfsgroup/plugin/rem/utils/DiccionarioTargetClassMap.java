@@ -236,7 +236,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosProvision", DDEstadoProvisionGastos.class);
 		mapa.put("motivosAutorizacionPropietaro", DDMotivoAutorizacionPropietario.class);
 		mapa.put("estadosAutorizacionHaya", DDEstadoAutorizacionHaya.class);
-		mapa.put("motivosAutorizacionHaya", DDMotivoRechazoAutorizacionHaya.class);
+		mapa.put("motivosRechazoHaya", DDMotivoRechazoAutorizacionHaya.class);
 		mapa.put("estadosAutorizacionPropietario", DDEstadoAutorizacionPropietario.class);
 		mapa.put("motivosAnulados", DDMotivoAnulacionGasto.class);
 		mapa.put("motivosRetenerPago", DDMotivoRetencionPago.class);

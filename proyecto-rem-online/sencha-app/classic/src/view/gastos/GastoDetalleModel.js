@@ -2,7 +2,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.gastodetalle',
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto',
-    			'HreRem.model.BusquedaTrabajo'],
+    			'HreRem.model.BusquedaTrabajo', 'HreRem.model.BusquedaTrabajo'],
     
     data: {
     	gasto: null,
@@ -44,7 +44,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	}
 	     	
 	     	return true;
-	     }  		
+	     },
+	     
+	     ocultarIncluirTrabajos: function(get) {
+	     	return get('gasto.autorizado') || get('gasto.asignadoAActivos');
+
+	     },
+	     
+	     ocultarIncluirActivos: function(get) {
+	     	
+	     	return get('gasto.autorizado') || get('gasto.asignadoATrabajos');
+
+	     }
 		
 	 },
 
@@ -84,7 +95,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboSubtipoGasto',
 				extraParams: {codigoTipoGasto: '{gasto.tipoGastoCodigo}'}
-			}   
+			} 
     	},
 
     	comboSubtiposNuevoGasto: {
@@ -142,6 +153,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	    	 }
     	},
     	
+    	storeTrabajosAfectados: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.BusquedaTrabajo',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'gastosproveedor/getListTrabajosGasto',
+		        extraParams: {idGasto: '{gasto.id}'}
+	    	 }
+    	},
+    	
     	comboEjercicioContabilidad: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -168,12 +189,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			}
     	},
     	
-    	comboMotivoAutorizacionHaya: {
+    	comboMotivoRechazoHaya: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'motivosAutorizacionHaya'}
+				extraParams: {diccionario: 'motivosRechazoHaya'}
 			}
     	},
     	
@@ -223,6 +244,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     		
     	},
     	
+    	
     	seleccionTrabajosGasto: {
     		pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.BusquedaTrabajo',
@@ -237,8 +259,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	        listeners : {
 	            beforeload : 'paramLoading'
 	        }
-    		
-    		
     	}
     	
 	

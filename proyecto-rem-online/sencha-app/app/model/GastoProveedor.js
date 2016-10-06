@@ -84,7 +84,28 @@ Ext.define('HreRem.model.GastoProveedor', {
 		},
 		{
 			name : 'destinatarioGastoCodigo'
-		}
+		},
+		{
+			name: 'autorizado',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}
+		},
+		{
+			name: 'asignadoATrabajos',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}
+		},
+		{
+			name: 'asignadoAActivos',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}
+		}	
     		
     ],
     

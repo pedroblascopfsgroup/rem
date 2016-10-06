@@ -33,6 +33,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoAdelanto implements Auditable, Dictionary {
 
+	
+	public static final String CODIGO_PROVISION = "01";
+	public static final String CODIGO_SUPLIDO = "02";
+	
 
 	/**
 	 * 

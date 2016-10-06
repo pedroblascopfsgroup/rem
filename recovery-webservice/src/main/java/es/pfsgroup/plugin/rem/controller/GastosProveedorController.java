@@ -25,6 +25,7 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -32,11 +33,13 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 
 
 @Controller
@@ -99,7 +102,6 @@ public class GastosProveedorController {
         
         
 	}
-
 	
 	
 	/**
@@ -123,6 +125,47 @@ public class GastosProveedorController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	/**
+	 * Método que recupera un trabajo según su id y lo mapea a un DTO
+	 * @param id Id del trabajo
+	 * @param pestana Pestaña del trabajo a cargar. Dependiendo de la pestaña recibida, cargará un DTO u otro
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView findOne(Long id, ModelMap model){
+
+		model.put("data", gastoProveedorApi.findOne(id));
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListGastos(DtoGastosFilter dtoGastosFilter, ModelMap model) {
+		try {
+
+//			if (dtoGastosFilter.getSort() == null){
+//				
+//				dtoGastosFilter.setSort("numFactura");
+//
+//			}
+			//Page page = ofertaApi.getListOfertas(dtoOfertasFilter);
+			DtoPage page = gastoProveedorApi.getListGastos(dtoGastosFilter);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -144,8 +187,7 @@ public class GastosProveedorController {
 		
 		return createModelAndViewJson(model);
 		
-	}
-	
+	}	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -163,6 +205,25 @@ public class GastosProveedorController {
 		return createModelAndViewJson(model);
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteGastosProveedor(DtoFichaGastoProveedor dto, @RequestParam Long id,  ModelMap model) {
+		
+		try {
+			boolean success = gastoProveedorApi.deleteGastoProveedor(id);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -236,6 +297,27 @@ public class GastosProveedorController {
 		return createModelAndViewJson(model);
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTrabajosGasto(@RequestParam Long idGasto, ModelMap model) {
+		
+		try {
+
+			List<VBusquedaGastoTrabajos> lista = gastoProveedorApi.getListTrabajosGasto(idGasto);
+
+			model.put("data", lista);
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -245,6 +327,9 @@ public class GastosProveedorController {
 			boolean success = gastoProveedorApi.createGastoActivo(idGasto, numActivo, numAgrupacion);
 			model.put("success", success);
 			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);	
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
@@ -339,6 +424,39 @@ public class GastosProveedorController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView asignarTrabajos(Long idGasto, Long[] trabajos, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.asignarTrabajos(idGasto, trabajos);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView quitarTrabajos(Long idGasto, Long[] trabajos, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.quitarTrabajos(idGasto, trabajos);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}	
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

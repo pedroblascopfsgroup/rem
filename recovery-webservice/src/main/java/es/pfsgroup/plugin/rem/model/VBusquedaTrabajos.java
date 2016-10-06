@@ -99,14 +99,22 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="TBJ_CUBRE_SEGURO")
 	private Integer cubreSeguro;
 	
-	@Column(name="TBJ_FECHA_CIERRE_ECONOMICO")
-	private Date fechaCierreEconomico;
+	@Column(name="CON_CIERRE_ECONOMICO")
+	private Integer conCierreEconomico;
+	
+	@Column(name="FACTURADO")
+	private Integer facturado;
 	
 	@Column(name="TBJ_IMPORTE_TOTAL")
 	private Double importeTotal;
 	
 	@Column(name="TBJ_FECHA_EJECUTADO")
 	private Date fechaEjecutado;
+	
+	@Column(name="TBJ_FECHA_CIERRE_ECONOMICO")
+	private Date fechaCierreEconomico;
+	
+	
 	
 	public String getActivos() {
 		return activos;
@@ -306,15 +314,7 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setNumAgrupacionRem(Long numAgrupacionRem) {
 		this.numAgrupacionRem = numAgrupacionRem;
-	}
-
-	public Date getFechaCierreEconomico() {
-		return fechaCierreEconomico;
-	}
-
-	public void setFechaCierreEconomico(Date fechaCierreEconomico) {
-		this.fechaCierreEconomico = fechaCierreEconomico;
-	}
+	}	
 
 	public Double getImporteTotal() {
 		return importeTotal;
@@ -330,6 +330,30 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setFechaEjecutado(Date fechaEjecutado) {
 		this.fechaEjecutado = fechaEjecutado;
+	}
+
+	public Long getIdProveedor() {
+		return idProveedor;
+	}
+
+	public void setIdProveedor(Long idProveedor) {
+		this.idProveedor = idProveedor;
+	}
+
+	public Integer getConCierreEconomico() {
+		return conCierreEconomico;
+	}
+
+	public void setConCierreEconomico(Integer conCierreEconomico) {
+		this.conCierreEconomico = conCierreEconomico;
+	}
+
+	public Date getFechaCierreEconomico() {
+		return fechaCierreEconomico;
+	}
+
+	public void setFechaCierreEconomico(Date fechaCierreEconomico) {
+		this.fechaCierreEconomico = fechaCierreEconomico;
 	}
 
 

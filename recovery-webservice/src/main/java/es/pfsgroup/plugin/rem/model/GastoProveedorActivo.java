@@ -19,7 +19,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Modelo que gestiona la relación entre gastos y activo
- *  
  * @author Jose Villel
  *
  */
@@ -48,7 +47,7 @@ public class GastoProveedorActivo implements Serializable {
     private Activo activo;
     
     @Column(name = "GPV_PARTICIPACION_GASTO")
-    private Double participacionGasto;
+    private Float participacionGasto;
     
     @Column(name="GPV_REFERENCIA_CATASTRAL")
     private String referenciaCatastral;
@@ -78,11 +77,11 @@ public class GastoProveedorActivo implements Serializable {
 		this.activo = activo;
 	}
 
-	public Double getParticipacionGasto() {
+	public Float getParticipacionGasto() {
 		return participacionGasto;
 	}
 
-	public void setParticipacionGasto(Double participacionGasto) {
+	public void setParticipacionGasto(Float participacionGasto) {
 		this.participacionGasto = participacionGasto;
 	}
 

@@ -32,7 +32,7 @@ public class DtoGestionGasto extends WebDto {
 	private String comboEstadoAutorizacionHaya;
 	private Date fechaAutorizacionHaya;
 	private String gestorAutorizacionHaya;
-	private String comboMotivoAutorizacionHaya;
+	private String comboMotivoRechazoHaya;
 	private String comboEstadoAutorizacionPropietario;
 	private Date fechaAutorizacionPropietario;
 	private String gestorAutorizacionPropietario;
@@ -111,11 +111,11 @@ public class DtoGestionGasto extends WebDto {
 	public void setGestorAutorizacionHaya(String gestorAutorizacionHaya) {
 		this.gestorAutorizacionHaya = gestorAutorizacionHaya;
 	}
-	public String getComboMotivoAutorizacionHaya() {
-		return comboMotivoAutorizacionHaya;
+	public String getComboMotivoRechazoHaya() {
+		return comboMotivoRechazoHaya;
 	}
-	public void setComboMotivoAutorizacionHaya(String comboMotivoAutorizacionHaya) {
-		this.comboMotivoAutorizacionHaya = comboMotivoAutorizacionHaya;
+	public void setComboMotivoRechazoHaya(String comboMotivoRechazoHaya) {
+		this.comboMotivoRechazoHaya = comboMotivoRechazoHaya;
 	}
 	public String getComboEstadoAutorizacionPropietario() {
 		return comboEstadoAutorizacionPropietario;

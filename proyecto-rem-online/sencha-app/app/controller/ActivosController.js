@@ -178,7 +178,8 @@ Ext.define('HreRem.controller.ActivosController', {
     		abrirDetalleGasto: 'abrirDetalleGasto'
     	},
     	'gastodetallemain': {
-    		abrirDetalleActivo: 'abrirDetalleActivoGastosActivos'
+    		abrirDetalleActivo: 'abrirDetalleActivoGastosActivos',
+    		abrirDetalleTrabajo: 'abrirDetalleTrabajo'
     	}
 
     },

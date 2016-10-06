@@ -63,8 +63,25 @@ Ext.define('HreRem.model.BusquedaTrabajo', {
     		},
     		{
     			name: 'codPostal'
-    		}
-        
+    		},
+    		{
+    			name: 'cubreSeguro',
+    			convert: function(value) {
+    				return value == 0? 'No' : 'Si';
+    			}
+    		},
+    		{
+    			name: 'fechaCierreEconomico'
+    		},
+    		{
+    			name: 'fechaEjecutado'
+    		},
+    		{
+    			name: 'fechaSolicitud'
+    		},
+    		{
+    			name: 'importeTotal'
+    		}    		        
     ] 
     
 

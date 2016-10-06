@@ -27,7 +27,7 @@ public class DtoActivoGasto extends WebDto {
 	private Long numAgrupacion;
 	private Long idGastoActivo;
 	private String direccion;
-	private Double participacionGasto;
+	private Float participacionGasto;
 	private Double importeProporcinalTotal;
 	private String referenciasCatastrales;
 	private String referenciaCatastral;
@@ -81,10 +81,10 @@ public class DtoActivoGasto extends WebDto {
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
-	public Double getParticipacionGasto() {
+	public Float getParticipacionGasto() {
 		return participacionGasto;
 	}
-	public void setParticipacionGasto(Double participacionGasto) {
+	public void setParticipacionGasto(Float participacionGasto) {
 		this.participacionGasto = participacionGasto;
 	}
 	public Double getImporteProporcinalTotal() {

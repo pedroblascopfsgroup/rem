@@ -15,7 +15,7 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 	initComponent: function() {
 	
 		var me = this;
-    	me.setTitle(HreRem.i18n('title.filtro.trabajos'));
+    	me.setTitle(HreRem.i18n('title.filtro'));
     	me.removeCls('shadow-panel');
   		
     	me.buttonAlign = 'left';
@@ -50,6 +50,16 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 											{
 												name: 'idProveedor',
 												bind: '{gasto.idEmisor}',
+												hidden: true
+											},
+											{
+												name: 'conCierreEconomico',
+												value: 1,
+												hidden: true
+											},
+											{
+												name: 'facturado',
+												value: 0,
 												hidden: true
 											}
 							]

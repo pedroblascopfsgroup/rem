@@ -295,7 +295,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     	
     	var me = this;
     	
-    	if (me.topBar) {
+    	if (!Ext.isEmpty(me.down('#addButton'))) {
     		me.down('#addButton').setDisabled(disabled);    		
     	}
     },
@@ -304,7 +304,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     	
     	var me = this;
     	
-    	if (me.topBar && !me.disabledDeleteBtn) {
+    	if (!Ext.isEmpty(me.down('#removeButton') && !me.disabledDeleteBtn)) {
     		me.down('#removeButton').setDisabled(disabled);    		
     	}
     },

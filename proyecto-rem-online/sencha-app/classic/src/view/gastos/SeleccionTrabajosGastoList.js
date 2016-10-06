@@ -1,20 +1,19 @@
 Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoList', {
     extend: 'HreRem.view.common.GridBase',
     xtype: 'selecciontrabajosgastolist',
-    requires: ['Ext.selection.CheckboxModel'],
+    requires: ['Ext.selection.CheckboxModel', 'HreRem.ux.plugin.PagingSelectionPersistence'],
 	bind: {
 		store: '{seleccionTrabajosGasto}'
 	},
 	scrollable: 'y',
 	
-	selModel : Ext.create('Ext.selection.CheckboxModel', {
-    	checkOnly: true
-	}),
+	plugins: 'pagingselectpersist',
+
 	
     initComponent: function () {
      	
      	var me = this;
-     	me.setTitle(HreRem.i18n('title.listado.trabajos'));
+     	//me.setTitle(HreRem.i18n('title.listado.trabajos'));    	
 	    me.removeCls('shadow-panel');
 	    me.columns = [
 	    	
@@ -56,8 +55,14 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoList', {
 			        }
 		        }
 
-	        ];
-	        
+	    ];
+	    
+	    
+	     
+	    me.selModel = {
+          selType: 'checkboxmodel'
+      	}; 
+      	        
 	    me.dockedItems = [
 	        {
 	            xtype: 'pagingtoolbar',
@@ -71,6 +76,20 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoList', {
 	    
 	    me.callParent();
 	    
+	    me.getSelectionModel().on({
+        	'selectionchange': function(sm,record,e) {
+        		me.fireEvent('persistedsselectionchange', sm, record, e, me, me.getPersistedSelection())
+        	}
+        });
+	    
+    },
+    
+    getPersistedSelection: function() {
+
+    	var me = this;
+    	return me.getPlugin('pagingselectpersist').getPersistedSelection(); 
+
+    	
     }
     
 });

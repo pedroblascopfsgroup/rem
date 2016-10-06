@@ -2,6 +2,10 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -289,5 +293,30 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente);
+		
+		/**
+		 * Método que guarda la información de una entrega de reserva
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public boolean saveEntregaReserva(DtoEntregaReserva dto, Long idEntidad);
+		
+		/**
+		 * Método que actualiza la información de una entrega de reserva
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public boolean updateEntregaReserva(DtoEntregaReserva dto, Long id);
+		
+		/**
+		 * Método que elimina una entrega de reserva
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+		
 }
 

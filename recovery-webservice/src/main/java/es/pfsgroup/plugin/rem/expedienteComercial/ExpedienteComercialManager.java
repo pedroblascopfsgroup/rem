@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tools.ant.taskdefs.Exec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1362,14 +1363,24 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		ExpedienteComercial expediente= findOne(idExpediente);
 		Reserva reserva = expediente.getReserva();
 		
-
-		if(!Checks.esNulo(dto.getTipoArrasCodigo())) {
+		try {
+			beanUtilNotNull.copyProperties(reserva, dto);
+			if(!Checks.esNulo(dto.getTipoArrasCodigo())) {
+				
+				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
+				reserva.setTipoArras(tipoArras);
+			}
 			
-			DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
-			reserva.setTipoArras(tipoArras);
+			genericDao.save(Reserva.class, reserva);
+			
+			
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
 		}
-		
-		genericDao.save(Reserva.class, reserva);
 		
 		return true;
 	}
@@ -1659,5 +1670,99 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return true;
 		
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveEntregaReserva(DtoEntregaReserva dto, Long idExpediente){
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		
+		try{		
+			if(!Checks.esNulo(expedienteComercial)){
+				
+				EntregaReserva entrega= new EntregaReserva();
+				
+	//			entregaReserva.setIdEntrega(entrega.getId());
+	//			entregaReserva.setFechaCobro(entrega.getFechaEntrega());
+	//			entregaReserva.setImporte(entrega.getImporte());
+	//			entregaReserva.setObservaciones(entrega.getObservaciones());
+	//			entregaReserva.setTitular(entrega.getTitular());	
+				
+				entrega.setImporte(dto.getImporte());
+				entrega.setFechaEntrega(dto.getFechaCobro());
+				entrega.setTitular(dto.getTitular());
+				entrega.setObservaciones(dto.getObservaciones());
+				entrega.setReserva(expedienteComercial.getReserva());
+				
+				expedienteComercial.getReserva().getEntregas().add(entrega);
+				
+				genericDao.save(EntregaReserva.class, entrega);
+				
+				genericDao.update(ExpedienteComercial.class, expedienteComercial);
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateEntregaReserva(DtoEntregaReserva dto, Long idExpediente){
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		
+		for(EntregaReserva entrega: expedienteComercial.getReserva().getEntregas()){
+			
+			try {
+				
+				if(entrega.getId().equals(dto.getIdEntrega())){
+					beanUtilNotNull.copyProperties(entrega, dto);
+					if(!Checks.esNulo(dto.getFechaCobro())){
+						entrega.setFechaEntrega(dto.getFechaCobro());
+					}
+					if("".equals(dto.getFechaCobro())){
+						entrega.setFechaEntrega(null);
+					}
+					
+					genericDao.update(ExpedienteComercial.class, expedienteComercial);
+				}
+				
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return false;
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				return false;
+			}
+			
+		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega){
+
+			try {
+				genericDao.deleteById(EntregaReserva.class, idEntrega);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			} 
+		
+		return true;
+		
+	}
+	
+	
+	
 
 }

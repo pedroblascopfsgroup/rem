@@ -38,6 +38,12 @@ public class DtoReserva extends WebDto {
 	private Integer conImpuesto;
 	
 	private Date fechaVencimiento;
+	
+	private Date fechaCobro;
+	
+	private String comprador;
+	
+	private String Observaciones;
 
 	public Long getIdReserva() {
 		return idReserva;
@@ -109,9 +115,31 @@ public class DtoReserva extends WebDto {
 
 	public void setFechaVencimiento(Date fechaVencimiento) {
 		this.fechaVencimiento = fechaVencimiento;
+	}
+
+	public Date getFechaCobro() {
+		return fechaCobro;
+	}
+
+	public void setFechaCobro(Date fechaCobro) {
+		this.fechaCobro = fechaCobro;
+	}
+
+	public String getComprador() {
+		return comprador;
+	}
+
+	public void setComprador(String comprador) {
+		this.comprador = comprador;
+	}
+
+	public String getObservaciones() {
+		return Observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		Observaciones = observaciones;
 	}  
-   
-   	
-   	
+
    	
 }

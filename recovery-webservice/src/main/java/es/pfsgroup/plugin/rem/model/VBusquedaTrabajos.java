@@ -66,6 +66,9 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name = "PROVEEDOR")
 	private String proveedor;
 	
+	@Column(name="PVE_ID")
+	private Long idProveedor;
+	
 	@Column(name = "SOLICITANTE")
 	private String solicitante;
 	
@@ -93,12 +96,40 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="ACTIVOS")
 	private String activos;
 	
+	@Column(name="TBJ_CUBRE_SEGURO")
+	private Integer cubreSeguro;
+	
+	@Column(name="CON_CIERRE_ECONOMICO")
+	private Integer conCierreEconomico;
+	
+	@Column(name="FACTURADO")
+	private Integer facturado;
+	
+	@Column(name="TBJ_IMPORTE_TOTAL")
+	private Double importeTotal;
+	
+	@Column(name="TBJ_FECHA_EJECUTADO")
+	private Date fechaEjecutado;
+	
+	@Column(name="TBJ_FECHA_CIERRE_ECONOMICO")
+	private Date fechaCierreEconomico;
+	
+	
+	
 	public String getActivos() {
 		return activos;
 	}
 
 	public void setActivos(String activos) {
 		this.activos = activos;
+	}
+
+	public Integer getCubreSeguro() {
+		return cubreSeguro;
+	}
+
+	public void setCubreSeguro(Integer cubreSeguro) {
+		this.cubreSeguro = cubreSeguro;
 	}
 
 	public Long getId() {
@@ -283,6 +314,46 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setNumAgrupacionRem(Long numAgrupacionRem) {
 		this.numAgrupacionRem = numAgrupacionRem;
+	}	
+
+	public Double getImporteTotal() {
+		return importeTotal;
+	}
+
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
+	}
+
+	public Date getFechaEjecutado() {
+		return fechaEjecutado;
+	}
+
+	public void setFechaEjecutado(Date fechaEjecutado) {
+		this.fechaEjecutado = fechaEjecutado;
+	}
+
+	public Long getIdProveedor() {
+		return idProveedor;
+	}
+
+	public void setIdProveedor(Long idProveedor) {
+		this.idProveedor = idProveedor;
+	}
+
+	public Integer getConCierreEconomico() {
+		return conCierreEconomico;
+	}
+
+	public void setConCierreEconomico(Integer conCierreEconomico) {
+		this.conCierreEconomico = conCierreEconomico;
+	}
+
+	public Date getFechaCierreEconomico() {
+		return fechaCierreEconomico;
+	}
+
+	public void setFechaCierreEconomico(Date fechaCierreEconomico) {
+		this.fechaCierreEconomico = fechaCierreEconomico;
 	}
 
 

@@ -481,14 +481,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return upload2(webFileItem, null);
 
 	}
-
+	
 	@Override
-	@BusinessOperation(overrides = "activoManager.upload2")
+	@BusinessOperation(overrides = "activoManager.uploadDocumento")
 	@Transactional(readOnly = false)
-	public String upload2(WebFileItem webFileItem, Long idDocRestClient) throws Exception {
-
-		Activo activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
-
+	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activoEntrada, String matricula) throws Exception {
+		Activo activo=null;
+		DDTipoDocumentoActivo tipoDocumento=null;;
+		
+		if(Checks.esNulo(activoEntrada)){
+			activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+			
+			if (webFileItem.getParameter("tipo") == null)
+				throw new Exception("Tipo no valido");
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+			tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,filtro);
+		}
+		else{
+			activo =activoEntrada;
+			if(!Checks.esNulo(matricula)){
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
+				tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,filtro);
+			}
+		}
+		
 		Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
 
 		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
@@ -496,13 +513,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		adjuntoActivo.setActivo(activo);
 
 		adjuntoActivo.setIdDocRestClient(idDocRestClient);
-
-		if (webFileItem.getParameter("tipo") == null)
-			throw new Exception("Tipo no valido");
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,
-				filtro);
+		
 		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
 
 		adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
@@ -522,6 +533,51 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		activoDao.save(activo);
 
 		return null;
+		
+	}
+
+	@Override
+	@BusinessOperation(overrides = "activoManager.upload2")
+	@Transactional(readOnly = false)
+	public String upload2(WebFileItem webFileItem, Long idDocRestClient) throws Exception {
+		
+		return uploadDocumento(webFileItem, idDocRestClient, null, null);
+
+//		Activo activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+//
+//		Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+//
+//		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+//		adjuntoActivo.setAdjunto(adj);
+//		adjuntoActivo.setActivo(activo);
+//
+//		adjuntoActivo.setIdDocRestClient(idDocRestClient);
+//
+//		if (webFileItem.getParameter("tipo") == null)
+//			throw new Exception("Tipo no valido");
+//
+//		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+//		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,
+//				filtro);
+//		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+//
+//		adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
+//
+//		adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
+//
+//		adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
+//
+//		adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
+//
+//		adjuntoActivo.setFechaDocumento(new Date());
+//
+//		Auditoria.save(adjuntoActivo);
+//
+//		activo.getAdjuntos().add(adjuntoActivo);
+//
+//		activoDao.save(activo);
+//
+//		return null;
 	}
 
 	@Override
@@ -1108,6 +1164,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
+				
+				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.
+				if(!Checks.esNulo(activo.getInfoComercial())) {
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorInforme", proveedor);
+					genericDao.save(Activo.class, activo);
+				}
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
@@ -1606,6 +1668,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return contador;
 	}
 
+
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean solicitarTasacion(Long idActivo) {
@@ -1661,5 +1724,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return dtoTasacion;
+	}
+	
+	@Override
+	@BusinessOperationDefinition("activoManager.comprobarActivoComercializable")
+	public Boolean comprobarActivoComercializable(Long idActivo) {
+		PerimetroActivo perimetro = this.getPerimetroByIdActivo(idActivo);
+		
+		return perimetro.getAplicaComercializar() == 1 ? true : false;
+	}
+   
+	@Override
+	@BusinessOperationDefinition("activoManager.comprobarObligatoriosDesignarMediador")
+	public String comprobarObligatoriosDesignarMediador(Long idActivo) throws Exception {
+
+		Activo activo = this.get(idActivo);
+		String mensaje = new String();
+
+		// Validaciones datos obligatorios correspondientes a Publicacion / Informe comercial
+		// del activo
+		// Validación mediador
+		if (Checks.esNulo(activo.getInfoComercial()) || Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+			mensaje = mensaje.concat(
+					messageServices.getMessage("tramite.admision.DesignarMediador.validacionPre.mediador"));
+		}
+
+		if (!Checks.esNulo(mensaje)) {
+			mensaje = messageServices.getMessage("tramite.admision.DesignarMediador.validacionPre.debeInformar")
+					.concat(mensaje);
+		}
+
+		return mensaje;
 	}
 }

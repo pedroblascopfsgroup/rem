@@ -89,7 +89,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		},
 		items: [
 		        {
-		        	xtype: 'datosbasicosexpediente', ocultarBotonesEdicion: true
+		        	xtype: 'datosbasicosexpediente', ocultarBotonesEdicion: false
 		        	
 		        },
 		        {

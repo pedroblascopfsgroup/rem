@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.PropuestaActivosVinculadosList', {
     
     listeners: {
     	boxready: function() {
-    		me = this;
+    		var me = this;
     		me.evaluarEdicion();
     	}
     },

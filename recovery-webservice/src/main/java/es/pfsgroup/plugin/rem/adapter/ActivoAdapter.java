@@ -2963,20 +2963,56 @@ public class ActivoAdapter {
 		}
 		return listaAdjuntos;
 	}
-
-	public String upload(WebFileItem webFileItem) throws Exception {
-		if(modoRestClient()) {
-			Activo activo = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
-			Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-			DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
-			Long idDocRestClient = gestorDocumentalAdapterApi.upload(activo, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-			activoApi.upload2(webFileItem, idDocRestClient);
-		}else{
-			activoApi.upload(webFileItem);
+	
+	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception{
+		
+		if(Checks.esNulo(activoEntrada)){
+			if(modoRestClient()) {
+				Activo activo = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+				Long idDocRestClient = gestorDocumentalAdapterApi.upload(activo, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+				activoApi.upload2(webFileItem, idDocRestClient);
+			}else{
+				activoApi.upload(webFileItem);
+			}
+		}
+		else{
+			if(modoRestClient()) {
+				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
+				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+				
+				if(!Checks.esNulo(tipoDocumento)){
+					Long idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+					activoApi.uploadDocumento(webFileItem, idDocRestClient,activoEntrada,matricula);
+				}
+			}
+			else{
+				activoApi.uploadDocumento(webFileItem, null, activoEntrada, matricula);
+			}
 		}
 		return null;
+	}
+	
+
+	public String upload(WebFileItem webFileItem) throws Exception {
+		return uploadDocumento(webFileItem, null, null);
+//		if(modoRestClient()) {
+//			Activo activo = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+//			Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+//			
+//			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+//			DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+//			Long idDocRestClient = gestorDocumentalAdapterApi.upload(activo, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+//			activoApi.upload2(webFileItem, idDocRestClient);
+//		}else{
+//			activoApi.upload(webFileItem);
+//		}
+//		return null;
 	}
 	
 	public FileItem download(Long id) throws Exception {

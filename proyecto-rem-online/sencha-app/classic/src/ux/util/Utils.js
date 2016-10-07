@@ -48,6 +48,14 @@ Ext.define('HreRem.ux.util.Utils', {
     */
    rendererCurrency: function(value, metaData, record, rowIndex, colIndex, store, view) {
 	   	return Ext.isEmpty(value) ? "" : Ext.util.Format.currency(value);
+   },
+   
+   /**
+    * Función que evalua si el objeto recibido está vacio
+    */
+   isEmptyJSON: function (obj) {
+ 		for(var i in obj) { return false; }
+ 		return true;
    }
     
 });

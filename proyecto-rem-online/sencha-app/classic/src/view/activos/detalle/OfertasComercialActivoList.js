@@ -166,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		}
 		
 		if(pertenceAgrupacionRestringida=="false" || pertenceAgrupacionRestringida==undefined){
-			var parent= me.up('ofertascomercialactivo');
+			var parent= me.up('ofertascomercialactivo'),
 			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
 			Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent}).show();
 		}else{

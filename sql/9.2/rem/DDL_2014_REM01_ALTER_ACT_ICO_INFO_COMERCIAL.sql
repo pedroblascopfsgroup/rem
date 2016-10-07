@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160920
+--## FECHA_CREACION=20160921
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -44,6 +44,8 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
+    	T_ALTER(  'ICO_POSIBLE_HACER_INF',			'NUMBER(1,0)',						'Es posible hacer el informe.'),
+    	T_ALTER(  'ICO_MOTIVO_NO_HACER_INF',		'VARCHAR2(500 CHAR)',				'Motivo no posible hacer el informe.'),
     	T_ALTER(  'ICO_FECHA_RECEP_LLAVES_HAYA',	'DATE',								'Fecha recepción de llaves HAYA.'),
     	T_ALTER(  'ICO_FECHA_ENVIO_LLAVES_API',		'DATE',								'Fecha recepción de envío llaves a Api.'),
     	T_ALTER(  'ICO_RECIBIO_IMPORTE_ADM',		'NUMBER(16,2)',						'Importe recibido datos administración.'),

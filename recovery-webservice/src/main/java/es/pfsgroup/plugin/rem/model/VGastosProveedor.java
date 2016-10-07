@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,6 +62,9 @@ public class VGastosProveedor implements Serializable {
 	
 	@Column(name = "GPV_NUM_GASTO_HAYA")
 	private Long numGastoHaya;
+	
+	@Column(name="PRG_ID")
+	private Long idProvision;
 	
 
 	public String getId() {
@@ -183,6 +185,14 @@ public class VGastosProveedor implements Serializable {
 
 	public void setNumGastoHaya(Long numGastoHaya) {
 		this.numGastoHaya = numGastoHaya;
+	}
+
+	public Long getIdProvision() {
+		return idProvision;
+	}
+
+	public void setIdProvision(Long idProvision) {
+		this.idProvision = idProvision;
 	}
 	
 	 

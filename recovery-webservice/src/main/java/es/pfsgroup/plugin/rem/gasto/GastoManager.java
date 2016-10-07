@@ -11,14 +11,13 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 @Service("gastoManager")
-public class GastoManager extends BusinessOperationOverrider<OfertaApi> implements  GastoApi {
+public class GastoManager extends BusinessOperationOverrider<GastoApi> implements  GastoApi {
 	
 	
 	protected static final Log logger = LogFactory.getLog(GastoManager.class);

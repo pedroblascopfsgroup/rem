@@ -25,8 +25,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoProveedor'}
-				},
-				autoLoad: true
+				}
 		},
 		comboSubtipoProveedor: {
 			model: 'HreRem.model.ComboBase',
@@ -34,8 +33,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionarioSubtipoProveedor',
 					extraParams: {codigoTipoProveedor: '{proveedor.tipoProveedorCodigo}'}
-				},
-				autoLoad: true
+				}
 		},
 		comboTipoPersona: {
 			model: 'HreRem.model.ComboBase',

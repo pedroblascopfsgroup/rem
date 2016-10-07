@@ -1,9 +1,11 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
+import java.util.List;
+
 public class PortalesRequestDto {
 
 	private Long id;
-	private PortalesDto data; 
+	private List<PortalesDto> data; 
 	
 	public Long getId() {
 		return id;
@@ -11,13 +13,12 @@ public class PortalesRequestDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public PortalesDto getData() {
+	public List<PortalesDto> getData() {
 		return data;
 	}
-	public void setData(PortalesDto data) {
+	public void setData(List<PortalesDto> data) {
 		this.data = data;
 	}
 
-	
 	
 }

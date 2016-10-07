@@ -32,16 +32,19 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -129,6 +132,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -759,6 +765,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//Subida de adjunto al Expediente Comercial
 		ExpedienteComercial expediente = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
 		
+		ActivoAdjuntoActivo adjuntoActivo= null;
 		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
 		
 		AdjuntoExpedienteComercial adjuntoExpediente = new AdjuntoExpedienteComercial();
@@ -784,6 +791,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		expediente.getAdjuntos().add(adjuntoExpediente);		
 		
 		genericDao.save(ExpedienteComercial.class, expediente);
+		
+		for(ActivoOferta activoOferta: expediente.getOferta().getActivosOferta()){
+			
+			if(!Checks.esNulo(adjuntoExpediente) && !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente())
+					&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())){
+				
+				Activo activo= activoOferta.getPrimaryKey().getActivo();
+				activoAdapter.uploadDocumento(fileItem, activo, adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+				adjuntoActivo= activo.getAdjuntos().get(activo.getAdjuntos().size()-1);
+			}
+		}
+		
+		if(!Checks.esNulo(adjuntoActivo)){
+			adjuntoExpediente.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
+			genericDao.update(AdjuntoExpedienteComercial.class, adjuntoExpediente);
+		}
+		
 	        
 		return null;
 

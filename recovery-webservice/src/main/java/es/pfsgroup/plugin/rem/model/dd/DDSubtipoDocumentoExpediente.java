@@ -55,6 +55,9 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_SDE_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
+	
+	@Column(name = "DD_SDE_MATRICULA_GD")   
+	private String matricula;
 	    
 	@Version   
 	private Long version;
@@ -128,6 +131,14 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
 	
 	public void setCodigoTipoDocExpediente(String codigoTipoDocExpediente) {
 		this.codigoTipoDocExpediente = tipoDocumentoExpediente.getCodigo();
+	}
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
 	}
 	
 

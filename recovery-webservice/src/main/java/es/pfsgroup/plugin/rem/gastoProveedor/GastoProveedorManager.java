@@ -1135,7 +1135,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			for(GastoProveedorActivo g: gasto.getGastoProveedorActivos()){
 				
-				if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto())){
+				if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto()) 
+						&& !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto().getMatricula())){
 					activoAdapter.uploadDocumento(fileItem, g.getActivo(), adjuntoGasto.getTipoDocumentoGasto().getMatricula());
 					adjuntoActivo= g.getActivo().getAdjuntos().get(g.getActivo().getAdjuntos().size()-1);
 				}

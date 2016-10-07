@@ -888,7 +888,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if(!Checks.esNulo(trabajo.getActivo())){
 				Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(trabajo.getActivo());
 				if(!Checks.esNulo(oferta)){
-					if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta())){
+					if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())){
 						tipoTramite = tipoProcedimientoManager.getByCodigo("T013");
 					}else{
 						tipoTramite = tipoProcedimientoManager.getByCodigo("T014");

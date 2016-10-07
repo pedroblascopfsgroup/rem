@@ -106,7 +106,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.alta'),
 													 		cls: 'cabecera-info-field',
 											            	bind:		'{expediente.fechaAlta}',
-											            	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+											            	renderer: Ext.util.Format.dateRenderer('d/m/Y')
 											            },
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.propietario'),
@@ -123,7 +123,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															labelWidth: 100,
 															cls: 'cabecera-info-field',
 										                	bind:		'{expediente.fechaSancion}',
-										                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+										                	renderer: Ext.util.Format.dateRenderer('d/m/Y')
 										                },
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.mediador'),
@@ -141,7 +141,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															labelWidth: 100,
 															cls: 'cabecera-info-field',
 										                	bind:		'{expediente.fechaReserva}',
-										                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+										                	renderer: Ext.util.Format.dateRenderer('d/m/Y')
 										                }
 										      ]
 										},

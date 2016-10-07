@@ -48,7 +48,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				            	},
 					            displayField: 'descripcion',
 		    					valueField: 'codigo',
-		    					allowBlank: false,
 		    					listeners: {
 			                		change:  'onHaCambiadoSolicitaFinanciacion'
 			            		}
@@ -113,31 +112,44 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					
 								{
 						        	xtype:'fieldset',
-						        	height: 90,
+						        	height: 140,
 						        	margin: '0 10 10 0',
 						        	layout: {
 								        type: 'table',
 						        		columns: 2
 						        	},
 									defaultType: 'textfieldbase',
-									bind: {
-					        			disabled: '{!esOfertaVenta}'
-			            			},
 									title: HreRem.i18n("fieldlabel.reserva"),
 									items :
 										[
+										
+											{ 
+									        	xtype: 'comboboxfieldbase',
+									        	fieldLabel: HreRem.i18n('fieldlabel.solicita.reserva'),
+									        	bind: {
+								            		store: '{comboSiNoRem}',
+								            		value: '{condiciones.solicitaReserva}'			            		
+								            	},
+								            	listeners: {
+								            		change: 'onHaCambiadoSolicitaReserva'
+								            	},
+								            	displayField: 'descripcion',
+					    						valueField: 'codigo',
+					    						colspan: 2
+									        },
 											{ 
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.calculo.reserva'),
 							                	reference: 'tipoCalculo',
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
-								            		value: '{condiciones.tipoCalculo}'
+								            		value: '{condiciones.tipoCalculo}',
+								            		disabled: '{!esSolicitadaReserva}'
 								            	},
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
 		    									listeners: {
-			                						select:  'onHaCambiadoTipoCalculo'
+			                						change:  'onHaCambiadoTipoCalculo'
 			            						},
 			            						editable: true
 									        },
@@ -146,7 +158,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												reference: 'porcentajeReserva',
 										 		symbol: HreRem.i18n("symbol.porcentaje"),
 												fieldLabel: HreRem.i18n('fieldlabel.portencaje.reserva'),
-				                				bind: '{condiciones.porcentajeReserva}',
+				                				bind: {
+				                					value: '{condiciones.porcentajeReserva}'
+				                				},
 				                				reference: 'porcentajeReserva',
 				                				listeners: {
 							                		change:  'onHaCambiadoPorcentajeReserva'
@@ -158,7 +172,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'plazoParaFirmar',
 										 		symbol: HreRem.i18n("symbol.dias"),
 							                	fieldLabel: HreRem.i18n('fieldlabel.plazo.firmar'),
-							                	bind: '{condiciones.plazoFirmaReserva}',
+							                	bind: {
+							                		value: '{condiciones.plazoFirmaReserva}'
+							                	},
 							                	reference: 'plazoFirmaReserva',
 							                	disabled: true
 							                },
@@ -166,7 +182,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	xtype: 'numberfieldbase',
 										 		symbol: HreRem.i18n("symbol.euro"),
 										 		fieldLabel: HreRem.i18n('fieldlabel.importe.reserva'),
-										 		bind: '{condiciones.importeReserva}',
+										 		bind: {
+										 			value: '{condiciones.importeReserva}'
+										 		},
 										 		reference: 'importeReserva',
 										 		disabled: true
 											}
@@ -176,7 +194,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        
 						        {
 						        	xtype:'fieldset',
-						        	height: 90,
+						        	height: 140,
 						        	margin: '0 10 10 0',
 						        	layout: {
 								        type: 'table',
@@ -194,8 +212,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            		value: '{condiciones.tipoImpuestoCodigo}'
 								            	},
 					            				displayField: 'descripcion',
-		    									valueField: 'codigo',
-		    									allowBlank: false
+		    									valueField: 'codigo'
 									        },	
 									        { 
 												xtype: 'numberfieldbase',
@@ -657,8 +674,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					            		value: '{condiciones.renunciaSaneamientoEviccion}'			            		
 					            	},
 					            	displayField: 'descripcion',
-		    						valueField: 'codigo',
-		    						allowBlank: false
+		    						valueField: 'codigo'
 						        },
 						        { 
 						        	xtype: 'comboboxfieldbase',
@@ -668,8 +684,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					            		value: '{condiciones.renunciaSaneamientoVicios}'			            		
 					            	},
 					            	displayField: 'descripcion',
-		    						valueField: 'codigo',
-		    						allowBlank: false
+		    						valueField: 'codigo'
 						        }
 					 		]
 						}

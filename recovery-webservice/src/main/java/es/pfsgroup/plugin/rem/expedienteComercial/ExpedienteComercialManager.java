@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tools.ant.taskdefs.Exec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,10 +72,12 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -82,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -272,11 +276,47 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		Oferta oferta = expedienteComercial.getOferta();
 		
-		if(!Checks.esNulo(dto.getEstadoVisitaOfertaCodigo())) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoVisitaOfertaCodigo());
-			DDEstadosVisitaOferta estado = genericDao.get(DDEstadosVisitaOferta.class, filtro);	
-			oferta.setEstadoVisitaOferta(estado);	
+		if(!Checks.esNulo(dto.getEstadoCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo());
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);	
+			oferta.setEstadoOferta(estado);;	
 		}
+		
+		if(!Checks.esNulo(dto.getTipoOfertaCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoOfertaCodigo());
+			DDTipoOferta tipoOferta = genericDao.get(DDTipoOferta.class, filtro);	
+			oferta.setTipoOferta(tipoOferta);
+		}
+		
+		if(!Checks.esNulo(dto.getEstadoVisitaOfertaCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoVisitaOfertaCodigo());
+			DDEstadosVisitaOferta estadoVisitaOferta = genericDao.get(DDEstadosVisitaOferta.class, filtro);	
+			oferta.setEstadoVisitaOferta(estadoVisitaOferta);
+		}
+		
+		if(!Checks.esNulo(dto.getCanalPrescripcionCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCanalPrescripcionCodigo());
+			DDCanalPrescripcion canalPrescripcion = genericDao.get(DDCanalPrescripcion.class, filtro);	
+			oferta.setCanalPrescripcion(canalPrescripcion);
+		}
+		if(("").equals(dto.getCanalPrescripcionCodigo())){
+			oferta.setCanalPrescripcion(null);
+		}
+		
+		try {
+			beanUtilNotNull.copyProperties(oferta, dto);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		oferta.setFechaAlta(dto.getFechaAlta());
+//		oferta.setImporteOferta(dto.getImporteOferta());
+//		oferta.setFechaNotificacion(dto.getFechaNotificacion());
+//		oferta.setImporteContraOferta(dto.getImporteContraoferta());
 		
 		expedienteComercial.setOferta(oferta);
 		
@@ -403,17 +443,19 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		dto.setNumOferta(oferta.getNumOferta());
 		if(!Checks.esNulo(oferta.getTipoOferta())) {
 			dto.setTipoOfertaDescripcion(oferta.getTipoOferta().getDescripcion());
+			dto.setTipoOfertaCodigo(oferta.getTipoOferta().getCodigo());
 		}
 		dto.setFechaNotificacion(oferta.getFechaNotificacion());
 		dto.setFechaAlta(oferta.getFechaAlta());
 		if(!Checks.esNulo(oferta.getEstadoOferta())) {
 			dto.setEstadoDescripcion(oferta.getEstadoOferta().getDescripcion());
+			dto.setEstadoCodigo(oferta.getEstadoOferta().getCodigo());
 		}
-		if(!Checks.esNulo(oferta.getPrescriptor()) && !Checks.esNulo(oferta.getPrescriptor().getTipoColaborador())) {
-			dto.setPrescriptorDescripcion(oferta.getPrescriptor().getTipoColaborador().getDescripcion());
+		if(!Checks.esNulo(oferta.getPrescriptor())) {
+			dto.setPrescriptor(oferta.getPrescriptor().getNombre());
 		}
 		dto.setImporteOferta(oferta.getImporteOferta());
-		dto.setImporteContraoferta(oferta.getImporteContraOferta());
+		dto.setImporteContraOferta(oferta.getImporteContraOferta());
 		
 		// TODO Comités sin definir
 		//dto.setComite();
@@ -425,6 +467,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(oferta.getEstadoVisitaOferta())) {
 			dto.setEstadoVisitaOfertaCodigo(oferta.getEstadoVisitaOferta().getCodigo());
 			dto.setEstadoVisitaOfertaDescripcion(oferta.getEstadoVisitaOferta().getDescripcion());
+		}
+		
+		if(!Checks.esNulo(oferta.getCanalPrescripcion())){
+			dto.setCanalPrescripcionCodigo(oferta.getCanalPrescripcion().getCodigo());
+			dto.setCanalPrescripcionDescripcion(oferta.getCanalPrescripcion().getDescripcion());
 		}
 		
 				
@@ -454,6 +501,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
 				dto.setImporte(expediente.getCondicionante().getImporteReserva());
 			}
+			dto.setMotivoAnulacion(reserva.getMotivoAnulacion());
+			dto.setFechaAnulacion(reserva.getFechaAnulacion());
 		}
 		
 		
@@ -827,6 +876,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
 			
 			//Economicas-Reserva
+			
+			dto.setSolicitaReserva(condiciones.getSolicitaReserva());
 			if(!Checks.esNulo(condiciones.getTipoCalculoReserva())){
 				dto.setTipoCalculo(condiciones.getTipoCalculoReserva().getCodigo());
 			}
@@ -1000,29 +1051,47 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}	
 
 			//Gastos CompraVenta
-			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe())){
+			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe()) || "".equals(dto.getPlusvaliaPorCuentaDe())){
+				if("".equals(dto.getPlusvaliaPorCuentaDe())){
+					condiciones.setGastosPlusvalia(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaPlusvalia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getPlusvaliaPorCuentaDe());
 				condiciones.setTipoPorCuentaPlusvalia(tipoPorCuentaPlusvalia);
 			}
-			if(!Checks.esNulo(dto.getNotariaPorCuentaDe())){
+			if(!Checks.esNulo(dto.getNotariaPorCuentaDe()) || "".equals(dto.getNotariaPorCuentaDe())){
+				if("".equals(dto.getNotariaPorCuentaDe())){
+					condiciones.setGastosNotaria(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaNotaria= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getNotariaPorCuentaDe());
 				condiciones.setTipoPorCuentaNotaria(tipoPorCuentaNotaria);
 			}
-			if(!Checks.esNulo(dto.getGastosCompraventaOtrosPorCuentaDe())){
+			if(!Checks.esNulo(dto.getGastosCompraventaOtrosPorCuentaDe()) || "".equals(dto.getGastosCompraventaOtrosPorCuentaDe())){
+				if("".equals(dto.getGastosCompraventaOtrosPorCuentaDe())){
+					condiciones.setGastosOtros(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaGCVOtros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getGastosCompraventaOtrosPorCuentaDe());
 				condiciones.setTipoPorCuentaGastosOtros(tipoPorCuentaGCVOtros);
 			}
 			
 			//Gastos Alquiler
-			if(!Checks.esNulo(dto.getIbiPorCuentaDe())){
+			if(!Checks.esNulo(dto.getIbiPorCuentaDe()) || "".equals(dto.getIbiPorCuentaDe())){
+				if("".equals(dto.getIbiPorCuentaDe())){
+					condiciones.setGastosIbi(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaIbi= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getIbiPorCuentaDe());
 				condiciones.setTipoPorCuentaIbi(tipoPorCuentaIbi);
 			}
-			if(!Checks.esNulo(dto.getComunidadPorCuentaDe())){
+			if(!Checks.esNulo(dto.getComunidadPorCuentaDe()) || "".equals(dto.getComunidadPorCuentaDe())){
+				if("".equals(dto.getComunidadPorCuentaDe())){
+					condiciones.setGastosComunidad(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaComunidad= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getComunidadPorCuentaDe());
 				condiciones.setTipoPorCuentaComunidadAlquiler(tipoPorCuentaComunidad);
 			}
-			if(!Checks.esNulo(dto.getSuministrosPorCuentaDe())){
+			if(!Checks.esNulo(dto.getSuministrosPorCuentaDe()) || "".equals(dto.getSuministrosPorCuentaDe())){
+				if("".equals(dto.getSuministrosPorCuentaDe())){
+					condiciones.setGastosSuministros(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaSuministros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getSuministrosPorCuentaDe());
 				condiciones.setTipoPorCuentaSuministros(tipoPorCuentaSuministros);
 			}
@@ -1036,7 +1105,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				DDTiposPorCuenta tipoPorCuentaComunidad= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getComunidadesPorCuentaDe());
 				condiciones.setTipoPorCuentaComunidad(tipoPorCuentaComunidad);
 			}
-			if(!Checks.esNulo(dto.getCargasPendientesOtrosPorCuentaDe())){
+			if(!Checks.esNulo(dto.getCargasPendientesOtrosPorCuentaDe()) || "".equals(dto.getCargasPendientesOtrosPorCuentaDe())){
+				if("".equals(dto.getCargasPendientesOtrosPorCuentaDe())){
+					condiciones.setCargasOtros(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaCPOtros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getCargasPendientesOtrosPorCuentaDe());
 				condiciones.setTipoPorCuentaCargasOtros(tipoPorCuentaCPOtros);
 			}
@@ -1058,12 +1130,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			//Renuncia a saneamiento por
 
 			//Condiciones administrativas
-			if(!Checks.esNulo(dto.getProcedeDescalificacionPorCuentaDe())){
+			if(!Checks.esNulo(dto.getProcedeDescalificacionPorCuentaDe()) || "".equals(dto.getProcedeDescalificacionPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaDescalificacion= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getProcedeDescalificacionPorCuentaDe());
 				condiciones.setTipoPorCuentaDescalificacion(tipoPorCuentaDescalificacion);
 			}
 			
-			if(!Checks.esNulo(dto.getLicenciaPorCuentaDe())){
+			if(!Checks.esNulo(dto.getLicenciaPorCuentaDe()) || "".equals(dto.getLicenciaPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaLicencia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getLicenciaPorCuentaDe());
 				condiciones.setTipoPorCuentaLicencia(tipoPorCuentaLicencia);
 			}
@@ -1316,14 +1388,24 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		ExpedienteComercial expediente= findOne(idExpediente);
 		Reserva reserva = expediente.getReserva();
 		
-
-		if(!Checks.esNulo(dto.getTipoArrasCodigo())) {
+		try {
+			beanUtilNotNull.copyProperties(reserva, dto);
+			if(!Checks.esNulo(dto.getTipoArrasCodigo())) {
+				
+				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
+				reserva.setTipoArras(tipoArras);
+			}
 			
-			DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
-			reserva.setTipoArras(tipoArras);
+			genericDao.save(Reserva.class, reserva);
+			
+			
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
 		}
-		
-		genericDao.save(Reserva.class, reserva);
 		
 		return true;
 	}
@@ -1578,5 +1660,134 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}		
 		return estado;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente){
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+
+		if(!Checks.esNulo(expedienteComercial)){
+			
+			try {
+				
+				beanUtilNotNull.copyProperties(expedienteComercial, dto);			
+				
+				if(!Checks.esNulo(expedienteComercial.getReserva()) && !Checks.esNulo(dto.getFechaReserva())){
+					expedienteComercial.getReserva().setFechaEnvio(dto.getFechaReserva());
+				}
+				if(!Checks.esNulo(expedienteComercial.getUltimoPosicionamiento()) && !Checks.esNulo(dto.getFechaPosicionamiento())){
+					expedienteComercial.getUltimoPosicionamiento().setFechaPosicionamiento(dto.getFechaPosicionamiento());
+				}
+				
+				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				
+				
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}			
+			
+		}
+		
+		
+		return true;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveEntregaReserva(DtoEntregaReserva dto, Long idExpediente){
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		
+		try{		
+			if(!Checks.esNulo(expedienteComercial)){
+				
+				EntregaReserva entrega= new EntregaReserva();
+				
+	//			entregaReserva.setIdEntrega(entrega.getId());
+	//			entregaReserva.setFechaCobro(entrega.getFechaEntrega());
+	//			entregaReserva.setImporte(entrega.getImporte());
+	//			entregaReserva.setObservaciones(entrega.getObservaciones());
+	//			entregaReserva.setTitular(entrega.getTitular());	
+				
+				entrega.setImporte(dto.getImporte());
+				entrega.setFechaEntrega(dto.getFechaCobro());
+				entrega.setTitular(dto.getTitular());
+				entrega.setObservaciones(dto.getObservaciones());
+				entrega.setReserva(expedienteComercial.getReserva());
+				
+				expedienteComercial.getReserva().getEntregas().add(entrega);
+				
+				genericDao.save(EntregaReserva.class, entrega);
+				
+				genericDao.update(ExpedienteComercial.class, expedienteComercial);
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateEntregaReserva(DtoEntregaReserva dto, Long idExpediente){
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		
+		for(EntregaReserva entrega: expedienteComercial.getReserva().getEntregas()){
+			
+			try {
+				
+				if(entrega.getId().equals(dto.getIdEntrega())){
+					beanUtilNotNull.copyProperties(entrega, dto);
+					if(!Checks.esNulo(dto.getFechaCobro())){
+						entrega.setFechaEntrega(dto.getFechaCobro());
+					}
+					if("".equals(dto.getFechaCobro())){
+						entrega.setFechaEntrega(null);
+					}
+					
+					genericDao.update(ExpedienteComercial.class, expedienteComercial);
+				}
+				
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return false;
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				return false;
+			}
+			
+		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega){
+
+			try {
+				genericDao.deleteById(EntregaReserva.class, idEntrega);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			} 
+		
+		return true;
+		
+	}
+	
+	
+	
 
 }

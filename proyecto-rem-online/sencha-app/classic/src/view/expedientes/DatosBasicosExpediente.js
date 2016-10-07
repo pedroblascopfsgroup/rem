@@ -164,34 +164,46 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				title: HreRem.i18n('title.tramite.expediente'),
 				items: [
 					{ 
+						xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.alta.oferta'),
 	                	bind:		'{expediente.fechaAltaOferta}',
-	                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+	                	maxValue: null
 	                },
 	                {
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.aceptacion'),
 	                	bind:		'{expediente.fechaAlta}',
-	                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+	                	maxValue: null
 	                },
 	                {
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion'),
 	                	bind:		'{expediente.fechaSancion}',
-	                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+	                	maxValue: null
 	                },
 	                { 
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
 	                	bind:		'{expediente.fechaReserva}',
-	                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+	                	maxValue: null
 	                },
 	                {
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.posicionamiento'),
-	                	bind:		'{expediente.fechaPosicionamiento}'	  ,
-	                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+	                	bind:		'{expediente.fechaPosicionamiento}',
+	                	maxValue: null
 	                },
 	                {
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion.propietario'),
 	                	bind:		'{expediente.fechaContabilizacionPropietario}',
-	                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+	                	maxValue: null
 	                }
 
 				]
@@ -204,25 +216,32 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				title: HreRem.i18n('title.anulacion'),
 				items: [
 						{
+							xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
 							bind: '{expediente.fechaAnulacion}',
-							renderer: Ext.util.Format.dateRenderer('d-m-Y')
+							maxValue: null
 						},
 						{
+							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.motivo.anulacion'),
 							bind: '{expediente.motivoAnulacion}',
 							colspan: 2
 						},	
 						{
+							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.peticionario'),
 							bind: '{expediente.peticionarioAnulacion}'
 						},
 						{
+							xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.entregas.a.cuenta'),
 							bind: '{expediente.fechaDevolucionEntregas}',
-							renderer: Ext.util.Format.dateRenderer('d-m-Y')
+							maxValue: null
 						},
 						{
+							xtype: 'numberfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.importe.devolucion'),
 							bind: '{expediente.importeDevolucionEntregas}'
 						}
@@ -244,8 +263,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{expediente.conflictoIntereses}'
-			            	},
-			            	allowBlank: false
+			            	}
 		                },
 		                {
 		                	xtype: 'comboboxfieldbase',
@@ -254,8 +272,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{expediente.riesgoReputacional}'
-			            	},
-			            	allowBlank: false
+			            	}
 		                }
 		        ]
             }

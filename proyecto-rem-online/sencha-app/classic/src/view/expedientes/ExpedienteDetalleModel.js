@@ -55,6 +55,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	
 	     },
 	     
+	     esSolicitadaReserva: function(get){
+			if(get('condiciones.solicitaReserva')==1){
+				return true;
+			}
+			return false;
+	     	
+	     },
+	     
+	     
 	     onEstaSujetoTanteo: function(get){
 	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
 	     	if(sujeto==1){
@@ -389,7 +398,44 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getHonorarios',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
-		}
+		},
+		
+		comboTipoOferta: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+			}
+	    },
+	    
+	    comboEstadoOferta: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosOfertas'}
+			}
+	    },
+	    
+	    comboColaboradorPrescriptor: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposColaborador'}
+			}
+	    },
+	    
+	    comboCanalPrescripcion: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'canalesPrescripcion'}
+			}
+	    }
+	    
 	
     }
   

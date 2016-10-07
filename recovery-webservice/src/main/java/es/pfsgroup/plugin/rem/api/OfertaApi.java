@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -109,16 +110,16 @@ public interface OfertaApi {
 	
 	/**
 	 * Método que comprueba si un activo tiene reserva.
-	 * @param idActivo
+	 * @param tareaExterna
 	 * @return true si tiene reserva, false si no la tiene.
 	 */
-	public boolean checkReserva(Long idActivo);
+	public boolean checkReserva(TareaExterna tareaExterna);
 
 	/**
 	 * Método que comprueba si la oferta viene de una oferta de tanteo de la Generalitat
-	 * @param idActivo
+	 * @param tareaExterna
 	 * @return true si viene, false si es nueva
 	 */
-	public boolean checkDeDerechoTanteo(Long idActivo);
+	public boolean checkDeDerechoTanteo(TareaExterna tareaExterna);
 	
 }

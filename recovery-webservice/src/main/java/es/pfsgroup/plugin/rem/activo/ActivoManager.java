@@ -1598,4 +1598,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return contador;
 	}
+
 }

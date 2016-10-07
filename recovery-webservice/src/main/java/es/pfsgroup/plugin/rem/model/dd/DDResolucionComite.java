@@ -19,35 +19,36 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de Tipos de una oferta.
+ * Modelo que gestiona el diccionario de resoluciones de comite.
  * 
- * @author Jose Villel
+ * @author Daniel Gutiérrez
  *
  */
 @Entity
-@Table(name = "DD_TOF_TIPOS_OFERTA", schema = "${entity.schema}")
+@Table(name = "DD_RCO_RESOL_COMITE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoOferta implements Auditable, Dictionary {
-		
-	public static final String CODIGO_VENTA= "01";
-	public static final String CODIGO_ALQUILER= "02";
-	
+public class DDResolucionComite implements Auditable, Dictionary {
+    
+    public static final String CODIGO_APRUEBA = "01";
+    public static final String CODIGO_RECHAZA = "02";
+    public static final String CODIGO_CONTRAOFERTA = "03";
+    
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TOF_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoOfertaGenerator")
-	@SequenceGenerator(name = "DDTipoOfertaGenerator", sequenceName = "S_DD_TOF_TIPOS_OFERTA")
+	@Column(name = "DD_RCO_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDResolucionComiteGenerator")
+	@SequenceGenerator(name = "DDResolucionComiteGenerator", sequenceName = "S_RCO_RESOL_COMITE")
 	private Long id;
 	    
-	@Column(name = "DD_TOF_CODIGO")   
+	@Column(name = "DD_RCO_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TOF_DESCRIPCION")   
+	@Column(name = "DD_RCO_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TOF_DESCRIPCION_LARGA")   
+	@Column(name = "DD_RCO_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   

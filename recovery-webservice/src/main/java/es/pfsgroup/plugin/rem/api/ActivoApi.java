@@ -450,4 +450,5 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos);
+
     }

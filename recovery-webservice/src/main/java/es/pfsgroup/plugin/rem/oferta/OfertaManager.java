@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -29,6 +30,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -40,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -82,6 +85,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
 	
 	@Override
 	public String managerName() {
@@ -633,17 +639,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public boolean checkDeDerechoTanteo(Long idActivo){
+	public boolean checkDeDerechoTanteo(TareaExterna tareaExterna){
 		return false;
 	}
 	
 	
 	@Override
-	public boolean checkReserva(Long idActivo){
-		Activo activo = activoApi.get(idActivo);
-		Oferta ofertaAceptada = getOfertaAceptadaByActivo(activo);
-		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-		return !Checks.esNulo(expediente.getReserva());
+	public boolean checkReserva(TareaExterna tareaExterna){
+		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		if(!Checks.esNulo(trabajo)){
+			Activo activo = trabajo.getActivo();
+			if(!Checks.esNulo(activo)){
+				Oferta ofertaAceptada = getOfertaAceptadaByActivo(activo);
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+				return !Checks.esNulo(expediente.getReserva());
+			}
+		}
+		return false;
 	}
 	
 }

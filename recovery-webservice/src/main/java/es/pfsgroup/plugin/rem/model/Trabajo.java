@@ -37,6 +37,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
@@ -231,7 +232,7 @@ public class Trabajo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private PropuestaPrecio propuestaPrecio;
     
-  /*@Column(name="TBJ_FECHA_EMISION_FACTURA")
+    /*@Column(name="TBJ_FECHA_EMISION_FACTURA")
     private Date fechaEmisionFactura;*/
     
     @OneToOne(mappedBy = "trabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -813,6 +814,22 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setGastoTrabajo(GastoProveedorTrabajo gastoTrabajo) {
 		this.gastoTrabajo = gastoTrabajo;
+	}
+
+	public Double getImporteProvisionesSuplidos() {
+		
+		Double importe = new Double(0);
+		
+		for(TrabajoProvisionSuplido ps: provisionSuplido) {
+			
+			if(DDTipoAdelanto.CODIGO_PROVISION.equals(ps.getTipoAdelanto().getCodigo())) {
+				importe-=ps.getImporte();
+			} else if (DDTipoAdelanto.CODIGO_SUPLIDO.equals(ps.getTipoAdelanto().getCodigo())) {
+				importe+=ps.getImporte();
+			}
+			
+		}		
+		return importe;
 	}
 
 

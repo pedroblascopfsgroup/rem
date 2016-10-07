@@ -37,9 +37,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
-
-
 
 /**
  * Modelo que gestiona la informacion comercial de los activos
@@ -51,7 +50,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 @Table(name = "ACT_ICO_INFO_COMERCIAL", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class ActivoInfoComercial implements Serializable, Auditable {
 
 	/**
@@ -59,118 +58,117 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	
 	@Id
-    @Column(name = "ICO_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoInfoComercialGenerator")
-    @SequenceGenerator(name = "ActivoInfoComercialGenerator", sequenceName = "S_ACT_ICO_INFO_COMERCIAL")
-    private Long id;
+	@Column(name = "ICO_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoInfoComercialGenerator")
+	@SequenceGenerator(name = "ActivoInfoComercialGenerator", sequenceName = "S_ACT_ICO_INFO_COMERCIAL")
+	private Long id;
 
 	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACT_ID")
-    private Activo activo;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_UAC_ID")
-    private DDUbicacionActivo ubicacionActivo;   
+	@JoinColumn(name = "ACT_ID")
+	private Activo activo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ECT_ID")
-    private DDEstadoConstruccion estadoConstruccion;   
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ECV_ID")
-    private DDEstadoConservacion estadoConservacion; 
+	@JoinColumn(name = "DD_UAC_ID")
+	private DDUbicacionActivo ubicacionActivo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TIC_ID")
-    private DDTipoInfoComercial tipoInfoComercial; 
-	
+	@JoinColumn(name = "DD_ECT_ID")
+	private DDEstadoConstruccion estadoConstruccion;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_ECV_ID")
+	private DDEstadoConservacion estadoConservacion;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TIC_ID")
+	private DDTipoInfoComercial tipoInfoComercial;
+
 	@ManyToOne
-    @JoinColumn(name = "ICO_MEDIADOR_ID")
-    private ActivoProveedor mediadorInforme;
-	
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoEdificio edificio; 
+	@JoinColumn(name = "ICO_MEDIADOR_ID")
+	private ActivoProveedor mediadorInforme;
 
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoInfraestructura infraestructura;
-    
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoEdificio edificio;
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoInfraestructura infraestructura;
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private ActivoCarpinteriaInterior carpinteriaInterior;
-    
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoCarpinteriaExterior carpinteriaExterior;
-	
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoParamentoVertical paramentoVertical;
-	
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoSolado solado;
-	
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoCocina cocina;
-	
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoBanyo banyo;
-	
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoInstalacion instalacion;
-	
-    @OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoZonaComun zonaComun;
-	
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoCarpinteriaExterior carpinteriaExterior;
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoParamentoVertical paramentoVertical;
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoSolado solado;
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoCocina cocina;
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoBanyo banyo;
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoInstalacion instalacion;
+
+	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ICO_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private ActivoZonaComun zonaComun;
+
 	@Column(name = "ICO_DESCRIPCION")
 	private String descripcionComercial;
-	
+
 	@Column(name = "ICO_ANO_CONSTRUCCION")
 	private Integer anyoConstruccion;
-	
+
 	@Column(name = "ICO_ANO_REHABILITACION")
 	private Integer anyoRehabilitacion;
-	
+
 	@Column(name = "ICO_APTO_PUBLICIDAD")
 	private Integer aptoPublicidad;
-	
+
 	@Column(name = "ICO_ACTIVOS_VINC")
 	private String activosVinculados;
-	
+
 	@Column(name = "ICO_FECHA_EMISION_INFORME")
 	private Date fechaEmisionInforme;
-	
+
 	@Column(name = "ICO_FECHA_ULTIMA_VISITA")
-	private Date fechaUltimaVisita;  
-	
+	private Date fechaUltimaVisita;
+
 	@Column(name = "ICO_FECHA_ACEPTACION")
-	private Date fechaAceptacion;  
-	
+	private Date fechaAceptacion;
+
 	@Column(name = "ICO_FECHA_RECHAZO")
-	private Date fechaRechazo;  
-	
+	private Date fechaRechazo;
+
 	@Column(name = "ICO_CONDICIONES_LEGALES")
 	private String condicionesLegales;
-	
-//  Nuevas columnas para Informe Comercial  ------------------------------	
+
+	// Nuevas columnas para Informe Comercial ------------------------------
 	@Column(name = "ICO_AUTORIZACION_WEB")
 	private Boolean autorizacionWeb;
 
@@ -179,23 +177,23 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	@Column(name = "ICO_FECHA_RECEP_LLAVES")
 	private Date fechaRecepcionLlaves;
-	
-	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TPA_ID")
-    private DDTipoActivo tipoActivo;
 
 	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_SAC_ID")
-    private DDSubtipoActivo subtipoActivo;
-	
-// TODO: Confirmar que hay que quitarlo (Estado Activo)
-	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EAC_ID")
-    private DDEstadoActivo estadoActivo;
+	@JoinColumn(name = "DD_TPA_ID")
+	private DDTipoActivo tipoActivo;
 
 	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TVI_ID")
-    private DDTipoVia tipoVia;
+	@JoinColumn(name = "DD_SAC_ID")
+	private DDSubtipoActivo subtipoActivo;
+
+	// TODO: Confirmar que hay que quitarlo (Estado Activo)
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_EAC_ID")
+	private DDEstadoActivo estadoActivo;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TVI_ID")
+	private DDTipoVia tipoVia;
 
 	@Column(name = "ICO_NOMBRE_VIA")
 	private String nombreVia;
@@ -208,10 +206,10 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	@Column(name = "ICO_PLANTA")
 	private String planta;
-	
+
 	@Column(name = "ICO_PUERTA")
 	private String puerta;
-	
+
 	@Column(name = "ICO_LATITUD")
 	private BigDecimal latitud;
 
@@ -226,52 +224,100 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	@Column(name = "ICO_CODIGO_POSTAL")
 	private String codigoPostal;
-	
+
 	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_LOC_ID")
-    private Localidad localidad;
-	
+	@JoinColumn(name = "DD_LOC_ID")
+	private Localidad localidad;
+
 	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_PRV_ID")
-    private DDProvincia provincia;
+	@JoinColumn(name = "DD_PRV_ID")
+	private DDProvincia provincia;
 
 	@Column(name = "ICO_JUSTIFICACION_VENTA")
 	private String justificacionVenta;
 
 	@Column(name = "ICO_JUSTIFICACION_RENTA")
 	private String justificacionRenta;
-	
+
 	@Column(name = "ICO_CUOTACP_ORIENTATIVA")
 	private Float cuotaOrientativaComunidad;
 
 	@Column(name = "ICO_DERRAMACP_ORIENTATIVA")
 	private Double derramaOrientativaComunidad;
-	
+
 	@Column(name = "ICO_FECHA_ESTIMACION_VENTA")
 	private Date fechaEstimacionVenta;
-	
+
 	@Column(name = "ICO_FECHA_ESTIMACION_RENTA")
 	private Date fechaEstimacionRenta;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_UPO_ID")
 	private DDUnidadPoblacional unidadPoblacional;
-	
+
 	@Column(name = "ICO_INFO_DESCRIPCION")
 	private String infoDescripcion;
-	
+
 	@Column(name = "ICO_INFO_DISTRIBUCION_INTERIOR")
 	private String infoDistribucionInterior;
-	
-	@Version   
+
+	@Version
 	private Long version;
-	
+
 	@Embedded
 	private Auditoria auditoria;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TVP_ID")
+	private DDTipoVpo regimenProteccion;
+
+	@Column(name = "ICO_VALOR_MAX_VPO")
+	private Float valorMaximoVpo;
+
+	@Column(name = "ICO_VALOR_ESTIMADO_VENTA")
+	private Float valorEstimadoVenta;
+
+	@Column(name = "ICO_VALOR_ESTIMADO_RENTA")
+	private Float valorEstimadoRenta;
+
+	@Column(name = "ICO_OCUPADO")
+	private Integer ocupado;
 	
+	@Column(name="ICO_NUM_TERRAZA_DESCUBIERTA")
+	private Integer numeroTerrazasDescubiertas;
 	
+	@Column(name="ICO_DESC_TERRAZA_DESCUBIERTA")
+	private String descripcionTerrazasDescubiertas;
 	
+	@Column(name="ICO_NUM_TERRAZA_CUBIERTA")
+	private Integer numeroTerrazasCubiertas;
 	
+	@Column(name="ICO_DESC_TERRAZA_CUBIERTA")
+	private String descripcionTerrazasCubiertas;
+	
+	@Column(name="ICO_DESPENSA_OTRAS_DEP")
+	private Integer despensaOtrasDependencias;
+	
+	@Column(name="ICO_LAVADERO_OTRAS_DEP")
+	private Integer lavaderoOtrasDependencias;
+	
+	@Column(name="ICO_AZOTEA_OTRAS_DEP")
+	private Integer azoteaOtrasDependencias;
+	
+	@Column(name="ICO_OTROS_OTRAS_DEP")
+	private String otrosOtrasDependencias;
+	
+	@Column(name="ICO_PRESIDENTE_NOMBRE")
+	private String nombrePresidenteComunidadEdificio;
+	
+	@Column(name="ICO_PRESIDENTE_TELF")
+	private String telefonoPresidenteComunidadEdificio;
+	
+	@Column(name="ICO_ADMINISTRADOR_NOMBRE")
+	private String nombreAdministradorComunidadEdificio;
+	
+	@Column(name="ICO_ADMINISTRADOR_TELF")
+	private String telefonoAdministradorComunidadEdificio;
 
 	public Float getCuotaOrientativaComunidad() {
 		return cuotaOrientativaComunidad;
@@ -529,8 +575,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.condicionesLegales = condicionesLegales;
 	}
 
-	
-	
 	public Boolean getAutorizacionWeb() {
 		return autorizacionWeb;
 	}
@@ -682,7 +726,7 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	public void setProvincia(DDProvincia provincia) {
 		this.provincia = provincia;
 	}
-	
+
 	public String getJustificacionVenta() {
 		return justificacionVenta;
 	}
@@ -699,7 +743,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.justificacionRenta = justificacionRenta;
 	}
 
-	
 	public Long getVersion() {
 		return version;
 	}
@@ -731,7 +774,142 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	public void setInfoDistribucionInterior(String infoDistribucionInterior) {
 		this.infoDistribucionInterior = infoDistribucionInterior;
 	}
-	
+
+	public DDTipoVpo getRegimenProteccion() {
+		return regimenProteccion;
+	}
+
+	public void setRegimenProteccion(DDTipoVpo regimenProteccion) {
+		this.regimenProteccion = regimenProteccion;
+	}
+
+	public Float getValorMaximoVpo() {
+		return valorMaximoVpo;
+	}
+
+	public void setValorMaximoVpo(Float valorMaximoVpo) {
+		this.valorMaximoVpo = valorMaximoVpo;
+	}
+
+	public Integer getOcupado() {
+		return ocupado;
+	}
+
+	public void setOcupado(Integer ocupado) {
+		this.ocupado = ocupado;
+	}
+
+	public Float getValorEstimadoVenta() {
+		return valorEstimadoVenta;
+	}
+
+	public void setValorEstimadoVenta(Float valorEstimadoVenta) {
+		this.valorEstimadoVenta = valorEstimadoVenta;
+	}
+
+	public Float getValorEstimadoRenta() {
+		return valorEstimadoRenta;
+	}
+
+	public void setValorEstimadoRenta(Float valorEstimadoRenta) {
+		this.valorEstimadoRenta = valorEstimadoRenta;
+	}
+
+	public Integer getNumeroTerrazasDescubiertas() {
+		return numeroTerrazasDescubiertas;
+	}
+
+	public void setNumeroTerrazasDescubiertas(Integer numeroTerrazasDescubiertas) {
+		this.numeroTerrazasDescubiertas = numeroTerrazasDescubiertas;
+	}
+
+	public String getDescripcionTerrazasDescubiertas() {
+		return descripcionTerrazasDescubiertas;
+	}
+
+	public void setDescripcionTerrazasDescubiertas(String descripcionTerrazasDescubiertas) {
+		this.descripcionTerrazasDescubiertas = descripcionTerrazasDescubiertas;
+	}
+
+	public Integer getNumeroTerrazasCubiertas() {
+		return numeroTerrazasCubiertas;
+	}
+
+	public void setNumeroTerrazasCubiertas(Integer numeroTerrazasCubiertas) {
+		this.numeroTerrazasCubiertas = numeroTerrazasCubiertas;
+	}
+
+	public String getDescripcionTerrazasCubiertas() {
+		return descripcionTerrazasCubiertas;
+	}
+
+	public void setDescripcionTerrazasCubiertas(String descripcionTerrazasCubiertas) {
+		this.descripcionTerrazasCubiertas = descripcionTerrazasCubiertas;
+	}
+
+	public Integer getDespensaOtrasDependencias() {
+		return despensaOtrasDependencias;
+	}
+
+	public void setDespensaOtrasDependencias(Integer despensaOtrasDependencias) {
+		this.despensaOtrasDependencias = despensaOtrasDependencias;
+	}
+
+	public Integer getLavaderoOtrasDependencias() {
+		return lavaderoOtrasDependencias;
+	}
+
+	public void setLavaderoOtrasDependencias(Integer lavaderoOtrasDependencias) {
+		this.lavaderoOtrasDependencias = lavaderoOtrasDependencias;
+	}
+
+	public Integer getAzoteaOtrasDependencias() {
+		return azoteaOtrasDependencias;
+	}
+
+	public void setAzoteaOtrasDependencias(Integer azoteaOtrasDependencias) {
+		this.azoteaOtrasDependencias = azoteaOtrasDependencias;
+	}
+
+	public String getOtrosOtrasDependencias() {
+		return otrosOtrasDependencias;
+	}
+
+	public void setOtrosOtrasDependencias(String otrosOtrasDependencias) {
+		this.otrosOtrasDependencias = otrosOtrasDependencias;
+	}
+
+	public String getNombrePresidenteComunidadEdificio() {
+		return nombrePresidenteComunidadEdificio;
+	}
+
+	public void setNombrePresidenteComunidadEdificio(String nombrePresidenteComunidadEdificio) {
+		this.nombrePresidenteComunidadEdificio = nombrePresidenteComunidadEdificio;
+	}
+
+	public String getTelefonoPresidenteComunidadEdificio() {
+		return telefonoPresidenteComunidadEdificio;
+	}
+
+	public void setTelefonoPresidenteComunidadEdificio(String telefonoPresidenteComunidadEdificio) {
+		this.telefonoPresidenteComunidadEdificio = telefonoPresidenteComunidadEdificio;
+	}
+
+	public String getNombreAdministradorComunidadEdificio() {
+		return nombreAdministradorComunidadEdificio;
+	}
+
+	public void setNombreAdministradorComunidadEdificio(String nombreAdministradorComunidadEdificio) {
+		this.nombreAdministradorComunidadEdificio = nombreAdministradorComunidadEdificio;
+	}
+
+	public String getTelefonoAdministradorComunidadEdificio() {
+		return telefonoAdministradorComunidadEdificio;
+	}
+
+	public void setTelefonoAdministradorComunidadEdificio(String telefonoAdministradorComunidadEdificio) {
+		this.telefonoAdministradorComunidadEdificio = telefonoAdministradorComunidadEdificio;
+	}
 	
 
 }

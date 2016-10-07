@@ -34,46 +34,37 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							                	xtype: 'textfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.id.gasto.haya'),
 							                	bind:		'{gasto.numGastoHaya}',
-							                	editable: false
-					
-							                },
-							                {
-							                	xtype: 'textfieldbase',
-							                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.emisor'),
-							                	reference: 'nifEmisorGasto',
-							                	bind:	{
-							                		value: '{gasto.nifEmisor}',
-							                		editable: '{!getConEmisor}',
-							                		hidden: '{!getConEmisor}'
-							                	},
-							                	editable: false,
-							                	allowBlank: false
+							                	readOnly: true
 					
 							                },
 							                {
 												xtype: 'textfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.emisor'),
-												reference: 'buscadorNifEmisorField',
+												name: 'buscadorNifEmisorField',
 												flex: 2,
 												bind: {
-													value: '{gasto.buscadorNifEmisor}',
-													hidden: '{getConEmisor}'
+													value: '{gasto.buscadorNifEmisor}'
 												},
 												allowBlank: false,
 												
 												triggers: {
 													
-													foo: {
-											            cls: Ext.baseCSSPrefix + 'form-search-trigger',
-											            handler: 'buscarProveedorBoton'
-											        }
+														buscarEmisor: {
+												            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+												             handler: 'buscarProveedor'
+												        }
+												        
 												},
 												cls: 'searchfield-input sf-con-borde',
-												emptyText: 'Buscar proveedor...',
+												emptyText:  HreRem.i18n('txt.buscar.emisor'),
 												enableKeyEvents: true,
 										        listeners: {
-										        	specialKey: 'onSpecialKeyProveedor'
-										        }
+											        	specialKey: function(field, e) {
+											        		if (e.getKey() === e.ENTER) {
+											        			field.lookupController().buscarProveedor(field);											        			
+											        		}
+											        	}
+											        }
 							                },
 							                {
 									        	xtype:'datefieldbase',
@@ -88,14 +79,14 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												xtype: 'textfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.id.gestoria'),
 												bind:		'{gasto.numGastoGestoria}',
-												editable: false
+												readOnly: true
 											},
 											{
 												xtype: 'textfieldbase',
-												reference: 'nombreEmisorGasto',
+												name: 'nombreEmisor',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.emisor'),
 												bind:		'{gasto.nombreEmisor}',
-												editable: false
+												readOnly: true
 											},
 											{ 
 												xtype: 'comboboxfieldbase',
@@ -103,8 +94,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										      	bind: {
 									           		store: '{comboPeriodicidad}',
 									           		value: '{gasto.periodicidad}'
-									         	},
-									         	allowBlank: false
+									         	}
 										    },
 											{
 												xtype: 'textfieldbase',
@@ -114,10 +104,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											},
 											{
 												xtype: 'textfieldbase',
-												reference: 'codigoEmisorGasto',
-												fieldLabel: HreRem.i18n('fieldlabel.gasto.id.emisor'),
+												name: 'codigoEmisor',
+												fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.emisor'),
 												bind:		'{gasto.codigoEmisor}',
-												editable: false
+												readOnly: true
 											},
 											{
 												xtype: 'textfieldbase',
@@ -128,18 +118,26 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											{ 
 												xtype: 'comboboxfieldbase',
 								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.gasto'),
+								               	reference: 'tipoGasto',
+				        						chainedStore: 'comboSubtipoGasto',
+												chainedReference: 'subtipoGastoCombo',
 										      	bind: {
 									           		store: '{comboTiposGasto}',
-									           		value: '{gasto.tiposGasto}'
+									           		value: '{gasto.tipoGastoCodigo}'
 									         	},
+									         	listeners: {
+								                	select: 'onChangeChainedCombo'
+								            	},
 									         	allowBlank: false
 										    },
 										    { 
 												xtype: 'comboboxfieldbase',
 								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
+								               	reference: 'subtipoGastoCombo',
 										      	bind: {
 									           		store: '{comboSubtiposGasto}',
-									           		value: '{gasto.subtiposGasto}'
+									           		value: '{gasto.subtipoGastoCodigo}',
+									           		disabled: '{!gasto.tipoGastoCodigo}'
 									         	},
 									         	allowBlank: false
 										    },
@@ -151,82 +149,54 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									           		value: '{gasto.destinatario}',
 									           		hidden: '{conPropietario}'
 									         	},
+									         	listeners:{
+									         		change: 'onHaCambiadoComboDestinatario'
+									         	},
 									         	allowBlank: false
 										    },
 										    
-//										    { 
-//												xtype: 'comboboxfieldbase',
-//								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.propietario'),
-//										      	bind: {
-//									           		store: '{comboPropietarios}',
-//									           		value: '{gasto.propietario}'
-//									         	},
-//									         	listeners: {
-//									         		change: 'onHaCambiadoComboPropietario'
-//									         	},
-//									         	editable: true
-//										    },
-										    {
-												xtype: 'textfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.propietario'),
-												bind:		'{gasto.nifPropietario}',
-												reference: 'nifPropietarioRef',
-												bind: {
-					        						editable: '{!getConPropietario}',
-					        						value: '{gasto.nifPropietario}',
-					        						hidden: '{!getConPropietario}'
-			                					},
-			                					editable: false,
-			                					allowBlank: false
-											},
 											{
 												xtype: 'textfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),
-												reference: 'buscadorNifPropietarioField',
-												flex: 2,
+												name: 'buscadorNifPropietarioField',
 												bind: {
-													value: '{gasto.buscadorNifPropietario}',
-													hidden: '{getConPropietario}'
+													value: '{gasto.buscadorNifPropietario}'
 												},
 												allowBlank: false,
 												triggers: {
 													
-													foo: {
-											            cls: Ext.baseCSSPrefix + 'form-search-trigger',
-											            handler: 'buscarPropietarioBoton'
-											        }
+														buscarEmisor: {
+												            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+												             handler: 'buscarPropietario'
+												        }
 												},
 												cls: 'searchfield-input sf-con-borde',
-												emptyText: 'Buscar propietario...',
+												emptyText:  HreRem.i18n('txt.buscar.propietario'),
 												enableKeyEvents: true,
 										        listeners: {
-										        	specialKey: 'onSpecialKeyPropietario'
+										        	specialKey: function(field, e) {
+										        		if (e.getKey() === e.ENTER) {
+										        			field.lookupController().buscarPropietario(field);											        			
+										        		}
+										        	}
 										        }
 							                },
 										    {
 												xtype: 'textfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.propietario'),
-												bind:		'{gasto.nombrePropietario}',
-												reference: 'nombrePropietarioRef',
+												name: 'nombrePropietario',
 												bind:{
-//													disabled: '{conPropietario}',
 													value: '{gasto.nombrePropietario}'													
 												},
-												editable: false
-											},
-										    {
-										    	
-										    },
-										    {
-										    	
-										    },
+												readOnly: true,
+												colspan: 2
+											}/*,
 										   	{
 												xtype: 'button',
 												text: HreRem.i18n('fieldlabel.gasto.incluir.trabajos.rem'),
 											    margin: '0 0 10 0',
-						//					    handler: 'onClickBotonFavoritos'
-											    disabled: true
-											}
+											    handler: 'onClickBotonIncluirTrabajosGasto'
+											}*/
 											
 										]
 					           },
@@ -239,13 +209,23 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										[
 											{
 										    xtype		: 'gridBase',
-					//					    title: HreRem.i18n('title.notario'),
 										    reference: 'listadoTrabajosIncluidosFactura',
 											cls	: 'panel-base shadow-panel',
 											bind: {
-												store: '{storeTrabajosIncluidosFactura}'
-											},									
-											
+												store: '{storeTrabajosAfectados}'
+											},
+											listeners: {
+
+												rowdblclick: 'onRowDblClickListadoTrabajosGasto'
+	    									},
+											tbar : {
+      												xtype: 'toolbar',
+      												dock: 'top',
+      												items: [
+      														{itemId: 'addButton',iconCls:'x-fa fa-plus', handler: 'onClickBotonIncluirTrabajosGasto', bind: {hidden: '{ocultarIncluirTrabajos}'}}/*,
+      														{itemId: 'removeButton',iconCls:'x-fa fa-minus', handler: 'onClickBotonQuitarTrabajosGasto', bind: {hidden: '{ocultarIncluirTrabajos}'}}*/
+      												]
+											},
 											columns: [
 											   {    text: HreRem.i18n('header.gasto.id.trabajo'),
 										        	dataIndex: 'idTrabajo',
@@ -253,55 +233,33 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										        	hidden: true,
 											        hideable: false
 										       },
+										       {
+									            	text	 : HreRem.i18n('header.numero.trabajo'),
+									                flex	 : 1,
+									                dataIndex: 'numTrabajo'
+									           },  
 											   {
-										            text: HreRem.i18n('header.gasto.subtipo.trabajo'),
-										            dataIndex: 'subtipoTrabajo',
+										            text: HreRem.i18n('header.subtipo'),
+										            dataIndex: 'descripcionSubtipo',
 										            flex: 1
 											   },
 											   {
-											   		text: HreRem.i18n('header.gasto.fecha.ejecucion'),
-										            dataIndex: 'fechaEjecucion',
+											   		text: HreRem.i18n('header.fecha.ejecutado'),
+										            dataIndex: 'fechaEjecutado',
+										            formatter: 'date("d/m/Y")',
 										            flex: 1
 											   },						   
 											   {
 											   		text: HreRem.i18n('header.gasto.cubierto.seguro'),
-										            dataIndex: 'cubiertoSeguro',
+										            dataIndex: 'cubreSeguro',
 										            flex: 1	
 											   },
 											   {
-											   		text: HreRem.i18n('header.gasto.importe.tarifa'),
-										            dataIndex: 'importeTarifa',
-										            flex: 1						   
-											   },
-											   {
-											   		text: HreRem.i18n('header.gasto.importe.penalizacion'),
-										            dataIndex: 'importePenalizacion',
-										            flex: 1						   
-											   },
-											   {
-											   		text: HreRem.i18n('header.gasto.importe.recargo'),
-										            dataIndex: 'importeRecargo',
-										            flex: 1						   
-											   },
-											   {
-											   		text: HreRem.i18n('header.gasto.provisiones.suplidos'),
-										            dataIndex: 'provisionesSuplidos',
+											   		text: HreRem.i18n('header.importe.total'),
+										            dataIndex: 'importeTotal',
 										            flex: 1						   
 											   }
-										    ],
-										    dockedItems : [
-										        {
-										            xtype: 'pagingtoolbar',
-										            dock: 'bottom',
-										            displayInfo: true,
-										            bind: {
-										                store: '{storeTrabajosIncluidosFactura}'
-										            }
-										        }
 										    ]
-					//					    listeners: {
-					//					    	rowdblclick: 'onNotarioDblClick'
-					//					    }
 										}
 										
 										]
@@ -322,6 +280,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     	var me = this; 
 		me.recargar = false;		
 		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});	
     	
     }
 });

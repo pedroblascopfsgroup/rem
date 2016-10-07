@@ -2,27 +2,22 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-
-
-
-
 /**
  * Dto para el listado de propietarios de los activos
  * @author Anahuac de Vicente
- *
  */
 public class DtoTasacion {
 
-	private static final long serialVersionUID = 0L;
-
-	
 	private Long id;
+	private Long externoID; // Solicitud tasación Bankia.
+	private Long idActivo; // Solicitud tasación Bankia.
     private String tipoTasacionCodigo; 
     private String tipoTasacionDescripcion; 
     private Date fechaInicioTasacion; 
     private Date fechaValorTasacion; //fechaFinTasacion a nivel visual
     private Date fechaRecepcionTasacion;  
-    private Date fechaSolicitudTasacion;
+    private Date fechaSolicitudTasacion; // Solicitud tasación Bankia.
+    private String gestorSolicitud; // Solicitud tasación Bankia.
     private String codigoFirma;  
     private String nomTasador;  
     private String importeValorTasacion;  
@@ -45,10 +40,8 @@ public class DtoTasacion {
     private String importeValorLegalFinca; 
     private String importeValorSolar; 
     private String observaciones;
-    
-    
-    
-    
+
+
 	public Long getId() {
 		return id;
 	}
@@ -223,6 +216,24 @@ public class DtoTasacion {
 	}
 	public void setImporteValorTasacion(String importeValorTasacion) {
 		this.importeValorTasacion = importeValorTasacion;
+	}
+	public Long getExternoID() {
+		return externoID;
+	}
+	public void setExternoID(Long externoID) {
+		this.externoID = externoID;
+	}
+	public String getGestorSolicitud() {
+		return gestorSolicitud;
+	}
+	public void setGestorSolicitud(String gestorSolicitud) {
+		this.gestorSolicitud = gestorSolicitud;
+	}
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
 	} 
 	
 	

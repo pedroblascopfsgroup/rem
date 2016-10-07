@@ -54,7 +54,7 @@
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
 				<targetBean>
-					activoGenericEnterActionHandler
+					activoGenericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>

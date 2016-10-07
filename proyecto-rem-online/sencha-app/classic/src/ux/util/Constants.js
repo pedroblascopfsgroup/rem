@@ -75,7 +75,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	FIJO: '02'
     },
     
-    TIPOS_PROVEEDOR: {
+    TIPOS_DESTINATARIO_GASTO: {
+    	PROPIETARIO: '01',
+    	HAYA: '02'
+    },
+
+	TIPOS_PROVEEDOR: {
     	ENTIDAD: '01',
     	ADMINISTRACION: '02',
     	PROVEEDOR: '03'
@@ -127,6 +132,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:			'documentostrabajo',
 		GESECO:			'gestioneconomicatrabajo'
 //		INVISIBLE:		Si creamos un registro-enlace-trabajo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
+    },
+    
+    CARTERA: {
+    	CAJAMAR: '01',
+    	SAREB: '02',
+    	BANKIA: '03',
+    	TERCEROS: '04'
     }
     
 

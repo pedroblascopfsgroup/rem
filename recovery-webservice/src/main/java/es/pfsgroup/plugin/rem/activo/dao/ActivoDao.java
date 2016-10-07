@@ -10,12 +10,14 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
@@ -64,4 +66,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Activo getActivoByNumActivo(Long activoVinculado);
 
 	public PropuestaActivosVinculados getPropuestaActivosVinculadosByID(Long id);
+
+	public ActivoTasacion getActivoTasacion(Long id);
 }

@@ -155,7 +155,7 @@ BEGIN
             LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA  PRV ON PRV.DD_PRV_CODIGO = MIG2.COM_COD_PROVINCIA AND PRV.BORRADO = 0
             WHERE NOT EXISTS (
               SELECT 1
-              FROM '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL AUX2
+              FROM '||V_ESQUEMA||'.COM_COMPRADOR AUX2
               WHERE AUX2.CLC_ID = CLC.CLC_ID
             )
           ) AUX      
@@ -198,7 +198,7 @@ BEGIN
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' COMPRADORES, hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes. ';
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' COMPRADORES, '||TABLE_COUNT||' son por CLIENTES_COMERCIALES inexistentes. ';
       END IF;
       
       EXECUTE IMMEDIATE '

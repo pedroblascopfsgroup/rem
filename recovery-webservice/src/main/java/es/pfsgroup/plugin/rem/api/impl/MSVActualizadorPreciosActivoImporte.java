@@ -96,13 +96,22 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 							exc.dameCelda(fila, 9));
 				}
 				
-				//Si hay Valoracion = Precio de Descuento Publicado para actualizar o crear
+				//Si hay Valoracion = Precio de Descuento Aprobado para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 10))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_DESC_APROBADO, 
 							Double.parseDouble(exc.dameCelda(fila, 10)),
 							exc.dameCelda(fila, 11),
 							exc.dameCelda(fila, 12));
+				}
+				
+				//Si hay Valoracion = Precio de Descuento Publicado para actualizar o crear
+				if(!Checks.esNulo(exc.dameCelda(fila, 13))){
+					actualizarCrearValoresPrecios(activo,
+							DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO, 
+							Double.parseDouble(exc.dameCelda(fila, 13)),
+							exc.dameCelda(fila, 14),
+							exc.dameCelda(fila, 15));
 				}
 			}
 

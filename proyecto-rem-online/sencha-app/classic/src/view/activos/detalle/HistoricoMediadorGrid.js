@@ -71,6 +71,12 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		        }
 		    ];
 		    
+		    me.saveSuccessFn = function() {
+		    	var me = this;
+		    	me.up('informecomercialactivo').funcionRecargar();
+		    	return true;
+		    },
+		    
 		    me.callParent();
    }
 });

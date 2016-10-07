@@ -14,6 +14,8 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long>{
 
 	
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter);
+	
+	public Long getNextNumGasto();
 
 
 }

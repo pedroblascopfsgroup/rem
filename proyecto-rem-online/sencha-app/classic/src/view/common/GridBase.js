@@ -9,6 +9,18 @@ Ext.define('HreRem.view.common.GridBase', {
 	topBar: false,
 	
 	/**
+	 * Para mostrar en la botonera el boton de añadir
+	 * @type Boolean
+	 */
+	addButton: true,
+	
+	/**
+	 * Para mostrar en la botonera el boton de eliminar
+	 * @type Boolean
+	 */
+	removeButton: true,
+	
+	/**
 	 * Parámetro para decidir si queremos que el grid se carge después del bind
 	 * 
 	 */
@@ -40,8 +52,8 @@ Ext.define('HreRem.view.common.GridBase', {
 		
 		if(me.topBar) {
 
-			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this };
-			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onClickRemove', scope: this, disabled: true };
+			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, hidden: !me.addButton };
+			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onClickRemove', scope: this, disabled: true, hidden: !me.removeButton };
 
 			if(!Ext.isEmpty(me.buttonSecurity)) {
 				
@@ -85,7 +97,7 @@ Ext.define('HreRem.view.common.GridBase', {
     	
     	var me = this;
     	
-    	if (me.topBar) {
+    	if (!Ext.isEmpty(me.down('#removeButton'))) {
     		me.down('#removeButton').setDisabled(disabled);    		
     	}
     },

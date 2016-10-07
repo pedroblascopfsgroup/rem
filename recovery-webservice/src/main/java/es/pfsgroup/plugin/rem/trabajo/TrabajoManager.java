@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
@@ -71,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -90,6 +92,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -158,6 +161,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -868,6 +874,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T012");
 		}
 		
+
+		// Módulo Expediente Comercial ------------------
+		//
+		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_COMERCIALIZACION)){
+			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(trabajo.getActivo());
+			
+			if(!Checks.esNulo(ofertaAceptada)){
+				// Trámite de Sanción Oferta Alquiler
+				if(DDTipoOferta.CODIGO_TIPO_OFERTA_ALQUILER.equals(ofertaAceptada.getTipoOferta().getCodigo()))
+					tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
+			}
+
+		}
+		
 		if(Checks.esNulo(tipoTramite.getId())){
 			return null;
 		}
@@ -875,6 +895,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());
 		return tramite;
+		
 	}
 	
 	

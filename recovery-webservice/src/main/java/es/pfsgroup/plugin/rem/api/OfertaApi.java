@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -98,6 +99,14 @@ public interface OfertaApi {
 	 * @return
 	 */	
 	public DDEstadoOferta getDDEstadosOfertaByCodigo (String codigo);
+	
+	
+// En caso de conflicto MERGE, quedarse con lo de Dani	
+	public Oferta getOfertaAceptadaByActivo(Activo activo);
+	
+	public boolean checkDeDerechoTanteo(Long idActivo);
+	
+	public boolean checkReserva(Long idActivo);
 	
 
 }

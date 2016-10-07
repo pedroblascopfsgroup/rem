@@ -882,7 +882,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			if(!Checks.esNulo(ofertaAceptada)){
 				// Trámite de Sanción Oferta Alquiler
-				if(DDTipoOferta.CODIGO_TIPO_OFERTA_ALQUILER.equals(ofertaAceptada.getTipoOferta()))
+				if(DDTipoOferta.CODIGO_TIPO_OFERTA_ALQUILER.equals(ofertaAceptada.getTipoOferta().getCodigo()))
 					tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
 			}
 

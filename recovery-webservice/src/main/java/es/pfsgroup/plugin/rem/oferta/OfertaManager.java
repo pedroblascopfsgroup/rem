@@ -627,7 +627,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	for(ActivoOferta activoOferta : listaOfertas){
 	Oferta oferta = activoOferta.getPrimaryKey().getOferta();
-	if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta()))
+	if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()))
 	return oferta;
 	}
 	return null;

@@ -3,12 +3,10 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 
@@ -74,7 +72,7 @@ public class FusionCambios implements Iterable<Map<String, Object>> {
 			if (globalMainMap == null) {
 				globalMainMap = new HashMap<String, Object>();
 				for (String container : containers) {
-					globalMainMap.put(container, new HashSet<Map<String, Object>>());
+					globalMainMap.put(container, new ArrayList<Map<String, Object>>());
 				}
 				this.data.put(groupValue.hashCode(), globalMainMap);
 			}
@@ -101,7 +99,7 @@ public class FusionCambios implements Iterable<Map<String, Object>> {
 			for (Entry<String, Map<String, Object>> e : localNestedMaps.entrySet()) {
 				Map<String, Object> localNestedMap = e.getValue();
 				if (!localNestedMap.isEmpty()) {
-					((Set) globalMainMap.get(e.getKey())).add(localNestedMap);
+					((List) globalMainMap.get(e.getKey())).add(localNestedMap);
 				}
 			}
 		}

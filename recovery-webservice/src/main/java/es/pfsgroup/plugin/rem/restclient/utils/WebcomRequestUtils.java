@@ -28,7 +28,8 @@ public class WebcomRequestUtils {
 
 	public static final String JSON_PROPERTY_ID = "id";
 
-	private static final Log logger = LogFactory.getLog(WebcomRequestUtils.class);
+	private static final Log logger = LogFactory
+			.getLog(WebcomRequestUtils.class);
 
 	private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
 
@@ -46,20 +47,25 @@ public class WebcomRequestUtils {
 		return json;
 	}
 
-	private static JSONObject createJSONData(Map<String, Object> params) {
+	public static JSONObject createJSONData(Map<String, Object> params) {
 		JSONObject data = new JSONObject();
 		if (params != null) {
 			for (Entry<String, Object> e : params.entrySet()) {
 				if (e.getValue() != null) {
-					if (!Collection.class.isAssignableFrom(e.getValue().getClass())) {
+					if (!Collection.class.isAssignableFrom(e.getValue()
+							.getClass())) {
 						// Añadimos un valor simple
-						data.put(e.getKey(), convertToStringIfNecessary(e.getValue()));
+						data.put(e.getKey(),
+								convertToStringIfNecessary(e.getValue()));
 					} else {
 						// Añadimos un list de datas
 						JSONArray array = new JSONArray();
 						for (Object o : ((Collection) e.getValue())) {
 							if (Map.class.isAssignableFrom(o.getClass())) {
-								array.add(createJSONData((Map) o));
+								JSONObject json = createJSONData((Map) o);
+								if (!array.contains(json)) {
+									array.add(json);
+								}
 							}
 						}
 						data.put(e.getKey(), array);
@@ -70,30 +76,31 @@ public class WebcomRequestUtils {
 		return data;
 	}
 
-//	private static Map<String, String> toStringParameters(Map<String, Object> params) {
-//		HashMap<String, String> strParams = new HashMap<String, String>();
-//		if ((params != null) && (!params.isEmpty())) {
-//			for (Entry<String, Object> p : params.entrySet()) {
-//				Object value = p.getValue();
-//				if (value != null) {
-//
-//					Object valueOf = WebcomDataType.valueOf(value);
-//					if (valueOf != null) {
-//						if (valueOf instanceof Date) {
-//							strParams.put(p.getKey(), formatDate((Date) valueOf));
-//						} else {
-//							strParams.put(p.getKey(), valueOf.toString());
-//						}
-//					} else {
-//						strParams.put(p.getKey(), null);
-//					}
-//
-//				}
-//
-//			}
-//		}
-//		return strParams;
-//	}
+	// private static Map<String, String> toStringParameters(Map<String, Object>
+	// params) {
+	// HashMap<String, String> strParams = new HashMap<String, String>();
+	// if ((params != null) && (!params.isEmpty())) {
+	// for (Entry<String, Object> p : params.entrySet()) {
+	// Object value = p.getValue();
+	// if (value != null) {
+	//
+	// Object valueOf = WebcomDataType.valueOf(value);
+	// if (valueOf != null) {
+	// if (valueOf instanceof Date) {
+	// strParams.put(p.getKey(), formatDate((Date) valueOf));
+	// } else {
+	// strParams.put(p.getKey(), valueOf.toString());
+	// }
+	// } else {
+	// strParams.put(p.getKey(), null);
+	// }
+	//
+	// }
+	//
+	// }
+	// }
+	// return strParams;
+	// }
 
 	private static String computeRequestId() {
 		long timestamp = ((Date) new Date()).getTime();
@@ -145,8 +152,8 @@ public class WebcomRequestUtils {
 	 * anotacion @WebcomRequired en el DTO.
 	 * 
 	 * <p>
-	 * Este método soporta DTO's anidados siempre y cuando usemos la
-	 * anotación @NestedDto en la referencia al SubDto.
+	 * Este método soporta DTO's anidados siempre y cuando usemos la anotación @NestedDto
+	 * en la referencia al SubDto.
 	 * </p>
 	 * 
 	 * @param dto
@@ -184,7 +191,7 @@ public class WebcomRequestUtils {
 			if (valueOf != null) {
 				if (valueOf instanceof Date) {
 					return formatDate((Date) valueOf);
-				}else if (valueOf instanceof Boolean){
+				} else if (valueOf instanceof Boolean) {
 					return valueOf;
 				} else {
 					return valueOf.toString();

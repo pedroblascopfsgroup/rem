@@ -18,12 +18,12 @@ public class DetectorWebcomEstadoInformeMediador  extends DetectorCambiosBD<Info
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "VI_INFORME_WEBCOM";
+		return "REM01.VI_INFORME_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "IWH_INFORME_WEBCOM_HIST";
+		return "REM01.IWH_INFORME_WEBCOM_HIST";
 	}
 
 	@Override

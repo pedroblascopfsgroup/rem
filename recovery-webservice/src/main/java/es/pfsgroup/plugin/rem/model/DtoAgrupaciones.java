@@ -2,23 +2,11 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-
-
-
-
 /**
- * Dto para la pestaña cabecera de la ficha de Activo
+ * Dto para la pestaña cabecera de la ficha de Agrupación.
  * @author Benjamín Guerrero
- *
  */
 public class DtoAgrupaciones {
-
-	private static final long serialVersionUID = 0L;
 
 	private String nombre;
 	private String descripcion;
@@ -41,11 +29,6 @@ public class DtoAgrupaciones {
 	private String estadoObraNuevaCodigo;
 	private String cartera;
 	private Boolean existeFechaBaja;
-	
-	
-	// MAPEADOS A MANO
-	//tipoAgrupacion
-	
 	
 	
 	public String getNombre() {
@@ -178,8 +161,5 @@ public class DtoAgrupaciones {
 	public void setExisteFechaBaja(Boolean existeFechaBaja) {
 		this.existeFechaBaja = existeFechaBaja;
 	}
-
-	// Mapeados a mano
-	//private DDTipoAgrupacion tipoAgrupacion;
 	
 }

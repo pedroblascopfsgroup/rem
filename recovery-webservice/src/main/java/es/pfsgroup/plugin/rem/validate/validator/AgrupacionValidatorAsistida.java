@@ -6,14 +6,12 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.impl.AgrupacionValidatorCommonImpl;
@@ -21,8 +19,6 @@ import es.pfsgroup.plugin.rem.validate.impl.AgrupacionValidatorCommonImpl;
 @Component
 public class AgrupacionValidatorAsistida extends AgrupacionValidatorCommonImpl implements AgrupacionValidator  {
 
-    @Autowired 
-    private ActivoAgrupacionApi activoAgrupacionApi;
     
     @Autowired 
     private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;

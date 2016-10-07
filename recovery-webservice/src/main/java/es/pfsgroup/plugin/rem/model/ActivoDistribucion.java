@@ -68,6 +68,9 @@ public class ActivoDistribucion implements Serializable, Auditable {
 	@Column(name = "DIS_SUPERFICIE")
 	private Float superficie;
 	
+	@Column(name = "DIS_DESCRIPCION")
+	private String descripcion;
+	
 	
 	@Version   
 	private Long version;
@@ -140,6 +143,14 @@ public class ActivoDistribucion implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 
 

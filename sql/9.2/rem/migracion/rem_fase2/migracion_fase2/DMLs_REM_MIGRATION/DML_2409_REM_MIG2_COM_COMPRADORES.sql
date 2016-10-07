@@ -198,7 +198,7 @@ BEGIN
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' COMPRADORES, hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes. ';
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' COMPRADORES, '||TABLE_COUNT||' son por CLIENTES_COMERCIALES inexistentes. ';
       END IF;
       
       EXECUTE IMMEDIATE '

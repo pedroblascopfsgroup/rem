@@ -1,5 +1,3 @@
-
-
 package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
@@ -26,22 +24,17 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  * Modelo que gestiona el diccionario de los tipos de proveedores de los activos
  * 
  * @author Anahuac de Vicente
- *
  */
 @Entity
 @Table(name = "DD_TPR_TIPO_PROVEEDOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoProveedor implements Auditable, Dictionary {
-	
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
 	public static final String COD_ASEGURADORA = "03";
-	public static final String COD_MEDIADOR = "20";
+	public static final String COD_MEDIADOR = "04";
 
 	@Id
 	@Column(name = "DD_TPR_ID")

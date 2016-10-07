@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
@@ -59,11 +61,14 @@ public class ResolucionComiteController {
 			}
 			model.put("id", jsonData.getId());	
 			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
+		} catch (JsonMappingException e1) {
+			e1.printStackTrace();
+			model.put("id", null);	
+			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");
+		} catch (Exception e2) {			
+			e2.printStackTrace();
 			model.put("id", jsonData.getId());	
-			model.put("error", e.getMessage());
+			model.put("error", e2.getMessage());
 		}
 	
 		return new ModelAndView("jsonView", model);

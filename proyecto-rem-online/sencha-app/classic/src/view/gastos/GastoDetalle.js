@@ -2,7 +2,8 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
     extend		: 'Ext.tab.Panel',
     xtype		: 'gastodetalle',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
-    requires : ['HreRem.view.gastos.DatosGeneralesGasto'],
+    requires : ['HreRem.view.gastos.DatosGeneralesGasto', 'HreRem.view.gastos.DetalleEconomicoGasto', 'HreRem.view.gastos.ActivosAfectadosGasto', 'HreRem.view.gastos.ContabilidadGasto',
+    			'HreRem.view.gastos.GestionGasto', 'HreRem.view.gastos.ImpugnacionGasto','HreRem.view.gastos.DocumentosGasto'],
 
     listeners: {
    		
@@ -85,6 +86,30 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		items: [
 		        {
 		        	xtype: 'datosgeneralesgasto'
+		        	
+		        },
+		        {
+		        	xtype: 'detalleeconomicogasto'
+		        	
+		        },
+		        {
+		        	xtype: 'activosafectadosgasto', ocultarBotonesEdicion: true
+		        	
+		        },
+		        {
+		        	xtype: 'contabilidadgasto'
+		        	
+		        },
+		        {
+		        	xtype: 'gestiongasto'
+		        	
+		        },
+		        {
+		        	xtype: 'impugnaciongasto'
+		        	
+		        },
+		        {
+		        	xtype: 'documentosgasto', ocultarBotonesEdicion: true
 		        	
 		        }
 		       

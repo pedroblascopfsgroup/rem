@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
@@ -204,6 +205,14 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public boolean deleteValoracionPrecio(Long id);
+		
+		/**
+		 * Borrado físico de una valoración, indicando si se ha de guardar en el histórico o no
+		 * @param id
+		 * @param guardadoEnHistorico
+		 * @return
+		 */
+		public boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico);
 		
 		/**
 		 * Este método obtiene un objeto con los condicionantes del activo.
@@ -442,7 +451,38 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos);
-		
+
+		/**
+		 * Este método recibe un ID de activo y pide por web service el id de tasación.
+		 * 
+		 * @param idActivo : ID del activo.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public Boolean solicitarTasacion(Long idActivo);
+
+		/**
+		 * Este método obtiene la solicitud de tasacion a Bankia por el ID del activo.
+		 * 
+		 * @param id : ID del activo a filtrar.
+		 * @return Devuelve un dto con los datos de la solicitud de tasación, si la hay.
+		 */
+		public DtoTasacion getSolicitudTasacionBankia(Long id);
+
+		/**
+		 * Comprueba si el activo tiene activada el check de comercializar
+		 * @param idActivo
+		 * @return
+		 */
+		public Boolean comprobarActivoComercializable(Long idActivo);
+	    
+	    /**
+	     * Devuelve mensaje de validación indicando los campos obligatorios que no
+	     * han sido informados en la pestaña "Informe comericla"
+	     * @param idActivo
+	     * @return
+	     * @throws Exception
+	     */
+	    public String comprobarObligatoriosDesignarMediador(Long idActivo) throws Exception;
 		/**
 	     * Sirve para que después de guardar un fichero en el servicio de RestClient
 	     * guarde el identificador obtenido en base de datos 

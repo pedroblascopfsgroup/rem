@@ -152,7 +152,16 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												dataIndex: 'observaciones',
 												editor: {xtype:'textarea'},
 												flex: 1
-											   }
+											   },
+											   {
+											        xtype: 'actioncolumn',
+											        width: 30,	
+											        hideable: false,
+											        items: [{
+											           	iconCls: 'fa fa-remove',
+											           	handler: 'onDeletePrecioVigenteClick'
+											        }]
+									    		}
 						    				]
 							},
 							saveSuccessFn: function() {

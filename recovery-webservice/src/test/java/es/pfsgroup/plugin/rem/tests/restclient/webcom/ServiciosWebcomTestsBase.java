@@ -95,7 +95,7 @@ public class ServiciosWebcomTestsBase {
 	protected void assertDataEquals(JSONArray requestData, int idx, String key, Object expected) {
 		assertDataContains(requestData, idx, key);
 		
-		assertEquals("data[i]." + key + " no tiene el valor esperado", expected.toString(),
+		assertEquals("data[i]." + key + " no tiene el valor esperado", expected,
 				requestData.getJSONObject(idx).get(key));
 	}
 

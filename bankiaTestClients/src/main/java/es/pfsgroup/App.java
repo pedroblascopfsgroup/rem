@@ -1,7 +1,7 @@
 package es.pfsgroup;
 
-import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
+import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.pfsgroup.plugin.rem.api.impl.UvemManager;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 
@@ -31,23 +31,31 @@ public class App {
 					System.out.println("Número de parametros incorrectos: ejem: sh run.sh tasaciones 22 nombreGestor BANKIA/HAYA");
 					System.exit(1);
 				}
-			} else if (args[0].equals("infoCliente")) {
-				System.out.println("Ejecutando servicio infoCliente");
+			} else if (args[0].equals("numCliente")) { 
+				System.out.println("Ejecutando servicio numCliente");
 				if (args.length == 4) {
-					uvemManager.ejecutarNumCliente(args[1], args[2], args[3]);
-					GMPAJC11_INS numclienteIns = uvemManager.resultadoNumCliente();
-					System.out.println("Resultado llamada resultadoNumCliente: " + numclienteIns.getnumeroCliente());
-					uvemManager.ejecutarDatosCliente(numclienteIns.getnumeroCliente(), args[3]);
-					GMPAJC93_INS datosClienteIns = uvemManager.resultadoDatosCliente();
-					System.out.println("Resultado llamada resultadoDatosCliente: " + datosClienteIns.getName());
+					Integer numcliente = uvemManager.obtenerNumClienteUrsus(args[1], args[2], args[3]);
+					System.out.println("Resultado llamada resultadoNumCliente: " + numcliente + "\n");
 					
 				} else {
-					System.out.println("Número de parametros incorrectos: ejem: sh run.sh infoCliente 20036188Z 1 00000/05021");
+					System.out.println("Número de parametros incorrectos: ejem: sh run.sh numCliente 20036188Z 1 00000/05021");
 					System.exit(1);
 				}
 
-			}else if(args[0].equals("instanciaDecision")){
+			} else if (args[0].equals("datosCliente")) { 
+				System.out.println("Ejecutando servicio datosCliente");
+				if (args.length == 4) {					
+					GMPAJC93_INS datosClienteIns = uvemManager.obtenerDatosClienteUrsus(args[1], args[2], args[3]);
+					System.out.println("Resultado llamada resultadoDatosCliente: " + datosClienteIns.getNombreDelClientenoclie()+ "\n");
+					
+				} else {
+					System.out.println("Número de parametros incorrectos: ejem: sh run.sh datosCliente 20036188Z 1 00000/05021");
+					System.exit(1);
+				}
+
+			} else if(args[0].equals("instanciaDecision")){
 				InstanciaDecisionDto dto = new InstanciaDecisionDto();
+				GMPDJB13_INS instancia = null;
 				if (args.length > 1) {
 					if(!args[1].equals("ALTA") && !args[1].equals("CONS") && !args[1].equals("MODI")){
 						System.out.println(args[1]);
@@ -62,9 +70,12 @@ public class App {
 							dto.setIdentificadorActivoEspecial(Integer.valueOf(args[4]));
 							dto.setImporteConSigno(Long.valueOf(args[5]));
 							dto.setTipoDeImpuesto(Short.valueOf(args[6]));
-							//dto.setContraoferta(Boolean.getBoolean(args[2])); <-- ¿No se setea en el manager?					
+							instancia = uvemManager.instanciaDecision(dto, args[1]);
+							System.out.println("Resultado llamada Longitud Mensaje De Salida: " + instancia.getLongitudMensajeDeSalidarcslon());
+							System.out.println("Resultado llamada Codigo De Oferta Haya: " + instancia.getCodigoDeOfertaHayacoofhx2());
+							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComitecocom7());
 						}else{
-							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA <idOfertaHAYA> <finCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA 0000000000000201 <financiaCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
 							System.exit(1);			
 						}
 						
@@ -76,8 +87,12 @@ public class App {
 							dto.setIdentificadorActivoEspecial(Integer.valueOf(args[4]));
 							dto.setImporteConSigno(Long.valueOf(args[5]));
 							dto.setTipoDeImpuesto(Short.valueOf(args[6]));
+							instancia = uvemManager.instanciaDecision(dto, args[1]);
+							System.out.println("Resultado llamada Longitud Mensaje De Salida: " + instancia.getLongitudMensajeDeSalidarcslon());
+							System.out.println("Resultado llamada Codigo De Oferta Haya: " + instancia.getCodigoDeOfertaHayacoofhx2());
+							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComitecocom7());														
 						}else{
-							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS <idOfertaHAYA> <finCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS 0000000000000201 false 0 0 0");
 							System.exit(1);			
 						}
 						
@@ -90,22 +105,34 @@ public class App {
 							dto.setImporteConSigno(Long.valueOf(args[5]));
 							dto.setTipoDeImpuesto(Short.valueOf(args[6]));	
 							//dto.setContraoferta(Boolean.getBoolean(args[2]));<-- ¿No se setea en el manager?
+							instancia = uvemManager.instanciaDecision(dto, args[1]);
+							System.out.println("Resultado llamada Longitud Mensaje De Salida: " + instancia.getLongitudMensajeDeSalidarcslon());
+							System.out.println("Resultado llamada Codigo De Oferta Haya: " + instancia.getCodigoDeOfertaHayacoofhx2());
+							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComitecocom7());	
 						}else{
 							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA <idOfertaHAYA> <finCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
 							System.exit(1);			
 						}
 					}
+
 					
-					uvemManager.instanciaDecision(dto, args[1]);
-				
 					
 				}else{
 					System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA/CONS/MODI");
 					System.exit(1);
 				}
 				
-			}else {
-				System.out.println("Servicios admintidos: tasaciones,infoCliente,instanciaDecision");
+			} if (args[0].equals("consultaDatosPrestamo")) {
+				System.out.println("Ejecutando servicio consultaDatosPrestamo");
+				if (args.length == 3) {
+					uvemManager.consultaDatosPrestamo(args[1], new Integer(args[2]).intValue());
+				} else {
+					System.out.println("Número de parametros incorrectos: ejem: sh run.sh consultaDatosPrestamo <numExpedienteRiesgo> <tipoRiesgo>");
+					System.exit(1);
+				}
+			}
+				else {			
+				System.out.println("Servicios admintidos: tasaciones,numCliente,datosCliente,instanciaDecision,consultaDatosPrestamo");
 				System.exit(1);
 			}
 		} catch (Exception e) {

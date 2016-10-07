@@ -1363,6 +1363,90 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(!Ext.isEmpty(record.getData().fechaHasta) || !Ext.isEmpty(record.getData().usuarioBaja)){
 			grid.up().disableRemoveButton(true);
 		}
-	}
+	},
 	
+	//Método para borrar/anular un precio vigente sin guardar en el Historico
+	onDeletePrecioVigenteClick: function(tableView, indiceFila, indiceColumna) {
+
+    	var me = this;
+    	var grid = tableView.up('grid');
+
+    	var idPrecioVigente = grid.store.getAt(indiceFila).get('idPrecioVigente');
+		
+		if(idPrecioVigente != null) {
+			grid.mask(HreRem.i18n("msg.mask.espere"));
+		
+			Ext.Msg.show({
+			   title: HreRem.i18n('title.confirmar.borrado.precio.vigente'),
+			   msg: HreRem.i18n('msg.confirmar.borrado.precio.vigente'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+
+			        if (buttonId == 'yes') {
+			        	
+			        	var storeTemp = grid.getStore();
+			        	
+			        	var url =  $AC.getRemoteUrl('activo/deletePrecioVigenteSinGuardadoHistorico');
+			    		Ext.Ajax.request({
+			    			
+							url: url,
+							params: {idPrecioVigente : idPrecioVigente},
+							
+							success: function (response,opts) {
+								
+								if(Ext.decode(response.responseText).success == "false") {
+									me.fireEvent("errorToast", HreRem.i18n("msg.error.borrar.precio.vigente"));
+								}
+								else {
+									storeTemp.load();
+									me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								}
+								
+							},
+                                
+                            failure: function (a, operation, context) {
+
+                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                            }
+			    		     
+			    		 });
+					}
+
+		        }
+	        });
+			grid.unmask();
+		}
+		else {
+			me.fireEvent("infoToast", HreRem.i18n("msg.info.seleccionar.precio"));
+		}
+
+	},
+	
+	// Método que es llamado cuando se solicita la tasaciónb del activo desde Bankia.
+	onClickSolicitarTasacionBankia: function(btn) {
+		var me = this;
+    	var idActivo = me.getViewModel().get("activo.id");
+    	var url = $AC.getRemoteUrl('activo/solicitarTasacion');
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
+		
+		Ext.Ajax.request({
+    		url: url,
+    		params: {idActivo : idActivo},
+    		
+    		success: function(response, opts){
+    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    			btn.up('tasacionesactivo').funcionRecargar();
+    		},
+    		
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    },
+		    
+		    callback: function(record, operation) {
+    			me.getView().unmask();
+		    }
+    	});
+	}
+
 });

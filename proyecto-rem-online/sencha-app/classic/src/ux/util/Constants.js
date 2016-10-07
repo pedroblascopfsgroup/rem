@@ -69,7 +69,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		COMERCIALIZACION: '06'
     	
     },
-    
         
     TIPOS_CALCULO: {
     	PORCENTAJE: '01',
@@ -90,7 +89,6 @@ Ext.define('HreRem.ux.util.Constants', {
     SUBTIPOS_PROVEEDOR: {
     	MEDIADOR: '20'
     },
-    
     
     MAP_TAB_ACTIVO_XTYPE: {
 		FICHA:			'datosgeneralesactivo',
@@ -134,6 +132,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:			'documentostrabajo',
 		GESECO:			'gestioneconomicatrabajo'
 //		INVISIBLE:		Si creamos un registro-enlace-trabajo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
+    },
+    
+    CARTERA: {
+    	CAJAMAR: '01',
+    	SAREB: '02',
+    	BANKIA: '03',
+    	TERCEROS: '04'
     }
     
 

@@ -7,6 +7,8 @@ import java.util.List;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 
 public interface InformeMediadorApi {
+	
+	public boolean existeInformemediadorActivo(Long numActivo);
 
 	public void validateInformeField(List<String> errorsList, String fiedlName, Object fieldValor,
 			String codigoTipoBien);

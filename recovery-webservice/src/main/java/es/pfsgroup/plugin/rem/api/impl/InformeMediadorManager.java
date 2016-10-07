@@ -3,13 +3,19 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 
@@ -17,6 +23,9 @@ import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 public class InformeMediadorManager implements InformeMediadorApi {
 
 	private HashMap<String, HashMap<String, Boolean>> obligatorios;
+
+	@Autowired
+	private GenericABMDao genericDao;
 
 	public InformeMediadorManager() {
 		obligatorios = new HashMap<String, HashMap<String, Boolean>>();
@@ -701,102 +710,102 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		HashMap<String, Boolean> otrosCentrosEducativos = new HashMap<String, Boolean>();
 		otrosCentrosEducativos.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("otroscentroseducativos", otrosCentrosEducativos);
-		
-		//existenCentrosSanitarios
+
+		// existenCentrosSanitarios
 		HashMap<String, Boolean> existenCentrosSanitarios = new HashMap<String, Boolean>();
 		existenCentrosSanitarios.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existencentrossanitarios", existenCentrosSanitarios);
-		
-		//existenCentrosDeSalud
+
+		// existenCentrosDeSalud
 		HashMap<String, Boolean> existenCentrosDeSalud = new HashMap<String, Boolean>();
 		existenCentrosDeSalud.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existencentrosdesalud", existenCentrosDeSalud);
-		
-		//centrosDeSalud
+
+		// centrosDeSalud
 		HashMap<String, Boolean> centrosDeSalud = new HashMap<String, Boolean>();
 		centrosDeSalud.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("centrosdesalud", centrosDeSalud);
-		
-		//existenClinicas
+
+		// existenClinicas
 		HashMap<String, Boolean> existenClinicas = new HashMap<String, Boolean>();
 		existenClinicas.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existenClinicas", existenClinicas);
-		
-		//clinicas
+
+		// clinicas
 		HashMap<String, Boolean> clinicas = new HashMap<String, Boolean>();
 		clinicas.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("clinicas", clinicas);
-		
-		//existenHospitales
+
+		// existenHospitales
 		HashMap<String, Boolean> existenHospitales = new HashMap<String, Boolean>();
 		existenHospitales.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existenhospitales", existenHospitales);
-		
-		//hospitales
+
+		// hospitales
 		HashMap<String, Boolean> hospitales = new HashMap<String, Boolean>();
 		hospitales.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("hospitales", hospitales);
-		
-		//existenOtrosCentrosSanitarios
+
+		// existenOtrosCentrosSanitarios
 		HashMap<String, Boolean> existenOtrosCentrosSanitarios = new HashMap<String, Boolean>();
 		existenOtrosCentrosSanitarios.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existenotroscentrossanitarios", existenOtrosCentrosSanitarios);
-		
-		//otrosCentrosSanitarios
+
+		// otrosCentrosSanitarios
 		HashMap<String, Boolean> otrosCentrosSanitarios = new HashMap<String, Boolean>();
 		otrosCentrosSanitarios.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("otroscentrossanitarios", otrosCentrosSanitarios);
-		
-		//codTipoAparcamientoEnSuperficie
+
+		// codTipoAparcamientoEnSuperficie
 		HashMap<String, Boolean> codTipoAparcamientoEnSuperficie = new HashMap<String, Boolean>();
 		codTipoAparcamientoEnSuperficie.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("codtipoaparcamientoensuperficie", codTipoAparcamientoEnSuperficie);
-		
-		//existenComunicaciones
+
+		// existenComunicaciones
 		HashMap<String, Boolean> existenComunicaciones = new HashMap<String, Boolean>();
 		existenComunicaciones.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existencomunicaciones", existenComunicaciones);
-		
-		//existeFacilAccesoPorCarretera
+
+		// existeFacilAccesoPorCarretera
 		HashMap<String, Boolean> existeFacilAccesoPorCarretera = new HashMap<String, Boolean>();
 		existeFacilAccesoPorCarretera.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existefacilaccesoporcarretera", existeFacilAccesoPorCarretera);
-		
-		//facilAccesoPorCarretera
+
+		// facilAccesoPorCarretera
 		HashMap<String, Boolean> facilAccesoPorCarretera = new HashMap<String, Boolean>();
 		facilAccesoPorCarretera.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("facilaccesoporcarretera", facilAccesoPorCarretera);
-		
-		//existeLineasDeAutobus
+
+		// existeLineasDeAutobus
 		HashMap<String, Boolean> existeLineasDeAutobus = new HashMap<String, Boolean>();
 		existeLineasDeAutobus.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existelineasdeautobus", existeLineasDeAutobus);
-		
-		//lineasDeAutobus
+
+		// lineasDeAutobus
 		HashMap<String, Boolean> lineasDeAutobus = new HashMap<String, Boolean>();
 		lineasDeAutobus.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("lineasdeautobus", lineasDeAutobus);
-		
-		//existeMetro
+
+		// existeMetro
 		HashMap<String, Boolean> existeMetro = new HashMap<String, Boolean>();
 		existeMetro.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existemetro", existeMetro);
-		
-		//metro
+
+		// metro
 		HashMap<String, Boolean> metro = new HashMap<String, Boolean>();
 		metro.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("metro", metro);
 
-		//existeEstacionesDeTren
+		// existeEstacionesDeTren
 		HashMap<String, Boolean> existeEstacionesDeTren = new HashMap<String, Boolean>();
 		existeEstacionesDeTren.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("existeestacionesdetren", existeEstacionesDeTren);
-		
-		//estacionesDeTren
+
+		// estacionesDeTren
 		HashMap<String, Boolean> estacionesDeTren = new HashMap<String, Boolean>();
 		estacionesDeTren.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("estacionesdetren", estacionesDeTren);
-		
+
 	}
 
 	@Override
@@ -818,10 +827,35 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(InformeMediadorDto.class)
 				.getPropertyDescriptors()) {
-			Object obj = propertyDescriptor.getReadMethod().invoke(informe);
-			this.validateInformeField(errorsList, propertyDescriptor.getReadMethod().getName(), obj, codigoTipoBien);
+			if (propertyDescriptor.getReadMethod() != null) {
+				Object obj = propertyDescriptor.getReadMethod().invoke(informe);
+				this.validateInformeField(errorsList, propertyDescriptor.getReadMethod().getName(), obj,
+						codigoTipoBien);
+			}
 
 		}
+
+	}
+
+	@Override
+	public boolean existeInformemediadorActivo(Long numActivo) {
+		Activo activo;
+		Serializable objetoEntity = null;
+		boolean resultado = false;
+
+		if (numActivo != null) {
+			activo = (Activo) genericDao.get(Activo.class,
+					genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo));
+			if (activo != null) {
+				objetoEntity = genericDao.get(ActivoInfoComercial.class,
+						genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+			}
+
+		}
+		if (objetoEntity != null) {
+			resultado = true;
+		}
+		return resultado;
 
 	}
 

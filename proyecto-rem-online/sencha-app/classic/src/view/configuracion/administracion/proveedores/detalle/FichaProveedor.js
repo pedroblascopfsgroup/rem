@@ -161,7 +161,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									title: HreRem.i18n('title.proveedor.ambito'),
 									collapsible: false,
 									bind: {
-										hidden: '{!proveedor.isProveedor}'
+										disabled: '{!proveedor.isProveedor}'
 									},
 									colspan: 3,
 									items :
@@ -219,7 +219,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									title: HreRem.i18n('title.mediador'),
 									collapsible: false,
 									bind: {
-										hidden: '{!proveedor.isMediador}'
+										disabled: '{!proveedor.isMediador}'
 									},
 									colspan: 3,
 									items :
@@ -386,7 +386,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 							title: HreRem.i18n('title.activos.integrados'),
 							collapsible: false,
 							bind: {
-								hidden: '{!proveedor.isEntidadOrAdministracionOrMediador}'
+								disabled: '{!proveedor.isEntidadOrAdministracionOrMediador}'
 							},
 							colspan: 3,
 							items :
@@ -401,7 +401,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 							title: HreRem.i18n('title.control.pbc'),
 							collapsible: false,
 							bind: {
-								hidden: '{!proveedor.isProveedor}'
+								disabled: '{!proveedor.isProveedor}'
 							},
 							items :
 								[

@@ -177,6 +177,7 @@ public abstract class ServiciosWebcomBaseManager {
 
 			logger.debug("Invocando al servicio " + endpoint);
 			getClienteWebcom().send(endpoint, paramsList, registroLlamada);
+			logger.debug("Respuesta recibida " + endpoint);
 
 		} catch (ErrorServicioWebcom e) {
 			logger.error("Error al invocar " + endpoint + " con parámetros "
@@ -187,7 +188,6 @@ public abstract class ServiciosWebcomBaseManager {
 			} else {
 				logger.error("Se va a reintentar la invocación a " + endpoint
 						+ " con parámetros " + paramsList.toString());
-				// getRegistroLlamadas().guardaRegistroLlamada(registroLlamada);
 				e.setReintentable(true);
 			}
 

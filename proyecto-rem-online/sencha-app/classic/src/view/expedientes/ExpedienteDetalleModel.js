@@ -55,6 +55,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	
 	     },
 	     
+	     esSolicitadaReserva: function(get){
+			if(get('condiciones.solicitaReserva')==1){
+				return true;
+			}
+			return false;
+	     	
+	     },
+	     
+	     
 	     onEstaSujetoTanteo: function(get){
 	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
 	     	if(sujeto==1){

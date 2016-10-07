@@ -209,6 +209,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "DD_TPC_ID_SUMINISTROS")
 	private DDTiposPorCuenta tipoPorCuentaSuministros;
     
+    @Column(name="COE_SOLICITA_RESERVA")
+    private Integer solicitaReserva;
+    
     @Version   
 	private Long version;
 
@@ -604,6 +607,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	public void setTipoPorCuentaSuministros(
 			DDTiposPorCuenta tipoPorCuentaSuministros) {
 		this.tipoPorCuentaSuministros = tipoPorCuentaSuministros;
+	}
+
+	public Integer getSolicitaReserva() {
+		return solicitaReserva;
+	}
+
+	public void setSolicitaReserva(Integer solicitaReserva) {
+		this.solicitaReserva = solicitaReserva;
 	}
 	
 

@@ -876,6 +876,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
 			
 			//Economicas-Reserva
+			
+			dto.setSolicitaReserva(condiciones.getSolicitaReserva());
 			if(!Checks.esNulo(condiciones.getTipoCalculoReserva())){
 				dto.setTipoCalculo(condiciones.getTipoCalculoReserva().getCodigo());
 			}
@@ -1049,29 +1051,47 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}	
 
 			//Gastos CompraVenta
-			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe())){
+			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe()) || "".equals(dto.getPlusvaliaPorCuentaDe())){
+				if("".equals(dto.getPlusvaliaPorCuentaDe())){
+					condiciones.setGastosPlusvalia(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaPlusvalia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getPlusvaliaPorCuentaDe());
 				condiciones.setTipoPorCuentaPlusvalia(tipoPorCuentaPlusvalia);
 			}
-			if(!Checks.esNulo(dto.getNotariaPorCuentaDe())){
+			if(!Checks.esNulo(dto.getNotariaPorCuentaDe()) || "".equals(dto.getNotariaPorCuentaDe())){
+				if("".equals(dto.getNotariaPorCuentaDe())){
+					condiciones.setGastosNotaria(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaNotaria= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getNotariaPorCuentaDe());
 				condiciones.setTipoPorCuentaNotaria(tipoPorCuentaNotaria);
 			}
-			if(!Checks.esNulo(dto.getGastosCompraventaOtrosPorCuentaDe())){
+			if(!Checks.esNulo(dto.getGastosCompraventaOtrosPorCuentaDe()) || "".equals(dto.getGastosCompraventaOtrosPorCuentaDe())){
+				if("".equals(dto.getGastosCompraventaOtrosPorCuentaDe())){
+					condiciones.setGastosOtros(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaGCVOtros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getGastosCompraventaOtrosPorCuentaDe());
 				condiciones.setTipoPorCuentaGastosOtros(tipoPorCuentaGCVOtros);
 			}
 			
 			//Gastos Alquiler
-			if(!Checks.esNulo(dto.getIbiPorCuentaDe())){
+			if(!Checks.esNulo(dto.getIbiPorCuentaDe()) || "".equals(dto.getIbiPorCuentaDe())){
+				if("".equals(dto.getIbiPorCuentaDe())){
+					condiciones.setGastosIbi(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaIbi= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getIbiPorCuentaDe());
 				condiciones.setTipoPorCuentaIbi(tipoPorCuentaIbi);
 			}
-			if(!Checks.esNulo(dto.getComunidadPorCuentaDe())){
+			if(!Checks.esNulo(dto.getComunidadPorCuentaDe()) || "".equals(dto.getComunidadPorCuentaDe())){
+				if("".equals(dto.getComunidadPorCuentaDe())){
+					condiciones.setGastosComunidad(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaComunidad= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getComunidadPorCuentaDe());
 				condiciones.setTipoPorCuentaComunidadAlquiler(tipoPorCuentaComunidad);
 			}
-			if(!Checks.esNulo(dto.getSuministrosPorCuentaDe())){
+			if(!Checks.esNulo(dto.getSuministrosPorCuentaDe()) || "".equals(dto.getSuministrosPorCuentaDe())){
+				if("".equals(dto.getSuministrosPorCuentaDe())){
+					condiciones.setGastosSuministros(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaSuministros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getSuministrosPorCuentaDe());
 				condiciones.setTipoPorCuentaSuministros(tipoPorCuentaSuministros);
 			}
@@ -1085,7 +1105,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				DDTiposPorCuenta tipoPorCuentaComunidad= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getComunidadesPorCuentaDe());
 				condiciones.setTipoPorCuentaComunidad(tipoPorCuentaComunidad);
 			}
-			if(!Checks.esNulo(dto.getCargasPendientesOtrosPorCuentaDe())){
+			if(!Checks.esNulo(dto.getCargasPendientesOtrosPorCuentaDe()) || "".equals(dto.getCargasPendientesOtrosPorCuentaDe())){
+				if("".equals(dto.getCargasPendientesOtrosPorCuentaDe())){
+					condiciones.setCargasOtros(null);
+				}
 				DDTiposPorCuenta tipoPorCuentaCPOtros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getCargasPendientesOtrosPorCuentaDe());
 				condiciones.setTipoPorCuentaCargasOtros(tipoPorCuentaCPOtros);
 			}
@@ -1107,12 +1130,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			//Renuncia a saneamiento por
 
 			//Condiciones administrativas
-			if(!Checks.esNulo(dto.getProcedeDescalificacionPorCuentaDe())){
+			if(!Checks.esNulo(dto.getProcedeDescalificacionPorCuentaDe()) || "".equals(dto.getProcedeDescalificacionPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaDescalificacion= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getProcedeDescalificacionPorCuentaDe());
 				condiciones.setTipoPorCuentaDescalificacion(tipoPorCuentaDescalificacion);
 			}
 			
-			if(!Checks.esNulo(dto.getLicenciaPorCuentaDe())){
+			if(!Checks.esNulo(dto.getLicenciaPorCuentaDe()) || "".equals(dto.getLicenciaPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaLicencia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getLicenciaPorCuentaDe());
 				condiciones.setTipoPorCuentaLicencia(tipoPorCuentaLicencia);
 			}

@@ -113,6 +113,9 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	
 	@Column(name = "SPS_OTRO")
 	private String otro;
+	
+	@Column(name = "SPS_ESTADO_PORTAL_EXTERNO")
+	private Boolean publicadoPortalExterno;
 
 	@Version   
 	private Long version;
@@ -297,6 +300,18 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	public void setOtro(String otro) {
 		this.otro = otro;
+	}
+
+	public Boolean isPublicadoPortalExterno() {
+		return publicadoPortalExterno;
+	}
+	
+	public Boolean getPublicadoPortalExterno() {
+		return publicadoPortalExterno;
+	}
+
+	public void setPublicadoPortalExterno(Boolean publicadoPortalExterno) {
+		this.publicadoPortalExterno = publicadoPortalExterno;
 	}
 
 }

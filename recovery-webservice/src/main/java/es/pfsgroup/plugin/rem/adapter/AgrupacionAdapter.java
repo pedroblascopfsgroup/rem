@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.adapter;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +10,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -23,14 +20,12 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
@@ -48,7 +43,6 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -68,7 +62,6 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoVisitasActivo;
 import es.pfsgroup.plugin.rem.model.DtoVisitasAgrupacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -89,9 +82,6 @@ import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service
 public class AgrupacionAdapter {
-	
-    @Autowired
-    private DTOFactory dtoFactory;
 	
     @Autowired
     private ApiProxyFactory proxyFactory;
@@ -115,9 +105,6 @@ public class AgrupacionAdapter {
     
     @Autowired 
     private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
-    
-    @Autowired
-    private JBPMActivoTramiteManagerApi jbpmActivoTramiteManagerApi;
     
     @Autowired
     protected JBPMProcessManagerApi jbpmProcessManagerApi;
@@ -239,10 +226,8 @@ public class AgrupacionAdapter {
 			
 			
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -341,19 +326,20 @@ public class AgrupacionAdapter {
 		
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
-		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);	
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 		
 		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 		try {			
 		
-			if(Checks.esNulo(activo)) {			
+			if(Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
 			}
 			
 			// Si la agrupación es asistida, el activo además de existir tiene que ser asistido.
-			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && activoApi.isActivoAsistido(activo))
+			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException("El activo no es asistido");
+			}
 			
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos
 			if ( num == 0 ) {
@@ -454,8 +440,8 @@ public class AgrupacionAdapter {
 			
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
-			asistida.setLocalidad(pobl.getLocalidad()); 					
-			asistida.setProvincia(pobl.getProvincia());					
+			asistida.setLocalidad(pobl.getLocalidad());
+			asistida.setProvincia(pobl.getProvincia());
 			asistida.setCodigoPostal(pobl.getCodPostal());
 			return asistida;
 		}
@@ -976,10 +962,8 @@ public class AgrupacionAdapter {
 			MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
 			if (!Checks.esNulo(lib)) lib.liberaFichero(document);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

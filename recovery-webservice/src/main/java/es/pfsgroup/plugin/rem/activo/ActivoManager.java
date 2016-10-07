@@ -506,35 +506,39 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		
-		if(!Checks.esNulo(activo) || !Checks.esNulo(tipoDocumento) ) {
-		
-			Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
-	
-			ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
-			adjuntoActivo.setAdjunto(adj);
-			adjuntoActivo.setActivo(activo);
-	
-			adjuntoActivo.setIdDocRestClient(idDocRestClient);
+		try{
+			if(!Checks.esNulo(activo) && !Checks.esNulo(tipoDocumento) ) {
 			
-			adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-	
-			adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
-	
-			adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
-	
-			adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
-	
-			adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
-	
-			adjuntoActivo.setFechaDocumento(new Date());
-	
-			Auditoria.save(adjuntoActivo);
-	
-			activo.getAdjuntos().add(adjuntoActivo);
-	
-			activoDao.save(activo);
-		} else {
-			throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
+				Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+		
+				ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+				adjuntoActivo.setAdjunto(adj);
+				adjuntoActivo.setActivo(activo);
+		
+				adjuntoActivo.setIdDocRestClient(idDocRestClient);
+				
+				adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+		
+				adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
+		
+				adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
+		
+				adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
+		
+				adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
+		
+				adjuntoActivo.setFechaDocumento(new Date());
+		
+				Auditoria.save(adjuntoActivo);
+		
+				activo.getAdjuntos().add(adjuntoActivo);
+		
+				activoDao.save(activo);
+			} else {
+				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
+			}
+		}catch(Exception e){
+			logger.error(e.getMessage());
 		}
 	
 		return null;

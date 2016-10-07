@@ -125,7 +125,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										
 											{ 
 									        	xtype: 'comboboxfieldbase',
-									        	fieldLabel: HreRem.i18n('fieldlabel.solicita.reserva'),
+									        	fieldLabel: HreRem.i18n('fieldlabel.reserva.necesaria'),
 									        	bind: {
 								            		store: '{comboSiNoRem}',
 								            		value: '{condiciones.solicitaReserva}'			            		

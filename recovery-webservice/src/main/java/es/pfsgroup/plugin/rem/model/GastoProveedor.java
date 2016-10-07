@@ -128,10 +128,12 @@ public class GastoProveedor implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<GastoProveedorTrabajo> gastoProveedorTrabajos;
     
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<GastoProveedorActivo> gastoProveedorActivos;
     
 	@Version   

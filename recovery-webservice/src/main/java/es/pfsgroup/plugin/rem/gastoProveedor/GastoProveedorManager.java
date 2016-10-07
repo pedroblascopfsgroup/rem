@@ -1017,6 +1017,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean asignarTrabajos(Long idGasto, Long[] trabajos) {
 		
 		GastoProveedor gasto = findOne(idGasto);	
+		List<GastoProveedorTrabajo> listaGastosTrabajo = new ArrayList<GastoProveedorTrabajo>();
+		List<GastoProveedorActivo> listaGastosActivo = new ArrayList<GastoProveedorActivo>();
 		
 		for(Long idTrabajo : trabajos) {
 			
@@ -1025,8 +1027,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			GastoProveedorTrabajo gastoTrabajo = new GastoProveedorTrabajo();
 			gastoTrabajo.setTrabajo(trabajo);
 			gastoTrabajo.setGastoProveedor(gasto);
-			gasto.getGastoProveedorTrabajos().add(gastoTrabajo);
-						
+			listaGastosTrabajo.add(gastoTrabajo);
+			
+			//gasto.getGastoProveedorTrabajos().add(gastoTrabajo);
 			//genericDao.save(GastoProveedorTrabajo.class, gastoTrabajo);
 			
 			// Asignamos los activos del trabajo al gasto
@@ -1041,13 +1044,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoActivo.setActivo(activo.getPrimaryKey().getActivo());
 					gastoActivo.setGastoProveedor(gasto);
 					gastoActivo.setParticipacionGasto(activo.getParticipacion());
+					listaGastosActivo.add(gastoActivo);
 					
-					gasto.getGastoProveedorActivos().add(gastoActivo);
-					
+					//gasto.getGastoProveedorActivos().add(gastoActivo);
 					//genericDao.save(GastoProveedorActivo.class, gastoActivo);
 				}			
 			}
 		}
+		
+		gasto.setGastoProveedorTrabajos(listaGastosTrabajo);
+		gasto.setGastoProveedorActivos(listaGastosActivo);
 		
 		//gasto = findOne(idGasto);
 		

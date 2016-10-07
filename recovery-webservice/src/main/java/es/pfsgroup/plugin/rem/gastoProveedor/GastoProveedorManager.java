@@ -1024,9 +1024,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			// Asignamos el trabajo al gasto
 			GastoProveedorTrabajo gastoTrabajo = new GastoProveedorTrabajo();
 			gastoTrabajo.setTrabajo(trabajo);
-			gastoTrabajo.setGastoProveedor(gasto);	
+			gastoTrabajo.setGastoProveedor(gasto);
+			gasto.getGastoProveedorTrabajos().add(gastoTrabajo);
 						
-			genericDao.save(GastoProveedorTrabajo.class, gastoTrabajo);
+			//genericDao.save(GastoProveedorTrabajo.class, gastoTrabajo);
 			
 			// Asignamos los activos del trabajo al gasto
 			
@@ -1041,10 +1042,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoActivo.setGastoProveedor(gasto);
 					gastoActivo.setParticipacionGasto(activo.getParticipacion());
 					
-					genericDao.save(GastoProveedorActivo.class, gastoActivo);
+					gasto.getGastoProveedorActivos().add(gastoActivo);
+					
+					//genericDao.save(GastoProveedorActivo.class, gastoActivo);
 				}			
 			}
 		}
+		
+		//gasto = findOne(idGasto);
 		
 		gasto = calcularImportesDetalleEconomicoGasto(gasto);
 		
@@ -1287,7 +1292,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		for(GastoProveedorActivo gastoActivo : gasto.getGastoProveedorActivos()) {
 			Long idActivo = gastoActivo.getActivo().getId();
 			gastoActivo.setParticipacionGasto((float) (mapa.get(idActivo)*100/importeTotal));
-			genericDao.save(GastoProveedorActivo.class, gastoActivo);
+			//genericDao.save(GastoProveedorActivo.class, gastoActivo);
 		}
 		
 		return gasto;

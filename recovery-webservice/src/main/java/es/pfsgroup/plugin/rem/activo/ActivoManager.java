@@ -506,32 +506,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		
-		Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
-
-		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
-		adjuntoActivo.setAdjunto(adj);
-		adjuntoActivo.setActivo(activo);
-
-		adjuntoActivo.setIdDocRestClient(idDocRestClient);
+		if(!Checks.esNulo(activo) || !Checks.esNulo(tipoDocumento) ) {
 		
-		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-
-		adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
-
-		adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
-
-		adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
-
-		adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
-
-		adjuntoActivo.setFechaDocumento(new Date());
-
-		Auditoria.save(adjuntoActivo);
-
-		activo.getAdjuntos().add(adjuntoActivo);
-
-		activoDao.save(activo);
-
+			Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+	
+			ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+			adjuntoActivo.setAdjunto(adj);
+			adjuntoActivo.setActivo(activo);
+	
+			adjuntoActivo.setIdDocRestClient(idDocRestClient);
+			
+			adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+	
+			adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
+	
+			adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
+	
+			adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
+	
+			adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
+	
+			adjuntoActivo.setFechaDocumento(new Date());
+	
+			Auditoria.save(adjuntoActivo);
+	
+			activo.getAdjuntos().add(adjuntoActivo);
+	
+			activoDao.save(activo);
+		} else {
+			throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
+		}
+	
 		return null;
 		
 	}

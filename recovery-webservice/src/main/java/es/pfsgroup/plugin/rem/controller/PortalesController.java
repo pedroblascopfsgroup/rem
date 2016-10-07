@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,52 +41,75 @@ public class PortalesController {
 			PortalesRequestDto jsonData = null;		
 			Activo activo = null;
 			ActivoSituacionPosesoria activoSituacionPosesoria = null;
-			PortalesDto portalesDto = null;
+			List<PortalesDto> listaPortalesDto = null;
+			List<String> errorList = null;
 								
 			try {
 				jsonData = (PortalesRequestDto) request.getRequestData(PortalesRequestDto.class);
-				portalesDto = jsonData.getData();
+				listaPortalesDto = jsonData.getData();
 				logger.debug("PETICIÓN: " + jsonData);
 				
-				if (Checks.esNulo(portalesDto.getIdActivoHaya())) throw new Exception("No existe un valor IdActivoHaya en la llamada.");
-				if (Checks.esNulo(portalesDto.getPublicado())) throw new Exception("No existe un valor Publicado en la llamada.");
-				if (Checks.esNulo(portalesDto.getIdUsuarioRemAccion())) throw new Exception("No existe un valor IdUsuarioRemAccion en la llamada.");
-				if (Checks.esNulo(portalesDto.getFechaAccion())) throw new Exception("No existe un valor FechaAccion en la llamada.");
+				errorList = new ArrayList<String>();
 				
-				activo = activoApi.get(portalesDto.getIdActivoHaya());
-				if (activo == null) throw new Exception("No existe ningun activo con IdActivoHaya = "+portalesDto.getIdActivoHaya()+".");
-
-				Usuario user = usuarioApi.get(portalesDto.getIdUsuarioRemAccion());
-				if (Checks.esNulo(user)) throw new Exception("No existe ningun usuario con IdUsuarioRemAccion = "+portalesDto.getIdUsuarioRemAccion()+".");
-				
-				if (activo.getSituacionPosesoria() == null) {	
+				for(int i=0; i < listaPortalesDto.size();i++){
 					
-					Date fechaCrear =  new Date();
-					activoSituacionPosesoria = new ActivoSituacionPosesoria();
-					activoSituacionPosesoria.getAuditoria().setUsuarioCrear(user.getUsername());					
-					activoSituacionPosesoria.getAuditoria().setFechaCrear(fechaCrear);
-					activoSituacionPosesoria.setActivo(activo);
-					activo.setSituacionPosesoria(activoSituacionPosesoria);
+					PortalesDto portalesDto = listaPortalesDto.get(i);
+					errorList.add("");
+					
+					if (Checks.esNulo(portalesDto.getIdActivoHaya())) errorList.set(i, "No existe un valor IdActivoHaya en la llamada.");
+					if (Checks.esNulo(portalesDto.getPublicado())) errorList.set(i, "No existe un valor Publicado en la llamada.");
+					if (Checks.esNulo(portalesDto.getIdUsuarioRemAccion())) errorList.set(i, "No existe un valor IdUsuarioRemAccion en la llamada.");
+					if (Checks.esNulo(portalesDto.getFechaAccion())) errorList.set(i, "No existe un valor FechaAccion en la llamada.");
+					
+					if (errorList.get(i).equals("")){
+						
+						activo = activoApi.get(portalesDto.getIdActivoHaya());
+						if (activo == null) errorList.set(i, "No existe ningún activo con IdActivoHaya = "+portalesDto.getIdActivoHaya()+".");
+						Usuario user = usuarioApi.get(portalesDto.getIdUsuarioRemAccion());
+						if (Checks.esNulo(user)) errorList.set(i, "No existe ningún usuario con IdUsuarioRemAccion = "+portalesDto.getIdUsuarioRemAccion()+".");
+						
+						if (errorList.get(i).equals("")){
+							if (activo.getSituacionPosesoria() == null) {	
+								
+								Date fechaCrear =  new Date();
+								activoSituacionPosesoria = new ActivoSituacionPosesoria();
+								activoSituacionPosesoria.getAuditoria().setUsuarioCrear(user.getUsername());					
+								activoSituacionPosesoria.getAuditoria().setFechaCrear(fechaCrear);
+								activoSituacionPosesoria.setActivo(activo);
+								activo.setSituacionPosesoria(activoSituacionPosesoria);
+			
+							}
+							
+							activoSituacionPosesoria = activo.getSituacionPosesoria();
+							activoSituacionPosesoria.setPublicadoPortalExterno(portalesDto.getPublicado());
+							
+							Date fechaMod = new Date();
+							activoSituacionPosesoria.getAuditoria().setUsuarioModificar(user.getUsername());				
+							activoSituacionPosesoria.getAuditoria().setFechaModificar(fechaMod);				
+			
+							activoApi.saveOrUpdate(activo);
+						}
+					}
 
 				}
 				
-				activoSituacionPosesoria = activo.getSituacionPosesoria();
-				activoSituacionPosesoria.setPublicadoPortalExterno(portalesDto.getPublicado());
-				
-				Date fechaMod = new Date();
-				activoSituacionPosesoria.getAuditoria().setUsuarioModificar(user.getUsername());				
-				activoSituacionPosesoria.getAuditoria().setFechaModificar(fechaMod);				
-
-				activoApi.saveOrUpdate(activo);
-				
 				model.put("id", jsonData.getId());	
-				model.put("error", "");
+				model.put("error", errorList);
 				
 			} catch (Exception e) {
 				
 				e.printStackTrace();
-				model.put("id", jsonData.getId());	
-				model.put("error", e.getMessage());	
+				if (listaPortalesDto != null) {
+					errorList = new ArrayList<String>();
+					model.put("id", jsonData.getId());
+					for(int i=0; i < listaPortalesDto.size();i++){
+						errorList.add(e.getMessage());
+					}
+				} else {
+					errorList = new ArrayList<String>();
+					errorList.add(e.getMessage());
+				}
+				model.put("error", errorList);	
 				
 			}
 			

@@ -17,7 +17,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomatica', {
 	        		{
 			    		xtype:'toolfieldset',			   		         						   		        
 			        	cls: 'fieldsetBase cabecera',
-			        	title: 'X',
+			        	title: '_',
 			        	scrollable: 'y',
 			        	border: false,			        	
 					    layout: {

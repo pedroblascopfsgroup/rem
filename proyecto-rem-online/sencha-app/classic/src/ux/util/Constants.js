@@ -75,7 +75,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	FIJO: '02'
     },
     
-    TIPOS_PROVEEDOR: {
+    TIPOS_DESTINATARIO_GASTO: {
+    	PROPIETARIO: '01',
+    	HAYA: '02'
+    },
+
+	TIPOS_PROVEEDOR: {
     	ENTIDAD: '01',
     	ADMINISTRACION: '02',
     	PROVEEDOR: '03'
@@ -135,4 +140,6 @@ Ext.define('HreRem.ux.util.Constants', {
     	BANKIA: '03',
     	TERCEROS: '04'
     }
+    
+
 });

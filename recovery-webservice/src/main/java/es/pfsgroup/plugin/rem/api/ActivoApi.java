@@ -467,4 +467,31 @@ public interface ActivoApi {
 		 * @return Devuelve un dto con los datos de la solicitud de tasación, si la hay.
 		 */
 		public DtoTasacion getSolicitudTasacionBankia(Long id);
+
+		/**
+		 * Comprueba si el activo tiene activada el check de comercializar
+		 * @param idActivo
+		 * @return
+		 */
+		public Boolean comprobarActivoComercializable(Long idActivo);
+	    
+	    /**
+	     * Devuelve mensaje de validación indicando los campos obligatorios que no
+	     * han sido informados en la pestaña "Informe comericla"
+	     * @param idActivo
+	     * @return
+	     * @throws Exception
+	     */
+	    public String comprobarObligatoriosDesignarMediador(Long idActivo) throws Exception;
+		/**
+	     * Sirve para que después de guardar un fichero en el servicio de RestClient
+	     * guarde el identificador obtenido en base de datos 
+	     * 
+	     * @param webFileItem
+	     * @param idDocRestClient
+	     * @return
+	     * @throws Exception
+	     */
+	    @BusinessOperationDefinition("activoManager.uploadDocumento")
+		String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula) throws Exception;
     }

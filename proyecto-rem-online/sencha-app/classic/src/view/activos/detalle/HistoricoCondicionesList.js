@@ -10,7 +10,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 
     listeners: {
     	boxready: function() {
-    		me = this;
+    		var me = this;
     		me.evaluarEdicion();
     	},
     	rowclick: 'onGridCondicionesEspecificasRowClick'

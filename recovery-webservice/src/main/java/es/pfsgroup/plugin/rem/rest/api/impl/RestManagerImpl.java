@@ -8,9 +8,11 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -234,6 +236,14 @@ public class RestManagerImpl implements RestApi {
 		return claseObjeto;
 	}
 
+	@SuppressWarnings({ "rawtypes" })
+	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
+			Object oFiltro, Object object, Serializable objetoEntity) {
+		ArrayList<Serializable> objetoEntitys = new ArrayList<Serializable>();
+		objetoEntitys.add(objetoEntity);
+		return this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, object, objetoEntitys);
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
 			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys) {
@@ -257,19 +267,12 @@ public class RestManagerImpl implements RestApi {
 
 				for (Serializable objetoEntity : objetoEntitys) {
 					try {
-						Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
-								claseObjeto);
-						metodo.invoke(objetoEntity, object);
-						resultado = true;
-						System.out.println("OK --------------->" + propertyEntityName + " seteada en la entidad "
-								+ objetoEntity.getClass().getName());
-					} catch (NoSuchMethodException e) {
-						// intentamos setear el objeto en las diferentes
-						// entidades
-						continue;
-					} catch (InvocationTargetException e) {
-						System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
-					} catch (IllegalAccessException e) {
+						Method metodo = this.getMethod(objetoEntity, "set".concat(propertyEntityName), claseObjeto);
+						if (metodo != null) {
+							metodo.invoke(objetoEntity, object);
+							resultado = true;
+						}
+					} catch (Exception e) {
 						System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
 					}
 				}
@@ -288,26 +291,89 @@ public class RestManagerImpl implements RestApi {
 
 	}
 
+	private Method getMethod(Serializable clase, String nombreMetodo, Class<?> parametro) {
+		Method metodo = null;
+		try {
+			metodo = clase.getClass().getMethod(nombreMetodo, parametro);
+		} catch (NoSuchMethodException e) {
+		} catch (SecurityException e) {
+		}
+		if (metodo == null) {
+			Method[] allMethods = clase.getClass().getDeclaredMethods();
+			for (Method met : allMethods) {
+				if (met.getName().equals(nombreMetodo)) {
+					metodo = met;
+					break;
+				}
+
+			}
+		}
+		return metodo;
+	}
+
 	private void guardarEntity(ArrayList<Serializable> objetoEntitys) throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
 		for (Serializable objetoEntity : objetoEntitys) {
-			Object primary = this.findPrimaryKey(objetoEntity);
-			if (primary == null) {
-				objetoEntity = genericaRestDaoImp.save(objetoEntity);
-			} else {
-				genericaRestDaoImp.update(objetoEntity);
-			}
-			
+			System.out.println("Guardando..." + objetoEntity.getClass().getName());
+			Serializable primaryKey = genericaRestDaoImp.save(objetoEntity);
+			System.out.println("Exito..." + primaryKey.getClass().getName());
+			String primaryKeFieldName = this.findPrimaryKey(objetoEntity);
+			this.setProperty(primaryKeFieldName, primaryKey.getClass(), null, null, primaryKey, objetoEntity);
+			this.setFk(objetoEntity, objetoEntitys);
 		}
 
 	}
 
-	private Object findPrimaryKey(Serializable objetoEntity) throws NoSuchMethodException, SecurityException,
+	private void setFk(Serializable objetoEntityFK, ArrayList<Serializable> objetoEntitys) {
+		for (Serializable objetoEntity : objetoEntitys) {
+			if (!objetoEntityFK.getClass().equals(objetoEntity.getClass())) {
+				String fieldFk = this.findFieldFk(objetoEntity, objetoEntityFK.getClass());
+				if (fieldFk != null) {
+					this.setProperty(fieldFk, objetoEntityFK.getClass(), null, null, objetoEntityFK, objetoEntity);
+				}
+			}
+		}
+	}
+
+	private List<Field> getAllFields(List<Field> fields, Class<?> type) {
+		fields.addAll(Arrays.asList(type.getDeclaredFields()));
+
+		if (type.getSuperclass() != null) {
+			fields = this.getAllFields(fields, type.getSuperclass());
+		}
+
+		return fields;
+	}
+
+	private String findFieldFk(Serializable objetoEntity, Class<?> claseFK) {
+		String result = null;
+		List<Field> fields = new ArrayList<Field>();
+		fields = this.getAllFields(fields, objetoEntity.getClass());
+		for (Field f : fields) {
+			if (f.getType().isAssignableFrom(claseFK)) {
+				String propertyEntityName = null;
+				propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+				// result = "get".concat(propertyEntityName);
+				result = propertyEntityName;
+				break;
+			}
+
+		}
+
+		return result;
+	}
+
+	private String findPrimaryKey(Serializable objetoEntity) throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
-		Object result = null;
-		for (Field f : objetoEntity.getClass().getDeclaredFields()) {
+		String result = null;
+		List<Field> fields = new ArrayList<Field>();
+		fields = this.getAllFields(fields, objetoEntity.getClass());
+		for (Field f : fields) {
 			if (f.getAnnotation(javax.persistence.Id.class) != null) {
-				result = this.getValue(objetoEntity, objetoEntity.getClass(), f.getName());
+				String propertyEntityName = null;
+				propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+				// result = "get".concat(propertyEntityName);
+				result = propertyEntityName;
 				break;
 			}
 
@@ -319,17 +385,9 @@ public class RestManagerImpl implements RestApi {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Serializable obtenerObjetoEntity(Long activoId, Class entity, String fieldActivo)
 			throws InstantiationException, IllegalAccessException {
-		Activo activo;
 		Serializable objetoEntity;
 		if (activoId != null) {
-			activo = (Activo) genericDao.get(Activo.class,
-					genericDao.createFilter(FilterType.EQUALS, "numActivo", activoId));
-			if (activo != null) {
-				objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, activo));
-			} else {
-				objetoEntity = (Serializable) entity.newInstance();
-			}
-
+			objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, activoId));
 		} else {
 			objetoEntity = (Serializable) entity.newInstance();
 		}
@@ -345,7 +403,8 @@ public class RestManagerImpl implements RestApi {
 		Object obj = null;
 		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(InformeMediadorDto.class)
 				.getPropertyDescriptors()) {
-			if (propertyDescriptor.getReadMethod().getName().equals(methodName)) {
+			if (propertyDescriptor.getReadMethod() != null
+					&& propertyDescriptor.getReadMethod().getName().equals(methodName)) {
 				obj = propertyDescriptor.getReadMethod().invoke(dto);
 				break;
 			}

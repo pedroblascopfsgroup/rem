@@ -15,9 +15,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -46,16 +44,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Autowired
 	private ActivoAgrupacionDao activoAgrupacionDao;
 
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-
 //	@Override
 //	public String managerName() {
 //		return "activoAgrupacionManager";
 //	}
-
-	@Autowired
-	private FuncionManager funcionManager;
 
 	@Autowired
 	private ActivoAgrupacionFactoryApi activoAgrupacionFactoryApi;

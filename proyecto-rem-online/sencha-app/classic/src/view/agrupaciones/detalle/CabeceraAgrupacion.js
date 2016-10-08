@@ -128,7 +128,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion'),
 															bind:		'{agrupacionficha.numAgrupRem}'
-															
 									                   	},	
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
@@ -170,6 +169,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.direccion'),
 															bind:		'{agrupacionficha.direccion}'
+														},
+														{ 
+															xtype: 'datefieldbase',
+															fieldLabel: HreRem.i18n('header.fecha.inicio.vigencia'),
+															bind:		'{agrupacionficha.fechaInicioVigencia}',
+															readOnly: true
+														},
+														{ 
+															xtype: 'datefieldbase',
+															fieldLabel: HreRem.i18n('header.fecha.fin.vigencia'),
+															bind:		'{agrupacionficha.fechaFinVigencia}',
+															readOnly: true
 														}
 
 										    ]

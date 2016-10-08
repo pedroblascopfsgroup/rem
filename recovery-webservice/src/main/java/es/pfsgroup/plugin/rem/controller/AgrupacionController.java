@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
@@ -110,9 +108,6 @@ public class AgrupacionController {
         /*binder.registerCustomEditor(Float.class, new CustomNumberEditor(Float.class, true));
         binder.registerCustomEditor(Long.class, new CustomNumberEditor(Long.class, true));
         binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));*/
-
-        
-        
 	}
 		
 	/**
@@ -122,6 +117,7 @@ public class AgrupacionController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAgrupacionById(Long id, int pestana, ModelMap model){
 
@@ -130,9 +126,7 @@ public class AgrupacionController {
 		return createModelAndViewJson(model);
 	}
 	
-	
-	
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id, ModelMap model){
 
@@ -141,21 +135,17 @@ public class AgrupacionController {
 		model.put("totalCount", page.getTotalCount());
 
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter, ModelMap model){
 
 		Page page = adapter.getListAgrupaciones(dtoAgrupacionFilter);
-		
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
-
-		//model.put("data", adapter.getListAgrupaciones());
 		
 		return createModelAndViewJson(model);
-		
 	}	
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
@@ -163,6 +153,7 @@ public class AgrupacionController {
 		return new ModelAndView("jsonView", model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createActivoAgrupacion(@RequestParam Long idEntidad, @RequestParam Long numActivo, @RequestParam(required = false) Integer activoPrincipal, ModelMap model){
 		
@@ -180,9 +171,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView marcarPrincipal(@RequestParam Long idAgrupacion, @RequestParam Long idActivo, ModelMap model){
 		
@@ -196,9 +187,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteActivoAgrupacion(@RequestParam Long id, ModelMap model){
 		
@@ -217,9 +208,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteActivosAgrupacion(@RequestParam Long[] id, ModelMap model){
 		
@@ -234,9 +225,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteAllActivosAgrupacion(@RequestParam Long id, ModelMap model){
 		
@@ -250,9 +241,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion, ModelMap model){
 		
@@ -266,9 +257,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteAgrupacionById(DtoAgrupacionesCreateDelete dtoAgrupacion, ModelMap model){
 		
@@ -282,9 +273,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListObservacionesAgrupacionById(Long id, ModelMap model){
 
@@ -294,50 +285,43 @@ public class AgrupacionController {
 		
 	}	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListVisitasAgrupacionById(Long id, ModelMap model){
 
 		model.put("data", adapter.getListVisitasAgrupacionById(id));
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasAgrupacion(Long id, ModelMap model){
 
 		model.put("data", adapter.getListOfertasAgrupacion(id));
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosAgrupacionById(Long id, ModelMap model){
-			
-
-	/*	List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
-		for (AgrupacionAvisadorApi avisador: avisadores) {
-			avisador.setAgrupacion(agrupacion);
-
-        }
-		*/
 
 		model.put("data", adapter.getAvisosAgrupacionById(id));
 		
 		return createModelAndViewJson(model);
-		
 	}	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView procesarMasivo(Long idProcess, Long idOperation, ModelMap model){
 		
 		model.put("data", adapter.procesarMasivo(idProcess, idOperation));
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model){
 		
@@ -351,9 +335,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOfertaAgrupacion(DtoOfertaActivo dtoOferta, ModelMap model){
 		
@@ -367,9 +351,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView  saveObservacionesAgrupacion(DtoObservacion dtoObservacion, Long idAgrupacion, ModelMap model){
 		
@@ -384,7 +368,6 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 
 	/**
@@ -394,6 +377,7 @@ public class AgrupacionController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView  createObservacionesAgrupacion(DtoObservacion dtoObservacion, Long idEntidad, ModelMap model){
 		
@@ -408,9 +392,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteObservacionesAgrupacion(@RequestParam Long id, ModelMap model){
 		
@@ -424,9 +408,9 @@ public class AgrupacionController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getFotosAgrupacionById(Long id, WebDto webDto, ModelMap model){
 				
@@ -498,6 +482,7 @@ public class AgrupacionController {
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getFotosSubdivisionById(DtoSubdivisiones subdivision, ModelMap model){
 		
@@ -563,9 +548,7 @@ public class AgrupacionController {
 			model.put("errores", e.getCause());
 		}
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(model);
-
-	} 
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -589,11 +572,10 @@ public class AgrupacionController {
 			model.put("errores", e.getCause());
 		}
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(model);
-
-	} 
+	}
 	
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListSubdivisionesAgrupacionById(DtoAgrupacionFilter agrupacionFilter, ModelMap model){
 
@@ -603,9 +585,9 @@ public class AgrupacionController {
 		model.put("totalCount", page.getTotalCount());
 		
 		return createModelAndViewJson(model);
-		
-	}	
+	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosSubdivisionById(DtoSubdivisiones subdivisionFilter, ModelMap model){
 		
@@ -615,8 +597,7 @@ public class AgrupacionController {
 		model.put("totalCount", page.getTotalCount());
 		
 		return createModelAndViewJson(model);
-		
-	}	
+	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoAgrupacionFilter dtoAgrupacionFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -630,7 +611,6 @@ public class AgrupacionController {
 		ExcelReport report = new AgrupacionExcelReport(listaAgrupaciones);
 		
 		excelReportGeneratorApi.generateAndSend(report, response);
-
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -645,7 +625,6 @@ public class AgrupacionController {
 			model.put("success", false);		
 		}
 		return createModelAndViewJson(model);
-
 	}
 
 }

@@ -1,19 +1,20 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
-import es.pfsgroup.plugin.rem.api.impl.ResolucionComiteManager;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -27,9 +28,12 @@ public class ResolucionComiteController {
 	@Autowired
 	private OfertaApi ofertaApi;
 	
+	@Autowired
+	private RestApi restApi;
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
-	public ModelAndView resolucionComite(ModelMap model, RestRequestWrapper request) {
+	public void resolucionComite(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 
 		ResolucionComiteRequestDto jsonData = null;
 		ResolucionComiteDto resolucionComiteDto = null;
@@ -52,11 +56,11 @@ public class ResolucionComiteController {
 				}
 			}
 
-			if (resolucionComiteApi.RESOLUCION_APROBADA.equals(resolucionComiteDto.getCodigoResolucion())) {
+			if (ResolucionComiteApi.RESOLUCION_APROBADA.equals(resolucionComiteDto.getCodigoResolucion())) {
 				resolucionComiteApi.aprobada(resolucionComiteDto);
-			} else if (resolucionComiteApi.RESOLUCION_DENEGADA.equals(resolucionComiteDto.getCodigoResolucion())) {
+			} else if (ResolucionComiteApi.RESOLUCION_DENEGADA.equals(resolucionComiteDto.getCodigoResolucion())) {
 				resolucionComiteApi.denegada(resolucionComiteDto);
-			} else if (resolucionComiteApi.RESOLUCION_CONTRAOFERTA.equals(resolucionComiteDto.getCodigoResolucion())) {
+			} else if (ResolucionComiteApi.RESOLUCION_CONTRAOFERTA.equals(resolucionComiteDto.getCodigoResolucion())) {
 				resolucionComiteApi.contraofertada(resolucionComiteDto);
 			}
 			model.put("id", jsonData.getId());	
@@ -71,7 +75,7 @@ public class ResolucionComiteController {
 			model.put("error", e2.getMessage());
 		}
 	
-		return new ModelAndView("jsonView", model);
+		restApi.sendResponse(response, model);
 		
 	}
 	

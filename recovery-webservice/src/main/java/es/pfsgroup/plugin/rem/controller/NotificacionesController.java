@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -28,6 +27,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class NotificacionesController {
@@ -39,6 +39,9 @@ public class NotificacionesController {
 
 	@Autowired
 	private NotificacionesWsManager notifWsManager;
+	
+	@Autowired
+	private RestApi restApi;
 
 	/**
 	 * Inserta una notificacion Ejem: IP:8080/pfs/rest/notificaciones HEADERS:
@@ -59,7 +62,7 @@ public class NotificacionesController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/notificaciones")
-	public ModelAndView saveNotificacion(ModelMap model, RestRequestWrapper request)
+	public void saveNotificacion(ModelMap model, RestRequestWrapper request,HttpServletResponse response)
 			throws JsonParseException, JsonMappingException, IOException {
 
 		NotificacionRequestDto jsonData = null;
@@ -118,7 +121,7 @@ public class NotificacionesController {
 			logger.debug("RESPUESTA: " + model);
 			logger.debug("ERRORES: " + errorsList);
 		}
-		return new ModelAndView("jsonView", model);
+		restApi.sendResponse(response,model);
 	}
 
 }

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.clienteComercial;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -211,7 +212,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				
 				if(alta){
 					//Validación para el alta de clientes
-					List<String> error = restApi.validateRequestObject(clienteDto);
+					HashMap<String, List<String>> error = restApi.validateRequestObject(clienteDto);
 					if (!Checks.esNulo(error) && !error.isEmpty()) {
 						listaErrores.add("No se cumple la especificación de parámetros para el alta del idClienteWebcom: " + clienteDto.getIdClienteWebcom() + ".Traza: " + error);			
 					}					

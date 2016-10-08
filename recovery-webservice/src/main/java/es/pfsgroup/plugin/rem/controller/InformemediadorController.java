@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
@@ -73,10 +71,10 @@ public class InformemediadorController {
 
 			for (InformeMediadorDto informe : informes) {
 				map = new HashMap<String, Object>();
-				List<String> errorsList = null;
+				HashMap<String, List<String>>errorsList = null;
 				if (informeMediadorApi.existeInformemediadorActivo(informe.getIdActivoHaya())) {
 					errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.INSERT);
-					informeMediadorApi.validateInformeMediadorDto(informe, informe.getCodTipoActivo(), errorsList);
+					//--------------------------informeMediadorApi.validateInformeMediadorDto(informe, informe.getCodTipoActivo(), errorsList);
 				} else {
 					errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.UPDATE);
 				}
@@ -84,11 +82,11 @@ public class InformemediadorController {
 					for (PlantaDto planta : informe.getPlantas()) {
 						List<String> errorsListPlanta = null;
 						if (informeMediadorApi.existeInformemediadorActivo(informe.getIdActivoHaya())) {
-							errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
+							//----------------------errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
 						} else {
-							errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.UPDATE);
+							///--------------------------------errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.UPDATE);
 						}
-						errorsList.addAll(errorsListPlanta);
+						//-----------------------------errorsList.addAll(errorsListPlanta);
 					}
 				}
 
@@ -186,22 +184,22 @@ public class InformemediadorController {
 				} else {
 					map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 					map.put("success", new Boolean(false));
-					map.put("errorMessages", errorsList);
+					map.put("invalidFields", errorsList);
 				}
 
 				listaRespuesta.add(map);
 			}
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
-			model.put("error", "");
+			model.put("error", null);
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
 			if (jsonData != null) {
 				model.put("id", jsonData.getId());
 			}
+			
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error",RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
 		
 		restApi.sendResponse(response,model);

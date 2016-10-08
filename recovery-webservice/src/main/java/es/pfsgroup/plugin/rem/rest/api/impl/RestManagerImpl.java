@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +29,7 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
@@ -130,13 +133,13 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public List<String> validateRequestObject(Serializable obj) {
+	public HashMap<String, List<String>> validateRequestObject(Serializable obj) {
 		return validateRequestObject(obj, null);
 	}
 
 	@Override
-	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion) {
-		ArrayList<String> error = new ArrayList<String>();
+	public HashMap<String, List<String>> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion) {
+		HashMap<String, List<String>> error = new HashMap<String, List<String>>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Serializable>> constraintViolations = null;
@@ -154,11 +157,31 @@ public class RestManagerImpl implements RestApi {
 		}
 		if (!constraintViolations.isEmpty()) {
 			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
-				error.add((visitaFailure.getPropertyPath() + " " + visitaFailure.getMessage()));
 
+				List<String> listaError = obtenerMapaErrores(error, visitaFailure.getPropertyPath().toString());
+				if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType().equals(NotNull.class)) {
+					listaError.add(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
+						.equals(Diccionary.class)) {
+					listaError.add(RestApi.REST_MSG_UNKNOWN_KEY);
+				} else {
+					listaError.add("DEFAULT");
+				}
 			}
 		}
 		return error;
+	}
+
+	private List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad) {
+		List<String> mapaErrores = null;
+		if (errores.containsKey(propiedad)) {
+			mapaErrores = errores.get(propiedad);
+		} else {
+			mapaErrores = new ArrayList<String>();
+			errores.put(propiedad, mapaErrores);
+		}
+
+		return mapaErrores;
 	}
 
 	@Override
@@ -179,12 +202,11 @@ public class RestManagerImpl implements RestApi {
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
 		Iterator it = model.keySet().iterator();
 		while (it.hasNext()) {
-			String key =(String)it.next();
+			String key = (String) it.next();
 			Object value = model.get(key);
 			value = transformObject(value);
 			jsonResp.accumulate(key, value);
 		}
-		
 
 		PrintWriter out;
 		try {
@@ -196,32 +218,32 @@ public class RestManagerImpl implements RestApi {
 		}
 
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Object transformObject(Object value){
-		if(value instanceof Integer || value instanceof Long || value instanceof Float){
+	private Object transformObject(Object value) {
+		if (value instanceof Integer || value instanceof Long || value instanceof Float) {
 			value = String.valueOf(value);
 		}
-		if(value instanceof String && ((String)value).equals("null")){
-			value=null;
+		if (value instanceof String && ((String) value).equals("null")) {
+			value = null;
 		}
-		if(value instanceof ArrayList){
-			for(Object v : (ArrayList)value){
+		if (value instanceof ArrayList) {
+			for (Object v : (ArrayList) value) {
 				transformObject(v);
-				
+
 			}
 		}
-		if(value instanceof Map){
-			//((Map)value).
-			Iterator it = ((Map)value).entrySet().iterator();
-			 
-		    while (it.hasNext()) {
-		        Map.Entry e = (Map.Entry)it.next();
-		        Object valueTrans = transformObject(e.getValue());
-		        ((Map)value).put(e.getKey(), valueTrans);
-		   }
+		if (value instanceof Map) {
+			// ((Map)value).
+			Iterator it = ((Map) value).entrySet().iterator();
+
+			while (it.hasNext()) {
+				Map.Entry e = (Map.Entry) it.next();
+				Object valueTrans = transformObject(e.getValue());
+				((Map) value).put(e.getKey(), valueTrans);
+			}
 		}
-		
+
 		return value;
 	}
 }

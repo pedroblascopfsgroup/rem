@@ -10,8 +10,8 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 	    	model: 'HreRem.model.Visitas',
 	    	proxy: {
 		        type: 'uxproxy',
-		        localUrl: '/visitas.json',
-		        remoteUrl: 'visitas/getListVisitas'
+		        localUrl: '/visitasdetalle.json',
+		        remoteUrl: 'visitas/getListVisitasDetalle'
 	    	},
 	    	autoLoad: true,
 	    	session: true,

@@ -1,6 +1,8 @@
 Ext.define('HreRem.view.comercial.ComercialVisitasController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.comercialvisitas',
+    
+    requires: ['HreRem.view.comercial.visitas.VisitasComercialDetalle'],
 
 	//Funcion que se ejecuta al hacer click en el botón buscar
 	onSearchClick: function(btn) {
@@ -84,6 +86,21 @@ Ext.define('HreRem.view.comercial.ComercialVisitasController', {
 	    me.redirectTo('activos', true);
 	    me.getView().fireEvent('abrirDetalleActivo', record);
     	
-    }
+    },
+    
+	onVisitasListDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	
+    	Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
+    	
+        	
+    },
+    
+    onClickBotonCerrarDetalleVisita: function(btn) {
+		var me = this,
+		window = btn.up('window');
+    	window.close();
+	}
 
 });

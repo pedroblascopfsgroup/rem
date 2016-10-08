@@ -14,6 +14,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicaAparcamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 
 
 
@@ -60,9 +61,45 @@ public class ActivoPlazaAparcamiento extends ActivoInfoComercial implements Seri
 	
 	@Column(name = "APR_FORMA_IRREGULAR")
 	private Boolean formaIrregular;
+	
+	@Column(name = "APR_ALTURA")
+	private Float aparcamientoAltura;
+	
 
+	@ManyToOne
+    @JoinColumn(name = "DD_TPV_ID")
+	private DDTipoVivienda aparcamientoTipoVario;
 	
+	@Column(name = "APR_LICENCIA")
+	private Integer aparcamientoLicencia;
 	
+	@Column(name = "APR_SERVIDUMBRE")
+	private Integer aparcamientoSerbidumbre;
+	
+	@Column(name = "APR_ASCENSOR_MONTACARGA")
+	private Integer aparcamientoMontacarga;
+	
+	@Column(name = "APR_COLUMNAS")
+	private Integer aparcamientoColumnas;
+	
+	@Column(name = "APR_SEGURIDAD")
+	private Integer aparcamientoSeguridad;
+
+	public Float getAparcamientoAltura() {
+		return aparcamientoAltura;
+	}
+
+	public void setAparcamientoAltura(Float aparcamientoAltura) {
+		this.aparcamientoAltura = aparcamientoAltura;
+	}
+
+	public DDTipoVivienda getAparcamientoTipoVario() {
+		return aparcamientoTipoVario;
+	}
+
+	public void setAparcamientoTipoVario(DDTipoVivienda aparcamientoTipoVario) {
+		this.aparcamientoTipoVario = aparcamientoTipoVario;
+	}
 
 	public Boolean getDestinoCoche() {
 		return destinoCoche;
@@ -127,6 +164,46 @@ public class ActivoPlazaAparcamiento extends ActivoInfoComercial implements Seri
 
 	public void setFormaIrregular(Boolean formaIrregular) {
 		this.formaIrregular = formaIrregular;
+	}
+
+	public Integer getAparcamientoLicencia() {
+		return aparcamientoLicencia;
+	}
+
+	public void setAparcamientoLicencia(Integer aparcamientoLicencia) {
+		this.aparcamientoLicencia = aparcamientoLicencia;
+	}
+
+	public Integer getAparcamientoSerbidumbre() {
+		return aparcamientoSerbidumbre;
+	}
+
+	public void setAparcamientoSerbidumbre(Integer aparcamientoSerbidumbre) {
+		this.aparcamientoSerbidumbre = aparcamientoSerbidumbre;
+	}
+
+	public Integer getAparcamientoMontacarga() {
+		return aparcamientoMontacarga;
+	}
+
+	public void setAparcamientoMontacarga(Integer aparcamientoMontacarga) {
+		this.aparcamientoMontacarga = aparcamientoMontacarga;
+	}
+
+	public Integer getAparcamientoColumnas() {
+		return aparcamientoColumnas;
+	}
+
+	public void setAparcamientoColumnas(Integer aparcamientoColumnas) {
+		this.aparcamientoColumnas = aparcamientoColumnas;
+	}
+
+	public Integer getAparcamientoSeguridad() {
+		return aparcamientoSeguridad;
+	}
+
+	public void setAparcamientoSeguridad(Integer aparcamientoSeguridad) {
+		this.aparcamientoSeguridad = aparcamientoSeguridad;
 	}
 
 	

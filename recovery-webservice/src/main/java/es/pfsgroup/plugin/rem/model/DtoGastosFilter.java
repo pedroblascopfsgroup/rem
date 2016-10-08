@@ -26,6 +26,7 @@ public class DtoGastosFilter extends WebDto {
 	private String periodicidad;
 	private String destinatario;
 	private String idDetalleGasto;
+	private Long idProvision;
 	
 	public Long getId() {
 		return id;
@@ -116,6 +117,12 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setIdDetalleGasto(String idDetalleGasto) {
 		this.idDetalleGasto = idDetalleGasto;
+	}
+	public Long getIdProvision() {
+		return idProvision;
+	}
+	public void setIdProvision(Long idProvision) {
+		this.idProvision = idProvision;
 	}
 
 	

@@ -9,9 +9,11 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -116,6 +118,9 @@ public interface GenericApi {
 	public List<TipoJuzgado> getComboTipoJuzgadoPlaza(Long idPlaza);
 
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedor(String codigoTipoProveedor);
+	
+	@BusinessOperationDefinition("genericManager.getComboSubtipoGasto")
+	public List<DDSubtipoGasto> getComboSubtipoGasto(String codigoTipoGasto);
 
 	/**
 	 * Este método recibe un código de provincia y obtiene una lista de unidades poblacionales
@@ -132,6 +137,9 @@ public interface GenericApi {
 	 * @return Devuelve una lista de localidades.
 	 */
 	public List<Localidad> getComboMunicipioSinFiltro();
+	
+	@BusinessOperationDefinition("genericManager.getComboEjercicioContabilidad")
+	public List<Ejercicio> getComboEjercicioContabilidad();
 
 }
 

@@ -39,11 +39,13 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -60,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -79,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -145,6 +149,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private VisitaDao visitasDao;
+	
+	@Autowired
+	private UvemManagerApi uvemManagerApi;
 
 	@Override
 	public String managerName() {
@@ -474,14 +481,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return upload2(webFileItem, null);
 
 	}
-
+	
 	@Override
-	@BusinessOperation(overrides = "activoManager.upload2")
+	@BusinessOperation(overrides = "activoManager.uploadDocumento")
 	@Transactional(readOnly = false)
-	public String upload2(WebFileItem webFileItem, Long idDocRestClient) throws Exception {
-
-		Activo activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
-
+	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activoEntrada, String matricula) throws Exception {
+		Activo activo=null;
+		DDTipoDocumentoActivo tipoDocumento=null;;
+		
+		if(Checks.esNulo(activoEntrada)){
+			activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+			
+			if (webFileItem.getParameter("tipo") == null)
+				throw new Exception("Tipo no valido");
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+			tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,filtro);
+		}
+		else{
+			activo =activoEntrada;
+			if(!Checks.esNulo(matricula)){
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
+				tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,filtro);
+			}
+		}
+		
 		Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
 
 		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
@@ -489,13 +513,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		adjuntoActivo.setActivo(activo);
 
 		adjuntoActivo.setIdDocRestClient(idDocRestClient);
-
-		if (webFileItem.getParameter("tipo") == null)
-			throw new Exception("Tipo no valido");
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,
-				filtro);
+		
 		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
 
 		adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
@@ -515,6 +533,51 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		activoDao.save(activo);
 
 		return null;
+		
+	}
+
+	@Override
+	@BusinessOperation(overrides = "activoManager.upload2")
+	@Transactional(readOnly = false)
+	public String upload2(WebFileItem webFileItem, Long idDocRestClient) throws Exception {
+		
+		return uploadDocumento(webFileItem, idDocRestClient, null, null);
+
+//		Activo activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+//
+//		Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+//
+//		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+//		adjuntoActivo.setAdjunto(adj);
+//		adjuntoActivo.setActivo(activo);
+//
+//		adjuntoActivo.setIdDocRestClient(idDocRestClient);
+//
+//		if (webFileItem.getParameter("tipo") == null)
+//			throw new Exception("Tipo no valido");
+//
+//		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+//		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,
+//				filtro);
+//		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+//
+//		adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
+//
+//		adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
+//
+//		adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
+//
+//		adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
+//
+//		adjuntoActivo.setFechaDocumento(new Date());
+//
+//		Auditoria.save(adjuntoActivo);
+//
+//		activo.getAdjuntos().add(adjuntoActivo);
+//
+//		activoDao.save(activo);
+//
+//		return null;
 	}
 
 	@Override
@@ -1101,6 +1164,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
+				
+				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.
+				if(!Checks.esNulo(activo.getInfoComercial())) {
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorInforme", proveedor);
+					genericDao.save(Activo.class, activo);
+				}
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
@@ -1597,6 +1666,96 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return contador;
+	}
+
+
+
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean solicitarTasacion(Long idActivo) {
+		
+		try{
+			// Se especifica bankia por que tan solo se va a poder demandar la tasación desde bankia.
+			int tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(idActivo, adapter.getUsuarioLogado().getNombre(), "BANKIA");
+			if(!Checks.esNulo(tasacionID)){
+				Activo activo = activoDao.get(idActivo);
+				
+				if(!Checks.esNulo(activo)) {
+					// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
+					NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
+					beanUtilNotNull.copyProperty(valoracionBien, "bien", activo.getBien());
+					valoracionBien = genericDao.save(NMBValoracionesBien.class, valoracionBien);
+					
+					if(!Checks.esNulo(valoracionBien)) {
+						// Generar una tasacion con el ID de activo y el ID de la valoracion del bien.
+						ActivoTasacion tasacion = new ActivoTasacion();
+						
+						beanUtilNotNull.copyProperty(tasacion, "idExterno", tasacionID);
+						beanUtilNotNull.copyProperty(tasacion, "activo", activo);
+						beanUtilNotNull.copyProperty(tasacion, "valoracionBien", valoracionBien);
+						
+						genericDao.save(ActivoTasacion.class, tasacion);
+					}
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+
+	@Override
+	public DtoTasacion getSolicitudTasacionBankia(Long id) {
+		ActivoTasacion activoTasacion = activoDao.getActivoTasacion(id);
+		DtoTasacion dtoTasacion = new DtoTasacion();
+		if(!Checks.esNulo(activoTasacion)) {
+			
+			try {
+				beanUtilNotNull.copyProperty(dtoTasacion, "id", activoTasacion.getId());
+				beanUtilNotNull.copyProperty(dtoTasacion, "fechaSolicitudTasacion", activoTasacion.getAuditoria().getFechaCrear());
+				beanUtilNotNull.copyProperty(dtoTasacion, "gestorSolicitud", activoTasacion.getAuditoria().getUsuarioCrear());
+				beanUtilNotNull.copyProperty(dtoTasacion, "externoID", activoTasacion.getIdExterno());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return dtoTasacion;
+	}
+	
+	@Override
+	@BusinessOperationDefinition("activoManager.comprobarActivoComercializable")
+	public Boolean comprobarActivoComercializable(Long idActivo) {
+		PerimetroActivo perimetro = this.getPerimetroByIdActivo(idActivo);
+		
+		return perimetro.getAplicaComercializar() == 1 ? true : false;
+	}
+   
+	@Override
+	@BusinessOperationDefinition("activoManager.comprobarObligatoriosDesignarMediador")
+	public String comprobarObligatoriosDesignarMediador(Long idActivo) throws Exception {
+
+		Activo activo = this.get(idActivo);
+		String mensaje = new String();
+
+		// Validaciones datos obligatorios correspondientes a Publicacion / Informe comercial
+		// del activo
+		// Validación mediador
+		if (Checks.esNulo(activo.getInfoComercial()) || Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+			mensaje = mensaje.concat(
+					messageServices.getMessage("tramite.admision.DesignarMediador.validacionPre.mediador"));
+		}
+
+		if (!Checks.esNulo(mensaje)) {
+			mensaje = messageServices.getMessage("tramite.admision.DesignarMediador.validacionPre.debeInformar")
+					.concat(mensaje);
+		}
+
+		return mensaje;
 	}
 
 }

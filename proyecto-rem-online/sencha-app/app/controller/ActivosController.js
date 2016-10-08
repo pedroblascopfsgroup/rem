@@ -176,6 +176,10 @@ Ext.define('HreRem.controller.ActivosController', {
     	},
     	'administraciongastosmain': {
     		abrirDetalleGasto: 'abrirDetalleGasto'
+    	},
+    	'gastodetallemain': {
+    		abrirDetalleActivo: 'abrirDetalleActivoGastosActivos',
+    		abrirDetalleTrabajo: 'abrirDetalleTrabajo'
     	}
 
     },
@@ -839,6 +843,14 @@ Ext.define('HreRem.controller.ActivosController', {
     	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['VISITAS'])
     },
     
+    abrirDetalleActivoGastosActivos: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, null)
+    },
+    
     abrirDetalleActivoComercialOfertas: function(record) {
     	var me = this,
     	titulo = "Activo " + record.get("numActivo"),
@@ -899,8 +911,10 @@ Ext.define('HreRem.controller.ActivosController', {
     
     abrirDetalleGasto: function(record, refLinks) {
     	var me = this,
-    	titulo = "Gasto " + record.get("numGastoHaya"),
-    	id = record.get("id");
+    	numGasto = record.get("numGastoHaya"),
+    	id = record.get("id"),
+    	titulo = Ext.isEmpty(numGasto)? null : 'Gasto ' + numGasto;
+    	
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleGastoById(id, titulo, refLinks);    	
     	

@@ -26,7 +26,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 
 
-
 /**
  * Modelo que gestiona las tasaciones de los activos.
  * 
@@ -37,18 +36,18 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoTasacion implements Serializable, Auditable {
-	 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
-	
+
 	@Id
     @Column(name = "TAS_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoTasacionGenerator")
     @SequenceGenerator(name = "ActivoTasacionGenerator", sequenceName = "S_ACT_TAS_TASACION")
     private Long id;
+	
+	@Column(name = "TAS_ID_EXTERNO")
+	private Long idExterno;
 	
     @ManyToOne
     @JoinColumn(name = "ACT_ID")
@@ -147,6 +146,14 @@ public class ActivoTasacion implements Serializable, Auditable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getIdExterno() {
+		return idExterno;
+	}
+
+	public void setIdExterno(Long idExterno) {
+		this.idExterno = idExterno;
 	}
 
 	public Activo getActivo() {

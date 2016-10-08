@@ -264,7 +264,7 @@ DECLARE
 	    T_TFI('T013_RespuestaOfertante'					,'2'		,'textarea'	,'observaciones'		,'Observaciones'														,''												,''												,''					),
 	    T_TFI('T013_InformeJuridico'					,'0'		,'label'	,'titulo'				,'<p style="margin-bottom: 10px"></p>'									,''												,''												,''					),
 	    T_TFI('T013_InformeJuridico'					,'1'		,'date'		,'fechaEmision'			,'Fecha de emisión'														,''												,''												,''					),
-	    T_TFI('T013_InformeJuridico'					,'2'		,'combo'	,'comboResultado'		,'¿Resultado favorable?'												,''												,''												,''					),
+	    T_TFI('T013_InformeJuridico'					,'2'		,'combo'	,'comboResultado'		,'¿Resultado favorable?'												,''												,''												,'DDSiNo'					),
 	    T_TFI('T013_InformeJuridico'					,'3'		,'combo'	,'tipoIncidencia'		,'Tipo de incidencia'													,''												,''												,'DDTipoIncidencia'	),
 	    T_TFI('T013_InformeJuridico'					,'4'		,'textarea'	,'observaciones'		,'Observaciones'														,''												,''												,''					),
 	    T_TFI('T013_InstruccionesReserva'				,'0'		,'label'	,'titulo'				,'<p style="margin-bottom: 10px"></p>'									,''												,''												,''					),

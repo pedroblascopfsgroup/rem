@@ -18,7 +18,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 			}
 			
 			if(tab.ocultarBotonesEdicion) {
-				me.down("[itemId=botoneditar]").setVisible(false);
+				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
             	tabPanel.evaluarBotonesEdicion(tab);
 			}

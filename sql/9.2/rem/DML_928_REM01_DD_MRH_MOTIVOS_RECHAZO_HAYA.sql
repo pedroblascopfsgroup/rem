@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160923
+--## FECHA_CREACION=20161004
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -43,7 +43,7 @@ DECLARE
 		T_TIPO_DATA('03'	,'Importe liquidación no coincide con el teclado'	,'Importe liquidación no coincide con el teclado'),
 		T_TIPO_DATA('04'	,'Error de tecleo'	,'Error de tecleo'),
 		T_TIPO_DATA('05'	,'El recargo no corresponde al propietario'	,'El recargo no corresponde al propietario'),
-		T_TIPO_DATA('06'	,'No procede pago plusvalía'	,'No procede pago plusvalía)
+		T_TIPO_DATA('06'	,'No procede pago plusvalía'	,'No procede pago plusvalía')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

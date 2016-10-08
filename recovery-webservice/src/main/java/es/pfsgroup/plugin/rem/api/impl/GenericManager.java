@@ -41,11 +41,13 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -141,7 +143,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				menuItemsPerm.add(item);
 			}
 		}
-		
+	
 			
 		return menuItemsPerm;		
 		
@@ -150,6 +152,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboMunicipio")
 	public List<Localidad> getComboMunicipio(String codigoProvincia) {
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", codigoProvincia);
 		
@@ -374,6 +377,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "plaza.id", idPlaza);
 		return (List<TipoJuzgado>) genericDao.getListOrdered(TipoJuzgado.class, order, filter);
+	}
+	
+	@Override
+	@BusinessOperationDefinition("genericManager.getComboSubtipoGasto")
+	public List<DDSubtipoGasto> getComboSubtipoGasto(String codigoTipoGasto) {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");			
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", codigoTipoGasto);
+		return (List<DDSubtipoGasto>) genericDao.getListOrdered(DDSubtipoGasto.class, order, filter);
+		
+	}
+	
+	@Override
+	@BusinessOperationDefinition("genericManager.getComboEjercicioContabilidad")
+	public List<Ejercicio> getComboEjercicioContabilidad(){
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "anyo");			
+		return (List<Ejercicio>) genericDao.getListOrdered(Ejercicio.class, order);
+		
 	}
 	
 	/**

@@ -86,10 +86,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
-		var listadoactivos = me.down("[reference=listadoactivos]");
-		
-		// FIXME ¿¿Deberiamos cargar la primera página??
-		listadoactivos.getStore().load();
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});	
     }
     
 });

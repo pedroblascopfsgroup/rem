@@ -21,14 +21,15 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
-	private Long id;
+	private Long idGasto;
 	private Long numGastoHaya;
 	private Long numGastoGestoria;
 	private String referenciaEmisor;
-	private String tiposGasto;
-	private String subtiposGasto;
+	private String tipoGastoCodigo;
+	private String subtipoGastoCodigo;
 	private String nifEmisor;
 	private String buscadorNifEmisor;
+	private String buscadorNifPropietario;
 	private String nombreEmisor;
 	private Long idEmisor;
 	private String destinatario;
@@ -39,12 +40,16 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private String nifPropietario;
 	private String nombrePropietario;
 	private String codigoEmisor;
+	private String destinatarioGastoCodigo;
+	private boolean autorizado;
+	private boolean asignadoATrabajos;
+	private boolean asignadoAActivos;
 	
-	public Long getId() {
-		return id;
+	public Long getIdGasto() {
+		return idGasto;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public void setIdGasto(Long idGasto) {
+		this.idGasto = idGasto;
 	}
 	public Long getNumGastoHaya() {
 		return numGastoHaya;
@@ -64,18 +69,7 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setReferenciaEmisor(String referenciaEmisor) {
 		this.referenciaEmisor = referenciaEmisor;
 	}
-	public String getTiposGasto() {
-		return tiposGasto;
-	}
-	public void setTiposGasto(String tiposGasto) {
-		this.tiposGasto = tiposGasto;
-	}
-	public String getSubtiposGasto() {
-		return subtiposGasto;
-	}
-	public void setSubtiposGasto(String subtiposGasto) {
-		this.subtiposGasto = subtiposGasto;
-	}
+
 	public String getNifEmisor() {
 		return nifEmisor;
 	}
@@ -148,5 +142,47 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setCodigoEmisor(String codigoEmisor) {
 		this.codigoEmisor = codigoEmisor;
 	}
-   	
+	public String getBuscadorNifPropietario() {
+		return buscadorNifPropietario;
+	}
+	public void setBuscadorNifPropietario(String buscadorNifPropietario) {
+		this.buscadorNifPropietario = buscadorNifPropietario;
+	}
+	public String getTipoGastoCodigo() {
+		return tipoGastoCodigo;
+	}
+	public void setTipoGastoCodigo(String tipoGastoCodigo) {
+		this.tipoGastoCodigo = tipoGastoCodigo;
+	}
+	public String getSubtipoGastoCodigo() {
+		return subtipoGastoCodigo;
+	}
+	public void setSubtipoGastoCodigo(String subtipoGastoCodigo) {
+		this.subtipoGastoCodigo = subtipoGastoCodigo;
+	}
+	public String getDestinatarioGastoCodigo() {
+		return destinatarioGastoCodigo;
+	}
+	public void setDestinatarioGastoCodigo(String destinatarioGastoCodigo) {
+		this.destinatarioGastoCodigo = destinatarioGastoCodigo;
+	}
+	public void setAutorizado(boolean autorizado) {
+		this.autorizado = autorizado;
+		
+	}
+   	public boolean getAutorizado() {
+   		return this.autorizado;
+   	}
+	public boolean getAsignadoATrabajos() {
+		return asignadoATrabajos;
+	}
+	public void setAsignadoATrabajos(boolean asignadoATrabajos) {
+		this.asignadoATrabajos = asignadoATrabajos;
+	}
+	public boolean getAsignadoAActivos() {
+		return asignadoAActivos;
+	}
+	public void setAsignadoAActivos(boolean asignadoAActivos) {
+		this.asignadoAActivos = asignadoAActivos;
+	}
 }

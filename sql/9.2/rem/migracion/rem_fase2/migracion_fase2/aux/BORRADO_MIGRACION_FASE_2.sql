@@ -42,7 +42,8 @@ DECLARE
                                                             T_TABLAS('REM01','ACT_OFR'),
                                                             T_TABLAS('REM01','OFR_OFERTAS'),
                                                             T_TABLAS('REM01','VIS_VISITAS'),
-                                                            T_TABLAS('REM01','CLC_CLIENTE_COMERCIAL')
+                                                            T_TABLAS('REM01','CLC_CLIENTE_COMERCIAL'),
+                                                            T_TABLAS('REM01','ECO_EXPEDIENTE_COMERCIAL')
                         );
        
 BEGIN
@@ -142,6 +143,7 @@ BEGIN
 	DELETE FROM COE_CONDICIONANTES_EXPEDIENTE WHERE USUARIOCREAR = 'MIG2';
 	DELETE FROM ACT_OFR AO WHERE EXISTS (SELECT 1 FROM OFR_OFERTAS OFR WHERE OFR.OFR_ID = AO.OFR_ID AND USUARIOCREAR = 'MIG2');
 	COMMIT;
+	DELETE FROM ECO_EXPEDIENTE_COMERCIAL WHERE USUARIOCREAR = 'MIG2';
 	DELETE FROM OFR_OFERTAS WHERE USUARIOCREAR = 'MIG2';
 	DELETE FROM VIS_VISITAS WHERE USUARIOCREAR = 'MIG2';
 	DELETE FROM CLC_CLIENTE_COMERCIAL WHERE USUARIOCREAR = 'MIG2';

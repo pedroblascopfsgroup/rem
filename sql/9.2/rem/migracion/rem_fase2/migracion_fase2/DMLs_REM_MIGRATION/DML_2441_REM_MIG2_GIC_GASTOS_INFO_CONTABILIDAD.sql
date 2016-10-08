@@ -48,7 +48,7 @@ BEGIN
       WHERE NOT EXISTS (
         SELECT 1 
         FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
-        WHERE GPV.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_INFO_CONTABIL
+        WHERE GPV.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_PROVEEDOR
       )
       '
       ;
@@ -79,20 +79,20 @@ BEGIN
             FECHA_COMPROBACION
           )
           WITH NOT_EXISTS AS (
-            SELECT DISTINCT MIG2.GIC_COD_GASTO_INFO_CONTABIL 
+            SELECT DISTINCT MIG2.GIC_COD_GASTO_PROVEEDOR 
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
             WHERE NOT EXISTS (
               SELECT 1 
               FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-              WHERE MIG2.GIC_COD_GASTO_INFO_CONTABIL = GPV.GPV_NUM_GASTO_GESTORIA
+              WHERE MIG2.GIC_COD_GASTO_PROVEEDOR = GPV.GPV_NUM_GASTO_GESTORIA
             )
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GIC_COD_GASTO_INFO_CONTABIL    						      GPV_NUM_GASTO_GESTORIA,          
+          MIG2.GIC_COD_GASTO_PROVEEDOR    						      GPV_NUM_GASTO_GESTORIA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN NOT_EXISTS ON NOT_EXISTS.GIC_COD_GASTO_INFO_CONTABIL = MIG2.GIC_COD_GASTO_INFO_CONTABIL
+          INNER JOIN NOT_EXISTS ON NOT_EXISTS.GIC_COD_GASTO_PROVEEDOR = MIG2.GIC_COD_GASTO_PROVEEDOR
           '
           ;
           
@@ -183,23 +183,23 @@ BEGIN
             ,BORRADO
           )
           SELECT
-            '||V_ESQUEMA||'.S_GIC_GASTOS_INFO_CONTABILIDAD.NEXTVAL                                                    AS GIC_ID,
-            GPV.GPV_ID                                                                                                                AS GPV_ID,
-            EJE.EJE_ID                                                                                                  AS EJE_ID,
-            PPR.DD_PPR_ID                                                                                                AS DD_PPR_ID,
-            CCO.DD_CCO_ID                                                                                                  AS DD_CCO_ID,
-            MIG2.GIC_FECHA_CONTABILIZACION                                                                              AS GIC_FECHA_CONTABILIZACION,
-            DEP.DD_DEP_ID                                                                                                  AS DD_DES_ID_CONTABILIZA,
-            MIG2.GIC_FECHA_DEVENGO_ESPECIAL                                                                           AS GIC_FECHA_DEVENGO_ESPECIAL,
-            TPE.DD_TPE_ID                                                                                                 AS DD_TPE_ID_ESPECIAL,
-            PPR2.DD_PPR_ID                                                                                                AS DD_PPR_ID_ESPECIAL,
-            CCO2.DD_CCO_ID                                                                                                  AS DD_CCO_ID_ESPECIAL,
-            0                                                                                                                                AS VERSION,
-            ''MIG2''                                                                                                                         AS USUARIOCREAR,
-            SYSDATE                                                                                                                    AS FECHACREAR,
-            0                                                                                                                                AS BORRADO
+            '||V_ESQUEMA||'.S_GIC_GASTOS_INFO_CONTABILIDAD.NEXTVAL      AS GIC_ID,
+            GPV.GPV_ID                                                  AS GPV_ID,
+            EJE.EJE_ID                                                  AS EJE_ID,
+            PPR.DD_PPR_ID                                               AS DD_PPR_ID,
+            CCO.DD_CCO_ID                                               AS DD_CCO_ID,
+            MIG2.GIC_FECHA_CONTABILIZACION                              AS GIC_FECHA_CONTABILIZACION,
+            DEP.DD_DEP_ID                                               AS DD_DES_ID_CONTABILIZA,
+            MIG2.GIC_FECHA_DEVENGO_ESPECIAL                             AS GIC_FECHA_DEVENGO_ESPECIAL,
+            TPE.DD_TPE_ID                                               AS DD_TPE_ID_ESPECIAL,
+            PPR2.DD_PPR_ID                                              AS DD_PPR_ID_ESPECIAL,
+            CCO2.DD_CCO_ID                                              AS DD_CCO_ID_ESPECIAL,
+            0                                                           AS VERSION,
+            ''MIG2''                                                    AS USUARIOCREAR,
+            SYSDATE                                                     AS FECHACREAR,
+            0                                                           AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-          LEFT JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_INFO_CONTABIL AND GPV.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_PROVEEDOR AND GPV.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ANYO = MIG2.GIC_EJERCICIO AND EJE.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR ON PPR.DD_PPR_CODIGO = MIG2.GIC_COD_PARTIDA_PRESUPUES AND PPR.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO ON CCO.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONTABLE AND CCO.BORRADO = 0
@@ -208,7 +208,7 @@ BEGIN
           LEFT JOIN '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR2 ON PPR2.DD_PPR_CODIGO = MIG2.GIC_COD_PAR_PRESUP_ESPECIAL AND PPR2.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO2 ON CCO2.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONT_ESPECIAL AND CCO2.BORRADO = 0          
           LEFT JOIN '||V_ESQUEMA||'.MIG2_EJE_NOT_EXISTS EJE_NOT ON EJE_NOT.EJE_ANYO = MIG2.GIC_EJERCICIO
-          LEFT JOIN '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS GPV_NOT ON GPV_NOT.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_INFO_CONTABIL
+          LEFT JOIN '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS GPV_NOT ON GPV_NOT.GPV_NUM_GASTO_GESTORIA = MIG2.GIC_COD_GASTO_PROVEEDOR
           WHERE EJE_NOT.EJE_ANYO IS NULL
           AND GPV_NOT.GPV_NUM_GASTO_GESTORIA IS NULL
       '

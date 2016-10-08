@@ -75,7 +75,7 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     private DDTipoPeriocidad tipoPeriocidadEspecial;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_PRE_ID_ESPECIAL")
+    @JoinColumn(name = "DD_PPR_ID_ESPECIAL")
     private DDPartidaPresupuestaria partidaPresupuestariaEspecial;
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -86,7 +86,7 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     private Date fechaContabilizacion;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_DES_ID_CONTABILIZA")
+    @JoinColumn(name = "DD_DEG_ID_CONTABILIZA")
     private DDDestinatarioGasto contabilizadoPor;
     
     

@@ -16,6 +16,8 @@ rm -Rf /output/*
 
 cd /input
 
+echo "WARNING - Vamos a eliminar el repo remoto 'sencha'"
+sencha pacakge repo remove sencha
 echo "Compilando"
 sencha app build testing
 echo "Copiando"

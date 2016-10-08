@@ -7,8 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +14,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class ClientesController {
@@ -63,13 +62,13 @@ public class ClientesController {
 	@RequestMapping(method = RequestMethod.POST, value = "/clientes")
 	public void saveOrUpdateClienteComercial(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		ClienteRequestDto jsonData = null;
-		List<String> errorsList = null;
 		ClienteComercial cliente = null;
 
 		ClienteDto clienteDto = null;
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
+		HashMap<String, List<String>> errorsList = null;
 
 		try {
 
@@ -85,17 +84,21 @@ public class ClientesController {
 				for (int i = 0; i < listaClienteDto.size(); i++) {
 
 					ClienteComercial clc = null;
-					errorsList = new ArrayList<String>();
 					map = new HashMap<String, Object>();
 					clienteDto = listaClienteDto.get(i);
-
 					cliente = clienteComercialApi.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
 					if (Checks.esNulo(cliente)) {
-						errorsList = clienteComercialApi.saveClienteComercial(clienteDto);
+						errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
+						if (errorsList.size() == 0) {
+							clienteComercialApi.saveClienteComercial(clienteDto);
+						}
 
 					} else {
-						errorsList = clienteComercialApi.updateClienteComercial(cliente, clienteDto,
-								jsonFields.getJSONArray("data").get(i));
+						errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
+						if (errorsList.size() == 0) {
+							clienteComercialApi.updateClienteComercial(cliente, clienteDto,
+									jsonFields.getJSONArray("data").get(i));
+						}
 
 					}
 
@@ -108,7 +111,8 @@ public class ClientesController {
 						map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 						map.put("idClienteRem", clienteDto.getIdClienteRem());
 						map.put("success", false);
-						// map.put("errorMessages", errorsList);
+						map.put("invalidFields", errorsList);
+
 					}
 					listaRespuesta.add(map);
 
@@ -149,7 +153,7 @@ public class ClientesController {
 	public void deleteClienteComercial(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 
 		ClienteRequestDto jsonData = null;
-		List<String> errorsList = null;
+		HashMap<String, List<String>> errorsList = null;
 		ClienteDto clienteDto = null;
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
@@ -163,10 +167,10 @@ public class ClientesController {
 
 				map = new HashMap<String, Object>();
 				clienteDto = listaClienteDto.get(i);
-
-				errorsList = clienteComercialApi.deleteClienteComercial(clienteDto);
+				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
 
 				if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
+					clienteComercialApi.deleteClienteComercial(clienteDto);
 					map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 					map.put("idClienteRem", clienteDto.getIdClienteRem());
 					map.put("success", true);

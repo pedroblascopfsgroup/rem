@@ -62,7 +62,7 @@ public interface ClienteComercialApi {
 	 * @param clienteDto con la información del clienteComercial a dar de alta
 	 * @return List<String> con la lista de errores detectados
 	 */
-	public List<String> saveClienteComercial(ClienteDto clienteDto);
+	public void saveClienteComercial(ClienteDto clienteDto);
 	
 	
 	/**

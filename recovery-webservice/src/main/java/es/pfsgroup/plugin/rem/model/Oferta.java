@@ -149,6 +149,8 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_FECHA_RECHAZO")
 	private Date fechaRechazoOferta;
     
+	@Column(name="OFR_DESDE_TANTEO")
+	private Boolean desdeTanteo;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -406,5 +408,12 @@ public class Oferta implements Serializable, Auditable {
 		this.fechaRechazoOferta = fechaRechazoOferta;
 	}
 	
+	public Boolean getDesdeTanteo() {
+		return desdeTanteo;
+	}
+
+	public void setDesdeTanteo(Boolean desdeTanteo) {
+		this.desdeTanteo = desdeTanteo;
+	}
 
 }

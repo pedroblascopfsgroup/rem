@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -99,5 +101,39 @@ public interface OfertaApi {
 	 */	
 	public DDEstadoOferta getDDEstadosOfertaByCodigo (String codigo);
 	
+	/**
+	 * Método que saca la oferta a partir de una tarea externa
+	 * @param tareaExterna
+	 * @return Oferta
+	 */
+	public Oferta tareaExternaToOferta(TareaExterna tareaExterna);
+	
+	/**
+	 * Método que obtiene la oferta aceptada de un activo en caso de haberla.
+	 * @param activo
+	 * @return Oferta
+	 */
+	public Oferta getOfertaAceptadaByActivo(Activo activo);
+	
+	/**
+	 * Método que comprueba si un activo tiene reserva.
+	 * @param tareaExterna
+	 * @return true si tiene reserva, false si no la tiene.
+	 */
+	public boolean checkReserva(TareaExterna tareaExterna);
 
+	/**
+	 * Método que comprueba si el activo tiene derecho de tanteo por la Generalitat
+	 * @param tareaExterna
+	 * @return true si tiene derecho de tanteo, false si lo tiene
+	 */
+	public boolean checkDerechoTanteo(TareaExterna tareaExterna);
+	
+	/**
+	 * Método que comprueba si la oferta viene de una oferta de tanteo de la Generalitat
+	 * @param tareaExterna
+	 * @return true si viene, false si es nueva
+	 */
+	public boolean checkDeDerechoTanteo(TareaExterna tareaExterna);
+	
 }

@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -26,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaRequestDto;
@@ -40,10 +42,13 @@ public class ReservaController {
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private RestApi restApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/reserva")
-	public ModelAndView reservaInmueble(ModelMap model, RestRequestWrapper request) {
+	public void reservaInmueble(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		
 		final String COBRO_RESERVA = "1";
 		final String COBRO_VENTA = "3";
@@ -203,7 +208,7 @@ public class ReservaController {
 			model.put("error", e.getMessage());
 		}
 	
-		return new ModelAndView("jsonView", model);
+		restApi.sendResponse(response, model);
 	}
 	
 	

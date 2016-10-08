@@ -46,6 +46,8 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
@@ -71,6 +73,8 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -83,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -90,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -158,6 +164,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+
+	@Autowired
+	private OfertaApi ofertaApi;
 	
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -866,6 +878,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// Trámite de actualización de estados
 		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_PUBLICACIONES)){
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T012");
+		}
+		
+		// Módulo de Expediente comercial ----------
+		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_COMERCIALIZACION)){
+			if(!Checks.esNulo(trabajo.getActivo())){
+				Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(trabajo.getActivo());
+				if(!Checks.esNulo(oferta)){
+					if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())){
+						tipoTramite = tipoProcedimientoManager.getByCodigo("T013");
+					}else{
+						tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
+					}
+				}
+			}
 		}
 		
 		if(Checks.esNulo(tipoTramite.getId())){
@@ -2114,7 +2140,7 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 					
 				} else {
 					
-					List<String> error = restApi.validateRequestObject(trabajoDto);
+					HashMap<String, List<String>> error = restApi.validateRequestObject(trabajoDto);
 					if (!Checks.esNulo(error) && !error.isEmpty()) {
 						listaErrores.add("No se cumple la especificación de parámetros para el alta de IdTrabajoWebcom: " + trabajoDto.getIdTrabajoWebcom() + ".Traza: " + error);			
 					}			
@@ -2288,8 +2314,50 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 	   
 	   return dtoFichaTrabajo;
    }
-	
    
+   @Override
+   public Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna){
+	   Trabajo trabajo = null;
+	   TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
+	   if(!Checks.esNulo(tareaActivo)){
+		   ActivoTramite tramite = tareaActivo.getTramite();
+		   if(!Checks.esNulo(tramite)){
+			   trabajo = tramite.getTrabajo();
+		   }
+	   }
+	   return trabajo;   
+   }
+   
+
+   @Override
+   public boolean checkFormalizacion(TareaExterna tareaExterna){
+	   Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+	   if(!Checks.esNulo(trabajo)){
+		   Activo primerActivo = trabajo.getActivo();
+		   if(!Checks.esNulo(primerActivo)){
+			   PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(primerActivo.getId());
+			   return(perimetro.getAplicaFormalizar() == 1);
+		   }
+	   }
+	   return false;	   			   
+   }
+	
+	@Override
+	public boolean checkAtribuciones(TareaExterna tareaExterna) {
+		return false;
+	}
+	
+	@Override
+	public boolean checkSareb(TareaExterna tareaExterna){
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if(!Checks.esNulo(trabajo)){
+			Activo primerActivo = trabajo.getActivo();
+			if(!Checks.esNulo(primerActivo)){
+				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera()));
+			}
+		}
+		return false;
+	}
    
 
 }

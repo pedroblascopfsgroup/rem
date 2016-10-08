@@ -252,10 +252,10 @@ public class ProveedoresController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView savePersonasContacto(DtoPersonaContacto dtoPersonaContacto, ModelMap model) {
+	public ModelAndView createPersonasContacto(DtoPersonaContacto dtoPersonaContacto, ModelMap model) {
 		
 		try{
-			boolean success = proveedoresApi.savePersonasContacto(dtoPersonaContacto);
+			boolean success = proveedoresApi.createPersonasContacto(dtoPersonaContacto);
 			model.put("success", success);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -263,9 +263,22 @@ public class ProveedoresController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto, ModelMap model) {
+		
+		try{
+			boolean success = proveedoresApi.updatePersonasContacto(dtoPersonaContacto);
+			model.put("success", success);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -280,7 +293,6 @@ public class ProveedoresController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -296,7 +308,6 @@ public class ProveedoresController {
 		}
 		
 		return createModelAndViewJson(model);
-		
 	}
 	
 	@SuppressWarnings("unchecked")

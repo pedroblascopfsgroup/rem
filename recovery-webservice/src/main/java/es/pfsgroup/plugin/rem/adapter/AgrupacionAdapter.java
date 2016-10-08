@@ -171,6 +171,9 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion", agrupacionTemp.getProvincia().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo", agrupacionTemp.getProvincia().getCodigo());
 					}
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "fechaFinVigencia", agrupacionTemp.getFechaFinVigencia());
+					BeanUtils.copyProperty(dtoAgrupacion, "fechaInicioVigencia", agrupacionTemp.getFechaInicioVigencia());
 				}
 				
 				// SI ES TIPO OBRA NUEVA
@@ -911,6 +914,7 @@ public class AgrupacionAdapter {
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
+			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 			
 			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
 			
@@ -1097,12 +1101,42 @@ public class AgrupacionAdapter {
 				activoAgrupacionApi.saveOrUpdate(obraNueva);
 				
 			} catch (Exception e) {
-				
 				e.printStackTrace();
 				return false;
 			}
+		}
+		
+		// Si es de tipo 'Asistida'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
 			
-		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+			try {
+				beanUtilNotNull.copyProperties(asistida, dto);
+				
+				if (dto.getMunicipioCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+					
+					asistida.setLocalidad(municipioNuevo);
+				}
+				
+				if (dto.getProvinciaCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+					DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+					
+					asistida.setProvincia(provinciaNueva);
+				}
+
+				activoAgrupacionApi.saveOrUpdate(asistida);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		// Si es de tipo 'Restringida'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			
 			ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 			
@@ -1126,11 +1160,8 @@ public class AgrupacionAdapter {
 					
 					restringida.setProvincia(provinciaNueva);
 				}
-				
-				//ActivoAgrupacionActivo activoAgrupacionNuevo = genericDao.save(ActivoAgrupacionActivo.class, activoAgrupacion);
 
 				activoAgrupacionApi.saveOrUpdate(restringida);
-				
 				
 			} catch (Exception e) {
 				
@@ -1140,8 +1171,6 @@ public class AgrupacionAdapter {
 		}
 		
 		return true;
-		
-			
 	}
 
 	

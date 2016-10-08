@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -19,6 +20,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -33,10 +35,13 @@ public class PortalesController {
 		private UsuarioManager usuarioApi;
 		
 		private final Log logger = LogFactory.getLog(getClass());
+		
+		@Autowired
+		private RestApi restApi;
 
 		@SuppressWarnings("unchecked")
 		@RequestMapping(method = RequestMethod.POST, value = "/portales")
-		public ModelAndView portales(ModelMap model, RestRequestWrapper request) {
+		public void portales(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 			
 			PortalesRequestDto jsonData = null;		
 			Activo activo = null;
@@ -113,7 +118,7 @@ public class PortalesController {
 				
 			}
 			
-			return new ModelAndView("jsonView", model);
+			restApi.sendResponse(response, model);
 		}
 	
 	

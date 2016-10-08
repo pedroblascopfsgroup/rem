@@ -377,26 +377,12 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Transactional(readOnly=false)
 	@Override
-	public boolean savePersonasContacto(DtoPersonaContacto dtoPersonaContacto) {
-		ActivoProveedorContacto personaContacto;
-		Long personaContactoID = null;
-		
-		try{
-			personaContactoID = Long.parseLong(dtoPersonaContacto.getId());
-		}catch(NumberFormatException n){
-			// No es un número. Se está creando uno nuevo.
-		}
-		
-		if(!Checks.esNulo(personaContactoID)) {
-			Filter personaIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", personaContactoID);
-			personaContacto = genericDao.get(ActivoProveedorContacto.class, personaIDFilter);
-		} else {
-			// Si no se ha obtenido un ID es que no existe, por lo tanto se está creando.
-			personaContacto = new ActivoProveedorContacto();
-		}
+	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto) {
+		ActivoProveedorContacto personaContacto = new ActivoProveedorContacto();
 		
 		try {
 			ActivoProveedor proveedor = proveedoresDao.getProveedorById(Long.parseLong(dtoPersonaContacto.getProveedorID()));
+			
 			if(!Checks.esNulo(proveedor)) {
 				beanUtilNotNull.copyProperty(personaContacto, "proveedor", proveedor);
 				if(!Checks.esNulo(proveedor.getTipoProveedor())){
@@ -404,13 +390,68 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 						if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(proveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
 							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
 							beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
-							
 						} else {
 							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
 						}
 					}
 				}
 			}
+			
+			if(!Checks.esNulo(dtoPersonaContacto.getCodigoUsuario())) {
+				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getCodigoUsuario()));
+				Usuario usuario = genericDao.get(Usuario.class, usuFilter);
+				beanUtilNotNull.copyProperty(personaContacto, "usuario", usuario);
+			}
+			if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
+				Filter direccionFilter = genericDao.createFilter(FilterType.EQUALS, "id", dtoPersonaContacto.getDelegacion());
+				ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, direccionFilter);
+				beanUtilNotNull.copyProperty(personaContacto, "delegacion", delegacion);
+			}
+			beanUtilNotNull.copyProperty(personaContacto, "telefono1", dtoPersonaContacto.getTelefono());
+			beanUtilNotNull.copyProperty(personaContacto, "email", dtoPersonaContacto.getEmail());
+			beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
+			beanUtilNotNull.copyProperty(personaContacto, "fechaAlta", dtoPersonaContacto.getFechaAlta());
+			beanUtilNotNull.copyProperty(personaContacto, "fechaBaja", dtoPersonaContacto.getFechaBaja());
+			beanUtilNotNull.copyProperty(personaContacto, "observaciones", dtoPersonaContacto.getObservaciones());
+			
+			genericDao.save(ActivoProveedorContacto.class, personaContacto);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Transactional(readOnly=false)
+	@Override
+	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto) {
+		Filter personaIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getId()));
+		ActivoProveedorContacto personaContacto = genericDao.get(ActivoProveedorContacto.class, personaIDFilter);
+		if(!Checks.esNulo(personaContacto)) {
+			return false;
+		}
+
+		try {
+			ActivoProveedor proveedor = proveedoresDao.getProveedorById(Long.parseLong(dtoPersonaContacto.getProveedorID()));
+			
+			if(!Checks.esNulo(proveedor)) {
+				beanUtilNotNull.copyProperty(personaContacto, "proveedor", proveedor);
+				if(!Checks.esNulo(proveedor.getTipoProveedor())){
+					if(!Checks.esNulo(proveedor.getTipoProveedor().getTipoEntidadProveedor())){
+						if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(proveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
+							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
+							beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
+						} else {
+							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
+						}
+					}
+				}
+			}
+			
 			if(!Checks.esNulo(dtoPersonaContacto.getCodigoUsuario())) {
 				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getCodigoUsuario()));
 				Usuario usuario = genericDao.get(Usuario.class, usuFilter);

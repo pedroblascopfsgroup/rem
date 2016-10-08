@@ -66,6 +66,15 @@ public class ActivoLocalComercial extends ActivoInfoComercial implements Seriali
 	
 	@Column(name = "LCO_OTROS_OTRAS_CARACT")
 	private String otrosOtrasCaracteristicas;
+	
+	@Column(name = "LCO_NUMERO_ESTANCIAS")
+	private Integer comercialNumEstancias;
+	
+	@Column(name = "LCO_NUMERO_BANYOS")
+	private Integer comercialNumBanyos;
+	
+	@Column(name = "LCO_NUMERO_ASEOS")
+	private Integer comercialNumAseos;
 
 	public Float getMtsFachadaPpal() {
 		return mtsFachadaPpal;
@@ -169,6 +178,30 @@ public class ActivoLocalComercial extends ActivoInfoComercial implements Seriali
 
 	public void setOtrosOtrasCaracteristicas(String otrosOtrasCaracteristicas) {
 		this.otrosOtrasCaracteristicas = otrosOtrasCaracteristicas;
+	}
+
+	public Integer getComercialNumEstancias() {
+		return comercialNumEstancias;
+	}
+
+	public void setComercialNumEstancias(Integer comercialNumEstancias) {
+		this.comercialNumEstancias = comercialNumEstancias;
+	}
+
+	public Integer getComercialNumBanyos() {
+		return comercialNumBanyos;
+	}
+
+	public void setComercialNumBanyos(Integer comercialNumBanyos) {
+		this.comercialNumBanyos = comercialNumBanyos;
+	}
+
+	public Integer getComercialNumAseos() {
+		return comercialNumAseos;
+	}
+
+	public void setComercialNumAseos(Integer comercialNumAseos) {
+		this.comercialNumAseos = comercialNumAseos;
 	}
 
 }

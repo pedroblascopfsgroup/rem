@@ -28,7 +28,8 @@ public class WebcomRequestUtils {
 
 	public static final String JSON_PROPERTY_ID = "id";
 
-	private static final Log logger = LogFactory.getLog(WebcomRequestUtils.class);
+	private static final Log logger = LogFactory
+			.getLog(WebcomRequestUtils.class);
 
 	private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
 
@@ -46,20 +47,25 @@ public class WebcomRequestUtils {
 		return json;
 	}
 
-	private static JSONObject createJSONData(Map<String, Object> params) {
+	public static JSONObject createJSONData(Map<String, Object> params) {
 		JSONObject data = new JSONObject();
 		if (params != null) {
 			for (Entry<String, Object> e : params.entrySet()) {
 				if (e.getValue() != null) {
-					if (!Collection.class.isAssignableFrom(e.getValue().getClass())) {
+					if (!Collection.class.isAssignableFrom(e.getValue()
+							.getClass())) {
 						// Añadimos un valor simple
-						data.put(e.getKey(), convertToStringIfNecessary(e.getValue()));
+						data.put(e.getKey(),
+								convertToStringIfNecessary(e.getValue()));
 					} else {
 						// Añadimos un list de datas
 						JSONArray array = new JSONArray();
 						for (Object o : ((Collection) e.getValue())) {
 							if (Map.class.isAssignableFrom(o.getClass())) {
-								array.add(createJSONData((Map) o));
+								JSONObject json = createJSONData((Map) o);
+								if (!array.contains(json)) {
+									array.add(json);
+								}
 							}
 						}
 						data.put(e.getKey(), array);
@@ -120,8 +126,8 @@ public class WebcomRequestUtils {
 	 * anotacion @WebcomRequired en el DTO.
 	 * 
 	 * <p>
-	 * Este método soporta DTO's anidados siempre y cuando usemos la
-	 * anotación @NestedDto en la referencia al SubDto.
+	 * Este método soporta DTO's anidados siempre y cuando usemos la anotación @NestedDto
+	 * en la referencia al SubDto.
 	 * </p>
 	 * 
 	 * @param dto
@@ -159,7 +165,7 @@ public class WebcomRequestUtils {
 			if (valueOf != null) {
 				if (valueOf instanceof Date) {
 					return formatDate((Date) valueOf);
-				}else if (valueOf instanceof Boolean){
+				} else if (valueOf instanceof Boolean) {
 					return valueOf;
 				} else {
 					return valueOf.toString();

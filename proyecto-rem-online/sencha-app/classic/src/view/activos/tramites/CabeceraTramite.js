@@ -108,29 +108,29 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 											                		src: '{getSrcCartera}'
 											                	}
 											                },
-											                {
-																xtype:'container',
-																defaultType: 'displayfield',
-																layout: {
-																    type: 'hbox',
-																    align: 'stretch'
-																},
-																items: [
-																
-																	{ 
-																		xtype: 'imagefield',
-																		fieldLabel: '',
-																		cls: 'cabecera-info-field',
-																		width: 40,
-																		bind: {
-																			src: '{getSrcMultiActivo}'																				
-																	    }
-																	},
-													                { 
-																		bind: '<div style="color: #26607c;font-size: 20px">'+'{tramite.countActivos}'+'</div>'
-																	}
-																]
-															},
+//											                {
+//																xtype:'container',
+//																defaultType: 'displayfield',
+//																layout: {
+//																    type: 'hbox',
+//																    align: 'stretch'
+//																},
+//																items: [
+//																
+//																	{ 
+//																		xtype: 'imagefield',
+//																		fieldLabel: '',
+//																		cls: 'cabecera-info-field',
+//																		width: 40,
+//																		bind: {
+//																			src: '{getSrcMultiActivo}'																				
+//																	    }
+//																	},
+//													                { 
+//																		bind: '<div style="color: #26607c;font-size: 20px">'+'{tramite.countActivos}'+'</div>'
+//																	}
+//																]
+//															},
 											                { 
 																fieldLabel: HreRem.i18n('fieldlabel.estado'),
 																bind:		'{tramite.estado}'

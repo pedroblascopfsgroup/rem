@@ -87,7 +87,7 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     SUBTIPOS_PROVEEDOR: {
-    	MEDIADOR: '20'
+    	MEDIADOR: '04'
     },
     
     MAP_TAB_ACTIVO_XTYPE: {

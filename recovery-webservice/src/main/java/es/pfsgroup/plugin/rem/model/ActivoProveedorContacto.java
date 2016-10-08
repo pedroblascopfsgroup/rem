@@ -297,4 +297,12 @@ public class ActivoProveedorContacto implements Serializable, Auditable {
 		this.observaciones = observaciones;
 	}
 
+	public ActivoProveedorDireccion getDelegacion() {
+		return delegacion;
+	}
+
+	public void setDelegacion(ActivoProveedorDireccion delegacion) {
+		this.delegacion = delegacion;
+	}
+
 }

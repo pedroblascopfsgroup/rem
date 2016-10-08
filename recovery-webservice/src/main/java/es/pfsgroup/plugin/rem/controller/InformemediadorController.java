@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBanyo;
 import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
 import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
@@ -29,11 +31,11 @@ import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
@@ -51,13 +53,16 @@ public class InformemediadorController {
 
 	@Autowired
 	private InformeMediadorApi informeMediadorApi;
+	
+	@Autowired
+	private DtoToEntityApi dtoToEntity;
 
 	@Autowired
 	private ActivoApi activoApi;
 
 	@SuppressWarnings({ "unchecked" })
 	@RequestMapping(method = RequestMethod.POST, value = "/informemediador")
-	public ModelAndView saveInformeMediador(ModelMap model, RestRequestWrapper request) {
+	public void saveInformeMediador(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		Map<String, Object> map = null;
 		InformemediadorRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
@@ -93,69 +98,69 @@ public class InformemediadorController {
 
 					ArrayList<Serializable> entitys = new ArrayList<Serializable>();
 					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
-						informeEntity = (ActivoLocalComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoLocalComercial.class, "activo.numActivo");
 						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
-						ActivoEdificio edificioEntity = (ActivoEdificio) restApi.obtenerObjetoEntity(
+						ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo");
-						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class, "activo.numActivo");
 						edificioEntity.setInfoComercial(informeEntity);
 						entitys.add(informeEntity);
 						entitys.add(edificioEntity);
 
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
-						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class, "activo.numActivo");
 						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)) {
-						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class, "activo.numActivo");
 						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
-						informeEntity = (ActivoPlazaAparcamiento) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoPlazaAparcamiento.class, "activo.numActivo");
 						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
-						informeEntity = (ActivoInfoComercial) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class, "activo.numActivo");
 						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
-						informeEntity = (ActivoVivienda) restApi.obtenerObjetoEntity(informe.getIdActivoHaya(),
+						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoVivienda.class, "activo.numActivo");
-						ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) restApi
+						ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
 										"infoComercial.activo.numActivo");
-						ActivoCarpinteriaInterior activoCarpinteriaInt = (ActivoCarpinteriaInterior) restApi
+						ActivoCarpinteriaInterior activoCarpinteriaInt = (ActivoCarpinteriaInterior) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaInterior.class,
 										"infoComercial.activo.numActivo");
 						
-						ActivoCarpinteriaExterior activoCarpinteriaExterior = (ActivoCarpinteriaExterior) restApi
+						ActivoCarpinteriaExterior activoCarpinteriaExterior = (ActivoCarpinteriaExterior) dtoToEntity
 						.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaExterior.class,
 								"infoComercial.activo.numActivo");
 						
-						ActivoParamentoVertical paramientoVertical = (ActivoParamentoVertical) restApi
+						ActivoParamentoVertical paramientoVertical = (ActivoParamentoVertical) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoParamentoVertical.class,
 										"infoComercial.activo.numActivo");
 						
-						ActivoSolado solado = (ActivoSolado) restApi
+						ActivoSolado solado = (ActivoSolado) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoSolado.class,
 										"infoComercial.activo.numActivo");
 						
-						ActivoCocina cocina = (ActivoCocina) restApi
+						ActivoCocina cocina = (ActivoCocina) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCocina.class,
 										"infoComercial.activo.numActivo");
 						
-						ActivoBanyo banyo = (ActivoBanyo) restApi
+						ActivoBanyo banyo = (ActivoBanyo) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoBanyo.class,
 										"infoComercial.activo.numActivo");
 						
-						ActivoInstalacion instalacion = (ActivoInstalacion) restApi
+						ActivoInstalacion instalacion = (ActivoInstalacion) dtoToEntity
 						.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInstalacion.class,
 								"infoComercial.activo.numActivo");
 						
-						ActivoZonaComun zonaComun =(ActivoZonaComun) restApi
+						ActivoZonaComun zonaComun =(ActivoZonaComun) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoZonaComun.class,
 										"infoComercial.activo.numActivo");
 						
@@ -173,7 +178,7 @@ public class InformemediadorController {
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activoApi.getByNumActivo(informe.getIdActivoHaya()));
 					}
-					informeEntity = (ActivoInfoComercial) restApi.saveDtoToBbdd(informe, entitys);
+					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys);
 
 					map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 					map.put("idinformeMediadorRem", informeEntity.getId());
@@ -198,8 +203,9 @@ public class InformemediadorController {
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
 		}
-
-		return new ModelAndView("jsonView", model);
+		
+		restApi.sendResponse(response,model);
+		//return new ModelAndView("jsonView", model);
 
 	}
 }

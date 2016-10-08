@@ -70,31 +70,6 @@ public class WebcomRequestUtils {
 		return data;
 	}
 
-//	private static Map<String, String> toStringParameters(Map<String, Object> params) {
-//		HashMap<String, String> strParams = new HashMap<String, String>();
-//		if ((params != null) && (!params.isEmpty())) {
-//			for (Entry<String, Object> p : params.entrySet()) {
-//				Object value = p.getValue();
-//				if (value != null) {
-//
-//					Object valueOf = WebcomDataType.valueOf(value);
-//					if (valueOf != null) {
-//						if (valueOf instanceof Date) {
-//							strParams.put(p.getKey(), formatDate((Date) valueOf));
-//						} else {
-//							strParams.put(p.getKey(), valueOf.toString());
-//						}
-//					} else {
-//						strParams.put(p.getKey(), null);
-//					}
-//
-//				}
-//
-//			}
-//		}
-//		return strParams;
-//	}
-
 	private static String computeRequestId() {
 		long timestamp = ((Date) new Date()).getTime();
 		int threadId = Math.abs(Thread.currentThread().getName().hashCode());

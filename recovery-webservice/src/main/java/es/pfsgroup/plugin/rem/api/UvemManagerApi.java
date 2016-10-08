@@ -10,6 +10,7 @@ import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 
 /**
  * Interface operaciones UVEM
@@ -118,7 +119,7 @@ public interface UvemManagerApi {
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public GMPDJB13_INS consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
 	
 	
 	
@@ -128,7 +129,7 @@ public interface UvemManagerApi {
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public GMPDJB13_INS altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+	public ResultadoInstanciaDecisionDto altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
 	
 	
 	
@@ -138,7 +139,7 @@ public interface UvemManagerApi {
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public GMPDJB13_INS modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+	public ResultadoInstanciaDecisionDto modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
 	
 
 	

@@ -19,35 +19,41 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de Tipos de una oferta.
+ * Modelo que gestiona el diccionario de tipos de incidencia.
  * 
- * @author Jose Villel
+ * @author Daniel Gutiérrez
  *
  */
 @Entity
-@Table(name = "DD_TOF_TIPOS_OFERTA", schema = "${entity.schema}")
+@Table(name = "DD_TIN_TIPO_INCI", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoOferta implements Auditable, Dictionary {
-		
-	public static final String CODIGO_VENTA= "01";
-	public static final String CODIGO_ALQUILER= "02";
-	
+public class DDTipoIncidencia implements Auditable, Dictionary {
+    
+    public static final String CODIGO_EQUIPO_TECNICO = "01";
+    public static final String CODIGO_GESTION_COMERCIAL = "02";
+    public static final String CODIGO_GESTION_OCUPACIONAL = "03";
+    public static final String CODIGO_GESTION_RECUPERACIONES = "04";
+    public static final String CODIGO_FIRMA = "05";
+    public static final String CODIGO_SIN_GESTION = "06";
+    public static final String CODIGO_INCIDENCIA = "07";    
+    
+    
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TOF_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoOfertaGenerator")
-	@SequenceGenerator(name = "DDTipoOfertaGenerator", sequenceName = "S_DD_TOF_TIPOS_OFERTA")
+	@Column(name = "DD_TIN_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoIncidenciaGenerator")
+	@SequenceGenerator(name = "DDTipoIncidenciaGenerator", sequenceName = "S_DD_TIN_TIPO_INCI")
 	private Long id;
 	    
-	@Column(name = "DD_TOF_CODIGO")   
+	@Column(name = "DD_TIN_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TOF_DESCRIPCION")   
+	@Column(name = "DD_TIN_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TOF_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TIN_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   

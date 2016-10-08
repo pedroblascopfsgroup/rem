@@ -1669,6 +1669,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 
+
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean solicitarTasacion(Long idActivo) throws Exception {
@@ -1765,4 +1766,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return mensaje;
 	}
+
 }

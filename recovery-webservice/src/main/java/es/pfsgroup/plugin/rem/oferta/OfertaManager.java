@@ -627,6 +627,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
+	public Oferta tareaExternaToOferta(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = null;
+		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		if(!Checks.esNulo(trabajo)){
+			Activo activo = trabajo.getActivo();
+			if(!Checks.esNulo(activo)){
+				ofertaAceptada = getOfertaAceptadaByActivo(activo);
+			}
+		}
+		return ofertaAceptada;
+	}
+	
+	@Override
 	public Oferta getOfertaAceptadaByActivo(Activo activo){
 		List<ActivoOferta> listaOfertas = activo.getOfertas();
 		
@@ -639,21 +652,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
+	public boolean checkDerechoTanteo(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if(!Checks.esNulo(expediente))
+				if(!Checks.esNulo(expediente.getCondicionante()))
+					return (expediente.getCondicionante().getSujetoTanteoRetracto() == 1);
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean checkDeDerechoTanteo(TareaExterna tareaExterna){
 		return false;
 	}
 	
-	
 	@Override
 	public boolean checkReserva(TareaExterna tareaExterna){
-		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
-		if(!Checks.esNulo(trabajo)){
-			Activo activo = trabajo.getActivo();
-			if(!Checks.esNulo(activo)){
-				Oferta ofertaAceptada = getOfertaAceptadaByActivo(activo);
-				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-				return !Checks.esNulo(expediente.getReserva());
-			}
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			return !Checks.esNulo(expediente.getReserva());
 		}
 		return false;
 	}

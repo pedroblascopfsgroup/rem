@@ -93,6 +93,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				            	    	name:		'numDocumentoCliente',
 				            	    	allowBlank: false,
 										bind:		'{oferta.numDocumentoCliente}'
+				            	    },
+				            	    {
+				            	    	xtype: 		'checkboxfield',
+				            	    	boxLabel: 	HreRem.i18n('fieldlabel.dederechotanteo'),
+				            	    	name:		'dederechotanteo',
+				            	    	allowBlank:	false,
+				            	    	bind:		'{oferta.deDerechoTanteo}',
+							        	inputValue: true
 				            	    }
 									
 

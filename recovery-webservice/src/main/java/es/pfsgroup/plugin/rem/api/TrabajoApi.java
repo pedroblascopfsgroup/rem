@@ -494,13 +494,6 @@ public interface TrabajoApi {
 		public boolean checkFormalizacion(TareaExterna tareaExterna);
 		
 		/**
-		 * Método que comprueba si el activo tiene derecho de tanteo por la Generalitat
-		 * @param tareaExterna
-		 * @return true si tiene derecho de tanteo, false si lo tiene
-		 */
-		public boolean checkDerechoTanteo(TareaExterna tareaExterna);
-		
-		/**
 		 * Método que comprueba si el activo tiene atribuciones para sancionar el expediente
 		 * @param tareaExterna
 		 * @return true si tiene atribuciones, false si no las tiene

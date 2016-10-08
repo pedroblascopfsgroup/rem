@@ -336,8 +336,8 @@
             	return ofertaManager.checkDeDerechoTanteo(tareaExterna);
             }
      		def checkDerechoTanteo = {
-     			def trabajoManager = ctx.getBean("trabajoManager");
-     			return trabajoManager.checkDerechoTanteo(tareaExterna);
+     			def ofertaManager = ctx.getBean("ofertaManager");
+     			return ofertaManager.checkDerechoTanteo(tareaExterna);
      		}
             def checkAtribuciones = {
             	def trabajoManager = ctx.getBean("trabajoManager");

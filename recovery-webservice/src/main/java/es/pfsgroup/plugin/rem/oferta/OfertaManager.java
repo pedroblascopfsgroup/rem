@@ -665,6 +665,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public boolean checkDeDerechoTanteo(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			if(!Checks.esNulo(ofertaAceptada.getDesdeTanteo())){
+				return ofertaAceptada.getDesdeTanteo();
+			}
+		}
 		return false;
 	}
 	

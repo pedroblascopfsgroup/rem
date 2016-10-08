@@ -457,8 +457,9 @@ public interface ActivoApi {
 		 * 
 		 * @param idActivo : ID del activo.
 		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 * @throws Exception Devuelve una excepción si no se ha podido obtener el ID de la tasación.
 		 */
-		public Boolean solicitarTasacion(Long idActivo);
+		public Boolean solicitarTasacion(Long idActivo) throws Exception;
 
 		/**
 		 * Este método obtiene la solicitud de tasacion a Bankia por el ID del activo.

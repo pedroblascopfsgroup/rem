@@ -1671,14 +1671,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean solicitarTasacion(Long idActivo) {
+	public Boolean solicitarTasacion(Long idActivo) throws Exception {
+		int tasacionID;
 		
 		try{
 			// Se especifica bankia por que tan solo se va a poder demandar la tasación desde bankia.
-			int tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(idActivo, adapter.getUsuarioLogado().getNombre(), "BANKIA");
-			if(!Checks.esNulo(tasacionID)){
+			tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(idActivo, adapter.getUsuarioLogado().getNombre(), "BANKIA");
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new Exception("No se ha podido obtener la tasación");
+		}
+		
+		if(!Checks.esNulo(tasacionID)){
+			try{
 				Activo activo = activoDao.get(idActivo);
-				
+			
 				if(!Checks.esNulo(activo)) {
 					// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
 					NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
@@ -1696,12 +1703,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						genericDao.save(ActivoTasacion.class, tasacion);
 					}
 				}
+			}catch(Exception e){
+				e.printStackTrace();
+				return false;
 			}
-		}catch(Exception e){
-			e.printStackTrace();
-			return false;
+		} else {
+			throw new Exception("No se ha podido obtener la tasación");
 		}
-		
+
 		return true;
 	}
 

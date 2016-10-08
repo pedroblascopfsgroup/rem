@@ -28,7 +28,8 @@ Ext.define('HreRem.ux.util.Constants', {
     TIPOS_AGRUPACION: {
     	
     	OBRA_NUEVA: '01',
-    	RESTRINGIDA: '02'    
+    	RESTRINGIDA: '02',
+    	ASISTIDA: '13'
     },
     
     TIPOS_ACTIVO: {
@@ -87,7 +88,7 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     SUBTIPOS_PROVEEDOR: {
-    	MEDIADOR: '20'
+    	MEDIADOR: '04'
     },
     
     MAP_TAB_ACTIVO_XTYPE: {

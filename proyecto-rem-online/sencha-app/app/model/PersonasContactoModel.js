@@ -55,11 +55,10 @@ Ext.define('HreRem.model.PersonasContactoModel', {
 		type: 'uxproxy',
 		api: {
             read: 'proveedores/getPersonasContactoByProveedor',
-            create: 'proveedores/savePersonasContacto',
-            update: 'proveedores/savePersonasContacto',
+            create: 'proveedores/createPersonasContacto',
+            update: 'proveedores/updatePersonasContacto',
             destroy: 'proveedores/deletePersonasContacto'
         }
-
     }
 
 });

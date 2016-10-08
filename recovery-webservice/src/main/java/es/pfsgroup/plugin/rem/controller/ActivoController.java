@@ -1940,8 +1940,13 @@ public class ActivoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model){
-
-		model.put("success", activoApi.solicitarTasacion(idActivo));
+		try {
+			model.put("success", activoApi.solicitarTasacion(idActivo));
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("msg", e.getMessage());
+			model.put("success", false);		
+		}
 		
 		return createModelAndViewJson(model);
 	}

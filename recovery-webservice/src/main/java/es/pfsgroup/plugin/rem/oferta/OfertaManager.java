@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -27,7 +28,10 @@ import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -36,8 +40,10 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -74,6 +80,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
 	
 	@Override
 	public String managerName() {
@@ -612,5 +627,62 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 	
+	@Override
+	public Oferta tareaExternaToOferta(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = null;
+		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		if(!Checks.esNulo(trabajo)){
+			Activo activo = trabajo.getActivo();
+			if(!Checks.esNulo(activo)){
+				ofertaAceptada = getOfertaAceptadaByActivo(activo);
+			}
+		}
+		return ofertaAceptada;
+	}
+	
+	@Override
+	public Oferta getOfertaAceptadaByActivo(Activo activo){
+		List<ActivoOferta> listaOfertas = activo.getOfertas();
+		
+		for(ActivoOferta activoOferta : listaOfertas){
+			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()))
+					return oferta;
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean checkDerechoTanteo(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if(!Checks.esNulo(expediente))
+				if(!Checks.esNulo(expediente.getCondicionante()))
+					return (expediente.getCondicionante().getSujetoTanteoRetracto() == 1);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkDeDerechoTanteo(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			if(!Checks.esNulo(ofertaAceptada.getDesdeTanteo())){
+				return ofertaAceptada.getDesdeTanteo();
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkReserva(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			return !Checks.esNulo(expediente.getReserva());
+		}
+		return false;
+	}
 	
 }

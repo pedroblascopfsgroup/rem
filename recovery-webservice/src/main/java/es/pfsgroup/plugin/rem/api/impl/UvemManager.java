@@ -48,6 +48,7 @@ import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 
 @Service("uvemManager")
 public class UvemManager implements UvemManagerApi {
@@ -343,6 +344,7 @@ public class UvemManager implements UvemManagerApi {
 		cabeceraFuncional.setCOCDAQ("0551");	
 		cabeceraFuncional.setCOSBAQ("00");
 		cabeceraFuncional.setNUPUAQ("00");
+		//cabeceraFuncional.setCOUSAQ("USRHAYA");
 		cabeceraTecnica.setCLORAQ("71");
 			
 		//logueamos parametros cabecera
@@ -380,7 +382,7 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC11_INS.setcabeceraTecnica(cabeceraTecnica);
 
 		// seteamos parametros
-		servicioGMPAJC11_INS.setCodigoObjetoAccesocopace("CACL0000");
+		servicioGMPAJC11_INS.setCodigoObjetoAccesocopace("PAHY0270");
 		servicioGMPAJC11_INS.setClaseDeDocumentoIdentificadorcocldo(tipoDocumento.charAt(0));
 		servicioGMPAJC11_INS.setDniNifDelTitularDeLaOfertanudnio(nDocumento);
 		servicioGMPAJC11_INS.setnumeroCliente(0);
@@ -492,6 +494,7 @@ public class UvemManager implements UvemManagerApi {
 		cabeceraFuncional.setCOCDAQ("0551");
 		cabeceraFuncional.setCOSBAQ("00");
 		cabeceraFuncional.setNUPUAQ("00");
+		//cabeceraFuncional.setCOUSAQ("USRHAYA");
 		cabeceraTecnica.setCLORAQ("71");
 		
 		//logueamos parametros cabecera
@@ -530,7 +533,7 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC93_INS.setcabeceraTecnica(cabeceraTecnica);
 
 		// seteamos parametros
-		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("CACL0000");
+		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0170");
 		servicioGMPAJC93_INS.setIdentificadorClienteOfertaidclow(numcliente);//<--------?????
 		servicioGMPAJC93_INS.setnumeroUsuario("");//<--------????? Nos lo piden obligatorio
 		servicioGMPAJC93_INS.setidSesionWL("");//<--------????? Nos lo piden obligatorio
@@ -602,9 +605,13 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	@Override
-	public GMPDJB13_INS altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException {
-		GMPDJB13_INS instancia = null;
-		instancia = instanciaDecision(instanciaDecisionDto, "ALTA");
+	public ResultadoInstanciaDecisionDto altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
+		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		try {
+			instancia = instanciaDecision(instanciaDecisionDto, "ALTA");
+		} catch (WIException e) {
+			throw new Exception(e.getMessage());
+		}
 		return instancia;
 	}
 
@@ -615,9 +622,13 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	@Override
-	public GMPDJB13_INS consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException {
-		GMPDJB13_INS instancia = null;
-		instancia = instanciaDecision(instanciaDecisionDto, "CONS");
+	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
+		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		try {
+			instancia = instanciaDecision(instanciaDecisionDto, "CONS");
+		} catch (WIException e) {
+			throw new Exception(e.getMessage());
+		}
 		return instancia;
 	}
 
@@ -628,9 +639,13 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	@Override
-	public GMPDJB13_INS modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException {
-		GMPDJB13_INS instancia = null;
-		instancia = instanciaDecision(instanciaDecisionDto, "MODI");
+	public ResultadoInstanciaDecisionDto modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
+		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		try {
+			instancia = instanciaDecision(instanciaDecisionDto, "MODI");
+		} catch (WIException e) {
+			throw new Exception(e.getMessage());
+		}		
 		return instancia;
 	}
 
@@ -641,7 +656,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @param accion: ALTA/CONS/MODI
 	 * @return
 	 */
-	public GMPDJB13_INS instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion) throws WIException {
+	public ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion) throws WIException {
 
 		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
 		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
@@ -718,6 +733,7 @@ public class UvemManager implements UvemManagerApi {
 		cabeceraFuncional.setCOCDAQ("0551");
 		cabeceraFuncional.setCOSBAQ("00");
 		cabeceraFuncional.setNUPUAQ("00");
+		//cabeceraFuncional.setCOUSAQ("USRHAYA");
 		cabeceraTecnica.setCLORAQ("71");
 		
 		//logueamos parametros cabecera
@@ -793,8 +809,18 @@ public class UvemManager implements UvemManagerApi {
 		
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();
+		
+		System.out.println("--RESULTADOS LLAMADA--");
+		System.out.println("Resultado llamada Longitud Mensaje De Salida: " + servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
+		System.out.println("Resultado llamada Codigo De Oferta Haya: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
+		System.out.println("Resultado llamada Codigo Comite: " + servicioGMPDJB13_INS.getCodigoComitecocom7());
+		
+		ResultadoInstanciaDecisionDto result = new ResultadoInstanciaDecisionDto();
+		result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
+		result.setCodigoComite( servicioGMPDJB13_INS.getCodigoComitecocom7()+"");
+		result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
 
-		return servicioGMPDJB13_INS;
+		return result;
 	}
 	
 	
@@ -844,6 +870,7 @@ public class UvemManager implements UvemManagerApi {
 		cabeceraFuncional.setCOCDAQ("0551");
 		cabeceraFuncional.setCOSBAQ("00");
 		cabeceraFuncional.setNUPUAQ("00");
+		cabeceraFuncional.setCOUSAQ("USRHAYA");
 		cabeceraTecnica.setCLORAQ("71");
 		
 		//logueamos parametros cabecera
@@ -858,6 +885,8 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("COCDAQ: " + cabeceraFuncional.getCOCDAQ());
 		logger.info("COSBAQ: " + cabeceraFuncional.getCOSBAQ());
 		logger.info("NUPUAQ: " + cabeceraFuncional.getNUPUAQ());
+		logger.info("COUSAQ: " + cabeceraFuncional.getCOUSAQ());
+		logger.info("------------------------------------");
 		logger.info("CLORAQ: " + cabeceraTecnica.getCLORAQ());
 		
 		System.out.println("\nParámetros CONSULTADATOSPRESTAMO:");
@@ -871,10 +900,12 @@ public class UvemManager implements UvemManagerApi {
 		System.out.println("COCDAQ: " + cabeceraFuncional.getCOCDAQ());
 		System.out.println("COSBAQ: " + cabeceraFuncional.getCOSBAQ());
 		System.out.println("NUPUAQ: " + cabeceraFuncional.getNUPUAQ());
+		System.out.println("COUSAQ: " + cabeceraFuncional.getCOUSAQ());
+		System.out.println("------------------------------------");
 		System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());
 		
 		// seteamos parametros
-		servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("CACL0000");
+		servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
 		servicioGMPAJC34_INS.setNumeroExpedienteDeRiesgoNumericonuidow(numExpedienteRiesgo);	
 		servicioGMPAJC34_INS.setTipoRiesgoClaseProductoUrsusCotirx(tipoRiesgo);
 		long numeroCliente = 0;

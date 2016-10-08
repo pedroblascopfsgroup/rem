@@ -82,13 +82,25 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 			            	text	 : HreRem.i18n('header.fecha.alta'),
 			                dataIndex: 'fechaAlta',
 					        formatter: 'date("d/m/Y")',
-					        width: 130 
+					        width: 120
 					    },
 					    {   
 			            	text	 : HreRem.i18n('header.fecha.baja'),
 			                dataIndex: 'fechaBaja',
 					        formatter: 'date("d/m/Y")',
-					        width: 130 
+					        width: 120
+					    },
+					    {   
+			            	text	 : HreRem.i18n('header.fecha.inicio.vigencia'),
+			                dataIndex: 'fechaInicioVigencia',
+					        formatter: 'date("d/m/Y")',
+					        width: 120
+					    },
+					    {   
+			            	text	 : HreRem.i18n('header.fecha.fin.vigencia'),
+			                dataIndex: 'fechaFinVigencia',
+					        formatter: 'date("d/m/Y")',
+					        width: 120
 					    },
 			            {
 			            	text	 : HreRem.i18n('header.numero.activos.incluidos'),

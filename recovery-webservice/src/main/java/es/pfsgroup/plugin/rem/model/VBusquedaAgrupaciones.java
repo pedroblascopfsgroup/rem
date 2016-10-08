@@ -18,13 +18,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 @Entity
 @Table(name = "V_BUSQUEDA_AGRUPACIONES", schema = "${entity.schema}")
 public class VBusquedaAgrupaciones implements Serializable {
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
-	
-	
+
+
 	@Id
 	@Column(name = "AGR_ID")
 	private Long id;	
@@ -49,9 +46,7 @@ public class VBusquedaAgrupaciones implements Serializable {
     
     @Column(name = "AGR_PUBLICADO")
 	private String publicado;
-    
-    
-	
+
     @Column(name = "AGR_NOMBRE")
 	private String nombre;	
 	
@@ -63,7 +58,13 @@ public class VBusquedaAgrupaciones implements Serializable {
 	
 	@Column(name = "AGR_FECHA_BAJA")
 	private Date fechaBaja;
+
+	@Column(name = "AGR_INI_VIGENCIA")
+	private Date fechaInicioVigencia;
 	
+	@Column(name = "AGR_FIN_VIGENCIA")
+	private Date fechaFinVigencia;
+
 	@Column(name = "ACTIVOS")
 	private String activos;
 	
@@ -183,6 +184,22 @@ public class VBusquedaAgrupaciones implements Serializable {
 
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+
+	public Date getFechaInicioVigencia() {
+		return fechaInicioVigencia;
+	}
+
+	public void setFechaInicioVigencia(Date fechaInicioVigencia) {
+		this.fechaInicioVigencia = fechaInicioVigencia;
+	}
+
+	public Date getFechaFinVigencia() {
+		return fechaFinVigencia;
+	}
+
+	public void setFechaFinVigencia(Date fechaFinVigencia) {
+		this.fechaFinVigencia = fechaFinVigencia;
 	}
 	
 }

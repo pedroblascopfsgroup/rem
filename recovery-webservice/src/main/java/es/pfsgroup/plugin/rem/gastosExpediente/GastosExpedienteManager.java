@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.gastosExpediente;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -97,7 +98,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 			
 
 			//Validación parámetros entrada
-			List<String> error = restApi.validateRequestObject(comisionDto);
+			HashMap<String, List<String>> error = restApi.validateRequestObject(comisionDto);
 			if (!Checks.esNulo(error) && !error.isEmpty()) {
 				listaErrores.add("No se cumple la especificación de parámetros para la comision con los siguientes datos: idOfertaRem-" + comisionDto.getIdOfertaRem() + 
 								" idOfertaWebcom-" + comisionDto.getIdOfertaWebcom() +

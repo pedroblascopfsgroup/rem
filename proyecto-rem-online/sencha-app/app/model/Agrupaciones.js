@@ -25,6 +25,16 @@ Ext.define('HreRem.model.Agrupaciones', {
     		dateFormat: 'c'
     	},
     	{
+    		name : 'fechaInicioVigencia',
+    		type : 'date',
+    		dateFormat: 'c'
+    	},
+    	{
+    		name : 'fechaFinVigencia',
+    		type : 'date',
+    		dateFormat: 'c'
+    	},
+    	{
     		name : 'numAgrupacionRem'
     	},
     	{

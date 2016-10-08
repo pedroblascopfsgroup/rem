@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -33,13 +30,11 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class OfertasController {
 
-	@Autowired 
-    private ActivoApi activoApi;
-	
 	@Autowired
 	private OfertaApi ofertaApi;
 	
@@ -115,7 +110,7 @@ public class OfertasController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas")
-	public ModelAndView saveOrUpdateOferta(ModelMap model, RestRequestWrapper request) {
+	public void saveOrUpdateOferta(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		OfertaRequestDto jsonData = null;
 		List<String> errorsList = null;
 		Oferta oferta = null;
@@ -130,7 +125,6 @@ public class OfertasController {
 			jsonData = (OfertaRequestDto) request.getRequestData(OfertaRequestDto.class);
 			List<OfertaDto> listaOfertaDto = jsonData.getData();				
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
@@ -184,7 +178,7 @@ public class OfertasController {
 			logger.debug("ERRORES: " + errorsList);
 		}
 
-		return new ModelAndView("jsonView", model);
+		restApi.sendResponse(response,model);
 	}
 	
 

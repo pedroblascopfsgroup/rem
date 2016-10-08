@@ -1,12 +1,11 @@
 package es.pfsgroup.plugin.rem.rest.api;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
 
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,6 +32,7 @@ public interface RestApi {
 	public static final String REST_MSG_MISSING_REQUIRED_FIELDS = "MISSING_REQUIRED_FIELDS";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
 	public static final String REST_MSG_UNKNOWN_KEY = "UNKNOWN_KEY";
+	public static final String REST_MSG_UNEXPECTED_ERROR ="UNEXPECTED_ERROR";
 	public static final String REST_LOGGED_USER_USERNAME = "USER";
 	public static final Object REST_LOGGED_USER_EMPTY_PASSWORD = "";
 
@@ -60,7 +60,7 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
+	public HashMap<String,List<String>> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
 
 	/**
 	 * Valida el pojo pasado a la rest api
@@ -68,7 +68,7 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public List<String> validateRequestObject(Serializable obj);
+	public HashMap<String,List<String>> validateRequestObject(Serializable obj);
 
 	/**
 	 * Obtiene un operador dada su ip pblica

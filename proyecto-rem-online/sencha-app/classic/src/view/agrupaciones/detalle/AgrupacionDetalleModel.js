@@ -23,11 +23,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     	}
 	     },
 	     
-	     esAgrupacionObraNueva: function(get) {
-	     	
+	     esAgrupacionObraNuevaOrAsistida: function(get) {
+	    	 
 	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-	     	var esAgrupacionObraNueva = tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'];
-	     	return esAgrupacionObraNueva;
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) || (tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
 	     },
 	     
 	     existeFechaBaja : function(get) {
@@ -39,8 +42,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	 var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
 	    	 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 	    	 var esAgrupacionObraNueva = tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'];
-	    	 //Si NO es agrupaci�n obra nueva OR S� hay fecha baja se debe ocultar
-	    	 return (existeFechaBaja || !esAgrupacionObraNueva);
+	    	 var esAgrupacionAsistida = tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'];
+	    	 //Si NO es agrupación obra nueva OR sí hay fecha baja se debe ocultar
+	    	 return (existeFechaBaja || !esAgrupacionObraNueva || !esAgrupacionAsistida);
 	    	 
 	     }
     },

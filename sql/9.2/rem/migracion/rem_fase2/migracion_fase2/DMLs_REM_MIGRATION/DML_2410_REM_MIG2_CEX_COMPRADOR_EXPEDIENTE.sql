@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HREOS-855
 --## PRODUCTO=NO
 --## 
---## Finalidad: Proceso de migración MIG2_COM_COMPRADOR -> COM_COMPRADOR
+--## Finalidad: Proceso de migración MIG2_CEX_COMPRADOR_EXPEDIENTE -> CEX_COMPRADOR_EXPEDIENTE
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:

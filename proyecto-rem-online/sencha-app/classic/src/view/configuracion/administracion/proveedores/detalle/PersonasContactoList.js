@@ -186,6 +186,54 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 		    ];
 		    
 		    me.callParent();
-   }
+   },
+   
+   editFuncion: function(editor, context){
+  		var me= this;
+		me.mask(HreRem.i18n("msg.mask.espere"));
+
+			if (me.isValidRecord(context.record)) {
+				var idDireccionDelegacionSelected = '';
+				var selection = me.up('fichaproveedor').down('direccionesdelegacioneslist').getSelectionModel().getSelection();
+				if(!Ext.isEmpty(selection)) {
+					idDireccionDelegacionSelected = selection[0].id;
+				}
+				
+	       		context.record.save({
+	
+	                   params: {
+	                       idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal),
+	                       delegacion: idDireccionDelegacionSelected
+	                   },
+	                   
+	                   success: function (a, operation, c) {
+	                       context.store.load();
+	                       me.unmask();
+	                       me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
+	                       me.saveSuccessFn();											
+	                   },
+	                   
+	                   failure: function (a, operation) {
+		                   	context.store.load();
+		                   	
+		                   	try {
+		                   		var response = Ext.JSON.decode(operation.getResponse().responseText)
+		                   		
+		                   	}catch(err) {}
+		                   	
+		                   	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
+		                   		me.fireEvent("errorToast", response.msg);
+		                   	} else {
+		                   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		                   	}                        	
+							me.unmask();
+	                   }
+	               });
+	       		me.disableAddButton(false);
+	       		me.disablePagingToolBar(false);
+	       		me.getSelectionModel().deselectAll();
+	       		editor.isNew = false;
+			}
+  }
 
 });

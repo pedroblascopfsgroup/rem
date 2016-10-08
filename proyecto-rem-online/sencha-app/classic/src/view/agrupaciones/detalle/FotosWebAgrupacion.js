@@ -97,8 +97,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 		                	reference: 'numeroActivoFoto',
 		                	bind: {
 								value: '{numeroActivo}',
-								hidden: '{esAgrupacionObraNueva}',
-								disabled: '{esAgrupacionObraNueva}'
+								hidden: '{esAgrupacionObraNuevaOrAsistida}',
+								disabled: '{esAgrupacionObraNuevaOrAsistida}'
 							}
 		                },
 		                { 

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -257,7 +258,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				if(alta){
 					//Validación para el alta de ofertas
-					List<String> error = restApi.validateRequestObject(ofertaDto);
+					HashMap<String, List<String>>  error = restApi.validateRequestObject(ofertaDto);
 					if (!Checks.esNulo(error) && !error.isEmpty()) {
 						listaErrores.add("No se cumple la especificación de parámetros para el alta de idOfertaWebcom: " + ofertaDto.getIdOfertaWebcom() + ".Traza: " + error);			
 					}					

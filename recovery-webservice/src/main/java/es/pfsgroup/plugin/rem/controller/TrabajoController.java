@@ -99,6 +99,9 @@ public class TrabajoController {
 	@Autowired
 	ExcelReportGeneratorApi excelReportGeneratorApi;
 	
+	@Autowired
+	private RestApi restApi;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	/**
@@ -1027,7 +1030,7 @@ public class TrabajoController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
-	public ModelAndView saveTrabajosWS(ModelMap model, RestRequestWrapper request) {		
+	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
 		List<String> errorsList = null;
 		TrabajoDto trabajoDto = null;		
@@ -1100,7 +1103,7 @@ public class TrabajoController {
 			logger.debug("ERRORES: " + errorsList);
 		}
 
-		return new ModelAndView("jsonView", model);
+		restApi.sendResponse(response, model);
 	}
 	
 	

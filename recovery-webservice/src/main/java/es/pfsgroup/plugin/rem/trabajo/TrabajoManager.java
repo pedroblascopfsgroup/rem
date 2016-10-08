@@ -2140,7 +2140,7 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 					
 				} else {
 					
-					List<String> error = restApi.validateRequestObject(trabajoDto);
+					HashMap<String, List<String>> error = restApi.validateRequestObject(trabajoDto);
 					if (!Checks.esNulo(error) && !error.isEmpty()) {
 						listaErrores.add("No se cumple la especificación de parámetros para el alta de IdTrabajoWebcom: " + trabajoDto.getIdTrabajoWebcom() + ".Traza: " + error);			
 					}			

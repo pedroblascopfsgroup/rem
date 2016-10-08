@@ -16,17 +16,17 @@ public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoO
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "VISTA DESCONOCIDA";
+		return "REM01.VI_ACTIVO_ONV_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "TABLA DESCONOCIDA";
+		return "REM01.AWH_ACTIVO_ONV_WEBCOM_HIST";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "CLAVE_PRIMARIA_DESCONCIDA";
+		return "ID";
 	}
 
 	@Override

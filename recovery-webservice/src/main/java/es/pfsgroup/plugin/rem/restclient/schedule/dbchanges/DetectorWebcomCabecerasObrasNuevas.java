@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
+/** Cabeceras/subdivisiones **/
 public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<CabeceraObrasNuevasDto> {
 
 	@Autowired
@@ -16,17 +17,17 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "VISTA DESCONOCIDA";
+		return "REM01.VI_SUBDIVISION_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "TABLA DESCONOCIDA";
+		return "REM01.SWH_SUBDIV_WEBCOM_HIST";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "CLAVE_PRIMARIA_DESCONCIDA";
+		return "ID";
 	}
 
 	@Override

@@ -1,16 +1,16 @@
 package es.pfsgroup.plugin.rem.rest.api;
 
-import java.beans.IntrospectionException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -119,13 +119,6 @@ public interface RestApi {
 	 */
 	public String getClientIpAddr(HttpServletRequest request);
 
-	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto,ArrayList<Serializable> objetoEntity)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
-			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException;
-
-	@SuppressWarnings("rawtypes")
-	public Serializable obtenerObjetoEntity(Long activoId, Class entity,String fieldActivo)
-			throws InstantiationException, IllegalAccessException;
+	public void sendResponse(HttpServletResponse response,ModelMap model);
 
 }

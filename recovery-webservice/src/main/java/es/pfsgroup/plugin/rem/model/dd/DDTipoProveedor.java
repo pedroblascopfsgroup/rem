@@ -1,5 +1,3 @@
-
-
 package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
@@ -12,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -21,27 +20,23 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Modelo que gestiona el diccionario de los tipos de proveedores de los activos
  * 
  * @author Anahuac de Vicente
- *
  */
 @Entity
 @Table(name = "DD_TPR_TIPO_PROVEEDOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoProveedor implements Auditable, Dictionary {
-	
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
 	public static final String COD_ASEGURADORA = "03";
-	public static final String COD_MEDIADOR = "20";
+	public static final String COD_MEDIADOR = "04";
 
 	@Id
 	@Column(name = "DD_TPR_ID")
@@ -61,6 +56,10 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	@ManyToOne
 	@JoinColumn(name = "DD_TEP_ID")
 	private DDEntidadProveedor tipoEntidadProveedor; 
+	
+	@Transient
+	private String tipoEntidadCodigo;
+	
 
 	@Version   
 	private Long version;
@@ -110,6 +109,14 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 		this.tipoEntidadProveedor = tipoEntidadProveedor;
 	}
 	
+	public String getTipoEntidadCodigo() {
+		return !Checks.esNulo(tipoEntidadProveedor) ? this.tipoEntidadCodigo = tipoEntidadProveedor.getCodigo(): null;
+	}
+
+	public void setTipoEntidadCodigo(String tipoEntidadCodigo) {
+		this.tipoEntidadCodigo = !Checks.esNulo(tipoEntidadCodigo) ? tipoEntidadCodigo : tipoEntidadProveedor.getCodigo();
+	}
+
 	public Long getVersion() {
 		return version;
 	}

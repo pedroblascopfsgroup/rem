@@ -13,6 +13,8 @@ public class DtoAdjunto implements Serializable{
 
     private Long id;
     
+    private Long idGasto;
+    
     private Long idActivo;
     
     private Long idTrabajo;
@@ -129,5 +131,13 @@ public class DtoAdjunto implements Serializable{
 
 	public void setIdProveedor(Long idProveedor) {
 		this.idProveedor = idProveedor;
+	}
+
+	public Long getIdGasto() {
+		return idGasto;
+	}
+
+	public void setIdGasto(Long idGasto) {
+		this.idGasto = idGasto;
 	}
 }

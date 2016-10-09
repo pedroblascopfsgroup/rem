@@ -3,9 +3,12 @@
  */
 Ext.define('HreRem.model.GastoProveedor', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
 
     fields: [ 
+    
+    	{	
+    		name: 'idGasto'
+    	},
     	{
     		name: 'numGastoHaya'
    	 	},
@@ -25,6 +28,9 @@ Ext.define('HreRem.model.GastoProveedor', {
    			name: 'buscadorNifEmisor'
    		},
    		{
+   			name: 'buscadorNifPropietario'
+   		},
+   		{
    			name: 'nombreEmisor'
    		},
     	{
@@ -34,10 +40,10 @@ Ext.define('HreRem.model.GastoProveedor', {
     		name: 'propietario'
     	},
     	{
-    		name: 'tipoGasto'
+    		name: 'tipoGastoCodigo'
     	},
     	{
-    		name: 'subtipoGasto'
+    		name: 'subtipoGastoCodigo'
     		
     	},
 		{
@@ -75,7 +81,31 @@ Ext.define('HreRem.model.GastoProveedor', {
 		},
 		{
 			name : 'nombrePropietario'
-		}
+		},
+		{
+			name : 'destinatarioGastoCodigo'
+		},
+		{
+			name: 'autorizado',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}
+		},
+		{
+			name: 'asignadoATrabajos',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}
+		},
+		{
+			name: 'asignadoAActivos',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}
+		}	
     		
     ],
     
@@ -83,8 +113,9 @@ Ext.define('HreRem.model.GastoProveedor', {
 		type: 'uxproxy',
 		localUrl: 'gastosproveedor.json',
 		api: {
-            read: 'gastosproveedor/getTabExpediente',
-            update: 'gastosproveedor/saveGastosProveedor'
+            read: 'gastosproveedor/getTabGasto',
+            update: 'gastosproveedor/saveGastosProveedor',
+			create: 'gastosproveedor/createGastosProveedor'
         },
 		
         extraParams: {tab: 'ficha'}

@@ -62,7 +62,7 @@ public class GastoImpugnacion implements Serializable, Auditable {
     private Date fechaPresentacion;
     
     @Column(name="GIM_FECHA_RESOLUCION")
-    private Double fechaResolucion;
+    private Date fechaResolucion;
     
     @Column(name="GIM_OBSERVACIONES")
     private String observaciones;
@@ -102,11 +102,11 @@ public class GastoImpugnacion implements Serializable, Auditable {
 		this.fechaPresentacion = fechaPresentacion;
 	}
 
-	public Double getFechaResolucion() {
+	public Date getFechaResolucion() {
 		return fechaResolucion;
 	}
 
-	public void setFechaResolucion(Double fechaResolucion) {
+	public void setFechaResolucion(Date fechaResolucion) {
 		this.fechaResolucion = fechaResolucion;
 	}
 

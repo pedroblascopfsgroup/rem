@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160923
+--## FECHA_CREACION=20160930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -44,7 +44,8 @@ DECLARE
         T_TIPO_DATA('04'	,'Trimestral'	,'Trimestral'),
         T_TIPO_DATA('05'	,'Cuatrimestral','Cuatrimestral'),
         T_TIPO_DATA('06'	,'Semestral'	,'Semestral'),
-        T_TIPO_DATA('07'	,'Anual'	,'Anual')
+        T_TIPO_DATA('07'	,'Anual'	,'Anual'),
+        T_TIPO_DATA('08'	,'Especial contable'	,'Especial Contable')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

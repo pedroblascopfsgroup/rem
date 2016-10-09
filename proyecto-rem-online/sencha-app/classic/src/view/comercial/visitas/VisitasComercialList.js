@@ -11,10 +11,19 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialList', {
         
         me.setTitle(HreRem.i18n('title.lista.visitas'));
         
-        me.columns= [
+        me.listeners = {	    	
+			rowdblclick: 'onVisitasListDobleClick'
+	     }
         
+        me.columns= [
+        		{	        	
+		            dataIndex: 'id',
+		            text: HreRem.i18n('header.numero.visita'),
+		            flex: 1,
+		            hidden: true
+		        },
 		        {	        	
-		            dataIndex: 'numVisitaRem',
+		            dataIndex: 'numVisita',
 		            text: HreRem.i18n('header.numero.visita'),
 		            flex: 1		        	
 		        },
@@ -48,17 +57,17 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialList', {
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'estadoVisita',
+		            dataIndex: 'estadoVisitaDescripcion',
 		            text: HreRem.i18n('header.estado.visita'),
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'nombre',
+		            dataIndex: 'nombreCompleroCliente',
 		            text: HreRem.i18n('header.nombre'),
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'numDocumento',
+		            dataIndex: 'documentoCliente',
 		            text: HreRem.i18n('header.numero.documeto'),
 		            flex: 1		        	
 		        },
@@ -67,6 +76,77 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialList', {
 		            text: HreRem.i18n('header.fecha.visita'),
 		            formatter: 'date("d/m/Y")',
 		            flex: 1
+		        },
+		        //campos ocultos para el detalle
+		        {	        	
+		            dataIndex: 'numVisita',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'idActivo',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'idActivo',
+		            hidden: true
+		        },
+		        {
+		            dataIndex: 'fechaConcertacion',
+		            formatter: 'date("d/m/Y")',
+		            hidden: true
+		        },
+		        {
+		            dataIndex: 'fechaContacto',
+		            formatter: 'date("d/m/Y")',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'observacionesVisita',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'subEstadoVisitaCodigo',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'subEstadoVisitaDescripcion',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'estadoVisitaCodigo',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'estadoVisitaDescripcion',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'idCliente',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'nombreCompleroCliente',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'documentoCliente',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'documentoRepresentanteCliente',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'telefono1Cliente',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'telefono2Cliente',
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'emailCliente',
+		            hidden: true
 		        }
 		        
         ];

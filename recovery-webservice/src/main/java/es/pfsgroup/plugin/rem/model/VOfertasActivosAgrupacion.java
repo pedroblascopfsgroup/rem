@@ -27,12 +27,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	
 	@Column(name = "OFR_NUM_OFERTA")  
 	private String numOferta;
-
-	@Column(name = "ACT_ID")
-	private String idActivo;
 	
-	@Column(name = "AGR_ID")
-	private String idAgrupacion;
+	@Column(name = "NUM_ACTIVO_AGRUPACION")
+	private String numActivoAgrupacion;
 	
 	@Column(name = "OFR_FECHA_ALTA")
 	private Date fechaCreacion;
@@ -40,16 +37,10 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "DD_TOF_DESCRIPCION")  
 	private String descripcionTipoOferta;
 	
-	@Column(name = "ACT_NUM_ACTIVO")
-	private String numActivo; 
-	
-	@Column(name = "AGR_NUM_AGRUP_REM")
-	private String numAgrupacionRem; 
-	
 	@Column(name = "OFERTANTE")
 	private String ofertante;
 	
-	@Column(name = "VAL_IMPORTE")
+	@Column(name = "PRECIO_PUBLICADO")
 	private String precioPublicado;
 	
 	@Column(name = "OFR_IMPORTE")
@@ -70,20 +61,18 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "DD_EEC_DESCRIPCION")
 	private String descripcionEstadoExpediente;
 	
-	@Column(name = "DD_SAC_DESCRIPCION")
-	private String subtipoActivo;
-	
 	@Column(name = "DD_TOF_CODIGO")  
 	private String codigoTipoOferta;
 	
+	@Column(name = "ACTIVOS")  
+	private String activos;
 	
-	public String getIdActivo() {
-		return idActivo;
-	}
+	@Column(name= "ACT_ID")
+	private String idActivo;	
+	
+	@Column(name= "AGR_ID")
+	private String idAgrupacion;	
 
-	public void setIdActivo(String idActivo) {
-		this.idActivo = idActivo;
-	}
 
 	public String getIdOferta() {
 		return idOferta;
@@ -91,14 +80,6 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setIdOferta(String idOferta) {
 		this.idOferta = idOferta;
-	}
-
-	public String getIdAgrupacion() {
-		return idAgrupacion;
-	}
-
-	public void setIdAgrupacion(String idAgrupacion) {
-		this.idAgrupacion = idAgrupacion;
 	}
 
 	public Date getFechaCreacion() {
@@ -115,14 +96,6 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setDescripcionTipoOferta(String descripcionTipoOferta) {
 		this.descripcionTipoOferta = descripcionTipoOferta;
-	}
-
-	public String getNumAgrupacionRem() {
-		return numAgrupacionRem;
-	}
-
-	public void setNumAgrupacionRem(String numAgrupacionRem) {
-		this.numAgrupacionRem = numAgrupacionRem;
 	}
 
 	public String getOfertante() {
@@ -197,28 +170,52 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.idExpediente = idExpediente;
 	}
 
-	public String getNumActivo() {
-		return numActivo;
-	}
-
-	public void setNumActivo(String numActivo) {
-		this.numActivo = numActivo;
-	}
-
-	public String getSubtipoActivo() {
-		return subtipoActivo;
-	}
-
-	public void setSubtipoActivo(String subtipoActivo) {
-		this.subtipoActivo = subtipoActivo;
-	}
-
 	public String getDescripcionCodigoOferta() {
 		return codigoTipoOferta;
 	}
 
 	public void setDescripcionCodigoOferta(String codigoTipoOferta) {
 		this.codigoTipoOferta = codigoTipoOferta;
+	}
+
+	public String getNumActivoAgrupacion() {
+		return numActivoAgrupacion;
+	}
+
+	public void setNumActivoAgrupacion(String numActivoAgrupacion) {
+		this.numActivoAgrupacion = numActivoAgrupacion;
+	}
+
+	public String getCodigoTipoOferta() {
+		return codigoTipoOferta;
+	}
+
+	public void setCodigoTipoOferta(String codigoTipoOferta) {
+		this.codigoTipoOferta = codigoTipoOferta;
+	}
+
+	public String getActivos() {
+		return activos;
+	}
+
+	public void setActivos(String activos) {
+		this.activos = activos;
+	}
+
+	public String getIdActivo() {
+		return idActivo;
+	}
+
+	public void setIdActivo(String idActivo) {
+		this.idActivo = idActivo;
+	}
+
+	public String getIdAgrupacion() {
+		return idAgrupacion;
+	}
+
+	public void setIdAgrupacion(String idAgrupacion) {
+		this.idAgrupacion = idAgrupacion;
 	}
 	
 	 

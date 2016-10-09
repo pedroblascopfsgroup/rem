@@ -14,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -51,10 +52,10 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	@Id
     @Column(name = "GDE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoDetalleEconomicoGenerator")
-    @SequenceGenerator(name = "GastoDetalleEconomicoGenerator", sequenceName = "S_GDE_GASTOS_DETALLE_ECO")
+    @SequenceGenerator(name = "GastoDetalleEconomicoGenerator", sequenceName = "S_GDE_GASTOS_DETALLE_ECONOMICO")
     private Long id;
 	
-    @ManyToOne
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor;
     
@@ -105,7 +106,7 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     private Double importeTotal;
     
     @Column(name="GDE_FECHA_TOPE_PAGO")
-    private Date fehcaTopePago;
+    private Date fechaTopePago;
     
     @Column(name="GDE_REPERCUTIBLE_INQUILINO")
     private Integer repercutibleInquilino;
@@ -126,8 +127,35 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_DEP_ID")
-    private DDDestinatarioPago destinatariosPago;   
+    private DDDestinatarioPago destinatariosPago;
     
+    @Column(name="GDE_REEMBOLSO_TERCERO")
+    private Integer reembolsoTercero;
+    
+    @Column(name="GDE_INCLUIR_PAGO_PROVISION")
+    private Integer incluirPagoProvision;
+    
+    @Column(name="GDE_ABONO_CUENTA")
+    private Integer abonoCuenta;
+    
+    @Column(name="GDE_IBAN")
+    private String ibanAbonar;
+    
+    @Column(name="GDE_TITULAR_CUENTA")
+    private String titularCuentaAbonar;
+    
+    @Column(name="GDE_NIF_TITULAR_CUENTA")
+    private String nifTitularCuentaAbonar;
+    
+    @Column(name="GDE_PAGADO_CONEXION_BANKIA")
+    private Integer pagadoConexionBankia;
+    
+    @Column(name="GDE_NUMERO_CONEXION")
+    private String numeroConexionBankia;
+    
+    @Column(name="GDE_OFICINA_BANKIA")
+    private String oficinaBankia;
+
     
 	@Version   
 	private Long version;
@@ -289,5 +317,134 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Date getFechaTopePago() {
+		return fechaTopePago;
+	}
+
+	public void setFechaTopePago(Date fechaTopePago) {
+		this.fechaTopePago = fechaTopePago;
+	}
+
+	public Integer getRepercutibleInquilino() {
+		return repercutibleInquilino;
+	}
+
+	public void setRepercutibleInquilino(Integer repercutibleInquilino) {
+		this.repercutibleInquilino = repercutibleInquilino;
+	}
+
+	public Double getImportePagado() {
+		return importePagado;
+	}
+
+	public void setImportePagado(Double importePagado) {
+		this.importePagado = importePagado;
+	}
+
+	public Date getFechaPago() {
+		return fechaPago;
+	}
+
+	public void setFechaPago(Date fechaPago) {
+		this.fechaPago = fechaPago;
+	}
+
+	public DDTipoPagador getTipoPagador() {
+		return tipoPagador;
+	}
+
+	public void setTipoPagador(DDTipoPagador tipoPagador) {
+		this.tipoPagador = tipoPagador;
+	}
+
+	public DDTipoPago getTipoPago() {
+		return tipoPago;
+	}
+
+	public void setTipoPago(DDTipoPago tipoPago) {
+		this.tipoPago = tipoPago;
+	}
+
+	public DDDestinatarioPago getDestinatariosPago() {
+		return destinatariosPago;
+	}
+
+	public void setDestinatariosPago(DDDestinatarioPago destinatariosPago) {
+		this.destinatariosPago = destinatariosPago;
+	}
+
+	public Integer getReembolsoTercero() {
+		return reembolsoTercero;
+	}
+
+	public void setReembolsoTercero(Integer reembolsoTercero) {
+		this.reembolsoTercero = reembolsoTercero;
+	}
+
+	public Integer getIncluirPagoProvision() {
+		return incluirPagoProvision;
+	}
+
+	public void setIncluirPagoProvision(Integer incluirPagoProvision) {
+		this.incluirPagoProvision = incluirPagoProvision;
+	}
+
+	public Integer getAbonoCuenta() {
+		return abonoCuenta;
+	}
+
+	public void setAbonoCuenta(Integer abonoCuenta) {
+		this.abonoCuenta = abonoCuenta;
+	}
+
+	public String getIbanAbonar() {
+		return ibanAbonar;
+	}
+
+	public void setIbanAbonar(String ibanAbonar) {
+		this.ibanAbonar = ibanAbonar;
+	}
+
+	public String getTitularCuentaAbonar() {
+		return titularCuentaAbonar;
+	}
+
+	public void setTitularCuentaAbonar(String titularCuentaAbonar) {
+		this.titularCuentaAbonar = titularCuentaAbonar;
+	}
+
+	public String getNifTitularCuentaAbonar() {
+		return nifTitularCuentaAbonar;
+	}
+
+	public void setNifTitularCuentaAbonar(String nifTitularCuentaAbonar) {
+		this.nifTitularCuentaAbonar = nifTitularCuentaAbonar;
+	}
+
+	public Integer getPagadoConexionBankia() {
+		return pagadoConexionBankia;
+	}
+
+	public void setPagadoConexionBankia(Integer pagadoConexionBankia) {
+		this.pagadoConexionBankia = pagadoConexionBankia;
+	}
+
+	public String getNumeroConexionBankia() {
+		return numeroConexionBankia;
+	}
+
+	public void setNumeroConexionBankia(String numeroConexionBankia) {
+		this.numeroConexionBankia = numeroConexionBankia;
+	}
+
+	public String getOficinaBankia() {
+		return oficinaBankia;
+	}
+
+	public void setOficinaBankia(String oficinaBankia) {
+		this.oficinaBankia = oficinaBankia;
+	}
+
 
 }

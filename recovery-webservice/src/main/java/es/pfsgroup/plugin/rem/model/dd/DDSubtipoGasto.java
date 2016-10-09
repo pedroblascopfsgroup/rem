@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -22,6 +23,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Modelo que gestiona el diccionario de tipos de gastos
@@ -56,6 +58,9 @@ public class DDSubtipoGasto implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_STG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
+	
+	@Transient
+	private String tipoGastoCodigo;
 	    
 	
 	    
@@ -105,6 +110,14 @@ public class DDSubtipoGasto implements Auditable, Dictionary {
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
+	}
+
+	public String getTipoGastoCodigo() {
+		return !Checks.esNulo(tipoGasto) ? this.tipoGastoCodigo = tipoGasto.getCodigo(): null;
+	}
+
+	public void setTipoGastoCodigo(String tipoGastoCodigo) {
+		this.tipoGastoCodigo = !Checks.esNulo(tipoGastoCodigo) ? tipoGastoCodigo : tipoGasto.getCodigo();
 	}
 
 	public Long getVersion() {

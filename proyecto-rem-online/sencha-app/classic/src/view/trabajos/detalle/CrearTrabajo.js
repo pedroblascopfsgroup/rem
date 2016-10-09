@@ -82,15 +82,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 									            		value: '{trabajo.tipoTrabajoCodigo}'
 									            	},
 						    						listeners: {
-									                	select: 'onChangeChainedCombo',
-														expand: function() {
-														      this.store.removeAll();
-														      this.store.load();
-														      this.show();
-														}
+									                	select: 'onChangeChainedCombo'
 									            	},
 									            	allowBlank: false
-									            	
 										        },
 												{ 
 													xtype: 'comboboxfieldbase',

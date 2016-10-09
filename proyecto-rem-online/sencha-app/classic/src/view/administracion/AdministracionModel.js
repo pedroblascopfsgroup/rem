@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.administracion.AdministracionModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.administracion',
-    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto'],
+    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision'],
     
     stores: {
     	
@@ -11,7 +11,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/gasto.json',
-		        remoteUrl: 'gasto/getListGastos'
+		        remoteUrl: 'gastosproveedor/getListGastos'
 	    	},
 	    	autoLoad: true,
 	    	session: true,
@@ -20,58 +20,128 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	        listeners : {
 	            beforeload : 'paramLoading'
 	        }
-    	}
+    	},
     	
-//    	visitasComercial: {
-//			pageSize: $AC.getDefaultPageSize(),
-//	    	model: 'HreRem.model.Visitas',
-//	    	proxy: {
-//		        type: 'uxproxy',
-//		        localUrl: '/visitas.json',
-//		        remoteUrl: 'visitas/getListVisitas'
-//	    	},
-//	    	autoLoad: true,
-//	    	session: true,
-//	    	remoteSort: true,
-//	    	remoteFilter: true,
-//	        listeners : {
-//	            beforeload : 'paramLoading'
-//	        }
-//    	},
-//    	
-//    	ofertasComercial: {
-//    		pageSize: $AC.getDefaultPageSize(),
-//	    	model: 'HreRem.model.Ofertas',
-//	    	proxy: {
-//		        type: 'uxproxy',
-//		        localUrl: '/ofertas.json',
-//		        remoteUrl: 'ofertas/getListOfertas'
-//	    	},
-//	    	autoLoad: true,
-//	    	session: true,
-//	    	remoteSort: true,
-//	    	remoteFilter: true,
-//	        listeners : {
-//	            beforeload : 'paramLoading'
-//	        }
-//    	},
-//    	
-//    	comboTipoOferta: {
-//				model: 'HreRem.model.ComboBase',
-//					proxy: {
-//						type: 'uxproxy',
-//						remoteUrl: 'generic/getDiccionario',
-//						extraParams: {diccionario: 'tiposOfertas'}
-//					}
-//    	},
-//    	comboEstadoOferta: {
-//				model: 'HreRem.model.ComboBase',
-//					proxy: {
-//						type: 'uxproxy',
-//						remoteUrl: 'generic/getDiccionario',
-//						extraParams: {diccionario: 'estadosOfertas'}
-//					}
-//    	}
+    	provisiones: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Provision',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/provision.json',
+		        remoteUrl: 'provisiongastos/findAll'
+	    	},
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,
+	        listeners : {
+	            beforeload : 'paramLoadingProvisiones'
+	        }
+    		
+    	},
+    	
+    	provisionGastos: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Gasto',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/provision.json',
+		        remoteUrl: 'gastosproveedor/getListGastos',
+		        extraParams: {idProvision: '{provisionSeleccionada.id}'}
+	    	}
+    		
+    	},
+    	
+    	comboEstadosProvision: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosProvision'}
+			}   
+    	},
+    	
+    	comboEstadoAutorizacionHaya: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosAutorizacionHaya'}
+			}
+    	},
+    	
+    	comboEstadoAutorizacionPropietario: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosAutorizacionPropietario'}
+			}
+    	},
+    	
+    	comboTipoGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposGasto'}
+			}		
+    		
+    	},
+    	
+    	comboSubtipoGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposGasto'}
+			}		
+    		
+    	},
+    	
+    	comboPeriodicidad: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoPeriocidad'}
+			}   
+    	},
+    	
+    	comboDestinatarios: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'destinatariosGasto'}
+			}   
+    	},
+    	
+    	otrasSituacionesGasto: {
+			data : [
+		        {"codigo":"01", "descripcion":"Anulado"},
+		        {"codigo":"02", "descripcion":"Retenido Pago"}
+		    ]
+			
+    	},
+    	
+    	comboTipoProveedor: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoProveedor'}
+			}
+		},
+		
+		comboSubtipoProveedor: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtipoProveedor'}
+			}
+		}
+    	
     		
     }
 });

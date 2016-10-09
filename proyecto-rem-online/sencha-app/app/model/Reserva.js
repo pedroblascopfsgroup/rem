@@ -26,7 +26,15 @@ Ext.define('HreRem.model.Reserva', {
 			name: 'fechaVencimiento',
     		type : 'date',
 			dateFormat: 'c'
-    	}    	
+    	},
+    	{
+    		name: 'fechaAnulacion',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
+    	{
+    		name: 'motivoAnulacion'
+    	}
     ],
     
     proxy: {

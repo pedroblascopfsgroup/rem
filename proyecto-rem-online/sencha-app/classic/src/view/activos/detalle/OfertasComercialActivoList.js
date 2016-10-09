@@ -37,11 +37,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            text: HreRem.i18n('header.oferta.tipoOferta'),
 		            flex: 1
 		        },
-		        {
+		        /*{
 		            dataIndex: 'numAgrupacionRem',
 		            text: HreRem.i18n('header.oferta.numAgrupacion'),
 		            flex: 1
-		        },
+		        },*/
 		        {
 		            dataIndex: 'ofertante',
 		            text: HreRem.i18n('header.oferta.ofertante'),
@@ -166,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		}
 		
 		if(pertenceAgrupacionRestringida=="false" || pertenceAgrupacionRestringida==undefined){
-			var parent= me.up('ofertascomercialactivo');
+			var parent= me.up('ofertascomercialactivo'),
 			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
 			Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent}).show();
 		}else{

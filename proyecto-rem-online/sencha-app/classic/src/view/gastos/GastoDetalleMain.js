@@ -1,7 +1,8 @@
 Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'gastodetallemain',
-	iconCls		: 'fa fa-folder-open',
+    cls			: 'gasto-detalle',
+	iconCls		: 'ico-pestana-gasto',
 	iconAlign	: 'left',
 	controller: 'gastodetalle',
     viewModel: {
@@ -35,9 +36,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 			    		xtype:'toolfieldset',			   		         						   		        
 			        	cls: 'fieldsetBase cabecera',
 			        	height: 20,
-			        	bind:{
-			        		title: 'Gasto {gasto.numGastoHaya}'
-			        	},
+			        	title: ' ',
+//			        	bind:{
+			        		title: ' ',
+//			        	},
 			        	scrollable: 'y',
 			        	border: false,			        	
 					    layout: {

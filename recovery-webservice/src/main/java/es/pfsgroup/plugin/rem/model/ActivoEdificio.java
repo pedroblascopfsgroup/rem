@@ -107,6 +107,15 @@ public class ActivoEdificio implements Serializable, Auditable {
 	@Column(name = "EDI_ENTORNO_COMUNICACION")
 	private String entornoComunicacion;
 	
+	@Column(name = "EDI_DIVISIBLE")
+	private Integer edificioDivisible;
+	
+	@Column(name = "EDI_DESC_PLANTAS")
+	private String edificioDescPlantas;
+	
+	@Column(name = "EDI_OTRAS_CARACTERISTICAS")
+	private String edificioOtrasCaracteristicas;
+	
 	
 	@Version   
 	private Long version;
@@ -283,6 +292,30 @@ public class ActivoEdificio implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Integer getEdificioDivisible() {
+		return edificioDivisible;
+	}
+
+	public void setEdificioDivisible(Integer edificioDivisible) {
+		this.edificioDivisible = edificioDivisible;
+	}
+
+	public String getEdificioDescPlantas() {
+		return edificioDescPlantas;
+	}
+
+	public void setEdificioDescPlantas(String edificioDescPlantas) {
+		this.edificioDescPlantas = edificioDescPlantas;
+	}
+
+	public String getEdificioOtrasCaracteristicas() {
+		return edificioOtrasCaracteristicas;
+	}
+
+	public void setEdificioOtrasCaracteristicas(String edificioOtrasCaracteristicas) {
+		this.edificioOtrasCaracteristicas = edificioOtrasCaracteristicas;
 	}
 
 

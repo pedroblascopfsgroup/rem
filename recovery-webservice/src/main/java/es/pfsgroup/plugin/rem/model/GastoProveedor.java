@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -14,12 +16,15 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
@@ -102,6 +107,32 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_NUM_GASTO_GESTORIA")
 	private Long numGastoGestoria;
 	
+    @OneToOne(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GastoGestion gastoGestion;
+
+    @OneToOne(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GastoDetalleEconomico gastoDetalleEconomico;    
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="PRG_ID")
+	private ProvisionGastos provision;
+	
+    @OneToMany(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<AdjuntoGasto> adjuntos;
+    
+    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    private List<GastoProveedorTrabajo> gastoProveedorTrabajos;
+    
+    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    private List<GastoProveedorActivo> gastoProveedorActivos;
     
 	@Version   
 	private Long version;
@@ -244,5 +275,68 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setNumGastoGestoria(Long numGastoGestoria) {
 		this.numGastoGestoria = numGastoGestoria;
 	}
+
+
+	public ProvisionGastos getProvision() {
+		return provision;
+	}
+
+	public void setProvision(ProvisionGastos provision) {
+		this.provision = provision;
+	}
+
+	public GastoGestion getGastoGestion() {
+		return gastoGestion;
+	}
+
+	public void setGastoGestion(GastoGestion gastoGestion) {
+		this.gastoGestion = gastoGestion;
+	}
+
+	public GastoDetalleEconomico getGastoDetalleEconomico() {
+		return gastoDetalleEconomico;
+	}
+
+	public void setGastoDetalleEconomico(GastoDetalleEconomico gastoDetalleEconomico) {
+		this.gastoDetalleEconomico = gastoDetalleEconomico;
+	}
+
+	public List<GastoProveedorTrabajo> getGastoProveedorTrabajos() {
+		return gastoProveedorTrabajos;
+	}
+
+	public void setGastoProveedorTrabajos(
+			List<GastoProveedorTrabajo> gastoProveedorTrabajos) {
+		this.gastoProveedorTrabajos = gastoProveedorTrabajos;
+	}
+
+	public List<GastoProveedorActivo> getGastoProveedorActivos() {
+		return gastoProveedorActivos;
+	}
+
+	public void setGastoProveedorActivos(
+			List<GastoProveedorActivo> gastoProveedorActivos) {
+		this.gastoProveedorActivos = gastoProveedorActivos;
+	}
+	public List<AdjuntoGasto> getAdjuntos() {
+		return adjuntos;
+	}
+
+	public void setAdjuntos(List<AdjuntoGasto> adjuntos) {
+		this.adjuntos = adjuntos;
+	}
+	
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public AdjuntoGasto getAdjunto(Long id) {
+        for (AdjuntoGasto adj : getAdjuntos()) {
+            if (adj.getId().equals(id)) { return adj; }
+        }
+        return null;
+    }
+
     
 }

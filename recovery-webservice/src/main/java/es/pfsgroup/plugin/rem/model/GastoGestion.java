@@ -14,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -54,10 +55,10 @@ public class GastoGestion implements Serializable, Auditable {
 	@Id
     @Column(name = "GGE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoGestionGenerator")
-    @SequenceGenerator(name = "GastoGestionGenerator", sequenceName = "S_GDE_GASTOS_DETALLE_ECO")
+    @SequenceGenerator(name = "GastoGestionGenerator", sequenceName = "S_GGE_GASTOS_GESTION")
     private Long id;
 	
-    @ManyToOne
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor;
     
@@ -106,6 +107,7 @@ public class GastoGestion implements Serializable, Auditable {
     @Column(name="GGE_FECHA_ANULACION")
     private Date fechaAnulacionGasto;
     
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USU_ID_ANULACION")
     private Usuario usuarioAnulacion;
     

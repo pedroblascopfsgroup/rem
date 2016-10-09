@@ -481,47 +481,112 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return upload2(webFileItem, null);
 
 	}
+	
+	@Override
+	@BusinessOperation(overrides = "activoManager.uploadDocumento")
+	@Transactional(readOnly = false)
+	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activoEntrada, String matricula) throws Exception {
+		Activo activo=null;
+		DDTipoDocumentoActivo tipoDocumento=null;;
+		
+		if(Checks.esNulo(activoEntrada)){
+			activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+			
+			if (webFileItem.getParameter("tipo") == null)
+				throw new Exception("Tipo no valido");
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+			tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,filtro);
+		}
+		else{
+			activo =activoEntrada;
+			if(!Checks.esNulo(matricula)){
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
+				tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,filtro);
+			}
+		}
+		
+		try{
+			if(!Checks.esNulo(activo) && !Checks.esNulo(tipoDocumento) ) {
+			
+				Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+		
+				ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+				adjuntoActivo.setAdjunto(adj);
+				adjuntoActivo.setActivo(activo);
+		
+				adjuntoActivo.setIdDocRestClient(idDocRestClient);
+				
+				adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+		
+				adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
+		
+				adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
+		
+				adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
+		
+				adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
+		
+				adjuntoActivo.setFechaDocumento(new Date());
+		
+				Auditoria.save(adjuntoActivo);
+		
+				activo.getAdjuntos().add(adjuntoActivo);
+		
+				activoDao.save(activo);
+			} else {
+				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
+			}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+	
+		return null;
+		
+	}
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.upload2")
 	@Transactional(readOnly = false)
 	public String upload2(WebFileItem webFileItem, Long idDocRestClient) throws Exception {
+		
+		return uploadDocumento(webFileItem, idDocRestClient, null, null);
 
-		Activo activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
-
-		Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
-
-		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
-		adjuntoActivo.setAdjunto(adj);
-		adjuntoActivo.setActivo(activo);
-
-		adjuntoActivo.setIdDocRestClient(idDocRestClient);
-
-		if (webFileItem.getParameter("tipo") == null)
-			throw new Exception("Tipo no valido");
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,
-				filtro);
-		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-
-		adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
-
-		adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
-
-		adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
-
-		adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
-
-		adjuntoActivo.setFechaDocumento(new Date());
-
-		Auditoria.save(adjuntoActivo);
-
-		activo.getAdjuntos().add(adjuntoActivo);
-
-		activoDao.save(activo);
-
-		return null;
+//		Activo activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+//
+//		Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+//
+//		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+//		adjuntoActivo.setAdjunto(adj);
+//		adjuntoActivo.setActivo(activo);
+//
+//		adjuntoActivo.setIdDocRestClient(idDocRestClient);
+//
+//		if (webFileItem.getParameter("tipo") == null)
+//			throw new Exception("Tipo no valido");
+//
+//		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+//		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,
+//				filtro);
+//		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+//
+//		adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
+//
+//		adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
+//
+//		adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
+//
+//		adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
+//
+//		adjuntoActivo.setFechaDocumento(new Date());
+//
+//		Auditoria.save(adjuntoActivo);
+//
+//		activo.getAdjuntos().add(adjuntoActivo);
+//
+//		activoDao.save(activo);
+//
+//		return null;
 	}
 
 	@Override
@@ -1108,6 +1173,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
+				
+				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.
+				if(!Checks.esNulo(activo.getInfoComercial())) {
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorInforme", proveedor);
+					genericDao.save(Activo.class, activo);
+				}
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
@@ -1607,16 +1678,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 
+
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean solicitarTasacion(Long idActivo) {
+	public Boolean solicitarTasacion(Long idActivo) throws Exception {
+		int tasacionID;
 		
 		try{
 			// Se especifica bankia por que tan solo se va a poder demandar la tasación desde bankia.
-			int tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(idActivo, adapter.getUsuarioLogado().getNombre(), "BANKIA");
-			if(!Checks.esNulo(tasacionID)){
+			tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(idActivo, adapter.getUsuarioLogado().getNombre(), "BANKIA");
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new Exception("No se ha podido obtener la tasación");
+		}
+		
+		if(!Checks.esNulo(tasacionID)){
+			try{
 				Activo activo = activoDao.get(idActivo);
-				
+			
 				if(!Checks.esNulo(activo)) {
 					// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
 					NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
@@ -1634,12 +1713,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						genericDao.save(ActivoTasacion.class, tasacion);
 					}
 				}
+			}catch(Exception e){
+				e.printStackTrace();
+				return false;
 			}
-		}catch(Exception e){
-			e.printStackTrace();
-			return false;
+		} else {
+			throw new Exception("No se ha podido obtener la tasación");
 		}
-		
+
 		return true;
 	}
 
@@ -1694,4 +1775,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return mensaje;
 	}
+
 }

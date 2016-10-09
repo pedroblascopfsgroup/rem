@@ -31,6 +31,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDEstadoAutorizacionHaya implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	
+	 public static final String CODIGO_PENDIENTE = "01";
+	 public static final String CODIGO_RECHAZADO = "02";
+	 public static final String CODIGO_AUTORIZADO = "03";
 
 	@Id
 	@Column(name = "DD_EAH_ID")

@@ -457,8 +457,9 @@ public interface ActivoApi {
 		 * 
 		 * @param idActivo : ID del activo.
 		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 * @throws Exception Devuelve una excepción si no se ha podido obtener el ID de la tasación.
 		 */
-		public Boolean solicitarTasacion(Long idActivo);
+		public Boolean solicitarTasacion(Long idActivo) throws Exception;
 
 		/**
 		 * Este método obtiene la solicitud de tasacion a Bankia por el ID del activo.
@@ -468,7 +469,6 @@ public interface ActivoApi {
 		 */
 		public DtoTasacion getSolicitudTasacionBankia(Long id);
 
-		
 		/**
 		 * Comprueba si el activo tiene activada el check de comercializar
 		 * @param idActivo
@@ -484,5 +484,15 @@ public interface ActivoApi {
 	     * @throws Exception
 	     */
 	    public String comprobarObligatoriosDesignarMediador(Long idActivo) throws Exception;
-
-}
+		/**
+	     * Sirve para que después de guardar un fichero en el servicio de RestClient
+	     * guarde el identificador obtenido en base de datos 
+	     * 
+	     * @param webFileItem
+	     * @param idDocRestClient
+	     * @return
+	     * @throws Exception
+	     */
+	    @BusinessOperationDefinition("activoManager.uploadDocumento")
+		String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula) throws Exception;
+    }

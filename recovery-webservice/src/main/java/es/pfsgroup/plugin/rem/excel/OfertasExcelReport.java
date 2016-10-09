@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 
 public class OfertasExcelReport extends AbstractExcelReport implements ExcelReport {
@@ -26,7 +24,7 @@ public class OfertasExcelReport extends AbstractExcelReport implements ExcelRepo
 		listaCabeceras.add("Fecha Alta");
 		listaCabeceras.add("Expediente");
 		listaCabeceras.add("Estado expediente");
-		listaCabeceras.add("Subtipo activo");
+		//listaCabeceras.add("Subtipo activo");
 		listaCabeceras.add("Importe oferta");
 		listaCabeceras.add("Ofertante");
 		//NO ESTA DEFINIDO
@@ -44,12 +42,7 @@ public class OfertasExcelReport extends AbstractExcelReport implements ExcelRepo
 			List<String> fila = new ArrayList<String>();
 			
 			fila.add(oferta.getNumOferta().toString());
-			if(Checks.esNulo(oferta.getNumAgrupacionRem())){
-				fila.add(oferta.getNumActivo().toString());
-			}
-			else{
-				fila.add(oferta.getNumAgrupacionRem().toString());
-			}
+			fila.add(oferta.getNumActivoAgrupacion().toString());
 			fila.add(oferta.getEstadoOferta());
 			fila.add(oferta.getDescripcionTipoOferta());
 			fila.add(this.getDateStringValue(oferta.getFechaCreacion()));
@@ -60,7 +53,7 @@ public class OfertasExcelReport extends AbstractExcelReport implements ExcelRepo
 				fila.add("");
 			}
 			fila.add(oferta.getDescripcionEstadoExpediente());
-			fila.add(oferta.getSubtipoActivo());
+			//fila.add(oferta.getSubtipoActivo());
 			fila.add(oferta.getImporteOferta());
 			fila.add(oferta.getOfertante());
 			

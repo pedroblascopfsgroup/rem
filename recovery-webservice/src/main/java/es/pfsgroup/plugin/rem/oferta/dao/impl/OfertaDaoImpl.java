@@ -36,10 +36,10 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		}
 		
 		if(!Checks.esNulo(dtoOfertasFilter.getNumAgrupacion())){
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numAgrupacionRem", dtoOfertasFilter.getNumAgrupacion().toString());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion", dtoOfertasFilter.getNumAgrupacion().toString());
 		}
 		if(!Checks.esNulo(dtoOfertasFilter.getNumActivo())){
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivo", dtoOfertasFilter.getNumActivo().toString());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.activos", dtoOfertasFilter.getNumActivo().toString());
 		}
 		
 		try {

@@ -762,29 +762,11 @@ public class AgrupacionAdapter {
 		
 		Filter filtro= genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());	
 		Order order = new Order(OrderType.ASC, "id");
-		List<VOfertasActivosAgrupacion> resultadoOfertasAgrupacion= new ArrayList<VOfertasActivosAgrupacion>();
-		List<VOfertasActivosAgrupacion> todasOfertasAgrupacion= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order,filtro);
 		
-		if(todasOfertasAgrupacion != null && todasOfertasAgrupacion.size()!=0){
-			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
-			if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)){
-				Activo activoPrincipal= agrupacion.getActivoPrincipal();
-				
-				for(VOfertasActivosAgrupacion vOfertas: todasOfertasAgrupacion){
-					if(activoPrincipal.getId().equals(Long.valueOf(vOfertas.getIdActivo()))){
-						resultadoOfertasAgrupacion.add(vOfertas);
-					}
-				}
-			}
-			else{
-				resultadoOfertasAgrupacion= todasOfertasAgrupacion;
-			}
-		}
-		else{
-			resultadoOfertasAgrupacion= todasOfertasAgrupacion;
-		}
+		List<VOfertasActivosAgrupacion> ofertasAgrupacion= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order,filtro);
+	
 		
-		return resultadoOfertasAgrupacion;
+		return ofertasAgrupacion;
 		
 	}
 	
@@ -847,7 +829,17 @@ public class AgrupacionAdapter {
 		try{
 			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
 			ClienteComercial clienteComercial= new ClienteComercial();
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "04");
+			
+			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+			for (Oferta of: agrupacion.getOfertas()) {
+
+				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
+					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
+				}
+				
+			}
+			
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumento());
 			Long numOferta= activoDao.getNextNumOferta();

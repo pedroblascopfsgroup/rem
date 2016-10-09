@@ -615,7 +615,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	me.logTime("Load agrupacion success"); 
 		    	me.setLogTime();	    	
 		    	if(Ext.isEmpty(titulo)) {		    		
-		    		titulo = "Agrupacion " + agrupacion.get("numAgrupacionRem");
+		    		titulo = "Agrupacion " + agrupacion.get("numAgrupRem");
 		    		tab.setTitle(titulo);
 		    	}
 		    	
@@ -829,7 +829,7 @@ Ext.define('HreRem.controller.ActivosController', {
     
     abrirDetalleAgrupacionComercialOfertas: function(record) {
     	var me = this,
-    	titulo = "Agrupación " + record.get("numAgrupacionRem"),
+    	titulo = null,//,"Agrupación " + record.get("numAgrupacionRem"),
     	id = record.get("idAgrupacion");
 		me.redirectTo('activos', true);
     	me.abrirDetalleAgrupacionComercialOfertasById(id, titulo, CONST.MAP_TAB_ACTIVO_XTYPE['OFERTASAGRU'])

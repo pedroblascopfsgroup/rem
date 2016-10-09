@@ -497,7 +497,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		form= window.down('formBase');
 	
 		var success = function(record, operation) {
-			me.getView().unmask();
+			
+			form.unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
 	    	window.destroy();    	
@@ -522,9 +523,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			    success: success,
 			 	failure: function(record, operation) {
 			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-			    },
-			    callback: function(record, operation) {
-			    	form.unmask();
+			 		form.unmask();
 			    }
 			    		    
 			});

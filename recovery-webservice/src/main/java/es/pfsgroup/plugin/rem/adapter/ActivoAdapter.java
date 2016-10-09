@@ -3286,8 +3286,17 @@ public class ActivoAdapter {
 					}
 				}
 			}
+			
+			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+			for (ActivoOferta acof: activo.getOfertas()) {
+				Oferta of = acof.getPrimaryKey().getOferta();
+				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
+					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
+				}
+				
+			}
 
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "04");
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumento());
 			Long numOferta= activoDao.getNextNumOferta();

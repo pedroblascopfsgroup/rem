@@ -76,7 +76,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				    				            	allowBlank: true
 				    				            	
 												},
-												{
+												/*{
 													xtype: 'comboboxfieldbase',
 				    					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 				    					        	bind: {
@@ -94,12 +94,38 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				    				            		disabled: '{!gastoNuevo.tipoGastoCodigo}'
 				    				            	},
 				    				            	allowBlank: false
-												},
+												},*/
+												
+												{ 
+													xtype: 'comboboxfieldbase',
+									               	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+									               	reference: 'tipoGasto',
+					        						chainedStore: 'comboSubtipoGasto',
+													chainedReference: 'subtipoGastoCombo',
+											      	bind: {
+										           		store: '{comboTiposGasto}',
+										           		value: '{gastoNuevo.tipoGastoCodigo}'
+										         	},
+										         	listeners: {
+									                	select: 'onChangeChainedCombo'
+									            	},
+										         	allowBlank: false
+										    	},
+											    { 
+													xtype: 'comboboxfieldbase',
+									               	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+									               	reference: 'subtipoGastoCombo',
+											      	bind: {
+										           		store: '{comboSubtiposNuevoGasto}',
+										           		value: '{gastoNuevo.subtipoGastoCodigo}',
+										           		disabled: '{!gastogastoNuevo.tipoGastoCodigo}'
+										         	},
+										         	allowBlank: false
+											    },
 												{
 													fieldLabel: HreRem.i18n('fieldlabel.nif.emisor'),
 													bind:		'{gastoNuevo.nifEmisor}',
-													name: 'buscadorNifEmisorField',
-				    				            	allowBlank: false,												
+													name: 'buscadorNifEmisorField',												
 													triggers: {
 														
 														buscarEmisor: {

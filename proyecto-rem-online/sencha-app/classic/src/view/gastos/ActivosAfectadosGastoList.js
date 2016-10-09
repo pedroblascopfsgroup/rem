@@ -45,8 +45,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			xtype: 'toolbar',
 			dock: 'top',
 			items: [
-					{itemId: 'addButton', iconCls:'x-fa fa-plus', handler: 'onAddClick', bind: {hidden: '{ocultarIncluirActivos}'}, scope: this},
-					{itemId: 'removeButton', iconCls:'x-fa fa-minus', handler: 'onDeleteClick', bind: {hidden: '{ocultarIncluirActivos}'}, disabled: true, scope: this}
+					{itemId: 'addButton', iconCls:'x-fa fa-plus', handler: 'onAddClick', bind: {hidden: '{ocultarBotonesActivos}'}, scope: this},
+					{itemId: 'removeButton', iconCls:'x-fa fa-minus', handler: 'onDeleteClick', bind: {hidden: '{ocultarBotonesActivos}'}, disabled: true, scope: this}
 			]
 		};			
 					
@@ -110,12 +110,15 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					flex : 1
 				}, {
 					text : HreRem.i18n('header.activos.afectados.porcentaje.participacion.gasto'),
-					dataIndex : 'participacionGasto',
+					dataIndex : 'participacion',
+					renderer: function(value) {
+			          return Ext.util.Format.number(value, '0.00%');
+			        },
 					flex : 1,
-					editor: {
-						xtype:'numberfield'
-					}
+					editor: 'numberfield'
 				}, {
+					xtype: 'numbercolumn', 
+					renderer: Utils.rendererCurrency,
 					text : HreRem.i18n('header.activos.afectados.importe.proporcional.total'),
 					dataIndex : 'importeProporcinalTotal',
 					flex : 1

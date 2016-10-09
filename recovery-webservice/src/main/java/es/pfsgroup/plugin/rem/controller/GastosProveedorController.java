@@ -381,10 +381,10 @@ public class GastosProveedorController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidad, ModelMap model) {
+	public ModelAndView updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidad, @RequestParam Long id, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.updateGastoContabilidad(dtoContabilidad);
+			boolean success = gastoProveedorApi.updateGastoContabilidad(dtoContabilidad, id);
 			model.put("success", success);
 			
 		} catch (Exception e) {
@@ -398,10 +398,10 @@ public class GastosProveedorController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateGestionGasto(DtoGestionGasto dtoGestion, ModelMap model) {
+	public ModelAndView updateGestionGasto(DtoGestionGasto dtoGestion, @RequestParam Long id, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.updateGestionGasto(dtoGestion);
+			boolean success = gastoProveedorApi.updateGestionGasto(dtoGestion, id);
 			model.put("success", success);
 			
 		} catch (Exception e) {
@@ -415,10 +415,10 @@ public class GastosProveedorController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateImpugnacionGasto(DtoImpugnacionGasto dtoImpugnacion, ModelMap model) {
+	public ModelAndView updateImpugnacionGasto(DtoImpugnacionGasto dtoImpugnacion, @RequestParam Long id, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.updateImpugnacionGasto(dtoImpugnacion);
+			boolean success = gastoProveedorApi.updateImpugnacionGasto(dtoImpugnacion, id);
 			model.put("success", success);
 			
 		} catch (Exception e) {
@@ -458,10 +458,10 @@ public class GastosProveedorController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView quitarTrabajos(Long idGasto, Long[] trabajos, ModelMap model) {
+	public ModelAndView desasignarTrabajos(Long idGasto, Long[] trabajos, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.quitarTrabajos(idGasto, trabajos);
+			boolean success = gastoProveedorApi.desasignarTrabajos(idGasto, trabajos);
 			model.put("success", success);
 			
 		} catch (Exception e) {

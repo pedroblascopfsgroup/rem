@@ -2,10 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -22,9 +18,8 @@ import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 
 public interface ExpedienteComercialApi {
@@ -228,23 +223,6 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public DtoPage getNotariosExpediente(Long idExpediente);
-		
-		/**
-		 * Método que obtiene los honorarios del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-
-		public DtoPage getGastosSoportadoPropietario(Long idExpediente);
-		
-		/**
-		 * Método que obtiene los gastos del expediente soportados por Haya
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public DtoPage getGastosSoportadoHaya(Long idExpediente);
 
 		
 		/**

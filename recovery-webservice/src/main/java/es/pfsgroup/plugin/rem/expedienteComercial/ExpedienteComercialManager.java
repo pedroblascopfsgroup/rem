@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tools.ant.taskdefs.Exec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +43,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -1351,23 +1349,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return resolucionDto;
 	}
 
-	public DtoPage getGastosSoportadoPropietario(Long idExpediente) {
-		List<DtoGastoExpediente> gastosExpediente= new ArrayList<DtoGastoExpediente>();
-		DtoGastoExpediente gastoExpedienteDto= new DtoGastoExpediente();
-		
-		//Falta la busqueda de los gastos y añadir un el dto a la lista de dto's
-		
-		return new DtoPage(gastosExpediente, gastosExpediente.size());
-	}
-	
-	public DtoPage getGastosSoportadoHaya(Long idExpediente) {
-		List<DtoGastoExpediente> gastosExpediente= new ArrayList<DtoGastoExpediente>();
-		DtoGastoExpediente gastoExpedienteDto= new DtoGastoExpediente();
-		
-		//Falta la busqueda de los gastos y añadir un el dto a la lista de dto's
-		
-		return new DtoPage(gastosExpediente, gastosExpediente.size());
-	}
 
 	@Override
 	@Transactional(readOnly = true)

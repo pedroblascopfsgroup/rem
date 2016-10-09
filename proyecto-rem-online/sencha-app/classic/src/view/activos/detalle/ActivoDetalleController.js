@@ -1447,6 +1447,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     			me.getView().unmask();
 		    }
     	});
+	},
+	
+	onVisitasListDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	
+    	Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
+    	
+        	
+    },
+    
+   	onClickBotonCerrarDetalleVisita: function(btn) {
+		var me = this,
+		window = btn.up('window');
+    	window.close();
 	}
 
 });

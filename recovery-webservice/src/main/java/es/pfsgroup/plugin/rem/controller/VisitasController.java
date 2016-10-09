@@ -167,6 +167,31 @@ public class VisitasController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter, ModelMap model) {
+		try {
+			
+//			if (dtoVisitasFilter.getSort() == null){
+//				
+//					dtoVisitasFilter.setSort("activo.numActivo, fechaSolicitud");
+//	
+//			}
+			//Page page = comercialApi.getListVisitas(dtoVisitasFilter);
+			DtoPage page = visitaApi.getListVisitasDetalle(dtoVisitasFilter);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoVisitasFilter dtoVisitasFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		dtoVisitasFilter.setStart(excelReportGeneratorApi.getStart());

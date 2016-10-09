@@ -16,16 +16,61 @@ Ext.define('HreRem.model.VisitasAgrupacion', {
 			dateFormat: 'c'
 		},
 		{
-			name : 'nombre'
+			name : 'nombreCompleroCliente'
 		},
 		{
-			name : 'numDocumento'
+			name : 'documentoCliente'
 		},
 		{
 			name : 'fechaVisita',
 			type : 'date',
 			dateFormat: 'c'
-		} 
+		},
+		{
+    			name:'observacionesVisita'
+    	},
+    	{
+    		name:'fechaFinalizacion',
+    		type : 'date',
+		  	dateFormat: 'c'
+    	},
+    	{
+    		name:'motivoFinalizacion'
+    	},
+    	{
+           	name:'solicitante'
+        },
+        {
+        	name:'nifSolicitante'
+        },
+    	{
+    		name:'telefonoSolicitante'
+    	},
+    	{
+    		name:'emailSolicitante'
+    	},
+    	{
+    		name:'fechaContacto',
+    		type : 'date',
+		   	dateFormat: 'c'
+    	},
+    	{
+    		name:'estadoVisitaCodigo'
+    	},
+    	{
+    		name:'estadoVisitaDescripcion'
+    	},
+    	{
+    		name:'subEstadoVisitaCodigo'
+    	},
+    	{
+    		name:'subEstadoVisitaDescripcion'
+    	},
+    	{
+    		name:'fechaConcertacion',
+    		type : 'date',
+		   	dateFormat: 'c'
+    	}
     		
     ],
     

@@ -1,19 +1,14 @@
 Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
    	extend: 'HreRem.view.common.GridBaseEditableRow',
     xtype: 'agrupacioneslist',
-  //  cls	: 'panel-base shadow-panel',
-    /*collapsed: false,
-    reference: 'agrupacioneslist',
-    scrollable	: 'y',
-    layout: 'fit',
-    */
+    reference: 'agrupacioneslistgrid',
+	editOnSelect : false,
+    topBar: true,
+
     bind: {
 		store: '{agrupaciones}'
 	},
- 	reference: 'agrupacioneslistgrid',
-	editOnSelect : false,
-    topBar: true,
-    
+
 	secFunToEdit: 'EDITAR_LIST_AGRUPACIONES',
 	
 	secButtons: {
@@ -21,14 +16,13 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 	},
     
     initComponent: function () {
-     	
      	var me = this;
+     	
      	me.setTitle(HreRem.i18n('title.listado.agrupaciones'));
      	
      	me.addListener('rowdblclick', 'onAgrupacionesListDobleClick');
 
      	me.columns = [
-			    
 		  				{
 			            	text	 : HreRem.i18n('header.numero.agrupacion'),
 			                flex	 : 1,
@@ -88,13 +82,25 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 			            	text	 : HreRem.i18n('header.fecha.alta'),
 			                dataIndex: 'fechaAlta',
 					        formatter: 'date("d/m/Y")',
-					        width: 130 
+					        width: 120
 					    },
 					    {   
 			            	text	 : HreRem.i18n('header.fecha.baja'),
 			                dataIndex: 'fechaBaja',
 					        formatter: 'date("d/m/Y")',
-					        width: 130 
+					        width: 120
+					    },
+					    {   
+			            	text	 : HreRem.i18n('header.fecha.inicio.vigencia'),
+			                dataIndex: 'fechaInicioVigencia',
+					        formatter: 'date("d/m/Y")',
+					        width: 120
+					    },
+					    {   
+			            	text	 : HreRem.i18n('header.fecha.fin.vigencia'),
+			                dataIndex: 'fechaFinVigencia',
+					        formatter: 'date("d/m/Y")',
+					        width: 120
 					    },
 			            {
 			            	text	 : HreRem.i18n('header.numero.activos.incluidos'),
@@ -123,5 +129,4 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 		    
 			me.callParent();
 		}
-    
 });

@@ -3318,6 +3318,7 @@ public class ActivoAdapter {
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
+			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 			
 			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
 			activoOfertaPk.setActivo(activo);

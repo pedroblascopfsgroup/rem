@@ -96,7 +96,15 @@ public interface ProveedoresApi {
 	 * @param dtoPersonaContacto : dto con los datos a almacenar.
 	 * @return Devuelve si la operación ha sido satisfactoria, o no.
 	 */
-	public boolean savePersonasContacto(DtoPersonaContacto dtoPersonaContacto);
+	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto);
+	
+	/**
+	 * Este método almacena en la DDBB los datos a cambiar de la persona contacto.
+	 * 
+	 * @param dtoPersonaContacto : dto con los datos a actualizar.
+	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 */
+	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto);
 
 	/**
 	 * Este método borra de manera lógica un registro de dpersona contacto de la DDBB

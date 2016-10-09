@@ -37,7 +37,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						        xtype: 'actioncolumn',
 						        reference: 'titularContratacion',
 //						        bind: {
-//						        	hidden: '{esAgrupacionObraNueva}'
+//						        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
 //						        },
 						        width: 30,
 						        text: HreRem.i18n('header.principal'),

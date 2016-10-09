@@ -1,48 +1,44 @@
 package es.pfsgroup.plugin.rem.rest.api.impl;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
-import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
-import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
-import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
+import net.sf.json.JSONObject;
 
 @Service("restManager")
 public class RestManagerImpl implements RestApi {
@@ -55,12 +51,6 @@ public class RestManagerImpl implements RestApi {
 
 	@Resource
 	private Properties appProperties;
-
-	@Autowired
-	private GenericABMDao genericDao;
-
-	@Autowired
-	private GenericaRestDaoImp genericaRestDaoImp;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -143,13 +133,13 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public List<String> validateRequestObject(Serializable obj) {
+	public HashMap<String, List<String>> validateRequestObject(Serializable obj) {
 		return validateRequestObject(obj, null);
 	}
 
 	@Override
-	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion) {
-		ArrayList<String> error = new ArrayList<String>();
+	public HashMap<String, List<String>> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion) {
+		HashMap<String, List<String>> error = new HashMap<String, List<String>>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Serializable>> constraintViolations = null;
@@ -167,11 +157,31 @@ public class RestManagerImpl implements RestApi {
 		}
 		if (!constraintViolations.isEmpty()) {
 			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
-				error.add((visitaFailure.getPropertyPath() + " " + visitaFailure.getMessage()));
 
+				List<String> listaError = obtenerMapaErrores(error, visitaFailure.getPropertyPath().toString());
+				if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType().equals(NotNull.class)) {
+					listaError.add(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
+						.equals(Diccionary.class)) {
+					listaError.add(RestApi.REST_MSG_UNKNOWN_KEY);
+				} else {
+					listaError.add("DEFAULT");
+				}
 			}
 		}
 		return error;
+	}
+
+	private List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad) {
+		List<String> mapaErrores = null;
+		if (errores.containsKey(propiedad)) {
+			mapaErrores = errores.get(propiedad);
+		} else {
+			mapaErrores = new ArrayList<String>();
+			errores.put(propiedad, mapaErrores);
+		}
+
+		return mapaErrores;
 	}
 
 	@Override
@@ -185,172 +195,55 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntitys)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
-			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException {
-
-		if (dto.getClass().getDeclaredFields() != null) {
-			for (Field f : dto.getClass().getDeclaredFields()) {
-				if (f.getAnnotation(EntityDefinition.class) != null
-						&& f.getAnnotation(EntityDefinition.class).propertyName() != null
-						&& !f.getAnnotation(EntityDefinition.class).propertyName().isEmpty()) {
-					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
-					String propertyEntityName = annotation.propertyName().substring(0, 1).toUpperCase()
-							+ annotation.propertyName().substring(1);
-					String propertyName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
-					if (annotation.classObj().equals(Object.class)) {
-						Class claseObjeto = f.getType();
-						claseObjeto = transformClass(annotation, claseObjeto);
-						Object object = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
-						this.setProperty(propertyEntityName, claseObjeto, annotation, null, object, objetoEntitys);
-					} else {
-						Class claseObjeto = annotation.classObj();
-						claseObjeto = transformClass(annotation, claseObjeto);
-						Object oFiltro = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
-						this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, null, objetoEntitys);
-					}
-				} else {
-					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
-					String propertyEntityName = null;
-					propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
-					this.setProperty(propertyEntityName, f.getType(), annotation, null,
-							this.getValue(dto, dto.getClass(), "get".concat(propertyEntityName)), objetoEntitys);
-
-				}
-			}
+	@Override
+	public void sendResponse(HttpServletResponse response, ModelMap model) {
+		JSONObject jsonResp = new JSONObject();
+		response.reset();
+		response.setHeader("Content-Type", "application/json;charset=UTF-8");
+		Iterator it = model.keySet().iterator();
+		while (it.hasNext()) {
+			String key = (String) it.next();
+			Object value = model.get(key);
+			value = transformObject(value);
+			jsonResp.accumulate(key, value);
 		}
-		guardarEntity(objetoEntitys);
-		return objetoEntitys.get(0);
-	}
 
-	@SuppressWarnings("rawtypes")
-	private Class transformClass(EntityDefinition annotation, Class claseObjeto) {
-		if (annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
-			claseObjeto = Integer.class;
-		} else if (annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
-			claseObjeto = BigDecimal.class;
-		}
-		return claseObjeto;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
-			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys) {
-		boolean resultado = false;
-		if ((annotation != null && annotation.procesar()) || annotation == null) {
-			if (oFiltro != null && annotation != null) {
-				object = genericDao.get(annotation.classObj(),
-						genericDao.createFilter(FilterType.EQUALS, annotation.foreingField(), oFiltro));
-			}
-
-			if (object != null) {
-				if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
-					if ((Boolean) object) {
-						object = 1;
-					} else {
-						object = 0;
-					}
-				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
-					object = new BigDecimal((Float) object);
-				}
-
-				for (Serializable objetoEntity : objetoEntitys) {
-					try {
-						Method metodo = objetoEntity.getClass().getMethod("set".concat(propertyEntityName),
-								claseObjeto);
-						metodo.invoke(objetoEntity, object);
-						resultado = true;
-						System.out.println("OK --------------->" + propertyEntityName + " seteada en la entidad "
-								+ objetoEntity.getClass().getName());
-					} catch (NoSuchMethodException e) {
-						// intentamos setear el objeto en las diferentes
-						// entidades
-						continue;
-					} catch (InvocationTargetException e) {
-						System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
-					} catch (IllegalAccessException e) {
-						System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
-					}
-				}
-				if (!resultado && annotation == null) {
-					System.out.println("FAIL --------------->" + propertyEntityName + " no se ha podido setear");
-				}
-			}
-		} else if (annotation != null && !annotation.procesar()) {
-			resultado = true;
-			if (!annotation.motivo().isEmpty()) {
-				System.out.println("SKIP  --------------->"
-						.concat(propertyEntityName.concat(" motivo: ").concat(annotation.motivo())));
-			}
-		}
-		return resultado;
-
-	}
-
-	private void guardarEntity(ArrayList<Serializable> objetoEntitys) throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
-		for (Serializable objetoEntity : objetoEntitys) {
-			Object primary = this.findPrimaryKey(objetoEntity);
-			if (primary == null) {
-				objetoEntity = genericaRestDaoImp.save(objetoEntity);
-			} else {
-				genericaRestDaoImp.update(objetoEntity);
-			}
-			
+		PrintWriter out;
+		try {
+			out = response.getWriter();
+			out.print(jsonResp);
+			out.flush();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
 
 	}
 
-	private Object findPrimaryKey(Serializable objetoEntity) throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
-		Object result = null;
-		for (Field f : objetoEntity.getClass().getDeclaredFields()) {
-			if (f.getAnnotation(javax.persistence.Id.class) != null) {
-				result = this.getValue(objetoEntity, objetoEntity.getClass(), f.getName());
-				break;
-			}
-
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Object transformObject(Object value) {
+		if (value instanceof Integer || value instanceof Long || value instanceof Float) {
+			value = String.valueOf(value);
 		}
-
-		return result;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Serializable obtenerObjetoEntity(Long activoId, Class entity, String fieldActivo)
-			throws InstantiationException, IllegalAccessException {
-		Activo activo;
-		Serializable objetoEntity;
-		if (activoId != null) {
-			activo = (Activo) genericDao.get(Activo.class,
-					genericDao.createFilter(FilterType.EQUALS, "numActivo", activoId));
-			if (activo != null) {
-				objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, activo));
-			} else {
-				objetoEntity = (Serializable) entity.newInstance();
-			}
-
-		} else {
-			objetoEntity = (Serializable) entity.newInstance();
+		if (value instanceof String && ((String) value).equals("null")) {
+			value = null;
 		}
-		if (objetoEntity == null) {
-			objetoEntity = (Serializable) entity.newInstance();
-		}
-		return objetoEntity;
-	}
+		if (value instanceof ArrayList) {
+			for (Object v : (ArrayList) value) {
+				transformObject(v);
 
-	@SuppressWarnings("rawtypes")
-	private Object getValue(Object dto, Class claseDto, String methodName)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
-		Object obj = null;
-		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(InformeMediadorDto.class)
-				.getPropertyDescriptors()) {
-			if (propertyDescriptor.getReadMethod().getName().equals(methodName)) {
-				obj = propertyDescriptor.getReadMethod().invoke(dto);
-				break;
 			}
 		}
-		return obj;
-	}
+		if (value instanceof Map) {
+			// ((Map)value).
+			Iterator it = ((Map) value).entrySet().iterator();
 
+			while (it.hasNext()) {
+				Map.Entry e = (Map.Entry) it.next();
+				Object valueTrans = transformObject(e.getValue());
+				((Map) value).put(e.getKey(), valueTrans);
+			}
+		}
+
+		return value;
+	}
 }

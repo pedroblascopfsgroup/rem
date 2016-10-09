@@ -154,6 +154,8 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "DD_CAP_ID")
 	private DDCanalPrescripcion canalPrescripcion;
     
+	@Column(name="OFR_DESDE_TANTEO")
+	private Boolean desdeTanteo;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -419,5 +421,12 @@ public class Oferta implements Serializable, Auditable {
 		this.canalPrescripcion = canalPrescripcion;
 	}
 	
+	public Boolean getDesdeTanteo() {
+		return desdeTanteo;
+	}
+
+	public void setDesdeTanteo(Boolean desdeTanteo) {
+		this.desdeTanteo = desdeTanteo;
+	}
 
 }

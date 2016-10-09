@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.visita;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -214,7 +215,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				
 				if(alta){
 					//Validación para el alta de visitas
-					List<String> error = restApi.validateRequestObject(visitaDto);
+					HashMap<String, List<String>> error = restApi.validateRequestObject(visitaDto);
 					if (!Checks.esNulo(error) && !error.isEmpty()) {
 						listaErrores.add("No se cumple la especificación de parámetros para el alta de idVisitaWebcom: " + visitaDto.getIdVisitaWebcom() + ".Traza: " + error);			
 					}					

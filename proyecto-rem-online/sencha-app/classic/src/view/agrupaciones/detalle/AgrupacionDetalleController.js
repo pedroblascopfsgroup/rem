@@ -93,7 +93,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		campo.up('form').getBindRecord().save();
 	},	
 	    
-   	onSaveFormularioCompleto: function(btn, form) {
+   	onSaveFormularioCompletoForm: function(btn, form) {
 		
    		var me = this;
    		if(form.isFormValid()) {
@@ -148,9 +148,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		
 		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
+		me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());				
 	},
 	
 	onClickBotonCancelar: function(btn) {
@@ -180,48 +179,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		me.getViewModel().set("editing", false);
 	},
 
-	/*onClickBotonEditar: function(btn) {
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').show();
-		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
-
-		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
-						function (field, index) 
-							{ 
-								field.fireEvent('edit');});
-								
-		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
-		
-	},
-    
-	onClickBotonGuardar: function(btn) {
-		
-		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
-	},
-	
-	onClickBotonCancelar: function(btn) {
-		
-		
-		var me = this,
-		activeTab = btn.up('tabpanel').getActiveTab();
-		
-		if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-			activeTab.getBindRecord().reject();
-		}	
-		
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
-		btn.up('tabbar').down('button[itemId=botoneditar]').show();
-		
-		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
-						function (field, index) 
-							{ 
-								field.fireEvent('save');
-								field.fireEvent('update');});
-	},*/
-
-    
     onChangeTipoAgrupacion: function(btn,value) {
     	
     	//Se deja comentado porque volverá a aplicar en fase 2

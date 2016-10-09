@@ -96,8 +96,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
     		{	xtype: 'activosagrupacion', ocultarBotonesEdicion: true},
     		{	xtype: 'fotosagrupacion', ocultarBotonesEdicion: true},
     		{	xtype: 'observacionesagrupacion', ocultarBotonesEdicion: true},
-    		{	xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNueva}'}},
-    		{	xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{esAgrupacionObraNueva}'}}
+    		{	xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistida}'}},
+    		{	xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{esAgrupacionObraNuevaOrAsistida}'}}
     		
 
     ],

@@ -1,11 +1,10 @@
 /**
- * This view is used to present the details of a single AgendaItem.
+ * This view is used to present the details of a agrupación.
  */
 Ext.define('HreRem.model.Agrupaciones', {
     extend: 'HreRem.model.Base',
 
     fields: [
-    	
     	{
     		name : 'nombre'
     	},
@@ -22,6 +21,16 @@ Ext.define('HreRem.model.Agrupaciones', {
     	},
     	{
     		name : 'fechaBaja',
+    		type : 'date',
+    		dateFormat: 'c'
+    	},
+    	{
+    		name : 'fechaInicioVigencia',
+    		type : 'date',
+    		dateFormat: 'c'
+    	},
+    	{
+    		name : 'fechaFinVigencia',
     		type : 'date',
     		dateFormat: 'c'
     	},
@@ -43,19 +52,13 @@ Ext.define('HreRem.model.Agrupaciones', {
     	{
     		name : 'direccion'
     	}
-
     ],
     
     proxy: {
 		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById',
-
 		api: {
             create: 'agrupacion/createAgrupacion',
             destroy: 'agrupacion/deleteAgrupacionById'
         }
-        
     }    
-
 });

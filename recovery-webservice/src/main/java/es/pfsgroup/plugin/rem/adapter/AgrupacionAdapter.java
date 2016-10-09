@@ -26,7 +26,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
@@ -44,7 +43,6 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -85,9 +83,6 @@ import es.pfsgroup.recovery.api.UsuarioApi;
 public class AgrupacionAdapter {
 	
     @Autowired
-    private DTOFactory dtoFactory;
-	
-    @Autowired
     private ApiProxyFactory proxyFactory;
     
     @Autowired
@@ -109,9 +104,6 @@ public class AgrupacionAdapter {
     
     @Autowired 
     private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
-    
-    @Autowired
-    private JBPMActivoTramiteManagerApi jbpmActivoTramiteManagerApi;
     
     @Autowired
     protected JBPMProcessManagerApi jbpmProcessManagerApi;
@@ -162,7 +154,26 @@ public class AgrupacionAdapter {
 				
 				BeanUtils.copyProperty(dtoAgrupacion, "tipoAgrupacionDescripcion", agrupacion.getTipoAgrupacion().getDescripcion());
 				BeanUtils.copyProperty(dtoAgrupacion, "tipoAgrupacionCodigo", agrupacion.getTipoAgrupacion().getCodigo());
-
+				
+				// Si es de tipo 'Asistida'.
+				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+					ActivoAsistida agrupacionTemp = (ActivoAsistida) agrupacion;
+					
+					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
+					
+					if (agrupacionTemp.getLocalidad() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion", agrupacionTemp.getLocalidad().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo", agrupacionTemp.getLocalidad().getCodigo());
+					}
+					
+					if (agrupacionTemp.getProvincia() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion", agrupacionTemp.getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo", agrupacionTemp.getProvincia().getCodigo());
+					}
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "fechaFinVigencia", agrupacionTemp.getFechaFinVigencia());
+					BeanUtils.copyProperty(dtoAgrupacion, "fechaInicioVigencia", agrupacionTemp.getFechaInicioVigencia());
+				}
 				
 				// SI ES TIPO OBRA NUEVA
 				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
@@ -233,10 +244,8 @@ public class AgrupacionAdapter {
 			
 			
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -335,19 +344,20 @@ public class AgrupacionAdapter {
 		
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
-		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);	
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 		
 		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 		try {			
 		
-			if(Checks.esNulo(activo)) {			
+			if(Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
 			}
 			
 			// Si la agrupación es asistida, el activo además de existir tiene que ser asistido.
-			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && activoApi.isActivoAsistido(activo))
+			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException("El activo no es asistido");
+			}
 			
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos
 			if ( num == 0 ) {
@@ -448,8 +458,8 @@ public class AgrupacionAdapter {
 			
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
-			asistida.setLocalidad(pobl.getLocalidad()); 					
-			asistida.setProvincia(pobl.getProvincia());					
+			asistida.setLocalidad(pobl.getLocalidad());
+			asistida.setProvincia(pobl.getProvincia());
 			asistida.setCodigoPostal(pobl.getCodPostal());
 			return asistida;
 		}
@@ -864,6 +874,7 @@ public class AgrupacionAdapter {
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
+			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 			
 			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
 			
@@ -931,10 +942,8 @@ public class AgrupacionAdapter {
 			MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
 			if (!Checks.esNulo(lib)) lib.liberaFichero(document);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1052,12 +1061,42 @@ public class AgrupacionAdapter {
 				activoAgrupacionApi.saveOrUpdate(obraNueva);
 				
 			} catch (Exception e) {
-				
 				e.printStackTrace();
 				return false;
 			}
+		}
+		
+		// Si es de tipo 'Asistida'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
 			
-		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+			try {
+				beanUtilNotNull.copyProperties(asistida, dto);
+				
+				if (dto.getMunicipioCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+					
+					asistida.setLocalidad(municipioNuevo);
+				}
+				
+				if (dto.getProvinciaCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+					DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+					
+					asistida.setProvincia(provinciaNueva);
+				}
+
+				activoAgrupacionApi.saveOrUpdate(asistida);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		// Si es de tipo 'Restringida'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			
 			ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 			
@@ -1081,11 +1120,8 @@ public class AgrupacionAdapter {
 					
 					restringida.setProvincia(provinciaNueva);
 				}
-				
-				//ActivoAgrupacionActivo activoAgrupacionNuevo = genericDao.save(ActivoAgrupacionActivo.class, activoAgrupacion);
 
 				activoAgrupacionApi.saveOrUpdate(restringida);
-				
 				
 			} catch (Exception e) {
 				
@@ -1095,8 +1131,6 @@ public class AgrupacionAdapter {
 		}
 		
 		return true;
-		
-			
 	}
 
 	

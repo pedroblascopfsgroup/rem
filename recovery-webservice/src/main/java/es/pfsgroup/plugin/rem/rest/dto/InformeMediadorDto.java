@@ -13,6 +13,8 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -21,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
@@ -47,7 +50,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private Long idUsuarioRemAccion;
 
-	@NotNull(groups = { Insert.class,Update.class })
+	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoActivo.class, message = "El codTipoActivo no existe", groups = { Insert.class,
 			Update.class })
 	@EntityDefinition(propertyName = "tipoActivo", classObj = DDTipoActivo.class)
@@ -58,7 +61,7 @@ public class InformeMediadorDto implements Serializable {
 			Update.class })
 	@EntityDefinition(propertyName = "subtipoActivo", classObj = DDSubtipoActivo.class)
 	private String codSubtipoInmueble;
-	
+
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = Activo.class, message = "El activo no existe", foreingField = "numActivo", groups = {
 			Insert.class, Update.class })
@@ -170,16 +173,16 @@ public class InformeMediadorDto implements Serializable {
 	// ? ACT_ICO_INF_COMERCIAL DD_LOC_REGISTRO_ID
 	@Diccionary(clase = Localidad.class, message = "El codMunicipioRegistro no existe", groups = { Insert.class,
 			Update.class })
-	@EntityDefinition(procesar = false, motivo = "No Existe entity para ACT_INFO_ADMINISTRATIVA")
+	@EntityDefinition(procesar = false, motivo = "Falta columna DD_LOC_REGISTRO_ID en ACT_ICO_INFO_COMERCIAL")
 	private String codMunicipioRegistro;
 
-	// ? ACT_INFO_ADMINISTRATIVA DD_TVP_ID
 	@NotNull(groups = Insert.class)
-	@EntityDefinition(procesar = false, motivo = "No Existe entity para ACT_INFO_ADMINISTRATIVA")
-	private String codRegimenProteccion;// <---------------------------------Diccionario???
+	@Diccionary(clase = DDTipoVpo.class, message = "El codRegimenProteccion no existe", groups = { Insert.class,
+			Update.class })
+	@EntityDefinition(propertyName = "regimenProteccion", classObj = DDTipoVpo.class)
+	private String codRegimenProteccion;
 
-	// ?
-	@EntityDefinition(procesar = false, motivo = "No conozco el campo valorMaximoVpo: ICO_VALOR_MAX_VPO")
+	// OK
 	private Float valorMaximoVpo;
 
 	@NotNull(groups = Insert.class)
@@ -194,7 +197,6 @@ public class InformeMediadorDto implements Serializable {
 
 	// activo.valoracion.importe
 	@NotNull(groups = Insert.class)
-	@EntityDefinition(procesar = false, motivo = "No estamos actualizando las valoraciones")
 	private Float valorEstimadoVenta;
 
 	// activo.valoracion.fechaInicio
@@ -203,18 +205,17 @@ public class InformeMediadorDto implements Serializable {
 	private Date fechaValorEstimadoVenta;
 
 	// activo.valoracion.observaciones
-	@EntityDefinition(propertyName="justificacionVenta")
+	@EntityDefinition(propertyName = "justificacionVenta")
 	@NotNull(groups = Insert.class)
 	private String justificacionValorEstimadoVenta;
 
 	// activo.valoracion.importe
 	@NotNull(groups = Insert.class)
-	@EntityDefinition(procesar = false, motivo = "No estamos actualizando las valoraciones")
 	private Float valorEstimadoRenta;
 
 	// activo.valoracion.fechaInicio
 	@NotNull(groups = Insert.class)
-	@EntityDefinition(propertyName="fechaEstimacionRenta")
+	@EntityDefinition(propertyName = "fechaEstimacionRenta")
 	private Date fechaValorEstimadoRenta;
 
 	@NotNull(groups = Insert.class)
@@ -249,7 +250,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "ultimaPlanta", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ultimaPlanta;
 
-	@EntityDefinition(procesar = false, motivo = "No existe entity ACT_SPS_SITUACION_POSESORIA")
+	@EntityDefinition(propertyName = "ocupado")
 	private Boolean ocupado;
 
 	@EntityDefinition(propertyName = "numPlantasInter")
@@ -266,35 +267,26 @@ public class InformeMediadorDto implements Serializable {
 	private String codNivelRenta;
 
 	// ?
-	@EntityDefinition(procesar = false, motivo = "No existe modelo para las plantas")
+	@EntityDefinition(procesar = false, motivo = "no estamos procesando las plantas")
 	private List<PlantaDto> plantas;
 
-	// ?
-	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
-	private Long numeroTerrazasDescubiertas;
+	private Integer numeroTerrazasDescubiertas;
 
-	// ?
-	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
 	private String descripcionTerrazasDescubiertas;
 
-	// ?
-	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
-	private Long numeroTerrazasCubiertas;
+	private Integer numeroTerrazasCubiertas;
 
-	// ?
-	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
 	private String descripcionTerrazasCubiertas;
 
-	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
+	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean despensaOtrasDependencias;
 
-	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
+	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean lavaderoOtrasDependencias;
 
-	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
+	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean azoteaOtrasDependencias;
 
-	@EntityDefinition(procesar = false, motivo = "ACT_DIS_DISTRIBUCION falta relacion activo comercial")
 	private String otrosOtrasDependencias;
 
 	@EntityDefinition(propertyName = "reformaCarpExt")
@@ -327,19 +319,19 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "infoDistribucionInterior")
 	private String distribucionInterior;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna EDI_DIVISIBLE en ACT_EDI_EDIFICIO")
+	@EntityDefinition(propertyName = "edificioDivisible")
 	private Boolean divisible;
 
 	@EntityDefinition(propertyName = "ascensor")
 	private Boolean ascensor;
 
-	@EntityDefinition(propertyName="numAscensores")
+	@EntityDefinition(propertyName = "numAscensores")
 	private Integer numeroAscensores;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna EDI_DESC_PLANTAS en ACT_EDI_EDIFICIO")
+	@EntityDefinition(propertyName = "edificioDescPlantas")
 	private String descripcionPlantas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna EDI_OTRAS_CARACTERISTICAS en ACT_EDI_EDIFICIO")
+	@EntityDefinition(propertyName = "edificioOtrasCaracteristicas")
 	private String otrasCaracteristicas;
 
 	@EntityDefinition(propertyName = "reformaFachada")
@@ -381,13 +373,13 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "usuAnterior")
 	private String anteriorUso;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna LCO_NUMERO_ESTANCIAS en ACT_LCO_LOCAL_COMERCIAL")
+	@EntityDefinition(propertyName = "comercialNumEstancias")
 	private Long numeroEstancias;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna LCO_NUMERO_BANYOS en ACT_LCO_LOCAL_COMERCIAL")
+	@EntityDefinition(propertyName = "comercialNumBanyos")
 	private Long numeroBanyos;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna LCO_NUMERO_ASEOS en ACT_LCO_LOCAL_COMERCIAL")
+	@EntityDefinition(propertyName = "comercialNumAseos")
 	private long numeroAseos;
 
 	@EntityDefinition(propertyName = "mtsFachadaPpal")
@@ -405,32 +397,34 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false, motivo = "No existe la tabla ACT_ANJ_ANEJOS")
 	private String codSubtipoPlazasGaraje;// <-------------------------------------diccionario?
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna LCO_SALIDA_HUMOS  en la tabla ACT_LCO_LOCAL_COMERCIAL")
+	@EntityDefinition(propertyName = "existeSalidaHumos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean salidaHumosOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna LCO_SALIDA_EMERGENCIA  en la tabla ACT_LCO_LOCAL_COMERCIAL")
+	@EntityDefinition(propertyName = "existeSalidaEmergencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean salidaEmergenciaOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna LCO_ACCESO_MINUSVALIDOS  en la tabla ACT_LCO_LOCAL_COMERCIAL")
+	@EntityDefinition(propertyName = "existeAccesoMinusvalidos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean accesoMinusvalidosOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna LCO_OTROS_OTRAS_CARACT  en la tabla ACT_LCO_LOCAL_COMERCIAL")
+	@EntityDefinition(propertyName = "otrosOtrasCaracteristicas")
 	private String otrosOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna ACT_APR_PLAZA_APARCAMIENTO  en la tabla ACT_APR_PLAZA_APARCAMIENTO")
-	private String codTipoVario;// <-------------------------------------diccionario?
+	@Diccionary(clase = DDTipoVivienda.class, message = "El codTipoVario no existe", groups = { Insert.class,
+			Update.class })
+	@EntityDefinition(propertyName = "aparcamientoTipoVario", classObj = DDTipoVivienda.class)
+	private String codTipoVario;
 
 	@EntityDefinition(propertyName = "anchura")
 	private Float ancho;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna APR_ALTURA  en la tabla ACT_APR_PLAZA_APARCAMIENTO")
+	@EntityDefinition(propertyName = "aparcamientoAltura")
 	private Float alto;
 
 	@EntityDefinition(propertyName = "profundidad")
 	private Float largo;
 
 	@Diccionary(clase = DDUsosActivo.class, message = "El codUso no existe", groups = { Insert.class, Update.class })
-	@EntityDefinition(procesar = false, motivo = "No existe la columna DD_SPG_ID  en la tabla ACT_APR_PLAZA_APARCAMIENTO")
+	@EntityDefinition(procesar = false, motivo = "No existe la columna DD_SPG_ID  en la tabla ACT_APR_PLAZA_APARCAMIENTO(no existe diccionario)")
 	private String codUso;
 
 	@Diccionary(clase = DDTipoCalidad.class, message = "El codNivelRenta no existe", groups = { Insert.class,
@@ -438,41 +432,43 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "tipoCalidad", classObj = DDTipoCalidad.class)
 	private String codManiobrabilidad;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna APR_LICENCIA  en la tabla ACT_APR_PLAZA_APARCAMIENTO")
+	@EntityDefinition(propertyName = "aparcamientoLicencia", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean licenciaOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna APR_SERVIDUMBRE  en la tabla ACT_APR_PLAZA_APARCAMIENTO")
+	@EntityDefinition(propertyName = "aparcamientoSerbidumbre", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean servidumbreOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna APR_ASCENSOR_MONTACARGA  en la tabla ACT_APR_PLAZA_APARCAMIENTO")
+	@EntityDefinition(propertyName = "aparcamientoMontacarga", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ascensorOMontacargasOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna APR_COLUMNAS  en la tabla ACT_APR_PLAZA_APARCAMIENTO")
+	@EntityDefinition(propertyName = "aparcamientoColumnas", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean columnasOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la columna APR_SEGURIDAD  en la tabla ACT_APR_PLAZA_APARCAMIENTO")
+	@EntityDefinition(propertyName = "aparcamientoSeguridad", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean seguridadOtrasCaracteristicas;
 
-	@EntityDefinition(procesar = false, motivo = "No existe en el modelo")
+	@EntityDefinition(propertyName = "electricidadBuenEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean buenEstadoInstalacionElectricidadInstalaciones;
 
-	@EntityDefinition(procesar = false, motivo = "No existe en el modelo")
+	@EntityDefinition(propertyName = "electricidadConContador", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean buenEstadoContadorElectricidadInstalaciones;
 
-	@EntityDefinition(procesar = false, motivo = "No existe en el modelo")
+	@EntityDefinition(propertyName = "aguaBuenEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean buenEstadoInstalacionAguaInstalaciones;
 
-	@EntityDefinition(procesar = false, motivo = "No existe en el modelo")
+	@EntityDefinition(propertyName = "aguaConContador", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean buenEstadoContadorAguaInstalaciones;
 
-	@EntityDefinition(procesar = false, motivo = "No existe en el modelo")
-	private Boolean buenEstadoGasInstalaciones;
+	@EntityDefinition(propertyName = "gasBuenEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoIntalacionGasInstalaciones;
 
-	@EntityDefinition(procesar = false, motivo = "No existe en el modelo")
+	@EntityDefinition(propertyName = "gasConContador", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean buenEstadoContadorGasInstalacion;
 
-	@EntityDefinition(procesar = false, motivo = "No es coherente. Necesitamos un valor del diccionario DDEstadoConservacion")
-	private Boolean buenEstadoConservacionEdificio;
+	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacionEdificio no existe", groups = {
+			Insert.class, Update.class })
+	@EntityDefinition(propertyName = "estadoConservacionEdificio", classObj = DDEstadoConservacion.class)
+	private String codEstadoConservacionEdificio;
 
 	@EntityDefinition(propertyName = "anyoRehabilitacion")
 	private Date anyoRehabilitacionEdificio;
@@ -500,101 +496,382 @@ public class InformeMediadorDto implements Serializable {
 
 	private String telefonoAdministradorComunidadEdificio;
 
+	@EntityDefinition(propertyName = "derramaOrientativaComunidad")
 	private String descripcionDerramaComunidadEdificio;
 
+	@EntityDefinition(propertyName = "reformaFachada")
+	private Boolean fachadaReformasNecesariasEdificio;
+
+	@EntityDefinition(propertyName = "reformaEscalera")
+	private String escaleraReformasNecesariasEdificio;
+
+	@EntityDefinition(propertyName = "reformaPortal")
+	private Boolean portalReformasNecesariasEdificio;
+
+	@EntityDefinition(propertyName = "reformaAscensor")
 	private Boolean ascensorReformasNecesariasEdificio;
 
+	@EntityDefinition(propertyName = "reformaCubierta")
 	private Boolean cubiertaReformasNecesariasEdificio;
 
+	@EntityDefinition(propertyName = "reformaOtraZona")
 	private Boolean otrasZonasComunesReformasNecesariasEdificio;
 
+	@EntityDefinition(propertyName = "reformaOtroDescEdificio")
 	private String otrosReformasNecesariasEdificio;
 
+	@EntityDefinition(propertyName = "entornoInfraestructura")
 	private String infraestructurasEntornoEdificio;
 
+	@EntityDefinition(propertyName = "entornoComunicacion")
 	private String comunicacionesEntornoEdificio;
 
+	@EntityDefinition(propertyName = "ocio", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existeOcio;
 
+	@EntityDefinition(propertyName = "hoteles", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenHoteles;
 
+	@EntityDefinition(propertyName = "hotelesDesc")
 	private String hoteles;
 
+	@EntityDefinition(propertyName = "teatros", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenTeatros;
 
+	@EntityDefinition(propertyName = "teatrosDesc")
 	private String teatros;
 
+	@EntityDefinition(propertyName = "salasCine", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenSalasDeCine;
 
+	@EntityDefinition(propertyName = "salasCineDesc")
 	private String salasDeCine;
 
+	@EntityDefinition(propertyName = "instDeportivas", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenInstalacionesDeportivas;
 
+	@EntityDefinition(propertyName = "instDeportivasDesc")
 	private String instalacionesDeportivas;
 
+	@EntityDefinition(propertyName = "centrosComerciales", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenCentrosComerciales;
 
+	@EntityDefinition(propertyName = "centrosComercialesDesc")
 	private String centrosComerciales;
 
+	@EntityDefinition(propertyName = "ocioOtros")
 	private String otrosOcio;
 
+	@EntityDefinition(propertyName = "centrosEducativos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenCentrosEducativos;
 
+	@EntityDefinition(propertyName = "escuelasInfantiles", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenEscuelasInfantiles;
 
+	@EntityDefinition(propertyName = "escuelasInfantilesDesc")
 	private String escuelasInfantiles;
 
+	@EntityDefinition(propertyName = "colegios", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenColegios;
 
+	@EntityDefinition(propertyName = "colegiosDesc")
 	private String colegios;
 
+	@EntityDefinition(propertyName = "institutos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenInstitutos;
 
+	@EntityDefinition(propertyName = "institutosDesc")
 	private String institutos;
 
+	@EntityDefinition(propertyName = "universidades", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenUniversidades;
 
+	@EntityDefinition(propertyName = "universidadesDesc")
 	private String universidades;
 
+	@EntityDefinition(propertyName = "centrosEducativosOtros")
 	private String otrosCentrosEducativos;
 
+	@EntityDefinition(propertyName = "centrosSanitarios", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenCentrosSanitarios;
 
+	@EntityDefinition(propertyName = "centrosSalud", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenCentrosDeSalud;
 
+	@EntityDefinition(propertyName = "centrosSaludDesc")
 	private String centrosDeSalud;
 
+	@EntityDefinition(propertyName = "clinicas", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenClinicas;
 
+	@EntityDefinition(propertyName = "clinicasDesc")
 	private String clinicas;
 
+	@EntityDefinition(propertyName = "hospitales", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenHospitales;
 
+	@EntityDefinition(propertyName = "hospitalesDesc")
 	private String hospitales;
 
+	@EntityDefinition(procesar = false)
 	private Boolean existenOtrosCentrosSanitarios;
 
+	@EntityDefinition(propertyName = "centrosSanitariosOtros")
 	private String otrosCentrosSanitarios;
 
-	private String codTipoAparcamientoEnSuperficie;// <-------------------------dicionario??
+	@EntityDefinition(propertyName = "parkingSuperSufi", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean suficienteAparcamientoEnSuperficie;
 
+	@EntityDefinition(propertyName = "comunicaciones", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existenComunicaciones;
 
+	@EntityDefinition(propertyName = "facilAcceso", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existeFacilAccesoPorCarretera;
 
-	private String facilAccesoPorCarretera;
-
+	@EntityDefinition(propertyName = "lineasBus", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existeLineasDeAutobus;
 
+	@EntityDefinition(propertyName = "lineasBusDesc")
 	private String lineasDeAutobus;
 
+	@EntityDefinition(propertyName = "metro", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existeMetro;
 
+	@EntityDefinition(propertyName = "metroDesc")
 	private String metro;
 
+	@EntityDefinition(propertyName = "estacionTren", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existeEstacionesDeTren;
 
+	@EntityDefinition(propertyName = "estacionTrenDesc")
 	private String estacionesDeTren;
+
+	@EntityDefinition(propertyName = "comunicacionesOtro")
+	private String otrosComunicaciones;
+
+	@EntityDefinition(propertyName = "puertaEntradaNormal", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPuertaEntradaNormal;
+
+	@EntityDefinition(propertyName = "puertaEntradaBlindada", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPuertaEntradaBlindada;
+
+	@EntityDefinition(propertyName = "puertaEntradaAcorazada", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPuertaEntradaAcorazada;
+
+	@EntityDefinition(propertyName = "puertaPasoMaciza", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPuertaPasoMaciza;
+
+	@EntityDefinition(propertyName = "puertaPasoHueca", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPuertaPasoHueca;
+
+	@EntityDefinition(propertyName = "puertaPasoLacada", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPuertaPasoLacada;
+
+	@EntityDefinition(propertyName = "armariosEmpotrados", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existenArmariosEmpotrados;
+
+	@Diccionary(clase = DDAcabadoCarpinteria.class, message = "El codAcabadoCarpinteria no existe", groups = {
+			Insert.class, Update.class })
+	@EntityDefinition(propertyName = "acabadoCarpinteria", classObj = DDAcabadoCarpinteria.class)
+	private String codAcabadoCarpinteria;
+
+	@EntityDefinition(propertyName = "carpinteriaInteriorOtros")
+	private String otrosCarpinteriaInterior;
+
+	@EntityDefinition(propertyName = "humedadPared", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean humedadesPared;
+
+	@EntityDefinition(propertyName = "humedadTecho", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean humedadesTecho;
+
+	@EntityDefinition(propertyName = "grietaPared", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean grietasPared;
+
+	@EntityDefinition(propertyName = "grietoTecho", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean grietasTecho;
+
+	@EntityDefinition(propertyName = "gotele", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPinturaParedesGotele;
+
+	@EntityDefinition(propertyName = "plasticaLisa", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPinturaParedesLisa;
+
+	@EntityDefinition(propertyName = "papelPintado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPinturaParedesPintado;
+
+	@EntityDefinition(propertyName = "pinturaTechoGoteleEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPinturaTechoGotele;
+
+	@EntityDefinition(propertyName = "pinturaLisaTechoEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPinturaTechoLisa;
+
+	@EntityDefinition(propertyName = "pinturaTechoPapelEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPinturaTechoPintado;
+
+	@EntityDefinition(propertyName = "molduraEscayolaEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoMolduraEscayola;
+
+	@EntityDefinition(propertyName = "paramentosOtros")
+	public String otrosParamentosVerticales;
+
+	@EntityDefinition(propertyName = "tarimaFlotante", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoTarimaFlotanteSolados;
+
+	@EntityDefinition(propertyName = "parque", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoParqueSolados;
+
+	@EntityDefinition(propertyName = "soladoMarmol", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoMarmolSolados;
+
+	@EntityDefinition(propertyName = "plaqueta", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoPlaquetaSolados;
+
+	@EntityDefinition(propertyName = "soladoOtros")
+	public String otrosSolados;
+
+	@EntityDefinition(propertyName = "estadoAmueblada", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoCocinaAmuebladaCocina;
+
+	@EntityDefinition(propertyName = "encimeraGranito", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoEncimeraGranitoCocina;
+
+	@EntityDefinition(propertyName = "encimeraMarmol", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoEncimeraMarmolCocina;
+
+	@EntityDefinition(propertyName = "encimeraOtroMaterial", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoEncimeraMaterialCocina;
+
+	@EntityDefinition(propertyName = "vitro", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoVitroceramicaCocina;
+
+	@EntityDefinition(propertyName = "lavadora", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoLavadoraCocina;
+
+	@EntityDefinition(propertyName = "frigorifico", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoFrigorificoCocina;
+
+	@EntityDefinition(propertyName = "lavavajillas", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoLavavajillasCocina;
+
+	@EntityDefinition(propertyName = "microondas", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoMicroondasCocina;
+
+	@EntityDefinition(propertyName = "horno", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoHornoCocina;
+
+	@EntityDefinition(propertyName = "suelos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoSueloCocina;
+
+	@EntityDefinition(propertyName = "azulejos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoAzulejosCocina;
+
+	@EntityDefinition(propertyName = "grifosMonomandos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoGriferiaMonomandoCocina;
+
+	@EntityDefinition(propertyName = "cocinaOtros")
+	public String otrosCocina;
+
+	@EntityDefinition(propertyName = "ducha", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoDuchaBanyo;
+
+	@EntityDefinition(propertyName = "banyera", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoBanyeraNormalBanyo;
+
+	@EntityDefinition(propertyName = "banyeraHidromasaje", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoBanyeraHidromasajeBanyo;
+
+	@EntityDefinition(propertyName = "columnaHidromasaje", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoColumnaHidromasajeBanyo;
+
+	@EntityDefinition(propertyName = "alicatadoMarmol", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoAlicatadoMarmolBanyo;
+
+	@EntityDefinition(propertyName = "alicatadoGrafito", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoAlicatadoGranitoBanyo;
+
+	@EntityDefinition(propertyName = "alicatadoAzulejo", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoAlicatadoAzulejoBanyo;
+
+	@EntityDefinition(propertyName = "marmol", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoEncimeraMarmolBanyo;
+
+	@EntityDefinition(propertyName = "granito", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoEncimeraGranitoBanyo;
+
+	@EntityDefinition(propertyName = "otroMaterial", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoEncimeraMaterialBanyo;
+
+	@EntityDefinition(propertyName = "estadoSanitarios", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoSanitariosBanyo;
+
+	@EntityDefinition(propertyName = "suelos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoSueloBanyo;
+
+	@EntityDefinition(propertyName = "estadoGrifoMonomando", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoGriferiaMonomandoBanyo;
+
+	@EntityDefinition(propertyName = "banyoOtros")
+	public String otrosBanyo;
+
+	@EntityDefinition(propertyName = "electricidadBuenEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean buenEstadoInstalacionElectrica;
+
+	@EntityDefinition(propertyName = "electricidadDefectuosa", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean instalacionElectricaAntiguaODefectuosa;
+
+	@EntityDefinition(propertyName = "calefaccionGasNat", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeCalefaccionGasNatural;
+
+	@EntityDefinition(propertyName = "calefaccionRadiadorAlu", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existenRadiadoresDeAluminio;
+
+	@EntityDefinition(propertyName = "aguaCalienteCentral", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeAguaCalienteCentral;
+
+	@EntityDefinition(propertyName = "aguaCalienteGasNat", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeAguaCalienteGasNatural;
+
+	@EntityDefinition(propertyName = "airePreinstalacion", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeAireAcondicionadoPreinstalacion;
+
+	@EntityDefinition(propertyName = "aireInstalacion", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeAireAcondicionadoInstalacion;
+
+	@EntityDefinition(propertyName = "aireFrioCalor", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeAireAcondicionadoCalor;
+
+	@EntityDefinition(propertyName = "instalacionOtros")
+	public String otrosInstalaciones;
+
+	@EntityDefinition(propertyName = "jardines", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existenJardinesZonasVerdes;
+
+	@EntityDefinition(propertyName = "piscina", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existePiscina;
+
+	@EntityDefinition(propertyName = "padel", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existePistaPadel;
+
+	@EntityDefinition(propertyName = "tenis", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existePistaTenis;
+
+	@EntityDefinition(propertyName = "pistaPolideportiva", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existePistaPolideportiva;
+
+	@EntityDefinition(propertyName = "gimnasio", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeGimnasio;
+
+	@EntityDefinition(propertyName = "instalacionesDeportivasOtros")
+	public String otrosInstalacionesDeportivas;
+
+	@EntityDefinition(propertyName = "zonaInfantil", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeZonaInfantil;
+
+	@EntityDefinition(propertyName = "conserjeVigilancia", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	public Boolean existeConserjeVigilancia;
+
+	@EntityDefinition(propertyName = "zonaComunOtros")
+	public String otrosZonasComunes;
 
 	public Long getIdInformeMediadorWebcom() {
 		return idInformeMediadorWebcom;
@@ -1012,11 +1289,11 @@ public class InformeMediadorDto implements Serializable {
 		this.plantas = plantas;
 	}
 
-	public Long getNumeroTerrazasDescubiertas() {
+	public Integer getNumeroTerrazasDescubiertas() {
 		return numeroTerrazasDescubiertas;
 	}
 
-	public void setNumeroTerrazasDescubiertas(Long numeroTerrazasDescubiertas) {
+	public void setNumeroTerrazasDescubiertas(Integer numeroTerrazasDescubiertas) {
 		this.numeroTerrazasDescubiertas = numeroTerrazasDescubiertas;
 	}
 
@@ -1028,11 +1305,11 @@ public class InformeMediadorDto implements Serializable {
 		this.descripcionTerrazasDescubiertas = descripcionTerrazasDescubiertas;
 	}
 
-	public Long getNumeroTerrazasCubiertas() {
+	public Integer getNumeroTerrazasCubiertas() {
 		return numeroTerrazasCubiertas;
 	}
 
-	public void setNumeroTerrazasCubiertas(Long numeroTerrazasCubiertas) {
+	public void setNumeroTerrazasCubiertas(Integer numeroTerrazasCubiertas) {
 		this.numeroTerrazasCubiertas = numeroTerrazasCubiertas;
 	}
 
@@ -1076,7 +1353,6 @@ public class InformeMediadorDto implements Serializable {
 		this.otrosOtrasDependencias = otrosOtrasDependencias;
 	}
 
-	
 	public Boolean getExteriorCarpinteriaReformasNecesarias() {
 		return exteriorCarpinteriaReformasNecesarias;
 	}
@@ -1518,12 +1794,12 @@ public class InformeMediadorDto implements Serializable {
 		this.buenEstadoContadorAguaInstalaciones = buenEstadoContadorAguaInstalaciones;
 	}
 
-	public Boolean getBuenEstadoGasInstalaciones() {
-		return buenEstadoGasInstalaciones;
+	public Boolean getBuenEstadoIntalacionGasInstalaciones() {
+		return buenEstadoIntalacionGasInstalaciones;
 	}
 
-	public void setBuenEstadoGasInstalaciones(Boolean buenEstadoGasInstalaciones) {
-		this.buenEstadoGasInstalaciones = buenEstadoGasInstalaciones;
+	public void setBuenEstadoIntalacionGasInstalaciones(Boolean buenEstadoIntalacionGasInstalaciones) {
+		this.buenEstadoIntalacionGasInstalaciones = buenEstadoIntalacionGasInstalaciones;
 	}
 
 	public Boolean getBuenEstadoContadorGasInstalacion() {
@@ -1534,12 +1810,12 @@ public class InformeMediadorDto implements Serializable {
 		this.buenEstadoContadorGasInstalacion = buenEstadoContadorGasInstalacion;
 	}
 
-	public Boolean getBuenEstadoConservacionEdificio() {
-		return buenEstadoConservacionEdificio;
+	public String getCodEstadoConservacionEdificio() {
+		return codEstadoConservacionEdificio;
 	}
 
-	public void setBuenEstadoConservacionEdificio(Boolean buenEstadoConservacionEdificio) {
-		this.buenEstadoConservacionEdificio = buenEstadoConservacionEdificio;
+	public void setCodEstadoConservacionEdificio(String codEstadoConservacionEdificio) {
+		this.codEstadoConservacionEdificio = codEstadoConservacionEdificio;
 	}
 
 	public Date getAnyoRehabilitacionEdificio() {
@@ -1926,14 +2202,6 @@ public class InformeMediadorDto implements Serializable {
 		this.otrosCentrosSanitarios = otrosCentrosSanitarios;
 	}
 
-	public String getCodTipoAparcamientoEnSuperficie() {
-		return codTipoAparcamientoEnSuperficie;
-	}
-
-	public void setCodTipoAparcamientoEnSuperficie(String codTipoAparcamientoEnSuperficie) {
-		this.codTipoAparcamientoEnSuperficie = codTipoAparcamientoEnSuperficie;
-	}
-
 	public Boolean getExistenComunicaciones() {
 		return existenComunicaciones;
 	}
@@ -1948,14 +2216,6 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setExisteFacilAccesoPorCarretera(Boolean existeFacilAccesoPorCarretera) {
 		this.existeFacilAccesoPorCarretera = existeFacilAccesoPorCarretera;
-	}
-
-	public String getFacilAccesoPorCarretera() {
-		return facilAccesoPorCarretera;
-	}
-
-	public void setFacilAccesoPorCarretera(String facilAccesoPorCarretera) {
-		this.facilAccesoPorCarretera = facilAccesoPorCarretera;
 	}
 
 	public Boolean getExisteLineasDeAutobus() {
@@ -2016,6 +2276,638 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setCodTipoVivienda(String codTipoVivienda) {
 		this.codTipoVivienda = codTipoVivienda;
+	}
+
+	public Boolean getFachadaReformasNecesariasEdificio() {
+		return fachadaReformasNecesariasEdificio;
+	}
+
+	public void setFachadaReformasNecesariasEdificio(Boolean fachadaReformasNecesariasEdificio) {
+		this.fachadaReformasNecesariasEdificio = fachadaReformasNecesariasEdificio;
+	}
+
+	public String getEscaleraReformasNecesariasEdificio() {
+		return escaleraReformasNecesariasEdificio;
+	}
+
+	public void setEscaleraReformasNecesariasEdificio(String escaleraReformasNecesariasEdificio) {
+		this.escaleraReformasNecesariasEdificio = escaleraReformasNecesariasEdificio;
+	}
+
+	public Boolean getPortalReformasNecesariasEdificio() {
+		return portalReformasNecesariasEdificio;
+	}
+
+	public void setPortalReformasNecesariasEdificio(Boolean portalReformasNecesariasEdificio) {
+		this.portalReformasNecesariasEdificio = portalReformasNecesariasEdificio;
+	}
+
+	public Boolean getSuficienteAparcamientoEnSuperficie() {
+		return suficienteAparcamientoEnSuperficie;
+	}
+
+	public void setSuficienteAparcamientoEnSuperficie(Boolean suficienteAparcamientoEnSuperficie) {
+		this.suficienteAparcamientoEnSuperficie = suficienteAparcamientoEnSuperficie;
+	}
+
+	public String getOtrosComunicaciones() {
+		return otrosComunicaciones;
+	}
+
+	public void setOtrosComunicaciones(String otrosComunicaciones) {
+		this.otrosComunicaciones = otrosComunicaciones;
+	}
+
+	public Boolean getBuenEstadoPuertaEntradaNormal() {
+		return buenEstadoPuertaEntradaNormal;
+	}
+
+	public void setBuenEstadoPuertaEntradaNormal(Boolean buenEstadoPuertaEntradaNormal) {
+		this.buenEstadoPuertaEntradaNormal = buenEstadoPuertaEntradaNormal;
+	}
+
+	public Boolean getBuenEstadoPuertaEntradaBlindada() {
+		return buenEstadoPuertaEntradaBlindada;
+	}
+
+	public void setBuenEstadoPuertaEntradaBlindada(Boolean buenEstadoPuertaEntradaBlindada) {
+		this.buenEstadoPuertaEntradaBlindada = buenEstadoPuertaEntradaBlindada;
+	}
+
+	public Boolean getBuenEstadoPuertaEntradaAcorazada() {
+		return buenEstadoPuertaEntradaAcorazada;
+	}
+
+	public void setBuenEstadoPuertaEntradaAcorazada(Boolean buenEstadoPuertaEntradaAcorazada) {
+		this.buenEstadoPuertaEntradaAcorazada = buenEstadoPuertaEntradaAcorazada;
+	}
+
+	public Boolean getBuenEstadoPuertaPasoMaciza() {
+		return buenEstadoPuertaPasoMaciza;
+	}
+
+	public void setBuenEstadoPuertaPasoMaciza(Boolean buenEstadoPuertaPasoMaciza) {
+		this.buenEstadoPuertaPasoMaciza = buenEstadoPuertaPasoMaciza;
+	}
+
+	public Boolean getBuenEstadoPuertaPasoHueca() {
+		return buenEstadoPuertaPasoHueca;
+	}
+
+	public void setBuenEstadoPuertaPasoHueca(Boolean buenEstadoPuertaPasoHueca) {
+		this.buenEstadoPuertaPasoHueca = buenEstadoPuertaPasoHueca;
+	}
+
+	public Boolean getBuenEstadoPuertaPasoLacada() {
+		return buenEstadoPuertaPasoLacada;
+	}
+
+	public void setBuenEstadoPuertaPasoLacada(Boolean buenEstadoPuertaPasoLacada) {
+		this.buenEstadoPuertaPasoLacada = buenEstadoPuertaPasoLacada;
+	}
+
+	public Boolean getExistenArmariosEmpotrados() {
+		return existenArmariosEmpotrados;
+	}
+
+	public void setExistenArmariosEmpotrados(Boolean existenArmariosEmpotrados) {
+		this.existenArmariosEmpotrados = existenArmariosEmpotrados;
+	}
+
+	public String getCodAcabadoCarpinteria() {
+		return codAcabadoCarpinteria;
+	}
+
+	public void setCodAcabadoCarpinteria(String codAcabadoCarpinteria) {
+		this.codAcabadoCarpinteria = codAcabadoCarpinteria;
+	}
+
+	public String getOtrosCarpinteriaInterior() {
+		return otrosCarpinteriaInterior;
+	}
+
+	public void setOtrosCarpinteriaInterior(String otrosCarpinteriaInterior) {
+		this.otrosCarpinteriaInterior = otrosCarpinteriaInterior;
+	}
+
+	public Boolean getHumedadesPared() {
+		return humedadesPared;
+	}
+
+	public void setHumedadesPared(Boolean humedadesPared) {
+		this.humedadesPared = humedadesPared;
+	}
+
+	public Boolean getHumedadesTecho() {
+		return humedadesTecho;
+	}
+
+	public void setHumedadesTecho(Boolean humedadesTecho) {
+		this.humedadesTecho = humedadesTecho;
+	}
+
+	public Boolean getGrietasPared() {
+		return grietasPared;
+	}
+
+	public void setGrietasPared(Boolean grietasPared) {
+		this.grietasPared = grietasPared;
+	}
+
+	public Boolean getGrietasTecho() {
+		return grietasTecho;
+	}
+
+	public void setGrietasTecho(Boolean grietasTecho) {
+		this.grietasTecho = grietasTecho;
+	}
+
+	public Boolean getBuenEstadoPinturaParedesGotele() {
+		return buenEstadoPinturaParedesGotele;
+	}
+
+	public void setBuenEstadoPinturaParedesGotele(Boolean buenEstadoPinturaParedesGotele) {
+		this.buenEstadoPinturaParedesGotele = buenEstadoPinturaParedesGotele;
+	}
+
+	public Boolean getBuenEstadoPinturaParedesLisa() {
+		return buenEstadoPinturaParedesLisa;
+	}
+
+	public void setBuenEstadoPinturaParedesLisa(Boolean buenEstadoPinturaParedesLisa) {
+		this.buenEstadoPinturaParedesLisa = buenEstadoPinturaParedesLisa;
+	}
+
+	public Boolean getBuenEstadoPinturaParedesPintado() {
+		return buenEstadoPinturaParedesPintado;
+	}
+
+	public void setBuenEstadoPinturaParedesPintado(Boolean buenEstadoPinturaParedesPintado) {
+		this.buenEstadoPinturaParedesPintado = buenEstadoPinturaParedesPintado;
+	}
+
+	public Boolean getBuenEstadoPinturaTechoGotele() {
+		return buenEstadoPinturaTechoGotele;
+	}
+
+	public void setBuenEstadoPinturaTechoGotele(Boolean buenEstadoPinturaTechoGotele) {
+		this.buenEstadoPinturaTechoGotele = buenEstadoPinturaTechoGotele;
+	}
+
+	public Boolean getBuenEstadoPinturaTechoLisa() {
+		return buenEstadoPinturaTechoLisa;
+	}
+
+	public void setBuenEstadoPinturaTechoLisa(Boolean buenEstadoPinturaTechoLisa) {
+		this.buenEstadoPinturaTechoLisa = buenEstadoPinturaTechoLisa;
+	}
+
+	public Boolean getBuenEstadoPinturaTechoPintado() {
+		return buenEstadoPinturaTechoPintado;
+	}
+
+	public void setBuenEstadoPinturaTechoPintado(Boolean buenEstadoPinturaTechoPintado) {
+		this.buenEstadoPinturaTechoPintado = buenEstadoPinturaTechoPintado;
+	}
+
+	public Boolean getBuenEstadoMolduraEscayola() {
+		return buenEstadoMolduraEscayola;
+	}
+
+	public void setBuenEstadoMolduraEscayola(Boolean buenEstadoMolduraEscayola) {
+		this.buenEstadoMolduraEscayola = buenEstadoMolduraEscayola;
+	}
+
+	public String getOtrosParamentosVerticales() {
+		return otrosParamentosVerticales;
+	}
+
+	public void setOtrosParamentosVerticales(String otrosParamentosVerticales) {
+		this.otrosParamentosVerticales = otrosParamentosVerticales;
+	}
+
+	public Boolean getBuenEstadoTarimaFlotanteSolados() {
+		return buenEstadoTarimaFlotanteSolados;
+	}
+
+	public void setBuenEstadoTarimaFlotanteSolados(Boolean buenEstadoTarimaFlotanteSolados) {
+		this.buenEstadoTarimaFlotanteSolados = buenEstadoTarimaFlotanteSolados;
+	}
+
+	public Boolean getBuenEstadoParqueSolados() {
+		return buenEstadoParqueSolados;
+	}
+
+	public void setBuenEstadoParqueSolados(Boolean buenEstadoParqueSolados) {
+		this.buenEstadoParqueSolados = buenEstadoParqueSolados;
+	}
+
+	public Boolean getBuenEstadoMarmolSolados() {
+		return buenEstadoMarmolSolados;
+	}
+
+	public void setBuenEstadoMarmolSolados(Boolean buenEstadoMarmolSolados) {
+		this.buenEstadoMarmolSolados = buenEstadoMarmolSolados;
+	}
+
+	public Boolean getBuenEstadoPlaquetaSolados() {
+		return buenEstadoPlaquetaSolados;
+	}
+
+	public void setBuenEstadoPlaquetaSolados(Boolean buenEstadoPlaquetaSolados) {
+		this.buenEstadoPlaquetaSolados = buenEstadoPlaquetaSolados;
+	}
+
+	public String getOtrosSolados() {
+		return otrosSolados;
+	}
+
+	public void setOtrosSolados(String otrosSolados) {
+		this.otrosSolados = otrosSolados;
+	}
+
+	public Boolean getBuenEstadoCocinaAmuebladaCocina() {
+		return buenEstadoCocinaAmuebladaCocina;
+	}
+
+	public void setBuenEstadoCocinaAmuebladaCocina(Boolean buenEstadoCocinaAmuebladaCocina) {
+		this.buenEstadoCocinaAmuebladaCocina = buenEstadoCocinaAmuebladaCocina;
+	}
+
+	public Boolean getBuenEstadoEncimeraGranitoCocina() {
+		return buenEstadoEncimeraGranitoCocina;
+	}
+
+	public void setBuenEstadoEncimeraGranitoCocina(Boolean buenEstadoEncimeraGranitoCocina) {
+		this.buenEstadoEncimeraGranitoCocina = buenEstadoEncimeraGranitoCocina;
+	}
+
+	public Boolean getBuenEstadoEncimeraMarmolCocina() {
+		return buenEstadoEncimeraMarmolCocina;
+	}
+
+	public void setBuenEstadoEncimeraMarmolCocina(Boolean buenEstadoEncimeraMarmolCocina) {
+		this.buenEstadoEncimeraMarmolCocina = buenEstadoEncimeraMarmolCocina;
+	}
+
+	public Boolean getBuenEstadoEncimeraMaterialCocina() {
+		return buenEstadoEncimeraMaterialCocina;
+	}
+
+	public void setBuenEstadoEncimeraMaterialCocina(Boolean buenEstadoEncimeraMaterialCocina) {
+		this.buenEstadoEncimeraMaterialCocina = buenEstadoEncimeraMaterialCocina;
+	}
+
+	public Boolean getBuenEstadoVitroceramicaCocina() {
+		return buenEstadoVitroceramicaCocina;
+	}
+
+	public void setBuenEstadoVitroceramicaCocina(Boolean buenEstadoVitroceramicaCocina) {
+		this.buenEstadoVitroceramicaCocina = buenEstadoVitroceramicaCocina;
+	}
+
+	public Boolean getBuenEstadoLavadoraCocina() {
+		return buenEstadoLavadoraCocina;
+	}
+
+	public void setBuenEstadoLavadoraCocina(Boolean buenEstadoLavadoraCocina) {
+		this.buenEstadoLavadoraCocina = buenEstadoLavadoraCocina;
+	}
+
+	public Boolean getBuenEstadoFrigorificoCocina() {
+		return buenEstadoFrigorificoCocina;
+	}
+
+	public void setBuenEstadoFrigorificoCocina(Boolean buenEstadoFrigorificoCocina) {
+		this.buenEstadoFrigorificoCocina = buenEstadoFrigorificoCocina;
+	}
+
+	public Boolean getBuenEstadoLavavajillasCocina() {
+		return buenEstadoLavavajillasCocina;
+	}
+
+	public void setBuenEstadoLavavajillasCocina(Boolean buenEstadoLavavajillasCocina) {
+		this.buenEstadoLavavajillasCocina = buenEstadoLavavajillasCocina;
+	}
+
+	public Boolean getBuenEstadoMicroondasCocina() {
+		return buenEstadoMicroondasCocina;
+	}
+
+	public void setBuenEstadoMicroondasCocina(Boolean buenEstadoMicroondasCocina) {
+		this.buenEstadoMicroondasCocina = buenEstadoMicroondasCocina;
+	}
+
+	public Boolean getBuenEstadoHornoCocina() {
+		return buenEstadoHornoCocina;
+	}
+
+	public void setBuenEstadoHornoCocina(Boolean buenEstadoHornoCocina) {
+		this.buenEstadoHornoCocina = buenEstadoHornoCocina;
+	}
+
+	public Boolean getBuenEstadoSueloCocina() {
+		return buenEstadoSueloCocina;
+	}
+
+	public void setBuenEstadoSueloCocina(Boolean buenEstadoSueloCocina) {
+		this.buenEstadoSueloCocina = buenEstadoSueloCocina;
+	}
+
+	public Boolean getBuenEstadoAzulejosCocina() {
+		return buenEstadoAzulejosCocina;
+	}
+
+	public void setBuenEstadoAzulejosCocina(Boolean buenEstadoAzulejosCocina) {
+		this.buenEstadoAzulejosCocina = buenEstadoAzulejosCocina;
+	}
+
+	public Boolean getBuenEstadoGriferiaMonomandoCocina() {
+		return buenEstadoGriferiaMonomandoCocina;
+	}
+
+	public void setBuenEstadoGriferiaMonomandoCocina(Boolean buenEstadoGriferiaMonomandoCocina) {
+		this.buenEstadoGriferiaMonomandoCocina = buenEstadoGriferiaMonomandoCocina;
+	}
+
+	public String getOtrosCocina() {
+		return otrosCocina;
+	}
+
+	public void setOtrosCocina(String otrosCocina) {
+		this.otrosCocina = otrosCocina;
+	}
+
+	public Boolean getBuenEstadoDuchaBanyo() {
+		return buenEstadoDuchaBanyo;
+	}
+
+	public void setBuenEstadoDuchaBanyo(Boolean buenEstadoDuchaBanyo) {
+		this.buenEstadoDuchaBanyo = buenEstadoDuchaBanyo;
+	}
+
+	public Boolean getBuenEstadoBanyeraNormalBanyo() {
+		return buenEstadoBanyeraNormalBanyo;
+	}
+
+	public void setBuenEstadoBanyeraNormalBanyo(Boolean buenEstadoBanyeraNormalBanyo) {
+		this.buenEstadoBanyeraNormalBanyo = buenEstadoBanyeraNormalBanyo;
+	}
+
+	public Boolean getBuenEstadoBanyeraHidromasajeBanyo() {
+		return buenEstadoBanyeraHidromasajeBanyo;
+	}
+
+	public void setBuenEstadoBanyeraHidromasajeBanyo(Boolean buenEstadoBanyeraHidromasajeBanyo) {
+		this.buenEstadoBanyeraHidromasajeBanyo = buenEstadoBanyeraHidromasajeBanyo;
+	}
+
+	public Boolean getBuenEstadoColumnaHidromasajeBanyo() {
+		return buenEstadoColumnaHidromasajeBanyo;
+	}
+
+	public void setBuenEstadoColumnaHidromasajeBanyo(Boolean buenEstadoColumnaHidromasajeBanyo) {
+		this.buenEstadoColumnaHidromasajeBanyo = buenEstadoColumnaHidromasajeBanyo;
+	}
+
+	public Boolean getBuenEstadoAlicatadoMarmolBanyo() {
+		return buenEstadoAlicatadoMarmolBanyo;
+	}
+
+	public void setBuenEstadoAlicatadoMarmolBanyo(Boolean buenEstadoAlicatadoMarmolBanyo) {
+		this.buenEstadoAlicatadoMarmolBanyo = buenEstadoAlicatadoMarmolBanyo;
+	}
+
+	public Boolean getBuenEstadoAlicatadoGranitoBanyo() {
+		return buenEstadoAlicatadoGranitoBanyo;
+	}
+
+	public void setBuenEstadoAlicatadoGranitoBanyo(Boolean buenEstadoAlicatadoGranitoBanyo) {
+		this.buenEstadoAlicatadoGranitoBanyo = buenEstadoAlicatadoGranitoBanyo;
+	}
+
+	public Boolean getBuenEstadoAlicatadoAzulejoBanyo() {
+		return buenEstadoAlicatadoAzulejoBanyo;
+	}
+
+	public void setBuenEstadoAlicatadoAzulejoBanyo(Boolean buenEstadoAlicatadoAzulejoBanyo) {
+		this.buenEstadoAlicatadoAzulejoBanyo = buenEstadoAlicatadoAzulejoBanyo;
+	}
+
+	public Boolean getBuenEstadoEncimeraMarmolBanyo() {
+		return buenEstadoEncimeraMarmolBanyo;
+	}
+
+	public void setBuenEstadoEncimeraMarmolBanyo(Boolean buenEstadoEncimeraMarmolBanyo) {
+		this.buenEstadoEncimeraMarmolBanyo = buenEstadoEncimeraMarmolBanyo;
+	}
+
+	public Boolean getBuenEstadoEncimeraGranitoBanyo() {
+		return buenEstadoEncimeraGranitoBanyo;
+	}
+
+	public void setBuenEstadoEncimeraGranitoBanyo(Boolean buenEstadoEncimeraGranitoBanyo) {
+		this.buenEstadoEncimeraGranitoBanyo = buenEstadoEncimeraGranitoBanyo;
+	}
+
+	public Boolean getBuenEstadoEncimeraMaterialBanyo() {
+		return buenEstadoEncimeraMaterialBanyo;
+	}
+
+	public void setBuenEstadoEncimeraMaterialBanyo(Boolean buenEstadoEncimeraMaterialBanyo) {
+		this.buenEstadoEncimeraMaterialBanyo = buenEstadoEncimeraMaterialBanyo;
+	}
+
+	public Boolean getBuenEstadoSanitariosBanyo() {
+		return buenEstadoSanitariosBanyo;
+	}
+
+	public void setBuenEstadoSanitariosBanyo(Boolean buenEstadoSanitariosBanyo) {
+		this.buenEstadoSanitariosBanyo = buenEstadoSanitariosBanyo;
+	}
+
+	public Boolean getBuenEstadoSueloBanyo() {
+		return buenEstadoSueloBanyo;
+	}
+
+	public void setBuenEstadoSueloBanyo(Boolean buenEstadoSueloBanyo) {
+		this.buenEstadoSueloBanyo = buenEstadoSueloBanyo;
+	}
+
+	public Boolean getBuenEstadoGriferiaMonomandoBanyo() {
+		return buenEstadoGriferiaMonomandoBanyo;
+	}
+
+	public void setBuenEstadoGriferiaMonomandoBanyo(Boolean buenEstadoGriferiaMonomandoBanyo) {
+		this.buenEstadoGriferiaMonomandoBanyo = buenEstadoGriferiaMonomandoBanyo;
+	}
+
+	public String getOtrosBanyo() {
+		return otrosBanyo;
+	}
+
+	public void setOtrosBanyo(String otrosBanyo) {
+		this.otrosBanyo = otrosBanyo;
+	}
+
+	public Boolean getBuenEstadoInstalacionElectrica() {
+		return buenEstadoInstalacionElectrica;
+	}
+
+	public void setBuenEstadoInstalacionElectrica(Boolean buenEstadoInstalacionElectrica) {
+		this.buenEstadoInstalacionElectrica = buenEstadoInstalacionElectrica;
+	}
+
+	public Boolean getInstalacionElectricaAntiguaODefectuosa() {
+		return instalacionElectricaAntiguaODefectuosa;
+	}
+
+	public void setInstalacionElectricaAntiguaODefectuosa(Boolean instalacionElectricaAntiguaODefectuosa) {
+		this.instalacionElectricaAntiguaODefectuosa = instalacionElectricaAntiguaODefectuosa;
+	}
+
+	public Boolean getExisteCalefaccionGasNatural() {
+		return existeCalefaccionGasNatural;
+	}
+
+	public void setExisteCalefaccionGasNatural(Boolean existeCalefaccionGasNatural) {
+		this.existeCalefaccionGasNatural = existeCalefaccionGasNatural;
+	}
+
+	public Boolean getExistenRadiadoresDeAluminio() {
+		return existenRadiadoresDeAluminio;
+	}
+
+	public void setExistenRadiadoresDeAluminio(Boolean existenRadiadoresDeAluminio) {
+		this.existenRadiadoresDeAluminio = existenRadiadoresDeAluminio;
+	}
+
+	public Boolean getExisteAguaCalienteCentral() {
+		return existeAguaCalienteCentral;
+	}
+
+	public void setExisteAguaCalienteCentral(Boolean existeAguaCalienteCentral) {
+		this.existeAguaCalienteCentral = existeAguaCalienteCentral;
+	}
+
+	public Boolean getExisteAguaCalienteGasNatural() {
+		return existeAguaCalienteGasNatural;
+	}
+
+	public void setExisteAguaCalienteGasNatural(Boolean existeAguaCalienteGasNatural) {
+		this.existeAguaCalienteGasNatural = existeAguaCalienteGasNatural;
+	}
+
+	public Boolean getExisteAireAcondicionadoPreinstalacion() {
+		return existeAireAcondicionadoPreinstalacion;
+	}
+
+	public void setExisteAireAcondicionadoPreinstalacion(Boolean existeAireAcondicionadoPreinstalacion) {
+		this.existeAireAcondicionadoPreinstalacion = existeAireAcondicionadoPreinstalacion;
+	}
+
+	public Boolean getExisteAireAcondicionadoInstalacion() {
+		return existeAireAcondicionadoInstalacion;
+	}
+
+	public void setExisteAireAcondicionadoInstalacion(Boolean existeAireAcondicionadoInstalacion) {
+		this.existeAireAcondicionadoInstalacion = existeAireAcondicionadoInstalacion;
+	}
+
+	public Boolean getExisteAireAcondicionadoCalor() {
+		return existeAireAcondicionadoCalor;
+	}
+
+	public void setExisteAireAcondicionadoCalor(Boolean existeAireAcondicionadoCalor) {
+		this.existeAireAcondicionadoCalor = existeAireAcondicionadoCalor;
+	}
+
+	public String getOtrosInstalaciones() {
+		return otrosInstalaciones;
+	}
+
+	public void setOtrosInstalaciones(String otrosInstalaciones) {
+		this.otrosInstalaciones = otrosInstalaciones;
+	}
+
+	public Boolean getExistenJardinesZonasVerdes() {
+		return existenJardinesZonasVerdes;
+	}
+
+	public void setExistenJardinesZonasVerdes(Boolean existenJardinesZonasVerdes) {
+		this.existenJardinesZonasVerdes = existenJardinesZonasVerdes;
+	}
+
+	public Boolean getExistePiscina() {
+		return existePiscina;
+	}
+
+	public void setExistePiscina(Boolean existePiscina) {
+		this.existePiscina = existePiscina;
+	}
+
+	public Boolean getExistePistaPadel() {
+		return existePistaPadel;
+	}
+
+	public void setExistePistaPadel(Boolean existePistaPadel) {
+		this.existePistaPadel = existePistaPadel;
+	}
+
+	public Boolean getExistePistaTenis() {
+		return existePistaTenis;
+	}
+
+	public void setExistePistaTenis(Boolean existePistaTenis) {
+		this.existePistaTenis = existePistaTenis;
+	}
+
+	public Boolean getExistePistaPolideportiva() {
+		return existePistaPolideportiva;
+	}
+
+	public void setExistePistaPolideportiva(Boolean existePistaPolideportiva) {
+		this.existePistaPolideportiva = existePistaPolideportiva;
+	}
+
+	public Boolean getExisteGimnasio() {
+		return existeGimnasio;
+	}
+
+	public void setExisteGimnasio(Boolean existeGimnasio) {
+		this.existeGimnasio = existeGimnasio;
+	}
+
+	public String getOtrosInstalacionesDeportivas() {
+		return otrosInstalacionesDeportivas;
+	}
+
+	public void setOtrosInstalacionesDeportivas(String otrosInstalacionesDeportivas) {
+		this.otrosInstalacionesDeportivas = otrosInstalacionesDeportivas;
+	}
+
+	public Boolean getExisteZonaInfantil() {
+		return existeZonaInfantil;
+	}
+
+	public void setExisteZonaInfantil(Boolean existeZonaInfantil) {
+		this.existeZonaInfantil = existeZonaInfantil;
+	}
+
+	public Boolean getExisteConserjeVigilancia() {
+		return existeConserjeVigilancia;
+	}
+
+	public void setExisteConserjeVigilancia(Boolean existeConserjeVigilancia) {
+		this.existeConserjeVigilancia = existeConserjeVigilancia;
+	}
+
+	public String getOtrosZonasComunes() {
+		return otrosZonasComunes;
+	}
+
+	public void setOtrosZonasComunes(String otrosZonasComunes) {
+		this.otrosZonasComunes = otrosZonasComunes;
 	}
 
 }

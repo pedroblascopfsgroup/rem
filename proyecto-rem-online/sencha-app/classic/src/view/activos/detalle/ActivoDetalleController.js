@@ -1433,8 +1433,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		params: {idActivo : idActivo},
     		
     		success: function(response, opts){
-    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-    			btn.up('tasacionesactivo').funcionRecargar();
+    			var obj = Ext.decode(response.responseText);
+    		    if (obj.success == true) {
+    		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+        			btn.up('tasacionesactivo').funcionRecargar();
+    		    } else {
+    		    	me.fireEvent("errorToast", obj.msg); 
+    		    }
     		},
     		
 		 	failure: function(record, operation) {

@@ -231,7 +231,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 															cls: 'cabecera-info-field',
 										                	bind:{		
 										                		value: 	'{activo.claseActivoDescripcion}',
-										                		hidden:	'{!activo.claseActivoDescripcion}'	
+										                		disabled:	'{!activo.claseActivoDescripcion}'	
 										                	}
 										                }
 										      ]

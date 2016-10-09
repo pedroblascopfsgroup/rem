@@ -13,11 +13,6 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
  */
 public class App {
 	public static void main(String[] args) {
-		if (args.length < 1) {
-			System.out.println("Indique el cliente a ejecutar: tasaciones,infoCliente, instanciaDecision");
-			System.exit(1);
-		}
-
 		UvemManager uvemManager = new UvemManager();
 		try {
 			if (args[0].equals("tasaciones")) {
@@ -90,7 +85,7 @@ public class App {
 							instancia = uvemManager.instanciaDecision(dto, args[1]);
 							System.out.println("Resultado llamada Longitud Mensaje De Salida: " + instancia.getLongitudMensajeDeSalidarcslon());
 							System.out.println("Resultado llamada Codigo De Oferta Haya: " + instancia.getCodigoDeOfertaHayacoofhx2());
-							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComitecocom7());														
+							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComitecocom7());	
 						}else{
 							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS 0000000000000201 false 0 0 0");
 							System.exit(1);			
@@ -136,6 +131,9 @@ public class App {
 				System.exit(1);
 			}
 		} catch (Exception e) {
+			System.out.println("------ERROR-MESSAGE-----");
+			System.out.println(e.getMessage());
+			System.out.println("------ERROR-----");
 			e.printStackTrace();
 		}
 	}

@@ -13,7 +13,7 @@ public class StockDto implements WebcomRESTDto{
 	private LongDataType idUsuarioRemAccion;
 	@WebcomRequired
 	private DateDataType fechaAccion;
-	
+	@WebcomRequired
 	private LongDataType idActivoHaya;
 	private StringDataType codTipoVia;
 	private StringDataType nombreCalle;

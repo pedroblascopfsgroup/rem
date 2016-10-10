@@ -18,12 +18,12 @@ public class DetectorWebcomObrasNuevasCampanyas  extends DetectorCambiosBD<Campa
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "REM01.VI_ACTIVO_ONV_WEBCOM";
+		return "REM01.VI_AGRUP_ONV_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "REM01.AWH_ACT_ONV_WEBCOM_HIST";
+		return "REM01.AWH_AGRUP_ONV_WEBCOM_HIST";
 	}
 
 	@Override

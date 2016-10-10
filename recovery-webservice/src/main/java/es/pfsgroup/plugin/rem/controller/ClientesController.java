@@ -128,7 +128,7 @@ public class ClientesController {
 			logger.error(e);
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 			logger.debug("ERRORES: " + errorsList);
@@ -178,7 +178,7 @@ public class ClientesController {
 					map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 					map.put("idClienteRem", clienteDto.getIdClienteRem());
 					map.put("success", false);
-					map.put("errorMessages", errorsList);
+					map.put("invalidFields", errorsList);
 				}
 				listaRespuesta.add(map);
 
@@ -186,13 +186,13 @@ public class ClientesController {
 
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
-			model.put("error", "");
+			model.put("error", null);
 
 		} catch (Exception e) {
 			logger.error(e);
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
 
 		restApi.sendResponse(response, model);

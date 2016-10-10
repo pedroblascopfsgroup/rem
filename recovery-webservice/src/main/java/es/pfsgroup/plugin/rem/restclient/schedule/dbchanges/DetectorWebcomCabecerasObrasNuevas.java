@@ -3,13 +3,14 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
-/** Cabeceras/subdivisiones **/
+
 public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<CabeceraObrasNuevasDto> {
 
 	@Autowired
@@ -17,17 +18,17 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "REM01.VI_SUBDIVISION_WEBCOM";
+		return "REM01.VI_CABEC_ONV_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "REM01.SWH_SUBDIV_WEBCOM_HIST";
+		return "REM01.CWH_CABEC_ONV_WEBCOM_HIST";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "ID";
+		return "ID_SUBDIVISION_REM";
 	}
 
 	@Override

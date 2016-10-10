@@ -3,11 +3,13 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+
 
 public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoObrasNuevasDto> {
 
@@ -26,7 +28,7 @@ public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoO
 
 	@Override
 	public String clavePrimaria() {
-		return "ID";
+		return "ID_AGRUP_ACTIVO";
 	}
 
 	@Override

@@ -53,7 +53,7 @@ public class VDatosPropuestaUnificada implements Serializable {
 	@Column(name = "TIPO_DESCRIPCION")
 	private String tipoActivoDescripcion;
 	@Column(name = "SUBTIPO_DESCRIPCION")
-	private String SubtipoActivoDescripcion;
+	private String subtipoActivoDescripcion;
 	
 	//Activo - Dirección
 	@Column(name = "DIRECCION")
@@ -79,12 +79,16 @@ public class VDatosPropuestaUnificada implements Serializable {
 	private String estadoConstruccion;
 	
 	//Estado Dptos. - Comercial
+	@Column(name = "ESTADO_COMERCIAL")
+	private String situacionComercialDescripcion;
 	@Column(name = "NUM_VISITAS")
 	private Integer numVisitas;
 	@Column(name = "NUM_OFERTAS")
 	private Integer numOfertas;
 	
 	//Estado Dptos. - Admisión
+	@Column(name = "FECHA_INSCRIPCION")
+	private Date fechaInscripcion;
 	@Column(name = "FECHA_REV_CARGAS")
 	private Date fechaRevisionCargas;
 	@Column(name = "FECHA_TOMA_POSESION")
@@ -92,7 +96,7 @@ public class VDatosPropuestaUnificada implements Serializable {
 	
 	//Estado Dptos. - Gestión
 	@Column(name = "OCUPADO")
-	private String Ocupado;
+	private String ocupado;
 	
 	//Estado Dptos. - Publicacion
 	@Column(name = "FECHA_PUBLICACION")
@@ -109,7 +113,7 @@ public class VDatosPropuestaUnificada implements Serializable {
 	@Column(name = "VALOR_TASACION")
 	private Double valorTasacion;
 	@Column(name = "FECHA_TASACION")
-	private Date FECHA_TASACION;
+	private Date fechaTasacion;
 	
 	//Valores - FSV
 	@Column(name = "FSV_VENTA")
@@ -133,9 +137,12 @@ public class VDatosPropuestaUnificada implements Serializable {
 	private Double valorVnc;
 	@Column(name = "COSTE_ADIQUISICION")
 	private Double valorAdquisicion;
+	@Column(name = "COSTE_ADIQUISICION_F_INI")
+	private Date fechaValorAdquisicion;
 	@Column(name = "VALOR_ASESORADO_LIQ")
 	private Double valorLiquidativo;
-	
+	@Column(name = "VALOR_ASESORADO_LIQ_F_INI")
+	private Date fechaValorLiquidativo;
 	
 	public Long getId() {
 		return id;
@@ -228,10 +235,10 @@ public class VDatosPropuestaUnificada implements Serializable {
 		this.tipoActivoDescripcion = tipoActivoDescripcion;
 	}
 	public String getSubtipoActivoDescripcion() {
-		return SubtipoActivoDescripcion;
+		return subtipoActivoDescripcion;
 	}
 	public void setSubtipoActivoDescripcion(String subtipoActivoDescripcion) {
-		SubtipoActivoDescripcion = subtipoActivoDescripcion;
+		this.subtipoActivoDescripcion = subtipoActivoDescripcion;
 	}
 	public String getDireccion() {
 		return direccion;
@@ -312,10 +319,10 @@ public class VDatosPropuestaUnificada implements Serializable {
 		this.fechaTomaPosesion = fechaTomaPosesion;
 	}
 	public String getOcupado() {
-		return Ocupado;
+		return ocupado;
 	}
 	public void setOcupado(String ocupado) {
-		Ocupado = ocupado;
+		this.ocupado = ocupado;
 	}
 	public Date getFechaPublicacion() {
 		return fechaPublicacion;
@@ -341,11 +348,11 @@ public class VDatosPropuestaUnificada implements Serializable {
 	public void setValorTasacion(Double valorTasacion) {
 		this.valorTasacion = valorTasacion;
 	}
-	public Date getFECHA_TASACION() {
-		return FECHA_TASACION;
+	public Date getFechaTasacion() {
+		return fechaTasacion;
 	}
-	public void setFECHA_TASACION(Date fECHA_TASACION) {
-		FECHA_TASACION = fECHA_TASACION;
+	public void setFechaTasacion(Date fechaTasacion) {
+		this.fechaTasacion = fechaTasacion;
 	}
 	public Double getValorFsv() {
 		return valorFsv;
@@ -400,6 +407,31 @@ public class VDatosPropuestaUnificada implements Serializable {
 	}
 	public void setValorLiquidativo(Double valorLiquidativo) {
 		this.valorLiquidativo = valorLiquidativo;
+	}
+	public String getSituacionComercialDescripcion() {
+		return situacionComercialDescripcion;
+	}
+	public void setSituacionComercialDescripcion(
+			String situacionComercialDescripcion) {
+		this.situacionComercialDescripcion = situacionComercialDescripcion;
+	}
+	public Date getFechaInscripcion() {
+		return fechaInscripcion;
+	}
+	public void setFechaInscripcion(Date fechaInscripcion) {
+		this.fechaInscripcion = fechaInscripcion;
+	}
+	public Date getFechaValorAdquisicion() {
+		return fechaValorAdquisicion;
+	}
+	public void setFechaValorAdquisicion(Date fechaValorAdquisicion) {
+		this.fechaValorAdquisicion = fechaValorAdquisicion;
+	}
+	public Date getFechaValorLiquidativo() {
+		return fechaValorLiquidativo;
+	}
+	public void setFechaValorLiquidativo(Date fechaValorLiquidativo) {
+		this.fechaValorLiquidativo = fechaValorLiquidativo;
 	}
 	
 	

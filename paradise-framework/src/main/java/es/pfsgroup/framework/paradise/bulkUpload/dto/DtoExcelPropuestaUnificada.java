@@ -26,7 +26,7 @@ public class DtoExcelPropuestaUnificada {
 	//Activo - Tipología
 	private String tipoActivoCodigo;
 	private String tipoActivoDescripcion;
-	private String SubtipoActivoDescripcion;
+	private String subtipoActivoDescripcion;
 	//Activo - Dirección
 	private String direccion;
 	private String municipio;
@@ -39,13 +39,15 @@ public class DtoExcelPropuestaUnificada {
 	private Integer anoConstruccion;
 	private String estadoConstruccion;
 	//Estado Dptos. - Comercial
+	private String situacionComercialDescripcion;
 	private Integer numVisitas;
 	private Integer numOfertas;
 	//Estado Dptos. - Admisión
+	private Date fechaInscripcion;
 	private Date fechaRevisionCargas;
 	private Date fechaTomaPosesion;
 	//Estado Dptos. - Gestión
-	private String Ocupado;
+	private String ocupado;
 	//Estado Dptos. - Publicacion
 	private Date fechaPublicacion;
 	//Valores - Estimado venta
@@ -65,7 +67,9 @@ public class DtoExcelPropuestaUnificada {
 	private Double valorRentaWeb = (double) 0.0;
 	private Double valorVnc = (double) 0.0;
 	private Double valorAdquisicion = (double) 0.0;
+	private Date fechaValorAdquisicion;
 	private Double valorLiquidativo = (double) 0.0;
+	private Date fechaValorLiquidativo;
 	
 	//PRECIOS PROPUESTOS (Valores calculados)
 	private Double valorPropuesto = (double) 0.0;
@@ -170,10 +174,10 @@ public class DtoExcelPropuestaUnificada {
 		this.tipoActivoDescripcion = tipoActivoDescripcion;
 	}
 	public String getSubtipoActivoDescripcion() {
-		return SubtipoActivoDescripcion;
+		return subtipoActivoDescripcion;
 	}
 	public void setSubtipoActivoDescripcion(String subtipoActivoDescripcion) {
-		SubtipoActivoDescripcion = subtipoActivoDescripcion;
+		this.subtipoActivoDescripcion = subtipoActivoDescripcion;
 	}
 	public String getDireccion() {
 		return direccion;
@@ -254,10 +258,10 @@ public class DtoExcelPropuestaUnificada {
 		this.fechaTomaPosesion = fechaTomaPosesion;
 	}
 	public String getOcupado() {
-		return Ocupado;
+		return ocupado;
 	}
 	public void setOcupado(String ocupado) {
-		Ocupado = ocupado;
+		this.ocupado = ocupado;
 	}
 	public Date getFechaPublicacion() {
 		return fechaPublicacion;
@@ -378,6 +382,31 @@ public class DtoExcelPropuestaUnificada {
 	}
 	public void setProcSobreVnc(Double procSobreVnc) {
 		this.procSobreVnc = procSobreVnc;
+	}
+	public String getSituacionComercialDescripcion() {
+		return situacionComercialDescripcion;
+	}
+	public void setSituacionComercialDescripcion(
+			String situacionComercialDescripcion) {
+		this.situacionComercialDescripcion = situacionComercialDescripcion;
+	}
+	public Date getFechaInscripcion() {
+		return fechaInscripcion;
+	}
+	public void setFechaInscripcion(Date fechaInscripcion) {
+		this.fechaInscripcion = fechaInscripcion;
+	}
+	public Date getFechaValorAdquisicion() {
+		return fechaValorAdquisicion;
+	}
+	public void setFechaValorAdquisicion(Date fechaValorAdquisicion) {
+		this.fechaValorAdquisicion = fechaValorAdquisicion;
+	}
+	public Date getFechaValorLiquidativo() {
+		return fechaValorLiquidativo;
+	}
+	public void setFechaValorLiquidativo(Date fechaValorLiquidativo) {
+		this.fechaValorLiquidativo = fechaValorLiquidativo;
 	}
 	
 }

@@ -13,10 +13,19 @@ Ext.define('HreRem.model.PersonasContactoModel', {
     			name:'personaPrincipal'
     		},
     		{
-    			name:'nombreApellidos'
+    			name:'nombre'
     		},
     		{
-    			name:'cargo'
+    			name:'apellido1'
+    		},
+    		{
+    			name:'apellido2'
+    		},
+    		{
+    			name:'cargoCombobox'
+    		},
+    		{
+    			name:'cargoTexto'
     		},
     		{
     			name:'nif'

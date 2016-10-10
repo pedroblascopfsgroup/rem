@@ -62,7 +62,7 @@ public class VisitasController {
 	@RequestMapping(method = RequestMethod.POST, value = "/visitas")
 	public void saveOrUpdateVisita(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		VisitaRequestDto jsonData = null;
-		List<String> errorsList = null;
+		 HashMap<String, List<String>> errorsList = null;
 		Visita visita = null;
 		
 		VisitaDto visitaDto = null;
@@ -86,7 +86,7 @@ public class VisitasController {
 				for(int i=0; i < listaVisitaDto.size();i++){
 					
 					Visita vis = null;
-					errorsList = new ArrayList<String>();
+					errorsList = new HashMap<String, List<String>>();
 					map = new HashMap<String, Object>();
 					visitaDto = listaVisitaDto.get(i);
 					
@@ -108,7 +108,7 @@ public class VisitasController {
 						map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
 						map.put("idVisitaRem", visitaDto.getIdVisitaRem());
 						map.put("success", false);
-						//map.put("errorMessages", errorsList);
+						map.put("invalidFields", errorsList);
 					}					
 					listaRespuesta.add(map);	
 					
@@ -124,7 +124,7 @@ public class VisitasController {
 			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 			logger.debug("ERRORES: " + errorsList);

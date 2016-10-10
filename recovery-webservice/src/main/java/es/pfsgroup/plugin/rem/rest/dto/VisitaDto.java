@@ -6,24 +6,27 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+
 public class VisitaDto implements Serializable {
 
 	private static final long serialVersionUID = 3773651686763584927L;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idVisitaWebcom;
 	private Long idVisitaRem;
-	@NotNull
+	@NotNull(groups = { Update.class })
 	private Long idClienteRem;
-	@NotNull
+	@NotNull(groups = { Update.class })
 	private Long idActivoHaya;
-	@NotNull
+	@NotNull(groups = { Insert.class})
 	@Size(max=20)
 	private String codEstadoVisita;
 	@Size(max=20)
 	private String codDetalleEstadoVisita;
-	@NotNull
+	@NotNull(groups = { Insert.class})
 	private Long idProveedorRemPrescriptor;
-	@NotNull
+	@NotNull(groups = { Insert.class})
 	private Long idProveedorRemCustodio;
 	private Long idProveedorRemResponsable;
 	private Long idProveedorRemFdv;

@@ -33,14 +33,18 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											{   
 												xtype:'fieldset',
 												border: false,
-												defaultType: 'textfieldbase',
 												height: 250,
 				        						margin: '10 10 10 0',
+				        						defaultType: 'numberfieldbase',
+				        						defaults: {
+				        							style: 'text-align: right',
+											        fieldStyle:'text-align:right;',
+											        labelStyle: 'text-align:left;',
+											        symbol: HreRem.i18n("symbol.euro")
+				        						},
 												items :
 													[
 														{ 
-															xtype: 'numberfieldbase',
-															symbol: HreRem.i18n("symbol.euro"),
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.sujeto'),
 											                bind: '{detalleeconomico.importePrincipalSujeto}',
 											                reference: 'importePrincipalSujeto',
@@ -50,8 +54,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                }
 														},
 														{ 
-															xtype: 'numberfieldbase',
-															symbol: HreRem.i18n("symbol.euro"),
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.no.sujeto'),
 															reference: 'importePrincipalNoSujeto',
 											                bind: '{detalleeconomico.importePrincipalNoSujeto}',
@@ -61,32 +63,22 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                }
 														},
 														{ 
-															xtype: 'numberfieldbase',
-															symbol: HreRem.i18n("symbol.euro"),
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
 											                bind: '{detalleeconomico.importeRecargo}'
 														},
 														{ 
-															xtype: 'numberfieldbase',
-															symbol: HreRem.i18n("symbol.euro"),
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.interes.demora'),
 											                bind: '{detalleeconomico.importeInteresDemora}'
 														},
 														{ 
-															xtype: 'numberfieldbase',
-															symbol: HreRem.i18n("symbol.euro"),
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.costas'),
 											                bind: '{detalleeconomico.importeCostas}'
 														},
 														{ 
-															xtype: 'numberfieldbase',
-															symbol: HreRem.i18n("symbol.euro"),
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.otros.incrementos'),
 											                bind: '{detalleeconomico.importeOtrosIncrementos}'
 														},
 														{ 
-															xtype: 'numberfieldbase',
-															symbol: HreRem.i18n("symbol.euro"),
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.provisiones.suplidos'),
 											                bind: '{detalleeconomico.importeProvisionesSuplidos}'
 														}
@@ -113,7 +105,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													    {		                
 										                	xtype: 'checkboxfieldbase',
 										                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.operacion.exenta'),
-										                	readOnly: false,
 										                	bind: {
 //								        						disabled:'{!esOfertaVenta}',
 								        						value: '{detalleeconomico.impuestoIndirectoExento}'
@@ -122,7 +113,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 					                					{		                
 										                	xtype: 'checkboxfieldbase',
 										                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.renuncia.exencion'),
-										                	readOnly: false,
 										                	bind: {
 //								        						disabled:'{!esOfertaVenta}',
 								        						value: '{detalleeconomico.renunciaExencionImpuestoIndirecto}'
@@ -131,6 +121,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 					                					{ 
 															xtype: 'numberfieldbase',
 															symbol: HreRem.i18n("symbol.porcentaje"),
+															style: 'text-align: right',
+											        		fieldStyle:'text-align:right;',
+											        		labelStyle: 'text-align:left;',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo'),
 											                bind: '{detalleeconomico.impuestoIndirectoTipoImpositivo}',
 											                allowBlank: false
@@ -138,9 +131,28 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														{ 
 															xtype: 'numberfieldbase',
 															symbol: HreRem.i18n("symbol.euro"),
+															style: 'text-align: right',
+											        		fieldStyle:'text-align:right;',
+											        		labelStyle: 'text-align:left;',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.cuota'),
+											                bind: '{calcularImpuestoIndirecto}',
+											                readOnly: true,
+											                listeners:{
+											                	change: function(field, value) {
+											                		field.next().setValue(value);
+											                	}
+											                }
+														},
+														{ 
+															xtype: 'numberfieldbase',
+															symbol: HreRem.i18n("symbol.euro"),
+															style: 'text-align: right',
+											        		fieldStyle:'text-align:right;',
+											        		labelStyle: 'text-align:left;',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.cuota'),
 											                bind: '{detalleeconomico.impuestoIndirectoCuota}',
-											                editable: false
+											                hidden: true,
+											                readOnly: true
 														}
 													
 													]
@@ -161,28 +173,79 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														{ 
 															xtype: 'numberfieldbase',
 															symbol: HreRem.i18n("symbol.porcentaje"),
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo'),
+															style: 'text-align: right',
+											        		fieldStyle:'text-align:right;',
+											        		labelStyle: 'text-align:left;',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo.irpf'),
 											                bind: '{detalleeconomico.irpfTipoImpositivo}',
 											                allowBlank: false
 														},
 														{ 
 															xtype: 'numberfieldbase',
 															symbol: HreRem.i18n("symbol.euro"),
+															style: 'text-align: right',
+											        		fieldStyle:'text-align:right;',
+											        		labelStyle: 'text-align:left;',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.retencion'),
+															readOnly: true,
+											                bind: '{calcularImpuestoDirecto}',
+											                listeners:{
+											                	change: function(field, value) {
+											                		field.next().setValue(value);
+											                	}
+											                }
+														},
+														{ 
+															xtype: 'numberfieldbase',
+															symbol: HreRem.i18n("symbol.euro"),
+															style: 'text-align: right',
+											        		fieldStyle:'text-align:right;',
+											        		labelStyle: 'text-align:left;',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.retencion'),
+															readOnly: true,
+															hidden: true,
 											                bind: '{detalleeconomico.irpfCuota}'
 														}
 													
 													]
 											},
-											{
-												xtype: 'numberfieldbase',
-												style: {
-													backgroundColor: '#E5F6FE'
-												},
-												symbol: HreRem.i18n("symbol.euro"),
-												fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
-											    bind: '{detalleeconomico.importeTotal}',
-											    editable: false
+											
+												
+											{   
+												xtype:'fieldset',
+												border: false,
+				        						margin: '10 10 10 0',
+				        						defaultType: 'numberfieldbase',
+				        						defaults: {
+				        							style: 'text-align: right',
+											        fieldStyle:'text-align:right;',
+											        labelStyle: 'text-align:left;',
+											        symbol: HreRem.i18n("symbol.euro")
+				        						},
+												items :
+													[
+														
+														{
+															margin: '10 0 10 0',
+															cls: 'txt-importe-total',
+															readOnly: true,
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
+														    bind: '{calcularImporteTotalGasto}',
+														    listeners: {
+														    	change: function(field, value) {
+														    		field.next().setValue(value);
+														    	}
+														    }
+														},
+														{
+															margin: '10 0 10 0',
+															cls: 'txt-importe-total',
+															hidden: true,
+															readOnly: true,
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
+														    bind: '{detalleeconomico.importeTotal}'
+														}
+													]
 											}
 											
 										
@@ -213,7 +276,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										    { 
 												xtype:'comboboxfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.repercutible.inquilino'),
-												readOnly:true,
 												reference: 'comboRepercutibleInquilino',
 								        		bind: {
 							            			store: '{comboSiNoRem}',
@@ -223,9 +285,11 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 									        { 
 												xtype: 'numberfieldbase',
 												symbol: HreRem.i18n("symbol.euro"),
-												style: {
-													backgroundColor: '#E5F6FE'
-												},
+												margin: '10 0 10 0',
+												cls: 'txt-importe-total',
+												style: 'text-align: right',
+											    fieldStyle:'text-align:right;',
+											    labelStyle: 'text-align:left;',
 												fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.pagado'),
 											    bind: '{detalleeconomico.importePagado}'
 											},

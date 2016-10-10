@@ -11,15 +11,15 @@ import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 
 public interface ExpedienteComercialApi {
@@ -223,23 +223,6 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public DtoPage getNotariosExpediente(Long idExpediente);
-		
-		/**
-		 * Método que obtiene los honorarios del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-
-		public DtoPage getGastosSoportadoPropietario(Long idExpediente);
-		
-		/**
-		 * Método que obtiene los gastos del expediente soportados por Haya
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public DtoPage getGastosSoportadoHaya(Long idExpediente);
 
 		
 		/**
@@ -280,5 +263,38 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */	
 		public DDEstadosExpedienteComercial getDDEstadosExpedienteComercialByCodigo (String codigo);
+		
+		/**
+		 * Método que guarda la información de la pestaña Ficha del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente);
+		
+		/**
+		 * Método que guarda la información de una entrega de reserva
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public boolean saveEntregaReserva(DtoEntregaReserva dto, Long idEntidad);
+		
+		/**
+		 * Método que actualiza la información de una entrega de reserva
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public boolean updateEntregaReserva(DtoEntregaReserva dto, Long id);
+		
+		/**
+		 * Método que elimina una entrega de reserva
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+		
 }
 

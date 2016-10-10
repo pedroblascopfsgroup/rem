@@ -85,6 +85,9 @@ public class AdjuntoExpedienteComercial implements Serializable, Auditable {
 	@Column(name = "ADE_FECHA_DOCUMENTO")
 	private Date fechaDocumento;
 	
+	@Column(name = "ADE_ID_DOCUMENTO_REST")
+	private Long idDocRestClient;
+	
 	@Version   
 	private Long version;
 	
@@ -212,6 +215,14 @@ public class AdjuntoExpedienteComercial implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Long getIdDocRestClient() {
+		return idDocRestClient;
+	}
+
+	public void setIdDocRestClient(Long idDocRestClient) {
+		this.idDocRestClient = idDocRestClient;
 	}
 	
 	

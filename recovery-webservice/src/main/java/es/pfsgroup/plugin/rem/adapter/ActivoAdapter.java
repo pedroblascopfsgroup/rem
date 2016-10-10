@@ -103,7 +103,6 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoTramite;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.DtoValoracion;
-import es.pfsgroup.plugin.rem.model.DtoVisitasActivo;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -111,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VLlaves;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
@@ -2094,40 +2094,18 @@ public class ActivoAdapter {
 				
 	}
 	
-	public List<DtoVisitasActivo> getListVisitasActivoById(Long id) {
+	public List<VBusquedaVisitasDetalle> getListVisitasActivoById(Long id) throws IllegalAccessException, InvocationTargetException {
 		
 		Activo activo = activoApi.get(id);
 
-		List<DtoVisitasActivo> listaDtoVisitas = new ArrayList<DtoVisitasActivo>();
-
+		List<VBusquedaVisitasDetalle> visitasDetalles= new ArrayList<VBusquedaVisitasDetalle>();
 		
-		if (activo.getVisitas() != null) {
-			
-			for (int i = 0; i < activo.getVisitas().size(); i++) 
-			{
-				DtoVisitasActivo dtoActivoVisitas = new DtoVisitasActivo();
-				try {
-					
-					BeanUtils.copyProperties(dtoActivoVisitas, activo.getVisitas().get(i));
-					//BeanUtils.copyProperties(dtoActivoVisitas, activo.getAgrupaciones().get(i).getAgrupacion());
-					
-					BeanUtils.copyProperty(dtoActivoVisitas, "numVisita", activo.getVisitas().get(i).getNumVisitaRem());
-					if(activo.getVisitas().get(i).getCliente()!=null){
-						BeanUtils.copyProperty(dtoActivoVisitas, "nombre", activo.getVisitas().get(i).getCliente().getNombreCompleto());
-						BeanUtils.copyProperty(dtoActivoVisitas, "numDocumento", activo.getVisitas().get(i).getCliente().getDocumento());
-					}
-					
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				}
-				listaDtoVisitas.add(dtoActivoVisitas);
-		
-			}
+		if(!Checks.esNulo(activo)){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId().toString());
+			visitasDetalles = genericDao.getList(VBusquedaVisitasDetalle.class, filtro);
 		}
 		
-		return listaDtoVisitas;	
+		return visitasDetalles;	
 				
 	}
 	
@@ -3308,8 +3286,17 @@ public class ActivoAdapter {
 					}
 				}
 			}
+			
+			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+			for (ActivoOferta acof: activo.getOfertas()) {
+				Oferta of = acof.getPrimaryKey().getOferta();
+				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
+					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
+				}
+				
+			}
 
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "04");
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumento());
 			Long numOferta= activoDao.getNextNumOferta();

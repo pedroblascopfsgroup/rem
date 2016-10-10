@@ -16,6 +16,7 @@ import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 
 @Controller
 public class UVEMController {
@@ -92,15 +93,16 @@ public class UVEMController {
 			// obtenemos el n de cliente interno dado su documento y tipo de
 			// documento
 			Integer numcliente = uvemManagerApi.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-
-
-			GMPAJC93_INS datosClienteIns = uvemManagerApi.ejecutarDatosCliente(numcliente, qcenre);
+			DatosClienteDto datosClienteIns = uvemManagerApi.ejecutarDatosCliente(numcliente, qcenre);
 			
-			//edad
-			model.put("edad", datosClienteIns.getEdadDelClientenuedaw());
+			//edad 
+			//model.put("edad", datosClienteIns.getEdadDelClientenuedaw());
+			//EDAD NO SE MAPEA PORQUE NO ESTA ESE CAMPO EN LA TABLA "COM_COMPRADOR"
 			
-
-		} catch (WIException e) {
+			model.put("nombre", datosClienteIns.getNombre());
+			model.put("documento", datosClienteIns.getDocumento());
+			
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 			model.put("error", true);
 			model.put("errorDesc", e.getMessage());

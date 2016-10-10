@@ -686,4 +686,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		return errorsList;
 	}
 	
+	@Override
+	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter) {
+		
+		return visitaDao.getListVisitasDetalle(dtoVisitasFilter);
+		
+	}
+	
 }

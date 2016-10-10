@@ -30,7 +30,7 @@ public class VBusquedaGastoActivo implements Serializable {
 	private String direccion;
 
 	@Column(name = "GPV_PARTICIPACION_GASTO")
-	private Double participacionGasto;
+	private Double participacion;
 
 	@Column(name = "IMPORTE_PROPORCIONAL_TOTAL")
 	private Double importeProporcinalTotal;
@@ -88,12 +88,12 @@ public class VBusquedaGastoActivo implements Serializable {
 		this.direccion = direccion;
 	}
 
-	public Double getParticipacionGasto() {
-		return participacionGasto;
+	public Double getParticipacion() {
+		return participacion;
 	}
 
-	public void setParticipacionGasto(Double participacionGasto) {
-		this.participacionGasto = participacionGasto;
+	public void setParticipacion(Double participacion) {
+		this.participacion = participacion;
 	}
 
 	public Double getImporteProporcinalTotal() {

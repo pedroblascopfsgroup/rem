@@ -21,7 +21,6 @@ public class DtoGestionGasto extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
-	private Long id;
 	private Integer necesariaAutorizacionPropietario;
 	private String comboMotivoAutorizacionPropietario;
 	private String gestoria;
@@ -43,12 +42,7 @@ public class DtoGestionGasto extends WebDto {
    	private Date fechaRetenerPago;
    	private String gestorRetenerPago;
    	private String comboMotivoRetenerPago;
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+
 	public Integer getNecesariaAutorizacionPropietario() {
 		return necesariaAutorizacionPropietario;
 	}

@@ -97,6 +97,11 @@ public interface VisitaApi {
 	public List<String> deleteVisita(VisitaDto visitaDto);
 	
 	
+	/**
+	 * Obtiene las visitas y detalle en la búsqueda de vistias.
+	 * @param dtoVisitasFilter 
+	 */
+	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter);
 	
 
 }

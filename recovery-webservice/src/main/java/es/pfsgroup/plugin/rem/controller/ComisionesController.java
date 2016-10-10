@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ComisionRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -30,7 +31,7 @@ public class ComisionesController {
 	@Autowired
 	private GastosExpedienteApi gastosExpedienteApi;
 
-		@Autowired
+	@Autowired
 	private RestApi restApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -56,7 +57,7 @@ public class ComisionesController {
 	@RequestMapping(method = RequestMethod.POST, value = "/comisiones")
 	public void updateAceptacionGasto(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		ComisionRequestDto jsonData = null;
-		List<String> errorsList = null;
+		HashMap<String, List<String>> errorsList = null;
 		List<GastosExpediente> listaGastos = null;
 
 		ComisionDto comisionDto = null;
@@ -78,7 +79,6 @@ public class ComisionesController {
 
 				for (int i = 0; i < listaComisionDto.size(); i++) {
 
-					errorsList = new ArrayList<String>();
 					map = new HashMap<String, Object>();
 					comisionDto = listaComisionDto.get(i);
 
@@ -103,8 +103,11 @@ public class ComisionesController {
 						 */
 
 					} else {
-						errorsList = gastosExpedienteApi.updateAceptacionGasto(listaGastos.get(0), comisionDto,
-								jsonFields.getJSONArray("data").get(i));
+						errorsList = restApi.validateRequestObject(listaGastos.get(0), TIPO_VALIDACION.INSERT);
+						if (errorsList.size() == 0) {
+							gastosExpedienteApi.updateAceptacionGasto(listaGastos.get(0), comisionDto,
+									jsonFields.getJSONArray("data").get(i));
+						}
 						/*
 						 * if(!Checks.esNulo(errorsList) && errorsList.isEmpty()
 						 * && !Checks.esNulo(comisionDto.getAceptacion()) &&
@@ -151,7 +154,7 @@ public class ComisionesController {
 						map.put("idOfertaWebcom", comisionDto.getIdOfertaWebcom());
 						map.put("idOfertaRem", comisionDto.getIdOfertaRem());
 						map.put("success", false);
-						// map.put("errorMessages", errorsList);
+						map.put("errorMessages", errorsList);
 					}
 					listaRespuesta.add(map);
 
@@ -167,7 +170,7 @@ public class ComisionesController {
 			logger.error(e);
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 			logger.debug("ERRORES: " + errorsList);

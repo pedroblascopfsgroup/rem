@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,7 +50,7 @@ public class PortalesController {
 		ActivoSituacionPosesoria activoSituacionPosesoria = null;
 		List<PortalesDto> listaPortalesDto = null;
 		HashMap<String, List<String>> errorsList = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		
 		
 
 		try {

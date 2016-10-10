@@ -28,17 +28,21 @@ public class DtoDatosBasicosOferta extends WebDto {
     
     private String tipoOfertaDescripcion;
     
+    private String tipoOfertaCodigo;
+    
     private Date fechaNotificacion;
     
     private Date fechaAlta;
     
     private String estadoDescripcion;
     
-    private String prescriptorDescripcion;
+    private String estadoCodigo;
     
+    private String prescriptor;
+        
     private Double importeOferta;
     
-    private Double importeContraoferta;
+    private Double importeContraOferta;
     
     private String comite;
     
@@ -47,6 +51,10 @@ public class DtoDatosBasicosOferta extends WebDto {
     private String estadoVisitaOfertaCodigo;
     
     private String estadoVisitaOfertaDescripcion;
+    
+    private String canalPrescripcionCodigo;
+    
+    private String canalPrescripcionDescripcion;
    
    	
 
@@ -98,12 +106,12 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.estadoDescripcion = estadoDescripcion;
 	}
 
-	public String getPrescriptorDescripcion() {
-		return prescriptorDescripcion;
+	public String getPrescriptor() {
+		return prescriptor;
 	}
 
-	public void setPrescriptorDescripcion(String prescriptorDescripcion) {
-		this.prescriptorDescripcion = prescriptorDescripcion;
+	public void setPrescriptor(String prescriptor) {
+		this.prescriptor = prescriptor;
 	}
 
 	public Double getImporteOferta() {
@@ -114,12 +122,12 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.importeOferta = importeOferta;
 	}
 
-	public Double getImporteContraoferta() {
-		return importeContraoferta;
+	public Double getImporteContraOferta() {
+		return importeContraOferta;
 	}
 
-	public void setImporteContraoferta(Double importeContraoferta) {
-		this.importeContraoferta = importeContraoferta;
+	public void setImporteContraOferta(Double importeContraOferta) {
+		this.importeContraOferta = importeContraOferta;
 	}
 
 	public String getComite() {
@@ -153,6 +161,38 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setEstadoVisitaOfertaDescripcion(
 			String estadoVisitaOfertaDescripcion) {
 		this.estadoVisitaOfertaDescripcion = estadoVisitaOfertaDescripcion;
+	}
+
+	public String getTipoOfertaCodigo() {
+		return tipoOfertaCodigo;
+	}
+
+	public void setTipoOfertaCodigo(String tipoOfertaCodigo) {
+		this.tipoOfertaCodigo = tipoOfertaCodigo;
+	}
+
+	public String getEstadoCodigo() {
+		return estadoCodigo;
+	}
+
+	public void setEstadoCodigo(String estadoCodigo) {
+		this.estadoCodigo = estadoCodigo;
+	}
+
+	public String getCanalPrescripcionCodigo() {
+		return canalPrescripcionCodigo;
+	}
+
+	public void setCanalPrescripcionCodigo(String canalPrescripcionCodigo) {
+		this.canalPrescripcionCodigo = canalPrescripcionCodigo;
+	}
+
+	public String getCanalPrescripcionDescripcion() {
+		return canalPrescripcionDescripcion;
+	}
+
+	public void setCanalPrescripcionDescripcion(String canalPrescripcionDescripcion) {
+		this.canalPrescripcionDescripcion = canalPrescripcionDescripcion;
 	} 	
    	
    	

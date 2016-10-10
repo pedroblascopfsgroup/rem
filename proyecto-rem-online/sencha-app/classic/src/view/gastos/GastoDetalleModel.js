@@ -47,12 +47,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	return true;
 	     },
 	     
-	     ocultarIncluirTrabajos: function(get) {
+	     ocultarBotonesTrabajos: function(get) {
 	     	return get('gasto.autorizado') || get('gasto.asignadoAActivos');
 
 	     },
 	     
-	     ocultarIncluirActivos: function(get) {
+	     ocultarBotonesActivos: function(get) {
 	     	
 	     	return get('gasto.autorizado') || get('gasto.asignadoATrabajos');
 	     },
@@ -88,7 +88,49 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	else{
 	     		return false;
 	     	}
+
+	     },
+	     
+	     calcularBaseImponible: function(get) {
+	     	
+	     	var importePrincipalSujeto = get('detalleeconomico.importePrincipalSujeto');
+			var importePricipalNoSujeto = get('detalleeconomico.importePrincipalNoSujeto');
+			var importeRecargo = get('detalleeconomico.importeRecargo');
+			var importeInteresDemora = get('detalleeconomico.importeInteresDemora');
+	     	var importeCostas = get('detalleeconomico.importeCostas');
+	     	var importeOtrosIncrementos = get('detalleeconomico.importeOtrosIncrementos')
+	     	var importeProvisionesSuplidos = get('detalleeconomico.importeProvisionesSuplidos');
+	     	var impuestoIndirectoCuota = get('detalleeconomico.impuestoIndirectoCuota');
+	     	var irpfCuota = get('detalleeconomico.irpfCuota');
+	     	
+	     	return importePrincipalSujeto + importePricipalNoSujeto + importeRecargo + importeInteresDemora
+	     	+ importeCostas+ importeOtrosIncrementos + importeProvisionesSuplidos + impuestoIndirectoCuota
+	     	
+	     	
+	     },
+	     	
+	     
+	     calcularImporteTotalGasto: function(get) {
+	     	
+	     	var irpfCuota = get('detalleeconomico.irpfCuota');
+	     	return get('calcularBaseImponible') - irpfCuota;
+	     	
+	     },
+	     
+	     calcularImpuestoIndirecto: function(get) {
+	     	
+	     	var tipo =  get('detalleeconomico.impuestoIndirectoTipoImpositivo');	     	
+	     	return tipo *  get('calcularBaseImponible') / 100;
+	     	
+	     },
+	     
+	     calcularImpuestoDirecto: function(get) {
+	     	
+	     	var tipo =  get('detalleeconomico.irpfTipoImpositivo');	     	
+	     	return tipo * get('calcularBaseImponible') / 100;
+	     	
 	     }
+	     
 		
 	 },
 

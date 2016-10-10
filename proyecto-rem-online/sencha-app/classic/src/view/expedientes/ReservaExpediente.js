@@ -71,13 +71,36 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                }		               
 		        ]
 			},
+			{   
+				xtype:'fieldsettable',
+				defaultType: 'displayfieldbase',				
+				title: HreRem.i18n('title.detalle.reserva.anulacion'),
+				items :
+					[
+		                {
+		                	xtype:'textfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.motivo.anulacion'),
+		                	bind:		'{reserva.motivoAnulacion}',
+		                	readOnly: true
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.anulacion'),
+		                	bind:		'{reserva.fechaAnulacion}',
+		                	readOnly: true
+		                }	
+		                
+		            ]
+			},
 			{
 				
             	xtype: 'fieldset',
             	title:  HreRem.i18n('title.historico.entregas.a.cuenta'),
             	items : [
                 	{
-					    xtype		: 'gridBase',
+					    xtype		: 'gridBaseEditableRow',
+					    topBar: true,
+					    idPrincipal : 'expediente.id',
 					    reference: 'listadoEntregasCuenta',
 						cls	: 'panel-base shadow-panel',
 						bind: {
@@ -87,23 +110,36 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 						columns: [
 						   {    text: HreRem.i18n('header.importe'),
 					        	dataIndex: 'importe',
-					        	flex: 1
+					        	flex: 1,
+					        	editor: {
+					        		xtype:'numberfield'
+					        	}
 					       },
 						   {
 					            text: HreRem.i18n('header.fecha.cobro'),
 					            dataIndex: 'fechaCobro',
-					            formatter: 'date("d/m/Y H:s")',
-					            flex: 1
+					            formatter: 'date("d/m/Y")',
+					            flex: 1,
+					            editor: {
+					            	xtype: 'datefield',
+					            	allowBlank: false
+					            }
 						   },
 						   {
 						   		text: HreRem.i18n('header.comprador'),
 					            dataIndex: 'titular',
-					            flex: 1
+					            flex: 1,
+					            editor: {
+					            	xtype: 'textfield'
+					            }
 						   },						   
 						   {
 						   		text: HreRem.i18n('header.observacion'),
 					            dataIndex: 'observaciones',
-					            flex: 1						   
+					            flex: 1,
+					            editor: {
+					            	xtype:'textarea'
+					            }
 						   }	
 					    ]					    
 					}

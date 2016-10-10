@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -33,9 +32,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -96,9 +92,6 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
-import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
-import es.pfsgroup.plugin.rem.rest.dto.ActivoRequestDto;
-import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
@@ -473,7 +466,13 @@ public class ActivoController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListVisitasActivoById(Long id, ModelMap model) {
 
-		model.put("data", adapter.getListVisitasActivoById(id));
+		try {
+			model.put("data", adapter.getListVisitasActivoById(id));
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 
 		return createModelAndViewJson(model);
 
@@ -1879,61 +1878,6 @@ public class ActivoController {
 		model.put("data", activoEstadoPublicacionApi.getHistoricoEstadoPublicacionByActivo(id));
 		
 		return createModelAndViewJson(model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET, value = "/activo")
-	public ModelAndView getActivo(ModelMap model, @RequestParam(value = "data") String data,
-			RestRequestWrapper request) {
-		try {
-
-			ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
-
-			ArrayList<ActivoDto> activos = new ArrayList<ActivoDto>();
-
-			for (int i = 0; i < ((ActivoDto)jsonData.getData()).getIdActivoBien().size(); i++) {
-				Activo actv = adapter.getActivoById(((ActivoDto)jsonData.getData()).getIdActivoBien().get(i));
-
-				if (actv != null) {
-					ActivoDto actvDto = new ActivoDto();
-					BeanUtils.copyProperties(actvDto, actv);
-					activos.add(actvDto);
-				}
-			}
-			model.put("id", jsonData.getId());
-			model.put("data", activos);
-		} catch (Exception e) {
-			model.put("data", e);
-		}
-		
-		return new ModelAndView("jsonView", model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST, value = "/activo")
-	public ModelAndView updateActivoo(ModelMap model, RestRequestWrapper request)
-			throws JsonParseException, JsonMappingException, IOException {
-
-		model.put("data", "hola update!!!!!!!");
-		return new ModelAndView("jsonView", model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST, value = "/inactivo")
-	public ModelAndView updateActivo(ModelMap model, RestRequestWrapper request)
-			throws JsonParseException, JsonMappingException, IOException {
-
-		model.put("data", "hola inactivo");
-		return new ModelAndView("jsonView", model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.DELETE, value = "/activo")
-	public ModelAndView deleteActivo(ModelMap model, RestRequestWrapper request)
-			throws JsonParseException, JsonMappingException, IOException {
-
-		model.put("data", "hola delete");
-		return new ModelAndView("jsonView", model);
 	}
 	
 	@SuppressWarnings("unchecked")

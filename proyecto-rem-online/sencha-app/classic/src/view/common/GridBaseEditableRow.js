@@ -402,7 +402,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
    		
    		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
-			
+
 			if (me.isValidRecord(context.record)) {				
 			
         		context.record.save({

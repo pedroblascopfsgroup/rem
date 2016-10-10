@@ -3,11 +3,13 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+
 
 public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoObrasNuevasDto> {
 
@@ -16,17 +18,17 @@ public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoO
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "VISTA DESCONOCIDA";
+		return "REM01.VI_ACTIVO_ONV_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "TABLA DESCONOCIDA";
+		return "REM01.AWH_ACTIVO_ONV_WEBCOM_HIST";
 	}
 
 	@Override
 	public String clavePrimaria() {
-		return "CLAVE_PRIMARIA_DESCONCIDA";
+		return "ID_AGRUP_ACTIVO";
 	}
 
 	@Override

@@ -9,7 +9,9 @@ import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 
 /**
  * Interface operaciones UVEM
@@ -92,7 +94,7 @@ public interface UvemManagerApi {
 	 *            Otros persona física. J Otros persona jurídica.
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	public Integer ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws WIException;
+	public Integer ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
 
 
 	/**
@@ -103,7 +105,7 @@ public interface UvemManagerApi {
 	 * @param numcliente: numero cliente Ursus (idclow)
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	public GMPAJC93_INS ejecutarDatosCliente(Integer numcliente, String qcenre)  throws WIException;
+	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre)  throws Exception;
 
 	
 	
@@ -118,7 +120,7 @@ public interface UvemManagerApi {
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public GMPDJB13_INS consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
 	
 	
 	
@@ -128,7 +130,7 @@ public interface UvemManagerApi {
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public GMPDJB13_INS altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+	public ResultadoInstanciaDecisionDto altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
 	
 	
 	
@@ -138,7 +140,7 @@ public interface UvemManagerApi {
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public GMPDJB13_INS modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws WIException;
+	public ResultadoInstanciaDecisionDto modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
 	
 
 	

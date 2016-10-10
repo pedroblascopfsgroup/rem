@@ -34,7 +34,7 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGasto', {
     	
     	me.setTitle(HreRem.i18n('title.seleccion.trabajos'));
     	
-    	me.buttons = [ { itemId: 'btnGuardar', text: 'Añadir selección', handler: 'onClickBotonAnyadirSeleccionTrabajos', disabled: true},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarSeleccionTrabajos'}];
+    	me.buttons = [ { itemId: 'btnGuardar', text: 'Añadir selección', handler: 'asignarSeleccionTrabajosGasto', disabled: true},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'cancelarSeleccionTrabajosGasto'}];
     	
     	me.items = [
     	

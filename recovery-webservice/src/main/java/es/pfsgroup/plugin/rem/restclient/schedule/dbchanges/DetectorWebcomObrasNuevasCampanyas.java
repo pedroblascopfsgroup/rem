@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.CampanyaObrasNuevasDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;

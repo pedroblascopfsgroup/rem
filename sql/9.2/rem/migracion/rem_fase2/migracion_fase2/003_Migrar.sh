@@ -1,8 +1,10 @@
 #! /bin/bash
 
+echo
 echo "-----------------------------------------------------"
 echo "-- [4/4] PROCESO DE VOLCADO A TABLAS MODELO DE REM --"
 echo "-----------------------------------------------------"
+echo
 
 dir=$(pwd)
 echo "[INFO] Directorio raiz de migración: "$dir

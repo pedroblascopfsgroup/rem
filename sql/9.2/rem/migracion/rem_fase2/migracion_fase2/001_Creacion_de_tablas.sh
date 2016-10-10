@@ -1,8 +1,10 @@
 #! /bin/bash
 
+echo
 echo "-----------------------------------------------------"
 echo "-- [2/4] PROCESO DE CREACION DE TABLAS --"
 echo "-----------------------------------------------------"
+echo
 
 dir=$(pwd)
 echo "[INFO] Directorio raiz de migración: "$dir

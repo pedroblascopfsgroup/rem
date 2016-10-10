@@ -126,7 +126,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     	
     	var me = this;
     	
-    	var items = [
+    	me.items = [
 			
 			{
 				xtype: 'informecomercialactivo'
@@ -140,7 +140,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     	
 
     	me.setTitle(HreRem.i18n('title.publicacion.activo'));
-    	me.addPlugin({ptype: 'lazyitems', items: items });
+    	//me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     	
     },

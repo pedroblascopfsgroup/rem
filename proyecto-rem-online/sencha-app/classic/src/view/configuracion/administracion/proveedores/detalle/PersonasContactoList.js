@@ -108,7 +108,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 		            flex: 0.8,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maskRe: /[0-9.]/,
+		            	maskRe: /[0-9]/,
+		            	stripCharsRe: /[^0-9]/,
 		            	maxLength: 16
 		            }
 		        },

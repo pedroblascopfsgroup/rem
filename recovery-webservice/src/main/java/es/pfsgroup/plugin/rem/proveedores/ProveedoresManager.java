@@ -23,7 +23,6 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -318,60 +317,64 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoPersonaContacto> getPersonasContactoByProveedor(DtoPersonaContacto dtoPersonaContacto) {
-		Filter proveedorIDFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoPersonaContacto.getId()));
-		Page page;
-		if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
-			// Filtrado por la delegacion seleccionada.
-			Filter delegacionIDFilter = genericDao.createFilter(FilterType.EQUALS, "delegacion.id", dtoPersonaContacto.getDelegacion());
-			page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter, delegacionIDFilter);
-		} else {
-			page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter);
-		}
-		List<ActivoProveedorContacto> personaContacto = (List<ActivoProveedorContacto>) page.getResults();
 		List<DtoPersonaContacto> dtoList = new ArrayList<DtoPersonaContacto>();
-		for(ActivoProveedorContacto persona : personaContacto) {
-			DtoPersonaContacto dto = new DtoPersonaContacto();
-			try {
-				beanUtilNotNull.copyProperty(dto, "id", persona.getId());
-				beanUtilNotNull.copyProperty(dto, "personaPrincipal", persona.getPrincipal());
-				if(!Checks.esNulo(persona.getUsuario())) {
-					beanUtilNotNull.copyProperty(dto, "nombreApellidos", persona.getUsuario().getApellidoNombre());
-					beanUtilNotNull.copyProperty(dto, "codigoUsuario", persona.getUsuario().getId());
-				}
-				if(!Checks.esNulo(persona.getProveedor())){
-					beanUtilNotNull.copyProperty(dto, "proveedorID", persona.getProveedor().getId());
-					if(!Checks.esNulo(persona.getProveedor().getTipoProveedor())){
-						if(!Checks.esNulo(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor())){
-							if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
-								beanUtilNotNull.copyProperty(dto, "cargo", persona.getCargoProveedorContacto().getCodigo());
-								if(!Checks.esNulo(persona.getProveedor())) {
+		
+		if(!Checks.esNulo(dtoPersonaContacto.getId())) {
+			Filter proveedorIDFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoPersonaContacto.getId()));
+			Page page;
+			if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
+				// Filtrado por la delegacion seleccionada.
+				Filter delegacionIDFilter = genericDao.createFilter(FilterType.EQUALS, "delegacion.id", dtoPersonaContacto.getDelegacion());
+				page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter, delegacionIDFilter);
+			} else {
+				page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter);
+			}
+			List<ActivoProveedorContacto> personaContacto = (List<ActivoProveedorContacto>) page.getResults();
+			
+			for(ActivoProveedorContacto persona : personaContacto) {
+				DtoPersonaContacto dto = new DtoPersonaContacto();
+				try {
+					beanUtilNotNull.copyProperty(dto, "id", persona.getId());
+					beanUtilNotNull.copyProperty(dto, "personaPrincipal", persona.getPrincipal());
+					if(!Checks.esNulo(persona.getUsuario())) {
+						beanUtilNotNull.copyProperty(dto, "nombreApellidos", persona.getUsuario().getApellidoNombre());
+						beanUtilNotNull.copyProperty(dto, "codigoUsuario", persona.getUsuario().getId());
+					}
+					if(!Checks.esNulo(persona.getProveedor())){
+						beanUtilNotNull.copyProperty(dto, "proveedorID", persona.getProveedor().getId());
+						if(!Checks.esNulo(persona.getProveedor().getTipoProveedor())){
+							if(!Checks.esNulo(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor())){
+								if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
+									if(!Checks.esNulo(persona.getCargoProveedorContacto())) {
+										beanUtilNotNull.copyProperty(dto, "cargo", persona.getCargoProveedorContacto().getCodigo());
+									}
 									beanUtilNotNull.copyProperty(dto, "nif", persona.getProveedor().getDocIdentificativo());
+									beanUtilNotNull.copyProperty(dto, "direccion", persona.getDireccion());
+								} else {
+									beanUtilNotNull.copyProperty(dto, "cargo", persona.getCargo());
 								}
-								beanUtilNotNull.copyProperty(dto, "direccion", persona.getDireccion());
-							} else {
-								beanUtilNotNull.copyProperty(dto, "cargo", persona.getCargo());
 							}
 						}
 					}
+					
+					beanUtilNotNull.copyProperty(dto, "telefono", persona.getTelefono1());
+					beanUtilNotNull.copyProperty(dto, "email", persona.getEmail());
+					if(!Checks.esNulo(persona.getProveedor())) {
+						beanUtilNotNull.copyProperty(dto, "fechaAlta", persona.getFechaAlta());
+						beanUtilNotNull.copyProperty(dto, "fechaBaja", persona.getFechaBaja());
+					}
+					beanUtilNotNull.copyProperty(dto, "observaciones", persona.getObservaciones());
+					beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
 				}
 				
-				beanUtilNotNull.copyProperty(dto, "telefono", persona.getTelefono1());
-				beanUtilNotNull.copyProperty(dto, "email", persona.getEmail());
-				if(!Checks.esNulo(persona.getProveedor())) {
-					beanUtilNotNull.copyProperty(dto, "fechaAlta", persona.getFechaAlta());
-					beanUtilNotNull.copyProperty(dto, "fechaBaja", persona.getFechaBaja());
-				}
-				beanUtilNotNull.copyProperty(dto, "observaciones", persona.getObservaciones());
-				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				dtoList.add(dto);
 			}
-			
-			dtoList.add(dto);
 		}
-		
+
 		return dtoList;
 	}
 	
@@ -522,47 +525,51 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoDireccionDelegacion> getDireccionesDelegacionesByProveedor(DtoDireccionDelegacion dtoDireccionDelegacion) {
-		Filter proveedorIDFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoDireccionDelegacion.getId()));
-		Page page = genericDao.getPage(ActivoProveedorDireccion.class, dtoDireccionDelegacion, proveedorIDFilter);
-		List<ActivoProveedorDireccion> delegaciones = (List<ActivoProveedorDireccion>) page.getResults();
 		List<DtoDireccionDelegacion> dtoList = new ArrayList<DtoDireccionDelegacion>();
-		for(ActivoProveedorDireccion delegacion : delegaciones) {
-			DtoDireccionDelegacion dto = new DtoDireccionDelegacion();
-			try {
-				beanUtilNotNull.copyProperty(dto, "id", delegacion.getId());
-				if(!Checks.esNulo(delegacion.getProveedor())) {
-					beanUtilNotNull.copyProperty(dto, "proveedorID", delegacion.getProveedor().getId());
-				}
-				if(!Checks.esNulo(delegacion.getTipoDireccion())) {
-					beanUtilNotNull.copyProperty(dto, "tipoDireccion", delegacion.getTipoDireccion().getCodigo());
-				}
-				beanUtilNotNull.copyProperty(dto, "localAbiertoPublicoCodigo", delegacion.getLocalAbiertoPublico());
-				beanUtilNotNull.copyProperty(dto, "referencia", delegacion.getReferencia());
-				if(!Checks.esNulo(delegacion.getTipoVia())) {
-					beanUtilNotNull.copyProperty(dto, "tipoViaCodigo", delegacion.getTipoVia().getCodigo());
-				}
-				beanUtilNotNull.copyProperty(dto, "nombreVia", delegacion.getNombreVia());
-				beanUtilNotNull.copyProperty(dto, "numeroVia", delegacion.getNumeroVia());
-				beanUtilNotNull.copyProperty(dto, "puerta", delegacion.getPuerta());
-				if(!Checks.esNulo(delegacion.getLocalidad())) {
-					beanUtilNotNull.copyProperty(dto, "localidadCodigo", delegacion.getLocalidad().getCodigo());
-				}
-				if(!Checks.esNulo(delegacion.getProvincia())) {
-				beanUtilNotNull.copyProperty(dto, "provincia", delegacion.getProvincia().getCodigo());
-				}
-				beanUtilNotNull.copyProperty(dto, "codigoPostal", delegacion.getCodigoPostal());
-				beanUtilNotNull.copyProperty(dto, "telefono", delegacion.getTelefono());
-				beanUtilNotNull.copyProperty(dto, "email", delegacion.getEmail());
-				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-			
-			dtoList.add(dto);
-		}
 		
+		if(!Checks.esNulo(dtoDireccionDelegacion.getId())) {
+			Filter proveedorIDFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoDireccionDelegacion.getId()));
+			Page page = genericDao.getPage(ActivoProveedorDireccion.class, dtoDireccionDelegacion, proveedorIDFilter);
+			List<ActivoProveedorDireccion> delegaciones = (List<ActivoProveedorDireccion>) page.getResults();
+			
+			for(ActivoProveedorDireccion delegacion : delegaciones) {
+				DtoDireccionDelegacion dto = new DtoDireccionDelegacion();
+				try {
+					beanUtilNotNull.copyProperty(dto, "id", delegacion.getId());
+					if(!Checks.esNulo(delegacion.getProveedor())) {
+						beanUtilNotNull.copyProperty(dto, "proveedorID", delegacion.getProveedor().getId());
+					}
+					if(!Checks.esNulo(delegacion.getTipoDireccion())) {
+						beanUtilNotNull.copyProperty(dto, "tipoDireccion", delegacion.getTipoDireccion().getCodigo());
+					}
+					beanUtilNotNull.copyProperty(dto, "localAbiertoPublicoCodigo", delegacion.getLocalAbiertoPublico());
+					beanUtilNotNull.copyProperty(dto, "referencia", delegacion.getReferencia());
+					if(!Checks.esNulo(delegacion.getTipoVia())) {
+						beanUtilNotNull.copyProperty(dto, "tipoViaCodigo", delegacion.getTipoVia().getCodigo());
+					}
+					beanUtilNotNull.copyProperty(dto, "nombreVia", delegacion.getNombreVia());
+					beanUtilNotNull.copyProperty(dto, "numeroVia", delegacion.getNumeroVia());
+					beanUtilNotNull.copyProperty(dto, "puerta", delegacion.getPuerta());
+					if(!Checks.esNulo(delegacion.getLocalidad())) {
+						beanUtilNotNull.copyProperty(dto, "localidadCodigo", delegacion.getLocalidad().getCodigo());
+					}
+					if(!Checks.esNulo(delegacion.getProvincia())) {
+					beanUtilNotNull.copyProperty(dto, "provincia", delegacion.getProvincia().getCodigo());
+					}
+					beanUtilNotNull.copyProperty(dto, "codigoPostal", delegacion.getCodigoPostal());
+					beanUtilNotNull.copyProperty(dto, "telefono", delegacion.getTelefono());
+					beanUtilNotNull.copyProperty(dto, "email", delegacion.getEmail());
+					beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				
+				dtoList.add(dto);
+			}
+		}
+
 		return dtoList;
 	}
 	

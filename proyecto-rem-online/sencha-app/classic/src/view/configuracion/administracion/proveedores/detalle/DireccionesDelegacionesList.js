@@ -99,7 +99,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            flex: 1,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maskRe: /[0-9.]/,
+		            	maskRe: /[0-9]/,
+		            	stripCharsRe: /[^0-9]/,
 		            	maxLength: 50
 		            }
 		        },
@@ -141,7 +142,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            flex: 0.5,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maskRe: /[0-9.]/,
+		            	maskRe: /[0-9]/,
+		            	stripCharsRe: /[^0-9]/,
 		            	maxLength: 5
 		            }
 		        },
@@ -151,7 +153,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            flex: 0.5,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maskRe: /[0-9.]/,
+		            	maskRe: /[0-9]/,
+		            	stripCharsRe: /[^0-9]/,
 		            	maxLength: 5
 		            }
 		        },
@@ -241,7 +244,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            flex: 0.5,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maskRe: /[0-9.]/,
+		            	maskRe: /[0-9]/,
+		            	stripCharsRe: /[^0-9]/,
 		            	maxLength: 5
 		            }
 		        },

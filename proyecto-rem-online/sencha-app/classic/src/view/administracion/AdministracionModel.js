@@ -149,7 +149,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'subtipoProveedor'}
 			}
-		},
+		}
 		
     		
     }

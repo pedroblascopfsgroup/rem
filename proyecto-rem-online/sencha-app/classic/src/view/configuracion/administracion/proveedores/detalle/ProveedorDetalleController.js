@@ -220,7 +220,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     },
     
     /**
-     * Función para mostrar un check en color verde o grid según si un usuario es el principal o no.
+     * Función para mostrar un check en color verde o gris según si un usuario es el principal o no.
      */
     onMarcarPrincipalClick: function(grid, rowIndex, colIndex, item, e, rec) {
     	var me = this;
@@ -261,7 +261,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		}
     },
     
-    // Este método es llamado cuando se deselecciona un elemento del grid DireccionesDelegaciones.
+    /**
+     * Este método es llamado cuando se deselecciona un elemento del grid DireccionesDelegaciones.
+     */
     onDireccionesDelegacionesGridDeselect: function(rowModel) {
     	var me = this;
     	if(rowModel.deselectingDuringSelect || rowModel.getLastSelected().dirty) {
@@ -272,26 +274,28 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     	var personasContactosStore = gridPersonasContactos.getStore();
     	if(!Ext.isEmpty(personasContactosStore)) {
     		personasContactosStore.getProxy().extraParams = {
-				// Se coje el ID de proveedor del primer elemento que contenga el grid para recargar por defecto.
-				id: gridDireccionesDelegaciones.getStore().getData().items[0].getData().proveedorID
+				// Se coje el ID de proveedor del view model.
+				id: me.getViewModel().getData().proveedor.getData().id
 			};
     		
     		personasContactosStore.load();
     	}
     },
     
-    // Este método es llamado cuando se selecciona un elemento del grid DireccionesDelegaciones.
+    /**
+     * Este método es llamado cuando se selecciona un elemento del grid DireccionesDelegaciones.
+     */
     onDireccionesDelegacionesGridClick: function(grid) {
+    	var me = this;
     	var gridPersonasContactos = grid.up('proveedoresdetalletabpanel').lookupReference('personascontactolistref');
     	var personasContactosStore = gridPersonasContactos.getStore();
     	if(!Ext.isEmpty(personasContactosStore)) {
     		var selection = grid.getSelection()[0];
     		if(!Ext.isEmpty(selection)){
-	    		
 	    		personasContactosStore.getProxy().extraParams = {
-	    			// Se filtra por la delegacion seleccionada.
+	    			// Se filtra por la delegacion seleccionada y el proveedor del ViewModel.
 	    			delegacion: selection.getData().id,
-	    			id: selection.getData().proveedorID
+	    			id: me.getViewModel().getData().proveedor.getData().id
 				};
 	    		
 	    		personasContactosStore.load();
@@ -299,7 +303,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     	}
     },
     
-    // Función que borra un documento del grid de documentos.
+    /**
+     * Función que borra un documento del grid de documentos.
+     */
     borrarDocumentoAdjunto: function(grid, record) {
 		var me = this;
 		idProveedor = me.getViewModel().get("proveedor.id");
@@ -318,7 +324,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
         });	
 	},
 	
-	// Función que descarga un documento del grid de documentos.
+	/**
+	 * Función que descarga un documento del grid de documentos.
+	 */
 	downloadDocumentoAdjunto: function(grid, record) {
 		var me = this,
 		config = {};

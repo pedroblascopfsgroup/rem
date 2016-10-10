@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
@@ -20,6 +21,8 @@ public class PortalesDto implements Serializable{
 	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;
 	@NotNull(groups = { Insert.class, Update.class })
+	@Diccionary(clase = Usuario.class, message = "El activo no existe", foreingField = "id", groups = {
+			Insert.class, Update.class })
 	private Long idUsuarioRemAccion;
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = Activo.class, message = "El activo no existe", foreingField = "numActivo", groups = {

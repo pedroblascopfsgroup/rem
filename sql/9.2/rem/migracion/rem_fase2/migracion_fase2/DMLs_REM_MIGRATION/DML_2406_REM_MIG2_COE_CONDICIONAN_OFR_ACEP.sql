@@ -98,7 +98,7 @@ BEGIN
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
     INNER JOIN '||V_ESQUEMA||'.OFR_NUM_OFERTA
-    ON OFR_NUM_OFERTA.OFR_NUM_OFERTA = MIG.OFR_NUM_OFERTA
+    ON OFR_NUM_OFERTA.COE_COD_OFERTA = MIG.COE_COD_OFERTA
     '
     ;
     

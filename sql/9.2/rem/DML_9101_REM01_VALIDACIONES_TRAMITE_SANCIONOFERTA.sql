@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20161008
+--## FECHA_CREACION=20161010
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=0
@@ -44,7 +44,8 @@ DECLARE
     
 BEGIN    
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T002_ValidacionActuacion''''][''''comboCorreccion''''] == DDSiNo.SI ? (valores[''''T002_ValidacionActuacion''''][''''comboPagar''''] == DDSiNo.SI ? ''''CorrectoConCoste'''' : ''''CorrectoSinCoste'''') : ''''Incorrecto'''' '' '||
+			  -- ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T002_ValidacionActuacion''''][''''comboCorreccion''''] == DDSiNo.SI ? (valores[''''T002_ValidacionActuacion''''][''''comboPagar''''] == DDSiNo.SI ? ''''CorrectoConCoste'''' : ''''CorrectoSinCoste'''') : ''''Incorrecto'''' '' '||
+			  ' SET TAP_SCRIPT_VALIDACION_JBPM = '''' ' ||
 			  ' WHERE TAP_CODIGO = ''T013_DefinicionOferta'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);

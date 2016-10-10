@@ -247,6 +247,8 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
+      V_REG_INSERTADOS := SQL%ROWCOUNT;
+      
       COMMIT;
       
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
@@ -260,8 +262,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
       -- Registros insertados en REM
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' CEX WHERE EXISTS (SELECT 1 FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO WHERE ECO.ECO_ID = CEX.ECO_ID AND USUARIOCREAR = ''MIG2'')';  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
+      -- V_REG_INSERTADOS
       
       -- Total registros rechazados
       V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
@@ -289,8 +290,7 @@ BEGIN
           
           IF TABLE_COUNT_2 != 0 THEN
               V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay un total de '||TABLE_COUNT_2||' EXPEDIENTES_ECONOMICOS (OFERTAS) inexistentes. ';
-          END IF;
-        
+          END IF;        
       END IF;
       
       EXECUTE IMMEDIATE '

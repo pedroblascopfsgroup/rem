@@ -683,5 +683,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+
+	@Override
+	public boolean checkSinRiesgoReputacional(TareaExterna tareaExterna) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

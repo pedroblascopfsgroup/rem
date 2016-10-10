@@ -154,7 +154,7 @@ public class ComisionesController {
 						map.put("idOfertaWebcom", comisionDto.getIdOfertaWebcom());
 						map.put("idOfertaRem", comisionDto.getIdOfertaRem());
 						map.put("success", false);
-						map.put("errorMessages", errorsList);
+						map.put("invalidFields", errorsList);
 					}
 					listaRespuesta.add(map);
 

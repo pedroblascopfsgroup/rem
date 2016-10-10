@@ -120,7 +120,13 @@ public interface RestApi {
 	 * @return
 	 */
 	public String getClientIpAddr(HttpServletRequest request);
-
+	
+	
+	/**
+	 * Escribe en la salida standard una respuesta JSON
+	 * @param response
+	 * @param model
+	 */
 	public void sendResponse(HttpServletResponse response,ModelMap model);
 
 }

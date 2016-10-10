@@ -152,7 +152,7 @@ public class PreciosController {
 		
 		ServletContext sc = request.getSession().getServletContext();
 		excel.cargarPlantilla(sc.getRealPath("plantillas/plugin/LISTADO_ACTIVOS_PROPUESTA_PRECIOS.xls"));
-		excel.rellenarPlantilla(propuesta.getId().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
+		excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
 		excelReportGeneratorApi.sendReport(excel.getFile(), response);
 		excel.vaciarLibros();
 	}

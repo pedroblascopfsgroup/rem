@@ -110,6 +110,17 @@
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-masivo-plugin</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-ayuda-plugin</artifactId>
 			<scope>compile</scope>
 			<exclusions>

@@ -122,6 +122,9 @@ BEGIN
           )
           SELECT 
               '||V_ESQUEMA||'.S_POS_POSICIONAMIENTO.NEXTVAL             AS POS_ID,
+              AUX.*
+          FROM (
+            SELECT DISTINCT
               ECO.ECO_ID                                                                    AS ECO_ID,
               MIG2.POS_FECHA_AVISO                                                  AS POS_FECHA_AVISO,
               MIG2.POS_COD_NOTARIO                                               AS POS_NOTARIA,                             -- este campo esta pendiente de definicion
@@ -131,9 +134,10 @@ BEGIN
               ''MIG2''                                                                           AS USUARIOCREAR,
               SYSDATE                                                                     AS FECHACREAR,
               0                                                                                 AS BORRADO
-          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-          INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG2.POS_COD_OFERTA AND OFR.BORRADO = 0
-          INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
+            INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG2.POS_COD_OFERTA AND OFR.BORRADO = 0
+            INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+          ) AUX
       '
       ;
       

@@ -359,6 +359,10 @@
             	def activoManager = ctx.getBean("activoManager");
                 return activoManager.comprobarObligatoriosDesignarMediador(idActivo);
             }
+            def checkSinRiesgoReputacional = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.checkSinRiesgoReputacional(tareaExterna);
+            }
 
   			 ]]></value>
   		</list>

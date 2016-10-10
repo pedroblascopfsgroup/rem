@@ -276,6 +276,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		}
 	}
 	
+	@Override
 	public List<DtoExcelPropuestaUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idPropuesta", idPropuesta);
@@ -303,8 +304,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 		Integer cartera = Integer.parseInt(dto.getCodCartera());
 		Double resultado = null;
-		//Activarlo luego, por ahora enviamos la tasacion como resultado
-		/*
+
+		
 		switch(cartera) {
 		
 			case 1: // Cajamar
@@ -322,8 +323,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			default:
 				break;
 				
-		}*/
-		resultado = dto.getValorTasacion();
+		}
+
 		return resultado;
 	}
 	

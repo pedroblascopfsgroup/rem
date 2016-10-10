@@ -167,4 +167,13 @@ public interface OfertaApi {
 	 */
 	public boolean checkDeDerechoTanteo(TareaExterna tareaExterna);
 
+	
+	/**
+	 * Método que comprueba si el activo tiene riesgo reputacional
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkSinRiesgoReputacional(TareaExterna tareaExterna);
+	
+
 }

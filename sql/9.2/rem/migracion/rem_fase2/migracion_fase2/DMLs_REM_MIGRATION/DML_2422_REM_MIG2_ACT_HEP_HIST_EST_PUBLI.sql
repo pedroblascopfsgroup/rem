@@ -1,13 +1,13 @@
 --/*
 --#########################################
---## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20160930
+--## AUTOR=MANUEL RODRIGUEZ
+--## FECHA_CREACION=20161010
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-855
 --## PRODUCTO=NO
 --## 
---## Finalidad: Proceso de migración MIG2_PAC_PERIMETRO_ACTIVO -> ACT_PAC_PERIMETRO_ACTIVO
+--## Finalidad: Proceso de migración MIG2_ACT_HEP_HIST_EST_PUBLI -> ACT_HEP_HIST_EST_PUBLICACION
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -27,8 +27,8 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
-V_TABLA VARCHAR2(40 CHAR) := 'ACT_PAC_PERIMETRO_ACTIVO';
-V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_PAC_PERIMETRO_ACTIVO';
+V_TABLA VARCHAR2(40 CHAR) := 'ACT_HEP_HIST_EST_PUBLICACION';
+V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_ACT_HEP_HIST_EST_PUBLI';
 V_SENTENCIA VARCHAR2(32000 CHAR);
 V_REG_MIG NUMBER(10,0) := 0;
 V_REG_INSERTADOS NUMBER(10,0) := 0;
@@ -45,7 +45,7 @@ BEGIN
 	  SELECT COUNT(1) 
 	  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
 	  WHERE NOT EXISTS (
-		SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = MIG.PAC_NUMERO_ACTIVO
+		SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = MIG.HEP_ACT_NUMERO_ACTIVO
 	  )
 	  '
 	  ;
@@ -78,19 +78,19 @@ BEGIN
 		)
 		WITH ACT_NUM_ACTIVO AS (
 			SELECT
-			MIG.PAC_NUMERO_ACTIVO 
+			MIG.HEP_ACT_NUMERO_ACTIVO 
 			FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
 			WHERE NOT EXISTS (
-			  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.PAC_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
+			  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.HEP_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
 			)
 		)
 		SELECT DISTINCT
-		MIG.PAC_NUMERO_ACTIVO                              						ACT_NUM_ACTIVO,
+		MIG.HEP_ACT_NUMERO_ACTIVO                              						ACT_NUM_ACTIVO,
 		'''||V_TABLA_MIG||'''                                                   TABLA_MIG,
 		SYSDATE                                                                 FECHA_COMPROBACION
 		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
 		INNER JOIN ACT_NUM_ACTIVO
-		ON ACT_NUM_ACTIVO.PAC_NUMERO_ACTIVO = MIG.PAC_NUMERO_ACTIVO
+		ON ACT_NUM_ACTIVO.PAC_NUMERO_ACTIVO = MIG.HEP_ACT_NUMERO_ACTIVO
 		'
 		;
 		
@@ -102,76 +102,38 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       V_SENTENCIA := '
-        INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-		   PAC_ID
-          ,ACT_ID
-          ,PAC_INCLUIDO
-          ,PAC_CHECK_TRA_ADMISION
-          ,PAC_FECHA_TRA_ADMISION
-          ,PAC_MOTIVO_TRA_ADMISION
-          ,PAC_CHECK_GESTIONAR
-          ,PAC_FECHA_GESTIONAR
-          ,PAC_MOTIVO_GESTIONAR
-          ,PAC_CHECK_ASIGNAR_MEDIADOR
-          ,PAC_FECHA_ASIGNAR_MEDIADOR
-          ,PAC_MOTIVO_ASIGNAR_MEDIADOR
-          ,PAC_CHECK_COMERCIALIZAR
-          ,PAC_FECHA_COMERCIALIZAR
-          ,DD_MCO_ID
-          ,DD_MNC_ID
-          ,PAC_CHECK_FORMALIZAR
-          ,PAC_FECHA_FORMALIZAR
-          ,PAC_MOTIVO_FORMALIZAR
-          ,VERSION
-          ,USUARIOCREAR
-          ,FECHACREAR
-          ,BORRADO
-        )
-        WITH INSERTAR AS (
-          SELECT DISTINCT PAC_NUMERO_ACTIVO
-          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-          INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
-          ON WMIG2.PAC_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO 
-          WHERE NOT EXISTS (
-            SELECT 1
-            FROM '||V_ESQUEMA||'.'||V_TABLA||' PAC
-            WHERE PAC.ACT_ID = ACT.ACT_ID
-          )  
-        )
-        SELECT 
-          '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                        	AS PAC_ID,
-          AUX.*
-        FROM (      
-          SELECT DISTINCT      
-          (SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-          WHERE ACT.ACT_NUM_ACTIVO = MIG2.PAC_NUMERO_ACTIVO)                AS ACT_ID,      
-          MIG2.PAC_IND_INCLUIDO                                             AS PAC_INCLUIDO,
-		  MIG2.PAC_IND_CHECK_TRA_ADMISION									AS PAC_CHECK_TRA_ADMISION,
-		  MIG2.PAC_FECHA_TRA_ADMISION										AS PAC_FECHA_TRA_ADMISION,
-		  MIG2.PAC_MOTIVO_TRA_ADMISION										AS PAC_MOTIVO_TRA_ADMISION,
-		  MIG2.PAC_IND_CHECK_GESTIONAR										AS PAC_CHECK_GESTIONAR,
-		  MIG2.PAC_FECHA_GESTIONAR											AS PAC_FECHA_GESTIONAR,
-		  MIG2.PAC_MOTIVO_GESTIONAR											AS PAC_MOTIVO_GESTIONAR,
-		  MIG2.PAC_IND_CHECK_ASIG_MEDIA										AS PAC_CHECK_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_FECHA_ASIGNAR_MEDIADOR									AS PAC_FECHA_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_MOTIVO_ASIGNAR_MEDIADOR									AS PAC_MOTIVO_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_IND_CHECK_COMERCIALIZAR									AS PAC_CHECK_COMERCIALIZAR,
-		  MIG2.PAC_FECHA_COMERCIALIZAR										AS PAC_FECHA_COMERCIALIZAR,
-		  (SELECT DD_MCO_ID FROM '||V_ESQUEMA||'.DD_MCO_MOTIVO_COMERCIALIZACION
-		  WHERE DD_MCO_CODIGO = MIG2.PAC_COD_MOTIVO_COMERCIAL)				AS DD_MCO_ID,
-		  (SELECT DD_MNC_ID FROM '||V_ESQUEMA||'.DD_MNC_MOT_NOCOMERCIALIZACION
-		  WHERE DD_MNC_CODIGO = MIG2.PAC_COD_MOTIVO_NOCOMERCIAL)			AS DD_MNC_ID,
-		  MIG2.PAC_IND_CHECK_FORMALIZAR										AS PAC_CHECK_FORMALIZAR,
-		  MIG2.PAC_FECHA_FORMALIZAR											AS PAC_FECHA_FORMALIZAR,
-		  MIG2.PAC_MOTIVO_FORMALIZAR										AS PAC_MOTIVO_FORMALIZAR,
-          0                                                               	AS VERSION, 
-          ''MIG2''                                                          AS USUARIOCREAR,                            
-          SYSDATE                                                           AS FECHACREAR,                             
-          0                                                                 AS BORRADO                             
+          INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' HEP (
+              HEP_ID
+              ,ACT_ID
+              ,HEP_FECHA_DESDE
+              ,HEP_FECHA_HASTA
+              ,DD_POR_ID
+              ,DD_TPU_ID
+              ,DD_EPU_ID
+              ,HEP_MOTIVO
+              ,VERSION
+              ,USUARIOCREAR
+              ,FECHACREAR
+              ,BORRADO
+          )
+          SELECT
+            '||V_ESQUEMA||'.S_ACT_HEP_HIST_EST_PUBLICACION.NEXTVAL                        AS HEP_ID,
+            ACT.ACT_ID                                                                                    AS ACT_ID,
+            MIG2.HEP_FECHA_DESDE                                                                  AS HEP_FECHA_DESDE,
+            MIG2.HEP_FECHA_HASTA                                                                  AS HEP_FECHA_HASTA,
+            POR.DD_POR_ID                                                                               AS DD_POR_ID,
+            TPU.DD_TPU_ID                                                                                AS DD_TPU_ID,
+            EPU.DD_EPU_ID                                                                               AS DD_EPU_ID,
+            MIG2.HEP_MOTIVO                                                                          AS HEP_MOTIVO,
+            0                                                                                                   AS VERSION,
+            ''MIG2''                                                                                            AS USUARIOCREAR,
+            SYSDATE                                                                                       AS FECHACREAR,
+            0                                                                                                   AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-          INNER JOIN INSERTAR INS 
-          ON INS.PAC_NUMERO_ACTIVO = MIG2.PAC_NUMERO_ACTIVO
-        ) AUX
+          INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG2.HEP_ACT_NUMERO_ACTIVO AND ACT.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_CODIGO = MIG2.HEP_COD_PORTAL AND POR.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION TPU ON TPU.DD_TPU_CODIGO = MIG2.HEP_COD_TIPO_PUBLICACION AND TPU.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION EPU ON EPU.DD_EPU_CODIGO = MIG2.HEP_COD_ESTADO_PUBLI AND EPU.BORRADO = 0      
       '
       ;
       EXECUTE IMMEDIATE V_SENTENCIA	;
@@ -213,11 +175,11 @@ BEGIN
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
-		V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' PERIMETROS_ACTIVOS.';
-		
-		IF TABLE_COUNT != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES || ' Hay un total de '||TABLE_COUNT||' ACTIVOS inexistentes.';
-		END IF;
+          V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' HIST_EST_PUBLICACIONES.';
+          
+          IF TABLE_COUNT != 0 THEN
+              V_OBSERVACIONES := V_OBSERVACIONES || ' Hay un total de '||TABLE_COUNT||' ACTIVOS inexistentes.';
+          END IF;
       END IF;
       
       V_SENTENCIA := '

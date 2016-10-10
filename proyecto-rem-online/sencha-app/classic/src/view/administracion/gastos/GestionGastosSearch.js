@@ -87,7 +87,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						    },
 						    { 
 						    	fieldLabel: HreRem.i18n('fieldlabel.numero.gasto.gestoria'),
-						        name: 'numgastogestoria'								            	
+						        name: 'numGastoGestoria'								            	
 						    },
 						    { 
 					        	xtype: 'comboboxfieldbase',
@@ -141,7 +141,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.destinatario'),
 					        	name: 'destinatario',
 					        	bind: {
-				            		store: '{comboDestinatarioGasto}'
+				            		store: '{comboDestinatarios}'
 				            	},
 				            	displayField: 'descripcion',
 								valueField: 'codigo'
@@ -165,7 +165,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 							{ 
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),
-					        	name: 'destinatario',
+					        	name: 'periodicidad',
 					        	bind: {
 				            		store: '{comboPeriodicidadGasto}'
 				            	},

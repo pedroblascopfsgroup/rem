@@ -140,8 +140,17 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'subtipoProveedor'}
 			}
-		}
+		},
     	
+		comboPeriodicidadGasto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtipoProveedor'}
+			}
+		}
+		
     		
     }
 });

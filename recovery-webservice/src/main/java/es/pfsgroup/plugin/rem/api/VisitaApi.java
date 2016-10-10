@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.HashMap;
 import java.util.List;
 
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -62,7 +63,7 @@ public interface VisitaApi {
 	 * @param alta true si es para validar el alta, false para validar la actualización
 	 * @return List<String> 
 	 */
-	public List<String> validateVisitaPostRequestData(VisitaDto visitaDto,  Object jsonFields, Boolean alta);
+	public HashMap<String, List<String>>  validateVisitaPostRequestData(VisitaDto visitaDto,  Object jsonFields, Boolean alta)  throws Exception;
 
 	
 	/**
@@ -70,7 +71,7 @@ public interface VisitaApi {
 	 * @param visitaDto con la información de la Visita a dar de alta
 	 * @return List<String> con la lista de errores detectados
 	 */
-	public List<String> saveVisita(VisitaDto visitaDto);
+	public HashMap<String, List<String>> saveVisita(VisitaDto visitaDto)  throws Exception;
 	
 	
 	/**
@@ -79,7 +80,7 @@ public interface VisitaApi {
 	 * @param jsonFields estructura de parámetros a actualizar. Si no vienen, no hay que actualizar. Si vienen y están a null, hay que seterlos a null
 	 * @return List<String> con la lista de errores detectados
 	 */
-	public List<String> updateVisita(Visita visita, VisitaDto visitaDto, Object jsonFields);
+	public HashMap<String, List<String>>  updateVisita(Visita visita, VisitaDto visitaDto, Object jsonFields) throws Exception;
 	
 	
 	/**

@@ -72,6 +72,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
         		{
         			xtype: 'tbfill'
         		},
+        		{
+					xtype: 'buttontab',
+					itemId: 'botonrefrescar',
+					iconCls: 'ico-refrescar',
+					handler	: 'onClickBotonRefrescar',
+					tooltip: 'Refrescar'
+		    	},
 				{
 					xtype: 'buttontab',
         			itemId: 'botoneditar',

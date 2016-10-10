@@ -172,7 +172,7 @@ public class RestManagerImpl implements RestApi {
 		return error;
 	}
 
-	private List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad) {
+	public List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad) {
 		List<String> mapaErrores = null;
 		if (errores.containsKey(propiedad)) {
 			mapaErrores = errores.get(propiedad);

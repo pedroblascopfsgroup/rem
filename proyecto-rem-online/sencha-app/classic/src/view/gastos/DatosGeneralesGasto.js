@@ -222,8 +222,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
       												xtype: 'toolbar',
       												dock: 'top',
       												items: [
-      														{itemId: 'addButton',iconCls:'x-fa fa-plus', handler: 'onClickBotonIncluirTrabajosGasto', bind: {hidden: '{ocultarIncluirTrabajos}'}}/*,
-      														{itemId: 'removeButton',iconCls:'x-fa fa-minus', handler: 'onClickBotonQuitarTrabajosGasto', bind: {hidden: '{ocultarIncluirTrabajos}'}}*/
+      														{itemId: 'addButton',iconCls:'x-fa fa-plus', handler: 'onClickBotonAsignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}},
+      														{itemId: 'removeButton',iconCls:'x-fa fa-minus', handler: 'onClickBotonDesasignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}}
       												]
 											},
 											columns: [

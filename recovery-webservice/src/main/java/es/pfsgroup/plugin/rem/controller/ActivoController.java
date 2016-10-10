@@ -466,7 +466,13 @@ public class ActivoController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListVisitasActivoById(Long id, ModelMap model) {
 
-		model.put("data", adapter.getListVisitasActivoById(id));
+		try {
+			model.put("data", adapter.getListVisitasActivoById(id));
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 
 		return createModelAndViewJson(model);
 

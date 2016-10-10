@@ -35,35 +35,60 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 
 		                },
 		                {
-		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
-		                	bind:		'{datosbasicosoferta.tipoOfertaDescripcion}'		                		
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboTipoOferta}',
+								value: '{datosbasicosoferta.tipoOfertaCodigo}'
+							},
+		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo')
 		                },
 		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.notificacion'),
-		                	bind:		'{datosbasicosoferta.fechaNotificacion}',
-		                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+		                	bind:		'{datosbasicosoferta.fechaNotificacion}'
 		                },
 		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.alta'),
-		                	bind:		'{datosbasicosoferta.fechaAlta}',
-		                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
+		                	bind:		'{datosbasicosoferta.fechaAlta}'
 		                },
 		                {
-		                	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
-		                	bind:		'{datosbasicosoferta.estadoDescripcion}'
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboEstadoOferta}',
+								value: '{datosbasicosoferta.estadoCodigo}'
+							},
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                },
-		                {		                
+		                {	
+		                	xtype: 'textfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.prescriptor'),
-		                	bind:		'{datosbasicosoferta.prescriptorDescripcion}'		                
+		                	bind: {
+								value: '{datosbasicosoferta.prescriptor}'
+							},
+							readOnly: true
 		                },
 		                {
+		                	xtype: 'numberfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.inicial.oferta'),
 		                	bind:		'{datosbasicosoferta.importeOferta}'
 		                },
-		                {		                
+		                {	
+		                	xtype: 'numberfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.contraoferta'),
-		                	bind:		'{datosbasicosoferta.importeContraoferta}',
-		                	colspan: 2
+		                	bind:		'{datosbasicosoferta.importeContraOferta}',
+		                	colspan: 1
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.canal.prescripcion'),
+		                	bind: {
+								store: '{comboCanalPrescripcion}',
+								value: '{datosbasicosoferta.canalPrescripcionCodigo}'
+							},
+							editable: true
 		                },
 		                {
 		                	xtype: 'fieldset',

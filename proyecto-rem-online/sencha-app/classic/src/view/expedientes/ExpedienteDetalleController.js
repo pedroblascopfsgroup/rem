@@ -355,7 +355,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		plazoParaFirmar = me.lookupReference('plazoFirmaReserva');
 
 		if(CONST.TIPOS_CALCULO['PORCENTAJE'] == valorCombo){
-			me.getViewModel().get('condiciones').set('importeReserva', null);
+			if(Ext.isEmpty(porcentajeReserva.getValue())){
+				me.getViewModel().get('condiciones').set('importeReserva', null);
+			}
 			porcentajeReserva.setDisabled(false);
 			porcentajeReserva.allowBlank= false;
 			importeReserva.setDisabled(false)
@@ -375,15 +377,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}else{
 			me.getViewModel().get('condiciones').set('importeReserva', null);
 			me.getViewModel().get('condiciones').set('porcentajeReserva', null);
-			me.getViewModel().get('condiciones').set('plazoFirmaReserva', null);			
+			me.getViewModel().get('condiciones').set('plazoFirmaReserva', null);
+			importeReserva.setValue(null);
+			porcentajeReserva.setValue(null);
+			plazoParaFirmar.setValue(null);
 			porcentajeReserva.setDisabled(true);
 			plazoParaFirmar.setDisabled(true);
+			importeReserva.setDisabled(true);
 			
 		}	
 	},
 	
 	onHaCambiadoPorcentajeReserva: function(combo, value) {
-		
 		var me = this,
 		importeOferta = parseFloat(me.getViewModel().get('expediente.importe')).toFixed(2),
 		importeReserva = null,
@@ -777,6 +782,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			tipoCalculoField.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
 		}
 		
+	},
+	
+	onHaCambiadoSolicitaReserva: function(combo, value){
+		var me= this;
+		if(value==1){
+			me.lookupReference('tipoCalculo').setDisabled(false);
+		}else{
+			
+			me.lookupReference('tipoCalculo').setDisabled(true);			
+			me.lookupReference('tipoCalculo').setValue(null);
+		
+		}
+		
+	
 	}
 
 });

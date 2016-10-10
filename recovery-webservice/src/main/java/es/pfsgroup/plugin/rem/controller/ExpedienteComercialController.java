@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -654,26 +655,6 @@ public class ExpedienteComercialController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getGastosSoportadoHaya(ModelMap model, Long idExpediente) {
-		
-		try {
-			DtoPage dto= expedienteComercialApi.getGastosSoportadoHaya(idExpediente);
-			
-			model.put("data", dto.getResults());
-			model.put("totalCount", dto.getTotalCount());
-			model.put("success", true);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			model.put("success", false);
-		}	
-		
-		return createModelAndViewJson(model);
-		
-	}
-	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveReserva(DtoReserva dto, @RequestParam Long id, ModelMap model) {
 		try {		
@@ -707,7 +688,70 @@ public class ExpedienteComercialController {
 		return createModelAndViewJson(model);
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveFichaExpediente(DtoFichaExpediente dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveFichaExpediente(dto, id));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveEntregaReserva(DtoEntregaReserva dto, @RequestParam Long idEntidad, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveEntregaReserva(dto, idEntidad));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateEntregaReserva(DtoEntregaReserva dto, @RequestParam Long idEntidad, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.updateEntregaReserva(dto, idEntidad));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteEntregaReserva(DtoEntregaReserva dto, @RequestParam Long idEntrega, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.deleteEntregaReserva(dto, idEntrega));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

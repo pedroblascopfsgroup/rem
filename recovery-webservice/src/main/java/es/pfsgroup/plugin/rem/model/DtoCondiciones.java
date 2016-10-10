@@ -69,6 +69,7 @@ public class DtoCondiciones extends WebDto {
 	private String ibiPorCuentaDe;
 	private String comunidadPorCuentaDe;
 	private String suministrosPorCuentaDe;
+	private Integer solicitaReserva; 
 	
 	
 
@@ -507,6 +508,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setSuministrosPorCuentaDe(String suministrosPorCuentaDe) {
 		this.suministrosPorCuentaDe = suministrosPorCuentaDe;
+	}
+
+	public Integer getSolicitaReserva() {
+		return solicitaReserva;
+	}
+
+	public void setSolicitaReserva(Integer solicitaReserva) {
+		this.solicitaReserva = solicitaReserva;
 	}  
    	
    	

@@ -21,19 +21,13 @@ public class DtoImpugnacionGasto extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
-	private Long id;
 	private Date fechaTope;
 	private Date fechaPresentacion;
 	private Date fechaResolucion;
 	private String resultadoCodigo;
 	private String observaciones;
 	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+
 	public Date getFechaTope() {
 		return fechaTope;
 	}

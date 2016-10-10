@@ -102,7 +102,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   		fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud'),
 									                   		cls: 'cabecera-info-field',
 															bind:		'{trabajo.fechaSolicitud}',
-															renderer: Ext.util.Format.dateRenderer('d-m-Y')
+															renderer: Ext.util.Format.dateRenderer('d/m/Y')
 									                   	},
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.propietario'),

@@ -6,6 +6,13 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+
 public class ComisionDto implements Serializable {
 
 
@@ -18,29 +25,33 @@ public class ComisionDto implements Serializable {
 	private Long idHonorarioWebcom;
 	@NotNull
 	private Long idHonorarioRem;*/
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idOfertaRem;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
+	@Diccionary(clase = Oferta.class, foreingField="numOferta",message = "El idOfertaWebcom no existe", groups = { Insert.class,
+			Update.class })
 	private Long idOfertaWebcom;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
+	@Diccionary(clase = ActivoProveedor.class, foreingField="id",message = "El idProveedorRem no existe", groups = { Insert.class,
+			Update.class })
 	private Long idProveedorRem;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean esPrescripcion;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean esColaboracion;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean esResponsable;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean esDoblePrescripcion;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean esFdv;
 	@Size(max=250)
 	private String observaciones;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean aceptacion;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idUsuarioRemAccion;
 	
 	

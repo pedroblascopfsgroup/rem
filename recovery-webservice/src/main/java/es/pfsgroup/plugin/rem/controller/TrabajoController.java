@@ -1082,7 +1082,7 @@ public class TrabajoController {
 						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
 						map.put("idTrabajoRem", "");
 						map.put("success", false);
-						//map.put("errorMessages", errorsList);
+						map.put("errorMessages", errorsList);
 					}
 					listaRespuesta.add(map);
 					

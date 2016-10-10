@@ -69,6 +69,8 @@ public interface RestApi {
 	 * @return
 	 */
 	public HashMap<String,List<String>> validateRequestObject(Serializable obj);
+	
+	public List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad);
 
 	/**
 	 * Obtiene un operador dada su ip pblica

@@ -167,7 +167,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),
 					        	name: 'periodicidad',
 					        	bind: {
-				            		store: '{comboPeriodicidadGasto}'
+				            		store: '{comboPeriodicidad}'
 				            	},
 				            	displayField: 'descripcion',
 								valueField: 'codigo'

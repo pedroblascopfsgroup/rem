@@ -433,7 +433,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
     
     funcionRecargar: function() {
     	var me = this; 
-		me.recargar = false;		
-		//me.lookupController().cargarTabData(me);
+		me.recargar = false;
+		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});
     }
 });

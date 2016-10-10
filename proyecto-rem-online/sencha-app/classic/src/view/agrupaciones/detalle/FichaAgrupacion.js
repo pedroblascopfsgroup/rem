@@ -151,6 +151,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						{ 
 		                	xtype: 'datefieldbase',
 		                	fieldLabel: HreRem.i18n('header.fecha.inicio.vigencia'),
+		                	maxValue: null,
 			            	bind: {
 			            		value: '{agrupacionficha.fechaInicioVigencia}'
 			            	}		
@@ -158,6 +159,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						{ 
 		                	xtype: 'datefieldbase',
 		                	fieldLabel: HreRem.i18n('header.fecha.fin.vigencia'),
+		                	maxValue: null,
 			            	bind: {
 			            		value: '{agrupacionficha.fechaFinVigencia}'
 			            	}		

@@ -112,7 +112,7 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas")
 	public void saveOrUpdateOferta(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		OfertaRequestDto jsonData = null;
-		List<String> errorsList = null;
+		HashMap<String, List<String>> errorsList = null;
 		Oferta oferta = null;
 		
 		OfertaDto ofertaDto = null;
@@ -134,7 +134,6 @@ public class OfertasController {
 				for(int i=0; i < listaOfertaDto.size();i++){
 					
 					Oferta ofr = null;
-					errorsList = new ArrayList<String>();
 					map = new HashMap<String, Object>();
 					ofertaDto = listaOfertaDto.get(i);
 					

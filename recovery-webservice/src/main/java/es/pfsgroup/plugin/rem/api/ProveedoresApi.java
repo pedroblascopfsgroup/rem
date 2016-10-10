@@ -95,16 +95,18 @@ public interface ProveedoresApi {
 	 * 
 	 * @param dtoPersonaContacto : dto con los datos a almacenar.
 	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 * @throws Exception Devuelve una excepción si no se ha encontrado el usuario.
 	 */
-	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto);
+	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto) throws Exception;
 	
 	/**
 	 * Este método almacena en la DDBB los datos a cambiar de la persona contacto.
 	 * 
 	 * @param dtoPersonaContacto : dto con los datos a actualizar.
 	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 * @throws Exception Devuelve una excepción si no se ha encontrado el usuario.
 	 */
-	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto);
+	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto) throws Exception;
 
 	/**
 	 * Este método borra de manera lógica un registro de dpersona contacto de la DDBB

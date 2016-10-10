@@ -5,7 +5,9 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -226,6 +228,11 @@ public class RestManagerImpl implements RestApi {
 		}
 		if (value instanceof String && ((String) value).equals("null")) {
 			value = null;
+		}
+		if(value instanceof Date){
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+			value = df.format(value);
 		}
 		if (value instanceof ArrayList) {
 			for (Object v : (ArrayList) value) {

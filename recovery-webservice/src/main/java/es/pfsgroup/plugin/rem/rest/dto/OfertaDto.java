@@ -7,6 +7,9 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+
 public class OfertaDto implements Serializable {
 
 	/**
@@ -16,13 +19,13 @@ public class OfertaDto implements Serializable {
 	
 	
 	
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idOfertaWebcom;
 	private Long idOfertaRem;
 	private Long idVisitaRem;
-	@NotNull
+	@NotNull(groups = { Update.class })
 	private Long idClienteRem;
-	@NotNull
+	@NotNull(groups = { Update.class })
 	private Long idActivoHaya;
 	@NotNull
 	private Double importe;

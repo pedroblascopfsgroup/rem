@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
@@ -60,8 +61,10 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 @Service("proveedoresManager")
 public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresApi> implements  ProveedoresApi {
-	public static String PROVEEDOR_EXISTS_EXCEPTION_CODE = "0001";
-	public static String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "El NIF de proveedor proporcionado ya existe";
+	public static final String PROVEEDOR_EXISTS_EXCEPTION_CODE = "0001";
+	public static final String USUARIO_NOT_EXISTS_EXCEPTION_CODE = "0002";
+	public static final String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "El NIF de proveedor proporcionado ya existe";
+	public static final String USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE = "No se ha encontrado el usuario especificado";
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -336,9 +339,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				try {
 					beanUtilNotNull.copyProperty(dto, "id", persona.getId());
 					beanUtilNotNull.copyProperty(dto, "personaPrincipal", persona.getPrincipal());
+					beanUtilNotNull.copyProperty(dto, "nombre", persona.getNombre());
+					beanUtilNotNull.copyProperty(dto, "apellido1", persona.getApellido1());
+					beanUtilNotNull.copyProperty(dto, "apellido2", persona.getApellido2());
 					if(!Checks.esNulo(persona.getUsuario())) {
-						beanUtilNotNull.copyProperty(dto, "nombreApellidos", persona.getUsuario().getApellidoNombre());
-						beanUtilNotNull.copyProperty(dto, "codigoUsuario", persona.getUsuario().getId());
+						beanUtilNotNull.copyProperty(dto, "codigoUsuario", persona.getUsuario().getUsername());
 					}
 					if(!Checks.esNulo(persona.getProveedor())){
 						beanUtilNotNull.copyProperty(dto, "proveedorID", persona.getProveedor().getId());
@@ -346,12 +351,12 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 							if(!Checks.esNulo(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor())){
 								if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
 									if(!Checks.esNulo(persona.getCargoProveedorContacto())) {
-										beanUtilNotNull.copyProperty(dto, "cargo", persona.getCargoProveedorContacto().getCodigo());
+										beanUtilNotNull.copyProperty(dto, "cargoCombobox", persona.getCargoProveedorContacto().getCodigo());
 									}
-									beanUtilNotNull.copyProperty(dto, "nif", persona.getProveedor().getDocIdentificativo());
+									beanUtilNotNull.copyProperty(dto, "nif", persona.getDocIdentificativo());
 									beanUtilNotNull.copyProperty(dto, "direccion", persona.getDireccion());
 								} else {
-									beanUtilNotNull.copyProperty(dto, "cargo", persona.getCargo());
+									beanUtilNotNull.copyProperty(dto, "cargoTexto", persona.getCargo());
 								}
 							}
 						}
@@ -380,7 +385,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Transactional(readOnly=false)
 	@Override
-	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto) {
+	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto) throws Exception {
 		ActivoProveedorContacto personaContacto = new ActivoProveedorContacto();
 		
 		try {
@@ -391,18 +396,30 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				if(!Checks.esNulo(proveedor.getTipoProveedor())){
 					if(!Checks.esNulo(proveedor.getTipoProveedor().getTipoEntidadProveedor())){
 						if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(proveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
-							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
 							beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
+							if(!Checks.esNulo(dtoPersonaContacto.getCargoCombobox())) {
+								DDCargoProveedorContacto cargo = (DDCargoProveedorContacto) utilDiccionarioApi.dameValorDiccionarioByCod(DDCargoProveedorContacto.class, dtoPersonaContacto.getCargoCombobox());
+								beanUtilNotNull.copyProperty(personaContacto, "cargoProveedorContacto", cargo);
+							}
+							beanUtilNotNull.copyProperty(personaContacto, "docIdentificativo", dtoPersonaContacto.getNif());
+							if(!Checks.esNulo(dtoPersonaContacto.getNif())) {
+								// Por defecto al crear el registro, el documento identificativo es de tipo NIF.
+								DDTipoDocumento tipoDoc = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, "15");
+								beanUtilNotNull.copyProperty(personaContacto, "tipoDocIdentificativo", tipoDoc);
+							}
 						} else {
-							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
+							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargoTexto());
 						}
 					}
 				}
 			}
 			
 			if(!Checks.esNulo(dtoPersonaContacto.getCodigoUsuario())) {
-				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getCodigoUsuario()));
+				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "username", dtoPersonaContacto.getCodigoUsuario());
 				Usuario usuario = genericDao.get(Usuario.class, usuFilter);
+				if(Checks.esNulo(usuario)){
+					throw new Exception(ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_CODE);
+				}
 				beanUtilNotNull.copyProperty(personaContacto, "usuario", usuario);
 			}
 			if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
@@ -410,6 +427,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, direccionFilter);
 				beanUtilNotNull.copyProperty(personaContacto, "delegacion", delegacion);
 			}
+			beanUtilNotNull.copyProperty(personaContacto, "nombre", dtoPersonaContacto.getNombre());
+			beanUtilNotNull.copyProperty(personaContacto, "apellido1", dtoPersonaContacto.getApellido1());
+			beanUtilNotNull.copyProperty(personaContacto, "apellido2", dtoPersonaContacto.getApellido2());
 			beanUtilNotNull.copyProperty(personaContacto, "telefono1", dtoPersonaContacto.getTelefono());
 			beanUtilNotNull.copyProperty(personaContacto, "email", dtoPersonaContacto.getEmail());
 			beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
@@ -431,10 +451,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Transactional(readOnly=false)
 	@Override
-	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto) {
+	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto) throws Exception {
 		Filter personaIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getId()));
 		ActivoProveedorContacto personaContacto = genericDao.get(ActivoProveedorContacto.class, personaIDFilter);
-		if(!Checks.esNulo(personaContacto)) {
+		if(Checks.esNulo(personaContacto)) {
 			return false;
 		}
 
@@ -446,20 +466,30 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				if(!Checks.esNulo(proveedor.getTipoProveedor())){
 					if(!Checks.esNulo(proveedor.getTipoProveedor().getTipoEntidadProveedor())){
 						if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(proveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
-							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
 							beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
+							if(!Checks.esNulo(dtoPersonaContacto.getCargoCombobox())) {
+								DDCargoProveedorContacto cargo = (DDCargoProveedorContacto) utilDiccionarioApi.dameValorDiccionarioByCod(DDCargoProveedorContacto.class, dtoPersonaContacto.getCargoCombobox());
+								beanUtilNotNull.copyProperty(personaContacto, "cargoProveedorContacto", cargo);
+							}
+							beanUtilNotNull.copyProperty(personaContacto, "docIdentificativo", dtoPersonaContacto.getNif());
 						} else {
-							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
+							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargoTexto());
 						}
 					}
 				}
 			}
 			
 			if(!Checks.esNulo(dtoPersonaContacto.getCodigoUsuario())) {
-				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getCodigoUsuario()));
+				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "username", dtoPersonaContacto.getCodigoUsuario());
 				Usuario usuario = genericDao.get(Usuario.class, usuFilter);
+				if(Checks.esNulo(usuario)){
+					throw new Exception(ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_CODE);
+				}
 				beanUtilNotNull.copyProperty(personaContacto, "usuario", usuario);
 			}
+			beanUtilNotNull.copyProperty(personaContacto, "nombre", dtoPersonaContacto.getNombre());
+			beanUtilNotNull.copyProperty(personaContacto, "apellido1", dtoPersonaContacto.getApellido1());
+			beanUtilNotNull.copyProperty(personaContacto, "apellido2", dtoPersonaContacto.getApellido2());
 			beanUtilNotNull.copyProperty(personaContacto, "telefono1", dtoPersonaContacto.getTelefono());
 			beanUtilNotNull.copyProperty(personaContacto, "email", dtoPersonaContacto.getEmail());
 			beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());

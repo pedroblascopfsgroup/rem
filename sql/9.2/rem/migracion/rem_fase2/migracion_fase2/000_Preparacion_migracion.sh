@@ -1,24 +1,28 @@
 #! /bin/bash
 
-echo "Se va a proceder a la generación de los paquetes necesarios para ejecutar el proceso de migración."
+echo
+echo "-----------------------------------------------------"
+echo "-- [1/4] PROCESO DE EMPAQUETADO --"
+echo "-----------------------------------------------------"
+echo
+
+dir=$(pwd)
+echo "[INFO] Directorio raiz de migración: "$dir
+
+cd ../../../../../../
+pwd=$(pwd)
+echo "[INFO] Directorio raiz de recovery: "$pwd
+
+pkg=$pwd"/sql/pitertul/tmp/package"
+echo "[INFO] Directorio raiz de empaquetado: "$pkg
+
 
 #01_PREV
 #-------------
 
-dir=$(pwd)
-echo "Directorio raiz de migración: "$dir
-
-cd ../../../../../../
-pwd=$(pwd)
-echo "Directorio raiz de recovery: "$pwd
-
-echo "[1/4] Generando empaquetado 01_PREV que contiene DDLs y DMLs de creación de tablas auxiliares e inserción de datos en diccionarios."
+echo "[INFO] Generando empaquetado del directorio PRE_MIGRACION..."
 
 nohup ./sql/pitertul/package-scripts-from-tag-and-folder.sh rem_mig_fase2_v0.1 REM migracion/rem_fase2/migracion_fase2/PRE_MIGRACION
-
-pkg=$pwd"/sql/pitertul/tmp/package"
-
-echo "Directorio raiz de empaquetado: "$pkg
 
 cd $pkg/DB/
 
@@ -26,10 +30,11 @@ rm -r $dir/01_PREV/*
 
 cp -r * $dir/01_PREV
 
+
 #02_TABLAS_MIG
 #------------
 
-echo "[2/4] Generando empaquetado 02_TABLAS_MIG que contiene los DDLs necesarios para crear las tablas de migración."
+echo "[INFO] Generando empaquetado del directorio DDLs_MIG..."
 
 cd $pwd
 
@@ -41,25 +46,11 @@ rm -r $dir/02_TABLAS_MIG/*
 
 cp -r * $dir/02_TABLAS_MIG
 
-#03_CHECK_DD
+
+#03_MIGRACION
 #------------
 
-echo "[3/4] Generando empaquetado 03_CHECK_DD que contiene DMLs necesarios para la comprobación de códigos de diccionario."
-
-cd $pwd
-
-nohup ./sql/pitertul/package-scripts-from-tag-and-folder.sh rem_mig_fase2_v0.1 REM migracion/rem_fase2/migracion_fase2/DMLs_CHECK_DD
-
-cd $pkg/DML/
-
-rm -r $dir/03_CHECK_DD/*
-
-cp -r * $dir/03_CHECK_DD
-
-#03_CHECK_DD
-#------------
-
-echo "[4/4] Generando empaquetado 04_MIGRACION que contiene los DMLs de volcado de las tablas de migración al modelo REM."
+echo "[INFO] Generando empaquetado del directorio DMLs_REM_MIGRATION..."
 
 cd $pwd
 
@@ -67,8 +58,8 @@ nohup ./sql/pitertul/package-scripts-from-tag-and-folder.sh rem_mig_fase2_v0.1 R
 
 cd $pkg/DML/
 
-rm -r $dir/04_MIGRACION/*
+rm -r $dir/03_MIGRACION/*
 
-cp -r * $dir/04_MIGRACION
+cp -r * $dir/03_MIGRACION
 
-echo "[OK] Preparación de paquetes finalizada"
+echo "[INFO] Proceso finalizado"

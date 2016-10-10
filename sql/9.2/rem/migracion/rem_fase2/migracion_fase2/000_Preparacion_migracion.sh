@@ -1,8 +1,10 @@
 #! /bin/bash
 
+echo
 echo "-----------------------------------------------------"
 echo "-- [1/4] PROCESO DE EMPAQUETADO --"
 echo "-----------------------------------------------------"
+echo
 
 dir=$(pwd)
 echo "[INFO] Directorio raiz de migración: "$dir

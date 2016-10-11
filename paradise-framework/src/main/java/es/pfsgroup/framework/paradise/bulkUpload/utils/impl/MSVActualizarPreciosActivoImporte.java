@@ -3,7 +3,9 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +37,14 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_PRIZE_NAN = "Uno de los importes indicados no es un valor numérico correcto";
-	public static final String ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEDEED = "El precio de descuento aprobado no puede ser mayor al precio de descuento publicado (P.Descuento <= P.Descuento Pub.)";
-	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEDEED = "El precio aprobado de venta no puede ser menor al precio mínimo autorizado (P.Minimo <= P.Aprobado Venta)";
-	public static final String ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEDEED = "El precio de descuento publicado no puede ser mayor al precio aprobado de venta (P.Descuento Pub. <= P.Aprobado Venta)";
+	public static final String ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED = "El precio de descuento aprobado no puede ser mayor al precio de descuento publicado (P.Descuento <= P.Descuento Pub.)";
+	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED = "El precio aprobado de venta no puede ser menor al precio mínimo autorizado (P.Minimo <= P.Aprobado Venta)";
+	public static final String ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED = "El precio de descuento publicado no puede ser mayor al precio aprobado de venta (P.Descuento Pub. <= P.Aprobado Venta)";
+	public static final String ACTIVE_PAV_DATE_INIT_EXCEEDED = "La fecha de inicio del precio aprobado de venta no puede ser posterior a la fecha de fin (F.inicio <= F.Fin)";
+	public static final String ACTIVE_PMA_DATE_INIT_EXCEEDED = "La fecha de inicio del precio mínimo autorizado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin)";
+	public static final String ACTIVE_PAR_DATE_INIT_EXCEEDED = "La fecha de inicio del precio aprobado de renta no puede ser posterior a la fecha de fin (F.inicio <= F.Fin)";
+	public static final String ACTIVE_PDA_DATE_INIT_EXCEEDED = "La fecha de inicio del precio de descuento aprobado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin)";
+	public static final String ACTIVE_PDP_DATE_INIT_EXCEEDED = "La fecha de inicio del precio de descuento publicado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin)";
 	
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
 	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
@@ -81,16 +88,26 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(ACTIVE_PRIZE_NAN, getNANPrecioIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEDEED, getLimitePreciosDescAprobDescWebIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEDEED, getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEDEED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
+				mapaErrores.put(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED, getLimitePreciosDescAprobDescWebIncorrectoRows(exc));
+				mapaErrores.put(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED, getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
+				mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
+				mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
+				mapaErrores.put(ACTIVE_PMA_DATE_INIT_EXCEEDED, getFechaInicioAprobadoRentaIncorrectaRows(exc));
+				mapaErrores.put(ACTIVE_PAR_DATE_INIT_EXCEEDED, getFechaInicioMinimoAuthIncorrectaRows(exc));
+				mapaErrores.put(ACTIVE_PDA_DATE_INIT_EXCEEDED, getFechaInicioDescuentoAprobIncorrectaRows(exc));
+				mapaErrores.put(ACTIVE_PDP_DATE_INIT_EXCEEDED, getFechaInicioDescuentoPubIncorrectaRows(exc));
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
 							!mapaErrores.get(ACTIVE_PRIZE_NAN).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEDEED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEDEED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEDEED).isEmpty() ){
+							!mapaErrores.get(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED).isEmpty() || 
+							!mapaErrores.get(ACTIVE_PAV_DATE_INIT_EXCEEDED).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PMA_DATE_INIT_EXCEEDED).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PAR_DATE_INIT_EXCEEDED).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PDA_DATE_INIT_EXCEEDED).isEmpty() || 
+							!mapaErrores.get(ACTIVE_PDP_DATE_INIT_EXCEEDED).isEmpty() ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -229,11 +246,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	
 	private List<Integer> getNANPrecioIncorrectoRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		Double precioVentaAprobado = (double) 0;
-		Double precioMinimoAuth = (double) 0;
-		Double precioRentaAprobado = (double) 0;
-		Double precioDescuentoAprobado = (double) 0;
-		Double precioDescuentoPublicado = (double) 0;
+		Double precioVentaAprobado = null;
+		Double precioMinimoAuth = null;
+		Double precioRentaAprobado = null;
+		Double precioDescuentoAprobado = null;
+		Double precioDescuentoPublicado = null;
 		
 		// Validacion que evalua si los precios son numeros correctos
 		try{
@@ -265,8 +282,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	
 	private List<Integer> getLimitePreciosDescAprobDescWebIncorrectoRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		Double precioDescuentoAprobado = (double) 0;
-		Double precioDescuentoPublicado = (double) 0;
+		Double precioDescuentoAprobado = null;
+		Double precioDescuentoPublicado = null;
 		
 		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
 		try{
@@ -293,12 +310,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		return listaFilas;
 	}
-
 	
 	private List<Integer> getLimitePreciosAprobadoMinimoIncorrectoRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		Double precioVentaAprobado = (double) 0;
-		Double precioMinimoAuth = (double) 0;
+		Double precioVentaAprobado = null;
+		Double precioMinimoAuth = null;
 		
 		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
 		try{
@@ -326,11 +342,10 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		return listaFilas;
 	}
 	
-	
 	private List<Integer> getLimitePreciosAprobadoDescWebIncorrectoRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		Double precioVentaAprobado = (double) 0;
-		Double precioDescuentoPublicado = (double) 0;
+		Double precioVentaAprobado = null;
+		Double precioDescuentoPublicado = null;
 		
 		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
 		try{
@@ -358,4 +373,153 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		return listaFilas;
 	}
 	
+	private List<Integer> getFechaInicioAprobadoVentaIncorrectaRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+		Date fechaInicioPAV = null;
+		Date fechaFinPAV = null;
+		
+		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
+
+				fechaInicioPAV = ft.parse(exc.dameCelda(i, 2));
+				fechaFinPAV = ft.parse(exc.dameCelda(i, 3));
+				
+				//Fecha Inicio <= Fecha Fin
+				if(!Checks.esNulo(fechaInicioPAV) && 
+						!Checks.esNulo(fechaFinPAV) &&
+						(fechaInicioPAV.after(fechaFinPAV))){
+					if (!listaFilas.contains(i))
+						listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+
+	private List<Integer> getFechaInicioAprobadoRentaIncorrectaRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+		Date fechaInicioPAR = null;
+		Date fechaFinPAR = null;
+		
+		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
+
+				fechaInicioPAR = ft.parse(exc.dameCelda(i, 8));
+				fechaFinPAR = ft.parse(exc.dameCelda(i, 9));
+				
+				//Fecha Inicio <= Fecha Fin
+				if(!Checks.esNulo(fechaInicioPAR) && 
+						!Checks.esNulo(fechaFinPAR) &&
+						(fechaInicioPAR.after(fechaFinPAR))){
+					if (!listaFilas.contains(i))
+						listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+
+	private List<Integer> getFechaInicioMinimoAuthIncorrectaRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+		Date fechaInicioPMA = null;
+		Date fechaFinPMA = null;
+		
+		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
+
+				fechaInicioPMA = ft.parse(exc.dameCelda(i, 5));
+				fechaFinPMA = ft.parse(exc.dameCelda(i, 6));
+				
+				//Fecha Inicio <= Fecha Fin
+				if(!Checks.esNulo(fechaInicioPMA) && 
+						!Checks.esNulo(fechaFinPMA) &&
+						(fechaInicioPMA.after(fechaFinPMA))){
+					if (!listaFilas.contains(i))
+						listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+
+	private List<Integer> getFechaInicioDescuentoAprobIncorrectaRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+		Date fechaInicioPDA = null;
+		Date fechaFinPDA = null;
+		
+		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
+
+				fechaInicioPDA = ft.parse(exc.dameCelda(i, 2));
+				fechaFinPDA = ft.parse(exc.dameCelda(i, 3));
+				
+				//Fecha Inicio <= Fecha Fin
+				if(!Checks.esNulo(fechaInicioPDA) && 
+						!Checks.esNulo(fechaFinPDA) &&
+						(fechaInicioPDA.after(fechaFinPDA))){
+					if (!listaFilas.contains(i))
+						listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+
+	private List<Integer> getFechaInicioDescuentoPubIncorrectaRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+		Date fechaInicioPDP = null;
+		Date fechaFinPDP = null;
+		
+		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
+
+				fechaInicioPDP = ft.parse(exc.dameCelda(i, 2));
+				fechaFinPDP = ft.parse(exc.dameCelda(i, 3));
+				
+				//Fecha Inicio <= Fecha Fin
+				if(!Checks.esNulo(fechaInicioPDP) && 
+						!Checks.esNulo(fechaFinPDP) &&
+						(fechaInicioPDP.after(fechaFinPDP))){
+					if (!listaFilas.contains(i))
+						listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
 }

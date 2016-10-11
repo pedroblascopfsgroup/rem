@@ -36,7 +36,9 @@ public interface RestApi {
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
 	public static final String REST_MSG_UNKNOWN_KEY = "UNKNOWN_KEY";
 	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
-	public static final String REST_LOGGED_USER_USERNAME = "USER";
+	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";
+	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";
+	public static final String REST_LOGGED_USER_USERNAME_FULL = "REST-USER";
 	public static final Object REST_LOGGED_USER_EMPTY_PASSWORD = "";
 
 	/**
@@ -150,7 +152,7 @@ public interface RestApi {
 	 * 
 	 * @param entidad
 	 */
-	public void doLogin(Entidad entidad, UsuarioSecurity user);
+	public void doLogin(UsuarioSecurity user);
 
 	/**
 	 * Crea un objeto de tipo peticion rest

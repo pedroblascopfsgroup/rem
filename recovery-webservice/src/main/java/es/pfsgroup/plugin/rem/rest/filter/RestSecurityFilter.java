@@ -349,7 +349,7 @@ public class RestSecurityFilter implements Filter {
 		}
 
 		// Realizamos login en la plataforma
-		restApi.doLogin(entidad, restApi.loadUserRest(entidad));
+		restApi.doLogin(restApi.loadUserRest(entidad));
 
 	}
 

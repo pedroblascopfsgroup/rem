@@ -277,14 +277,14 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public void doLogin(Entidad entidad,UsuarioSecurity user) {
+	public void doLogin(UsuarioSecurity user) {
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(),
 				RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
 		authToken.setDetails(user);
 
 		AuthenticationRestService authRestService = new AuthenticationRestService();
-		authRestService.setUserNameprefix("REST-");
+		//authRestService.setUserNameprefix("REST-");
 
 		PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
 		preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);

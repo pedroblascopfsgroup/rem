@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -115,7 +116,8 @@ public interface OfertaApi {
 	 * @param oferta
 	 */
 	public void updateStateDispComercialActivosByOferta(Oferta oferta);
-
+	
+	
 	/**
 	 * Método que obtiene uno de los estados posibles de la oferta relacionado
 	 * con una determinado código

@@ -22,13 +22,11 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
-<<<<<<< HEAD
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-=======
->>>>>>> 431e67fb0870fa7b8562d657534c56327e1647a4
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -80,7 +78,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private UpdaterStateApi updaterState;
 
 	@Autowired
-<<<<<<< HEAD
 	private ParticularValidatorApi particularValidatorApi;
 	
 	@Autowired
@@ -88,14 +85,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
-=======
-	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
 	private TrabajoApi trabajoApi;
 
->>>>>>> 431e67fb0870fa7b8562d657534c56327e1647a4
 	@Override
 	public String managerName() {
 		return "ofertaManager";

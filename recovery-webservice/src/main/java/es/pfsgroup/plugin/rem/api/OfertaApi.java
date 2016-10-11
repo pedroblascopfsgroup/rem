@@ -176,12 +176,5 @@ public interface OfertaApi {
 	public boolean checkSinRiesgoReputacional(TareaExterna tareaExterna);
 	
 	
-// En caso de conflicto MERGE, quedarse con lo de Dani	
-	public Oferta getOfertaAceptadaByActivo(Activo activo);
-	
-	public boolean checkDeDerechoTanteo(Long idActivo);
-	
-	public boolean checkReserva(Long idActivo);
-	
 
 }

@@ -45,10 +45,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-<<<<<<< HEAD
-=======
 import es.pfsgroup.plugin.rem.api.ActivoApi;
->>>>>>> 431e67fb0870fa7b8562d657534c56327e1647a4
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
@@ -76,10 +73,7 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.Oferta;
-<<<<<<< HEAD
-=======
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
->>>>>>> 431e67fb0870fa7b8562d657534c56327e1647a4
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;

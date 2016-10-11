@@ -604,10 +604,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setFechaRechazoOferta(fechaAccion);
 			}
 			ofertaDao.saveOrUpdate(oferta);
-			this.updateStateDispComercialActivosByOferta(oferta);
 			usuarioSecurity = usuarioSecurityManager.get(new Long(-1));
 			restApi.doLogin(usuarioSecurity);
 		}
+		this.updateStateDispComercialActivosByOferta(oferta);
 	}
 
 	private ActivoOferta buildActivoOferta(Activo activo, Oferta oferta, Double importe) {

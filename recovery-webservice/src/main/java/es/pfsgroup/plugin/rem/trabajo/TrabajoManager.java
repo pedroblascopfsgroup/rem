@@ -168,6 +168,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
+
 	@Override
 	public String managerName() {
 		return "trabajoManager";
@@ -955,6 +956,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());
 		return tramite;
+		
 	}
 
 	private DtoFichaTrabajo trabajoToDtoFichaTrabajo(Trabajo trabajo)

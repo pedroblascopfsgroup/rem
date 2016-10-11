@@ -21,7 +21,6 @@ public class UpdaterServicePropuestaPreciosCargaProp implements UpdaterService {
     private GenericABMDao genericDao;
     
     private static final String FECHA_SANCION = "fechaSancion";
-	private static final String FECHA_CARGA = "fechaCarga";
 	private static final String CODIGO_T009_CARGA_PROPUESTA = "T009_SancionCargaPropuesta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -36,19 +35,6 @@ public class UpdaterServicePropuestaPreciosCargaProp implements UpdaterService {
 				//Guardado adicional Fecha generación propuesta => trabajo.propuesta precios ->  Fecha carga y Fecha Sancion
 				try {
 					tramite.getTrabajo().getPropuestaPrecio().setFechaSancion(ft.parse(valor.getValor()));
-					Auditoria.save(tramite.getTrabajo().getPropuestaPrecio());
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-
-			}
-			
-			//Fecha carga
-			if(FECHA_CARGA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-			{
-				//Guardado adicional Fecha generación propuesta => trabajo.propuesta precios ->  Fecha carga y Fecha Sancion
-				try {
-					tramite.getTrabajo().getPropuestaPrecio().setFechaCarga(ft.parse(valor.getValor()));
 					Auditoria.save(tramite.getTrabajo().getPropuestaPrecio());
 				} catch (ParseException e) {
 					e.printStackTrace();

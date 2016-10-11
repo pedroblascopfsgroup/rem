@@ -9,13 +9,12 @@ public class DtoActivosPublicacion extends WebDto {
 	private String tipoActivo;
 	private String subtipoActivo;
 	private String cartera;
-	private Boolean despubliForzada;
-	private Boolean publiForzada;
+	private String estadoPublicacionCodigo;
 	private Boolean admision;
 	private Boolean gestion;
 	private Boolean publicacion;
 	private Boolean precio;
-	private Boolean precioConsultar;
+	private Boolean informeComercial;
 
 
 	public String getNumActivo() {
@@ -40,22 +39,6 @@ public class DtoActivosPublicacion extends WebDto {
 
 	public void setSubtipoActivo(String subtipoActivo) {
 		this.subtipoActivo = subtipoActivo;
-	}
-
-	public Boolean getDespubliForzada() {
-		return despubliForzada;
-	}
-
-	public void setDespubliForzada(Boolean despubliForzada) {
-		this.despubliForzada = despubliForzada;
-	}
-
-	public Boolean getPubliForzada() {
-		return publiForzada;
-	}
-
-	public void setPubliForzada(Boolean publiForzada) {
-		this.publiForzada = publiForzada;
 	}
 
 	public Boolean getAdmision() {
@@ -98,12 +81,20 @@ public class DtoActivosPublicacion extends WebDto {
 		this.cartera = cartera;
 	}
 
-	public Boolean getPrecioConsultar() {
-		return precioConsultar;
+	public String getEstadoPublicacionCodigo() {
+		return estadoPublicacionCodigo;
 	}
 
-	public void setPrecioConsultar(Boolean precioConsultar) {
-		this.precioConsultar = precioConsultar;
+	public void setEstadoPublicacionCodigo(String estadoPublicacionCodigo) {
+		this.estadoPublicacionCodigo = estadoPublicacionCodigo;
+	}
+
+	public Boolean getInformeComercial() {
+		return informeComercial;
+	}
+
+	public void setInformeComercial(Boolean informeComercial) {
+		this.informeComercial = informeComercial;
 	}
 
 }

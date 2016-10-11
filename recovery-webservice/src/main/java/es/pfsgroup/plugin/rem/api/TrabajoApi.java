@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -470,7 +471,7 @@ public interface TrabajoApi {
 		 * @param TrabajoDto con los parametros de entrada
 		 * @return List<String> 
 		 */
-	    public List<String> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
+	    public HashMap<String, List<String>> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
 
 	    /**
 		 * Devuelve un DtoFichaTrabajo a partir del TrabajoDto pasado por parámetros
@@ -479,6 +480,33 @@ public interface TrabajoApi {
 		 */	    
 	    public DtoFichaTrabajo convertTrabajoDto2DtoFichaTrabajo(TrabajoDto trabajoDto);
 
+	    /**
+	     * Devuelve el trabajo asociado a la tarea externa indicada.
+	     * @param tareaExterna
+	     * @return
+	     */
+	    public Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna);
+	    
+		/**
+		 * Método que comprueba si el activo tiene formalización
+		 * @param tareaExterna
+		 * @return true si tiene formalización, false si no la tiene
+		 */
+		public boolean checkFormalizacion(TareaExterna tareaExterna);
+		
+		/**
+		 * Método que comprueba si el activo tiene atribuciones para sancionar el expediente
+		 * @param tareaExterna
+		 * @return true si tiene atribuciones, false si no las tiene
+		 */
+		public boolean checkAtribuciones(TareaExterna tareaExterna);
+		
+		/**
+		 * Método que comprueba si el activo pertenece a la cartera Sareb.
+		 * @param tareaExterna
+		 * @return true si pertenece a la cartera, false si no.
+		 */
+		public boolean checkSareb(TareaExterna tareaExterna);
     }
 
 

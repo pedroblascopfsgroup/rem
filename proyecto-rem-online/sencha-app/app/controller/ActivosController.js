@@ -257,13 +257,17 @@ Ext.define('HreRem.controller.ActivosController', {
 				tab.unmask();
 		    	Ext.resumeLayouts(true);
 		    	
-		    	/* Selector de subpestanyas del activo:
+				/* Selector de subPestanyas del Trabajo:
 		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
 		    	 * para evitar el uso de Notify() si no hay activacion de pesta�as (refLinks != null)
 		    	 */
 		    	if (refLinks != null){
-		    		tab.getViewModel().notify();
-					me.seleccionarTabByXtype(tab, refLinks);				
+		    		var selectTab = new Ext.util.DelayedTask(function(){
+						tab.getViewModel().notify();
+						me.seleccionarTabByXtype(tab, refLinks);
+					});
+					// Necesario para priorizar el renderizado de la primera pestaña, y para el caso de tener que seleccionar otra más del segundo nivel.
+					selectTab.delay(1);
 				}
 				
 		     	me.logTime("Fin Set values " + id);
@@ -298,14 +302,12 @@ Ext.define('HreRem.controller.ActivosController', {
 	    	
 	    	activeTabXtype = refs[0];
 			var slicedRefLinks = refLinks.split('.').slice(1).join('.');
-			
-	    	tabActivo.getLayout().setActiveItem(tabActivo.items.indexOf(tabActivo.down('[xtype='+ activeTabXtype +']')));
+			var nextActiveTab = tabActivo.down('[xtype='+ activeTabXtype +']');
+	    	tabActivo.getLayout().setActiveItem(tabActivo.items.indexOf(nextActiveTab));
 
 			if (refs.length > 1){
-
-	   			tabActivo = tab.down(' '+activeTabXtype+' ');
-				me.seleccionarTabByXtype(tabActivo, slicedRefLinks);				
-
+				tabActivo = tab.down(' '+activeTabXtype+' ');
+				me.seleccionarTabByXtype(tabActivo, slicedRefLinks);
 			}
 
     	}
@@ -343,7 +345,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	titulo = "Activo " + record.get("numActivo"),
     	id = record.get("id");
 		me.redirectTo('activos', true);
-    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PUBLICACION'])
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PUBLICACION_DATOS']);
     },
     
     abrirDetalleAgrupacion: function(record) {
@@ -615,7 +617,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	me.logTime("Load agrupacion success"); 
 		    	me.setLogTime();	    	
 		    	if(Ext.isEmpty(titulo)) {		    		
-		    		titulo = "Agrupacion " + agrupacion.get("numAgrupacionRem");
+		    		titulo = "Agrupacion " + agrupacion.get("numAgrupRem");
 		    		tab.setTitle(titulo);
 		    	}
 		    	
@@ -829,7 +831,7 @@ Ext.define('HreRem.controller.ActivosController', {
     
     abrirDetalleAgrupacionComercialOfertas: function(record) {
     	var me = this,
-    	titulo = "Agrupación " + record.get("numAgrupacionRem"),
+    	titulo = null,//,"Agrupación " + record.get("numAgrupacionRem"),
     	id = record.get("idAgrupacion");
 		me.redirectTo('activos', true);
     	me.abrirDetalleAgrupacionComercialOfertasById(id, titulo, CONST.MAP_TAB_ACTIVO_XTYPE['OFERTASAGRU'])

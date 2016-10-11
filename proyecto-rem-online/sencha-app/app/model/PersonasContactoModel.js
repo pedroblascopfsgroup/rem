@@ -13,10 +13,19 @@ Ext.define('HreRem.model.PersonasContactoModel', {
     			name:'personaPrincipal'
     		},
     		{
-    			name:'nombreApellidos'
+    			name:'nombre'
     		},
     		{
-    			name:'cargo'
+    			name:'apellido1'
+    		},
+    		{
+    			name:'apellido2'
+    		},
+    		{
+    			name:'cargoCombobox'
+    		},
+    		{
+    			name:'cargoTexto'
     		},
     		{
     			name:'nif'
@@ -55,11 +64,10 @@ Ext.define('HreRem.model.PersonasContactoModel', {
 		type: 'uxproxy',
 		api: {
             read: 'proveedores/getPersonasContactoByProveedor',
-            create: 'proveedores/savePersonasContacto',
-            update: 'proveedores/savePersonasContacto',
+            create: 'proveedores/createPersonasContacto',
+            update: 'proveedores/updatePersonasContacto',
             destroy: 'proveedores/deletePersonasContacto'
         }
-
     }
 
 });

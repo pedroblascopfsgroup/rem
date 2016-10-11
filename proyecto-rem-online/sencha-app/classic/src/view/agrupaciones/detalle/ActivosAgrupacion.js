@@ -30,7 +30,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 				},
 				colspan: 2,
 				listeners: {
-					// Listener para el doble click en la lista de activos
 					rowdblclick: 'onActivosAgrupacionListDobleClick'
 			    },
 			    
@@ -46,7 +45,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 				        xtype: 'actioncolumn',
 				        reference: 'activoPrincipal',
 				        bind: {
-				        	hidden: '{esAgrupacionObraNueva}'
+				        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
 				        },
 				        width: 30,
 				        text: HreRem.i18n('header.principal'),
@@ -96,7 +95,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			            text: HreRem.i18n('header.subdivision'),
 			            hideable: false,
 			            bind: {
-				        	hidden: '{!esAgrupacionObraNueva}'
+				        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
 				        },
 			            flex: 0.5
 			        },
@@ -105,7 +104,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			            text: HreRem.i18n('header.direccion'),
 			            hideable: false,
 			            bind: {
-				        	hidden: '{esAgrupacionObraNueva}'
+				        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
 				        },
 			            flex: 1
 			        },
@@ -114,7 +113,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			            text: HreRem.i18n('header.finca.registral'),
 			            hideable: false,
 			            bind: {
-				        	hidden: '{!esAgrupacionObraNueva}'
+				        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
 				        },
 			            flex: 0.5
 			        },
@@ -123,7 +122,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			            text: HreRem.i18n('header.puerta'),
 			            hideable: false,
 			            bind: {
-				        	hidden: '{!esAgrupacionObraNueva}'
+				        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
 				        },
 			            flex: 0.5
 			        },
@@ -169,7 +168,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			            dataIndex: 'superficieConstruida',
 			            hideable: false,
 			            bind: {
-				        	hidden: '{esAgrupacionObraNueva}'
+				        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
 				        },
 			            text: HreRem.i18n('header.superficie.construida'),
 			            flex: 1,

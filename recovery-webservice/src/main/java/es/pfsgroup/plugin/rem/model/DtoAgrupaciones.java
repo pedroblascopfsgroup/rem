@@ -29,6 +29,8 @@ public class DtoAgrupaciones {
 	private String estadoObraNuevaCodigo;
 	private String cartera;
 	private Boolean existeFechaBaja;
+	private Date fechaInicioVigencia;
+	private Date fechaFinVigencia;
 	
 	
 	public String getNombre() {
@@ -160,6 +162,18 @@ public class DtoAgrupaciones {
 	}
 	public void setExisteFechaBaja(Boolean existeFechaBaja) {
 		this.existeFechaBaja = existeFechaBaja;
+	}
+	public Date getFechaInicioVigencia() {
+		return fechaInicioVigencia;
+	}
+	public void setFechaInicioVigencia(Date fechaInicioVigencia) {
+		this.fechaInicioVigencia = fechaInicioVigencia;
+	}
+	public Date getFechaFinVigencia() {
+		return fechaFinVigencia;
+	}
+	public void setFechaFinVigencia(Date fechaFinVigencia) {
+		this.fechaFinVigencia = fechaFinVigencia;
 	}
 	
 }

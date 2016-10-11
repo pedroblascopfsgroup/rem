@@ -7,25 +7,39 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 
     fields: [ 
     	{
-    		name: 'importePrincipalSujeto'
+    		name: 'importePrincipalSujeto',
+    		type: 'number',
+    		defaultValue: 0
    	 	},
    	 	{
-   	 		name: 'importePrincipalNoSujeto'
+   	 		name: 'importePrincipalNoSujeto',
+   	 		type: 'number',
+   	 		defaultValue: 0
    	 	},
    	 	{
-   	 		name: 'importeRecargo'
+   	 		name: 'importeRecargo',
+   	 		type: 'number',
+   	 		defaultValue: 0
    	 	},
    	 	{
-   	 		name: 'importeInteresDemora'
+   	 		name: 'importeInteresDemora',
+   	 		type: 'number',
+   	 		defaultValue: 0
    	 	},
     	{
-    		name: 'importeCostas'
+    		name: 'importeCostas',
+    		type: 'number',
+    		defaultValue: 0
    		},
    		{
-   			name: 'importeOtrosIncrementos'
+   			name: 'importeOtrosIncrementos',
+   			type: 'number',
+   			defaultValue: 0
    		},
    		{
-   			name: 'importeProvisionesSuplidos'
+   			name: 'importeProvisionesSuplidos',
+   			type: 'number',
+   			defaultValue: 0
    		},
     	{
     		name: 'impuestoIndirectoTipo'
@@ -37,19 +51,39 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
     		name: 'renunciaExencionImpuestoIndirecto'
     	},
     	{
-    		name: 'impuestoIndirectoTipoImpositivo'
+    		name: 'impuestoIndirectoTipoImpositivo',
+    		type: 'number',
+   			defaultValue: 0
     	},
 		{
-			name : 'impuestoIndirectoCuota'
+			name : 'impuestoIndirectoCuota',
+			type: 'number',
+			defaultValue: 0
 		},
 		{
-			name : 'irpfTipoImpositivo'
+			name : 'irpfTipoImpositivo',
+			type: 'number',
+   			defaultValue: 0
 		},
 		{
-			name : 'irpfCuota'
+			name : 'irpfCuota',
+			type: 'number',
+			defaultValue: 0
 		},
 		{
-			name : 'importeTotal'
+			name : 'importeTotal',
+			type: 'number',
+			defaultValue: 0
+		},
+		{
+			name : 'baseImponibleCalculo',
+			type: 'number',
+			defaultValue: 0,
+			calculate: function (data) {
+         		return data.importeTotal;
+			},
+			depends: 'importeTotal'
+     
 		},
 		{
 			name : 'fechaTopePago',
@@ -60,7 +94,9 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 			name: 'repercutibleInquilino'
 		},
 		{
-			name: 'importePagado'
+			name: 'importePagado',
+			type: 'number',
+			defaultValue: 0
 		},
 		{
 			name : 'fechaPago',
@@ -68,7 +104,7 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 			dateFormat: 'c'
 		},
 		{
-			name: 'tipoPagador'
+			name: 'tipoPagadorCodigo'
 		},
 		{
 			name: 'tipoPago'

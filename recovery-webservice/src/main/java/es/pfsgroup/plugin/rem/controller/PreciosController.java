@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,14 +27,17 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrecios;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.excel.ActivosPreciosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 
@@ -49,7 +53,10 @@ public class PreciosController {
 	private UploadAdapter uploadAdapter;
 	
 	@Autowired
-	private ExcelReportGeneratorApi excelReportGeneratorApi;		
+	private ExcelReportGeneratorApi excelReportGeneratorApi;	
+	
+	@Autowired
+    private GenericAdapter adapter;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -134,11 +141,20 @@ public class PreciosController {
 		List<VBusquedaActivosPrecios> listaActivos = (List<VBusquedaActivosPrecios>) preciosApi.getActivos(dtoActivoFilter).getResults();
 		
 		//Genera la propuesta en BBDD y asocia los activos
-		preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo(), esManual);
+		PropuestaPrecio propuesta =preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo(), esManual);
 		
 		// FIXME Se genera una excel básica, pendiente de definir
-		ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);
-		excelReportGeneratorApi.generateAndSend(report, response);
+		/*ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);
+		excelReportGeneratorApi.generateAndSend(report, response);*/
+		
+		// Se genera excel unificada
+		ExcelGenerarPropuestaPrecios excel = new ExcelGenerarPropuestaPrecios();
+		
+		ServletContext sc = request.getSession().getServletContext();
+		excel.cargarPlantilla(sc.getRealPath("plantillas/plugin/LISTADO_ACTIVOS_PROPUESTA_PRECIOS.xls"));
+		excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
+		excelReportGeneratorApi.sendReport(excel.getFile(), response);
+		excel.vaciarLibros();
 	}
 	
 	/****************************************************************************************************************/

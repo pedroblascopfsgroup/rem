@@ -38,7 +38,7 @@ DECLARE
 
     --CAMPO TFI PARA ACTUALIZAR
     V_TAP_CAMPO VARCHAR2(100 CHAR)  := 'TAP_SCRIPT_DECISION';
-    V_TAP_VALOR VARCHAR2(1000 CHAR) := 'tieneAtribuciones() ? ''OK'' : ''KO'' ';
+    V_TAP_VALOR VARCHAR2(1000 CHAR) := 'checkAtribuciones() ? ''OK'' : ''KO'' ';
 
   
 BEGIN 

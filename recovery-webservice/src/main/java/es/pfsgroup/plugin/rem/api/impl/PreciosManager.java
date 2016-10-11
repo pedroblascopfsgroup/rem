@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoExcelPropuestaUnificada;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -36,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
+import es.pfsgroup.plugin.rem.model.VDatosPropuestaUnificada;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
@@ -75,6 +79,14 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	//Porcentajes para el calculo de precios propuestos
+	private static final Double porc120 = 1.20;
+	private static final Double porc115 = 1.15;
+	private static final Double porc110 = 1.10;
+	private static final Double porc090 = 0.90;
+	private static final Double porc075 = 0.75;
+	private static final Double porc060 = 0.60;
 
 		
 	@Override
@@ -262,6 +274,136 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			activoDao.update(activo);
 			
 		}
+	}
+	
+	@Override
+	public List<DtoExcelPropuestaUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idPropuesta", idPropuesta);
+		List<VDatosPropuestaUnificada> listDatosPropuesta = genericDao.getList(VDatosPropuestaUnificada.class,filtro);
+		List<DtoExcelPropuestaUnificada> listDto = new ArrayList<DtoExcelPropuestaUnificada>();
+		
+		for(VDatosPropuestaUnificada datos : listDatosPropuesta) {
+			DtoExcelPropuestaUnificada dto = new DtoExcelPropuestaUnificada();
+			BeanUtils.copyProperties(dto, datos);
+			BeanUtils.copyProperty(dto, "valorPropuesto", valorPropuestaPrecio(dto));
+			
+			listDto.add(dto);
+		}
+		
+		return listDto;
+		
+	}
+	
+	/**
+	 * Devuelve el precio propuesto, y lo calcula según cartera
+	 * @param dto
+	 * @return
+	 */
+	private Double valorPropuestaPrecio(DtoExcelPropuestaUnificada dto) {
+		
+		Integer cartera = Integer.parseInt(dto.getCodCartera());
+		Double resultado = null;
+
+		
+		switch(cartera) {
+		
+			case 1: // Cajamar
+				resultado = precioPropuestoCajamar(dto.getValorFsv(),dto.getValorTasacion(),dto.getValorVnc(),dto.getValorAdquisicion());
+				break;
+			case 2: // Sareb
+				resultado = precioPropuestoSareb(dto.getValorFsv());
+				break;
+			case 3: // Bankia
+				if(dto.getCodCartera()=="03" && !Checks.esNulo(dto.getCodSubCartera())) 
+					resultado = precioPropuestoBankiaTerceros(dto.getValorTasacion());
+				else
+					resultado = precioPropuestoBankia(dto.getTipoActivoCodigo()!="02",dto.getValorTasacion(),dto.getValorVnc(),dto.getValorLiquidativo(),dto.getValorFsv());
+				break;
+			default:
+				break;
+				
+		}
+
+		return resultado;
+	}
+	
+	/**
+	 * Calculo del precio propuesta para Cajamar
+	 * @param fsv
+	 * @param tasacion
+	 * @param vnc
+	 * @param adquisicion
+	 * @return
+	 */
+	private Double precioPropuestoCajamar(Double fsv, Double tasacion, Double vnc, Double adquisicion) {
+		
+		if((fsv > tasacion * porc110) && (fsv > vnc * porc110) && (fsv > adquisicion * porc110))
+			return fsv;
+		
+		if((porc110 * vnc) > (porc090 * tasacion) && (porc110 * vnc) > (porc060 * adquisicion))
+			return porc110 * vnc;
+		
+		if((tasacion > porc110 * vnc) && (tasacion > porc060 * adquisicion))
+			return tasacion;
+		
+		if((porc060 * adquisicion) > (porc090 * tasacion) && (porc060 * adquisicion) > (porc110 * vnc))
+			return porc060 * adquisicion;
+		
+		return tasacion;
+	}
+	
+	/**
+	 * Calculo del precio propuesta para Sareb
+	 * @param fsv
+	 * @return
+	 */
+	private Double precioPropuestoSareb(Double fsv) {
+
+		return porc110 * fsv;
+	}
+	
+	/**
+	 * Calculo del precio propuesta para Bankia
+	 * @param residencial
+	 * @param tasacion
+	 * @param vnc
+	 * @param liquidativo
+	 * @param fsv
+	 * @return
+	 */
+	private Double precioPropuestoBankia(Boolean residencial, Double tasacion, Double vnc, Double liquidativo, Double fsv) {
+		
+		Double vncDefecto = porc110 * vnc;
+		
+		if(!residencial) {
+			if(tasacion >= vnc)
+				return porc110 * tasacion;
+		}
+		else {
+			Double mayor = liquidativo > fsv ? liquidativo : fsv;
+			
+			if(!Checks.esNulo(liquidativo) && !Checks.esNulo(fsv) && (porc115 * mayor >= vncDefecto)) {
+				return porc115 * mayor;
+			}
+			else if(!Checks.esNulo(liquidativo) && Checks.esNulo(fsv) && (porc120 * liquidativo >= vncDefecto)) {
+				return porc120 * liquidativo;
+			}
+			else if(Checks.esNulo(liquidativo) && Checks.esNulo(fsv) && (porc075 * tasacion >= vncDefecto)) {
+				return porc075 * tasacion;
+			}
+			else if(Checks.esNulo(liquidativo) && !Checks.esNulo(fsv) && (porc115 * fsv >= vncDefecto)) {
+				return porc115 * fsv;
+			}
+			
+		}
+		
+		return vncDefecto;
+	
+	}
+	
+	private Double precioPropuestoBankiaTerceros(Double tasacion) {
+		return tasacion;	
 	}
 
 }

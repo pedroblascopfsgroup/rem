@@ -1,9 +1,11 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoExcelPropuestaUnificada;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
@@ -71,5 +73,14 @@ public interface PreciosApi {
 	 * @return
 	 */
 	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera();
+	
+	/**
+	 * Devuelve el Dto para rellenar el Excel de la Propuesta Unidicada.
+	 * @param idPropuesta
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	public List<DtoExcelPropuestaUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException;
 
 }

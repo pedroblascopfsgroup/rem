@@ -28,6 +28,30 @@ public class DtoGastosFilter extends WebDto {
 	private String idDetalleGasto;
 	private Long idProvision;
 	
+	private String estadoAutorizacionHayaCodigo;
+	private String estadoAutorizacionPropietarioCodigo;
+	private String otrosEstados;
+//	private Long numGastoHaya;
+	private String tipoGastoCodigo;
+	private String importeDesde;
+	private String numGastoGestoria;
+	private String subtipoGastoCodigo;
+	private String importeHasta;
+	private String referenciaEmisor;
+	private String necesitaAutorizacionPropietario;
+	private String fechaTopePagoDesde;
+//	private String destinatario;
+	private String cubreSeguro;
+	private String fechaTopePagoHasta;
+//	private String periodicidad;
+	private String numProvision;
+	private String nifProveedor;
+	private String codigoTipoProveedor;
+	private String codigoSubtipoProveedor;
+	private String nombreProveedor;
+	
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -123,6 +147,116 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setIdProvision(Long idProvision) {
 		this.idProvision = idProvision;
+	}
+	public String getEstadoAutorizacionHayaCodigo() {
+		return estadoAutorizacionHayaCodigo;
+	}
+	public void setEstadoAutorizacionHayaCodigo(String estadoAutorizacionHayaCodigo) {
+		this.estadoAutorizacionHayaCodigo = estadoAutorizacionHayaCodigo;
+	}
+	public String getEstadoAutorizacionPropietarioCodigo() {
+		return estadoAutorizacionPropietarioCodigo;
+	}
+	public void setEstadoAutorizacionPropietarioCodigo(
+			String estadoAutorizacionPropietarioCodigo) {
+		this.estadoAutorizacionPropietarioCodigo = estadoAutorizacionPropietarioCodigo;
+	}
+	public String getOtrosEstados() {
+		return otrosEstados;
+	}
+	public void setOtrosEstados(String otrosEstados) {
+		this.otrosEstados = otrosEstados;
+	}
+	public String getTipoGastoCodigo() {
+		return tipoGastoCodigo;
+	}
+	public void setTipoGastoCodigo(String tipoGastoCodigo) {
+		this.tipoGastoCodigo = tipoGastoCodigo;
+	}
+	public String getImporteDesde() {
+		return importeDesde;
+	}
+	public void setImporteDesde(String importeDesde) {
+		this.importeDesde = importeDesde;
+	}
+	public String getNumGastoGestoria() {
+		return numGastoGestoria;
+	}
+	public void setNumGastoGestoria(String numGastoGestoria) {
+		this.numGastoGestoria = numGastoGestoria;
+	}
+	public String getSubtipoGastoCodigo() {
+		return subtipoGastoCodigo;
+	}
+	public void setSubtipoGastoCodigo(String subtipoGastoCodigo) {
+		this.subtipoGastoCodigo = subtipoGastoCodigo;
+	}
+	public String getImporteHasta() {
+		return importeHasta;
+	}
+	public void setImporteHasta(String importeHasta) {
+		this.importeHasta = importeHasta;
+	}
+	public String getReferenciaEmisor() {
+		return referenciaEmisor;
+	}
+	public void setReferenciaEmisor(String referenciaEmisor) {
+		this.referenciaEmisor = referenciaEmisor;
+	}
+	public String getNecesitaAutorizacionPropietario() {
+		return necesitaAutorizacionPropietario;
+	}
+	public void setNecesitaAutorizacionPropietario(
+			String necesitaAutorizacionPropietario) {
+		this.necesitaAutorizacionPropietario = necesitaAutorizacionPropietario;
+	}
+	public String getFechaTopePagoDesde() {
+		return fechaTopePagoDesde;
+	}
+	public void setFechaTopePagoDesde(String fechaTopePagoDesde) {
+		this.fechaTopePagoDesde = fechaTopePagoDesde;
+	}
+	public String getCubreSeguro() {
+		return cubreSeguro;
+	}
+	public void setCubreSeguro(String cubreSeguro) {
+		this.cubreSeguro = cubreSeguro;
+	}
+	public String getFechaTopePagoHasta() {
+		return fechaTopePagoHasta;
+	}
+	public void setFechaTopePagoHasta(String fechaTopePagoHasta) {
+		this.fechaTopePagoHasta = fechaTopePagoHasta;
+	}
+	public String getNumProvision() {
+		return numProvision;
+	}
+	public void setNumProvision(String numProvision) {
+		this.numProvision = numProvision;
+	}
+	public String getNifProveedor() {
+		return nifProveedor;
+	}
+	public void setNifProveedor(String nifProveedor) {
+		this.nifProveedor = nifProveedor;
+	}
+	public String getCodigoTipoProveedor() {
+		return codigoTipoProveedor;
+	}
+	public void setCodigoTipoProveedor(String codigoTipoProveedor) {
+		this.codigoTipoProveedor = codigoTipoProveedor;
+	}
+	public String getCodigoSubtipoProveedor() {
+		return codigoSubtipoProveedor;
+	}
+	public void setCodigoSubtipoProveedor(String codigoSubtipoProveedor) {
+		this.codigoSubtipoProveedor = codigoSubtipoProveedor;
+	}
+	public String getNombreProveedor() {
+		return nombreProveedor;
+	}
+	public void setNombreProveedor(String nombreProveedor) {
+		this.nombreProveedor = nombreProveedor;
 	}
 
 	

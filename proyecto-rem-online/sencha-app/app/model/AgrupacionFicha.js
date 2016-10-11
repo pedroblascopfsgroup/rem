@@ -5,8 +5,7 @@ Ext.define('HreRem.model.AgrupacionFicha', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
 
-    fields: [    
-      
+    fields: [
      			{
 		    		name : 'numAgrupRem'
 		    	},
@@ -78,24 +77,28 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	    					return value;
 	    				}
 	    			}
-	    		}
-		    	   	
+	    		},
+	    		{
+		    		name : 'fechaInicioVigencia',
+		    		type : 'date',
+		    		dateFormat: 'c'
+		    	},
+		    	{
+		    		name : 'fechaFinVigencia',
+		    		type : 'date',
+		    		dateFormat: 'c'
+		    	}
     ],
     
 	proxy: {
 		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById',
-
 		api: {
             read: 'agrupacion/getAgrupacionById',
             create: 'agrupacion/saveAgrupacion',
             update: 'agrupacion/saveAgrupacion',
             destroy: 'agrupacion/getAgrupacionById'
         },
-        
 		extraParams: {pestana: '1'}
-
     }    
 
 });

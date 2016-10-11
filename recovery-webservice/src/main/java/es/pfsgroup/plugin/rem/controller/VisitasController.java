@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -32,14 +29,11 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class VisitasController {
 
-	
-	@Autowired 
-    private ActivoApi activoApi;
-	
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 	
@@ -66,9 +60,9 @@ public class VisitasController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/visitas")
-	public ModelAndView saveOrUpdateVisita(ModelMap model, RestRequestWrapper request) {
+	public void saveOrUpdateVisita(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		VisitaRequestDto jsonData = null;
-		List<String> errorsList = null;
+		 HashMap<String, List<String>> errorsList = null;
 		Visita visita = null;
 		
 		VisitaDto visitaDto = null;
@@ -92,7 +86,7 @@ public class VisitasController {
 				for(int i=0; i < listaVisitaDto.size();i++){
 					
 					Visita vis = null;
-					errorsList = new ArrayList<String>();
+					errorsList = new HashMap<String, List<String>>();
 					map = new HashMap<String, Object>();
 					visitaDto = listaVisitaDto.get(i);
 					
@@ -114,7 +108,7 @@ public class VisitasController {
 						map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
 						map.put("idVisitaRem", visitaDto.getIdVisitaRem());
 						map.put("success", false);
-						//map.put("errorMessages", errorsList);
+						map.put("invalidFields", errorsList);
 					}					
 					listaRespuesta.add(map);	
 					
@@ -130,13 +124,13 @@ public class VisitasController {
 			logger.error(e);
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 			logger.debug("ERRORES: " + errorsList);
 		}
 
-		return new ModelAndView("jsonView", model);
+		restApi.sendResponse(response, model);
 	}
 	
 
@@ -152,6 +146,31 @@ public class VisitasController {
 			}
 			//Page page = comercialApi.getListVisitas(dtoVisitasFilter);
 			DtoPage page = visitaApi.getListVisitas(dtoVisitasFilter);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter, ModelMap model) {
+		try {
+			
+//			if (dtoVisitasFilter.getSort() == null){
+//				
+//					dtoVisitasFilter.setSort("activo.numActivo, fechaSolicitud");
+//	
+//			}
+			//Page page = comercialApi.getListVisitas(dtoVisitasFilter);
+			DtoPage page = visitaApi.getListVisitasDetalle(dtoVisitasFilter);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());

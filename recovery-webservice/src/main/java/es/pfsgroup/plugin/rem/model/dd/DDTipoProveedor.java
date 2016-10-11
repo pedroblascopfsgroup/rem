@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -19,6 +20,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Modelo que gestiona el diccionario de los tipos de proveedores de los activos
@@ -54,6 +56,10 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	@ManyToOne
 	@JoinColumn(name = "DD_TEP_ID")
 	private DDEntidadProveedor tipoEntidadProveedor; 
+	
+	@Transient
+	private String tipoEntidadCodigo;
+	
 
 	@Version   
 	private Long version;
@@ -103,6 +109,14 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 		this.tipoEntidadProveedor = tipoEntidadProveedor;
 	}
 	
+	public String getTipoEntidadCodigo() {
+		return !Checks.esNulo(tipoEntidadProveedor) ? this.tipoEntidadCodigo = tipoEntidadProveedor.getCodigo(): null;
+	}
+
+	public void setTipoEntidadCodigo(String tipoEntidadCodigo) {
+		this.tipoEntidadCodigo = !Checks.esNulo(tipoEntidadCodigo) ? tipoEntidadCodigo : tipoEntidadProveedor.getCodigo();
+	}
+
 	public Long getVersion() {
 		return version;
 	}

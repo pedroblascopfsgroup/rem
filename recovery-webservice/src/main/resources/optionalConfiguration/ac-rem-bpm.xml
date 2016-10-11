@@ -163,7 +163,8 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionEstados.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramitePublicacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="-1"/>
-	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="-1"/>
+	 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">
   		<list>
@@ -327,6 +328,30 @@
 				def activoTramiteManager = ctx.getBean("activoTramiteManager");
             	return activoTramiteManager.existeAdjuntoUGValidacionCadena(tareaExterna, cadenaDAUG);
             }
+            def checkFormalizacion = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkFormalizacion(tareaExterna);
+            }
+            def checkDeDerechoTanteo = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.checkDeDerechoTanteo(tareaExterna);
+            }
+     		def checkDerechoTanteo = {
+     			def ofertaManager = ctx.getBean("ofertaManager");
+     			return ofertaManager.checkDerechoTanteo(tareaExterna);
+     		}
+            def checkAtribuciones = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkAtribuciones(tareaExterna);
+            }
+            def checkReserva = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.checkReserva(tareaExterna);
+            }
+            def checkSareb = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkSareb(tareaExterna);
+            }
             def comprobarActivoComercializable = {
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.comprobarActivoComercializable(idActivo);
@@ -334,6 +359,10 @@
             def comprobarObligatoriosDesignarMediador = {
             	def activoManager = ctx.getBean("activoManager");
                 return activoManager.comprobarObligatoriosDesignarMediador(idActivo);
+            }
+            def checkSinRiesgoReputacional = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.checkSinRiesgoReputacional(tareaExterna);
             }
 
   			 ]]></value>
@@ -352,7 +381,8 @@
 		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDTipoFondo</value>  
 		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDResultadoComiteConcursal</value>   
 		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDTipoConcurso</value>   
-		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDMotivoConclusion</value>   
+		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDMotivoConclusion</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDResolucionComite</value>
         </list>
     </property>
    </bean>

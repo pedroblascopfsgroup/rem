@@ -172,7 +172,7 @@ BEGIN
             ,DD_PPR_ID
             ,DD_CCO_ID
             ,GIC_FECHA_CONTABILIZACION
-            ,DD_DES_ID_CONTABILIZA
+            ,DD_DEG_ID_CONTABILIZA
             ,GIC_FECHA_DEVENGO_ESPECIAL
             ,DD_TPE_ID_ESPECIAL
             ,DD_PPR_ID_ESPECIAL
@@ -189,7 +189,7 @@ BEGIN
             PPR.DD_PPR_ID                                               AS DD_PPR_ID,
             CCO.DD_CCO_ID                                               AS DD_CCO_ID,
             MIG2.GIC_FECHA_CONTABILIZACION                              AS GIC_FECHA_CONTABILIZACION,
-            DEP.DD_DEP_ID                                               AS DD_DES_ID_CONTABILIZA,
+            DEP.DD_DEP_ID                                               AS DD_DEG_ID_CONTABILIZA,
             MIG2.GIC_FECHA_DEVENGO_ESPECIAL                             AS GIC_FECHA_DEVENGO_ESPECIAL,
             TPE.DD_TPE_ID                                               AS DD_TPE_ID_ESPECIAL,
             PPR2.DD_PPR_ID                                              AS DD_PPR_ID_ESPECIAL,

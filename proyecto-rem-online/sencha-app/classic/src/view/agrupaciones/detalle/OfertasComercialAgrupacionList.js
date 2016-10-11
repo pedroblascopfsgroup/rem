@@ -30,11 +30,11 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		            text: HreRem.i18n('header.oferta.tipoOferta'),
 		            flex: 1
 		        },
-		        {
+		        /*{
 		            dataIndex: 'numAgrupacionRem',
 		            text: HreRem.i18n('header.oferta.numAgrupacion'),
 		            flex: 1
-		        },
+		        },*/
 		        {
 		            dataIndex: 'ofertante',
 		            text: HreRem.i18n('header.oferta.ofertante'),

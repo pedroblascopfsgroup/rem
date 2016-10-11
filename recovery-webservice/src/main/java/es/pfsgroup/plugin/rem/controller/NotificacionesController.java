@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -23,11 +22,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
-import es.pfsgroup.plugin.rem.notificaciones.NotificacionesWsManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class NotificacionesController {
@@ -36,9 +36,9 @@ public class NotificacionesController {
 	private NotificacionAdapter notificacionAdapter;
 
 	private final Log logger = LogFactory.getLog(getClass());
-
+	
 	@Autowired
-	private NotificacionesWsManager notifWsManager;
+	private RestApi restApi;
 
 	/**
 	 * Inserta una notificacion Ejem: IP:8080/pfs/rest/notificaciones HEADERS:
@@ -59,13 +59,13 @@ public class NotificacionesController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/notificaciones")
-	public ModelAndView saveNotificacion(ModelMap model, RestRequestWrapper request)
+	public void saveNotificacion(ModelMap model, RestRequestWrapper request,HttpServletResponse response)
 			throws JsonParseException, JsonMappingException, IOException {
 
 		NotificacionRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = null;
-		List<String> errorsList = null;
+		HashMap<String, List<String>> errorsList = null;
 		JSONObject jsonFields = null;
 		
 		try {
@@ -83,14 +83,23 @@ public class NotificacionesController {
 	
 				for (NotificacionDto notificacion : notificaciones) {
 					map = new HashMap<String, Object>();
-					errorsList = notifWsManager.validateNotificacionRequest(notificacion);
+					errorsList = restApi.validateRequestObject(notificacion,TIPO_VALIDACION.INSERT);
+					if (notificacion.getCodTipoNotificacion() == null || (!notificacion.getCodTipoNotificacion().equals("N")
+							&& !notificacion.getCodTipoNotificacion().equals("A"))) {
+						restApi.obtenerMapaErrores(errorsList, "codTipoNotificacion").add(RestApi.REST_MSG_UNKNOWN_KEY);
+					}
 					if (errorsList.size() == 0) {
 						Notificacion notificacionBbdd = new Notificacion();
 						notificacionBbdd.setIdActivo(notificacion.getIdActivoHaya());
 						notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
 						notificacionBbdd.setTitulo(notificacion.getTitulo());
 						notificacionBbdd.setDescripcion(notificacion.getDescripcion());
-						notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
+						if (notificacion.getCodTipoNotificacion().equals("N")){
+							notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
+						}else if(notificacion.getCodTipoNotificacion().equals("A")){
+							notificacionBbdd.setFecha(null);
+						}
+						
 						Notificacion notifrem = notificacionAdapter.saveNotificacion(notificacionBbdd);
 						map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
 						map.put("idNotificacionRem", notifrem.getIdsNotificacionCreada().get(0));
@@ -99,7 +108,7 @@ public class NotificacionesController {
 					} else {
 						map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
 						map.put("success", false);
-						//map.put("errorMessages", errorsList);
+						map.put("invalidFields", errorsList);
 					}
 					listaRespuesta.add(map);
 				}
@@ -118,7 +127,7 @@ public class NotificacionesController {
 			logger.debug("RESPUESTA: " + model);
 			logger.debug("ERRORES: " + errorsList);
 		}
-		return new ModelAndView("jsonView", model);
+		restApi.sendResponse(response,model);
 	}
 
 }

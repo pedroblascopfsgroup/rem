@@ -86,6 +86,12 @@ public class ActivoParamentoVertical implements Serializable, Auditable {
 	
 	@Column(name = "PRV_PARAMENTOS_OTROS")
 	private String paramentosOtros;
+	
+	@Column(name = "PRV_PINTURA_GOTELE_TECHO_EST")
+	private Integer pinturaTechoGoteleEstado;
+	
+	@Column(name = "PRV_PINTURA_PAPEL_TECHO_EST")
+	private Integer pinturaTechoPapelEstado;
 
 	
 	@Version   
@@ -223,6 +229,22 @@ public class ActivoParamentoVertical implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Integer getPinturaTechoGoteleEstado() {
+		return pinturaTechoGoteleEstado;
+	}
+
+	public void setPinturaTechoGoteleEstado(Integer pinturaTechoGoteleEstado) {
+		this.pinturaTechoGoteleEstado = pinturaTechoGoteleEstado;
+	}
+
+	public Integer getPinturaTechoPapelEstado() {
+		return pinturaTechoPapelEstado;
+	}
+
+	public void setPinturaTechoPapelEstado(Integer pinturaTechoPapelEstado) {
+		this.pinturaTechoPapelEstado = pinturaTechoPapelEstado;
 	}
 	
 	

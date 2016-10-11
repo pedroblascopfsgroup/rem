@@ -14,6 +14,7 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
+import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
@@ -54,6 +55,7 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		for(Visita v: visitas){
 			DtoVisitasFilter dtoFilter= new DtoVisitasFilter();
 			
+			dtoFilter.setId(v.getId());
 			dtoFilter.setNumActivo(v.getActivo().getNumActivo());
 			dtoFilter.setNumVisitaRem((v.getNumVisitaRem()));
 			dtoFilter.setNumActivoRem(v.getActivo().getNumActivoRem());
@@ -93,5 +95,30 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		return HibernateQueryUtils.list(this, hql);
 
 	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter) {
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaVisitasDetalle vvisita");
+		
+		if(!Checks.esNulo(dtoVisitasFilter.getNumVisitaRem())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numVisita", dtoVisitasFilter.getNumVisitaRem().toString());
+		}
+		if(!Checks.esNulo(dtoVisitasFilter.getNumActivo())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numActivo", dtoVisitasFilter.getNumActivo().toString());
+		}
+
+
+	
+		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);
+		
+		List<VBusquedaVisitasDetalle> visitas = (List<VBusquedaVisitasDetalle>) pageVisitas.getResults();
+		
+		return new DtoPage(visitas, pageVisitas.getTotalCount());
+		
+		
+	}
+	
 
 }

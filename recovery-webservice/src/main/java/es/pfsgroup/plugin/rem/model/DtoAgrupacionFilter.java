@@ -15,6 +15,8 @@ public class DtoAgrupacionFilter extends WebDto {
 	private String tipoAgrupacion;
 	private String fechaCreacionDesde;
 	private String fechaCreacionHasta;
+	private String fechaInicioVigencia;
+	private String fechaFinVigencia;
 	private String numAgrupacionRem;
 	private String publicado;
 	private String agrupacionId;
@@ -109,6 +111,22 @@ public class DtoAgrupacionFilter extends WebDto {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getFechaInicioVigencia() {
+		return fechaInicioVigencia;
+	}
+
+	public void setFechaInicioVigencia(String fechaInicioVigencia) {
+		this.fechaInicioVigencia = fechaInicioVigencia;
+	}
+
+	public String getFechaFinVigencia() {
+		return fechaFinVigencia;
+	}
+
+	public void setFechaFinVigencia(String fechaFinVigencia) {
+		this.fechaFinVigencia = fechaFinVigencia;
 	}
 	
 }

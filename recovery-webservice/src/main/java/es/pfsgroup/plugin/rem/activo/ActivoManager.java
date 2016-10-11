@@ -506,32 +506,41 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		
-		Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
-
-		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
-		adjuntoActivo.setAdjunto(adj);
-		adjuntoActivo.setActivo(activo);
-
-		adjuntoActivo.setIdDocRestClient(idDocRestClient);
+		try{
+			if(!Checks.esNulo(activo) && !Checks.esNulo(tipoDocumento) ) {
+			
+				Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
 		
-		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-
-		adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
-
-		adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
-
-		adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
-
-		adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
-
-		adjuntoActivo.setFechaDocumento(new Date());
-
-		Auditoria.save(adjuntoActivo);
-
-		activo.getAdjuntos().add(adjuntoActivo);
-
-		activoDao.save(activo);
-
+				ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+				adjuntoActivo.setAdjunto(adj);
+				adjuntoActivo.setActivo(activo);
+		
+				adjuntoActivo.setIdDocRestClient(idDocRestClient);
+				
+				adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+		
+				adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
+		
+				adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
+		
+				adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
+		
+				adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
+		
+				adjuntoActivo.setFechaDocumento(new Date());
+		
+				Auditoria.save(adjuntoActivo);
+		
+				activo.getAdjuntos().add(adjuntoActivo);
+		
+				activoDao.save(activo);
+			} else {
+				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
+			}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+	
 		return null;
 		
 	}
@@ -1669,16 +1678,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 
+
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean solicitarTasacion(Long idActivo) {
+	public Boolean solicitarTasacion(Long idActivo) throws Exception {
+		int tasacionID;
 		
 		try{
 			// Se especifica bankia por que tan solo se va a poder demandar la tasación desde bankia.
-			int tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(idActivo, adapter.getUsuarioLogado().getNombre(), "BANKIA");
-			if(!Checks.esNulo(tasacionID)){
+			tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(idActivo, adapter.getUsuarioLogado().getNombre(), "BANKIA");
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new Exception("No se ha podido obtener la tasación");
+		}
+		
+		if(!Checks.esNulo(tasacionID)){
+			try{
 				Activo activo = activoDao.get(idActivo);
-				
+			
 				if(!Checks.esNulo(activo)) {
 					// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
 					NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
@@ -1696,12 +1713,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						genericDao.save(ActivoTasacion.class, tasacion);
 					}
 				}
+			}catch(Exception e){
+				e.printStackTrace();
+				return false;
 			}
-		}catch(Exception e){
-			e.printStackTrace();
-			return false;
+		} else {
+			throw new Exception("No se ha podido obtener la tasación");
 		}
-		
+
 		return true;
 	}
 
@@ -1756,4 +1775,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return mensaje;
 	}
+
 }

@@ -28,7 +28,7 @@ public class DetectorWebcomEstadoOferta  extends DetectorCambiosBD<EstadoOfertaD
 
 	@Override
 	public String clavePrimaria() {
-		return "ID_OFERTA_WEBCOM";
+		return "ID_OFERTA_REM";
 	}
 
 	@Override

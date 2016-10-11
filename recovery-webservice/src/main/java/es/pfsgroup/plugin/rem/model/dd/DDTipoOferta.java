@@ -29,11 +29,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoOferta implements Auditable, Dictionary {
+		
+	public static final String CODIGO_VENTA= "01";
+	public static final String CODIGO_ALQUILER= "02";
 	
-	
-	public static final String CODIGO_TIPO_OFERTA_VENTA = "01";
-	public static final String CODIGO_TIPO_OFERTA_ALQUILER = "02";
-
 	private static final long serialVersionUID = 1L;
 
 	@Id

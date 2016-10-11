@@ -387,8 +387,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me= this;
 		if(!Ext.isEmpty(field.getValue())){
 			me.lookupReference('importePrincipalNoSujeto').allowBlank= true;
+			me.lookupReference('importePrincipalNoSujeto').validate();
 		}else{
 			me.lookupReference('importePrincipalNoSujeto').allowBlank= false;
+			me.lookupReference('importePrincipalNoSujeto').validate();
 		}
 	},
 	
@@ -396,13 +398,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me= this;
 		if(!Ext.isEmpty(field.getValue())){
 			me.lookupReference('importePrincipalSujeto').allowBlank= true;
+			me.lookupReference('importePrincipalSujeto').validate();
 		}else{
 			me.lookupReference('importePrincipalSujeto').allowBlank= false;
+			me.lookupReference('importePrincipalSujeto').validate();
 		}
 	},
 	
 	onHaCambiadoFechaTopePago: function(field, value){
-		var me= this;
+		/*var me= this;
 		var fechaPago= me.lookupReference('fechaPago').getValue();
 		if(!Ext.isEmpty(me.lookupReference('destinatariosPago'))){
 			if(fechaPago<value){
@@ -412,11 +416,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				me.lookupReference('destinatariosPago').setDisabled(true);
 				me.lookupReference('destinatariosPago').allowBlank= true;
 			}
-		}
+		}*/
 	},
 	
 	onHaCambiadoFechaPago: function(field, value){
-		var me= this;
+		/*var me= this;
 		var fechaTopePago= me.lookupReference('fechaTopePago').getValue();
 		if(!Ext.isEmpty(me.lookupReference('destinatariosPago'))){
 			if(fechaTopePago<value){
@@ -427,7 +431,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				me.lookupReference('destinatariosPago').setDisabled(true);
 				me.lookupReference('destinatariosPago').allowBlank= true;
 			}
-		}
+		}*/
 	},
 	
 	onChangeChainedCombo: function(combo) {
@@ -612,16 +616,60 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		me.onSaveFormularioCompleto(null, form, success);		
 	},
 	
-	onClickBotonIncluirTrabajosGasto: function(btn) {
+	onClickBotonAsignarTrabajosGasto: function(btn) {
 		
 		var me = this;
     	var gasto = me.getViewModel().get("gasto");
     	Ext.create("HreRem.view.gastos.SeleccionTrabajosGasto",{gasto: gasto, parent: btn.up('formBase')}).show();
 	},
 	
-	onClickBotonCancelarSeleccionTrabajos: function(btn) {
-		btn.up('window').destroy();
+	onClickBotonDesasignarTrabajosGasto: function(btn) {
+		
+		var me = this,
+		form = btn.up('form'),		
+		grid = btn.up('grid'),
+		trabajos = grid.getSelection(),
+		url =  $AC.getRemoteUrl('gastosproveedor/desasignarTrabajos'),	
+		idGasto = me.getViewModel().get("gasto.id"),
+		idTrabajos = [];
+		
+		if(!Ext.isEmpty(trabajos)) {
+			// Recuperamos todos los ids de los trabajos seleccionados
+			Ext.Array.each(trabajos, function(trabajo, index) {
+			    idTrabajos.push(trabajo.get("id"));
+			});		
+			
+			grid.mask(HreRem.i18n("msg.mask.loading"));
+			
+			Ext.Ajax.request({
+		    			
+			     url: url,
+			     params: {idGasto: idGasto, trabajos: idTrabajos},
+			
+			     success: function(response, opts) {
+			         grid.unmask();		         
+			         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		        	 me.refrescarGasto(true);
+			     },
+			     
+			     failure: function(response) {
+			     	grid.unmask();
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(operation._response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+		    		     
+		    });
+		}
 	},
+	
 	
 	onSearchClick: function(btn) {
 		
@@ -666,7 +714,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		return criteria;
 	},
 	
-	onClickBotonAnyadirSeleccionTrabajos: function(btn) {
+	asignarSeleccionTrabajosGasto: function(btn) {
 		
 		var me = this,
 		ventanaSeleccionTrabajos = btn.up('window'),
@@ -711,55 +759,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    });
 	},
 	
-	onClickBotonQuitarTrabajosGasto: function(btn) {
-		
-		var me = this,
-		grid = btn.up('grid'),
-		trabajos = grid.getSelection(),
-		url =  $AC.getRemoteUrl('gastosproveedor/quitarTrabajos'),	
-		idGasto = me.getViewModel().get("gasto.id"),
-		idTrabajos = [];
-		
-		if(!Ext.isEmpty(trabajos)) {
-			// Recuperamos todos los ids de los trabajos seleccionados
-			Ext.Array.each(trabajos, function(trabajo, index) {
-			    idTrabajos.push(trabajo.get("id"));
-			});		
-			
-			grid.mask(HreRem.i18n("msg.mask.loading"));
-			
-			Ext.Ajax.request({
-		    			
-			     url: url,
-			     params: {idGasto: idGasto, trabajos: idTrabajos},
-			
-			     success: function(response, opts) {
-			         grid.unmask();		         
-			         grid.getStore().load();		         
-			     },
-			     
-			     failure: function(response) {
-			     	grid.unmask();
-		     		var data = {};
-	                try {
-	                	data = Ext.decode(operation._response.responseText);
-	                }
-	                catch (e){ };
-	                if (!Ext.isEmpty(data.msg)) {
-	                	me.fireEvent("errorToast", data.msg);
-	                } else {
-	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	                }
-			     }
-		    		     
-		    });
-		}
-		
-		
+	cancelarSeleccionTrabajosGasto: function(btn) {
+		btn.up('window').destroy();
 	},
 	
 	onRowDblClickListadoTrabajosGasto: function(view, record) {
 		var me = this;
+		record.set('id', record.get('idTrabajo'));
 		me.getView().fireEvent('abrirDetalleTrabajo', record);
 	},
     

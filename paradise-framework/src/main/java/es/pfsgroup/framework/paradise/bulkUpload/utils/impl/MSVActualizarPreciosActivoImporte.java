@@ -35,7 +35,10 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_PRIZE_NAN = "Uno de los importes indicados no es un valor numérico correcto";
-	public static final String ACTIVE_PRIZE_LIMIT_EXCEDED = "Uno de los importes indicados no cumple con el límite comparativo entre precios (P.Descuento <= P.Descuento Pub. <= P.Aprobado Venta)";
+	public static final String ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEDEED = "El precio de descuento aprobado no puede ser mayor al precio de descuento publicado (P.Descuento <= P.Descuento Pub.)";
+	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEDEED = "El precio aprobado de venta no puede ser menor al precio mínimo autorizado (P.Minimo <= P.Aprobado Venta)";
+	public static final String ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEDEED = "El precio de descuento publicado no puede ser mayor al precio aprobado de venta (P.Descuento Pub. <= P.Aprobado Venta)";
+	
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
 	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
 	public static final String ACTIVE_OFERTA_APROBADA = "El activo tiene ofertas aprobadas. No se pueden actualizar precios";
@@ -78,12 +81,16 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(ACTIVE_PRIZE_NAN, getNANPrecioIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZE_LIMIT_EXCEDED, getLimitePrecioIncorrectoRows(exc));
+				mapaErrores.put(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEDEED, getLimitePreciosDescAprobDescWebIncorrectoRows(exc));
+				mapaErrores.put(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEDEED, getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
+				mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEDEED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
 							!mapaErrores.get(ACTIVE_PRIZE_NAN).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZE_LIMIT_EXCEDED).isEmpty() ){
+							!mapaErrores.get(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEDEED).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEDEED).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEDEED).isEmpty() ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -256,11 +263,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		return listaFilas;
 	}
 	
-	private List<Integer> getLimitePrecioIncorrectoRows(MSVHojaExcel exc){
+	private List<Integer> getLimitePreciosDescAprobDescWebIncorrectoRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		Double precioVentaAprobado = (double) 0;
-		Double precioMinimoAuth = (double) 0;
-		Double precioRentaAprobado = (double) 0;
 		Double precioDescuentoAprobado = (double) 0;
 		Double precioDescuentoPublicado = (double) 0;
 		
@@ -268,19 +272,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
 
-				precioVentaAprobado = Double.parseDouble(exc.dameCelda(i, 1));
-				precioMinimoAuth = Double.parseDouble(exc.dameCelda(i, 4));
-				precioRentaAprobado = Double.parseDouble(exc.dameCelda(i, 7));
 				precioDescuentoAprobado = Double.parseDouble(exc.dameCelda(i, 10));
 				precioDescuentoPublicado = Double.parseDouble(exc.dameCelda(i, 13));
-				
-				// Si alguno de los precios no es un numero
-				if(precioVentaAprobado.isNaN() ||
-						precioMinimoAuth.isNaN() ||
-						precioRentaAprobado.isNaN() ||
-						precioDescuentoAprobado.isNaN() ||
-						precioDescuentoPublicado.isNaN())
-					listaFilas.add(i);
 				
 				// Condiciones Limites: dto<=dto web<=aprobado
 				
@@ -291,6 +284,31 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					if (!listaFilas.contains(i))
 						listaFilas.add(i);
 				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+
+	
+	private List<Integer> getLimitePreciosAprobadoMinimoIncorrectoRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double precioVentaAprobado = (double) 0;
+		Double precioMinimoAuth = (double) 0;
+		
+		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
+
+				precioVentaAprobado = Double.parseDouble(exc.dameCelda(i, 1));
+				precioMinimoAuth = Double.parseDouble(exc.dameCelda(i, 4));
+				
+				// Condiciones Limites: dto<=dto web<=aprobado
+				
 				// Limite: Precio Aprobado Venta >= Precio Minimo Auth
 				if(!Checks.esNulo(precioMinimoAuth) && 
 						!Checks.esNulo(precioVentaAprobado) &&
@@ -298,14 +316,30 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					if (!listaFilas.contains(i))
 						listaFilas.add(i);
 				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> getLimitePreciosAprobadoDescWebIncorrectoRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double precioVentaAprobado = (double) 0;
+		Double precioDescuentoPublicado = (double) 0;
+		
+		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
+		try{
+			for(int i=1; i<exc.getNumeroFilas();i++){
 
-				// Limite: Precio Descuento Web >= Precio Descuento Aprobado
-				if(!Checks.esNulo(precioDescuentoAprobado) && 
-						!Checks.esNulo(precioDescuentoPublicado) &&
-						(precioDescuentoAprobado > precioDescuentoPublicado)){
-					if (!listaFilas.contains(i))
-						listaFilas.add(i);
-				}
+				precioVentaAprobado = Double.parseDouble(exc.dameCelda(i, 1));
+				precioDescuentoPublicado = Double.parseDouble(exc.dameCelda(i, 13));
+				
+				// Condiciones Limites: dto<=dto web<=aprobado y aprobado>=minimo
 				
 				// Limite: Precio Aprobado Venta >= Precio Descuento Web
 				if(!Checks.esNulo(precioVentaAprobado) && 
@@ -323,4 +357,5 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		return listaFilas;
 	}
+	
 }

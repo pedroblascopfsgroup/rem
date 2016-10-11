@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,9 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+
 
 /**
  * Modelo que gestiona la relacion entre las agrupaciones y los activos
@@ -29,7 +33,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "ACT_AGA_AGRUPACION_ACTIVO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 /*@Where(clause = Auditoria.UNDELETED_RESTICTION)*/
-public class ActivoAgrupacionActivo implements Serializable /*, Auditable*/ {
+public class ActivoAgrupacionActivo implements Serializable , Auditable {
 	
 
 	
@@ -62,10 +66,10 @@ public class ActivoAgrupacionActivo implements Serializable /*, Auditable*/ {
 	
 	@Version   
 	private Long version;
-/*
+
 	@Embedded
 	private Auditoria auditoria;
-*/
+
 	
 	
 	
@@ -117,13 +121,13 @@ public class ActivoAgrupacionActivo implements Serializable /*, Auditable*/ {
 		this.version = version;
 	}
 
-	/*public Auditoria getAuditoria() {
+	public Auditoria getAuditoria() {
 		return auditoria;
 	}
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}*/
+	}
 
 	
 	/*

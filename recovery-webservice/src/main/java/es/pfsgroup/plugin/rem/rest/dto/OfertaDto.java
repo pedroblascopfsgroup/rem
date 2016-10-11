@@ -37,7 +37,6 @@ public class OfertaDto implements Serializable {
 	private Long idProveedorRemCustodio;
 	private Long idProveedorRemResponsable;
 	private Long idProveedorRemFdv;
-	@NotNull
 	@Size(max=20)
 	private String codEstadoOferta;
 	@NotNull

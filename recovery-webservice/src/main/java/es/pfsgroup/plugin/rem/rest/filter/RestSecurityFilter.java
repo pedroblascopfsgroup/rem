@@ -15,27 +15,21 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
-import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
+import net.sf.json.JSONObject;
 
 /**
  * Filtro para la gestión de las peticiones a la rest-api
@@ -69,12 +63,12 @@ public class RestSecurityFilter implements Filter {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private SecurityContext securityContext = null;
+
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
 
-		PeticionRest peticion = crearPeticionObj(request);
+		PeticionRest peticion = restApi.crearPeticionObj(request);
 		RestRequestWrapper restRequest = null;
 		try {
 
@@ -134,7 +128,6 @@ public class RestSecurityFilter implements Filter {
 				}
 			}
 			// securityContext.getAuthentication().setAuthenticated(false);
-			restApi.guardarPeticionRest(peticion);
 		} catch (Exception e) {
 			peticion.setResult("ERROR");
 			logger.error(e.getMessage());
@@ -145,10 +138,22 @@ public class RestSecurityFilter implements Filter {
 				peticion.setErrorDesc(e.getMessage());
 			}
 
-			throwErrorGeneral(response, e);
+			throwErrorGeneral(response, e, null);
 
+		} catch (Throwable t) {
+			peticion.setResult("ERROR");
+			logger.error(t.getMessage());
+			if (t.getMessage() != null && t.getMessage().length() > 200) {
+
+				peticion.setErrorDesc(t.getMessage().substring(0, 199));
+			} else {
+				peticion.setErrorDesc(t.getMessage());
+			}
+
+			throwErrorGeneral(response, null, t);
 		} finally {
 			SecurityContextHolder.clearContext();
+			restApi.guardarPeticionRest(peticion);
 		}
 	}
 
@@ -291,15 +296,19 @@ public class RestSecurityFilter implements Filter {
 	 * @param e
 	 * @throws IOException
 	 */
-	private void throwErrorGeneral(ServletResponse res, Exception e) {
+	private void throwErrorGeneral(ServletResponse res, Exception e, Throwable t) {
 
 		try {
 			HttpServletResponse response = (HttpServletResponse) res;
 
 			String descError = "";
 
-			if (e.getMessage() != null && !e.getMessage().isEmpty()) {
+			if (e !=null && e.getMessage() != null && !e.getMessage().isEmpty()) {
 				descError = e.getMessage().toUpperCase();
+			}
+			
+			if (t !=null && t.getMessage() != null && !t.getMessage().isEmpty()) {
+				descError = t.getMessage().toUpperCase();
 			}
 
 			String error = "{\"data\":null,\"error\":\"".concat(descError).concat("\"}");
@@ -310,70 +319,6 @@ public class RestSecurityFilter implements Filter {
 		} catch (Exception ex) {
 
 		}
-	}
-
-	/**
-	 * Crea un objeto de tipo peticion rest
-	 * 
-	 * @param req
-	 * @return
-	 */
-	private PeticionRest crearPeticionObj(ServletRequest req) {
-		HttpServletRequest request = (HttpServletRequest) req;
-		PeticionRest peticion = new PeticionRest();
-		peticion.setMetodo(request.getMethod());
-		peticion.setQuery(request.getPathInfo());
-		peticion.setData(request.getParameter("data"));
-		peticion.setIp(request.getRemoteAddr());
-
-		return peticion;
-
-	}
-
-	/**
-	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir
-	 * en base de datos ya que en posteriores ejecuciones se accederá a ésta
-	 * para login.
-	 * 
-	 * @param entidad
-	 *            de base de datos del usuario ficticio
-	 * @return user usuario ficticio.
-	 */
-	private UsuarioSecurity loadUser(Entidad entidad) {
-		UsuarioSecurity user = new UsuarioSecurity();
-		user.setId(-1L);
-		user.setUsername(RestApi.REST_LOGGED_USER_USERNAME);
-		user.setAccountNonExpired(true);
-		user.setAccountNonLocked(true);
-		user.setEnabled(true);
-		user.setEntidad(entidad);
-		return user;
-	}
-
-	/**
-	 * Realiza el login de un usuario ficticio en una entidad de base de datos
-	 * pasada por parámetro. Los datos del usuario ficticio deberán existir en
-	 * base de datos ya que en posteriores ejecuciones se accederá a ésta para
-	 * login.
-	 * 
-	 * @param entidad
-	 *            de base de datos del usuario ficticio
-	 * @return securityContext
-	 */
-	protected void doLogin(Entidad entidad) {
-		UsuarioSecurity user = loadUser(entidad);
-		securityContext = SecurityContextHolder.getContext();
-		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(),
-				RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
-		authToken.setDetails(user);
-
-		AuthenticationRestService authRestService = new AuthenticationRestService();
-		authRestService.setUserNameprefix("REST-");
-
-		PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
-		preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
-		Authentication authentication = preAuthenticatedProvider.authenticate(authToken);
-		securityContext.setAuthentication(authentication);
 	}
 
 	/**
@@ -404,7 +349,7 @@ public class RestSecurityFilter implements Filter {
 		}
 
 		// Realizamos login en la plataforma
-		doLogin(entidad);
+		restApi.doLogin(entidad, restApi.loadUserRest(entidad));
 
 	}
 

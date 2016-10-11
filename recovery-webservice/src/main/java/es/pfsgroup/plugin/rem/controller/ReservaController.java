@@ -195,7 +195,9 @@ public class ReservaController {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
 					}
 				}
-			}					
+			}else{
+				throw new Exception("El activo no tiene ofertas aceptadas");
+			}
 			
 			model.put("id", jsonData.getId());	
 			model.put("data", listaRespuesta);

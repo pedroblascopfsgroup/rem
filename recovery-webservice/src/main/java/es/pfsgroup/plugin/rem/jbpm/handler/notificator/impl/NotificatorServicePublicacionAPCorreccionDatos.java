@@ -20,9 +20,9 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 
 @Component
-public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificatorService implements NotificatorService {
+public class NotificatorServicePublicacionAPCorreccionDatos extends AbstractNotificatorService implements NotificatorService {
 	
-	private static final String CODIGO_T009_CARGA_PROPUESTA = "T009_SancionCargaPropuesta";
+	private static final String CODIGO_T011_AP_CORRECCION = "T011_AnalisisPeticionCorreccion";
 
 
 	@Autowired
@@ -39,7 +39,7 @@ public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificator
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T009_CARGA_PROPUESTA};
+		return new String[]{CODIGO_T011_AP_CORRECCION};
 	}
 	
 	@Resource(name = "mailManager")
@@ -55,8 +55,16 @@ public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificator
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
 			
-			
-		    String correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+			//Notificacion al Mediador y al Gestor de publicacion
+			String correoMediador = null;
+			if(!Checks.esNulo(tramite.getTrabajo().getMediador())){
+				correoMediador = tramite.getTrabajo().getMediador().getEmail();
+			}
+
+			//TODO: Notificar al mediador, para ello habilitar la linea comentada "String correos" y quitar la actual.
+			//TODO: Falta añadir al String de correos, el correo del Gestor de publicacion
+		    //String correos = !Checks.esNulo(correoMediador) ? correoMediador : "pruebashrem@gmail.com";
+			String correos = "pruebashrem@gmail.com";;
 		    Collections.addAll(mailsPara, correos.split(";"));
 			mailsCC.add(this.getCorreoFrom());
 			
@@ -64,9 +72,7 @@ public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificator
 			String titulo = "";
 			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 	
-			/**
-			 * HREOS-763 Completar cuando haya más información para esta notificación
-			 */
+
 			contenido = "<p>El gestor del ....</p>";
 			titulo = "Notificación de análisis de petición de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
 	

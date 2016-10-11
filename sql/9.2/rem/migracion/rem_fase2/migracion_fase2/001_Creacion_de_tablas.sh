@@ -24,5 +24,3 @@ echo "[INFO] Creando tablas de migración..."
 ./DDL-scripts.sh $1 $1
 
 echo "[INFO] Proceso finalizado"
-
-

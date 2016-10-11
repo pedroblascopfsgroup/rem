@@ -226,7 +226,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto,"aplicaGestion", perimetroActivo.getAplicaGestion() == 1? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", perimetroActivo.getAplicaAsignarMediador() == 1? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaComercializar", perimetroActivo.getAplicaComercializar() == 1? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", perimetroActivo.getAplicaComercializar() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", perimetroActivo.getAplicaFormalizar() == 1? true: false);
 //		}
 		// ----------
 		

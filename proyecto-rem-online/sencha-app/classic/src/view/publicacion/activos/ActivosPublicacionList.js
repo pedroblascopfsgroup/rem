@@ -50,18 +50,9 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionList', {
 	                dataIndex: 'direccion'
 	            },
 	            {
-		            text: HreRem.i18n('header.activos.publicacion.despubliForzado'),
-		            renderer: estadoRenderer,	           
-		            flex: 0.5,
-		            dataIndex: 'despubliForzado',
-		            align: 'center'
-		        },
-		        {
-		            text: HreRem.i18n('header.activos.publicacion.publiForzado'),
-		            renderer: estadoRenderer,	           
-		            flex: 0.5,
-		            dataIndex: 'publiForzado',
-		            align: 'center'
+		            text: HreRem.i18n('header.activos.estado.publicacion'),           
+		            flex: 1,
+		            dataIndex: 'estadoPublicacionDescripcion'
 		        },
 		        {
 		            text: HreRem.i18n('header.activos.publicacion.admision'),

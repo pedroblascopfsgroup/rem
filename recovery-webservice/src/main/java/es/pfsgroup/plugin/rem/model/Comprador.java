@@ -13,6 +13,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -25,6 +26,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVFileItem;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
@@ -90,6 +92,10 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name = "COM_PROVINCIA")
     private String provincia;   
+    
+    @OneToOne
+    @JoinColumn(name = "CLC_ID")
+    private ClienteComercial clienteComercial;
    
     
 
@@ -235,7 +241,14 @@ public class Comprador implements Serializable, Auditable {
 
 		return fullName;
 	}
-    
+
+	public ClienteComercial getClienteComercial() {
+		return clienteComercial;
+	}
+
+	public void setClienteComercial(ClienteComercial clienteComercial) {
+		this.clienteComercial = clienteComercial;
+	}
     
     
     

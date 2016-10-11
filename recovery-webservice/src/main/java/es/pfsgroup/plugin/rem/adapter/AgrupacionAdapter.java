@@ -637,6 +637,8 @@ public class AgrupacionAdapter {
 			asistida.setNombre(dtoAgrupacion.getNombre());
 			asistida.setTipoAgrupacion(tipoAgrupacion);
 			asistida.setFechaAlta(new Date());
+			asistida.setFechaInicioVigencia(dtoAgrupacion.getFechaInicioVigencia());
+			asistida.setFechaFinVigencia(dtoAgrupacion.getFechaFinVigencia());
 			asistida.setNumAgrupRem(numAgrupacionRem);
 
 			genericDao.save(ActivoAsistida.class, asistida);

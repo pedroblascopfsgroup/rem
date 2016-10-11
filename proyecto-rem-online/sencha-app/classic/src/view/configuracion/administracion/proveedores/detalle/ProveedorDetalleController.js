@@ -158,9 +158,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		if(activeTab.funcionRecargar) {
   			activeTab.funcionRecargar();
 		}
-		
-		me.getView().fireEvent("refrescarTrabajo", me.getView());
-
 	},
 	
 	/**

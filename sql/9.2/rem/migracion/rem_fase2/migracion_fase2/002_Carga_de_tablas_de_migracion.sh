@@ -1,8 +1,10 @@
 #! /bin/bash
 
+echo
 echo "-----------------------------------------------------"
 echo "-- [3/4] PROCESO DE CARGA DE TABLAS MIG2 --"
 echo "-----------------------------------------------------"
+echo
 
 # Limpia de los directorios
 rm CTLs_DATs/logs/*.log

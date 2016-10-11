@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-855
 --## PRODUCTO=NO
---## Finalidad: Tabla para registrar las propuestas de precios (PRP_NUM_PROPUESTA) inexistentes en PRP_PROPUESTAS_PRECIOS que vienen provistos en las interfaces. FASE 2
+--## Finalidad: Tabla para registrar los proveedor direccion (PVE_COD_UVEM) inexistentes en ACT_PRD_PROVEEDOR_DIRECCION que vienen provistos en las interfaces. FASE 2
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -30,34 +30,34 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para registrar las propuestas de precios (PRP_NUM_PROPUESTA) inexistentes en PRP_PROPUESTAS_PRECIOS que vienen provistos en las interfaces. FASE 2'; -- Vble. para los comentarios de las tablas
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para registrar los proveedor direccion (PVE_COD_UVEM) inexistentes en ACT_PRD_PROVEEDOR_DIRECCION que vienen provistos en las interfaces. FASE 2'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
 
-	DBMS_OUTPUT.PUT_LINE('******** MIG2_PRP_NOT_EXISTS ********'); 
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_PRP_NOT_EXISTS... Comprobaciones previas');
+	DBMS_OUTPUT.PUT_LINE('******** MIG2_PVE_NOT_EXISTS ********'); 
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_PVE_NOT_EXISTS... Comprobaciones previas');
 	
 
 	
 	-- Verificar si la tabla nueva ya existe
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG2_PRP_NOT_EXISTS'' and owner = '''||V_ESQUEMA||'''';
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG2_PVE_NOT_EXISTS'' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	
 	IF V_NUM_TABLAS = 1 THEN
   
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG2_PRP_NOT_EXISTS... Ya existe. Se borrará.');
-		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.MIG2_PRP_NOT_EXISTS CASCADE CONSTRAINTS';
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG2_PVE_NOT_EXISTS... Ya existe. Se borrará.');
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.MIG2_PVE_NOT_EXISTS CASCADE CONSTRAINTS';
 		
 	END IF;
 	
 	
 	-- Creamos la tabla
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.MIG2_PRP_NOT_EXISTS...');
-	V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG2_PRP_NOT_EXISTS
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.MIG2_PVE_NOT_EXISTS...');
+	V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG2_PVE_NOT_EXISTS
 	(
 		TABLA_MIG 				VARCHAR2(30 CHAR),
-		PRP_NUM_PROPUESTA		NUMBER(16,0),
+		PVE_COD_UVEM			NUMBER(16,0),
 		FECHA_COMPROBACION 		DATE
 	)
 	LOGGING 
@@ -67,14 +67,14 @@ BEGIN
 	NOMONITORING
 	';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_PRP_NOT_EXISTS... Tabla creada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_PVE_NOT_EXISTS... Tabla creada.');
 	
 	-- Creamos comentario	
-	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.MIG2_PRP_NOT_EXISTS IS '''||V_COMMENT_TABLE||'''';		
+	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.MIG2_PVE_NOT_EXISTS IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_PRP_NOT_EXISTS... Comentario creado.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_PVE_NOT_EXISTS... Comentario creado.');
 	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_PRP_NOT_EXISTS... OK');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_PVE_NOT_EXISTS... OK');
 
 
 	COMMIT;

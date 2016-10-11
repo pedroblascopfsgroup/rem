@@ -5,6 +5,22 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     //Funcion que se ejecuta al hacer click en el botón buscar gastos
 	onClickGastosSearch: function(btn) {
 		var me = this;
+		var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		
+		if (searchForm.isValid()) {
+			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+			
+			Ext.Object.each(criteria, function(key, val) {
+				if (Ext.isEmpty(val)) {
+					delete criteria[key];
+				}
+			});
+			this.lookupReference('gestiongastoslistref').getStore().loadPage(1);
+        }
+		
+		
 	},
     
 	//Funcion que se ejecuta al hacer click en el botón buscar provisiones
@@ -20,23 +36,23 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	},
 	
 	paramLoading: function(store, operation, opts) {
-//		var initialData = {};
-//		
-//		var searchForm = this.lookupReference('visitasComercialSearch');
-//		if (searchForm.isValid()) {
-//			
-//			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-//			
-//			Ext.Object.each(criteria, function(key, val) {
-//				if (Ext.isEmpty(val)) {
-//					delete criteria[key];
-//				}
-//			});	
-//		
-//			store.getProxy().extraParams = criteria;
-//			
-//			return true;		
-//		}
+		var initialData = {};
+		
+		var searchForm = this.lookupReference('gestiongastossearchref');
+		if (searchForm.isValid()) {
+			
+			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+			
+			Ext.Object.each(criteria, function(key, val) {
+				if (Ext.isEmpty(val)) {
+					delete criteria[key];
+				}
+			});	
+		
+			store.getProxy().extraParams = criteria;
+			
+			return true;		
+		}
 	},
 	
 	onClickAbrirGastoProveedor: function(grid, record){

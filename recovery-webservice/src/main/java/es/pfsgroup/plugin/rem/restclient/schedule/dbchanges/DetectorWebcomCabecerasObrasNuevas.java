@@ -10,7 +10,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
-
+@Component
 public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<CabeceraObrasNuevasDto> {
 
 	@Autowired

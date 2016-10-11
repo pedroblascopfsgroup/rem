@@ -436,7 +436,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setImpuestoIndirectoTipoImpositivo(detalleGasto.getImpuestoIndirectoTipoImpositivo());
 			dto.setImpuestoIndirectoCuota(detalleGasto.getImpuestoIndirectoCuota());
 			
-			dto.setIrpfTipoImpositivo(detalleGasto.getIrpfCuota());
+			dto.setIrpfTipoImpositivo(detalleGasto.getIrpfTipoImpositivo());
 			dto.setIrpfCuota(detalleGasto.getIrpfCuota());
 			//TIPO IMPUESTO DIRECTO
 			
@@ -697,8 +697,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoGasto.getId());
 			GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtro);
 			
-			if(!Checks.esNulo(dtoActivoGasto.getParticipacionGasto())){
-				gastoActivo.setParticipacionGasto(dtoActivoGasto.getParticipacionGasto());
+			if(!Checks.esNulo(dtoActivoGasto.getParticipacion())){
+				gastoActivo.setParticipacionGasto(dtoActivoGasto.getParticipacion());
 				
 			}
 			
@@ -796,10 +796,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto){
+	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto){
 		
 		try{
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", dtoContabilidadGasto.getId());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
 			
 			if(!Checks.esNulo(dtoContabilidadGasto.getEjercicioImputaGasto())){
@@ -902,13 +902,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean updateGestionGasto(DtoGestionGasto dtoGestionGasto){
+	public boolean updateGestionGasto(DtoGestionGasto dtoGestionGasto, Long idGasto){
 		
 		try{
 			
 			Usuario usuario = genericAdapter.getUsuarioLogado();
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", dtoGestionGasto.getId());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 			GastoGestion gestionGasto = genericDao.get(GastoGestion.class, filtro);
 			
 			if(!Checks.esNulo(gestionGasto)){
@@ -985,11 +985,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean updateImpugnacionGasto(DtoImpugnacionGasto dto){
+	public boolean updateImpugnacionGasto(DtoImpugnacionGasto dto, Long idGasto){
 		
 		try{
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", dto.getId());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 			GastoImpugnacion gastoImpugnacion = genericDao.get(GastoImpugnacion.class, filtro);
 			
 			if(!Checks.esNulo(gastoImpugnacion)){
@@ -1017,6 +1017,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean asignarTrabajos(Long idGasto, Long[] trabajos) {
 		
 		GastoProveedor gasto = findOne(idGasto);	
+
 		
 		for(Long idTrabajo : trabajos) {
 			
@@ -1024,26 +1025,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			// Asignamos el trabajo al gasto
 			GastoProveedorTrabajo gastoTrabajo = new GastoProveedorTrabajo();
 			gastoTrabajo.setTrabajo(trabajo);
-			gastoTrabajo.setGastoProveedor(gasto);	
-						
+			gastoTrabajo.setGastoProveedor(gasto);
+			
 			genericDao.save(GastoProveedorTrabajo.class, gastoTrabajo);
+			gasto.getGastoProveedorTrabajos().add(gastoTrabajo);
 			
 			// Asignamos los activos del trabajo al gasto
 			
-			for(ActivoTrabajo activo : trabajo.getActivosTrabajo()) {
-				
-				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getPrimaryKey().getActivo().getId());
-				Filter filtroGasto= genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-				GastoProveedorActivo gastoActivo = genericDao.get(GastoProveedorActivo.class, filtroActivo, filtroGasto);
-				if(Checks.esNulo(gastoActivo)) {
-					gastoActivo = new GastoProveedorActivo();
-					gastoActivo.setActivo(activo.getPrimaryKey().getActivo());
-					gastoActivo.setGastoProveedor(gasto);
-					gastoActivo.setParticipacionGasto(activo.getParticipacion());
-					
-					genericDao.save(GastoProveedorActivo.class, gastoActivo);
-				}			
-			}
+			gasto = asignarActivos(gasto, trabajo);
+			
+
 		}
 		
 		gasto = calcularImportesDetalleEconomicoGasto(gasto);
@@ -1056,6 +1047,29 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 	}
 	
+	private GastoProveedor asignarActivos(GastoProveedor gasto, Trabajo trabajo) {
+		
+		for(ActivoTrabajo activo : trabajo.getActivosTrabajo()) {
+			
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getPrimaryKey().getActivo().getId());
+			Filter filtroGasto= genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoProveedorActivo gastoActivo = genericDao.get(GastoProveedorActivo.class, filtroActivo, filtroGasto);
+			
+			// Si no existe ya 
+			if(Checks.esNulo(gastoActivo)) {
+				gastoActivo = new GastoProveedorActivo();
+				gastoActivo.setActivo(activo.getPrimaryKey().getActivo());
+				gastoActivo.setGastoProveedor(gasto);
+				gastoActivo.setParticipacionGasto(activo.getParticipacion());
+				
+				genericDao.save(GastoProveedorActivo.class, gastoActivo);
+				gasto.getGastoProveedorActivos().add(gastoActivo);
+			}			
+		}
+		
+		return gasto;
+	}
+
 	@Override
     @BusinessOperationDefinition("gastoProveedorManager.getAdjuntosGasto")
 	public List<DtoAdjunto> getAdjuntos(Long id) {
@@ -1124,7 +1138,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			for(GastoProveedorActivo g: gasto.getGastoProveedorActivos()){
 				
-				if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto())){
+				if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto()) 
+						&& !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto().getMatricula())){
 					activoAdapter.uploadDocumento(fileItem, g.getActivo(), adjuntoGasto.getTipoDocumentoGasto().getMatricula());
 					adjuntoActivo= g.getActivo().getAdjuntos().get(g.getActivo().getAdjuntos().size()-1);
 				}
@@ -1172,7 +1187,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		    
 		}catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 	    
 	    
 	    return true;
@@ -1194,46 +1209,38 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean quitarTrabajos(Long idGasto, Long[] ids) {
+	public boolean desasignarTrabajos(Long idGasto, Long[] ids) {
 		
+		GastoProveedor gasto = findOne(idGasto);
 		
+		//Desasignamos los trabajo del gasto
 		for(Long id : ids) {
-			
-			//Trabajo trabajo = trabajoApi.findOne(idTrabajo);
-			// Desasignamos el trabajo del gasto
-			/*Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro);*/			
-			
-			//gasto.getGastoProveedorTrabajos().remove(gastoTrabajoEliminado);
-			genericDao.deleteById(GastoProveedorTrabajo.class, id);
 
-			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro);
+			gasto.getGastoProveedorTrabajos().remove(gastoTrabajoEliminado);
+			gastoDao.deleteGastoTrabajoById(id);			
 		}
 		
-		/*gasto.getGastoProveedorActivos().clear();
+		// Desasignamos TODOS los activos
+		for(GastoProveedorActivo gastoActivo : gasto.getGastoProveedorActivos()) {
+			genericDao.deleteById(GastoProveedorActivo.class, gastoActivo.getId());
+		}
+		gasto.getGastoProveedorActivos().clear();
 		
-		for(GastoProveedorTrabajo gastoProveedorTrabajo: gasto.getGastoProveedorTrabajos()) {
-			Set<Long> activos = new HashSet<Long>();
-			for(ActivoTrabajo activoTrabajo : gastoProveedorTrabajo.getTrabajo().getActivosTrabajo()) {
-				Activo activo = activoTrabajo.getPrimaryKey().getActivo();
-				
-				if(!activos.contains(activo.getId())) {
-					GastoProveedorActivo gastoActivo = new GastoProveedorActivo();
-					gastoActivo.setActivo(activo);
-					gastoActivo.setGastoProveedor(gasto);
-					gastoActivo.setParticipacionGasto(activoTrabajo.getParticipacion());
-					gasto.getGastoProveedorActivos().add(gastoActivo);
-					
-					activos.add(activo.getId());
-				}			
-			}
-		}*/
-
-		//gasto = calcularImportesDetalleEconomicoGasto(gasto);
+		// Volvemos a asignar los activos de los trabajos que queden
+		for(GastoProveedorTrabajo gastoTrabajo: gasto.getGastoProveedorTrabajos()) {
+			
+			asignarActivos(gasto, gastoTrabajo.getTrabajo());
+		}
 		
-		//gasto = calcularParticipacionActivosGasto(gasto);
-		/*GastoProveedor gasto = findOne(idGasto);
-		genericDao.save(GastoProveedor.class, gasto);*/
+		// Calculamos importe y participación
+		gasto = calcularImportesDetalleEconomicoGasto(gasto);
+		
+		gasto = calcularParticipacionActivosGasto(gasto);
+		
+		genericDao.save(GastoProveedor.class, gasto);
+		
 		
 		return true;
 		
@@ -1287,7 +1294,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		for(GastoProveedorActivo gastoActivo : gasto.getGastoProveedorActivos()) {
 			Long idActivo = gastoActivo.getActivo().getId();
 			gastoActivo.setParticipacionGasto((float) (mapa.get(idActivo)*100/importeTotal));
-			genericDao.save(GastoProveedorActivo.class, gastoActivo);
+			//genericDao.save(GastoProveedorActivo.class, gastoActivo);
 		}
 		
 		return gasto;

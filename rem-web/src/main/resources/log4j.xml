@@ -155,23 +155,27 @@
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.rest" additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.ClientesController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="es.pfsgroup.plugin.rem.controller.VisitasController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.OfertasController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.TrabajoController"
 		additivity="false">
@@ -182,11 +186,13 @@
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.NotificacionesController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.InformemediadorController"
 		additivity="false">
@@ -197,21 +203,25 @@
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.ReservaController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.ResolucionComiteController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.api.impl.UvemManager"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
 	</logger>
 
 

@@ -12,43 +12,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
     initComponent: function () {
      	
      	var me = this;
-     	
-     	var colCargoText = Ext.create('Ext.grid.column.Column', {
-     		text: HreRem.i18n('fieldlabel.cargo'),
-     		dataIndex: 'cargo',
-            flex: 1,
-            editor: {
-            	xtype: 'textfield',
-            	maxLength: 50
-            }
- 		});
-     	
-     	var colCargoCombobox = Ext.create('Ext.grid.column.Column', {
-     		xtype: 'gridcolumn',
-	        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-	            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboCargo').findRecord('codigo', value);
-	            var descripcion;
-	        	if(!Ext.isEmpty(foundedRecord)) {
-	        		descripcion = foundedRecord.getData().descripcion;
-	        	}
-	            return descripcion;
-	        },
-	        dataIndex: 'cargo',
-	        text: HreRem.i18n('fieldlabel.cargo'),
-            flex: 1,
-            editor: {
-	            xtype: 'combobox',
-	            displayField: 'descripcion',
-	            valueField: 'codigo',
-	            bind: {
-	            	store: '{comboCargo}'
-	            },
-	            reference: 'cbDDColCargo'
-	        }
- 		});
-		
-     	var colCargoOptions = '{proveedor.isEntidad}' ?  colCargoCombobox : colCargoText;
-     	
+
 		me.columns = [
 		        {
 		        	dataIndex: 'id',
@@ -78,17 +42,70 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 					 ]
 	    		},
 		        {
-		        	
-		            dataIndex: 'nombreApellidos',
-		            text: HreRem.i18n('header.personas.contacto.nombre.apellidos'),
+		            dataIndex: 'nombre',
+		            text: HreRem.i18n('header.personas.contacto.nombre'),
 		            flex: 1,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maxLength: 100,
-		            	disabled: true
+		            	maxLength: 256
 		            }
 		        },
-		        colCargoOptions,
+		        {
+		            dataIndex: 'apellido1',
+		            text: HreRem.i18n('header.personas.contacto.apellido1'),
+		            flex: 1,
+		            editor: {
+		            	xtype: 'textfield',
+		            	maxLength: 50
+		            }
+		        },
+		        {
+		            dataIndex: 'apellido2',
+		            text: HreRem.i18n('header.personas.contacto.apellido2'),
+		            flex: 1,
+		            editor: {
+		            	xtype: 'textfield',
+		            	maxLength: 50
+		            }
+		        },
+		        {
+		     		xtype: 'gridcolumn',
+			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+			            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboCargo').findRecord('codigo', value);
+			            var descripcion;
+			        	if(!Ext.isEmpty(foundedRecord)) {
+			        		descripcion = foundedRecord.getData().descripcion;
+			        	}
+			            return descripcion;
+			        },
+			        dataIndex: 'cargoCombobox',
+			        text: HreRem.i18n('fieldlabel.cargo'),
+		            flex: 1,
+		            bind: {
+		            	hidden: '{!proveedor.isEntidad}'
+		            },
+		            editor: {
+			            xtype: 'combobox',
+			            displayField: 'descripcion',
+			            valueField: 'codigo',
+			            bind: {
+			            	store: '{comboCargo}'
+			            },
+			            reference: 'cbDDColCargo'
+			        }
+		 		},
+		 		{
+		     		text: HreRem.i18n('fieldlabel.cargo'),
+		     		dataIndex: 'cargoTexto',
+		            flex: 1,
+		            bind: {
+		            	hidden: '{proveedor.isEntidad}'
+		            },
+		            editor: {
+		            	xtype: 'textfield',
+		            	maxLength: 50
+		            }
+		 		},
 		        {
 		            dataIndex: 'nif',
 		            text: HreRem.i18n('fieldlabel.proveedores.nif'),
@@ -98,8 +115,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 		            },
 		            editor: {
 		            	xtype: 'textfield',
-		            	maxLength: 20,
-		            	disabled: true
+		            	maxLength: 20
 		            }
 		        },
 		        {
@@ -108,7 +124,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 		            flex: 0.8,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maskRe: /[0-9.]/,
 		            	maxLength: 16
 		            }
 		        },
@@ -186,6 +201,54 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 		    ];
 		    
 		    me.callParent();
-   }
+   },
+   
+   editFuncion: function(editor, context){
+  		var me= this;
+		me.mask(HreRem.i18n("msg.mask.espere"));
+
+			if (me.isValidRecord(context.record)) {
+				var idDireccionDelegacionSelected = '';
+				var selection = me.up('fichaproveedor').down('direccionesdelegacioneslist').getSelectionModel().getSelection();
+				if(!Ext.isEmpty(selection)) {
+					idDireccionDelegacionSelected = selection[0].id;
+				}
+				
+	       		context.record.save({
+	
+	                   params: {
+	                       idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal),
+	                       delegacion: idDireccionDelegacionSelected
+	                   },
+	                   
+	                   success: function (a, operation, c) {
+	                       context.store.load();
+	                       me.unmask();
+	                       me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
+	                       me.saveSuccessFn();											
+	                   },
+	                   
+	                   failure: function (a, operation) {
+		                   	context.store.load();
+		                   	
+		                   	try {
+		                   		var response = Ext.JSON.decode(operation.getResponse().responseText)
+		                   		
+		                   	}catch(err) {}
+		                   	
+		                   	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
+		                   		me.fireEvent("errorToast", response.msg);
+		                   	} else {
+		                   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		                   	}                        	
+							me.unmask();
+	                   }
+	               });
+	       		me.disableAddButton(false);
+	       		me.disablePagingToolBar(false);
+	       		me.getSelectionModel().deselectAll();
+	       		editor.isNew = false;
+			}
+  }
 
 });

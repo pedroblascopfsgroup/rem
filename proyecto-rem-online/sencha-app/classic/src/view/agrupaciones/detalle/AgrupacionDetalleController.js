@@ -93,7 +93,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		campo.up('form').getBindRecord().save();
 	},	
 	    
-   	onSaveFormularioCompleto: function(btn, form) {
+   	onSaveFormularioCompletoForm: function(btn, form) {
 		
    		var me = this;
    		if(form.isFormValid()) {
@@ -148,9 +148,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		
 		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
+		me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());				
 	},
 	
 	onClickBotonCancelar: function(btn) {
@@ -180,48 +179,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		me.getViewModel().set("editing", false);
 	},
 
-	/*onClickBotonEditar: function(btn) {
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').show();
-		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
-
-		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
-						function (field, index) 
-							{ 
-								field.fireEvent('edit');});
-								
-		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
-		
-	},
-    
-	onClickBotonGuardar: function(btn) {
-		
-		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
-	},
-	
-	onClickBotonCancelar: function(btn) {
-		
-		
-		var me = this,
-		activeTab = btn.up('tabpanel').getActiveTab();
-		
-		if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-			activeTab.getBindRecord().reject();
-		}	
-		
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
-		btn.up('tabbar').down('button[itemId=botoneditar]').show();
-		
-		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
-						function (field, index) 
-							{ 
-								field.fireEvent('save');
-								field.fireEvent('update');});
-	},*/
-
-    
     onChangeTipoAgrupacion: function(btn,value) {
     	
     	//Se deja comentado porque volverá a aplicar en fase 2
@@ -497,7 +454,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		form= window.down('formBase');
 	
 		var success = function(record, operation) {
-			me.getView().unmask();
+			
+			form.unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
 	    	window.destroy();    	
@@ -522,9 +480,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			    success: success,
 			 	failure: function(record, operation) {
 			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-			    },
-			    callback: function(record, operation) {
-			    	form.unmask();
+			 		form.unmask();
 			    }
 			    		    
 			});
@@ -533,6 +489,21 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
 	
+	},
+	
+	onVisitasListDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	
+    	Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
+    	
+        	
+    },
+    
+    onClickBotonCerrarDetalleVisita: function(btn) {
+		var me = this,
+		window = btn.up('window');
+    	window.close();
 	}
 
 	

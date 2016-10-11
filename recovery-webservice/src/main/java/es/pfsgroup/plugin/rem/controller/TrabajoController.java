@@ -99,6 +99,9 @@ public class TrabajoController {
 	@Autowired
 	ExcelReportGeneratorApi excelReportGeneratorApi;
 	
+	@Autowired
+	private RestApi restApi;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	/**
@@ -1027,9 +1030,9 @@ public class TrabajoController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
-	public ModelAndView saveTrabajosWS(ModelMap model, RestRequestWrapper request) {		
+	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
-		List<String> errorsList = null;
+		HashMap<String, List<String>> errorsList = null;
 		TrabajoDto trabajoDto = null;		
 		DtoFichaTrabajo dtoFichaTrabajo = null;
 		Map<String, Object> map = null;
@@ -1051,20 +1054,16 @@ public class TrabajoController {
 
 					Long idTrabajo = null;
 					Trabajo trabajo = null;
-					errorsList = new ArrayList<String>();
+					errorsList = new HashMap<String, List<String>>();
 					map = new HashMap<String, Object>();
 					trabajoDto = listaTrabajoDto.get(i);
 					
 					errorsList = trabajoApi.validateTrabajoPostRequestData(trabajoDto);
 					if(!Checks.esNulo(errorsList) && errorsList.isEmpty()){					
 						dtoFichaTrabajo = trabajoApi.convertTrabajoDto2DtoFichaTrabajo(trabajoDto);
-						if(Checks.esNulo(dtoFichaTrabajo)){
-							errorsList.add("Ha ocurrido un error al procesar la petición. Error de conversion de tipos al construir el dtoTrabajo.");
-						}else{
+						if(!Checks.esNulo(dtoFichaTrabajo)){
 							idTrabajo = trabajoApi.create(dtoFichaTrabajo);
-							if(Checks.esNulo(idTrabajo)){
-								errorsList.add("Ha ocurrido un error al crear el trabajo.");
-							}else{
+							if(!Checks.esNulo(idTrabajo)){
 								trabajo = trabajoApi.findOne(idTrabajo);
 							}
 						}					
@@ -1079,7 +1078,7 @@ public class TrabajoController {
 						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
 						map.put("idTrabajoRem", "");
 						map.put("success", false);
-						//map.put("errorMessages", errorsList);
+						map.put("invalidFields", errorsList);
 					}
 					listaRespuesta.add(map);
 					
@@ -1100,7 +1099,7 @@ public class TrabajoController {
 			logger.debug("ERRORES: " + errorsList);
 		}
 
-		return new ModelAndView("jsonView", model);
+		restApi.sendResponse(response, model);
 	}
 	
 	

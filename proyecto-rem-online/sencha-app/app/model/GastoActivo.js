@@ -3,13 +3,9 @@
  */
 Ext.define('HreRem.model.GastoActivo', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
 
     fields: [    
   
-            {
-            	name:'id'
-            },
             {
             	name: 'idGasto'
             },
@@ -32,7 +28,7 @@ Ext.define('HreRem.model.GastoActivo', {
             	name: 'direccion'
             },
             {
-            	name: 'participacionGasto'
+            	name: 'participacion'
             },
             {
             	name: 'importeProporcinalTotal'

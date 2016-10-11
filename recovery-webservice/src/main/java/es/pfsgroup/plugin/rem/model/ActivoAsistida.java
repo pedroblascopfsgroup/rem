@@ -1,23 +1,17 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
 
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.commons.utils.Checks;
@@ -28,7 +22,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAsistida;
  * Modelo que gestiona la información de las agrupaciones de tipo asistidas de los activos.
  *  
  * @author Daniel Gutiérrez
- *
  */
 @Entity
 @Table(name = "ACT_ASI_ASISTIDA", schema = "${entity.schema}")
@@ -36,11 +29,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAsistida;
 @PrimaryKeyJoinColumn(name="AGR_ID")
 public class ActivoAsistida extends ActivoAgrupacion implements Serializable {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	
+
+
     @ManyToOne
     @JoinColumn(name = "DD_PRV_ID")
     private DDProvincia provincia;
@@ -61,6 +52,7 @@ public class ActivoAsistida extends ActivoAgrupacion implements Serializable {
 	
 	@Column(name = "ASI_ACREEDOR_PDV")
 	private String acreedorPDV;
+
 
 	public DDProvincia getProvincia() {
 		return provincia;

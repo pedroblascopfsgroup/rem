@@ -17,22 +17,43 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name:'tipoOfertaDescripcion'
     		},
     		{
-    			name:'fechaNotificacion'
+    			name:'tipoOfertaCodigo'
     		},
     		{
-    			name:'fechaAlta'
+    			name:'fechaNotificacion',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    			name:'fechaAlta',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		},
     		{
     			name:'estadoDescripcion'
     		},
     		{
-    			name:'prescriptorDescripcion'
+    			name:'prescriptor'
     		},
     		{
     			name:'importeOferta'
     		},
     		{
-    			name:'importeContraoferta'
+    			name:'importeContraOferta'
     		},
     		{
     			name:'comite'
@@ -45,6 +66,12 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'estadoVisitaOfertaDescripcion'
+    		},
+    		{
+    			name: 'canalPrescripcionCodigo'
+    		},
+    		{
+    			name: 'canalPrescripcionDescripcion'
     		}
     ],
     

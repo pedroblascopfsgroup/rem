@@ -15,27 +15,21 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
-import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
+import net.sf.json.JSONObject;
 
 /**
  * Filtro para la gestión de las peticiones a la rest-api
@@ -69,13 +63,12 @@ public class RestSecurityFilter implements Filter {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private SecurityContext securityContext = null;
+
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
 
-		PeticionRest peticion = crearPeticionObj(request);
+		PeticionRest peticion = restApi.crearPeticionObj(request);
 		RestRequestWrapper restRequest = null;
 		try {
 
@@ -92,8 +85,8 @@ public class RestSecurityFilter implements Filter {
 			String id = datajson.getId();
 			peticion.setToken(id);
 			String ipClient = restApi.getClientIpAddr(((HttpServletRequest) request));
-			
-			((HttpServletRequest) request).getHeader("X-Forwarded-For");  
+
+			((HttpServletRequest) request).getHeader("X-Forwarded-For");
 
 			Broker broker = restApi.getBrokerByIp(ipClient);
 			if (broker == null) {
@@ -109,24 +102,24 @@ public class RestSecurityFilter implements Filter {
 					logger.error("REST: La firma no es correcta");
 					peticion.setResult(RestApi.CODE_ERROR);
 					peticion.setErrorDesc(RestApi.REST_MSG_INVALID_SIGNATURE);
-					//throwUnauthorized(response);
+					// throwUnauthorized(response);
 					throwRestException(response, RestApi.REST_MSG_INVALID_SIGNATURE, restRequest.getJsonObject());
-					
 
 				} else {
 					if (!restApi.validateId(broker, id)) {
 						logger.error("REST: El id de la petición ya se ha ejecutado previamente");
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_REPETEAD_REQUEST);
-						//throwInvalidId(response);
+						// throwInvalidId(response);
 						throwRestException(response, RestApi.REST_MSG_REPETEAD_REQUEST, restRequest.getJsonObject());
 
 					} else if (!restRequest.getBody().contains("data")) {
 						logger.error("REST: Petición no contiene información en el campo data.");
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-						//throwInvalidRequest(response);
-						throwRestException(response, RestApi.REST_MSG_MISSING_REQUIRED_FIELDS, restRequest.getJsonObject());
+						// throwInvalidRequest(response);
+						throwRestException(response, RestApi.REST_MSG_MISSING_REQUIRED_FIELDS,
+								restRequest.getJsonObject());
 
 					} else {
 						chain.doFilter(restRequest, response);
@@ -134,8 +127,7 @@ public class RestSecurityFilter implements Filter {
 					}
 				}
 			}
-			// securityContext.getAuthentication().setAuthenticated(false);		
-			restApi.guardarPeticionRest(peticion);
+			// securityContext.getAuthentication().setAuthenticated(false);
 		} catch (Exception e) {
 			peticion.setResult("ERROR");
 			logger.error(e.getMessage());
@@ -146,14 +138,25 @@ public class RestSecurityFilter implements Filter {
 				peticion.setErrorDesc(e.getMessage());
 			}
 
-			throwErrorGeneral(response, e);
+			throwErrorGeneral(response, e, null);
 
+		} catch (Throwable t) {
+			peticion.setResult("ERROR");
+			logger.error(t.getMessage());
+			if (t.getMessage() != null && t.getMessage().length() > 200) {
+
+				peticion.setErrorDesc(t.getMessage().substring(0, 199));
+			} else {
+				peticion.setErrorDesc(t.getMessage());
+			}
+
+			throwErrorGeneral(response, null, t);
 		} finally {
 			SecurityContextHolder.clearContext();
+			restApi.guardarPeticionRest(peticion);
 		}
 	}
-	
-	
+
 	/**
 	 * Genera el formato de una respuesta de un servicio REST
 	 * 
@@ -167,62 +170,62 @@ public class RestSecurityFilter implements Filter {
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 
-		if(!Checks.esNulo(jsonFields)){
-			
+		if (!Checks.esNulo(jsonFields)) {
+
 			jsonResp = new JSONObject();
-			if(jsonFields.has("id")){
-				jsonResp.accumulate("id",jsonFields.get("id"));			
+			if (jsonFields.has("id")) {
+				jsonResp.accumulate("id", jsonFields.get("id"));
 			}
-			if(!Checks.esNulo(errorCode)){
+			if (!Checks.esNulo(errorCode)) {
 				jsonResp.accumulate("error", errorCode);
 			}
-			
-			if(!Checks.esNulo(jsonFields.getJSONArray("data")) && jsonFields.getJSONArray("data").size()>0){
-				
-				//Construimos mapa de ids a retornar
-				for (int i=0; i<jsonFields.getJSONArray("data").size(); i++){					
+
+			if (!Checks.esNulo(jsonFields.getJSONArray("data")) && jsonFields.getJSONArray("data").size() > 0) {
+
+				// Construimos mapa de ids a retornar
+				for (int i = 0; i < jsonFields.getJSONArray("data").size(); i++) {
 					map = new HashMap<String, Object>();
-					jsonLine = jsonFields.getJSONArray("data").get(i);						
-					if(((JSONObject)jsonLine).containsKey("idInformeMediadorWebcom")){
-						map.put("idInformeMediadorWebcom", ((JSONObject)jsonLine).get("idInformeMediadorWebcom"));
-						map.put("idActivoHaya", ((JSONObject)jsonLine).get("idActivoHaya"));
+					jsonLine = jsonFields.getJSONArray("data").get(i);
+					if (((JSONObject) jsonLine).containsKey("idInformeMediadorWebcom")) {
+						map.put("idInformeMediadorWebcom", ((JSONObject) jsonLine).get("idInformeMediadorWebcom"));
+						map.put("idActivoHaya", ((JSONObject) jsonLine).get("idActivoHaya"));
 					}
-					if(((JSONObject)jsonLine).containsKey("idClienteWebcom")){
-						map.put("idClienteWebcom", ((JSONObject)jsonLine).get("idClienteWebcom"));
-						map.put("idClienteRem", ((JSONObject)jsonLine).get("idClienteRem"));
+					if (((JSONObject) jsonLine).containsKey("idClienteWebcom")) {
+						map.put("idClienteWebcom", ((JSONObject) jsonLine).get("idClienteWebcom"));
+						map.put("idClienteRem", ((JSONObject) jsonLine).get("idClienteRem"));
 					}
-					if(((JSONObject)jsonLine).containsKey("idVisitaWebcom")){
-						map.put("idVisitaWebcom", ((JSONObject)jsonLine).get("idVisitaWebcom"));
-						map.put("idVisitaRem", ((JSONObject)jsonLine).get("idVisitaRem"));
+					if (((JSONObject) jsonLine).containsKey("idVisitaWebcom")) {
+						map.put("idVisitaWebcom", ((JSONObject) jsonLine).get("idVisitaWebcom"));
+						map.put("idVisitaRem", ((JSONObject) jsonLine).get("idVisitaRem"));
 					}
-					if(((JSONObject)jsonLine).containsKey("idOfertaWebcom")){
-						map.put("idOfertaWebcom", ((JSONObject)jsonLine).get("idOfertaWebcom"));
-						map.put("idOfertaRem", ((JSONObject)jsonLine).get("idOfertaRem"));
+					if (((JSONObject) jsonLine).containsKey("idOfertaWebcom")) {
+						map.put("idOfertaWebcom", ((JSONObject) jsonLine).get("idOfertaWebcom"));
+						map.put("idOfertaRem", ((JSONObject) jsonLine).get("idOfertaRem"));
 					}
-					if(((JSONObject)jsonLine).containsKey("idActivoHaya")){
-						map.put("idActivoHaya", ((JSONObject)jsonLine).get("idActivoHaya"));
+					if (((JSONObject) jsonLine).containsKey("idActivoHaya")) {
+						map.put("idActivoHaya", ((JSONObject) jsonLine).get("idActivoHaya"));
 					}
-					if(((JSONObject)jsonLine).containsKey("idTrabajoWebcom")){
-						map.put("idTrabajoWebcom", ((JSONObject)jsonLine).get("idTrabajoWebcom"));
-						map.put("idTrabajoRem", ((JSONObject)jsonLine).get("idTrabajoRem"));
+					if (((JSONObject) jsonLine).containsKey("idTrabajoWebcom")) {
+						map.put("idTrabajoWebcom", ((JSONObject) jsonLine).get("idTrabajoWebcom"));
+						map.put("idTrabajoRem", ((JSONObject) jsonLine).get("idTrabajoRem"));
 					}
-					if(((JSONObject)jsonLine).containsKey("idNotificacionWebcom")){
-						map.put("idNotificacionWebcom", ((JSONObject)jsonLine).get("idNotificacionWebcom"));
-						map.put("idNotificacionRem", ((JSONObject)jsonLine).get("idNotificacionRem"));
-					}					
+					if (((JSONObject) jsonLine).containsKey("idNotificacionWebcom")) {
+						map.put("idNotificacionWebcom", ((JSONObject) jsonLine).get("idNotificacionWebcom"));
+						map.put("idNotificacionRem", ((JSONObject) jsonLine).get("idNotificacionRem"));
+					}
 					map.put("success", false);
-					
+
 					listaRespuesta.add(map);
-				}			
-				jsonResp.accumulate("data",listaRespuesta);
-				
-			}else{
+				}
+				jsonResp.accumulate("data", listaRespuesta);
+
+			} else {
 				jsonResp.accumulate("data", jsonFields.getJSONArray("data"));
 			}
 		}
-		
+
 		return jsonResp;
-			
+
 	}
 
 	/**
@@ -233,24 +236,23 @@ public class RestSecurityFilter implements Filter {
 	 */
 	private void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields) throws IOException {
 		JSONObject jsonResp = null;
-		
+
 		HttpServletResponse response = (HttpServletResponse) res;
-		
+
 		jsonResp = buildJsonResponse(errorCode, jsonFields);
-		
+
 		response.reset();
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
-		
-		if(!Checks.esNulo(jsonResp)){
+
+		if (!Checks.esNulo(jsonResp)) {
 			PrintWriter out = response.getWriter();
 			out.print(jsonResp);
 			out.flush();
-		}else{
-			
+		} else {
+
 		}
 
 	}
-
 
 	/**
 	 * Error el operador no permitido
@@ -294,85 +296,29 @@ public class RestSecurityFilter implements Filter {
 	 * @param e
 	 * @throws IOException
 	 */
-	private void throwErrorGeneral(ServletResponse res, Exception e) throws IOException {
+	private void throwErrorGeneral(ServletResponse res, Exception e, Throwable t) {
 
-		HttpServletResponse response = (HttpServletResponse) res;
+		try {
+			HttpServletResponse response = (HttpServletResponse) res;
 
-		String descError = "";
+			String descError = "";
 
-		if (e.getMessage() != null && !e.getMessage().isEmpty()) {
-			descError = e.getMessage().toUpperCase();
+			if (e !=null && e.getMessage() != null && !e.getMessage().isEmpty()) {
+				descError = e.getMessage().toUpperCase();
+			}
+			
+			if (t !=null && t.getMessage() != null && !t.getMessage().isEmpty()) {
+				descError = t.getMessage().toUpperCase();
+			}
+
+			String error = "{\"data\":null,\"error\":\"".concat(descError).concat("\"}");
+
+			response.reset();
+			response.setHeader("Content-Type", "application/json;charset=UTF-8");
+			response.getWriter().write(error);
+		} catch (Exception ex) {
+
 		}
-
-		String error = "{\"data\":null,\"error\":\"".concat(descError).concat("\"}");
-
-		response.reset();
-		response.setHeader("Content-Type", "application/json;charset=UTF-8");
-		response.getWriter().write(error);
-	}
-
-	/**
-	 * Crea un objeto de tipo peticion rest
-	 * 
-	 * @param req
-	 * @return
-	 */
-	private PeticionRest crearPeticionObj(ServletRequest req) {
-		HttpServletRequest request = (HttpServletRequest) req;
-		PeticionRest peticion = new PeticionRest();
-		peticion.setMetodo(request.getMethod());
-		peticion.setQuery(request.getPathInfo());
-		peticion.setData(request.getParameter("data"));
-		peticion.setIp(request.getRemoteAddr());
-
-		return peticion;
-
-	}
-
-	/**
-	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir
-	 * en base de datos ya que en posteriores ejecuciones se accederá a ésta
-	 * para login.
-	 * 
-	 * @param entidad
-	 *            de base de datos del usuario ficticio
-	 * @return user usuario ficticio.
-	 */
-	private UsuarioSecurity loadUser(Entidad entidad) {
-		UsuarioSecurity user = new UsuarioSecurity();
-		user.setId(-1L);
-		user.setUsername(RestApi.REST_LOGGED_USER_USERNAME);
-		user.setAccountNonExpired(true);
-		user.setAccountNonLocked(true);
-		user.setEnabled(true);
-		user.setEntidad(entidad);
-		return user;
-	}
-
-	/**
-	 * Realiza el login de un usuario ficticio en una entidad de base de datos
-	 * pasada por parámetro. Los datos del usuario ficticio deberán existir en
-	 * base de datos ya que en posteriores ejecuciones se accederá a ésta para
-	 * login.
-	 * 
-	 * @param entidad
-	 *            de base de datos del usuario ficticio
-	 * @return securityContext
-	 */
-	protected void doLogin(Entidad entidad) {
-		UsuarioSecurity user = loadUser(entidad);
-		securityContext = SecurityContextHolder.getContext();
-		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(),
-				RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
-		authToken.setDetails(user);
-
-		AuthenticationRestService authRestService = new AuthenticationRestService();
-		authRestService.setUserNameprefix("REST-");
-
-		PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
-		preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
-		Authentication authentication = preAuthenticatedProvider.authenticate(authToken);
-		securityContext.setAuthentication(authentication);
 	}
 
 	/**
@@ -403,7 +349,7 @@ public class RestSecurityFilter implements Filter {
 		}
 
 		// Realizamos login en la plataforma
-		doLogin(entidad);
+		restApi.doLogin(restApi.loadUserRest(entidad));
 
 	}
 

@@ -1,17 +1,19 @@
 package es.pfsgroup.plugin.rem.rest.api;
 
-import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
+import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
@@ -33,7 +35,10 @@ public interface RestApi {
 	public static final String REST_MSG_MISSING_REQUIRED_FIELDS = "MISSING_REQUIRED_FIELDS";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
 	public static final String REST_MSG_UNKNOWN_KEY = "UNKNOWN_KEY";
-	public static final String REST_LOGGED_USER_USERNAME = "USER";
+	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
+	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";
+	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";
+	public static final String REST_LOGGED_USER_USERNAME_FULL = "REST-USER";
 	public static final Object REST_LOGGED_USER_EMPTY_PASSWORD = "";
 
 	/**
@@ -60,7 +65,7 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public List<String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
+	public HashMap<String, List<String>> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
 
 	/**
 	 * Valida el pojo pasado a la rest api
@@ -68,7 +73,9 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public List<String> validateRequestObject(Serializable obj);
+	public HashMap<String, List<String>> validateRequestObject(Serializable obj);
+
+	public List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad);
 
 	/**
 	 * Obtiene un operador dada su ip pblica
@@ -119,13 +126,40 @@ public interface RestApi {
 	 */
 	public String getClientIpAddr(HttpServletRequest request);
 
-	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto,ArrayList<Serializable> objetoEntity)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
-			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException;
+	/**
+	 * Escribe en la salida standard una respuesta JSON
+	 * 
+	 * @param response
+	 * @param model
+	 */
+	public void sendResponse(HttpServletResponse response, ModelMap model);
 
-	@SuppressWarnings("rawtypes")
-	public Serializable obtenerObjetoEntity(Long activoId, Class entity,String fieldActivo)
-			throws InstantiationException, IllegalAccessException;
+	/**
+	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir
+	 * en base de datos ya que en posteriores ejecuciones se accederá a ésta
+	 * para login.
+	 * 
+	 * @param entidad
+	 * @return
+	 */
+	public UsuarioSecurity loadUserRest(Entidad entidad);
+
+	/**
+	 * Realiza el login de un usuario ficticio en una entidad de base de datos
+	 * pasada por parámetro. Los datos del usuario ficticio deberán existir en
+	 * base de datos ya que en posteriores ejecuciones se accederá a ésta para
+	 * login.
+	 * 
+	 * @param entidad
+	 */
+	public void doLogin(UsuarioSecurity user);
+
+	/**
+	 * Crea un objeto de tipo peticion rest
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public PeticionRest crearPeticionObj(ServletRequest req);
 
 }

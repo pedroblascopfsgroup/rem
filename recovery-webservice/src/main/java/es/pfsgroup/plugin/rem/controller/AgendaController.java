@@ -33,7 +33,6 @@ import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;

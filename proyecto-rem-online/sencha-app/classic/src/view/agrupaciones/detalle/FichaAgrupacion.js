@@ -4,20 +4,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     reference: 'fichaagrupacionref',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
-    scrollable	: 'y',
+    scrollable: 'y',
     flex: 1,
-    layout 		: 
+    layout: 
     	{
 			type : 'vbox',
 			align : 'stretch'
 		},
-		
 
 	recordName: "agrupacionficha",
-	
 	recordClass: "HreRem.model.AgrupacionFicha",
-    
     requires: ['HreRem.model.AgrupacionFicha'],
+    
     initComponent: function () {
 
         var me = this;
@@ -149,8 +147,23 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							maskRe: /^\d*$/,
 							vtype: 'codigoPostal'
 							
+						},
+						{ 
+		                	xtype: 'datefieldbase',
+		                	fieldLabel: HreRem.i18n('header.fecha.inicio.vigencia'),
+		                	maxValue: null,
+			            	bind: {
+			            		value: '{agrupacionficha.fechaInicioVigencia}'
+			            	}		
+						},
+						{ 
+		                	xtype: 'datefieldbase',
+		                	fieldLabel: HreRem.i18n('header.fecha.fin.vigencia'),
+		                	maxValue: null,
+			            	bind: {
+			            		value: '{agrupacionficha.fechaFinVigencia}'
+			            	}		
 						}
-
 					]
           }
             

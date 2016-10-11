@@ -22,7 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 @Component
 public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificatorService implements NotificatorService {
 	
-	private static final String CODIGO_T009_ENVIO_PROPUESTA_PROPIETARIO = "T009_EnvioPropuestaPropietario";
+	private static final String CODIGO_T009_CARGA_PROPUESTA = "T009_SancionCargaPropuesta";
 
 
 	@Autowired
@@ -39,7 +39,7 @@ public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificator
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T009_ENVIO_PROPUESTA_PROPIETARIO};
+		return new String[]{CODIGO_T009_CARGA_PROPUESTA};
 	}
 	
 	@Resource(name = "mailManager")

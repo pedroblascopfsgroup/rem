@@ -46,8 +46,15 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				              	fieldLabel : 'Estado Autorización Propietario',
 								bind: {
 									store: '{comboEstadoAutorizacionPropietario}'
-								},
-								colspan:2
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								name: 'otrosEstados',
+				              	fieldLabel : 'Otras situaciones',
+								bind: {
+									store: '{otrasSituacionesGasto}'
+								}						
 							}
 				        				
 						]
@@ -64,16 +71,14 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						        name: 'numGastoHaya'								            	
 						    },
 						    { 
-					        	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 					        	reference: 'filtroComboTipoGasto',
-					        	name: 'codigoTipo',
+					        	name: 'tipoGastoCodigo',
 					        	bind: {
 				            		store: '{comboTipoGasto}'
 				            	},
-	    						publishes: 'value',
-	    						displayField: 'descripcion',
-								valueField: 'codigo'
+								publishes: 'value'
 			    						
 							},
 							{ 
@@ -82,35 +87,31 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						    },
 						    { 
 						    	fieldLabel: HreRem.i18n('fieldlabel.numero.gasto.gestoria'),
-						        name: 'numgastogestoria'								            	
-						    },							
-							{ 
-					        	xtype: 'combo',
+						        name: 'numGastoGestoria'								            	
+						    },
+						    { 
+					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
-					        	name: 'codigoSubtipo',
-					        	queryMode: 'remote',
-					        	forceSelection: true,
+					        	name: 'subtipoGastoCodigo',
 					        	bind: {
-				            		store: '{comboSubtipoTrabajo}',
-				                    disabled: '{!filtroComboTipoTrabajo.value}',
+				            		store: '{comboSubtipoGasto}',
+				                    disabled: '{!filtroComboTipoGasto.value}',
 				                    filters: {
-				                        property: 'codigoTipoTrabajo',
-				                        value: '{filtroComboTipoTrabajo.value}'
+				                        property: 'tipoGastoCodigo',
+				                        value: '{filtroComboTipoGasto.value}'
 				                    }
-				            	},
-				            	displayField: 'descripcion',
-								valueField: 'codigo'
-    						},
+				            	}
+					        },
     						{ 
 						    	fieldLabel: HreRem.i18n('fieldlabel.importe.hasta'),
 						        name: 'importeHasta'								            	
 						    },
 						    {
-						    	fieldLabel: HreRem.i18n('fieldlabel.refrencia.emisor'),
+						    	fieldLabel: HreRem.i18n('fieldlabel.referencia.emisor'),
 						        name: 'referenciaEmisor'						    	
 						    },
 						    { 
-					        	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.necesita.autorizacion.propietario'),
 					        	name: 'necesitaAutorizacionPropietario',
 					        	bind: {
@@ -136,17 +137,17 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            	}				            	
 							},
 							{ 
-					        	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.destinatario'),
 					        	name: 'destinatario',
 					        	bind: {
-				            		store: '{comboDestinatarioGasto}'
+				            		store: '{comboDestinatarios}'
 				            	},
 				            	displayField: 'descripcion',
 								valueField: 'codigo'
     						},
     						{ 
-					        	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.cubre.seguro'),
 					        	name: 'cubreSeguro',
 					        	bind: {
@@ -156,17 +157,17 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 								valueField: 'codigo'
     						},
 							{ 
-			                	xtype:'datefield',
+			                	xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.tope.pago.hasta'),
 						 		name: 'fechaTopePagoHasta',
 						 		formatter: 'date("d/m/Y")'					 		
 							},
 							{ 
-					        	xtype: 'combo',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.destinatario'),
-					        	name: 'destinatario',
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),
+					        	name: 'periodicidad',
 					        	bind: {
-				            		store: '{comboPeriodicidadGasto}'
+				            		store: '{comboPeriodicidad}'
 				            	},
 				            	displayField: 'descripcion',
 								valueField: 'codigo'
@@ -191,35 +192,29 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						        name: 'nifProveedor'								            	
 						    },			    		
 					    	{ 
-					        	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 					        	reference: 'filtroComboTipoProveedor',
 					        	name: 'codigoTipoProveedor',
 					        	bind: {
 				            		store: '{comboTipoProveedor}'
 				            	},
-	    						publishes: 'value',
-	    						displayField: 'descripcion',
-								valueField: 'codigo'
+								publishes: 'value'
 			    						
 							},
-							{ 
-					        	xtype: 'combo',
+    						{ 
+					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
 					        	name: 'codigoSubtipoProveedor',
-					        	queryMode: 'remote',
-					        	forceSelection: true,
 					        	bind: {
 				            		store: '{comboSubtipoProveedor}',
 				                    disabled: '{!filtroComboTipoProveedor.value}',
 				                    filters: {
-				                        property: 'codigoTipoProveedor',
+				                        property: 'tipoEntidadCodigo',
 				                        value: '{filtroComboTipoProveedor.value}'
 				                    }
-				            	},
-				            	displayField: 'descripcion',
-								valueField: 'codigo'
-    						},
+				            	}
+					        },
 						    { 
 						    	fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
 						        name: 'nombreProveedor'								            	

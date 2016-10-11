@@ -7,6 +7,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
@@ -35,12 +36,19 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType riesgoOcupacion;
 	private DateDataType fechaPosesion;
 	private DateDataType ultimaModificacion;
+	@MappedColumn("FECHA_CONTRATO_DATOS_OCU")
 	private DateDataType fechaContratoDatosOcupacionales;
+	@MappedColumn("PLAZO_CONTRATO_DATOS_OCU")
 	private DateDataType plazoContratoDatosOcupacionales;
+	@MappedColumn("RENTA_MENSUAL_DATOS_OCU")
 	private DoubleDataType rentaMensualDatosOcupacionales;
+	@MappedColumn("RECIBIDO_IMPORTE_DATOS_ADM")
 	private DoubleDataType recibidoImporteDatosAdministracion;
+	@MappedColumn("IBI_IMPORTE_DATOS_ADM")
 	private DoubleDataType ibiImporteDatosAdministracion;
+	@MappedColumn("DERRAMA_IMPORTE_DATOS_ADM")
 	private DoubleDataType derramaImporteDatosAdministracion;
+	@MappedColumn("DETALLE_DERRAMA_DATOS_ADM")
 	private StringDataType detalleDerramaDatosAdministracion;
 	private StringDataType codTipoActivo;
 	private StringDataType codSubtipoInmueble;
@@ -69,9 +77,11 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private DoubleDataType porcentajePropiedad;
 	private DoubleDataType valorEstimadoVenta;
 	private DateDataType fechaValorEstimadoVenta;
+	@MappedColumn("JUSTIFICACION_VALOR_EST_VENTA")
 	private StringDataType justificacionValorEstimadoVenta;
 	private DoubleDataType valorEstimadoRenta;
 	private DateDataType fechaValorEstimadoRenta;
+	@MappedColumn("JUSTIFICACION_VALOR_EST_RENTA")
 	private StringDataType justificacionValorEstimadoRenta;
 	private DoubleDataType utilSuperficie;
 	private DoubleDataType construidaSuperficie;
@@ -86,27 +96,38 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private LongDataType numeroPlantas;
 	private StringDataType codNivelRenta;
 	private LongDataType numeroTerrazasDescubiertas;
+	@MappedColumn("DESC_TERRAZAS_DESCUBIERTAS")
 	private StringDataType descripcionTerrazasDescubiertas;
 	private LongDataType numeroTerrazasCubiertas;
+	@MappedColumn("DESC_TERRAZAS_CUBIERTAS")
 	private StringDataType descripcionTerrazasCubiertas;
 	private BooleanDataType despensaOtrasDependencias;
 	private BooleanDataType lavaderoOtrasDependencias;
 	private BooleanDataType azoteaOtrasDependencias;
 	private StringDataType otrosOtrasDependencias;
-	private BooleanDataType instalacionElectricidadInstalaciones;
+	/*private BooleanDataType instalacionElectricidadInstalaciones;
 	private BooleanDataType contadorElectricidadInstalaciones;
 	private BooleanDataType instalacionAguaInstalaciones;
 	private BooleanDataType contadorAguaInstalaciones;
 	private BooleanDataType gasInstalaciones;
-	private BooleanDataType contadorGasInstalacion;
+	private BooleanDataType contadorGasInstalacion;*/
+	@MappedColumn("EXTERIOR_CARP_REFORMAS_NEC")
 	private BooleanDataType exteriorCarpinteriaReformasNecesarias;
+	@MappedColumn("INTERIOR_CARP_REFORMAS_NEC")
 	private BooleanDataType interiorCarpinteriaReformasNecesarias;
+	@MappedColumn("COCINA_REFORMAS_NEC")
 	private BooleanDataType cocinaReformasNecesarias;
+	@MappedColumn("SUELOS_REFORMAS_NEC")
 	private BooleanDataType suelosReformasNecesarias;
+	@MappedColumn("PINTURA_REFORMAS_NEC")
 	private BooleanDataType pinturaReformasNecesarias;
+	@MappedColumn("INTEGRAL_REFORMAS_NEC")
 	private BooleanDataType integralReformasNecesarias;
+	@MappedColumn("BANYOS_REFORMAS_NEC")
 	private BooleanDataType banyosReformasNecesarias;
+	@MappedColumn("OTRAS_REFORMAS_NEC")
 	private StringDataType otrasReformasNecesarias;
+	@MappedColumn("OTRAS_REFORMAS_NEC_IMPORTE")
 	private DoubleDataType otrasReformasNecesariasImporteAproximado;
 	private StringDataType distribucionInterior;
 	private BooleanDataType divisible;
@@ -119,7 +140,9 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType portalReformasNecesarias;
 	private BooleanDataType ascensorReformasNecesarias;
 	private BooleanDataType cubierta;
+	@MappedColumn("OTRAS_ZNC_REFORMAS_NECESARIAS")
 	private BooleanDataType otrasZonasComunesReformasNecesarias;
+	@MappedColumn("OTRAS_REFORMAS_NECESARIAS")
 	private StringDataType otrosReformasNecesarias;
 	private StringDataType descripcionEdificio;
 	private StringDataType infraestructurasEntorno;
@@ -130,6 +153,7 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private LongDataType numeroEstancias;
 	private LongDataType numeroBanyos;
 	private LongDataType numeroAseos;
+	@MappedColumn("MTS_LINEALES_FACHADA_PPAL")
 	private DoubleDataType metrosLinealesFachadaPrincipal;
 	private DoubleDataType altura;
 	private BooleanDataType existeAnejoTrastero;
@@ -138,9 +162,13 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private LongDataType numeroPlazasGaraje;
 	private DoubleDataType superficiePlazasGaraje;
 	private StringDataType codSubtipoPlazasGaraje;
+	@MappedColumn("SALIDA_HUMOS_OTRAS_CARAC")
 	private BooleanDataType salidaHumosOtrasCaracteristicas;
+	@MappedColumn("SALIDA_EMERGENCIA_OTRAS_CARAC")
 	private BooleanDataType salidaEmergenciaOtrasCaracteristicas;
+	@MappedColumn("ACCESO_MINUSVAL_OTRAS_CARAC")
 	private BooleanDataType accesoMinusvalidosOtrasCaracteristicas;
+	@MappedColumn("OTROS_OTRAS_CARAC")
 	private StringDataType otrosOtrasCaracteristicas;
 	private StringDataType codTipoVario;
 	private DoubleDataType ancho;
@@ -148,37 +176,64 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private DoubleDataType largo;
 	private StringDataType codUso;
 	private StringDataType codManiobrabilidad;
+	@MappedColumn("LICENCIA_OTRAS_CARAC")
 	private BooleanDataType licenciaOtrasCaracteristicas;
+	@MappedColumn("SERVIDUMBRE_OTRAS_CARAC")
 	private BooleanDataType servidumbreOtrasCaracteristicas;
+	@MappedColumn("ASCENSOR_MONT_OTRAS_CARAC")
 	private BooleanDataType ascensorOMontacargasOtrasCaracteristicas;
+	@MappedColumn("COLUMNAS_OTRAS_CARAC")
 	private BooleanDataType columnasOtrasCaracteristicas;
+	@MappedColumn("SREGURIDAD_OTRAS_CARAC")
 	private BooleanDataType seguridadOtrasCaracteristicas;
+	@MappedColumn("BUEN_EST_INST_ELECT_INST")
 	private BooleanDataType buenEstadoInstalacionElectricidadInstalaciones;
+	@MappedColumn("BUEN_EST_CONT_ELECT_INST")
 	private BooleanDataType buenEstadoContadorElectricidadInstalaciones;
+	@MappedColumn("BUEN_EST_INST_AGUA_INST")
 	private BooleanDataType buenEstadoInstalacionAguaInstalaciones;
+	@MappedColumn("BUEN_EST_CONT_AGUA_INST")
 	private BooleanDataType buenEstadoContadorAguaInstalaciones;
+	@MappedColumn("BUEN_EST_INST_GAS_INST")
 	private BooleanDataType buenEstadoGasInstalaciones;
+	@MappedColumn("BUEN_EST_CONT_GAS_INST")
 	private BooleanDataType buenEstadoContadorGasInstalacion;
-	private BooleanDataType buenEstadoConservacionEdificio;
-	private DateDataType anyoRehabilitacionEdificio;
+	@MappedColumn("ESTADO_CONSERVACION_EDI")
+	private StringDataType codEstadoConservacionEdificio;
+	//private BooleanDataType buenEstadoConservacionEdificio;
+	private LongDataType anyoRehabilitacionEdificio;
 	private LongDataType numeroPlantasEdificio;
 	private BooleanDataType ascensorEdificio;
 	private LongDataType numeroAscensoresEdificio;
 	private BooleanDataType existeComunidadEdificio;
 	private DoubleDataType cuotaComunidadEdificio;
+	@MappedColumn("NOM_PRESIDENTE_COM_EDIFICIO")
 	private StringDataType nombrePresidenteComunidadEdificio;
+	@MappedColumn("TELF_PRESIDENTE_COM_EDIFICIO")
 	private StringDataType telefonoPresidenteComunidadEdificio;
+	@MappedColumn("NOM_ADMIN_COM_EDIFICIO")
 	private StringDataType nombreAdministradorComunidadEdificio;
+	@MappedColumn("TELF_ADMIN_COM_EDIFICIO")
 	private StringDataType telefonoAdministradorComunidadEdificio;
+	@MappedColumn("DESC_DERRAMA_COM_EDIFICIO")
 	private StringDataType descripcionDerramaComunidadEdificio;
+	@MappedColumn("FACHADA_REFORMAS_NEC_EDI")
 	private BooleanDataType fachadaReformasNecesariasEdificio;
+	@MappedColumn("ESCALERA_REFORMAS_NEC_EDI")
 	private BooleanDataType escaleraReformasNecesariasEdificio;
+	@MappedColumn("PORTAL_REFORMAS_NEC_EDI")
 	private BooleanDataType portalReformasNecesariasEdificio;
+	@MappedColumn("ASCENSOR_REFORMAS_NEC_EDI")
 	private BooleanDataType ascensorReformasNecesariasEdificio;
+	@MappedColumn("CUBIERTA_REFORMAS_NEC_EDI")
 	private BooleanDataType cubiertaReformasNecesariasEdificio;
+	@MappedColumn("OTRAS_ZCO_REFORMAS_NEC_EDI")
 	private BooleanDataType otrasZonasComunesReformasNecesariasEdificio;
+	@MappedColumn("OTRAS_REFORMAS_NEC_EDI")
 	private StringDataType otrosReformasNecesariasEdificio;
+	@MappedColumn("INFRAESTRUCTURAS_ENTORNO_EDI")
 	private StringDataType infraestructurasEntornoEdificio;
+	@MappedColumn("COMUNICACIONES_ENTORNO_EDI")
 	private StringDataType comunicacionesEntornoEdificio;
 	private BooleanDataType existeOcio;
 	private BooleanDataType existenHoteles;
@@ -187,7 +242,9 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private StringDataType teatros;
 	private BooleanDataType existenSalasDeCine;
 	private StringDataType salasDeCine;
+	@MappedColumn("EXISTEN_INST_DEPORTIVAS")
 	private BooleanDataType existenInstalacionesDeportivas;
+	@MappedColumn("INST_DEPORTIVAS")
 	private StringDataType instalacionesDeportivas;
 	private BooleanDataType existenCentrosComerciales;
 	private StringDataType centrosComerciales;
@@ -209,11 +266,15 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private StringDataType clinicas;
 	private BooleanDataType existenHospitales;
 	private StringDataType hospitales;
+	@MappedColumn("EXISTEN_OTROS_CENTROS_SANIT")
 	private BooleanDataType existenOtrosCentrosSanitarios;
 	private StringDataType otrosCentrosSanitarios;
-	private StringDataType codTipoAparcamientoEnSuperficie;
+	@MappedColumn("SUFI_APARCAMIENTO_SUPERFICIE")
+	private BooleanDataType suficienteAparcamientoEnSuperficie;
 	private BooleanDataType existenComunicaciones;
+	@MappedColumn("EXISTE_FACIL_ACCESO_CARRETERA")
 	private BooleanDataType existeFacilAccesoPorCarretera;
+	@MappedColumn("FACIL_ACCESO_POR_CARRETERA")
 	private StringDataType facilAccesoPorCarretera;
 	private BooleanDataType existeLineasDeAutobus;
 	private StringDataType lineasDeAutobus;
@@ -222,11 +283,17 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType existeEstacionesDeTren;
 	private StringDataType estacionesDeTren;
 	private StringDataType otrosComunicaciones;
+	@MappedColumn("BUEN_ESTADO_PTA_ENT_NORMAL")
 	private BooleanDataType buenEstadoPuertaEntradaNormal;
+	@MappedColumn("BUEN_ESTADO_PTA_ENT_BLINDADA")
 	private BooleanDataType buenEstadoPuertaEntradaBlindada;
+	@MappedColumn("BUEN_ESTADO_PTA_ENT_ACORAZADA")
 	private BooleanDataType buenEstadoPuertaEntradaAcorazada;
+	@MappedColumn("BUEN_ESTADO_PTA_PASO_MACIZA")
 	private BooleanDataType buenEstadoPuertaPasoMaciza;
+	@MappedColumn("BUEN_ESTADO_PTA_PASO_HUECA")
 	private BooleanDataType buenEstadoPuertaPasoHueca;
+	@MappedColumn("BUEN_ESTADO_PTA_PASO_LACADA")
 	private BooleanDataType buenEstadoPuertaPasoLacada;
 	private BooleanDataType existenArmariosEmpotrados;
 	private StringDataType codAcabadoCarpinteria;
@@ -238,64 +305,111 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType buenEstadoVentanaMadera;
 	private BooleanDataType buenEstadoPersianaPlastico;
 	private BooleanDataType buenEstadoPersianaAluminio;
+	@MappedColumn("BUEN_ESTADO_VTNAS_CORREDERAS")
 	private BooleanDataType buenEstadoAperturaVentanaCorrederas;
+	@MappedColumn("BUEN_ESTADO_VTNAS_ABATIBLES")
 	private BooleanDataType buenEstadoAperturaVentanaAbatibles;
+	@MappedColumn("BUEN_ESTADO_VTNAS_OSCILOBAT")
 	private BooleanDataType buenEstadoAperturaVentanaOscilobat;
+	@MappedColumn("BUEN_ESTADO_DOBLE_CRISTAL")
 	private BooleanDataType buenEstadoDobleAcristalamientoOClimalit;
 	private StringDataType otrosCarpinteriaExterior;
 	private BooleanDataType humedadesPared;
 	private BooleanDataType humedadesTecho;
 	private BooleanDataType grietasPared;
 	private BooleanDataType grietasTecho;
+	@MappedColumn("ESTADO_PINTURA_PAREDES_GOTELE")
 	private BooleanDataType buenEstadoPinturaParedesGotele;
+	@MappedColumn("ESTADO_PINTURA_PAREDES_LISA")
 	private BooleanDataType buenEstadoPinturaParedesLisa;
+	@MappedColumn("ESTADO_PINTURA_PAREDES_PINTADO")
 	private BooleanDataType buenEstadoPinturaParedesPintado;
+	@MappedColumn("ESTADO_PINTURA_TECHO_GOTELE")
 	private BooleanDataType buenEstadoPinturaTechoGotele;
+	@MappedColumn("ESTADO_PINTURA_TECHO_LISA")
 	private BooleanDataType buenEstadoPinturaTechoLisa;
+	@MappedColumn("ESTADO_PINTURA_TECHO_PINTADO")
 	private BooleanDataType buenEstadoPinturaTechoPintado;
+	@MappedColumn("ESTADO_MOLDURA_ESCAYOLA")
 	private BooleanDataType buenEstadoMolduraEscayola;
 	private StringDataType otrosParamentosVerticales;
+	@MappedColumn("ESTADO_TARIMA_FLOTANTE_SOLADOS")
 	private BooleanDataType buenEstadoTarimaFlotanteSolados;
+	@MappedColumn("ESTADO_PARQUE_SOLADOS")
 	private BooleanDataType buenEstadoParqueSolados;
+	@MappedColumn("ESTADO_MARMOL_SOLADOS")
 	private BooleanDataType buenEstadoMarmolSolados;
+	@MappedColumn("ESTADO_PLAQUETA_SOLADOS")
 	private BooleanDataType buenEstadoPlaquetaSolados;
 	private StringDataType otrosSolados;
+	@MappedColumn("ESTADO_COCINA_AMUEBLADA_COCINA")
 	private BooleanDataType buenEstadoCocinaAmuebladaCocina;
+	@MappedColumn("ESTADO_ENCIMERA_GRANITO_COCINA")
 	private BooleanDataType buenEstadoEncimeraGranitoCocina;
+	@MappedColumn("ESTADO_ENCIMERA_MARMOL_COCINA")
 	private BooleanDataType buenEstadoEncimeraMarmolCocina;
+	@MappedColumn("ESTADO_ENCIMERA_MATERIAL_COC")
 	private BooleanDataType buenEstadoEncimeraMaterialCocina;
+	@MappedColumn("ESTADO_VITROCERAMICA_COCINA")
 	private BooleanDataType buenEstadoVitroceramicaCocina;
+	@MappedColumn("ESTADO_LABADORA_COCINA")
 	private BooleanDataType buenEstadoLavadoraCocina;
+	@MappedColumn("ESTADO_FRIGORIFICO_COCINA")
 	private BooleanDataType buenEstadoFrigorificoCocina;
+	@MappedColumn("ESTADO_LAVAVAJILLAS_COCINA")
 	private BooleanDataType buenEstadoLavavajillasCocina;
+	@MappedColumn("ESTADO_MICROONDAS_COCINA")
 	private BooleanDataType buenEstadoMicroondasCocina;
+	@MappedColumn("ESTADO_HORNO_COCINA")
 	private BooleanDataType buenEstadoHornoCocina;
+	@MappedColumn("ESTADO_SUELO_COCINA")
 	private BooleanDataType buenEstadoSueloCocina;
+	@MappedColumn("ESTADO_AZULEJOS_COCINA")
 	private BooleanDataType buenEstadoAzulejosCocina;
+	@MappedColumn("ESTADO_GRIFERIA_MONOMANDO_COC")
 	private BooleanDataType buenEstadoGriferiaMonomandoCocina;
 	private StringDataType otrosCocina;
+	@MappedColumn("ESTADO_DUCHA_BNY")
 	private BooleanDataType buenEstadoDuchaBanyo;
+	@MappedColumn("ESTADO_BANYERA_NORMAL_BNY")
 	private BooleanDataType buenEstadoBanyeraNormalBanyo;
+	@MappedColumn("ESTADO_BANYERA_HIDROMASAJE_BNY")
 	private BooleanDataType buenEstadoBanyeraHidromasajeBanyo;
+	@MappedColumn("ESTADO_COLUMNA_HIDROMASAJE_BNY")
 	private BooleanDataType buenEstadoColumnaHidromasajeBanyo;
+	@MappedColumn("ESTADO_ALICATADO_MARMOL_BNY")
 	private BooleanDataType buenEstadoAlicatadoMarmolBanyo;
+	@MappedColumn("ESTADO_ALICATADO_GRANITO_BNY")
 	private BooleanDataType buenEstadoAlicatadoGranitoBanyo;
+	@MappedColumn("ESTADO_ALICATADO_AZULEJO_BNY")
 	private BooleanDataType buenEstadoAlicatadoAzulejoBanyo;
+	@MappedColumn("ESTADO_ENCIMERA_MARMOL_BNY")
 	private BooleanDataType buenEstadoEncimeraMarmolBanyo;
+	@MappedColumn("ESTADO_ENCIMERA_GRANITO_BNY")
 	private BooleanDataType buenEstadoEncimeraGranitoBanyo;
+	@MappedColumn("ESTADO_ENCIMERA_MATERIAL_BNY")
 	private BooleanDataType buenEstadoEncimeraMaterialBanyo;
+	@MappedColumn("ESTADO_SANITARIOS_BNY")
 	private BooleanDataType buenEstadoSanitariosBanyo;
+	@MappedColumn("ESTADO_SUELO_BNY")
 	private BooleanDataType buenEstadoSueloBanyo;
+	@MappedColumn("ESTADO_GRIFERIA_MONOMANDO_BNY")
 	private BooleanDataType buenEstadoGriferiaMonomandoBanyo;
 	private StringDataType otrosBanyo;
+	@MappedColumn("ESTADO_INS_ELECTR")
 	private BooleanDataType buenEstadoInstalacionElectrica;
+	@MappedColumn("INS_ELECTR_ANTIGUA_DEFECTUOSA")
 	private BooleanDataType instalacionElectricaAntiguaODefectuosa;
 	private BooleanDataType existeCalefaccionGasNatural;
 	private BooleanDataType existenRadiadoresDeAluminio;
 	private BooleanDataType existeAguaCalienteCentral;
+	@MappedColumn("EXISTE_AGUA_CALIENTE_GAS_NAT")
 	private BooleanDataType existeAguaCalienteGasNatural;
+	@MappedColumn("EXISTE_AIRE_PREINSTALACION")
 	private BooleanDataType existeAireAcondicionadoPreinstalacion;
+	@MappedColumn("EXISTE_AIRE_INSTALACION")
 	private BooleanDataType existeAireAcondicionadoInstalacion;
+	@MappedColumn("EXISTE_AIRE_CALOR")
 	private BooleanDataType existeAireAcondicionadoCalor;
 	private StringDataType otrosInstalaciones;
 	private BooleanDataType existenJardinesZonasVerdes;
@@ -784,7 +898,7 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setOtrosOtrasDependencias(StringDataType otrosOtrasDependencias) {
 		this.otrosOtrasDependencias = otrosOtrasDependencias;
 	}
-	public BooleanDataType getInstalacionElectricidadInstalaciones() {
+	/*public BooleanDataType getInstalacionElectricidadInstalaciones() {
 		return instalacionElectricidadInstalaciones;
 	}
 	public void setInstalacionElectricidadInstalaciones(BooleanDataType instalacionElectricidadInstalaciones) {
@@ -819,7 +933,7 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	}
 	public void setContadorGasInstalacion(BooleanDataType contadorGasInstalacion) {
 		this.contadorGasInstalacion = contadorGasInstalacion;
-	}
+	}*/
 	public BooleanDataType getExteriorCarpinteriaReformasNecesarias() {
 		return exteriorCarpinteriaReformasNecesarias;
 	}
@@ -1182,16 +1296,23 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setBuenEstadoContadorGasInstalacion(BooleanDataType buenEstadoContadorGasInstalacion) {
 		this.buenEstadoContadorGasInstalacion = buenEstadoContadorGasInstalacion;
 	}
-	public BooleanDataType getBuenEstadoConservacionEdificio() {
+	public StringDataType getCodEstadoConservacionEdificio() {
+		return codEstadoConservacionEdificio;
+	}
+	public void setCodEstadoConservacionEdificio(
+			StringDataType codEstadoConservacionEdificio) {
+		this.codEstadoConservacionEdificio = codEstadoConservacionEdificio;
+	}
+	/*	public BooleanDataType getBuenEstadoConservacionEdificio() {
 		return buenEstadoConservacionEdificio;
 	}
 	public void setBuenEstadoConservacionEdificio(BooleanDataType buenEstadoConservacionEdificio) {
 		this.buenEstadoConservacionEdificio = buenEstadoConservacionEdificio;
-	}
-	public DateDataType getAnyoRehabilitacionEdificio() {
+	}*/
+	public LongDataType getAnyoRehabilitacionEdificio() {
 		return anyoRehabilitacionEdificio;
 	}
-	public void setAnyoRehabilitacionEdificio(DateDataType anyoRehabilitacionEdificio) {
+	public void setAnyoRehabilitacionEdificio(LongDataType anyoRehabilitacionEdificio) {
 		this.anyoRehabilitacionEdificio = anyoRehabilitacionEdificio;
 	}
 	public LongDataType getNumeroPlantasEdificio() {
@@ -1495,11 +1616,18 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setOtrosCentrosSanitarios(StringDataType otrosCentrosSanitarios) {
 		this.otrosCentrosSanitarios = otrosCentrosSanitarios;
 	}
-	public StringDataType getCodTipoAparcamientoEnSuperficie() {
+/*	public StringDataType getCodTipoAparcamientoEnSuperficie() {
 		return codTipoAparcamientoEnSuperficie;
 	}
 	public void setCodTipoAparcamientoEnSuperficie(StringDataType codTipoAparcamientoEnSuperficie) {
 		this.codTipoAparcamientoEnSuperficie = codTipoAparcamientoEnSuperficie;
+	}*/
+	public BooleanDataType getSuficienteAparcamientoEnSuperficie() {
+		return suficienteAparcamientoEnSuperficie;
+	}
+	public void setSuficienteAparcamientoEnSuperficie(
+			BooleanDataType suficienteAparcamientoEnSuperficie) {
+		this.suficienteAparcamientoEnSuperficie = suficienteAparcamientoEnSuperficie;
 	}
 	public BooleanDataType getExistenComunicaciones() {
 		return existenComunicaciones;

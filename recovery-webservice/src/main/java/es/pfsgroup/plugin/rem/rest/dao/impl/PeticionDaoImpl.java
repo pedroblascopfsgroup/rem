@@ -20,7 +20,9 @@ public class PeticionDaoImpl extends AbstractEntityDao<PeticionRest, Long> imple
 	public boolean existePeticionToken(String token,Long idBroker) {
 		HQLBuilder hb = new HQLBuilder("from PeticionRest");
 		HQLBuilder.addFiltroIgualQue(hb,  "token", token);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "broker.id", idBroker);
+		if(idBroker==new Long(-1)){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "broker.id", idBroker);
+		}
 		HQLBuilder.addFiltroIgualQue(hb,  "result", "OK");
 		return !HibernateQueryUtils.list(this, hb).isEmpty();
 	}

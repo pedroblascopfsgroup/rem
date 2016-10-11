@@ -30,6 +30,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -148,7 +149,13 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_FECHA_RECHAZO")
 	private Date fechaRechazoOferta;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CAP_ID")
+	private DDCanalPrescripcion canalPrescripcion;
     
+	@Column(name="OFR_DESDE_TANTEO")
+	private Boolean desdeTanteo;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -405,6 +412,21 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaRechazoOferta(Date fechaRechazoOferta) {
 		this.fechaRechazoOferta = fechaRechazoOferta;
 	}
+
+	public DDCanalPrescripcion getCanalPrescripcion() {
+		return canalPrescripcion;
+	}
+
+	public void setCanalPrescripcion(DDCanalPrescripcion canalPrescripcion) {
+		this.canalPrescripcion = canalPrescripcion;
+	}
 	
+	public Boolean getDesdeTanteo() {
+		return desdeTanteo;
+	}
+
+	public void setDesdeTanteo(Boolean desdeTanteo) {
+		this.desdeTanteo = desdeTanteo;
+	}
 
 }

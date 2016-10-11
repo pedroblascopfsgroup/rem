@@ -104,7 +104,7 @@ public interface GastoProveedorApi {
 		 * Método que actualiza la la contabilidad de un gasto
 		 * @return
 		 */
-		boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto);
+		boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto);
 
 		/**
 		 * crea un gasto
@@ -117,13 +117,13 @@ public interface GastoProveedorApi {
 		 * Método que actualiza la gestión de un gasto
 		 * @return
 		 */
-		boolean updateGestionGasto(DtoGestionGasto dto);
+		boolean updateGestionGasto(DtoGestionGasto dto, Long idGasto);
 		
 		/**
 		 * Método que actualiza la impugnación de un gasto
 		 * @return
 		 */
-		boolean updateImpugnacionGasto(DtoImpugnacionGasto dto);
+		boolean updateImpugnacionGasto(DtoImpugnacionGasto dto, Long idGasto);
 
 		/**
 		 * Método que asigna los trabajos que recibe a un gasto
@@ -145,7 +145,7 @@ public interface GastoProveedorApi {
 		 * @param trabajos
 		 * @return
 		 */
-		public boolean quitarTrabajos(Long idGasto, Long[] trabajos);
+		public boolean desasignarTrabajos(Long idGasto, Long[] trabajos);
 
 		
 		/**

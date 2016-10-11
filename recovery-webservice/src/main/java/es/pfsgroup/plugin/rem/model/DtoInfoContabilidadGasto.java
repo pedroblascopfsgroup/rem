@@ -21,7 +21,6 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
-	private Long id;
 	private Long ejercicioImputaGasto;
 	private String periodicidadDescripcion;
 	private String partidaPresupuestariaDescripcion;
@@ -32,12 +31,7 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private String cuentaContableEspecialDescripcion;
 	private Date fechaContabilizacion;
 	private String contabilizadoPorDescripcion;
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+
 	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
 	}

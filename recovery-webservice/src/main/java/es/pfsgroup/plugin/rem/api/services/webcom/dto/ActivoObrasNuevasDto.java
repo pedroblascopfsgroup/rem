@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class ActivoObrasNuevasDto implements WebcomRESTDto {
@@ -10,11 +11,13 @@ public class ActivoObrasNuevasDto implements WebcomRESTDto {
 	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
 	@WebcomRequired
-	private LongDataType idAgrupacionRem;
+	private LongDataType idAgrupacionRem;	
 	@WebcomRequired
+	@MappedColumn("ID_SUBDIVISION_REM")
 	private LongDataType idSubdivisionAgrupacionRem;
 	@WebcomRequired
 	private LongDataType idActivoHaya;
+	
 	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -46,5 +49,7 @@ public class ActivoObrasNuevasDto implements WebcomRESTDto {
 	public void setIdActivoHaya(LongDataType idActivoHaya) {
 		this.idActivoHaya = idActivoHaya;
 	}
+
+	
 
 }

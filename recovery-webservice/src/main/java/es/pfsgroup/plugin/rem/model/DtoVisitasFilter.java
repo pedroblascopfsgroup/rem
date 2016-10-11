@@ -13,6 +13,7 @@ public class DtoVisitasFilter extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 
+	private Long id;
 	private Long numVisitaRem;
 	private Long numActivo;
 	private Long numActivoRem;
@@ -27,6 +28,12 @@ public class DtoVisitasFilter extends WebDto {
 
 	public Long getNumVisitaRem() {
 		return numVisitaRem;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	public void setNumVisitaRem(Long numVisitaRem) {
 		this.numVisitaRem = numVisitaRem;

@@ -15,10 +15,12 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
         var items = [
         
 	        {
-	        	xtype:'gestiongastossearch'
+	        	xtype:'gestiongastossearch',
+	        	reference: 'gestiongastossearchref'
 	        },       			
 	        {
-	        	xtype: 'gestiongastoslist'	        	
+	        	xtype: 'gestiongastoslist',
+	        	reference: 'gestiongastoslistref'
 			}
         
         ];

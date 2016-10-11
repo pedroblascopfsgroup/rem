@@ -6,6 +6,19 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+
 public class ClienteDto implements Serializable{
 	
 	/**
@@ -13,22 +26,29 @@ public class ClienteDto implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;
-	@NotNull
+	@NotNull(groups = { Insert.class})
+	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
+			Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
+	@Diccionary(clase = ClienteComercial.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
+			Update.class },foreingField="idClienteWebcom")
 	private Long idClienteWebcom;
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteRem;
 	@Size(max=50)
 	private String razonSocial;
-	@NotNull
+	@NotNull(groups = { Insert.class})
 	@Size(max=25)
 	private String nombre;
-	@NotNull
+	@NotNull(groups = { Insert.class})
 	@Size(max=50)
 	private String apellidos;
 	@Size(max=20)
+	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumento no existe", groups = { Insert.class,
+			Update.class })
 	private String codTipoDocumento;
 	@Size(max=14)
 	private String documento;
@@ -44,9 +64,15 @@ public class ClienteDto implements Serializable{
 	private String email;
 	//@Size(max=20)
 	//private String codTipoPrescriptor;
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
+			Update.class },foreingField="id")
 	private Long idProveedorRemPrescriptor;
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
+			Update.class },foreingField="id")
 	private Long idProveedorRemResponsable;
 	@Size(max=20)
+	@Diccionary(clase = DDTipoVia.class, message = "El codTipoVia de activo no existe", groups = { Insert.class,
+			Update.class })
 	private String codTipoVia;
 	@Size(max=100)
 	private String nombreCalle;
@@ -59,10 +85,15 @@ public class ClienteDto implements Serializable{
 	@Size(max=17)
 	private String puerta;
 	@Size(max=20)
+	@Diccionary(clase = Localidad.class, message = "El codMunicipio no existe", groups = { Insert.class, Update.class })
 	private String codMunicipio;
 	@Size(max=20)
+	@Diccionary(clase = DDProvincia.class, message = "El codProvincia no existe", groups = { Insert.class,
+			Update.class })
 	private String codProvincia;
 	@Size(max=20)
+	@Diccionary(clase = DDUnidadPoblacional.class, message = "El codPedania no existe", groups = { Insert.class,
+			Update.class })
 	private String codPedania;
 	@Size(max=5)
 	private String codigoPostal;

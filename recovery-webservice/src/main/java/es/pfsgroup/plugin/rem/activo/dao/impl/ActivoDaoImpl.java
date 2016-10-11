@@ -440,13 +440,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.tipoActivoCodigo", dto.getTipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subtipoActivoCodigo", dto.getSubtipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.despublicadoForzado", dto.getDespubliForzada());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicadoForzado", dto.getPubliForzada());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.estadoPublicacionCodigo", dto.getEstadoPublicacionCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.admision", dto.getAdmision());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.gestion", dto.getGestion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precio", dto.getPrecio());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precioConsultar", dto.getPrecioConsultar());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.informeComercial", dto.getInformeComercial());
    		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

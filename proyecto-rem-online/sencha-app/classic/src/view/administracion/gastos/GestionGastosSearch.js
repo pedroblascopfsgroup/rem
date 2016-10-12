@@ -179,17 +179,18 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 			    		]
 				    },
 				    {
-
+						
 			    		title: HreRem.i18n('title.filtro.por.proveedor'),
 			    		defaultType: 'textfieldbase',
 			    		defaults: {							        
 							addUxReadOnlyEditFieldPlugin: false
 						},
+						hidden: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
 			    		items: [
 			    		
 			    			{ 
 						    	fieldLabel: HreRem.i18n('fieldlabel.nif.proveedor'),
-						        name: 'nifProveedor'								            	
+						        name: 'nifProveedor'
 						    },			    		
 					    	{ 
 					        	xtype: 'comboboxfieldbase',

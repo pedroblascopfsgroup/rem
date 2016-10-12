@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +22,19 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
+import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-import net.sf.json.JSONObject;
 
 @Controller
 public class NotificacionesController {
 
 	@Autowired
-	private NotificacionAdapter notificacionAdapter;
+	private AnotacionApi anotacionApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 	
@@ -91,6 +92,7 @@ public class NotificacionesController {
 					if (errorsList.size() == 0) {
 						Notificacion notificacionBbdd = new Notificacion();
 						notificacionBbdd.setIdActivo(notificacion.getIdActivoHaya());
+						notificacionBbdd.setIdTareaAppExterna(notificacion.getIdNotificacionWebcom());
 						notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
 						notificacionBbdd.setTitulo(notificacion.getTitulo());
 						notificacionBbdd.setDescripcion(notificacion.getDescripcion());
@@ -100,7 +102,7 @@ public class NotificacionesController {
 							notificacionBbdd.setFecha(null);
 						}
 						
-						Notificacion notifrem = notificacionAdapter.saveNotificacion(notificacionBbdd);
+						Notificacion notifrem = anotacionApi.saveNotificacion(notificacionBbdd);
 						map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
 						map.put("idNotificacionRem", notifrem.getIdsNotificacionCreada().get(0));
 						map.put("success", true);

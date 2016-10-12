@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 
@@ -495,4 +496,11 @@ public interface ActivoApi {
 	     */
 	    @BusinessOperationDefinition("activoManager.uploadDocumento")
 		String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula) throws Exception;
+	    
+	    /**
+		 * Devuelve la lista de proveedores para un activo
+		 * @param idActivo
+		 * @return
+		 */
+	    public List<VBusquedaProveedoresActivo> getProveedorByActivo(Long idActivo);
     }

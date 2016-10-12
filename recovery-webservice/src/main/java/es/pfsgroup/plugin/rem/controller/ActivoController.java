@@ -90,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
@@ -1966,5 +1967,25 @@ public class ActivoController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getProveedorByActivo(Long idActivo, ModelMap model){
+		
+		try {
+			
+			List<VBusquedaProveedoresActivo> lista  =  activoApi.getProveedorByActivo(idActivo);
+			
+			model.put("data", lista);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+			return createModelAndViewJson(model);
+	}
+	
 	
 }

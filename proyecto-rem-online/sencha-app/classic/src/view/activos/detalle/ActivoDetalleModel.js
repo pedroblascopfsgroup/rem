@@ -880,6 +880,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {idActivo: '{activo.id}'}
 			},
 			autoload: true
+		},
+		
+		storeProveedores: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Proveedor',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getProveedorByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			autoload: true
 		}
      }    
 });

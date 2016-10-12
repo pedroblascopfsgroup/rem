@@ -4,34 +4,43 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
 
     fields: [    
     		{
-    			name:'ruina'
+    			name:'ruina',
+    			type: 'boolean'
     		},
     		{
-    			name:'pendienteInscripcion'
+    			name:'pendienteInscripcion',
+    			type: 'boolean'
     		},
     		{
-    			name:'obraNuevaSinDeclarar'
+    			name:'obraNuevaSinDeclarar',
+    			type: 'boolean'
     		},
     		{
-    			name:'sinTomaPosesionInicial'
+    			name:'sinTomaPosesionInicial',
+    			type: 'boolean'
     		},
     		{
-    			name:'proindiviso'
+    			name:'proindiviso',
+    			type: 'boolean'
     		},
     		{
-    			name:'obraNuevaEnConstruccion'
+    			name:'obraNuevaEnConstruccion',
+    			type: 'boolean'
     		},
     		{
-    			name:'ocupadoConTitulo'
+    			name:'ocupadoConTitulo',
+    			type: 'boolean'
     		},
     		{
-    			name:'tapiado'
+    			name:'tapiado',
+    			type: 'boolean'
     		},
     		{
     			name:'otro'
     		},
     		{
-    			name: 'portalesExternos'
+    			name: 'portalesExternos',
+    			type: 'boolean'
     		},
     		{
     			name: 'portalesExternosDescripcion',
@@ -45,10 +54,12 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
 				depends: 'portalesExternos'
     		},
     		{
-    			name:'ocupadoSinTitulo'
+    			name:'ocupadoSinTitulo',
+    			type: 'boolean'
     		},
     		{
-    			name:'divHorizontalNoInscrita'
+    			name:'divHorizontalNoInscrita',
+    			type: 'boolean'
     		},
     		// Referente a la cabecera de datos publicacion. Campo calculado con datos de este modelo.
     		{
@@ -58,6 +69,8 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
 							|| data.proindiviso || data.obraNuevaEnConstruccion || data.ocupadoConTitulo || data.tapiado
 							|| data.ocupadoSinTitulo || data.divHorizontalNoInscrita || !Ext.isEmpty(data.otro)){
 						return true;
+					} else {
+						return false;
 					}
 				}
     		}

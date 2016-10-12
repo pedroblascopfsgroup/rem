@@ -45,7 +45,7 @@ DECLARE
 BEGIN    
 			  
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_DECISION =''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? ''''Aprueba'''': (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Rechaza'''' : (checkSareb() ? ''''ContraofertaSareb'''' : ''''Contraoferta'''')) '' '
+			  ' SET TAP_SCRIPT_DECISION =''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? ''''Aprueba'''': (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Rechaza'''' : (checkSareb() ? ''''ContraofertaSareb'''' : ''''Contraoferta'''')) '' '||
 			  ' WHERE TAP_CODIGO = ''T013_ResolucionComite'' ';
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');

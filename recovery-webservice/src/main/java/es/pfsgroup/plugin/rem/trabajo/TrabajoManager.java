@@ -2342,14 +2342,31 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 	   return false;	   			   
    }
 	
+   	//TODO: Dani: Cuando estén definidas y desarrolladas las atribuciones, hay que desarrollar estos dos métodos. ¿Meterlos en OfertaApi?
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		return false;
 	}
 	
 	@Override
+	public boolean checkAtribuciones(Trabajo trabajo) {
+		return false;
+	}
+	
+	@Override
 	public boolean checkSareb(TareaExterna tareaExterna){
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if(!Checks.esNulo(trabajo)){
+			Activo primerActivo = trabajo.getActivo();
+			if(!Checks.esNulo(primerActivo)){
+				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkSareb(Trabajo trabajo){
 		if(!Checks.esNulo(trabajo)){
 			Activo primerActivo = trabajo.getActivo();
 			if(!Checks.esNulo(primerActivo)){

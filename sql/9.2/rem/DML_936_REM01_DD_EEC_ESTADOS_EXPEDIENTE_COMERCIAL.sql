@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20161011
+--## FECHA_CREACION=20161012
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -38,7 +38,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('13'	,'Pte. doble firma'					,'Pte. doble firma')
+        T_TIPO_DATA('13'	,'Pte. doble firma'					,'Pte. doble firma'),
+        T_TIPO_DATA('14'	,'Rpta. ofertante'					,'Rpta. ofertante')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

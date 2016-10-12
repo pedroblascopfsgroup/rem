@@ -30,6 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
@@ -77,6 +78,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -910,5 +914,25 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		
 		return listaMapeada;
+	}
+
+	@Override
+	public String getNifProveedorByUsuarioLogado() {
+		
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+		String nifProveedor = null;
+		
+		Filter idUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+		List<ActivoProveedorContacto> listaPersonasContacto = genericDao.getList(ActivoProveedorContacto.class, idUsuario);
+		
+		if(!Checks.estaVacio(listaPersonasContacto) && !Checks.esNulo(listaPersonasContacto.get(0).getProveedor())) {			
+			nifProveedor = listaPersonasContacto.get(0).getProveedor().getDocIdentificativo();
+		} else if (!Checks.estaVacio(listaPersonasContacto)) {
+			nifProveedor = listaPersonasContacto.get(0).getDocIdentificativo();
+		} else {
+			nifProveedor = usuario.getUsername();
+		}
+
+		return nifProveedor;
 	}
 }

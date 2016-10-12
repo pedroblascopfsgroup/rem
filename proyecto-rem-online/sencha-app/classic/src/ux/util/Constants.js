@@ -141,6 +141,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	SAREB: '02',
     	BANKIA: '03',
     	TERCEROS: '04'
+    },
+    
+    PERFILES: {   	
+    	PROVEEDOR: 'HAYAPROV',
+    	GESTOR_ACTIVOS: 'GESTACT',
+    	GESTOR_ADMISION: 'GESTADM'    	
     }
     
 

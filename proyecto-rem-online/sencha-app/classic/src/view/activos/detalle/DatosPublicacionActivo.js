@@ -54,9 +54,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 				                	readOnly: true
 			                    }
 							]
-						
 					},
-// Circunstancias completas.
+// Circunstancias concretas.
 			        {
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',

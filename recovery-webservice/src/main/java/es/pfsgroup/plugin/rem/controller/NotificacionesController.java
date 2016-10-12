@@ -96,9 +96,9 @@ public class NotificacionesController {
 						notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
 						notificacionBbdd.setTitulo(notificacion.getTitulo());
 						notificacionBbdd.setDescripcion(notificacion.getDescripcion());
-						if (notificacion.getCodTipoNotificacion().equals("N")){
+						if(!Checks.esNulo(notificacion.getFechaRealizacion())){
 							notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
-						}else if(notificacion.getCodTipoNotificacion().equals("A")){
+						}else{
 							notificacionBbdd.setFecha(null);
 						}
 						

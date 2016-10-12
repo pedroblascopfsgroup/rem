@@ -42,6 +42,8 @@ public interface  ParticularValidatorApi {
 	
 	public Boolean esActivoIncluidoPerimetro(String numActivo);
 	
+	public Boolean esActivoAsistido (String numActivo);
+	
 	/**
 	 * Validacion de Localizacion unica para un grupo de activos
 	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas

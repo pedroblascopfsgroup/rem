@@ -1182,17 +1182,52 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var id = chkbx.getReference();
     	var view = me.getView();
 
-    	if(!chkbx.getValue() && id != "chkbxpublicacionforzada"){
-    		// si el checkbox esta siendo desactivado y no es de publicación, no hacer nada.
+    	if(!chkbx.getValue() && (id != "chkbxpublicacionforzada" || id != "chkbxpublicacionordinaria")){
+    		// si el checkbox esta siendo desactivado y no es de la sección 'publicación', tan sólo resetear conenido textbox de la propia sección del checkbox.
+    		switch (id){
+        	case "chkbxpublicacionocultarprecio":
+        		// textfield.
+        		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+        		// textarea.
+        		view.lookupReference('textareapublicacionocultacionprecio').reset();
+        		break;
+        	case "chkbxpublicaciondespublicar":
+        		// checkbox.
+        		view.lookupReference('chkbxpublicacionforzada').setValue(me.chkbxPublicacionForzadaLastState);
+        		view.lookupReference('chkbxpublicacionordinaria').setValue(me.chkbxPublicacionOrdinariaLastState);
+        		// textfield.
+        		view.lookupReference('textfieldpublicaciondespublicar').reset();
+        		break;
+        	case "chkbxpublicacionocultacionforzada":
+        		// textfield.
+        		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+        		break;
+        	default:
+        		break;
+        	}
     		return;
     	}
     	
     	switch (id){
+    	case "chkbxpublicacionordinaria":
+    		// checkbox.
+    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+    		// textarea.
+    		view.lookupReference('textareapublicacionocultacionprecio').reset();
+    		break;
     	case "chkbxpublicacionforzada":
     		// checkbox.
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
     		// textfield.
     		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
@@ -1210,7 +1245,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		break;
     	case "chkbxpublicaciondespublicar":
+    		me.chkbxPublicacionForzadaLastState = view.lookupReference('chkbxpublicacionforzada').getValue();
     		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		me.chkbxPublicacionOrdinariaLastState = view.lookupReference('chkbxpublicacionordinaria').getValue();
+    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
     		// textfield.

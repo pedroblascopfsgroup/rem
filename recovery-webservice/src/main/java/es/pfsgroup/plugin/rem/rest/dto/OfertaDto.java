@@ -27,25 +27,24 @@ public class OfertaDto implements Serializable {
 	private Long idClienteRem;
 	@NotNull(groups = { Update.class })
 	private Long idActivoHaya;
-	@NotNull
+	@NotNull(groups = { Insert.class })
 	private Double importe;
 	private Double importeContraoferta;
 	private List<OfertaTitularAdicionalDto> titularesAdicionales;
-	@NotNull
+	@NotNull(groups = { Insert.class })
 	private Long idProveedorRemPrescriptor;
-	@NotNull
+	@NotNull(groups = { Insert.class })
 	private Long idProveedorRemCustodio;
 	private Long idProveedorRemResponsable;
 	private Long idProveedorRemFdv;
-	@NotNull
 	@Size(max=20)
 	private String codEstadoOferta;
-	@NotNull
+	@NotNull(groups = { Insert.class })
 	@Size(max=20)
 	private String codTipoOferta;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idUsuarioRemAccion;
 	
 	

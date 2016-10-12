@@ -36,11 +36,11 @@ public class VBusquedaPublicacionActivo implements Serializable {
     @Column(name = "DIRECCION")
     private String direccion;
     
-    @Column(name="DESPUBLICADO_FORZADO")
-    private Boolean despublicadoForzado;
+    @Column(name="ESTADO_PUBLICACION_CODIGO")
+    private String estadoPublicacionCodigo;
     
-    @Column(name="PUBLICADO_FORZADO")
-    private Boolean publicadoForzado;
+    @Column(name="ESTADO_PUBLICACION_DESCRIPCION")
+    private String estadoPublicacionDescripcion;
 	
     @Column(name="ADMISION")
     private Boolean admision;
@@ -51,14 +51,14 @@ public class VBusquedaPublicacionActivo implements Serializable {
     @Column(name="PUBLICACION")
     private Boolean publicacion;
     
+    @Column(name="INFORME_COMERCIAL")
+    private Boolean informeComercial;
+    
     @Column(name="PRECIO")
     private Boolean precio;
     
     @Column(name="CARTERA_CODIGO")
     private String cartera;
-    
-    @Column(name="PRECIO_CONSULTAR")
-    private Boolean precioConsultar;
 
 	public Long getId() {
 		return id;
@@ -116,20 +116,20 @@ public class VBusquedaPublicacionActivo implements Serializable {
 		this.direccion = direccion;
 	}
 
-	public Boolean getDespubliForzado() {
-		return despublicadoForzado;
+	public String getEstadoPublicacionCodigo() {
+		return estadoPublicacionCodigo;
 	}
 
-	public void setDespubliForzado(Boolean despubliForzado) {
-		this.despublicadoForzado = despubliForzado;
+	public void setEstadoPublicacionCodigo(String estadoPublicacionCodigo) {
+		this.estadoPublicacionCodigo = estadoPublicacionCodigo;
 	}
 
-	public Boolean getPubliForzado() {
-		return publicadoForzado;
+	public String getEstadoPublicacionDescripcion() {
+		return estadoPublicacionDescripcion;
 	}
 
-	public void setPubliForzado(Boolean publiForzado) {
-		this.publicadoForzado = publiForzado;
+	public void setEstadoPublicacionDescripcion(String estadoPublicacionDescripcion) {
+		this.estadoPublicacionDescripcion = estadoPublicacionDescripcion;
 	}
 
 	public Boolean getAdmision() {
@@ -170,14 +170,6 @@ public class VBusquedaPublicacionActivo implements Serializable {
 
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
-	}
-
-	public Boolean getPrecioConsultar() {
-		return precioConsultar;
-	}
-
-	public void setPrecioConsultar(Boolean precioConsultar) {
-		this.precioConsultar = precioConsultar;
 	}
     
 }

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,17 +17,17 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.security.UsuarioSecurityManager;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -78,16 +79,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private UpdaterStateApi updaterState;
 
 	@Autowired
-	private ParticularValidatorApi particularValidatorApi;
-	
-	@Autowired
-	private ActivoApi activoApi;
-	
-	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
 	private TrabajoApi trabajoApi;
+
+	@Autowired
+	private UsuarioSecurityManager usuarioSecurityManager;
 
 	@Override
 	public String managerName() {
@@ -184,20 +182,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		if (param > 0) {
 			ofertaDto = new OfertaDto();
-			if(numOfertaRem != null){
+			if (numOfertaRem != null) {
 				ofertaDto.setIdOfertaRem(numOfertaRem);
 			}
-			
-			if(idOfertaWebcom !=null){
+
+			if (idOfertaWebcom != null) {
 				ofertaDto.setIdOfertaWebcom(idOfertaWebcom);
-			}			
+			}
 
 			lista = ofertaDao.getListaOfertas(ofertaDto);
 			if (!Checks.esNulo(lista) && lista.size() > 0) {
 				oferta = lista.get(0);
 			}
 
-		}else{
+		} else {
 			throw new Exception("Faltan datos para el filtro");
 		}
 		return oferta;
@@ -453,14 +451,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setUsuarioAccion(user);
 				}
 			}
-			DDEstadoOferta estadoOfr = null;
-			if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {
-				estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));
-				if (!Checks.esNulo(estadoOfr)) {
-					oferta.setEstadoOferta(estadoOfr);
-				}
-			}
+			/*
+			 * DDEstadoOferta estadoOfr = null; if
+			 * (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) { estadoOfr =
+			 * (DDEstadoOferta) genericDao.get(DDEstadoOferta.class,
+			 * genericDao.createFilter(FilterType.EQUALS, "codigo",
+			 * ofertaDto.getCodEstadoOferta())); if (!Checks.esNulo(estadoOfr))
+			 * { oferta.setEstadoOferta(estadoOfr); } }
+			 */
 			if (!Checks.esNulo(ofertaDto.getCodTipoOferta())) {
 				DDTipoOferta tipoOfr = (DDTipoOferta) genericDao.get(DDTipoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodTipoOferta()));
@@ -521,19 +519,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			}
 
-			if (ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
-				oferta.setFechaAlta(ofertaDto.getFechaAccion());
-			} else if (ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
-				oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion());
-			}
-
-			ofertaDao.save(oferta);
-
+			Long idOferta = ofertaDao.save(oferta);
+			oferta.setId(idOferta);
+			updateEstadoOferta(oferta, ofertaDto.getFechaAccion());
 			// Si la oferta tiene estado, hay que actualizar la disposicion
 			// comercial del activo
-			if (!Checks.esNulo(estadoOfr)) {
-				this.updateStateDispComercialActivosByOferta(oferta);
-			}
+			/*
+			 * if (!Checks.esNulo(estadoOfr)) {
+			 * this.updateStateDispComercialActivosByOferta(oferta); }
+			 */
 
 		}
 		return errorsList;
@@ -552,33 +546,68 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				oferta.setImporteContraOferta(ofertaDto.getImporteContraoferta());
 			}
-			DDEstadoOferta estadoOfr = null;
-			if (((JSONObject) jsonFields).containsKey("codEstadoOferta")) {
-				if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {
-					estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));
-					if (!Checks.esNulo(estadoOfr)) {
-						oferta.setEstadoOferta(estadoOfr);
-					}
-				} else {
-					oferta.setEstadoOferta(null);
-				}
-			}
-			if (ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
-				oferta.setFechaAlta(ofertaDto.getFechaAccion());
-			} else if (ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
-				oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion());
-			}
+			/*
+			 * DDEstadoOferta estadoOfr = null; if (((JSONObject)
+			 * jsonFields).containsKey("codEstadoOferta")) { if
+			 * (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) { estadoOfr =
+			 * (DDEstadoOferta) genericDao.get(DDEstadoOferta.class,
+			 * genericDao.createFilter(FilterType.EQUALS, "codigo",
+			 * ofertaDto.getCodEstadoOferta())); if (!Checks.esNulo(estadoOfr))
+			 * { oferta.setEstadoOferta(estadoOfr); } } else {
+			 * oferta.setEstadoOferta(null); } } if
+			 * (ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.
+			 * CODIGO_PENDIENTE)) {
+			 * oferta.setFechaAlta(ofertaDto.getFechaAccion()); } else if
+			 * (ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.
+			 * CODIGO_RECHAZADA)) {
+			 * oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion()); }
+			 */
 			ofertaDao.saveOrUpdate(oferta);
+			updateEstadoOferta(oferta, ofertaDto.getFechaAccion());
 
 			// Si la oferta tiene estado, hay que actualizar la disposicion
 			// comercial del activo
-			if (!Checks.esNulo(estadoOfr)) {
-				this.updateStateDispComercialActivosByOferta(oferta);
-			}
+			/*
+			 * if (!Checks.esNulo(estadoOfr)) {
+			 * this.updateStateDispComercialActivosByOferta(oferta); }
+			 */
 		}
 
 		return errorsList;
+	}
+
+	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) {
+		if (oferta.getEstadoOferta() == null) {
+			UsuarioSecurity usuarioSecurity = usuarioSecurityManager.get(new Long(29737));
+			usuarioSecurity.setUsername("REM-USER");
+			restApi.doLogin(usuarioSecurity);
+
+			List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
+			boolean isAccepted = false;
+			for(ActivoOferta tmp:listaActivoOferta){
+				Oferta ofertaAux = tmp.getPrimaryKey().getOferta();
+				if (ofertaAux.getEstadoOferta()!=null && DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+					isAccepted = true;
+				}
+			}
+			
+			if (isAccepted) {
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
+			} else {
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+			}
+			if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
+				oferta.setFechaAlta(fechaAccion);
+			} else if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
+				oferta.setFechaRechazoOferta(fechaAccion);
+			}
+			ofertaDao.saveOrUpdate(oferta);
+			usuarioSecurity = usuarioSecurityManager.get(new Long(-1));
+			restApi.doLogin(usuarioSecurity);
+		}
+		this.updateStateDispComercialActivosByOferta(oferta);
 	}
 
 	private ActivoOferta buildActivoOferta(Activo activo, Oferta oferta, Double importe) {
@@ -673,5 +702,5 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 }

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.clienteComercial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.json.JSONObject;
 
@@ -29,6 +30,7 @@ import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
 
 @Service("clienteComercialManager")
@@ -315,7 +317,6 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public void saveClienteComercial(ClienteDto clienteDto) {
 		ClienteComercial cliente = null;
 		try {
@@ -405,7 +406,6 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public List<String> updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) {
 		List<String> errorsList = null;
 
@@ -657,6 +657,74 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		}
 
 		return errorsList;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) {
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < listaClienteDto.size(); i++) {
+			HashMap<String, List<String>> errorsList = null;
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			ClienteDto clienteDto = listaClienteDto.get(i);
+			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
+			if (Checks.esNulo(cliente)) {
+				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
+				if (errorsList.size() == 0) {
+					this.saveClienteComercial(clienteDto);
+				}
+
+			} else {
+				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
+				if (errorsList.size() == 0) {
+					this.updateClienteComercial(cliente, clienteDto, jsonFields.getJSONArray("data").get(i));
+				}
+
+			}
+
+			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
+				cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
+				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
+				map.put("idClienteRem", cliente.getIdClienteRem());
+				map.put("success", true);
+			} else {
+				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
+				map.put("idClienteRem", clienteDto.getIdClienteRem());
+				map.put("success", false);
+				map.put("invalidFields", errorsList);
+
+			}
+			listaRespuesta.add(map);
+
+		}
+		return listaRespuesta;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public ArrayList<Map<String, Object>> deleteClienteComercial(List<ClienteDto> listaClienteDto) {
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < listaClienteDto.size(); i++) {
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			ClienteDto clienteDto = listaClienteDto.get(i);
+			HashMap<String, List<String>> errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
+
+			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
+				this.deleteClienteComercial(clienteDto);
+				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
+				map.put("idClienteRem", clienteDto.getIdClienteRem());
+				map.put("success", true);
+			} else {
+				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
+				map.put("idClienteRem", clienteDto.getIdClienteRem());
+				map.put("success", false);
+				map.put("invalidFields", errorsList);
+			}
+			listaRespuesta.add(map);
+
+		}
+		return listaRespuesta;
 	}
 
 }

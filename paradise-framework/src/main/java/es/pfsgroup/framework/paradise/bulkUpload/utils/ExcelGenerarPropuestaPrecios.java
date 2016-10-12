@@ -62,7 +62,7 @@ public class ExcelGenerarPropuestaPrecios {
 		}
 	}
 	
-	public void rellenarPlantilla(String idPropuesta, String gestor, List<DtoExcelPropuestaUnificada> listDto) {
+	public void rellenarPlantilla(String numPropuesta, String gestor, List<DtoExcelPropuestaUnificada> listDto) {
 		
 		try {
 			
@@ -74,7 +74,7 @@ public class ExcelGenerarPropuestaPrecios {
 			WritableSheet hoja = libroEditable.getSheet(0);
 			
 			//Relenamos las celdas sueltas de Id propuesta, y gestor
-			Label valor = new Label(2,1,idPropuesta);
+			Label valor = new Label(2,1,numPropuesta);
 			hoja.addCell(valor);
 			valor = new Label(2,2,gestor);
 			hoja.addCell(valor);
@@ -140,12 +140,13 @@ public class ExcelGenerarPropuestaPrecios {
 			if(!Checks.esNulo(dto.getAnoConstruccion()))
 				hoja.addCell(new Label(20,fila,dto.getAnoConstruccion().toString()));
 			hoja.addCell(new Label(21,fila,dto.getEstadoConstruccion()));
-			//22 estado comercial
+			hoja.addCell(new Label(22,fila,dto.getSituacionComercialDescripcion()));
 			if(!Checks.esNulo(dto.getNumVisitas()))
 				hoja.addCell(new Label(23,fila,dto.getNumVisitas().toString()));
 			if(!Checks.esNulo(dto.getNumOfertas()))
 				hoja.addCell(new Label(24,fila,dto.getNumOfertas().toString()));
-			//25 fecha inscripcion de admision
+			if(!Checks.esNulo(dto.getFechaInscripcion()))
+				hoja.addCell(new Label(25,fila,sdf.format(dto.getFechaInscripcion())));
 			if(!Checks.esNulo(dto.getFechaRevisionCargas()))
 				hoja.addCell(new Label(26,fila,sdf.format(dto.getFechaRevisionCargas())));
 			if(!Checks.esNulo(dto.getFechaTomaPosesion()))
@@ -172,7 +173,7 @@ public class ExcelGenerarPropuestaPrecios {
 			if(!Checks.esNulo(dto.getValorRentaWeb()) && dto.getValorRentaWeb() > 0)
 				hoja.addCell(new Label(43,fila,df.format(dto.getValorRentaWeb())));
 			//Precios actuales y Precios propuestos
-			if(dto.getValorPropuesto() > 0) {
+			if(!Checks.esNulo(dto.getValorPropuesto()) && dto.getValorPropuesto() > 0) {
 				
 				hoja.addCell(new Label(44,fila,df.format(dto.getValorPropuesto())));
 				
@@ -187,16 +188,26 @@ public class ExcelGenerarPropuestaPrecios {
 					hoja.addCell(new Label(34,fila,df.format(dto.getValorFsv())));					
 					hoja.addCell(new Label(48,fila,df.format(diferenciaEnPorcentaje(dto.getValorPropuesto(),dto.getValorFsv()))+" %"));
 				}
+				if(dto.getValorLiquidativo() > 0) {
+					hoja.addCell(new Label(36,fila,df.format(dto.getValorLiquidativo())));
+					if(!Checks.esNulo(dto.getFechaValorLiquidativo()))
+						hoja.addCell(new Label(37,fila,sdf.format(dto.getFechaValorLiquidativo())));
+				}
 				if(dto.getValorVentaWeb() > 0) {
 					hoja.addCell(new Label(41,fila,df.format(dto.getValorVentaWeb())));
 					hoja.addCell(new Label(49,fila,df.format(diferenciaEnPorcentaje(dto.getValorPropuesto(),dto.getValorVentaWeb()))+" %"));
 				}
 				if(dto.getValorVnc() > 0) {
+					hoja.addCell(new Label(38,fila,df.format(dto.getValorVnc())));
 					Double resta = diferenciaEntreValores(dto.getValorPropuesto(),dto.getValorVnc());
 					if(resta != 0.0)
 						hoja.addCell(new Label(50,fila,df.format(resta)));
 					hoja.addCell(new Label(51,fila,df.format(diferenciaEnPorcentaje(dto.getValorPropuesto(),dto.getValorVnc()))+" %"));
 				}
+				if(dto.getValorAdquisicion() > 0) {
+					hoja.addCell(new Label(39,fila,df.format(dto.getValorAdquisicion())));
+				}
+				
 			}
 			
 			

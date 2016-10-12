@@ -258,8 +258,13 @@ public class ProveedoresController {
 			boolean success = proveedoresApi.createPersonasContacto(dtoPersonaContacto);
 			model.put("success", success);
 		} catch(Exception e) {
-			e.printStackTrace();
-			model.put("success", false);
+			if(e.getMessage().equals(ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_CODE)) {
+				model.put("msg", ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE);
+				model.put("success", false);
+			} else {
+				e.printStackTrace();
+				model.put("success", false);
+			}
 		}
 		
 		return createModelAndViewJson(model);
@@ -273,8 +278,13 @@ public class ProveedoresController {
 			boolean success = proveedoresApi.updatePersonasContacto(dtoPersonaContacto);
 			model.put("success", success);
 		} catch(Exception e) {
-			e.printStackTrace();
-			model.put("success", false);
+			if(e.getMessage().equals(ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_CODE)) {
+				model.put("msg", ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE);
+				model.put("success", false);
+			} else {
+				e.printStackTrace();
+				model.put("success", false);
+			}
 		}
 		
 		return createModelAndViewJson(model);

@@ -1,51 +1,54 @@
 DECLARE
-        TABLE_COUNT NUMBER(3);
-        EXISTE    NUMBER;
-        V_SQL VARCHAR2(4000 CHAR);
-        V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';
+	TABLE_COUNT NUMBER(3);
+	EXISTE    NUMBER;
+	V_SQL VARCHAR2(4000 CHAR);
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';
 
-        ERR_NUM NUMBER(25);  
-        ERR_MSG VARCHAR2(1024 CHAR);     
-        TYPE T_TABLAS IS TABLE OF VARCHAR2(150);      
-        TYPE T_ARRAY_TABLAS IS TABLE OF T_TABLAS;          
-        V_TEMP_TABLAS  T_TABLAS;
-        V_NUMBER    NUMBER;    
-        
-   V_TABLA T_ARRAY_TABLAS := T_ARRAY_TABLAS(
-                                                            T_TABLAS('REM01','ACT_PAC_PERIMETRO_ACTIVO'),
-                                                            T_TABLAS('REM01','ACT_ACTIVO'),
-                                                            T_TABLAS('REM01','GIC_GASTOS_INFO_CONTABILIDAD'),
-                                                            T_TABLAS('REM01','GIM_GASTOS_IMPUGNACION'),
-                                                            T_TABLAS('REM01','GGE_GASTOS_GESTION'),
-                                                            T_TABLAS('REM01','GDE_GASTOS_DETALLE_ECONOMICO'),
-                                                            T_TABLAS('REM01','GPV_TBJ'),
-                                                            T_TABLAS('REM01','GPV_ACT'),
-                                                            T_TABLAS('REM01','GPV_GASTOS_PROVEEDOR'),
-                                                            T_TABLAS('REM01','ACT_PVC_PROVEEDOR_CONTACTO'),
-                                                            T_TABLAS('REM01','ACT_PRD_PROVEEDOR_DIRECCION'),
-                                                            T_TABLAS('REM01','ACT_PVE_PROVEEDOR'),
-                                                            T_TABLAS('REM01','ACT_PRP'),
-                                                            T_TABLAS('REM01','PRP_PROPUESTAS_PRECIOS'),
-                                                            T_TABLAS('REM01','ACT_HVA_HIST_VALORACIONES'),
-                                                            T_TABLAS('REM01','ACT_COE_CONDICION_ESPECIFICA'),
-                                                            T_TABLAS('REM01','ACT_HEP_HIST_EST_PUBLICACION'),
-                                                            T_TABLAS('REM01','SUB_SUBSANACIONES'),
-                                                            T_TABLAS('REM01','POS_POSICIONAMIENTO'),
-                                                            T_TABLAS('REM01','FOR_FORMALIZACION'),
-                                                            T_TABLAS('REM01','OEX_OBS_EXPEDIENTE'),
-                                                            T_TABLAS('REM01','GEX_GASTOS_EXPEDIENTE'),
-                                                            T_TABLAS('REM01','CEX_COMPRADOR_EXPEDIENTE'),
-                                                            T_TABLAS('REM01','COM_COMPRADOR'),
-                                                            T_TABLAS('REM01','OFR_TIA_TITULARES_ADICIONALES'),
-                                                            T_TABLAS('REM01','RES_RESERVAS'),
-                                                            T_TABLAS('REM01','COE_CONDICIONANTES_EXPEDIENTE'),
-                                                            T_TABLAS('REM01','ACT_OFR'),
-                                                            T_TABLAS('REM01','OFR_OFERTAS'),
-                                                            T_TABLAS('REM01','VIS_VISITAS'),
-                                                            T_TABLAS('REM01','CLC_CLIENTE_COMERCIAL'),
-                                                            T_TABLAS('REM01','ECO_EXPEDIENTE_COMERCIAL')
-                        );
-       
+	ERR_NUM NUMBER(25);  
+	ERR_MSG VARCHAR2(1024 CHAR);     
+	TYPE T_TABLAS IS TABLE OF VARCHAR2(150);      
+	TYPE T_ARRAY_TABLAS IS TABLE OF T_TABLAS;          
+	V_TEMP_TABLAS  T_TABLAS;
+	V_NUMBER    NUMBER;    
+
+	V_TABLA T_ARRAY_TABLAS := T_ARRAY_TABLAS(
+		T_TABLAS('REM01','ACT_PAC_PROPIETARIO_ACTIVO'),
+		T_TABLAS('REM01','ACT_PRO_PROPIETARIO'),
+		T_TABLAS('REM01','ACT_AGR_AGRUPACION'),
+		T_TABLAS('REM01','ACT_PAC_PERIMETRO_ACTIVO'),
+		T_TABLAS('REM01','ACT_ACTIVO'),
+		T_TABLAS('REM01','GIC_GASTOS_INFO_CONTABILIDAD'),
+		T_TABLAS('REM01','GIM_GASTOS_IMPUGNACION'),
+		T_TABLAS('REM01','GGE_GASTOS_GESTION'),
+		T_TABLAS('REM01','GDE_GASTOS_DETALLE_ECONOMICO'),
+		T_TABLAS('REM01','GPV_TBJ'),
+		T_TABLAS('REM01','GPV_ACT'),
+		T_TABLAS('REM01','GPV_GASTOS_PROVEEDOR'),
+		T_TABLAS('REM01','ACT_PVC_PROVEEDOR_CONTACTO'),
+		T_TABLAS('REM01','ACT_PRD_PROVEEDOR_DIRECCION'),
+		T_TABLAS('REM01','ACT_PVE_PROVEEDOR'),
+		T_TABLAS('REM01','ACT_PRP'),
+		T_TABLAS('REM01','PRP_PROPUESTAS_PRECIOS'),
+		T_TABLAS('REM01','ACT_HVA_HIST_VALORACIONES'),
+		T_TABLAS('REM01','ACT_COE_CONDICION_ESPECIFICA'),
+		T_TABLAS('REM01','ACT_HEP_HIST_EST_PUBLICACION'),
+		T_TABLAS('REM01','SUB_SUBSANACIONES'),
+		T_TABLAS('REM01','POS_POSICIONAMIENTO'),
+		T_TABLAS('REM01','FOR_FORMALIZACION'),
+		T_TABLAS('REM01','OEX_OBS_EXPEDIENTE'),
+		T_TABLAS('REM01','GEX_GASTOS_EXPEDIENTE'),
+		T_TABLAS('REM01','CEX_COMPRADOR_EXPEDIENTE'),
+		T_TABLAS('REM01','COM_COMPRADOR'),
+		T_TABLAS('REM01','OFR_TIA_TITULARES_ADICIONALES'),
+		T_TABLAS('REM01','RES_RESERVAS'),
+		T_TABLAS('REM01','COE_CONDICIONANTES_EXPEDIENTE'),
+		T_TABLAS('REM01','ACT_OFR'),
+		T_TABLAS('REM01','ECO_EXPEDIENTE_COMERCIAL'),
+		T_TABLAS('REM01','OFR_OFERTAS'),
+		T_TABLAS('REM01','VIS_VISITAS'),
+		T_TABLAS('REM01','CLC_CLIENTE_COMERCIAL')
+	);
+
 BEGIN
  
   DBMS_OUTPUT.PUT_LINE('********************' );

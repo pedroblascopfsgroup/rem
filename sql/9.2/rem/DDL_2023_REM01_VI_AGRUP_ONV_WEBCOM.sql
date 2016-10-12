@@ -135,8 +135,8 @@ BEGIN
 		  ELSE NULL
 		END 																				   AS HASTA,	
 		CASE WHEN (AGR.BORRADO = 1) 
-		  THEN CAST(''1'' AS VARCHAR2(5 CHAR))
-		  ELSE CAST(''0'' AS VARCHAR2(5 CHAR))
+		  THEN CAST(''0'' AS VARCHAR2(5 CHAR))
+		  ELSE CAST(''1'' AS VARCHAR2(5 CHAR))
 		END                                                                 					AS COD_ESTADO_AGRUPACION,
 		CAST(DDLOC.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))                       					AS COD_MUNICIPIO,
 		CAST(ONV.ONV_CP AS VARCHAR2(5 CHAR))                                					AS CODIGO_POSTAL,

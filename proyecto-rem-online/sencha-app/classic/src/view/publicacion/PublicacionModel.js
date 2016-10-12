@@ -40,7 +40,19 @@ Ext.define('HreRem.view.publicacion.PublicacionModel', {
 	            beforeload : 'paramLoading'
 	        }
 
-	}
+		},
+		
+		comboEstadoPublicacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosPublicacion'}
+			}
+			
+		}
+		
+		
 		
     }
 });

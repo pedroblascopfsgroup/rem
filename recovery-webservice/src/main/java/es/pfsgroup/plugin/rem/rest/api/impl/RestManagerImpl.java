@@ -5,7 +5,9 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
@@ -25,14 +28,22 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.Authentication;
+import org.springframework.security.context.SecurityContext;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
+import es.pfsgroup.plugin.rem.rest.filter.AuthenticationRestService;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
@@ -172,6 +183,7 @@ public class RestManagerImpl implements RestApi {
 		return error;
 	}
 
+	@Override
 	public List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad) {
 		List<String> mapaErrores = null;
 		if (errores.containsKey(propiedad)) {
@@ -227,6 +239,11 @@ public class RestManagerImpl implements RestApi {
 		if (value instanceof String && ((String) value).equals("null")) {
 			value = null;
 		}
+		if(value instanceof Date){
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+			value = df.format(value);
+		}
 		if (value instanceof ArrayList) {
 			for (Object v : (ArrayList) value) {
 				transformObject(v);
@@ -245,5 +262,46 @@ public class RestManagerImpl implements RestApi {
 		}
 
 		return value;
+	}
+
+	@Override
+	public UsuarioSecurity loadUserRest(Entidad entidad) {
+		UsuarioSecurity user = new UsuarioSecurity();
+		user.setId(-1L);
+		user.setUsername(RestApi.REST_LOGGED_USER_USERNAME);
+		user.setAccountNonExpired(true);
+		user.setAccountNonLocked(true);
+		user.setEnabled(true);
+		user.setEntidad(entidad);
+		return user;	
+	}
+
+	@Override
+	public void doLogin(UsuarioSecurity user) {
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(),
+				RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
+		authToken.setDetails(user);
+
+		AuthenticationRestService authRestService = new AuthenticationRestService();
+		//authRestService.setUserNameprefix("REST-");
+
+		PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
+		preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
+		Authentication authentication = preAuthenticatedProvider.authenticate(authToken);
+		securityContext.setAuthentication(authentication);
+		
+	}
+
+	@Override
+	public PeticionRest crearPeticionObj(ServletRequest req) {
+		HttpServletRequest request = (HttpServletRequest) req;
+		PeticionRest peticion = new PeticionRest();
+		peticion.setMetodo(request.getMethod());
+		peticion.setQuery(request.getPathInfo());
+		peticion.setData(request.getParameter("data"));
+		peticion.setIp(request.getRemoteAddr());
+
+		return peticion;
 	}
 }

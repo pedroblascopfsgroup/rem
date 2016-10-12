@@ -7,6 +7,9 @@ Ext.define('HreRem.model.Gasto', {
 
     fields: [ 
     	{
+    		name: 'numGastoHaya'
+    	},
+    	{
     		name: 'numFactura'
     	},
     	{

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -470,7 +471,7 @@ public interface TrabajoApi {
 		 * @param TrabajoDto con los parametros de entrada
 		 * @return List<String> 
 		 */
-	    public List<String> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
+	    public HashMap<String, List<String>> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
 
 	    /**
 		 * Devuelve un DtoFichaTrabajo a partir del TrabajoDto pasado por parámetros

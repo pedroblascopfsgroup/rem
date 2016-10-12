@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteSancionOfertaAlquiler">
+
+	<start-state name="inicio">
+		<transition to="T014_DefinicionOferta" name="avanzaBPM"></transition>
+	</start-state>
+
+	<state name="T014_DefinicionOferta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T014_DefinicionOfertaDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T014_DefinicionOfertaDecision" expression="#{T014_DefinicionOfertaDecision}">
+		<transition to="T014_ResolucionComiteExterno" name="KO"></transition>
+		<transition to="T014_PosicionamientoFirma" name="OK"></transition>
+	</decision>
+
+	<state name="T014_PosicionamientoFirma">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="T014_ResolucionComiteExterno">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T014_ResolucionComiteExternoDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T014_ResolucionComiteExternoDecision">
+		<transition to="T014_PosicionamientoFirma" name="OK"></transition>
+		<transition to="Fin" name="KO"></transition>
+	</decision>
+		
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>activoEndProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

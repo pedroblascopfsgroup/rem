@@ -56,16 +56,17 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String entidadPropietaria;
 	private String entidadPropietariaCodigo;
 	private String entidadPropietariaDescripcion;
-
 	private String estadoActivoCodigo;
 	private Integer divHorizontal;
 	private String tipoUsoDestinoCodigo;
 	private String tipoUsoDestinoDescripcion;
 
 	// Comunidad de propietarios
-	// Mapeo manual
 	private String tipoCuotaCodigo;
 	private String direccionComunidad;
+
+	// Mapeo manual
+	private Boolean informeComercialAceptado;
 
 	// Mapeo automático beanutils
 	private Integer constituida;
@@ -1099,6 +1100,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 	public void setIntegradoEnAgrupacionAsistida(
 			Boolean integradoEnAgrupacionAsistida) {
 		this.integradoEnAgrupacionAsistida = integradoEnAgrupacionAsistida;
+	}
+
+	public Boolean getInformeComercialAceptado() {
+		return informeComercialAceptado;
+	}
+
+	public void setInformeComercialAceptado(Boolean informeComercialAceptado) {
+		this.informeComercialAceptado = informeComercialAceptado;
 	}
 
 

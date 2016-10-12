@@ -36,12 +36,12 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.tipo.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'tipo'
+	    	                    	 dataIndex: 'tipoDescripcion'
 	    	                     },
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.subtipo.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'subtipo'
+	    	                    	 dataIndex: 'subtipoDescripcion'
 	    	                     },
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.concepto.gasto'),
@@ -79,12 +79,12 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.periodicidad.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'periodicidad'
+	    	                    	 dataIndex: 'periodicidadDescripcion'
 	    	                     },
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.destinatario.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'destinatario'
+	    	                    	 dataIndex: 'destinatarioDescripcion'
 	    	                     }
 		];
 		

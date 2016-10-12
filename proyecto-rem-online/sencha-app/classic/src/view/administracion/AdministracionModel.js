@@ -141,7 +141,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 				extraParams: {diccionario: 'subtipoProveedor'}
 			}
 		}
-    	
+		
     		
     }
 });

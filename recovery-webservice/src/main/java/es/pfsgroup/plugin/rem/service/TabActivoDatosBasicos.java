@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
@@ -185,8 +188,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 		}
-		
-		
+
+		// Obtener estado de aceptación del informe comercial.
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Order order = new Order(OrderType.DESC, "id");
+		List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
+		if(!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
+			ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
+				BeanUtils.copyProperty(activoDto, "informeComercialAceptado", historico.getEstadoInformeComercial().getCodigo().equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION) ? true : false);
+		}
+
 		//HREOS-843 Situacion Comercial del activo
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
 			BeanUtils.copyProperty(activoDto, "situacionComercialDescripcion", activo.getSituacionComercial().getDescripcion());
@@ -226,7 +237,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto,"aplicaGestion", perimetroActivo.getAplicaGestion() == 1? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", perimetroActivo.getAplicaAsignarMediador() == 1? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaComercializar", perimetroActivo.getAplicaComercializar() == 1? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", perimetroActivo.getAplicaComercializar() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", perimetroActivo.getAplicaFormalizar() == 1? true: false);
 //		}
 		// ----------
 		

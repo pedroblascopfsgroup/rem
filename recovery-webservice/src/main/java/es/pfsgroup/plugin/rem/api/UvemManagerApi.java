@@ -3,10 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 
-import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
-import es.cajamadrid.servicios.GM.GMPAJC34_INS.GMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
-import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -55,6 +52,22 @@ public interface UvemManagerApi {
 	
 	
 /*******************************************CLIENTES URSUS***************************************************/
+	
+	/**
+	 * 
+	 * (DE CLIENTE SOLO DEBERIA USARSE ESTE)
+	 * Devuelve los clientes partir de los datos pasados por parámetro
+	 * 
+	 * @param nDocumento: documento identificativo del cliente a consultar
+	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
+	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
+	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
+	 *            Otros persona física. J Otros persona jurídica.
+	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
+	 */
+	DatosClienteDto ejecutarDatosClientePorDocumento(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	
+	
 	
 	/**
 	 * Devuelve los clientes Ursus a partir de los datos pasados por parámetro
@@ -154,11 +167,16 @@ public interface UvemManagerApi {
 	/**
 	 * Invoca al servicio GMPAJC34_INS de BANKIA para consultar los datos de un prestamo
 	 * 
-	 * @param numExpedienteRiesgo
+	 * @param numExpedienteRiesgo12
 	 * @param tipoRiesgo
-	 * @return
+	 * @return IMPORTE CONCEDIDO Multiplicado por 100 (para que no tenga decimales).
 	 */
-	public GMPAJC34_INS consultaDatosPrestamo(String numExpedienteRiesgo, int tipoRiesgo) throws WIException;
+	public Long consultaDatosPrestamo(String numExpedienteRiesgo12, int tipoRiesgo) throws Exception;
+
+
+
+
+
 
 
 }

@@ -40,7 +40,7 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 	public static final String ACTIVO_EN_AGRUPACION = "El Activo ya está incluido en la agrupación";
 	public static final String ACTIVO_EN_OTRA_AGRUPACION = "Este activo ya pertenece a otra agrupación.";
 	public static final String ACTIVO_OFERTAS_ACEPTADAS = "El activo tiene ofertas vivas";
-	public static final String ACTIVO_INCLUIDO_PERIMETRO = "El activo está incluido en perímetro y por tanto no puede estar en agrupación asistida";
+	public static final String ACTIVO_INCLUIDO_PERIMETRO = "El activo debe ser un activo bancario de tipo financiero";
 
 	// Textos de validaciones para grupos de activos, estas variables llevan aparejado un texto y un codigo. Necesario para metodo comun
 	public static final class ACTIVOS_NO_MISMA_LOCALIZACION { static int codigoError = 1; static String mensajeError = "NO todos los activos de esta agrupación comparten la misma PROVINCIA, MUNICIPIO, CP y CARTERA.";};

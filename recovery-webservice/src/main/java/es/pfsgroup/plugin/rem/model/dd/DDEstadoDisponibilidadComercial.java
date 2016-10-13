@@ -31,7 +31,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDEstadoDisponibilidadComercial implements Auditable, Dictionary {
 	
     public static final String CODIGO_CONDICIONADO = "01";
-    public static final String CODIGO_NO_CONDICIONADO = "02";
+    public static final String CODIGO_DISPONIBLE = "02";
 
 	private static final long serialVersionUID = 1L;
 

@@ -638,7 +638,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public Oferta tareaExternaToOferta(TareaExterna tareaExterna) {
+	public Oferta trabajoToOferta(Trabajo trabajo){
+		Oferta ofertaAceptada = null;
+		Activo activo = trabajo.getActivo();
+		if(!Checks.esNulo(activo)){
+			ofertaAceptada = getOfertaAceptadaByActivo(activo);
+		}
+		return ofertaAceptada;
+	}
+	
+	@Override
+	public Oferta tareaExternaToOferta(TareaExterna tareaExterna){
 		Oferta ofertaAceptada = null;
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
@@ -662,6 +672,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return null;
 	}
 
+	@Override
+	public boolean checkDerechoTanteo(Trabajo trabajo){
+		Oferta ofertaAceptada = trabajoToOferta(trabajo);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if(!Checks.esNulo(expediente))
+				if(!Checks.esNulo(expediente.getCondicionante()))
+					return (expediente.getCondicionante().getSujetoTanteoRetracto() == 1);
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean checkDerechoTanteo(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
@@ -698,8 +720,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public boolean checkSinRiesgoReputacional(TareaExterna tareaExterna) {
-		// TODO Auto-generated method stub
+	public boolean checkRiesgoReputacional(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			return (expediente.getRiesgoReputacional()== 0 ? true : false);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkImporte(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			return (!Checks.esNulo(ofertaAceptada.getImporteOferta()));
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkCompradores(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			return (!Checks.estaVacio(expediente.getCompradores()));
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkConflictoIntereses(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			return (expediente.getConflictoIntereses() == 0 ? true : false);
+		}
 		return false;
 	}
 

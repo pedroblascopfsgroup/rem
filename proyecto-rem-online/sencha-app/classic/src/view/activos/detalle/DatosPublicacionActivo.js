@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     scrollable	: 'y',
     saveMultiple: true,
     refreshAfterSave: true,
-    disableValidation: true,
+    disableValidation: false,
     records: ['activohistoricoestadopublicacion', 'activoCondicionantesDisponibilidad', 'datosPublicacion'], 
     recordsClass: ['HreRem.model.ActivoHistoricoEstadoPublicacion', 'HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacion'],
     requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.ActivoHistoricoEstadoPublicacion' ,'HreRem.model.CondicionEspecifica', 

@@ -76,7 +76,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 		if (running) {
 			logger.fatal("Ha cadudado el tiempo de espera y el proceso aún está bloqueado");
-			throw new RuntimeException("AAFADFALLKAFA");
+			throw new RuntimeException("Ha cadudado el tiempo de espera y el proceso aún está bloqueado");
 		}
 		synchronized (this) {
 			running = true;

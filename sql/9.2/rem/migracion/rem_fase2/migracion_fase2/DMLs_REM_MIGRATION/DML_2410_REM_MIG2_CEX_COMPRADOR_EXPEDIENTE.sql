@@ -267,29 +267,16 @@ BEGIN
       -- Total registros rechazados
       V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
       
-      /*  
-      -- Diccionarios rechazados
-      V_SENTENCIA := '
-      SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_COD_NOT_EXISTS 
-      WHERE DICCIONARIO IN (''DD_TPR_TIPO_PROVEEDOR'',''DD_TDI_TIPO_DOCUMENTO_ID'',''DD_ZNG_ZONA_GEOGRAFICA'',''DD_PRV_PROVINCIA'',''DD_LOC_LOCALIDAD'')
-      AND FICHERO_ORIGEN = ''PROVEEDORES.dat''
-      AND CAMPO_ORIGEN IN (''TIPO_PROVEEDOR'',''TIPO_DOCUMENTO'',''ZONA_GEOGRAFICA'',''PVE_PROVINCIA'',''PVE_LOCALIDAD'')
-      '
-      ;
-      
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;
-      */
-      
       -- Observaciones
       IF V_REJECTS != 0 THEN      
-          V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' COMPRADORES_EXPEDIENTES.';      
+          V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';      
           
           IF TABLE_COUNT_1 != 0 THEN
-              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay un total de '||TABLE_COUNT_1||'  COMPRADORES (CLIENTES_COMERCIALES) inexistentes. ';
+              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay '||TABLE_COUNT_1||'  COMPRADORES (CLIENTES_COMERCIALES) inexistentes. ';
           END IF;     
           
           IF TABLE_COUNT_2 != 0 THEN
-              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay un total de '||TABLE_COUNT_2||' EXPEDIENTES_ECONOMICOS (OFERTAS) inexistentes. ';
+              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay '||TABLE_COUNT_2||' EXPEDIENTES_ECONOMICOS (OFERTAS) inexistentes. ';
           END IF;        
       END IF;
       

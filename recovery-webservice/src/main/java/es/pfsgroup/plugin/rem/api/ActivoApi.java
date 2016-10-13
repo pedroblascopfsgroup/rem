@@ -494,5 +494,13 @@ public interface ActivoApi {
 	     * @throws Exception
 	     */
 	    @BusinessOperationDefinition("activoManager.uploadDocumento")
-		String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula) throws Exception;
+		public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula) throws Exception;
+
+	    /**
+	     * Este método hace una llamada para actualizar el estado de los condicionantes del activo.
+	     * 
+	     * @param idActivo : ID del activo.
+	     * @return Devuelve si la operación ha sido satisfactoria, o no.
+	     */
+		public Boolean updateCondicionantesDisponibilidad(Long idActivo);
     }

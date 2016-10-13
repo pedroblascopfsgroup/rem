@@ -681,7 +681,6 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				}
 
 			}
-
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
 				cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
 				map.put("idClienteWebcom", cliente.getIdClienteWebcom());

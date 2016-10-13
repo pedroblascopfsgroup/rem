@@ -1714,6 +1714,7 @@ public class ActivoController {
 	public ModelAndView saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto, ModelMap model){
 		try {
 			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
+			activoApi.updateCondicionantesDisponibilidad(idActivo);
 			model.put("success", success);
 
 		} catch (Exception e) {

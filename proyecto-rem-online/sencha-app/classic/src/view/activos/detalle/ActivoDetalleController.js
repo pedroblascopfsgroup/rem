@@ -175,9 +175,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		var me = this;
 		
-		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
+		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
 		if(form.isFormValid() || form.disableValidation) {
-
+			
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 			);
@@ -1092,12 +1092,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		return criteria;
     },
-    
+
     // Funcion que se ejecuta al hacer click en el botón limpiar
-	onCleanFiltersClick: function(btn) {			
-		btn.up('form').getForm().reset();				
+	onCleanFiltersClick: function(btn) {
+		btn.up('form').getForm().reset();
 	},
-	
+
 	// Función que define el estado de un activo según su estado de disponibilidad comercial.
     onChangeEstadoDisponibilidadComercial: function(field){
     	var me = this;
@@ -1107,7 +1107,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		// Condicionado.
     		field.setValue(store.findRecord('codigo','01').getData().descripcion);
     	} else if(field.getValue() === "false") {
-    		// No condicionado.
+    		// Disponible.
     		field.setValue(store.findRecord('codigo','02').getData().descripcion);
     	}
     },
@@ -1280,8 +1280,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(combo.getValue() === '0'){
     		view.lookupReference('fieldtextCondicionanteOtro').reset();
     		view.lookupReference('fieldtextCondicionanteOtro').hide();
+    		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=true;
     	} else {
     		view.lookupReference('fieldtextCondicionanteOtro').show();
+    		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=false;
+    		view.lookupReference('fieldtextCondicionanteOtro').isValid();
     	}
     },
     

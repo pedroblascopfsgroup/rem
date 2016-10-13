@@ -201,6 +201,11 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 															cls: 'cabecera-info-field',
 															bind:		'{activo.tipoActivoDescripcion}'
 														},
+														{ 
+															fieldLabel: HreRem.i18n('fieldlabel.proveedores.subcartera'),
+															cls: 'cabecera-info-field',
+															bind:		'{activo.subcarteraDescripcion}'
+														},
 									                   	{ 
 													 		fieldLabel: HreRem.i18n('fieldlabel.direccion'),
 													 		cls: 'cabecera-info-field',

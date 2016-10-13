@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
@@ -136,6 +136,13 @@ public interface OfertaApi {
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna);
 
 	/**
+	 * Método que saca la oferta aceptada a partir de un trabajo
+	 * @param trabajo
+	 * @return
+	 */
+	public Oferta trabajoToOferta(Trabajo trabajo);
+	
+	/**
 	 * Método que obtiene la oferta aceptada de un activo en caso de haberla.
 	 * 
 	 * @param activo
@@ -152,8 +159,14 @@ public interface OfertaApi {
 	public boolean checkReserva(TareaExterna tareaExterna);
 
 	/**
-	 * Método que comprueba si el activo tiene derecho de tanteo por la
-	 * Generalitat
+	 * Método que comprueba si el activo tiene derecho de tanteo por la Generalitat
+	 * @param trabajo
+	 * @return true si tiene derecho de tanteo, false si no lo tiene
+	 */
+	public boolean checkDerechoTanteo(Trabajo trabajo);
+	
+	/**
+	 * Método que comprueba si el activo tiene derecho de tanteo por la Generalitat
 	 * 
 	 * @param tareaExterna
 	 * @return true si tiene derecho de tanteo, false si lo tiene
@@ -171,11 +184,32 @@ public interface OfertaApi {
 
 	
 	/**
-	 * Método que comprueba si el activo tiene riesgo reputacional
+	 * Método que comprueba que la oferta no tenga riesgo reputacional
 	 * @param tareaExterna
-	 * @return
+	 * @return si no tiene riesgo devuelve true, si tiene false
 	 */
-	public boolean checkSinRiesgoReputacional(TareaExterna tareaExterna);
+	public boolean checkRiesgoReputacional(TareaExterna tareaExterna);
+	
+	/**
+	 * Método que comprueba si la oferta tiene importe
+	 * @param tareaExterna
+	 * @return si tiene importe devuelve true, en caso contrario devuelve false
+	 */
+	public boolean checkImporte(TareaExterna tareaExterna);
+	
+	/**
+	 * Método que comprueba si la oferta tiene compradores
+	 * @param tareaExterna
+	 * @return si tiene compradores devuelve true, en caso contrario devuelve false
+	 */
+	public boolean checkCompradores(TareaExterna tareaExterna);
+	
+	/**
+	 * Método que comprueba que la oferta no tenga conflicto de intereses
+	 * @param tareaExterna
+	 * @return si tiene conflicto de intereses devuelve true, en caso contrario devuelve false
+	 */
+	public boolean checkConflictoIntereses(TareaExterna tareaExterna);	
 	
 	
 

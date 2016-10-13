@@ -30,6 +30,12 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'subcarteraCodigo'
+    		},
+    		{
+    			name: 'subcarteraDescripcion'
+    		},
+    		{
     			name:'entidadPropietariaDescripcion'
     		},
     		{
@@ -423,6 +429,9 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'claseActivoDescripcion'
+			},
+			{
+				name: 'motivoNoAplicaComercializar'
 			}
     ],
     

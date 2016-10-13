@@ -1,0 +1,40 @@
+.########..########.##.....##.......########....###.....######..########........#######.."
+.##.....##.##.......###...###.......##.........##.##...##....##.##.............##.....##."
+.##.....##.##.......####.####.......##........##...##..##.......##....................##."
+.########..######...##.###.##.......######...##.....##..######..######..........#######.."
+.##...##...##.......##.....##.......##.......#########.......##.##.............##........"
+.##....##..##.......##.....##.......##.......##.....##.##....##.##.............##........"
+.##.....##.########.##.....##.......##.......##.....##..######..########.......#########."
+
+
+	############################
+	## MANUAL DE EXPLOTACION  ##
+	############################
+
+	Esta migración consta principalmente de cuatro procesos:
+
+		- 000_Preparacion_migracion.sh: Proceso en el que se generan los paquetes pitertulizados de las carpetas PRE_MIGRACION, DDLs_MIG y DMLs_REM_MIGRATION 
+				y se almacenan en los directorios 01_PREV, 02_TABLAS_MIG y 03_MIGRACION respectivamente. 
+		- 001_Creacion_de_tablas.sh: Proceso en el que se crean las tablas necesarias para la migración, dichas tablas comienzan con el prefijo "MIG2_".
+		- 002_Carga_de_tablas_de_migracion.sh: Proceso en el que se cargan las tablas MIG2 con los DATs que hay en el directorio /CTLs_DATs/DATs
+		- 003_Migrar.sh: Proceso de volcado de tablas MIG2 a las tablas de modelo de REM.
+
+	La migración tiene dos modos de ejecución:
+
+	---------------------
+	-- Modo Automatico --
+	---------------------
+
+		- En este modo se ejecutarán uno tras otro los cuatro procesos mencionados anteriormente de forma automatizada.
+		- Para ejecutar dicho modo basta con ejecutar el script proceso_completo_migracion.sh PASS@HOST:PORT/SID
+		- Ejemplo: ./proceso_completo_migracion.sh admin@192.168.31.33:1521/ibd031
+
+	-----------------
+	-- Modo Manual --
+	-----------------
+
+		- Este modo de lanzamiento trata de ir ejecutando uno a uno todos los procesos de la migración, la principal ventaja que tiene este modo
+				es que si por un casual fallase la migración en el proceso 003_Migrar.sh, se podría relanzar manualmente la migración desde
+				ese punto, evitando tener que cargar de nuevo todas las tablas MIG2, que es un proceso bastante pesado.
+		
+		- Los 

@@ -94,8 +94,7 @@ public class HttpClientFacade {
 			
 			return JSONObject.fromObject(respBody);
 		} catch (Exception e) {
-			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + ",PARAMS:"
-					+ requestJson.toString() + "]";
+			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";
 			throw new HttpClientException(errorMsg, responseCode, e);
 		} finally {
 			if (method != null) {

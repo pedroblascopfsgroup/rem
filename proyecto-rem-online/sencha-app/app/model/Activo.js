@@ -277,6 +277,21 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
+    			name: 'informeComercialAceptado',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isPublicable',
+    			calculate: function(data) {
+    				if(data.admision && data.gestion && data.informeComercialAceptado) {
+    					return true;
+    				} else {
+    					return false;
+    				}
+    			},
+    			depends: 'admision'
+    		},
+    		{
     			name: 'rating',
     			convert: function(value) {
     				return Ext.isEmpty(value) ? '0' : value;
@@ -287,14 +302,14 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'isVivienda',
-    			calculate: function(data) { 
+    			calculate: function(data) {
     				return data.tipoInfoComercialCodigo == CONST.TIPOS_INFO_COMERCIAL['VIVIENDA'];
     			},
     			depends: 'tipoInfoComercialCodigo'
     		},
     		{
     			name: 'isLocalComercial',
-    			calculate: function(data) { 
+    			calculate: function(data) {
     				return data.tipoInfoComercialCodigo ==  CONST.TIPOS_INFO_COMERCIAL['LOCAL_COMERCIAL'];
     			},
     			depends: 'tipoInfoComercialCodigo'
@@ -408,6 +423,9 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'claseActivoDescripcion'
+			},
+			{
+				name: 'motivoNoAplicaComercializar'
 			}
     ],
     

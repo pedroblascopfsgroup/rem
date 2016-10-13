@@ -155,6 +155,8 @@ BEGIN
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
+  V_REG_INSERTADOS := SQL%ROWCOUNT;
+  
   COMMIT;
   
   EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
@@ -164,20 +166,11 @@ BEGIN
    -- INFORMAMOS A LA TABLA INFO
   
   -- Registros MIG
-  V_SENTENCIA := '
-  SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
-  '
-  ;
-
+  V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';
  EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
  
  -- Registros insertados en REM
-  V_SENTENCIA := '
-	SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOCREAR = ''MIG2''
-  '
-  ;
-  
-  EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
+ -- V_REG_INSERTADOS
   
   -- Total registros rechazados
   V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;
@@ -185,10 +178,10 @@ BEGIN
   -- Observaciones
   IF V_REJECTS != 0 THEN
   
-    IF TABLE_COUNT != 0 THEN
-    
-      V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT||' han sido por EXPEDIENTE_ECONOMICO inexistentes. ';
-    
+    V_OBSERVACIONES := 'Se han rechazado '||TABLE_COUNT||' registros.';
+  
+    IF TABLE_COUNT != 0 THEN    
+      V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' EXPEDIENTE_ECONOMICO inexistentes. ';    
     END IF; 
     
   END IF;

@@ -502,11 +502,25 @@ public interface TrabajoApi {
 		public boolean checkAtribuciones(TareaExterna tareaExterna);
 		
 		/**
+		 * Método que comprueba si el activo tiene atribuciones para sancionar el expediente
+		 * @param trabajo
+		 * @return true si tiene atribuciones, false si no las tiene
+		 */
+		public boolean checkAtribuciones(Trabajo trabajo);
+		
+		/**
 		 * Método que comprueba si el activo pertenece a la cartera Sareb.
 		 * @param tareaExterna
 		 * @return true si pertenece a la cartera, false si no.
 		 */
 		public boolean checkSareb(TareaExterna tareaExterna);
+		
+		/**
+		 * Método que comprueba si el activo pertenece a la cartera Sareb.
+		 * @param trabajo
+		 * @return true si pertenece a la cartera, false si no
+		 */
+		public boolean checkSareb(Trabajo trabajo);
     }
 
 

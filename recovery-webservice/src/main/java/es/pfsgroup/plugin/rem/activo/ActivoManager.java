@@ -872,17 +872,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 
-		try {
-			beanUtilNotNull.copyProperty(condicionantesDisponibilidad, "otro", dtoCondicionanteDisponibilidad.getOtro());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			return false;
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-			return false;
-		}
+		condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
 
 		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean updateCondicionantesDisponibilidad(Long idActivo) {
+		// Actualizar estado disponibilidad comercial. Se realiza despues de haber guardado el cambio en los estados condicionantes.
+		Activo activo = activoDao.get(idActivo);
+		updaterState.updaterStateDisponibilidadComercial(activo);
 		
 		return true;
 	}

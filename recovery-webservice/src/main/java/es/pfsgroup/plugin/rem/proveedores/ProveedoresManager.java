@@ -30,6 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
@@ -77,6 +78,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -849,14 +853,19 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Override
 	@Transactional(readOnly = false)
 	public boolean createProveedor(DtoProveedorFilter dtoProveedorFilter) throws Exception {
-		ActivoProveedor proveedor = proveedoresDao.getProveedorByNIF(dtoProveedorFilter.getNifProveedor());
+		ActivoProveedor proveedor = null;
 		
-		if (Checks.esNulo(proveedor)){
+		if(!Checks.esNulo(dtoProveedorFilter.getNifProveedor())) { // Si se ha definido NIF.
+			proveedor = proveedoresDao.getProveedorByNIF(dtoProveedorFilter.getNifProveedor());
+			if (Checks.esNulo(proveedor)){ // Si no se ha encontrado proveedor por el NIF definido.
+				proveedor = new ActivoProveedor();
+			} else { // Si existe un proveedor con el NIF ya definido.
+				throw new Exception(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE);
+			}
+		} else { // Si no se ha definido NIF.
 			proveedor = new ActivoProveedor();
-		} else {
-			throw new Exception(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE);
 		}
-
+		
 		try {
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dtoProveedorFilter.getNifProveedor());
 			
@@ -910,5 +919,25 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		
 		return listaMapeada;
+	}
+
+	@Override
+	public String getNifProveedorByUsuarioLogado() {
+		
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+		String nifProveedor = null;
+		
+		Filter idUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+		List<ActivoProveedorContacto> listaPersonasContacto = genericDao.getList(ActivoProveedorContacto.class, idUsuario);
+		
+		if(!Checks.estaVacio(listaPersonasContacto) && !Checks.esNulo(listaPersonasContacto.get(0).getProveedor())) {			
+			nifProveedor = listaPersonasContacto.get(0).getProveedor().getDocIdentificativo();
+		} else if (!Checks.estaVacio(listaPersonasContacto)) {
+			nifProveedor = listaPersonasContacto.get(0).getDocIdentificativo();
+		} else {
+			nifProveedor = usuario.getUsername();
+		}
+
+		return nifProveedor;
 	}
 }

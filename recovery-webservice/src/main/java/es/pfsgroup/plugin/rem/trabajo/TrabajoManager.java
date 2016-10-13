@@ -2386,24 +2386,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-		return dtoFichaTrabajo;
-	}
-
-	@Override
-	public Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna) {
-		Trabajo trabajo = null;
-		TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
-		if (!Checks.esNulo(tareaActivo)) {
-			ActivoTramite tramite = tareaActivo.getTramite();
-			if (!Checks.esNulo(tramite)) {
-				trabajo = tramite.getTrabajo();
-			}
-		}
-		return trabajo;
-	}
-
+	   }
+	   
+	   return dtoFichaTrabajo;
+   }
+   
+   @Override
+   public Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna){
+	   Trabajo trabajo = null;
+	   TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
+	   if(!Checks.esNulo(tareaActivo)){
+		   ActivoTramite tramite = tareaActivo.getTramite();
+		   if(!Checks.esNulo(tramite)){
+			   trabajo = tramite.getTrabajo();
+		   }
+	   }
+	   return trabajo;   
+   }
+   
 	@Override
 	public boolean checkFormalizacion(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -2417,13 +2417,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return false;
 	}
 
+   	//TODO: Dani: Cuando estén definidas y desarrolladas las atribuciones, hay que desarrollar estos dos métodos. ¿Meterlos en OfertaApi?
+
+	
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		return false;
 	}
 
 	@Override
-	public boolean checkSareb(TareaExterna tareaExterna) {
+	public boolean checkAtribuciones(Trabajo trabajo) {
+		return false;
+	}
+	
+	@Override
+	public boolean checkSareb(TareaExterna tareaExterna){
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
@@ -2433,4 +2441,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean checkSareb(Trabajo trabajo){
+		if(!Checks.esNulo(trabajo)){
+			Activo primerActivo = trabajo.getActivo();
+			if(!Checks.esNulo(primerActivo)){
+				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera()));
+			}
+		}
+		return false;
+	}
+   
+
 }

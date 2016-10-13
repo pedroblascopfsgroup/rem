@@ -68,7 +68,7 @@ public class ExcelGenerarPropuestaPrecios {
 			
 			libroEditable = Workbook.createWorkbook(this.file, libroExcel);
 			
-			for(int i=8 ; i< libroEditable.getSheet(0).getRows() ; i++)
+			for(int i=8 ; i< libroEditable.getSheet(0).getRows() + 3 ; i++)
         		libroEditable.getSheet(0).removeRow(i);
 			
 			WritableSheet hoja = libroEditable.getSheet(0);

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
@@ -18,12 +17,10 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoNoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 
 @Component
@@ -45,14 +42,7 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	private ActivoApi activoApi;
 	
 	@Autowired
-	private GenericABMDao genericDao;
-	
-	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
-	
-    @Autowired
-    private GenericAdapter adapter;
-	
 	
 	@Override
 	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
@@ -150,8 +140,7 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				
 				//Motivo para No comercializar
 				if(!Checks.esNulo(tmpMotivoNoComercializacion))
-					perimetroActivo.setMotivoNoAplicaComercializar((DDMotivoNoComercializacion)
-						utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoNoComercializacion.class, tmpMotivoNoComercializacion));
+					perimetroActivo.setMotivoNoAplicaComercializar(tmpMotivoNoComercializacion);
 				
 				//Tipo de comercializacion en el activo
 				if(!Checks.esNulo(tmpTipoComercializacion))

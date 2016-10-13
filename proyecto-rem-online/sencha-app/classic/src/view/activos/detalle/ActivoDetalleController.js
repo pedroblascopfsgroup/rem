@@ -1092,12 +1092,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		return criteria;
     },
-    
+
     // Funcion que se ejecuta al hacer click en el botón limpiar
-	onCleanFiltersClick: function(btn) {			
-		btn.up('form').getForm().reset();				
+	onCleanFiltersClick: function(btn) {
+		btn.up('form').getForm().reset();
 	},
-	
+
 	// Función que define el estado de un activo según su estado de disponibilidad comercial.
     onChangeEstadoDisponibilidadComercial: function(field){
     	var me = this;

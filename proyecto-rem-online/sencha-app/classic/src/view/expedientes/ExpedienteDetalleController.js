@@ -796,6 +796,49 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 		
 	
+	},
+	
+	consultarComiteSancionador: function(btn) {
+		
+		var me = this;
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/consultarComiteSancionador');
+			Ext.Ajax.request({
+			     url: url,
+			     params:  {idExpediente : me.getViewModel().get("expediente.id")},
+			     success: function(response, opts) {
+			     	var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }  catch (e){ };
+	                
+	                if(data.success === "true") {
+	                	me.fireEvent("log", data);
+	                }else {
+	                	me.fireEvent("errorToast", data.msg);
+	                }
+			     },
+			     
+			     failure: function(response) {
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+	    		     
+	    	});		
+		
+		
+	
 	}
+		
+	
+	
 
 });

@@ -295,6 +295,15 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+
+
+		/**
+		 * Función que devuelve la propuesta de un comité para un expediente comercial de Bankia
+		 * @param idExpediente
+		 * @return
+		 * @throws Exception 
+		 */
+		public String consultarComiteSancionador(Long idExpediente) throws Exception;
 		
 }
 

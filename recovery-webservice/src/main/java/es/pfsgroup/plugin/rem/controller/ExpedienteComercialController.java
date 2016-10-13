@@ -753,6 +753,26 @@ public class ExpedienteComercialController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView consultarComiteSancionador(@RequestParam Long idExpediente, ModelMap model) {
+		try {		
+			model.put("codigo", expedienteComercialApi.consultarComiteSancionador(idExpediente));
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", "No se ha podido conectar con el servicio");
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
+	
+	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);

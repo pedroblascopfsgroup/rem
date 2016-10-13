@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.impl.UvemManager;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -74,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
@@ -95,6 +98,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager implements ExpedienteComercialApi {
@@ -136,6 +141,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
+	@Autowired
+	private UvemManager uvemManager;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -307,6 +314,19 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			oferta.setCanalPrescripcion(null);
 		}
 		
+		if(!Checks.esNulo(dto.getComitePropuestoCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getComitePropuestoCodigo());
+			DDComiteSancion comitePropuesto = genericDao.get(DDComiteSancion.class, filtro);	
+			expedienteComercial.setComitePropuesto(comitePropuesto);			
+		}
+		
+		if(!Checks.esNulo(dto.getComiteSancionadorCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getComiteSancionadorCodigo());
+			DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filtro);	
+			expedienteComercial.setComiteSancion(comiteSancion);			
+		}
+		
+		
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
 		} catch (IllegalAccessException e) {
@@ -350,6 +370,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setNumExpediente(expediente.getNumExpediente());	
 				if(!Checks.esNulo(activo.getCartera())) {
 					dto.setEntidadPropietariaDescripcion(activo.getCartera().getDescripcion());
+					dto.setEntidadPropietariaCodigo(activo.getCartera().getCodigo());
 				}	
 				
 				if(!Checks.esNulo(oferta.getTipoOferta())) {
@@ -478,6 +499,13 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			dto.setCanalPrescripcionDescripcion(oferta.getCanalPrescripcion().getDescripcion());
 		}
 		
+		if(!Checks.esNulo(expediente.getComitePropuesto())) {
+			dto.setComitePropuestoCodigo(expediente.getComitePropuesto().getCodigo());
+		}
+		
+		if(!Checks.esNulo(expediente.getComiteSancion())) {
+			dto.setComiteSancionadorCodigo(expediente.getComiteSancion().getCodigo());
+		}		
 				
 		return dto;
 	}
@@ -1790,6 +1818,64 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		return true;
 		
+	}
+	
+	@Override
+	public String consultarComiteSancionador(Long idExpediente) throws Exception {
+		
+		ExpedienteComercial expediente = findOne(idExpediente);
+		InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
+		String codigoComite = null;
+			
+		ResultadoInstanciaDecisionDto resultadoDto;
+		try {
+			resultadoDto = uvemManager.consultarInstanciaDecision(instancia);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new Exception(e);
+		}
+		
+		codigoComite = resultadoDto.getCodigoComite();
+			
+		
+		return codigoComite;	
+		
+	}
+
+	private InstanciaDecisionDto expedienteComercialToInstanciaDecision(ExpedienteComercial expediente) {
+		
+		InstanciaDecisionDto instancia  = new InstanciaDecisionDto();
+		Oferta oferta = expediente.getOferta();
+		Activo activo = oferta.getActivoPrincipal();
+		
+		boolean solicitaFinanciacion = false;
+		int numActivoEspecial = 0;
+		Long importe = new Long(0);
+		short tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_SIN_IMPUESTO;
+		
+		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
+			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
+		}
+
+		numActivoEspecial = Checks.esNulo(activo.getNumActivoUvem()) ? 0 : activo.getNumActivoUvem().intValue();
+		importe = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta().longValue() : oferta.getImporteContraOferta().longValue();
+		
+		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
+			String tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo(); 
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IVA;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IGIC;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IPSI;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_ITP;
+		}
+		
+		instancia.setCodigoDeOfertaHaya("0");
+		instancia.setFinanciacionCliente(solicitaFinanciacion);
+		instancia.setIdentificadorActivoEspecial(numActivoEspecial);
+		instancia.setImporteConSigno(importe);
+		instancia.setTipoDeImpuesto(tipoDeImpuesto);
+		
+		
+		return instancia;
 	}
 	
 	

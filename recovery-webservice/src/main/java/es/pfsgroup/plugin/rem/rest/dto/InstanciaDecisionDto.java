@@ -8,11 +8,11 @@ public class InstanciaDecisionDto {
 	public final char FINANCIACION_CLIENTE_SI = 'S';
 	public final char FINANCIACION_CLIENTE_NO = 'N';
 	
-	public final short TIPO_IMPUESTO_SIN_IMPUESTO = 0;
-	public final short TIPO_IMPUESTO_ITP = 1;
-	public final short TIPO_IMPUESTO_IVA = 2;
-	public final short TIPO_IMPUESTO_IGIC = 3;
-	public final short TIPO_IMPUESTO_IPSI = 4;
+	public final static short TIPO_IMPUESTO_SIN_IMPUESTO = 0;
+	public final static short TIPO_IMPUESTO_ITP = 1;
+	public final static short TIPO_IMPUESTO_IVA = 2;
+	public final static short TIPO_IMPUESTO_IGIC = 3;
+	public final static short TIPO_IMPUESTO_IPSI = 4;
 	
 	private String codigoDeOfertaHaya; //Campo OFR_NUM_OFERTA de la tabla OFR_OFERTAS
 	//private short tipoPropuesta; //1 = Venta o 3 = Modificación precio si es contraoferta  <--AHORA DEPENDE DE SI ES CONS/ALTA/MODI

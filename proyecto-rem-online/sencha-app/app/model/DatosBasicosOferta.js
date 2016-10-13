@@ -72,6 +72,12 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name: 'canalPrescripcionDescripcion'
+    		},
+    		{
+    			name: 'comiteSeleccionadoCodigo'
+    		},
+    		{
+    			name: 'comitePropuestoCodigo'
     		}
     ],
     

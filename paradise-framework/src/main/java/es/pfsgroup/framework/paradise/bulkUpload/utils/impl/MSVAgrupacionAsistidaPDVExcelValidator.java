@@ -34,6 +34,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
 public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbstract {
+	// Textos de validaciones para agrupaciones
+	public static final class AGRUPACIONES_CON_BAJA { static int codigoError = 3; static String mensajeError = "El periodo de vigencia de esta agrupación ha concluido. No se pueden asociar activos.";};
 	
 	// Textos de validaciones para cada activo
 	public static final String ACTIVO_NO_EXISTE = "Activo no encontrado con este número de activo";
@@ -93,6 +95,7 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 			mapaErrores.put(ACTIVO_NO_ASISTIDO, activosAsistidosRows(exc));
 			
 			// Validaciones de grupo, para todos los activos de una agrupacion en el excel:
+			mapaErrores.put(AGRUPACIONES_CON_BAJA.mensajeError, activosAgrupMultipleValidacionRows(exc, AGRUPACIONES_CON_BAJA.codigoError));
 			mapaErrores.put(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError, activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
 			mapaErrores.put(ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError, activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMO_PROPIETARIO.codigoError));
 						
@@ -103,6 +106,7 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 						!mapaErrores.get(ACTIVO_OFERTAS_ACEPTADAS).isEmpty() ||
 						!mapaErrores.get(ACTIVO_INCLUIDO_PERIMETRO).isEmpty() ||
 						!mapaErrores.get(ACTIVO_NO_ASISTIDO).isEmpty() ||
+						!mapaErrores.get(AGRUPACIONES_CON_BAJA.mensajeError).isEmpty() ||
 						!mapaErrores.get(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError).isEmpty() ||
 						!mapaErrores.get(ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError).isEmpty() ){
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -213,6 +217,7 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 		return numFilaError;
 	}
 	
+// Validaciones para activos de la lista excel	
 	private List<Integer> activesNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
@@ -387,6 +392,11 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 					
 					// Lanza la validacion para el grupo completo de num activos de la agrupacion (BBDD+excel), con un filtro IN de SQL
 					// La validacion que se lanza es la que se ha indicado por parametro, solo se lanza 1 de ellas.
+					
+					// Validacion agrupacion dada de baja
+					if(codigoValidacionMultiple == AGRUPACIONES_CON_BAJA.codigoError &&
+							particularValidator.esAgrupacionConBaja(String.valueOf(numAgrupacion)))
+						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
 					
 					// Validacion misma localizacion
 					if(codigoValidacionMultiple == ACTIVOS_NO_MISMA_LOCALIZACION.codigoError &&

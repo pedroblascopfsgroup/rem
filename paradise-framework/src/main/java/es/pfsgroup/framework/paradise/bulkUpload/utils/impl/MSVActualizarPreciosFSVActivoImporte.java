@@ -3,7 +3,10 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.jamonapi.utils.Logger;
 
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
@@ -33,30 +34,20 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-
 
 @Component
-public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
+public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstract {
 		
-	//Textos con errores de validacion
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
+	public static final String ACTIVE_PRIZE_NAN = "Uno de los importes indicados no es un valor numérico correcto";
+	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor FSV de Renta no puede ser mayor al valor FSV de Renta (FSV Venta >= FSV Renta) o uno de estos valores no tiene un formato correcto";
+	
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
-	public static final String VALID_PERIMETRO_TIPO_COMERCIALIZACION = "Debe indicar un codigo valido para el tipo de comercializacion";
-	public static final String VALID_PERIMETRO_RESPUESTA_SN = "En columnas cuyo nombre acaba en SN, debe indicar como valor la letra 'S' (Si) o la letra 'N' (No).";
-	public static final String VALID_PERIMETRO_MOTIVO_CON_COMERCIAL = "Debe indicar un codigo valido para el motivo de inclusion comercial";
-	public static final String VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL = "Debe indicar un codigo valido para el motivo de exclusion comercial";
+	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
+	public static final String ACTIVE_OFERTA_APROBADA = "El activo tiene ofertas aprobadas. No se pueden actualizar precios";
 
-	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
-	public static final int COL_NUM_EN_PERIMETRO_SN = 1;
-	public static final int COL_NUM_CON_GESTION_SN = 2;
-	public static final int COL_NUM_CON_COMERCIAL_SN = 4;
-	public static final int COL_NUM_MOTIVO_CON_COMERCIAL = 5;
-	public static final int COL_NUM_MOTIVO_SIN_COMERCIAL = 6;
-	public static final int COL_NUM_TIPO_COMERCIALIZACION = 7;
-
-    protected final Log logger = LogFactory.getLog(getClass());
-    
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	@Autowired
 	private MSVExcelParser excelParser;
 	
@@ -74,10 +65,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
-	
-	@Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
-	
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -98,18 +85,13 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 //			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				mapaErrores.put(VALID_PERIMETRO_TIPO_COMERCIALIZACION, getPerimetroTipoComerRows(exc));
-				mapaErrores.put(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL, getPerimetroConComerRows(exc));
-//				mapaErrores.put(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL, getPerimetroSinComerRows(exc));
-				mapaErrores.put(VALID_PERIMETRO_RESPUESTA_SN, getPerimetroRespuestaSNRows(exc));
-
+				mapaErrores.put(ACTIVE_PRIZE_NAN, getNANPrecioIncorrectoRows(exc));
+				mapaErrores.put(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED, getLimitePreciosVentaRentaIncorrectoRows(exc));
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(VALID_PERIMETRO_TIPO_COMERCIALIZACION).isEmpty() ||
-							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL).isEmpty()  ||
-//							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL).isEmpty()  ||
-							!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty() ){
+							!mapaErrores.get(ACTIVE_PRIZE_NAN).isEmpty() ||
+							!mapaErrores.get(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED).isEmpty() ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -117,7 +99,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 					}
 				} catch (Exception e) {
-					logger.error(e.getMessage());
 					e.printStackTrace();
 				}
 //			}
@@ -170,7 +151,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();
 		} catch (FileNotFoundException e) {
-			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
@@ -183,10 +163,10 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					return false;
 			}
 		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return true;
@@ -200,82 +180,75 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 					listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return listaFilas;
 	}
 	
-	
-	private List<Integer> getPerimetroTipoComerRows(MSVHojaExcel exc){
+	private List<Integer> getPreciosBloqueadoRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-		// Validacion que evalua si el registro de perimetro tiene un Tipo de comercializacion valido.
-		// Codigos validos 00 (ninguno) 01 (venta) 02 (alquiler) 03 (alquiler & venta) 04 (alquiler opcion compra) 
+		// Validacion que evalua si el activo tiene activo el bloqueo de precios. No pueden actualizarse precios.
 		try{
-			String codigoTipoComercial = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION)))
-					codigoTipoComercial = exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION).substring(0, 2);
-				else 
-					codigoTipoComercial = null;
-				
-				if(!(Checks.esNulo(codigoTipoComercial) || "01".equals(codigoTipoComercial) || "02".equals(codigoTipoComercial) || "03".equals(codigoTipoComercial) || "04".equals(codigoTipoComercial)) )
+				if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
 					listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return listaFilas;
 	}
 	
-	private List<Integer> getPerimetroConComerRows(MSVHojaExcel exc){
+	private List<Integer> getOfertaAprobadaRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-		// Validacion que evalua si el registro de perimetro tiene un motivo "con" comercializacion valido.
-		// Codigos validos 00 (ninguno) 01 (ordinario) 02 (pdv) 03 (performing) 
+		// Validacion que evalua si el activo tiene ofertas activas. No pueden actualizarse precios.
 		try{
-			String codigoMotivoConComercial = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
+				if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> getNANPrecioIncorrectoRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double precioFSVVenta = null;
+		Double precioFSVRenta = null;
 
-				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL)))
-					codigoMotivoConComercial = exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL).substring(0, 2);
-				else 
-					codigoMotivoConComercial = null;
-				
-				if(!(Checks.esNulo(codigoMotivoConComercial) || "01".equals(codigoMotivoConComercial) || "02".equals(codigoMotivoConComercial) || "03".equals(codigoMotivoConComercial)) )
-					listaFilas.add(i);
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		return listaFilas;
-	}
-	
-	private List<Integer> getPerimetroSinComerRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-		// Validacion que evalua si el registro de perimetro tiene un motivo "sin" comercializacion valido.
-		// Codigos validos 00 (ninguno) 01 (V.P.O Auto) 02 (perdido) 03 (desistido) ... 63 (no comer. pte. propuesta) 
-		try{
-			Integer codigoMotivoSinComercial = 0;
+		// Validacion que evalua si los precios son numeros correctos
+		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				codigoMotivoSinComercial = exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL).isEmpty() ? Integer.valueOf(0) :
-					Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL));
-				if(codigoMotivoSinComercial < 0 || codigoMotivoSinComercial > 63)
+				try{
+					precioFSVVenta = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
+					precioFSVRenta = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;
+					
+					// Si alguno de los precios no es un numero
+					if((!Checks.esNulo(precioFSVVenta) && precioFSVVenta.isNaN()) ||
+							(!Checks.esNulo(precioFSVRenta) && precioFSVRenta.isNaN()) )
+						listaFilas.add(i);	
+				} catch (NumberFormatException e) {
 					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage());
@@ -284,36 +257,35 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
+		
 		return listaFilas;
 	}
 	
-	private List<Integer> getPerimetroRespuestaSNRows(MSVHojaExcel exc){
+	private List<Integer> getLimitePreciosVentaRentaIncorrectoRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		// Validacion que evalua si el registro de perimetro tiene columnas con una respuesta correcta de SN.
-		// Codigos validos S (Si) N (No) 
-		try{
-			String valorEnPerimetro = "-";
-			String valorConGestion = "-";
-			String valorConComercial = "-";
-			
+		Double valorFSVVenta = null;
+		Double valorFSVRenta = null;
+		
+		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
+		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				
-				//Columnas EN_PERIMETRO, CON_GESTION, CON_COMERCIAL
-				// Si la celda no tiene valor, debe validarse correctamente
-				// Si la S o la N van en minusculas, deben ser valores validos
-				// No deben tenerse en cuenta espacios en blanco
-				valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
-				valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
-				valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
-				
-				// Valida valores correctos de los campos S/N/<nulo>
-				if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
-						|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))
-						|| !("S".equals(valorConComercial) || "N".equals(valorConComercial) || "-".equals(valorConComercial))
-						)
+				try{
+					valorFSVVenta = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
+					valorFSVRenta = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;
+					
+					// Condiciones Limites: dto<=dto web<=aprobado
+					
+					// Limite: Precio Descuento Web >= Precio Descuento Aprobado
+					if(!Checks.esNulo(valorFSVVenta) && 
+							!Checks.esNulo(valorFSVRenta) &&
+							(valorFSVRenta > valorFSVVenta)){
+						if (!listaFilas.contains(i))
+							listaFilas.add(i);
+					}
+				} catch (NumberFormatException e) {
 					listaFilas.add(i);
-			
+					logger.error(e.getMessage());
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage());
@@ -322,6 +294,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
+		
 		return listaFilas;
 	}
 	

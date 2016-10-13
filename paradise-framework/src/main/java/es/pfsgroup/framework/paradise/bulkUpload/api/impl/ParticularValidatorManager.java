@@ -338,6 +338,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
+	public Boolean esAgrupacionConBaja (String numAgrupacion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		FROM ACT_AGR_AGRUPACION agr "
+				+ "		WHERE " 
+				+ "		agr.AGR_FECHA_BAJA IS NOT NULL "
+				+ "		AND agr.AGR_NUM_AGRUP_REM = "+numAgrupacion+" ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
 	public Boolean esActivosMismaLocalizacion (String inSqlNumActivosRem){
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(COUNT(1)) "
 				+ "			  FROM ACT_ACTIVO act, BIE_LOCALIZACION loc "

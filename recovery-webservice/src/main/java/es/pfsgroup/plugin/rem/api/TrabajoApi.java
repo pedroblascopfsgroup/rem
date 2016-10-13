@@ -521,6 +521,15 @@ public interface TrabajoApi {
 		 * @return true si pertenece a la cartera, false si no
 		 */
 		public boolean checkSareb(Trabajo trabajo);
+
+		/**
+		 * Comprueba la existencia de una propuesta en el tramite de Propuestas,
+		 * en la tarea Generacion de propuesta, devolviendo mensaje en caso de que se haya creado.
+		 * @param tareaExterna
+		 * @return
+		 */
+		public String comprobarPropuestaPrecios(TareaExterna tareaExterna);
+
     }
 
 

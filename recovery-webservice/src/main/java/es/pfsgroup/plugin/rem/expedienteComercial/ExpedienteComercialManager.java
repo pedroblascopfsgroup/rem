@@ -96,7 +96,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
@@ -117,9 +116,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
-	
-	@Autowired
-	private OfertaDao ofertaDao;
 	
 	@Autowired
 	private ReservaDao reservaDao;
@@ -1390,11 +1386,15 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) {
+	public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial)throws Exception {
 		
 		ExpedienteComercial expedienteComercial = findOne(idExpedienteComercial);
 		Reserva reserva = expedienteComercial.getReserva();
+		if(reserva==null){
+			throw new Exception("No existe la reserva para el expediente comercial");
+		}
 		entregaReserva.setReserva(reserva);
+		
 		try {
 			genericDao.save(EntregaReserva.class, entregaReserva);
 		} catch(Exception e) {

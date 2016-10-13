@@ -31,6 +31,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarPreciosActivoImporte actualizarPrecioActivo;
 	
 	@Autowired
+	private MSVActualizarPreciosFSVActivoImporte actualizarPrecioFSVActivo;
+	
+	@Autowired
 	private MSVActualizarPreciosActivoBloqueo actualizarBloqueoPrecioActivo;
 
 	@Autowired
@@ -50,9 +53,10 @@ public class MSVExcelValidatorFactoryImpl {
 				return agrupacionAsistidaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(codTipoOperacion)) {
 				return listadoActivosExcelValidator;
-			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE.equals(codTipoOperacion) ||
-					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_FSV_ACTIVO_IMPORTE.equals(codTipoOperacion)) {
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE.equals(codTipoOperacion)) {
 				return actualizarPrecioActivo;
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_FSV_ACTIVO_IMPORTE.equals(codTipoOperacion)) {
+				return actualizarPrecioFSVActivo;
 			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_BLOQUEO.equals(codTipoOperacion)) {
 				return actualizarBloqueoPrecioActivo;				
 			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_DESBLOQUEO.equals(codTipoOperacion)) {

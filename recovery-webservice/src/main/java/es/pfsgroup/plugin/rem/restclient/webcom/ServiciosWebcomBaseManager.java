@@ -295,7 +295,8 @@ public abstract class ServiciosWebcomBaseManager {
 			for (WebcomRESTDto dto : dtoList) {
 				HashMap<String, Object> params = createParametersMap(dto);
 				params.putAll(Converter.dtoToMap(dto));
-				compruebaObligatorios(dto.getClass(), params);
+				// Comentado con Anahuac. No fallamos si faltan campos obligatorios. Dejamos que falle webcom.
+				//compruebaObligatorios(dto.getClass(), params);
 				paramsList.add(params);
 			}
 		} else {

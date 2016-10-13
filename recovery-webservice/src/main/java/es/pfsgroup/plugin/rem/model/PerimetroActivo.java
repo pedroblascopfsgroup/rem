@@ -21,7 +21,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoNoComercializacion;
 
 /**
  * Modelo que gestiona el perímetro de un activo
@@ -88,9 +87,8 @@ public class PerimetroActivo implements Serializable, Auditable {
     @JoinColumn(name = "DD_MCO_ID")
 	private DDMotivoComercializacion motivoAplicaComercializar;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_MNC_ID")
-	private DDMotivoNoComercializacion motivoNoAplicaComercializar;
+    @Column(name = "PAC_MOT_EXCL_COMERCIALIZAR")
+	private String motivoNoAplicaComercializar;
     
     @Column(name = "PAC_CHECK_FORMALIZAR")
 	private Integer aplicaFormalizar; 
@@ -230,12 +228,11 @@ public class PerimetroActivo implements Serializable, Auditable {
 		this.motivoAplicaComercializar = motivoAplicaComercializar;
 	}
 
-	public DDMotivoNoComercializacion getMotivoNoAplicaComercializar() {
+	public String getMotivoNoAplicaComercializar() {
 		return motivoNoAplicaComercializar;
 	}
 
-	public void setMotivoNoAplicaComercializar(
-			DDMotivoNoComercializacion motivoNoAplicaComercializar) {
+	public void setMotivoNoAplicaComercializar(String motivoNoAplicaComercializar) {
 		this.motivoNoAplicaComercializar = motivoNoAplicaComercializar;
 	}
 

@@ -33,8 +33,6 @@ public class ClienteDto implements Serializable{
 			Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
 	@NotNull(groups = { Insert.class, Update.class })
-	@Diccionary(clase = ClienteComercial.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
-			Update.class },foreingField="idClienteWebcom")
 	private Long idClienteWebcom;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteRem;

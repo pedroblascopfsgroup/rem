@@ -367,7 +367,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		 model: 'HreRem.model.Fotos',
 		     proxy: {
 		        type: 'uxproxy',
-		        //remoteUrl: 'activo/getFotosById',
 		        api: {
 		            read: 'activo/getFotosById',
 		            create: 'activo/getFotosById',
@@ -376,9 +375,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        },
 		        extraParams: {id: '{activo.id}', tipoFoto: '01'}
 		     }, autoLoad: false
-		     /*   remoteUrl: 'activo/getFotosById',
-		        extraParams: {id: '{activo.id}'}
-	    	 }*/
     		},
     		
     		storeFotosTecnicas: {    			
@@ -773,8 +769,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getEstadoInformeComercialByActivo',
     				extraParams: {id: '{activo.id}'}
-    			},
-				autoload: true
+    			}
     		},
     		
     		storeHistoricoMediador:{
@@ -784,8 +779,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getHistoricoMediadorByActivo',
     				extraParams: {id: '{activo.id}'}
-    			},
-				autoload: true
+    			}
     		},
     		
     		storeMediadorListFiltered: {
@@ -794,8 +788,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'proveedores/getMediadorListFiltered',
 					extraParams: {idActivo : '{activo.id}'}
-				},
-				autoload: true
+				}
     		},
     		
     		storeHistoricoValoresPrecios : {    			
@@ -824,14 +817,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        
     		},
     		
-    		storeEstadoDisponibilidadComercial: {    		
+    		storeEstadoDisponibilidadComercial: {
 				model: 'HreRem.model.DDBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadoDisponibilidadComercial'}
 				},
-				autoload: true
+				autoLoad: true
 			},
 			
 		comboEstadoOferta: {
@@ -867,8 +860,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'unidadPoblacional'}
-			},
-			autoload: false  	
+			} 	
     	},
     	
     	storePropuestaActivosVinculados:{
@@ -878,8 +870,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getPropuestaActivosVinculadosByActivo',
 				extraParams: {idActivo: '{activo.id}'}
-			},
-			autoload: true
+			}
 		}
      }    
 });

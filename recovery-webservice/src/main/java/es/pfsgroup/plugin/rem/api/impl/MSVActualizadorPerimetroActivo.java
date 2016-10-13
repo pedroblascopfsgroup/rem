@@ -84,6 +84,23 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 		
 	}
 
+	
+	/**
+	 * Método que evalua el valor de un check en funcion de las columnas S/N/<nulo>
+	 * @param cellValue
+	 * @return
+	 */
+	private Integer getCheckValueCalculated(String cellValue, Integer chkIncluidoPerimetro){
+		if(!Checks.esNulo(cellValue)){
+			if("S".equalsIgnoreCase(cellValue))
+				return CHECK_VALOR_SI;
+			else
+				return CHECK_VALOR_NO;					
+		} else {
+			return getCheckValue(String.valueOf(chkIncluidoPerimetro));
+		}
+	}
+	
 	@Override
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
 			
@@ -102,9 +119,9 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	
 				//Variables temporales para asignar valores de filas excel
 				Integer tmpIncluidoEnPerimetro = getCheckValue(exc.dameCelda(fila, 1));
-				Integer tmpAplicaGestion = getCheckValue(exc.dameCelda(fila, 2));
+				Integer tmpAplicaGestion = getCheckValueCalculated(exc.dameCelda(fila, 2), tmpIncluidoEnPerimetro);
 				String  tmpMotivoAplicaGestion = exc.dameCelda(fila, 3);
-				Integer tmpAplicaComercializar = getCheckValue(exc.dameCelda(fila, 4));
+				Integer tmpAplicaComercializar = getCheckValueCalculated(exc.dameCelda(fila, 4), tmpIncluidoEnPerimetro);
 				String  tmpMotivoComercializacion = exc.dameCelda(fila, 5);
 				String  tmpMotivoNoComercializacion = exc.dameCelda(fila, 6);
 				String  tmpTipoComercializacion = exc.dameCelda(fila, 7);

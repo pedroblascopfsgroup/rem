@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import com.jamonapi.utils.Logger;
 
 import es.capgemini.devon.files.FileItem;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
@@ -99,7 +100,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_TIPO_COMERCIALIZACION, getPerimetroTipoComerRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL, getPerimetroConComerRows(exc));
-				mapaErrores.put(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL, getPerimetroSinComerRows(exc));
+//				mapaErrores.put(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL, getPerimetroSinComerRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_RESPUESTA_SN, getPerimetroRespuestaSNRows(exc));
 
 				
@@ -107,7 +108,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
 							!mapaErrores.get(VALID_PERIMETRO_TIPO_COMERCIALIZACION).isEmpty() ||
 							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL).isEmpty()  ||
-							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL).isEmpty()  ||
+//							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL).isEmpty()  ||
 							!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty() ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -216,11 +217,14 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// Validacion que evalua si el registro de perimetro tiene un Tipo de comercializacion valido.
 		// Codigos validos 00 (ninguno) 01 (venta) 02 (alquiler) 03 (alquiler & venta) 04 (alquiler opcion compra) 
 		try{
-			Integer codigoTipoComercial = 0;
+			String codigoTipoComercial = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				codigoTipoComercial = exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION).isEmpty()? Integer.valueOf(0) : 
-					Integer.valueOf(exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION));
-				if(codigoTipoComercial < 0 || codigoTipoComercial > 4)
+				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION)))
+					codigoTipoComercial = exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION).substring(0, 2);
+				else 
+					codigoTipoComercial = null;
+				
+				if(!(Checks.esNulo(codigoTipoComercial) || "01".equals(codigoTipoComercial) || "02".equals(codigoTipoComercial) || "03".equals(codigoTipoComercial) || "04".equals(codigoTipoComercial)) )
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
@@ -239,11 +243,15 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// Validacion que evalua si el registro de perimetro tiene un motivo "con" comercializacion valido.
 		// Codigos validos 00 (ninguno) 01 (ordinario) 02 (pdv) 03 (performing) 
 		try{
-			Integer codigoMotivoConComercial = 0;
+			String codigoMotivoConComercial = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				codigoMotivoConComercial = exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL).isEmpty() ? Integer.valueOf(0) :
-						Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL));
-				if(codigoMotivoConComercial < 0 || codigoMotivoConComercial > 3)
+
+				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL)))
+					codigoMotivoConComercial = exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL).substring(0, 2);
+				else 
+					codigoMotivoConComercial = null;
+				
+				if(!(Checks.esNulo(codigoMotivoConComercial) || "01".equals(codigoMotivoConComercial) || "02".equals(codigoMotivoConComercial) || "03".equals(codigoMotivoConComercial)) )
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {

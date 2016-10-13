@@ -14,8 +14,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -34,7 +32,6 @@ public class ClienteDto implements Serializable{
 	private Long idUsuarioRemAccion;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteWebcom;
-	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteRem;
 	@Size(max=50)
 	private String razonSocial;

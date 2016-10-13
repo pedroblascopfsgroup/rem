@@ -853,14 +853,19 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Override
 	@Transactional(readOnly = false)
 	public boolean createProveedor(DtoProveedorFilter dtoProveedorFilter) throws Exception {
-		ActivoProveedor proveedor = proveedoresDao.getProveedorByNIF(dtoProveedorFilter.getNifProveedor());
+		ActivoProveedor proveedor = null;
 		
-		if (Checks.esNulo(proveedor)){
+		if(!Checks.esNulo(dtoProveedorFilter.getNifProveedor())) { // Si se ha definido NIF.
+			proveedor = proveedoresDao.getProveedorByNIF(dtoProveedorFilter.getNifProveedor());
+			if (Checks.esNulo(proveedor)){ // Si no se ha encontrado proveedor por el NIF definido.
+				proveedor = new ActivoProveedor();
+			} else { // Si existe un proveedor con el NIF ya definido.
+				throw new Exception(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE);
+			}
+		} else { // Si no se ha definido NIF.
 			proveedor = new ActivoProveedor();
-		} else {
-			throw new Exception(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE);
 		}
-
+		
 		try {
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dtoProveedorFilter.getNifProveedor());
 			

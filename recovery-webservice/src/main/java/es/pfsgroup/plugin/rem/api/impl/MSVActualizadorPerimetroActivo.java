@@ -64,10 +64,10 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	 */
 	private Integer getCheckValue(String cellValue){
 		if(!Checks.esNulo(cellValue)){
-			if("S".equalsIgnoreCase(cellValue))
+			if("S".equalsIgnoreCase(cellValue) || String.valueOf(CHECK_VALOR_SI).equalsIgnoreCase(cellValue))
 				return CHECK_VALOR_SI;
 			else
-				return CHECK_VALOR_NO;					
+				return CHECK_VALOR_NO;
 		}
 		
 		return CHECK_NO_CAMBIAR;
@@ -82,10 +82,10 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	 */
 	private Integer getCheckValueCalculated(String cellValue, Integer chkIncluidoPerimetro){
 		if(!Checks.esNulo(cellValue)){
-			if("S".equalsIgnoreCase(cellValue))
+			if("S".equalsIgnoreCase(cellValue) || String.valueOf(CHECK_VALOR_SI).equalsIgnoreCase(cellValue))
 				return CHECK_VALOR_SI;
 			else
-				return CHECK_VALOR_NO;					
+				return CHECK_VALOR_NO;
 		} else {
 			return getCheckValue(String.valueOf(chkIncluidoPerimetro));
 		}
@@ -136,7 +136,7 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				//Motivo para Si comercializar
 				if(!Checks.esNulo(tmpMotivoComercializacion))
 					perimetroActivo.setMotivoAplicaComercializar((DDMotivoComercializacion)
-						utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class, tmpMotivoComercializacion));
+						utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class, tmpMotivoComercializacion.substring(0, 2)));
 				
 				//Motivo para No comercializar
 				if(!Checks.esNulo(tmpMotivoNoComercializacion))
@@ -145,7 +145,7 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				//Tipo de comercializacion en el activo
 				if(!Checks.esNulo(tmpTipoComercializacion))
 				activo.setTipoComercializacion((DDTipoComercializacion)
-						utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpTipoComercializacion));
+						utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpTipoComercializacion.substring(0, 2)));
 				
 				//Persiste los datos, creando el registro de perimetro
 				// Todos los datos son de PerimetroActivo, a excepcion del tipo comercializacion que es del Activo

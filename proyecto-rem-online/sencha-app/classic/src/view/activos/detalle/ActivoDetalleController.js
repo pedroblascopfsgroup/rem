@@ -1465,6 +1465,64 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		window = btn.up('window');
     	window.close();
+	},
+	
+	onProveedoresListClick: function(gridView, record){
+//		var me=this,
+//		idCliente = record.get("id"),
+//		model = Ext.create('HreRem.model.FichaComprador');
+//		
+//		var fieldset =  me.lookupReference('estadoPbcCompradoRef');
+//		fieldset.mask(HreRem.i18n("msg.mask.loading"));
+//	
+//		model.setId(idCliente);
+//		model.load({			
+//		    success: function(record) {	
+//		    	me.getViewModel().set("detalleComprador", record);
+//		    	fieldset.unmask();
+//		    }
+//		});
+		var me=this;
+		idProveedor= record.get('id');
+		idActivo= record.get('idActivo');
+		gridView.up('form').down('[reference=listadogastosref]').getStore().getProxy().setExtraParams({'idActivo': idActivo,'idProveedor': idProveedor});
+		gridView.up('form').down('[reference=listadogastosref]').getStore().load();
+		
+		
+	},
+	
+	// Función que abre la pestaña de proveedor.
+   abrirPestañaProveedor: function(tableView, indiceFila, indiceColumna){
+   		var me = this;
+		var grid = tableView.up('grid');
+	    var record = grid.store.getAt(indiceFila);
+	    grid.setSelection(record);
+	    if(!Ext.isEmpty(record.get('id'))){
+	    	var idProveedor = record.get("id");
+//	   		me.redirectTo('activos', true);
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }
+   },
+   
+   	onClickAbrirGastoProveedor: function(grid, record){
+		var me = this;
+		record.setId(record.data.idGasto);
+		
+    	me.getView().fireEvent('abrirDetalleGasto', record);
+		
+	},
+	
+	onClickAbrirGastoProveedorIcono: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+//		
+		var grid = tableView.up('grid');
+	    var record = grid.store.getAt(indiceFila);
+	    grid.setSelection(record);
+	    if(!Ext.isEmpty(record.get('id'))){
+//	   		me.redirectTo('activos', true);
+	    	record.setId(record.data.idGasto);
+	    	me.getView().fireEvent('abrirDetalleGasto', record);
+	    }
 	}
 
 });

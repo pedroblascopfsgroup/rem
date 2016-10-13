@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -503,4 +504,11 @@ public interface ActivoApi {
 		 * @return
 		 */
 	    public List<VBusquedaProveedoresActivo> getProveedorByActivo(Long idActivo);
+	    
+	    /**
+		 * Devuelve la lista de los gastos proveedores para un activo y un proveedor
+		 * @param idActivo
+		 * @return
+		 */
+	    public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor);  
     }

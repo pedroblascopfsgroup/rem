@@ -48,6 +48,9 @@ Ext.define('HreRem.model.Gasto', {
 		},
 		{
 			name : 'destinatario'
+		},
+		{
+			name: 'estadoGastoDescripcion'
 		}
     		
     ],

@@ -89,7 +89,9 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
@@ -1975,6 +1977,25 @@ public class ActivoController {
 		try {
 			
 			List<VBusquedaProveedoresActivo> lista  =  activoApi.getProveedorByActivo(idActivo);
+			
+			model.put("data", lista);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+			return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastoByActivo(Long idActivo,Long idProveedor, ModelMap model){
+		
+		try {
+			
+			List<VBusquedaGastoActivo> lista  =  activoApi.getGastoByActivo(idActivo, idProveedor);
 			
 			model.put("data", lista);
 			model.put("success", true);

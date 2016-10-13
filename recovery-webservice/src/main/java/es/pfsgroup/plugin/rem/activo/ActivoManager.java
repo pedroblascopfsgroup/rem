@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -86,12 +87,14 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -1787,6 +1790,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return listadoProveedores;
 		
+	}
+	
+	public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor){
+			
+		List<VBusquedaGastoActivo> vGastosActivos= new ArrayList<VBusquedaGastoActivo>();
+		
+		if(!Checks.esNulo(idActivo) && !Checks.esNulo(idProveedor)){
+			Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo",idActivo);
+			Filter filtroGastoProveedor = genericDao.createFilter(FilterType.EQUALS, "idProveedor",idProveedor);
+			vGastosActivos= genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo,filtroGastoProveedor);
+		}
+		
+		return vGastosActivos;
 	}
 
 }

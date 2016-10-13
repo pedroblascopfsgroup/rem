@@ -69,7 +69,9 @@ Ext.define('HreRem.controller.ActivosController', {
         	abrirDetalleTrabajo: 'abrirDetalleTrabajo',
         	abrirDetalleExpediente: 'abrirDetalleExpediente',
         	refrescarActivo: 'refrescarDetalleActivo',
-        	abrirDetalleActivo: 'abrirDetalleActivoById'
+        	abrirDetalleActivo: 'abrirDetalleActivoById',
+        	abrirDetalleProveedor: 'abrirDetalleProveedor',
+        	abrirDetalleGasto: 'abrirDetalleGasto'
     	},
 
     	'tareagenerica' : {

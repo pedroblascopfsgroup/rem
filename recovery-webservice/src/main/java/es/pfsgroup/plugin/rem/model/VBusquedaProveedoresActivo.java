@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,6 +48,9 @@ public class VBusquedaProveedoresActivo implements Serializable {
 	@Column(name="PVE_COD_UVEM")
 	private String codigoProveedor;
 
+	@Column(name="AIN_FECHA_EXCLUSION")
+	private Date fechaExclusion;
+	
 	public String getId() {
 		return id;
 	}
@@ -125,6 +129,14 @@ public class VBusquedaProveedoresActivo implements Serializable {
 
 	public void setCodigoProveedor(String codigoProveedor) {
 		this.codigoProveedor = codigoProveedor;
+	}
+
+	public Date getFechaExclusion() {
+		return fechaExclusion;
+	}
+
+	public void setFechaExclusion(Date fechaExclusion) {
+		this.fechaExclusion = fechaExclusion;
 	}
 		
 

@@ -40,6 +40,8 @@ public class StockDto implements WebcomRESTDto{
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType superficie;
 	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType superficieConstruida;
+	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType superficieRegistral;
 	private BooleanDataType ascensor;
 	private LongDataType dormitorios;
@@ -205,6 +207,12 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setSuperficie(DoubleDataType superficie) {
 		this.superficie = superficie;
+	}
+	public DoubleDataType getSuperficieConstruida() {
+		return superficieConstruida;
+	}
+	public void setSuperficieConstruida(DoubleDataType superficieConstruida) {
+		this.superficieConstruida = superficieConstruida;
 	}
 	public DoubleDataType getSuperficieRegistral() {
 		return superficieRegistral;

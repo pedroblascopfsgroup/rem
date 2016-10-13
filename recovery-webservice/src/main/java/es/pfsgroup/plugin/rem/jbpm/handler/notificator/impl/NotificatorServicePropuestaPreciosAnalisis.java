@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -47,8 +48,14 @@ public class NotificatorServicePropuestaPreciosAnalisis extends AbstractNotifica
 
 	@Override
 	public void notificator(ActivoTramite tramite) {
+
+	}
+	
+	@Override
+	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
-		if(!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !Checks.esNulo(tramite.getTrabajo().getSolicitante().getEmail())) {
+		if(!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !Checks.esNulo(tramite.getTrabajo().getSolicitante().getEmail())
+				&& !tramite.getTrabajo().getSolicitante().equals(genericAdapter.getUsuarioLogado())) {
 			
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 			
@@ -63,21 +70,23 @@ public class NotificatorServicePropuestaPreciosAnalisis extends AbstractNotifica
 			String contenido = "";
 			String titulo = "";
 			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
-	
-			/**
-			 * HREOS-763 Completar cuando haya más información para esta notificación
-			 */
-			contenido = "<p>El gestor del ....</p>";
-			titulo = "Notificación de análisis de petición de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-	
+			
+			String motivo = null;
+			
+			if(activoTramiteApi.getTareaValorByNombre(valores, "comboTramitar").equalsIgnoreCase(DDSiNo.NO))
+				motivo = activoTramiteApi.getTareaValorByNombre(valores, "motivoDenegacion");
+
+			if(motivo == null) {
+				contenido = "<p>El gestor responsable de tramitar su petición la ha aceptado, por lo que se va a tramitar la correspondiente propuesta de precios.</p>";
+				titulo = "Notificación de aceptación de petición en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			}
+			else {
+				contenido = "<p>El gestor responsable de tramitar su petición la ha rechazado indicando el siguiente motivo: ("+motivo+").</p>";
+				titulo = "Notificación de rechazo de petición en REM(" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			}
 				  
-			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
 	}
 	
-	@Override
-	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		
-	}
 }

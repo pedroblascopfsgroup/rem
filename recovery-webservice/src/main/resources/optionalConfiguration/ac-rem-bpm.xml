@@ -380,7 +380,11 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkConflictoIntereses(tareaExterna);
 			}
-	
+            def comprobarPropuestaPrecios = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.comprobarPropuestaPrecios(tareaExterna);
+            }
+
   			 ]]></value>
   		</list>
   	</property>

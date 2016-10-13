@@ -7,7 +7,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 
 /**
  * Clase que comprueba si para el trabajo existe ya generada una propuesta de precios y retorna señales
@@ -20,21 +19,28 @@ public class ActivoComprobarPropuestaPreciosActionHandler extends ActivoBaseActi
 	private static final long serialVersionUID = 102030L;
 	
 	private static final String CODIGO_TRAMITE_PROPUESTA_PRECIOS = "T009";
+	
+	@Autowired
+	GestorActivoApi gestorActivoApi;
 
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception { 
 
 		ActivoTramite tramite = getActivoTramite(executionContext);
-//		Usuario usuario = tramite.getTrabajo().getSolicitante();
+		Usuario usuario = tramite.getTrabajo().getSolicitante();
 
 		if(!Checks.esNulo(tramite.getTrabajo().getPropuestaPrecio()) 
 				&& tramite.getTrabajo().getPropuestaPrecio().getEsPropuestaManual())
 			//Existe una propuesta y es de solicitud manual
 			getExecutionContext().getToken().signal("Manual");
-		else 
+		else {
 			//No existe una propuesta o si existe es de solicitud por petición
-			getExecutionContext().getToken().signal("Peticion");
-			
+			//Debe comprobar si "es gestor precios/marketing u otros"
+			if(gestorActivoApi.isGestorPreciosOMarketing(tramite.getActivo(),usuario))
+				getExecutionContext().getToken().signal("GestorMarketingOPrecio");
+			else
+				getExecutionContext().getToken().signal("OtrosGestores");
 		}
+	}
 
 }

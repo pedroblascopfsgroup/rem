@@ -153,8 +153,8 @@ BEGIN
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
-    INNER JOIN ACT_NUM_ACTIVO
-    ON ACT_NUM_ACTIVO.ACT_PRP_NUM_PROPUESTA = MIG.ACT_PRP_NUM_PROPUESTA
+    INNER JOIN PRP_NUM_PROPUESTA
+    ON PRP_NUM_PROPUESTA.ACT_PRP_NUM_PROPUESTA = MIG.ACT_PRP_NUM_PROPUESTA
     '
     ;
     

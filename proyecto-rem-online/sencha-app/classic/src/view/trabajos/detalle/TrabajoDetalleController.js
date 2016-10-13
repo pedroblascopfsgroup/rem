@@ -89,7 +89,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  			codigoSubtipoTrabajo : combo.getValue()},
 			  success: function(response,opts){
 			  
-				  //TODO: Aqu� debe mostrarse el mensaje de alerta para existencia de otros subtipos de trabajo
+				  //TODO: Aqui debe mostrarse el mensaje de alerta para existencia de otros subtipos de trabajo
 				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
 				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
 			  }
@@ -662,6 +662,50 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				
     		    })
     	    }
+     },
+     
+     onClickGenerarPropuesta: function(btn) {
+     	
+     	var me = this, params = {},
+     	idTrabajo = me.getViewModel().get('trabajo').get('id'),
+     	config = {};
+		
+		var messageBox = Ext.Msg.prompt(HreRem.i18n('title.generar.propuesta'),"<span class='txt-guardar-propuesta'>" + HreRem.i18n('txt.aviso.guardar.propuesta') + "</span>", function(btn, text){
+		    if (btn == 'ok'){
+		    	
+		    	//LLamada para comprobar si se puede crear la propuesta
+		    	var url = $AC.getRemoteUrl('trabajo/comprobarCreacionPropuesta');
+			    Ext.Ajax.request({
+				  url:url,
+				  params:  {idTrabajo : idTrabajo},
+				  			
+				  success: function(response,opts){
+					  //Si se puede crear la propuesta, la crea
+					  if(Ext.JSON.decode(response.responseText).success == "true") {
+					    	params.nombrePropuesta = text;
+					    	params.idTrabajo = idTrabajo;
+					       
+					        config.params = params;
+							config.url= $AC.getRemoteUrl('trabajo/createPropuestaPreciosFromTrabajo');
+							
+							me.fireEvent("downloadFile", config);
+					  }
+					  else {
+						  me.fireEvent("errorToast", Ext.JSON.decode(response.responseText).mensaje); 
+					  }
+							
+				  },
+				  failure: function (a, operation, context) {
+					  
+					  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				  }
+		    	});
+		    }
+    	});
+
+		messageBox.textField.maskRe=/^[a-z0-9\s_/]+$/;
+		messageBox.textField.mon(messageBox.textField.el, 'keypress', messageBox.textField.filterKeys, messageBox.textField);
+		
      }
     	
 });

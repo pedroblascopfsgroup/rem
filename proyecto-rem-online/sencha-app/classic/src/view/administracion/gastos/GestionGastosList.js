@@ -103,9 +103,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     },
     
     onClickAdd: function (btn) {
-		var me = this,
-		parent= me.up('gestiongastos');
-		Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent}).show();				    				    	
+		var me = this;
+		
+		me.fireEvent("onClickAddGasto", me);
+		
 	},
 	
 	onClickRemove: function (btn) {

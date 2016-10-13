@@ -56,16 +56,17 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String entidadPropietaria;
 	private String entidadPropietariaCodigo;
 	private String entidadPropietariaDescripcion;
-
 	private String estadoActivoCodigo;
 	private Integer divHorizontal;
 	private String tipoUsoDestinoCodigo;
 	private String tipoUsoDestinoDescripcion;
 
 	// Comunidad de propietarios
-	// Mapeo manual
 	private String tipoCuotaCodigo;
 	private String direccionComunidad;
+
+	// Mapeo manual
+	private Boolean informeComercialAceptado;
 
 	// Mapeo automático beanutils
 	private Integer constituida;
@@ -121,8 +122,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private Date fechaAplicaComercializar;
 	private String motivoAplicaComercializarCodigo;
 	private String motivoAplicaComercializarDescripcion;
-	private String motivoNoAplicaComercializarCodigo;
-	private String motivoNoAplicaComercializarDescripcion;
+	private String motivoNoAplicaComercializar;
 	private Boolean aplicaFormalizar;
 	private Date fechaAplicaFormalizar;
 	private String motivoAplicaFormalizar;
@@ -956,20 +956,12 @@ public class DtoActivoFichaCabecera extends WebDto {
 		this.motivoAplicaComercializarDescripcion = motivoAplicaComercializarDescripcion;
 	}
 	
-	public String getMotivoNoAplicaComercializarCodigo() {
-		return motivoNoAplicaComercializarCodigo;
+	public String getMotivoNoAplicaComercializar() {
+		return motivoNoAplicaComercializar;
 	}
 
-	public void setMotivoNoAplicaComercializarCodigo(String motivoNoAplicaComercializarCodigo) {
-		this.motivoNoAplicaComercializarCodigo = motivoNoAplicaComercializarCodigo;
-	}
-
-	public String getMotivoNoAplicaComercializarDescripcion() {
-		return motivoNoAplicaComercializarDescripcion;
-	}
-
-	public void setMotivoNoAplicaComercializarDescripcion(String motivoNoAplicaComercializarDescripcion) {
-		this.motivoNoAplicaComercializarDescripcion = motivoNoAplicaComercializarDescripcion;
+	public void setMotivoNoAplicaComercializar(String motivoNoAplicaComercializar) {
+		this.motivoNoAplicaComercializar = motivoNoAplicaComercializar;
 	}
 
 	public Boolean getAplicaFormalizar() {
@@ -1099,6 +1091,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 	public void setIntegradoEnAgrupacionAsistida(
 			Boolean integradoEnAgrupacionAsistida) {
 		this.integradoEnAgrupacionAsistida = integradoEnAgrupacionAsistida;
+	}
+
+	public Boolean getInformeComercialAceptado() {
+		return informeComercialAceptado;
+	}
+
+	public void setInformeComercialAceptado(Boolean informeComercialAceptado) {
+		this.informeComercialAceptado = informeComercialAceptado;
 	}
 
 

@@ -13,17 +13,7 @@
 				activoComprobarPropuestaPreciosActionHandler
 			</targetBean>
 		</action>
-		<transition to="T009_ComprobacionGestor" name="Peticion"></transition>
 		<transition to="T009_EnvioPropuestaPropietario" name="Manual"></transition>
-	</node>
-		
-	<node name="T009_ComprobacionGestor">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>
-				activoComprobarGestorActionHandler
-			</targetBean>
-		</action>
 		<transition to="T009_AnalisisPeticion" name="OtrosGestores"></transition>
 		<transition to="T009_GenerarPropuestaPrecios" name="GestorMarketingOPrecio"></transition>
 	</node>

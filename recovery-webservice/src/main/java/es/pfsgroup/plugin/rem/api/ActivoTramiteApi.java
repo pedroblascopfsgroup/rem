@@ -5,11 +5,8 @@ import java.util.List;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -156,4 +153,21 @@ public interface ActivoTramiteApi {
 	 * @return
 	 */
 	public String obtenerMotivoDenegacion(ActivoTramite tramite);
+	
+	/**
+	 * Devuelve el valor de un campo de la tarea, a través del nombre del campo
+	 * @param valores
+	 * @param tevNombre
+	 * @return
+	 */
+	public String getTareaValorByNombre(List<TareaExternaValor> valores, String tevNombre);
+	
+	/**
+	 * Segun el campo pasado por parametro, buscara entre todas las tareas que hayan en el tramite
+	 * y devolverá su valor, solo sirve para la primera coincidencia
+	 * @param idToken
+	 * @param tevNombre
+	 * @return
+	 */
+	public String getValorTareasAnteriorByCampo(Long idToken, String tevNombre);
 }

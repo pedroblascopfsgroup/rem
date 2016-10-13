@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +17,8 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
-import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -34,11 +30,9 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;;
 
 /**
  * Clase para tratar los trámites de Activo.
@@ -379,5 +373,36 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		return motivo;
 	}
 	
+	@Override
+	public String getTareaValorByNombre(List<TareaExternaValor> valores, String tevNombre) {
+		
+		String valor = null;
 
+		for(TareaExternaValor tev : valores) {
+			if(tev.getNombre().equalsIgnoreCase(tevNombre)) {
+				if(!Checks.esNulo(tev.getValor()) ) {
+					valor = tev.getValor();
+				}
+				break;
+			}
+		}
+		
+		return valor;
+	}
+	
+	@Override
+	public String getValorTareasAnteriorByCampo(Long idToken, String tevNombre) {
+		
+		List<TareaExternaValor> allValoresTramite = new ArrayList<TareaExternaValor>();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tokenIdBpm", idToken);
+		
+		List<TareaExterna> listTareas = genericDao.getList(TareaExterna.class, filtro);
+		for(TareaExterna tarea : listTareas) {
+			allValoresTramite.addAll(tarea.getValores());
+		}
+		
+		return this.getTareaValorByNombre(allValoresTramite,"emailPropietario");
+	}
+	
 }

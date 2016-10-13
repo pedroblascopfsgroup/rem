@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.gastosExpediente;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,15 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import net.sf.json.JSONObject;
 
@@ -32,9 +30,6 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 	@Autowired
 	private RestApi restApi;
-
-	@Autowired
-	private GenericABMDao genericDao;
 
 	@Autowired
 	private GastosExpedienteDao gastosExpedienteDao;
@@ -80,93 +75,66 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 	}
 
 	@Override
-	public List<String> validateComisionPostRequestData(ComisionDto comisionDto) {
-		List<String> listaErrores = new ArrayList<String>();
-		GastosExpediente gasto = null;
-
-		try {
-
-			// Validación parámetros entrada
-			HashMap<String, List<String>> error = restApi.validateRequestObject(comisionDto);
-			if (!Checks.esNulo(error) && !error.isEmpty()) {
-				listaErrores
-						.add("No se cumple la especificación de parámetros para la comision con los siguientes datos: idOfertaRem-"
-								+ comisionDto.getIdOfertaRem() + " idOfertaWebcom-" + comisionDto.getIdOfertaWebcom()
-								+ " idProveedorRem-" + comisionDto.getIdProveedorRem() + " esPrescripcion-"
-								+ comisionDto.getEsPrescripcion() + " esColaboracion-" + comisionDto.getEsColaboracion()
-								+ " esResponsable-" + comisionDto.getEsResponsable() + " esFdv-"
-								+ comisionDto.getEsFdv() + " .Traza: " + error);
-			}
-
-			if (!Checks.esNulo(comisionDto.getIdOfertaRem())) {
-				Oferta oferta = (Oferta) genericDao.get(Oferta.class,
-						genericDao.createFilter(FilterType.EQUALS, "numOferta", comisionDto.getIdOfertaRem()));
-				if (Checks.esNulo(oferta)) {
-					listaErrores.add("No existe la oferta en REM especificada en el campo idOfertaRem: "
-							+ comisionDto.getIdOfertaRem());
+	@Transactional(readOnly = false)
+	public void updateAceptacionGasto(GastosExpediente gasto, ComisionDto comisionDto, Object jsonFields) {
+		if (((JSONObject) jsonFields).containsKey("observaciones")) {
+			gasto.setObservaciones(comisionDto.getObservaciones());
+		}
+		if (((JSONObject) jsonFields).containsKey("aceptacion")) {
+			if (!Checks.esNulo(comisionDto.getAceptacion())) {
+				if (comisionDto.getAceptacion()) {
+					gasto.setAprobado(Integer.valueOf(1));
+				} else {
+					gasto.setAprobado(Integer.valueOf(0));
 				}
+			} else {
+				gasto.setAprobado(null);
 			}
-
-			if (!Checks.esNulo(comisionDto.getIdProveedorRem())) {
-				ActivoProveedor pve = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", comisionDto.getIdProveedorRem()));
-				if (Checks.esNulo(pve)) {
-					listaErrores.add("No existe el proveedor en REM especificado en el campo idProveedorRem: "
-							+ comisionDto.getIdProveedorRem());
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			listaErrores
-					.add("Ha ocurrido un error al validar los parámetros de la comision con los siguientes datos: idOfertaRem-"
-							+ comisionDto.getIdOfertaRem() + " idOfertaWebcom-" + comisionDto.getIdOfertaWebcom()
-							+ " idProveedorRem-" + comisionDto.getIdProveedorRem() + " esPrescripcion-"
-							+ comisionDto.getEsPrescripcion() + " esColaboracion-" + comisionDto.getEsColaboracion()
-							+ " esResponsable-" + comisionDto.getEsResponsable() + " esFdv-" + comisionDto.getEsFdv()
-							+ ". Traza: " + e.getMessage());
-			return listaErrores;
 		}
 
-		return listaErrores;
+		gastosExpedienteDao.saveOrUpdate(gasto);
+
 	}
 
 	@Override
 	@Transactional(readOnly = false)
-	public List<String> updateAceptacionGasto(GastosExpediente gasto, ComisionDto comisionDto, Object jsonFields) {
-		List<String> errorsList = null;
+	public ArrayList<Map<String, Object>> updateAceptacionesGasto(List<ComisionDto> listaComisionDto,
+			JSONObject jsonFields) {
+		Map<String, Object> map = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		HashMap<String, List<String>> errorsList = null;
+		for (int i = 0; i < listaComisionDto.size(); i++) {
 
-		try {
+			map = new HashMap<String, Object>();
+			ComisionDto comisionDto = listaComisionDto.get(i);
 
-			if (((JSONObject) jsonFields).containsKey("observaciones")) {
-				gasto.setObservaciones(comisionDto.getObservaciones());
-			}
-			if (((JSONObject) jsonFields).containsKey("aceptacion")) {
-				if (!Checks.esNulo(comisionDto.getAceptacion())) {
-					if (comisionDto.getAceptacion()) {
-						gasto.setAprobado(Integer.valueOf(1));
-					} else {
-						gasto.setAprobado(Integer.valueOf(0));
-					}
-				} else {
-					gasto.setAprobado(null);
+			List<GastosExpediente> listaGastos = this.getListaGastosExpediente(comisionDto);
+			if (Checks.esNulo(listaGastos) || (!Checks.esNulo(listaGastos) && listaGastos.size() != 1)) {
+				restApi.obtenerMapaErrores(errorsList, "idOfertaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
+
+			} else {
+				errorsList = restApi.validateRequestObject(listaGastos.get(0), TIPO_VALIDACION.INSERT);
+				if (errorsList.size() == 0) {
+					this.updateAceptacionGasto(listaGastos.get(0), comisionDto, jsonFields.getJSONArray("data").get(i));
 				}
+
 			}
 
-			gastosExpedienteDao.saveOrUpdate(gasto);
+			if (!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(listaGastos)) {
+				map.put("idOfertaWebcom", listaGastos.get(0).getExpediente().getOferta().getIdWebCom());
+				map.put("idOfertaRem", listaGastos.get(0).getExpediente().getOferta().getNumOferta());
+				map.put("success", true);
+			} else {
+				map.put("idOfertaWebcom", comisionDto.getIdOfertaWebcom());
+				map.put("idOfertaRem", comisionDto.getIdOfertaRem());
+				map.put("success", false);
+				map.put("invalidFields", errorsList);
+			}
+			listaRespuesta.add(map);
 
-		} catch (Exception e) {
-			logger.error(e);
-			logger.error(
-					"Ha ocurrido un error en base de datos al actualizar la comision con los siguientes datos: idOfertaRem-"
-							+ comisionDto.getIdOfertaRem() + " idOfertaWebcom-" + comisionDto.getIdOfertaWebcom()
-							+ " idProveedorRem-" + comisionDto.getIdProveedorRem() + " esPrescripcion-"
-							+ comisionDto.getEsPrescripcion() + " esColaboracion-" + comisionDto.getEsColaboracion()
-							+ " esResponsable-" + comisionDto.getEsResponsable() + " esFdv-" + comisionDto.getEsFdv()
-							+ ". Traza: " + e.getMessage());
 		}
+		return listaRespuesta;
 
-		return errorsList;
 	}
 
 }

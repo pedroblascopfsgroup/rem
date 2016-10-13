@@ -81,7 +81,7 @@ public interface ExpedienteComercialApi {
 	     * @return
 		 * @throws Exception 
 	     */
-		public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial);
+		public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) throws Exception;
 		
 		/**
 	     * Actualizar los valores del Expediente Comercial

@@ -578,9 +578,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) {
 		if (oferta.getEstadoOferta() == null) {
-			UsuarioSecurity usuarioSecurity = usuarioSecurityManager.get(new Long(29737));
-			usuarioSecurity.setUsername("REM-USER");
-			restApi.doLogin(usuarioSecurity);
+			//UsuarioSecurity usuarioSecurity = usuarioSecurityManager.get(new Long(29737));
+			//usuarioSecurity.setUsername("REM-USER");
+			//restApi.doLogin(usuarioSecurity);
 
 			List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
 			boolean isAccepted = false;
@@ -604,8 +604,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setFechaRechazoOferta(fechaAccion);
 			}
 			ofertaDao.saveOrUpdate(oferta);
-			usuarioSecurity = usuarioSecurityManager.get(new Long(-1));
-			restApi.doLogin(usuarioSecurity);
+			//usuarioSecurity = usuarioSecurityManager.get(new Long(-1));
+			//restApi.doLogin(usuarioSecurity);
 		}
 		this.updateStateDispComercialActivosByOferta(oferta);
 	}

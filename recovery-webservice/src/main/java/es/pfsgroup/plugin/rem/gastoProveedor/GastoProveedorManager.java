@@ -195,6 +195,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if(!Checks.esNulo(gasto.getSubtipoGasto())){
 				dto.setSubtipoGastoCodigo(gasto.getSubtipoGasto().getCodigo());
 			}
+			if(!Checks.esNulo(gasto.getEstadoGasto())){
+				dto.setEstadoGastoCodigo(gasto.getEstadoGasto().getCodigo());
+			}
 			
 			if(!Checks.esNulo(gasto.getProveedor())){
 				dto.setNifEmisor(gasto.getProveedor().getDocIdentificativo());

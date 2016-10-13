@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -247,6 +248,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposDocumentosGasto", DDTipoDocumentoGasto.class);
 		mapa.put("tiposColaborador", DDTiposColaborador.class);
 		mapa.put("canalesPrescripcion", DDCanalPrescripcion.class);
+		mapa.put("estadoGasto", DDEstadoGasto.class);
 //		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 		return Collections.unmodifiableMap(mapa);
 	}

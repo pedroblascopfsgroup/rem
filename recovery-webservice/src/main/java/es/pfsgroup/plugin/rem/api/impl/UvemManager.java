@@ -823,6 +823,11 @@ public class UvemManager implements UvemManagerApi {
 
 		// Aunque es un array solo usamos el 1er campo
 		numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
+		// Este codigo de BANKIA aunque parezca setear una variable, esta haciendo una add a un Array.
+		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu structEmpty = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+		for(int i=1; i<40; i++){
+			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(structEmpty);
+		}
 
 		logger.info("------------ LLAMADA WS INSTANCIADECISION (" + accion + ") -----------------");
 		leerConfiguracion();

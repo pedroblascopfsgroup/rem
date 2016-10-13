@@ -30,7 +30,7 @@ public interface PreciosApi {
 	 * @param tipoPropuestaCodigo Tipo de propuesta solicitada: Preciar, Repreciar, Descuento
 	 * @return PropuestaPrecio
 	 */
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual);
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo);
 
 	/**
 	 * Crea una propuesta de precios de tipo peticion automatica
@@ -41,6 +41,13 @@ public interface PreciosApi {
 	 */
 	public PropuestaPrecio createPropuestaPreciosAutom(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo);
 	
+	/**
+	 * Crea una propuesta de precios desde un trabajo
+	 * @param idTrabajo
+	 * @param nombrePropuesta
+	 * @return
+	 */
+	public PropuestaPrecio createPropuestaPreciosFromTrabajo(Long idTrabajo, String nombrePropuesta);
 	
 	public ExcelReport createExcelPropuestaPrecios(List<VBusquedaActivosPrecios> activosPrecios, String entidadPropietariaCodigo, String nombrePropuesta);
 	
@@ -83,4 +90,10 @@ public interface PreciosApi {
 	 */
 	public List<DtoExcelPropuestaUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException;
 
+	/**
+	 * Comprueba si no existe ya una propuesta asociada al trabajo, y si el trabajo es del tipo y subtipo de propuesta de preciar, descuento
+	 * @param idTrabajo
+	 * @return
+	 */
+	public String puedeCreasePropuestaFromTrabajo(Long idTrabajo);
 }

@@ -48,16 +48,14 @@ BEGIN
     V_SENTENCIA := '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
             OFR_ID,
-            OFR_NUM_OFERTA,
-            
+            OFR_NUM_OFERTA,            
             AGR_ID,
             OFR_IMPORTE,
             CLC_ID,
             DD_EOF_ID,
             DD_TOF_ID,
             VIS_ID,
-            DD_EVO_ID,
-            
+            DD_EVO_ID,            
             OFR_FECHA_ALTA,
             OFR_FECHA_NOTIFICACION,
             OFR_IMPORTE_CONTRAOFERTA,
@@ -73,8 +71,7 @@ BEGIN
         )
         SELECT
             '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL            		 		OFR_ID, 
-            MIG.OFR_COD_OFERTA												OFR_COD_OFERTA,
-            
+            MIG.OFR_COD_OFERTA												OFR_COD_OFERTA,            
             AGR.AGR_ID														AGR_ID,
             CASE WHEN MIG.OFR_IMPORTE = 0 THEN null
             ELSE MIG.OFR_IMPORTE END										OFR_IMPORTE,
@@ -82,8 +79,7 @@ BEGIN
             EOF.DD_EOF_ID													DD_EOF_ID,
             TOF.DD_TOF_ID													DD_TOF_ID,
             VIS.VIS_ID														VIS_ID,
-            EVO.DD_EVO_ID													DD_EVO_ID,
-            
+            EVO.DD_EVO_ID													DD_EVO_ID,            
             MIG.OFR_FECHA_ALTA												OFR_FECHA_ALTA,
             CASE WHEN MIG.OFR_FECHA_NOTIFICACION IS null 
             AND  MIG.OFR_COD_ESTADO_OFERTA = ''01'' THEN SYSDATE
@@ -124,6 +120,8 @@ BEGIN
     EXECUTE IMMEDIATE V_SENTENCIA	;
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+    
+    V_REG_INSERTADOS := SQL%ROWCOUNT;
     
     COMMIT;
     
@@ -221,30 +219,16 @@ BEGIN
     EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
     
     -- Registros insertados en REM
-    V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOCREAR = ''MIG2''';  
-    EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
+    -- V_REG_INSERTADOS
     
     -- Total registros rechazados
     V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
     
-    /*  
-    -- Diccionarios rechazados
-    V_SENTENCIA := '
-    SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_COD_NOT_EXISTS 
-    WHERE DICCIONARIO IN (''DD_TPR_TIPO_PROVEEDOR'',''DD_TDI_TIPO_DOCUMENTO_ID'',''DD_ZNG_ZONA_GEOGRAFICA'',''DD_PRV_PROVINCIA'',''DD_LOC_LOCALIDAD'')
-    AND FICHERO_ORIGEN = ''PROVEEDORES.dat''
-    AND CAMPO_ORIGEN IN (''TIPO_PROVEEDOR'',''TIPO_DOCUMENTO'',''ZONA_GEOGRAFICA'',''PVE_PROVINCIA'',''PVE_LOCALIDAD'')
-    '
-    ;
-    
-    EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;
-    */
-    
+    -- Observaciones
     IF V_TABLE_ECO != 0 THEN
          V_OBSERVACIONES := 'Se han creado '||V_TABLE_ECO||' Expedientes Comerciales de Ofertas aceptadas.';
     END IF;
      
-    -- Observaciones
     IF V_REJECTS != 0 THEN
         V_OBSERVACIONES := V_OBSERVACIONES ||' Se han rechazado '||V_REJECTS||' registros, comprobar integridad de los campos.';
     END IF;

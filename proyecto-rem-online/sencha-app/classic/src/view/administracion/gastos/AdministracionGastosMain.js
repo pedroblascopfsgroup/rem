@@ -27,7 +27,8 @@ Ext.define('HreRem.view.administracion.gastos.AdministracionGastosMain', {
         		},
         		{	
         			xtype: 'gestionprovisiones',
-        			reference: 'gestionprovisionesref'        				
+        			reference: 'gestionprovisionesref',
+        			disabled: $AU.userIsRol(CONST.PERFILES['PROVEEDOR'])
         		}
         
         ];

@@ -384,11 +384,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								}
 							},
 							{
-								xtype: 'comboboxfieldbase',
+								xtype: 'textfieldbase',
 								visible: false,
+								maxLength: '256',
 								bind: {
-									store: '{comboMotivoNoAplicaComercializarActivo}',
-									value: '{activo.motivoNoAplicaComercializarCodigo}',
+									value: '{activo.motivoNoAplicaComercializar}',
 									visible: '{!activo.aplicaComercializar}'
 								}
 							},

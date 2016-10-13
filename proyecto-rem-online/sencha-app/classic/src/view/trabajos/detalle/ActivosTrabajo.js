@@ -3,6 +3,17 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
     xtype: 'activostrabajo',    
     cls	: 'panel-base shadow-panel',
 	layout: 'fit',
+	
+	listeners: {
+    	boxready: function() {
+    		me = this;
+    		//Si el trabajo no es de tipo PRECIOS, se oculta el boton de generar propuesta
+    		if(me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo')!='04') {
+    			me.down("[itemId=generarPropuestaFromTrabajo]").hide();
+    		}
+    	}
+    },
+	
     initComponent: function () {
     	
     	var me = this;
@@ -136,6 +147,13 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 			       	        
 			    ],
 			    dockedItems : [
+					{
+					    xtype: 'toolbar',
+					    dock: 'top',
+					    items: [
+							{cls:'tbar-grid-button', text: HreRem.i18n('title.generar.propuesta'), itemId:'generarPropuestaFromTrabajo', handler: 'onClickGenerarPropuesta'}
+					    ]
+					},
 			        {
 			            xtype: 'pagingtoolbar',
 			            dock: 'bottom',

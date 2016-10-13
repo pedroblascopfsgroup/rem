@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
@@ -98,6 +99,24 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
    		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+    }
+    
+    @Override
+	public boolean existePropuestaEnTrabajo(Long idTrabajo) {
+    	
+    	String sql = "select count(1) from PRP_PROPUESTAS_PRECIOS prp where prp.TBJ_ID = " + idTrabajo;
+
+    	return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue() == 1;
+
+	}
+    
+    @Override
+    @SuppressWarnings("unchecked")
+	public List<BigDecimal> getActivosFromTrabajo(Long idTrabajo) {
+    	String sql = "select act_id from V_BUSQUEDA_ACTIVOS_TRABAJO prp where prp.TBJ_ID = " + idTrabajo;
+    	
+    	return (List<BigDecimal>) getSession().createSQLQuery(sql).list();
+    	
     }
 	
 }

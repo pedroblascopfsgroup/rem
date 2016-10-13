@@ -4,7 +4,6 @@ import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -176,5 +175,11 @@ public interface ProveedoresApi {
 	 * @return Devulve una lista de proveedores de tipo mediador mapeada en el DTO.
 	 */
 	public List<DtoMediador> getMediadorListFiltered(DtoMediador dto);
+
+	/**
+	 * Método que devuelve el nif del proveedor que tenga como contacto, el usuario logado.
+	 * @return
+	 */
+	public String getNifProveedorByUsuarioLogado();
 
 }

@@ -74,7 +74,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 								remoteUrl: 'generic/getDiccionario',
 								extraParams: {diccionario: 'estadosOfertas'}
 							},
-							autoLoad: true
+							autoLoad: true,
+							bind: {
+								disabled: '{activo.aplicaComercializar}'
+							}
 						}),
 						displayField: 'descripcion',
     					valueField: 'codigo'
@@ -311,10 +314,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    },
    
    //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar y las acciones editables por fila
+   //HREOS-1001 Si está en el perimetro pero no es comercializable tampoco se puede editar
    evaluarEdicion: function() {    	
 		var me = this;
-		
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+		var activo = me.lookupController().getViewModel().get('activo');
+		debugger;
+		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar')) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

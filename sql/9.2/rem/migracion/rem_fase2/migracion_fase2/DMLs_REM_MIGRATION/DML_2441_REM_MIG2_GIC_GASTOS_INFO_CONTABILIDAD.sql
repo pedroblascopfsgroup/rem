@@ -48,7 +48,7 @@ BEGIN
       WHERE NOT EXISTS (
         SELECT 1 
         FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
-        WHERE GPV.GPV_NUM_GASTO_HAYA = MIG2.GIM_GPV_ID
+        WHERE GPV.GPV_NUM_GASTO_HAYA = MIG2.GIC_GPV_ID
       )
       '
       ;
@@ -77,20 +77,20 @@ BEGIN
             FECHA_COMPROBACION
           )
           WITH NOT_EXISTS AS (
-            SELECT DISTINCT MIG2.GIM_GPV_ID 
+            SELECT DISTINCT MIG2.GIC_GPV_ID 
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
             WHERE NOT EXISTS (
               SELECT 1 
               FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-              WHERE MIG2.GIM_GPV_ID = GPV.GPV_NUM_GASTO_HAYA
+              WHERE MIG2.GIC_GPV_ID = GPV.GPV_NUM_GASTO_HAYA
             )
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GIM_GPV_ID			    						      			  GPV_NUM_GASTO_HAYA,          
+          MIG2.GIC_GPV_ID			    						      			  GPV_NUM_GASTO_HAYA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN NOT_EXISTS ON NOT_EXISTS.GIM_GPV_ID = MIG2.GIM_GPV_ID
+          INNER JOIN NOT_EXISTS ON NOT_EXISTS.GIC_GPV_ID = MIG2.GIC_GPV_ID
           '
           ;
           
@@ -196,7 +196,7 @@ BEGIN
                   SYSDATE                                                                    AS FECHACREAR,
                   0                                                                                 AS BORRADO
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-                  INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GIM_GPV_ID AND GPV.BORRADO = 0
+                  INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GIC_GPV_ID AND GPV.BORRADO = 0
                   INNER JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ANYO = MIG2.GIC_EJERCICIO AND EJE.BORRADO = 0
                   LEFT JOIN '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR ON PPR.DD_PPR_CODIGO = MIG2.GIC_COD_PARTIDA_PRESUPUES AND PPR.BORRADO = 0
                   LEFT JOIN '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO ON CCO.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONTABLE AND CCO.BORRADO = 0

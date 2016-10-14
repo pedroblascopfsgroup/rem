@@ -753,6 +753,26 @@ public class ExpedienteComercialController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createComprador(VBusquedaDatosCompradorExpediente vDatosComprador, Long idExpediente){
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.createComprador(vDatosComprador, idExpediente);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);

@@ -47,9 +47,14 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 
     	me.setTitle(HreRem.i18n("title.windows.datos.comprador"));
     	
-    	me.buttonAlign = 'right';    	
-    	
-    	me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador'},{ itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'hideWindow', scope: this}];
+    	me.buttonAlign = 'right';   
+    	    	
+    	if(!Ext.isEmpty(me.idComprador)){
+    		me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador'},{ itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
+    	}
+    	else{
+    		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear'), handler: 'onClickBotonCrearComprador'},{ itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
+    	}
 
     	me.items = [
     				{
@@ -190,14 +195,30 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            	}
 													
 										        },
-										        { 
-										        	fieldLabel:  HreRem.i18n('fieldlabel.municipio'),
-										        	reference: 'municipio',
-										        	bind: {
-									            		value: '{comprador.municipio}'
-									            	}
-													
-										        },
+//										        { 
+//													xtype: 'comboboxfieldbase',
+//										        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+//													reference: 'provincia',
+//										        	bind: {
+//									            		store: '{comboProvincia}',
+//									            		value: '{comprador.provinciaCodigo}'
+//									            	}
+//									            	
+//										        },
+										        {
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+													reference: 'provinciaCombo',
+													chainedStore: 'comboMunicipio',
+													chainedReference: 'municipioCombo',
+									            	bind: {
+									            		store: '{comboProvincia}',
+									            	    value: '{comprador.provinciaCodigo}'
+									            	},
+						    						listeners: {
+														select: 'onChangeChainedCombo'
+						    						}
+												},
 										        { 
 										        	fieldLabel:  HreRem.i18n('fieldlabel.telefono1'),
 										        	reference: 'telefono1',
@@ -206,14 +227,17 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            	}
 													
 										        },
-										        { 
-										        	fieldLabel:  HreRem.i18n('fieldlabel.provincia'),
-										        	reference: 'provincia',
-										        	bind: {
-									            		value: '{comprador.provincia}'
+										        
+										        {
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+													reference: 'municipioCombo',
+									            	bind: {
+									            		store: '{comboMunicipio}',
+									            		value: '{comprador.municipioCodigo}',
+									            		disabled: '{!comprador.provinciaCodigo}'
 									            	}
-													
-										        },
+												},
 										        { 
 										        	fieldLabel:  HreRem.i18n('fieldlabel.telefono2'),
 										        	reference: 'telefono2',
@@ -394,14 +418,32 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            	}
 													
 										        },
-										        { 
-										        	fieldLabel:  HreRem.i18n('fieldlabel.municipio'),
-										        	reference: 'municipioRte',
-										        	bind: {
-									            		value: '{comprador.municipioRte}'
-									            	}
-													
-										        },
+										        
+										        {
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+													reference: 'provinciaComboRte',
+													chainedStore: 'comboMunicipioRte',
+													chainedReference: 'municipioComboRte',
+									            	bind: {
+									            		store: '{comboProvincia}',
+									            	    value: '{comprador.provinciaRteCodigo}'
+									            	},
+						    						listeners: {
+														select: 'onChangeChainedCombo'
+						    						}
+												},
+//										        { 
+//													xtype: 'comboboxfieldbase',
+//										        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+//													reference: 'provinciaRte',
+//										        	bind: {
+//									            		store: '{comboProvincia}',
+//									            		value: '{comprador.provinciaRteCondigo}'
+//									            	}
+//									            	
+//										        },
+//										        
 										        { 
 										        	fieldLabel:  HreRem.i18n('fieldlabel.telefono1'),
 										        	reference: 'telefono1Rte',
@@ -410,14 +452,27 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            	}
 													
 										        },
-										        { 
-										        	fieldLabel:  HreRem.i18n('fieldlabel.provincia'),
-										        	reference: 'provinciaRte',
-										        	bind: {
-									            		value: '{comprador.provinciaRte}'
+//										        { 
+//													xtype: 'comboboxfieldbase',
+//										        	fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+//													reference: 'municipioRte',
+//										        	bind: {
+//									            		store: '{comboMunicipio}',
+//									            		value: '{comprador.municipioRteCodigo}'
+//									            	}
+//									            	
+//										        },
+										        {
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+													reference: 'municipioComboRte',
+									            	bind: {
+									            		store: '{comboMunicipioRte}',
+									            		value: '{comprador.municipioRteCodigo}',
+									            		disabled: '{!comprador.provinciaRteCodigo}'
 									            	}
-													
-										        },
+												},
+//										        
 										        { 
 										        	fieldLabel:  HreRem.i18n('fieldlabel.telefono2'),
 										        	reference: 'telefono2Rte',

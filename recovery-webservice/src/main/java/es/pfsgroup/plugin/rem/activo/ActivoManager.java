@@ -436,12 +436,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoComprador.setTelefono2(oferta.getCliente().getTelefono2());
 				nuevoComprador.setEmail(oferta.getCliente().getEmail());
 				nuevoComprador.setDireccion(oferta.getCliente().getDireccion());
+				
 				if(!Checks.esNulo(oferta.getCliente().getMunicipio())){
-					nuevoComprador.setMunicipio(oferta.getCliente().getMunicipio().getDescripcion());
+					nuevoComprador.setLocalidad(oferta.getCliente().getMunicipio());
 				}
 				if(!Checks.esNulo(oferta.getCliente().getProvincia())){
-					nuevoComprador.setProvincia(oferta.getCliente().getProvincia().getDescripcion());
+					nuevoComprador.setProvincia(oferta.getCliente().getProvincia());
 				}
+
 				nuevoComprador.setCodigoPostal(oferta.getCliente().getCodigoPostal());
 				
 				genericDao.save(Comprador.class, nuevoComprador);

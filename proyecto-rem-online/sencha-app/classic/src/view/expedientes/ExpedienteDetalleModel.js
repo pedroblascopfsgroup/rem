@@ -434,7 +434,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'canalesPrescripcion'}
 			}
-	    }
+	    },
+	    
+	    comboProvincia: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'provincias'}
+			}
+	    },
+	    
+	    comboMunicipio: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaCodigo}'}
+			}
+    	},
+    	
+    	comboMunicipioRte: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}
+			}
+    	}
 	    
 	
     }

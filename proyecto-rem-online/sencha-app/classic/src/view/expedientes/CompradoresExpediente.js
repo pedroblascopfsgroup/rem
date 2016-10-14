@@ -21,6 +21,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
             	items : [
                 	{
 					    xtype		: 'gridBase',
+					    topBar		: true,
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						bind: {
@@ -36,9 +37,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							{
 						        xtype: 'actioncolumn',
 						        reference: 'titularContratacion',
-//						        bind: {
-//						        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
-//						        },
 						        width: 30,
 						        text: HreRem.i18n('header.principal'),
 								hideable: false,
@@ -116,7 +114,13 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					                store: '{storeCompradoresExpediente}'
 					            }
 					        }
-					    ]
+					    ],
+					    onClickAdd: function (btn) {
+							var me = this;
+							var controller= me.lookupController();
+							controller.abrirFormularioCrearComprador(me);
+											    				    	
+						}
 					}
             	]
 			},
@@ -287,34 +291,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		        ]
             }
            
-//            {
-//				xtype:'fieldsettable',
-//				defaultType: 'displayfieldbase',				
-//				title: HreRem.i18n('title.politica.corporativa'),
-//				items :
-//					[
-//						{
-//		                	xtype: 'comboboxfieldbase',
-//							reference: 'comboConflictoIntereses',
-//		                	fieldLabel:  HreRem.i18n('fieldlabel.conflicto.intereses'),
-//				        	bind: {
-//			            		store: '{comboConflictoIntereses}',
-//			            		value: '{conflictoIntereses}'
-//			            	},
-//			            	allowBlank: false
-//		                },
-//		                {
-//		                	xtype: 'comboboxfieldbase',
-//							reference: 'comboRiesgoReputacional',
-//		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
-//				        	bind: {
-//			            		store: '{comboRiesgoReputacional}',
-//			            		value: '{riesgoReputacional}'
-//			            	},
-//			            	allowBlank: false
-//		                }
-//		        ]
-//            }
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });

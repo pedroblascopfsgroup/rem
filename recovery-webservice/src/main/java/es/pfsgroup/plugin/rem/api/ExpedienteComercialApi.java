@@ -296,5 +296,13 @@ public interface ExpedienteComercialApi {
 		 */
 		public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
 		
+		/**
+		 * Método que crea un comprador desde la pestaña compradores del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
+		
 }
 

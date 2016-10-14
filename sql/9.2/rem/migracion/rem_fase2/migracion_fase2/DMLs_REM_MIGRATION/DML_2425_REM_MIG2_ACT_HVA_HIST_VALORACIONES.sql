@@ -232,11 +232,11 @@ BEGIN
           V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' HIST_EST_PUBLICACIONES.';
           
           IF TABLE_COUNT_1 != 0 THEN
-              V_OBSERVACIONES := V_OBSERVACIONES || ' Hay un total de '||TABLE_COUNT_1||' ACTIVOS inexistentes.';
+              V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT_1||' ACTIVOS inexistentes.';
           END IF;
           
           IF TABLE_COUNT_2 != 0 THEN
-              V_OBSERVACIONES := V_OBSERVACIONES || ' Hay un total de '||TABLE_COUNT_2||' TIPOS DE PRECIO inexistentes.';
+              V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT_2||' TIPOS DE PRECIO inexistentes.';
           END IF;
       END IF;
       

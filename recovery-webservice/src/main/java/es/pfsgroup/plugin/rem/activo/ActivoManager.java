@@ -1687,8 +1687,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		int tasacionID;
 		
 		try{
-			// Se especifica bankia por que tan solo se va a poder demandar la tasación desde bankia.
-			tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(idActivo, adapter.getUsuarioLogado().getNombre(), "BANKIA");
+			Activo activo = activoDao.get(idActivo);
+			if(!Checks.esNulo(activo)) {
+				// Se especifica bankia por que tan solo se va a poder demandar la tasación desde bankia.
+				tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(activo.getNumActivoUvem(), adapter.getUsuarioLogado().getUsername(), "BANKIA");
+			} else {
+				return false;
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 			throw new Exception("No se ha podido obtener la tasación");

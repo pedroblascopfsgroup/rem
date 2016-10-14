@@ -318,7 +318,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    evaluarEdicion: function() {    	
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo');
-		debugger;
+		
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar')) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();

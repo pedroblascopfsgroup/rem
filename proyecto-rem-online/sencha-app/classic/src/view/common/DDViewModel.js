@@ -67,6 +67,13 @@ Ext.define('HreRem.view.common.DDViewModel', {
     		comboPorCuenta: {
     			source: 'porCuenta',
     			loadSource: true
+    		},
+    		
+    		comboAceptadoRechazado: {
+				data : [
+			        {"codigo": 0, "descripcion": "Rechazado"},
+			        {"codigo": 1, "descripcion": "Aprobado"}
+			    ]
     		}
     		
     	

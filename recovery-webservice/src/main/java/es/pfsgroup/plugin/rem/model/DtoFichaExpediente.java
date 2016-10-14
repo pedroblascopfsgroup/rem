@@ -90,7 +90,10 @@ public class DtoFichaExpediente extends WebDto {
     private Double precioOpcionCompraAlquiler;
     private String condicionesOpcionCompraAlquiler;
     private Integer conflictoIntereses;
-    private Integer riesgoReputacional;
+    private Integer riesgoReputacional;    
+    private Integer estadoPbc;
+    
+    
    	
 
 	public Long getId() {
@@ -416,6 +419,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setEntidadPropietariaCodigo(String entidadPropietariaCodigo) {
 		this.entidadPropietariaCodigo = entidadPropietariaCodigo;
+	}
+
+	public Integer getEstadoPbc() {
+		return estadoPbc;
+	}
+
+	public void setEstadoPbc(Integer estadoPbc) {
+		this.estadoPbc = estadoPbc;
 	}
    	
    	

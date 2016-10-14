@@ -239,7 +239,7 @@ public class RestManagerImpl implements RestApi {
 		if (value instanceof String && ((String) value).equals("null")) {
 			value = null;
 		}
-		if(value instanceof Date){
+		if (value instanceof Date) {
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 			value = df.format(value);
@@ -273,24 +273,26 @@ public class RestManagerImpl implements RestApi {
 		user.setAccountNonLocked(true);
 		user.setEnabled(true);
 		user.setEntidad(entidad);
-		return user;	
+		return user;
 	}
 
 	@Override
 	public void doLogin(UsuarioSecurity user) {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(),
-				RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
-		authToken.setDetails(user);
+		if (user != null) {
+			SecurityContext securityContext = SecurityContextHolder.getContext();
+			PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(),
+					RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
+			authToken.setDetails(user);
 
-		AuthenticationRestService authRestService = new AuthenticationRestService();
-		//authRestService.setUserNameprefix("REST-");
+			AuthenticationRestService authRestService = new AuthenticationRestService();
+			// authRestService.setUserNameprefix("REST-");
 
-		PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
-		preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
-		Authentication authentication = preAuthenticatedProvider.authenticate(authToken);
-		securityContext.setAuthentication(authentication);
-		
+			PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
+			preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
+			Authentication authentication = preAuthenticatedProvider.authenticate(authToken);
+			securityContext.setAuthentication(authentication);
+		}
+
 	}
 
 	@Override

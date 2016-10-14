@@ -522,12 +522,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Long idOferta = ofertaDao.save(oferta);
 			oferta.setId(idOferta);
 			updateEstadoOferta(oferta, ofertaDto.getFechaAccion());
-			// Si la oferta tiene estado, hay que actualizar la disposicion
-			// comercial del activo
-			/*
-			 * if (!Checks.esNulo(estadoOfr)) {
-			 * this.updateStateDispComercialActivosByOferta(oferta); }
-			 */
+			this.updateStateDispComercialActivosByOferta(oferta);
 
 		}
 		return errorsList;
@@ -564,6 +559,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			 */
 			ofertaDao.saveOrUpdate(oferta);
 			updateEstadoOferta(oferta, ofertaDto.getFechaAccion());
+			this.updateStateDispComercialActivosByOferta(oferta);
 
 			// Si la oferta tiene estado, hay que actualizar la disposicion
 			// comercial del activo
@@ -577,20 +573,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) {
-		if (oferta.getEstadoOferta() == null) {
-			//UsuarioSecurity usuarioSecurity = usuarioSecurityManager.get(new Long(29737));
-			//usuarioSecurity.setUsername("REM-USER");
-			//restApi.doLogin(usuarioSecurity);
+		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
+		restApi.doLogin(usuarioSecurity);
 
-			List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
-			boolean isAccepted = false;
-			for(ActivoOferta tmp:listaActivoOferta){
-				Oferta ofertaAux = tmp.getPrimaryKey().getOferta();
-				if (ofertaAux.getEstadoOferta()!=null && DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
-					isAccepted = true;
-				}
+		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
+		boolean isAccepted = false;
+		for (ActivoOferta tmp : listaActivoOferta) {
+			Oferta ofertaAux = tmp.getPrimaryKey().getOferta();
+			if (ofertaAux.getEstadoOferta() != null
+					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+				isAccepted = true;
 			}
-			
+		}
+		if (oferta.getEstadoOferta() == null) {
 			if (isAccepted) {
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
@@ -598,16 +593,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
 			}
-			if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
-				oferta.setFechaAlta(fechaAccion);
-			} else if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
-				oferta.setFechaRechazoOferta(fechaAccion);
-			}
-			ofertaDao.saveOrUpdate(oferta);
-			//usuarioSecurity = usuarioSecurityManager.get(new Long(-1));
-			//restApi.doLogin(usuarioSecurity);
 		}
-		this.updateStateDispComercialActivosByOferta(oferta);
+		if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
+			oferta.setFechaAlta(fechaAccion);
+		} else if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
+			oferta.setFechaRechazoOferta(fechaAccion);
+		}
+		ofertaDao.saveOrUpdate(oferta);
+		usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REST_LOGGED_USER_USERNAME);
+		restApi.doLogin(usuarioSecurity);
 	}
 
 	private ActivoOferta buildActivoOferta(Activo activo, Oferta oferta, Double importe) {
@@ -638,17 +632,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public Oferta trabajoToOferta(Trabajo trabajo){
+	public Oferta trabajoToOferta(Trabajo trabajo) {
 		Oferta ofertaAceptada = null;
 		Activo activo = trabajo.getActivo();
-		if(!Checks.esNulo(activo)){
+		if (!Checks.esNulo(activo)) {
 			ofertaAceptada = getOfertaAceptadaByActivo(activo);
 		}
 		return ofertaAceptada;
 	}
-	
+
 	@Override
-	public Oferta tareaExternaToOferta(TareaExterna tareaExterna){
+	public Oferta tareaExternaToOferta(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = null;
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
@@ -673,17 +667,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public boolean checkDerechoTanteo(Trabajo trabajo){
+	public boolean checkDerechoTanteo(Trabajo trabajo) {
 		Oferta ofertaAceptada = trabajoToOferta(trabajo);
-		if(!Checks.esNulo(ofertaAceptada)){
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-			if(!Checks.esNulo(expediente))
-				if(!Checks.esNulo(expediente.getCondicionante()))
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if (!Checks.esNulo(expediente))
+				if (!Checks.esNulo(expediente.getCondicionante()))
 					return (expediente.getCondicionante().getSujetoTanteoRetracto() == 1);
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean checkDerechoTanteo(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
@@ -722,37 +717,40 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean checkRiesgoReputacional(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		if(!Checks.esNulo(ofertaAceptada)){
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return (expediente.getRiesgoReputacional()== 0 ? true : false);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			return (expediente.getRiesgoReputacional() == 0 ? true : false);
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean checkImporte(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		if(!Checks.esNulo(ofertaAceptada)){
+		if (!Checks.esNulo(ofertaAceptada)) {
 			return (!Checks.esNulo(ofertaAceptada.getImporteOferta()));
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean checkCompradores(TareaExterna tareaExterna){
+	public boolean checkCompradores(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		if(!Checks.esNulo(ofertaAceptada)){
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			return (!Checks.estaVacio(expediente.getCompradores()));
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean checkConflictoIntereses(TareaExterna tareaExterna){
+	public boolean checkConflictoIntereses(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		if(!Checks.esNulo(ofertaAceptada)){
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			return (expediente.getConflictoIntereses() == 0 ? true : false);
 		}
 		return false;

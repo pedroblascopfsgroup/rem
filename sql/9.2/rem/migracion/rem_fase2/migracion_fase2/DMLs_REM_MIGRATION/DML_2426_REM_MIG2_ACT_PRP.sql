@@ -160,11 +160,7 @@ BEGIN
     
     COMMIT;
 
-  END IF;
-
-
-
-  
+  END IF;  
   
   --Inicio del proceso de volcado sobre RES_RESERVAS
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
@@ -186,14 +182,16 @@ BEGIN
 	MIG.ACT_PRP_MOTIVO_DESCARTE											ACT_PRP_MOTIVO_DESCARTE,
 	''0''                                               				VERSION
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG		
-	INNER JOIN ACT_ACTIVO ACT
+	INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		ON ACT.ACT_NUM_ACTIVO = MIG.ACT_PRP_ACT_NUMERO_ACTIVO
-	INNER JOIN PRP_PROPUESTAS_PRECIOS PRP
+	INNER JOIN '||V_ESQUEMA||'.PRP_PROPUESTAS_PRECIOS PRP
 		ON PRP.PRP_NUM_PROPUESTA = MIG.ACT_PRP_NUM_PROPUESTA
 	')
 	;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+  
+  V_REG_INSERTADOS := SQL%ROWCOUNT;
   
   COMMIT;
   
@@ -204,18 +202,11 @@ BEGIN
    -- INFORMAMOS A LA TABLA INFO
   
   -- Registros MIG
-  V_SENTENCIA := '
-  SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
-  '
-  ;
-
+  V_SENTENCIA := '  SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';
  EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
  
  -- Registros insertados en REM
-  V_SENTENCIA := '
-	SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||'
-  '
-  ;
+ -- V_REG_INSERTADOS
   
   EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
   
@@ -224,18 +215,14 @@ BEGIN
   
   -- Observaciones
   IF V_REJECTS != 0 THEN
-  
-    IF TABLE_COUNT != 0 THEN
+    V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';    
     
-      V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT||' han sido por ACTIVOS inexistentes. ';
+    IF TABLE_COUNT != 0 THEN    
+      V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' ACTIVOS inexistentes. ';    
+    END IF;     
     
-    END IF; 
-    
-    
-    IF TABLE_COUNT_2 != 0 THEN
-    
-      V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT_2||' han sido por PRUESTAS DE PRECIOS inexistentes. ';
-    
+    IF TABLE_COUNT_2 != 0 THEN    
+      V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT_2||' PRUESTAS DE PRECIOS inexistentes. ';    
     END IF; 
     
   END IF;

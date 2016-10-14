@@ -88,7 +88,7 @@ BEGIN
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GDE_COD_GASTO_PROVEEDOR    						      			  GPV_NUM_GASTO_HAYA,          
+          MIG2.GDE_GPV_ID			    						      			  GPV_NUM_GASTO_HAYA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.GDE_GPV_ID = MIG2.GDE_GPV_ID
@@ -176,7 +176,7 @@ BEGIN
 						MIG.GDE_OFICINA_BANKIA
 		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
 		INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-		  ON GPV.GPV_NUM_GASTO_GESTORIA = MIG.GDE_COD_GASTO_PROVEEDOR
+		  ON GPV.GPV_NUM_GASTO_HAYA = MIG.GDE_GPV_ID
 	  )
 		SELECT
 		'||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL            		 		GDE_ID, 

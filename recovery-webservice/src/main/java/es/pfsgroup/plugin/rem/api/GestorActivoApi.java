@@ -15,6 +15,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_ACTIVOS = "SUPACT";
 	public static final String CODIGO_GESTOR_PRECIOS = "GPREC";
 	public static final String CODIGO_GESTOR_MARKETING = "GMARK";
+	public static final String CODIGO_SUPERVISOR_PRECIOS = "SPREC";
+	public static final String CODIGO_SUPERVISOR_MARKETING = "SMARK";
 	
 	void insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

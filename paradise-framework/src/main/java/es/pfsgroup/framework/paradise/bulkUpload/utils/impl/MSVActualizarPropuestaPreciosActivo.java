@@ -81,12 +81,15 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
-		List<String> lista = recuperarFormato(dtoFile.getIdTipoOperacion());
+//		List<String> lista = recuperarFormato(dtoFile.getIdTipoOperacion());
 		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-		MSVHojaExcel excPlantilla = null; //excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
-		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
-		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
-		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
+//		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
+//		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
+//		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
+//		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
+		
+		MSVDtoValidacion dtoValidacionContenido = new MSVDtoValidacion();
+		dtoValidacionContenido.setFicheroTieneErrores(false);
 		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());

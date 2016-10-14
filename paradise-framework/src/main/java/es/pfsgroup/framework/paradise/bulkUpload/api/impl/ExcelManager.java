@@ -159,14 +159,19 @@ public class ExcelManager implements ExcelManagerApi {
 
 		MSVDtoValidacion dtoValidacionFormato = null;
 		try {
-			dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
-			if (dtoValidacionFormato != null) {
-				if (dtoValidacionFormato.getFicheroTieneErrores()) {
-					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
-					document.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
-				} else {
-					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
-					document.setErroresFichero(document.getContenidoFichero());
+			if(MSV_PROCESS_CODE_PROPUESTA_PRECIOS_ACTIVO.equals(document.getProcesoMasivo().getTipoOperacion().getCodigo())){
+				dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
+				document.setErroresFichero(document.getContenidoFichero());
+			}else{
+				dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
+				if (dtoValidacionFormato != null) {
+					if (dtoValidacionFormato.getFicheroTieneErrores()) {
+						dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
+						document.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
+					} else {
+						dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
+						document.setErroresFichero(document.getContenidoFichero());
+					}
 				}
 			}
 		} catch (RuntimeException err) {

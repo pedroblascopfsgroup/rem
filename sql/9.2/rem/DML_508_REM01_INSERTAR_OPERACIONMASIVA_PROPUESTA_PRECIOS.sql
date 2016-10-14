@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('CPPA', 'Carga de propuesta de precios de los activos', 'Carga de propuesta de precios de los activos', 'MASIVO_PROPUESTA_PRECIOS', '')
+	  T_FUNCION('CPPA', 'Carga de propuesta de precios de los activos', 'Carga de propuesta de precios de los activos', 'MASIVO_PROPUESTA_PRECIOS', 's')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

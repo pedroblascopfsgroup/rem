@@ -70,7 +70,7 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 
 		try {
 			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilas(); fila++) {
-				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, EXCEL_COL_NUMACTIVO)));
 				
 				//Si hay Valoracion = Valor Neto Contable (VNC) actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 38))){

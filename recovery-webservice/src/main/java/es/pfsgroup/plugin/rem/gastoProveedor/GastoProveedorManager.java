@@ -649,7 +649,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
 				gastoProveedorActivo.setActivo(activo);
 				gastoProveedorActivo.setGastoProveedor(gasto);
-				gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+				if(!Checks.estaVacio(activosCatastro)) {
+					gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+				}
+
 				
 				genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 				return true;

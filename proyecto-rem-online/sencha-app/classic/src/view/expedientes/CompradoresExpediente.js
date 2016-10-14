@@ -12,7 +12,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     initComponent: function () {
 
         var me = this;
-		me.setTitle(HreRem.i18n('title.compradores.pbc'));
+		me.setTitle(HreRem.i18n('title.compradores'));
         var items= [
 
 			{   
@@ -99,7 +99,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						   {
 						   		text: HreRem.i18n('fieldlabel.estado.pbc'),
 					            dataIndex: 'descripcionEstadoPbc',
-					            flex: 1						   
+					            flex: 1,
+					            hidden: true
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.relacion.hre'),
@@ -119,8 +120,10 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					    ]
 					}
             	]
-			},
-			{
+			} 
+			
+			// HREOS - 939 Fuera de alcance detalle PBC
+			/*,{
 				xtype:'fieldsettable',
 				defaultType: 'displayfieldbase',
 				reference: 'estadoPbcCompradoRef',
@@ -285,36 +288,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						
 					    
 		        ]
-            }
-           
-//            {
-//				xtype:'fieldsettable',
-//				defaultType: 'displayfieldbase',				
-//				title: HreRem.i18n('title.politica.corporativa'),
-//				items :
-//					[
-//						{
-//		                	xtype: 'comboboxfieldbase',
-//							reference: 'comboConflictoIntereses',
-//		                	fieldLabel:  HreRem.i18n('fieldlabel.conflicto.intereses'),
-//				        	bind: {
-//			            		store: '{comboConflictoIntereses}',
-//			            		value: '{conflictoIntereses}'
-//			            	},
-//			            	allowBlank: false
-//		                },
-//		                {
-//		                	xtype: 'comboboxfieldbase',
-//							reference: 'comboRiesgoReputacional',
-//		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
-//				        	bind: {
-//			            		store: '{comboRiesgoReputacional}',
-//			            		value: '{riesgoReputacional}'
-//			            	},
-//			            	allowBlank: false
-//		                }
-//		        ]
-//            }
+            }*/
+          
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });

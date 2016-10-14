@@ -163,7 +163,7 @@ DECLARE
 			),	
 			
     	T_TAP('T013_ObtencionContratoReserva',
-                'Instrucciones reserva',
+                'Obtención contrato reserva',
                 '811',
                 '3',
                 'GESTORIA_PREDOC',

@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +63,6 @@ public class RestSecurityFilter implements Filter {
 	}
 
 	private final Log logger = LogFactory.getLog(getClass());
-
-
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
@@ -180,47 +179,50 @@ public class RestSecurityFilter implements Filter {
 				jsonResp.accumulate("error", errorCode);
 			}
 
-			if (!Checks.esNulo(jsonFields.getJSONArray("data")) && jsonFields.getJSONArray("data").size() > 0) {
+			if (jsonFields.has("data") && jsonFields.getJSONObject("data").isArray()) {
+				if (!Checks.esNulo(jsonFields.getJSONArray("data")) && jsonFields.isArray()
+						&& jsonFields.getJSONArray("data").size() > 0) {
 
-				// Construimos mapa de ids a retornar
-				for (int i = 0; i < jsonFields.getJSONArray("data").size(); i++) {
-					map = new HashMap<String, Object>();
-					jsonLine = jsonFields.getJSONArray("data").get(i);
-					if (((JSONObject) jsonLine).containsKey("idInformeMediadorWebcom")) {
-						map.put("idInformeMediadorWebcom", ((JSONObject) jsonLine).get("idInformeMediadorWebcom"));
-						map.put("idActivoHaya", ((JSONObject) jsonLine).get("idActivoHaya"));
-					}
-					if (((JSONObject) jsonLine).containsKey("idClienteWebcom")) {
-						map.put("idClienteWebcom", ((JSONObject) jsonLine).get("idClienteWebcom"));
-						map.put("idClienteRem", ((JSONObject) jsonLine).get("idClienteRem"));
-					}
-					if (((JSONObject) jsonLine).containsKey("idVisitaWebcom")) {
-						map.put("idVisitaWebcom", ((JSONObject) jsonLine).get("idVisitaWebcom"));
-						map.put("idVisitaRem", ((JSONObject) jsonLine).get("idVisitaRem"));
-					}
-					if (((JSONObject) jsonLine).containsKey("idOfertaWebcom")) {
-						map.put("idOfertaWebcom", ((JSONObject) jsonLine).get("idOfertaWebcom"));
-						map.put("idOfertaRem", ((JSONObject) jsonLine).get("idOfertaRem"));
-					}
-					if (((JSONObject) jsonLine).containsKey("idActivoHaya")) {
-						map.put("idActivoHaya", ((JSONObject) jsonLine).get("idActivoHaya"));
-					}
-					if (((JSONObject) jsonLine).containsKey("idTrabajoWebcom")) {
-						map.put("idTrabajoWebcom", ((JSONObject) jsonLine).get("idTrabajoWebcom"));
-						map.put("idTrabajoRem", ((JSONObject) jsonLine).get("idTrabajoRem"));
-					}
-					if (((JSONObject) jsonLine).containsKey("idNotificacionWebcom")) {
-						map.put("idNotificacionWebcom", ((JSONObject) jsonLine).get("idNotificacionWebcom"));
-						map.put("idNotificacionRem", ((JSONObject) jsonLine).get("idNotificacionRem"));
-					}
-					map.put("success", false);
+					// Construimos mapa de ids a retornar
+					for (int i = 0; i < jsonFields.getJSONArray("data").size(); i++) {
+						map = new HashMap<String, Object>();
+						jsonLine = jsonFields.getJSONArray("data").get(i);
+						if (((JSONObject) jsonLine).containsKey("idInformeMediadorWebcom")) {
+							map.put("idInformeMediadorWebcom", ((JSONObject) jsonLine).get("idInformeMediadorWebcom"));
+							map.put("idActivoHaya", ((JSONObject) jsonLine).get("idActivoHaya"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idClienteWebcom")) {
+							map.put("idClienteWebcom", ((JSONObject) jsonLine).get("idClienteWebcom"));
+							map.put("idClienteRem", ((JSONObject) jsonLine).get("idClienteRem"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idVisitaWebcom")) {
+							map.put("idVisitaWebcom", ((JSONObject) jsonLine).get("idVisitaWebcom"));
+							map.put("idVisitaRem", ((JSONObject) jsonLine).get("idVisitaRem"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idOfertaWebcom")) {
+							map.put("idOfertaWebcom", ((JSONObject) jsonLine).get("idOfertaWebcom"));
+							map.put("idOfertaRem", ((JSONObject) jsonLine).get("idOfertaRem"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idActivoHaya")) {
+							map.put("idActivoHaya", ((JSONObject) jsonLine).get("idActivoHaya"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idTrabajoWebcom")) {
+							map.put("idTrabajoWebcom", ((JSONObject) jsonLine).get("idTrabajoWebcom"));
+							map.put("idTrabajoRem", ((JSONObject) jsonLine).get("idTrabajoRem"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idNotificacionWebcom")) {
+							map.put("idNotificacionWebcom", ((JSONObject) jsonLine).get("idNotificacionWebcom"));
+							map.put("idNotificacionRem", ((JSONObject) jsonLine).get("idNotificacionRem"));
+						}
+						map.put("success", false);
 
-					listaRespuesta.add(map);
+						listaRespuesta.add(map);
+					}
+					jsonResp.accumulate("data", listaRespuesta);
+
+				} else {
+					jsonResp.accumulate("data", jsonFields.getJSONArray("data"));
 				}
-				jsonResp.accumulate("data", listaRespuesta);
-
-			} else {
-				jsonResp.accumulate("data", jsonFields.getJSONArray("data"));
 			}
 		}
 
@@ -303,13 +305,14 @@ public class RestSecurityFilter implements Filter {
 
 			String descError = "";
 
-			if (e !=null && e.getMessage() != null && !e.getMessage().isEmpty()) {
+			if (e != null && e.getMessage() != null && !e.getMessage().isEmpty()) {
 				descError = e.getMessage().toUpperCase();
 			}
-			
-			if (t !=null && t.getMessage() != null && !t.getMessage().isEmpty()) {
+
+			if (t != null && t.getMessage() != null && !t.getMessage().isEmpty()) {
 				descError = t.getMessage().toUpperCase();
 			}
+			descError =StringEscapeUtils.escapeXml(descError);
 
 			String error = "{\"data\":null,\"error\":\"".concat(descError).concat("\"}");
 

@@ -6,7 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -25,6 +27,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -108,6 +111,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
@@ -163,6 +169,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private DiccionarioTargetClassMap diccionarioTargetClassMap;
+	
+	@Autowired
+	private UsuarioManager usuarioApi;
+
+	@Autowired
+	private RestApi restApi;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -1781,6 +1793,62 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return mensaje;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public ArrayList<Map<String, Object>> saveOrUpdate(List<PortalesDto> listaPortalesDto) {
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		HashMap<String, List<String>> errorsList = null;
+		ActivoSituacionPosesoria activoSituacionPosesoria = null;
+		Map<String, Object> map = null;
+		Activo activo = null;
+		for (int i = 0; i < listaPortalesDto.size(); i++) {
+
+			PortalesDto portalesDto = listaPortalesDto.get(i);
+			errorsList = restApi.validateRequestObject(portalesDto, TIPO_VALIDACION.INSERT);
+			map = new HashMap<String, Object>();
+			if (errorsList.size() == 0) {
+
+				activo = this.getByNumActivo(portalesDto.getIdActivoHaya());
+				Usuario user = usuarioApi.get(portalesDto.getIdUsuarioRemAccion());
+
+				if (activo.getSituacionPosesoria() == null) {
+
+					Date fechaCrear = new Date();
+					activoSituacionPosesoria = new ActivoSituacionPosesoria();
+					activoSituacionPosesoria.getAuditoria().setUsuarioCrear(user.getUsername());
+					activoSituacionPosesoria.getAuditoria().setFechaCrear(fechaCrear);
+					activoSituacionPosesoria.setActivo(activo);
+					activo.setSituacionPosesoria(activoSituacionPosesoria);
+
+				}
+
+				activoSituacionPosesoria = activo.getSituacionPosesoria();
+				activoSituacionPosesoria.setPublicadoPortalExterno(portalesDto.getPublicado());
+
+				Date fechaMod = new Date();
+				activoSituacionPosesoria.getAuditoria().setUsuarioModificar(user.getUsername());
+				activoSituacionPosesoria.getAuditoria().setFechaModificar(fechaMod);
+
+				if (this.saveOrUpdate(activo)) {
+					map.put("idActivoHaya", portalesDto.getIdActivoHaya());
+					map.put("idUsuarioRemAccion", portalesDto.getIdUsuarioRemAccion());
+					map.put("success", true);
+				} else {
+					map.put("idActivoHaya", portalesDto.getIdActivoHaya());
+					map.put("idUsuarioRemAccion", portalesDto.getIdUsuarioRemAccion());
+					map.put("success", false);
+				}
+			} else {
+				map.put("idActivoHaya", portalesDto.getIdActivoHaya());
+				map.put("idUsuarioRemAccion", portalesDto.getIdUsuarioRemAccion());
+				map.put("success", false);
+				map.put("invalidFields", errorsList);
+			}
+			listaRespuesta.add(map);
+		}
+		return listaRespuesta;
 	}
 
 }

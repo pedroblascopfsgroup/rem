@@ -2421,7 +2421,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Activo primerActivo = trabajo.getActivo();
 			if (!Checks.esNulo(primerActivo)) {
 				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(primerActivo.getId());
-				return (perimetro.getAplicaFormalizar() == 1);
+				return (Integer.valueOf(1).equals(perimetro.getAplicaFormalizar()));
 			}
 		}
 		return false;

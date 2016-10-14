@@ -674,7 +674,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if (!Checks.esNulo(expediente))
 				if (!Checks.esNulo(expediente.getCondicionante()))
-					return (expediente.getCondicionante().getSujetoTanteoRetracto() == 1);
+					return (Integer.valueOf(1).equals(expediente.getCondicionante().getSujetoTanteoRetracto()));
 		}
 		return false;
 	}
@@ -687,7 +687,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if (!Checks.esNulo(expediente))
 				if (!Checks.esNulo(expediente.getCondicionante()))
-					return (expediente.getCondicionante().getSujetoTanteoRetracto() == 1);
+					return (Integer.valueOf(1).equals(expediente.getCondicionante().getSujetoTanteoRetracto()));
 		}
 		return false;
 	}
@@ -709,7 +709,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return !Checks.esNulo(expediente.getReserva());
+			if (!Checks.esNulo(expediente))
+				if (!Checks.esNulo(expediente.getCondicionante()))
+					return (Integer.valueOf(1).equals(expediente.getCondicionante().getSolicitaReserva()));
 		}
 		return false;
 	}
@@ -720,7 +722,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return (expediente.getRiesgoReputacional() == 0 ? true : false);
+			return (Integer.valueOf(0).equals(expediente.getRiesgoReputacional()));
 		}
 		return false;
 	}
@@ -751,7 +753,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return (expediente.getConflictoIntereses() == 0 ? true : false);
+			return (Integer.valueOf(0).equals(expediente.getConflictoIntereses()));
 		}
 		return false;
 	}

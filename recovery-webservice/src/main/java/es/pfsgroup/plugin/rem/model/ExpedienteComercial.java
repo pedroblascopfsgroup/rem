@@ -166,7 +166,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_COS_ID_PROPUESTO")
-	private DDComiteSancion comitePropuesto;   
+	private DDComiteSancion comitePropuesto;
+    
+    @Column(name="ECO_ESTADO_PBC")
+    private Integer estadoPbc;   
     
     
      
@@ -490,6 +493,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setComitePropuesto(DDComiteSancion comitePropuesto) {
 		this.comitePropuesto = comitePropuesto;
+	}
+
+	public Integer getEstadoPbc() {
+		return estadoPbc;
+	}
+
+	public void setEstadoPbc(Integer estadoPbc) {
+		this.estadoPbc = estadoPbc;
 	}
 	
     

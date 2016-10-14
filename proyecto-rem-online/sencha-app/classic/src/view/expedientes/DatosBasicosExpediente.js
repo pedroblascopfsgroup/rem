@@ -273,6 +273,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			            		store: '{comboSiNoRem}',
 			            		value: '{expediente.riesgoReputacional}'
 			            	}
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+							reference: 'comboEstadoPbc',
+							readOnly: true,
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc'),
+				        	bind: {
+			            		store: '{comboAceptadoRechazado}',
+			            		value: '{expediente.estadoPbc}'
+			            	}
 		                }
 		        ]
             }

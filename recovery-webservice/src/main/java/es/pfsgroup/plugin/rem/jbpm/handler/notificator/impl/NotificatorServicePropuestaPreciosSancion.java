@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.mail.MailManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
@@ -31,6 +32,9 @@ public class NotificatorServicePropuestaPreciosSancion extends AbstractNotificat
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
 	
+	@Autowired
+	private GenericABMDao genericDao;
+	
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTarea();
@@ -47,37 +51,52 @@ public class NotificatorServicePropuestaPreciosSancion extends AbstractNotificat
 
 	@Override
 	public void notificator(ActivoTramite tramite) {
-		
-		if(!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !Checks.esNulo(tramite.getTrabajo().getSolicitante().getEmail())) {
-		
-			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
-			
-			List<String> mailsPara = new ArrayList<String>();
-			List<String> mailsCC = new ArrayList<String>();
-			
-			
-		    String correos = tramite.getTrabajo().getSolicitante().getEmail();
-		    Collections.addAll(mailsPara, correos.split(";"));
-			mailsCC.add(this.getCorreoFrom());
-			
-			String contenido = "";
-			String titulo = "";
-			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 	
-			/**
-			 * HREOS-763 Completar cuando haya más información para esta notificación
-			 */
-			contenido = "<p>El gestor del ....</p>";
-			titulo = "Notificación de análisis de petición de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-	
-				  
-			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
-			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
-		}
 	}
 	
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+		
+		List<String> mailsPara = new ArrayList<String>();
+		List<String> mailsCC = new ArrayList<String>();
+
+		String contenido = "";
+		String titulo = "";
+		String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion()) ? (tramite.getTrabajo().getDescripcion() + " - ") : "";
+		
+		
+		if(!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !Checks.esNulo(tramite.getTrabajo().getSolicitante().getEmail()) 
+				&& !tramite.getTrabajo().getSolicitante().equals(genericAdapter.getUsuarioLogado())) {
+
+			contenido = "<p>Ha finalizado la tramitación del trámite de propuesta de precios iniciado por usted, que se inició como consecuencia de la petición formalizada.</p>";
+			titulo = "Notificación de finalización de trámite de propuesta de precios (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+	
+			String correos = tramite.getTrabajo().getSolicitante().getEmail();
+		    Collections.addAll(mailsPara, correos.split(";"));
+			mailsCC.add(this.getCorreoFrom());
+			
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		}
+		
+		String emailPropietario = activoTramiteApi.getValorTareasAnteriorByCampo(valores.get(0).getTareaExterna().getTokenIdBpm(),"emailPropietario");
+		
+		if(!Checks.esNulo(emailPropietario)) {
+			
+			String fechaTarea = activoTramiteApi.getTareaValorByNombre(valores,"fechaSancion");
+			
+			contenido = "<p>Los precios de los activos contenidos en la propuesta de precios sancionada por usted en fecha " + fechaTarea + " han sido actualizados correctamente.</p>";
+			titulo = "Notificación de finalización de trámite de propuesta de precios (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			
+			mailsPara.removeAll(mailsPara);
+			mailsCC.removeAll(mailsCC);
+			
+		    Collections.addAll(mailsPara, emailPropietario.split(";"));
+			mailsCC.add(this.getCorreoFrom());
+			
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		}
 	}
+	
 }

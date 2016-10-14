@@ -43,14 +43,11 @@ import es.cajamadrid.servicios.GM.GMPETS07_INS.StructGMPETS07_INS_NumeroDeOcurre
 import es.cajamadrid.servicios.GM.GMPETS07_INS.StructGMPETS07_INS_NumeroDeOcurrenciasnumogt;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.VectorGMPETS07_INS_NumeroDeOcurrenciasnumogt;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -60,6 +57,10 @@ import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 public class UvemManager implements UvemManagerApi {
 
 	private final Log logger = LogFactory.getLog(getClass());
+	
+	private final String INSTANCIA_DECISION_ALTA = "ALTA";
+	private final String INSTANCIA_DECISION_CONSULTA = "CONS";
+	private final String INSTANCIA_DECISION_MODIFICACION = "MODI";
 
 	private String URL = "";
 	private String ALIAS = "";
@@ -459,8 +460,13 @@ public class UvemManager implements UvemManagerApi {
 
 	
 	
-	
-
+	@Override
+	public DatosClienteDto  ejecutarDatosClientePorDocumento(String nDocumento, String tipoDocumento, String qcenre) throws Exception {
+		
+		Integer numCliente = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
+		return ejecutarDatosCliente(numCliente, qcenre);
+		
+	}
 	
 	
 	
@@ -580,50 +586,129 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("\nRespuesta DATOSCLIENTE:");	
 		System.out.println("\nRespuesta DATOSCLIENTE:");
 		
-		if(servicioGMPAJC11_INS.getIndicadorDePaginacionindipg() =='0'){
-			struct = servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().getStructGMPAJC11_INS_NumeroDeOcurrenciasnumocuAt(0);
-		}else{
-			struct = servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().getStructGMPAJC11_INS_NumeroDeOcurrenciasnumocuAt(servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size());
-		}
-
-		logger.info("DniNifDelTitularDeLaOfertanudnio2: " + struct.getDniNifDelTitularDeLaOfertanudnio2());	
-		logger.info("ClaseDeDocumentoIdentificadorcocldo2: " + struct.getClaseDeDocumentoIdentificadorcocldo2());	
-		logger.info("NombreYApellidosTitularDeOfertanotiof: " + struct.getNombreYApellidosTitularDeOfertanotiof());	
-		logger.info("IdentificadorClienteOfertaidclow2: " + struct.getIdentificadorClienteOfertaidclow2());	
-
-		System.out.println("DniNifDelTitularDeLaOfertanudnio2: " + struct.getDniNifDelTitularDeLaOfertanudnio2());	
-		System.out.println("ClaseDeDocumentoIdentificadorcocldo2: " + struct.getClaseDeDocumentoIdentificadorcocldo2());	
-		System.out.println("NombreYApellidosTitularDeOfertanotiof: " + struct.getNombreYApellidosTitularDeOfertanotiof());	
-		System.out.println("IdentificadorClienteOfertaidclow2: " + struct.getIdentificadorClienteOfertaidclow2());
+// AL PONER BIEN EL NOMBRE DEL SERVICIO, PARECE QUE ESTO NO HACE FALTA (para Anahuac).
+//		if(servicioGMPAJC93_INS.getIndicadorDePaginacionindipg() =='0'){
+//			struct = servicioGMPAJC93_INS.getNumeroDeOcurrenciasnumocu().getStructGMPAJC11_INS_NumeroDeOcurrenciasnumocuAt(0);
+//		}else{
+//			struct = servicioGMPAJC93_INS.getNumeroDeOcurrenciasnumocu().getStructGMPAJC11_INS_NumeroDeOcurrenciasnumocuAt(servicioGMPAJC93_INS.getNumeroDeOcurrenciasnumocu().size());
+//		}
 		
+		logger.info("COCLDO: " + servicioGMPAJC93_INS.getClaseDeDocumentoIdentificadorcocldo());
+		logger.info("NUDNIO: " + servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio());
+		logger.info("NOTIOF: " + servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof());
+		logger.info("NOCLIE: " + servicioGMPAJC93_INS.getNombreDelClientenoclie());
+		logger.info("NOAPE1: " + servicioGMPAJC93_INS.getPrimerApellidonoape1());
+		logger.info("NOAPE2: " + servicioGMPAJC93_INS.getSegundoApellidonoape2());
+		logger.info("COTIVW: " + servicioGMPAJC93_INS.getCodigoTipoDeViacotivw());
+		logger.info("NOTIV1: " + servicioGMPAJC93_INS.getDenominacionTipoDeViaTrabajoNotiv1());
+		logger.info("NOVISA: " + servicioGMPAJC93_INS.getNombreDeLaVianovisa());
+		logger.info("NUPORO: " + servicioGMPAJC93_INS.getPORTALNUPORO());
+		logger.info("NUESCL: " + servicioGMPAJC93_INS.getESCALERANUESCL());
+		logger.info("NUPICL: " + servicioGMPAJC93_INS.getPISONUPICL());
+		logger.info("NUPUCL: " + servicioGMPAJC93_INS.getNumeroDePuertanupucl());
+		logger.info("COPOIW: " + servicioGMPAJC93_INS.getCodigoPostalcopoiw());
+		logger.info("NOMUSA: " + servicioGMPAJC93_INS.getNombreDelMunicipionomusa());
+		logger.info("NOPRSA: " + servicioGMPAJC93_INS.getNombreDeLaProvincianoprsa());
+		logger.info("COPRVW: " + servicioGMPAJC93_INS.getCodigoDeProvinciacoprvw());
+		logger.info("NOPADO: " + servicioGMPAJC93_INS.getNombreDePaisDelDomicilionopado());
+		logger.info("OBDOM1: " + servicioGMPAJC93_INS.getDatosComplementariosDelDomicilioobdom1());
+		logger.info("NOBAR2: " + servicioGMPAJC93_INS.getBarrioColoniaOApartadonobar2());
+		logger.info("NUEDAW: " + servicioGMPAJC93_INS.getEdadDelClientenuedaw());
+		logger.info("COESCI: " + servicioGMPAJC93_INS.getCodigoEstadoCivilcoesci());
+		logger.info("COESC1: " + servicioGMPAJC93_INS.getEstadoCivilActualcoesc1());
+		logger.info("NUHIJW: " + servicioGMPAJC93_INS.getNumeroDeHijosnuhijw());
+		logger.info("COSEXO: " + servicioGMPAJC93_INS.getSEXOCOSEXO());
+		logger.info("NOCOME: " + servicioGMPAJC93_INS.getNombreComercialDeLaEmpresanocome());
+		logger.info("XDELEG: " + servicioGMPAJC93_INS.getDELEGACIONXDELEG());
+		logger.info("CODEM1: " + servicioGMPAJC93_INS.getTipoDeSociedadcodem1());
+		logger.info("COSICX: " + servicioGMPAJC93_INS.getCodigoDeSituacionDelClientecosicx());
+		logger.info("NOSICL: " + servicioGMPAJC93_INS.getNombreDeLaSituacionDelClientenosicl());
+		logger.info("FENACW: " + servicioGMPAJC93_INS.getFechaDeNacimientoOConstitucionfenacw());
+		logger.info("NOPANC: " + servicioGMPAJC93_INS.getNombreDelPaisDeNacimientonopanc());
+		logger.info("NOPRNC: " + servicioGMPAJC93_INS.getNombreDeLaProvinciaNacimientonoprnc());
+		logger.info("NOPOBN: " + servicioGMPAJC93_INS.getNombreDePoblacionDeNacimientonopobn());
+		logger.info("NOPANA: " + servicioGMPAJC93_INS.getNombreDePaisNacionalidadnopana());
+		logger.info("NOPARS: " + servicioGMPAJC93_INS.getNombreDePaisResidencianopars());
+		logger.info("COSSEW: " + servicioGMPAJC93_INS.getSubsectorDeActividadEconomicanossec());
+		
+
+		System.out.println("COCLDO: " + servicioGMPAJC93_INS.getClaseDeDocumentoIdentificadorcocldo());
+		System.out.println("NUDNIO: " + servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio());
+		System.out.println("NOTIOF: " + servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof());
+		System.out.println("NOCLIE: " + servicioGMPAJC93_INS.getNombreDelClientenoclie());
+		System.out.println("NOAPE1: " + servicioGMPAJC93_INS.getPrimerApellidonoape1());
+		System.out.println("NOAPE2: " + servicioGMPAJC93_INS.getSegundoApellidonoape2());
+		System.out.println("COTIVW: " + servicioGMPAJC93_INS.getCodigoTipoDeViacotivw());
+		System.out.println("NOTIV1: " + servicioGMPAJC93_INS.getDenominacionTipoDeViaTrabajoNotiv1());
+		System.out.println("NOVISA: " + servicioGMPAJC93_INS.getNombreDeLaVianovisa());
+		System.out.println("NUPORO: " + servicioGMPAJC93_INS.getPORTALNUPORO());
+		System.out.println("NUESCL: " + servicioGMPAJC93_INS.getESCALERANUESCL());
+		System.out.println("NUPICL: " + servicioGMPAJC93_INS.getPISONUPICL());
+		System.out.println("NUPUCL: " + servicioGMPAJC93_INS.getNumeroDePuertanupucl());
+		System.out.println("COPOIW: " + servicioGMPAJC93_INS.getCodigoPostalcopoiw());
+		System.out.println("NOMUSA: " + servicioGMPAJC93_INS.getNombreDelMunicipionomusa());
+		System.out.println("NOPRSA: " + servicioGMPAJC93_INS.getNombreDeLaProvincianoprsa());
+		System.out.println("COPRVW: " + servicioGMPAJC93_INS.getCodigoDeProvinciacoprvw());
+		System.out.println("NOPADO: " + servicioGMPAJC93_INS.getNombreDePaisDelDomicilionopado());
+		System.out.println("OBDOM1: " + servicioGMPAJC93_INS.getDatosComplementariosDelDomicilioobdom1());
+		System.out.println("NOBAR2: " + servicioGMPAJC93_INS.getBarrioColoniaOApartadonobar2());
+		System.out.println("NUEDAW: " + servicioGMPAJC93_INS.getEdadDelClientenuedaw());
+		System.out.println("COESCI: " + servicioGMPAJC93_INS.getCodigoEstadoCivilcoesci());
+		System.out.println("COESC1: " + servicioGMPAJC93_INS.getEstadoCivilActualcoesc1());
+		System.out.println("NUHIJW: " + servicioGMPAJC93_INS.getNumeroDeHijosnuhijw());
+		System.out.println("COSEXO: " + servicioGMPAJC93_INS.getSEXOCOSEXO());
+		System.out.println("NOCOME: " + servicioGMPAJC93_INS.getNombreComercialDeLaEmpresanocome());
+		System.out.println("XDELEG: " + servicioGMPAJC93_INS.getDELEGACIONXDELEG());
+		System.out.println("CODEM1: " + servicioGMPAJC93_INS.getTipoDeSociedadcodem1());
+		System.out.println("COSICX: " + servicioGMPAJC93_INS.getCodigoDeSituacionDelClientecosicx());
+		System.out.println("NOSICL: " + servicioGMPAJC93_INS.getNombreDeLaSituacionDelClientenosicl());
+		System.out.println("FENACW: " + servicioGMPAJC93_INS.getFechaDeNacimientoOConstitucionfenacw());
+		System.out.println("NOPANC: " + servicioGMPAJC93_INS.getNombreDelPaisDeNacimientonopanc());
+		System.out.println("NOPRNC: " + servicioGMPAJC93_INS.getNombreDeLaProvinciaNacimientonoprnc());
+		System.out.println("NOPOBN: " + servicioGMPAJC93_INS.getNombreDePoblacionDeNacimientonopobn());
+		System.out.println("NOPANA: " + servicioGMPAJC93_INS.getNombreDePaisNacionalidadnopana());
+		System.out.println("NOPARS: " + servicioGMPAJC93_INS.getNombreDePaisResidencianopars());
+		System.out.println("COSSEW: " + servicioGMPAJC93_INS.getSubsectorDeActividadEconomicanossec());
+	
 		DatosClienteDto datos = new DatosClienteDto();
-		datos.setNombre(struct.getNombreYApellidosTitularDeOfertanotiof());
-		datos.setApellidos("-");
-		datos.setDocumento(struct.getDniNifDelTitularDeLaOfertanudnio2());
-		
-		
-//		 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
-//		 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
-//		 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
-//		 *            Otros persona física. J Otros persona jurídica.
-		
-		
-//		DD_TDI_DESCRIPCION_LARGA	    NIF
-//		DD_TDI_DESCRIPCION_LARGA	    DNI
-//		DD_TDI_DESCRIPCION_LARGA	    CIF
-//		DD_TDI_DESCRIPCION_LARGA	    TARJETA DE RESIDENTE
-//		DD_TDI_DESCRIPCION_LARGA	    PASAPORTE
-//		DD_TDI_DESCRIPCION_LARGA	    CIF PAIS EXTRANJERO
-//		DD_TDI_DESCRIPCION_LARGA	    DNI PAIS EXTRANJERO
-//		DD_TDI_DESCRIPCION_LARGA	    TJ IDENTIFICACION DIPLOMATICA
-//		DD_TDI_DESCRIPCION_LARGA	    MENOR
-//		DD_TDI_DESCRIPCION_LARGA	    OTROS PERSONA FISICA
-		
-		Filter filtrotipodoc = genericDao.createFilter(FilterType.EQUALS, "codigo", "01");
-		DDTipoDocumento tipoDoc = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class, filtrotipodoc);
-		datos.setTipoDocumento(tipoDoc);
-		
-		//NO PODEMOS DIFERENCIAR CON LOS DATOS ENVIADOS POR REM SI ES DNI o NIF.  :(
+
+		datos.setClaseDeDocumentoIdentificador(servicioGMPAJC93_INS.getClaseDeDocumentoIdentificadorcocldo()+"");
+		datos.setDniNifDelTitularDeLaOferta(servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio().toString());
+		datos.setNombreYApellidosTitularDeOferta(servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof().toString());
+		datos.setNombreDelCliente(servicioGMPAJC93_INS.getNombreDelClientenoclie().toString());
+		datos.setPrimerApellido(servicioGMPAJC93_INS.getPrimerApellidonoape1().toString());
+		datos.setSegundoApellido(servicioGMPAJC93_INS.getSegundoApellidonoape2().toString());
+		datos.setCodigoTipoDeVia(servicioGMPAJC93_INS.getCodigoTipoDeViacotivw()+"");
+		datos.setDenominacionTipoDeViaTrabajo(servicioGMPAJC93_INS.getDenominacionTipoDeViaTrabajoNotiv1().toString());
+		datos.setNombreDeLaVia(servicioGMPAJC93_INS.getNombreDeLaVianovisa().toString());
+		datos.setPORTAL(servicioGMPAJC93_INS.getPORTALNUPORO().toString());
+		datos.setESCALERA(servicioGMPAJC93_INS.getESCALERANUESCL()+"");
+		datos.setPISO(servicioGMPAJC93_INS.getPISONUPICL().toString());
+		datos.setNumeroDePuerta(servicioGMPAJC93_INS.getNumeroDePuertanupucl()+"");
+		datos.setCodigoPostal(servicioGMPAJC93_INS.getCodigoPostalcopoiw()+"");
+		datos.setNombreDelMunicipio(servicioGMPAJC93_INS.getNombreDelMunicipionomusa().toString());
+		datos.setNombreDeLaProvincia(servicioGMPAJC93_INS.getNombreDeLaProvincianoprsa().toString());
+		datos.setCodigoDeProvincia(servicioGMPAJC93_INS.getCodigoDeProvinciacoprvw()+"");
+		datos.setNombreDePaisDelDomicilio(servicioGMPAJC93_INS.getNombreDePaisDelDomicilionopado().toString());
+		datos.setDatosComplementariosDelDomicilio(servicioGMPAJC93_INS.getDatosComplementariosDelDomicilioobdom1().toString());
+		datos.setBarrioColoniaOApartado(servicioGMPAJC93_INS.getBarrioColoniaOApartadonobar2().toString());
+		datos.setEdadDelCliente(servicioGMPAJC93_INS.getEdadDelClientenuedaw()+"");
+		datos.setCodigoEstadoCivil(servicioGMPAJC93_INS.getCodigoEstadoCivilcoesci()+"");
+		datos.setEstadoCivilActual(servicioGMPAJC93_INS.getEstadoCivilActualcoesc1().toString());
+		datos.setNumeroDeHijos(servicioGMPAJC93_INS.getNumeroDeHijosnuhijw()+"");
+		datos.setSEXO(servicioGMPAJC93_INS.getSEXOCOSEXO()+"");
+		datos.setNombreComercialDeLaEmpresa(servicioGMPAJC93_INS.getNombreComercialDeLaEmpresanocome().toString());
+		datos.setDELEGACION(servicioGMPAJC93_INS.getDELEGACIONXDELEG().toString());
+		datos.setTipoDeSociedad(servicioGMPAJC93_INS.getTipoDeSociedadcodem1().toString());
+		datos.setCodigoDeSituacionDelCliente(servicioGMPAJC93_INS.getCodigoDeSituacionDelClientecosicx()+"");
+		datos.setNombreDeLaSituacionDelCliente(servicioGMPAJC93_INS.getNombreDeLaSituacionDelClientenosicl().toString());
+		datos.setFechaDeNacimientoOConstitucion(servicioGMPAJC93_INS.getFechaDeNacimientoOConstitucionfenacw().toString());
+		datos.setNombreDelPaisDeNacimiento(servicioGMPAJC93_INS.getNombreDelPaisDeNacimientonopanc().toString());
+		datos.setNombreDeLaProvinciaNacimiento(servicioGMPAJC93_INS.getNombreDeLaProvinciaNacimientonoprnc().toString());
+		datos.setNombreDePoblacionDeNacimiento(servicioGMPAJC93_INS.getNombreDePoblacionDeNacimientonopobn().toString());
+		datos.setNombreDePaisNacionalidad(servicioGMPAJC93_INS.getNombreDePaisNacionalidadnopana().toString());
+		datos.setNombreDePaisResidencia(servicioGMPAJC93_INS.getNombreDePaisResidencianopars().toString());
+		datos.setSubsectorDeActividadEconomica(servicioGMPAJC93_INS.getSubsectorDeActividadEconomicanossec().toString());
 
 		return datos;
 
@@ -645,7 +730,7 @@ public class UvemManager implements UvemManagerApi {
 	public ResultadoInstanciaDecisionDto altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
-			instancia = instanciaDecision(instanciaDecisionDto, "ALTA");
+			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);
 		} catch (WIException e) {
 			throw new Exception(e.getMessage());
 		}
@@ -662,13 +747,13 @@ public class UvemManager implements UvemManagerApi {
 	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
-			instancia = instanciaDecision(instanciaDecisionDto, "CONS");
+			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
 			throw new Exception(e.getMessage());
 		}
 		return instancia;
 	}
-
+	
 	/**
 	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de decisión de una oferta
 	 * 
@@ -679,7 +764,7 @@ public class UvemManager implements UvemManagerApi {
 	public ResultadoInstanciaDecisionDto modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
-			instancia = instanciaDecision(instanciaDecisionDto, "MODI");
+			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION);
 		} catch (WIException e) {
 			throw new Exception(e.getMessage());
 		}		
@@ -738,6 +823,11 @@ public class UvemManager implements UvemManagerApi {
 
 		// Aunque es un array solo usamos el 1er campo
 		numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
+		// Este codigo de BANKIA aunque parezca setear una variable, esta haciendo una add a un Array.
+		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu structEmpty = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+		for(int i=1; i<40; i++){
+			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(structEmpty);
+		}
 
 		logger.info("------------ LLAMADA WS INSTANCIADECISION (" + accion + ") -----------------");
 		leerConfiguracion();
@@ -770,7 +860,6 @@ public class UvemManager implements UvemManagerApi {
 		cabeceraFuncional.setCOCDAQ("0551");
 		cabeceraFuncional.setCOSBAQ("00");
 		cabeceraFuncional.setNUPUAQ("00");
-		//cabeceraFuncional.setCOUSAQ("USRHAYA");
 		cabeceraTecnica.setCLORAQ("71");
 		
 		//logueamos parametros cabecera
@@ -803,17 +892,18 @@ public class UvemManager implements UvemManagerApi {
 
 
 		// seteamos parametros
-		servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PRAC0170");
+		servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PAHY0170");
 		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(instanciaDecisionDto.getCodigoDeOfertaHaya());
 		if (instanciaDecisionDto.isFinanciacionCliente()) {
 			servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_SI);
 		} else {
 			servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_NO);
 		}
-		if (instanciaDecisionDto.isFinanciacionCliente()) {		
-			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_VENTA);
-		} else {
+		//Según llamada telefonica con Antonio Rios Muñoz(Atos Origin)
+		if (accion.equals(INSTANCIA_DECISION_MODIFICACION)) { 	
 			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);
+		} else {
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_VENTA);
 		}
 		
 		if (numeroOcurrencias!=null) {			
@@ -873,7 +963,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	@Override
-	public GMPAJC34_INS consultaDatosPrestamo(String numExpedienteRiesgo, int tipoRiesgo) throws WIException {
+	public Long consultaDatosPrestamo(String numExpedienteRiesgo12, int tipoRiesgo) throws Exception {
 		
 		logger.info("------------ LLAMADA WS ConsultaDatosPrestamo -----------------");
 		leerConfiguracion();
@@ -907,7 +997,6 @@ public class UvemManager implements UvemManagerApi {
 		cabeceraFuncional.setCOCDAQ("0551");
 		cabeceraFuncional.setCOSBAQ("00");
 		cabeceraFuncional.setNUPUAQ("00");
-		cabeceraFuncional.setCOUSAQ("USRHAYA");
 		cabeceraTecnica.setCLORAQ("71");
 		
 		//logueamos parametros cabecera
@@ -922,7 +1011,6 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("COCDAQ: " + cabeceraFuncional.getCOCDAQ());
 		logger.info("COSBAQ: " + cabeceraFuncional.getCOSBAQ());
 		logger.info("NUPUAQ: " + cabeceraFuncional.getNUPUAQ());
-		logger.info("COUSAQ: " + cabeceraFuncional.getCOUSAQ());
 		logger.info("------------------------------------");
 		logger.info("CLORAQ: " + cabeceraTecnica.getCLORAQ());
 		
@@ -937,13 +1025,13 @@ public class UvemManager implements UvemManagerApi {
 		System.out.println("COCDAQ: " + cabeceraFuncional.getCOCDAQ());
 		System.out.println("COSBAQ: " + cabeceraFuncional.getCOSBAQ());
 		System.out.println("NUPUAQ: " + cabeceraFuncional.getNUPUAQ());
-		System.out.println("COUSAQ: " + cabeceraFuncional.getCOUSAQ());
 		System.out.println("------------------------------------");
 		System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());
 		
 		// seteamos parametros
 		servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
-		servicioGMPAJC34_INS.setNumeroExpedienteDeRiesgoNumericonuidow(numExpedienteRiesgo);	
+		numExpedienteRiesgo12 = StringUtils.leftPad(numExpedienteRiesgo12, 12, "0");
+		servicioGMPAJC34_INS.setNumeroExpedienteDeRiesgoNumericonuidow(numExpedienteRiesgo12);	
 		servicioGMPAJC34_INS.setTipoRiesgoClaseProductoUrsusCotirx(tipoRiesgo);
 		long numeroCliente = 0;
 		servicioGMPAJC34_INS.setnumeroCliente(numeroCliente);
@@ -981,7 +1069,11 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC34_INS.setAlias(ALIAS);
 		servicioGMPAJC34_INS.execute();
 		
-		return servicioGMPAJC34_INS;
+		if (servicioGMPAJC34_INS == null) throw new Exception("GMPAJC34_SERVICE_NOT_WORKING");
+		es.cm.arq.tda.tiposdedatosbase.ImporteMonetario importe = servicioGMPAJC34_INS.getImporteMonetarioConcedido();
+		
+		if (importe == null) throw new Exception("GMPAJC34_NO_RESULT_AVAILABLE");		
+		return importe.getImporteComoLong();
 		
 	}
 	

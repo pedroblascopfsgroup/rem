@@ -47,7 +47,7 @@ BEGIN
       WHERE NOT EXISTS (
         SELECT 1 
         FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
-        WHERE GPV.GPV_NUM_GASTO_GESTORIA = MIG2.GIM_COD_GASTO_PROVEEDOR
+        WHERE GPV.GPV_NUM_GASTO_HAYA = MIG2.GIM_GPV_ID
       )
       '
       ;
@@ -74,24 +74,24 @@ BEGIN
           EXECUTE IMMEDIATE '
           INSERT INTO '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS (
             TABLA_MIG,
-            GPV_NUM_GASTO_GESTORIA,            
+            GPV_NUM_GASTO_HAYA,            
             FECHA_COMPROBACION
           )
           WITH NOT_EXISTS AS (
-            SELECT DISTINCT MIG2.GIM_COD_GASTO_PROVEEDOR 
+            SELECT DISTINCT MIG2.GIM_GPV_ID 
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
             WHERE NOT EXISTS (
               SELECT 1 
               FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-              WHERE MIG2.GIM_COD_GASTO_PROVEEDOR = GPV.GPV_NUM_GASTO_GESTORIA
+              WHERE MIG2.GIM_GPV_ID = GPV.GPV_NUM_GASTO_HAYA
             )
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GIM_COD_GASTO_PROVEEDOR    						      			  GPV_NUM_GASTO_GESTORIA,          
+          MIG2.GIM_GPV_ID		         						      			  GPV_NUM_GASTO_HAYA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN NOT_EXISTS ON NOT_EXISTS.GIM_COD_GASTO_PROVEEDOR = MIG2.GIM_COD_GASTO_PROVEEDOR
+          INNER JOIN NOT_EXISTS ON NOT_EXISTS.GIM_GPV_ID = MIG2.GIM_GPV_ID
           '
           ;
           
@@ -125,7 +125,7 @@ BEGIN
 						MIG.GIM_OBSERVACIONES
 		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
 		INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-		  ON GPV.GPV_NUM_GASTO_GESTORIA = MIG.GIM_COD_GASTO_PROVEEDOR
+		  ON GPV.GPV_NUM_GASTO_HAYA = MIG.GIM_GPV_ID
 	  )
 		SELECT
 		'||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL            		 		GIM_ID, 

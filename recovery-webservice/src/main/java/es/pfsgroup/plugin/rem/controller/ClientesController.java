@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
@@ -62,10 +61,6 @@ public class ClientesController {
 	@RequestMapping(method = RequestMethod.POST, value = "/clientes")
 	public void saveOrUpdateClienteComercial(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		ClienteRequestDto jsonData = null;
-		ClienteComercial cliente = null;
-
-		ClienteDto clienteDto = null;
-		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
 		HashMap<String, List<String>> errorsList = null;
@@ -81,43 +76,7 @@ public class ClientesController {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 
 			} else {
-				for (int i = 0; i < listaClienteDto.size(); i++) {
-
-					ClienteComercial clc = null;
-					map = new HashMap<String, Object>();
-					clienteDto = listaClienteDto.get(i);
-					cliente = clienteComercialApi.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
-					if (Checks.esNulo(cliente)) {
-						errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
-						if (errorsList.size() == 0) {
-							clienteComercialApi.saveClienteComercial(clienteDto);
-						}
-
-					} else {
-						errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
-						if (errorsList.size() == 0) {
-							clienteComercialApi.updateClienteComercial(cliente, clienteDto,
-									jsonFields.getJSONArray("data").get(i));
-						}
-
-					}
-
-					if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-						clc = clienteComercialApi.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
-						map.put("idClienteWebcom", clc.getIdClienteWebcom());
-						map.put("idClienteRem", clc.getIdClienteRem());
-						map.put("success", true);
-					} else {
-						map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
-						map.put("idClienteRem", clienteDto.getIdClienteRem());
-						map.put("success", false);
-						map.put("invalidFields", errorsList);
-
-					}
-					listaRespuesta.add(map);
-
-				}
-
+				listaRespuesta = clienteComercialApi.saveOrUpdate(listaClienteDto, jsonFields);
 				model.put("id", jsonData.getId());
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
@@ -156,12 +115,13 @@ public class ClientesController {
 		HashMap<String, List<String>> errorsList = null;
 		ClienteDto clienteDto = null;
 		Map<String, Object> map = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		ArrayList<Map<String, Object>> listaRespuesta = null;	
 
 		try {
 
 			jsonData = (ClienteRequestDto) request.getRequestData(ClienteRequestDto.class);
 			List<ClienteDto> listaClienteDto = jsonData.getData();
+			listaRespuesta = clienteComercialApi.deleteClienteComercial(listaClienteDto);
 
 			for (int i = 0; i < listaClienteDto.size(); i++) {
 

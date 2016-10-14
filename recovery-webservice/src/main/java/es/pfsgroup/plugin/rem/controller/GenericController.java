@@ -221,4 +221,9 @@ public class GenericController {
 	public ModelAndView getComboEjercicioContabilidad(ModelMap model){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboEjercicioContabilidad()));	
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComitesByCartera(String carteraCodigo, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesByCartera(carteraCodigo)));	
+	}
 }

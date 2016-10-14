@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,6 +12,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
@@ -57,6 +61,8 @@ public class PreciosController {
 	
 	@Autowired
     private GenericAdapter adapter;
+	
+	protected static final Log logger = LogFactory.getLog(PreciosController.class);
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -121,17 +127,17 @@ public class PreciosController {
 	public void createPropuestaPreciosAutom(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// Metodo para crear propuestas por peticion automatica
 		
-		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response,false);		
+		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);		
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void generarPropuestaManual(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// Metodo para crear propuestas por peticion manual
 		
-		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response,true);
+		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);
 	}
 	
-	private void generarPropuesta(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response, Boolean esManual) throws Exception {
+	private void generarPropuesta(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
@@ -141,20 +147,42 @@ public class PreciosController {
 		List<VBusquedaActivosPrecios> listaActivos = (List<VBusquedaActivosPrecios>) preciosApi.getActivos(dtoActivoFilter).getResults();
 		
 		//Genera la propuesta en BBDD y asocia los activos
-		PropuestaPrecio propuesta =preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo(), esManual);
+		PropuestaPrecio propuesta =preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo());
 		
 		// FIXME Se genera una excel básica, pendiente de definir
 		/*ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);
 		excelReportGeneratorApi.generateAndSend(report, response);*/
 		
 		// Se genera excel unificada
+		this.generarExcelPropuestaUnificada(propuesta,request,response);
+		
+	}
+	
+	/**
+	 * Carga la plantilla unificada de Propuesta de precios, y la rellena con los datos de la propuesta
+	 * @param propuesta
+	 * @param request
+	 * @param response
+	 */
+	private void generarExcelPropuestaUnificada(PropuestaPrecio propuesta, HttpServletRequest request, HttpServletResponse response) {
+		
 		ExcelGenerarPropuestaPrecios excel = new ExcelGenerarPropuestaPrecios();
 		
 		ServletContext sc = request.getSession().getServletContext();
 		excel.cargarPlantilla(sc.getRealPath("plantillas/plugin/LISTADO_ACTIVOS_PROPUESTA_PRECIOS.xls"));
-		excel.rellenarPlantilla(propuesta.getId().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
-		excelReportGeneratorApi.sendReport(excel.getFile(), response);
-		excel.vaciarLibros();
+		try {
+			excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
+		
+			excelReportGeneratorApi.sendReport(excel.getFile(), response);
+			excel.vaciarLibros();
+			
+		} catch (IllegalAccessException ex) {
+			logger.error(ex.getMessage());
+		} catch (InvocationTargetException ex) {
+			logger.error(ex.getMessage());
+		} catch (IOException ex) {
+			logger.error(ex.getMessage());
+		}
 	}
 	
 	/****************************************************************************************************************/

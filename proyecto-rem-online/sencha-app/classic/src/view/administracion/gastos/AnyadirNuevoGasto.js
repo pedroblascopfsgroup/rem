@@ -8,6 +8,13 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
     		
     modoEdicion: null,
     
+    /**
+     * Cuando un proveedor crea un gasto, no debe poder seleccionar otros proveedores.
+     * En caso de recibir un nif de emisor, se deshabilita la búsqueda y se asigna el nif recibido.
+     * @type 
+     */
+    nifEmisor: null,
+    
     controller: 'gastodetalle',
     viewModel: {
         type: 'gastodetalle'
@@ -20,8 +27,14 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 			var me = this,
 			form = me.down('formBase');
 			
-			form.setBindRecord(Ext.create('HreRem.model.GastoProveedor'));	
-			
+			form.setBindRecord(Ext.create('HreRem.model.GastoProveedor'));
+			if(!Ext.isEmpty(me.nifEmisor)) {
+		        var fieldEmisor = me.down('field[name=buscadorNifEmisorField]'); 
+	        	fieldEmisor.setValue(me.nifEmisor);
+	        	fieldEmisor.setReadOnly(true);
+	        	fieldEmisor.lookupController().buscarProveedor(fieldEmisor);
+			}
+			        	
 			Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),
 				function (field, index) 
 					{ 								
@@ -29,6 +42,8 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 						if(index == 0) field.focus();
 					}
 			);
+			
+			
 		}
 	},
     

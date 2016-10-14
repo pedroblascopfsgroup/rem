@@ -351,7 +351,7 @@ public class Activo implements Serializable, Auditable {
     private List<ActivoOferta> ofertas;
     
     
-    // Indicadores de precios del activo
+    // Indicadores de precios del activo y de activo publicable
     @Column(name = "ACT_FECHA_IND_PRECIAR")
     private Date fechaPreciar;
     
@@ -360,6 +360,9 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_FECHA_IND_DESCUENTO")
     private Date fechaDescuento;
+    
+    @Column(name = "ACT_FECHA_IND_PUBLICABLE")
+    private Date fechaPublicable;
     
 	@Version   
 	private Long version;
@@ -1412,6 +1415,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaDescuento(Date fechaDescuento) {
 		this.fechaDescuento = fechaDescuento;
+	}
+
+	public Date getFechaPublicable() {
+		return fechaPublicable;
+	}
+
+	public void setFechaPublicable(Date fechaPublicable) {
+		this.fechaPublicable = fechaPublicable;
 	}
 	
 	

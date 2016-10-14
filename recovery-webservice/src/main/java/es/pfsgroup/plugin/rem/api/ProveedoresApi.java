@@ -4,7 +4,6 @@ import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -95,16 +94,18 @@ public interface ProveedoresApi {
 	 * 
 	 * @param dtoPersonaContacto : dto con los datos a almacenar.
 	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 * @throws Exception Devuelve una excepción si no se ha encontrado el usuario.
 	 */
-	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto);
+	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto) throws Exception;
 	
 	/**
 	 * Este método almacena en la DDBB los datos a cambiar de la persona contacto.
 	 * 
 	 * @param dtoPersonaContacto : dto con los datos a actualizar.
 	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 * @throws Exception Devuelve una excepción si no se ha encontrado el usuario.
 	 */
-	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto);
+	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto) throws Exception;
 
 	/**
 	 * Este método borra de manera lógica un registro de dpersona contacto de la DDBB
@@ -174,5 +175,11 @@ public interface ProveedoresApi {
 	 * @return Devulve una lista de proveedores de tipo mediador mapeada en el DTO.
 	 */
 	public List<DtoMediador> getMediadorListFiltered(DtoMediador dto);
+
+	/**
+	 * Método que devuelve el nif del proveedor que tenga como contacto, el usuario logado.
+	 * @return
+	 */
+	public String getNifProveedorByUsuarioLogado();
 
 }

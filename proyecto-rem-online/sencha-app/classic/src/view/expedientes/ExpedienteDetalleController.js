@@ -276,6 +276,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	abrirFormularioAdjuntarDocumentos: function(grid) {
+		
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id");
     	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
@@ -922,8 +923,47 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
 
-    }
+    },
+
+	consultarComiteSancionador: function(btn) {
+		
+		var me = this,
+		comboComitePropuesto = me.lookupReference('comboComitePropuesto');
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/consultarComiteSancionador');
+			Ext.Ajax.request({
+			     url: url,
+			     params:  {idExpediente : me.getViewModel().get("expediente.id")},
+			     success: function(response, opts) {
+			     	var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }  catch (e){ };
+	                
+	                if(data.success === "true") {
+	                	comboComitePropuesto.setValue(data.codigo);           	
+	                }else {
+	                	me.fireEvent("errorToast", data.msg);
+	                }
+			     },
+			     
+			     failure: function(response) {
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+	    		     
+	    	});		
+		
 		
 	
+	}
 
 });

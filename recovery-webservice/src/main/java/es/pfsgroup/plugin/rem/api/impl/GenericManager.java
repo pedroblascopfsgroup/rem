@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -429,4 +430,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return listaDD;
 	}
 	
+	@Override
+	public List<DDComiteSancion> getComitesByCartera(String carteraCodigo) {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");			
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
+
+		return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter);
+
+	}
 }

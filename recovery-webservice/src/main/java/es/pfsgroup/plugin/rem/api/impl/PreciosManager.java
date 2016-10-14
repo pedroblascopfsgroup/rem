@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -125,7 +126,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual){
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
 
 		// Funcionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Manual - Automatica"
 		
@@ -143,8 +144,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		List<Activo> uniqueListActivos = new ArrayList<Activo>(uniqueSetActivos);
 		
 		// Nueva propuesta de precios con activos asociados
-		//Boolean esPropManual = true;
-		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(uniqueListActivos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
+		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(uniqueListActivos, nombrePropuesta, tipoPropuestaCodigo, null);
 		
 		// Nuevo trabajo+tramite de propuesta de precios: Preciar o Repreciar
 		// La propuesta es necesaria en el create ya que es necesario crear la relacion con el nuevo trabajo.
@@ -160,6 +160,31 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 	}
 	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public PropuestaPrecio createPropuestaPreciosFromTrabajo(Long idTrabajo, String nombrePropuesta) {
+		
+		PropuestaPrecio propuesta = null;
+		
+		List<BigDecimal> listIdActivos = propuestaPrecioDao.getActivosFromTrabajo(idTrabajo);
+		List<Activo> activos = new ArrayList<Activo>();
+		for(BigDecimal idActivo : listIdActivos) {
+			
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id",idActivo.longValue());
+			Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
+			activos.add(activo);
+		}
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idTrabajo);
+		Trabajo trabajo = genericDao.get(Trabajo.class, filtro);
+		String codigoPropuesta = this.getCodTipoPropuestaFromSubtipoTrabajo(trabajo.getSubtipoTrabajo().getCodigo());
+
+		propuesta = createPropuestaPrecios(activos, nombrePropuesta, codigoPropuesta, trabajo);
+
+		return propuesta;
+	}
+	
 	/**
 	 * Crea una nueva propuesta de precios del tipo indicado, para una lista de activos
 	 * Es un metodo generico para crear cualquier propuesta de precios
@@ -170,7 +195,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	 * @return PropuestaPrecio
 	 */
 	@Transactional(readOnly = false)
-	private PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual){
+	private PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Trabajo trabajo){
 		
 		PropuestaPrecio propuestaPrecio = new PropuestaPrecio();
 		
@@ -191,10 +216,14 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		propuestaPrecio.setEstado(estadoPropuestaPrecios);
 		DDTipoPropuestaPrecio tipoPropuestaPrecio = (DDTipoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPropuestaPrecio.class, tipoPropuestaCodigo);
 		propuestaPrecio.setTipoPropuesta(tipoPropuestaPrecio);
-		propuestaPrecio.setEsPropuestaManual(esPropManual);
 		
+		if(Checks.esNulo(trabajo))
+			propuestaPrecio.setEsPropuestaManual(true);
+		else {
+			propuestaPrecio.setEsPropuestaManual(false);
+			propuestaPrecio.setTrabajo(trabajo);
+		}
 		propuestaPrecio.setActivosPropuesta(listaActivosToActivosPropuesta(activos, propuestaPrecio));
-		
 		propuestaPrecioDao.saveOrUpdate(propuestaPrecio);
 		
 		this.eliminarMarcaActivosPropuesta(propuestaPrecio.getActivosPropuesta(), tipoPropuestaPrecio);
@@ -276,6 +305,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		}
 	}
 	
+	@Override
 	public List<DtoExcelPropuestaUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idPropuesta", idPropuesta);
@@ -303,8 +333,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 		Integer cartera = Integer.parseInt(dto.getCodCartera());
 		Double resultado = null;
-		//Activarlo luego, por ahora enviamos la tasacion como resultado
-		/*
+
+		
 		switch(cartera) {
 		
 			case 1: // Cajamar
@@ -322,8 +352,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			default:
 				break;
 				
-		}*/
-		resultado = dto.getValorTasacion();
+		}
+
 		return resultado;
 	}
 	
@@ -403,6 +433,46 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	private Double precioPropuestoBankiaTerceros(Double tasacion) {
 		return tasacion;	
+	}
+	
+	/**
+	 * Segun el subtipo de Trabajo, devuelve un codigo de tipo propuesta
+	 * @param codSubtipo
+	 * @return
+	 */
+	private String getCodTipoPropuestaFromSubtipoTrabajo(String codSubtipo) {
+		
+		if(codSubtipo.equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS))
+			return DDTipoPropuestaPrecio.TIPO_PRECIAR;
+		//else if(codSubtipo.equals(DDSubtipoTrabajo))
+		//	return DDTipoPropuestaPrecio.TIPO_REPRECIAR;	
+		else if(codSubtipo.equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO))
+			return DDTipoPropuestaPrecio.TIPO_DESCUENTO;
+		else
+			return null;
+	}
+	
+	@Override
+	public String puedeCreasePropuestaFromTrabajo(Long idTrabajo) {
+		
+		String mensaje = "";
+		
+		//Si el trabajo ya tiene una propuesta asociada, no debe crearla
+		if(!propuestaPrecioDao.existePropuestaEnTrabajo(idTrabajo)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idTrabajo);
+			Trabajo trabajo = genericDao.get(Trabajo.class, filtro);
+			String codigoPropuesta = this.getCodTipoPropuestaFromSubtipoTrabajo(trabajo.getSubtipoTrabajo().getCodigo());
+			
+			// Si el subtipo de trabajo no es de preciar o descuento, no se genera la propuesta
+			if(Checks.esNulo(codigoPropuesta)) {
+				mensaje = "El Tipo/Subtipo de trabajo no permite generar una propuesta de precios.";
+			}			
+		}
+		else {
+			mensaje = "Ya existe una propuesta asociada";
+		}
+		
+		return mensaje;
 	}
 
 }

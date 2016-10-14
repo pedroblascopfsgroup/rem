@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
@@ -35,7 +38,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoNoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -108,7 +110,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "entidadPropietariaCodigo", activo.getCartera().getCodigo());
 				BeanUtils.copyProperty(activoDto, "entidadPropietariaDescripcion", activo.getCartera().getDescripcion());
 			}
-			
+			if(!Checks.esNulo(activo.getSubcartera())) {
+				BeanUtils.copyProperty(activoDto, "subcarteraCodigo", activo.getSubcartera().getCodigo());
+				BeanUtils.copyProperty(activoDto, "subcarteraDescripcion", activo.getSubcartera().getDescripcion());
+			}
 			if (activo.getRating() != null ) {
 				BeanUtils.copyProperty(activoDto, "rating", activo.getRating().getCodigo());
 			}
@@ -185,8 +190,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 		}
-		
-		
+
+		// Obtener estado de aceptación del informe comercial.
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Order order = new Order(OrderType.DESC, "id");
+		List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
+		if(!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
+			ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
+				BeanUtils.copyProperty(activoDto, "informeComercialAceptado", historico.getEstadoInformeComercial().getCodigo().equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION) ? true : false);
+		}
+
 		//HREOS-843 Situacion Comercial del activo
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
 			BeanUtils.copyProperty(activoDto, "situacionComercialDescripcion", activo.getSituacionComercial().getDescripcion());
@@ -215,8 +228,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getMotivoNoAplicaComercializar())) {
-			BeanUtils.copyProperty(activoDto, "motivoNoAplicaComercializarCodigo", perimetroActivo.getMotivoNoAplicaComercializar().getCodigo());
-			BeanUtils.copyProperty(activoDto, "motivoNoAplicaComercializarDescripcion", perimetroActivo.getMotivoNoAplicaComercializar().getDescripcion());
+			BeanUtils.copyProperty(activoDto, "motivoNoAplicaComercializar", perimetroActivo.getMotivoNoAplicaComercializar());
 		}
 		
 		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
@@ -226,7 +238,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto,"aplicaGestion", perimetroActivo.getAplicaGestion() == 1? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", perimetroActivo.getAplicaAsignarMediador() == 1? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaComercializar", perimetroActivo.getAplicaComercializar() == 1? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", perimetroActivo.getAplicaComercializar() == 1? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", perimetroActivo.getAplicaFormalizar() == 1? true: false);
 //		}
 		// ----------
 		
@@ -433,14 +445,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(
 				dto.getAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || dto.getAplicaFormalizar() != null || 
 				dto.getAplicaGestion() != null  || dto.getAplicaTramiteAdmision() != null || dto.getMotivoAplicaComercializarCodigo() != null ||
-				dto.getMotivoNoAplicaComercializarCodigo() != null || dto.getTipoComercializacionCodigo() != null ||
+				dto.getMotivoNoAplicaComercializar() != null || dto.getTipoComercializacionCodigo() != null ||
 				dto.getIncluidoEnPerimetro() != null ||	dto.getFechaAltaActivoRem() != null || dto.getAplicaTramiteAdmision() != null || 
 				dto.getFechaAplicaTramiteAdmision() != null || dto.getMotivoAplicaTramiteAdmision() != null ||	dto.getAplicaGestion() != null ||
 				dto.getFechaAplicaGestion() != null || dto.getMotivoAplicaGestion() != null || dto.getAplicaAsignarMediador() != null ||
 				dto.getFechaAplicaAsignarMediador() != null || dto.getMotivoAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || 
 				dto.getFechaAplicaComercializar() != null || dto.getMotivoAplicaComercializarCodigo() != null || dto.getMotivoAplicaComercializarDescripcion() != null ||
-				dto.getMotivoNoAplicaComercializarCodigo() != null || dto.getMotivoNoAplicaComercializarDescripcion() != null || dto.getAplicaFormalizar() != null ||
-				dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null ) 
+				dto.getMotivoNoAplicaComercializar() != null || dto.getAplicaFormalizar() != null || dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null ) 
 			{
 				
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
@@ -479,10 +490,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setMotivoAplicaComercializar(motivoAplicaComercializar);
 				}
 				
-				if (dto.getMotivoNoAplicaComercializarCodigo() != null) {
-					DDMotivoNoComercializacion motivoNoAplicaComercializar = (DDMotivoNoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoNoComercializacion.class,  dto.getMotivoNoAplicaComercializarCodigo());
-					perimetroActivo.setMotivoNoAplicaComercializar(motivoNoAplicaComercializar);
-				}
+				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
 				
 				if (dto.getTipoComercializacionCodigo() != null) {
 					DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());

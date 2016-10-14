@@ -91,6 +91,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name:'entidadPropietariaDescripcion'
     		},
     		{
+    			name:'entidadPropietariaCodigo'
+    		},
+    		{
     			name: 'tipoExpedienteCodigo'
     		},
     		{

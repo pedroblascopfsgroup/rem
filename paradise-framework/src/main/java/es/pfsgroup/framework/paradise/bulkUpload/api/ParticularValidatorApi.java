@@ -42,6 +42,15 @@ public interface  ParticularValidatorApi {
 	
 	public Boolean esActivoIncluidoPerimetro(String numActivo);
 	
+	public Boolean esActivoAsistido (String numActivo);
+	
+	/**
+	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja
+	 * @param numAgrupacion
+	 * @return
+	 */
+	public Boolean esAgrupacionConBaja (String numAgrupacion);
+	
 	/**
 	 * Validacion de Localizacion unica para un grupo de activos
 	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas

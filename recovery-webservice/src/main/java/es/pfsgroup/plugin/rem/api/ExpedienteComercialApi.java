@@ -81,7 +81,7 @@ public interface ExpedienteComercialApi {
 	     * @return
 		 * @throws Exception 
 	     */
-		public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial);
+		public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) throws Exception;
 		
 		/**
 	     * Actualizar los valores del Expediente Comercial
@@ -295,6 +295,15 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+
+
+		/**
+		 * Función que devuelve la propuesta de un comité para un expediente comercial de Bankia
+		 * @param idExpediente
+		 * @return
+		 * @throws Exception 
+		 */
+		public String consultarComiteSancionador(Long idExpediente) throws Exception;
 		
 		/**
 		 * Método que crea un comprador desde la pestaña compradores del expediente

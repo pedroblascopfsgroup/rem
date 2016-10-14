@@ -26,6 +26,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
 	     },
 	     
+	     esCarteraBankia: function(get) {
+	     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
+	     },
+	     
 	     getTipoExpedienteCabecera: function(get) {
 	     
 	     	var tipoExpedidenteDescripcion =  get('expediente.tipoExpedienteDescripcion');
@@ -461,7 +467,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getComboMunicipio',
 				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}
 			}
-    	}
+    	},
+
+		comboComites: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Honorario',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getComitesBycartera',
+		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+	    	}	    	
+	    }
 	    
 	
     }

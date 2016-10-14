@@ -1,6 +1,57 @@
 Ext.define('HreRem.view.administracion.AdministracionController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.administracion',
+    
+    init: function() {
+    	
+    	// Si el usuario es proveedor, las búsquedas deberan filtrarse por el nif de este, 
+    	// y todas las listas de selección de proveedores estarán deshabilitadas.
+    	var me = this;
+    	
+    	me.nifProveedorIdentificado= null;
+    	
+    	if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
+			var url =  $AC.getRemoteUrl('gastosproveedor/getNifProveedorByUsuario');
+			Ext.Ajax.request({
+			     url: url,			
+			     success: function(response, opts) {
+			     	var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }  catch (e){ };
+	                
+	                if(data.success === "true") {
+						me.nifProveedorIdentificado = data.data;
+	                }else {
+	                	me.fireEvent("errorToast", data.msg);
+	                }
+			     },
+			     
+			     failure: function(response) {
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+	    		     
+	    	});				
+		}
+    	
+    },
+    
+    control: {
+    	
+    	'gestiongastoslist' : {    	
+    		onClickAddGasto: 'onClickAddGasto'
+    	}
+
+    },
 
     //Funcion que se ejecuta al hacer click en el botón buscar gastos
 	onClickGastosSearch: function(btn) {
@@ -10,13 +61,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var searchForm = btn.up('formBase');
 		
 		if (searchForm.isValid()) {
-			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-			
-			Ext.Object.each(criteria, function(key, val) {
-				if (Ext.isEmpty(val)) {
-					delete criteria[key];
-				}
-			});
 			this.lookupReference('gestiongastoslistref').getStore().loadPage(1);
         }
 		
@@ -37,7 +81,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	
 	paramLoading: function(store, operation, opts) {
 		var initialData = {};
-		
+		var me = this;
 		var searchForm = this.lookupReference('gestiongastossearchref');
 		if (searchForm.isValid()) {
 			
@@ -48,7 +92,10 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 					delete criteria[key];
 				}
 			});	
-		
+		    
+			if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
+				criteria.nifProveedor = me.nifProveedorIdentificado;
+			}
 			store.getProxy().extraParams = criteria;
 			
 			return true;		
@@ -139,6 +186,14 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		});
 
 		return criteria;
+    },
+    
+    onClickAddGasto: function(grid) {
+    	
+    	var me =this,
+    	parent= grid.up('gestiongastos');
+		Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent, nifEmisor: me.nifProveedorIdentificado}).show();
+	                
     }
 
 });

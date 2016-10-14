@@ -8,14 +8,14 @@ public class InstanciaDecisionDto {
 	public final char FINANCIACION_CLIENTE_SI = 'S';
 	public final char FINANCIACION_CLIENTE_NO = 'N';
 	
-	public final short TIPO_IMPUESTO_SIN_IMPUESTO = 0;
-	public final short TIPO_IMPUESTO_ITP = 1;
-	public final short TIPO_IMPUESTO_IVA = 2;
-	public final short TIPO_IMPUESTO_IGIC = 3;
-	public final short TIPO_IMPUESTO_IPSI = 4;
+	public final static short TIPO_IMPUESTO_SIN_IMPUESTO = 0;
+	public final static short TIPO_IMPUESTO_ITP = 1;
+	public final static short TIPO_IMPUESTO_IVA = 2;
+	public final static short TIPO_IMPUESTO_IGIC = 3;
+	public final static short TIPO_IMPUESTO_IPSI = 4;
 	
-	private String codigoDeOfertaHaya;
-	private short tipoPropuesta; //1 = Venta o 3 = Modificación precio si es contraoferta
+	private String codigoDeOfertaHaya; //Campo OFR_NUM_OFERTA de la tabla OFR_OFERTAS
+	//private short tipoPropuesta; //1 = Venta o 3 = Modificación precio si es contraoferta  <--AHORA DEPENDE DE SI ES CONS/ALTA/MODI
 	private char indicadorDeFinanciacionCliente; //'S' or 'N'
 	private Integer identificadorActivoEspecial;
 	private Long importeConSigno; //x100
@@ -45,16 +45,16 @@ public class InstanciaDecisionDto {
 	public void setTipoDeImpuesto(short tipoDeImpuesto) {
 		this.tipoDeImpuesto = tipoDeImpuesto;
 	}
-	public boolean isContraoferta() {
-		return ( tipoPropuesta == PROPUESTA_CONTRAOFERTA );
-	}
-	public void setContraoferta( boolean esContraoferta) {
-		if (esContraoferta) {
-			this.tipoPropuesta = PROPUESTA_CONTRAOFERTA;
-		} else {
-			this.tipoPropuesta = PROPUESTA_VENTA;
-		}
-	}
+//	public boolean isContraoferta() {
+//		return ( tipoPropuesta == PROPUESTA_CONTRAOFERTA );
+//	}
+//	public void setContraoferta( boolean esContraoferta) {
+//		if (esContraoferta) {
+//			this.tipoPropuesta = PROPUESTA_CONTRAOFERTA;
+//		} else {
+//			this.tipoPropuesta = PROPUESTA_VENTA;
+//		}
+//	}
 	public boolean isFinanciacionCliente() {
 		return ( indicadorDeFinanciacionCliente ==  FINANCIACION_CLIENTE_SI);
 	}

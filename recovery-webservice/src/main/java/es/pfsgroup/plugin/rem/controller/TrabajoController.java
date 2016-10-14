@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,11 +44,13 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrecios;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
+import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoAvisadorApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -66,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
@@ -101,6 +106,9 @@ public class TrabajoController {
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private PreciosApi preciosApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1032,7 +1040,7 @@ public class TrabajoController {
 	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
 	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
-		List<String> errorsList = null;
+		HashMap<String, List<String>> errorsList = null;
 		TrabajoDto trabajoDto = null;		
 		DtoFichaTrabajo dtoFichaTrabajo = null;
 		Map<String, Object> map = null;
@@ -1054,20 +1062,16 @@ public class TrabajoController {
 
 					Long idTrabajo = null;
 					Trabajo trabajo = null;
-					errorsList = new ArrayList<String>();
+					errorsList = new HashMap<String, List<String>>();
 					map = new HashMap<String, Object>();
 					trabajoDto = listaTrabajoDto.get(i);
 					
 					errorsList = trabajoApi.validateTrabajoPostRequestData(trabajoDto);
 					if(!Checks.esNulo(errorsList) && errorsList.isEmpty()){					
 						dtoFichaTrabajo = trabajoApi.convertTrabajoDto2DtoFichaTrabajo(trabajoDto);
-						if(Checks.esNulo(dtoFichaTrabajo)){
-							errorsList.add("Ha ocurrido un error al procesar la petición. Error de conversion de tipos al construir el dtoTrabajo.");
-						}else{
+						if(!Checks.esNulo(dtoFichaTrabajo)){
 							idTrabajo = trabajoApi.create(dtoFichaTrabajo);
-							if(Checks.esNulo(idTrabajo)){
-								errorsList.add("Ha ocurrido un error al crear el trabajo.");
-							}else{
+							if(!Checks.esNulo(idTrabajo)){
 								trabajo = trabajoApi.findOne(idTrabajo);
 							}
 						}					
@@ -1082,7 +1086,7 @@ public class TrabajoController {
 						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
 						map.put("idTrabajoRem", "");
 						map.put("success", false);
-						map.put("errorMessages", errorsList);
+						map.put("invalidFields", errorsList);
 					}
 					listaRespuesta.add(map);
 					
@@ -1106,9 +1110,62 @@ public class TrabajoController {
 		restApi.sendResponse(response, model);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public void createPropuestaPreciosFromTrabajo(DtoTrabajoFilter dtoTrabajoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) {
+		
+		DtoActivosTrabajoFilter dtoActivosTrabajo = new DtoActivosTrabajoFilter();
+		dtoActivosTrabajo.setIdTrabajo(dtoTrabajoFilter.getIdTrabajo());
+		
+		PropuestaPrecio propuesta = preciosApi.createPropuestaPreciosFromTrabajo(Long.parseLong(dtoTrabajoFilter.getIdTrabajo()), nombrePropuesta);
+		// Se genera excel unificada si se ha creado la propuesta
+		if(!Checks.esNulo(propuesta))
+			this.generarExcelPropuestaUnificada(propuesta,request,response);
+	}
 	
+	/**
+	 * Carga la plantilla unificada de Propuesta de precios, y la rellena con los datos de la propuesta
+	 * @param propuesta
+	 * @param request
+	 * @param response
+	 */
+	private void generarExcelPropuestaUnificada(PropuestaPrecio propuesta, HttpServletRequest request, HttpServletResponse response) {
+		
+		ExcelGenerarPropuestaPrecios excel = new ExcelGenerarPropuestaPrecios();
+		
+		ServletContext sc = request.getSession().getServletContext();
+		excel.cargarPlantilla(sc.getRealPath("plantillas/plugin/LISTADO_ACTIVOS_PROPUESTA_PRECIOS.xls"));
+		try {
+			excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), genericAdapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
+		
+			excelReportGeneratorApi.sendReport(excel.getFile(), response);
+			excel.vaciarLibros();
+			
+		} catch (IllegalAccessException ex) {
+			logger.error(ex.getMessage());
+		} catch (InvocationTargetException ex) {
+			logger.error(ex.getMessage());
+		} catch (IOException ex) {
+			logger.error(ex.getMessage());
+		}
+	}
 	
-	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView comprobarCreacionPropuesta(@RequestParam Long idTrabajo, ModelMap model){
+		
+		String advertencia = preciosApi.puedeCreasePropuestaFromTrabajo(idTrabajo);
+		if(Checks.esNulo(advertencia)) {
+		
+			model.put("success", true);
+		}
+		else {
+			model.put("mensaje", advertencia);
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
 	
 	
 	

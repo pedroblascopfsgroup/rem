@@ -23,7 +23,6 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -31,6 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
@@ -61,8 +62,10 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 @Service("proveedoresManager")
 public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresApi> implements  ProveedoresApi {
-	public static String PROVEEDOR_EXISTS_EXCEPTION_CODE = "0001";
-	public static String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "El NIF de proveedor proporcionado ya existe";
+	public static final String PROVEEDOR_EXISTS_EXCEPTION_CODE = "0001";
+	public static final String USUARIO_NOT_EXISTS_EXCEPTION_CODE = "0002";
+	public static final String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "El NIF de proveedor proporcionado ya existe";
+	public static final String USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE = "No se ha encontrado el usuario especificado";
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -75,6 +78,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -318,66 +324,72 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoPersonaContacto> getPersonasContactoByProveedor(DtoPersonaContacto dtoPersonaContacto) {
-		Filter proveedorIDFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoPersonaContacto.getId()));
-		Page page;
-		if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
-			// Filtrado por la delegacion seleccionada.
-			Filter delegacionIDFilter = genericDao.createFilter(FilterType.EQUALS, "delegacion.id", dtoPersonaContacto.getDelegacion());
-			page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter, delegacionIDFilter);
-		} else {
-			page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter);
-		}
-		List<ActivoProveedorContacto> personaContacto = (List<ActivoProveedorContacto>) page.getResults();
 		List<DtoPersonaContacto> dtoList = new ArrayList<DtoPersonaContacto>();
-		for(ActivoProveedorContacto persona : personaContacto) {
-			DtoPersonaContacto dto = new DtoPersonaContacto();
-			try {
-				beanUtilNotNull.copyProperty(dto, "id", persona.getId());
-				beanUtilNotNull.copyProperty(dto, "personaPrincipal", persona.getPrincipal());
-				if(!Checks.esNulo(persona.getUsuario())) {
-					beanUtilNotNull.copyProperty(dto, "nombreApellidos", persona.getUsuario().getApellidoNombre());
-					beanUtilNotNull.copyProperty(dto, "codigoUsuario", persona.getUsuario().getId());
-				}
-				if(!Checks.esNulo(persona.getProveedor())){
-					beanUtilNotNull.copyProperty(dto, "proveedorID", persona.getProveedor().getId());
-					if(!Checks.esNulo(persona.getProveedor().getTipoProveedor())){
-						if(!Checks.esNulo(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor())){
-							if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
-								beanUtilNotNull.copyProperty(dto, "cargo", persona.getCargoProveedorContacto().getCodigo());
-								if(!Checks.esNulo(persona.getProveedor())) {
-									beanUtilNotNull.copyProperty(dto, "nif", persona.getProveedor().getDocIdentificativo());
+		
+		if(!Checks.esNulo(dtoPersonaContacto.getId())) {
+			Filter proveedorIDFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoPersonaContacto.getId()));
+			Page page;
+			if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
+				// Filtrado por la delegacion seleccionada.
+				Filter delegacionIDFilter = genericDao.createFilter(FilterType.EQUALS, "delegacion.id", dtoPersonaContacto.getDelegacion());
+				page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter, delegacionIDFilter);
+			} else {
+				page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter);
+			}
+			List<ActivoProveedorContacto> personaContacto = (List<ActivoProveedorContacto>) page.getResults();
+			
+			for(ActivoProveedorContacto persona : personaContacto) {
+				DtoPersonaContacto dto = new DtoPersonaContacto();
+				try {
+					beanUtilNotNull.copyProperty(dto, "id", persona.getId());
+					beanUtilNotNull.copyProperty(dto, "personaPrincipal", persona.getPrincipal());
+					beanUtilNotNull.copyProperty(dto, "nombre", persona.getNombre());
+					beanUtilNotNull.copyProperty(dto, "apellido1", persona.getApellido1());
+					beanUtilNotNull.copyProperty(dto, "apellido2", persona.getApellido2());
+					if(!Checks.esNulo(persona.getUsuario())) {
+						beanUtilNotNull.copyProperty(dto, "codigoUsuario", persona.getUsuario().getUsername());
+					}
+					if(!Checks.esNulo(persona.getProveedor())){
+						beanUtilNotNull.copyProperty(dto, "proveedorID", persona.getProveedor().getId());
+						if(!Checks.esNulo(persona.getProveedor().getTipoProveedor())){
+							if(!Checks.esNulo(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor())){
+								if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(persona.getProveedor().getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
+									if(!Checks.esNulo(persona.getCargoProveedorContacto())) {
+										beanUtilNotNull.copyProperty(dto, "cargoCombobox", persona.getCargoProveedorContacto().getCodigo());
+									}
+									beanUtilNotNull.copyProperty(dto, "nif", persona.getDocIdentificativo());
+									beanUtilNotNull.copyProperty(dto, "direccion", persona.getDireccion());
+								} else {
+									beanUtilNotNull.copyProperty(dto, "cargoTexto", persona.getCargo());
 								}
-								beanUtilNotNull.copyProperty(dto, "direccion", persona.getDireccion());
-							} else {
-								beanUtilNotNull.copyProperty(dto, "cargo", persona.getCargo());
 							}
 						}
 					}
+					
+					beanUtilNotNull.copyProperty(dto, "telefono", persona.getTelefono1());
+					beanUtilNotNull.copyProperty(dto, "email", persona.getEmail());
+					if(!Checks.esNulo(persona.getProveedor())) {
+						beanUtilNotNull.copyProperty(dto, "fechaAlta", persona.getFechaAlta());
+						beanUtilNotNull.copyProperty(dto, "fechaBaja", persona.getFechaBaja());
+					}
+					beanUtilNotNull.copyProperty(dto, "observaciones", persona.getObservaciones());
+					beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
 				}
 				
-				beanUtilNotNull.copyProperty(dto, "telefono", persona.getTelefono1());
-				beanUtilNotNull.copyProperty(dto, "email", persona.getEmail());
-				if(!Checks.esNulo(persona.getProveedor())) {
-					beanUtilNotNull.copyProperty(dto, "fechaAlta", persona.getFechaAlta());
-					beanUtilNotNull.copyProperty(dto, "fechaBaja", persona.getFechaBaja());
-				}
-				beanUtilNotNull.copyProperty(dto, "observaciones", persona.getObservaciones());
-				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				dtoList.add(dto);
 			}
-			
-			dtoList.add(dto);
 		}
-		
+
 		return dtoList;
 	}
 	
 	@Transactional(readOnly=false)
 	@Override
-	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto) {
+	public boolean createPersonasContacto(DtoPersonaContacto dtoPersonaContacto) throws Exception {
 		ActivoProveedorContacto personaContacto = new ActivoProveedorContacto();
 		
 		try {
@@ -388,18 +400,30 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				if(!Checks.esNulo(proveedor.getTipoProveedor())){
 					if(!Checks.esNulo(proveedor.getTipoProveedor().getTipoEntidadProveedor())){
 						if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(proveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
-							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
 							beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
+							if(!Checks.esNulo(dtoPersonaContacto.getCargoCombobox())) {
+								DDCargoProveedorContacto cargo = (DDCargoProveedorContacto) utilDiccionarioApi.dameValorDiccionarioByCod(DDCargoProveedorContacto.class, dtoPersonaContacto.getCargoCombobox());
+								beanUtilNotNull.copyProperty(personaContacto, "cargoProveedorContacto", cargo);
+							}
+							beanUtilNotNull.copyProperty(personaContacto, "docIdentificativo", dtoPersonaContacto.getNif());
+							if(!Checks.esNulo(dtoPersonaContacto.getNif())) {
+								// Por defecto al crear el registro, el documento identificativo es de tipo NIF.
+								DDTipoDocumento tipoDoc = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, "15");
+								beanUtilNotNull.copyProperty(personaContacto, "tipoDocIdentificativo", tipoDoc);
+							}
 						} else {
-							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
+							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargoTexto());
 						}
 					}
 				}
 			}
 			
 			if(!Checks.esNulo(dtoPersonaContacto.getCodigoUsuario())) {
-				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getCodigoUsuario()));
+				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "username", dtoPersonaContacto.getCodigoUsuario());
 				Usuario usuario = genericDao.get(Usuario.class, usuFilter);
+				if(Checks.esNulo(usuario)){
+					throw new Exception(ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_CODE);
+				}
 				beanUtilNotNull.copyProperty(personaContacto, "usuario", usuario);
 			}
 			if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
@@ -407,6 +431,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, direccionFilter);
 				beanUtilNotNull.copyProperty(personaContacto, "delegacion", delegacion);
 			}
+			beanUtilNotNull.copyProperty(personaContacto, "nombre", dtoPersonaContacto.getNombre());
+			beanUtilNotNull.copyProperty(personaContacto, "apellido1", dtoPersonaContacto.getApellido1());
+			beanUtilNotNull.copyProperty(personaContacto, "apellido2", dtoPersonaContacto.getApellido2());
 			beanUtilNotNull.copyProperty(personaContacto, "telefono1", dtoPersonaContacto.getTelefono());
 			beanUtilNotNull.copyProperty(personaContacto, "email", dtoPersonaContacto.getEmail());
 			beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
@@ -428,10 +455,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Transactional(readOnly=false)
 	@Override
-	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto) {
+	public boolean updatePersonasContacto(DtoPersonaContacto dtoPersonaContacto) throws Exception {
 		Filter personaIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getId()));
 		ActivoProveedorContacto personaContacto = genericDao.get(ActivoProveedorContacto.class, personaIDFilter);
-		if(!Checks.esNulo(personaContacto)) {
+		if(Checks.esNulo(personaContacto)) {
 			return false;
 		}
 
@@ -443,20 +470,30 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				if(!Checks.esNulo(proveedor.getTipoProveedor())){
 					if(!Checks.esNulo(proveedor.getTipoProveedor().getTipoEntidadProveedor())){
 						if(DDEntidadProveedor.TIPO_ENTIDAD_CODIGO.equals(proveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
-							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
 							beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
+							if(!Checks.esNulo(dtoPersonaContacto.getCargoCombobox())) {
+								DDCargoProveedorContacto cargo = (DDCargoProveedorContacto) utilDiccionarioApi.dameValorDiccionarioByCod(DDCargoProveedorContacto.class, dtoPersonaContacto.getCargoCombobox());
+								beanUtilNotNull.copyProperty(personaContacto, "cargoProveedorContacto", cargo);
+							}
+							beanUtilNotNull.copyProperty(personaContacto, "docIdentificativo", dtoPersonaContacto.getNif());
 						} else {
-							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargo());
+							beanUtilNotNull.copyProperty(personaContacto, "cargo", dtoPersonaContacto.getCargoTexto());
 						}
 					}
 				}
 			}
 			
 			if(!Checks.esNulo(dtoPersonaContacto.getCodigoUsuario())) {
-				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getCodigoUsuario()));
+				Filter usuFilter = genericDao.createFilter(FilterType.EQUALS, "username", dtoPersonaContacto.getCodigoUsuario());
 				Usuario usuario = genericDao.get(Usuario.class, usuFilter);
+				if(Checks.esNulo(usuario)){
+					throw new Exception(ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_CODE);
+				}
 				beanUtilNotNull.copyProperty(personaContacto, "usuario", usuario);
 			}
+			beanUtilNotNull.copyProperty(personaContacto, "nombre", dtoPersonaContacto.getNombre());
+			beanUtilNotNull.copyProperty(personaContacto, "apellido1", dtoPersonaContacto.getApellido1());
+			beanUtilNotNull.copyProperty(personaContacto, "apellido2", dtoPersonaContacto.getApellido2());
 			beanUtilNotNull.copyProperty(personaContacto, "telefono1", dtoPersonaContacto.getTelefono());
 			beanUtilNotNull.copyProperty(personaContacto, "email", dtoPersonaContacto.getEmail());
 			beanUtilNotNull.copyProperty(personaContacto, "direccion", dtoPersonaContacto.getDireccion());
@@ -522,47 +559,51 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoDireccionDelegacion> getDireccionesDelegacionesByProveedor(DtoDireccionDelegacion dtoDireccionDelegacion) {
-		Filter proveedorIDFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoDireccionDelegacion.getId()));
-		Page page = genericDao.getPage(ActivoProveedorDireccion.class, dtoDireccionDelegacion, proveedorIDFilter);
-		List<ActivoProveedorDireccion> delegaciones = (List<ActivoProveedorDireccion>) page.getResults();
 		List<DtoDireccionDelegacion> dtoList = new ArrayList<DtoDireccionDelegacion>();
-		for(ActivoProveedorDireccion delegacion : delegaciones) {
-			DtoDireccionDelegacion dto = new DtoDireccionDelegacion();
-			try {
-				beanUtilNotNull.copyProperty(dto, "id", delegacion.getId());
-				if(!Checks.esNulo(delegacion.getProveedor())) {
-					beanUtilNotNull.copyProperty(dto, "proveedorID", delegacion.getProveedor().getId());
-				}
-				if(!Checks.esNulo(delegacion.getTipoDireccion())) {
-					beanUtilNotNull.copyProperty(dto, "tipoDireccion", delegacion.getTipoDireccion().getCodigo());
-				}
-				beanUtilNotNull.copyProperty(dto, "localAbiertoPublicoCodigo", delegacion.getLocalAbiertoPublico());
-				beanUtilNotNull.copyProperty(dto, "referencia", delegacion.getReferencia());
-				if(!Checks.esNulo(delegacion.getTipoVia())) {
-					beanUtilNotNull.copyProperty(dto, "tipoViaCodigo", delegacion.getTipoVia().getCodigo());
-				}
-				beanUtilNotNull.copyProperty(dto, "nombreVia", delegacion.getNombreVia());
-				beanUtilNotNull.copyProperty(dto, "numeroVia", delegacion.getNumeroVia());
-				beanUtilNotNull.copyProperty(dto, "puerta", delegacion.getPuerta());
-				if(!Checks.esNulo(delegacion.getLocalidad())) {
-					beanUtilNotNull.copyProperty(dto, "localidadCodigo", delegacion.getLocalidad().getCodigo());
-				}
-				if(!Checks.esNulo(delegacion.getProvincia())) {
-				beanUtilNotNull.copyProperty(dto, "provincia", delegacion.getProvincia().getCodigo());
-				}
-				beanUtilNotNull.copyProperty(dto, "codigoPostal", delegacion.getCodigoPostal());
-				beanUtilNotNull.copyProperty(dto, "telefono", delegacion.getTelefono());
-				beanUtilNotNull.copyProperty(dto, "email", delegacion.getEmail());
-				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-			
-			dtoList.add(dto);
-		}
 		
+		if(!Checks.esNulo(dtoDireccionDelegacion.getId())) {
+			Filter proveedorIDFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoDireccionDelegacion.getId()));
+			Page page = genericDao.getPage(ActivoProveedorDireccion.class, dtoDireccionDelegacion, proveedorIDFilter);
+			List<ActivoProveedorDireccion> delegaciones = (List<ActivoProveedorDireccion>) page.getResults();
+			
+			for(ActivoProveedorDireccion delegacion : delegaciones) {
+				DtoDireccionDelegacion dto = new DtoDireccionDelegacion();
+				try {
+					beanUtilNotNull.copyProperty(dto, "id", delegacion.getId());
+					if(!Checks.esNulo(delegacion.getProveedor())) {
+						beanUtilNotNull.copyProperty(dto, "proveedorID", delegacion.getProveedor().getId());
+					}
+					if(!Checks.esNulo(delegacion.getTipoDireccion())) {
+						beanUtilNotNull.copyProperty(dto, "tipoDireccion", delegacion.getTipoDireccion().getCodigo());
+					}
+					beanUtilNotNull.copyProperty(dto, "localAbiertoPublicoCodigo", delegacion.getLocalAbiertoPublico());
+					beanUtilNotNull.copyProperty(dto, "referencia", delegacion.getReferencia());
+					if(!Checks.esNulo(delegacion.getTipoVia())) {
+						beanUtilNotNull.copyProperty(dto, "tipoViaCodigo", delegacion.getTipoVia().getCodigo());
+					}
+					beanUtilNotNull.copyProperty(dto, "nombreVia", delegacion.getNombreVia());
+					beanUtilNotNull.copyProperty(dto, "numeroVia", delegacion.getNumeroVia());
+					beanUtilNotNull.copyProperty(dto, "puerta", delegacion.getPuerta());
+					if(!Checks.esNulo(delegacion.getLocalidad())) {
+						beanUtilNotNull.copyProperty(dto, "localidadCodigo", delegacion.getLocalidad().getCodigo());
+					}
+					if(!Checks.esNulo(delegacion.getProvincia())) {
+					beanUtilNotNull.copyProperty(dto, "provincia", delegacion.getProvincia().getCodigo());
+					}
+					beanUtilNotNull.copyProperty(dto, "codigoPostal", delegacion.getCodigoPostal());
+					beanUtilNotNull.copyProperty(dto, "telefono", delegacion.getTelefono());
+					beanUtilNotNull.copyProperty(dto, "email", delegacion.getEmail());
+					beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				
+				dtoList.add(dto);
+			}
+		}
+
 		return dtoList;
 	}
 	
@@ -812,14 +853,19 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Override
 	@Transactional(readOnly = false)
 	public boolean createProveedor(DtoProveedorFilter dtoProveedorFilter) throws Exception {
-		ActivoProveedor proveedor = proveedoresDao.getProveedorByNIF(dtoProveedorFilter.getNifProveedor());
+		ActivoProveedor proveedor = null;
 		
-		if (Checks.esNulo(proveedor)){
+		if(!Checks.esNulo(dtoProveedorFilter.getNifProveedor())) { // Si se ha definido NIF.
+			proveedor = proveedoresDao.getProveedorByNIF(dtoProveedorFilter.getNifProveedor());
+			if (Checks.esNulo(proveedor)){ // Si no se ha encontrado proveedor por el NIF definido.
+				proveedor = new ActivoProveedor();
+			} else { // Si existe un proveedor con el NIF ya definido.
+				throw new Exception(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE);
+			}
+		} else { // Si no se ha definido NIF.
 			proveedor = new ActivoProveedor();
-		} else {
-			throw new Exception(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE);
 		}
-
+		
 		try {
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dtoProveedorFilter.getNifProveedor());
 			
@@ -873,5 +919,25 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		
 		return listaMapeada;
+	}
+
+	@Override
+	public String getNifProveedorByUsuarioLogado() {
+		
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+		String nifProveedor = null;
+		
+		Filter idUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+		List<ActivoProveedorContacto> listaPersonasContacto = genericDao.getList(ActivoProveedorContacto.class, idUsuario);
+		
+		if(!Checks.estaVacio(listaPersonasContacto) && !Checks.esNulo(listaPersonasContacto.get(0).getProveedor())) {			
+			nifProveedor = listaPersonasContacto.get(0).getProveedor().getDocIdentificativo();
+		} else if (!Checks.estaVacio(listaPersonasContacto)) {
+			nifProveedor = listaPersonasContacto.get(0).getDocIdentificativo();
+		} else {
+			nifProveedor = usuario.getUsername();
+		}
+
+		return nifProveedor;
 	}
 }

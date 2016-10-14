@@ -114,7 +114,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',
 		PRESUPUESTO:	'gestionactivo.presupuestoasignadosactivo',
-		PUBLICACION:	'publicacionactivo',
+		PUBLICACION:	'publicacionactivo', 
+		PUBLICACION_DATOS:		'publicacionactivo.datospublicacionactivo',
 		OFERTAS:		'comercialactivo.ofertascomercialactivo',
 		VISITAS:		'comercialactivo.visitascomercialactivo',
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
@@ -140,6 +141,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	SAREB: '02',
     	BANKIA: '03',
     	TERCEROS: '04'
+    },
+    
+    PERFILES: {   	
+    	PROVEEDOR: 'HAYAPROV',
+    	GESTOR_ACTIVOS: 'GESTACT',
+    	GESTOR_ADMISION: 'GESTADM'    	
     }
     
 

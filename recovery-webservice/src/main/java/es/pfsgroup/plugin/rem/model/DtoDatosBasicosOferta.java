@@ -55,8 +55,13 @@ public class DtoDatosBasicosOferta extends WebDto {
     private String canalPrescripcionCodigo;
     
     private String canalPrescripcionDescripcion;
+    
+    private String comiteSancionadorCodigo;
+    
+    private String comitePropuestoDescripcion;
+    
+    private String comitePropuestoCodigo;
    
-   	
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -193,6 +198,30 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setCanalPrescripcionDescripcion(String canalPrescripcionDescripcion) {
 		this.canalPrescripcionDescripcion = canalPrescripcionDescripcion;
+	}
+
+	public String getComiteSancionadorCodigo() {
+		return comiteSancionadorCodigo;
+	}
+
+	public void setComiteSancionadorCodigo(String comiteSancionadorCodigo) {
+		this.comiteSancionadorCodigo = comiteSancionadorCodigo;
+	}
+
+	public String getComitePropuestoDescripcion() {
+		return comitePropuestoDescripcion;
+	}
+
+	public void setComitePropuestoDescripcion(String comitePropuestoDescripcion) {
+		this.comitePropuestoDescripcion = comitePropuestoDescripcion;
+	}
+
+	public String getComitePropuestoCodigo() {
+		return comitePropuestoCodigo;
+	}
+
+	public void setComitePropuestoCodigo(String comitePropuestoCodigo) {
+		this.comitePropuestoCodigo = comitePropuestoCodigo;
 	} 	
    	
    	

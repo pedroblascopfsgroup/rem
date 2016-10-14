@@ -52,6 +52,8 @@ public class DtoFichaExpediente extends WebDto {
     private Double importe;
     
   	private String entidadPropietariaDescripcion;
+  	
+  	private String entidadPropietariaCodigo;
     
     private Date fechaAlta;
 
@@ -406,6 +408,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setRiesgoReputacional(Integer riesgoReputacional) {
 		this.riesgoReputacional = riesgoReputacional;
+	}
+
+	public String getEntidadPropietariaCodigo() {
+		return entidadPropietariaCodigo;
+	}
+
+	public void setEntidadPropietariaCodigo(String entidadPropietariaCodigo) {
+		this.entidadPropietariaCodigo = entidadPropietariaCodigo;
 	}
    	
    	

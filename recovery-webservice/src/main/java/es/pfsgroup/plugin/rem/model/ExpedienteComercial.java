@@ -32,6 +32,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 
@@ -156,6 +157,18 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_RIESGO_REPUTACIONAL")
     private Integer riesgoReputacional;
+    
+    @Column(name="ECO_FECHA_SANCION_COMITE")
+    private Date fechaSancionComite;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_COS_ID")
+	private DDComiteSancion comiteSancion;   
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_COS_ID_PROPUESTO")
+	private DDComiteSancion comitePropuesto;   
+    
     
      
 	@Version   
@@ -454,6 +467,30 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setRiesgoReputacional(Integer riesgoReputacional) {
 		this.riesgoReputacional = riesgoReputacional;
+	}
+
+	public Date getFechaSancionComite() {
+		return fechaSancionComite;
+	}
+
+	public void setFechaSancionComite(Date fechaSancionComite) {
+		this.fechaSancionComite = fechaSancionComite;
+	}
+
+	public DDComiteSancion getComiteSancion() {
+		return comiteSancion;
+	}
+
+	public void setComiteSancion(DDComiteSancion comiteSancion) {
+		this.comiteSancion = comiteSancion;
+	}
+
+	public DDComiteSancion getComitePropuesto() {
+		return comitePropuesto;
+	}
+
+	public void setComitePropuesto(DDComiteSancion comitePropuesto) {
+		this.comitePropuesto = comitePropuesto;
 	}
 	
     

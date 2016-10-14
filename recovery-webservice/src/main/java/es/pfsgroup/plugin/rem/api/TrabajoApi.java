@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -470,7 +471,7 @@ public interface TrabajoApi {
 		 * @param TrabajoDto con los parametros de entrada
 		 * @return List<String> 
 		 */
-	    public List<String> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
+	    public HashMap<String, List<String>> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
 
 	    /**
 		 * Devuelve un DtoFichaTrabajo a partir del TrabajoDto pasado por parámetros
@@ -501,11 +502,34 @@ public interface TrabajoApi {
 		public boolean checkAtribuciones(TareaExterna tareaExterna);
 		
 		/**
+		 * Método que comprueba si el activo tiene atribuciones para sancionar el expediente
+		 * @param trabajo
+		 * @return true si tiene atribuciones, false si no las tiene
+		 */
+		public boolean checkAtribuciones(Trabajo trabajo);
+		
+		/**
 		 * Método que comprueba si el activo pertenece a la cartera Sareb.
 		 * @param tareaExterna
 		 * @return true si pertenece a la cartera, false si no.
 		 */
 		public boolean checkSareb(TareaExterna tareaExterna);
+		
+		/**
+		 * Método que comprueba si el activo pertenece a la cartera Sareb.
+		 * @param trabajo
+		 * @return true si pertenece a la cartera, false si no
+		 */
+		public boolean checkSareb(Trabajo trabajo);
+
+		/**
+		 * Comprueba la existencia de una propuesta en el tramite de Propuestas,
+		 * en la tarea Generacion de propuesta, devolviendo mensaje en caso de que se haya creado.
+		 * @param tareaExterna
+		 * @return
+		 */
+		public String comprobarPropuestaPrecios(TareaExterna tareaExterna);
+
     }
 
 

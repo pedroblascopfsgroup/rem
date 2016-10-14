@@ -162,6 +162,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionPrecios.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionEstados.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramitePublicacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="-1"/>
 	 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
@@ -362,6 +363,26 @@
             def checkSinRiesgoReputacional = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkSinRiesgoReputacional(tareaExterna);
+            }
+			def checkRiesgoReputacional = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkRiesgoReputacional(tareaExterna);
+			}
+			def checkImporte = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkImporte(tareaExterna);
+			}
+			def checkCompradores = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkCompradores(tareaExterna);
+			}
+			def checkConflictoIntereses = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkConflictoIntereses(tareaExterna);
+			}
+            def comprobarPropuestaPrecios = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.comprobarPropuestaPrecios(tareaExterna);
             }
 
   			 ]]></value>

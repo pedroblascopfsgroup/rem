@@ -800,7 +800,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	consultarComiteSancionador: function(btn) {
 		
-		var me = this;
+		var me = this,
+		comboComitePropuesto = me.lookupReference('comboComitePropuesto');
 		
 		var url =  $AC.getRemoteUrl('expedientecomercial/consultarComiteSancionador');
 			Ext.Ajax.request({
@@ -813,7 +814,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	                }  catch (e){ };
 	                
 	                if(data.success === "true") {
-	                	me.fireEvent("log", data);
+	                	comboComitePropuesto.setValue(data.codigo);           	
 	                }else {
 	                	me.fireEvent("errorToast", data.msg);
 	                }

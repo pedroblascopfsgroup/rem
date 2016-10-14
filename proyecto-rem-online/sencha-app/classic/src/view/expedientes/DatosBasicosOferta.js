@@ -101,6 +101,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                {
 						                	xtype: 'comboboxfieldbase',
 						                	fieldLabel:  HreRem.i18n('fieldlabel.comite.seleccionado'),
+						                	reference: 'comboComiteSeleccionado',
 						                	bind: {
 												store: '{comboComites}',
 												value: '{datosbasicosoferta.comiteSancionadorCodigo}'
@@ -113,22 +114,24 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                	},
 						                	layout: 'hbox',
 						                	items: [
-						                	    {
-							                		xtype: 'button',
-							                		text: HreRem.i18n('btn.consultar.comite'),
-							                		handler: 'consultarComiteSancionador',
-							                		margin: '0 40 0 0'
-					                			},
+						                	    
 								                {
 								                	xtype: 'comboboxfieldbase',
 								                	fieldLabel:  HreRem.i18n('fieldlabel.comite.propuesto'),
+								                	reference: 'comboComitePropuesto',
 								                	readOnly: true,								                	
 								                	bind: {
 														store: '{comboComites}',
 														value: '{datosbasicosoferta.comitePropuestoCodigo}',
-														hidden: '{datosbasicosoferta.comitePropuestoCodigo}'
+														hidden: '{!datosbasicosoferta.comitePropuestoCodigo}'
 													}
-								                }
+								                },
+								                {
+							                		xtype: 'button',
+							                		text: HreRem.i18n('btn.consultar.comite'),
+							                		handler: 'consultarComiteSancionador',
+							                		margin: '0 40 0 0'
+					                			}
 						                	]
 						                	
 						                }

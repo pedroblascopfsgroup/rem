@@ -88,7 +88,7 @@ BEGIN
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GDE_COD_GASTO_PROVEEDOR    						      			  GPV_NUM_GASTO_HAYA,          
+          MIG2.GDE_GPV_ID			    						      			  GPV_NUM_GASTO_HAYA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.GDE_GPV_ID = MIG2.GDE_GPV_ID

@@ -24,7 +24,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Entit
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
-import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 
 @Service("dtoToEntity")
 public class DtoToEntityImpl implements DtoToEntityApi {

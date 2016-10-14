@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
@@ -38,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
 
 public interface ActivoApi {
@@ -54,6 +57,13 @@ public interface ActivoApi {
 	    
 	    @BusinessOperationDefinition("activoManager.saveOrUpdate")
 	    public boolean saveOrUpdate(Activo activo);
+	    
+	    /**
+	     * Guarda o acutaliza una lista de 
+	     * @param listaPortalesDto
+	     * @return
+	     */
+	    public ArrayList<Map<String, Object>> saveOrUpdate(List<PortalesDto> listaPortalesDto);
 	    
 	    @BusinessOperationDefinition("activoManager.upload")
 	    public String upload(WebFileItem fileItem) throws Exception;

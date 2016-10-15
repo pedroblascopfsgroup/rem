@@ -35,6 +35,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
@@ -756,6 +757,25 @@ public class ExpedienteComercialController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createComprador(VBusquedaDatosCompradorExpediente vDatosComprador, Long idExpediente){
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.createComprador(vDatosComprador, idExpediente);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView consultarComiteSancionador(@RequestParam Long idExpediente, ModelMap model) {
 		try {		
 			model.put("codigo", expedienteComercialApi.consultarComiteSancionador(idExpediente));
@@ -821,8 +841,30 @@ public class ExpedienteComercialController {
 		return createModelAndViewJson(model);
 
 	}
-	
-	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarNumeroUrsus(@RequestParam Long numCompradorUrsus,@RequestParam String tipoDocumento, ModelMap model) {
+		try {		
+			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numCompradorUrsus, tipoDocumento));
+			model.put("success", true);
+			
+		} 
+		catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+			
+		}	catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", "No se ha podido conectar con el servicio");
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+
 	
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {

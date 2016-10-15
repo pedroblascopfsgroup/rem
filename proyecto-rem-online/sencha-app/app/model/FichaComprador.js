@@ -50,13 +50,13 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'direccion'
 		},
 		{
-		    	name: 'municipio'
+		    	name: 'municipioCodigo'
 		},
 		{
 		    	name: 'telefono1'
 		},
 		{
-		    	name: 'provincia'
+		    	name: 'provinciaCodigo'
 		},
 		{
 		    	name: 'telefono2'
@@ -98,13 +98,13 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'direccionRte'
 		},
 		{
-		    	name: 'municipioRte'
+		    	name: 'municipioRteCodigo'
 		},
 		{
 		    	name: 'telefono1Rte'
 		},
 		{
-		    	name: 'provinciaRte'
+		    	name: 'provinciaRteCodigo'
 		},
 		{
 		    	name: 'telefono2Rte'
@@ -177,7 +177,7 @@ Ext.define('HreRem.model.FichaComprador', {
 		remoteUrl: 'expedientecomercial/getCompradorById',
 		api: {
             read: 'expedientecomercial/getCompradorById',
-            create: 'expedientecomercial/create',
+            create: 'expedientecomercial/createComprador',
             update: 'expedientecomercial/saveFichaComprador',
             destroy: 'expedientecomercial/findOne'
         }

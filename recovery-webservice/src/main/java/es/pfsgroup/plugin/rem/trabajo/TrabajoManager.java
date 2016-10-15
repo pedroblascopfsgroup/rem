@@ -926,15 +926,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		// Tramite de actualizacion de precios / propuesta descuento
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T009");
 		}
 		// Tramite de bloqueo de precios
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
 		}
-
+		// Tramite de desbloqueo de precios
+		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_PRECIOS_DESBLOQUEAR_ACTIVOS)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+		}
 		// Tramite de actualizacion de precios / carga de precios
-		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS)) {
+		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+		}
+		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS_DESCUENTO)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
 		}
 
@@ -2421,7 +2427,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Activo primerActivo = trabajo.getActivo();
 			if (!Checks.esNulo(primerActivo)) {
 				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(primerActivo.getId());
-				return (perimetro.getAplicaFormalizar() == 1);
+				return (Integer.valueOf(1).equals(perimetro.getAplicaFormalizar()));
 			}
 		}
 		return false;

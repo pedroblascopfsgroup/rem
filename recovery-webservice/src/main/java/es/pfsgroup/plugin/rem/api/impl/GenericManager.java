@@ -328,7 +328,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					return listaSubtipos;
 			}
 			// Solo se pueden crear por la pantalla de crear trabajo estos subtipos relacionados con precios
-			else if(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS.equals(subtipo.getCodigo()) 
+			else if(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS.equals(subtipo.getCodigo()) 
 					|| DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())
 					|| DDSubtipoTrabajo.CODIGO_PRECIOS_DESBLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())) {
 						listaSubtiposFiltered.add(subtipo);

@@ -442,7 +442,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
 	    },
 	    
-	    comboComites: {
+	    comboProvincia: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'provincias'}
+			}
+	    },
+	    
+	    comboMunicipio: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaCodigo}'}
+			}
+    	},
+    	
+    	comboMunicipioRte: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}
+			}
+    	},
+
+		comboComites: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Honorario',
 	    	proxy: {

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -59,7 +60,6 @@ public class NotificatorServiceActualizacionPreciosAnalisis extends AbstractNoti
 		{
 		
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
-			String motivo = comprobarAceptacionTarea(valores);
 			
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
@@ -73,52 +73,25 @@ public class NotificatorServiceActualizacionPreciosAnalisis extends AbstractNoti
 			String titulo = "";
 			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 	
-			/**
-			 * HREOS-763 Completar cuando haya más información para esta notificación
-			 */
-			if(Checks.esNulo(motivo)) {
-				
-				contenido = "<p>Desde HAYA RE le informamos de que el gestor del trabajo "+dtoSendNotificator.getNumTrabajo()+" ha validado positivamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
-						 + ", por lo que se procederá a la actualización de precios de los activos incluidos en el listado adjuntado del trabajo.</p>"
-				  		 + "<p>Un saludo.</p>";
+			String motivo = null;
+			if(activoTramiteApi.getTareaValorByNombre(valores, "comboAceptacion").equalsIgnoreCase(DDSiNo.NO))
+				motivo = activoTramiteApi.getTareaValorByNombre(valores, "motivoDenegacion");
 			
-				titulo = "Notificación de aceptación de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			if(motivo == null) {
+				
+				contenido = "<p>El gestor responsable de tramitar su petición la ha aceptado, por lo que se ha procedido a actualizar la información solicitada en los activos correspondientes.</p>";
+			
+				titulo = "Notificación de aceptación de petición en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
 				
 			}
 			else {
-				contenido = "<p>Desde HAYA RE le informamos de que el gestor del trabajo "+dtoSendNotificator.getNumTrabajo()+" ha rechazado su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
-						 + ", por tanto, no habrá actualización de precios de los activos incluidos en el listado adjuntado del trabajo por el siguiente motivo:</p>"
-						 + "<p><i>"+motivo+"</i></p>"
-				  		 + "<p>Un saludo.</p>";
+				contenido = "<p>El gestor responsable de tramitar su petición la ha rechazado indicando el siguiente motivo: "+motivo+".</p>";
 			
-				titulo = "Notificación de rechazo de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+				titulo = "Notificación de rechazo de petición en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
 			}
 	
-				  
-			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
-	}
-	
-	/**
-	 * El mensaje varía en caso de que se haya aceptado o no la tarea
-	 * @param idTramite
-	 * @return
-	 */
-	private String comprobarAceptacionTarea(List<TareaExternaValor> valores) {
-		
-		String motivo = null;
-
-		for(TareaExternaValor tev : valores) {
-			if(tev.getNombre().equalsIgnoreCase("motivoDenegacion")) {
-				if(!Checks.esNulo(tev.getValor()) ) {
-					motivo = tev.getValor();
-				}
-				break;
-			}
-		}
-		
-		return motivo;
 	}
 
 }

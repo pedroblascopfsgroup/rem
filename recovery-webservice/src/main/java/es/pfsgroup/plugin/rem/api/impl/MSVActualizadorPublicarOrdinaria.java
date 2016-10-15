@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,9 +56,8 @@ public class MSVActualizadorPublicarOrdinaria implements MSVLiberator {
 	
 		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
-			dtoCambioEstadoPublicacion.setActivo(activo.getId());
-			dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+			activo.setFechaPublicable(new Date());
+			activoApi.saveOrUpdate(activo);
 		}
 
 		return true;

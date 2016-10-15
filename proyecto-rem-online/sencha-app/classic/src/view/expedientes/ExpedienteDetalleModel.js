@@ -474,7 +474,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	model: 'HreRem.model.Honorario',
 	    	proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'generic/getComitesBycartera',
+		        remoteUrl: 'generic/getComitesByCartera',
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
 	    }

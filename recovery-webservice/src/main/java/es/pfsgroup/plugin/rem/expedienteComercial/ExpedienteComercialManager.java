@@ -33,6 +33,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
+import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
@@ -95,12 +97,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 
@@ -2050,6 +2054,55 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		
 		return instancia;
+	}
+	
+	public DatosClienteDto buscarNumeroUrsus(Long numCompradorUrsus, String tipoDocumento) throws Exception{
+		
+		DtoClienteUrsus compradorUrsus= new DtoClienteUrsus();
+		DatosClienteDto dtoDatosCliente= new DatosClienteDto();
+		String tipoDoc = null;
+		
+		if(!Checks.esNulo(tipoDocumento)){
+			if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;	
+			if (DDTiposDocumentos.CIF.equals(tipoDocumento))  tipoDoc = DtoClienteUrsus.CIF;
+			if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;
+			if (DDTiposDocumentos.TARJETA_RESIDENTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_RESIDENTE;
+			if (DDTiposDocumentos.PASAPORTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.PASAPORTE;
+			if (DDTiposDocumentos.CIF_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.CIF_EXTRANJERO;
+			if (DDTiposDocumentos.DNI_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI_EXTRANJERO;
+			if (DDTiposDocumentos.TARJETA_DIPLOMATICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_DIPLOMATICA;
+			if (DDTiposDocumentos.MENOR.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.MENOR;
+			if (DDTiposDocumentos.OTROS_PERSONA_FISICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PERSONA_FISICA;
+			if (DDTiposDocumentos.OTROS_PESONA_JURIDICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
+		}
+		
+		if(!Checks.esNulo(numCompradorUrsus)){
+			compradorUrsus.setNumDocumento(numCompradorUrsus.toString());
+		}
+		compradorUrsus.setTipoDocumento(tipoDoc);
+		compradorUrsus.setQcenre(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+		
+		
+		try {
+			//dtoDatosCliente.rellenarDatosDummies();
+			dtoDatosCliente= uvemManager.ejecutarDatosClientePorDocumento(compradorUrsus);
+			if(Checks.esNulo(dtoDatosCliente.getDniNifDelTitularDeLaOferta())){
+				throw new JsonViewerException("Cliente no encontrado en Bankia");
+			}
+		}
+		catch (JsonViewerException e) {
+			logger.error(e.getMessage());
+			throw e;
+//			e.printStackTrace();
+		} 
+		catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new Exception(e);
+//			e.printStackTrace();
+		}
+		
+		return dtoDatosCliente;
+		
 	}
 
 }

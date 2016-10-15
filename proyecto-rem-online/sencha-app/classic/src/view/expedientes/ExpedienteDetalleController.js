@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
-    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador'],
+    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 'HreRem.view.expedientes.DatosClienteUrsus'],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -888,7 +888,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id");
 		var ventanaCompradores= grid.up().up();
-		Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores}).show();		
+		var expediente= me.getViewModel().get("expediente");
+		Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();		
 	},
 	
 	onChangeChainedCombo: function(combo) {
@@ -964,6 +965,55 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		
 	
+	},
+	
+	buscarNumeroUrsus: function(field, e){
+		var me= this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/buscarNumeroUrsus');
+		var numCompradorUrsus= field.getValue();
+		var parent= field.up('datoscompradorwindow');
+		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
+		var data;
+		
+		Ext.Ajax.request({
+		    			
+		    		     url: url,
+		    		     params: {numCompradorUrsus: numCompradorUrsus, tipoDocumento: tipoDocumento},
+		    			method: 'GET',
+		    		     success: function(response, opts) {
+		    		    	 data = Ext.decode(response.responseText);
+		    		    	 
+		    		    	 if(!Utils.isEmptyJSON(data.data)){
+		    		    	 	me.abrirDatosClienteUrsus(data.data, parent);
+		
+		    		    	 }
+		    		    	 else{
+		    		    	 	me.fireEvent("errorToast", data.msg);
+		    		    	 }
+		    		    	 
+		    		     },
+		    		     failure: function(response) {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    		     },
+		    		     callback: function(options, success, response){
+		    		     }
+		    		     
+		});
+			
+	},
+	
+	abrirDatosClienteUrsus: function(datosClienteUrsus, parent) {
+		var me = this;
+		parent.setX(Ext.Element.getViewportWidth() / 40);
+		var window = Ext.create('HreRem.view.expedientes.DatosClienteUrsus',{clienteUrsus: datosClienteUrsus});
+		parent.add(window);
+		window.show();
+	},
+	
+	onClickBotonCerrarClienteUrsus: function(btn){
+		var me = this;
+		var window = btn.up("window");
+		window.destroy();
 	}
 
 });

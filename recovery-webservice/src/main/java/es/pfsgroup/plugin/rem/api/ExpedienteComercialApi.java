@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 
 
 public interface ExpedienteComercialApi {
@@ -313,5 +314,11 @@ public interface ExpedienteComercialApi {
 		 */
 		boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
 		
+		/**
+		 * Método que devuelve los datos de un comprador de Bankia (WebService Ursus) por número de comprador
+		 * @param numCompradorUrsus
+		 * @return DatosClienteDto
+		 */
+		public DatosClienteDto buscarNumeroUrsus(Long numCompradorUrsus, String tipoDocumento) throws Exception;
 }
 

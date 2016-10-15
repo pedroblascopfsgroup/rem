@@ -5,13 +5,14 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     width	: Ext.Element.getViewportWidth() /1.8,    
     height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50,
 	reference: 'datoscompradorwindowref',
-	y:Ext.Element.getViewportHeight()*(10/100),
+	y:Ext.Element.getViewportHeight()*(10/150),
     controller: 'expedientedetalle',
     viewModel: {
         type: 'expedientedetalle'
     },
     cls: '',//panel-base shadow-panel
     collapsed: false,
+    modal	: true,
 
     
     idComprador: null,
@@ -262,7 +263,35 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            		value: '{comprador.email}'
 									            	}
 													
-										        }
+										        },
+										        {
+													xtype: 'textfieldbase',
+													fieldLabel:  HreRem.i18n('header.numero.ursus'),
+													name: 'buscadorNumUrsus',
+													flex: 2,
+													bind: {
+														value: '{comprador.numeroUrsus}',
+														hidden: '{!esCarteraBankia}'
+													},
+													triggers: {
+														
+															buscarEmisor: {
+													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+													             handler: 'buscarNumeroUrsus'
+													        }
+													        
+													},
+													cls: 'searchfield-input sf-con-borde',
+													emptyText:  HreRem.i18n('txt.buscar.numero.ursus'),
+													enableKeyEvents: true,
+											        listeners: {
+												        	specialKey: function(field, e) {
+												        		if (e.getKey() === e.ENTER) {
+												        			field.lookupController().buscarNumeroUrsus(field);											        			
+												        		}
+												        	}
+												        }
+								                }
 
 											]
 						           },

@@ -101,6 +101,8 @@ public class Comprador implements Serializable, Auditable {
     @JoinColumn(name = "CLC_ID")
     private ClienteComercial clienteComercial;
    
+    @Column(name = "ID_COMPRADOR_URSUS")
+    private Long idCompradorUrsus;
     
 
 	@Version   
@@ -252,6 +254,14 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setLocalidad(Localidad localidad) {
 		this.localidad = localidad;
+	}
+
+	public Long getIdCompradorUrsus() {
+		return idCompradorUrsus;
+	}
+
+	public void setIdCompradorUrsus(Long idCompradorUrsus) {
+		this.idCompradorUrsus = idCompradorUrsus;
 	}    
     
    

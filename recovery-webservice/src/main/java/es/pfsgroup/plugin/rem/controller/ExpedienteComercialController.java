@@ -35,6 +35,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
@@ -784,6 +785,29 @@ public class ExpedienteComercialController {
 			model.put("success", false);
 			model.put("msg", "No se ha podido conectar con el servicio");
 		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarNumeroUrsus(@RequestParam Long numCompradorUrsus,@RequestParam String tipoDocumento, ModelMap model) {
+		try {		
+			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numCompradorUrsus, tipoDocumento));
+			model.put("success", true);
+			
+		} 
+		catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+			
+		}	catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", "No se ha podido conectar con el servicio");
+		}
 		
 		return createModelAndViewJson(model);
 		

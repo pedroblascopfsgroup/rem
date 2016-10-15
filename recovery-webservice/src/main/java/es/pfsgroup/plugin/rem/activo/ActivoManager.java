@@ -61,9 +61,11 @@ import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -94,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -102,7 +105,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
@@ -1776,6 +1781,102 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return mensaje;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DtoReglasPublicacionAutomatica> getReglasPublicacionAutomatica(DtoReglasPublicacionAutomatica dto) {
+		Page p = genericDao.getPage(ActivoReglasPublicacionAutomatica.class, dto);
+		List<ActivoReglasPublicacionAutomatica> reglas = (List<ActivoReglasPublicacionAutomatica>) p.getResults();
+		List<DtoReglasPublicacionAutomatica> reglasDto = new ArrayList<DtoReglasPublicacionAutomatica>();
+		
+		for(ActivoReglasPublicacionAutomatica regla : reglas) {
+			DtoReglasPublicacionAutomatica nuevoDto = new DtoReglasPublicacionAutomatica();
+			try {
+				beanUtilNotNull.copyProperty(nuevoDto, "idRegla", regla.getId());
+				beanUtilNotNull.copyProperty(nuevoDto, "incluidoAgrupacionAsistida", regla.getIncluidoAgrupacionAsistida());
+				if(!Checks.esNulo(regla.getCartera())) {
+					beanUtilNotNull.copyProperty(nuevoDto, "carteraCodigo", regla.getCartera().getCodigo());
+				}
+				if(!Checks.esNulo(regla.getTipoActivo())) {
+					beanUtilNotNull.copyProperty(nuevoDto, "tipoActivoCodigo", regla.getTipoActivo().getCodigo());
+				}
+				if(!Checks.esNulo(regla.getSubtipoActivo())) {
+					beanUtilNotNull.copyProperty(nuevoDto, "subtipoActivoCodigo", regla.getSubtipoActivo().getCodigo());
+				}
+				
+				nuevoDto.setTotalCount(p.getTotalCount());
+				
+				reglasDto.add(nuevoDto);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+		return reglasDto;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto) {
+		ActivoReglasPublicacionAutomatica arpa = new ActivoReglasPublicacionAutomatica();
+		
+		try {
+			beanUtilNotNull.copyProperty(arpa, "incluidoAgrupacionAsistida", dto.getIncluidoAgrupacionAsistida());
+			if(!Checks.esNulo(dto.getCarteraCodigo())) {
+				DDCartera cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, dto.getCarteraCodigo());
+				beanUtilNotNull.copyProperty(arpa, "cartera", cartera);
+			}
+			if(!Checks.esNulo(dto.getTipoActivoCodigo())) {
+				DDTipoActivo tipo = (DDTipoActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoActivo.class, dto.getTipoActivoCodigo());
+				beanUtilNotNull.copyProperty(arpa, "tipoActivo", tipo);
+			}
+			if(!Checks.esNulo(dto.getSubtipoActivoCodigo())) {
+				DDSubtipoActivo subtipo = (DDSubtipoActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class, dto.getSubtipoActivoCodigo());
+				beanUtilNotNull.copyProperty(arpa, "subtipoActivo", subtipo);
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		genericDao.save(ActivoReglasPublicacionAutomatica.class, arpa);
+		
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto) {
+		if(Checks.esNulo(dto.getIdRegla())){
+			return false;
+		}
+		Filter reglaIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdRegla()));
+		ActivoReglasPublicacionAutomatica arpa = genericDao.get(ActivoReglasPublicacionAutomatica.class, reglaIDFilter);
+		
+		if(Checks.esNulo(arpa)) {
+			return false;
+		}
+		
+		try {
+			beanUtilNotNull.copyProperty(arpa, "auditoria.borrado", "1");
+			beanUtilNotNull.copyProperty(arpa, "auditoria.fechaBorrar", new Date());
+			beanUtilNotNull.copyProperty(arpa, "auditoria.usuarioBorrar", adapter.getUsuarioLogado().getUsername());
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		genericDao.save(ActivoReglasPublicacionAutomatica.class, arpa);
+		
+		return true;
 	}
 
 }

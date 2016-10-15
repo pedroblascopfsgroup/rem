@@ -7,6 +7,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
@@ -14,6 +15,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
@@ -222,7 +224,7 @@ public interface ExpedienteComercialApi {
 		 * @param idExpediente
 		 * @return
 		 */
-		public DtoPage getNotariosExpediente(Long idExpediente);
+		public List<DtoActivoProveedor> getNotariosExpediente(Long idExpediente);
 
 		
 		/**
@@ -304,6 +306,28 @@ public interface ExpedienteComercialApi {
 		 * @throws Exception 
 		 */
 		public String consultarComiteSancionador(Long idExpediente) throws Exception;
+
+		/**
+		 * Crea un registro de posicionamiento
+		 * @param dto
+		 * @param idEntidad
+		 * @return
+		 */
+		public boolean createPosicionamiento(DtoPosicionamiento dto, Long idEntidad);
+
+		/**
+		 * Actualiza un registro de posicionamiento
+		 * @param dto
+		 * @return
+		 */
+		public boolean savePosicionamiento(DtoPosicionamiento dto);
+
+		/**
+		 * Elimina un registro de posicionamiento
+		 * @param idPosicionamiento
+		 * @return
+		 */
+		public boolean deletePosicionamiento(Long idPosicionamiento);
 		
 }
 

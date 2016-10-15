@@ -328,7 +328,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
 	    },
 
-				storePosicionamientos: {
+		storePosicionamientos: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Posicionamiento',
 	    	proxy: {
@@ -451,6 +451,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
 	    }
+	    
 	    
 	
     }

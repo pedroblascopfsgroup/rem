@@ -97,6 +97,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
     @OrderBy("fechaPosicionamiento DESC")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<Posicionamiento> posicionamientos;
     
     @Column(name="ECO_FECHA_ANULACION")

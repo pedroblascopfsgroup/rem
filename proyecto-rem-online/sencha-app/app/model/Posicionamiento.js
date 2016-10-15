@@ -16,7 +16,7 @@ Ext.define('HreRem.model.Posicionamiento', {
 				dateFormat: 'c'
     		},
     		{
-    			name:'notaria'
+    			name:'idProveedorNotario'
     		},
     		{
     			name: 'fechaPosicionamiento',
@@ -26,6 +26,8 @@ Ext.define('HreRem.model.Posicionamiento', {
     		{
     			name: 'motivoAplazamiento'
     		}
+
+    		
     ],
     
 	proxy: {
@@ -33,7 +35,9 @@ Ext.define('HreRem.model.Posicionamiento', {
 		writeAll: true,
 		localUrl: 'posicionamiento.json',
 		api: {
-            
+			create: 'expedientecomercial/createPosicionamiento',
+            update: 'expedientecomercial/savePosicionamiento',
+            destroy: 'expedientecomercial/deletePosicionamiento'
         }
     }
 

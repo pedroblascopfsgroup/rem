@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -49,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -1216,12 +1218,30 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public DtoPosicionamiento posicionamientoToDto(Posicionamiento posicionamiento){
 		
 		DtoPosicionamiento posicionamientoDto= new DtoPosicionamiento();
+		posicionamientoDto.setIdPosicionamiento(posicionamiento.getId());
 		posicionamientoDto.setFechaAviso(posicionamiento.getFechaAviso());
-		posicionamientoDto.setNotaria(posicionamiento.getNotaria());
+		if(!Checks.esNulo(posicionamiento.getNotario())) {
+			posicionamientoDto.setIdProveedorNotario(posicionamiento.getNotario().getId());
+		}
 		posicionamientoDto.setFechaPosicionamiento(posicionamiento.getFechaPosicionamiento());
 		posicionamientoDto.setMotivoAplazamiento(posicionamiento.getMotivoAplazamiento());
 		
 		return posicionamientoDto;
+		
+	}
+	
+	public Posicionamiento dtoToPosicionamiento(DtoPosicionamiento dto, Posicionamiento posicionamiento){
+		
+		posicionamiento.setFechaAviso(dto.getFechaAviso());
+		if(!Checks.esNulo(dto.getIdProveedorNotario())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdProveedorNotario());
+			ActivoProveedor notario = genericDao.get(ActivoProveedor.class, filtro);
+			posicionamiento.setNotario(notario);
+		}
+		posicionamiento.setFechaPosicionamiento(dto.getFechaPosicionamiento());
+		posicionamiento.setMotivoAplazamiento(dto.getMotivoAplazamiento());
+		
+		return posicionamiento;
 		
 	}
 	
@@ -1284,21 +1304,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		return subsanacionDto;
 	}
-	
-	public DtoPage getNotariosExpediente(Long idExpediente){
-		ExpedienteComercial expediente= findOne(idExpediente);
-		List<DtoActivoProveedorContacto> proveedoresContacto= new ArrayList<DtoActivoProveedorContacto>();
-		
-		if(!Checks.esNulo(expediente.getTrabajo())){
-			ActivoProveedorContacto proveedorContacto= expediente.getTrabajo().getProveedorContacto();
-			if(!Checks.esNulo(proveedorContacto)){
-				proveedoresContacto.add(activoProveedorContactoToDto(proveedorContacto));
-			}
-		}
-		
-		return new DtoPage(proveedoresContacto, proveedoresContacto.size());
-		
-	}
+
 	
 	public DtoActivoProveedorContacto activoProveedorContactoToDto(ActivoProveedorContacto proveedorContacto){
 		DtoActivoProveedorContacto proveedorContactoDto= new DtoActivoProveedorContacto();
@@ -1879,6 +1885,94 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		
 		return instancia;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createPosicionamiento(DtoPosicionamiento dto, Long idEntidad) {
+		
+		ExpedienteComercial expediente = findOne(idEntidad);	
+		Posicionamiento posicionamiento = new Posicionamiento();
+		
+		posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
+		posicionamiento.setExpediente(expediente);
+		
+		genericDao.save(Posicionamiento.class, posicionamiento);
+		
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean savePosicionamiento(DtoPosicionamiento dto) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPosicionamiento());
+		Posicionamiento posicionamiento = genericDao.get(Posicionamiento.class, filtro);
+		
+		posicionamiento = dtoToPosicionamiento(dto, posicionamiento);			
+		genericDao.update(Posicionamiento.class, posicionamiento);
+			
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deletePosicionamiento(Long idPosicionamiento) {
+		
+		try {
+			genericDao.deleteById(Posicionamiento.class, idPosicionamiento);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+		return true;
+		
+	}
+	
+	@Override
+	public List<DtoActivoProveedor> getNotariosExpediente(Long idExpediente){
+		ExpedienteComercial expediente= findOne(idExpediente);
+		List<DtoActivoProveedor> notarios= new ArrayList<DtoActivoProveedor>();
+		for(Posicionamiento posicionamiento : expediente.getPosicionamientos()) {
+			
+			ActivoProveedor notario = posicionamiento.getNotario();
+			DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);		
+			notarios.add(dtoNotario);
+
+		}
+		
+		return notarios;
+		
+	}
+
+	private DtoActivoProveedor activoProveedorToDto(ActivoProveedor notario) {
+		
+		DtoActivoProveedor proveedorDto= new DtoActivoProveedor();
+		String nombreCompleto= "";
+		
+		proveedorDto.setId(notario.getId());
+		if(!Checks.esNulo(notario.getNombre())){
+			nombreCompleto= notario.getNombre();
+		} else {
+			nombreCompleto = notario.getNombreComercial();
+		}
+		
+		proveedorDto.setNombreProveedor(nombreCompleto);
+		proveedorDto.setDireccion(notario.getDireccion());
+
+
+		if(!Checks.esNulo(notario.getTelefono1())){
+			proveedorDto.setTelefono(notario.getTelefono1());
+		}
+		else{
+			proveedorDto.setTelefono(notario.getTelefono2());
+		}
+		proveedorDto.setEmail(notario.getEmail());
+		if(!Checks.esNulo(notario.getProvincia())){
+			proveedorDto.setProvincia(notario.getProvincia().getDescripcion());
+		}
+		
+		return proveedorDto;
 	}
 	
 	

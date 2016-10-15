@@ -149,6 +149,13 @@ public interface GenericApi {
 	 */
 	public List<DDComiteSancion> getComitesByCartera(String carteraCodigo);
 
+	/**
+	 * Devuelve una lista de proveedores para mostrar en un combo, filtrado por subtipo proveedor
+	 * @param subtipoProveedorCodigo
+	 * @return
+	 */
+	public List<DtoDiccionario> getComboProveedorBySubtipo(String subtipoProveedorCodigo);
+
 }
 
 	  

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161013
+--## FECHA_CREACION=20161014
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -46,7 +46,8 @@ DECLARE
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
     	T_ALTER(  'DD_COS_ID',		 					'NUMBER(16,0)',						'Código único del comite sancionador.'),
     	T_ALTER(  'DD_COS_ID_PROPUESTO',		 		'NUMBER(16,0)',						'Código único del comite sancionador propuesto.'),
-    	T_ALTER(  'ECO_FECHA_SANCION_COMITE',			'DATE',								'Fecha de sanción por el comité')
+    	T_ALTER(  'ECO_FECHA_SANCION_COMITE',			'DATE',								'Fecha de sanción por el comité'),
+    	T_ALTER(  'ECO_ESTADO_PBC',						'NUMBER(1)',						'Estado PBC 0 Rechazado 1 Aceptado')
 		);
     V_T_ALTER T_ALTER;
     

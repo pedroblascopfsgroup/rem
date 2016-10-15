@@ -459,6 +459,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				if(!Checks.esNulo(expediente.getRiesgoReputacional())){
 					dto.setRiesgoReputacional(expediente.getRiesgoReputacional());
 				}
+				if(!Checks.esNulo(expediente.getEstadoPbc())){
+					dto.setEstadoPbc(expediente.getEstadoPbc());
+				}
 
 			}
 		}

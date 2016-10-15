@@ -28,6 +28,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarEstadoPublicacion actualizarEstadoPublicacion;
 	
 	@Autowired
+	private MSVActualizarPropuestaPreciosActivo actualizarPropuestaPrecioActivo;
+	
+	@Autowired
 	private MSVActualizarPreciosActivoImporte actualizarPrecioActivo;
 	
 	@Autowired
@@ -53,6 +56,8 @@ public class MSVExcelValidatorFactoryImpl {
 				return agrupacionAsistidaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(codTipoOperacion)) {
 				return listadoActivosExcelValidator;
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_PROPUESTA_PRECIOS_ACTIVO.equals(codTipoOperacion)) {
+				return actualizarPropuestaPrecioActivo;
 			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE.equals(codTipoOperacion)) {
 				return actualizarPrecioActivo;
 			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_FSV_ACTIVO_IMPORTE.equals(codTipoOperacion)) {

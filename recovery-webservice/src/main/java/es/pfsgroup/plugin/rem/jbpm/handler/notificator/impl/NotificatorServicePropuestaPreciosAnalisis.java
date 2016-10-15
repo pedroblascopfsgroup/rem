@@ -81,7 +81,7 @@ public class NotificatorServicePropuestaPreciosAnalisis extends AbstractNotifica
 				titulo = "Notificación de aceptación de petición en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
 			}
 			else {
-				contenido = "<p>El gestor responsable de tramitar su petición la ha rechazado indicando el siguiente motivo: ("+motivo+").</p>";
+				contenido = "<p>El gestor responsable de tramitar su petición la ha rechazado indicando el siguiente motivo: "+motivo+".</p>";
 				titulo = "Notificación de rechazo de petición en REM(" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
 			}
 				  

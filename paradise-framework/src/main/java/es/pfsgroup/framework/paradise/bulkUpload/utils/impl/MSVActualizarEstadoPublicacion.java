@@ -181,7 +181,8 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++)
-				if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(operacionMasiva.getCodigo()))
+				if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(operacionMasiva.getCodigo()) ||
+						MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(operacionMasiva.getCodigo()))
 				{
 					if(!particularValidator.estadoPublicar(exc.dameCelda(i, 0)))
 						listaFilas.add(i);

@@ -71,7 +71,13 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private String idActivo;	
 	
 	@Column(name= "AGR_ID")
-	private String idAgrupacion;	
+	private String idAgrupacion;
+	
+	@Column(name = "DD_CAP_DESCRIPCION")
+	private String canalPrescripcionDescripcion;
+	
+	@Column(name = "DD_CAP_CODIGO")
+	private String canalPrescripcionCodigo;
 
 
 	public String getIdOferta() {
@@ -216,6 +222,22 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setIdAgrupacion(String idAgrupacion) {
 		this.idAgrupacion = idAgrupacion;
+	}
+
+	public String getCanalPrescripcionDescripcion() {
+		return canalPrescripcionDescripcion;
+	}
+
+	public void setCanalPrescripcionDescripcion(String canalPrescripcionDescripcion) {
+		this.canalPrescripcionDescripcion = canalPrescripcionDescripcion;
+	}
+
+	public String getCanalPrescripcionCodigo() {
+		return canalPrescripcionCodigo;
+	}
+
+	public void setCanalPrescripcionCodigo(String canalPrescripcionCodigo) {
+		this.canalPrescripcionCodigo = canalPrescripcionCodigo;
 	}
 	
 	 

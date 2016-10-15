@@ -228,11 +228,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		HashMap<String, List<String>> errorsList = null;
 		Oferta oferta = null;
 
-		oferta = getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
+/*		oferta = getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
 		if (Checks.esNulo(oferta) && !Checks.esNulo(ofertaDto.getIdOfertaRem())) {
 			restApi.obtenerMapaErrores(errorsList, "idOfertaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
 
-		}
+		}*/
 
 		if (alta) {
 			// Validación para el alta de ofertas

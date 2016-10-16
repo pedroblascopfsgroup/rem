@@ -178,7 +178,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	public HashMap<String, List<String>> validateVisitaPostRequestData(VisitaDto visitaDto, Object jsonFields,
 			Boolean alta) throws Exception {
 		HashMap<String, List<String>> hashErrores = null;
-		Visita visita = null;
 
 		if (alta) {
 			hashErrores = restApi.validateRequestObject(visitaDto, TIPO_VALIDACION.INSERT);
@@ -191,14 +190,14 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			restApi.obtenerMapaErrores(hashErrores, "idVisitaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
 		}*/
 
-		if (!alta) {
+/*		if (!alta) {
 			// Validación para la actualización de visitas
 			visita = getVisitaByIdVisitaWebcomNumVisitaRem(visitaDto.getIdVisitaWebcom(), visitaDto.getIdVisitaRem());
 			if (Checks.esNulo(visita)) {
 				restApi.obtenerMapaErrores(hashErrores, "idVisitaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 
-		}
+		}*/
 		if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 			ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()));
@@ -404,12 +403,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			errorsList = validateVisitaPostRequestData(visitaDto, jsonFields, false);
 			if (errorsList.isEmpty()) {
 
-				if (((JSONObject) jsonFields).containsKey("idVisitaWebcom")) {
-					visita.setIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
-				}
-				if (((JSONObject) jsonFields).containsKey("idVisitaRem")) {
-					visita.setNumVisitaRem(visitaDto.getIdVisitaRem());
-				}
 				if (((JSONObject) jsonFields).containsKey("idClienteRem")) {
 					if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 						ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class, genericDao

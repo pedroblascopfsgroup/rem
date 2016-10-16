@@ -228,11 +228,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		HashMap<String, List<String>> errorsList = null;
 		Oferta oferta = null;
 
-		oferta = getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
+/*		oferta = getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
 		if (Checks.esNulo(oferta) && !Checks.esNulo(ofertaDto.getIdOfertaRem())) {
 			restApi.obtenerMapaErrores(errorsList, "idOfertaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
 
-		}
+		}*/
 
 		if (alta) {
 			// Validación para el alta de ofertas
@@ -324,7 +324,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
-				restApi.obtenerMapaErrores(errorsList, "idProveedorRemResponsable").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				restApi.obtenerMapaErrores(errorsList, "IdProveedorRemCustodio").add(RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {

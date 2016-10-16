@@ -101,6 +101,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -1003,7 +1004,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return mensaje;
+
 	}
+	private Activo tareaExternaToActivo(TareaExterna tareaExterna) {
+		Activo activo = null;
+		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			activo = trabajo.getActivo();
+		}
+		return activo;
+	}
+	
+		
+	public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna){
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", tareaExternaToActivo(tareaExterna));
+		VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
+		
+		return (publicacionActivo.getAdmision() && publicacionActivo.getGestion());
+		
+	}
+	
 
 	@Override
 	public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo) {

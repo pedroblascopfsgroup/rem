@@ -513,4 +513,11 @@ public interface ActivoApi {
 	     * @return Devuelve si la operación ha sido satisfactoria, o no.
 	     */
 		public Boolean updateCondicionantesDisponibilidad(Long idActivo);
+		
+		/**
+		 * Este método comprueba si el activo tiene los check de admisión y gestión
+		 * @param tareaExterna
+		 * @return devuelve true si tiene los check activos, false en caso contrario
+		 */
+		public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna);
     }

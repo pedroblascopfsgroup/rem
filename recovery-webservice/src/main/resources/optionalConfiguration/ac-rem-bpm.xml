@@ -384,7 +384,10 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.comprobarPropuestaPrecios(tareaExterna);
             }
-
+			def checkAdmisionAndGestion = {
+				def activoManager = ctx.getBean("activoManager");
+				return activoManager.checkAdmisionAndGestion(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

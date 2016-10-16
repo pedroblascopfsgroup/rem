@@ -83,12 +83,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						     };
 						     
 						//Elimina los enlaces, si existen
-						//Los enlaces siempre van a continuación de los campos
+						//Los enlaces siempre van a continuaciï¿½n de los campos
 						for (var i = 0; i < numEnlaces; i++) {
 							me.campos.pop();
 						}
 						
-						//Bucle que quita el último campo = Observaciones, para construir la tarea con
+						//Bucle que quita el ï¿½ltimo campo = Observaciones, para construir la tarea con
 						// 2 columnas de campos y agregar "Observaciones" al final, en todo el ancho form
 						for (var i = 1; i < me.campos.length - 1; i++) {
 							if (me.campos[i].allowBlank == 'false'){
@@ -852,6 +852,25 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 							}
 						})	 
 				     },
+				     
+				     T011_RevisionInformeComercial: function(){
+						var me = this;
+						
+						debugger;
+								
+						me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+						me.deshabilitarCampo(me.down('[name=comboDatosIguales]'));
+								
+						me.down('[name=comboAceptacion]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.habilitarCampo(me.down('[name=comboDatosIguales]'));
+								me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+							}else{
+								me.deshabilitarCampo(me.down('[name=comboDatosIguales]'));
+								me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+							}
+						})	 
+					},
 				     
 					habilitarCampo: function(campo) {				    	
 					    	var me = this;

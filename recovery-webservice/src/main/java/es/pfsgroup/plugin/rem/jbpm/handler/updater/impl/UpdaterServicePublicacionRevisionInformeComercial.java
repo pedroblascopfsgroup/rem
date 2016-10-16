@@ -111,9 +111,16 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		
 		//Si han habido cambios en el historico, lo persistimos.
 		if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
-			activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
-			activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(new Date());
-			
+			if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
+				Auditoria auditoria = new Auditoria();
+				auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+				auditoria.setFechaCrear(new Date());
+				genericDao.save(Auditoria.class, auditoria);
+				activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
+			}else{
+				activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+				activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(new Date());
+			}
 			genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
 		}
 		

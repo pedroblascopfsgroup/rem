@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20161015
+--## FECHA_CREACION=20161016
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=0
@@ -44,7 +44,7 @@ DECLARE
     
 BEGIN    
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T011_RevisionInformeComercial''''][''''comboDatosIguales''''] == DDSiNo.SI ? (checkAdmisionAndGestion() ? null : ''''El activo no tiene el OK de admisión y gestión'''' '' '||
+			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T011_RevisionInformeComercial''''][''''comboDatosIguales''''] == DDSiNo.SI ? (checkAdmisionAndGestion() ? null : ''''El activo no tiene el OK de admisi&oacuate;n y gesti&oacuate;n'''') : null '' '||
 			  ' WHERE TAP_CODIGO = ''T011_RevisionInformeComercial'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);

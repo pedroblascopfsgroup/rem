@@ -853,11 +853,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						})	 
 				     },
 				     
-				     T011_RevisionInformeComercial: function(){
+				     T011_RevisionInformeComercialValidacion: function(){
 						var me = this;
-						
-						debugger;
-								
+														
 						me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
 						me.deshabilitarCampo(me.down('[name=comboDatosIguales]'));
 								

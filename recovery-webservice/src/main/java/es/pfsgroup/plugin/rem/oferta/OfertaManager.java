@@ -324,7 +324,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
-				restApi.obtenerMapaErrores(errorsList, "idProveedorRemResponsable").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				restApi.obtenerMapaErrores(errorsList, "IdProveedorRemCustodio").add(RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {

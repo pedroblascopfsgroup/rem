@@ -64,10 +64,10 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					            dataIndex: 'idProveedorNotario',
 					            flex: 1,
 					            renderer: function(value) {								        		
-					        		var me = this,
-					        		comboEditor = me.columns && me.columns[1].getEditor ? me.columns[1].getEditor() : me.getEditor ? me.getEditor():null;
+					        		var me = this;					        		
+					        		var comboEditor = me.columns && me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor ? me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor() : me.getEditor ? me.getEditor():null;
 					        		if(!Ext.isEmpty(comboEditor)) {
-						        		store = comboEditor.getStore(),							        		
+						        		var store = comboEditor.getStore(),							        		
 						        		record = store.findRecord("id", value);
 						        		if(!Ext.isEmpty(record)) {								        			
 						        			return record.get("descripcion");								        		

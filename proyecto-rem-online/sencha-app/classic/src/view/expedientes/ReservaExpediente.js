@@ -88,7 +88,10 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.anulacion'),
 		                	bind:		'{reserva.fechaAnulacion}',
 		                	readOnly: true
-		                }	
+		                },
+		                {
+		                	xtype: 'displayfield'
+		                }
 		                
 		            ]
 			},
@@ -99,7 +102,13 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
             	items : [
                 	{
 					    xtype		: 'gridBaseEditableRow',
-					    topBar: true,
+					    topBar		: false,
+					    tbar : {
+				    		xtype: 'toolbar',
+				    		dock: 'top',
+				    		tipo: 'toolbaredicion',
+				    		items: [{iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClickThis', scope: this, bind: {disabled: '{esCarteraBankia}'} }]
+			    		},
 					    idPrincipal : 'expediente.id',
 					    reference: 'listadoEntregasCuenta',
 						cls	: 'panel-base shadow-panel',
@@ -150,6 +159,11 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 	    me.addPlugin({ptype: 'lazyitems', items: items });
 	    
 	    me.callParent(); 
+    },
+    
+    onAddClickThis: function() {
+    	var me = this;
+    	me.down('grid[reference=listadoEntregasCuenta]').onAddClick();
     },
     
     funcionRecargar: function() {

@@ -68,6 +68,10 @@ import es.pfsgroup.plugin.rem.model.ActivoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -89,12 +93,15 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -381,6 +388,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoExpediente.setNumExpediente(activoDao.getNextNumOferta());
 			nuevoExpediente.setTrabajo(trabajo);
 			
+			
+			
+			
+			//Creación de formalización y condicionantes. Evita errores en los trámites al preguntar por datos de algunos de estos objetos y aún no esten creados. Para ello creamos los objetos vacios con el unico
+			//fin que se cree la fila.
+			Formalizacion nuevaFormalizacion= new Formalizacion();
+			nuevaFormalizacion.setAuditoria(Auditoria.getNewInstance());
+			nuevaFormalizacion.setExpediente(nuevoExpediente);
+			nuevoExpediente.setFormalizacion(nuevaFormalizacion);
+			
+			CondicionanteExpediente nuevoCondicionante= new CondicionanteExpediente();
+			nuevoCondicionante.setAuditoria(Auditoria.getNewInstance());
+			nuevoCondicionante.setExpediente(nuevoExpediente);
+			nuevoExpediente.setCondicionante(nuevoCondicionante);
+			
+//			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
+			
+			crearCompradores(oferta, nuevoExpediente);
+			
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 			
 			crearGastosExpediente(nuevoExpediente,oferta);
@@ -394,6 +420,112 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 	}
 	
+	
+	public boolean crearCompradores(Oferta oferta, ExpedienteComercial nuevoExpediente){
+		
+		if(!Checks.esNulo(oferta.getCliente())){
+			//Busca un comprador con el mismo dni que el cliente de la oferta
+			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento", oferta.getCliente().getDocumento());
+			Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
+			List<CompradorExpediente> listaCompradoresExpediente= new ArrayList<CompradorExpediente>();
+			CompradorExpediente compradorExpedienteNuevo= new CompradorExpediente();
+			
+			//si ya existe un comprador con dicho dni, crea una nueva relación Comprador-Expediente
+			if(!Checks.esNulo(compradorBusqueda)){
+				
+				CompradorExpedientePk pk= new CompradorExpedientePk();
+				pk.setComprador(compradorBusqueda);
+				pk.setExpediente(nuevoExpediente);			
+				compradorExpedienteNuevo.setPrimaryKey(pk);
+				compradorExpedienteNuevo.setTitularReserva(0);
+				compradorExpedienteNuevo.setTitularContratacion(1);
+								
+				listaCompradoresExpediente.add(compradorExpedienteNuevo);
+			}
+			else{ //Si no existe un comprador con dicho dni, lo crea, añade los datos posibles del cliente comercial y crea una nueva relación Comprador-Expediente 
+				
+				Comprador nuevoComprador= new Comprador();
+				nuevoComprador.setClienteComercial(oferta.getCliente());
+				nuevoComprador.setDocumento(oferta.getCliente().getDocumento());
+				nuevoComprador.setNombre(oferta.getCliente().getNombre());
+				nuevoComprador.setApellidos(oferta.getCliente().getApellidos());
+				nuevoComprador.setTipoDocumento(oferta.getCliente().getTipoDocumento());
+				nuevoComprador.setTelefono1(oferta.getCliente().getTelefono1());
+				nuevoComprador.setTelefono2(oferta.getCliente().getTelefono2());
+				nuevoComprador.setEmail(oferta.getCliente().getEmail());
+				nuevoComprador.setDireccion(oferta.getCliente().getDireccion());
+				
+				if(!Checks.esNulo(oferta.getCliente().getMunicipio())){
+					nuevoComprador.setLocalidad(oferta.getCliente().getMunicipio());
+				}
+				if(!Checks.esNulo(oferta.getCliente().getProvincia())){
+					nuevoComprador.setProvincia(oferta.getCliente().getProvincia());
+				}
+
+				nuevoComprador.setCodigoPostal(oferta.getCliente().getCodigoPostal());
+				
+				genericDao.save(Comprador.class, nuevoComprador);
+				
+				CompradorExpedientePk pk= new CompradorExpedientePk();
+				pk.setComprador(nuevoComprador);
+				pk.setExpediente(nuevoExpediente);
+				compradorExpedienteNuevo.setPrimaryKey(pk);
+				compradorExpedienteNuevo.setTitularReserva(0);
+				compradorExpedienteNuevo.setTitularContratacion(1);
+								
+				listaCompradoresExpediente.add(compradorExpedienteNuevo);
+			}
+			
+			//Se recorre todos los titulares adicionales, estos tambien se crean como compradores y su relacion Comprador-Expediente con la diferencia de que los campos 
+			//TitularReserva y TitularContratacion estan al contrario. Por decirlo de alguna forma son "Compradores secundarios"
+			for(TitularesAdicionalesOferta titularAdicional: oferta.getTitularesAdicionales()){
+				
+				Filter filtroCompradorAdicional = genericDao.createFilter(FilterType.EQUALS, "documento", titularAdicional.getDocumento());
+				Comprador compradorBusquedaAdicional = genericDao.get(Comprador.class, filtroCompradorAdicional);
+				
+				if(!Checks.esNulo(compradorBusquedaAdicional)){
+					CompradorExpediente compradorExpedienteAdicionalNuevo= new CompradorExpediente();
+					CompradorExpedientePk pk= new CompradorExpedientePk();
+					
+					pk.setComprador(compradorBusquedaAdicional);
+					pk.setExpediente(nuevoExpediente);
+					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
+					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
+					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+										
+					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+				}
+				else{
+					Comprador nuevoCompradorAdicional= new Comprador();
+					CompradorExpediente compradorExpedienteAdicionalNuevo= new CompradorExpediente();
+					
+					nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
+					nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
+					nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
+					genericDao.save(Comprador.class, nuevoCompradorAdicional);
+					
+					CompradorExpedientePk pk= new CompradorExpedientePk();
+					
+					pk.setComprador(nuevoCompradorAdicional);
+					pk.setExpediente(nuevoExpediente);
+					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
+					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
+					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+										
+					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+					
+				}
+				
+			}
+				
+			//Una vez creadas las relaciones Comprador-Expediente se añaden al nuevo expediente
+			nuevoExpediente.setCompradores(listaCompradoresExpediente);
+			
+			return true;
+		}
+		
+		return false;
+	}
 	
 	
 	@Override
@@ -872,7 +1004,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return mensaje;
+
 	}
+	private Activo tareaExternaToActivo(TareaExterna tareaExterna) {
+		Activo activo = null;
+		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			activo = trabajo.getActivo();
+		}
+		return activo;
+	}
+	
+		
+	public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna){
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", tareaExternaToActivo(tareaExterna));
+		VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
+		
+		return (publicacionActivo.getAdmision() && publicacionActivo.getGestion());
+		
+	}
+	
 
 	@Override
 	public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo) {

@@ -11,7 +11,7 @@ Ext.define('HreRem.model.Notario', {
     			name:'idActivoProveedorContacto'
     		},
     		{
-    			name:'nombre'
+    			name:'nombreProveedor'
     		},
     		{
     			name: 'direccion'

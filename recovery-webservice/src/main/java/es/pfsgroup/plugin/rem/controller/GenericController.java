@@ -25,6 +25,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 
 
@@ -225,5 +226,12 @@ public class GenericController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComitesByCartera(String carteraCodigo, ModelMap model){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesByCartera(carteraCodigo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboNotarios(ModelMap model) {
+		
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboProveedorBySubtipo(DDTipoProveedor.COD_NOTARIO)));
+		
 	}
 }

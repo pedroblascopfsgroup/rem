@@ -49,6 +49,7 @@ import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
@@ -461,7 +462,11 @@ public class UvemManager implements UvemManagerApi {
 	
 	
 	@Override
-	public DatosClienteDto  ejecutarDatosClientePorDocumento(String nDocumento, String tipoDocumento, String qcenre) throws Exception {
+	public DatosClienteDto  ejecutarDatosClientePorDocumento(DtoClienteUrsus dtoCliente) throws Exception {
+		
+		String nDocumento= dtoCliente.getNumDocumento();
+		String tipoDocumento= dtoCliente.getTipoDocumento();
+		String qcenre= dtoCliente.getQcenre();
 		
 		Integer numCliente = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
 		return ejecutarDatosCliente(numCliente, qcenre);

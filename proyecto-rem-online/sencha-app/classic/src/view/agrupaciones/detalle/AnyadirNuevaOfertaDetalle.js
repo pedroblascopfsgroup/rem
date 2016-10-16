@@ -58,7 +58,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    				            		value: '{oferta.tipoOferta}'
 	    				            	},
 	    				            	displayField: 'descripcion',
-	    	    						valueField: 'codigo'
+	    	    						valueField: 'codigo',
+	    	    						listeners: {
+	    	    							change: function(combo, value) {
+	    	    								var me = this;
+	    	    								var form = combo.up('form');
+	    	    								var checkTanteo = form.down('field[name=dederechotanteo]');
+	    	    								checkTanteo.reset();
+	    	    								checkTanteo.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
+	    	    								
+	    	    							}
+	    	    						}
 									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.nombre.cliente'),

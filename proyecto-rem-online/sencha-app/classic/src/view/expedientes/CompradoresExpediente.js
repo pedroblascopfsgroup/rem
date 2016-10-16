@@ -21,6 +21,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
             	items : [
                 	{
 					    xtype		: 'gridBase',
+					    topBar		: true,
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						bind: {
@@ -36,9 +37,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							{
 						        xtype: 'actioncolumn',
 						        reference: 'titularContratacion',
-//						        bind: {
-//						        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
-//						        },
 						        width: 30,
 						        text: HreRem.i18n('header.principal'),
 								hideable: false,
@@ -117,7 +115,13 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					                store: '{storeCompradoresExpediente}'
 					            }
 					        }
-					    ]
+					    ],
+					    onClickAdd: function (btn) {
+							var me = this;
+							var controller= me.lookupController();
+							controller.abrirFormularioCrearComprador(me);
+											    				    	
+						}
 					}
             	]
 			} 

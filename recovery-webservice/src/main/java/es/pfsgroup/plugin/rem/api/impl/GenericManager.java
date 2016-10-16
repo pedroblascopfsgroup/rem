@@ -328,7 +328,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					return listaSubtipos;
 			}
 			// Solo se pueden crear por la pantalla de crear trabajo estos subtipos relacionados con precios
-			else if(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS.equals(subtipo.getCodigo()) 
+			else if(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS.equals(subtipo.getCodigo()) 
 					|| DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())
 					|| DDSubtipoTrabajo.CODIGO_PRECIOS_DESBLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())) {
 						listaSubtiposFiltered.add(subtipo);
@@ -438,5 +438,32 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter);
 
+	}
+	
+	@Override
+	public List<DtoDiccionario> getComboProveedorBySubtipo(String subtipoProveedorCodigo ) {
+			
+		List<DtoDiccionario> listaDD = new ArrayList<DtoDiccionario>();
+
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", subtipoProveedorCodigo);
+		Order order = new Order(OrderType.ASC, "nombre");
+		List<ActivoProveedor> lista = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado, filtroSubtipo);
+		
+		for(ActivoProveedor proveedor: lista){
+			DtoDiccionario dto = new DtoDiccionario();;
+			try {
+				beanUtilNotNull.copyProperty(dto, "id", proveedor.getId());
+				beanUtilNotNull.copyProperty(dto, "descripcion", proveedor.getNombre());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			listaDD.add(dto);
+		}
+		
+		
+		return listaDD;
 	}
 }

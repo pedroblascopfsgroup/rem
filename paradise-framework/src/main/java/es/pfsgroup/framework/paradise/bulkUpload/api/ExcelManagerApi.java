@@ -31,6 +31,7 @@ public interface ExcelManagerApi {
 	public static final String MSV_BO_UPLOAD_AND_VALDIATE = "es.pfsgroup.framework.paradise.bulkUpload.api.impl.uploadAndValidate";
 	public static final String MSV_BO_IS_VALID_PROCESS = "es.pfsgroup.framework.paradise.bulkUpload.api.impl.isValidProcess";
 	
+	public static final String MSV_PROCESS_CODE_PROPUESTA_PRECIOS_ACTIVO = "CPPA"; 
 	/**
 	 * Devuelve una plantilla excel en funci�n del tipo de plantilla que se le
 	 * indique.

@@ -165,9 +165,55 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+
+	@Override
+	public Boolean isActivoPrePublicable(String numActivo){
+		if(isActivoGestionAdmision(numActivo) && isActivoUltimoInformeComercialAceptado(numActivo))
+			return false;
+		else
+			return true;
+	}
+
+	private Boolean isActivoGestionAdmision(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		 FROM ACT_ACTIVO WHERE "
+				+ "			ACT_ADMISION = 1 "
+				+ "			AND ACT_ADMISION = 1 "
+				+ "		 	AND ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	private Boolean isActivoUltimoInformeComercialAceptado(String numActivo){
+		String resultado = rawDao.getExecuteSQL("select count(1) from ( "
+				+ "		 	  select dd_aic_codigo from ( "
+				+ "		 	    select aic.dd_aic_codigo "
+				+ "		 	    from ACT_ACTIVO act, "
+				+ "		 	         ACT_HIC_EST_INF_COMER_HIST hic, "
+				+ "		 	         DD_AIC_ACCION_INF_COMERCIAL aic "
+				+ "		 	    where act.act_id = hic.act_id "
+				+ "		 	      and hic.dd_aic_id = aic.dd_aic_id "
+				+ "		 	      AND ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "		 	      AND act.BORRADO = 0 "
+				+ "		 	      AND hic.BORRADO = 0 "
+				+ "		 	      AND aic.BORRADO = 0 "
+				+ "		 	    order by hic.HIC_ID desc "
+				+ "		 	  ) "
+				+ "		 	  where rownum = 1 "
+				+ "		 	) "
+				+ "		 	where dd_aic_codigo = '02' "
+				);
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 	
 	@Override
-	public Boolean estadoPublicar(String numActivo){
+	public Boolean estadoNoPublicado(String numActivo){
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
@@ -176,9 +222,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
 				+ "				WHERE DD_EPU_CODIGO IN ('06'))");
 		if("0".equals(resultado))
-			return false;
-		else
 			return true;
+		else
+			return false;
 	}
 	
 	@Override

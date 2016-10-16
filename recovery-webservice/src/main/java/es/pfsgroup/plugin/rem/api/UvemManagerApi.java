@@ -6,6 +6,7 @@ import com.gfi.webIntegrator.WIMetaServiceException;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
+import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
@@ -65,7 +66,7 @@ public interface UvemManagerApi {
 	 *            Otros persona física. J Otros persona jurídica.
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	DatosClienteDto ejecutarDatosClientePorDocumento(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	DatosClienteDto ejecutarDatosClientePorDocumento(DtoClienteUrsus dtoCliente) throws Exception;
 	
 	
 	

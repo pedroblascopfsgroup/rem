@@ -39,6 +39,8 @@ import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
@@ -547,4 +549,18 @@ public interface ActivoApi {
 		 * @return Devuelve si la operación ha sido satisfactoria, o no.
 		 */
 		public boolean deleteReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto);
+
+		/**
+		 * Devuelve la lista de proveedores para un activo
+		 * @param idActivo
+		 * @return
+		 */
+	    public List<VBusquedaProveedoresActivo> getProveedorByActivo(Long idActivo);
+	    
+	    /**
+		 * Devuelve la lista de los gastos proveedores para un activo y un proveedor
+		 * @param idActivo
+		 * @return
+		 */
+	    public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor);  
     }

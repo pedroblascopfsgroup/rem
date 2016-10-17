@@ -23,17 +23,6 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
         me.buttons = [{ text: 'Buscar', handler: 'onSearchManualClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];
         me.buttonAlign = 'left';
         
-        //Store personalizado (tipoPropuesta) por el dato correspondiente a Todos
-        var comboTipoPropuestaManual = new Ext.data.Store({
-			data : 
-				[
-					{"codigo":"01", "descripcion": HreRem.i18n("comboItem.precios.preciar")},
-					{"codigo":"02", "descripcion": HreRem.i18n("comboItem.precios.repreciar")},
-					{"codigo":"03", "descripcion": HreRem.i18n("comboItem.precios.descuento")},
-					{"codigo":null, "descripcion": HreRem.i18n("comboItem.precios.todos")}
-			    ]
-    	});
-        
         var items = [
         
        {
@@ -68,11 +57,10 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
 						editable: true,
 						fieldLabel: HreRem.i18n('fieldlabel.tipo.propuesta'),
 						name: 'tipoPropuestaCodigo',
-						store: comboTipoPropuestaManual,
-		            	allowBlank: false
-						/*bind: {
+		            	allowBlank: false,
+						bind: {
 		            		store: '{comboTiposPropuesta}'
-		            	}*/
+		            	}
 					},
 					{ 
 					    xtype: 'comboboxfieldbase',
@@ -89,6 +77,12 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
 						},
 		            	allowBlank: false,
 		            	valueField: 'id'
+					},
+					{
+						xtype: 'checkboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.generacion.manual.check.todos'),
+						name: 'checkTodosActivos',
+			        	inputValue: true
 					}
         	]
         },

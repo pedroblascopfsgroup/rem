@@ -6,6 +6,9 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+
 public class TrabajoDto implements Serializable{
 	
 	/**
@@ -13,40 +16,40 @@ public class TrabajoDto implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idTrabajoWebcom;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idActivoHaya;
-	@NotNull
-	@Size(max=20)
+	@NotNull(groups = { Insert.class})
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codTipoTrabajo;
-	@NotNull
-	@Size(max=20)
+	@NotNull(groups = { Insert.class})
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codSubtipoTrabajo;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;
-	@NotNull
+	@NotNull(groups = { Insert.class, Update.class })
 	private Long idUsuarioRemAccion;
-	@NotNull
+	@NotNull(groups = { Insert.class})
 	@Size(max=256)
 	private String descripcion;
-	@NotNull
+	@NotNull(groups = { Insert.class})
 	private Long idProveedorRemResponsable;
-	@Size(max=60)
+	@Size(max=60,groups = { Insert.class, Update.class })
 	private String nombreContacto;
-	@Size(max=14)
+	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefonoContacto;
-	@Size(max=60)
+	@Size(max=60,groups = { Insert.class, Update.class })
 	private String emailContacto;
-	@Size(max=250)
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String descripcionContacto;
-	@Size(max=60)
+	@Size(max=60,groups = { Insert.class, Update.class })
 	private String nombreRequiriente;
-	@Size(max=14)
+	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefonoRequiriente;
-	@Size(max=60)
+	@Size(max=60,groups = { Insert.class, Update.class })
 	private String emailRequiriente;
-	@Size(max=250)
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String descripcionRequiriente;
 	private Boolean fechaPrioridadRequirienteEsExacta;
 	//private Date fechaTopeRequiriente;

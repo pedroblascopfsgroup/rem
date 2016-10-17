@@ -1040,7 +1040,7 @@ public class TrabajoController {
 	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
 	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		TrabajoDto trabajoDto = null;		
 		DtoFichaTrabajo dtoFichaTrabajo = null;
 		Map<String, Object> map = null;
@@ -1062,7 +1062,7 @@ public class TrabajoController {
 
 					Long idTrabajo = null;
 					Trabajo trabajo = null;
-					errorsList = new HashMap<String, List<String>>();
+					errorsList = new HashMap<String, String>();
 					map = new HashMap<String, Object>();
 					trabajoDto = listaTrabajoDto.get(i);
 					

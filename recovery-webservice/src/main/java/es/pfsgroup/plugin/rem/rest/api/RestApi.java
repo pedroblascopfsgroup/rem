@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +32,10 @@ public interface RestApi {
 	public static final String REST_MSG_INVALID_SIGNATURE = "INVALID_SIGNATURE";
 	public static final String REST_MSG_REPETEAD_REQUEST = "REPETEAD_REQUEST";
 	public static final String REST_MSG_MISSING_REQUIRED_FIELDS = "MISSING_REQUIRED_FIELDS";
+	public static final String REST_MSG_MISSING_REQUIRED = "REQUIRED";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
-	public static final String REST_MSG_UNKNOWN_KEY = "UNKNOWN_KEY";
+	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";
+	public static final String REST_MSG_OVERFLOW = "OVERFLOW";
 	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
 	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";
 	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";
@@ -65,7 +66,7 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public HashMap<String, List<String>> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
+	public HashMap<String, String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
 
 	/**
 	 * Valida el pojo pasado a la rest api
@@ -73,9 +74,7 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public HashMap<String, List<String>> validateRequestObject(Serializable obj);
-
-	public List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad);
+	public HashMap<String, String> validateRequestObject(Serializable obj);
 
 	/**
 	 * Obtiene un operador dada su ip pblica

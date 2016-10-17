@@ -66,7 +66,7 @@ public class NotificacionesController {
 		NotificacionRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = null;
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		JSONObject jsonFields = null;
 		
 		try {
@@ -87,7 +87,7 @@ public class NotificacionesController {
 					errorsList = restApi.validateRequestObject(notificacion,TIPO_VALIDACION.INSERT);
 					if (notificacion.getCodTipoNotificacion() == null || (!notificacion.getCodTipoNotificacion().equals("N")
 							&& !notificacion.getCodTipoNotificacion().equals("A"))) {
-						restApi.obtenerMapaErrores(errorsList, "codTipoNotificacion").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						errorsList.put("codTipoNotificacion", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 					if (errorsList.size() == 0) {
 						Notificacion notificacionBbdd = new Notificacion();

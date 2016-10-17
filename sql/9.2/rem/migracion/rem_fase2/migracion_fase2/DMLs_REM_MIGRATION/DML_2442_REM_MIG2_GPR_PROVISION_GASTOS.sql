@@ -234,7 +234,7 @@ BEGIN
 		
 		END IF;
 		
-		IF TABLE_COUNT != 0 THEN
+		IF TABLE_COUNT_2 != 0 THEN
 		
 		  V_OBSERVACIONES := V_OBSERVACIONES || 'Del total de registros rechazados, '||TABLE_COUNT_2||' han sido por Codigos de PROVEEDOR (TIPO GESTOR) inexistentes.';
 		

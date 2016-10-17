@@ -117,13 +117,13 @@ BEGIN
             ,COM_TELEFONO2
             ,COM_EMAIL
             ,COM_DIRECCION
-            ,COM_MUNICIPIO
             ,COM_CODIGO_POSTAL
-            ,COM_PROVINCIA
             ,VERSION
             ,USUARIOCREAR
             ,FECHACREAR
             ,BORRADO
+            ,DD_LOC_ID
+            ,DD_PRV_ID
           )
           SELECT
             '||V_ESQUEMA||'.S_COM_COMPRADOR.NEXTVAL                                                           AS COM_ID,
@@ -139,14 +139,14 @@ BEGIN
               MIG2.COM_TELEFONO1                                                                                  AS COM_TELEFONO1,
               MIG2.COM_TELEFONO2                                                                                  AS COM_TELEFONO2,
               MIG2.COM_EMAIL                                                                                          AS COM_EMAIL,
-              MIG2.COM_DIRECCION                                                                                    AS COM_DIRECCION,
-              LOC.DD_LOC_ID                                                                                               AS DD_LOC_ID,
+              MIG2.COM_DIRECCION                                                                                    AS COM_DIRECCION,              
               MIG2.COM_CODIGO_POSTAL                                                                            AS COM_CODIGO_POSTAL,
-              PRV.DD_PRV_ID                                                                                               AS DD_PRV_ID,
               0                                                                                                                   AS VERSION,
               ''MIG2''                                                                                                            AS USUARIOCREAR,
               SYSDATE                                                                                                     AS FECHACREAR,
-              0                                                                                                                 AS BORRADO
+              0                                                                                                                 AS BORRADO,
+              LOC.DD_LOC_ID                                                                                               AS DD_LOC_ID,
+              PRV.DD_PRV_ID                                                                                               AS DD_PRV_ID
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
             INNER JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_NUM_CLIENTE_HAYA = MIG2.COM_COD_COMPRADOR
             LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = MIG2.COM_COD_TIPO_PERSONA AND TPE.BORRADO = 0
@@ -155,7 +155,7 @@ BEGIN
             LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA  PRV ON PRV.DD_PRV_CODIGO = MIG2.COM_COD_PROVINCIA AND PRV.BORRADO = 0
             WHERE NOT EXISTS (
               SELECT 1
-              FROM '||V_ESQUEMA||'.COM_COMPRADOR AUX2
+              FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX2
               WHERE AUX2.CLC_ID = CLC.CLC_ID
             )
           ) AUX      
@@ -191,7 +191,7 @@ BEGIN
         
         IF TABLE_COUNT != 0 THEN
            V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes. ';
-        END IF
+        END IF;
       END IF;
       
       EXECUTE IMMEDIATE '

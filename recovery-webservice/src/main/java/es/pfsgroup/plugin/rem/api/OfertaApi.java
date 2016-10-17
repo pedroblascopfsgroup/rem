@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -11,6 +13,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import net.sf.json.JSONObject;
 
 public interface OfertaApi {
 
@@ -109,6 +112,16 @@ public interface OfertaApi {
 	 */
 	public HashMap<String,String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception;
+	
+	/**
+	 * Actualiza una lista de ofertas a partir de la información pasada por parámetro.
+	 * 
+	 * @param listaOfertaDto
+	 * @param jsonFields
+	 * @return
+	 * @throws Exception
+	 */
+	public ArrayList<Map<String, Object>> saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields)throws Exception;
 
 	/**
 	 * Actualizar el estado de disponibilidad comercial en los activos

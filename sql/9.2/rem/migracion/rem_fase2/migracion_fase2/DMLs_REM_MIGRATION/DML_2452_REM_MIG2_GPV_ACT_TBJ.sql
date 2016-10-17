@@ -389,7 +389,7 @@ BEGIN
       -- Observaciones
 	  IF V_REJECTS != 0 THEN
 	  
-		IF TABLE_COUNT != 0 or TABLE_COUNT_3 != 0 THEN
+		IF TABLE_COUNT_2 != 0 or TABLE_COUNT_3 != 0 THEN
 		
 		  V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT_2||' han sido por Codigos de TRABAJOS inexistentes y '||TABLE_COUNT_3||' ha sido por Códigos de GASTOS_PROVEEDOR inexistentes.';
 		

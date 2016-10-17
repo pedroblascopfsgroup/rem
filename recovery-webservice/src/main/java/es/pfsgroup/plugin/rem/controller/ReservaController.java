@@ -57,7 +57,7 @@ public class ReservaController {
 
 		ReservaRequestDto jsonData = null;
 		ReservaDto reservaDto = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		Map<String, Object> respuesta = new HashMap<String, Object>();
 
 		try {
 
@@ -153,8 +153,8 @@ public class ReservaController {
 				Map<String, Object> mapTitulares = new HashMap<String, Object>();
 				mapTitulares.put("titulares", listaTitularUVEM);
 
-				listaRespuesta.add(mapOferta);
-				listaRespuesta.add(mapTitulares);
+				respuesta.put("oferta",mapOferta);
+				respuesta.put("titulares", mapTitulares);
 
 				if (COBRO_RESERVA.equals(reservaDto.getAccion())) {
 					EntregaReserva entregaReserva = new EntregaReserva();
@@ -210,7 +210,7 @@ public class ReservaController {
 				}
 
 				model.put("id", jsonData.getId());
-				model.put("data", listaRespuesta);
+				model.put("data", respuesta);
 				model.put("error", "");
 			} else {
 				model.put("id", jsonData.getId());

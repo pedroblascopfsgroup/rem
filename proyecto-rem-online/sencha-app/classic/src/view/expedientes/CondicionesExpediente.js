@@ -118,6 +118,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								        type: 'table',
 						        		columns: 2
 						        	},
+						        	bind: {
+								    	disabled: '{!esOfertaVenta}'
+						            },
 									defaultType: 'textfieldbase',
 									title: HreRem.i18n("fieldlabel.reserva"),
 									items :

@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20161010
+--## FECHA_CREACION=20161017
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=SI
 --##
---## Finalidad: Realiza las modificaciones necesarias para el trámite de sanción de ofertas.
+--## Finalidad: Realiza las modificaciones necesarias para el trámite de publicación.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -37,16 +37,22 @@ DECLARE
     
     
     /* ################################################################################
-     ## MODIFICACIONES: Se cambian las decisiones del trámite de sanción de ofertas.
+     ## MODIFICACIONES: Se cambian las decisiones del trámite de publicación.
      ## de la obtención de documentos.
      ##
      */
     
-BEGIN    
+BEGIN
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  -- ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T002_ValidacionActuacion''''][''''comboCorreccion''''] == DDSiNo.SI ? (valores[''''T002_ValidacionActuacion''''][''''comboPagar''''] == DDSiNo.SI ? ''''CorrectoConCoste'''' : ''''CorrectoSinCoste'''') : ''''Incorrecto'''' '' '||
-			  ' SET TAP_SCRIPT_VALIDACION_JBPM = '''' ' ||
-			  ' WHERE TAP_CODIGO = ''T013_DefinicionOferta'' ';
+			  ' SET TAP_DESCRIPCION = ''Revisión de informe comercial y envío a publicación'' '||
+	          ' WHERE TAP_CODIGO = ''T011_RevisionInformeComercial''';
+    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando descripción tarea.......');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T011_RevisionInformeComercial''''][''''comboDatosIguales''''] == DDSiNo.SI ? (checkAdmisionAndGestion() ? null : ''''El activo no tiene el OK de admisión y gestión'''') : null '' '||
+			  ' WHERE TAP_CODIGO = ''T011_RevisionInformeComercial'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;

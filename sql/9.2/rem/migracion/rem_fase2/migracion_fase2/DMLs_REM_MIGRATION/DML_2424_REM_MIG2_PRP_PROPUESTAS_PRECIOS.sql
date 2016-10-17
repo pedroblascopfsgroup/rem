@@ -84,41 +84,54 @@ BEGIN
 			FROM CARTERA_ACTIVOS_ORDEN CAO
 			WHERE CAO.ORDEN = 1
 		)
-		SELECT DISTINCT
-			1   				                                                                        PRP_ID,
-			MIG.PRP_NUM_PROPUESTA										                          PRP_NUM_PROPUESTA,
-			MIG.PRP_NOMBRE_PROPUESTA									                      PRP_NOMBRE_PROPUESTA,
-			NVL(EPP.DD_EPP_ID,
-			  (SELECT DD_EPP_ID
-				  FROM '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO
-				  WHERE DD_EPP_CODIGO = ''01''
-				  AND BORRADO = 0) 
-			)                                                                                 DD_EPP_ID,
-			NVL(
-			  USU.USU_ID, 
-			  (SELECT USU_ID 
-				  FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS 
-				 WHERE USU_USERNAME = ''MIGRACION'' 
-				  AND BORRADO = 0)
-			)                                                                                 USU_ID,
-			NVL(CRA.DD_CRA_ID, MAXI.DD_CRA_ID)                        DD_CRA_ID,
-			TPP.DD_TPP_ID												                                    DD_TPP_ID,
-			MIG.PRP_IND_PROP_MANUAL										                      PRP_ES_PROP_MANUAL,
-			MIG.PRP_FECHA_EMISION										                          PRP_FECHA_EMISION,
-			MIG.PRP_FECHA_ENVIO											                            PRP_FECHA_ENVIO,
-			MIG.PRP_FECHA_SANCION										                          PRP_FECHA_SANCION,
-			MIG.PRP_FECHA_CARGA											                          PRP_FECHA_CARGA,
-			MIG.PRP_OBSERVACIONES										                          PRP_OBSERVACIONES,
-			0 															                                                  VERSION,
-			''MIG2'' 													                                              USUARIOCREAR,
-			SYSDATE 													                                          FECHACREAR,
-			0 															                                                  BORRADO
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-			LEFT JOIN '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO EPP ON DD_EPP_CODIGO = MIG.PRP_COD_ESTADO_PRP 
-			LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = MIG.PRP_COD_USUARIO
-			LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = MIG.PRP_COD_CARTERA
-			LEFT JOIN '||V_ESQUEMA||'.DD_TPP_TIPO_PROP_PRECIO TPP ON TPP.DD_TPP_CODIGO = MIG.PRP_COD_TIPO_PRP
-			LEFT JOIN MAXIMO MAXI ON MAXI.ACT_PRP_NUM_PROPUESTA = MIG.PRP_NUM_PROPUESTA
+		SELECT
+			'||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                PRP_ID,
+		  AUX.*
+		FROM (
+			  SELECT DISTINCT
+					MIG.PRP_NUM_PROPUESTA										                          PRP_NUM_PROPUESTA,
+					MIG.PRP_NOMBRE_PROPUESTA									                      PRP_NOMBRE_PROPUESTA,
+					NVL(EPP.DD_EPP_ID,
+                (SELECT DD_EPP_ID
+                FROM '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO
+                WHERE DD_EPP_CODIGO = ''01''
+                AND BORRADO = 0) 
+					)                                                                                 DD_EPP_ID,
+					NVL(USU.USU_ID, 
+                (SELECT USU_ID 
+                FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS 
+                 WHERE USU_USERNAME = ''MIGRACION'' 
+                AND BORRADO = 0)
+					)                                                                                 USU_ID,
+					NVL(CRA.DD_CRA_ID, MAXI.DD_CRA_ID)                        DD_CRA_ID,
+					NVL(TPP.DD_TPP_ID,
+            (SELECT DD_TPP_ID 
+						FROM '||V_ESQUEMA||'.DD_TPP_TIPO_PROP_PRECIO 
+					   WHERE DD_TPP_CODIGO = ''04'')
+					)                                                                                 DD_TPP_ID,
+					MIG.PRP_IND_PROP_MANUAL										                      PRP_ES_PROP_MANUAL,
+					MIG.PRP_FECHA_EMISION										                          PRP_FECHA_EMISION,
+					MIG.PRP_FECHA_ENVIO											                            PRP_FECHA_ENVIO,
+					MIG.PRP_FECHA_SANCION										                          PRP_FECHA_SANCION,
+					MIG.PRP_FECHA_CARGA											                          PRP_FECHA_CARGA,
+					MIG.PRP_OBSERVACIONES										                          PRP_OBSERVACIONES,
+					0 															                                                  VERSION,
+					''MIG2'' 													                                              USUARIOCREAR,
+					SYSDATE 													                                          FECHACREAR,
+					0 															                                                  BORRADO
+			  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+					LEFT JOIN '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO EPP ON DD_EPP_CODIGO = MIG.PRP_COD_ESTADO_PRP 
+					LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = MIG.PRP_COD_USUARIO
+					LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = MIG.PRP_COD_CARTERA
+					LEFT JOIN '||V_ESQUEMA||'.DD_TPP_TIPO_PROP_PRECIO TPP ON TPP.DD_TPP_CODIGO = MIG.PRP_COD_TIPO_PRP
+					LEFT JOIN MAXIMO MAXI ON MAXI.ACT_PRP_NUM_PROPUESTA = MIG.PRP_NUM_PROPUESTA
+			  WHERE NOT EXISTS (
+				SELECT 1
+				FROM '||V_ESQUEMA||'.'||V_TABLA||' NOTE
+				WHERE NOTE.PRP_NUM_PROPUESTA = MIG.PRP_NUM_PROPUESTA
+				AND NOTE.BORRADO = 0
+			  )
+		  ) AUX
       '
       ;
    

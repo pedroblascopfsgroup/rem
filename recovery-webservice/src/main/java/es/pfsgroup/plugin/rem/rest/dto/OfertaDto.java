@@ -7,6 +7,8 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -23,9 +25,9 @@ public class OfertaDto implements Serializable {
 	private Long idOfertaWebcom;
 	private Long idOfertaRem;
 	private Long idVisitaRem;
-	@NotNull(groups = { Update.class })
+	@NotNull(groups = { Insert.class })
 	private Long idClienteRem;
-	@NotNull(groups = { Update.class })
+	@NotNull(groups = { Insert.class })
 	private Long idActivoHaya;
 	@NotNull(groups = { Insert.class })
 	private Double importe;
@@ -37,14 +39,16 @@ public class OfertaDto implements Serializable {
 	private Long idProveedorRemCustodio;
 	private Long idProveedorRemResponsable;
 	private Long idProveedorRemFdv;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codEstadoOferta;
 	@NotNull(groups = { Insert.class })
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codTipoOferta;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;
 	@NotNull(groups = { Insert.class, Update.class })
+	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
+		Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
 	
 	

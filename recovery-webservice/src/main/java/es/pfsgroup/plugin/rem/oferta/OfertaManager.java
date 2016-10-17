@@ -223,16 +223,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public HashMap<String, List<String>> validateOfertaPostRequestData(OfertaDto ofertaDto, Object jsonFields,
+	public HashMap<String,String> validateOfertaPostRequestData(OfertaDto ofertaDto, Object jsonFields,
 			Boolean alta) throws Exception {
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		Oferta oferta = null;
 
-		oferta = getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
+/*		oferta = getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
 		if (Checks.esNulo(oferta) && !Checks.esNulo(ofertaDto.getIdOfertaRem())) {
 			restApi.obtenerMapaErrores(errorsList, "idOfertaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
 
-		}
+		}*/
 
 		if (alta) {
 			// Validación para el alta de ofertas
@@ -242,23 +242,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Validación para la actualización de ofertas
 			oferta = getOfertaByIdOfertaWebcomNumOfertaRem(ofertaDto.getIdOfertaWebcom(), ofertaDto.getIdOfertaRem());
 			if (Checks.esNulo(oferta)) {
-				restApi.obtenerMapaErrores(errorsList, "idVisitaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idVisitaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 
 			// Mirar si hace falta validar que no se pueda modificar la
 			// oferta si ha pasado al comité
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
 					&& !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)) {
-				restApi.obtenerMapaErrores(errorsList, "idVisitaWebcom")
-						.add("No es posible actualizar la oferta porque se encuentra en el estado: "
-								+ oferta.getEstadoOferta().getDescripcion());
+				errorsList.put("idVisitaWebcom","No es posible actualizar la oferta porque se encuentra en el estado: "
+						+ oferta.getEstadoOferta().getDescripcion());
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdVisitaRem())) {
 			Visita visita = (Visita) genericDao.get(Visita.class,
 					genericDao.createFilter(FilterType.EQUALS, "numVisitaRem", ofertaDto.getIdVisitaRem()));
 			if (Checks.esNulo(visita)) {
-				restApi.obtenerMapaErrores(errorsList, "idVisitaRem").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idVisitaRem",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 
 		}
@@ -266,21 +265,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()));
 			if (Checks.esNulo(cliente)) {
-				restApi.obtenerMapaErrores(errorsList, "idClienteRem").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idClienteRem",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
 			Activo activo = (Activo) genericDao.get(Activo.class,
 					genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
 			if (Checks.esNulo(activo)) {
-				restApi.obtenerMapaErrores(errorsList, "idActivoHaya").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idActivoHaya",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())) {
 			Usuario user = (Usuario) genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));
 			if (Checks.esNulo(user)) {
-				restApi.obtenerMapaErrores(errorsList, "idUsuarioRem").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idUsuarioRem",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {
@@ -289,20 +288,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Se valida lo primero pq debe hacerse aunque el diccionario
 			// tenga borrado logico del estado aceptada
 			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta())) {
-				restApi.obtenerMapaErrores(errorsList, "codEstadoOferta")
-						.add(messageServices.getMessage("oferta.validacion.errorMensaje.perimetroSinComercial"));
+				errorsList.put("codEstadoOferta",messageServices.getMessage("oferta.validacion.errorMensaje.perimetroSinComercial"));
 			}
 			DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));
 			if (Checks.esNulo(estadoOfr)) {
-				restApi.obtenerMapaErrores(errorsList, "codEstadoOferta").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("codEstadoOferta",RestApi.REST_MSG_UNKNOWN_KEY);
 			} else {
 				if (!ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE)
 						&& !ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
-					restApi.obtenerMapaErrores(errorsList, "codEstadoOferta")
-							.add("Código de estado no permitido. Valores permitidos: "
-									.concat(DDEstadoOferta.CODIGO_PENDIENTE).concat(",")
-									.concat(DDEstadoOferta.CODIGO_RECHAZADA));
+					errorsList.put("codEstadoOferta","Código de estado no permitido. Valores permitidos: "
+							.concat(DDEstadoOferta.CODIGO_PENDIENTE).concat(",")
+							.concat(DDEstadoOferta.CODIGO_RECHAZADA));
 				}
 			}
 		}
@@ -310,35 +307,35 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDTipoOferta tipoOfr = (DDTipoOferta) genericDao.get(DDTipoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodTipoOferta()));
 			if (Checks.esNulo(tipoOfr)) {
-				restApi.obtenerMapaErrores(errorsList, "codTipoOferta").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("codTipoOferta",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemPrescriptor())) {
 			ActivoProveedor pres = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemPrescriptor()));
 			if (Checks.esNulo(pres)) {
-				restApi.obtenerMapaErrores(errorsList, "idProveedorRemPrescriptor").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idProveedorRemPrescriptor",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemCustodio())) {
 			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
-				restApi.obtenerMapaErrores(errorsList, "idProveedorRemResponsable").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("IdProveedorRemCustodio",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {
 			ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemResponsable()));
 			if (Checks.esNulo(apiResp)) {
-				restApi.obtenerMapaErrores(errorsList, "idProveedorRemResponsable").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idProveedorRemResponsable",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemFdv())) {
 			ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));
 			if (Checks.esNulo(fdv)) {
-				restApi.obtenerMapaErrores(errorsList, "idProveedorRemResponsable").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idProveedorRemResponsable",RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
@@ -348,7 +345,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					DDTipoDocumento tpd = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento()));
 					if (Checks.esNulo(tpd)) {
-						restApi.obtenerMapaErrores(errorsList, "codTipoDocumento").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						errorsList.put("codTipoDocumento",RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 			}
@@ -359,9 +356,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public HashMap<String, List<String>> saveOferta(OfertaDto ofertaDto) throws Exception {
+	public HashMap<String, String> saveOferta(OfertaDto ofertaDto) throws Exception {
 		Oferta oferta = null;
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String,String> errorsList = null;
 
 		// ValidateAlta
 		errorsList = validateOfertaPostRequestData(ofertaDto, null, true);
@@ -531,9 +528,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public HashMap<String, List<String>> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
+	public HashMap<String, String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception {
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		// ValidateUpdate
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {

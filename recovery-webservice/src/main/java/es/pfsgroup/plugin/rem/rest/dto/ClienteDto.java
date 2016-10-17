@@ -24,76 +24,79 @@ public class ClienteDto implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@NotNull(groups = { Insert.class, Update.class })
-	private Date fechaAccion;
-	@NotNull(groups = { Insert.class})
-	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
-			Update.class },foreingField="id")
-	private Long idUsuarioRemAccion;
+
 	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteWebcom;
 	private Long idClienteRem;
-	@Size(max=50)
+	@Size(max=50,groups = { Insert.class, Update.class })
 	private String razonSocial;
 	@NotNull(groups = { Insert.class})
-	@Size(max=25)
+	@Size(max=25,groups = { Insert.class, Update.class })
 	private String nombre;
 	@NotNull(groups = { Insert.class})
-	@Size(max=50)
+	@Size(max=50,groups = { Insert.class, Update.class })
 	private String apellidos;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumento no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoDocumento;
 	@Size(max=14)
 	private String documento;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumentoRepresentante no existe", groups = { Insert.class,
+		Update.class })
 	private String codTipoDocumentoRepresentante;
-	@Size(max=14)
+	@Size(max=14,groups = { Insert.class, Update.class })
 	private String documentoRepresentante;
-	@Size(max=14)
+	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefono1;
-	@Size(max=14)
+	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefono2;
-	@Size(max=50)
+	@Size(max=50,groups = { Insert.class, Update.class })
 	private String email;
 	//@Size(max=20)
 	//private String codTipoPrescriptor;
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
 			Update.class },foreingField="id")
 	private Long idProveedorRemPrescriptor;
-	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemResponsable no existe", groups = { Insert.class,
 			Update.class },foreingField="id")
 	private Long idProveedorRemResponsable;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoVia.class, message = "El codTipoVia de activo no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoVia;
-	@Size(max=100)
+	@Size(max=100,groups = { Insert.class, Update.class })
 	private String nombreCalle;
 	@Size(max=100)
 	private String numeroCalle;
-	@Size(max=10)
+	@Size(max=10,groups = { Insert.class, Update.class })
 	private String escalera;
-	@Size(max=11)
+	@Size(max=11,groups = { Insert.class, Update.class })
 	private String planta;
-	@Size(max=17)
+	@Size(max=17,groups = { Insert.class, Update.class })
 	private String puerta;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = Localidad.class, message = "El codMunicipio no existe", groups = { Insert.class, Update.class })
 	private String codMunicipio;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDProvincia.class, message = "El codProvincia no existe", groups = { Insert.class,
 			Update.class })
 	private String codProvincia;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDUnidadPoblacional.class, message = "El codPedania no existe", groups = { Insert.class,
 			Update.class })
 	private String codPedania;
-	@Size(max=5)
+	@Size(max=5,groups = { Insert.class, Update.class })
 	private String codigoPostal;
-	@Size(max=250)
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String observaciones;
+	@NotNull(groups = { Insert.class, Update.class })
+	private Date fechaAccion;
+	@NotNull(groups = { Insert.class, Update.class })
+	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
+		Update.class },foreingField="id")
+	private Long idUsuarioRemAccion;
 	
 	
 	public Date getFechaAccion() {

@@ -20,6 +20,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
@@ -79,14 +81,16 @@ public class CompradorExpediente implements Serializable {
     @Column(name = "CEX_DIRECCION_RTE")
     private String direccionRepresentante;
     
-    @Column(name = "CEX_MUNICIPIO_RTE")
-    private String municipioRepresentante;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_ID_RTE")
+	private Localidad localidadRepresentante;
     
     @Column(name = "CEX_CODIGO_POSTAL_RTE")
     private String codigoPostalRepresentante;
     
-    @Column(name = "CEX_PROVINCIA_RTE")
-    private String provinciaRepresentante;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_ID_RTE")
+	private DDProvincia provinciaRepresentante;
     
     @Column(name="CEX_PORCION_COMPRA")
     private Double porcionCompra;
@@ -95,8 +99,7 @@ public class CompradorExpediente implements Serializable {
     private Integer titularReserva;
     
     @Column(name="CEX_TITULAR_CONTRATACION")
-    private Integer titularContratacion;
-    
+    private Integer titularContratacion;  
    
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ECV_ID")
@@ -234,12 +237,12 @@ public class CompradorExpediente implements Serializable {
 		this.direccionRepresentante = direccionRepresentante;
 	}
 
-	public String getMunicipioRepresentante() {
-		return municipioRepresentante;
+	public Localidad getLocalidadRepresentante() {
+		return localidadRepresentante;
 	}
 
-	public void setMunicipioRepresentante(String municipioRepresentante) {
-		this.municipioRepresentante = municipioRepresentante;
+	public void setLocalidadRepresentante(Localidad localidadRepresentante) {
+		this.localidadRepresentante = localidadRepresentante;
 	}
 
 	public String getCodigoPostalRepresentante() {
@@ -250,11 +253,11 @@ public class CompradorExpediente implements Serializable {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
 	}
 
-	public String getProvinciaRepresentante() {
+	public DDProvincia getProvinciaRepresentante() {
 		return provinciaRepresentante;
 	}
 
-	public void setProvinciaRepresentante(String provinciaRepresentante) {
+	public void setProvinciaRepresentante(DDProvincia provinciaRepresentante) {
 		this.provinciaRepresentante = provinciaRepresentante;
 	}
 

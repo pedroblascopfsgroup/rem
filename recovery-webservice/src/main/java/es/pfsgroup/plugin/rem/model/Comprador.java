@@ -13,6 +13,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -23,8 +24,11 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVFileItem;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
@@ -82,15 +86,23 @@ public class Comprador implements Serializable, Auditable {
     @Column(name = "COM_DIRECCION")
     private String direccion;
     
-    @Column(name = "COM_MUNICIPIO")
-    private String municipio;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_ID")
+	private DDProvincia provincia;
     
     @Column(name = "COM_CODIGO_POSTAL")
-    private String codigoPostal;
+    private String codigoPostal; 
     
-    @Column(name = "COM_PROVINCIA")
-    private String provincia;   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_ID")
+	private Localidad localidad;
+    
+    @OneToOne
+    @JoinColumn(name = "CLC_ID")
+    private ClienteComercial clienteComercial;
    
+    @Column(name = "ID_COMPRADOR_URSUS")
+    private Long idCompradorUrsus;
     
 
 	@Version   
@@ -181,28 +193,12 @@ public class Comprador implements Serializable, Auditable {
 		this.direccion = direccion;
 	}
 
-	public String getMunicipio() {
-		return municipio;
-	}
-
-	public void setMunicipio(String municipio) {
-		this.municipio = municipio;
-	}
-
 	public String getCodigoPostal() {
 		return codigoPostal;
 	}
 
 	public void setCodigoPostal(String codigoPostal) {
 		this.codigoPostal = codigoPostal;
-	}
-
-	public String getProvincia() {
-		return provincia;
-	}
-
-	public void setProvincia(String provincia) {
-		this.provincia = provincia;
 	}
 
 	public Long getVersion() {
@@ -235,9 +231,38 @@ public class Comprador implements Serializable, Auditable {
 
 		return fullName;
 	}
-    
-    
-    
+
+	public ClienteComercial getClienteComercial() {
+		return clienteComercial;
+	}
+
+	public void setClienteComercial(ClienteComercial clienteComercial) {
+		this.clienteComercial = clienteComercial;
+	}
+
+	public DDProvincia getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(DDProvincia provincia) {
+		this.provincia = provincia;
+	}
+
+	public Localidad getLocalidad() {
+		return localidad;
+	}
+
+	public void setLocalidad(Localidad localidad) {
+		this.localidad = localidad;
+	}
+
+	public Long getIdCompradorUrsus() {
+		return idCompradorUrsus;
+	}
+
+	public void setIdCompradorUrsus(Long idCompradorUrsus) {
+		this.idCompradorUrsus = idCompradorUrsus;
+	}    
     
    
 }

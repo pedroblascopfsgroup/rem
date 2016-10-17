@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -44,13 +45,15 @@ public class ComisionDto implements Serializable {
 	private Boolean esDoblePrescripcion;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean esFdv;
-	@Size(max=250)
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String observaciones;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean aceptacion;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;
 	@NotNull(groups = { Insert.class, Update.class })
+	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
+		Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
 	
 	

@@ -29,11 +29,105 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 				defaultType: 'displayfieldbase',
 				cls	: 'panel-base shadow-panel',
 				title: HreRem.i18n('title.posicionamiento.firma'),
-				items : [	
+				items : [
+					{
+			    		xtype: 'gridBaseEditableRow',
+			    		title: HreRem.i18n('title.posicionamiento'),
+					    reference: 'listadoposicionamiento',
+					    idPrincipal: 'expediente.id',
+						bind: {
+							store: '{storePosicionamientos}'
+						},			    
+			    		topBar: true,
+						columns: [
+						
+							{   
+								text: HreRem.i18n('fieldlabel.fecha.aviso'),
+						  		dataIndex: 'fechaAviso',
+					            formatter: 'date("d/m/Y")',
+					        	flex: 1,
+					        	editor: {
+		                  			xtype: 'datefield'
+					        	}
+					       	},
+					       	{   
+					       		text: HreRem.i18n('fieldlabel.fecha.posicionamiento'),
+						  		dataIndex: 'fechaPosicionamiento',
+					            formatter: 'date("d/m/Y")',
+					        	flex: 1,
+					        	editor: {
+		                  			xtype: 'datefield'
+					        	}
+					       	},	
+						   	{
+					            text: HreRem.i18n('fieldlabel.notaria'),
+					            dataIndex: 'idProveedorNotario',
+					            flex: 1,
+					            renderer: function(value) {								        		
+					        		var me = this;					        		
+					        		var comboEditor = me.columns && me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor ? me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor() : me.getEditor ? me.getEditor():null;
+					        		if(!Ext.isEmpty(comboEditor)) {
+						        		var store = comboEditor.getStore(),							        		
+						        		record = store.findRecord("id", value);
+						        		if(!Ext.isEmpty(record)) {								        			
+						        			return record.get("descripcion");								        		
+						        		} else {
+						        			comboEditor.setValue(value);								        			
+						        		}
+					        		}
+								},
+					            editor: {
+					            	xtype: 'comboboxfieldbase',
+					            	addUxReadOnlyEditFieldPlugin: false,
+					            	store: Ext.create('Ext.data.Store',{								        		
+					        			model: 'HreRem.model.ComboBase',
+								    	proxy: {
+									        type: 'uxproxy',
+									        remoteUrl: 'generic/getComboNotarios'	    
+										},
+										autoLoad: true
+									}),					            	
+					            	displayField: 'descripcion',
+			    					valueField: 'id'
+					            }
+						   	},					   
+						   	{
+						   		text: HreRem.i18n('fieldlabel.motivo.aplazamiento'),
+					            dataIndex: 'motivoAplazamiento',
+					            flex: 1,
+					            editor: {
+		                  			xtype: 'textarea'
+					        	}
+						   	}
+						],
+
+					    dockedItems : [
+					        {
+					            xtype: 'pagingtoolbar',
+					            dock: 'bottom',
+					            displayInfo: true,
+					            bind: {
+					                store: '{storePosicionamientos}'
+					            }
+					        }
+			    		],
+			    		
+			    		saveSuccessFn: function() {			    			
+			    			var me = this;
+			    			me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();
+			    			
+			    		},
+			    		
+			    		deleteSuccessFn: function() {
+			    			var me = this;
+			    			me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();			    			
+			    		}
+					},
 					{
 					    xtype		: 'gridBase',
+					    reference	: 'listadoNotarios',
+					    minHeight	: 50,
 					    title: HreRem.i18n('title.notario'),
-					    reference: 'listadoNotarioPosicionamientofirma',
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storeNotarios}'
@@ -41,24 +135,19 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						
 						columns: [
 						   {    text: HreRem.i18n('fieldlabel.nombre'),
-					        	dataIndex: 'nombre',
+					        	dataIndex: 'nombreProveedor',
 					        	flex: 1
 					       },
 						   {
 					            text: HreRem.i18n('header.direccion'),
 					            dataIndex: 'direccion',
 					            flex: 1
-						   },
+						   },	
 						   {
-						   		text: HreRem.i18n('fieldlabel.persona.contacto'),
-					            dataIndex: 'personaContacto',
+					            text: HreRem.i18n('header.provincia'),
+					            dataIndex: 'provincia',
 					            flex: 1
-						   },						   
-						   {
-						   		text: HreRem.i18n('fieldlabel.cargo'),
-					            dataIndex: 'cargo',
-					            flex: 1	
-						   },
+						   },	
 						   {
 						   		text: HreRem.i18n('fieldlabel.telefono'),
 					            dataIndex: 'telefono',
@@ -69,53 +158,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					            dataIndex: 'email',
 					            flex: 1						   
 						   }
-					    ],
-					    listeners: {
-					    	rowdblclick: 'onNotarioDblClick'
-					    }
-					},
-					{
-					    xtype		: 'gridBase',
-					    title: HreRem.i18n('title.posicionamiento'),
-					    reference: 'listadoposicionamiento',
-						cls	: 'panel-base shadow-panel',
-						bind: {
-							store: '{storePosicionamientos}'
-						},									
-						
-						columns: [
-						   {    text: HreRem.i18n('fieldlabel.fecha.aviso'),
-						  		 dataIndex: 'fechaAviso',
-					            formatter: 'date("d/m/Y")',
-					        	flex: 1
-					       },
-						   {
-					            text: HreRem.i18n('fieldlabel.notaria'),
-					            dataIndex: 'notaria',
-					            flex: 1
-						   },
-						   {    text: HreRem.i18n('fieldlabel.fecha.posicionamiento'),
-						  		dataIndex: 'fechaPosicionamiento',
-					            formatter: 'date("d/m/Y")',
-					        	flex: 1
-					       },						   
-						   {
-						   		text: HreRem.i18n('fieldlabel.motivo.aplazamiento'),
-					            dataIndex: 'motivoAplazamiento',
-					            flex: 1						   
-						   }	
-					    ],
-					    dockedItems : [
-					        {
-					            xtype: 'pagingtoolbar',
-					            dock: 'bottom',
-					            displayInfo: true,
-					            bind: {
-					                store: '{storePosicionamientos}'
-					            }
-					        }
-			    		]
-					},
+					    ]
+					}
 //	GRID COMPARECIENTES EN NOMBRE DEL VENDEDOR					
 //					{
 //					    xtype		: 'gridBaseEditableRow',
@@ -160,13 +204,13 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 //							
 //						}
 //					},
-					{
+					/*{
 						xtype: 'button',
 						text: HreRem.i18n('fieldlabel.generar.hoja.datos'),
 					    margin: '10 10 10 10',
 //					    handler: 'onClickBotonFavoritos'
 					    disabled: true // TODO Comités sin definir
-					}
+					}*/
 					
 	
 				]					

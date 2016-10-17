@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Size;
 
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+
 public class OfertaTitularAdicionalDto implements Serializable {
 
 	/**
@@ -13,11 +16,11 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	
 	
 	
-	@Size(max=60)
+	@Size(max=60,groups = { Insert.class, Update.class })
 	private String nombre;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codTipoDocumento;
-	@Size(max=14)
+	@Size(max=14,groups = { Insert.class, Update.class })
 	private String documento;
 	
 	

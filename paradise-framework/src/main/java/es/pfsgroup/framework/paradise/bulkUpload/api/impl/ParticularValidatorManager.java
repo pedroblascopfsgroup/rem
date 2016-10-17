@@ -169,9 +169,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean isActivoPrePublicable(String numActivo){
 		if(isActivoGestionAdmision(numActivo) && isActivoUltimoInformeComercialAceptado(numActivo))
-			return false;
-		else
 			return true;
+		else
+			return false;
 	}
 
 	private Boolean isActivoGestionAdmision(String numActivo){

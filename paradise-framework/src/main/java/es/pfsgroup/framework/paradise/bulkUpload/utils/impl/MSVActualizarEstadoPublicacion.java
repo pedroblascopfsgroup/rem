@@ -34,7 +34,7 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
-	public static final String ACTIVE_NOT_PREPUBLICABLE = "El activo no reúne las condiciones de pre-publicable (Admisión, Gestión, Informe comercial).";
+	public static final String ACTIVE_NOT_PREPUBLICABLE = "El activo no reúne las condiciones para ser publicado (Admisión, Gestión, Informe comercial aceptado).";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -229,8 +229,9 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.isActivoPrePublicable(exc.dameCelda(i, 0)));
+				if(!particularValidator.isActivoPrePublicable(exc.dameCelda(i, 0))){
 					listaFilas.add(i);
+				}
 			}
 			
 			} catch (IllegalArgumentException e) {

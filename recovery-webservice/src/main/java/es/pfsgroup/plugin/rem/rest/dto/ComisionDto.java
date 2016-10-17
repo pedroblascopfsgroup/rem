@@ -45,7 +45,7 @@ public class ComisionDto implements Serializable {
 	private Boolean esDoblePrescripcion;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean esFdv;
-	@Size(max=250)
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String observaciones;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean aceptacion;

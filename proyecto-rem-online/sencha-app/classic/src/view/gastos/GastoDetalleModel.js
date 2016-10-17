@@ -309,6 +309,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			}
     	},
     	
+    	comboEstadosGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoGasto'}
+			}	
+    	},
+    	
     	filtroComboSubtipoTrabajo: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -348,6 +357,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	          	 groupField: 'descripcionTipo'
     		}
     	}
-    	
+
   
 });

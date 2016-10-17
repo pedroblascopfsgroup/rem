@@ -2202,63 +2202,62 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	@Override
-	public HashMap<String, List<String>> validateTrabajoPostRequestData(TrabajoDto trabajoDto) {
-		HashMap<String, List<String>> hashErrores = restApi.validateRequestObject(trabajoDto);
+	public HashMap<String, String> validateTrabajoPostRequestData(TrabajoDto trabajoDto) {
+		HashMap<String, String> hashErrores = restApi.validateRequestObject(trabajoDto);
 		Boolean existe = null;
 		if (Checks.esNulo(trabajoDto.getIdTrabajoWebcom())) {
-			restApi.obtenerMapaErrores(hashErrores, "IdTrabajoWebcom").add(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			hashErrores.put("idTrabajoWebcom",RestApi.REST_MSG_MISSING_REQUIRED);
 
 		} else {
 
 			existe = existsTrabajoByIdTrabajoWebcom(trabajoDto.getIdTrabajoWebcom());
 			if (Checks.esNulo(existe)) {
-				restApi.obtenerMapaErrores(hashErrores, "IdTrabajoWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idTrabajoWebcom",RestApi.REST_MSG_UNKNOWN_KEY);
 
 			} else if (!Checks.esNulo(existe) && existe) {
-				restApi.obtenerMapaErrores(hashErrores, "IdTrabajoWebcom")
-						.add("Ya existe en REM el trabajo con id de webcom IdTrabajoWebcom: "
-								+ trabajoDto.getIdTrabajoWebcom() + ". No se dará de alta.");
+				hashErrores.put("idTrabajoWebcom","Ya existe en REM el trabajo con id de webcom IdTrabajoWebcom: "
+						+ trabajoDto.getIdTrabajoWebcom() + ". No se dará de alta.");
 			} else {
 
 				if (!Checks.esNulo(trabajoDto.getIdActivoHaya())) {
 					Activo activo = (Activo) genericDao.get(Activo.class,
 							genericDao.createFilter(FilterType.EQUALS, "numActivo", trabajoDto.getIdActivoHaya()));
 					if (Checks.esNulo(activo)) {
-						restApi.obtenerMapaErrores(hashErrores, "idActivoHaya").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("idActivoHaya",RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getCodTipoTrabajo())) {
 					DDTipoTrabajo tipotbj = (DDTipoTrabajo) genericDao.get(DDTipoTrabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodTipoTrabajo()));
 					if (Checks.esNulo(tipotbj)) {
-						restApi.obtenerMapaErrores(hashErrores, "codTipoTrabajo").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("codTipoTrabajo",RestApi.REST_MSG_UNKNOWN_KEY);
 					} else if (!Checks.esNulo(tipotbj)
 							&& !tipotbj.getCodigo().equalsIgnoreCase(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) {
-						restApi.obtenerMapaErrores(hashErrores, "codTipoTrabajo").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("codTipoTrabajo",RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getCodSubtipoTrabajo())) {
 					DDSubtipoTrabajo subtipotbj = (DDSubtipoTrabajo) genericDao.get(DDSubtipoTrabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodSubtipoTrabajo()));
 					if (Checks.esNulo(subtipotbj)) {
-						restApi.obtenerMapaErrores(hashErrores, "codSubtipoTrabajo").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("codSubtipoTrabajo",RestApi.REST_MSG_UNKNOWN_KEY);
 					} else if (!Checks.esNulo(subtipotbj) && !subtipotbj.getCodigoTipoTrabajo()
 							.equalsIgnoreCase(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) {
-						restApi.obtenerMapaErrores(hashErrores, "codSubtipoTrabajo").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("codSubtipoTrabajo",RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getIdUsuarioRemAccion())) {
 					Usuario user = (Usuario) genericDao.get(Usuario.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdUsuarioRemAccion()));
 					if (Checks.esNulo(user)) {
-						restApi.obtenerMapaErrores(hashErrores, "idUsuarioRem").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("idUsuarioRem",RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getIdProveedorRemResponsable())) {
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
 							.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRemResponsable()));
 					if (Checks.esNulo(apiResp)) {
-						restApi.obtenerMapaErrores(hashErrores, "idApiResponsable").add(RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("idApiResponsable",RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				// Validamos que no vengan los 2 campos a true
@@ -2266,8 +2265,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						&& trabajoDto.getUrgentePrioridadRequiriente()
 						&& !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 						&& trabajoDto.getRiesgoPrioridadRequiriente()) {
-					restApi.obtenerMapaErrores(hashErrores, "urgentePrioridadRequiriente").add(
-							"Sólo uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente puede valer true.");
+					hashErrores.put("urgentePrioridadRequiriente","Sólo uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente puede valer true.");
 				}
 
 				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
@@ -2275,22 +2273,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 					// Validamos que no venga fecha concreta
 					if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
-						restApi.obtenerMapaErrores(hashErrores, "fechaPrioridadRequiriente").add(
-								"El campo fechaPrioridadRequiriente debe ser null ya que fechaPrioridadRequirienteEsExacta es true.");
+						hashErrores.put("fechaPrioridadRequiriente","El campo fechaPrioridadRequiriente debe ser null ya que fechaPrioridadRequirienteEsExacta es true.");
 					}
 					// Validamos que no vengan los 2 campos a null
 					if (Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
 							&& Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())) {
-						restApi.obtenerMapaErrores(hashErrores, "urgentePrioridadRequiriente").add(
-								"Los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente son nulos. Al menos uno de los 2 campos debe ser True si fechaPrioridadRequirienteEsExacta = true.");
+						hashErrores.put("urgentePrioridadRequiriente","Los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente son nulos. Al menos uno de los 2 campos debe ser True si fechaPrioridadRequirienteEsExacta = true.");
 					}
 					// Validamos que no vengan los 2 campos a false
 					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
 							&& !trabajoDto.getUrgentePrioridadRequiriente()
 							&& !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 							&& !trabajoDto.getRiesgoPrioridadRequiriente()) {
-						restApi.obtenerMapaErrores(hashErrores, "urgentePrioridadRequiriente").add(
-								"Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
+						hashErrores.put("urgentePrioridadRequiriente","Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
 					}
 					// Validamos que no venga 1 campo a null y el otro a false
 					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
@@ -2299,8 +2294,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							|| !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 									&& !trabajoDto.getRiesgoPrioridadRequiriente()
 									&& Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())) {
-						restApi.obtenerMapaErrores(hashErrores, "urgentePrioridadRequiriente").add(
-								"Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
+						hashErrores.put("urgentePrioridadRequiriente","Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
 					}
 				}
 			}

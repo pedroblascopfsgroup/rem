@@ -471,7 +471,7 @@ public interface TrabajoApi {
 		 * @param TrabajoDto con los parametros de entrada
 		 * @return List<String> 
 		 */
-	    public HashMap<String, List<String>> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
+	    public HashMap<String, String> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
 
 	    /**
 		 * Devuelve un DtoFichaTrabajo a partir del TrabajoDto pasado por parámetros

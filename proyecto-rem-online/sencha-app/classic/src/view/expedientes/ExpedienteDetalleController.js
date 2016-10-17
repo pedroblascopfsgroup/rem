@@ -714,14 +714,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		idCliente = record.get("id"),
 		model = Ext.create('HreRem.model.FichaComprador');
 		
-		var fieldset =  me.lookupReference('estadoPbcCompradoRef');
-		fieldset.mask(HreRem.i18n("msg.mask.loading"));
+//		var fieldset =  me.lookupReference('estadoPbcCompradoRef');
+//		fieldset.mask(HreRem.i18n("msg.mask.loading"));
 	
 		model.setId(idCliente);
 		model.load({			
 		    success: function(record) {	
 		    	me.getViewModel().set("detalleComprador", record);
-		    	fieldset.unmask();
+//		    	fieldset.unmask();
 		    }
 		});
 	},
@@ -970,35 +970,50 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	buscarNumeroUrsus: function(field, e){
 		var me= this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/buscarNumeroUrsus');
-		var numCompradorUrsus= field.getValue();
 		var parent= field.up('datoscompradorwindow');
 		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
+		var numeroDocumento= field.up('formBase').down('[reference=numeroDocumento]').getValue();
 		var data;
 		
-		Ext.Ajax.request({
-		    			
-		    		     url: url,
-		    		     params: {numCompradorUrsus: numCompradorUrsus, tipoDocumento: tipoDocumento},
-		    			method: 'GET',
-		    		     success: function(response, opts) {
-		    		    	 data = Ext.decode(response.responseText);
-		    		    	 
-		    		    	 if(!Utils.isEmptyJSON(data.data)){
-		    		    	 	me.abrirDatosClienteUrsus(data.data, parent);
+		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento)){
 		
-		    		    	 }
-		    		    	 else{
-		    		    	 	me.fireEvent("errorToast", data.msg);
-		    		    	 }
-		    		    	 
-		    		     },
-		    		     failure: function(response) {
-							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    		     },
-		    		     callback: function(options, success, response){
-		    		     }
-		    		     
-		});
+			Ext.Ajax.request({
+			    			
+			    		     url: url,
+			    		     params: {numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento},
+			    			method: 'GET',
+			    		     success: function(response, opts) {
+			    		    	 data = Ext.decode(response.responseText);
+			    		    	 
+			    		    	 if(!Utils.isEmptyJSON(data.data)){
+			    		    	 	var numeroCliente= data.data.numeroClienteUrsus;
+			    		    	 	var form= parent.down('formBase');
+			    		    	 	var fieldNumeroClienteUrsus= form.down('[reference=numeroClienteUrsusRef]');
+			    		    	 	if(Ext.isEmpty(numeroCliente)){
+			    		    	 			fieldNumeroClienteUrsus.setValue('');
+			    		    	 	}
+			    		    	 	else{
+			    		    	 		fieldNumeroClienteUrsus.setValue(numeroCliente);
+			    		    	 	}
+			    		    	 	me.abrirDatosClienteUrsus(data.data, parent);
+			
+			    		    	 }
+			    		    	 else{
+			    		    	 	me.fireEvent("errorToast", data.msg);
+			    		    	 }
+			    		    	 
+			    		     },
+			    		     failure: function(response) {
+								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    		     },
+			    		     callback: function(options, success, response){
+			    		     }
+			    		     
+			});
+		}
+		else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));	
+		}
 			
 	},
 	

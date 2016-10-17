@@ -1507,6 +1507,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			if(!Checks.esNulo(comprador)){
 				
+				if(!Checks.esNulo(dto.getNumeroClienteUrsus())){
+					comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+				}
+				
 				if(!Checks.esNulo(dto.getCodTipoPersona())){
 					DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
 					comprador.setTipoPersona(tipoPersona);
@@ -1862,9 +1866,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 			ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 			
-			
-			
-			
+			if(!Checks.esNulo(dto.getNumeroClienteUrsus())){
+				comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+			}
+					
 			if(!Checks.esNulo(dto.getCodTipoPersona())){
 				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
 				comprador.setTipoPersona(tipoPersona);
@@ -2154,7 +2159,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return proveedorDto;
 	}
 	
-	public DatosClienteDto buscarNumeroUrsus(Long numCompradorUrsus, String tipoDocumento) throws Exception{
+	public DatosClienteDto buscarNumeroUrsus(String numeroDocumento, String tipoDocumento) throws Exception{
 		
 		DtoClienteUrsus compradorUrsus= new DtoClienteUrsus();
 		DatosClienteDto dtoDatosCliente= new DatosClienteDto();
@@ -2174,8 +2179,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			if (DDTiposDocumentos.OTROS_PESONA_JURIDICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
 		}
 		
-		if(!Checks.esNulo(numCompradorUrsus)){
-			compradorUrsus.setNumDocumento(numCompradorUrsus.toString());
+		if(!Checks.esNulo(numeroDocumento)){
+			compradorUrsus.setNumDocumento(numeroDocumento.toString());
 		}
 		compradorUrsus.setTipoDocumento(tipoDoc);
 		compradorUrsus.setQcenre(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
@@ -2185,7 +2190,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			//dtoDatosCliente.rellenarDatosDummies();
 			dtoDatosCliente= uvemManager.ejecutarDatosClientePorDocumento(compradorUrsus);
 			if(Checks.esNulo(dtoDatosCliente.getDniNifDelTitularDeLaOferta())){
-				throw new JsonViewerException("Cliente no encontrado en Bankia");
+				throw new JsonViewerException("Cliente Ursus no encontrado");
 			}
 		}
 		catch (JsonViewerException e) {

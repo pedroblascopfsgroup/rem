@@ -39,6 +39,7 @@ public class DatosClienteDto {
 	 private String NombreDePaisNacionalidad;
 	 private String NombreDePaisResidencia;
 	 private String SubsectorDeActividadEconomica;
+	 private String numeroClienteUrsus;
 	 
 	public String getClaseDeDocumentoIdentificador() {
 		return ClaseDeDocumentoIdentificador;
@@ -261,6 +262,12 @@ public class DatosClienteDto {
 	}
 	public void setSubsectorDeActividadEconomica(String subsectorDeActividadEconomica) {
 		SubsectorDeActividadEconomica = subsectorDeActividadEconomica;
+	}	
+	public String getNumeroClienteUrsus() {
+		return numeroClienteUrsus;
+	}
+	public void setNumeroClienteUrsus(String numeroClienteUrsus) {
+		this.numeroClienteUrsus = numeroClienteUrsus;
 	}
 	
 	public void rellenarDatosDummies(){
@@ -301,7 +308,8 @@ public class DatosClienteDto {
 		setNombreDePoblacionDeNacimiento("Población nacimiento");
 		setNombreDePaisNacionalidad("Pais nacionalidad");
 		setNombreDePaisResidencia("Pais residencia");
-		setSubsectorDeActividadEconomica("Subsector actividad");		
+		setSubsectorDeActividadEconomica("Subsector actividad");
+		setNumeroClienteUrsus("20401");
 	}
 
 }

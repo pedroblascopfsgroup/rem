@@ -22,6 +22,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
                 	{
 					    xtype		: 'gridBase',
 					    topBar		: true,
+					    disableRemoveButton: true,
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						bind: {

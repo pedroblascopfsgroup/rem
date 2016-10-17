@@ -343,6 +343,6 @@ public interface ExpedienteComercialApi {
 		 * @param numCompradorUrsus
 		 * @return DatosClienteDto
 		 */
-		public DatosClienteDto buscarNumeroUrsus(Long numCompradorUrsus, String tipoDocumento) throws Exception;
+		public DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento) throws Exception;
 }
 

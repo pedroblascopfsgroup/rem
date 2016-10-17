@@ -844,9 +844,9 @@ public class ExpedienteComercialController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView buscarNumeroUrsus(@RequestParam Long numCompradorUrsus,@RequestParam String tipoDocumento, ModelMap model) {
+	public ModelAndView buscarNumeroUrsus(@RequestParam String numeroDocumento,@RequestParam String tipoDocumento, ModelMap model) {
 		try {		
-			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numCompradorUrsus, tipoDocumento));
+			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numeroDocumento, tipoDocumento));
 			model.put("success", true);
 			
 		} 

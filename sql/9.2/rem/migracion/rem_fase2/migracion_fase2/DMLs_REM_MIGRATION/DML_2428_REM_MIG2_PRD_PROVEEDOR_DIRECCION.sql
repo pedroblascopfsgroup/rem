@@ -125,6 +125,7 @@ BEGIN
             EXECUTE IMMEDIATE '
                   DELETE FROM '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS
                   WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
+                  AND DICCIONARIO = ''DD_TDP_TIPO_DIR_PROVEEDOR''
             '
             ;
             
@@ -179,13 +180,14 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS TIPOS DE VIA EXISTEN EN '||V_ESQUEMA_MASTER||'.DD_TVI_TIPO_VIA');    
       ELSE
             
-            DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_2||' TIPOS DE VIA INEXISTENTES EN DD_TVI_TIPO_VIA. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS.');
+            DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_3||' TIPOS DE VIA INEXISTENTES EN DD_TVI_TIPO_VIA. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS.');
             
             --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
             
             EXECUTE IMMEDIATE '
                   DELETE FROM '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS
                   WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
+                  AND DICCIONARIO = ''DD_TVI_TIPO_VIA''
             '
             ;
             
@@ -311,7 +313,7 @@ BEGIN
             END IF;       
             
             IF TABLE_COUNT_3 != 0 THEN    
-                  V_OBSERVACIONES := V_OBSERVACIONES ||  ' Hay, '||TABLE_COUNT_2||'  DD_TVI_TIPO_VIA inexistentes. ';    
+                  V_OBSERVACIONES := V_OBSERVACIONES ||  ' Hay, '||TABLE_COUNT_3||'  DD_TVI_TIPO_VIA inexistentes. ';    
             END IF;      
       END IF;
       

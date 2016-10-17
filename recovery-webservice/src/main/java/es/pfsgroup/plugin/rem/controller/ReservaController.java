@@ -64,11 +64,11 @@ public class ReservaController {
 			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
 			reservaDto = jsonData.getData();
 
-			HashMap<String, List<String>> errorList = restApi.validateRequestObject(reservaDto, TIPO_VALIDACION.INSERT);
+			HashMap<String, String> errorList = restApi.validateRequestObject(reservaDto, TIPO_VALIDACION.INSERT);
 
 			if (errorList != null && errorList.isEmpty()) {
 				Double importeReserva = null;
-				Activo activo = activoApi.getByNumActivo(reservaDto.getActivo());
+				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
 				List<ActivoOferta> listaActivoOferta = activo.getOfertas();
 				boolean isAccepted = false;
 				int i = 0;

@@ -208,6 +208,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return genericDao.get(Activo.class, filter);
 	}
 	
+	
+	@Override
+	public Activo getByNumActivoUvem(Long id){
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivoUvem", id);
+		return genericDao.get(Activo.class, filter);
+	}
+	
 	@Override
 	@BusinessOperation(overrides = "activoManager.saveOrUpdate")
 	@Transactional
@@ -1870,7 +1877,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			throw new Exception("No se ha podido obtener la tasación");
+			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
 		}
 		
 		if(!Checks.esNulo(tasacionID)){
@@ -1899,7 +1906,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				return false;
 			}
 		} else {
-			throw new Exception("No se ha podido obtener la tasación");
+			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
 		}
 
 		return true;
@@ -1961,7 +1968,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public ArrayList<Map<String, Object>> saveOrUpdate(List<PortalesDto> listaPortalesDto) {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		ActivoSituacionPosesoria activoSituacionPosesoria = null;
 		Map<String, Object> map = null;
 		Activo activo = null;

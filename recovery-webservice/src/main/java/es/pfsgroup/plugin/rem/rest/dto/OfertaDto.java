@@ -39,10 +39,10 @@ public class OfertaDto implements Serializable {
 	private Long idProveedorRemCustodio;
 	private Long idProveedorRemResponsable;
 	private Long idProveedorRemFdv;
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codEstadoOferta;
 	@NotNull(groups = { Insert.class })
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codTipoOferta;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;

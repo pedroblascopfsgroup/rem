@@ -23,6 +23,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -169,10 +170,13 @@ public class RestManagerImpl implements RestApi {
 			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
 
 				if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType().equals(NotNull.class)) {
-					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_MISSING_REQUIRED);
 				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
 						.equals(Diccionary.class)) {
 					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_UNKNOWN_KEY);
+				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
+						.equals(Size.class)) {
+					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_OVERFLOW);
 				} else {
 					error.put(visitaFailure.getPropertyPath().toString(), "DEFAULT");
 				}

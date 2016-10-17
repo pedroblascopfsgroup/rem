@@ -32,8 +32,10 @@ public interface RestApi {
 	public static final String REST_MSG_INVALID_SIGNATURE = "INVALID_SIGNATURE";
 	public static final String REST_MSG_REPETEAD_REQUEST = "REPETEAD_REQUEST";
 	public static final String REST_MSG_MISSING_REQUIRED_FIELDS = "MISSING_REQUIRED_FIELDS";
+	public static final String REST_MSG_MISSING_REQUIRED = "REQUIRED";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
-	public static final String REST_MSG_UNKNOWN_KEY = "UNKNOWN_KEY";
+	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";
+	public static final String REST_MSG_OVERFLOW = "OVERFLOW";
 	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
 	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";
 	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";

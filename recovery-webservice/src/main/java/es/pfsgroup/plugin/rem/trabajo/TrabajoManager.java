@@ -2206,7 +2206,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		HashMap<String, String> hashErrores = restApi.validateRequestObject(trabajoDto);
 		Boolean existe = null;
 		if (Checks.esNulo(trabajoDto.getIdTrabajoWebcom())) {
-			hashErrores.put("idTrabajoWebcom",RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			hashErrores.put("idTrabajoWebcom",RestApi.REST_MSG_MISSING_REQUIRED);
 
 		} else {
 

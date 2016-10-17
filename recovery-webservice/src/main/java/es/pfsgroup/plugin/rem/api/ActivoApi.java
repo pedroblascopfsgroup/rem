@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
@@ -18,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -40,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
 
 public interface ActivoApi {
@@ -56,6 +60,13 @@ public interface ActivoApi {
 	    
 	    @BusinessOperationDefinition("activoManager.saveOrUpdate")
 	    public boolean saveOrUpdate(Activo activo);
+	    
+	    /**
+	     * Guarda o acutaliza una lista de 
+	     * @param listaPortalesDto
+	     * @return
+	     */
+	    public ArrayList<Map<String, Object>> saveOrUpdate(List<PortalesDto> listaPortalesDto);
 	    
 	    @BusinessOperationDefinition("activoManager.upload")
 	    public String upload(WebFileItem fileItem) throws Exception;
@@ -496,9 +507,48 @@ public interface ActivoApi {
 	     * @throws Exception
 	     */
 	    @BusinessOperationDefinition("activoManager.uploadDocumento")
-		String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula) throws Exception;
-	    
+		public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula) throws Exception;
+
 	    /**
+	     * Este método hace una llamada para actualizar el estado de los condicionantes del activo.
+	     * 
+	     * @param idActivo : ID del activo.
+	     * @return Devuelve si la operación ha sido satisfactoria, o no.
+	     */
+		public Boolean updateCondicionantesDisponibilidad(Long idActivo);
+		
+		/**
+		 * Este método comprueba si el activo tiene los check de admisión y gestión
+		 * @param tareaExterna
+		 * @return devuelve true si tiene los check activos, false en caso contrario
+		 */
+		public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna);
+
+		/**
+		 * Este método obtiene una lista de reglas de publicación automática.
+		 * 
+		 * @return Devuelve una lista de DTOReglasPublicacionAutomatica con los datos obtenidos.
+		 */
+		public List<DtoReglasPublicacionAutomatica> getReglasPublicacionAutomatica(DtoReglasPublicacionAutomatica dto);
+
+		/**
+		 * Este método crea una regla de publicación automática en la DB. 
+		 * 
+		 * @param dto : DTO con los parámetros a almacenar.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public boolean createReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto);
+
+		/**
+		 * Este método borra de manera lógica una regla de publicación automática en la DB
+		 * por el ID de la regla.
+		 * 
+		 * @param dto : DTO con el ID de la regla a borrar.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public boolean deleteReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto);
+
+		/**
 		 * Devuelve la lista de proveedores para un activo
 		 * @param idActivo
 		 * @return

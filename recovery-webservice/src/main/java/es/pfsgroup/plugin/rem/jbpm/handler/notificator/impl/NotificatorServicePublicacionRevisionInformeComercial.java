@@ -47,7 +47,7 @@ public class NotificatorServicePublicacionRevisionInformeComercial extends Abstr
 
 	@Override
 	public void notificator(ActivoTramite tramite) {
-		
+		/*
 		if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto()) && !Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getEmail())) {
 			
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
@@ -78,7 +78,9 @@ public class NotificatorServicePublicacionRevisionInformeComercial extends Abstr
 				  
 			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+			
 		}
+		*/
 	}
 	
 	@Override

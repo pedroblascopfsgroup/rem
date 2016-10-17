@@ -12,6 +12,7 @@ public class Notificacion {
 	String descripcion;
 	String strFecha;
 	Date fecha;
+	Long idTareaAppExterna;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -54,5 +55,12 @@ public class Notificacion {
 	}
 	public void setIdsNotificacionCreada(List<Long> idsNotificacionCreada) {
 		this.idsNotificacionCreada = idsNotificacionCreada;
+	}
+	public Long getIdTareaAppExterna() {
+		return idTareaAppExterna;
+	}
+	public void setIdTareaAppExterna(Long idTareaAppExterna) {
+		this.idTareaAppExterna = idTareaAppExterna;
 	}	
+	
 }

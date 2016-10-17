@@ -46,7 +46,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 													value: '{gasto.buscadorNifEmisor}'
 												},
 												allowBlank: false,
-												
+												readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
 												triggers: {
 													
 														buscarEmisor: {

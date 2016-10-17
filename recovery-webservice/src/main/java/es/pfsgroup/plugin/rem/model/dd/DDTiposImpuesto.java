@@ -30,6 +30,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTiposImpuesto implements Auditable, Dictionary {
 	
+	public final static String TIPO_IMPUESTO_IVA = "01";
+	public final static String TIPO_IMPUESTO_ITP = "02";
+	public final static String TIPO_IMPUESTO_IGIC = "03";
+	public final static String TIPO_IMPUESTO_IPSI = "04";
+	
 
 	private static final long serialVersionUID = 1L;
 

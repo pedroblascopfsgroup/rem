@@ -98,19 +98,44 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	height: 90,
 		                	layout: 'vbox',
 		                	items: [
-		                				{
-					                		xtype: 'displayfieldbase',
-					                		fieldLabel:  HreRem.i18n('fieldlabel.comite'),
-					                		bind: {
-					                			value : '{datosbasicosoferta.comite}'
-					                		}   		
-					                	},		                	
-					                	{
-					                		xtype: 'button',
-					                		text: HreRem.i18n('fieldlabel.verificar.comite'),
-					                		margin: '0 10 0 0',
-					                		disabled: true // TODO Comités sin definir
-					                	}
+						                {
+						                	xtype: 'comboboxfieldbase',
+						                	fieldLabel:  HreRem.i18n('fieldlabel.comite.seleccionado'),
+						                	reference: 'comboComiteSeleccionado',
+						                	bind: {
+												store: '{comboComites}',
+												value: '{datosbasicosoferta.comiteSancionadorCodigo}'
+											}
+						                },
+						                {
+						                	xtype: 'container',
+						                	bind: { 
+						                		hidden: '{!esCarteraBankia}'
+						                	},
+						                	layout: 'hbox',
+						                	items: [
+						                	    
+								                {
+								                	xtype: 'comboboxfieldbase',
+								                	fieldLabel:  HreRem.i18n('fieldlabel.comite.propuesto'),
+								                	reference: 'comboComitePropuesto',
+								                	readOnly: true,								                	
+								                	bind: {
+														store: '{comboComites}',
+														value: '{datosbasicosoferta.comitePropuestoCodigo}',
+														hidden: '{!datosbasicosoferta.comitePropuestoCodigo}'
+													}
+								                },
+								                {
+							                		xtype: 'button',
+							                		text: HreRem.i18n('btn.consultar.comite'),
+							                		handler: 'consultarComiteSancionador',
+							                		margin: '0 40 0 0'
+					                			}
+						                	]
+						                	
+						                }
+
 		                	]
 		                		
 		                	

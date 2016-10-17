@@ -364,7 +364,30 @@
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkSinRiesgoReputacional(tareaExterna);
             }
-
+			def checkRiesgoReputacional = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkRiesgoReputacional(tareaExterna);
+			}
+			def checkImporte = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkImporte(tareaExterna);
+			}
+			def checkCompradores = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkCompradores(tareaExterna);
+			}
+			def checkConflictoIntereses = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkConflictoIntereses(tareaExterna);
+			}
+            def comprobarPropuestaPrecios = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.comprobarPropuestaPrecios(tareaExterna);
+            }
+			def checkAdmisionAndGestion = {
+				def activoManager = ctx.getBean("activoManager");
+				return activoManager.checkAdmisionAndGestion(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -97,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
@@ -165,6 +169,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private PropuestaPrecioDao propuestaDao;
+	
+	@Resource
+	MessageService messageServices;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -916,15 +926,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		// Tramite de actualizacion de precios / propuesta descuento
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T009");
 		}
 		// Tramite de bloqueo de precios
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
 		}
-
+		// Tramite de desbloqueo de precios
+		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_PRECIOS_DESBLOQUEAR_ACTIVOS)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+		}
 		// Tramite de actualizacion de precios / carga de precios
-		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS)) {
+		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+		}
+		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS_DESCUENTO)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
 		}
 
@@ -2386,24 +2402,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-		return dtoFichaTrabajo;
-	}
-
-	@Override
-	public Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna) {
-		Trabajo trabajo = null;
-		TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
-		if (!Checks.esNulo(tareaActivo)) {
-			ActivoTramite tramite = tareaActivo.getTramite();
-			if (!Checks.esNulo(tramite)) {
-				trabajo = tramite.getTrabajo();
-			}
-		}
-		return trabajo;
-	}
-
+	   }
+	   
+	   return dtoFichaTrabajo;
+   }
+   
+   @Override
+   public Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna){
+	   Trabajo trabajo = null;
+	   TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
+	   if(!Checks.esNulo(tareaActivo)){
+		   ActivoTramite tramite = tareaActivo.getTramite();
+		   if(!Checks.esNulo(tramite)){
+			   trabajo = tramite.getTrabajo();
+		   }
+	   }
+	   return trabajo;   
+   }
+   
 	@Override
 	public boolean checkFormalizacion(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -2411,19 +2427,27 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Activo primerActivo = trabajo.getActivo();
 			if (!Checks.esNulo(primerActivo)) {
 				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(primerActivo.getId());
-				return (perimetro.getAplicaFormalizar() == 1);
+				return (Integer.valueOf(1).equals(perimetro.getAplicaFormalizar()));
 			}
 		}
 		return false;
 	}
 
+   	//TODO: Dani: Cuando estén definidas y desarrolladas las atribuciones, hay que desarrollar estos dos métodos. ¿Meterlos en OfertaApi?
+
+	
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		return false;
 	}
 
 	@Override
-	public boolean checkSareb(TareaExterna tareaExterna) {
+	public boolean checkAtribuciones(Trabajo trabajo) {
+		return false;
+	}
+	
+	@Override
+	public boolean checkSareb(TareaExterna tareaExterna){
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
@@ -2432,5 +2456,34 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean checkSareb(Trabajo trabajo){
+		if(!Checks.esNulo(trabajo)){
+			Activo primerActivo = trabajo.getActivo();
+			if(!Checks.esNulo(primerActivo)){
+				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera()));
+			}
+		}
+		return false;
+	}
+   
+	public String comprobarPropuestaPrecios(TareaExterna tareaExterna) {
+		
+		String mensaje = new String();
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		
+		if(!propuestaDao.existePropuestaEnTrabajo(trabajo.getId())) {
+			mensaje = mensaje.concat(
+					messageServices.getMessage("tramite.propuestaPrecios.GenerarPropuesta.validacionPre.propuesta"));
+		}
+		
+		if (!Checks.esNulo(mensaje)) {
+			mensaje = messageServices.getMessage("tramite.propuestaPrecios.GenerarPropuesta.validacionPre.debeRealizar")
+					.concat(mensaje);
+		}
+		
+		return mensaje;
 	}
 }

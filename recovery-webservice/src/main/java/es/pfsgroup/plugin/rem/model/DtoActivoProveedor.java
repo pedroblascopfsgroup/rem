@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
-import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -13,7 +12,7 @@ public class DtoActivoProveedor extends WebDto {
 
 	// Datos generales.
 	private Date fechaUltimaActualizacion;
-	private String id;
+	private Long id;
 	private String nombreProveedor;
 	private Date fechaAltaProveedor;
 	private String tipoProveedorCodigo;
@@ -50,6 +49,17 @@ public class DtoActivoProveedor extends WebDto {
 	private Date fechaProceso;
 	private String resultadoBlanqueoCodigo;
 	
+	private String direccion;
+	
+	private String telefono;
+	
+	private String provincia;
+	
+	private String email;
+	
+	
+	
+	
 	
 	public Date getFechaUltimaActualizacion() {
 		return fechaUltimaActualizacion;
@@ -57,10 +67,10 @@ public class DtoActivoProveedor extends WebDto {
 	public void setFechaUltimaActualizacion(Date fechaUltimaActualizacion) {
 		this.fechaUltimaActualizacion = fechaUltimaActualizacion;
 	}
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getNombreProveedor() {
@@ -224,6 +234,30 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setResultadoBlanqueoCodigo(String resultadoBlanqueoCodigo) {
 		this.resultadoBlanqueoCodigo = resultadoBlanqueoCodigo;
+	}
+	public String getDireccion() {
+		return direccion;
+	}
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+	public String getTelefono() {
+		return telefono;
+	}
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+	public String getProvincia() {
+		return provincia;
+	}
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

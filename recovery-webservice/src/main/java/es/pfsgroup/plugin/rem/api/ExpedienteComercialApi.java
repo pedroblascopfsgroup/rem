@@ -7,6 +7,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
@@ -14,12 +15,14 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 
 
 public interface ExpedienteComercialApi {
@@ -81,7 +84,7 @@ public interface ExpedienteComercialApi {
 	     * @return
 		 * @throws Exception 
 	     */
-		public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial);
+		public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) throws Exception;
 		
 		/**
 	     * Actualizar los valores del Expediente Comercial
@@ -222,7 +225,7 @@ public interface ExpedienteComercialApi {
 		 * @param idExpediente
 		 * @return
 		 */
-		public DtoPage getNotariosExpediente(Long idExpediente);
+		public List<DtoActivoProveedor> getNotariosExpediente(Long idExpediente);
 
 		
 		/**
@@ -295,6 +298,51 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+
+
+		/**
+		 * Función que devuelve la propuesta de un comité para un expediente comercial de Bankia
+		 * @param idExpediente
+		 * @return
+		 * @throws Exception 
+		 */
+		public String consultarComiteSancionador(Long idExpediente) throws Exception;
+
+		/**
+		 * Crea un registro de posicionamiento
+		 * @param dto
+		 * @param idEntidad
+		 * @return
+		 */
+		public boolean createPosicionamiento(DtoPosicionamiento dto, Long idEntidad);
+
+		/**
+		 * Actualiza un registro de posicionamiento
+		 * @param dto
+		 * @return
+		 */
+		public boolean savePosicionamiento(DtoPosicionamiento dto);
+
+		/**
+		 * Elimina un registro de posicionamiento
+		 * @param idPosicionamiento
+		 * @return
+		 */
+		public boolean deletePosicionamiento(Long idPosicionamiento);
 		
+		/**
+		 * Método que crea un comprador desde la pestaña compradores del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
+		
+		/**
+		 * Método que devuelve los datos de un comprador de Bankia (WebService Ursus) por número de comprador
+		 * @param numCompradorUrsus
+		 * @return DatosClienteDto
+		 */
+		public DatosClienteDto buscarNumeroUrsus(Long numCompradorUrsus, String tipoDocumento) throws Exception;
 }
 

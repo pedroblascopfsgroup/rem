@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
-    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador'],
+    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 'HreRem.view.expedientes.DatosClienteUrsus'],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -577,23 +577,29 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		models = null,
 		nameModels = null,
 		id = window.idComprador;
-		var form= window.down('formBase');
-		form.mask(HreRem.i18n("msg.mask.loading"));
-		if(!form.saveMultiple) {	
-			model = form.getModelInstance(),
-			model.setId(id);
-			if(Ext.isDefined(model.getProxy().getApi().read)) {
-				// Si la API tiene metodo de lectura (read).
-				model.load({
-				    success: function(record) {
-				    	form.setBindRecord(record);			    	
-				    	form.unmask();
-				    	if(Ext.isFunction(form.afterLoad)) {
-				    		form.afterLoad();
-				    	}
-				    }
-				});
+		if(!Ext.isEmpty(id)){
+			var form= window.down('formBase');
+			form.mask(HreRem.i18n("msg.mask.loading"));
+			if(!form.saveMultiple) {	
+				model = form.getModelInstance(),
+				model.setId(id);
+				if(Ext.isDefined(model.getProxy().getApi().read)) {
+					// Si la API tiene metodo de lectura (read).
+					model.load({
+					    success: function(record) {
+					    	form.setBindRecord(record);			    	
+					    	form.unmask();
+					    	if(Ext.isFunction(form.afterLoad)) {
+					    		form.afterLoad();
+					    	}
+					    }
+					});
+				}
 			}
+		}
+		else{
+			var form= window.down('formBase');
+			form.setBindRecord(Ext.create('HreRem.model.FichaComprador'));		
 		}
 	},
 	
@@ -661,6 +667,46 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
 	
+	},
+	
+	onCreateFormularioComprador: function(idExpediente, form, success, failure){
+		var me = this;
+		var window = btn.up('window');
+		
+		if(form.isFormValid()) {
+			var idExpedienteComercial = idExpediente;
+			form.mask(HreRem.i18n("msg.mask.espere"));
+			
+			if(Ext.isDefined(form.getModelInstance().getProxy().getApi().create)){
+	    			form.getModelInstance().getProxy().extraParams.idExpediente = idExpediente;
+	    			form.getModelInstance().save({
+	    				success: function(a, operation, c){
+	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    				},
+	    				failure: function(a, operation){
+	    					var data = {};
+			                try {
+			                	data = Ext.decode(operation._response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
+	    				},
+	    				callback: function(records, operation, success) {
+//	    					form.reset();
+	    					window.parent.funcionRecargar();
+	    					window.close();
+	    				}
+	    				
+	    			})
+	    		}
+		} else {
+		
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
 	},
 	
 	onCompradoresListClick: function(gridView,record){
@@ -796,6 +842,178 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 		
 	
+	},
+	
+	onClickBotonCerrarComprador: function(btn){
+		var me = this;
+		var window = btn.up("window");
+		window.destroy();
+	},
+	
+	onClickBotonCrearComprador: function(btn){
+		var me = this;	
+		var idExpediente = btn.up('datoscompradorwindow').idExpediente;
+		var window = btn.up().up();
+		var form = window.down("formBase");
+
+		if(form.isFormValid()) {
+			form.mask(HreRem.i18n("msg.mask.espere"));
+			
+			if(Ext.isDefined(form.getModelInstance().getProxy().getApi().create)){
+	    			form.getModelInstance().getProxy().extraParams.idExpediente = idExpediente;
+	    			form.getBindRecord().save({
+	    				success: function(a, operation, c){
+	    					me.getView().unmask();
+	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    					form.reset();
+	    					window.parent.funcionRecargar();
+	    					window.hide();
+	    				},
+	    				failure: function(a, operation){
+	    					me.getView().unmask();
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    					form.reset();
+	    					window.parent.funcionRecargar();
+	    					window.hide();
+	    				}
+	    			})
+	    		}
+		} else {
+		
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+	},
+	
+	abrirFormularioCrearComprador: function(grid) {
+		var me = this,
+		idExpediente = me.getViewModel().get("expediente.id");
+		var ventanaCompradores= grid.up().up();
+		var expediente= me.getViewModel().get("expediente");
+		Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();		
+	},
+	
+	onChangeChainedCombo: function(combo) {
+    	var me = this,
+    	chainedCombo = me.lookupReference(combo.chainedReference);   
+    	
+    	me.getViewModel().notify();
+    	
+    	if(!Ext.isEmpty(chainedCombo.getValue())) {
+			chainedCombo.clearValue();
+    	}
+		
+		chainedCombo.getStore().load({ 			
+			callback: function(records, operation, success) {
+   				if(!Ext.isEmpty(records) && records.length > 0) {
+   					if (chainedCombo.selectFirst == true) {
+	   					chainedCombo.setSelection(1);
+	   				};
+   					chainedCombo.setDisabled(false);
+   				} else {
+   					chainedCombo.setDisabled(true);
+   				}
+			}
+		});
+		
+		if (me.lookupReference(chainedCombo.chainedReference) != null) {
+			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+
+    },
+
+	consultarComiteSancionador: function(btn) {
+		
+		var me = this,
+		comboComitePropuesto = me.lookupReference('comboComitePropuesto');
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/consultarComiteSancionador');
+			Ext.Ajax.request({
+			     url: url,
+			     params:  {idExpediente : me.getViewModel().get("expediente.id")},
+			     success: function(response, opts) {
+			     	var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }  catch (e){ };
+	                
+	                if(data.success === "true") {
+	                	comboComitePropuesto.setValue(data.codigo);           	
+	                }else {
+	                	me.fireEvent("errorToast", data.msg);
+	                }
+			     },
+			     
+			     failure: function(response) {
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+	    		     
+	    	});		
+		
+		
+	
+	},
+	
+	buscarNumeroUrsus: function(field, e){
+		var me= this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/buscarNumeroUrsus');
+		var numCompradorUrsus= field.getValue();
+		var parent= field.up('datoscompradorwindow');
+		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
+		var data;
+		
+		Ext.Ajax.request({
+		    			
+		    		     url: url,
+		    		     params: {numCompradorUrsus: numCompradorUrsus, tipoDocumento: tipoDocumento},
+		    			method: 'GET',
+		    		     success: function(response, opts) {
+		    		    	 data = Ext.decode(response.responseText);
+		    		    	 
+		    		    	 if(!Utils.isEmptyJSON(data.data)){
+		    		    	 	me.abrirDatosClienteUrsus(data.data, parent);
+		
+		    		    	 }
+		    		    	 else{
+		    		    	 	me.fireEvent("errorToast", data.msg);
+		    		    	 }
+		    		    	 
+		    		     },
+		    		     failure: function(response) {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    		     },
+		    		     callback: function(options, success, response){
+		    		     }
+		    		     
+		});
+			
+	},
+	
+	abrirDatosClienteUrsus: function(datosClienteUrsus, parent) {
+		var me = this;
+		parent.setX(Ext.Element.getViewportWidth() / 40);
+		var window = Ext.create('HreRem.view.expedientes.DatosClienteUrsus',{clienteUrsus: datosClienteUrsus});
+		parent.add(window);
+		window.show();
+	},
+	
+	onClickBotonCerrarClienteUrsus: function(btn){
+		var me = this;
+		var window = btn.up("window");
+		window.destroy();
 	}
 
 });

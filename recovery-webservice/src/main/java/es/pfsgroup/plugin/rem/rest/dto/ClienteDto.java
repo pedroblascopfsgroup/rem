@@ -14,8 +14,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -26,17 +24,9 @@ public class ClienteDto implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+
 	@NotNull(groups = { Insert.class, Update.class })
-	private Date fechaAccion;
-	@NotNull(groups = { Insert.class})
-	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
-			Update.class },foreingField="id")
-	private Long idUsuarioRemAccion;
-	@NotNull(groups = { Insert.class, Update.class })
-	@Diccionary(clase = ClienteComercial.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
-			Update.class },foreingField="idClienteWebcom")
 	private Long idClienteWebcom;
-	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteRem;
 	@Size(max=50)
 	private String razonSocial;
@@ -53,6 +43,8 @@ public class ClienteDto implements Serializable{
 	@Size(max=14)
 	private String documento;
 	@Size(max=20)
+	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumentoRepresentante no existe", groups = { Insert.class,
+		Update.class })
 	private String codTipoDocumentoRepresentante;
 	@Size(max=14)
 	private String documentoRepresentante;
@@ -67,7 +59,7 @@ public class ClienteDto implements Serializable{
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
 			Update.class },foreingField="id")
 	private Long idProveedorRemPrescriptor;
-	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemResponsable no existe", groups = { Insert.class,
 			Update.class },foreingField="id")
 	private Long idProveedorRemResponsable;
 	@Size(max=20)
@@ -99,6 +91,12 @@ public class ClienteDto implements Serializable{
 	private String codigoPostal;
 	@Size(max=250)
 	private String observaciones;
+	@NotNull(groups = { Insert.class, Update.class })
+	private Date fechaAccion;
+	@NotNull(groups = { Insert.class, Update.class })
+	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
+		Update.class },foreingField="id")
+	private Long idUsuarioRemAccion;
 	
 	
 	public Date getFechaAccion() {

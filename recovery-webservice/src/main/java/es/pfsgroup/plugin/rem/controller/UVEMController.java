@@ -15,7 +15,9 @@ import com.gfi.webIntegrator.WIException;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
+import es.pfsgroup.plugin.recovery.mejoras.cliente.clienteController;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 
 @Controller
@@ -89,18 +91,51 @@ public class UVEMController {
 			if (qcenre == null || qcenre.isEmpty()) {
 				qcenre = "00000";
 			}
+			DtoClienteUrsus clienteUrsus= new DtoClienteUrsus();
+			clienteUrsus.setNumDocumento(nDocumento);
+			clienteUrsus.setTipoDocumento(tipoDocumento);
+			clienteUrsus.setQcenre(qcenre);
+			
+			DatosClienteDto datosClienteIns = uvemManagerApi.ejecutarDatosClientePorDocumento(clienteUrsus);
+			
+			model.put("ClaseDeDocumentoIdentificador", datosClienteIns.getClaseDeDocumentoIdentificador());
+			model.put("DniNifDelTitularDeLaOferta", datosClienteIns.getDniNifDelTitularDeLaOferta());
+			model.put("NombreYApellidosTitularDeOferta", datosClienteIns.getNombreYApellidosTitularDeOferta());
+			model.put("NombreDelCliente", datosClienteIns.getNombreDelCliente());
+			model.put("PrimerApellido", datosClienteIns.getPrimerApellido());
+			model.put("SegundoApellido", datosClienteIns.getSegundoApellido());
+			model.put("CodigoTipoDeVia", datosClienteIns.getCodigoTipoDeVia());
+			model.put("DenominacionTipoDeViaTrabajo", datosClienteIns.getDenominacionTipoDeViaTrabajo());
+			model.put("NombreDeLaVia", datosClienteIns.getNombreDeLaVia());
+			model.put("PORTAL", datosClienteIns.getPORTAL());
+			model.put("ESCALERA", datosClienteIns.getESCALERA());
+			model.put("PISO", datosClienteIns.getPISO());
+			model.put("NumeroDePuerta", datosClienteIns.getNumeroDePuerta());
+			model.put("CodigoPostal", datosClienteIns.getCodigoPostal());
+			model.put("NombreDelMunicipio", datosClienteIns.getNombreDelMunicipio());
+			model.put("NombreDeLaProvincia", datosClienteIns.getNombreDeLaProvincia());
+			model.put("CodigoDeProvincia", datosClienteIns.getCodigoDeProvincia());
+			model.put("NombreDePaisDelDomicilio", datosClienteIns.getNombreDePaisDelDomicilio());
+			model.put("DatosComplementariosDelDomicilio", datosClienteIns.getDatosComplementariosDelDomicilio());
+			model.put("BarrioColoniaOApartado", datosClienteIns.getBarrioColoniaOApartado());
+			model.put("EdadDelCliente", datosClienteIns.getEdadDelCliente());
+			model.put("CodigoEstadoCivil", datosClienteIns.getCodigoEstadoCivil());
+			model.put("EstadoCivilActual", datosClienteIns.getEstadoCivilActual());
+			model.put("NumeroDeHijos", datosClienteIns.getNumeroDeHijos());
+			model.put("SEXO", datosClienteIns.getSEXO());
+			model.put("NombreComercialDeLaEmpresa", datosClienteIns.getNombreComercialDeLaEmpresa());
+			model.put("DELEGACION", datosClienteIns.getDELEGACION());
+			model.put("TipoDeSociedad", datosClienteIns.getTipoDeSociedad());
+			model.put("CodigoDeSituacionDelCliente", datosClienteIns.getCodigoDeSituacionDelCliente());
+			model.put("NombreDeLaSituacionDelCliente", datosClienteIns.getNombreDeLaSituacionDelCliente());
+			model.put("FechaDeNacimientoOConstitucion", datosClienteIns.getFechaDeNacimientoOConstitucion());
+			model.put("NombreDelPaisDeNacimiento", datosClienteIns.getNombreDelPaisDeNacimiento());
+			model.put("NombreDeLaProvinciaNacimiento", datosClienteIns.getNombreDeLaProvinciaNacimiento());
+			model.put("NombreDePoblacionDeNacimiento", datosClienteIns.getNombreDePoblacionDeNacimiento());
+			model.put("NombreDePaisNacionalidad", datosClienteIns.getNombreDePaisNacionalidad());
+			model.put("NombreDePaisResidencia", datosClienteIns.getNombreDePaisResidencia());
+			model.put("SubsectorDeActividadEconomica", datosClienteIns.getSubsectorDeActividadEconomica());
 
-			// obtenemos el n de cliente interno dado su documento y tipo de
-			// documento
-			Integer numcliente = uvemManagerApi.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-			DatosClienteDto datosClienteIns = uvemManagerApi.ejecutarDatosCliente(numcliente, qcenre);
-			
-			//edad 
-			//model.put("edad", datosClienteIns.getEdadDelClientenuedaw());
-			//EDAD NO SE MAPEA PORQUE NO ESTA ESE CAMPO EN LA TABLA "COM_COMPRADOR"
-			
-			model.put("nombre", datosClienteIns.getNombre());
-			model.put("documento", datosClienteIns.getDocumento());
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());

@@ -49,7 +49,9 @@ $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/DETALLE_ECONOMICO_GASTOS.c
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GESTION_GASTOS.ctl					log=./CTLs_DATs/logs/GESTION_GASTOS.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_IMPUGNACIONES.ctl				log=./CTLs_DATs/logs/GASTOS_IMPUGNACIONES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_INFORMACION_CONTABILIDAD.ctl	log=./CTLs_DATs/logs/GASTOS_INFORMACION_CONTABILIDAD.log
+$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_PROVISIONES.ctl				log=./CTLs_DATs/logs/GASTOS_PROVISIONES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVOS.ctl							log=./CTLs_DATs/logs/ACTIVOS.log
+$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVOS_ESTADOS.ctl					log=./CTLs_DATs/logs/ACTIVOS_ESTADOS.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVOS_DATOS_ALQUILERES.ctl			log=./CTLs_DATs/logs/ACTIVOS_DATOS_ALQUILERES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/AGRUPACIONES.ctl						log=./CTLs_DATs/logs/AGRUPACIONES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PERIMETRO_ACTIVOS.ctl					log=./CTLs_DATs/logs/PERIMETRO_ACTIVOS.log

@@ -26,6 +26,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
 	     },
 	     
+	     esCarteraBankia: function(get) {
+	     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
+	     },
+	     
 	     getTipoExpedienteCabecera: function(get) {
 	     
 	     	var tipoExpedidenteDescripcion =  get('expediente.tipoExpedienteDescripcion');
@@ -322,7 +328,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
 	    },
 
-				storePosicionamientos: {
+		storePosicionamientos: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Posicionamiento',
 	    	proxy: {
@@ -434,7 +440,45 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'canalesPrescripcion'}
 			}
+	    },
+	    
+	    comboProvincia: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'provincias'}
+			}
+	    },
+	    
+	    comboMunicipio: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaCodigo}'}
+			}
+    	},
+    	
+    	comboMunicipioRte: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}
+			}
+    	},
+
+		comboComites: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Honorario',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getComitesByCartera',
+		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+	    	}	    	
 	    }
+	    
 	    
 	
     }

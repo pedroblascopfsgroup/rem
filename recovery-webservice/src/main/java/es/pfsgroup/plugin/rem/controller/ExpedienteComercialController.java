@@ -35,11 +35,13 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -49,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -542,10 +545,9 @@ public class ExpedienteComercialController {
 	public ModelAndView getNotariosExpediente(ModelMap model, Long idExpediente) {
 		
 		try {
-			DtoPage dto= expedienteComercialApi.getNotariosExpediente(idExpediente);
+			List<DtoActivoProveedor> lista = expedienteComercialApi.getNotariosExpediente(idExpediente);
 			
-			model.put("data", dto.getResults());
-			model.put("totalCount", dto.getTotalCount());
+			model.put("data", lista);
 			model.put("success", true);
 			
 		} catch (Exception e) {
@@ -752,6 +754,118 @@ public class ExpedienteComercialController {
 		return createModelAndViewJson(model);
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createComprador(VBusquedaDatosCompradorExpediente vDatosComprador, Long idExpediente){
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.createComprador(vDatosComprador, idExpediente);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView consultarComiteSancionador(@RequestParam Long idExpediente, ModelMap model) {
+		try {		
+			model.put("codigo", expedienteComercialApi.consultarComiteSancionador(idExpediente));
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", "No se ha podido conectar con el servicio");
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createPosicionamiento(DtoPosicionamiento dto, @RequestParam Long idEntidad, ModelMap model) {
+
+		try {
+			boolean success = expedienteComercialApi.createPosicionamiento(dto, idEntidad);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView savePosicionamiento(DtoPosicionamiento dto, ModelMap model) {
+
+		try {
+			boolean success = expedienteComercialApi.savePosicionamiento(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deletePosicionamiento(DtoPosicionamiento dto, ModelMap model) {
+
+		try {
+			boolean success = expedienteComercialApi.deletePosicionamiento(dto.getIdPosicionamiento());
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarNumeroUrsus(@RequestParam Long numCompradorUrsus,@RequestParam String tipoDocumento, ModelMap model) {
+		try {		
+			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numCompradorUrsus, tipoDocumento));
+			model.put("success", true);
+			
+		} 
+		catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+			
+		}	catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", "No se ha podido conectar con el servicio");
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+	
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

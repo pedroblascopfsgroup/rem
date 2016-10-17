@@ -11,7 +11,9 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.impl.AgrupacionValidatorCommonImpl;
@@ -76,9 +78,18 @@ public class AgrupacionValidatorAsistida extends AgrupacionValidatorCommonImpl i
 		}		
 		
 		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
-		if(perimetro.getIncluidoEnPerimetro()==1)
+		if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getIncluidoEnPerimetro()) && perimetro.getIncluidoEnPerimetro()==1){
 			return ERROR_IS_PERIMETRO;
-				
+		}
+		
+		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
+			if(!activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
+				return ERROR_NOT_FINANCIERO;
+			}
+		} else {
+			return ERROR_FINANCIERO_NULL;
+		}
 
 		
 		return "";

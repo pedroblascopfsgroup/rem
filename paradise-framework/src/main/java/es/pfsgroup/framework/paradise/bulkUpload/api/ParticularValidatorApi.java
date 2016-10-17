@@ -20,7 +20,9 @@ public interface  ParticularValidatorApi {
 	
 	public Boolean existeActivo(String numActivo);
 	
-	public Boolean estadoPublicar(String numActivo);
+	public Boolean isActivoPrePublicable(String numActivo);
+	
+	public Boolean estadoNoPublicado(String numActivo);
 	
 	public Boolean estadoOcultaractivo(String numActivo);
 	
@@ -41,6 +43,15 @@ public interface  ParticularValidatorApi {
 	public Boolean esActivoConVentaOferta(String numActivo);
 	
 	public Boolean esActivoIncluidoPerimetro(String numActivo);
+	
+	public Boolean esActivoAsistido (String numActivo);
+	
+	/**
+	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja
+	 * @param numAgrupacion
+	 * @return
+	 */
+	public Boolean esAgrupacionConBaja (String numAgrupacion);
 	
 	/**
 	 * Validacion de Localizacion unica para un grupo de activos

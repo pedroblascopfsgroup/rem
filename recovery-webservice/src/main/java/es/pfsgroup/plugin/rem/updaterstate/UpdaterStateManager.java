@@ -126,6 +126,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				default:
 					break;
 			}
+		} else {
+			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA;
 		}
 		
 		return codigo;

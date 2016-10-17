@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.propuestaprecios.dao;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
@@ -16,4 +19,8 @@ public interface PropuestaPrecioDao extends AbstractDao<PropuestaPrecio, Long>{
 	public Long getNextNumPropuestaPrecio();
 	
 	public Page getListHistoricoPropuestasPrecios(DtoHistoricoPropuestaFilter dtoPropuestaFiltro);
+	
+	public boolean existePropuestaEnTrabajo(Long idTrabajo);
+	
+	public List<BigDecimal> getActivosFromTrabajo(Long idTrabajo);
 }

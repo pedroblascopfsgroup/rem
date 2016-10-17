@@ -29,12 +29,14 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
@@ -60,6 +62,9 @@ public class GastosProveedorController {
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private ProveedoresApi proveedoresApi;
 	
 	
 	/**
@@ -563,6 +568,33 @@ public class GastosProveedorController {
        	}
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getNifProveedorByUsuario(ModelMap model){
+		
+		
+		
+		try {
+			String nif = proveedoresApi.getNifProveedorByUsuarioLogado();
+			
+			if(Checks.esNulo(nif)) {
+				model.put("msg", "No ha sido posible encontrar un proveedor asignado al usuario identificado.");
+				model.put("success", false);
+			} else {
+				model.put("data", nif);
+				model.put("success", true);
+			}
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

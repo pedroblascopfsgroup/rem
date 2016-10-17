@@ -12,8 +12,7 @@ public class PublicacionExcelReport extends AbstractExcelReport implements Excel
 	private static final String CAB_SUBTIPO = "Subtipo";
 	private static final String CAB_CARTERA = "Cartera";
 	private static final String CAB_DIRECCION = "Dirección";
-	private static final String CAB_DESPUBLICADO_FORZADO = "Despublicado Forzado";
-	private static final String CAB_PUBLICADO_FORZADO = "Publicado Forzado";
+	private static final String CAB_ESTADO_PUBLICACION = "Estado publicacion";
 	private static final String CAB_DPTO_ADMISION = "Dpto. Admisión";
 	private static final String CAB_DPTO_GESTION = "Dtpo. Gestion";
 	private static final String CAB_DPTO_PUBLICACION = "Dpto. Publicación";
@@ -34,8 +33,7 @@ public class PublicacionExcelReport extends AbstractExcelReport implements Excel
 		listaCabeceras.add(CAB_SUBTIPO);
 		listaCabeceras.add(CAB_CARTERA);
 		listaCabeceras.add(CAB_DIRECCION);
-		listaCabeceras.add(CAB_DESPUBLICADO_FORZADO);
-		listaCabeceras.add(CAB_PUBLICADO_FORZADO);
+		listaCabeceras.add(CAB_ESTADO_PUBLICACION);
 		listaCabeceras.add(CAB_DPTO_ADMISION);
 		listaCabeceras.add(CAB_DPTO_GESTION);
 		listaCabeceras.add(CAB_DPTO_PUBLICACION);
@@ -55,9 +53,7 @@ public class PublicacionExcelReport extends AbstractExcelReport implements Excel
 			fila.add(publicacion.getSubtipoActivoDescripcion());
 			fila.add(publicacion.getCartera());
 			fila.add(publicacion.getDireccion());
-			fila.add(mapeoYesNo(publicacion.getDespubliForzado()));
-			fila.add(mapeoYesNo(publicacion.getPubliForzado()));
-			fila.add(mapeoBoolean(publicacion.getAdmision()));
+			fila.add(publicacion.getEstadoPublicacionDescripcion());
 			fila.add(mapeoBoolean(publicacion.getGestion()));
 			fila.add(mapeoBoolean(publicacion.getPublicacion()));
 			fila.add(mapeoBoolean(publicacion.getPrecio()));

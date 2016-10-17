@@ -25,10 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
---V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
---V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_TABLA VARCHAR2(40 CHAR) := 'SUB_SUBSANACIONES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_SUB_SUBSANACIONES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -111,21 +109,79 @@ BEGIN
                 USUARIOCREAR            ,
                 FECHACREAR       )
            SELECT
-                S_SUB_SUBSANACIONES.NEXTVAL     ,
-                ECO.ECO_ID                      ,
-                ESU.DD_ESU_ID                   ,
-                SUB_PETICIONARIO                ,
-                SUB_MOTIVO                      ,
-                SUB_FECHA_PETICION              ,
-                SUB_GASTOS_SUBSANACION          ,
-                SUB_GASTOS_INSCRIPCION          ,
-                0                               ,
-                ''MIG2''                        ,
+                '||V_ESQUEMA||'.S_SUB_SUBSANACIONES.NEXTVAL     ,
+                ECO.ECO_ID                                      ,
+                ESU.DD_ESU_ID                                   ,
+                SUB_PETICIONARIO                                ,
+                SUB_MOTIVO                                      ,
+                SUB_FECHA_PETICION                              ,
+                SUB_GASTOS_SUBSANACION                          ,
+                SUB_GASTOS_INSCRIPCION                          ,
+                0                                               ,
+                ''MIG2''                                        ,
                 SYSDATE
            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_NUM_EXPEDIENTE = MIG.SUB_COD_OFERTA
                 LEFT  JOIN '||V_ESQUEMA||'.DD_ESU_ESTADOS_SUBSANACION ESU ON ESU.DD_ESU_CODIGO = MIG.SUB_COD_ESTADO_SUBSANACION';
       EXECUTE IMMEDIATE V_SENTENCIA;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      
+      V_REG_INSERTADOS := SQL%ROWCOUNT;
+      
+      COMMIT;
+      
+      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      
+      -- INFORMAMOS A LA TABLA INFO
+      
+      -- Registros MIG
+      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
+      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
+      
+      -- Registros insertados en REM
+      -- V_REG_INSERTADOS
+      
+      -- Total registros rechazados
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      
+      -- Observaciones
+      IF V_REJECTS != 0 THEN      
+          V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';      
+
+          IF TABLE_COUNT != 0 THEN
+              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay '||TABLE_COUNT||' EXPEDIENTES_ECONOMICOS (OFERTAS) inexistentes. ';
+          END IF;
+        
+      END IF;
+      
+      EXECUTE IMMEDIATE '
+      INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
+        TABLA_MIG,
+        TABLA_REM,
+        REGISTROS_TABLA_MIG,
+        REGISTROS_INSERTADOS,
+        REGISTROS_RECHAZADOS,
+        DD_COD_INEXISTENTES,
+        FECHA,
+        OBSERVACIONES
+      )
+      SELECT
+      '''||V_TABLA_MIG||''',
+      '''||V_TABLA||''',
+      '||V_REG_MIG||',
+      '||V_REG_INSERTADOS||',
+      '||V_REJECTS||',
+      '||V_COD||',
+      SYSDATE,
+      '''||V_OBSERVACIONES||'''
+      FROM DUAL
+      '
+      ;
+      
+      COMMIT;  
                         
 EXCEPTION
       WHEN OTHERS THEN

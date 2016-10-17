@@ -68,7 +68,7 @@ public class ReservaController {
 
 			if (errorList != null && errorList.isEmpty()) {
 				Double importeReserva = null;
-				Activo activo = activoApi.getByNumActivo(reservaDto.getActivo());
+				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
 				List<ActivoOferta> listaActivoOferta = activo.getOfertas();
 				boolean isAccepted = false;
 				int i = 0;

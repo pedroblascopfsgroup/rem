@@ -84,7 +84,7 @@ public interface OfertaApi {
 	 *            actualización
 	 * @return List<String>
 	 */
-	public HashMap<String, List<String>> validateOfertaPostRequestData(OfertaDto ofertaDto, Object jsonFields,
+	public HashMap<String, String> validateOfertaPostRequestData(OfertaDto ofertaDto, Object jsonFields,
 			Boolean alta) throws Exception;
 
 	/**
@@ -94,7 +94,7 @@ public interface OfertaApi {
 	 *            con la información de la Oferta a dar de alta
 	 * @return List<String> con la lista de errores detectados
 	 */
-	public HashMap<String, List<String>> saveOferta(OfertaDto ofertaDto) throws Exception;
+	public HashMap<String,String> saveOferta(OfertaDto ofertaDto) throws Exception;
 
 	/**
 	 * Actualiza una Oferta a partir de la información pasada por parámetro.
@@ -107,7 +107,7 @@ public interface OfertaApi {
 	 *            a null
 	 * @return List<String> con la lista de errores detectados
 	 */
-	public HashMap<String, List<String>> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
+	public HashMap<String,String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception;
 
 	/**

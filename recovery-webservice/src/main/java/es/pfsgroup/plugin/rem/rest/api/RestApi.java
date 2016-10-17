@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +64,7 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public HashMap<String, List<String>> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
+	public HashMap<String, String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion);
 
 	/**
 	 * Valida el pojo pasado a la rest api
@@ -73,9 +72,7 @@ public interface RestApi {
 	 * @param obj
 	 * @return
 	 */
-	public HashMap<String, List<String>> validateRequestObject(Serializable obj);
-
-	public List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad);
+	public HashMap<String, String> validateRequestObject(Serializable obj);
 
 	/**
 	 * Obtiene un operador dada su ip pblica

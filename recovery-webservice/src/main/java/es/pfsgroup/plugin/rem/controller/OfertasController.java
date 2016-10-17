@@ -112,7 +112,7 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas")
 	public void saveOrUpdateOferta(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		OfertaRequestDto jsonData = null;
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		Oferta oferta = null;
 		
 		OfertaDto ofertaDto = null;

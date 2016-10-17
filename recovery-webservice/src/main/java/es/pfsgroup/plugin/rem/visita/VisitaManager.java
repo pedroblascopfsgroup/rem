@@ -176,9 +176,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	}
 
 	@Override
-	public HashMap<String, List<String>> validateVisitaPostRequestData(VisitaDto visitaDto, Object jsonFields,
+	public HashMap<String,String> validateVisitaPostRequestData(VisitaDto visitaDto, Object jsonFields,
 			Boolean alta) throws Exception {
-		HashMap<String, List<String>> hashErrores = null;
+		HashMap<String, String> hashErrores = null;
 
 		if (alta) {
 			hashErrores = restApi.validateRequestObject(visitaDto, TIPO_VALIDACION.INSERT);
@@ -206,70 +206,70 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()));
 			if (Checks.esNulo(cliente)) {
-				restApi.obtenerMapaErrores(hashErrores, "idClienteRem").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
 			Activo activo = (Activo) genericDao.get(Activo.class,
 					genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
 			if (Checks.esNulo(activo)) {
-				restApi.obtenerMapaErrores(hashErrores, "idActivoHaya").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdUsuarioRemAccion())) {
 			Usuario user = (Usuario) genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdUsuarioRemAccion()));
 			if (Checks.esNulo(user)) {
-				restApi.obtenerMapaErrores(hashErrores, "idUsuarioRemAccion").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idUsuarioRemAccion", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getCodEstadoVisita())) {
 			DDEstadosVisita estadoVis = (DDEstadosVisita) genericDao.get(DDEstadosVisita.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", visitaDto.getCodEstadoVisita()));
 			if (Checks.esNulo(estadoVis)) {
-				restApi.obtenerMapaErrores(hashErrores, "codEstadoVisita").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("codEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getCodDetalleEstadoVisita())) {
 			DDSubEstadosVisita subEstVis = (DDSubEstadosVisita) genericDao.get(DDSubEstadosVisita.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", visitaDto.getCodDetalleEstadoVisita()));
 			if (Checks.esNulo(subEstVis)) {
-				restApi.obtenerMapaErrores(hashErrores, "codDetalleEstadoVisita").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
 			ActivoProveedor pres = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdProveedorRemPrescriptor()));
 			if (Checks.esNulo(pres)) {
-				restApi.obtenerMapaErrores(hashErrores, "idProveedorRemPrescriptor").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idProveedorRemPrescriptor", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdProveedorRemResponsable())) {
 			ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdProveedorRemResponsable()));
 			if (Checks.esNulo(apiResp)) {
-				restApi.obtenerMapaErrores(hashErrores, "idProveedorRemResponsable").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idProveedorRemResponsable", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdProveedorRemCustodio())) {
 			ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(apiResp)) {
-				restApi.obtenerMapaErrores(hashErrores, "idProveedorRemCustodio").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdProveedorRemFdv())) {
 			ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdProveedorRemFdv()));
 			if (Checks.esNulo(fdv)) {
-				restApi.obtenerMapaErrores(hashErrores, "idProveedorRemFdv").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdProveedorRemVisita())) {
 			ActivoProveedor pveVisita = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdProveedorRemVisita()));
 			if (Checks.esNulo(pveVisita)) {
-				restApi.obtenerMapaErrores(hashErrores, "idProveedorRemVisita").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idProveedorRemVisita", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 
@@ -278,9 +278,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public HashMap<String, List<String>> saveVisita(VisitaDto visitaDto) throws Exception {
+	public HashMap<String, String> saveVisita(VisitaDto visitaDto) throws Exception {
 		Visita visita = null;
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 
 		// ValidateAlta
 		errorsList = validateVisitaPostRequestData(visitaDto, null, true);
@@ -400,9 +400,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public HashMap<String, List<String>> updateVisita(Visita visita, VisitaDto visitaDto, Object jsonFields)
+	public HashMap<String, String> updateVisita(Visita visita, VisitaDto visitaDto, Object jsonFields)
 			throws Exception {
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 
 		// ValidateUpdate
 		errorsList = validateVisitaPostRequestData(visitaDto, jsonFields, false);
@@ -655,12 +655,12 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		VisitaDto visitaDto = null;
 		Map<String, Object> map = null;
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		Visita visita = null;
 		for (int i = 0; i < listaVisitaDto.size(); i++) {
 
 			Visita vis = null;
-			errorsList = new HashMap<String, List<String>>();
+			errorsList = new HashMap<String,String>();
 			map = new HashMap<String, Object>();
 			visitaDto = listaVisitaDto.get(i);
 

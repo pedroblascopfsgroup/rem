@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -144,13 +143,13 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public HashMap<String, List<String>> validateRequestObject(Serializable obj) {
+	public HashMap<String, String> validateRequestObject(Serializable obj) {
 		return validateRequestObject(obj, null);
 	}
 
 	@Override
-	public HashMap<String, List<String>> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion) {
-		HashMap<String, List<String>> error = new HashMap<String, List<String>>();
+	public HashMap<String, String> validateRequestObject(Serializable obj, TIPO_VALIDACION tipovalidacion) {
+		HashMap<String, String> error = new HashMap<String, String>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Serializable>> constraintViolations = null;
@@ -169,31 +168,17 @@ public class RestManagerImpl implements RestApi {
 		if (!constraintViolations.isEmpty()) {
 			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
 
-				List<String> listaError = obtenerMapaErrores(error, visitaFailure.getPropertyPath().toString());
 				if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType().equals(NotNull.class)) {
-					listaError.add(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
 						.equals(Diccionary.class)) {
-					listaError.add(RestApi.REST_MSG_UNKNOWN_KEY);
+					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_UNKNOWN_KEY);
 				} else {
-					listaError.add("DEFAULT");
+					error.put(visitaFailure.getPropertyPath().toString(), "DEFAULT");
 				}
 			}
 		}
 		return error;
-	}
-
-	@Override
-	public List<String> obtenerMapaErrores(HashMap<String, List<String>> errores, String propiedad) {
-		List<String> mapaErrores = null;
-		if (errores.containsKey(propiedad)) {
-			mapaErrores = errores.get(propiedad);
-		} else {
-			mapaErrores = new ArrayList<String>();
-			errores.put(propiedad, mapaErrores);
-		}
-
-		return mapaErrores;
 	}
 
 	@Override

@@ -1956,7 +1956,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public ArrayList<Map<String, Object>> saveOrUpdate(List<PortalesDto> listaPortalesDto) {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		ActivoSituacionPosesoria activoSituacionPosesoria = null;
 		Map<String, Object> map = null;
 		Activo activo = null;

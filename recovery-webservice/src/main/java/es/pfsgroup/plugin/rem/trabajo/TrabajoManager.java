@@ -169,15 +169,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private OfertaApi ofertaApi;
-	
+
 	@Autowired
 	private PropuestaPrecioDao propuestaDao;
-	
+
 	@Resource
 	MessageService messageServices;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-
 
 	@Override
 	public String managerName() {
@@ -972,7 +971,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());
 		return tramite;
-		
+
 	}
 
 	private DtoFichaTrabajo trabajoToDtoFichaTrabajo(Trabajo trabajo)
@@ -1625,6 +1624,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return trabajoDao.getListActivosAgrupacion(filtro, usuarioLogado);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getSeleccionTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, String cartera, String tipoTrabajo,
 			String subtipoTrabajo) {
@@ -1647,6 +1647,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return new DtoPage(tarifas, page.getTotalCount());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
 
@@ -1666,6 +1667,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return new DtoPage(tarifas, page.getTotalCount());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getPresupuestosTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
 
@@ -2206,16 +2208,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		HashMap<String, String> hashErrores = restApi.validateRequestObject(trabajoDto);
 		Boolean existe = null;
 		if (Checks.esNulo(trabajoDto.getIdTrabajoWebcom())) {
-			hashErrores.put("idTrabajoWebcom",RestApi.REST_MSG_MISSING_REQUIRED);
+			hashErrores.put("idTrabajoWebcom", RestApi.REST_MSG_MISSING_REQUIRED);
 
 		} else {
 
 			existe = existsTrabajoByIdTrabajoWebcom(trabajoDto.getIdTrabajoWebcom());
 			if (Checks.esNulo(existe)) {
-				hashErrores.put("idTrabajoWebcom",RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idTrabajoWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 
 			} else if (!Checks.esNulo(existe) && existe) {
-				hashErrores.put("idTrabajoWebcom","Ya existe en REM el trabajo con id de webcom IdTrabajoWebcom: "
+				hashErrores.put("idTrabajoWebcom", "Ya existe en REM el trabajo con id de webcom IdTrabajoWebcom: "
 						+ trabajoDto.getIdTrabajoWebcom() + ". No se dará de alta.");
 			} else {
 
@@ -2223,41 +2225,41 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					Activo activo = (Activo) genericDao.get(Activo.class,
 							genericDao.createFilter(FilterType.EQUALS, "numActivo", trabajoDto.getIdActivoHaya()));
 					if (Checks.esNulo(activo)) {
-						hashErrores.put("idActivoHaya",RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getCodTipoTrabajo())) {
 					DDTipoTrabajo tipotbj = (DDTipoTrabajo) genericDao.get(DDTipoTrabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodTipoTrabajo()));
 					if (Checks.esNulo(tipotbj)) {
-						hashErrores.put("codTipoTrabajo",RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("codTipoTrabajo", RestApi.REST_MSG_UNKNOWN_KEY);
 					} else if (!Checks.esNulo(tipotbj)
 							&& !tipotbj.getCodigo().equalsIgnoreCase(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) {
-						hashErrores.put("codTipoTrabajo",RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("codTipoTrabajo", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getCodSubtipoTrabajo())) {
 					DDSubtipoTrabajo subtipotbj = (DDSubtipoTrabajo) genericDao.get(DDSubtipoTrabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodSubtipoTrabajo()));
 					if (Checks.esNulo(subtipotbj)) {
-						hashErrores.put("codSubtipoTrabajo",RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("codSubtipoTrabajo", RestApi.REST_MSG_UNKNOWN_KEY);
 					} else if (!Checks.esNulo(subtipotbj) && !subtipotbj.getCodigoTipoTrabajo()
 							.equalsIgnoreCase(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) {
-						hashErrores.put("codSubtipoTrabajo",RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("codSubtipoTrabajo", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getIdUsuarioRemAccion())) {
 					Usuario user = (Usuario) genericDao.get(Usuario.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdUsuarioRemAccion()));
 					if (Checks.esNulo(user)) {
-						hashErrores.put("idUsuarioRem",RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("idUsuarioRem", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getIdProveedorRemResponsable())) {
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
 							.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRemResponsable()));
 					if (Checks.esNulo(apiResp)) {
-						hashErrores.put("idApiResponsable",RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("idApiResponsable", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				// Validamos que no vengan los 2 campos a true
@@ -2265,7 +2267,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						&& trabajoDto.getUrgentePrioridadRequiriente()
 						&& !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 						&& trabajoDto.getRiesgoPrioridadRequiriente()) {
-					hashErrores.put("urgentePrioridadRequiriente","Sólo uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente puede valer true.");
+					hashErrores.put("urgentePrioridadRequiriente",
+							"Sólo uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente puede valer true.");
 				}
 
 				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
@@ -2273,19 +2276,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 					// Validamos que no venga fecha concreta
 					if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
-						hashErrores.put("fechaPrioridadRequiriente","El campo fechaPrioridadRequiriente debe ser null ya que fechaPrioridadRequirienteEsExacta es true.");
+						hashErrores.put("fechaPrioridadRequiriente",
+								"El campo fechaPrioridadRequiriente debe ser null ya que fechaPrioridadRequirienteEsExacta es true.");
 					}
 					// Validamos que no vengan los 2 campos a null
 					if (Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
 							&& Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())) {
-						hashErrores.put("urgentePrioridadRequiriente","Los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente son nulos. Al menos uno de los 2 campos debe ser True si fechaPrioridadRequirienteEsExacta = true.");
+						hashErrores.put("urgentePrioridadRequiriente",
+								"Los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente son nulos. Al menos uno de los 2 campos debe ser True si fechaPrioridadRequirienteEsExacta = true.");
 					}
 					// Validamos que no vengan los 2 campos a false
 					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
 							&& !trabajoDto.getUrgentePrioridadRequiriente()
 							&& !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 							&& !trabajoDto.getRiesgoPrioridadRequiriente()) {
-						hashErrores.put("urgentePrioridadRequiriente","Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
+						hashErrores.put("urgentePrioridadRequiriente",
+								"Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
 					}
 					// Validamos que no venga 1 campo a null y el otro a false
 					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
@@ -2294,7 +2300,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							|| !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 									&& !trabajoDto.getRiesgoPrioridadRequiriente()
 									&& Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())) {
-						hashErrores.put("urgentePrioridadRequiriente","Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
+						hashErrores.put("urgentePrioridadRequiriente",
+								"Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
 					}
 				}
 			}
@@ -2396,24 +2403,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		} catch (Exception e) {
 			e.printStackTrace();
-	   }
-	   
-	   return dtoFichaTrabajo;
-   }
-   
-   @Override
-   public Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna){
-	   Trabajo trabajo = null;
-	   TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
-	   if(!Checks.esNulo(tareaActivo)){
-		   ActivoTramite tramite = tareaActivo.getTramite();
-		   if(!Checks.esNulo(tramite)){
-			   trabajo = tramite.getTrabajo();
-		   }
-	   }
-	   return trabajo;   
-   }
-   
+		}
+
+		return dtoFichaTrabajo;
+	}
+
+	@Override
+	public Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna) {
+		Trabajo trabajo = null;
+		TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
+		if (!Checks.esNulo(tareaActivo)) {
+			ActivoTramite tramite = tareaActivo.getTramite();
+			if (!Checks.esNulo(tramite)) {
+				trabajo = tramite.getTrabajo();
+			}
+		}
+		return trabajo;
+	}
+
 	@Override
 	public boolean checkFormalizacion(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -2427,9 +2434,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return false;
 	}
 
-   	//TODO: Dani: Cuando estén definidas y desarrolladas las atribuciones, hay que desarrollar estos dos métodos. ¿Meterlos en OfertaApi?
+	// TODO: Dani: Cuando estén definidas y desarrolladas las atribuciones, hay
+	// que desarrollar estos dos métodos. ¿Meterlos en OfertaApi?
 
-	
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		return false;
@@ -2439,9 +2446,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean checkAtribuciones(Trabajo trabajo) {
 		return false;
 	}
-	
+
 	@Override
-	public boolean checkSareb(TareaExterna tareaExterna){
+	public boolean checkSareb(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
@@ -2451,33 +2458,76 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean checkSareb(Trabajo trabajo){
-		if(!Checks.esNulo(trabajo)){
+	public boolean checkSareb(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
-			if(!Checks.esNulo(primerActivo)){
+			if (!Checks.esNulo(primerActivo)) {
 				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera()));
 			}
 		}
 		return false;
 	}
-   
+
 	public String comprobarPropuestaPrecios(TareaExterna tareaExterna) {
-		
+
 		String mensaje = new String();
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
-		
-		if(!propuestaDao.existePropuestaEnTrabajo(trabajo.getId())) {
+
+		if (!propuestaDao.existePropuestaEnTrabajo(trabajo.getId())) {
 			mensaje = mensaje.concat(
 					messageServices.getMessage("tramite.propuestaPrecios.GenerarPropuesta.validacionPre.propuesta"));
 		}
-		
+
 		if (!Checks.esNulo(mensaje)) {
 			mensaje = messageServices.getMessage("tramite.propuestaPrecios.GenerarPropuesta.validacionPre.debeRealizar")
 					.concat(mensaje);
 		}
-		
+
 		return mensaje;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public ArrayList<Map<String, Object>> createTrabajos(List<TrabajoDto> listaTrabajoDto) throws Exception {
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		HashMap<String, String> errorsList = null;
+		Map<String, Object> map = null;
+		TrabajoDto trabajoDto = null;
+		DtoFichaTrabajo dtoFichaTrabajo = null;
+		for (int i = 0; i < listaTrabajoDto.size(); i++) {
+
+			Long idTrabajo = null;
+			Trabajo trabajo = null;
+			errorsList = new HashMap<String, String>();
+			map = new HashMap<String, Object>();
+			trabajoDto = listaTrabajoDto.get(i);
+
+			errorsList = this.validateTrabajoPostRequestData(trabajoDto);
+			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
+				dtoFichaTrabajo = this.convertTrabajoDto2DtoFichaTrabajo(trabajoDto);
+				if (!Checks.esNulo(dtoFichaTrabajo)) {
+					idTrabajo = this.create(dtoFichaTrabajo);
+					if (!Checks.esNulo(idTrabajo)) {
+						trabajo = this.findOne(idTrabajo);
+					}
+				}
+			}
+
+			if (!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(trabajo)) {
+				map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
+				map.put("idTrabajoRem", trabajo.getNumTrabajo());
+				map.put("success", true);
+			} else {
+				map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
+				map.put("idTrabajoRem", "");
+				map.put("success", false);
+				map.put("invalidFields", errorsList);
+			}
+			listaRespuesta.add(map);
+
+		}
+		return listaRespuesta;
 	}
 }

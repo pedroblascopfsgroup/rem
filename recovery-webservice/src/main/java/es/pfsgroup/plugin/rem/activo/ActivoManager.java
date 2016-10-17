@@ -1870,7 +1870,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			throw new Exception("No se ha podido obtener la tasación");
+			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
 		}
 		
 		if(!Checks.esNulo(tasacionID)){
@@ -1899,7 +1899,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				return false;
 			}
 		} else {
-			throw new Exception("No se ha podido obtener la tasación");
+			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
 		}
 
 		return true;

@@ -32,6 +32,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
 	     },
 	     
+	     esCarteraSareb: function(get) {
+	     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['SAREB'] == carteraCodigo;
+	     },
+	     
 	     getTipoExpedienteCabecera: function(get) {
 	     
 	     	var tipoExpedidenteDescripcion =  get('expediente.tipoExpedienteDescripcion');

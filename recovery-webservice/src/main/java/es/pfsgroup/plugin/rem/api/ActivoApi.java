@@ -20,7 +20,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -36,9 +35,12 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
@@ -55,6 +57,8 @@ public interface ActivoApi {
 	    public Activo get(Long id);
 	    
 		public Activo getByNumActivo(Long id);
+		
+		public Activo getByNumActivoUvem(Long id);
 	    
 	    @BusinessOperationDefinition("activoManager.saveOrUpdate")
 	    public boolean saveOrUpdate(Activo activo);
@@ -545,4 +549,18 @@ public interface ActivoApi {
 		 * @return Devuelve si la operación ha sido satisfactoria, o no.
 		 */
 		public boolean deleteReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto);
+
+		/**
+		 * Devuelve la lista de proveedores para un activo
+		 * @param idActivo
+		 * @return
+		 */
+	    public List<VBusquedaProveedoresActivo> getProveedorByActivo(Long idActivo);
+	    
+	    /**
+		 * Devuelve la lista de los gastos proveedores para un activo y un proveedor
+		 * @param idActivo
+		 * @return
+		 */
+	    public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor);  
     }

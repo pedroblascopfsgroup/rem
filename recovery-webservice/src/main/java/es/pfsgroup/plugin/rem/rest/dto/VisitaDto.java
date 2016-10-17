@@ -25,10 +25,10 @@ public class VisitaDto implements Serializable {
 	@NotNull(groups = { Insert.class })
 	private Long idActivoHaya;
 	@NotNull(groups = { Insert.class})
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codEstadoVisita;
 	@NotNull(groups = { Insert.class})
-	@Size(max=20)
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codDetalleEstadoVisita;
 	@NotNull(groups = { Insert.class})
 	private Long idProveedorRemPrescriptor;
@@ -37,7 +37,7 @@ public class VisitaDto implements Serializable {
 	private Long idProveedorRemResponsable;
 	private Long idProveedorRemFdv;
 	private Long idProveedorRemVisita;
-	@Size(max=250)
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String observaciones;
 	@NotNull(groups = { Insert.class, Update.class })
 	private Date fechaAccion;

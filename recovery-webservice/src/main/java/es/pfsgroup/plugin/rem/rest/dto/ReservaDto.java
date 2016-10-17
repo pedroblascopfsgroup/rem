@@ -17,7 +17,7 @@ public class ReservaDto implements Serializable{
 	private static final long serialVersionUID = 8290921899779316851L;
 	
 	@NotNull(groups = { Insert.class, Update.class })
-	@Diccionary(clase = Activo.class, message = "El activo no existe", foreingField = "numActivo", groups = {
+	@Diccionary(clase = Activo.class, message = "El activo no existe", foreingField = "numActivoUvem", groups = {
 			Insert.class, Update.class })
 	Long activo;
 	

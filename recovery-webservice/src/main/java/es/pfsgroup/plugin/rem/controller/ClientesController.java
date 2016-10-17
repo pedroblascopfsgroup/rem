@@ -112,7 +112,7 @@ public class ClientesController {
 	public void deleteClienteComercial(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 
 		ClienteRequestDto jsonData = null;
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		ClienteDto clienteDto = null;
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = null;	

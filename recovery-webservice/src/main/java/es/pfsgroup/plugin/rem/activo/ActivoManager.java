@@ -27,6 +27,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.upload.dto.DtoFileUpload;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -83,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -91,8 +93,10 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -101,6 +105,8 @@ import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -1004,7 +1010,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return mensaje;
-
 	}
 	private Activo tareaExternaToActivo(TareaExterna tareaExterna) {
 		Activo activo = null;
@@ -1047,7 +1052,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return true;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean updateCondicionantesDisponibilidad(Long idActivo) {
@@ -1865,7 +1870,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			throw new Exception("No se ha podido obtener la tasación");
+			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
 		}
 		
 		if(!Checks.esNulo(tasacionID)){
@@ -1894,7 +1899,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				return false;
 			}
 		} else {
-			throw new Exception("No se ha podido obtener la tasación");
+			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
 		}
 
 		return true;
@@ -2102,6 +2107,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		genericDao.save(ActivoReglasPublicacionAutomatica.class, arpa);
 		
 		return true;
+	}
+
+	public List<VBusquedaProveedoresActivo> getProveedorByActivo(Long idActivo){
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo",idActivo.toString());
+		List<VBusquedaProveedoresActivo> listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class, filtro);
+		
+		
+		return listadoProveedores;
+		
+	}
+	
+	public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor){
+			
+		List<VBusquedaGastoActivo> vGastosActivos= new ArrayList<VBusquedaGastoActivo>();
+		
+		if(!Checks.esNulo(idActivo) && !Checks.esNulo(idProveedor)){
+			Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo",idActivo);
+			Filter filtroGastoProveedor = genericDao.createFilter(FilterType.EQUALS, "idProveedor",idProveedor);
+			vGastosActivos= genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo,filtroGastoProveedor);
+		}
+		
+		return vGastosActivos;
 	}
 
 }

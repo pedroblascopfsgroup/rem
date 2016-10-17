@@ -151,6 +151,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposDocumentosGasto", DDTipoDocumentoGasto.class);
 		mapa.put("tiposColaborador", DDTiposColaborador.class);
 		mapa.put("canalesPrescripcion", DDCanalPrescripcion.class);
+		mapa.put("estadoGasto", DDEstadoGasto.class);
 //		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 		mapa.put("estadosPublicacion", DDEstadoPublicacion.class);
 		mapa.put("comitesSancion", DDComiteSancion.class);

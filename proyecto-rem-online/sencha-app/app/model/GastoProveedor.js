@@ -46,6 +46,9 @@ Ext.define('HreRem.model.GastoProveedor', {
     		name: 'subtipoGastoCodigo'
     		
     	},
+    	{
+    		name: 'estadoGastoCodigo'
+    	},
 		{
 			name : 'concepto'
 		},

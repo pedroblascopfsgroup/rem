@@ -1,12 +1,15 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
+import net.sf.json.JSONObject;
 
 public interface VisitaApi {
 	
@@ -81,6 +84,14 @@ public interface VisitaApi {
 	 * @return List<String> con la lista de errores detectados
 	 */
 	public HashMap<String, List<String>>  updateVisita(Visita visita, VisitaDto visitaDto, Object jsonFields) throws Exception;
+	
+	
+	/**
+	 * Actualiza una lista de Visitas a partir de la información pasada por parámetro.
+	 * @return
+	 * @throws Exception
+	 */
+	public ArrayList<Map<String, Object>> saveOrUpdateVisitas(List<VisitaDto> listaVisitaDto,JSONObject jsonFields) throws Exception;
 	
 	
 	/**

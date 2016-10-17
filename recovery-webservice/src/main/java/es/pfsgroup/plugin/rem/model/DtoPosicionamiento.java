@@ -23,7 +23,7 @@ public class DtoPosicionamiento extends WebDto {
 
 	private Long idPosicionamiento;
 	private Date fechaAviso;
-	private String notaria;
+	private Long idProveedorNotario;
 	private Date fechaPosicionamiento;
 	private String motivoAplazamiento;
 	
@@ -40,12 +40,6 @@ public class DtoPosicionamiento extends WebDto {
 	public void setFechaAviso(Date fechaAviso) {
 		this.fechaAviso = fechaAviso;
 	}
-	public String getNotaria() {
-		return notaria;
-	}
-	public void setNotaria(String notaria) {
-		this.notaria = notaria;
-	}
 	public Date getFechaPosicionamiento() {
 		return fechaPosicionamiento;
 	}
@@ -57,6 +51,12 @@ public class DtoPosicionamiento extends WebDto {
 	}
 	public void setMotivoAplazamiento(String motivoAplazamiento) {
 		this.motivoAplazamiento = motivoAplazamiento;
+	}
+	public Long getIdProveedorNotario() {
+		return idProveedorNotario;
+	}
+	public void setIdProveedorNotario(Long idProveedorNotario) {
+		this.idProveedorNotario = idProveedorNotario;
 	}
 	
 	

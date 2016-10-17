@@ -17,16 +17,14 @@ Ext.define('HreRem.view.publicacion.PublicacionMain', {
         var me = this;
         
         me.items = [
-		    {	
+		    {
 				xtype: 'activospublicacionmain', reference: 'activosPublicacionMain'
 			},
-			{	
-				xtype: 'configuracionpublicacionmain', reference	: 'configuracionPublicacionMain'				
+			{
+				xtype: 'configuracionpublicacionmain', reference	: 'configuracionPublicacionMain'
 			}
         ];
-        
-        me.callParent(); 
 
-        
+        me.callParent(); 
     }
 });

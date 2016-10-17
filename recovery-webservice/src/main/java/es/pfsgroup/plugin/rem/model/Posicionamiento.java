@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -57,14 +58,15 @@ public class Posicionamiento implements Serializable, Auditable {
 	@Column(name="POS_FECHA_AVISO")
 	private Date fechaAviso;
 	
-	@Column(name="POS_NOTARIA")
-	private String notaria;
-	
 	@Column(name="POS_FECHA_POSICIONAMIENTO")
 	private Date fechaPosicionamiento;
 	
 	@Column(name="POS_MOTIVO_APLAZAMIENTO")
 	private String motivoAplazamiento;
+	
+	@ManyToOne
+	@JoinColumn(name="PVE_ID_NOTARIO")
+	private ActivoProveedor notario;
 
     
     @Version   
@@ -100,14 +102,6 @@ public class Posicionamiento implements Serializable, Auditable {
 		this.fechaAviso = fechaAviso;
 	}
 
-	public String getNotaria() {
-		return notaria;
-	}
-
-	public void setNotaria(String notaria) {
-		this.notaria = notaria;
-	}
-
 	public Date getFechaPosicionamiento() {
 		return fechaPosicionamiento;
 	}
@@ -122,6 +116,14 @@ public class Posicionamiento implements Serializable, Auditable {
 
 	public void setMotivoAplazamiento(String motivoAplazamiento) {
 		this.motivoAplazamiento = motivoAplazamiento;
+	}
+
+	public ActivoProveedor getNotario() {
+		return notario;
+	}
+
+	public void setNotario(ActivoProveedor notario) {
+		this.notario = notario;
 	}
 
 	public Long getVersion() {

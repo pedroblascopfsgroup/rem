@@ -168,7 +168,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'expedientedetallemain': {
     		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
-    		abrirDetalleTramiteTarea : 'abrirDetalleTramiteTarea'
+    		abrirDetalleTramiteTarea : 'abrirDetalleTramiteTarea',
+    		refrescarExpediente: 'refrescarExpedienteComercial'
     	},
     	
     	'configuracionmain': {
@@ -540,6 +541,29 @@ Ext.define('HreRem.controller.ActivosController', {
 		    }
 		});
 
+    },
+    
+    refrescarExpedienteComercial: function (detalle) {
+    	
+    	var me = this,
+    	id = detalle.getViewModel().get("expediente.id");	;
+    	
+    	HreRem.model.ExpedienteComercial.load(id, {
+    		scope: this,
+		    success: function(expediente) {
+		    	
+		    	detalle.getViewModel().set("expediente", expediente);		    	
+		    	detalle.configCmp(expediente);
+		    	
+		    	HreRem.model.ExpedienteAviso.load(id, {
+		    		scope: this,
+				    success: function(avisos) {
+			    		detalle.getViewModel().set("avisos", avisos);				    	
+				    }
+				});
+		    }
+		});
+    	
     },
     
     abrirDetalleExpediente: function(record, refLinks) {

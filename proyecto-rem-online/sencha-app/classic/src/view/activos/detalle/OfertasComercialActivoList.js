@@ -50,6 +50,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        {
 		            dataIndex: 'comite',
 		            text: HreRem.i18n('header.oferta.comite'),
+		            flex: 1,
+		            hidden: true
+		        },
+		        {
+		        	dataIndex: 'canalPrescripcionDescripcion',
+		        	text: HreRem.i18n('header.canal.prescripcion'),
 		            flex: 1
 		        },
 		        {

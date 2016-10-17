@@ -3278,14 +3278,14 @@ public class ActivoAdapter {
 			
 			Activo activo= activoApi.get(dto.getIdActivo());
 			
-			if(!Checks.esNulo(activo.getAgrupaciones()) && activo.getAgrupaciones().size()!=0){
+			/*if(!Checks.esNulo(activo.getAgrupaciones()) && activo.getAgrupaciones().size()!=0){
 				for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 					ActivoAgrupacion agrupacion = agrupaciones.getAgrupacion();
 					if(agrupacion.getActivoPrincipal().getId().equals(activo.getId())){
 						oferta.setAgrupacion(agrupacion);
 					}
 				}
-			}
+			}*/
 			
 			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 			for (ActivoOferta acof: activo.getOfertas()) {

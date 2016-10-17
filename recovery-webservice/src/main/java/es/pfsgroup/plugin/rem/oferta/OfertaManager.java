@@ -228,11 +228,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		HashMap<String, List<String>> errorsList = null;
 		Oferta oferta = null;
 
-		oferta = getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
+/*		oferta = getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
 		if (Checks.esNulo(oferta) && !Checks.esNulo(ofertaDto.getIdOfertaRem())) {
 			restApi.obtenerMapaErrores(errorsList, "idOfertaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
 
-		}
+		}*/
 
 		if (alta) {
 			// Validación para el alta de ofertas
@@ -324,7 +324,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
-				restApi.obtenerMapaErrores(errorsList, "idProveedorRemResponsable").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				restApi.obtenerMapaErrores(errorsList, "IdProveedorRemCustodio").add(RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {
@@ -674,7 +674,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if (!Checks.esNulo(expediente))
 				if (!Checks.esNulo(expediente.getCondicionante()))
-					return (expediente.getCondicionante().getSujetoTanteoRetracto() == 1);
+					return (Integer.valueOf(1).equals(expediente.getCondicionante().getSujetoTanteoRetracto()));
 		}
 		return false;
 	}
@@ -687,7 +687,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if (!Checks.esNulo(expediente))
 				if (!Checks.esNulo(expediente.getCondicionante()))
-					return (expediente.getCondicionante().getSujetoTanteoRetracto() == 1);
+					return (Integer.valueOf(1).equals(expediente.getCondicionante().getSujetoTanteoRetracto()));
 		}
 		return false;
 	}
@@ -709,7 +709,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return !Checks.esNulo(expediente.getReserva());
+			if (!Checks.esNulo(expediente))
+				if (!Checks.esNulo(expediente.getCondicionante()))
+					return (Integer.valueOf(1).equals(expediente.getCondicionante().getSolicitaReserva()));
 		}
 		return false;
 	}
@@ -720,7 +722,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return (expediente.getRiesgoReputacional() == 0 ? true : false);
+			return (Integer.valueOf(0).equals(expediente.getRiesgoReputacional()));
 		}
 		return false;
 	}
@@ -751,7 +753,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return (expediente.getConflictoIntereses() == 0 ? true : false);
+			return (Integer.valueOf(0).equals(expediente.getConflictoIntereses()));
 		}
 		return false;
 	}

@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -20,11 +19,8 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 
 @Component
 public class UpdaterServicePublicacionRevisionInformeComercial implements UpdaterService {
@@ -111,9 +107,16 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		
 		//Si han habido cambios en el historico, lo persistimos.
 		if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
-			activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
-			activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(new Date());
-			
+			if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
+				Auditoria auditoria = new Auditoria();
+				auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+				auditoria.setFechaCrear(new Date());
+				activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
+			}else{
+				activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+				activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(new Date());
+			}
+			activoEstadosInformeComercialHistorico.setActivo(activo);
 			genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
 		}
 		

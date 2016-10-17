@@ -42,57 +42,89 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       EXECUTE IMMEDIATE '
-          INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' PRP (
-			PRP_ID,
-			PRP_NUM_PROPUESTA,
-			PRP_NOMBRE_PROPUESTA,
-			DD_EPP_ID,
-			USU_ID,
-			DD_CRA_ID,
-			DD_TPP_ID,
-			PRP_ES_PROP_MANUAL,
-			PRP_FECHA_EMISION,
-			PRP_FECHA_ENVIO,
-			PRP_FECHA_SANCION,
-			PRP_FECHA_CARGA,
-			PRP_OBSERVACIONES,
-			VERSION,
-			USUARIOCREAR,
-			FECHACREAR,
-			BORRADO
-          )
-          SELECT  
-            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL      				AS PRP_ID,
-            MIG.PRP_NUM_PROPUESTA										PRP_NUM_PROPUESTA,
-            MIG.PRP_NOMBRE_PROPUESTA									PRP_NOMBRE_PROPUESTA,
-            EPP.DD_EPP_ID												DD_EPP_ID,
-            USU.USU_ID													USU_ID,
-            CRA.DD_CRA_ID												DD_CRA_ID,
-            TPP.DD_TPP_ID												DD_TPP_ID,
-            MIG.PRP_IND_PROP_MANUAL										PRP_ES_PROP_MANUAL,
-            MIG.PRP_FECHA_EMISION										PRP_FECHA_EMISION,
-            MIG.PRP_FECHA_ENVIO											PRP_FECHA_ENVIO,
-            MIG.PRP_FECHA_SANCION										PRP_FECHA_SANCION,
-            MIG.PRP_FECHA_CARGA											PRP_FECHA_CARGA,
-            MIG.PRP_OBSERVACIONES										PRP_OBSERVACIONES,
-            0 															VERSION,
-            ''MIG2'' 													USUARIOCREAR,
-            SYSDATE 													FECHACREAR,
-            0 															BORRADO
-          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-          LEFT JOIN '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO EPP
-			ON DD_EPP_CODIGO = MIG.PRP_COD_ESTADO_PRP
-		  LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
-			ON USU.USU_USERNAME = MIG.PRP_COD_USUARIO
-		  LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA
-			ON CRA.DD_CRA_CODIGO = MIG.PRP_COD_CARTERA
-		  LEFT JOIN '||V_ESQUEMA||'.DD_TPP_TIPO_PROP_PRECIO TPP
-			ON TPP.DD_TPP_CODIGO = MIG.PRP_COD_TIPO_PRP
+		INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' PRP (
+			  PRP_ID,
+			  PRP_NUM_PROPUESTA,
+			  PRP_NOMBRE_PROPUESTA,
+			  DD_EPP_ID,
+			  USU_ID,
+			  DD_CRA_ID,
+			  DD_TPP_ID,
+			  PRP_ES_PROP_MANUAL,
+			  PRP_FECHA_EMISION,
+			  PRP_FECHA_ENVIO,
+			  PRP_FECHA_SANCION,
+			  PRP_FECHA_CARGA,
+			  PRP_OBSERVACIONES,
+			  VERSION,
+			  USUARIOCREAR,
+			  FECHACREAR,
+			  BORRADO
+		)
+		WITH CARTERA_ACTIVOS AS (
+			SELECT 
+			  ACT.DD_CRA_ID,
+			  AP.ACT_PRP_NUM_PROPUESTA,
+			  COUNT(AP.ACT_PRP_ACT_NUMERO_ACTIVO) TOTAL_ACTIVOS
+			FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+			  INNER JOIN '||V_ESQUEMA||'.MIG2_ACT_PRP AP ON AP.ACT_PRP_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
+			WHERE ACT.BORRADO = 0
+			GROUP BY (ACT.DD_CRA_ID, AP.ACT_PRP_NUM_PROPUESTA)
+		), CARTERA_ACTIVOS_ORDEN AS (
+			SELECT 
+			  CA.DD_CRA_ID,
+			  CA.ACT_PRP_NUM_PROPUESTA,
+			  CA.TOTAL_ACTIVOS, 
+			  ROW_NUMBER () OVER (PARTITION BY CA.ACT_PRP_NUM_PROPUESTA ORDER BY CA.TOTAL_ACTIVOS DESC) AS ORDEN
+			FROM CARTERA_ACTIVOS CA
+		), MAXIMO AS (
+			SELECT
+			  CAO.DD_CRA_ID,
+			  CAO.ACT_PRP_NUM_PROPUESTA
+			FROM CARTERA_ACTIVOS_ORDEN CAO
+			WHERE CAO.ORDEN = 1
+		)
+		SELECT DISTINCT
+			1   				                                                                        PRP_ID,
+			MIG.PRP_NUM_PROPUESTA										                          PRP_NUM_PROPUESTA,
+			MIG.PRP_NOMBRE_PROPUESTA									                      PRP_NOMBRE_PROPUESTA,
+			NVL(EPP.DD_EPP_ID,
+			  (SELECT DD_EPP_ID
+				  FROM '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO
+				  WHERE DD_EPP_CODIGO = ''01''
+				  AND BORRADO = 0) 
+			)                                                                                 DD_EPP_ID,
+			NVL(
+			  USU.USU_ID, 
+			  (SELECT USU_ID 
+				  FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS 
+				 WHERE USU_USERNAME = ''MIGRACION'' 
+				  AND BORRADO = 0)
+			)                                                                                 USU_ID,
+			NVL(CRA.DD_CRA_ID, MAXI.DD_CRA_ID)                        DD_CRA_ID,
+			TPP.DD_TPP_ID												                                    DD_TPP_ID,
+			MIG.PRP_IND_PROP_MANUAL										                      PRP_ES_PROP_MANUAL,
+			MIG.PRP_FECHA_EMISION										                          PRP_FECHA_EMISION,
+			MIG.PRP_FECHA_ENVIO											                            PRP_FECHA_ENVIO,
+			MIG.PRP_FECHA_SANCION										                          PRP_FECHA_SANCION,
+			MIG.PRP_FECHA_CARGA											                          PRP_FECHA_CARGA,
+			MIG.PRP_OBSERVACIONES										                          PRP_OBSERVACIONES,
+			0 															                                                  VERSION,
+			''MIG2'' 													                                              USUARIOCREAR,
+			SYSDATE 													                                          FECHACREAR,
+			0 															                                                  BORRADO
+		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+			LEFT JOIN '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO EPP ON DD_EPP_CODIGO = MIG.PRP_COD_ESTADO_PRP 
+			LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = MIG.PRP_COD_USUARIO
+			LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = MIG.PRP_COD_CARTERA
+			LEFT JOIN '||V_ESQUEMA||'.DD_TPP_TIPO_PROP_PRECIO TPP ON TPP.DD_TPP_CODIGO = MIG.PRP_COD_TIPO_PRP
+			LEFT JOIN MAXIMO MAXI ON MAXI.ACT_PRP_NUM_PROPUESTA = MIG.PRP_NUM_PROPUESTA
       '
       ;
    
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
+      V_REG_INSERTADOS := SQL%ROWCOUNT;
       
       COMMIT;
       
@@ -107,31 +139,14 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
       -- Registros insertados en REM
-      V_SENTENCIA := 'SELECT COUNT(1) 
-                        FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOCREAR = ''MIG2'' ';  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
+      -- V_REG_INSERTADOS
       
       -- Total registros rechazados
       V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
-      
-      /*  
-      -- Diccionarios rechazados
-      V_SENTENCIA := '
-      SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_COD_NOT_EXISTS 
-      WHERE DICCIONARIO IN (''DD_TPR_TIPO_PROVEEDOR'',''DD_TDI_TIPO_DOCUMENTO_ID'',''DD_ZNG_ZONA_GEOGRAFICA'',''DD_PRV_PROVINCIA'',''DD_LOC_LOCALIDAD'')
-      AND FICHERO_ORIGEN = ''PROVEEDORES.dat''
-      AND CAMPO_ORIGEN IN (''TIPO_PROVEEDOR'',''TIPO_DOCUMENTO'',''ZONA_GEOGRAFICA'',''PVE_PROVINCIA'',''PVE_LOCALIDAD'')
-      '
-      ;
-      
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;
-      */
-      
+            
       -- Observaciones
       IF V_REJECTS != 0 THEN      
-      
-          V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' GASTOS_EXPEDIENTES. Comprobar integridad de los datos';     
-        
+          V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';        
       END IF;
       
       EXECUTE IMMEDIATE '

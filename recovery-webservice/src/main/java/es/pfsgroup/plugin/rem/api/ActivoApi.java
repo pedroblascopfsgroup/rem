@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -513,4 +514,35 @@ public interface ActivoApi {
 	     * @return Devuelve si la operación ha sido satisfactoria, o no.
 	     */
 		public Boolean updateCondicionantesDisponibilidad(Long idActivo);
+		
+		/**
+		 * Este método comprueba si el activo tiene los check de admisión y gestión
+		 * @param tareaExterna
+		 * @return devuelve true si tiene los check activos, false en caso contrario
+		 */
+		public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna);
+
+		/**
+		 * Este método obtiene una lista de reglas de publicación automática.
+		 * 
+		 * @return Devuelve una lista de DTOReglasPublicacionAutomatica con los datos obtenidos.
+		 */
+		public List<DtoReglasPublicacionAutomatica> getReglasPublicacionAutomatica(DtoReglasPublicacionAutomatica dto);
+
+		/**
+		 * Este método crea una regla de publicación automática en la DB. 
+		 * 
+		 * @param dto : DTO con los parámetros a almacenar.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public boolean createReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto);
+
+		/**
+		 * Este método borra de manera lógica una regla de publicación automática en la DB
+		 * por el ID de la regla.
+		 * 
+		 * @param dto : DTO con el ID de la regla a borrar.
+		 * @return Devuelve si la operación ha sido satisfactoria, o no.
+		 */
+		public boolean deleteReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto);
     }

@@ -65,6 +65,7 @@ BEGIN
         EXECUTE IMMEDIATE '
         DELETE FROM '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS
         WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
+        AND DICCIONARIO = ''DD_TPR_TIPO_PROVEEDOR''
         '
         ;
         
@@ -128,6 +129,7 @@ BEGIN
         EXECUTE IMMEDIATE '
         DELETE FROM '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS
         WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
+        AND DICCIONARIO = ''DD_TDI_TIPO_DOCUMENTO_ID''
         '
         ;
         
@@ -234,7 +236,8 @@ BEGIN
 			  ) AUX
 		ON (PVE.PVE_DOCIDENTIF = AUX.PVE_DOCUMENTO_ID AND PVE.DD_TPR_ID = AUX.DD_TPR_ID AND TRIM(UPPER(PVE.PVE_NOMBRE)) = TRIM(UPPER(AUX.PVE_NOMBRE)))
 		WHEN MATCHED THEN UPDATE SET
-		  PVE.DD_TPC_ID = AUX.DD_TPC_ID
+		  PVE.PVE_COD_UVEM = AUX.PVE_COD_UVEM
+		  ,PVE.DD_TPC_ID = AUX.DD_TPC_ID
 		  ,PVE.DD_TPE_ID = AUX.DD_TPE_ID
 		  ,PVE.PVE_NIF = AUX.PVE_RAZON_SOCIAL
 		  ,PVE.PVE_FECHA_ALTA = AUX.PVE_FECHA_ALTA
@@ -367,26 +370,19 @@ BEGIN
       
       -- Total registros rechazados
       V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
-      
-      /*  
-      -- Diccionarios rechazados
-      V_SENTENCIA := '
-      SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_COD_NOT_EXISTS 
-      WHERE DICCIONARIO IN (''DD_TPR_TIPO_PROVEEDOR'',''DD_TDI_TIPO_DOCUMENTO_ID'',''DD_ZNG_ZONA_GEOGRAFICA'',''DD_PRV_PROVINCIA'',''DD_LOC_LOCALIDAD'')
-      AND FICHERO_ORIGEN = ''PROVEEDORES.dat''
-      AND CAMPO_ORIGEN IN (''TIPO_PROVEEDOR'',''TIPO_DOCUMENTO'',''ZONA_GEOGRAFICA'',''PVE_PROVINCIA'',''PVE_LOCALIDAD'')
-      '
-      ;
-      
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;
-      */
-      
+       
       -- Observaciones
 	  IF V_REJECTS != 0 THEN
 	  
 		IF TABLE_COUNT != 0 THEN
 		
-		  V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT||' han sido por ACTIVOS inexistentes. ';
+		  V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT||' han sido por DD_TPR_TIPO_PROVEEDOR inexistentes. ';
+		
+		END IF;
+		
+		IF TABLE_COUNT_2 != 0 THEN
+		
+		  V_OBSERVACIONES := V_OBSERVACIONES || 'Del total de registros rechazados, '||TABLE_COUNT_2||' han sido por DD_TDI_TIPO_DOCUMENTO_ID inexistentes. ';
 		
 		END IF;
       END IF;

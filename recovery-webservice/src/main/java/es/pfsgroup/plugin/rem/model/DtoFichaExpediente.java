@@ -93,6 +93,8 @@ public class DtoFichaExpediente extends WebDto {
     private Integer riesgoReputacional;    
     private Integer estadoPbc;
     
+    private Integer alquilerOpcionCompra;
+    
     
    	
 
@@ -427,6 +429,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setEstadoPbc(Integer estadoPbc) {
 		this.estadoPbc = estadoPbc;
+	}
+
+	public Integer getAlquilerOpcionCompra() {
+		return alquilerOpcionCompra;
+	}
+
+	public void setAlquilerOpcionCompra(Integer alquilerOpcionCompra) {
+		this.alquilerOpcionCompra = alquilerOpcionCompra;
 	}
    	
    	

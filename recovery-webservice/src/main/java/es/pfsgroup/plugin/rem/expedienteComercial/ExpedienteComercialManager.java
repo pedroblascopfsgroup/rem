@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -464,6 +465,15 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 				if(!Checks.esNulo(expediente.getEstadoPbc())){
 					dto.setEstadoPbc(expediente.getEstadoPbc());
+				}
+				if(!Checks.esNulo(activo.getTipoComercializacion())){
+					DDTipoComercializacion comercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA);
+					if(comercializacion.equals(activo.getTipoComercializacion())){
+						dto.setAlquilerOpcionCompra(1);
+					}
+					else{
+						dto.setAlquilerOpcionCompra(0);
+					}
 				}
 
 			}

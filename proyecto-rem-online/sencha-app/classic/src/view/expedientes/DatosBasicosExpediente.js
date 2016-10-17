@@ -21,7 +21,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			{   
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',				
-				title: HreRem.i18n('title.identificacion'),
+				title: HreRem.i18n('title.expediente.ficha.objeto'),
 				items :
 					[
 		                {
@@ -122,7 +122,11 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 					{   
 						xtype:'fieldsettable',
 						collapsible: false,
-						defaultType: 'displayfieldbase',				
+						defaultType: 'displayfieldbase',
+						bind: {
+							hidden: '{!esAlquilerConOpcionCompra}',
+							disabled: '{!esAlquilerConOpcionCompra}'
+					    },
 						title: HreRem.i18n('title.opcion.compra.alquiler'),
 						items : [
 					        {

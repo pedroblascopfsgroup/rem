@@ -7,10 +7,16 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialMain', {
         align: 'stretch'
     },
     
-        controller: 'comercialvisitas',
+    controller: 'comercialvisitas',
     viewModel: {
         type: 'comercial'
     },
+    
+    refreshOnActivate : true,
+    	
+    listeners: {
+		 activate: function(){this.refresh()}
+	},
 
     initComponent: function () {
         
@@ -34,6 +40,15 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialMain', {
         me.callParent(); 
 
         
+    },
+    
+    refresh: function() {						
+		var me = this;
+		
+		if(me.refreshOnActivate)  {
+			me.down('visitascomerciallist').getStore().loadPage(1);
+			me.refreshOnActivate = false;
+		}
     }
 
 

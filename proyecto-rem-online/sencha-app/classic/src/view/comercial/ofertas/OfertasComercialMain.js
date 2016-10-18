@@ -11,6 +11,12 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialMain', {
     viewModel: {
         type: 'comercial'
     },
+    
+    refreshOnActivate : false,
+    	
+    listeners: {
+		 activate: function(){this.refresh()}
+	},
 
     initComponent: function () {
         
@@ -34,6 +40,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialMain', {
         me.callParent(); 
 
         
+    },
+    
+    refresh: function() {						
+		var me = this;
+		if(me.refreshOnActivate)  {
+			me.down('ofertascomerciallist').getStore().loadPage(1);
+			me.refreshOnActivate = false;
+		}
     }
 
 

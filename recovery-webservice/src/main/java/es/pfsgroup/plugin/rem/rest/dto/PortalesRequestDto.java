@@ -2,23 +2,19 @@ package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.util.List;
 
-public class PortalesRequestDto {
+public class PortalesRequestDto extends RequestDto {
 
-	private Long id;
-	private List<PortalesDto> data; 
+	private static final long serialVersionUID = 2451364543888351039L;
 	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+	private List<PortalesDto> data;
+
+	
 	public List<PortalesDto> getData() {
 		return data;
 	}
+
 	public void setData(List<PortalesDto> data) {
 		this.data = data;
 	}
 
-	
 }

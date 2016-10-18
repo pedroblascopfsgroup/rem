@@ -762,8 +762,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getEstadoPublicacionByActivo',
     				extraParams: {id: '{activo.id}'}
-    			},
-				autoload: true
+    			}
     		},
     		
     		historicoInformeComercial:{
@@ -828,7 +827,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadoDisponibilidadComercial'}
 				},
-				autoload: true
+				autoLoad: true
 			},
 			
 		comboEstadoOferta: {
@@ -874,8 +873,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getPropuestaActivosVinculadosByActivo',
 				extraParams: {idActivo: '{activo.id}'}
-			},
-			autoload: true
+			}
 		},
 		
 		storeProveedores: {
@@ -885,11 +883,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getProveedorByActivo',
 				extraParams: {idActivo: '{activo.id}'}
-			},
-			autoload: true
-//			listeners: {
-//				load: 'storeProveedoresLoad'
-//			}
+			}
 		},
 		
 		storeGastosProveedor: {

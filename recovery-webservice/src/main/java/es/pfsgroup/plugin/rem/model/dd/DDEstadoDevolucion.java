@@ -19,47 +19,38 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de estados de un expediente comercial.
+ * Modelo que gestiona el diccionario de regímenes matrimoniales
  * 
  * @author Jose Villel
  *
  */
 @Entity
-@Table(name = "DD_EEC_EST_EXP_COMERCIAL", schema = "${entity.schema}")
+@Table(name = "DD_EDE_ESTADOS_DEVOLUCION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
+public class DDEstadoDevolucion implements Auditable, Dictionary {
 	
-	private static final long serialVersionUID = -5820108531500198730L;
+
+	private static final long serialVersionUID = 1L;
 	
-	public final static String EN_TRAMITACION = "01";
-	public final static String ANULADO = "02";
-	public final static String FIRMADO = "03";
-	public final static String CONTRAOFERTADO = "04";
-	public final static String BLOQUEO_ADM = "05";
-	public final static String RESERVADO = "06";
-	public final static String POSICIONADO = "07";
-	public final static String VENDIDO = "08";
-	public final static String RESUELTO = "09";
-	public final static String PTE_SANCION = "10";
-	public final static String APROBADO = "11";
-	public final static String DENEGADO = "12";
-	public final static String DOBLE_FIRMA = "13";
-	public final static String RPTA_OFERTANTE = "14";
+	public static String ESTADO_NO_PROCEDE ="01";
+	public static String ESTADO_DEVUELTA ="02";
+	public static String ESTADO_BLOQUEADA ="03";
+	public static String ESTADO_PENDIENTE ="04";
 
 	@Id
-	@Column(name = "DD_EEC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadosExpedienteGenerator")
-	@SequenceGenerator(name = "DDEstadosExpedienteGenerator", sequenceName = "S_DD_EEC_EST_EXP_COMERCIAL")
+	@Column(name = "DD_EDE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoDevolucionGenerator")
+	@SequenceGenerator(name = "DDEstadoDevolucionGenerator", sequenceName = "S_DD_EDE_ESTADOS_DEVOLUCION")
 	private Long id;
 	    
-	@Column(name = "DD_EEC_CODIGO")   
+	@Column(name = "DD_EDE_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_EEC_DESCRIPCION")   
+	@Column(name = "DD_EDE_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_EEC_DESCRIPCION_LARGA")   
+	@Column(name = "DD_EDE_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   

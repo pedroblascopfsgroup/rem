@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,11 +15,15 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -40,6 +45,9 @@ public class ReintegroController {
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -92,7 +100,20 @@ public class ReintegroController {
 				mapTitulares.put("titulares", listaTitularUVEM);
 				respuesta.put("titulares", mapTitulares);
 				
-				expedienteComercialApi.reintegroReserva(expedienteComercial);
+				Double importeReserva = Double.valueOf(ofertaUVEM.getImporteReserva());
+				EntregaReserva entregaReserva = new EntregaReserva();
+				entregaReserva.setImporte(-importeReserva);
+				Date fechaEntrega = new Date();
+				entregaReserva.setFechaEntrega(fechaEntrega);
+				entregaReserva.setReserva(expedienteComercial.getReserva());
+
+				if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
+					throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
+				}
+				DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_BLOQUEADA));
+				expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
+				expedienteComercialApi.update(expedienteComercial);	
 
 				model.put("id", jsonData.getId());
 				model.put("data", respuesta);

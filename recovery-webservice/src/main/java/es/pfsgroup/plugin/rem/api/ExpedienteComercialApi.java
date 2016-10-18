@@ -385,13 +385,6 @@ public interface ExpedienteComercialApi {
 	public DatosClienteDto buscarNumeroUrsus(Long numCompradorUrsus, String tipoDocumento) throws Exception;
 
 	/**
-	 * Hace un reitegro de una oferta
-	 * 
-	 * @param expComercial
-	 */
-	public void reintegroReserva(ExpedienteComercial expComercial);
-	
-	/**
 	 * Crea un objeto de tipo OfertaUVEMDto
 	 * @param oferta
 	 * @return

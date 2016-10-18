@@ -66,7 +66,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-        HAL_ID                                                        NUMBER(16,0)			                NOT NULL,
+        HAL_ID                                                       NUMBER(16,0)			                NOT NULL,
         ACT_ID                                                         NUMBER(16,0)			                NOT NULL,
         HAL_NUMERO_CONTRATO_ALQUILER              NUMBER(16,0),
         DD_ESC_ID                                                   NUMBER(16,0),
@@ -85,14 +85,14 @@ BEGIN
         HAL_GASTOS_COMUNIDAD                             NUMBER(16,2),
         DD_TPC_ID_COM                                            NUMBER(16,0),
         DD_TPC_ID_SUMINISTRO                                 NUMBER(16,0),
-        VERSION 					                                              NUMBER(38,0) 			                DEFAULT 0 NOT NULL ENABLE, 
-        USUARIOCREAR 				                                      VARCHAR2(50 CHAR) 		        NOT NULL ENABLE, 
-        FECHACREAR 					                                      TIMESTAMP (6) 			                NOT NULL ENABLE, 
-        USUARIOMODIFICAR 			                                  VARCHAR2(50 CHAR), 
-        FECHAMODIFICAR 				                                  TIMESTAMP (6), 
-        USUARIOBORRAR 				                                    VARCHAR2(50 CHAR), 
-        FECHABORRAR 				                                      TIMESTAMP (6), 
-        BORRADO 					                                            NUMBER(1,0) 			                  DEFAULT 0 NOT NULL ENABLE 
+        VERSION                                               NUMBER(38,0) 			                DEFAULT 0 NOT NULL ENABLE, 
+        USUARIOCREAR                                      VARCHAR2(50 CHAR) 		        NOT NULL ENABLE, 
+        FECHACREAR                                       TIMESTAMP (6) 			                NOT NULL ENABLE, 
+        USUARIOMODIFICAR                                  VARCHAR2(50 CHAR), 
+        FECHAMODIFICAR                                   TIMESTAMP (6), 
+        USUARIOBORRAR                                     VARCHAR2(50 CHAR), 
+        FECHABORRAR                                       TIMESTAMP (6), 
+        BORRADO                                             NUMBER(1,0) 			                  DEFAULT 0 NOT NULL ENABLE 
 	)
 	LOGGING 
 	NOCOMPRESS 
@@ -242,14 +242,14 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPC_ID_SUMINISTRO IS '''||V_TEXT1||'''  ';
   
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
-  
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
+
   COMMIT;
 
 

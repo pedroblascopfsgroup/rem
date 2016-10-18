@@ -485,7 +485,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < listaClienteDto.size(); i++) {
-			HashMap<String, List<String>> errorsList = null;
+			HashMap<String, String> errorsList = null;
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			ClienteDto clienteDto = listaClienteDto.get(i);
 			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
@@ -528,7 +528,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			ClienteDto clienteDto = listaClienteDto.get(i);
-			HashMap<String, List<String>> errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
+			HashMap<String, String> errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
 
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
 				this.deleteClienteComercial(clienteDto);

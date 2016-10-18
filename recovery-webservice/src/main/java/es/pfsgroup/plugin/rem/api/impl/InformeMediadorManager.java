@@ -897,7 +897,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		Map<String, Object> map = null;
 		for (InformeMediadorDto informe : informes) {
 			map = new HashMap<String, Object>();
-			HashMap<String, List<String>>errorsList = null;
+			HashMap<String, String>errorsList = null;
 			if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
 				errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.INSERT);
 			} else {

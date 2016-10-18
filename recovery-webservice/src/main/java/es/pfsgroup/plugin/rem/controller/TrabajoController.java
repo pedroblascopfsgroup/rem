@@ -1040,11 +1040,8 @@ public class TrabajoController {
 	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
 	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
-		HashMap<String, List<String>> errorsList = null;
-		TrabajoDto trabajoDto = null;		
-		DtoFichaTrabajo dtoFichaTrabajo = null;
-		Map<String, Object> map = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		HashMap<String, String> errorsList = null;
+		ArrayList<Map<String, Object>> listaRespuesta = null;
 		JSONObject jsonFields = null;
 		
 		try {
@@ -1058,40 +1055,7 @@ public class TrabajoController {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
-				for(int i=0; i < listaTrabajoDto.size();i++){
-
-					Long idTrabajo = null;
-					Trabajo trabajo = null;
-					errorsList = new HashMap<String, List<String>>();
-					map = new HashMap<String, Object>();
-					trabajoDto = listaTrabajoDto.get(i);
-					
-					errorsList = trabajoApi.validateTrabajoPostRequestData(trabajoDto);
-					if(!Checks.esNulo(errorsList) && errorsList.isEmpty()){					
-						dtoFichaTrabajo = trabajoApi.convertTrabajoDto2DtoFichaTrabajo(trabajoDto);
-						if(!Checks.esNulo(dtoFichaTrabajo)){
-							idTrabajo = trabajoApi.create(dtoFichaTrabajo);
-							if(!Checks.esNulo(idTrabajo)){
-								trabajo = trabajoApi.findOne(idTrabajo);
-							}
-						}					
-					}
-					
-					
-					if(!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(trabajo)){
-						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
-						map.put("idTrabajoRem", trabajo.getNumTrabajo());
-						map.put("success", true);
-					}else{
-						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
-						map.put("idTrabajoRem", "");
-						map.put("success", false);
-						map.put("invalidFields", errorsList);
-					}
-					listaRespuesta.add(map);
-					
-				}
-			
+				listaRespuesta = trabajoApi.createTrabajos(listaTrabajoDto);			
 				model.put("id", jsonData.getId());	
 				model.put("data", listaRespuesta);
 				model.put("error", "null");

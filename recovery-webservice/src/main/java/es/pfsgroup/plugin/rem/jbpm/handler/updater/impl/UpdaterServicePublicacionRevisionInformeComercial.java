@@ -57,12 +57,12 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		for(TareaExternaValor valor :  valores){
 
 			if(COMBO_ACEPTACION.equals(valor.getNombre())){				
-				if(valor.getValor().equals(DDSiNo.SI))
+				if(DDSiNo.SI.equals(valor.getValor()))
 					checkAcepta = true;				
 			}
 			
 			if(COMBO_DATOS_IGUALES.equals(valor.getNombre())){				
-				if(valor.getValor().equals(DDSiNo.SI))
+				if(DDSiNo.SI.equals(valor.getValor()))
 					checkContinuaProceso = true;				
 			}
 			

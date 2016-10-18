@@ -102,7 +102,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 			JSONObject jsonFields) {
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		HashMap<String, List<String>> errorsList = null;
+		HashMap<String, String> errorsList = null;
 		for (int i = 0; i < listaComisionDto.size(); i++) {
 
 			map = new HashMap<String, Object>();
@@ -110,7 +110,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 			List<GastosExpediente> listaGastos = this.getListaGastosExpediente(comisionDto);
 			if (Checks.esNulo(listaGastos) || (!Checks.esNulo(listaGastos) && listaGastos.size() != 1)) {
-				restApi.obtenerMapaErrores(errorsList, "idOfertaWebcom").add(RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 
 			} else {
 				errorsList = restApi.validateRequestObject(listaGastos.get(0), TIPO_VALIDACION.INSERT);

@@ -450,5 +450,17 @@ public class ProveedoresController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIdProveedorByNif(HttpServletRequest request, ModelMap model) {
+		try {
+			model.put("id", proveedoresApi.getIdProveedorByNif(request.getParameter("nifProveedor")).toString());
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
 
+		return createModelAndViewJson(model);
+	}
 }

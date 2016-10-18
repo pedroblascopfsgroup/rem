@@ -133,5 +133,25 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
     // Funcion que se ejecuta al hacer click en el botón limpiar del formulario.
 	onCleanFiltersClick: function(btn) {			
 		btn.up('form').getForm().reset();				
+	},
+	
+	// Recupera el id por su nif de un nuevo proveedor creado, y abre su ficha
+	openProveedorByNif: function(nif) {
+		var me = this,
+		url = $AC.getRemoteUrl("proveedores/getIdProveedorByNif");
+		var parameters = {};
+		parameters.nifProveedor = nif;
+		
+		Ext.Ajax.request({
+			url:url,
+			params: parameters,
+			success: function(response,opts){
+				var idProveedorNuevo = Ext.decode(response.responseText).id;
+				var record = Ext.create('Ext.data.Model',{'id':idProveedorNuevo});
+
+				me.getView().fireEvent('abrirDetalleProveedor', record);
+			}
+		});
+		
 	}
 });

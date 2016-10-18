@@ -1,14 +1,14 @@
 --/*
 --#########################################
---## AUTOR=CLV
---## FECHA_CREACION=20161007
+--## AUTOR=Sergio Hernández
+--## FECHA_CREACION=20161010
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-855
 --## PRODUCTO=NO
 --## 
---## Finalidad: Proceso de migración MIG2_GEX_GASTOS_EXPEDIENTE -> GEX_GASTOS_EXPEDIENTE
---##			
+--## Finalidad: Proceso de migración MIG2_SUB_SUBSANACIONES -> SUB_SUBSANACIONES
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -27,17 +27,17 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
-V_TABLA VARCHAR2(40 CHAR) := 'GEX_GASTOS_EXPEDIENTE';
-V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GEX_GASTOS_EXPEDIENTE';
+V_TABLA VARCHAR2(40 CHAR) := 'SUB_SUBSANACIONES';
+V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_SUB_SUBSANACIONES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
 V_REG_MIG NUMBER(10,0) := 0;
 V_REG_INSERTADOS NUMBER(10,0) := 0;
 V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
 V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
+V_COD NUMBER(10,0) := 0;
 
 BEGIN
-           
+      
       --COMPROBACIONES PREVIAS - EXPEDIENTE_ECONOMICO
       DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO EXPEDIENTE_ECONOMICO...');
       
@@ -45,10 +45,8 @@ BEGIN
       SELECT COUNT(1) 
       FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
       WHERE NOT EXISTS (
-        SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR 
-        INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-        ON OFR.OFR_ID = ECO.OFR_ID
-      WHERE OFR.OFR_NUM_OFERTA = MIG.GEX_COD_OFERTA
+        SELECT 1 FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+      WHERE ECO.ECO_NUM_EXPEDIENTE = MIG.SUB_COD_OFERTA
       )
       '
       ;
@@ -75,90 +73,59 @@ BEGIN
       
         EXECUTE IMMEDIATE '
         INSERT INTO '||V_ESQUEMA||'.MIG2_ECO_NOT_EXISTS (
-        OFR_NUM_OFERTA,
-        TABLA_MIG,
-        FECHA_COMPROBACION
-        )
-        WITH OFR_NUM_OFERTA AS (
-        SELECT
-        MIG.GEX_COD_OFERTA 
-        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-        WHERE NOT EXISTS (
-          SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR 
-          INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-            ON OFR.OFR_ID = ECO.OFR_ID
-          WHERE OFR.OFR_NUM_OFERTA = MIG.GEX_COD_OFERTA
-          )
-        )
-        SELECT DISTINCT
-        MIG.GEX_COD_OFERTA                              						RES_COD_OFERTA,
-        '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-        SYSDATE                                                                 FECHA_COMPROBACION
+             OFR_NUM_OFERTA,
+             TABLA_MIG,
+             FECHA_COMPROBACION
+		        )
+        SELECT 
+             MIG.SUB_COD_OFERTA,        
+             '''||V_TABLA_MIG||'''         TABLA_MIG,
+             SYSDATE                       FECHA_COMPROBACION
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
-        INNER JOIN '||V_ESQUEMA||'.OFR_NUM_OFERTA
-        ON OFR_NUM_OFERTA.GEX_COD_OFERTA = MIG.GEX_COD_OFERTA
+        WHERE NOT EXISTS (
+            SELECT 1 FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+             WHERE ECO.ECO_NUM_EXPEDIENTE = MIG.SUB_COD_OFERTA
+          )
         '
         ;
         
         COMMIT;
     
       END IF;
-      
-      --Inicio del proceso de volcado sobre GEX_GASTOS_EXPEDIENTE
+
+      --Inicio del proceso de volcado sobre SUB_SUBSANACIONES
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
-      EXECUTE IMMEDIATE '
-          INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' GEX (
-             GEX_ID
-            ,ECO_ID
-            ,DD_ACC_ID
-            ,GEX_CODIGO
-            ,GEX_NOMBRE
-            ,DD_TCC_ID
-            ,GEX_IMPORTE_CALCULO
-            ,GEX_IMPORTE_FINAL
-            ,GEX_PAGADOR
-            ,VERSION
-            ,USUARIOCREAR
-            ,FECHACREAR
-            ,USUARIOMODIFICAR
-            ,FECHAMODIFICAR
-            ,USUARIOBORRAR
-            ,FECHABORRAR
-            ,BORRADO
-            ,GEX_WEBCOM_ID
-            ,GEX_PROVEEDOR
-            ,GEX_OBSERVACIONES
-            ,GEX_APROBADO
-            ,DD_DEG_ID
-          )
-          SELECT  
-            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL      AS GEX_ID
-            ,(SELECT ECO.ECO_ID FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0 WHERE OFR.OFR_NUM_OFERTA = MIG2.GEX_COD_OFERTA AND OFR.BORRADO =0) ECO_ID
-            ,(SELECT DD_ACC.DD_ACC_ID FROM '||V_ESQUEMA||'.DD_ACC_ACCION_GASTOS DD_ACC WHERE DD_ACC.DD_ACC_CODIGO = MIG2.GEX_COD_CONCEPTO_GASTO AND DD_ACC.BORRADO = 0) DD_ACC_ID
-            ,MIG2.GEX_CODIGO
-            ,MIG2.GEX_NOMBRE
-            ,(SELECT DD_TCC.DD_TCC_ID FROM '||V_ESQUEMA||'.DD_TCC_TIPO_CALCULO DD_TCC WHERE DD_TCC.DD_TCC_CODIGO = MIG2.GEX_COD_TIPO_CALCULO AND DD_TCC.BORRADO = 0) DD_TCC_ID
-            ,MIG2.GEX_IMPORTE_CALCULO
-            ,MIG2.GEX_IMPORTE_FINAL
-            ,MIG2.GEX_IND_PAGADOR
-            ,0 VERSION
-            ,''MIG2'' USUARIOCREAR
-            ,SYSDATE FECHACREAR
-            ,NULL USUARIOMODIFICAR
-            ,NULL FECHAMODIFICAR
-            ,NULL USUARIOBORRAR
-            ,NULL FECHABORRAR
-            ,0 BORRADO
-            ,MIG2.GEX_WEBCOM_ID
-            ,(SELECT PVE.PVE_ID FROM ACT_PVE_PROVEEDOR PVE WHERE PVE.PVE_COD_UVEM = MIG2.GEX_COD_PROVEEDOR) GEX_PROVEEDOR
-            ,NULL GEX_OBSERVACIONES
-            ,MIG2.GEX_IND_APROBADO
-            ,(SELECT DD_DEG.DD_DEG_ID FROM '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DD_DEG WHERE DD_DEG.DD_DEG_CODIGO = MIG2.GEX_COD_DESTINATARIO AND DD_DEG.BORRADO = 0) DD_DEG_ID
-          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-      '
-      ;
-   
+      V_SENTENCIA:= '
+          INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' SUB (
+                SUB_ID                  ,
+                ECO_ID                  ,
+                DD_ESU_ID               ,
+                SUB_PETICIONARIO        ,
+                SUB_MOTIVO              ,
+                SUB_FECHA_PETICION      ,
+                SUB_GASTOS_SUBSANACION  ,
+                SUB_GASTOS_INSCRIPCION  ,
+                VERSION                 ,
+                USUARIOCREAR            ,
+                FECHACREAR       )
+           SELECT
+                '||V_ESQUEMA||'.S_SUB_SUBSANACIONES.NEXTVAL     ,
+                ECO.ECO_ID                                      ,
+                ESU.DD_ESU_ID                                   ,
+                SUB_PETICIONARIO                                ,
+                SUB_MOTIVO                                      ,
+                SUB_FECHA_PETICION                              ,
+                SUB_GASTOS_SUBSANACION                          ,
+                SUB_GASTOS_INSCRIPCION                          ,
+                0                                               ,
+                ''MIG2''                                        ,
+                SYSDATE
+           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_NUM_EXPEDIENTE = MIG.SUB_COD_OFERTA
+                LEFT  JOIN '||V_ESQUEMA||'.DD_ESU_ESTADOS_SUBSANACION ESU ON ESU.DD_ESU_CODIGO = MIG.SUB_COD_ESTADO_SUBSANACION';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
       V_REG_INSERTADOS := SQL%ROWCOUNT;
@@ -186,7 +153,7 @@ BEGIN
           V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';      
 
           IF TABLE_COUNT != 0 THEN
-              V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' EXPEDIENTES_ECONOMICOS (OFERTAS) inexistentes. ';
+              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay '||TABLE_COUNT||' EXPEDIENTES_ECONOMICOS (OFERTAS) inexistentes. ';
           END IF;
         
       END IF;
@@ -216,7 +183,7 @@ BEGIN
       ;
       
       COMMIT;  
-
+                        
 EXCEPTION
       WHEN OTHERS THEN
             DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

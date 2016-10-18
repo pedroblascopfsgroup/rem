@@ -99,6 +99,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -129,6 +130,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
+import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
@@ -189,6 +191,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private TareaActivoManager tareaActivoManager;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -1041,15 +1046,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private Activo tareaExternaToActivo(TareaExterna tareaExterna) {
 		Activo activo = null;
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		
 		if (!Checks.esNulo(trabajo)) {
 			activo = trabajo.getActivo();
+		}else{
+			TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
+			activo = tareaActivo.getTramite().getActivo();
 		}
 		return activo;
 	}
-
-	public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna) {
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", tareaExternaToActivo(tareaExterna));
+	
+		
+	public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna){
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", tareaExternaToActivo(tareaExterna).getId());
 		VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
 
 		return (publicacionActivo.getAdmision() && publicacionActivo.getGestion());

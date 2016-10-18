@@ -37,7 +37,7 @@ DECLARE
     
     
     /* ################################################################################
-     ## MODIFICACIONES: Se cambian las decisiones del trámite de obtención documental.
+     ## MODIFICACIONES: Se cambian las decisiones del trámite de sanción de ofertas.
      ## de la obtención de documentos.
      ##
      */

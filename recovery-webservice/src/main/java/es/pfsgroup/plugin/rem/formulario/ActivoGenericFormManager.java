@@ -27,6 +27,7 @@ import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
+import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -42,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
@@ -80,6 +82,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+	private PreciosApi preciosApi;
     
     /**
      * Genera un vector de valores de las tareas del idTramite
@@ -221,6 +226,16 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			if(!Checks.estaVacio(lista))
             				item.setValue(lista.get(0).getSaldoDisponible() + "€");
             		}
+            		if(item.getNombre().equals("nombrePropuesta"))
+            		{
+            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+            			PropuestaPrecio propuesta = preciosApi.getPropuestaByTrabajo(tramite.getTrabajo().getId());
+            			if(!Checks.esNulo(propuesta)) {
+	            			String nombrePropuesta = propuesta.getNombrePropuesta();
+	            		    if(!Checks.esNulo(nombrePropuesta))
+	            		    	item.setValue(nombrePropuesta);
+            			}
+            		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA))
             	{
@@ -241,6 +256,17 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             		    SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             		    if(!Checks.esNulo(fecha))
             		    	item.setValue(formatoFecha.format(fecha));
+            		}
+            		if(item.getNombre().equals("fechaGeneracion"))
+            		{
+            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+            			PropuestaPrecio propuesta = preciosApi.getPropuestaByTrabajo(tramite.getTrabajo().getId());
+            			if(!Checks.esNulo(propuesta)) {
+	            			Date fecha = propuesta.getFechaEmision();
+	            		    SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+	            		    if(!Checks.esNulo(fecha))
+	            		    	item.setValue(formatoFecha.format(fecha));
+            			}
             		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_HORA))

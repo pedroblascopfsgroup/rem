@@ -51,6 +51,8 @@ public class DtoTramite extends WebDto {
 	
 	private Long countActivos;
 	
+	private Boolean ocultarBotonCierre;
+	
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -202,6 +204,14 @@ public class DtoTramite extends WebDto {
 
 	public void setCountActivos(Long countActivos) {
 		this.countActivos = countActivos;
+	}
+
+	public Boolean getOcultarBotonCierre() {
+		return ocultarBotonCierre;
+	}
+
+	public void setOcultarBotonCierre(Boolean ocultarBotonCierre) {
+		this.ocultarBotonCierre = ocultarBotonCierre;
 	}
 	
 }

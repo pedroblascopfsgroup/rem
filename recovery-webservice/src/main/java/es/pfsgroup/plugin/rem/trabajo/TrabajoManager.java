@@ -2453,7 +2453,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
 			if (!Checks.esNulo(primerActivo)) {
-				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera()));
+				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera().getCodigo()));
 			}
 		}
 		return false;
@@ -2464,7 +2464,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
 			if (!Checks.esNulo(primerActivo)) {
-				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera()));
+				return (DDCartera.CODIGO_CARTERA_02.equals(primerActivo.getCartera().getCodigo()));
 			}
 		}
 		return false;

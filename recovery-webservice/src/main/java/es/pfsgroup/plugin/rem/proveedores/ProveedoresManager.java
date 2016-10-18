@@ -27,6 +27,8 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -939,5 +941,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 
 		return nifProveedor;
+	}
+	
+	@Override
+	public Long getIdProveedorByNif(String nif) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nif);
+		Order orden = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		ActivoProveedor proveedor = genericDao.getListOrdered(ActivoProveedor.class, orden, filtro).get(0);
+		
+		return proveedor.getId();
 	}
 }

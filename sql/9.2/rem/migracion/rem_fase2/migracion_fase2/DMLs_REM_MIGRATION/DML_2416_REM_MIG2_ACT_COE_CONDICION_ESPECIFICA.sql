@@ -221,7 +221,7 @@ BEGIN
         
         IF TABLE_COUNT != 0 THEN
            V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' ACTIVOS inexistentes.';
-        END IF
+        END IF;
       END IF;
       
       EXECUTE IMMEDIATE '

@@ -21,6 +21,8 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoExcelPropuestaUnificada;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -473,6 +475,20 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		}
 		
 		return mensaje;
+	}
+	
+	@Override
+	public PropuestaPrecio getPropuestaByTrabajo(Long idTrabajo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
+		Order orden = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		
+		List<PropuestaPrecio>  listaPropuestas = (List<PropuestaPrecio>) genericDao.getListOrdered(PropuestaPrecio.class, orden, filtro);
+		PropuestaPrecio propuesta = null;
+		
+		if(!Checks.estaVacio(listaPropuestas))
+			propuesta = listaPropuestas.get(0);
+		
+		return propuesta;
 	}
 
 }

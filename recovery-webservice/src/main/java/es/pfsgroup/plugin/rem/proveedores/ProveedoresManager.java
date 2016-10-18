@@ -31,6 +31,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
@@ -38,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -47,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -81,6 +84,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ActivoApi activoApi;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -179,6 +185,22 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		
 		return dto;
+	}
+	
+	public List<ActivoProveedor> getProveedoresByActivoId(Long idActivo){
+		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
+
+		//Obtiene de la vista del buscador, la relacion de proveedores de un activo
+		List<VBusquedaProveedoresActivo> listadoVBProveedores = activoApi.getProveedorByActivo(idActivo);
+
+		//Transforma la lista de la vista en una lista de proveedores
+		for(VBusquedaProveedoresActivo proveedorVB : listadoVBProveedores){
+			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "id", proveedorVB.getId());
+			listaProveedores.add(genericDao.get(ActivoProveedor.class, filtroProveedor));
+		}
+		
+		return listaProveedores;
+		
 	}
 
 	@Override
@@ -801,6 +823,23 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 
 		return listaAdjuntos;
+	}
+	
+	@Override
+	public Boolean comprobarExisteAdjuntoProveedores(Long idActivo, String codigoDocumento){
+
+		Boolean documentoEncontrado = false;
+		// Recorre todos los proveedores de un activo para comprobar si existe el documento a comprobar
+		for(ActivoProveedor proveedor : this.getProveedoresByActivoId(idActivo)){
+			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+			Filter filtroAdjuntoCodigo = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoProveedor.codigo", codigoDocumento);
+			ActivoAdjuntoProveedor activoAdjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, filtroProveedor, filtroAdjuntoCodigo);			
+		
+			if(!Checks.esNulo(activoAdjuntoProveedor))
+				documentoEncontrado =  true;
+		}
+		
+		return documentoEncontrado;		
 	}
 	
 	@Override

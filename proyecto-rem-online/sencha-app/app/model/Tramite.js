@@ -45,6 +45,13 @@ Ext.define('HreRem.model.Tramite', {
     	'estado',
     	'tipoTrabajo',
     	'subtipoTrabajo',
+    	'idExpediente',
+    	'descripcionEstadoEC',
+    	'numEC',
+    	{
+	    	name: 'tieneEC',
+	    	type: 'boolean'
+    	},
     	'codigoTareaActiva',
     	{
         	name: 'descItemMenu',

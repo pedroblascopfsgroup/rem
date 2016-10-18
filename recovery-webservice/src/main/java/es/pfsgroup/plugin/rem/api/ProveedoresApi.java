@@ -142,6 +142,15 @@ public interface ProveedoresApi {
 	public Object getAdjuntos(Long id);
 
 	/**
+	 * Verificación de adjunto existente la lista de proveedores de 1 activo.
+	 * Esta verificación está pensada para trámites (ya que se identifica el activo)
+	 * @param idActivo
+	 * @param codigoDocumento
+	 * @return
+	 */
+	public Boolean comprobarExisteAdjuntoProveedores(Long idActivo, String codigoDocumento);
+	
+	/**
 	 * Este método sube un archivo al servidor.
 	 * 
 	 * @param fileItem: archivo a subir.

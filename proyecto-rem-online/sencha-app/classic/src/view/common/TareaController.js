@@ -214,6 +214,18 @@ Ext.define('HreRem.view.common.TareaController', {
 			
 		},
 
+		verBotonEnlaceExpediente: function(window, invisible) {
+		
+			//debugger;    	
+			var me = this;
+			
+			//INVisibilizar boton enlace a Expediente
+			if(invisible){
+			 	me.getView().down('[handler=enlaceAbrirExpediente]').hidden = true;
+			}
+			
+		},
+		
 		enlaceAbrirTrabajo: function(button) {
 			//debugger;
 			var me = this,
@@ -244,6 +256,38 @@ Ext.define('HreRem.view.common.TareaController', {
 				
 		},
 	
+	enlaceAbrirExpediente: function(button) {
+		//debugger;
+		var me = this,
+		window = button.up('window'),
+		idExpediente = window.idExpediente;
+
+		if(Ext.isEmpty(idExpediente)) {
+			
+			window.mask();
+					
+			//Llamada Ajax para obtener el idExpediente relacionado con la tarea (idTarea)
+		    var url = $AC.getRemoteUrl('agenda/getIdExpediente');
+		    Ext.Ajax.request({
+			  url:url,
+			  params:  {idTarea : me.getView().idTarea},
+			  success: function(response,opts){
+				  idTrabajo = Ext.JSON.decode(response.responseText).idExpediente;					  
+				  titulo = "Expediente " + record.get("idExpediente");
+				  me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);
+			  },
+			  callback: function(options, success, response){
+				  window.unmask();
+			  }
+		    });
+		} else {
+			titulo = "Expediente " + record.get("idExpediente");
+			me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);			
+		}
+			
+			
+	},
+		
 	enlaceAbrirActivo: function(button) {
 
 		var me = this,

@@ -51,6 +51,12 @@ public class DtoTramite extends WebDto {
 	
 	private Long countActivos;
 	
+	private Boolean tieneEC;
+	
+	private String descripcionEstadoEC;
+	
+	private Long numEC;
+	
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -203,5 +209,30 @@ public class DtoTramite extends WebDto {
 	public void setCountActivos(Long countActivos) {
 		this.countActivos = countActivos;
 	}
+
+	public Boolean getTieneEC() {
+		return tieneEC;
+	}
+
+	public void setTieneEC(Boolean tieneEC) {
+		this.tieneEC = tieneEC;
+	}
+
+	public String getDescripcionEstadoEC() {
+		return descripcionEstadoEC;
+	}
+
+	public void setDescripcionEstadoEC(String descripcionEstadoEC) {
+		this.descripcionEstadoEC = descripcionEstadoEC;
+	}
+
+	public Long getNumEC() {
+		return numEC;
+	}
+
+	public void setNumEC(Long numEC) {
+		this.numEC = numEC;
+	}
+	
 	
 }

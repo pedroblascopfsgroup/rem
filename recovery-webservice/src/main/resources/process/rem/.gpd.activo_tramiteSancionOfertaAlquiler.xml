@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteSancionOfertaAlquiler" width="890" height="620">
+<root-container name="activo_tramiteSancionOfertaAlquiler" width="751" height="673">
   <node name="inicio" x="190" y="19" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -14,7 +14,7 @@
   <node name="T014_DefinicionOfertaDecision" x="146" y="240" width="225" height="36">
     <edge>
       <label x="-180" y="-19"/>
-      <bendpoint w1="339" h1="0" w2="-2" h2="-121"/>
+      <bendpoint w1="344" h1="0" w2="0" h2="-55"/>
     </edge>
     <edge>
       <label x="11" y="-30"/>
@@ -25,13 +25,20 @@
       <label x="-86" y="-4"/>
     </edge>
   </node>
-  <node name="T014_ResolucionComiteExterno" x="480" y="294" width="238" height="36">
+  <node name="T014_DevolucionLlavesHRE" x="146" y="581" width="228" height="36">
+    <edge>
+      <label x="-35" y="-17"/>
+    </edge>
+  </node>
+  <node name="T014_ResolucionComiteExterno" x="483" y="295" width="238" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="359" y="524" width="132" height="36"/>
   <node name="T014_ResolucionComiteExternoDecision" x="460" y="393" width="290" height="36">
+    <edge>
+      <label x="14" y="-1"/>
+    </edge>
     <edge>
       <label x="5" y="-20"/>
     </edge>
@@ -39,4 +46,14 @@
       <label x="14" y="-1"/>
     </edge>
   </node>
+  <node name="T014_PosicionamientoFirmaDecision" x="136" y="480" width="251" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="234" h1="-1" w2="-117" h2="-101"/>
+    </edge>
+  </node>
+  <node name="Fin" x="546" y="580" width="132" height="36"/>
 </root-container>

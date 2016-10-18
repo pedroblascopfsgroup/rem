@@ -143,6 +143,15 @@ public interface ExpedienteComercialApi {
 		public List<DtoAdjuntoExpediente> getAdjuntos(Long id);
 		
 		/**
+		 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento.
+		 * Esta verificación está pensada para trámites (ya que se identifica el trabajo)
+		 * @param idTrabajo
+		 * @param codigoSubtipoDocumento Código del subtipo de documento del expediente
+		 * @return
+		 */
+		public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
+		
+		/**
 		 * 
 		 * @param fileItem
 		 * @return
@@ -344,5 +353,6 @@ public interface ExpedienteComercialApi {
 		 * @return DatosClienteDto
 		 */
 		public DatosClienteDto buscarNumeroUrsus(Long numCompradorUrsus, String tipoDocumento) throws Exception;
+		
 }
 

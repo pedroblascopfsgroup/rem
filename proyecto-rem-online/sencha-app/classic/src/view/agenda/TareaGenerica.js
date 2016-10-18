@@ -26,6 +26,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 				     * @type Long
 				     */
 				    idActivo: null,
+				    
+				   	/**
+				     * Párametro para guardar el id del expediente en caso de existir.
+				     * @type Long
+				     */
+				    idExpediente: null,
 		                   
 					initComponent : function() {
 
@@ -40,10 +46,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						var camposFiltrados = [];
 						var ecActivo = {};
 						var ecTrabajo = {};
+						var ecExpediente = {};
 						var txtEcActivo = HreRem.i18n('fieldlabel.activo');
 						var txtEcTrabajo = HreRem.i18n('fieldlabel.trabajo');
+						var txtEcExpediente = HreRem.i18n('fieldlabel.expediente');
 						var esInvisibleEcActivo = false;
-						var esInvisibleEcTrabajo = false;
+						var esInvisibleEcTrabajo = idExpediente == null ? false : true;
+						var esInvisibleEcExpediente = idExpediente == null ? true : false; //Los enlaces del expediente y el trabajo se deben mostrar alternativamente
 						
 						//Bucle que busca los enlaces en el array me.campos,
 						// para mantener funcionalidad "TareaGenerica", los enlaces deben retirarse de me.campos
@@ -66,6 +75,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 								}
 								numEnlaces++;
 							}
+							
+							if (me.campos[i].xtype == 'elcexpediente') {
+								ecExpediente = me.campos[i];
+								txtEcExpediente = ecExpediente.fieldLabel;
+								if ("INVISIBLE" == ecExpediente.name){
+									esInvisibleEcExpediente = true;
+								}
+								numEnlaces++;
+							}
 						}
 
 						//Listener afterrender, con
@@ -73,12 +91,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						// - Advertencias tarea
 						// - Visibilidad Enlace Trabajo
 						// - Visibilidad Enlace Activo
+						// - Visibilidad Enlace Expediente
 					    me.listeners = {
 					    		afterrender: function(){
 					    			me.lookupController().getValidacionPrevia(me);
 					    			me.lookupController().getAdvertenciaTarea(me);
 					    			me.lookupController().verBotonEnlaceTrabajo(me, esInvisibleEcTrabajo);
 					    			me.lookupController().verBotonEnlaceActivo(me, esInvisibleEcActivo);
+									me.lookupController().verBotonEnlaceExpediente(me, esInvisibleEcExpediente);
 					    			}
 						     };
 						     
@@ -293,7 +313,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 							},
 							layout : 'column',
 							title : 'Enlaces directos',
-							hidden: (esInvisibleEcTrabajo && esInvisibleEcActivo),
+							hidden: (esInvisibleEcTrabajo && esInvisibleEcActivo && esInvisibleEcExpediente),
 							items : [ {
 									xtype : 'button',
 									html : '<div style="color: #26607c">'+txtEcTrabajo+'</div>',
@@ -302,6 +322,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 									hidden: esInvisibleEcTrabajo,
 									reflinks: CONST.MAP_TAB_TRABAJO_XTYPE[''+ecTrabajo.name+''],
 									handler: 'enlaceAbrirTrabajo'
+								},
+								{
+									xtype : 'button',
+									html : '<div style="color: #26607c">'+txtEcExpediente+'</div>',
+									//cls : 'boton-link',
+									style : 'background: transparent; border: none;',
+									hidden: esInvisibleEcExpediente,
+									reflinks: CONST.MAP_TAB_EXPEDIENTE_XTYPE[''+ecExpediente.name+''],
+									handler: 'enlaceAbrirExpediente'
 								},
 								{
 									xtype: 'image',

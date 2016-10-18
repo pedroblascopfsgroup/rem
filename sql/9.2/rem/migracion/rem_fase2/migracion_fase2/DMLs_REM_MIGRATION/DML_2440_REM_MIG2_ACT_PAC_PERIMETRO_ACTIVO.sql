@@ -118,7 +118,6 @@ BEGIN
           ,PAC_CHECK_COMERCIALIZAR
           ,PAC_FECHA_COMERCIALIZAR
           ,DD_MCO_ID
-          ,DD_MNC_ID
           ,PAC_CHECK_FORMALIZAR
           ,PAC_FECHA_FORMALIZAR
           ,PAC_MOTIVO_FORMALIZAR
@@ -126,6 +125,7 @@ BEGIN
           ,USUARIOCREAR
           ,FECHACREAR
           ,BORRADO
+          ,PAC_MOT_EXCL_COMERCIALIZAR
         )
         WITH INSERTAR AS (
           SELECT DISTINCT PAC_NUMERO_ACTIVO
@@ -144,30 +144,32 @@ BEGIN
         FROM (      
           SELECT DISTINCT      
           (SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-          WHERE ACT.ACT_NUM_ACTIVO = MIG2.PAC_NUMERO_ACTIVO)                AS ACT_ID,      
-          MIG2.PAC_IND_INCLUIDO                                             AS PAC_INCLUIDO,
-		  MIG2.PAC_IND_CHECK_TRA_ADMISION									AS PAC_CHECK_TRA_ADMISION,
-		  MIG2.PAC_FECHA_TRA_ADMISION										AS PAC_FECHA_TRA_ADMISION,
-		  MIG2.PAC_MOTIVO_TRA_ADMISION										AS PAC_MOTIVO_TRA_ADMISION,
-		  MIG2.PAC_IND_CHECK_GESTIONAR										AS PAC_CHECK_GESTIONAR,
-		  MIG2.PAC_FECHA_GESTIONAR											AS PAC_FECHA_GESTIONAR,
-		  MIG2.PAC_MOTIVO_GESTIONAR											AS PAC_MOTIVO_GESTIONAR,
-		  MIG2.PAC_IND_CHECK_ASIG_MEDIA										AS PAC_CHECK_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_FECHA_ASIGNAR_MEDIADOR									AS PAC_FECHA_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_MOTIVO_ASIGNAR_MEDIADOR									AS PAC_MOTIVO_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_IND_CHECK_COMERCIALIZAR									AS PAC_CHECK_COMERCIALIZAR,
-		  MIG2.PAC_FECHA_COMERCIALIZAR										AS PAC_FECHA_COMERCIALIZAR,
-		  (SELECT DD_MCO_ID FROM '||V_ESQUEMA||'.DD_MCO_MOTIVO_COMERCIALIZACION
-		  WHERE DD_MCO_CODIGO = MIG2.PAC_COD_MOTIVO_COMERCIAL)				AS DD_MCO_ID,
-		  (SELECT DD_MNC_ID FROM '||V_ESQUEMA||'.DD_MNC_MOT_NOCOMERCIALIZACION
-		  WHERE DD_MNC_CODIGO = MIG2.PAC_COD_MOTIVO_NOCOMERCIAL)			AS DD_MNC_ID,
-		  MIG2.PAC_IND_CHECK_FORMALIZAR										AS PAC_CHECK_FORMALIZAR,
-		  MIG2.PAC_FECHA_FORMALIZAR											AS PAC_FECHA_FORMALIZAR,
-		  MIG2.PAC_MOTIVO_FORMALIZAR										AS PAC_MOTIVO_FORMALIZAR,
-          0                                                               	AS VERSION, 
-          ''MIG2''                                                          AS USUARIOCREAR,                            
-          SYSDATE                                                           AS FECHACREAR,                             
-          0                                                                 AS BORRADO                             
+          WHERE ACT.ACT_NUM_ACTIVO = MIG2.PAC_NUMERO_ACTIVO)           AS ACT_ID,      
+          MIG2.PAC_IND_INCLUIDO                                                                  AS PAC_INCLUIDO,
+		  MIG2.PAC_IND_CHECK_TRA_ADMISION									                                  AS PAC_CHECK_TRA_ADMISION,
+		  MIG2.PAC_FECHA_TRA_ADMISION										                                      AS PAC_FECHA_TRA_ADMISION,
+		  MIG2.PAC_MOTIVO_TRA_ADMISION										                                    AS PAC_MOTIVO_TRA_ADMISION,
+		  MIG2.PAC_IND_CHECK_GESTIONAR										                                    AS PAC_CHECK_GESTIONAR,
+		  MIG2.PAC_FECHA_GESTIONAR											                                          AS PAC_FECHA_GESTIONAR,
+		  MIG2.PAC_MOTIVO_GESTIONAR											                                        AS PAC_MOTIVO_GESTIONAR,
+		  MIG2.PAC_IND_CHECK_ASIG_MEDIA										                                    AS PAC_CHECK_ASIGNAR_MEDIADOR,
+		  MIG2.PAC_FECHA_ASIGNAR_MEDIADOR									                                AS PAC_FECHA_ASIGNAR_MEDIADOR,
+		  MIG2.PAC_MOTIVO_ASIGNAR_MEDIADOR									                              AS PAC_MOTIVO_ASIGNAR_MEDIADOR,
+		  MIG2.PAC_IND_CHECK_COMERCIALIZAR									                                AS PAC_CHECK_COMERCIALIZAR,
+		  MIG2.PAC_FECHA_COMERCIALIZAR										                                    AS PAC_FECHA_COMERCIALIZAR,
+		  (SELECT DD_MCO_ID 
+            FROM '||V_ESQUEMA||'.DD_MCO_MOTIVO_COMERCIALIZACION
+            WHERE DD_MCO_CODIGO = MIG2.PAC_COD_MOTIVO_COMERCIAL)				AS DD_MCO_ID,
+		  MIG2.PAC_IND_CHECK_FORMALIZAR										                                        AS PAC_CHECK_FORMALIZAR,
+		  MIG2.PAC_FECHA_FORMALIZAR											                                              AS PAC_FECHA_FORMALIZAR,
+		  MIG2.PAC_MOTIVO_FORMALIZAR										                                              AS PAC_MOTIVO_FORMALIZAR,
+          0                                                               	                                          AS VERSION, 
+          ''MIG2''                                                                                                  AS USUARIOCREAR,                            
+          SYSDATE                                                                                               AS FECHACREAR,                             
+          0                                                                                                         AS BORRADO,
+          (SELECT DD_MNC_DESCRIPCION 
+            FROM '||V_ESQUEMA||'.DD_MNC_MOT_NOCOMERCIALIZACION
+            WHERE DD_MNC_CODIGO = MIG2.PAC_COD_MOTIVO_NOCOMERCIAL)			AS PAC_MOT_EXCL_COMERCIALIZAR
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           INNER JOIN INSERTAR INS 
           ON INS.PAC_NUMERO_ACTIVO = MIG2.PAC_NUMERO_ACTIVO

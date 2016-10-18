@@ -27,6 +27,8 @@ import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -42,6 +44,8 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
@@ -74,6 +78,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
     @Autowired
     private TareaExternaManager tareaExternaManager;
+    
+    @Autowired
+    private OfertaApi ofertaApi;
+    
+    @Autowired
+    private ExpedienteComercialApi expedienteComercialApi;
 
     @Autowired
     private DictionaryManager dictionaryManager;
@@ -220,6 +230,19 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			List<VBusquedaActivosTrabajo> lista = genericDao.getList(VBusquedaActivosTrabajo.class, filtroActivo);
             			if(!Checks.estaVacio(lista))
             				item.setValue(lista.get(0).getSaldoDisponible() + "€");
+            		}
+            	}
+            	if(item.getType().equals(TIPO_CAMPO_INFORMATIVO))
+            	{
+            		if(item.getNombre().equals("comite"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if (!Checks.esNulo(expediente))
+            					if(!Checks.esNulo(expediente.getComiteSancion()))
+            						item.setValue(expediente.getComiteSancion().getDescripcion());
+            			}
             		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA))

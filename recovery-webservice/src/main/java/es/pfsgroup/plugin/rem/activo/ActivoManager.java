@@ -71,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -2233,5 +2234,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return ofertaAceptada;
 	}
+	
+	private Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna) {
+		Trabajo trabajo = null;
+		TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
+		if (!Checks.esNulo(tareaActivo)) {
+			ActivoTramite tramite = tareaActivo.getTramite();
+			if (!Checks.esNulo(tramite)) {
+				trabajo = tramite.getTrabajo();
+			}
+		}
+		return trabajo;
+	}
+	
+	@Override
+	public Boolean checkTiposDistintos(TareaExterna tareaExterna){
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if(!Checks.esNulo(trabajo)){
+			Activo activo = trabajo.getActivo();
+			if(!Checks.esNulo(activo)){
+				if(!Checks.esNulo(activo.getInfoComercial())){
+					if(!Checks.esNulo(activo.getInfoComercial().getTipoActivo()))
+						return(activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
+				}
+			}
+		}
+		return false;
+	}
+
 
 }

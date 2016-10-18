@@ -2259,7 +2259,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 
 

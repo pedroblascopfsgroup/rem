@@ -463,6 +463,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 				if(!Checks.esNulo(expediente.getEstadoPbc())){
 					dto.setEstadoPbc(expediente.getEstadoPbc());
+				}				
+				if(!Checks.esNulo(expediente.getFechaVenta())){
+					dto.setFechaVenta(expediente.getFechaVenta());
 				}
 
 			}

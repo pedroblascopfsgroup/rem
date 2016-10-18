@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=JORGE ROS
---## FECHA_CREACION=20161014
+--## FECHA_CREACION=20161017
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-927
+--## INCIDENCIA_LINK=HREOS-1016
 --## PRODUCTO=NO
 --##
---## Finalidad: Realiza las modificaciones necesarias para el trámite de información.
+--## Finalidad: Realiza las modificaciones necesarias para el trámite de actualización de estados (publicación)
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -40,10 +40,10 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TFI;
     V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
     --		   TAP_CODIGO							TFI_ORDEN		TFI_TIPO		TFI_NOMBRE				TFI_LABEL																																																																																		TFI_ERROR_VALIDACION											TFI_VALIDACION									TFI_BUSINESS_OPERATION
-    	T_TFI('T010_AnalisisPeticionCargaList'			,'0'		,'label'	    ,'titulo'				,'<p style="margin-bottom: 10px">Se ha formulado una petición para actualizar la información relativa al departamento de precios.</p><p style="margin-bottom: 10px">Para valorar la solicitud y decidir si la acepta o rechaza, podrá consultar los activos afectados en el listado de activos  y el contenido de la petición en la pestaña de documentos, ambas del trabajo.</p><p style="margin-bottom: 10px">Si deniega la petición deberá hacer constar el motivo, finalizándose el trámite.</p><p style="margin-bottom: 10px">Si acepta la solicitud, deberá cargar la Excel de actualización en el módulo de carga masiva, finalizándose asimismo el trámite.</p><p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>'																																									,''																,''												,''					),
-    	T_TFI('T010_AnalisisPeticionCargaList'			,'1'		,'combo'		,'comboAceptacion'		,'Aceptaci&oacute;n de la petici&oacute;n'																																																																						  		,''	                                                            ,''                                 			,'DDSiNo'			),
-		T_TFI('T010_AnalisisPeticionCargaList'			,'2'		,'textfield'	,'motivoDenegacion'		,'Motivo de denegaci&oacute;n'																																																																						   	,''																,''												,''					),
-    	T_TFI('T010_AnalisisPeticionCargaList'			,'3'		,'textarea'	    ,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					)
+    	T_TFI('T012_AnalisisPeticionActualizacionEstado'			,'0'		,'label'	    ,'titulo'				,'<p style="margin-bottom: 10px">Se ha formulado una petición de modificación del estado de publicación de activos.</p><p style="margin-bottom: 10px">Para valorar la propuesta, puede consultar el listado de activos y el cambio de estado solicitado desde la pestaña del trabajo.</p><p style="margin-bottom: 10px">Si deniega la petición deberá hacer constar el motivo, finalizándose el trámite.</p>Si acepta la solicitud, deberá cargar la Excel de actualización de estado desde el módulo de carga masiva, finalizando así el trámite.<p style="margin-bottom: 10px"></p><p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>'																																									,''																,''												,''					),
+    	T_TFI('T012_AnalisisPeticionActualizacionEstado'			,'1'		,'combo'		,'comboAceptacion'		,'Tramitar petici&oacute;n'																																																																			  		,''	                                                            ,''                                 			,'DDSiNo'			),
+		T_TFI('T012_AnalisisPeticionActualizacionEstado'			,'2'		,'textfield'	,'motivoDenegacion'		,'Motivo de denegaci&oacute;n'																																																																						   	,''																,''												,''					),
+    	T_TFI('T012_AnalisisPeticionActualizacionEstado'			,'3'		,'textarea'	    ,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					)
     	);
     V_TMP_T_TFI T_TFI;
     
@@ -56,11 +56,10 @@ DECLARE
      */  
 BEGIN    
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_DESCRIPCION = ''An&aacute;lisis de petici&oacute;n y carga de listado'' ' ||
-			  ' ,TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T010_AnalisisPeticionCargaList''''][''''comboAceptacion''''] == DDSiNo.NO ? (valores[''''T010_AnalisisPeticionCargaList''''][''''motivoDenegacion''''] == '''''''' ? ''''Si deniega la petici&oacute;n debe indicar un motivo'''' : null) : null'' '||
-			  ' ,TAP_SCRIPT_DECISION = ''valores[''''T010_AnalisisPeticionCargaList''''][''''comboAceptacion''''] == DDSiNo.SI ? ''''OK'''' : ''''KO'''''' '||
-			  ' ,USUARIOMODIFICAR =''HREOS-927_REM_F2'', FECHAMODIFICAR = SYSDATE  '||
-			  ' WHERE TAP_CODIGO = ''T010_AnalisisPeticionCargaList'' ';
+			  ' SET TAP_DESCRIPCION = ''An&aacute;lisis de petici&oacute;n y actualizaci&oacute;n de estado publicaci&oacute;n'' ' ||
+			  ' ,TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T012_AnalisisPeticionActualizacionEstado''''][''''comboAceptacion''''] == DDSiNo.NO ? (valores[''''T012_AnalisisPeticionActualizacionEstado''''][''''motivoDenegacion''''] == '''''''' ? ''''Si deniega la petici&oacute;n debe indicar un motivo'''' : null) : null'' '||
+			  ' ,USUARIOMODIFICAR =''REM_F2'', FECHAMODIFICAR = SYSDATE  '||
+			  ' WHERE TAP_CODIGO = ''T012_AnalisisPeticionActualizacionEstado'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
@@ -88,9 +87,9 @@ BEGIN
 					
 				 	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS (' ||
           			  'TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, TFI_BUSINESS_OPERATION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) '||
-          			  'VALUES ('||V_ENTIDAD_ID||', (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T010_AnalisisPeticionCargaList''),'||
+          			  'VALUES ('||V_ENTIDAD_ID||', (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T012_AnalisisPeticionActualizacionEstado''),'||
           			  ''''||V_TMP_T_TFI(2)||''','''||V_TMP_T_TFI(3)||''','''||V_TMP_T_TFI(4)||''','''||V_TMP_T_TFI(5)||''', '''||V_TMP_T_TFI(6)||''', '''||V_TMP_T_TFI(7)||''', '||
-          			  ''''||V_TMP_T_TFI(8)||''',1, ''HREOS-927_REM_F2'', SYSDATE, 0)';
+          			  ''''||V_TMP_T_TFI(8)||''',1, ''REM_F2'', SYSDATE, 0)';
 		          
           			DBMS_OUTPUT.PUT_LINE('INSERTANDO: Campo '''||V_TMP_T_TFI(4)||''' de '''||V_TMP_T_TFI(1)||''''); 
 			        DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -107,7 +106,7 @@ BEGIN
 							,TFI_ERROR_VALIDACION='''||V_TMP_T_TFI(6)||''' 
 							,TFI_VALIDACION='''||V_TMP_T_TFI(7)||''' 
 							,TFI_BUSINESS_OPERATION ='''||V_TMP_T_TFI(8)||'''    
-							,USUARIOMODIFICAR =''HREOS-927_REM_F2'', FECHAMODIFICAR = SYSDATE  
+							,USUARIOMODIFICAR =''REM_F2'', FECHAMODIFICAR = SYSDATE  
 				       WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TFI(1)||''') 
 				         	AND TFI_ORDEN = '''||V_TMP_T_TFI(2)||'''
 				       ';

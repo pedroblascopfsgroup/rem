@@ -14,7 +14,7 @@ public class DtoOfertaActivo {
 	private Long idOferta;
 	private Long idActivo;
 	private Long idAgrupacion;
-	//private String estadoOferta;
+	private String estadoOferta;
 	private String codigoEstadoOferta;
 	
 	public Long getIdOferta() {
@@ -36,12 +36,12 @@ public class DtoOfertaActivo {
 	public void setIdAgrupacion(Long idAgrupacion) {
 		this.idAgrupacion = idAgrupacion;
 	}
-	/*public String getEstadoOferta() {
+	public String getEstadoOferta() {
 		return estadoOferta;
 	}
 	public void setEstadoOferta(String estadoOferta) {
 		this.estadoOferta = estadoOferta;
-	}*/
+	}
 	public String getCodigoEstadoOferta() {
 		return codigoEstadoOferta;
 	}

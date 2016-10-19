@@ -120,10 +120,10 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_2;
       
       IF TABLE_COUNT_2 = 0 THEN    
-            DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS TIPOS DE DIRECCION EXISTEN EN '||V_ESQUEMA||'.DD_TDP_TIPO_DIR_PROVEEDOR');    
+            DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LAS CARTERAS EXISTEN EN '||V_ESQUEMA||'.DD_CRA_CARTERA');    
       ELSE
             
-            DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_2||' TIPOS DE DIRECCION INEXISTENTES EN DD_TDP_TIPO_DIR_PROVEEDOR. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS.');
+            DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_2||' CARTERAS INEXISTENTES EN DD_CRA_CARTERA. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS.');
             
             --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
             
@@ -160,7 +160,7 @@ BEGIN
             )'
             ;
           
-            V_COD := SQL%ROWCOUNT;
+            V_COD := V_COD + SQL%ROWCOUNT;
             
             COMMIT;      
       
@@ -314,77 +314,39 @@ BEGIN
 			  FECHACREAR,
 			  BORRADO
 		)
-		WITH CARTERA_ACTIVOS AS (
-			SELECT 
-			  ACT.DD_CRA_ID,
-			  AP.ACT_PRP_NUM_PROPUESTA,
-			  COUNT(AP.ACT_PRP_ACT_NUMERO_ACTIVO) TOTAL_ACTIVOS
-			FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-			  INNER JOIN '||V_ESQUEMA||'.MIG2_ACT_PRP AP ON AP.ACT_PRP_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-			WHERE ACT.BORRADO = 0
-			GROUP BY (ACT.DD_CRA_ID, AP.ACT_PRP_NUM_PROPUESTA)
-		), CARTERA_ACTIVOS_ORDEN AS (
-			SELECT 
-			  CA.DD_CRA_ID,
-			  CA.ACT_PRP_NUM_PROPUESTA,
-			  CA.TOTAL_ACTIVOS, 
-			  ROW_NUMBER () OVER (PARTITION BY CA.ACT_PRP_NUM_PROPUESTA ORDER BY CA.TOTAL_ACTIVOS DESC) AS ORDEN
-			FROM CARTERA_ACTIVOS CA
-		), MAXIMO AS (
-			SELECT
-			  CAO.DD_CRA_ID,
-			  CAO.ACT_PRP_NUM_PROPUESTA
-			FROM CARTERA_ACTIVOS_ORDEN CAO
-			WHERE CAO.ORDEN = 1
-		)
 		SELECT
-			'||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                PRP_ID,
-		  AUX.*
-		FROM (
-			  SELECT DISTINCT
-					MIG.PRP_NUM_PROPUESTA										                          PRP_NUM_PROPUESTA,
-					MIG.PRP_NOMBRE_PROPUESTA									                      PRP_NOMBRE_PROPUESTA,
-					NVL(EPP.DD_EPP_ID,
-                (SELECT DD_EPP_ID
-                FROM '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO
-                WHERE DD_EPP_CODIGO = ''01''
-                AND BORRADO = 0) 
-					)                                                                                 DD_EPP_ID,
-					NVL(USU.USU_ID, 
-                (SELECT USU_ID 
-                FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS 
-                 WHERE USU_USERNAME = ''MIGRACION'' 
-                AND BORRADO = 0)
-					)                                                                                 USU_ID,
-					NVL(CRA.DD_CRA_ID, MAXI.DD_CRA_ID)                        DD_CRA_ID,
-					NVL(TPP.DD_TPP_ID,
-            (SELECT DD_TPP_ID 
-						FROM '||V_ESQUEMA||'.DD_TPP_TIPO_PROP_PRECIO 
-					   WHERE DD_TPP_CODIGO = ''04'')
-					)                                                                                 DD_TPP_ID,
-					MIG.PRP_IND_PROP_MANUAL										                      PRP_ES_PROP_MANUAL,
-					MIG.PRP_FECHA_EMISION										                          PRP_FECHA_EMISION,
-					MIG.PRP_FECHA_ENVIO											                            PRP_FECHA_ENVIO,
-					MIG.PRP_FECHA_SANCION										                          PRP_FECHA_SANCION,
-					MIG.PRP_FECHA_CARGA											                          PRP_FECHA_CARGA,
-					MIG.PRP_OBSERVACIONES										                          PRP_OBSERVACIONES,
-					0 															                                                  VERSION,
-					''MIG2'' 													                                              USUARIOCREAR,
-					SYSDATE 													                                          FECHACREAR,
-					0 															                                                  BORRADO
-			  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-					LEFT JOIN '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO EPP ON DD_EPP_CODIGO = MIG.PRP_COD_ESTADO_PRP 
-					LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = MIG.PRP_COD_USUARIO
-					LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = MIG.PRP_COD_CARTERA
-					LEFT JOIN '||V_ESQUEMA||'.DD_TPP_TIPO_PROP_PRECIO TPP ON TPP.DD_TPP_CODIGO = MIG.PRP_COD_TIPO_PRP
-					LEFT JOIN MAXIMO MAXI ON MAXI.ACT_PRP_NUM_PROPUESTA = MIG.PRP_NUM_PROPUESTA
-			  WHERE NOT EXISTS (
-				SELECT 1
-				FROM '||V_ESQUEMA||'.'||V_TABLA||' NOTE
-				WHERE NOTE.PRP_NUM_PROPUESTA = MIG.PRP_NUM_PROPUESTA
-				AND NOTE.BORRADO = 0
-			  )
-		  ) AUX
+			'||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                		PRP_ID,
+			MIG.PRP_NUM_PROPUESTA										PRP_NUM_PROPUESTA,
+			MIG.PRP_NOMBRE_PROPUESTA									PRP_NOMBRE_PROPUESTA,
+			EPP.DD_EPP_ID												DD_EPP_ID,
+			USU.USU_ID													USU_ID,
+			CRA.DD_CRA_ID												DD_CRA_ID,
+			TPP.DD_TPP_ID												DD_TPP_ID,
+			MIG.PRP_IND_PROP_MANUAL										PRP_ES_PROP_MANUAL,
+			MIG.PRP_FECHA_EMISION										PRP_FECHA_EMISION,
+			MIG.PRP_FECHA_ENVIO											PRP_FECHA_ENVIO,
+			MIG.PRP_FECHA_SANCION										PRP_FECHA_SANCION,
+			MIG.PRP_FECHA_CARGA											PRP_FECHA_CARGA,
+			MIG.PRP_OBSERVACIONES										PRP_OBSERVACIONES,
+			0 															VERSION,
+			''MIG2'' 													USUARIOCREAR,
+			SYSDATE 													FECHACREAR,
+			0 															BORRADO
+		  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+		  INNER JOIN '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO EPP 
+			ON DD_EPP_CODIGO = MIG.PRP_COD_ESTADO_PRP 
+		  INNER JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU 
+			ON USU.USU_USERNAME = MIG.PRP_COD_USUARIO
+		  INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA 
+			ON CRA.DD_CRA_CODIGO = MIG.PRP_COD_CARTERA
+		  INNER JOIN '||V_ESQUEMA||'.DD_TPP_TIPO_PROP_PRECIO TPP 
+			ON TPP.DD_TPP_CODIGO = MIG.PRP_COD_TIPO_PRP
+		  WHERE NOT EXISTS (
+			SELECT 1
+			FROM '||V_ESQUEMA||'.'||V_TABLA||' NOTE
+			WHERE NOTE.PRP_NUM_PROPUESTA = MIG.PRP_NUM_PROPUESTA
+			AND NOTE.BORRADO = 0
+			)
       '
       ;
    

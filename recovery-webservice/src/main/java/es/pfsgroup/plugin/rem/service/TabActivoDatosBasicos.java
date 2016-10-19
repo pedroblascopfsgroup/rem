@@ -125,6 +125,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getTipoActivo() != null ) {					
 			BeanUtils.copyProperty(activoDto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoActivoDescripcion", activo.getTipoActivo().getDescripcion());
+			
+			if(!Checks.esNulo(activo.getInfoComercial())) {
+				if(!Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
+					// Comprobar si el tipo de activo es el mismo tanto en el activo como en el informe comercial.
+					BeanUtils.copyProperty(activoDto, "tipoActivoAdmisionMediadorCorresponde", activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
+				}
+			}
 		}
 		 
 		if (activo.getSubtipoActivo() != null ) {

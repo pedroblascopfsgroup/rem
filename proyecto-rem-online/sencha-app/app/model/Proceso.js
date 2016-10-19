@@ -29,7 +29,12 @@ Ext.define('HreRem.model.Proceso', {
     		}  ,
     		{
     			name:'descripcion'
-    		}  
+    		},
+    		{
+    			name: 'fechaCrear',
+    			type: 'date',
+    			dateFormat: 'c'
+    		}
     		
     ] 
 

@@ -33,84 +33,78 @@ V_SENTENCIA VARCHAR2(32000 CHAR);
 V_REG_MIG NUMBER(10,0) := 0;
 V_REG_INSERTADOS NUMBER(10,0) := 0;
 V_REJECTS NUMBER(10,0) := 0;
-TABLE_COUNT_1 NUMBER(10,0) := 0;
-
+V_COD NUMBER(10,0) := 0;
+V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
       
---    --COMPROBACIONES PREVIAS - TIPO AGRUPACION
---    DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO TIPO AGRUPACION...');
---    
---    V_SENTENCIA := '
---    SELECT COUNT(1) 
---    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
---    WHERE NOT EXISTS (
---      SELECT 1 
---      FROM '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG 
---      WHERE TAG.DD_TAG_CODIGO = MIG2.AGR_COD_TIPO_AGRUPACION
---    )
---    '
---    ;
---    EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_1;
---    
---    IF TABLE_COUNT_1 = 0 THEN
---    
---        DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS TIPOS DE AGRUPACION EXISTEN EN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION');
---    
---    ELSE
---    
---        DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_1||' TIPOS DE AGRUPACION INEXISTENTES EN DD_TAG_TIPO_AGRUPACION. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS.');
---        
---        --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
---        
---        EXECUTE IMMEDIATE '
---        DELETE FROM '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS
---        WHERE FICHERO_ORIGEN = '''||V_TABLA_MIG||'''
---        '
---        ;
---        
---        COMMIT;
---        
---        EXECUTE IMMEDIATE '
---        INSERT INTO '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS (
---              CLAVE           ,  
---              FICHERO_ORIGEN  , 
---              CAMPO_ORIGEN    ,
---              DICCIONARIO     ,
---              VALOR           ,
---              FECHA_COMPROBACION
---
---        )
---              SELECT
---                      AGR_UVEM,'''||V_TABLA_MIG||''',''AGR_COD_TIPO_AGRUPACION'',''DD_TAG_TIPO_AGRUPACION'',AGR_COD_TIPO_AGRUPACION, SYSDATE
---
---              FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
---                    WHERE NOT EXISTS (
---                      SELECT 1 
---                      FROM '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG 
---                      WHERE TAG.DD_TAG_CODIGO = MIG2.AGR_COD_TIPO_AGRUPACION)'
---        ;
---        
---        COMMIT;      
---    
---    END IF;
-
       --Inicio del proceso de volcado 
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       V_SENTENCIA:= '
-		MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' DEST	
-   		     USING '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		        ON (DEST.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM)
-		WHEN MATCHED THEN UPDATE
-		     SET  
-			   DEST.DD_TAG_ID = (SELECT DD_TAG_ID FROM '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = MIG.AGR_COD_TIPO_AGRUPACION),
-			   DEST.VERSION = DEST.VERSION +1,
-			   DEST.AGR_PUBLICADO = MIG.AGR_IND_PUBLICADA ,
-			   DEST.USUARIOMODIFICAR = ''MIG2''           ,
-			   DEST.FECHAMODIFICAR = SYSDATE  ';
-      DBMS_OUTPUT.PUT_LINE(V_SENTENCIA);
+        MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' DEST	
+               USING '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                ON (DEST.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM)
+        WHEN MATCHED THEN UPDATE
+             SET  
+             DEST.DD_TAG_ID = (SELECT DD_TAG_ID FROM '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = MIG.AGR_COD_TIPO_AGRUPACION),
+             DEST.VERSION = DEST.VERSION +1,
+             DEST.AGR_PUBLICADO = MIG.AGR_IND_PUBLICADA ,
+             DEST.USUARIOMODIFICAR = ''MIG2''           ,
+             DEST.FECHAMODIFICAR = SYSDATE  ';
+
+      EXECUTE IMMEDIATE V_SENTENCIA	;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      
+      V_REG_INSERTADOS := SQL%ROWCOUNT;
+      
+      COMMIT;
+      
+      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      
+      -- INFORMAMOS A LA TABLA INFO
+      
+      -- Registros MIG
+      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
+      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
+            
+      -- Total registros rechazados
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+            
+      -- Observaciones
+	  IF V_REJECTS != 0 THEN
+      V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
+    END IF;
+        
+      V_SENTENCIA := '
+      INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
+        TABLA_MIG,
+        TABLA_REM,
+        REGISTROS_TABLA_MIG,
+        REGISTROS_INSERTADOS,
+        REGISTROS_RECHAZADOS,
+        DD_COD_INEXISTENTES,
+        FECHA,
+        OBSERVACIONES
+      )
+      SELECT
+      '''||V_TABLA_MIG||''',
+      '''||V_TABLA||''',
+      '||V_REG_MIG||',
+      '||V_REG_INSERTADOS||',
+      '||V_REJECTS||',
+      '||V_COD||',
+      SYSDATE,
+      '''||V_OBSERVACIONES||'''
+      FROM DUAL
+      '
+      ;
       EXECUTE IMMEDIATE V_SENTENCIA;
+      
+      COMMIT; 
 			
 EXCEPTION
       WHEN OTHERS THEN

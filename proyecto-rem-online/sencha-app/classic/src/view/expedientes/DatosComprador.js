@@ -269,7 +269,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        },
 										        {
 										        	xtype      : 'container',
-							                        layout: 'hbox',
+							                        layout: 'box',
 							                        items: [
 							                            {
 							                            	xtype: 'textfieldbase',
@@ -286,6 +286,9 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 							                                xtype: 'button',
 //												            cls: 'searchfield-input sf-con-borde',
 												            handler: 'buscarNumeroUrsus',
+												            bind: {
+												            	hidden: '{!esCarteraBankia}'
+												            },
 												            cls: 'search-button-buscador',
 															iconCls: 'app-buscador-ico ico-search'
 							                            }

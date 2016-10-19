@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -21,351 +22,400 @@ import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
-
+import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
+import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
 public interface ExpedienteComercialApi {
-    
-		/**
-	     * Recupera el ExpedienteComercial indicado.
-	     * @param id Long
-	     * @return ExpedienteComercial
-	     */
-	    public ExpedienteComercial findOne(Long id);
-	    
+	/**
+	 * Recupera el ExpedienteComercial indicado.
+	 * 
+	 * @param id
+	 *            Long
+	 * @return ExpedienteComercial
+	 */
+	public ExpedienteComercial findOne(Long id);
 
-		/**
-		 * Método que recupera un conjunto de datos del expediente comercial según su id 
-		 * @param id
-		 * @param tab
-		 * @return Object
-		 */
-	    public Object getTabExpediente(Long id, String tab);
+	/**
+	 * Método que recupera un conjunto de datos del expediente comercial según
+	 * su id
+	 * 
+	 * @param id
+	 * @param tab
+	 * @return Object
+	 */
+	public Object getTabExpediente(Long id, String tab);
 
+	/**
+	 * Método que recupera los textos de la oferta de un expediente
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<DtoTextosOferta> getListTextosOfertaById(Long id);
 
-	    /**
-	     * Método que recupera los textos de la oferta de un expediente
-	     * @param id
-	     * @return
-	     */
-		public List<DtoTextosOferta> getListTextosOfertaById(Long id);
+	/**
+	 * Método que guarda un texto de oferta para un expediente comercial
+	 * 
+	 * @param dto
+	 * @param idEntidad
+	 *            id del expediente
+	 * @return resultado de la operacion
+	 */
+	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
 
-		
-		/**
-		 * Método que guarda un texto de oferta para un expediente comercial
-		 * @param dto
-		 * @param idEntidad id del expediente
-		 * @return resultado de la operacion
-		 */
-		public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
+	/**
+	 * Método que guarda la información de la pestaña datos básicos de la oferta
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
 
+	/**
+	 * Método que recupera las entregas de una reserva para un expediente
+	 * 
+	 * @return
+	 */
+	public List<DtoEntregaReserva> getListEntregasReserva(Long id);
 
-		/**
-		 * Método que guarda la información de la pestaña datos básicos de la oferta
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
+	/**
+	 * Añadir una Entrega Reserva a un Expediente Comercial
+	 * 
+	 * @param entregaReserva
+	 * @param idExpedienteComercial
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) throws Exception;
 
+	/**
+	 * Actualizar los valores del Expediente Comercial
+	 * 
+	 * @parame xpedienteComercial
+	 * @return
+	 */
+	public boolean update(ExpedienteComercial expedienteComercial);
 
-		/**
-		 * Método que recupera las entregas de una reserva para un expediente
-		 * @return
-		 */
-		public List<DtoEntregaReserva> getListEntregasReserva(Long id);
-		
-		
-		/**
-	     * Añadir una Entrega Reserva a un Expediente Comercial
-	     * @param entregaReserva
-	     * @param idExpedienteComercial
-	     * @return
-		 * @throws Exception 
-	     */
-		public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) throws Exception;
-		
-		/**
-	     * Actualizar los valores del Expediente Comercial
-	     * @parame xpedienteComercial
-	     * @return
-	     */
-		public boolean update(ExpedienteComercial expedienteComercial);
+	/**
+	 * Método que recupera las observaciones del expediente comercial
+	 * 
+	 * @return
+	 */
+	public DtoPage getListObservaciones(Long idExpediente, WebDto dto);
 
-		/**
-		 * Método que recupera las observaciones del expediente comercial
-		 * @return
-		 */
-		public DtoPage getListObservaciones(Long idExpediente, WebDto dto);
-		
-	    
-		/**
-	     * Actualiza una observacion
-	     * @param dtoObservacion
-	     * @return
-	     */
-		public boolean saveObservacion(DtoObservacion dtoObservacion);
+	/**
+	 * Actualiza una observacion
+	 * 
+	 * @param dtoObservacion
+	 * @return
+	 */
+	public boolean saveObservacion(DtoObservacion dtoObservacion);
 
-	    /**
-	     * Crea una observación
-	     * @param dtoObservacion
-	     * @param idTrabajo
-	     * @return
-	     */
-		public boolean createObservacion(DtoObservacion dtoObservacion, Long idExpediente);
+	/**
+	 * Crea una observación
+	 * 
+	 * @param dtoObservacion
+	 * @param idTrabajo
+	 * @return
+	 */
+	public boolean createObservacion(DtoObservacion dtoObservacion, Long idExpediente);
 
-	    /**
-	     * Elimina una observación
-	     * @param idObservacion
-	     * @return
-	     */
-		public boolean deleteObservacion(Long idObservacion);
-		
-		/**
-		 * Método que recupera los activos del expediente comercial
-		 * @return
-		 */
-		public DtoPage getActivosExpediente(Long idExpediente);
+	/**
+	 * Elimina una observación
+	 * 
+	 * @param idObservacion
+	 * @return
+	 */
+	public boolean deleteObservacion(Long idObservacion);
 
-		/**
-		 * Recupera el adjunto del Expediente comercial
-		 * @param dtoAdjunto
-		 * @return
-		 */
-		public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto);
-		
-		/**
-		 * Recupera info de los adjuntos asociados al expediente comercial
-		 * @param id
-		 * @return
-		 */
-		public List<DtoAdjuntoExpediente> getAdjuntos(Long id);
-		
-		/**
-		 * 
-		 * @param fileItem
-		 * @return
-		 */
-		public String upload(WebFileItem fileItem) throws Exception;
-		
-		/**
-	     * Sube un adjunto del expediente comercial
-	     * @param dtoAdjunto
-	     * @return
-	     */
-		public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto);
+	/**
+	 * Método que recupera los activos del expediente comercial
+	 * 
+	 * @return
+	 */
+	public DtoPage getActivosExpediente(Long idExpediente);
 
-		
-		/**
-		 * Recupera la lista de compradores asociados al expediente
-		 * @param idExpediente
-		 * @return
-		 */
-		public Page getCompradoresByExpediente(Long idExpediente, WebDto dto);
-		
-		/**
-		 * Recupera la informacion de un Comprador de un Expediente Comercial
-		 * @param idComprador
-		 * @return
-		 */
-		public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idComprador);
+	/**
+	 * Recupera el adjunto del Expediente comercial
+	 * 
+	 * @param dtoAdjunto
+	 * @return
+	 */
+	public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto);
 
-		/**
-		 * Método que guarda la información de la pestaña Condicionantes del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
-		
-		/**
-		 * Método que guarda la información de la pestaña de un comprador del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
-		
-		/**
-		 * Método que guarda el comprador como principal
-		 * @param idComercial
-		 * @param idExpedienteComercial
-		 * @return
-		 */
-		boolean marcarCompradorPrincipal(Long idComprador, Long idExpedienteComercial);
+	/**
+	 * Recupera info de los adjuntos asociados al expediente comercial
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<DtoAdjuntoExpediente> getAdjuntos(Long id);
 
-		/**
-		 * Método que obtiene el posicionamiento del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public DtoPage getPosicionamientosExpediente(Long idExpediente);
-		
-		/**
-		 * Método que obtiene los comparecientes del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public DtoPage getComparecientesExpediente(Long idExpediente);
-		
-		/**
-		 * Método que obtiene las subsanaciones del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public DtoPage getSubsanacionesExpediente(Long idExpediente);
-		
-		/**
-		 * Método que obtiene los notarios del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public List<DtoActivoProveedor> getNotariosExpediente(Long idExpediente);
+	/**
+	 * 
+	 * @param fileItem
+	 * @return
+	 */
+	public String upload(WebFileItem fileItem) throws Exception;
 
-		
-		/**
-		 * Modifica los datos de una reserva
-		 * @param dto
-		 * @param idEntidad
-		 * @return
-		 */
-		boolean saveReserva(DtoReserva dto, Long idEntidad);
-		
-		/**
-		 * Método que obtiene los honorarios(gastos) del expediente
-		 * @param idExpediente
-		 * @return
-		 */
-		public DtoPage getHonorarios(Long idExpediente);
-		
-		/**
-		 * Método que guarda los honorarios(gastos) del expediente
-		 * @param dtoGastoExpediente
-		 * @return
-		 */
-		public boolean saveHonorario(DtoGastoExpediente dtoGastoExpediente);
+	/**
+	 * Sube un adjunto del expediente comercial
+	 * 
+	 * @param dtoAdjunto
+	 * @return
+	 */
+	public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto);
 
-		
-		/**
-		 * Método que obtiene el ExpedienteComercial relacionado con una determinada Oferta 
-		 * @param idOferta
-		 * @return
-		 */		
-		public ExpedienteComercial expedienteComercialPorOferta (Long idOferta);
-	   
+	/**
+	 * Recupera la lista de compradores asociados al expediente
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public Page getCompradoresByExpediente(Long idExpediente, WebDto dto);
 
-		/**
-		 * Método que obtiene uno de los estados posibles del ExpedienteComercial 
-		 * relacionado con una determinado código
-		 * @param codigo
-		 * @return
-		 */	
-		public DDEstadosExpedienteComercial getDDEstadosExpedienteComercialByCodigo (String codigo);
-		
-		/**
-		 * Método que guarda la información de la pestaña Ficha del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente);
-		
-		/**
-		 * Método que guarda la información de una entrega de reserva
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public boolean saveEntregaReserva(DtoEntregaReserva dto, Long idEntidad);
-		
-		/**
-		 * Método que actualiza la información de una entrega de reserva
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public boolean updateEntregaReserva(DtoEntregaReserva dto, Long id);
-		
-		/**
-		 * Método que elimina una entrega de reserva
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+	/**
+	 * Recupera la informacion de un Comprador de un Expediente Comercial
+	 * 
+	 * @param idComprador
+	 * @return
+	 */
+	public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idComprador);
 
+	/**
+	 * Método que guarda la información de la pestaña Condicionantes del
+	 * expediente
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
 
-		/**
-		 * Función que devuelve la propuesta de un comité para un expediente comercial de Bankia
-		 * @param idExpediente
-		 * @return
-		 * @throws Exception 
-		 */
-		public String consultarComiteSancionador(Long idExpediente) throws Exception;
+	/**
+	 * Método que guarda la información de la pestaña de un comprador del
+	 * expediente
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
 
-		/**
-		 * Crea un registro de posicionamiento
-		 * @param dto
-		 * @param idEntidad
-		 * @return
-		 */
-		public boolean createPosicionamiento(DtoPosicionamiento dto, Long idEntidad);
+	/**
+	 * Método que guarda el comprador como principal
+	 * 
+	 * @param idComercial
+	 * @param idExpedienteComercial
+	 * @return
+	 */
+	boolean marcarCompradorPrincipal(Long idComprador, Long idExpedienteComercial);
 
-		/**
-		 * Actualiza un registro de posicionamiento
-		 * @param dto
-		 * @return
-		 */
-		public boolean savePosicionamiento(DtoPosicionamiento dto);
+	/**
+	 * Método que obtiene el posicionamiento del expediente
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public DtoPage getPosicionamientosExpediente(Long idExpediente);
 
-		/**
-		 * Elimina un registro de posicionamiento
-		 * @param idPosicionamiento
-		 * @return
-		 */
-		public boolean deletePosicionamiento(Long idPosicionamiento);
-		
-		/**
-		 * Método que crea un comprador desde la pestaña compradores del expediente
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
-		
-		/**
-		 * Método que devuelve los datos de un comprador de Bankia (WebService Ursus) por número de comprador
-		 * @param numCompradorUrsus
-		 * @return DatosClienteDto
-		 */
-		public DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento) throws Exception;
-		
-		/**
-		 * Método que devuelve los proveedores filtrados por su tipo de proveedor
-		 * @param codigoTipoProveedor
-		 * @return List<ActivoProveedor>
-		 */
-		public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto dto);
-		
-		/**
-		 * Crea un registro de honorarios (gasto_expediente)
-		 * @param dto
-		 * @param idEntidad
-		 * @return
-		 */
-		public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad);
-		
-		/**
-		 * Elimina un registro de honorario (gasto_expediente)
-		 * @param idPosicionamiento
-		 * @return
-		 */
-		public boolean deleteHonorario(Long idHonorario);
+	/**
+	 * Método que obtiene los comparecientes del expediente
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public DtoPage getComparecientesExpediente(Long idExpediente);
+
+	/**
+	 * Método que obtiene las subsanaciones del expediente
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public DtoPage getSubsanacionesExpediente(Long idExpediente);
+
+	/**
+	 * Método que obtiene los notarios del expediente
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public List<DtoActivoProveedor> getNotariosExpediente(Long idExpediente);
+
+	/**
+	 * Modifica los datos de una reserva
+	 * 
+	 * @param dto
+	 * @param idEntidad
+	 * @return
+	 */
+	boolean saveReserva(DtoReserva dto, Long idEntidad);
+
+	/**
+	 * Método que obtiene los honorarios(gastos) del expediente
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public DtoPage getHonorarios(Long idExpediente);
+
+	/**
+	 * Método que guarda los honorarios(gastos) del expediente
+	 * 
+	 * @param dtoGastoExpediente
+	 * @return
+	 */
+	public boolean saveHonorario(DtoGastoExpediente dtoGastoExpediente);
+
+	/**
+	 * Método que obtiene el ExpedienteComercial relacionado con una determinada
+	 * Oferta
+	 * 
+	 * @param idOferta
+	 * @return
+	 */
+	public ExpedienteComercial expedienteComercialPorOferta(Long idOferta);
+
+	/**
+	 * Método que obtiene uno de los estados posibles del ExpedienteComercial
+	 * relacionado con una determinado código
+	 * 
+	 * @param codigo
+	 * @return
+	 */
+	public DDEstadosExpedienteComercial getDDEstadosExpedienteComercialByCodigo(String codigo);
+
+	/**
+	 * Método que guarda la información de la pestaña Ficha del expediente
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente);
+
+	/**
+	 * Método que guarda la información de una entrega de reserva
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean saveEntregaReserva(DtoEntregaReserva dto, Long idEntidad);
+
+	/**
+	 * Método que actualiza la información de una entrega de reserva
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean updateEntregaReserva(DtoEntregaReserva dto, Long id);
+
+	/**
+	 * Método que elimina una entrega de reserva
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+
+	/**
+	 * Función que devuelve la propuesta de un comité para un expediente
+	 * comercial de Bankia
+	 * 
+	 * @param idExpediente
+	 * @return
+	 * @throws Exception
+	 */
+	public String consultarComiteSancionador(Long idExpediente) throws Exception;
+
+	/**
+	 * Crea un registro de posicionamiento
+	 * 
+	 * @param dto
+	 * @param idEntidad
+	 * @return
+	 */
+	public boolean createPosicionamiento(DtoPosicionamiento dto, Long idEntidad);
+
+	/**
+	 * Actualiza un registro de posicionamiento
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	public boolean savePosicionamiento(DtoPosicionamiento dto);
+
+	/**
+	 * Elimina un registro de posicionamiento
+	 * 
+	 * @param idPosicionamiento
+	 * @return
+	 */
+	public boolean deletePosicionamiento(Long idPosicionamiento);
+
+	/**
+	 * Método que crea un comprador desde la pestaña compradores del expediente
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
+
+	/**
+	 * Crea un objeto de tipo OfertaUVEMDto
+	 * @param oferta
+	 * @return
+	 */
+	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial); 
+	
+	/**
+	 * Obtiene la lista de titulares para uvem
+	 * @param expedienteComercial
+	 * @return
+	 */
+	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial);
+	
+	/**
+	 * Método que devuelve los datos de un comprador de Bankia (WebService Ursus) por número de comprador
+	 * @param numCompradorUrsus
+	 * @return DatosClienteDto
+	 */
+	public DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento) throws Exception;
+	
+	/**
+	 * Método que devuelve los proveedores filtrados por su tipo de proveedor
+	 * @param codigoTipoProveedor
+	 * @return List<ActivoProveedor>
+	 */
+	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto dto);
+	
+	/**
+	 * Crea un registro de honorarios (gasto_expediente)
+	 * @param dto
+	 * @param idEntidad
+	 * @return
+	 */
+	public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad);
+	
+	/**
+	 * Elimina un registro de honorario (gasto_expediente)
+	 * @param idPosicionamiento
+	 * @return
+	 */
+	public boolean deleteHonorario(Long idHonorario);
+
 }
-

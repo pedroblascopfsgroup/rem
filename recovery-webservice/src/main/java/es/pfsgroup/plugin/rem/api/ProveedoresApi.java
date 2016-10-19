@@ -181,5 +181,12 @@ public interface ProveedoresApi {
 	 * @return
 	 */
 	public String getNifProveedorByUsuarioLogado();
+	
+	/**
+	 * Método que devuelve el id del proveedor a través de su nif
+	 * @param nif
+	 * @return
+	 */
+	public Long getIdProveedorByNif(String nif);
 
 }

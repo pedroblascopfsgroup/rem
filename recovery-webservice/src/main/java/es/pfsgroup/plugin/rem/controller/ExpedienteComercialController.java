@@ -789,9 +789,8 @@ public class ExpedienteComercialController {
 			model.put("success", true);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			model.put("success", false);
-			model.put("msg", "No se ha podido conectar con el servicio");
+			model.put("msg", e.getMessage());
 		}	
 		
 		return createModelAndViewJson(model);
@@ -858,14 +857,12 @@ public class ExpedienteComercialController {
 			
 		} 
 		catch (JsonViewerException e) {
-			e.printStackTrace();
 			model.put("success", false);
 			model.put("msg", e.getMessage());
 			
 		}	catch (Exception e) {
-			e.printStackTrace();
 			model.put("success", false);
-			model.put("msg", "No se ha podido conectar con el servicio");
+			model.put("msg", e.getMessage());
 		}
 		
 		return createModelAndViewJson(model);

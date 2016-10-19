@@ -835,10 +835,9 @@ public class UvemManager implements UvemManagerApi {
 		System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());
 		
 
-
 		// seteamos parametros
 		servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PAHY0170");
-		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(instanciaDecisionDto.getCodigoDeOfertaHaya());
+		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(StringUtils.leftPad(instanciaDecisionDto.getCodigoDeOfertaHaya(), 16, "0"));
 		if (instanciaDecisionDto.isFinanciacionCliente()) {
 			servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_SI);
 		} else {

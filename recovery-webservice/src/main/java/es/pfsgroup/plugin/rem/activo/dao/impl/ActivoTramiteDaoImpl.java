@@ -29,15 +29,15 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 	 * @return la lista de trámites
 	 */
 	public Page getTramitesActivo(Long idActivo, WebDto webDto){
-		//List<ActivoTramite> listaTramites = new ArrayList<ActivoTramite>();
+		
+		//HQLBuilder hb = new HQLBuilder("select tra from ActivoTramite tra, ActivoTrabajo tbj");
+		//hb.appendWhere("tra.trabajo.id = tbj.trabajo");
+		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.activo", idActivo);
+		
 		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
-		
-		//Activo activo = activoDao.get(idActivo);
-		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.activo.id", idActivo);
-		
+						
 		return HibernateQueryUtils.page(this, hb, webDto);
-		
 	}
 	
 	public List<ActivoTramite> getListaTramitesActivo(Long idActivo){

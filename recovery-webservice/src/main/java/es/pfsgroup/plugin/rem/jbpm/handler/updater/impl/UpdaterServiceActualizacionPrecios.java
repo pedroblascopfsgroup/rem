@@ -24,6 +24,7 @@ public class UpdaterServiceActualizacionPrecios implements UpdaterService {
 	private GenericABMDao genericDao;
 
 	private static final String CODIGO_T010_ANALISIS_PETICION_CARGA = "T010_AnalisisPeticionCargaList";
+	private static final String CODIGO_T012_ANALISIS_PETICION_ACTUALIZACION_ESTADO = "T012_AnalisisPeticionActualizacionEstado";
 	private static final String COMBO_ACEPTAR = "comboAceptacion";
 	private static final String MOTIVO_DENEGACION = "motivoDenegacion";
 
@@ -63,7 +64,7 @@ public class UpdaterServiceActualizacionPrecios implements UpdaterService {
 
 	public String[] getCodigoTarea() {
 		// TODO Constantes con los nombres de los nodos.
-		return new String[] { CODIGO_T010_ANALISIS_PETICION_CARGA };
+		return new String[] { CODIGO_T010_ANALISIS_PETICION_CARGA, CODIGO_T012_ANALISIS_PETICION_ACTUALIZACION_ESTADO };
 	}
 
 	public String[] getKeys() {

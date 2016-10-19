@@ -157,7 +157,12 @@ Ext.define('HreRem.ux.util.Constants', {
     TIPOS_PROVEEDOR_ESPEDIENTE: {
     	CAT : '28',
     	MEDIADOR_OFICINA: '29'
+    },
+    
+    ESTADOS_OFERTA: {
+    	ACEPTADA : '01'
     }
+    
     
 
 });

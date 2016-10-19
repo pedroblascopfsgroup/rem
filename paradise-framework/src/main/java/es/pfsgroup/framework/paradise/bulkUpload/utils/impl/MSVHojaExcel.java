@@ -110,6 +110,11 @@ public class MSVHojaExcel {
 			this.columnasReales = 0;
 			Sheet hoja = libroExcel.getSheet(0);
 			Cell[] cabeceras = hoja.getRow(0);
+			
+			//Masivo propuesta precios: Si no se detecta la cabecera en fila0, prueba con fila7
+			if(cabeceras.length == 0)
+				cabeceras = hoja.getRow(7);
+
 			//for (int i=cabeceras.length - 1; i>0; i--) {
 			for (int i=cabeceras.length -1; i>=0; i--){
 				Cell celda = cabeceras[i];

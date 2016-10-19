@@ -484,15 +484,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     	},
 
 		comboComites: {
-			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.Honorario',
+	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getComitesByCartera',
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
-	    } 
-	
+	    },
+	    
+	    storeEstadosDevolucion: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'estadosDevolucion'}
+	    	}	
+	    	
+	    	
+	    }
+	    	
     }
   
 });

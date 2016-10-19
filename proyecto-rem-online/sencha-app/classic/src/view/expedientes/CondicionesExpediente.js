@@ -726,7 +726,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				            		store: '{comboSiNoRem}',
 				            		value: '{condiciones.procedeDescalificacion}'
 				            	},
-				            	allowBlank: false,
 				            	listeners: {
 				            		change: 'onHaCambiadoProcedeDescalificacion'
 				            	}

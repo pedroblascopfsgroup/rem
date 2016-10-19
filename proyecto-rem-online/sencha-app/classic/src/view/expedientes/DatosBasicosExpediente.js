@@ -78,44 +78,24 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio'),
-					        	bind: '{expediente.fechaInicioAlquiler}'					        						        	
+					        	bind: '{expediente.fechaInicioAlquiler}',
+					        	readOnly: true,
+					        	maxValue: null
 					        },
 					        {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.fin'),
-					        	bind: '{expediente.fechaFinAlquiler}'					        						        	
+					        	bind: '{expediente.fechaFinAlquiler}',
+					        	readOnly: true,
+					        	maxValue: null
 					        },
-					        {
-					        	
-					        },
-					        { 
-								xtype: 'numberfieldbase',
-								symbol: HreRem.i18n("symbol.euro"),
-								fieldLabel: HreRem.i18n('fieldlabel.importe.renta.alquiler'),
-				                bind: '{expediente.importeRentaAlquiler}'
-							},
 							{ 
 								xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
-					        	bind: '{expediente.numContratoAlquiler}'
-					        },
-					        { 
-								xtype: 'textfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.situacion.contrato.alquiler'),
-					        	value: 'COMBO NO DEFINIDO'
+					        	bind: '{expediente.numContratoAlquiler}',
+					        	readOnly: true
 					        }
-//							{ 
-//								xtype: 'comboboxfieldbase',
-//			                	fieldLabel:  HreRem.i18n('fieldlabel.situacion.contrato.alquiler'),
-//					        	bind: {
-//				            		store: '{comboSituacionContratoAlquiler}',
-//				            		value: '{expediente.situacionContratoAlquiler}'
-//				            		//value: '{expediente.situacionContratoAlquiler}'
-//				            	},
-//					            displayField: 'descripcion',
-//		    					valueField: 'codigo'
-//					        }
 					        
 				        ]
 					},
@@ -172,42 +152,43 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.alta.oferta'),
 	                	bind:		'{expediente.fechaAltaOferta}',
-	                	maxValue: null
+	                	readOnly: true
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.aceptacion'),
 	                	bind:		'{expediente.fechaAlta}',
-	                	maxValue: null
+	                	readOnly: true
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion'),
 	                	bind:		'{expediente.fechaSancion}',
-	                	maxValue: null
+	                	readOnly: true
 	                },
 	                { 
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
 	                	bind:		'{expediente.fechaReserva}',
-	                	maxValue: null
+	                	readOnly: true
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
-	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.posicionamiento'),
-	                	bind:		'{expediente.fechaPosicionamiento}',
-	                	maxValue: null
+	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
+	                	bind:		'{expediente.fechaVenta}',
+	                	readOnly: true
+	                	
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
-	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion.propietario'),
+	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.ingreso.cheque'),
 	                	bind:		'{expediente.fechaContabilizacionPropietario}',
-	                	maxValue: null
+	                	readOnly: true
 	                }
 
 				]
@@ -224,30 +205,33 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							formatter: 'date("d/m/Y")',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
 							bind: '{expediente.fechaAnulacion}',
-							maxValue: null
+							readOnly: true
 						},
 						{
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.motivo.anulacion'),
 							bind: '{expediente.motivoAnulacion}',
-							colspan: 2
+							colspan: 2,
+							readOnly: true
 						},	
 						{
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.peticionario'),
-							bind: '{expediente.peticionarioAnulacion}'
+							bind: '{expediente.peticionarioAnulacion}',
+							readOnly: true
 						},
 						{
 							xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.entregas.a.cuenta'),
 							bind: '{expediente.fechaDevolucionEntregas}',
-							maxValue: null
+							readOnly: true
 						},
 						{
 							xtype: 'numberfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.importe.devolucion'),
-							bind: '{expediente.importeDevolucionEntregas}'
+							bind: '{expediente.importeDevolucionEntregas}',
+							readOnly: true
 						}
 						
 				

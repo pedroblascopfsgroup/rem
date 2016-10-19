@@ -53,26 +53,24 @@ Ext.define('HreRem.view.masivo.MasivoController', {
     },
     
     onClickDescargarErrores: function(btn) {
-		
+
     	var me = this,
 		config = {};
-		
+
 		config.url= $AC.getRemoteUrl("process/downloadErrors");
 		config.params = {};
 		config.params.idProcess = this.getView().down('grid').selection.data.id;
-		
-		me.fireEvent("downloadFile", config);		
-    	
-    	
+
+		me.fireEvent("downloadFile", config);	
     },
     
     
     onClickBotonProcesar: function(btn,b,c) {
-
+debugger;
     	var me = this;
     	var parameters = {};
-    	parameters.idProcess = this.getView().down('grid').selection.data.id; //selection.get("id")
-        parameters.idOperation = this.getView().down('grid').selection.data.tipoOperacion.id;
+    	parameters.idProcess = this.getView().down('grid').selection.data.id;
+        parameters.idOperation = this.getView().down('grid').selection.data.tipoOperacionId;
     	var url =  $AC.getRemoteUrl('agrupacion/procesarMasivo');
 		Ext.Ajax.request({
 			 method: 'GET',
@@ -100,10 +98,5 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 			     });
 		     }
 		 });
-    	
-    	
     }
-
- 
-    
 });

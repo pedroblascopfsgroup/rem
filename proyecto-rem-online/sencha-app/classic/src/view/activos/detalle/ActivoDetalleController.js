@@ -1215,6 +1215,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;

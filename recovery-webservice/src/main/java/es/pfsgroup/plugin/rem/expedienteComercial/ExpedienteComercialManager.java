@@ -2221,14 +2221,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 	}
 
-	@Override
-	public void reintegroReserva(ExpedienteComercial expComercial) {
-		DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_BLOQUEADA));
-		expComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
-		this.update(expComercial);	
-		
-	}
 
 	@Override
 	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) {

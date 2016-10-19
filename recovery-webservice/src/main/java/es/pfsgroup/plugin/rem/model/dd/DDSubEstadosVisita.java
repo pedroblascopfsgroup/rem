@@ -93,6 +93,14 @@ public class DDSubEstadosVisita implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
+	public DDEstadosVisita getEstadoVisita() {
+		return estadoVisita;
+	}
+
+	public void setEstadoVisita(DDEstadosVisita estadoVisita) {
+		this.estadoVisita = estadoVisita;
+	}
+
 	public Long getVersion() {
 		return version;
 	}

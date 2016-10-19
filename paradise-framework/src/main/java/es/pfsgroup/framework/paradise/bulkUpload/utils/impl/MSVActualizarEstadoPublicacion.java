@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
@@ -85,7 +86,7 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || 
 							!mapaErrores.get(ACTIVE_NOT_ACTUALIZABLE).isEmpty() ||
-							!mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE).isEmpty() ){
+							(!Checks.esNulo(mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE)) && !mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE).isEmpty()) ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -192,7 +193,9 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 				if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(operacionMasiva.getCodigo()) ||
 						MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(operacionMasiva.getCodigo()))
 				{
-					if(!particularValidator.estadoNoPublicado(exc.dameCelda(i, 0)))
+					// Validación estado no publicado: Se valida que los activos estén "no publicados"
+					// y si alguno no tuviera puesto el estado de publicación (null) debe tomarse como "no publicado" para validar
+					if(!particularValidator.estadoNoPublicadoOrNull(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
 				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(operacionMasiva.getCodigo())){
 					if(!particularValidator.estadoOcultaractivo(exc.dameCelda(i, 0)))

@@ -22,7 +22,7 @@ public interface  ParticularValidatorApi {
 	
 	public Boolean isActivoPrePublicable(String numActivo);
 	
-	public Boolean estadoNoPublicado(String numActivo);
+	public Boolean estadoNoPublicadoOrNull(String numActivo);
 	
 	public Boolean estadoOcultaractivo(String numActivo);
 	

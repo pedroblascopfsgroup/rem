@@ -78,27 +78,23 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio'),
-					        	bind: '{expediente.fechaInicioAlquiler}'					        						        	
+					        	bind: '{expediente.fechaInicioAlquiler}',
+					        	readOnly: true,
+					        	maxValue: null
 					        },
 					        {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.fin'),
-					        	bind: '{expediente.fechaFinAlquiler}'					        						        	
+					        	bind: '{expediente.fechaFinAlquiler}',
+					        	readOnly: true,
+					        	maxValue: null
 					        },
-					        {
-					        	
-					        },
-					        { 
-								xtype: 'numberfieldbase',
-								symbol: HreRem.i18n("symbol.euro"),
-								fieldLabel: HreRem.i18n('fieldlabel.importe.renta.alquiler'),
-				                bind: '{expediente.importeRentaAlquiler}'
-							},
 							{ 
 								xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
-					        	bind: '{expediente.numContratoAlquiler}'
+					        	bind: '{expediente.numContratoAlquiler}',
+					        	readOnly: true
 					        }
 					        
 				        ]

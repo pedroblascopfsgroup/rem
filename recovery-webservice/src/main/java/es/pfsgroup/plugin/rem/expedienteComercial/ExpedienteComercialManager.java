@@ -463,6 +463,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 				if(!Checks.esNulo(expediente.getEstadoPbc())){
 					dto.setEstadoPbc(expediente.getEstadoPbc());
+				}				
+				if(!Checks.esNulo(expediente.getFechaVenta())){
+					dto.setFechaVenta(expediente.getFechaVenta());
 				}
 
 			}
@@ -547,6 +550,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			dto.setMotivoAnulacion(reserva.getMotivoAnulacion());
 			dto.setFechaAnulacion(reserva.getFechaAnulacion());
+			if(!Checks.esNulo(reserva.getEstadoDevolucion())){
+				dto.setEstadoDevolucionCodigo(reserva.getEstadoDevolucion().getCodigo());
+			}
 		}
 		
 		
@@ -1447,6 +1453,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				
 				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
 				reserva.setTipoArras(tipoArras);
+			}
+			if(!Checks.esNulo(dto.getEstadoDevolucionCodigo())) {
+				
+				DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoDevolucion.class, dto.getEstadoDevolucionCodigo());
+				reserva.setEstadoDevolucion(estadoDevolucion);
 			}
 			
 			genericDao.save(Reserva.class, reserva);

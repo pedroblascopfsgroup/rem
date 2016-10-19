@@ -853,6 +853,42 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						})	 
 				     },
 				     
+				     T009_AnalisisPeticionValidacion: function(){
+				    	var me = this;
+							
+						me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+						
+						me.down('[name=comboTramitar]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+							}else{
+								me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+							}
+						})
+				     },
+				     
+				     T009_GenerarPropuestaPreciosValidacion: function(){
+				    	var me = this;
+							
+						me.deshabilitarCampo(me.down('[name=fechaGeneracion]'));
+						me.deshabilitarCampo(me.down('[name=nombrePropuesta]'));
+						
+				     },
+				     
+				     T010_AnalisisPeticionCargaListValidacion: function(){
+				    	var me = this;
+							
+						me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+						
+						me.down('[name=comboAceptacion]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+							}else{
+								me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+							}
+						})
+				     },
+				     
 				     T011_RevisionInformeComercialValidacion: function(){
 						var me = this;
 														
@@ -868,6 +904,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 								me.habilitarCampo(me.down('[name=motivoDenegacion]'));
 							}
 						})	 
+					},
+					
+					T012_AnalisisPeticionActualizacionEstadoValidacion: function() {
+						var me = this;
+						
+						me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+						
+						me.down('[name=comboAceptacion]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+							}else{
+								me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+							}
+						})
 					},
 				     
 					habilitarCampo: function(campo) {				    	

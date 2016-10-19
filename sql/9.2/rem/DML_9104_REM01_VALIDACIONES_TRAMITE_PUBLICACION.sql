@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=SI
 --##
---## Finalidad: Realiza las modificaciones necesarias para el trámite de sanción de ofertas.
+--## Finalidad: Realiza las modificaciones necesarias para el trámite de publicación.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -37,14 +37,14 @@ DECLARE
     
     
     /* ################################################################################
-     ## MODIFICACIONES: Se cambian las decisiones del trámite de obtención documental.
+     ## MODIFICACIONES: Se cambian las decisiones del trámite de publicación.
      ## de la obtención de documentos.
      ##
      */
     
 BEGIN    
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T011_RevisionInformeComercial''''][''''comboDatosIguales''''] == DDSiNo.SI ? (checkAdmisionAndGestion() ? null : ''''El activo no tiene el OK de admisi&oacuate;n y gesti&oacuate;n'''') : null '' '||
+			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T011_RevisionInformeComercial''''][''''comboDatosIguales''''] == DDSiNo.SI ? (checkAdmisionAndGestion() ? null : ''''El activo no tiene el OK de admisión y gestión'''') : null '' '||
 			  ' WHERE TAP_CODIGO = ''T011_RevisionInformeComercial'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);

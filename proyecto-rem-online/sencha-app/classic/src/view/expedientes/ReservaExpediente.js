@@ -89,9 +89,16 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	bind:		'{reserva.fechaAnulacion}',
 		                	readOnly: true
 		                },
-		                {
-		                	xtype: 'displayfield'
-		                }
+		                { 
+							xtype: 'comboboxfieldbase',
+							reference: 'comboEstadoDevolucion',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.devolucion'),
+				        	bind: {
+			            		store: '{storeEstadosDevolucion}',
+			            		value: '{reserva.estadoDevolucionCodigo}'
+			            	},
+			            	readOnly: true
+				        }
 		                
 		            ]
 			},

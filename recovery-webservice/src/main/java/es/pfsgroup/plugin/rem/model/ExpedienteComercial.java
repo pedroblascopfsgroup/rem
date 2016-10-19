@@ -173,6 +173,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_ESTADO_PBC")
     private Integer estadoPbc;   
     
+    @Column(name="ECO_FECHA_VENTA")
+    private Date fechaVenta;
+    
     
      
 	@Version   
@@ -503,6 +506,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setEstadoPbc(Integer estadoPbc) {
 		this.estadoPbc = estadoPbc;
+	}
+
+	public Date getFechaVenta() {
+		return fechaVenta;
+	}
+
+	public void setFechaVenta(Date fechaVenta) {
+		this.fechaVenta = fechaVenta;
 	}
 	
     

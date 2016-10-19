@@ -388,6 +388,10 @@
 				def activoManager = ctx.getBean("activoManager");
 				return activoManager.checkAdmisionAndGestion(tareaExterna);
 			}
+			def checkTiposDistintos = {
+				def activoManager = ctx.getBean("activoManager");
+				return activoManager.checkTiposDistintos(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

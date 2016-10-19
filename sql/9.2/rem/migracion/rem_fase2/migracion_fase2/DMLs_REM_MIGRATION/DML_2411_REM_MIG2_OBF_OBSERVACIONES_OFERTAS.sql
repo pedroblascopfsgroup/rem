@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HREOS-855
 --## PRODUCTO=NO
 --## 
---## Finalidad: Proceso de migración MIG2_OBF_OBSERVACIONES_OFERTAS -> OEX_OBS_EXPEDIENTE
+--## Finalidad: Proceso de migración MIG2_OBF_OBSERVACIONES_OFERTAS -> TXO_TEXTOS_OFERTA
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -27,7 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
-V_TABLA VARCHAR2(40 CHAR) := 'OEX_OBS_EXPEDIENTE';
+V_TABLA VARCHAR2(40 CHAR) := 'TXO_TEXTOS_OFERTA';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OBF_OBSERVACIONES_OFERTAS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
 V_REG_MIG NUMBER(10,0) := 0;
@@ -37,8 +37,69 @@ V_COD NUMBER(10,0) := 0;
 V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
+
+  --COMPROBACIONES PREVIAS - OFERTAS
+  DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO OFERTAS...');
+  
+  V_SENTENCIA := '
+  SELECT COUNT(1) 
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+  WHERE NOT EXISTS (
+    SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR WHERE OFR.OFR_NUM_OFERTA = MIG.OBF_COD_OFERTA
+  )
+  '
+  ;
+  
+  EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
+  
+  IF TABLE_COUNT = 0 THEN
+  
+    DBMS_OUTPUT.PUT_LINE('[INFO] TODAS LAS OFERTAS EXISTEN EN OFR_OFERTAS');
+    
+  ELSE
+  
+    DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' OFERTAS INEXISTENTES EN OFR_OFERTAS. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_OFR_NOT_EXISTS.');
+    
+    --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
+    
+    EXECUTE IMMEDIATE '
+    DELETE FROM '||V_ESQUEMA||'.MIG2_OFR_NOT_EXISTS
+    WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
+    '
+    ;
+    
+    COMMIT;
+  
+    EXECUTE IMMEDIATE '
+    INSERT INTO '||V_ESQUEMA||'.MIG2_OFR_NOT_EXISTS (
+    OFR_NUM_OFERTA,
+    TABLA_MIG,
+    FECHA_COMPROBACION
+    )
+    WITH OFR_NUM_OFERTA AS (
+		SELECT
+		MIG.OBF_COD_OFERTA 
+		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+		WHERE NOT EXISTS (
+		  SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE MIG.OBF_COD_OFERTA = OFR_NUM_OFERTA
+		)
+    )
+    SELECT DISTINCT
+    MIG.OBF_COD_OFERTA                              						OFR_NUM_OFERTA,
+    '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
+    SYSDATE                                                                 FECHA_COMPROBACION
+    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
+    INNER JOIN OFR_NUM_OFERTA
+    ON OFR_NUM_OFERTA.OBF_COD_OFERTA = MIG.OBF_COD_OFERTA
+    '
+    ;
+    
+    COMMIT;
+
+  END IF;
+
           
-      --COMPROBACIONES PREVIAS - EXPEDIENTE_ECONOMICO
+      /*--COMPROBACIONES PREVIAS - EXPEDIENTE_ECONOMICO
       DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO EXPEDIENTE_ECONOMICO...');
       
       V_SENTENCIA := '
@@ -102,39 +163,34 @@ BEGIN
         
         COMMIT;
     
-      END IF;
+      END IF;*/
       
-      --Inicio del proceso de volcado sobre CEX_COMPRADOR_EXPEDIENTE
+      --Inicio del proceso de volcado sobre TXO_TEXTOS_OFERTA
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       EXECUTE IMMEDIATE '
           INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' OEX (
-          OEX_ID
-          ,ECO_ID
-          ,USU_ID
-          ,OEX_OBSERVACION
-          ,OEX_FECHA
+          TXO_ID
+          ,OFR_ID
+          ,DD_TTX_ID
+          ,TXO_TEXTO
           ,VERSION
           ,USUARIOCREAR
           ,FECHACREAR
           ,BORRADO
           )
           SELECT
-            '||V_ESQUEMA||'.S_OEX_OBS_EXPEDIENTE.NEXTVAL  AS OEX_ID,
-            ECO.ECO_ID                                                          AS ECO_ID,
-            (SELECT USU.USU_ID
-              FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
-              WHERE USU.USU_USERNAME = ''MIGRACION''
-              AND USU.BORRADO = 0)                                    AS USU_ID,
-            MIG2.OBF_OBSERVACION                                       AS OEX_OBSERVACION,
-            MIG2.OBF_FECHA                                                  AS OEX_FECHA,
-            0                                                                         AS VERSION,
-            ''MIG2''                                                                  AS USUARIOCREAR,
-            SYSDATE                                                             AS FECHACREAR,
-            0                                                                         AS BORRADO
+            '||V_ESQUEMA||'.S_TXO_TEXTOS_OFERTA.NEXTVAL  				AS TXO_ID,
+            OFR.OFR_ID                                                  AS OFR_ID,
+            TTX.DD_TTX_ID												AS DD_TTX_ID,
+            MIG2.OBF_OBSERVACION                                        AS TXO_TEXTO,
+            0                                                           AS VERSION,
+            ''MIG2''                                                    AS USUARIOCREAR,
+            MIG2.OBF_FECHA                                              AS FECHACREAR,
+            0                                                           AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG2.OBF_COD_OFERTA AND OFR.BORRADO = 0
-          INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+          LEFT JOIN '||V_ESQUEMA||'.DD_TTX_TIPOS_TEXTO_OFERTA TTX ON DD_TTX_CODIGO = MIG2.OBF_COD_TIPO_OBS
       '
       ;
       
@@ -165,7 +221,7 @@ BEGIN
           V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';      
                    
           IF TABLE_COUNT != 0 THEN
-              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay un total de '||TABLE_COUNT||' EXPEDIENTES_ECONOMICOS (OFERTAS) inexistentes. ';
+              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay un total de '||TABLE_COUNT||' OFERTAS inexistentes. ';
           END IF;
         
       END IF;

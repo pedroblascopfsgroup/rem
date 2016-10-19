@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.DatosClienteUrsus', {
     height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50,
 	reference: 'datosclienteursuswindowref',
 //	y:Ext.Element.getViewportHeight()/20,
-	x:Ext.Element.getViewportWidth() / 1.7,
+	x:Ext.Element.getViewportWidth() / 1.60,
     controller: 'expedientedetalle',
     viewModel: {
         type: 'expedientedetalle'
@@ -47,6 +47,10 @@ Ext.define('HreRem.view.expedientes.DatosClienteUrsus', {
 						},
 						items :
 							[
+								{ 
+									fieldLabel: HreRem.i18n('fieldlabel.cliente.ursus.numero.cliente.ursus'),
+									value: clienteUrsus.numeroClienteUrsus
+								},
 								{ 
 									fieldLabel: HreRem.i18n('fieldlabel.cliente.ursus.tipo.documento'),
 									value: clienteUrsus.claseDeDocumentoIdentificador

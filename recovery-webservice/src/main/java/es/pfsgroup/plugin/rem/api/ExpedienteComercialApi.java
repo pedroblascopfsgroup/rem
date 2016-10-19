@@ -8,6 +8,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -29,7 +30,6 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
 public interface ExpedienteComercialApi {
-
 	/**
 	 * Recupera el ExpedienteComercial indicado.
 	 * 
@@ -376,15 +376,6 @@ public interface ExpedienteComercialApi {
 	boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
 
 	/**
-	 * Método que devuelve los datos de un comprador de Bankia (WebService
-	 * Ursus) por número de comprador
-	 * 
-	 * @param numCompradorUrsus
-	 * @return DatosClienteDto
-	 */
-	public DatosClienteDto buscarNumeroUrsus(Long numCompradorUrsus, String tipoDocumento) throws Exception;
-
-	/**
 	 * Crea un objeto de tipo OfertaUVEMDto
 	 * @param oferta
 	 * @return
@@ -397,5 +388,34 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial);
+	
+	/**
+	 * Método que devuelve los datos de un comprador de Bankia (WebService Ursus) por número de comprador
+	 * @param numCompradorUrsus
+	 * @return DatosClienteDto
+	 */
+	public DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento) throws Exception;
+	
+	/**
+	 * Método que devuelve los proveedores filtrados por su tipo de proveedor
+	 * @param codigoTipoProveedor
+	 * @return List<ActivoProveedor>
+	 */
+	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto dto);
+	
+	/**
+	 * Crea un registro de honorarios (gasto_expediente)
+	 * @param dto
+	 * @param idEntidad
+	 * @return
+	 */
+	public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad);
+	
+	/**
+	 * Elimina un registro de honorario (gasto_expediente)
+	 * @param idPosicionamiento
+	 * @return
+	 */
+	public boolean deleteHonorario(Long idHonorario);
 
 }

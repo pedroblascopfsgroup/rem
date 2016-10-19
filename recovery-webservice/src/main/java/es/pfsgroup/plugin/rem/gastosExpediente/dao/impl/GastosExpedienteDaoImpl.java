@@ -36,7 +36,7 @@ public class GastosExpedienteDaoImpl extends AbstractEntityDao<GastosExpediente,
 			
 		}else if((!Checks.esNulo(comisionDto.getEsDoblePrescripcion()) && comisionDto.getEsDoblePrescripcion()) ||
 				 (!Checks.esNulo(comisionDto.getEsResponsable()) && comisionDto.getEsResponsable())){	
-			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "ge.accionGastos.codigo", DDAccionGastos.CODIGO_DOBLE_PRESCRIPCION);
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "ge.accionGastos.codigo", DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
 			
 		}
 

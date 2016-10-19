@@ -213,6 +213,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												
 											{   
 												xtype:'fieldset',
+												colspan: 3,
 												border: false,
 				        						margin: '10 10 10 0',
 				        						defaultType: 'numberfieldbase',

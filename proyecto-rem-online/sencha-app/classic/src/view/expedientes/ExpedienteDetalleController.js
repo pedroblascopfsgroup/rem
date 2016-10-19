@@ -119,7 +119,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			            },
 				            
 			            failure: function (a, operation) {
-			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            	var data = {};
+			                try {
+			                	data = Ext.decode(operation._response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
 							 me.getView().unmask();
 			            }
 					});

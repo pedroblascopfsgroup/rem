@@ -1759,47 +1759,113 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDTipoProveedorHonorario tipoProveedorOficinaBankia= (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA);
 			DDTipoProveedorHonorario tipoProveedorOficinaCajamar= (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR);
 			
-			if(!Checks.esNulo(oferta.getCustodio())){
-				DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
-				GastosExpediente gastoExpedienteCustodio= new GastosExpediente();
-				gastoExpedienteCustodio.setNombre(oferta.getCustodio().getNombre());
-				gastoExpedienteCustodio.setCodigo(oferta.getCustodio().getCodProveedorUvem());
-				gastoExpedienteCustodio.setProveedor(oferta.getCustodio());
-				gastoExpedienteCustodio.setAccionGastos(accionGastoColaboracion);
-				gastoExpedienteCustodio.setExpediente(nuevoExpediente);
-				gastosExpediente.add(gastoExpedienteCustodio);
+			if(!Checks.esNulo(oferta.getVisita())){
+				//Custodio
+				if(!Checks.esNulo(oferta.getCustodio()) && Checks.esNulo(oferta.getVisita().getApiCustodio())){ //Oferta tiene y visita no 
+					DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+					GastosExpediente gastoExpedienteCustodio= anyadirGastoExpediente(oferta, accionGastoColaboracion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteCustodio);
+				}
+				else if(Checks.esNulo(oferta.getCustodio()) && !Checks.esNulo(oferta.getVisita().getApiCustodio())){ //Oferta no tiene y visita si
+					oferta.setCustodio(oferta.getVisita().getApiCustodio());
+					DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+					GastosExpediente gastoExpedienteCustodio= anyadirGastoExpediente(oferta, accionGastoColaboracion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteCustodio);
+				}
+				else if(!Checks.esNulo(oferta.getCustodio()) && !Checks.esNulo(oferta.getVisita().getApiCustodio())){ //ambos tiene y son iguales
+					if(oferta.getCustodio().getId().equals(oferta.getVisita().getApiCustodio().getId())){
+						DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+						GastosExpediente gastoExpedienteCustodio= anyadirGastoExpediente(oferta, accionGastoColaboracion, nuevoExpediente);
+						gastosExpediente.add(gastoExpedienteCustodio);
+					}
+				}
+				
+				
+				//FDV
+				if(!Checks.esNulo(oferta.getFdv()) && Checks.esNulo(oferta.getVisita().getFdv())){//Oferta tiene y visita no
+					DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+					GastosExpediente gastoExpedienteFdv= anyadirGastoExpediente(oferta, accionGastoColaboracion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteFdv);
+				}
+				else if(Checks.esNulo(oferta.getFdv()) && !Checks.esNulo(oferta.getVisita().getFdv())){//Oferta no tiene y visita si
+					oferta.setFdv(oferta.getVisita().getFdv());
+					DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+					GastosExpediente gastoExpedienteFdv= anyadirGastoExpediente(oferta, accionGastoColaboracion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteFdv);
+				}
+				else if(!Checks.esNulo(oferta.getFdv()) && !Checks.esNulo(oferta.getVisita().getFdv())){//ambos tiene y son iguales
+					if(oferta.getFdv().getId().equals(oferta.getVisita().getFdv().getId())){
+						DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+						GastosExpediente gastoExpedienteFdv= anyadirGastoExpediente(oferta, accionGastoColaboracion, nuevoExpediente);
+						gastosExpediente.add(gastoExpedienteFdv);
+					}
+				}
+				
+				
+				//PRESCRIPTOR
+				if(!Checks.esNulo(oferta.getPrescriptor()) && Checks.esNulo(oferta.getVisita().getPrescriptor())){//Oferta tiene y visita no
+					DDAccionGastos accionGastoPrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_PRESCRIPCION);
+					GastosExpediente gastoExpedientePrescriptor= anyadirGastoExpediente(oferta, accionGastoPrescripcion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedientePrescriptor);
+				}
+				else if(Checks.esNulo(oferta.getPrescriptor()) && !Checks.esNulo(oferta.getVisita().getPrescriptor())){//Oferta no tiene y visita si
+					oferta.setPrescriptor(oferta.getVisita().getPrescriptor());
+					DDAccionGastos accionGastoPrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_PRESCRIPCION);
+					GastosExpediente gastoExpedientePrescriptor= anyadirGastoExpediente(oferta, accionGastoPrescripcion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedientePrescriptor);
+				}
+				else if(!Checks.esNulo(oferta.getPrescriptor()) && !Checks.esNulo(oferta.getVisita().getPrescriptor())){//ambos tiene y son iguales
+					if(oferta.getPrescriptor().getId().equals(oferta.getVisita().getPrescriptor().getId())){
+						DDAccionGastos accionGastoPrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_PRESCRIPCION);
+						GastosExpediente gastoExpedientePrescriptor= anyadirGastoExpediente(oferta, accionGastoPrescripcion, nuevoExpediente);
+						gastosExpediente.add(gastoExpedientePrescriptor);
+					}
+				}
+				
+				//RESPONSABLE
+				if(!Checks.esNulo(oferta.getApiResponsable()) && Checks.esNulo(oferta.getVisita().getApiResponsable())){//Oferta tiene y visita no
+					DDAccionGastos accionResponsableCliente= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+					GastosExpediente gastoExpedienteResponsable= anyadirGastoExpediente(oferta, accionResponsableCliente, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteResponsable);
+				}
+				else if(Checks.esNulo(oferta.getApiResponsable()) && !Checks.esNulo(oferta.getVisita().getApiResponsable())){//Oferta no tiene y visita si
+					oferta.setApiResponsable(oferta.getVisita().getApiResponsable());
+					DDAccionGastos accionResponsableCliente= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+					GastosExpediente gastoExpedienteResponsable= anyadirGastoExpediente(oferta, accionResponsableCliente, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteResponsable);
+				}
+				else if(!Checks.esNulo(oferta.getApiResponsable()) && !Checks.esNulo(oferta.getVisita().getApiResponsable())){//ambos tiene y son iguales
+					if(oferta.getApiResponsable().getId().equals(oferta.getVisita().getApiResponsable().getId())){
+						DDAccionGastos accionResponsableCliente= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+						GastosExpediente gastoExpedienteResponsable= anyadirGastoExpediente(oferta, accionResponsableCliente, nuevoExpediente);
+						gastosExpediente.add(gastoExpedienteResponsable);
+					}
+				}
 			}
-			if(!Checks.esNulo(oferta.getFdv())){
-				DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
-				GastosExpediente gastoExpedienteFdv= new GastosExpediente();
-				gastoExpedienteFdv.setNombre(oferta.getFdv().getNombre());
-				gastoExpedienteFdv.setCodigo(oferta.getFdv().getCodProveedorUvem());
-				gastoExpedienteFdv.setProveedor(oferta.getFdv());
-				gastoExpedienteFdv.setAccionGastos(accionGastoColaboracion);
-				gastoExpedienteFdv.setExpediente(nuevoExpediente);
-				gastosExpediente.add(gastoExpedienteFdv);
-			}
-			if(!Checks.esNulo(oferta.getPrescriptor())){
-				DDAccionGastos accionGastoPrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_PRESCRIPCION);
-				GastosExpediente gastoExpedientePrescriptor= new GastosExpediente();
-				gastoExpedientePrescriptor.setNombre(oferta.getPrescriptor().getNombre());
-				gastoExpedientePrescriptor.setCodigo(oferta.getPrescriptor().getCodProveedorUvem());
-				gastoExpedientePrescriptor.setProveedor(oferta.getPrescriptor());
-				gastoExpedientePrescriptor.setAccionGastos(accionGastoPrescripcion);
-				gastoExpedientePrescriptor.setExpediente(nuevoExpediente);
-				gastosExpediente.add(gastoExpedientePrescriptor);
-			}
-			if(!Checks.esNulo(oferta.getApiResponsable())){
-				DDAccionGastos accionResponsableCliente= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
-				GastosExpediente gastoExpedienteResponsable= new GastosExpediente();
-				gastoExpedienteResponsable.setNombre(oferta.getApiResponsable().getNombre());
-				gastoExpedienteResponsable.setCodigo(oferta.getApiResponsable().getCodProveedorUvem());
-				gastoExpedienteResponsable.setProveedor(oferta.getApiResponsable());
-				gastoExpedienteResponsable.setAccionGastos(accionResponsableCliente);
-				gastoExpedienteResponsable.setExpediente(nuevoExpediente);
-				gastosExpediente.add(gastoExpedienteResponsable);
+			else{
+				if(!Checks.esNulo(oferta.getCustodio())){  
+					DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+					GastosExpediente gastoExpedienteCustodio= anyadirGastoExpediente(oferta, accionGastoColaboracion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteCustodio);
+				}
+				if(!Checks.esNulo(oferta.getFdv())){
+					DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+					GastosExpediente gastoExpedienteFdv= anyadirGastoExpediente(oferta, accionGastoColaboracion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteFdv);
+				}
+				if(!Checks.esNulo(oferta.getPrescriptor())){
+					DDAccionGastos accionGastoPrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_PRESCRIPCION);
+					GastosExpediente gastoExpedientePrescriptor= anyadirGastoExpediente(oferta, accionGastoPrescripcion, nuevoExpediente);
+					gastosExpediente.add(gastoExpedientePrescriptor);
+				}
+				if(!Checks.esNulo(oferta.getApiResponsable())){
+					DDAccionGastos accionResponsableCliente= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+					GastosExpediente gastoExpedienteResponsable= anyadirGastoExpediente(oferta, accionResponsableCliente, nuevoExpediente);
+					gastosExpediente.add(gastoExpedienteResponsable);
+				}
 			}
 			
+			//Añadir los tipos de proveedores que coincidan con los tipos proveedores honorarios 
 			for(GastosExpediente gastoExpediente: gastosExpediente){
 				ActivoProveedor proveedor= gastoExpediente.getProveedor();
 				if(!Checks.esNulo(proveedor) && !Checks.esNulo(proveedor.getTipoProveedor())){
@@ -2163,4 +2229,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return vGastosActivos;
 	}
 
+	public GastosExpediente anyadirGastoExpediente(Oferta oferta, DDAccionGastos accionGasto, ExpedienteComercial nuevoExpediente){
+		
+		GastosExpediente gastoExpediente= new GastosExpediente();
+		gastoExpediente.setNombre(oferta.getCustodio().getNombre());
+		gastoExpediente.setCodigo(oferta.getCustodio().getCodProveedorUvem());
+		gastoExpediente.setProveedor(oferta.getCustodio());
+		gastoExpediente.setAccionGastos(accionGasto);
+		gastoExpediente.setExpediente(nuevoExpediente);
+		
+		return gastoExpediente;
+		
+	}
+	
 }

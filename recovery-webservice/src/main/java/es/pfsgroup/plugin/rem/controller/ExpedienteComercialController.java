@@ -238,7 +238,13 @@ public class ExpedienteComercialController {
 			
 			model.put("success", expedienteComercialApi.saveDatosBasicosOferta(dto, id));
 			
-		} catch (Exception e) {
+		}catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("msg", e.getMessage());
+			model.put("success", false);
+		}
+		
+		catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
 		}	

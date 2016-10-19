@@ -168,7 +168,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 							                		
 							                	},
 							                	{
-							                		xtype: 'displayfieldbase',
+							                		xtype: 'numberfieldbase',
 							                		fieldLabel:  HreRem.i18n('fieldlabel.numero.visita'),
 							                		bind: {
 							                			value : '{datosbasicosoferta.numVisita}'

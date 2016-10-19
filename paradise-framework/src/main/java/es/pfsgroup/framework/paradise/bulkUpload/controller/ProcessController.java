@@ -26,7 +26,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewer;
 
@@ -35,11 +34,7 @@ public class ProcessController {
 	
 	@Autowired
 	ProcessAdapter processAdapter;
-	
-	@Autowired
-	private MSVExcelParser excelParser;
-		
-	
+
 	@Autowired 
 	UploadAdapter uploadAdapter;
 	
@@ -233,6 +228,7 @@ public class ProcessController {
 		processAdapter.setStateError(idProcess);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 		public ModelAndView subeListaActivos (HttpServletRequest request, HttpServletResponse response) throws Exception {
 				

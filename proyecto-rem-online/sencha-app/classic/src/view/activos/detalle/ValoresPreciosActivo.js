@@ -140,10 +140,9 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 											   {
 												text: HreRem.i18n('header.gestor'),
 												cls: 'grid-no-seleccionable-col',
-								        		tdCls: 'grid-no-seleccionable-td',												
+								        		tdCls: 'grid-no-seleccionable-td',
 												dataIndex: 'gestor',
-												flex: 1,
-												hidden: true
+												flex: 1
 											   },
 											   {
 												text: HreRem.i18n('header.observaciones'),

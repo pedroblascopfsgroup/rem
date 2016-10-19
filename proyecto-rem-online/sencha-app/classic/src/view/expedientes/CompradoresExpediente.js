@@ -22,14 +22,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
                 	{
 					    xtype		: 'gridBase',
 					    topBar		: true,
+					    removeButton: false,
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storeCompradoresExpediente}'
 						},									
 						listeners : {
-					    	rowdblclick: 'onCompradoresListDobleClick',
-					    	rowclick: 'onCompradoresListClick'
+					    	rowdblclick: 'onCompradoresListDobleClick'/*,
+					    	rowclick: 'onCompradoresListClick'*/
 					    	
 					    },
 					    

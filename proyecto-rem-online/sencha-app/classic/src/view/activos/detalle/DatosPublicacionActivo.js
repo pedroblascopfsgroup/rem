@@ -79,9 +79,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 defaultType: 'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.condicionantes'),
 					        	 border: false,
-								 collapsible: true,
+								 collapsible: false,
 								 collapsed: false,
-								 
 								 items:
 									 [
 								    	{
@@ -218,8 +217,22 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 					                    }
 									  ]
 							 },
-							 // Grid del histórico de condiciones específicas.
-							{xtype: "historicocondicioneslist", reference: "historicocondicioneslist"}
+						// Condiciones específicas.
+							 {
+								 xtype:'fieldsettable',
+								 defaultType: 'textfieldbase',
+								 title: HreRem.i18n('title.publicaciones.condiciones.especificas'),
+					        	 border: false,
+								 collapsible: false,
+								 collapsed: false,
+								 items:
+									 [
+										 {
+											 xtype: "historicocondicioneslist",
+											 reference: "historicocondicioneslist"
+										 }
+									 ]
+							 }
 							]
 					},
 // Estados de Publicación.
@@ -243,7 +256,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.forzada'),
 								        	reference: 'chkbxpublicacionforzada',
 								        	colspan: 3,
-								        	bind: '{activohistoricoestadopublicacion.publicacionForzada}',
+								        	bind: {
+								        		value: '{activohistoricoestadopublicacion.publicacionForzada}',
+								        		disabled: '{activohistoricoestadopublicacion.publicacionOrdinaria}'
+								        		},
 								        	listeners:{
 								        		change: 'onchkbxEstadoPublicacionChange'
 								        	}
@@ -257,6 +273,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        		value	: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
 								        		readOnly: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
 								        		hidden	: '{!activo.isPublicable}'
+								        	},
+								        	listeners:{
+								        		change: 'onchkbxEstadoPublicacionChange'
 								        	}
 								        },
 								        {
@@ -265,7 +284,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	reference: 'textfieldpublicacionpublicar',
 								        	colspan: 3,
 								        	bind: {
-							            		value: '{activohistoricoestadopublicacion.motivoPublicacion}'
+							            		value: '{activohistoricoestadopublicacion.motivoPublicacion}',
+							            		disabled: '{activohistoricoestadopublicacion.publicacionOrdinaria}'
 							            	},
 							            	maxLength: '100'
 								        }

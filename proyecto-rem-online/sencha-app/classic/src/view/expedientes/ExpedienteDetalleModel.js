@@ -32,6 +32,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
 	     },
 	     
+	     esCarteraSareb: function(get) {
+	     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['SAREB'] == carteraCodigo;
+	     },
+	     
 	     getTipoExpedienteCabecera: function(get) {
 	     
 	     	var tipoExpedidenteDescripcion =  get('expediente.tipoExpedienteDescripcion');
@@ -470,13 +476,23 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     	},
 
 		comboComites: {
-			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.Honorario',
+	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getComitesByCartera',
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
+	    },
+	    
+	    storeEstadosDevolucion: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'estadosDevolucion'}
+	    	}	
+	    	
+	    	
 	    }
 	    
 	    

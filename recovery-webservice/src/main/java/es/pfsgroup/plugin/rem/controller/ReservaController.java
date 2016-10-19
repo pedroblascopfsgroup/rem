@@ -3,30 +3,29 @@ package es.pfsgroup.plugin.rem.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
@@ -46,6 +45,11 @@ public class ReservaController {
 
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/reserva")
@@ -57,7 +61,7 @@ public class ReservaController {
 
 		ReservaRequestDto jsonData = null;
 		ReservaDto reservaDto = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		Map<String, Object> respuesta = new HashMap<String, Object>();
 
 		try {
 
@@ -68,101 +72,41 @@ public class ReservaController {
 
 			if (errorList != null && errorList.isEmpty()) {
 				Double importeReserva = null;
-				Activo activo = activoApi.getByNumActivo(reservaDto.getActivo());
-				List<ActivoOferta> listaActivoOferta = activo.getOfertas();
-				boolean isAccepted = false;
-				int i = 0;
-				Oferta oferta = null;
-				while (i < listaActivoOferta.size() && !isAccepted) {
-					ActivoOferta tmp = listaActivoOferta.get(i);
-					i++;
-					oferta = tmp.getPrimaryKey().getOferta();
-					if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-						isAccepted = true;
-					}
-				}
-				if (!isAccepted || oferta == null) {
+				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
+				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
+				if (oferta == null) {
 					throw new Exception("El activo no tiene ofertas aceptadas");
 				}
 
-				ExpedienteComercial expC = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-				if (expC == null) {
+				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				if (expedienteComercial == null) {
 					throw new Exception("No existe el expediente comericial para esta oferta");
 				}
-				CondicionanteExpediente condExp = expC.getCondicionante();
-				OfertaUVEMDto ofertaUVEM = new OfertaUVEMDto();
-				if (oferta.getTipoOferta() != null) {
-					ofertaUVEM.setCodOpcion(oferta.getTipoOferta().getCodigo());
-				}
-				if (oferta.getNumOferta() != null) {
-					ofertaUVEM.setCodOfertaHRE(oferta.getNumOferta().toString());
-				}
-				if (oferta.getPrescriptor() != null) {
-					ofertaUVEM.setCodPrescriptor(oferta.getPrescriptor().getCodProveedorUvem());
-				}
-				if (condExp != null) {
-					if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva())) {
-						importeReserva = condExp.getPorcentajeReserva() * oferta.getImporteOferta();
-						if (importeReserva != null) {
-							ofertaUVEM.setImporteReserva(importeReserva.toString());
-						}
-					} else {
-						importeReserva = condExp.getImporteReserva();
-						if (importeReserva != null) {
-							ofertaUVEM.setImporteReserva(importeReserva.toString());
-						}
-					}
-				}
-				if (oferta.getImporteOferta() != null) {
-					ofertaUVEM.setImporteVenta(oferta.getImporteOferta().toString());
-				}
+				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);
 				Map<String, Object> mapOferta = new HashMap<String, Object>();
 				mapOferta.put("oferta", ofertaUVEM);
+				importeReserva = Double.valueOf(ofertaUVEM.getImporteReserva());
 
-				ArrayList<TitularUVEMDto> listaTitularUVEM = new ArrayList<TitularUVEMDto>();
-				for (int k = 0; k < expC.getCompradores().size(); k++) {
-					CompradorExpediente compradorExpediente = expC.getCompradores().get(k);
-					TitularUVEMDto titularUVEM = new TitularUVEMDto();
-					if (compradorExpediente.getComprador() != null) {
-						titularUVEM.setCliente(compradorExpediente.getComprador().toString());
-					}
-					if (compradorExpediente.getImporteProporcionalOferta() != null) {
-						titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
-					}
-					if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
-						titularUVEM.setImpuestos("S");
-					} else {
-						titularUVEM.setImpuestos("N");
-					}
-					if (condExp.getEntidadFinanciacion() != null) {
-						titularUVEM.setEntidad(condExp.getEntidadFinanciacion());
-					}
-					if (expC.getReserva() != null) {
-						if (expC.getReserva().getTipoArras() != null) {
-							if (DDTiposArras.CONFIRMATORIAS.equals(expC.getReserva().getTipoArras().getCodigo())) {
-								titularUVEM.setArras("A");
-							} else {
-								titularUVEM.setArras("B");
-							}
-						} else {
-							titularUVEM.setArras("");
-						}
-					}
-					listaTitularUVEM.add(titularUVEM);
-				}
+				ArrayList<TitularUVEMDto> listaTitularUVEM = expedienteComercialApi.obtenerListaTitularesUVEM(expedienteComercial);
 				Map<String, Object> mapTitulares = new HashMap<String, Object>();
 				mapTitulares.put("titulares", listaTitularUVEM);
 
-				listaRespuesta.add(mapOferta);
-				listaRespuesta.add(mapTitulares);
+				respuesta.put("oferta", mapOferta);
+				respuesta.put("titulares", mapTitulares);
 
 				if (COBRO_RESERVA.equals(reservaDto.getAccion())) {
+					if(!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)){
+						throw new Exception("La reserva debe estar en el estado pendiente de firma");
+					}
+					if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.APROBADO)){
+						throw new Exception("El expediente debe estar aprobado");
+					}
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(importeReserva);
 					Date fechaEntrega = new Date();
 					entregaReserva.setFechaEntrega(fechaEntrega);
-					entregaReserva.setReserva(expC.getReserva());
-					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expC.getId())) {
+					entregaReserva.setReserva(expedienteComercial.getReserva());
+					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
 						throw new Exception("No se ha podido guardar la reserva entregada en base de datos");
 					}
 					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
@@ -170,20 +114,29 @@ public class ReservaController {
 					if (estadoReservado == null) {
 						throw new Exception("No se ha podido obtener estado RESERVADO de base de datos");
 					}
-					expC.setEstado(estadoReservado);
-					if (!expedienteComercialApi.update(expC)) {
+					expedienteComercial.setEstado(estadoReservado);
+					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
 					}
 				}
 
 				if (DEVOLUCION_RESERVA.equals(reservaDto.getAccion())) {
+					if(!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_ANULADA)){
+						throw new Exception("La reserva debe estar en el estado anulada");
+					}
+					if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.ANULADO)){
+						throw new Exception("El expediente debe estar anulado");
+					}
+					if(expedienteComercial.getReserva().getEstadoDevolucion()!=null && !expedienteComercial.getReserva().getEstadoDevolucion().getCodigo().equals(DDEstadoDevolucion.ESTADO_PENDIENTE)){
+						throw new Exception("La devolucion debe estar pendiente");
+					}
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(-importeReserva);
 					Date fechaEntrega = new Date();
 					entregaReserva.setFechaEntrega(fechaEntrega);
-					entregaReserva.setReserva(expC.getReserva());
+					entregaReserva.setReserva(expedienteComercial.getReserva());
 
-					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expC.getId())) {
+					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
 						throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
 					}
 					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
@@ -191,26 +144,37 @@ public class ReservaController {
 					if (estadoReservado == null) {
 						throw new Exception("No se ha podido obtener estado ANULADO de base de datos");
 					}
-					expC.setEstado(estadoReservado);
-					if (!expedienteComercialApi.update(expC)) {
+					expedienteComercial.setEstado(estadoReservado);
+					
+					DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_DEVUELTA));
+					expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
+					
+					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
 					}
 				}
 
 				if (COBRO_VENTA.equals(reservaDto.getAccion())) {
+					if(!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA)){
+						throw new Exception("La reserva debe estar en el estado firmada");
+					}
+					if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.POSICIONADO)){
+						throw new Exception("El expediente debe estar posicionado");
+					}
 					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
 							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
 					if (estadoReservado == null) {
 						throw new Exception("No se ha podido obtener estado VENDIDO de base de datos");
 					}
-					expC.setEstado(estadoReservado);
-					if (!expedienteComercialApi.update(expC)) {
+					expedienteComercial.setEstado(estadoReservado);
+					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
 					}
 				}
 
 				model.put("id", jsonData.getId());
-				model.put("data", listaRespuesta);
+				model.put("data", respuesta);
 				model.put("error", "");
 			} else {
 				model.put("id", jsonData.getId());
@@ -219,7 +183,7 @@ public class ReservaController {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("id", jsonData.getId());
 			model.put("data", "");
 			model.put("error", e.getMessage());

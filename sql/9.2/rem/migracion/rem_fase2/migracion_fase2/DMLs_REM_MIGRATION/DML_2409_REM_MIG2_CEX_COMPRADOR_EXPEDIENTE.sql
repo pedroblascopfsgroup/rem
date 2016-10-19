@@ -94,7 +94,7 @@ BEGIN
           ''CLC_NUM_CLIENTE_HAYA''	                                      CAMPO_CLC_MOTIVO_RECHAZO,
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN NOT_EXISTS ON NOT_EXISTS.COM_COD_COMPRADOR = MIG2.CEX_COD_COMPRADOR
+          INNER JOIN NOT_EXISTS ON NOT_EXISTS.CEX_COD_COMPRADOR = MIG2.CEX_COD_COMPRADOR
           '
           ;
           
@@ -194,13 +194,13 @@ BEGIN
               ,CEX_TELEFONO2_RTE
               ,CEX_EMAIL_RTE
               ,CEX_DIRECCION_RTE
-              ,CEX_MUNICIPIO_RTE
               ,CEX_CODIGO_POSTAL_RTE
-              ,CEX_PROVINCIA_RTE
               ,VERSION
               ,BORRADO
               ,CEX_FECHA_PETICION
               ,CEX_FECHA_RESOLUCION
+              ,DD_LOC_ID_RTE
+              ,DD_PRV_ID_RTE
           )
           SELECT DISTINCT 
             COM.COM_ID                                            AS COM_ID,
@@ -223,14 +223,14 @@ BEGIN
             MIG2.CEX_TELEFONO1_RTE                          AS CEX_TELEFONO1_RTE,
             MIG2.CEX_TELEFONO2_RTE                          AS CEX_TELEFONO2_RTE,
             MIG2.CEX_EMAIL_RTE                                  AS CEX_EMAIL_RTE,
-            MIG2.CEX_DIRECCION_RTE                          AS CEX_DIRECCION_RTE,
-            LOC.DD_LOC_ID                                          AS CEX_MUNICIPIO_RTE,
+            MIG2.CEX_DIRECCION_RTE                          AS CEX_DIRECCION_RTE,            
             MIG2.CEX_CODIGO_POSTAL_RTE                  AS CEX_CODIGO_POSTAL_RTE,
-            PRV.DD_PRV_ID                                           AS CEX_PROVINCIA_RTE,
             0                                                               AS VERSION,
             0                                                               AS BORRADO,
             MIG2.CEX_FECHA_PETICION                         AS CEX_FECHA_PETICION,
-            MIG2.CEX_FECHA_RESOLUCION                   AS CEX_FECHA_RESOLUCION
+            MIG2.CEX_FECHA_RESOLUCION                   AS CEX_FECHA_RESOLUCION,
+            LOC.DD_LOC_ID                                          AS DD_LOC_ID_RTE,
+            PRV.DD_PRV_ID                                           AS DD_PRV_ID_RTE
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           INNER JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_NUM_CLIENTE_HAYA = MIG2.CEX_COD_COMPRADOR AND CLC.BORRADO = 0
           INNER JOIN '||V_ESQUEMA||'.COM_COMPRADOR COM ON COM.CLC_ID = CLC.CLC_ID AND COM.BORRADO = 0

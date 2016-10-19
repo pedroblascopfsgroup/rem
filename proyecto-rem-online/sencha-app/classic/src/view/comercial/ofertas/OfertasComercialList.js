@@ -4,7 +4,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
     bind: {
         store: '{ofertasComercial}'
     },
-    loadAfterBind: false,
+
     initComponent: function () {
         
         var me = this;

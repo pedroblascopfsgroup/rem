@@ -48,6 +48,8 @@ public class DtoReserva extends WebDto {
 	private Date fechaAnulacion;
 	
 	private String motivoAnulacion;
+	
+	private String estadoDevolucionCodigo;
 
 	public Long getIdReserva() {
 		return idReserva;
@@ -159,6 +161,14 @@ public class DtoReserva extends WebDto {
 
 	public void setMotivoAnulacion(String motivoAnulacion) {
 		this.motivoAnulacion = motivoAnulacion;
+	}
+
+	public String getEstadoDevolucionCodigo() {
+		return estadoDevolucionCodigo;
+	}
+
+	public void setEstadoDevolucionCodigo(String estadoDevolucionCodigo) {
+		this.estadoDevolucionCodigo = estadoDevolucionCodigo;
 	}  
 
    	

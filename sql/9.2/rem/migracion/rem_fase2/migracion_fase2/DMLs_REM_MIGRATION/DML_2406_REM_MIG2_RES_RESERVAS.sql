@@ -194,21 +194,18 @@ BEGIN
  
  -- Registros insertados en REM
  --V_REG_INSERTADOS
-  
-  EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
-  
+
   -- Total registros rechazados
   V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;
   
   -- Observaciones
   IF V_REJECTS != 0 THEN
     
-    V_OBSERVACIONES := 'Hay un total de '||V_REJECTS||' registros rechazados.';
+    V_OBSERVACIONES := 'Hay un total de '||V_REJECTS||' registros rechazados. Comprobar la unicidad del campo RES_COD_NUM_RESERVA';
     
     IF TABLE_COUNT != 0 THEN    
       V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' OFERTAS inexistentes. ';    
     END IF; 
-    
   END IF;
 
 EXECUTE IMMEDIATE ('

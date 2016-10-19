@@ -58,8 +58,8 @@ import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
+import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
@@ -104,11 +105,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager implements ExpedienteComercialApi {
@@ -126,9 +128,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
-	
-	@Autowired
-	private OfertaDao ofertaDao;
 	
 	@Autowired
 	private ReservaDao reservaDao;
@@ -392,7 +391,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dto.setMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
 				}
 				
-				dto.setImporte(oferta.getImporteOferta());
+				dto.setImporte(Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta(): oferta.getImporteOferta());
+				
 				if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
 					dto.setComprador(expediente.getCompradorPrincipal().getFullName());
 				}
@@ -463,6 +463,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 				if(!Checks.esNulo(expediente.getEstadoPbc())){
 					dto.setEstadoPbc(expediente.getEstadoPbc());
+				}				
+				if(!Checks.esNulo(expediente.getFechaVenta())){
+					dto.setFechaVenta(expediente.getFechaVenta());
 				}
 
 			}
@@ -547,6 +550,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			dto.setMotivoAnulacion(reserva.getMotivoAnulacion());
 			dto.setFechaAnulacion(reserva.getFechaAnulacion());
+			if(!Checks.esNulo(reserva.getEstadoDevolucion())){
+				dto.setEstadoDevolucionCodigo(reserva.getEstadoDevolucion().getCodigo());
+			}
 		}
 		
 		
@@ -1448,6 +1454,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
 				reserva.setTipoArras(tipoArras);
 			}
+			if(!Checks.esNulo(dto.getEstadoDevolucionCodigo())) {
+				
+				DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoDevolucion.class, dto.getEstadoDevolucionCodigo());
+				reserva.setEstadoDevolucion(estadoDevolucion);
+			}
 			
 			genericDao.save(Reserva.class, reserva);
 			
@@ -2200,6 +2211,77 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		return dtoDatosCliente;
 		
+	}
+
+
+	@Override
+	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) {
+		Double importeReserva = null;
+		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+		OfertaUVEMDto ofertaUVEM = new OfertaUVEMDto();
+		if (oferta.getTipoOferta() != null) {
+			ofertaUVEM.setCodOpcion(oferta.getTipoOferta().getCodigo());
+		}
+		if (oferta.getNumOferta() != null) {
+			ofertaUVEM.setCodOfertaHRE(oferta.getNumOferta().toString());
+		}
+		if (oferta.getPrescriptor() != null) {
+			ofertaUVEM.setCodPrescriptor(oferta.getPrescriptor().getCodProveedorUvem());
+		}
+		if (condExp != null) {
+			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva())) {
+				importeReserva = condExp.getPorcentajeReserva() * oferta.getImporteOferta();
+				if (importeReserva != null) {
+					ofertaUVEM.setImporteReserva(importeReserva.toString());
+				}
+			} else {
+				importeReserva = condExp.getImporteReserva();
+				if (importeReserva != null) {
+					ofertaUVEM.setImporteReserva(importeReserva.toString());
+				}
+			}
+		}
+		if (oferta.getImporteOferta() != null) {
+			ofertaUVEM.setImporteVenta(oferta.getImporteOferta().toString());
+		}
+		return ofertaUVEM;
+	}
+
+	@Override
+	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) {
+		ArrayList<TitularUVEMDto> listaTitularUVEM = new ArrayList<TitularUVEMDto>();
+		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+		for (int k = 0; k < expedienteComercial.getCompradores().size(); k++) {
+			CompradorExpediente compradorExpediente = expedienteComercial.getCompradores().get(k);
+			TitularUVEMDto titularUVEM = new TitularUVEMDto();
+			if (compradorExpediente.getComprador() != null) {
+				titularUVEM.setCliente(compradorExpediente.getComprador().toString());
+			}
+			if (compradorExpediente.getImporteProporcionalOferta() != null) {
+				titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
+			}
+			if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
+				titularUVEM.setImpuestos("S");
+			} else {
+				titularUVEM.setImpuestos("N");
+			}
+			if (condExp.getEntidadFinanciacion() != null) {
+				titularUVEM.setEntidad(condExp.getEntidadFinanciacion());
+			}
+			if (expedienteComercial.getReserva() != null) {
+				if (expedienteComercial.getReserva().getTipoArras() != null) {
+					if (DDTiposArras.CONFIRMATORIAS.equals(expedienteComercial.getReserva().getTipoArras().getCodigo())) {
+						titularUVEM.setArras("A");
+					} else {
+						titularUVEM.setArras("B");
+					}
+				} else {
+					titularUVEM.setArras("");
+				}
+			}
+			listaTitularUVEM.add(titularUVEM);
+		}
+		return listaTitularUVEM;
 	}
 
 }

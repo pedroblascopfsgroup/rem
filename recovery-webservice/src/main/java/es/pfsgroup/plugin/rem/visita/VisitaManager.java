@@ -230,11 +230,23 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				hashErrores.put("codEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
+		
+		if(Checks.esNulo(visitaDto.getCodDetalleEstadoVisita()) && !Checks.esNulo(visitaDto.getCodEstadoVisita()) && 
+				(visitaDto.getCodEstadoVisita().equalsIgnoreCase(DDEstadosVisita.CODIGO_REALIZADA) || visitaDto.getCodEstadoVisita().equalsIgnoreCase(DDEstadosVisita.CODIGO_NO_REALIZADA))){
+			//El codDetalleEstadoVisita solo es obligatorio si la visita está completada, es decir, estados "Realizada" y "No realizada".
+			hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_MISSING_REQUIRED);
+		}
+
 		if (!Checks.esNulo(visitaDto.getCodDetalleEstadoVisita())) {
 			DDSubEstadosVisita subEstVis = (DDSubEstadosVisita) genericDao.get(DDSubEstadosVisita.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", visitaDto.getCodDetalleEstadoVisita()));
 			if (Checks.esNulo(subEstVis)) {
 				hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
+			}else{
+				if(Checks.esNulo(subEstVis.getEstadoVisita()) || 
+				  (!Checks.esNulo(subEstVis.getEstadoVisita()) && !subEstVis.getEstadoVisita().getCodigo().equalsIgnoreCase(visitaDto.getCodEstadoVisita()))){
+					hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
@@ -408,12 +420,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		errorsList = validateVisitaPostRequestData(visitaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {
 
-			if (((JSONObject) jsonFields).containsKey("idVisitaWebcom")) {
-				visita.setIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
-			}
-			if (((JSONObject) jsonFields).containsKey("idVisitaRem")) {
-				visita.setNumVisitaRem(visitaDto.getIdVisitaRem());
-			}
 			if (((JSONObject) jsonFields).containsKey("idClienteRem")) {
 				if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 					ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,

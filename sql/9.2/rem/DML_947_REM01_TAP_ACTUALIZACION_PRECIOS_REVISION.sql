@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-927
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las modificaciones necesarias para el trámite de información.
 --## INSTRUCCIONES: 

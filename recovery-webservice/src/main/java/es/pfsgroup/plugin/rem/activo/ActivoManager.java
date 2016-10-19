@@ -2261,4 +2261,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return true;
 	}
+
+	@Override
+	public Boolean checkTiposDistintos(Activo activo){
+			if(!Checks.esNulo(activo)){
+				if(!Checks.esNulo(activo.getInfoComercial())){
+					if(!Checks.esNulo(activo.getInfoComercial().getTipoActivo()))
+						return(activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
+				}
+			}
+		return true;
+	}
+
 }

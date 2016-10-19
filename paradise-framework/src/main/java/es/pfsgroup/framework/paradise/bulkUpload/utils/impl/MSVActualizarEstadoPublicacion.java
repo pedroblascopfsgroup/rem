@@ -86,7 +86,7 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || 
 							!mapaErrores.get(ACTIVE_NOT_ACTUALIZABLE).isEmpty() ||
-							!mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE).isEmpty() ){
+							(!Checks.esNulo(mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE)) && !mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE).isEmpty()) ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -195,7 +195,7 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 				{
 					// Validación estado no publicado: Se valida que los activos estén "no publicados"
 					// y si alguno no tuviera puesto el estado de publicación (null) debe tomarse como "no publicado" para validar
-					if(!particularValidator.estadoNoPublicado(exc.dameCelda(i, 0)) && !Checks.esNulo(exc.dameCelda(i, 0)))
+					if(!particularValidator.estadoNoPublicadoOrNull(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
 				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(operacionMasiva.getCodigo())){
 					if(!particularValidator.estadoOcultaractivo(exc.dameCelda(i, 0)))

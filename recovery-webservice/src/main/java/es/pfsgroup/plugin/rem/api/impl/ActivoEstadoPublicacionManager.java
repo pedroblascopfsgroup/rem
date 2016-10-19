@@ -50,7 +50,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     	Activo activo = activoApi.get(idActivo);
     	dtoCambioEstadoPublicacion.setActivo(idActivo);
     	
-    	DDEstadoPublicacion estadoPublicacion = activo.getEstadoPublicacion();
+    	// Si el activo NO tiene estado, se toma como "no publicado"
+    	DDEstadoPublicacion estadoPublicacion = null;
+    	if(!Checks.esNulo(activo.getEstadoPublicacion())){
+    		estadoPublicacion = activo.getEstadoPublicacion();    		
+    	} else {
+    		estadoPublicacion = (DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO); 
+    	}
+    	
     	if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estadoPublicacion.getCodigo())){
     		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
     	} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estadoPublicacion.getCodigo())){

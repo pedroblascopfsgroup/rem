@@ -2644,8 +2644,10 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1? true : false);
 			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());
-			if(!DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
-				beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre",  true);
+			if(!Checks.esNulo(tramite.getTrabajo()))
+					if(!DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
+							beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre",  true);
+			
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

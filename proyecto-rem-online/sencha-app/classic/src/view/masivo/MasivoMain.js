@@ -3,30 +3,27 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 	xtype		: 'masivomain',	
 	cls			: 'masico-main',
 	scrollable  : 'y',
-	
+
 	requires: [
         'HreRem.view.masivo.MasivoController',
         'HreRem.view.masivo.MasivoModel'
     ],
-	
+
 	layout : {
 		type : 'vbox',
 		align : 'stretch'
 	},
-	
+
 	controller: 'masivo',
     viewModel: {
         type: 'masivo'
     },
-	
+
 	initComponent: function() {
-		
-		
+
 		var me = this;
-		
+
 		me.items = [
-		
-			
 				{
 					xtype: 'formBase',
 					url: $AC.getRemoteUrl('process/initProcessUpload'),					
@@ -93,55 +90,49 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 				    		}
 				    	]
 				},
-	
-			
 				{
-			 		
-					xtype		: 'gridBase',
-					flex		: 1,
-					title		: HreRem.i18n("title.listado.archivos.procesamiento"),
+					xtype	 : 'gridBase',
+					flex	 : 1,
+					title	 : HreRem.i18n("title.listado.archivos.procesamiento"),
 				    reference: 'listadoCargamasiva',
 					bind: {
 						store: '{storeListadoProcesos}'
 					},
 					columns: [				
-						
-					    {   text: HreRem.i18n('header.tipo'),
+
+					    {
+					    	text: HreRem.i18n('header.tipo'),
 				        	dataIndex: 'tipoOperacion',
-				        	flex: 1,
-				        	renderer: function (value) {
-				        		return Ext.isEmpty(value) ? "" : value.descripcion;
-				        	}
+				        	sortable: true,
+				        	flex: 1
 				        },
-				        {   text: HreRem.i18n('header.estado'),
+				        {
+				        	text: HreRem.i18n('header.estado'),
 				        	dataIndex: 'estadoProceso',
-				        	flex: 1,
-				        	renderer: function (value) {
-				        		return Ext.isEmpty(value) ? "" : value.descripcion;
-				        	}
-				        },	
+				        	sortable: true,
+				        	flex: 0.7
+				        },
 						{
 				            text: HreRem.i18n('header.nombre.archivo'),
-				            dataIndex: 'descripcion',
+				            dataIndex: 'nombre',
+				            sortable: true,
 				            flex: 1
 				        },
-				        {   text: HreRem.i18n('header.usuario'),
-				        	dataIndex: 'auditoria',
-				        	flex: 1,
-				        	renderer: function (value) {
-				        		return Ext.isEmpty(value) ? "" : value.usuarioCrear;
-				        	}
+				        {
+				        	text: HreRem.i18n('header.usuario'),
+				        	dataIndex: 'usuario',
+				            sortable: true,
+				        	flex: 0.7
 				        },
-				        {   text: HreRem.i18n('header.fecha.creacion'),
-				        	dataIndex: 'auditoria',
+				        {
+				        	text: HreRem.i18n('header.fecha.creacion'),
+				        	dataIndex: 'fechaCrear',
+				        	sortable: true,
 				        	flex: 1,
-				        	renderer: function (value) {
-				        		return Ext.isEmpty(value) ? "" : value.fechaCrear
-				        	}
+				            formatter: 'date("d/m/Y")'
 				        }
-					       	        
 					],
-					
+
 				    dockedItems : [
 					    {
 					    	xtype: 'toolbar',
@@ -156,7 +147,6 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 						        {
 						        	itemId:'removeButton',
 						        	cls: 'tbar-grid-button',
-						        	//handler: 'onClickAdd',
 						        	text: 'Eliminar'
 						        },
 						        {
@@ -166,8 +156,6 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 						        	text: 'Descargar errores'
 						        }			    	
 					    	]
-					    	
-					    	
 					    },
 				        {
 				            xtype: 'pagingtoolbar',
@@ -178,13 +166,9 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 				            }
 				        }
 				    ]
-				
 				}
-		
-		
 		];
-		me.callParent();		
 
+		me.callParent();
 	}
-
 });

@@ -1,5 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +24,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.recovery.bpmframework.api.RecoveryBPMfwkBatchApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoMSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
@@ -54,7 +59,9 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
-	private MSVLiberatorsFactory factoriaLiberators;	
+	private MSVLiberatorsFactory factoriaLiberators;
+	
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Override
 	@BusinessOperation(MSV_BO_ALTA_PROCESO_MASIVO)
@@ -139,9 +146,36 @@ public class MSVProcesoManager implements MSVProcesoApi {
 
 	@Override
 	@BusinessOperation(MSV_BO_MOSTRAR_PROCESOS)
-	public List<MSVProcesoMasivo> mostrarProcesos() {
+	public List<DtoMSVProcesoMasivo> mostrarProcesos() {
 		List<MSVProcesoMasivo> listaProcesos = procesoDao.dameListaProcesos(this.getUsername());
-		return listaProcesos;
+		List<DtoMSVProcesoMasivo> procesosDto = new ArrayList<DtoMSVProcesoMasivo>();
+
+		for (MSVProcesoMasivo proceso : listaProcesos) {
+			DtoMSVProcesoMasivo nuevoDto = new DtoMSVProcesoMasivo();
+			try {
+				beanUtilNotNull.copyProperty(nuevoDto, "id", proceso.getId());
+				if(!Checks.esNulo(proceso.getTipoOperacion())) {
+					beanUtilNotNull.copyProperty(nuevoDto, "tipoOperacion", proceso.getTipoOperacion().getDescripcion());
+					beanUtilNotNull.copyProperty(nuevoDto, "tipoOperacionId", proceso.getTipoOperacion().getId());
+				}
+				if(!Checks.esNulo(proceso.getEstadoProceso())){
+					beanUtilNotNull.copyProperty(nuevoDto, "estadoProceso",	proceso.getEstadoProceso().getDescripcion());
+				}
+				beanUtilNotNull.copyProperty(nuevoDto, "nombre", proceso.getDescripcion());
+				if (!Checks.esNulo(proceso.getAuditoria())) {
+					beanUtilNotNull.copyProperty(nuevoDto, "usuario", proceso.getAuditoria().getUsuarioCrear());;
+					beanUtilNotNull.copyProperty(nuevoDto, "fechaCrear", proceso.getAuditoria().getFechaCrear());
+				}
+
+				procesosDto.add(nuevoDto);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return procesosDto;
 	}
 
 	@Override
@@ -283,7 +317,7 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	private String comprobarPendienteProcesar(MSVDDOperacionMasiva tipoOperacion) {
 		if (tipoOperacion == null)
 			return MSVDDEstadoProceso.CODIGO_PTE_PROCESAR;
-		String codigoTipoOperacion=tipoOperacion.getCodigo();
+//		String codigoTipoOperacion=tipoOperacion.getCodigo();
 //		if(MSVDDOperacionMasiva.CODIGO_CANCELACION_ASUNTOS.equals(codigoTipoOperacion) ||
 //			MSVDDOperacionMasiva.CODIGO_PARALIZACION_ASUNTOS.equals(codigoTipoOperacion))
 //			return MSVDDEstadoProceso.CODIGO_PROCESADO;

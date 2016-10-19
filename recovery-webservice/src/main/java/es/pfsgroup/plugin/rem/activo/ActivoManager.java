@@ -2261,6 +2261,4 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return true;
 	}
-
-
 }

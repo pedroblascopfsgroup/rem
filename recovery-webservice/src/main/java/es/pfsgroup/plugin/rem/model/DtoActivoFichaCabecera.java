@@ -69,6 +69,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	// Mapeo manual
 	private Boolean informeComercialAceptado;
+	private Boolean tipoActivoAdmisionMediadorCorresponde;
 
 	// Mapeo automático beanutils
 	private Integer constituida;
@@ -1117,6 +1118,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setInformeComercialAceptado(Boolean informeComercialAceptado) {
 		this.informeComercialAceptado = informeComercialAceptado;
+	}
+
+	public Boolean getTipoActivoAdmisionMediadorCorresponde() {
+		return tipoActivoAdmisionMediadorCorresponde;
+	}
+
+	public void setTipoActivoAdmisionMediadorCorresponde(Boolean tipoActivoAdmisionMediadorCorresponde) {
+		this.tipoActivoAdmisionMediadorCorresponde = tipoActivoAdmisionMediadorCorresponde;
 	}
 
 

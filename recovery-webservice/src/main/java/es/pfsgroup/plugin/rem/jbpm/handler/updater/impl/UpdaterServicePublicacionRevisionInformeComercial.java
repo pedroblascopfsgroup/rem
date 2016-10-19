@@ -78,32 +78,23 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		fechaRevision = new Date();
 				
 		if(checkAcepta){
-			if(checkContinuaProceso){
-				// Ha aceptado el proceso, sin realizar modificaciones
+			if(!activoApi.checkTiposDistintos(activo)){
 				estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 				activoEstadosInformeComercialHistorico.setFecha(new Date());
-				
+					
 				// Marca activo como publicable directamente
 				activo.setFechaPublicable(new Date());
-				
-			} else {
-				// Ha aceptado el proceso, con modificaciones del informe comercial en el activo
-				//estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
-				estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
-				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
-				//activoEstadosInformeComercialHistorico.setFecha(fechaRevision);
-				activoEstadosInformeComercialHistorico.setFecha(new Date());
 			}
-		} else {
-			// Ha rechazado proceso
-			estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
-			activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
-			activoEstadosInformeComercialHistorico.setFecha(new Date());
-			activoEstadosInformeComercialHistorico.setMotivo(motivoDenegacion);
-			
-			// Marca activo como NO publicable directamente
-			activo.setFechaPublicable(null);
+		}else{
+				// Ha rechazado proceso
+				estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
+				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+				activoEstadosInformeComercialHistorico.setFecha(new Date());
+				activoEstadosInformeComercialHistorico.setMotivo(motivoDenegacion);
+					
+				// Marca activo como NO publicable directamente
+				activo.setFechaPublicable(null);
 		}
 		
 		

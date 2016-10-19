@@ -66,7 +66,7 @@ Ext.define('HreRem.view.masivo.MasivoController', {
     
     
     onClickBotonProcesar: function(btn,b,c) {
-debugger;
+
     	var me = this;
     	var parameters = {};
     	parameters.idProcess = this.getView().down('grid').selection.data.id;

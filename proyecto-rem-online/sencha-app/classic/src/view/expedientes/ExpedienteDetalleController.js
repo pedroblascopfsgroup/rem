@@ -1029,6 +1029,48 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var window = btn.up("window");
 		window.destroy();
+	},
+	
+	changeComboTipoProveedor: function(combo,value,c){
+		var me= this;
+		if(combo.getValue()==CONST.TIPOS_PROVEEDOR_ESPEDIENTE['CAT'] || combo.getValue()==CONST.TIPOS_PROVEEDOR_ESPEDIENTE['MEDIADOR_OFICINA']){
+				me.lookupReference('proveedorRef').setValue();
+				me.lookupReference('proveedorRef').setDisabled(true);
+		}
+		else{
+			me.lookupReference('proveedorRef').setDisabled(false);
+			var ges= combo.up('gestioneconomicaexpediente');
+			me.lookupReference('proveedorRef').setValue();
+			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':value.getData().codigo, 'nombreBusqueda': ''});
+			ges.storeProveedores.load();
+		}
+
+	},
+	
+	changeComboProveedor: function(combo){
+		var me= this;
+		var ges= combo.up('gestioneconomicaexpediente');
+		if(!Ext.isEmpty(combo.getValue()) && combo.getValue().length>=3){
+			var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
+			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': combo.getValue()});
+			ges.storeProveedores.load();
+		}
+		else{
+			var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
+			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': ''});
+			ges.storeProveedores.load();
+		}
+	},
+	
+	expandeComboProveedor: function (field, o){
+		var me= this;
+		var ges= field.up('gestioneconomicaexpediente');
+		var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
+		var nombreBusqueda= me.lookupReference('proveedorVistaRef').value;
+		ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': nombreBusqueda});
+		ges.storeProveedores.load();
+		
 	}
+		
 
 });

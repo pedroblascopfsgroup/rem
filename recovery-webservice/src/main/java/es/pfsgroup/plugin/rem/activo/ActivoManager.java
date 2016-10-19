@@ -128,6 +128,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -1752,56 +1753,79 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean crearGastosExpediente(ExpedienteComercial nuevoExpediente, Oferta oferta){
 		
 		try{
-			List<DDAccionGastos> accionesGastos= new ArrayList<DDAccionGastos>();
-			DDAccionGastos accionGastoPrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_PRESCRIPCION);
-			DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
-			DDAccionGastos accionGastoDoblePrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_DOBLE_PRESCRIPCION);
-			accionesGastos.add(accionGastoPrescripcion);
-			accionesGastos.add(accionGastoColaboracion);
+			List<GastosExpediente> gastosExpediente= new ArrayList<GastosExpediente>();
+			DDTipoProveedorHonorario tipoProveedorMediador= (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_MEDIADOR);
+			DDTipoProveedorHonorario tipoProveedorfdv= (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_FVD);
+			DDTipoProveedorHonorario tipoProveedorOficinaBankia= (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA);
+			DDTipoProveedorHonorario tipoProveedorOficinaCajamar= (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR);
 			
+			if(!Checks.esNulo(oferta.getCustodio())){
+				DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+				GastosExpediente gastoExpedienteCustodio= new GastosExpediente();
+				gastoExpedienteCustodio.setNombre(oferta.getCustodio().getNombre());
+				gastoExpedienteCustodio.setCodigo(oferta.getCustodio().getCodProveedorUvem());
+				gastoExpedienteCustodio.setProveedor(oferta.getCustodio());
+				gastoExpedienteCustodio.setAccionGastos(accionGastoColaboracion);
+				gastoExpedienteCustodio.setExpediente(nuevoExpediente);
+				gastosExpediente.add(gastoExpedienteCustodio);
+			}
+			if(!Checks.esNulo(oferta.getFdv())){
+				DDAccionGastos accionGastoColaboracion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_COLABORACION);
+				GastosExpediente gastoExpedienteFdv= new GastosExpediente();
+				gastoExpedienteFdv.setNombre(oferta.getFdv().getNombre());
+				gastoExpedienteFdv.setCodigo(oferta.getFdv().getCodProveedorUvem());
+				gastoExpedienteFdv.setProveedor(oferta.getFdv());
+				gastoExpedienteFdv.setAccionGastos(accionGastoColaboracion);
+				gastoExpedienteFdv.setExpediente(nuevoExpediente);
+				gastosExpediente.add(gastoExpedienteFdv);
+			}
+			if(!Checks.esNulo(oferta.getPrescriptor())){
+				DDAccionGastos accionGastoPrescripcion= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_PRESCRIPCION);
+				GastosExpediente gastoExpedientePrescriptor= new GastosExpediente();
+				gastoExpedientePrescriptor.setNombre(oferta.getPrescriptor().getNombre());
+				gastoExpedientePrescriptor.setCodigo(oferta.getPrescriptor().getCodProveedorUvem());
+				gastoExpedientePrescriptor.setProveedor(oferta.getPrescriptor());
+				gastoExpedientePrescriptor.setAccionGastos(accionGastoPrescripcion);
+				gastoExpedientePrescriptor.setExpediente(nuevoExpediente);
+				gastosExpediente.add(gastoExpedientePrescriptor);
+			}
 			if(!Checks.esNulo(oferta.getApiResponsable())){
-				accionesGastos.add(accionGastoDoblePrescripcion);
+				DDAccionGastos accionResponsableCliente= (DDAccionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDAccionGastos.class, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+				GastosExpediente gastoExpedienteResponsable= new GastosExpediente();
+				gastoExpedienteResponsable.setNombre(oferta.getApiResponsable().getNombre());
+				gastoExpedienteResponsable.setCodigo(oferta.getApiResponsable().getCodProveedorUvem());
+				gastoExpedienteResponsable.setProveedor(oferta.getApiResponsable());
+				gastoExpedienteResponsable.setAccionGastos(accionResponsableCliente);
+				gastoExpedienteResponsable.setExpediente(nuevoExpediente);
+				gastosExpediente.add(gastoExpedienteResponsable);
 			}
 			
-			for(DDAccionGastos accionGasto: accionesGastos){
-				GastosExpediente gastoExpediente= new GastosExpediente();
-				gastoExpediente.setAccionGastos(accionGasto);
-				gastoExpediente.setExpediente(nuevoExpediente);
-				
-				DDDestinatarioGasto destinatarioGasto= (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, DDDestinatarioGasto.CODIGO_HAYA);
-				gastoExpediente.setDestinatarioGasto(destinatarioGasto);
-				
-				if(accionGasto.getCodigo().equals(DDAccionGastos.CODIGO_COLABORACION)){
-					if(!Checks.esNulo(oferta.getCustodio())){
-						gastoExpediente.setNombre(oferta.getCustodio().getNombre());
-						gastoExpediente.setCodigo(oferta.getCustodio().getCodProveedorUvem());
-						gastoExpediente.setProveedor(oferta.getCustodio());
-					}
-					else if(!Checks.esNulo(oferta.getFdv())){
-						gastoExpediente.setNombre(oferta.getFdv().getNombre());
-						gastoExpediente.setCodigo(oferta.getFdv().getCodProveedorUvem());
-						gastoExpediente.setProveedor(oferta.getFdv());
+			for(GastosExpediente gastoExpediente: gastosExpediente){
+				ActivoProveedor proveedor= gastoExpediente.getProveedor();
+				if(!Checks.esNulo(proveedor) && !Checks.esNulo(proveedor.getTipoProveedor())){
+					if(proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_MEDIADOR)){
+						gastoExpediente.setTipoProveedor(tipoProveedorMediador);
 					}
 				}
-				
-				else if(accionGasto.getCodigo().equals(DDAccionGastos.CODIGO_PRESCRIPCION)){
-					if(!Checks.esNulo(oferta.getPrescriptor())){
-						gastoExpediente.setNombre(oferta.getPrescriptor().getNombre());
-						gastoExpediente.setCodigo(oferta.getPrescriptor().getCodProveedorUvem());
-						gastoExpediente.setProveedor(oferta.getPrescriptor());
+				if(!Checks.esNulo(proveedor) && !Checks.esNulo(proveedor.getTipoProveedor())){
+					if(proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_FVD)){
+						gastoExpediente.setTipoProveedor(tipoProveedorfdv);
 					}
 				}
-				
-				else if(accionGasto.getCodigo().equals(DDAccionGastos.CODIGO_DOBLE_PRESCRIPCION)){
-					if(!Checks.esNulo(oferta.getApiResponsable())){
-						gastoExpediente.setNombre(oferta.getApiResponsable().getNombre());
-						gastoExpediente.setCodigo(oferta.getApiResponsable().getCodProveedorUvem());
-						gastoExpediente.setProveedor(oferta.getApiResponsable());
+				if(!Checks.esNulo(proveedor) && !Checks.esNulo(proveedor.getTipoProveedor())){
+					if(proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA)){
+						gastoExpediente.setTipoProveedor(tipoProveedorOficinaBankia);
+					}
+				}
+				if(!Checks.esNulo(proveedor) && !Checks.esNulo(proveedor.getTipoProveedor())){
+					if(proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR)){
+						gastoExpediente.setTipoProveedor(tipoProveedorOficinaCajamar);
 					}
 				}
 				
 				genericDao.save(GastosExpediente.class, gastoExpediente);
 			}
+
 		}catch(Exception ex) {
 			logger.error(ex.getMessage());
 			return false;

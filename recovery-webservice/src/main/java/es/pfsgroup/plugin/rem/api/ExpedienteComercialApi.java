@@ -7,6 +7,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -344,5 +345,27 @@ public interface ExpedienteComercialApi {
 		 * @return DatosClienteDto
 		 */
 		public DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento) throws Exception;
+		
+		/**
+		 * Método que devuelve los proveedores filtrados por su tipo de proveedor
+		 * @param codigoTipoProveedor
+		 * @return List<ActivoProveedor>
+		 */
+		public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto dto);
+		
+		/**
+		 * Crea un registro de honorarios (gasto_expediente)
+		 * @param dto
+		 * @param idEntidad
+		 * @return
+		 */
+		public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad);
+		
+		/**
+		 * Elimina un registro de honorario (gasto_expediente)
+		 * @param idPosicionamiento
+		 * @return
+		 */
+		public boolean deleteHonorario(Long idHonorario);
 }
 

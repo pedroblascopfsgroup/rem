@@ -12,15 +12,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     },
     
     formulas: {   
-	
-//	     esAlquilerConOpcionCompra: function(get){
-//	     	var me= this;
-//	     	debugger;
-//	     	if(get('condiciones.alquilerOpcionCompra')==1){
-//	     		return true;
-//	     	}
-//	     	return false;
-//	     },
 	     
 	     getSrcCartera: function(get) {
 	     	
@@ -119,7 +110,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 		
 		esOfertaVentaFicha: function(get){
-	     	debugger;
 	     	var me = this;
 	     	var expediente= me.getData().expediente;
 	     	if(!Ext.isEmpty(expediente)){
@@ -132,7 +122,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     esAlquilerConOpcionCompra: function(get){
-	     	debugger;
 	     	var me = this;
 			if(me.getData().expediente.get('alquilerOpcionCompra')==1){
 				return true;
@@ -502,9 +491,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'generic/getComitesByCartera',
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
-	    }
-	    
-	    
+	    } 
 	
     }
   

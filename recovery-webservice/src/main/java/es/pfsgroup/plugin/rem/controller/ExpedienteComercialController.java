@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -864,8 +865,63 @@ public class ExpedienteComercialController {
 		return createModelAndViewJson(model);
 		
 	}
-
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboProveedoresExpediente(@RequestParam String codigoTipoProveedor, @RequestParam String nombreBusqueda,WebDto dto, ModelMap model) {
+		
+		try {
+			List<ActivoProveedor> proveedores = expedienteComercialApi.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, dto);
+			model.put("data", proveedores);
+			model.put("success", true);
+		}catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+		}		
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createHonorario(DtoGastoExpediente dto, Long idEntidad) {
+		ModelMap model = new ModelMap();
+		try {
+			boolean success = expedienteComercialApi.createHonorario(dto, idEntidad);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteHonorario(@RequestParam Long id){
+		
+		ModelMap model = new ModelMap();		
+		try {
+			boolean success = expedienteComercialApi.deleteHonorario(id);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

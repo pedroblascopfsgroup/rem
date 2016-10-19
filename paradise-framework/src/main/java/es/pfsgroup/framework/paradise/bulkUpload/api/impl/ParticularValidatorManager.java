@@ -213,18 +213,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean estadoNoPublicado(String numActivo){
+	public Boolean estadoNoPublicadoOrNull(String numActivo){
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
-				+ "			AND BORRADO = 0"
-				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
-				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
-				+ "				WHERE DD_EPU_CODIGO IN ('06'))");
+				+ "			AND BORRADO = 0 "
+				+ "			AND ( DD_EPU_ID IS NULL "
+				+ "			      OR DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				     FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				     WHERE DD_EPU_CODIGO IN ('06')) )");
 		if("0".equals(resultado))
-			return true;
-		else
 			return false;
+		else
+			return true;
 	}
 	
 	@Override

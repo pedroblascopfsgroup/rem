@@ -15,7 +15,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasList', {
         
         var me = this; 
         
-        me.setTitle(HreRem.i18n("title.historico.listado.propuestas"));
+        me.setTitle(HreRem.i18n("title.historico.propuestas.listado"));
         
         me.columns= [
         

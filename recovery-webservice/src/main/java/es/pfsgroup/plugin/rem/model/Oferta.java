@@ -133,7 +133,9 @@ public class Oferta implements Serializable, Auditable {
     private List<TextosOferta> textos;
     
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_ID")
     private List<ActivoOferta> activosOferta;
+   
     
     @Column(name = "OFR_FECHA_ALTA")
     private Date fechaAlta;

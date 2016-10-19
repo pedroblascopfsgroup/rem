@@ -41,8 +41,7 @@ DECLARE
         T_TIPO_DATA('01'		,'No procede'			,'No procede'),
         T_TIPO_DATA('02'		,'Devuelta'			,'Devuelta'),
         T_TIPO_DATA('03'		,'Bloqueada'			,'Bloqueada'),
-	T_TIPO_DATA('04'		,'Pendiente'			,'Pendiente'),
-	T_TIPO_DATA('05'		,'Reintegro'			,'Reintegro')
+	T_TIPO_DATA('04'		,'Pendiente'			,'Pendiente')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

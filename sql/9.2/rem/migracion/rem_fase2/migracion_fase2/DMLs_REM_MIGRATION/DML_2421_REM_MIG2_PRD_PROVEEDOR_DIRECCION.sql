@@ -295,8 +295,6 @@ BEGIN
       -- Registros insertados en REM
       -- V_REG_INSERTADOS
       
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
-      
       -- Total registros rechazados
       V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;
       

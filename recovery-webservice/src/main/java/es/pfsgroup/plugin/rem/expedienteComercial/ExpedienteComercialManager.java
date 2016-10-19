@@ -384,6 +384,14 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				if(!Checks.esNulo(oferta.getTipoOferta())) {
 					dto.setTipoExpedienteDescripcion(oferta.getTipoOferta().getDescripcion());
 					dto.setTipoExpedienteCodigo(oferta.getTipoOferta().getCodigo());
+					
+					if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+						dto.setImporte(!Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta(): oferta.getImporteOferta());
+						
+					} else if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+						dto.setImporte(oferta.getImporteOferta());
+					}
+					
 				}
 				
 				dto.setPropietario(activo.getFullNamePropietario());		
@@ -391,7 +399,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dto.setMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
 				}
 				
-				dto.setImporte(Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta(): oferta.getImporteOferta());
+				
 				
 				if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
 					dto.setComprador(expediente.getCompradorPrincipal().getFullName());
@@ -2213,14 +2221,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 	}
 
-	@Override
-	public void reintegroReserva(ExpedienteComercial expComercial) {
-		DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_BLOQUEADA));
-		expComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
-		this.update(expComercial);	
-		
-	}
 
 	@Override
 	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) {

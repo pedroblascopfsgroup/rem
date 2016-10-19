@@ -74,7 +74,7 @@ BEGIN
           EXECUTE IMMEDIATE '
           INSERT INTO '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS (
             TABLA_MIG,
-            GPV_NUM_GASTO_HAYA,            
+            GPV_NUM_GASTO_GESTORIA,            
             FECHA_COMPROBACION
           )
           WITH NOT_EXISTS AS (
@@ -231,6 +231,8 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
+      V_REG_INSERTADOS := SQL%ROWCOUNT;
+      
       COMMIT;
       
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
@@ -243,33 +245,16 @@ BEGIN
       V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
-      -- Registros insertados en REM
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOCREAR = ''MIG2''';  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
-      
       -- Total registros rechazados
       V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
-      
-      /*  
-      -- Diccionarios rechazados
-      V_SENTENCIA := '
-      SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_COD_NOT_EXISTS 
-      WHERE DICCIONARIO IN (''DD_TPR_TIPO_PROVEEDOR'',''DD_TDI_TIPO_DOCUMENTO_ID'',''DD_ZNG_ZONA_GEOGRAFICA'',''DD_PRV_PROVINCIA'',''DD_LOC_LOCALIDAD'')
-      AND FICHERO_ORIGEN = ''PROVEEDORES.dat''
-      AND CAMPO_ORIGEN IN (''TIPO_PROVEEDOR'',''TIPO_DOCUMENTO'',''ZONA_GEOGRAFICA'',''PVE_PROVINCIA'',''PVE_LOCALIDAD'')
-      '
-      ;
-      
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;
-      */
-      
+           
       -- Observaciones
 	  IF V_REJECTS != 0 THEN
 	  
-		IF TABLE_COUNT != 0 THEN
-		
-		  V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT||' han sido por Codigos de GASTOS_PROVEEDOR inexistentes. ';
-		
+      V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
+    
+		IF TABLE_COUNT != 0 THEN		
+		  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' GASTOS_PROVEEDOR inexistentes. ';		
 		END IF;
       END IF;
         

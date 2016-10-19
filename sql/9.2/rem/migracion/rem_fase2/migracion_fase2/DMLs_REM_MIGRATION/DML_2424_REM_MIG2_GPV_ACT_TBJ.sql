@@ -28,13 +28,14 @@ TABLE_COUNT    NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
 TABLE_COUNT_3 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMAMASTER#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_TABLA_1 VARCHAR2(40 CHAR) := 'GPV_ACT';
 V_TABLA_2 VARCHAR2(40 CHAR) := 'GPV_TBJ';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GPV_ACT_TBJ';
 V_SENTENCIA VARCHAR2(32000 CHAR);
 V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
+V_REG_INSERTADOS_1 NUMBER(10,0) := 0;
+V_REG_INSERTADOS_2 NUMBER(10,0) := 0;
 V_REJECTS NUMBER(10,0) := 0;
 V_COD NUMBER(10,0) := 0;
 V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
@@ -223,8 +224,6 @@ BEGIN
       
       END IF;
 
-
-
 	  --Inicio del proceso de volcado sobre GPV_ACT
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_1||'.');
       
@@ -251,38 +250,14 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
+      V_REG_INSERTADOS_1 := SQL%ROWCOUNT;
+      
       COMMIT;
       
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_1||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_1||' ANALIZADA.');
-      
-      
-      --ACTUALIZAMOS EL CAMPO GPV_PARTICIPACION_GASTO DE GPV_ACT
-      DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_1||'.');
-      
-      /*V_SENTENCIA := '
-      MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_1||' ACT
-        USING ( SELECT  
-				
-			  ) AUX
-		ON (ACT.ACT_NUM_ACTIVO = AUX.ACT_NUMERO_ACTIVO)
-		WHEN MATCHED THEN UPDATE SET
-		  
-          ,ACT.USUARIOMODIFICAR = ''MIG2''
-          ,ACT.FECHAMODIFICAR = SYSDATE
-      '
-      ;
-      EXECUTE IMMEDIATE V_SENTENCIA	;
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
-      COMMIT;
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_1||' COMPUTE STATISTICS');
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_1||' ANALIZADA.');*/
-      
+          
       --Inicio del proceso de volcado sobre GPV_TBJ
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_2||'.');
       
@@ -309,37 +284,34 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
+      V_REG_INSERTADOS_2 := SQL%ROWCOUNT;
+      
       COMMIT;
       
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_2||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
       
-      -- INFORMAMOS A LA TABLA INFO GPV_ACT
       
+      -- INFORMAMOS A LA TABLA INFO GPV_ACT      
       -- Registros MIG
       V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
-      
-      -- Registros insertados en REM
-      V_SENTENCIA := 'SELECT COUNT(1) 
-                                  FROM '||V_ESQUEMA||'.'||V_TABLA_1||' GPV_ACT 
-                                  INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GPV_ACT.GPV_ID
-                                  AND GPV.USUARIOCREAR = ''MIG2''';  
-      
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
-      
+            
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS_1;	
       
       -- Observaciones
-	  IF V_REJECTS != 0 THEN
-	  
-		IF TABLE_COUNT != 0 or TABLE_COUNT_2 != 0 THEN
-		
-		  V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT||' han sido por Codigos de ACTIVOS inexistentes y '||TABLE_COUNT_3||' ha sido por Códigos de GASTOS_PROVEEDOR inexistentes.';
-		
-		END IF;
+      IF V_REJECTS != 0 THEN
+            V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
+            
+            IF TABLE_COUNT != 0  THEN
+                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay  '||TABLE_COUNT||' ACTIVOS inexistentes';
+            END IF;
+            
+            IF TABLE_COUNT_3 != 0 THEN
+                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT_3||' GASTOS_PROVEEDOR inexistentes.';
+            END IF;
       END IF;
         
       V_SENTENCIA := '
@@ -357,7 +329,7 @@ BEGIN
       '''||V_TABLA_MIG||''',
       '''||V_TABLA_1||''',
       '||V_REG_MIG||',
-      '||V_REG_INSERTADOS||',
+      '||V_REG_INSERTADOS_1||',
       '||V_REJECTS||',
       '||V_COD||',
       SYSDATE,
@@ -369,31 +341,26 @@ BEGIN
       
       COMMIT;  
       
-      -- INFORMAMOS A LA TABLA INFO GPV_TBJ
       
+      -- INFORMAMOS A LA TABLA INFO GPV_TBJ      
       -- Registros MIG
       V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
-      -- Registros insertados en REM
-      V_SENTENCIA := 'SELECT COUNT(1) 
-                                  FROM '||V_ESQUEMA||'.'||V_TABLA_2||' GPV_TBJ 
-                                  INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GPV_TBJ.GPV_ID
-                                  AND GPV.USUARIOCREAR = ''MIG2''';  
-      
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
-      
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS_2;	
       
       -- Observaciones
-	  IF V_REJECTS != 0 THEN
-	  
-		IF TABLE_COUNT_2 != 0 or TABLE_COUNT_3 != 0 THEN
-		
-		  V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT_2||' han sido por Codigos de TRABAJOS inexistentes y '||TABLE_COUNT_3||' ha sido por Códigos de GASTOS_PROVEEDOR inexistentes.';
-		
-		END IF;
+            IF V_REJECTS != 0 THEN
+            V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
+            
+            IF TABLE_COUNT_2 != 0 THEN
+                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT_2||' TRABAJOS inexistentes.';
+            END IF;
+            
+            IF TABLE_COUNT_3 != 0  THEN
+                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay  '||TABLE_COUNT_3||' GASTOS_PROVEEDOR inexistentes';
+            END IF;
       END IF;
         
       V_SENTENCIA := '
@@ -411,7 +378,7 @@ BEGIN
       '''||V_TABLA_MIG||''',
       '''||V_TABLA_2||''',
       '||V_REG_MIG||',
-      '||V_REG_INSERTADOS||',
+      '||V_REG_INSERTADOS_2||',
       '||V_REJECTS||',
       '||V_COD||',
       SYSDATE,

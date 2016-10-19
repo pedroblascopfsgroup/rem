@@ -4,7 +4,7 @@ Ext.define('HreRem.view.comercial.ComercialMainMenu', {
     xtype		: 'comercialmainmenu',
     reference	: 'comercialMainmenu',
     layout: 'fit',
-    
+
     requires	: ['HreRem.view.comercial.ComercialVisitasController','HreRem.view.comercial.ComercialModel',
     'HreRem.view.comercial.visitas.VisitasComercialMain', 'HreRem.view.comercial.ofertas.OfertasComercialMain', 'HreRem.view.comercial.configuracion.ConfiguracionComercialMain'],
     
@@ -19,11 +19,12 @@ Ext.define('HreRem.view.comercial.ComercialMainMenu', {
 			},
 			{	
 				xtype: 'ofertascomercialmain', reference: 'ofertasComercialMain'
-			},
+			}/*,
 			{	
-				xtype: 'configuracioncomercialmain', reference: 'configuracioncomercialMain', disabled: true
-			}
+				xtype: 'configuracioncomercialmain', reference: 'configuracioncomercialMain', hidden: true
+			}*/
         ];
+       
         
         me.callParent(); 
 

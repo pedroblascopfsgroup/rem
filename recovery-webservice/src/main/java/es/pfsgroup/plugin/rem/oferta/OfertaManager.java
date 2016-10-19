@@ -481,7 +481,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));
 				if (!Checks.esNulo(cust)) {
 					oferta.setCustodio(cust);
-					;
 				}
 			}
 			if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {
@@ -544,62 +543,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				oferta.setImporteContraOferta(ofertaDto.getImporteContraoferta());
 			}
-			/*
-			 * DDEstadoOferta estadoOfr = null; if (((JSONObject)
-			 * jsonFields).containsKey("codEstadoOferta")) { if
-			 * (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) { estadoOfr =
-			 * (DDEstadoOferta) genericDao.get(DDEstadoOferta.class,
-			 * genericDao.createFilter(FilterType.EQUALS, "codigo",
-			 * ofertaDto.getCodEstadoOferta())); if (!Checks.esNulo(estadoOfr))
-			 * { oferta.setEstadoOferta(estadoOfr); } } else {
-			 * oferta.setEstadoOferta(null); } } if
-			 * (ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.
-			 * CODIGO_PENDIENTE)) {
-			 * oferta.setFechaAlta(ofertaDto.getFechaAccion()); } else if
-			 * (ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.
-			 * CODIGO_RECHAZADA)) {
-			 * oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion()); }
-			 */
+
 			ofertaDao.saveOrUpdate(oferta);
 			updateEstadoOferta(oferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
-			// Si la oferta tiene estado, hay que actualizar la disposicion
-			// comercial del activo
-			/*
-			 * if (!Checks.esNulo(estadoOfr)) {
-			 * this.updateStateDispComercialActivosByOferta(oferta); }
-			 */
 		}
 
 		return errorsList;
 	}
 
 	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) {
+		
+		Oferta ofertaAcepted = null;
+		
 		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
 		restApi.doLogin(usuarioSecurity);
-
+		
+		
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
-		boolean isAccepted = false;
-		for (ActivoOferta tmp : listaActivoOferta) {
-			Oferta ofertaAux = tmp.getPrimaryKey().getOferta();
-			if (ofertaAux.getEstadoOferta() != null
-					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
-				isAccepted = true;
-			}
+		ActivoOferta actOfr = listaActivoOferta.get(0);
+		if(!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())){
+			ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
 		}
-		if (oferta.getEstadoOferta() == null) {
-			if (isAccepted) {
-				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
-			} else {
-				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
-			}
+			
+		if (!Checks.esNulo(ofertaAcepted)) {
+			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
+		} else {
+			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
 		}
-		if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
-			oferta.setFechaAlta(fechaAccion);
-		} else if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
+		
+		oferta.setFechaAlta(fechaAccion);
+		
+		if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		ofertaDao.saveOrUpdate(oferta);

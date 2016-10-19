@@ -43,7 +43,6 @@ Ext.define('HreRem.view.activos.ActivosMain', {
 				    },
 				    refresh: function() {						
 						var me = this;
-						
 						if(me.refreshOnActivate)  {
 							me.down('activoslist').getStore().load();
 							me.refreshOnActivate = false;

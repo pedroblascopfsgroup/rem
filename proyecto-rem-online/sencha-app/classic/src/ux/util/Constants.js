@@ -152,7 +152,12 @@ Ext.define('HreRem.ux.util.Constants', {
     TIPOS_OFERTA: {
     	VENTA : '01',
     	ALQUILER: '02'
+    },
+    
+    ESTADOS_OFERTA: {
+    	ACEPTADA : '01'
     }
+    
     
 
 });

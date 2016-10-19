@@ -34,6 +34,9 @@ Ext.define('HreRem.model.Reserva', {
     	},
     	{
     		name: 'motivoAnulacion'
+    	},
+    	{
+    		name: 'estadoDevolucionCodigo'
     	}
     ],
     

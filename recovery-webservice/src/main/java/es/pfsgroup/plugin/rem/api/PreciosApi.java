@@ -96,4 +96,11 @@ public interface PreciosApi {
 	 * @return
 	 */
 	public String puedeCreasePropuestaFromTrabajo(Long idTrabajo);
+	
+	/**
+	 * Devuelve una propuesta por el idTrabajo
+	 * @param idTrabajo
+	 * @return
+	 */
+	public PropuestaPrecio getPropuestaByTrabajo(Long idTrabajo);
 }

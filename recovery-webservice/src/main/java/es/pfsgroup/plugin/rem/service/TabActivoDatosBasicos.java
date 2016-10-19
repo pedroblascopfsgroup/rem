@@ -190,7 +190,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getAgrupaciones().size() > 0){
 			Boolean pertenceAgrupacionRestringida= false;
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
-				if(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)){
+				if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())){
 					pertenceAgrupacionRestringida= true;
 					break;
 				}

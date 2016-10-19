@@ -22,4 +22,12 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @return
 	 */
 	public Page getObservacionesByExpediente(Long idExpediente, WebDto dto);
+	
+	/**
+	 * Recupera una lista de proveedores filtrado por tipoProveedor y nombre
+	 * @param codigoTipoProveedor
+	 * @param nombreBusqueda
+	 * @return 
+	 */
+	public Page getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto webDto);
 }

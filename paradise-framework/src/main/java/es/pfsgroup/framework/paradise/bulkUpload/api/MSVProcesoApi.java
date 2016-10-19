@@ -4,6 +4,7 @@ import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoMSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
@@ -37,7 +38,7 @@ public interface MSVProcesoApi {
 	String eliminarProceso(long idProceso) throws Exception;
 	
 	@BusinessOperationDefinition(MSV_BO_MOSTRAR_PROCESOS)
-	List<MSVProcesoMasivo> mostrarProcesos();
+	List<DtoMSVProcesoMasivo> mostrarProcesos();
 
     /**
      * Esta operación de negocio devuelve una lista de procesos de operaciones masivas.

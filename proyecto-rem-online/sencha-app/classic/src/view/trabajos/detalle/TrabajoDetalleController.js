@@ -703,7 +703,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    }
     	});
 
-		messageBox.textField.maskRe=/^[a-z0-9\s_/]+$/;
+		messageBox.textField.maskRe=/^[A-Za-z0-9\s_/]+$/;
 		messageBox.textField.mon(messageBox.textField.el, 'keypress', messageBox.textField.filterKeys, messageBox.textField);
 		
      }

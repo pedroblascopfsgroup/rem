@@ -108,7 +108,8 @@ public class ExcelGenerarPropuestaPrecios {
 		try {
 			
 	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	        DecimalFormat df = new DecimalFormat(".##");
+	        DecimalFormat df = new DecimalFormat("#.##");
+	        df.setDecimalSeparatorAlwaysShown(false);
 		
 			//Propietario
 	        
@@ -179,9 +180,8 @@ public class ExcelGenerarPropuestaPrecios {
 				
 				if(dto.getValorTasacion() > 0) {
 					hoja.addCell(new Label(32,fila,df.format(dto.getValorTasacion())));
-					Double resta = diferenciaEntreValores(dto.getValorPropuesto(),dto.getValorTasacion());
-					if(resta != 0.0)
-						hoja.addCell(new Label(46,fila,df.format(resta)));
+					Double resta = diferenciaEntreValores(dto.getValorPropuesto(),dto.getValorTasacion());				
+					hoja.addCell(new Label(46,fila,df.format(resta)));
 					hoja.addCell(new Label(47,fila,df.format(diferenciaEnPorcentaje(dto.getValorPropuesto(),dto.getValorTasacion()))+" %"));
 				}
 				if(dto.getValorFsv() > 0) {
@@ -200,8 +200,7 @@ public class ExcelGenerarPropuestaPrecios {
 				if(dto.getValorVnc() > 0) {
 					hoja.addCell(new Label(38,fila,df.format(dto.getValorVnc())));
 					Double resta = diferenciaEntreValores(dto.getValorPropuesto(),dto.getValorVnc());
-					if(resta != 0.0)
-						hoja.addCell(new Label(50,fila,df.format(resta)));
+					hoja.addCell(new Label(50,fila,df.format(resta)));
 					hoja.addCell(new Label(51,fila,df.format(diferenciaEnPorcentaje(dto.getValorPropuesto(),dto.getValorVnc()))+" %"));
 				}
 				if(dto.getValorAdquisicion() > 0) {
@@ -229,7 +228,7 @@ public class ExcelGenerarPropuestaPrecios {
 	
 	private Double diferenciaEnPorcentaje(Double valorPropuesto, Double valor) {
 		
-		return (valorPropuesto / valor ) * 100;
+		return ((valorPropuesto / valor ) * 100) - 100;
 	}
 	
 	private Double diferenciaEntreValores(Double valorPropuesto, Double valor) {

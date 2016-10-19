@@ -665,4 +665,12 @@ public interface ActivoApi {
 	 * @return true si son distintos, false si son iguales
 	 */
 	public Boolean checkTiposDistintos(TareaExterna tareaExterna);
+	
+	/**
+	 * Comprueba que los datos de activo del activo y del informe comercial sean distintos.
+	 * @param activo
+	 * @return true si son distintos, false si son iguales
+	 */
+	public Boolean checkTiposDistintos(Activo activo);
+	
 }

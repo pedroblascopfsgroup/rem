@@ -245,7 +245,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 							 { // Publicación Forzada.
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
-								 title: HreRem.i18n('title.publicaciones.publicacionforzada'),
+								 title: HreRem.i18n('title.publicaciones.publicacion'),
 								 reference: 'seccionPublicacionForzada',
 								 margin: '5 8 10 8',
 								 minHeight	: 150,

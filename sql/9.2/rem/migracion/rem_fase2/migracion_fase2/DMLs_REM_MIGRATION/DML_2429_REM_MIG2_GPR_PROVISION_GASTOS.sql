@@ -27,7 +27,7 @@ DECLARE
 TABLE_COUNT    NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMAMASTER#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_TABLA VARCHAR2(40 CHAR) := 'PRG_PROVISION_GASTOS';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GPR_PROVISION_GASTOS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -135,26 +135,27 @@ BEGIN
   
     EXECUTE IMMEDIATE '
     INSERT INTO '||V_ESQUEMA||'.MIG2_PVE_NOT_EXISTS (
-    PVE_COD_UVEM,
-    TABLA_MIG,
-    FECHA_COMPROBACION
+          PVE_COD_UVEM,
+          TABLA_MIG,
+          FECHA_COMPROBACION
     )
     WITH PVE_COD_UVEM AS (
-		SELECT
-		MIG.GPR_COD_GESTORIA 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE WHERE MIG.GPR_COD_GESTORIA = PVE.PVE_COD_UVEM
-		  AND PVE.DD_TPR_ID = (SELECT DD_TPR_ID FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = ''01'')
-		)
+          SELECT
+          MIG.GPR_COD_GESTORIA 
+          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+          WHERE NOT EXISTS (
+            SELECT 1 
+            FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
+            WHERE MIG.GPR_COD_GESTORIA = PVE.PVE_COD_UVEM
+            AND PVE.DD_TPR_ID = (SELECT DD_TPR_ID FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = ''01'')
+          )
     )
     SELECT DISTINCT
-    MIG.GPR_COD_GESTORIA                              							PVE_COD_UVEM,
-    '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-    SYSDATE                                                                 FECHA_COMPROBACION
+          MIG.GPR_COD_GESTORIA                              							PVE_COD_UVEM,
+          '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
+          SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
-    INNER JOIN PVE_COD_UVEM
-    ON PVE_COD_UVEM.GPR_COD_GESTORIA = MIG.GPR_COD_GESTORIA
+    INNER JOIN PVE_COD_UVEM ON PVE_COD_UVEM.GPR_COD_GESTORIA = MIG.GPR_COD_GESTORIA
     '
     ;
     
@@ -194,16 +195,16 @@ BEGIN
         SYSDATE															FECHACREAR,	
         0																BORRADO
 		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		INNER JOIN '||V_ESQUEMA||'.DD_EPR_ESTADOS_PROVISION_GASTO EPR
-			ON EPR.DD_EPR_CODIGO = MIG.GPR_COD_ESTADO_PROVISION
-		INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
-			ON PVE.PVE_COD_UVEM =  MIG.GPR_COD_GESTORIA
+		INNER JOIN '||V_ESQUEMA||'.DD_EPR_ESTADOS_PROVISION_GASTO EPR ON EPR.DD_EPR_CODIGO = MIG.GPR_COD_ESTADO_PROVISION
+		INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM =  MIG.GPR_COD_GESTORIA
 			AND PVE.DD_TPR_ID = (SELECT DD_TPR_ID FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = ''01'')
 		'
 		;
       EXECUTE IMMEDIATE V_SENTENCIA	;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      
+      V_REG_INSERTADOS := SQL%ROWCOUNT;
       
       COMMIT;
       
@@ -217,28 +218,20 @@ BEGIN
       V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
-      -- Registros insertados en REM
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOCREAR = ''MIG2''';  
-      
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
-      
       -- Total registros rechazados
       V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
       
       -- Observaciones
-	  IF V_REJECTS != 0 THEN
-	  
-		IF TABLE_COUNT != 0 THEN
-		
-		  V_OBSERVACIONES := 'Del total de registros rechazados, '||TABLE_COUNT||' han sido por Codigos de DD_EPR_ESTADOS_PROVISION_GASTO inexistentes.';
-		
-		END IF;
-		
-		IF TABLE_COUNT_2 != 0 THEN
-		
-		  V_OBSERVACIONES := V_OBSERVACIONES || 'Del total de registros rechazados, '||TABLE_COUNT_2||' han sido por Codigos de PROVEEDOR (TIPO GESTOR) inexistentes.';
-		
-		END IF;
+      IF V_REJECTS != 0 THEN      
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
+      
+        IF TABLE_COUNT != 0 THEN      
+          V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' DD_EPR_ESTADOS_PROVISION_GASTO inexistentes.';      
+        END IF;
+        
+        IF TABLE_COUNT_2 != 0 THEN		
+          V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT_2||' PROVEEDOR (TIPO GESTOR) inexistentes.';		
+        END IF;
       END IF;
         
       V_SENTENCIA := '

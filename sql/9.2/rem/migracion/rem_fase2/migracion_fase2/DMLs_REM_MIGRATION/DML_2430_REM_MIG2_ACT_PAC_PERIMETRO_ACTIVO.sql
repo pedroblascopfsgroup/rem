@@ -202,7 +202,7 @@ BEGIN
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
-		V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' PERIMETROS_ACTIVOS.';
+		V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
 		
 		IF TABLE_COUNT != 0 THEN
 			V_OBSERVACIONES := V_OBSERVACIONES || ' Hay un total de '||TABLE_COUNT||' ACTIVOS inexistentes.';

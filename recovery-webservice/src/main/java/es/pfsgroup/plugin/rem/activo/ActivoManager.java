@@ -2250,13 +2250,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public Boolean checkTiposDistintos(TareaExterna tareaExterna){
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
-		if(!Checks.esNulo(trabajo)){
-			Activo activo = trabajo.getActivo();
-			if(!Checks.esNulo(activo)){
-				if(!Checks.esNulo(activo.getInfoComercial())){
-					if(!Checks.esNulo(activo.getInfoComercial().getTipoActivo()))
-						return(activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
-				}
+		Activo activo;
+		if(!Checks.esNulo(trabajo))
+			activo = trabajo.getActivo();
+		else
+			activo = ((TareaActivo) tareaExterna.getTareaPadre()).getActivo();
+		
+		if(!Checks.esNulo(activo)){
+			if(!Checks.esNulo(activo.getInfoComercial())){
+				if(!Checks.esNulo(activo.getInfoComercial().getTipoActivo()))
+					return(!activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
 			}
 		}
 		return true;
@@ -2264,12 +2267,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public Boolean checkTiposDistintos(Activo activo){
-			if(!Checks.esNulo(activo)){
-				if(!Checks.esNulo(activo.getInfoComercial())){
-					if(!Checks.esNulo(activo.getInfoComercial().getTipoActivo()))
-						return(activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
-				}
+		if(!Checks.esNulo(activo)){
+			if(!Checks.esNulo(activo.getInfoComercial())){
+				if(!Checks.esNulo(activo.getInfoComercial().getTipoActivo()))
+					return(!activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
 			}
+		}
 		return true;
 	}
 

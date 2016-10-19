@@ -322,7 +322,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
 
 			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getEstadoOferta());
+					.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
 			oferta.setEstadoOferta(tipoOferta);
 

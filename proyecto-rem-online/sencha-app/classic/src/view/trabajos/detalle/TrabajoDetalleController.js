@@ -95,6 +95,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  }
 		    });
 		}
+    	
+    	if(combo.getValue() == "44" || combo.getValue() == "45") {
+    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(true);
+    		me.lookupReference("checkEnglobaTodosActivosRef").setValue(true);
+    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
+    		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
+    	}
+    	else {
+    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(false);
+    		me.lookupReference("checkEnglobaTodosActivosRef").setValue(false);
+    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
+    		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
+    	}
 	    
     },
     	
@@ -206,24 +219,29 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		window = btn.up("window"),
 		form = window.down("form"),
 		idAgrupacion = window.idAgrupacion,
-		idActivo = window.idActivo;
-		
+		idActivo = window.idActivo,
 		idProceso = window.idProceso;
-
-		form.getBindRecord().set("idActivo", idActivo);
-		form.getBindRecord().set("idAgrupacion", idAgrupacion);
-		form.getBindRecord().set("idProceso", idProceso);
-		var success = function(record, operation) {
-			me.getView().unmask();
-	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
-	    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
-	    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);	
-	    	window.hide();
-		};
-
-		me.onSaveFormularioCompleto(form, success);
-
+		
+		/*if(idAgrupacion == null && idActivo == null) {
+			
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+		else {
+			*/
+			form.getBindRecord().set("idActivo", idActivo);
+			form.getBindRecord().set("idAgrupacion", idAgrupacion);
+			form.getBindRecord().set("idProceso", idProceso);
+			var success = function(record, operation) {
+				me.getView().unmask();
+		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
+		    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
+		    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);	
+		    	window.hide();
+			};
+	
+			me.onSaveFormularioCompleto(form, success);
+		//}
 	},
 	
 	onClickBotonCancelarTrabajo: function(btn) {		

@@ -13,7 +13,6 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 		        localUrl: '/visitasdetalle.json',
 		        remoteUrl: 'visitas/getListVisitasDetalle'
 	    	},
-	    	autoLoad: true,
 	    	session: true,
 	    	remoteSort: true,
 	    	remoteFilter: true,
@@ -30,7 +29,6 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 		        localUrl: '/ofertas.json',
 		        remoteUrl: 'ofertas/getListOfertas'
 	    	},
-	    	autoLoad: true,
 	    	session: true,
 	    	remoteSort: true,
 	    	remoteFilter: true,

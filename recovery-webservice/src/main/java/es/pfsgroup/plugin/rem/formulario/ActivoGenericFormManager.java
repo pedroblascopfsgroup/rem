@@ -2,9 +2,7 @@ package es.pfsgroup.plugin.rem.formulario;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -21,33 +19,32 @@ import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
-import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
-import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
-import es.pfsgroup.plugin.rem.api.PreciosApi;
-import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 //import es.pfsgroup.plugin.rem.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
+import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 @Service
 public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
@@ -76,6 +73,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
     @Autowired
     private TareaExternaManager tareaExternaManager;
+    
+    @Autowired
+    private OfertaApi ofertaApi;
+    
+    @Autowired
+    private ExpedienteComercialApi expedienteComercialApi;
 
     @Autowired
     private DictionaryManager dictionaryManager;
@@ -234,6 +237,19 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            			String nombrePropuesta = propuesta.getNombrePropuesta();
 	            		    if(!Checks.esNulo(nombrePropuesta))
 	            		    	item.setValue(nombrePropuesta);
+            			}
+            		}
+            	}
+            	if(item.getType().equals(TIPO_CAMPO_INFORMATIVO))
+            	{
+            		if(item.getNombre().equals("comite"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if (!Checks.esNulo(expediente))
+            					if(!Checks.esNulo(expediente.getComiteSancion()))
+            						item.setValue(expediente.getComiteSancion().getDescripcion());
             			}
             		}
             	}

@@ -658,4 +658,11 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Oferta tieneOfertaAceptada(Activo activo);
+	
+	/**
+	 * Comprueba que los tipos de activo del activo y del informe comercial sean distintos.
+	 * @param tareaExterna
+	 * @return true si son distintos, false si son iguales
+	 */
+	public Boolean checkTiposDistintos(TareaExterna tareaExterna);
 }

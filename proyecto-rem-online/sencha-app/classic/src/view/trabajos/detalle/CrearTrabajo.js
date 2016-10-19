@@ -231,13 +231,14 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   										    dock: 'bottom',
 						        	   											displayInfo: true,
 						        	   											bind: {
-						        	   											       store: '{activosAgrupacion}'
+						        	   											       store: '{listaActivosSubida}'
 						        	   											      }
 						        	   											}
 						        	   									      ]						           
 						        	   						},
 						        	   						{
 		        	   											xtype: 'checkboxfieldbase',
+		        	   											reference: 'checkEnglobaTodosActivosRef',
 						        	   							margin: '20 0 10 0',
 						        	   							boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
 						        	   							bind: '{trabajo.esSolicitudConjunta}'
@@ -347,6 +348,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 										           },
 										           {
 										           		xtype: 'checkboxfieldbase',
+										           		reference: 'checkEnglobaTodosActivosAgrRef',
 										           		margin: '20 0 10 0',
 														boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
 														bind: '{trabajo.esSolicitudConjunta}'
@@ -671,6 +673,10 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	me.down("[reference=checkFechaConcreta]").setValue(false);
     	me.down("[reference=checkFechaTope]").setValue(false);
     	me.down("[reference=checkFechaContinuado]").setValue(false);
+    	
+        idProceso= null;
+    	me.lookupReference('listaActivosSubidaRef').getStore().getProxy().extraParams = {'idProceso':idProceso};
+    	me.lookupReference('listaActivosSubidaRef').getStore().loadPage(0);
 
     	if(!Ext.isEmpty(me.idAgrupacion)) {
     		me.getViewModel().get("activosAgrupacion").load();

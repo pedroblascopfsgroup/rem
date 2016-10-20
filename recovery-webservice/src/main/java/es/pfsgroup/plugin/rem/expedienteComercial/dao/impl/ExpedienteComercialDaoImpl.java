@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.expedienteComercial.dao.impl;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -8,10 +9,11 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 @Repository("ExpedienteComercialDao")
-public class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteComercial, Long> implements ExpedienteComercialDao {
+public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteComercial, Long> implements ExpedienteComercialDao {
 
 	@Override
 	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto) {
@@ -43,4 +45,12 @@ public class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCome
 		
 		return HibernateQueryUtils.page(this, hql, webDto);
 	}
+	
+	@Override
+	public void deleteCompradorExpediente(Long idExpediente, Long idComprador) {
+
+		StringBuilder sb = new StringBuilder("delete from CompradorExpediente ce where ce.primaryKey.comprador = "+idComprador+" and ce.primaryKey.expediente= "+idExpediente);		
+		getSession().createQuery(sb.toString()).executeUpdate();
+	}
+	
 }

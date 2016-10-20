@@ -674,8 +674,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	me.down("[reference=checkFechaTope]").setValue(false);
     	me.down("[reference=checkFechaContinuado]").setValue(false);
     	
-        idProceso= null;
-    	me.lookupReference('listaActivosSubidaRef').getStore().getProxy().extraParams = {'idProceso':idProceso};
+    	me.lookupReference('listaActivosSubidaRef').getStore().getProxy().extraParams = {'idProceso':null};
     	me.lookupReference('listaActivosSubidaRef').getStore().loadPage(0);
 
     	if(!Ext.isEmpty(me.idAgrupacion)) {

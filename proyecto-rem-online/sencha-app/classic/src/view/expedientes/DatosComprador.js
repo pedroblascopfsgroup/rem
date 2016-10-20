@@ -16,7 +16,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 
     
     idComprador: null,
-    
+    expediente: null,
     
     
     requires: ['HreRem.model.FichaComprador'],
@@ -49,8 +49,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	me.setTitle(HreRem.i18n("title.windows.datos.comprador"));
     	
     	me.buttonAlign = 'right';   
-    	    	
-    	if(!Ext.isEmpty(me.idComprador)){
+    	if(!Ext.isEmpty(me.idComprador) && CONST.ESTADOS_EXPEDIENTE['APROBADO'] == me.expediente.data.codigoEstado){
+    		me.buttons = [ { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
+    	}
+    	else if(!Ext.isEmpty(me.idComprador)){
     		me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador'},{ itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
     	}
     	else{
@@ -117,6 +119,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	xtype: 'comboboxfieldbase',
 										        	fieldLabel: HreRem.i18n('fieldlabel.titular.reserva'),
 													reference: 'titularReserva',
+													hidden: true,
 													margin: '10 0 10 0',
 										        	bind: {
 									            		store: '{comboSiNoRem}',

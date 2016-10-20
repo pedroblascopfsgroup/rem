@@ -45,6 +45,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							bind		: {
 											store: '{storePreciosVigentes}'
 							},
+
 							columns		: {
 											defaults: {
 							    				menuDisabled: true,
@@ -71,8 +72,11 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 									        		hideTrigger: true,
 									        		keyNavEnable: false,
 									        		mouseWheelEnable: false,
-									        		allowBlank: false
-									        		},
+									        		allowBlank: false,
+									        		validator: function(value){
+									        			return this.up('activosdetallemain').getController().validatePreciosVigentes(value);
+									        	    }
+									        	},
 												flex: 1
 											   },
 											   {

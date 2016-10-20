@@ -862,7 +862,7 @@ public class ExpedienteComercialController {
 			
 		}	catch (Exception e) {
 			model.put("success", false);
-			model.put("msg", e.getMessage());
+			model.put("msg", "Servicio no disponible");
 		}
 		
 		return createModelAndViewJson(model);
@@ -918,6 +918,29 @@ public class ExpedienteComercialController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteCompradorExpediente(@RequestParam Long idExpediente, @RequestParam Long idComprador){
+		
+		ModelMap model = new ModelMap();		
+		try {
+			boolean success = expedienteComercialApi.deleteCompradorExpediente(idExpediente, idComprador);
+			model.put("success", success);
+			
+		}
+		catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+		}catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);		
 		}

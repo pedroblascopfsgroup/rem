@@ -515,6 +515,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				
 				if(!Checks.esNulo(expediente.getEstado())) {
 					dto.setEstado(expediente.getEstado().getDescripcion());
+					dto.setCodigoEstado(expediente.getEstado().getCodigo());
 				}		
 				dto.setFechaAlta(expediente.getFechaAlta());
 				dto.setFechaAltaOferta(oferta.getFechaAlta());
@@ -1708,17 +1709,17 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					if(compradorExpediente.getPrimaryKey().getComprador().getId().equals(Long.parseLong(dto.getId())) &&
 							compradorExpediente.getPrimaryKey().getExpediente().getId().equals(Long.parseLong(dto.getIdExpedienteComercial()))){
 					
-//							if(!Checks.esNulo(dto.getTitularContratacion())){
-//								compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
-//							}
 							if(!Checks.esNulo(dto.getPorcentajeCompra())){
 								compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
 							}
-							if(!Checks.esNulo(dto.getTitularReserva())){
-								compradorExpediente.setTitularReserva(dto.getTitularReserva());
-							}
 							if(!Checks.esNulo(dto.getTitularContratacion())){
-								compradorExpediente.setTitularContratacion(dto.getTitularContratacion());;
+								compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
+								if(dto.getTitularContratacion()==1){
+									compradorExpediente.setTitularReserva(0);
+								}
+								else if(dto.getTitularContratacion()==0){
+									compradorExpediente.setTitularReserva(1);
+								}
 							}
 							
 							//Nexos
@@ -2531,6 +2532,44 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			listaTitularUVEM.add(titularUVEM);
 		}
 		return listaTitularUVEM;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean deleteCompradorExpediente(Long idExpediente, Long idComprador) {
+		
+		try {
+			
+			Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "primaryKey.expediente.id", idExpediente);
+			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "primaryKey.comprador.id", idComprador);
+			
+			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroExpediente, filtroComprador);
+			
+
+			if(!Checks.esNulo(compradorExpediente)){
+				if(compradorExpediente.getTitularContratacion()==0){
+					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
+				}
+				else{
+					throw new JsonViewerException("Operación no permitida, por ser el titular de la contratación");
+				}
+			}else{
+				throw new JsonViewerException("Error al eliminar comprador");
+			}
+			
+				
+			
+		} 
+		catch (JsonViewerException e) {
+			logger.error(e.getMessage());
+			throw e;
+//			e.printStackTrace();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		} 
+
+		return true;
+		
 	}
 
 }

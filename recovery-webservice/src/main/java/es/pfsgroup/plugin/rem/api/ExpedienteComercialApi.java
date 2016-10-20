@@ -417,5 +417,12 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean deleteHonorario(Long idHonorario);
+	
+	/**
+	 * Elimina la relación entre un comprador y un expediente
+	 * @param idPosicionamiento
+	 * @return
+	 */
+	public boolean deleteCompradorExpediente(Long idExpediente, Long idComprador);
 
 }

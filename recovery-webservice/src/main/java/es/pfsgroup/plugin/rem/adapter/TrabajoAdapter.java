@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -26,10 +27,10 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
@@ -64,6 +65,9 @@ public class TrabajoAdapter {
         
     @Autowired
     private MSVExcelParser excelParser;
+    
+    @Autowired
+    private ActivoDao activoDao;
     	
 //    @Autowired
 //    private ActivoApi activoApi;
@@ -247,55 +251,31 @@ public class TrabajoAdapter {
 	
 	
 	
-	public List<DtoTrabajoListActivos> getListActivosByProceso(Long idProceso){
-		List<DtoTrabajoListActivos> listaActivos = new ArrayList<DtoTrabajoListActivos>();
-		if(Checks.esNulo(idProceso))
-			return listaActivos;
-		//MSVProcesoMasivo proceso = processAdapter.get(idProceso);
-		MSVDocumentoMasivo document = processAdapter.getMSVDocumento(idProceso);
+	public Page getListActivosByProceso(Long idProceso, DtoTrabajoListActivos webDto){
 		
-		//MSVHojaExcel exc = excelParser.getExcel(fileItem.getFileItem().getFile());
+		List<String> listIdActivos = new ArrayList<String>();
+		
+		if(Checks.esNulo(idProceso))
+			return null;
+
+		MSVDocumentoMasivo document = processAdapter.getMSVDocumento(idProceso);
+
 		MSVHojaExcel exc = excelParser.getExcel(document.getContenidoFichero().getFile());
-		//exc.getNumeroColumnas();
 		
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){ //Nos saltamos la línea del título
-				DtoTrabajoListActivos dto = new DtoTrabajoListActivos();
-				
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", Long.parseLong(exc.dameCelda(i, 0)));
-				Activo activo =  genericDao.get(Activo.class, filtro);
-				if (!Checks.esNulo(activo)){	
-					beanUtilNotNull.copyProperty(dto, "idActivo", activo.getId());
-					beanUtilNotNull.copyProperty(dto, "numActivoRem", activo.getNumActivoRem());
-					beanUtilNotNull.copyProperty(dto, "numActivoHaya", activo.getNumActivo());
-					beanUtilNotNull.copyProperty(dto, "tipoActivo", activo.getTipoActivo().getDescripcion());
-					beanUtilNotNull.copyProperty(dto, "subtipoActivo", activo.getSubtipoActivo().getDescripcion());
-					beanUtilNotNull.copyProperty(dto, "cartera", activo.getCartera().getDescripcion());
-					beanUtilNotNull.copyProperty(dto, "situacionComercial", activo.getSituacionComercial().getDescripcion());
-				}else{
-					dto.setNumActivoHaya(exc.dameCelda(i, 0));
-					dto.setTipoActivo("No existe el activo");
-				}
-				//beanUtilNotNull.copyProperty(dto, "situacionPosesoria", activo.getSituacionPosesoria().);
-				
-				listaActivos.add(dto);
+			for(int i = 1; i < exc.getNumeroFilas(); i++){ //Nos saltamos la línea del título	
+				listIdActivos.add(exc.dameCelda(i, 0));
 			}
+			
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
 		
-		return listaActivos;
+		return activoDao.getActivosFromCrearTrabajo(listIdActivos, webDto);
 	}
 
 }

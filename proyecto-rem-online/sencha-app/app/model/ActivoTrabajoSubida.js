@@ -23,6 +23,9 @@ Ext.define('HreRem.model.ActivoTrabajoSubida', {
     		},
     		{
     			name:'subtipoActivo'
+    		},
+    		{
+    			name:'situacionComercial'
     		}
 //    		,
 //    		{

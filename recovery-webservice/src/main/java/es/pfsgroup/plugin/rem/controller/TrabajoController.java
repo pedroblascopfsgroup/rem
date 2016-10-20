@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
@@ -1012,12 +1013,22 @@ public class TrabajoController {
 		
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListActivosByProceso(Long idProceso, ModelMap model){
-		
-		model.put("data", trabajoAdapter.getListActivosByProceso(idProceso));
-			
+	public ModelAndView getListActivosByProceso(Long idProceso, DtoTrabajoListActivos webDto, ModelMap model){
+
+		try {
+
+			Page page = trabajoAdapter.getListActivosByProceso(idProceso, webDto);
+			if(!Checks.esNulo(page)) {
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
 		return createModelAndViewJson(model);
-			
 	}
 	
 	
@@ -1130,9 +1141,6 @@ public class TrabajoController {
 		return createModelAndViewJson(model);
 		
 	}
-	
-	
-	
-	
+
 
 }

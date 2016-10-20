@@ -66,13 +66,18 @@ public class RestManagerImpl implements RestApi {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
-	public boolean validateSignature(Broker broker, String signature, String peticion)
+	public boolean validateSignature(Broker broker, String signature, String peticion, ALGORITMO_FIRMA algoritmoFirma)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		boolean resultado = false;
 		if (broker == null || signature == null || signature.isEmpty() || peticion == null) {
 			resultado = false;
 		} else {
-			String firma = WebcomSignatureUtils.computeSignatue(broker.getKey(), broker.getIp(), peticion);
+			String firma = "";
+			if (algoritmoFirma.equals(ALGORITMO_FIRMA.DEFAULT)) {
+				firma = WebcomSignatureUtils.computeSignatue(broker.getKey(), broker.getIp(), peticion);
+			} else if (algoritmoFirma.equals(ALGORITMO_FIRMA.NO_IP)) {
+				firma = WebcomSignatureUtils.computeSignatue(broker.getKey(), null, peticion);
+			}
 
 			if (firma.equals(signature) || broker.getValidarFirma().equals(new Long(0))) {
 				resultado = true;
@@ -106,19 +111,21 @@ public class RestManagerImpl implements RestApi {
 		return broker;
 	}
 
-	public String getClientIpAddr(HttpServletRequest request) {
-		String ip = request.getHeader("X-Forwarded-For");
+	public String getClientIpAddr(ServletRequest request) {
+
+		HttpServletRequest requestServlet = (HttpServletRequest) request;
+		String ip = requestServlet.getHeader("X-Forwarded-For");
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-			ip = request.getHeader("Proxy-Client-IP");
+			ip = requestServlet.getHeader("Proxy-Client-IP");
 		}
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-			ip = request.getHeader("WL-Proxy-Client-IP");
+			ip = requestServlet.getHeader("WL-Proxy-Client-IP");
 		}
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-			ip = request.getHeader("HTTP_CLIENT_IP");
+			ip = requestServlet.getHeader("HTTP_CLIENT_IP");
 		}
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+			ip = requestServlet.getHeader("HTTP_X_FORWARDED_FOR");
 		}
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
@@ -294,5 +301,79 @@ public class RestManagerImpl implements RestApi {
 		peticion.setIp(request.getRemoteAddr());
 
 		return peticion;
+	}
+
+	@Override
+	public String obtenerNombreServicio(ServletRequest req) {
+		String servicename = "";
+		String requestUri = ((HttpServletRequest) req).getRequestURI();
+		requestUri = requestUri.toLowerCase();
+		Boolean encontrado = false;
+		for (String token : requestUri.split("/")) {
+			if (token.equals("rest")) {
+				encontrado = true;
+			} else {
+				if (encontrado) {
+					if (!servicename.isEmpty()) {
+						servicename = servicename.concat("/");
+					}
+					servicename = servicename.concat(token);
+				} else {
+					continue;
+				}
+			}
+		}
+
+		return servicename;
+	}
+
+	@Override
+	public ALGORITMO_FIRMA obtenerAlgoritmoFirma(String nombreServicio, String ipClient) {
+		ALGORITMO_FIRMA resultado = ALGORITMO_FIRMA.DEFAULT;
+		nombreServicio = nombreServicio.toLowerCase().trim();
+		String SERVICIOS_NO_IP = !Checks.esNulo(appProperties.getProperty("rest.server.rem.protocolo.noip.servicios"))
+				? appProperties.getProperty("rest.server.rem.protocolo.noip.servicios") : "reserva,reintegro";
+
+		String RANGO_IP_NO_IP = !Checks.esNulo(appProperties.getProperty("rest.server.rem.protocolo.noip.ip"))
+				? appProperties.getProperty("rest.server.rem.protocolo.noip.ip") : "*.*.*.*";
+		if (SERVICIOS_NO_IP != null && !SERVICIOS_NO_IP.isEmpty()) {
+			SERVICIOS_NO_IP = SERVICIOS_NO_IP.toLowerCase();
+			Boolean esBankia = false;
+			if (compararIps(ipClient, RANGO_IP_NO_IP)) {
+				for (String servicioAux : SERVICIOS_NO_IP.split(",")) {
+					servicioAux = servicioAux.trim();
+					if (servicioAux.equals(nombreServicio)) {
+						esBankia = true;
+						break;
+					}
+				}
+			}
+			if (esBankia) {
+				resultado = ALGORITMO_FIRMA.NO_IP;
+			}
+		}
+		return resultado;
+	}
+
+	private boolean compararIps(String ipClient, String rangoIP) {
+		boolean resultado = false;
+		if (ipClient != null && rangoIP != null) {
+			String[] ipclientTokens = ipClient.split("\\.");
+			String[] rangoIpTokens = rangoIP.split("\\.");
+			if (ipclientTokens.length == rangoIpTokens.length) {
+				resultado = true;
+				for (int i = 0; i < ipclientTokens.length; i++) {
+					if (!ipclientTokens[i].equals(rangoIpTokens[i]) && !rangoIpTokens[i].equals("*")) {
+						resultado = false;
+					}
+				}
+			}
+		}
+		return resultado;
+	}
+
+	@Override
+	public ALGORITMO_FIRMA obtenerAlgoritmoFirma(ServletRequest req) {
+		return obtenerAlgoritmoFirma(obtenerNombreServicio(req), getClientIpAddr(req));
 	}
 }

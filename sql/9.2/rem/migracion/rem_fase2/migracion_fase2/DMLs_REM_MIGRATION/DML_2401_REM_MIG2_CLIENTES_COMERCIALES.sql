@@ -32,70 +32,12 @@ V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_CLC_CLIENTE_COMERCIAL';
 V_SENTENCIA VARCHAR2(32000 CHAR);
 V_REG_MIG NUMBER(10,0) := 0;
 V_REG_INSERTADOS NUMBER(10,0) := 0;
+V_DUPLICADOS NUMBER(10,0) := 0;
 V_REJECTS NUMBER(10,0) := 0;
 V_COD NUMBER(10,0) := 0;
 V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
-      
-      --COMPROBACIONES PREVIAS - USUARIOS
---      DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO USUARIOS...');
---      
---      V_SENTENCIA := '
---      SELECT COUNT(1) 
---      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
---      WHERE NOT EXISTS (
---        SELECT 1 FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = MIG2.CLC_COD_USUARIO_LDAP_ACCION
---      )
---      '
---      ;
---      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
---      
---      IF TABLE_COUNT = 0 THEN
---      
---          DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS USUARIOS EXISTEN EN REMMASTER.USU_USUARIOS');
---      
---      ELSE
---      
---          DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' USUARIOS INEXISTENTES EN USU_USUARIO. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_USU_NOT_EXISTS.');
---          
---          --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
---          
---          EXECUTE IMMEDIATE '
---          DELETE FROM '||V_ESQUEMA||'.MIG2_USU_NOT_EXISTS
---          WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
---          '
---          ;
---          
---          COMMIT;
---          
---          EXECUTE IMMEDIATE '
---          INSERT INTO '||V_ESQUEMA||'.MIG2_USU_NOT_EXISTS (
---            TABLA_MIG,
---            USU_USERNAME,            
---            FECHA_COMPROBACION
---          )
---          WITH USERNAME_NOT_EXISTS AS (
---            SELECT DISTINCT MIG2.CLC_COD_USUARIO_LDAP_ACCION 
---            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
---            WHERE NOT EXISTS (
---              SELECT 1 
---              FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
---              WHERE MIG2.CLC_COD_USUARIO_LDAP_ACCION = USU.USU_USERNAME
---            )
---          )
---          SELECT DISTINCT
---          '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
---          MIG2.CLC_COD_USUARIO_LDAP_ACCION    						      OFA_COD_OFERTA,          
---          SYSDATE                                                                 FECHA_COMPROBACION
---          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
---          INNER JOIN USERNAME_NOT_EXISTS ON USERNAME_NOT_EXISTS.CLC_COD_USUARIO_LDAP_ACCION = MIG2.CLC_COD_USUARIO_LDAP_ACCION
---          '
---          ;
---          
---          COMMIT;      
---      
---      END IF;
       
       --Inicio del proceso de volcado sobre CLC_CLIENTE_COMERCIAL
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
@@ -143,43 +85,49 @@ BEGIN
             FROM '||V_ESQUEMA||'.'||V_TABLA||' CLC
             WHERE CLC.CLC_WEBCOM_ID = WMIG2.CLC_COD_CLIENTE_WEBCOM
           )  
-        )
+        ),
+        DUPLICADOS AS (
+          SELECT DISTINCT CLC_COD_CLIENTE_WEBCOM
+          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+          GROUP BY CLC_COD_CLIENTE_WEBCOM 
+          HAVING COUNT(1) > 1
+          )  
         SELECT 
-          '||V_ESQUEMA||'.S_CLC_CLIENTE_COMERCIAL.NEXTVAL                                         AS CLC_ID,
-          '||V_ESQUEMA||'.S_CLC_REM_ID.NEXTVAL                                          AS CLC_REM_ID,
+          '||V_ESQUEMA||'.S_CLC_CLIENTE_COMERCIAL.NEXTVAL               AS CLC_ID,
+          '||V_ESQUEMA||'.S_CLC_REM_ID.NEXTVAL                          AS CLC_REM_ID,
           AUX.*
         FROM (      
           SELECT DISTINCT      
-          MIG2.CLC_COD_CLIENTE_WEBCOM                                                       AS CLC_WEBCOM_ID,      
-          MIG2.CLC_COD_CLIENTE_HAYA                                                            AS CLC_NUM_CLIENTE_HAYA,
-          MIG2.CLC_COD_CLIENTE_UVEM                                                           AS CLC_NUM_CLIENTE_UVEM,
-          MIG2.CLC_RAZON_SOCIAL                                                                  AS CLC_RAZON_SOCIAL,
-          MIG2.CLC_NOMBRE                                                                            AS CLC_NOMBRE,
-          MIG2.CLC_APELLIDOS                                                                         AS CLC_APELLIDOS,
-          MIG2.CLC_FECHA_ALTA                                                                      AS CLC_FECHA_ALTA,
-          USU.USU_ID                                                                                        AS USU_ID,
-          TDI.DD_TDI_ID                                                                                    AS DD_TDI_ID,
-          MIG2.CLC_DOCUMENTO                                                                           AS CLC_DOCUMENTO,
-          TDI2.DD_TDI_ID                                                                         AS DD_TDI_ID_REPRESENTANTE,
-          MIG2.CLC_DOCUMENTO_RTE                                                               AS CLC_DOCUMENTO_REPRESENTANTE,
-          MIG2.CLC_TELEFONO1                                                                        AS CLC_TELEFONO1,
-          MIG2.CLC_TELEFONO2                                                                        AS CLC_TELEFONO2,
-          MIG2.CLC_EMAIL                                                                                AS CLC_EMAIL,
-          TVI.DD_TVI_ID                                                                                    AS DD_TVI_ID,
-          MIG2.CLC_CLC_DIRECCION                                                                  AS CLC_DIRECCION,
-          MIG2.CLC_NUMEROCALLE                                                                  AS CLC_NUMEROCALLE,
-          MIG2.CLC_ESCALERA                                                                         AS CLC_ESCALERA,
-          MIG2.CLC_PLANTA                                                                             AS CLC_PLANTA,
-          MIG2.CLC_PUERTA                                                                            AS CLC_PUERTA,
-          MIG2.CLC_CODIGO_POSTAL                                                               AS CLC_CODIGO_POSTAL,
-          PRV.DD_PRV_ID                                                                                AS DD_PRV_ID,  
-          LOC.DD_LOC_ID                                                                                AS DD_LOC_ID,
-          UPO.DD_UPO_ID                                                                               AS DD_UPO_ID,
-          MIG2.CLC_OBSERVACIONES                                                                      AS CLC_OBSERVACIONES,
-          0                                                                                                           AS VERSION,
-          ''MIG2''                                                                                                    AS USUARIOCREAR,
-          SYSDATE                                                                                               AS FECHACREAR,
-          0                                                                                                           AS BORRADO
+          MIG2.CLC_COD_CLIENTE_WEBCOM                                   AS CLC_WEBCOM_ID,      
+          MIG2.CLC_COD_CLIENTE_HAYA                                     AS CLC_NUM_CLIENTE_HAYA,
+          MIG2.CLC_COD_CLIENTE_UVEM                                     AS CLC_NUM_CLIENTE_UVEM,
+          MIG2.CLC_RAZON_SOCIAL                                         AS CLC_RAZON_SOCIAL,
+          MIG2.CLC_NOMBRE                                               AS CLC_NOMBRE,
+          MIG2.CLC_APELLIDOS                                            AS CLC_APELLIDOS,
+          MIG2.CLC_FECHA_ALTA                                           AS CLC_FECHA_ALTA,
+          USU.USU_ID                                                    AS USU_ID,
+          TDI.DD_TDI_ID                                                 AS DD_TDI_ID,
+          MIG2.CLC_DOCUMENTO                                            AS CLC_DOCUMENTO,
+          TDI2.DD_TDI_ID                                                AS DD_TDI_ID_REPRESENTANTE,
+          MIG2.CLC_DOCUMENTO_RTE                                        AS CLC_DOCUMENTO_REPRESENTANTE,
+          MIG2.CLC_TELEFONO1                                            AS CLC_TELEFONO1,
+          MIG2.CLC_TELEFONO2                                            AS CLC_TELEFONO2,
+          MIG2.CLC_EMAIL                                                AS CLC_EMAIL,
+          TVI.DD_TVI_ID                                                 AS DD_TVI_ID,
+          MIG2.CLC_CLC_DIRECCION                                        AS CLC_DIRECCION,
+          MIG2.CLC_NUMEROCALLE                                          AS CLC_NUMEROCALLE,
+          MIG2.CLC_ESCALERA                                             AS CLC_ESCALERA,
+          MIG2.CLC_PLANTA                                               AS CLC_PLANTA,
+          MIG2.CLC_PUERTA                                               AS CLC_PUERTA,
+          MIG2.CLC_CODIGO_POSTAL                                        AS CLC_CODIGO_POSTAL,
+          PRV.DD_PRV_ID                                                 AS DD_PRV_ID,  
+          LOC.DD_LOC_ID                                                 AS DD_LOC_ID,
+          UPO.DD_UPO_ID                                                 AS DD_UPO_ID,
+          MIG2.CLC_OBSERVACIONES                                        AS CLC_OBSERVACIONES,
+          0                                                             AS VERSION,
+          ''MIG2''                                                      AS USUARIOCREAR,
+          SYSDATE                                                       AS FECHACREAR,
+          0                                                             AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           INNER JOIN CLIENTE_WEBCOM CW ON CW.CLC_COD_CLIENTE_WEBCOM = MIG2.CLC_COD_CLIENTE_WEBCOM
           LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = MIG2.CLC_COD_USUARIO_LDAP_ACCION AND USU.BORRADO = 0
@@ -189,6 +137,10 @@ BEGIN
           LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = MIG2.CLC_COD_PROVINCIA AND PRV.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG2.CLC_COD_LOCALIDAD AND LOC.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_UPO_UNID_POBLACIONAL UPO ON UPO.DD_UPO_CODIGO = MIG2.CLC_COD_UNIDADPOBLACIONAL AND UPO.BORRADO = 0
+          WHERE NOT EXISTS (
+            SELECT 1
+            FROM DUPLICADOS DUP
+            WHERE DUP.CLC_COD_CLIENTE_WEBCOM = MIG2.CLC_COD_CLIENTE_WEBCOM)
         ) AUX
       '
       ;
@@ -202,6 +154,16 @@ BEGIN
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      
+      --VALIDACION DE DUPLICADOS
+      V_SENTENCIA := '
+      SELECT SUM(COUNT(1))
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+      GROUP BY CLC_COD_CLIENTE_WEBCOM 
+      HAVING COUNT(1) > 1
+      '
+      ;  
+      EXECUTE IMMEDIATE V_SENTENCIA INTO V_DUPLICADOS;
       
       -- INFORMAMOS A LA TABLA INFO
       
@@ -218,6 +180,10 @@ BEGIN
       -- Observaciones
       IF V_REJECTS != 0 THEN
         V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' CLIENTES_COMERCIALES, comprobar CLC_COD_CLIENTE_WEBCOM duplicados en la MIG2 o que ya existan en la tabla de volcado.';
+        
+        IF V_DUPLICADOS != 0 THEN
+			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' VIS_COD_VISITA_WEBCOM duplicados. ';	
+		END IF;
       END IF;
       
       EXECUTE IMMEDIATE '

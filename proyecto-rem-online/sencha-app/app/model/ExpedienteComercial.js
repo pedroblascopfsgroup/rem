@@ -143,6 +143,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'alquilerOpcionCompra'
+    		},
+    		{
+    			name: 'codigoEstado'
     		}
     		
     		

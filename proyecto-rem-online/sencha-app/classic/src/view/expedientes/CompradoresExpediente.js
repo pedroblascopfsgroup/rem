@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     disableValidation: true,
     reference: 'compradoresexpedienteref',
     scrollable	: 'y',
-    controller: 'expedientedetalle',
+//    controller: 'expedientedetalle',
    
 
     initComponent: function () {
@@ -22,7 +22,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
                 	{
 					    xtype		: 'gridBase',
 					    topBar		: true,
-					    removeButton: false,
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						bind: {

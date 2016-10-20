@@ -48,6 +48,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrec
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -110,6 +111,9 @@ public class TrabajoController {
 	
 	@Autowired
 	private PreciosApi preciosApi;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1142,5 +1146,15 @@ public class TrabajoController {
 		
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			trabajoApi.downloadTemplateActivosTrabajo(request,response,"LACT");
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+		}
+
+	}
 
 }

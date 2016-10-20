@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -24,6 +27,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
@@ -36,7 +40,9 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
@@ -172,6 +178,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private PropuestaPrecioDao propuestaDao;
+	
+	@Autowired
+	private ProcessAdapter processAdapter;
 
 	@Resource
 	MessageService messageServices;
@@ -2529,5 +2538,36 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		}
 		return listaRespuesta;
+	}
+	
+	@Override
+	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response, String codPlantilla) throws Exception {
+
+		try {
+
+			MSVDDOperacionMasiva plantilla = (MSVDDOperacionMasiva) utilDiccionarioApi.dameValorDiccionarioByCod(MSVDDOperacionMasiva.class, codPlantilla);
+			
+       		ServletOutputStream salida = response.getOutputStream(); 
+       		FileItem fileItem = processAdapter.downloadTemplate(plantilla.getId());
+       		
+       		if(fileItem!= null) {
+       		
+	       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+	       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+	       		response.setHeader("Cache-Control", "max-age=0");
+	       		response.setHeader("Expires", "0");
+	       		response.setHeader("Pragma", "public");
+	       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+	       		response.setContentType(fileItem.getContentType());       		
+	       		// Write
+	       		FileUtils.copy(fileItem.getInputStream(), salida);
+	       		salida.flush();
+	       		salida.close();
+       		}
+       		
+       	} catch (Exception e) { 
+       		e.printStackTrace();
+       	}
+
 	}
 }

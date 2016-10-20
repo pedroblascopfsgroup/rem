@@ -38,7 +38,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 @Entity
 @Table(name = "CEX_COMPRADOR_EXPEDIENTE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
 public class CompradorExpediente implements Serializable {
 	

@@ -161,6 +161,23 @@ Ext.define('HreRem.ux.util.Constants', {
     
     ESTADOS_OFERTA: {
     	ACEPTADA : '01'
+    },
+    
+    ESTADOS_EXPEDIENTE: {
+    	EN_TRAMITACION: '01',
+    	ANULADO: '02',
+    	FIRMADO: '03',
+    	CONTRAOFERTADO: '04',
+    	BLOQUEO_ADM: '05',
+    	RESERVADO: '06',
+    	POSICIONADO: '07',
+    	VENDIDO: '08',
+    	RESUELTO: '09',
+    	PENDIENTE_SANCION: '10',
+    	APROBADO: '11',
+    	DENEGADO: '12',
+    	PTE_DOBLE_FIRMA: '13',
+    	RPTA_OFERTANTE: '14'
     }
     
     

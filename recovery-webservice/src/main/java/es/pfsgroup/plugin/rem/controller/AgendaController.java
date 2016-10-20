@@ -130,6 +130,12 @@ public class AgendaController extends TareaController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIdExpediente(Long idTarea, ModelMap model) {
+		model.put("idExpediente", adapter.getIdExpediente(idTarea));
+		return JsonViewer.createModelAndViewJson(model);
+	}	
+
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getCodigoTramiteTarea(Long idTarea, ModelMap model) {
 		model.put("codigoTramite", adapter.getCodigoTramiteTarea(idTarea));
 		return JsonViewer.createModelAndViewJson(model);

@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoNombreTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -162,6 +163,21 @@ public class AgendaAdapter {
 		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
 		
 		return tareaActivo.getTramite().getTrabajo().getId().toString();
+	}
+	
+	public String getIdExpediente(Long id){
+		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(id);
+//		TareaActivo tareaActivo = proxyFactory.proxy(TareaActivoApi.class).getByIdTareaExterna(tar.getTareaExterna().getId());
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
+		
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
+		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+		
+		if(!Checks.esNulo(expedienteComercial)){
+			return expedienteComercial.getId().toString();
+		} else {
+			return null;
+		}
 	}
 	
 	public List<DtoCampo>  getFormularioTarea(Long id){

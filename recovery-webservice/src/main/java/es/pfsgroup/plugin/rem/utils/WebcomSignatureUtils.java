@@ -14,7 +14,14 @@ public class WebcomSignatureUtils {
 	public static String computeSignatue(String apiKey, String ipAddress, String body) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 		logger.debug("Cálculo del sginature");
 		logger.debug("------------- INICIO FIRMA -----------------");
-		String firma = (apiKey.concat(ipAddress).concat(body));
+		String firma = apiKey;
+		if(ipAddress!=null && !ipAddress.isEmpty()){
+			firma = firma.concat(ipAddress);
+		}
+		if(body!=null && !body.isEmpty()){
+			firma = firma.concat(body);
+		}
+		
 		logger.debug(firma);
 		logger.debug("-------------  FIN FIRMA   -----------------");
 		byte[] bytesOfMessage = firma.getBytes("UTF-8");

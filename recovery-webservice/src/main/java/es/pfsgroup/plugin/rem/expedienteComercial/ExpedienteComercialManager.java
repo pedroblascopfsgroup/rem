@@ -520,6 +520,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				
 				if(!Checks.esNulo(expediente.getEstado())) {
 					dto.setEstado(expediente.getEstado().getDescripcion());
+					dto.setCodigoEstado(expediente.getEstado().getCodigo());
 				}		
 				dto.setFechaAlta(expediente.getFechaAlta());
 				dto.setFechaAltaOferta(oferta.getFechaAlta());
@@ -817,10 +818,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		List<Activo> listaActivosExpediente= new ArrayList<Activo>();
 		
 		//Se crea un mapa para cada dato que se quiere obtener
-		Map<Activo,Float> activoPorcentajeParti= new HashMap<Activo, Float>();	
-		Map<Activo,Double> activoPrecioAprobado= new HashMap<Activo, Double>();
-		Map<Activo,Double> activoPrecioMinimo= new HashMap<Activo, Double>();
-		Map<Activo,Double> activoImporteParticipacion= new HashMap<Activo, Double>();
+		Map<Long,Float> activoPorcentajeParti= new HashMap<Long, Float>();	
+		Map<Long,Double> activoPrecioAprobado= new HashMap<Long, Double>();
+		Map<Long,Double> activoPrecioMinimo= new HashMap<Long, Double>();
+		Map<Long,Double> activoImporteParticipacion= new HashMap<Long, Double>();
 		
 		//Recorre los activos de la oferta y los añade a la lista de activos a mostrar
 		for(ActivoOferta activoOferta: activosExpediente){
@@ -830,8 +831,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//Recorre la relacion activo-trabajo del expediente, por cada una guarda en un mapa el porcentaje de participacion del activo y el importe calculado a partir de dicho porcentaje
 		if(!Checks.esNulo(expediente.getTrabajo())){
 			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
-				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo(), activoTrabajo.getParticipacion());
-				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo(), 
+				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(), activoTrabajo.getParticipacion());
+				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(), 
 												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
 			}
 		}
@@ -840,10 +841,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		for(Activo activo: listaActivosExpediente){
 			for(ActivoValoraciones valoracion: activo.getValoracion()){
 				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())){
-					activoPrecioAprobado.put(activo, valoracion.getImporte());
+					activoPrecioAprobado.put(activo.getId(), valoracion.getImporte());
 				}
 				if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(valoracion.getTipoPrecio().getCodigo())){
-					activoPrecioMinimo.put(activo, valoracion.getImporte());
+					activoPrecioMinimo.put(activo.getId(), valoracion.getImporte());
 				}
 				
 			}
@@ -861,8 +862,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	 * @param activo
 	 * @return
 	 */
-	private DtoActivosExpediente activosToDto(Activo activo, Map<Activo,Float> activoPorcentajeParti, Map<Activo,Double> activoPrecioAprobado, 
-												Map<Activo,Double> activoPrecioMinimo, Map<Activo,Double> activoImporteParticipacion) {
+	private DtoActivosExpediente activosToDto(Activo activo, Map<Long,Float> activoPorcentajeParti, Map<Long,Double> activoPrecioAprobado, 
+												Map<Long,Double> activoPrecioMinimo, Map<Long,Double> activoImporteParticipacion) {
 		
 		DtoActivosExpediente dtoActivo= new DtoActivosExpediente();
 		
@@ -873,16 +874,16 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			//Falta precio minimo y precio aprobado venta
 			
 			if(!Checks.estaVacio(activoPorcentajeParti)){
-				dtoActivo.setPorcentajeParticipacion(activoPorcentajeParti.get(activo));
+				dtoActivo.setPorcentajeParticipacion(activoPorcentajeParti.get(activo.getId()));
 			}
 			if(!Checks.estaVacio(activoPrecioAprobado)){
-				dtoActivo.setPrecioAprobadoVenta(activoPrecioAprobado.get(activo));
+				dtoActivo.setPrecioAprobadoVenta(activoPrecioAprobado.get(activo.getId()));
 			}
 			if(!Checks.estaVacio(activoPrecioMinimo)){
-				dtoActivo.setPrecioMinimo(activoPrecioMinimo.get(activo));
+				dtoActivo.setPrecioMinimo(activoPrecioMinimo.get(activo.getId()));
 			}
 			if(!Checks.estaVacio(activoImporteParticipacion)){
-				dtoActivo.setImporteParticipacion((activoImporteParticipacion.get(activo)));
+				dtoActivo.setImporteParticipacion((activoImporteParticipacion.get(activo.getId())));
 			}
 			
 			
@@ -930,6 +931,19 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 
 		return listaAdjuntos;
+	}
+	
+	@Override
+	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoDocumento){
+		Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);
+		Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS, "subtipoDocumentoExpediente.codigo", codigoDocumento);
+		AdjuntoExpedienteComercial adjuntoExpedienteComercial = genericDao.get(AdjuntoExpedienteComercial.class, filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
+		
+		if(!Checks.esNulo(adjuntoExpedienteComercial))
+			return true;
+		else
+			return false;
+		
 	}
 	
 	@Override
@@ -1713,17 +1727,17 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					if(compradorExpediente.getPrimaryKey().getComprador().getId().equals(Long.parseLong(dto.getId())) &&
 							compradorExpediente.getPrimaryKey().getExpediente().getId().equals(Long.parseLong(dto.getIdExpedienteComercial()))){
 					
-//							if(!Checks.esNulo(dto.getTitularContratacion())){
-//								compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
-//							}
 							if(!Checks.esNulo(dto.getPorcentajeCompra())){
 								compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
 							}
-							if(!Checks.esNulo(dto.getTitularReserva())){
-								compradorExpediente.setTitularReserva(dto.getTitularReserva());
-							}
 							if(!Checks.esNulo(dto.getTitularContratacion())){
-								compradorExpediente.setTitularContratacion(dto.getTitularContratacion());;
+								compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
+								if(dto.getTitularContratacion()==1){
+									compradorExpediente.setTitularReserva(0);
+								}
+								else if(dto.getTitularContratacion()==0){
+									compradorExpediente.setTitularReserva(1);
+								}
 							}
 							
 							//Nexos
@@ -2536,6 +2550,68 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			listaTitularUVEM.add(titularUVEM);
 		}
 		return listaTitularUVEM;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean deleteCompradorExpediente(Long idExpediente, Long idComprador) {
+		
+		try {
+			
+			Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "primaryKey.expediente.id", idExpediente);
+			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "primaryKey.comprador.id", idComprador);
+			
+			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroExpediente, filtroComprador);
+			
+
+			if(!Checks.esNulo(compradorExpediente)){
+				if(compradorExpediente.getTitularContratacion()==0){
+					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
+				}
+				else{
+					throw new JsonViewerException("Operación no permitida, por ser el titular de la contratación");
+				}
+			}else{
+				throw new JsonViewerException("Error al eliminar comprador");
+			}
+			
+				
+			
+		} 
+		catch (JsonViewerException e) {
+			logger.error(e.getMessage());
+			throw e;
+//			e.printStackTrace();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		} 
+
+		return true;
+		
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id){
+		
+		ExpedienteComercial expedienteComercial = findOne(id);
+		try{
+		//Recorre la relacion activo-trabajo del expediente, modifica la participacion del que coincida con el activo que estamos buscando
+				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
+					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
+						
+						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
+							activoTrabajo.setParticipacion(dto.getPorcentajeParticipacion());
+							genericDao.update(ActivoTrabajo.class, activoTrabajo);
+							return true;
+						}
+					}
+				}
+		}catch(Exception e) {
+			return false;
+		}
+		
+		return false;
+		
 	}
 
 }

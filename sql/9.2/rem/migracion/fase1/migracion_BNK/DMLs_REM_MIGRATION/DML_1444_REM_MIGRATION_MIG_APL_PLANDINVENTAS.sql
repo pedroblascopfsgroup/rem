@@ -109,6 +109,8 @@ BEGIN
 	PDV_ACREEDOR_NIF,
 	PDV_ACREEDOR_DIR,
 	PDV_IMPORTE_DEUDA,
+	PDV_ACREEDOR_NUM_EXP,
+	TIPO_PRODUCTO_ACTIVO,
 	VERSION,
 	USUARIOCREAR,
 	FECHACREAR,
@@ -126,6 +128,7 @@ BEGIN
     PDV_ACREEDOR_DIR,
     PDV_IMPORTE_DEUDA,
     PDV_ACREEDOR_NUM_EXP,
+    PDV_TIPO_PRODUCTO_ACTIVO,
     ROW_NUMBER() OVER ( PARTITION BY ACT_NUMERO_ACTIVO ORDER BY PDV_ACREEDOR_NUM_EXP DESC) AS ORDEN
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
     LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
@@ -142,8 +145,10 @@ BEGIN
 	MIG.PDV_ACREEDOR_NIF                                PDV_ACREEDOR_NIF,
 	MIG.PDV_ACREEDOR_DIR                                PDV_ACREEDOR_DIR,
 	MIG.PDV_IMPORTE_DEUDA                               PDV_IMPORTE_DEUDA,
+	MIG.PDV_ACREEDOR_NUM_EXP							PDV_ACREEDOR_NUM_EXP,					
+	MIG.PDV_TIPO_PRODUCTO_ACTIVO						TIPO_PRODUCTO_ACTIVO,
 	''0''                                               VERSION,
-	''MIGRAREM01BNK''                                             USUARIOCREAR,
+	''MIGRAREM01BNK''                                   USUARIOCREAR,
 	SYSDATE                                             FECHACREAR,
 	NULL                                                USUARIOMODIFICAR,
 	NULL                                                FECHAMODIFICAR,

@@ -687,9 +687,11 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
      	}
      	
     	if(Ext.isEmpty(me.idAgrupacion) && Ext.isEmpty(me.idActivo)){
+    		me.down('[reference=filefieldActivosRef]').allowBlank=false;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(true);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(true);
      	} else {
+     		me.down('[reference=filefieldActivosRef]').allowBlank=true;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(false);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
      	}

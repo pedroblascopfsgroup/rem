@@ -119,7 +119,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			            },
 				            
 			            failure: function (a, operation) {
-			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            	var data = {};
+			                try {
+			                	data = Ext.decode(operation._response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
 							 me.getView().unmask();
 			            }
 					});
@@ -714,14 +723,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		idCliente = record.get("id"),
 		model = Ext.create('HreRem.model.FichaComprador');
 		
-		var fieldset =  me.lookupReference('estadoPbcCompradoRef');
-		fieldset.mask(HreRem.i18n("msg.mask.loading"));
+//		var fieldset =  me.lookupReference('estadoPbcCompradoRef');
+//		fieldset.mask(HreRem.i18n("msg.mask.loading"));
 	
 		model.setId(idCliente);
 		model.load({			
 		    success: function(record) {	
 		    	me.getViewModel().set("detalleComprador", record);
-		    	fieldset.unmask();
+//		    	fieldset.unmask();
 		    }
 		});
 	},
@@ -970,35 +979,50 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	buscarNumeroUrsus: function(field, e){
 		var me= this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/buscarNumeroUrsus');
-		var numCompradorUrsus= field.getValue();
 		var parent= field.up('datoscompradorwindow');
 		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
+		var numeroDocumento= field.up('formBase').down('[reference=numeroDocumento]').getValue();
 		var data;
 		
-		Ext.Ajax.request({
-		    			
-		    		     url: url,
-		    		     params: {numCompradorUrsus: numCompradorUrsus, tipoDocumento: tipoDocumento},
-		    			method: 'GET',
-		    		     success: function(response, opts) {
-		    		    	 data = Ext.decode(response.responseText);
-		    		    	 
-		    		    	 if(!Utils.isEmptyJSON(data.data)){
-		    		    	 	me.abrirDatosClienteUrsus(data.data, parent);
+		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento)){
 		
-		    		    	 }
-		    		    	 else{
-		    		    	 	me.fireEvent("errorToast", data.msg);
-		    		    	 }
-		    		    	 
-		    		     },
-		    		     failure: function(response) {
-							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    		     },
-		    		     callback: function(options, success, response){
-		    		     }
-		    		     
-		});
+			Ext.Ajax.request({
+			    			
+			    		     url: url,
+			    		     params: {numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento},
+			    			method: 'GET',
+			    		     success: function(response, opts) {
+			    		    	 data = Ext.decode(response.responseText);
+			    		    	 
+			    		    	 if(!Utils.isEmptyJSON(data.data)){
+			    		    	 	var numeroCliente= data.data.numeroClienteUrsus;
+			    		    	 	var form= parent.down('formBase');
+			    		    	 	var fieldNumeroClienteUrsus= form.down('[reference=numeroClienteUrsusRef]');
+			    		    	 	if(Ext.isEmpty(numeroCliente)){
+			    		    	 			fieldNumeroClienteUrsus.setValue('');
+			    		    	 	}
+			    		    	 	else{
+			    		    	 		fieldNumeroClienteUrsus.setValue(numeroCliente);
+			    		    	 	}
+			    		    	 	me.abrirDatosClienteUrsus(data.data, parent);
+			
+			    		    	 }
+			    		    	 else{
+			    		    	 	me.fireEvent("errorToast", data.msg);
+			    		    	 }
+			    		    	 
+			    		     },
+			    		     failure: function(response) {
+								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    		     },
+			    		     callback: function(options, success, response){
+			    		     }
+			    		     
+			});
+		}
+		else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));	
+		}
 			
 	},
 	
@@ -1014,6 +1038,48 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var window = btn.up("window");
 		window.destroy();
+	},
+	
+	changeComboTipoProveedor: function(combo,value,c){
+		var me= this;
+		if(combo.getValue()==CONST.TIPOS_PROVEEDOR_ESPEDIENTE['CAT'] || combo.getValue()==CONST.TIPOS_PROVEEDOR_ESPEDIENTE['MEDIADOR_OFICINA']){
+				me.lookupReference('proveedorRef').setValue();
+				me.lookupReference('proveedorRef').setDisabled(true);
+		}
+		else{
+			me.lookupReference('proveedorRef').setDisabled(false);
+			var ges= combo.up('gestioneconomicaexpediente');
+			me.lookupReference('proveedorRef').setValue();
+			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':value.getData().codigo, 'nombreBusqueda': ''});
+			ges.storeProveedores.load();
+		}
+
+	},
+	
+	changeComboProveedor: function(combo){
+		var me= this;
+		var ges= combo.up('gestioneconomicaexpediente');
+		if(!Ext.isEmpty(combo.getValue()) && combo.getValue().length>=3){
+			var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
+			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': combo.getValue()});
+			ges.storeProveedores.load();
+		}
+		else{
+			var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
+			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': ''});
+			ges.storeProveedores.load();
+		}
+	},
+	
+	expandeComboProveedor: function (field, o){
+		var me= this;
+		var ges= field.up('gestioneconomicaexpediente');
+		var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
+		var nombreBusqueda= me.lookupReference('proveedorVistaRef').value;
+		ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': nombreBusqueda});
+		ges.storeProveedores.load();
+		
 	}
+		
 
 });

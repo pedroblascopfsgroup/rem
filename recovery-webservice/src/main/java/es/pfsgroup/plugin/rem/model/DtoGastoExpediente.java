@@ -19,7 +19,7 @@ public class DtoGastoExpediente extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
-	private Long id;
+	private String id;
 	private String codigoId;
 	private String participacion;
 	private String proveedor;
@@ -27,11 +27,15 @@ public class DtoGastoExpediente extends WebDto {
 	private Double importeCalculo;
 	private Double honorarios;
 	private String observaciones;
+	private String tipoProveedor;
+	private Long idProveedor;
+	private String codigoTipoProveedor;
+	private String codigoParticipacion;
 	
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getCodigoId() {
@@ -76,7 +80,30 @@ public class DtoGastoExpediente extends WebDto {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-
+	public String getTipoProveedor() {
+		return tipoProveedor;
+	}
+	public void setTipoProveedor(String tipoProveedor) {
+		this.tipoProveedor = tipoProveedor;
+	}
+	public Long getIdProveedor() {
+		return idProveedor;
+	}
+	public void setIdProveedor(Long idProveedor) {
+		this.idProveedor = idProveedor;
+	}
+	public String getCodigoTipoProveedor() {
+		return codigoTipoProveedor;
+	}
+	public void setCodigoTipoProveedor(String codigoTipoProveedor) {
+		this.codigoTipoProveedor = codigoTipoProveedor;
+	}
+	public String getCodigoParticipacion() {
+		return codigoParticipacion;
+	}
+	public void setCodigoParticipacion(String codigoParticipacion) {
+		this.codigoParticipacion = codigoParticipacion;
+	}
 	
 	
    		

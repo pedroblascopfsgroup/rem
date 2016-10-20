@@ -15,6 +15,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +33,6 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
-import net.sf.json.JSONObject;
 
 /**
  * Filtro para la gestión de las peticiones a la rest-api
@@ -179,9 +181,8 @@ public class RestSecurityFilter implements Filter {
 				jsonResp.accumulate("error", errorCode);
 			}
 
-			if (jsonFields.has("data") && jsonFields.getJSONObject("data").isArray()) {
-				if (!Checks.esNulo(jsonFields.getJSONArray("data")) && jsonFields.isArray()
-						&& jsonFields.getJSONArray("data").size() > 0) {
+			if (jsonFields.has("data") && jsonFields.get("data") instanceof JSONArray) {
+				if (!Checks.esNulo(jsonFields.getJSONArray("data")) && jsonFields.getJSONArray("data").size() > 0) {
 
 					// Construimos mapa de ids a retornar
 					for (int i = 0; i < jsonFields.getJSONArray("data").size(); i++) {

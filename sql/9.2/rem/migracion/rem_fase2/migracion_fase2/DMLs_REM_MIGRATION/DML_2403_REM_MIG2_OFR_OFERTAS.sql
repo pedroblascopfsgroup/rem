@@ -70,51 +70,44 @@ BEGIN
             BORRADO
         )
         SELECT
-            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL            		 		OFR_ID, 
-            MIG.OFR_COD_OFERTA												OFR_COD_OFERTA,            
-            AGR.AGR_ID														AGR_ID,
+            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL            		 		                  OFR_ID, 
+            MIG.OFR_COD_OFERTA												                                        OFR_COD_OFERTA,            
+            AGR.AGR_ID														                                                  AGR_ID,
             CASE WHEN MIG.OFR_IMPORTE = 0 THEN null
-            ELSE MIG.OFR_IMPORTE END										OFR_IMPORTE,
-            CLC.CLC_ID														CLC_ID,
-            EOF.DD_EOF_ID													DD_EOF_ID,
-            TOF.DD_TOF_ID													DD_TOF_ID,
-            VIS.VIS_ID														VIS_ID,
-            EVO.DD_EVO_ID													DD_EVO_ID,            
-            MIG.OFR_FECHA_ALTA												OFR_FECHA_ALTA,
+            ELSE MIG.OFR_IMPORTE END										                                    OFR_IMPORTE,
+            CLC.CLC_ID														                                                    CLC_ID,
+            EOF.DD_EOF_ID													                                                DD_EOF_ID,
+            TOF.DD_TOF_ID													                                                DD_TOF_ID,
+            VIS.VIS_ID														                                                      VIS_ID,
+            EVO.DD_EVO_ID													                                                DD_EVO_ID,            
+            MIG.OFR_FECHA_ALTA												                                        OFR_FECHA_ALTA,
             CASE WHEN MIG.OFR_FECHA_NOTIFICACION IS null 
             AND  MIG.OFR_COD_ESTADO_OFERTA = ''01'' THEN SYSDATE
-            ELSE MIG.OFR_FECHA_NOTIFICACION END								OFR_FECHA_NOTIFICACION,
+            ELSE MIG.OFR_FECHA_NOTIFICACION END								                    OFR_FECHA_NOTIFICACION,
             CASE WHEN MIG.OFR_IMPORTE_CONTRAOFERTA = 0 THEN null
-            ELSE MIG.OFR_IMPORTE_CONTRAOFERTA END							OFR_IMPORTE_CONTRAOFERTA,
+            ELSE MIG.OFR_IMPORTE_CONTRAOFERTA END							                OFR_IMPORTE_CONTRAOFERTA,
             CASE WHEN MIG.OFR_IMPORTE_CONTRAOFERTA != 0 
             AND MIG.OFR_FECHA_CONTRAOFERTA is null THEN SYSDATE
-            ELSE MIG.OFR_FECHA_CONTRAOFERTA END								OFR_FECHA_CONTRAOFERTA,
-            USU.USU_ID														USU_ID,
+            ELSE MIG.OFR_FECHA_CONTRAOFERTA END								                  OFR_FECHA_CONTRAOFERTA,
+            USU.USU_ID														                                                    USU_ID,
             CASE WHEN MIG.OFR_FECHA_RECHAZO IS null 
             AND  MIG.OFR_COD_ESTADO_OFERTA = ''02'' THEN SYSDATE
-            ELSE MIG.OFR_FECHA_RECHAZO END									OFR_FECHA_RECHAZO,
-            MIG.OFR_IND_LOTE_RESTRINGIDO									OFR_IND_LOTE_RESTRINGIDO,
+            ELSE MIG.OFR_FECHA_RECHAZO END								                        	OFR_FECHA_RECHAZO,
+            MIG.OFR_IND_LOTE_RESTRINGIDO									                            OFR_IND_LOTE_RESTRINGIDO,
             CASE WHEN MIG.OFR_IMPORTE_APROBADO = 0 THEN null
-            ELSE MIG.OFR_IMPORTE_APROBADO END								OFR_IMPORTE_APROBADO,
-            0																VERSION,
-            ''MIG2''                                            			USUARIOCREAR,
-            SYSDATE                                            				FECHACREAR,
-            0                                                  				BORRADO
-        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-        LEFT JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
-            ON AGR.AGR_NUM_AGRUP_UVEM = MIG.OFR_COD_AGRUPACION
-        LEFT JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC
-            ON CLC.CLC_WEBCOM_ID = MIG.OFR_COD_CLIENTE_WEBCOM
-        LEFT JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF
-            ON EOF.DD_EOF_CODIGO = MIG.OFR_COD_ESTADO_OFERTA
-        LEFT JOIN '||V_ESQUEMA||'.DD_TOF_TIPOS_OFERTA TOF
-            ON TOF.DD_TOF_CODIGO = MIG.OFR_COD_TIPO_OFERTA
-        LEFT JOIN '||V_ESQUEMA||'.VIS_VISITAS VIS
-            ON VIS.VIS_WEBCOM_ID = MIG.OFR_COD_VISITA_WEBCOM
-        LEFT JOIN '||V_ESQUEMA||'.DD_EVO_EST_VISITA_OFERTA EVO
-            ON EVO.DD_EVO_CODIGO = MIG.OFR_COD_ESTADO_VISITA_OFR
-        LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
-            ON USU.USU_USERNAME = MIG.OFR_COD_USUARIO_LDAP_ACCION
+            ELSE MIG.OFR_IMPORTE_APROBADO END								                    OFR_IMPORTE_APROBADO,
+            0																                                                            VERSION,
+            ''MIG2''                                            			                                  USUARIOCREAR,
+            SYSDATE                                            				                              FECHACREAR,
+            0                                                  				                                  BORRADO
+        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+            LEFT JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_NUM_AGRUP_UVEM = MIG.OFR_COD_AGRUPACION
+            LEFT JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_WEBCOM_ID = MIG.OFR_COD_CLIENTE_WEBCOM
+            LEFT JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_CODIGO = SUBSTR(MIG.OFR_COD_ESTADO_OFERTA,0,2)
+            LEFT JOIN '||V_ESQUEMA||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_CODIGO = MIG.OFR_COD_TIPO_OFERTA
+            LEFT JOIN '||V_ESQUEMA||'.VIS_VISITAS VIS ON VIS.VIS_WEBCOM_ID = MIG.OFR_COD_VISITA_WEBCOM
+            LEFT JOIN '||V_ESQUEMA||'.DD_EVO_EST_VISITA_OFERTA EVO ON EVO.DD_EVO_CODIGO = MIG.OFR_COD_ESTADO_VISITA_OFR
+            LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = MIG.OFR_COD_USUARIO_LDAP_ACCION
     '
     ;
     EXECUTE IMMEDIATE V_SENTENCIA	;
@@ -133,7 +126,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE INICIALIZACION DE LA SECUENCIA S_OFR_NUM_OFERTA  DE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
     
     -- Obtenemos el valor maximo de la columna OFR_NUM_OFERTA y lo incrementamos en 1
-    V_SENTENCIA := 'SELECT MAX(OFR_NUM_OFERTA) FROM '||V_ESQUEMA||'.'||V_TABLA||'';
+    V_SENTENCIA := 'SELECT NVL(MAX(OFR_NUM_OFERTA),0) FROM '||V_ESQUEMA||'.'||V_TABLA||'';
     EXECUTE IMMEDIATE V_SENTENCIA INTO MAX_NUM_OFR;
     
     MAX_NUM_OFR := MAX_NUM_OFR +1;
@@ -169,12 +162,12 @@ BEGIN
             , FECHACREAR
         )
         SELECT
-          '||V_ESQUEMA||'.S_ECO_EXPEDIENTE_COMERCIAL.NEXTVAL                                              AS ECO_ID,
-          '||V_ESQUEMA||'.S_ECO_NUM_EXPEDIENTE.NEXTVAL                                                        AS ECO_NUM_EXPEDIENTE,
-          OFR.OFR_ID                                                                                                                  AS OFR_ID,
+          '||V_ESQUEMA||'.S_ECO_EXPEDIENTE_COMERCIAL.NEXTVAL                                                              AS ECO_ID,
+          '||V_ESQUEMA||'.S_ECO_NUM_EXPEDIENTE.NEXTVAL                                                                        AS ECO_NUM_EXPEDIENTE,
+          OFR.OFR_ID                                                                                                                                  AS OFR_ID,
           (SELECT DD.DD_EEC_ID
             FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL DD
-            WHERE DD.DD_EEC_CODIGO =  DECODE(EOF.DD_EOF_CODIGO, ''01-01'',''10'', 
+            WHERE DD.DD_EEC_CODIGO =  DECODE(MIG2.OFR_COD_ESTADO_OFERTA, ''01-01'',''10'', 
                                                                 ''01-02'',''06'', 
                                                                 ''01-03'',''11'', 
                                                                 ''01-04'',''04'', 
@@ -183,23 +176,28 @@ BEGIN
                                                                 ''01-07'',''03'', 
                                                                 ''01-08'',''02'', 
                                                                 ''01-09'',''08'')
-                                                                )                                                                  AS DD_EEC_ID,
-          OFR.OFR_FECHA_ALTA                                                                                        AS ECO_FECHA_ALTA,
-          CASE
-              WHEN EOF.DD_EOF_CODIGO = ''01-02'' 
-                THEN OFR.OFR_FECHA_ALTA
-              ELSE NULL
-          END                                                                                                                   AS ECO_FECHA_SANCION,
-          0                                                                                                                           AS VERSION,
-          ''MIG2''                                                                                                                  AS USUARIOCREAR,
-          SYSDATE                                                                                                           AS FECHACREAR
+                                                                )                                                                                 AS DD_EEC_ID,
+          OFR.OFR_FECHA_ALTA                                                                                                       AS ECO_FECHA_ALTA,
+          DECODE(MIG2.OFR_COD_ESTADO_OFERTA, 
+                                                                ''01-02'',OFR.OFR_FECHA_ALTA, 
+                                                                ''01-03'',OFR.OFR_FECHA_ALTA, 
+                                                                ''01-04'',OFR.OFR_FECHA_ALTA, 
+                                                                ''01-05'',OFR.OFR_FECHA_ALTA, 
+                                                                ''01-06'',OFR.OFR_FECHA_ALTA, 
+                                                                ''01-07'',OFR.OFR_FECHA_ALTA, 
+                                                                ''01-09'',OFR.OFR_FECHA_ALTA,
+                                                                NULL)                                                                        AS ECO_FECHA_SANCION,
+          0                                                                                                                                      AS VERSION,
+          ''MIG2''                                                                                                                               AS USUARIOCREAR,
+          SYSDATE                                                                                                                          AS FECHACREAR
         FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
-        INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID 
-        WHERE SUBSTR(EOF.DD_EOF_CODIGO,0,2) = ''01'' AND OFR.USUARIOCREAR = ''MIG2''
+        INNER JOIN MIG2_OFR_OFERTAS MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA
+        WHERE SUBSTR(MIG2.OFR_COD_ESTADO_OFERTA,0,2) = ''01''
         AND NOT EXISTS (
             SELECT 1
             FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL AUX
             WHERE AUX.OFR_ID = OFR.OFR_ID
+        )
         )
     '
     ;   

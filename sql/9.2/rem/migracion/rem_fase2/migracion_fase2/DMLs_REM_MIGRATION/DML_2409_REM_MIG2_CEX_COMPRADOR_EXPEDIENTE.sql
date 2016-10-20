@@ -94,7 +94,7 @@ BEGIN
           ''CLC_NUM_CLIENTE_HAYA''	                                      CAMPO_CLC_MOTIVO_RECHAZO,
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN NOT_EXISTS ON NOT_EXISTS.COM_COD_COMPRADOR = MIG2.CEX_COD_COMPRADOR
+          INNER JOIN NOT_EXISTS ON NOT_EXISTS.CEX_COD_COMPRADOR = MIG2.CEX_COD_COMPRADOR
           '
           ;
           

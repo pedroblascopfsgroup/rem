@@ -27,7 +27,7 @@ public class VisitaDto implements Serializable {
 	@NotNull(groups = { Insert.class})
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codEstadoVisita;
-	@NotNull(groups = { Insert.class})
+	//@NotNull(groups = { Insert.class})
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codDetalleEstadoVisita;
 	@NotNull(groups = { Insert.class})

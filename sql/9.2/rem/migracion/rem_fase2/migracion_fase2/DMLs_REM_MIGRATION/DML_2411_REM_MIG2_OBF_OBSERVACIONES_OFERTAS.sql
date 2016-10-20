@@ -25,6 +25,7 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
+TABLE_COUNT_2 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_TABLA VARCHAR2(40 CHAR) := 'TXO_TEXTOS_OFERTA';
@@ -97,6 +98,68 @@ BEGIN
     COMMIT;
 
   END IF;
+
+   --COMPROBACIONES PREVIAS - DD_TTX_TIPOS_TEXTO_OFERTA
+   DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO TIPO PRECIO...');
+    
+   V_SENTENCIA := '
+       SELECT COUNT(1) 
+       FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
+       WHERE NOT EXISTS (
+         SELECT 1 
+         FROM '||V_ESQUEMA||'.DD_TTX_TIPOS_TEXTO_OFERTA DD 
+         WHERE DD.DD_TTX_CODIGO = MIG2.OBF_COD_TIPO_OBS
+   )
+   '
+   ;
+   EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_2;
+    
+    IF TABLE_COUNT_2 = 0 THEN    
+        DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS TIPOS DE PRECIO EXISTEN EN '||V_ESQUEMA||'.DD_TTX_TIPOS_TEXTO_OFERTA');    
+    ELSE
+    
+        DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_2||' TIPOS TEXTO OFERTA INEXISTENTES EN DD_TTX_TIPOS_TEXTO_OFERTA. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS.');
+        
+        --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
+        
+        EXECUTE IMMEDIATE '
+        DELETE FROM '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS
+        WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
+        '
+        ;
+        
+        COMMIT;
+        
+        EXECUTE IMMEDIATE '
+        INSERT INTO '||V_ESQUEMA||'.MIG2_DD_COD_NOT_EXISTS (
+              CLAVE           ,  
+              TABLA_MIG  , 
+              CAMPO_ORIGEN    ,
+              DICCIONARIO     ,
+              VALOR           ,
+              FECHA_COMPROBACION
+
+        )
+              SELECT
+                      OBF_COD_OFERTA,
+                      '''||V_TABLA_MIG||''',
+                      ''OBF_COD_TIPO_OBS'',
+                      ''DD_TTX_TIPOS_TEXTO_OFERTA'',
+                      OBF_COD_TIPO_OBS,
+                      SYSDATE
+              FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
+                    WHERE NOT EXISTS (
+                      SELECT 1 
+                      FROM '||V_ESQUEMA||'.DD_TTX_TIPOS_TEXTO_OFERTA DD 
+                      WHERE DD.DD_TTX_CODIGO = MIG2.OBF_COD_TIPO_OBS
+              )'
+        ;
+        
+        V_COD := SQL%ROWCOUNT;
+        
+        COMMIT;      
+    
+    END IF;
 
           
       /*--COMPROBACIONES PREVIAS - EXPEDIENTE_ECONOMICO
@@ -190,7 +253,7 @@ BEGIN
             0                                                           AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG2.OBF_COD_OFERTA AND OFR.BORRADO = 0
-          LEFT JOIN '||V_ESQUEMA||'.DD_TTX_TIPOS_TEXTO_OFERTA TTX ON DD_TTX_CODIGO = MIG2.OBF_COD_TIPO_OBS
+          INNER JOIN '||V_ESQUEMA||'.DD_TTX_TIPOS_TEXTO_OFERTA TTX ON DD_TTX_CODIGO = MIG2.OBF_COD_TIPO_OBS
       '
       ;
       

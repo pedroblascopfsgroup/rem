@@ -21,7 +21,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			{   
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',				
-				title: HreRem.i18n('title.identificacion'),
+				title: HreRem.i18n('title.expediente.ficha.objeto'),
 				items :
 					[
 		                {
@@ -78,27 +78,23 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio'),
-					        	bind: '{expediente.fechaInicioAlquiler}'					        						        	
+					        	bind: '{expediente.fechaInicioAlquiler}',
+					        	readOnly: true,
+					        	maxValue: null
 					        },
 					        {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.fin'),
-					        	bind: '{expediente.fechaFinAlquiler}'					        						        	
+					        	bind: '{expediente.fechaFinAlquiler}',
+					        	readOnly: true,
+					        	maxValue: null
 					        },
-					        {
-					        	
-					        },
-					        { 
-								xtype: 'numberfieldbase',
-								symbol: HreRem.i18n("symbol.euro"),
-								fieldLabel: HreRem.i18n('fieldlabel.importe.renta.alquiler'),
-				                bind: '{expediente.importeRentaAlquiler}'
-							},
 							{ 
 								xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
-					        	bind: '{expediente.numContratoAlquiler}'
+					        	bind: '{expediente.numContratoAlquiler}',
+					        	readOnly: true
 					        }
 					        
 				        ]
@@ -106,7 +102,11 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 					{   
 						xtype:'fieldsettable',
 						collapsible: false,
-						defaultType: 'displayfieldbase',				
+						defaultType: 'displayfieldbase',
+						bind: {
+							hidden: '{!esAlquilerConOpcionCompra}',
+							disabled: '{!esAlquilerConOpcionCompra}'
+					    },
 						title: HreRem.i18n('title.opcion.compra.alquiler'),
 						items : [
 					        {

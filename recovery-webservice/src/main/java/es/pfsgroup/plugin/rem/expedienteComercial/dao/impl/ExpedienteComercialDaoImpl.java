@@ -30,4 +30,17 @@ public class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCome
    		
    		return HibernateQueryUtils.page(this, hql, dto);
 	}
+	
+	@Override
+	public Page getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto webDto) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivoProveedor");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "tipoProveedor.codigo", codigoTipoProveedor);
+		
+		if (nombreBusqueda != null) {
+   			HQLBuilder.addFiltroLikeSiNotNull(hql, "nombre", nombreBusqueda, true);
+   		}
+		
+		return HibernateQueryUtils.page(this, hql, webDto);
+	}
 }

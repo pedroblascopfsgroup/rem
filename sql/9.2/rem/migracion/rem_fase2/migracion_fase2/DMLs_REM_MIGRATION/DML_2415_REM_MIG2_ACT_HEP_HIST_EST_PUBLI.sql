@@ -119,7 +119,7 @@ BEGIN
           SELECT
             '||V_ESQUEMA||'.S_ACT_HEP_HIST_EST_PUBLICACION.NEXTVAL      AS HEP_ID,
             ACT.ACT_ID                                                  AS ACT_ID,
-            MIG2.HEP_FECHA_DESDE                                        AS HEP_FECHA_DESDE,
+            NVL(MIG2.HEP_FECHA_DESDE, SYSDATE)                AS HEP_FECHA_DESDE,
             MIG2.HEP_FECHA_HASTA                                        AS HEP_FECHA_HASTA,
             POR.DD_POR_ID                                               AS DD_POR_ID,
             TPU.DD_TPU_ID                                               AS DD_TPU_ID,
@@ -134,7 +134,6 @@ BEGIN
           LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_CODIGO = MIG2.HEP_COD_PORTAL AND POR.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION TPU ON TPU.DD_TPU_CODIGO = MIG2.HEP_COD_TIPO_PUBLICACION AND TPU.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION EPU ON EPU.DD_EPU_CODIGO = MIG2.HEP_COD_ESTADO_PUBLI AND EPU.BORRADO = 0
-          WHERE MIG2.HEP_FECHA_DESDE IS NOT NULL      
       '
       ;
       EXECUTE IMMEDIATE V_SENTENCIA	;

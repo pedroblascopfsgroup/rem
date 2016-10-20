@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;

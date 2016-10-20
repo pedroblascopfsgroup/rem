@@ -187,7 +187,7 @@ BEGIN
      
       -- Observaciones
       IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros. Comprobar unicidad de COM_COD_COMPRADOR.';
         
         IF TABLE_COUNT != 0 THEN
            V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes. ';

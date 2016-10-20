@@ -136,7 +136,7 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 																bind:		'{tramite.estado}'
 															},
 															{
-																fieldLabel: HreRem.i18n('fieldlabel.subtipo.trabajo'),
+																fieldLabel: HreRem.i18n('fieldlabel.subtipo'),
 																bind:		'{tramite.subtipoTrabajo}'
 															}
 														]

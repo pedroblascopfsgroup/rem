@@ -22,7 +22,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	ACTIVO: 1,
         TRABAJO: 2,
         TRAMITE: 3,
-        TAREA: 4
+        TAREA: 4,
+        EXPEDIENTE: 5
     },
     
     TIPOS_AGRUPACION: {
@@ -136,6 +137,21 @@ Ext.define('HreRem.ux.util.Constants', {
 //		INVISIBLE:		Si creamos un registro-enlace-trabajo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
     },
     
+    MAP_TAB_EXPEDIENTE_XTYPE: {
+		BASICOS:			'datosbasicosexpediente',
+		OFERTAS:			'ofertaexpediente',
+		CONDICIONES:		'condicionesexpediente',
+		ACTIVOS:			'activosexpediente',
+		RESERVA:			'reservaexpediente',
+		COMPRADOR:			'compradoresexpediente',
+		DIARIO:				'diariogestionesexpediente',
+		TRAMITES:			'tramitestareasexpediente',
+		DOCU:				'documentosexpediente',
+		FORMA:				'formalizacionexpediente',
+		GESECO:				'gestioneconomicaexpediente'		
+//		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
+    },
+
     CARTERA: {
     	CAJAMAR: '01',
     	SAREB: '02',

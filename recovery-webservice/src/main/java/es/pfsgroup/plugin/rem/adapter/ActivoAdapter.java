@@ -103,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoTramite;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.DtoValoracion;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -2647,7 +2648,18 @@ public class ActivoAdapter {
 			if(!Checks.esNulo(tramite.getTrabajo()))
 					if(!DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
 							beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre",  true);
-			
+
+			// Trabajos asociados con expediente comercial
+			Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tramite.getTrabajo().getId());	
+			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
+			if(!Checks.esNulo(expedienteComercial)){
+				beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", true);
+				beanUtilNotNull.copyProperty(dtoTramite, "idExpediente", expedienteComercial.getId());
+				beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC", expedienteComercial.getEstado().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
+			}else{
+				beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
+			}
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

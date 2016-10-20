@@ -319,11 +319,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.admision'),
 								bind:		'{activo.aplicaTramiteAdmision}',
+								reference: 'chkbxPerimetroAdmision',
+								listeners: {
+									change: 'onChkbxPerimetroChange'
+								},
 								hidden: true
 							},
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaTramiteAdmision}',
+								reference: 'datefieldPerimetroAdmision',
 								hidden: true
 							},
 							{
@@ -336,11 +341,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion'),
-								bind:		'{activo.aplicaGestion}'
+								bind:		'{activo.aplicaGestion}',
+								reference: 'chkbxPerimetroGestion',
+								listeners: {
+									change: 'onChkbxPerimetroChange'
+								}
 							},
 							{
 								xtype: 'datefieldbase',
-								bind:		'{activo.fechaAplicaGestion}'
+								bind:		'{activo.fechaAplicaGestion}',
+								reference: 'datefieldPerimetroGestion'
 							},
 							{
 								xtype: 'textfieldbase',
@@ -352,11 +362,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.mediador'),
 								bind:		'{activo.aplicaAsignarMediador}',
+								reference: 'chkbxPerimetroMediador',
+								listeners: {
+									change: 'onChkbxPerimetroChange'
+								},
 								hidden: true
 							},
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaAsignarMediador}',
+								reference: 'datefieldPerimetroMediador',
 								hidden: true
 							},
 							{
@@ -369,11 +384,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
-								bind:		'{activo.aplicaComercializar}'
+								bind:		'{activo.aplicaComercializar}',
+								reference: 'chkbxPerimetroComercializar',
+								listeners: {
+									change: 'onChkbxPerimetroChange'
+								}
 							},
 							{
 								xtype: 'datefieldbase',
-								bind:		'{activo.fechaAplicaComercializar}'
+								bind:		'{activo.fechaAplicaComercializar}',
+								reference: 'datefieldPerimetroComercializar'
 							},
 							{
 								xtype: 'comboboxfieldbase',
@@ -392,15 +412,24 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									visible: '{!activo.aplicaComercializar}'
 								}
 							},
+
 							//Fila formalizar
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
-								bind:		'{activo.aplicaFormalizar}'
+								reference: 'chkbxPerimetroFormalizar',
+								bind: {
+									value: '{activo.aplicaFormalizar}',
+									disabled: '{!activo.aplicaComercializar}'
+								},
+								listeners: {
+									change: 'onChkbxPerimetroChange'
+								}
 							},
 							{
 								xtype: 'datefieldbase',
-								bind:		'{activo.fechaAplicaFormalizar}'
+								bind:		'{activo.fechaAplicaFormalizar}',
+								reference: 'datefieldPerimetroFormalizar'
 							},
 							{
 								xtype: 'textfieldbase',

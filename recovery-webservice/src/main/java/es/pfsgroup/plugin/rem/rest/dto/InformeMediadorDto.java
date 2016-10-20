@@ -15,8 +15,8 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Entit
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoPlazaGaraje;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
@@ -25,7 +25,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -76,7 +75,6 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private Long idProveedorRem;
 
-	// ?ACT_HIC_EST_INF_COMER_HIST
 	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
 	private Boolean posibleInforme;
@@ -84,7 +82,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
 	private String motivoNoPosibleInforme;
-	// fin ACT_HIC_EST_INF_COMER_HIST
+
 
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDSubtipoActivo.class, message = "El codSubtipoImueble no existe", groups = { Insert.class,
@@ -234,10 +232,9 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private Float parcelaSuperficie;
 
-	// Fake!! construccion y conservacion cruzados
-	@Diccionary(clase = DDEstadoConstruccion.class, message = "El codEstadoConservacion no existe", groups = {
+	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacion no existe", groups = {
 			Insert.class, Update.class })
-	@EntityDefinition(propertyName = "estadoConservacion", classObj = DDEstadoConstruccion.class)
+	@EntityDefinition(propertyName = "estadoConservacion", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacion;
 
 	// ok
@@ -250,10 +247,10 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "ultimaPlanta", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ultimaPlanta;
 
-	@EntityDefinition(propertyName = "ocupado")
+	@EntityDefinition(propertyName = "ocupado", transform=TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ocupado;
 
-	@EntityDefinition(propertyName = "numPlantasInter")
+	@EntityDefinition(procesar=false,motivo="Existe en diferentes entidades")
 	private Integer numeroPlantas;
 
 	@Diccionary(clase = DDTipoOrientacion.class, message = "El codOrientacion no existe", groups = { Insert.class,
@@ -322,7 +319,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "edificioDivisible")
 	private Boolean divisible;
 
-	@EntityDefinition(propertyName = "ascensor")
+	@EntityDefinition(propertyName = "ascensor",transform=TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ascensor;
 
 	@EntityDefinition(propertyName = "numAscensores")
@@ -374,13 +371,13 @@ public class InformeMediadorDto implements Serializable {
 	private String anteriorUso;
 
 	@EntityDefinition(propertyName = "comercialNumEstancias")
-	private Long numeroEstancias;
+	private Integer numeroEstancias;
 
 	@EntityDefinition(propertyName = "comercialNumBanyos")
-	private Long numeroBanyos;
+	private Integer numeroBanyos;
 
 	@EntityDefinition(propertyName = "comercialNumAseos")
-	private long numeroAseos;
+	private Integer numeroAseos;
 
 	@EntityDefinition(propertyName = "mtsFachadaPpal")
 	private Float metrosLinealesFachadaPrincipal;
@@ -388,14 +385,16 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "mtsAlturaLibre")
 	private Float altura;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la tabla ACT_ANJ_ANEJOS")
+	@EntityDefinition(propertyName="cantidad")
 	private Long numeroPlazasGaraje;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la tabla ACT_ANJ_ANEJOS")
+	@EntityDefinition(propertyName="superficie")
 	private Float superficiePlazasGaraje;
 
-	@EntityDefinition(procesar = false, motivo = "No existe la tabla ACT_ANJ_ANEJOS")
-	private String codSubtipoPlazasGaraje;// <-------------------------------------diccionario?
+	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codSubtipoPlazasGaraje no existe", groups = { Insert.class,
+			Update.class })
+	@EntityDefinition(propertyName = "subTipo", classObj = DDSubtipoPlazaGaraje.class)
+	private String codSubtipoPlazasGaraje;
 
 	@EntityDefinition(propertyName = "existeSalidaHumos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean salidaHumosOtrasCaracteristicas;
@@ -423,8 +422,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "profundidad")
 	private Float largo;
 
-	@Diccionary(clase = DDUsosActivo.class, message = "El codUso no existe", groups = { Insert.class, Update.class })
-	@EntityDefinition(procesar = false, motivo = "No existe la columna DD_SPG_ID  en la tabla ACT_APR_PLAZA_APARCAMIENTO(no existe diccionario)")
+	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codUso no existe", groups = { Insert.class, Update.class })
+	@EntityDefinition(propertyName = "subtipoPlazagaraje", classObj = DDSubtipoPlazaGaraje.class)
 	private String codUso;
 
 	@Diccionary(clase = DDTipoCalidad.class, message = "El codNivelRenta no existe", groups = { Insert.class,
@@ -470,7 +469,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "estadoConservacionEdificio", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacionEdificio;
 
-	@EntityDefinition(propertyName = "anyoRehabilitacion")
+	@EntityDefinition(propertyName = "anyoRehabilitacion",transform=TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)
 	private Date anyoRehabilitacionEdificio;
 
 	@EntityDefinition(propertyName = "numPlantas")
@@ -495,9 +494,6 @@ public class InformeMediadorDto implements Serializable {
 	private String nombreAdministradorComunidadEdificio;
 
 	private String telefonoAdministradorComunidadEdificio;
-
-	@EntityDefinition(propertyName = "derramaOrientativaComunidad")
-	private String descripcionDerramaComunidadEdificio;
 
 	@EntityDefinition(propertyName = "reformaFachada")
 	private Boolean fachadaReformasNecesariasEdificio;
@@ -678,6 +674,42 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "carpinteriaInteriorOtros")
 	private String otrosCarpinteriaInterior;
 
+	@EntityDefinition(propertyName = "ventanasHierro", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoVentanaHierro;
+
+	@EntityDefinition(propertyName = "ventanasAluAnodizado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoVentanaAnodizado;
+
+	@EntityDefinition(propertyName = "ventanasAluLacado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoVentanaLacado;
+
+	@EntityDefinition(propertyName = "ventanasPVC", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoVentanaPvc;
+
+	@EntityDefinition(propertyName = "ventanasMadera", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoVentanaMadera;
+
+	@EntityDefinition(propertyName = "persianasPlatico", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoPersianaPlastico;
+
+	@EntityDefinition(propertyName = "persianasAluminio", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoPersianaAluminio;
+
+	@EntityDefinition(propertyName = "ventanasCorrederas", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoAperturaVentanaCorrederas;
+
+	@EntityDefinition(propertyName = "ventanasAbatibles", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoAperturaVentanaAbatibles;
+
+	@EntityDefinition(propertyName = "ventanasOscilobatientes", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoAperturaVentanaOscilobat;
+
+	@EntityDefinition(propertyName = "dobleCristal", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	private Boolean buenEstadoDobleAcristalamientoOClimalit;
+	
+	@EntityDefinition(propertyName = "carpinteriaExteriorOtros")
+	private String otrosCarpinteriaExterior;
+
 	@EntityDefinition(propertyName = "humedadPared", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	public Boolean humedadesPared;
 
@@ -759,7 +791,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "horno", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	public Boolean buenEstadoHornoCocina;
 
-	@EntityDefinition(propertyName = "suelos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "suelosCocina", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	public Boolean buenEstadoSueloCocina;
 
 	@EntityDefinition(propertyName = "azulejos", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
@@ -1577,27 +1609,27 @@ public class InformeMediadorDto implements Serializable {
 		this.anteriorUso = anteriorUso;
 	}
 
-	public Long getNumeroEstancias() {
+	public Integer getNumeroEstancias() {
 		return numeroEstancias;
 	}
 
-	public void setNumeroEstancias(Long numeroEstancias) {
+	public void setNumeroEstancias(Integer numeroEstancias) {
 		this.numeroEstancias = numeroEstancias;
 	}
 
-	public Long getNumeroBanyos() {
+	public Integer getNumeroBanyos() {
 		return numeroBanyos;
 	}
 
-	public void setNumeroBanyos(Long numeroBanyos) {
+	public void setNumeroBanyos(Integer numeroBanyos) {
 		this.numeroBanyos = numeroBanyos;
 	}
 
-	public long getNumeroAseos() {
+	public Integer getNumeroAseos() {
 		return numeroAseos;
 	}
 
-	public void setNumeroAseos(long numeroAseos) {
+	public void setNumeroAseos(Integer numeroAseos) {
 		this.numeroAseos = numeroAseos;
 	}
 
@@ -1896,14 +1928,6 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setTelefonoAdministradorComunidadEdificio(String telefonoAdministradorComunidadEdificio) {
 		this.telefonoAdministradorComunidadEdificio = telefonoAdministradorComunidadEdificio;
-	}
-
-	public String getDescripcionDerramaComunidadEdificio() {
-		return descripcionDerramaComunidadEdificio;
-	}
-
-	public void setDescripcionDerramaComunidadEdificio(String descripcionDerramaComunidadEdificio) {
-		this.descripcionDerramaComunidadEdificio = descripcionDerramaComunidadEdificio;
 	}
 
 	public Boolean getAscensorReformasNecesariasEdificio() {
@@ -2908,6 +2932,102 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setOtrosZonasComunes(String otrosZonasComunes) {
 		this.otrosZonasComunes = otrosZonasComunes;
+	}
+
+	public Boolean getBuenEstadoVentanaHierro() {
+		return buenEstadoVentanaHierro;
+	}
+
+	public void setBuenEstadoVentanaHierro(Boolean buenEstadoVentanaHierro) {
+		this.buenEstadoVentanaHierro = buenEstadoVentanaHierro;
+	}
+
+	public Boolean getBuenEstadoVentanaAnodizado() {
+		return buenEstadoVentanaAnodizado;
+	}
+
+	public void setBuenEstadoVentanaAnodizado(Boolean buenEstadoVentanaAnodizado) {
+		this.buenEstadoVentanaAnodizado = buenEstadoVentanaAnodizado;
+	}
+
+	public Boolean getBuenEstadoVentanaLacado() {
+		return buenEstadoVentanaLacado;
+	}
+
+	public void setBuenEstadoVentanaLacado(Boolean buenEstadoVentanaLacado) {
+		this.buenEstadoVentanaLacado = buenEstadoVentanaLacado;
+	}
+
+	public Boolean getBuenEstadoVentanaPvc() {
+		return buenEstadoVentanaPvc;
+	}
+
+	public void setBuenEstadoVentanaPvc(Boolean buenEstadoVentanaPvc) {
+		this.buenEstadoVentanaPvc = buenEstadoVentanaPvc;
+	}
+
+	public Boolean getBuenEstadoVentanaMadera() {
+		return buenEstadoVentanaMadera;
+	}
+
+	public void setBuenEstadoVentanaMadera(Boolean buenEstadoVentanaMadera) {
+		this.buenEstadoVentanaMadera = buenEstadoVentanaMadera;
+	}
+
+	public Boolean getBuenEstadoPersianaPlastico() {
+		return buenEstadoPersianaPlastico;
+	}
+
+	public void setBuenEstadoPersianaPlastico(Boolean buenEstadoPersianaPlastico) {
+		this.buenEstadoPersianaPlastico = buenEstadoPersianaPlastico;
+	}
+
+	public Boolean getBuenEstadoPersianaAluminio() {
+		return buenEstadoPersianaAluminio;
+	}
+
+	public void setBuenEstadoPersianaAluminio(Boolean buenEstadoPersianaAluminio) {
+		this.buenEstadoPersianaAluminio = buenEstadoPersianaAluminio;
+	}
+
+	public Boolean getBuenEstadoAperturaVentanaCorrederas() {
+		return buenEstadoAperturaVentanaCorrederas;
+	}
+
+	public void setBuenEstadoAperturaVentanaCorrederas(Boolean buenEstadoAperturaVentanaCorrederas) {
+		this.buenEstadoAperturaVentanaCorrederas = buenEstadoAperturaVentanaCorrederas;
+	}
+
+	public Boolean getBuenEstadoAperturaVentanaAbatibles() {
+		return buenEstadoAperturaVentanaAbatibles;
+	}
+
+	public void setBuenEstadoAperturaVentanaAbatibles(Boolean buenEstadoAperturaVentanaAbatibles) {
+		this.buenEstadoAperturaVentanaAbatibles = buenEstadoAperturaVentanaAbatibles;
+	}
+
+	public Boolean getBuenEstadoAperturaVentanaOscilobat() {
+		return buenEstadoAperturaVentanaOscilobat;
+	}
+
+	public void setBuenEstadoAperturaVentanaOscilobat(Boolean buenEstadoAperturaVentanaOscilobat) {
+		this.buenEstadoAperturaVentanaOscilobat = buenEstadoAperturaVentanaOscilobat;
+	}
+
+	public Boolean getBuenEstadoDobleAcristalamientoOClimalit() {
+		return buenEstadoDobleAcristalamientoOClimalit;
+	}
+
+	public void setBuenEstadoDobleAcristalamientoOClimalit(Boolean buenEstadoDobleAcristalamientoOClimalit) {
+		this.buenEstadoDobleAcristalamientoOClimalit = buenEstadoDobleAcristalamientoOClimalit;
+	}
+
+	public String getOtrosCarpinteriaExterior() {
+		return otrosCarpinteriaExterior;
+	}
+
+	public void setOtrosCarpinteriaExterior(String otrosCarpinteriaExterior) {
+		this.otrosCarpinteriaExterior = otrosCarpinteriaExterior;
 	}
 
 }

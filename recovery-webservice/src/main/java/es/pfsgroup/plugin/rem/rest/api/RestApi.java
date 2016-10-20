@@ -6,7 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.ui.ModelMap;
@@ -23,7 +22,11 @@ public interface RestApi {
 	}
 
 	public enum TRANSFORM_TYPE {
-		NONE, BOOLEAN_TO_INTEGER, FLOAT_TO_BIGDECIMAL
+		NONE, BOOLEAN_TO_INTEGER, FLOAT_TO_BIGDECIMAL, DATE_TO_YEAR_INTEGER
+	}
+
+	public enum ALGORITMO_FIRMA {
+		DEFAULT, NO_IP
 	}
 
 	public static final String CODE_ERROR = "ERROR";
@@ -49,7 +52,7 @@ public interface RestApi {
 	 * @param signature
 	 * @return
 	 */
-	public boolean validateSignature(Broker broker, String signature, String peticion)
+	public boolean validateSignature(Broker broker, String signature, String peticion,ALGORITMO_FIRMA algoritmoFirma)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException;
 
 	/**
@@ -123,7 +126,7 @@ public interface RestApi {
 	 * @param request
 	 * @return
 	 */
-	public String getClientIpAddr(HttpServletRequest request);
+	public String getClientIpAddr(ServletRequest request);
 
 	/**
 	 * Escribe en la salida standard una respuesta JSON
@@ -160,5 +163,29 @@ public interface RestApi {
 	 * @return
 	 */
 	public PeticionRest crearPeticionObj(ServletRequest req);
+
+	/**
+	 * Obtiene el nombre del del servicio ejecutado
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public String obtenerNombreServicio(ServletRequest req);
+
+	/**
+	 * Obtiene el algoritmo de la firma
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public ALGORITMO_FIRMA obtenerAlgoritmoFirma(ServletRequest req);
+
+	/**
+	 * Obtiene el algoritmo de la firma segun el servicio
+	 * 
+	 * @param nombreServicio
+	 * @return
+	 */
+	public ALGORITMO_FIRMA obtenerAlgoritmoFirma(String nombreServicio,String ipClient);
 
 }

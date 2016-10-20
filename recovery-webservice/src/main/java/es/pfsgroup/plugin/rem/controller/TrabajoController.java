@@ -48,6 +48,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrec
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -70,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
@@ -109,6 +111,9 @@ public class TrabajoController {
 	
 	@Autowired
 	private PreciosApi preciosApi;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1012,12 +1017,22 @@ public class TrabajoController {
 		
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListActivosByProceso(Long idProceso, ModelMap model){
-		
-		model.put("data", trabajoAdapter.getListActivosByProceso(idProceso));
-			
+	public ModelAndView getListActivosByProceso(Long idProceso, DtoTrabajoListActivos webDto, ModelMap model){
+
+		try {
+
+			Page page = trabajoAdapter.getListActivosByProceso(idProceso, webDto);
+			if(!Checks.esNulo(page)) {
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
 		return createModelAndViewJson(model);
-			
 	}
 	
 	
@@ -1130,9 +1145,16 @@ public class TrabajoController {
 		return createModelAndViewJson(model);
 		
 	}
-	
-	
-	
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			trabajoApi.downloadTemplateActivosTrabajo(request,response,"LACT");
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+		}
+
+	}
 
 }

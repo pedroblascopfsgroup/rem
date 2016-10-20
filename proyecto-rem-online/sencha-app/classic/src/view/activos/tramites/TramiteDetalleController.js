@@ -165,7 +165,8 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		var me = this,
 		idTrabajo = me.getViewModel().get("tramite.idTrabajo");
 		idActivo = me.getViewModel().get("tramite.idActivo");
-		me.getView().fireEvent('abrirtarea',record, gridView.up('grid'), me.getView(), idTrabajo, idActivo);
+		idExpediente = me.getViewModel().get("tramite.idExpediente");
+		me.getView().fireEvent('abrirtarea',record, gridView.up('grid'), me.getView(), idTrabajo, idActivo, idExpediente);
 	},
 	
 	onTareasListDobleClickHistorico : function(gridView,record) {

@@ -23,13 +23,18 @@ Ext.define('HreRem.model.ActivosExpediente', {
     			name:'importeParticipacion'
     		},
     		{
-    			name:'porcentajeParticipacion'
+    			name:'porcentajeParticipacion',
+    			type: 'float'
     		},
     		{
     			name:'precioMinimo'
     		},
     		{
     			name:'precioAprobadoVenta'
+    		},
+    		{
+    			name: 'idActivo',
+    			critical: true
     		}
     		
     ],
@@ -38,7 +43,7 @@ Ext.define('HreRem.model.ActivosExpediente', {
 		type: 'uxproxy',
 		api: {
 			create: '',
-            update: '',
+            update: 'expedientecomercial/updateListadoActivos',
             destroy: ''
         }
     }

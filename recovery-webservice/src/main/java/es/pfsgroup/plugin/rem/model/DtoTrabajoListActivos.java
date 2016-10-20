@@ -1,12 +1,16 @@
 package es.pfsgroup.plugin.rem.model;
 
+import es.capgemini.devon.dto.WebDto;
+
 /**
  * 
  * Dto para el listado de activos al crear una agrupación
  * @author Daniel Gutiérrez
  */
 
-public class DtoTrabajoListActivos {
+public class DtoTrabajoListActivos extends WebDto {
+
+	private static final long serialVersionUID = 1L;
 	
 	private String idActivo;
 	private String numActivoRem;

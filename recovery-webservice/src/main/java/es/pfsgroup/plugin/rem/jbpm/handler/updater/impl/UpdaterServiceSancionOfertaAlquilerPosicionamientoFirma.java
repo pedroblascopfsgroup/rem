@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -18,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements UpdaterService {
@@ -35,6 +39,7 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 	private static final String FECHA_INICIO = "fechaInicio";
 	private static final String FECHA_FIN = "fechaFin";
 	private static final String NUM_CONTRATO = "numContrato";
+	private static final String COMBO_FIRMA = "comboFirma";
 	
 	private static final String CODIGO_T014_POSICIONAMIENTO_FIRMA = "T014_PosicionamientoFirma";
 
@@ -54,11 +59,8 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 			//Fecha inicio Oferta Alquiler
 			if(FECHA_INICIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 			{
-				//Guardado adicional Fecha inicio => expediente comercial.fecha inicio y en situacion posesoria.fecha toma posesion
+				//Guardado adicional Fecha inicio => expediente comercial.fecha inicio
 				try {
-					if(!Checks.esNulo(situacionPosesoria))
-						situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
-					
 					if(!Checks.esNulo(expedienteComercial))
 						expedienteComercial.setFechaInicioAlquiler(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
@@ -70,11 +72,8 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 			//Fecha Fin Oferta Alquiler
 			if(FECHA_FIN.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 			{
-				//Guardado adicional Fecha fin => expediente comercial.fecha fin y en situacion posesoria.fecha revision estado posesorio
+				//Guardado adicional Fecha fin => expediente comercial.fecha fin
 				try {
-					if(!Checks.esNulo(situacionPosesoria))
-						situacionPosesoria.setFechaRevisionEstado(ft.parse(valor.getValor()));
-					
 					if(!Checks.esNulo(expedienteComercial))
 						expedienteComercial.setFechaFinAlquiler(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
@@ -90,9 +89,27 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 					expedienteComercial.setNumContratoAlquiler(Integer.parseInt(valor.getValor()));
 			}
 			
-
+			//Combo Firmar contrato SI/NO
+			if(COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if(DDSiNo.SI.equals(valor.getValor())){
+					// Actualizacion del estado de expediente comercial: ALQUILADO
+					if(!Checks.esNulo(expedienteComercial)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ALQUILADO);
+	
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expedienteComercial.setEstado(estado);
+					}
+				} else {
+					// Actualizacion del estado de expediente comercial: ANULADO
+					if(!Checks.esNulo(expedienteComercial)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+	
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expedienteComercial.setEstado(estado);
+					}
+				}
+			}
 		}
-
 	}
 
 	public String[] getCodigoTarea() {

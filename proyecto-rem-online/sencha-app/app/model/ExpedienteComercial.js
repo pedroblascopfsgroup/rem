@@ -140,6 +140,12 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'riesgoReputacional'	
+    		},
+    		{
+    			name: 'alquilerOpcionCompra'
+    		},
+    		{
+    			name: 'codigoEstado'
     		}
     		
     		

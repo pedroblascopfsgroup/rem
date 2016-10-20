@@ -19,8 +19,15 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				cls	: 'panel-base shadow-panel',
 				bind: {
 					store: '{storeActivosExpediente}'
-				},	
+				},
 				
+				features: [{
+				            id: 'summary',
+				            ftype: 'summary',
+				            hideGroupedHeader: true,
+				            enableGroupingMenu: false,
+				            dock: 'bottom'
+				}],
 				columns: [
 				   {    xtype: 'actioncolumn',
 	    			text: HreRem.i18n('fieldlabel.numero.activo'),
@@ -52,12 +59,25 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            text: HreRem.i18n("header.importe.participacion"),
 			            dataIndex: 'importeParticipacion',
 			            flex:1
-			            
 			       },
 			       {   
 			       		text: HreRem.i18n("header.porcentaje.participacion"),
 			       	    dataIndex: 'porcentajeParticipacion',
-			       		flex:1
+			       	    editor: 'textfield',
+			       		flex:1,
+			       		renderer: function(value) {
+			            	return Ext.util.Format.number(value, '0.00%');
+			            },
+			       		summaryType: 'sum',
+			            summaryRenderer: function(value, summaryData, dataIndex) {
+			            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value + "%";
+			            	var style = "" 
+			            	if(value != 100) {
+			            		msg = HreRem.i18n("fieldlabel.participacion.total.error")	
+			            		style = "style= 'color: red'" 
+			            	}			            	
+			            	return "<span "+style+ ">"+msg+"</span>"
+			            }
 			       },
 			       {   
 			       		text: HreRem.i18n("header.precio.minimo.autorizado"),
@@ -70,6 +90,16 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       		flex:1
 			       }
 			       	        
+			    ],
+			    dockedItems : [
+			        {
+			            xtype: 'pagingtoolbar',
+			            dock: 'bottom',
+			            displayInfo: true,
+			            bind: {
+			                store: '{storeActivosExpediente}'
+			            }
+			        }
 			    ]
 			    
 			}

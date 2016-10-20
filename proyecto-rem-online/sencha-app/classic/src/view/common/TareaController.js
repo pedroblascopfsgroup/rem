@@ -195,6 +195,14 @@ Ext.define('HreRem.view.common.TareaController', {
 				  	  //Se visibiliza boton-enlace solo cuando es cualquier tramite menos el 1o (admision)
 				  	  //Esta regla prima sobre otras
 					  	me.getView().down('[handler=enlaceAbrirTrabajo]').hide();
+					  	me.getView().down('[handler=enlaceAbrirExpediente]').hide();
+				  }
+				  
+				  if(codigoTramite == "T013" || codigoTramite == "T014"){
+				  	  //Se visibiliza boton-enlace EXPEDIENTE
+				  	  //Se oculta el trabajo
+				  	  	me.getView().down('[handler=enlaceAbrirTrabajo]').hide();
+					  	me.getView().down('[handler=enlaceAbrirExpediente]').show();
 				  }
 				  
 			  }
@@ -214,8 +222,20 @@ Ext.define('HreRem.view.common.TareaController', {
 			
 		},
 
+		verBotonEnlaceExpediente: function(window, invisible) {
+		
+			//debugger;    	
+			var me = this;
+			
+			//INVisibilizar boton enlace a Expediente
+			if(invisible){
+			 	me.getView().down('[handler=enlaceAbrirExpediente]').hidden = true;
+			}
+			
+		},
+		
 		enlaceAbrirTrabajo: function(button) {
-			//debugger;
+
 			var me = this,
 			window = button.up('window'),
 			idTrabajo = window.idTrabajo;
@@ -244,6 +264,39 @@ Ext.define('HreRem.view.common.TareaController', {
 				
 		},
 	
+	enlaceAbrirExpediente: function(button) {
+
+		var me = this,
+		window = button.up('window'),
+		idExpediente = window.idExpediente;
+
+		if(Ext.isEmpty(idExpediente)) {
+			
+			window.mask();
+					
+			//Llamada Ajax para obtener el idExpediente relacionado con la tarea (idTarea)
+		    var url = $AC.getRemoteUrl('agenda/getIdExpediente');
+		    Ext.Ajax.request({
+			  url:url,
+			  params:  {idTarea : me.getView().idTarea},
+			  success: function(response,opts){
+				  idExpediente = Ext.JSON.decode(response.responseText).idExpediente;					  
+				  titulo = "Expediente " + idExpediente;
+				  me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);
+			  },
+			  callback: function(options, success, response){
+				  window.unmask();
+			  }
+		    });
+		    
+		} else {
+			titulo = "Expediente " + idExpediente;
+			me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);			
+		}
+			
+			
+	},
+		
 	enlaceAbrirActivo: function(button) {
 
 		var me = this,

@@ -616,6 +616,7 @@ public class UvemManager implements UvemManagerApi {
 	
 		DatosClienteDto datos = new DatosClienteDto();
 
+		datos.setNumeroClienteUrsus(numcliente.toString());
 		datos.setClaseDeDocumentoIdentificador(servicioGMPAJC93_INS.getClaseDeDocumentoIdentificadorcocldo()+"");
 		datos.setDniNifDelTitularDeLaOferta(servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio().toString());
 		datos.setNombreYApellidosTitularDeOferta(servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof().toString());

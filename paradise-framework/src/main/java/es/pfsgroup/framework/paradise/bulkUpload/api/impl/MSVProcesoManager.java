@@ -153,8 +153,10 @@ public class MSVProcesoManager implements MSVProcesoApi {
 		for (MSVProcesoMasivo proceso : listaProcesos) {
 			DtoMSVProcesoMasivo nuevoDto = new DtoMSVProcesoMasivo();
 			try {
+				beanUtilNotNull.copyProperty(nuevoDto, "id", proceso.getId());
 				if(!Checks.esNulo(proceso.getTipoOperacion())) {
 					beanUtilNotNull.copyProperty(nuevoDto, "tipoOperacion", proceso.getTipoOperacion().getDescripcion());
+					beanUtilNotNull.copyProperty(nuevoDto, "tipoOperacionId", proceso.getTipoOperacion().getId());
 				}
 				if(!Checks.esNulo(proceso.getEstadoProceso())){
 					beanUtilNotNull.copyProperty(nuevoDto, "estadoProceso",	proceso.getEstadoProceso().getDescripcion());

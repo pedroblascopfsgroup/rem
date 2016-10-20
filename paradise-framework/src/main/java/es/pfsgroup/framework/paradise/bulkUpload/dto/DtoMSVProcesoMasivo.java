@@ -8,7 +8,9 @@ public class DtoMSVProcesoMasivo extends WebDto{
 
 	private static final long serialVersionUID = 1L;
 
+	private String id;
 	private String tipoOperacion;
+	private Long tipoOperacionId;
 	private String estadoProceso;
 	private String nombre;
 	private String usuario;
@@ -16,11 +18,23 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	private int totalCount;
 
 
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public String getTipoOperacion() {
 		return tipoOperacion;
 	}
 	public void setTipoOperacion(String tipoOperacion) {
 		this.tipoOperacion = tipoOperacion;
+	}
+	public Long getTipoOperacionId() {
+		return tipoOperacionId;
+	}
+	public void setTipoOperacionId(Long tipoOperacionId) {
+		this.tipoOperacionId = tipoOperacionId;
 	}
 	public String getEstadoProceso() {
 		return estadoProceso;

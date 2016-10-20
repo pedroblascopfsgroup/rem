@@ -13,11 +13,11 @@
 
 	Esta migración consta principalmente de cuatro procesos:
 
-		- 000_Preparacion_migracion.sh: Proceso en el que se generan los paquetes pitertulizados de las carpetas PRE_MIGRACION, DDLs_MIG y DMLs_REM_MIGRATION 
-				y se almacenan en los directorios 01_PREV, 02_TABLAS_MIG y 03_MIGRACION respectivamente. 
-		- 001_Creacion_de_tablas.sh: Proceso en el que se crean las tablas necesarias para la migración, dichas tablas comienzan con el prefijo "MIG2_".
-		- 002_Carga_de_tablas_de_migracion.sh: Proceso en el que se cargan las tablas MIG2 con los DATs que hay en el directorio /CTLs_DATs/DATs
-		- 003_Migrar.sh: Proceso de volcado de tablas MIG2 a las tablas de modelo de REM.
+		- (1º)	000_Preparacion_migracion.sh: Proceso en el que se generan los paquetes pitertulizados de las carpetas PRE_MIGRACION, DDLs_MIG y DMLs_REM_MIGRATION 
+					y se almacenan en los directorios 01_PREV, 02_TABLAS_MIG y 03_MIGRACION respectivamente. 
+		- (2º)	001_Creacion_de_tablas.sh: Proceso en el que se crean las tablas necesarias para la migración, dichas tablas comienzan con el prefijo "MIG2_".
+		- (3º)	002_Carga_de_tablas_de_migracion.sh: Proceso en el que se cargan las tablas MIG2 con los DATs que hay en el directorio /CTLs_DATs/DATs
+		- (3º)	003_Migrar.sh: Proceso de volcado de tablas MIG2 a las tablas de modelo de REM.
 
 	La migración tiene dos modos de ejecución:
 
@@ -36,5 +36,9 @@
 		- Este modo de lanzamiento trata de ir ejecutando uno a uno todos los procesos de la migración, la principal ventaja que tiene este modo
 				es que si por un casual fallase la migración en el proceso 003_Migrar.sh, se podría relanzar manualmente la migración desde
 				ese punto, evitando tener que cargar de nuevo todas las tablas MIG2, que es un proceso bastante pesado.
-		
-		- Los 
+
+		- Hay que tener en cuenta que si a mitad de la migración tenemos que modicar un DML de volcado, por el motivo que sea, es OBLIGATORIO 
+				volver a lanzar el proceso 000_Preparacion_migracion.sh para reempaquetar el DML modificado, ya que si no lo hacemos,
+				cuando volvieramos a lanzar el proceso 003_Migrar.sh, se ejecutaría el DML previo a la migracíon, ya que es el DML que se encuentra
+				en la carpeta 03_MIGRACION.
+	

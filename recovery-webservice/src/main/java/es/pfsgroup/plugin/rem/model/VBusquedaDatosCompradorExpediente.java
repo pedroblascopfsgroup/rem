@@ -178,6 +178,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "DESC_USO_ACTIVO")
 	private String descripcionUsoActivo;
+	
+	@Column(name = "ID_COMPRADOR_URSUS")
+	private Long numeroClienteUrsus;
     
 
 	public String getId() {
@@ -596,5 +599,14 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	public void setTelefono1Rte(String telefono1Rte) {
 		this.telefono1Rte = telefono1Rte;
 	}
+
+	public Long getNumeroClienteUrsus() {
+		return numeroClienteUrsus;
+	}
+
+	public void setNumeroClienteUrsus(Long numeroClienteUrsus) {
+		this.numeroClienteUrsus = numeroClienteUrsus;
+	}
+
 
 }

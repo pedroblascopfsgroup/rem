@@ -23,7 +23,7 @@ public interface RestApi {
 	}
 
 	public enum TRANSFORM_TYPE {
-		NONE, BOOLEAN_TO_INTEGER, FLOAT_TO_BIGDECIMAL
+		NONE, BOOLEAN_TO_INTEGER, FLOAT_TO_BIGDECIMAL, DATE_TO_YEAR_INTEGER
 	}
 
 	public static final String CODE_ERROR = "ERROR";

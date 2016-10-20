@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoPlazaGaraje;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicaAparcamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
@@ -64,6 +65,10 @@ public class ActivoPlazaAparcamiento extends ActivoInfoComercial implements Seri
 	
 	@Column(name = "APR_ALTURA")
 	private Float aparcamientoAltura;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_SPG_ID")
+	private DDSubtipoPlazaGaraje subtipoPlazagaraje;
 	
 
 	@ManyToOne
@@ -204,6 +209,14 @@ public class ActivoPlazaAparcamiento extends ActivoInfoComercial implements Seri
 
 	public void setAparcamientoSeguridad(Integer aparcamientoSeguridad) {
 		this.aparcamientoSeguridad = aparcamientoSeguridad;
+	}
+
+	public DDSubtipoPlazaGaraje getSubtipoPlazagaraje() {
+		return subtipoPlazagaraje;
+	}
+
+	public void setSubtipoPlazagaraje(DDSubtipoPlazaGaraje subtipoPlazagaraje) {
+		this.subtipoPlazagaraje = subtipoPlazagaraje;
 	}
 
 	

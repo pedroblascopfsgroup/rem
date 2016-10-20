@@ -123,8 +123,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     esAlquilerConOpcionCompra: function(get){
 	     	var me = this;
-			if(me.getData().expediente.get('alquilerOpcionCompra')==1){
-				return true;
+			if(!Ext.isEmpty(me.getData().expediente)){
+				if(me.getData().expediente.get('alquilerOpcionCompra')==1){
+					return true;
+				}
 			}
 	     	return false;
 	     }

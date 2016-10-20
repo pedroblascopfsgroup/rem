@@ -222,26 +222,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		idActivo = window.idActivo,
 		idProceso = window.idProceso;
 		
-		/*if(idAgrupacion == null && idActivo == null) {
-			
-			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
-		}
-		else {
-			*/
-			form.getBindRecord().set("idActivo", idActivo);
-			form.getBindRecord().set("idAgrupacion", idAgrupacion);
-			form.getBindRecord().set("idProceso", idProceso);
-			var success = function(record, operation) {
-				me.getView().unmask();
-		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
-		    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
-		    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);	
-		    	window.hide();
-			};
-	
-			me.onSaveFormularioCompleto(form, success);
-		//}
+		form.getBindRecord().set("idActivo", idActivo);
+		form.getBindRecord().set("idAgrupacion", idAgrupacion);
+		form.getBindRecord().set("idProceso", idProceso);
+		var success = function(record, operation) {
+			me.getView().unmask();
+	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
+	    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
+	    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);	
+	    	window.hide();
+		};
+
+		me.onSaveFormularioCompleto(form, success);
+
 	},
 	
 	onClickBotonCancelarTrabajo: function(btn) {		

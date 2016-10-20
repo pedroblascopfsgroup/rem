@@ -114,8 +114,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 
 		HQLBuilder hb = new HQLBuilder(" from VActivosAgrupacionTrabajo agracttbj");
 		
-   		if (dto.getAgrupacionId() != null) {
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "agracttbj.agrId", Long.valueOf(dto.getAgrupacionId()), true);
+   		if (!Checks.esNulo(dto.getAgrupacionId())) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agracttbj.agrId", Long.valueOf(dto.getAgrupacionId()));
    		}
 
 		return HibernateQueryUtils.page(this, hb, dto);

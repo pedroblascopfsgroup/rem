@@ -1,72 +1,99 @@
 package es.pfsgroup.plugin.rem.model;
 
-import es.capgemini.devon.dto.WebDto;
+import java.io.Serializable;
 
-/**
- * 
- * Dto para el listado de activos al crear una agrupación
- * @author Daniel Gutiérrez
- */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-public class DtoTrabajoListActivos extends WebDto {
+@Entity
+@Table(name = "V_BUSQUEDA_ACTIVOS_CREAR_TBJ", schema = "${entity.schema}")
+public class VBusquedaActivosCrearTrabajo implements Serializable {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
-	
+
+	@Id
+	@Column(name="ACT_ID")
 	private String idActivo;
-	private String numActivoRem;
-	private String numActivoHaya;
-	private String tipoActivo;
-	private String subtipoActivo;
-	private String cartera;
-	private String situacionComercial;
-	private String situacionPosesoria;
 	
+	@Column(name="ACT_NUM_ACTIVO")
+	private String numActivoHaya;
+	
+	@Column(name="ACT_NUM_ACTIVO_REM")
+	private String numActivoRem;
+	
+	@Column(name="CARTERA")
+	private String cartera;
+	
+	@Column(name="TIPO_ACTIVO")
+	private String tipoActivo;
+	
+	@Column(name="SUBTIPO_ACTIVO")
+	private String subtipoActivo;
+	
+	@Column(name="SITUACION_COMERCIAL")
+	private String situacionComercial;
+
 	public String getIdActivo() {
 		return idActivo;
 	}
+
 	public void setIdActivo(String idActivo) {
 		this.idActivo = idActivo;
 	}
-	public String getNumActivoRem() {
-		return numActivoRem;
-	}
-	public void setNumActivoRem(String numActivoRem) {
-		this.numActivoRem = numActivoRem;
-	}
+
 	public String getNumActivoHaya() {
 		return numActivoHaya;
 	}
+
 	public void setNumActivoHaya(String numActivoHaya) {
 		this.numActivoHaya = numActivoHaya;
 	}
-	public String getTipoActivo() {
-		return tipoActivo;
+
+	public String getNumActivoRem() {
+		return numActivoRem;
 	}
-	public void setTipoActivo(String tipoActivo) {
-		this.tipoActivo = tipoActivo;
+
+	public void setNumActivoRem(String numActivoRem) {
+		this.numActivoRem = numActivoRem;
 	}
-	public String getSubtipoActivo() {
-		return subtipoActivo;
-	}
-	public void setSubtipoActivo(String subtipoActivo) {
-		this.subtipoActivo = subtipoActivo;
-	}
+
 	public String getCartera() {
 		return cartera;
 	}
+
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
 	}
+
+	public String getTipoActivo() {
+		return tipoActivo;
+	}
+
+	public void setTipoActivo(String tipoActivo) {
+		this.tipoActivo = tipoActivo;
+	}
+
+	public String getSubtipoActivo() {
+		return subtipoActivo;
+	}
+
+	public void setSubtipoActivo(String subtipoActivo) {
+		this.subtipoActivo = subtipoActivo;
+	}
+
 	public String getSituacionComercial() {
 		return situacionComercial;
 	}
+
 	public void setSituacionComercial(String situacionComercial) {
 		this.situacionComercial = situacionComercial;
 	}
-	public String getSituacionPosesoria() {
-		return situacionPosesoria;
-	}
-	public void setSituacionPosesoria(String situacionPosesoria) {
-		this.situacionPosesoria = situacionPosesoria;
-	}
+	
+	
+	
 }

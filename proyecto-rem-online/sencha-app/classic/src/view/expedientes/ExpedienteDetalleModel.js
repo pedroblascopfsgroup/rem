@@ -12,7 +12,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     },
     
     formulas: {   
-	
 	     
 	     getSrcCartera: function(get) {
 	     	
@@ -120,7 +119,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	}
 	     	}
 	     	return false;
+	     },
+	     
+	     esAlquilerConOpcionCompra: function(get){
+	     	var me = this;
+			if(!Ext.isEmpty(me.getData().expediente)){
+				if(me.getData().expediente.get('alquilerOpcionCompra')==1){
+					return true;
+				}
+			}
+	     	return false;
 	     }
+	     
 		
 	 },
 
@@ -494,9 +504,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	
 	    	
 	    }
-	    
-	    
-	
+	    	
     }
   
 });

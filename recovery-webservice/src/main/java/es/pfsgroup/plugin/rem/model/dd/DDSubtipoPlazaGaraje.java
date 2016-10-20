@@ -21,41 +21,39 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de acción de gastos
+ * Modelo que gestiona el diccionario de subtipos de plaza de garaje
+ * 
+ * @author Ramon Llinares
+ *
  */
 @Entity
-@Table(name = "DD_ACC_ACCION_GASTOS", schema = "${entity.schema}")
+@Table(name = "DD_SPG_SUBTIPO_PLAZA_GARAJE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDAccionGastos implements Auditable, Dictionary {
+public class DDSubtipoPlazaGaraje implements Auditable, Dictionary {
 
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1159457586748063717L;
 
 	@Id
-	@Column(name = "DD_ACC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDAccionGastosGenerator")
-	@SequenceGenerator(name = "DDAccionGastosGenerator", sequenceName = "S_DD_ACC_ACCION_GASTOS_")
+	@Column(name = "DD_SPG_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDSubtipoPlazaGarajeGenerator")
+	@SequenceGenerator(name = "DDSubtipoPlazaGarajeGenerator", sequenceName = "S_DD_SPG_SUBTIPO_PLAZA_GARAJE")
 	private Long id;
 	    
-	@Column(name = "DD_ACC_CODIGO")   
+	@Column(name = "DD_SPG_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_ACC_DESCRIPCION")   
+	@Column(name = "DD_SPG_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_ACC_DESCRIPCION_LARGA")   
+	@Column(name = "DD_SPG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	
-	public static final String CODIGO_PRESCRIPCION = "04";
-	public static final String CODIGO_COLABORACION = "05";
-	public static final String CODIGO_RESPONSABLE_CLIENTE = "06";
 	    
-	
-	    
+
 	@Version   
 	private Long version;
 

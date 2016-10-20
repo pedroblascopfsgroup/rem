@@ -1458,7 +1458,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 	
-	// Método que es llamado cuando se solicita la tasaciónb del activo desde Bankia.
+	// Método que es llamado cuando se solicita la tasación del activo desde Bankia.
 	onClickSolicitarTasacionBankia: function(btn) {
 		var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
@@ -1552,7 +1552,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onClickAbrirGastoProveedorIcono: function(tableView, indiceFila, indiceColumna){
 		var me = this;
-//		
+		
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
 	    grid.setSelection(record);
@@ -1561,6 +1561,107 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    	record.setId(record.data.idGasto);
 	    	me.getView().fireEvent('abrirDetalleGasto', record);
 	    }
-	}
+	},
 
+	// Este método obtiene el valor del campo importe que se está editando y comprueba las validaciones oportunas.
+	validatePreciosVigentes: function(value) {
+		var me = this;
+		var grid = me.lookupReference('gridPreciosVigentes');
+		if(Ext.isEmpty(grid)){ return true;}
+		var selected = grid.getSelectionModel().getSelection();
+		// Obtener columna automáticamente por 'dataindex = importe'.
+		var importeActualColumn = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'importe')];
+
+		if(!Ext.isEmpty(selected)) {
+			// Almacenar la fila fila selecciona para cuando esté siendo editada.
+			grid.codTipoPrecio = selected[0].getData().codigoTipoPrecio;
+		}
+
+		// Constantes.
+		var tipoMinimoAutorizado = '04';
+		var tipoAprobadoVentaWeb = '02';
+		var tipoAprobadoRentaWeb = '03';
+		var tipoDescuentoAprobado = '07';
+		var tipoDescuentoPublicadoWeb = '13';
+
+		var codTipoPrecio = grid.codTipoPrecio;
+
+		switch(codTipoPrecio) {
+		case tipoMinimoAutorizado: // Mínimo <= descuento.
+			var importeMinimo = importeActualColumn.getEditor().value;
+			var importeDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().importe;
+			
+			if(!Ext.isEmpty(importeMinimo)) {
+				importeMinimo = parseFloat(importeMinimo);
+				if(!Ext.isEmpty(importeDescuentoAprobado)){
+					importeDescuentoAprobado = parseFloat(importeDescuentoAprobado);
+					if(importeMinimo <= importeDescuentoAprobado) {
+						return true;
+					} else {
+						return HreRem.i18n('info.precio.importe.minimo.msg.validacion');
+					}
+				} else {
+					// Todavía no se ha escrito en el campo 'descuento aprobado'.
+					return true;
+				}
+			} else {
+				// Todavía no se ha escrito en el campo 'mínimo'.
+				return true;
+			}
+			break;
+		case tipoAprobadoVentaWeb: // Aprovado venta(web) >= descuento.
+			var importeAprobadoVenta = importeActualColumn.getEditor().value;
+			var importeDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().importe;
+			
+			if(!Ext.isEmpty(importeAprobadoVenta)) {
+				importeAprobadoVenta = parseFloat(importeAprobadoVenta);
+				if(!Ext.isEmpty(importeDescuentoAprobado)){
+					importeDescuentoAprobado = parseFloat(importeDescuentoAprobado);
+					if(importeAprobadoVenta >= importeDescuentoAprobado) {
+						return true;
+					} else {
+						return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+					}
+				} else {
+					// Todavía no se ha escrito en el campo 'aprobado de venta(web)'.
+					return true;
+				}
+			} else {
+				// Todavía no se ha escrito en el campo 'descuento aprobado'.
+				return true;
+			}
+			break;
+		case tipoDescuentoAprobado: // Descuento <= aprobado venta AND Descuento >= Mínimo.
+			var importeDescuentoAprobado = importeActualColumn.getEditor().value;
+			var importeAprobadoVenta = grid.getStore().findRecord('codigoTipoPrecio', tipoAprobadoVentaWeb).getData().importe;
+			var importeMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().importe;
+			
+			if(!Ext.isEmpty(importeDescuentoAprobado)) {
+				importeDescuentoAprobado = parseFloat(importeDescuentoAprobado);
+				if(!Ext.isEmpty(importeAprobadoVenta)){
+					importeAprobadoVenta = parseFloat(importeAprobadoVenta);
+					if(!Ext.isEmpty(importeMinimo)) {
+						importeMinimo = parseFloat(importeMinimo);
+						if((importeDescuentoAprobado >= importeMinimo) && (importeDescuentoAprobado <= importeAprobadoVenta)) {
+    						return true;
+    					} else {
+    						return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
+    					}
+					} else {
+						// Todavía no se ha escrito en el campo 'mínimo autorizado'.
+						return true;
+					}
+				} else {
+					// Todavía no se ha escrito en el campo 'aprobado de venta(web)'.
+					return true;
+				}
+			} else {
+				// Todavía no se ha escrito en el campo 'descuento aprobado'.
+				return true;
+			}
+			break;
+		default:
+			return true;
+		}
+	}
 });

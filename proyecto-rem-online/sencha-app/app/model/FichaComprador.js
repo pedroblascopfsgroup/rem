@@ -168,6 +168,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 				name: 'apellidosRte'
+		},
+		{
+			name: 'numeroClienteUrsus'
 		}
 		
     ],

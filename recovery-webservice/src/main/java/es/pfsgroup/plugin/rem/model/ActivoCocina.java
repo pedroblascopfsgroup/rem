@@ -87,7 +87,7 @@ public class ActivoCocina implements Serializable, Auditable {
     private Integer horno;   
 	
 	@Column(name = "COC_SUELOS")
-	private Integer suelos;
+	private Integer suelosCocina;
 	 
 	@Column(name = "COC_AZULEJOS")
 	private Integer azulejos;
@@ -225,12 +225,12 @@ public class ActivoCocina implements Serializable, Auditable {
 		this.horno = horno;
 	}
 
-	public Integer getSuelos() {
-		return suelos;
+	public Integer getSuelosCocina() {
+		return suelosCocina;
 	}
 
-	public void setSuelos(Integer suelos) {
-		this.suelos = suelos;
+	public void setSuelosCocina(Integer suelos) {
+		this.suelosCocina = suelos;
 	}
 
 	public Integer getAzulejos() {

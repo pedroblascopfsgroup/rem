@@ -27,6 +27,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 
 
 /**
@@ -96,9 +97,11 @@ public class GastosExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_DEG_ID")
 	private DDDestinatarioGasto destinatarioGasto;
-
     
-      
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPH_ID")
+	private DDTipoProveedorHonorario tipoProveedor;
+
     
     
 	@Version   
@@ -239,6 +242,13 @@ public class GastosExpediente implements Serializable, Auditable {
 		this.destinatarioGasto = destinatarioGasto;
 	}
 
+	public DDTipoProveedorHonorario getTipoProveedor() {
+		return tipoProveedor;
+	}
+
+	public void setTipoProveedor(DDTipoProveedorHonorario tipoProveedor) {
+		this.tipoProveedor = tipoProveedor;
+	}
 
      
     

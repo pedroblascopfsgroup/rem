@@ -22,7 +22,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	ACTIVO: 1,
         TRABAJO: 2,
         TRAMITE: 3,
-        TAREA: 4
+        TAREA: 4,
+        EXPEDIENTE: 5
     },
     
     TIPOS_AGRUPACION: {

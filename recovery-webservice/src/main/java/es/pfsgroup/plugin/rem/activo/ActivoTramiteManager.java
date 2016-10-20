@@ -236,24 +236,22 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		
 		// Si no le pasamos el codigo de DocAdjunto, va a buscar el tipo de documento que corresponde
 		// por cada subtipo de trabajo
-		if (Checks.esNulo(codigoDocAdjunto)){
+		if (("A".equals(uGestion) || "T".equals(uGestion)) && Checks.esNulo(codigoDocAdjunto)){
 			codigoDocAdjunto = diccionarioTargetClassMap.getTipoDocumento(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getSubtipoTrabajo().getCodigo());
 		}
 		
 		// Si no hemos pasado codigo por param y el mapeo de documentos tampoco nos da un documento, NO realizamos validación
 		if (!Checks.esNulo(codigoDocAdjunto)){
 
-			if ("A".equals(uGestion)){
+			if (("A".equals(uGestion) || "T".equals(uGestion)) && !Checks.esNulo(codigoDocAdjunto) ){
 				return activoApi.comprobarExisteAdjuntoActivo(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getActivo().getId(), codigoDocAdjunto);
-			}else if ("T".equals(uGestion)){
+			}else if("E".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
 				return trabajoApi.comprobarExisteAdjuntoTrabajo(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getId(), codigoDocAdjunto);
-			}else if ("E".equals(uGestion)){
+			}else if("P".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
 				return expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getId(), codigoDocAdjunto);
-			}else if ("P".equals(uGestion)){
-				return proveedoresApi.comprobarExisteAdjuntoProveedores(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getActivo().getId(), codigoDocAdjunto);
-//			}else if ("G".equals(uGestion)){
-//				return gastoApi.comprobarExisteAdjuntoGasto(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getId(), codigoDocAdjunto);
-			}else{
+//			}else if("G".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
+//				return proveedoresApi.comprobarExisteAdjuntoProveedores(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getActivo().getId(), codigoDocAdjunto);
+			} else {
 				return false;
 			}
 			
@@ -274,7 +272,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			
 			// Si no le pasamos el codigo de DocAdjunto, va a buscar el tipo de documento que corresponde
 			// por cada subtipo de trabajo
-			if (Checks.esNulo(codigoDocAdjunto)){
+			if (("A".equals(uGestion) || "T".equals(uGestion)) && Checks.esNulo(codigoDocAdjunto)){
 				codigoDocAdjunto = diccionarioTargetClassMap.getTipoDocumento(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getSubtipoTrabajo().getCodigo());
 			}
 			
@@ -285,57 +283,60 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			DDTipoDocumentoProveedor tipoFicheroAdjuntoProveedor = null;
 			DDTipoDocumentoGasto tipoFicheroAdjuntoGasto = null;
 			
-			if (uGestion.equals("A") || uGestion.equals("T")){
+			if ("A".equals(uGestion) || "T".equals(uGestion)){
 				tipoFicheroAdjunto = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
-			}else if(uGestion.equals("E")){
+			}else if("E".equals(uGestion)){
 				tipoFicheroAdjuntoEC = genericDao.get(DDSubtipoDocumentoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
-			}else if(uGestion.equals("P")){
+			}else if("P".equals(uGestion)){
 				tipoFicheroAdjuntoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
-			}else if(uGestion.equals("G")){
+			}else if("G".equals(uGestion)){
 				tipoFicheroAdjuntoGasto = genericDao.get(DDTipoDocumentoGasto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
 			}
 		
-			if (!Checks.esNulo(tipoFicheroAdjunto)){
+			if (!Checks.esNulo(tipoFicheroAdjunto) 
+					|| !Checks.esNulo(tipoFicheroAdjuntoEC)
+					|| !Checks.esNulo(tipoFicheroAdjuntoProveedor)
+					|| !Checks.esNulo(tipoFicheroAdjuntoGasto) ){
  
 				mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.debeAportar").concat(" ");
 						
 				//Dependiendo del entorno de comprobaciÃ³n de existencia, se retorna un mensaje
-				if (uGestion.equals("A")){
+				if ("A".equals(uGestion)){
 					mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("activo.adjuntos.validacion.advertencia.debeAportarSobre").concat(" "));
-				}else if(uGestion.equals("T")){
+				}else if("T".equals(uGestion)){
 					mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.debeAportarSobre").concat(" "));
-				}else if(uGestion.equals("E")){
+				}else if("E".equals(uGestion)){
 					mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("ecomercial.adjuntos.validacion.advertencia.debeAportarSobre").concat(" "));
-				}else if(uGestion.equals("P")){
+				}else if("P".equals(uGestion)){
 					mensajeValidacion = messageServices.getMessage("proveedores.adjuntos.validacion.advertencia.debeAportar".concat(" "));
-				}else if(uGestion.equals("G")){
+				}else if("G".equals(uGestion)){
 					mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("gasto.adjuntos.validacion.advertencia.debeAportarSobre").concat(" "));
 				}
 				
 				//Segun unidad de gestion, Incluye en el mensaje, la descripciÃ³n de documento adjunto.
-				if ((uGestion.equals("A") || uGestion.equals("T")) && Checks.esNulo(tipoFicheroAdjunto) ){
+				if (("A".equals(uGestion) || "T".equals(uGestion)) && !Checks.esNulo(tipoFicheroAdjunto) ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjunto.getDescripcion());
-				}else if(uGestion.equals("E") && Checks.esNulo(tipoFicheroAdjuntoEC) ){
+				}else if("E".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoEC) ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoEC.getDescripcion());
-				}else if(uGestion.equals("P") && Checks.esNulo(tipoFicheroAdjuntoProveedor) ){
+				}else if("P".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoProveedor) ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoProveedor.getDescripcion());
-				}else if(uGestion.equals("G") && Checks.esNulo(tipoFicheroAdjuntoGasto) ){
+				}else if("G".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoGasto) ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoGasto.getDescripcion());
 				}
 								
 				//Si no encuentra el doc. adjunto de la unidad de gestion correspondiente, retorna un mensaje fijo de advertencia
-				if ((uGestion.equals("A") || uGestion.equals("T")) && Checks.esNulo(tipoFicheroAdjunto) ){
+				if (("A".equals(uGestion) || "T".equals(uGestion)) && Checks.esNulo(tipoFicheroAdjunto) ){
 					mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.codigoDocInvalido").concat(" ").concat(codigoDocAdjunto);
-				}else if(uGestion.equals("E") && Checks.esNulo(tipoFicheroAdjuntoEC) ){
+				}else if("E".equals(uGestion) && Checks.esNulo(tipoFicheroAdjuntoEC) ){
 					mensajeValidacion = messageServices.getMessage("ecomercial.adjuntos.validacion.advertencia.codigoDocInvalido").concat(" ").concat(codigoDocAdjunto);
-				}else if(uGestion.equals("P") && Checks.esNulo(tipoFicheroAdjuntoProveedor) ){
+				}else if("P".equals(uGestion) && Checks.esNulo(tipoFicheroAdjuntoProveedor) ){
 					mensajeValidacion = messageServices.getMessage("proveedores.adjuntos.validacion.advertencia.codigoDocInvalido").concat(" ").concat(codigoDocAdjunto);
-				}else if(uGestion.equals("G") && Checks.esNulo(tipoFicheroAdjuntoGasto) ){
+				}else if("G".equals(uGestion) && Checks.esNulo(tipoFicheroAdjuntoGasto) ){
 					mensajeValidacion = messageServices.getMessage("gasto.adjuntos.validacion.advertencia.codigoDocInvalido").concat(" ").concat(codigoDocAdjunto);
 				}
 		
 				//Si la unidad de gestiÃ³n no es ninguna de las definidas, retorna un mensaje fijo de advertencia.
-				if (!uGestion.isEmpty() && !uGestion.equals("A") && !uGestion.equals("T") && !uGestion.equals("E") && !uGestion.equals("P")){
+				if (!uGestion.isEmpty() && !"A".equals(uGestion) && !"P".equals(uGestion) && !"E".equals(uGestion) && !"G".equals(uGestion)){
 					mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.unidadGestionInvalida").concat(" ").concat(uGestion);
 				}
 				

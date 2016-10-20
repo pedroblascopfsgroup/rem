@@ -51,8 +51,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						var txtEcTrabajo = HreRem.i18n('fieldlabel.trabajo');
 						var txtEcExpediente = HreRem.i18n('fieldlabel.expediente');
 						var esInvisibleEcActivo = false;
-						var esInvisibleEcTrabajo = idExpediente == null ? false : true;
-						var esInvisibleEcExpediente = idExpediente == null ? true : false; //Los enlaces del expediente y el trabajo se deben mostrar alternativamente
+						var esInvisibleEcTrabajo = false;
+						var esInvisibleEcExpediente = true; 
 						
 						//Bucle que busca los enlaces en el array me.campos,
 						// para mantener funcionalidad "TareaGenerica", los enlaces deben retirarse de me.campos
@@ -410,6 +410,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 							    	me.fireEvent("refreshComponentOnActivate", "agendamain");
 							    	me.fireEvent("refreshComponentOnActivate", "agendaalertasmain");
 							    	me.fireEvent("refreshComponentOnActivate", "agendaavisosmain");
+									
+									// TODO: FALTA REFRESCAR EL EXPEDIENTE
+									
 							    	if(!Ext.isEmpty(me.idTrabajo)) {
 							    		me.fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['TRABAJO'], me.idTrabajo);
 							    	}
@@ -895,6 +898,26 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 							}else{
 								me.deshabilitarCampo(me.down('[name=comboDatosIguales]'));
 								me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+							}
+						})	 
+					},
+					
+					T014_PosicionamientoFirmaValidacion: function(){
+						var me = this;
+
+						me.deshabilitarCampo(me.down('[name=fechaInicio]'));
+						me.deshabilitarCampo(me.down('[name=fechaFin]'));
+						me.deshabilitarCampo(me.down('[name=numContrato]'));
+							
+						me.down('[name=comboFirma]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.habilitarCampo(me.down('[name=fechaInicio]'));
+								me.habilitarCampo(me.down('[name=fechaFin]'));
+								me.habilitarCampo(me.down('[name=numContrato]'));
+							}else{
+								me.deshabilitarCampo(me.down('[name=fechaInicio]'));
+								me.deshabilitarCampo(me.down('[name=fechaFin]'));
+								me.deshabilitarCampo(me.down('[name=numContrato]'));
 							}
 						})	 
 					},

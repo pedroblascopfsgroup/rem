@@ -170,7 +170,7 @@ public class AgendaAdapter {
 //		TareaActivo tareaActivo = proxyFactory.proxy(TareaActivoApi.class).getByIdTareaExterna(tar.getTareaExterna().getId());
 		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
 		
-		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId().toString());
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
 		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
 		
 		if(!Checks.esNulo(expedienteComercial)){

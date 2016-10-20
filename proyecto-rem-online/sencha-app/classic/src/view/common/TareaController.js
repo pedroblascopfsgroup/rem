@@ -195,6 +195,14 @@ Ext.define('HreRem.view.common.TareaController', {
 				  	  //Se visibiliza boton-enlace solo cuando es cualquier tramite menos el 1o (admision)
 				  	  //Esta regla prima sobre otras
 					  	me.getView().down('[handler=enlaceAbrirTrabajo]').hide();
+					  	me.getView().down('[handler=enlaceAbrirExpediente]').hide();
+				  }
+				  
+				  if(codigoTramite == "T013" || codigoTramite == "T014"){
+				  	  //Se visibiliza boton-enlace EXPEDIENTE
+				  	  //Se oculta el trabajo
+				  	  	me.getView().down('[handler=enlaceAbrirTrabajo]').hide();
+					  	me.getView().down('[handler=enlaceAbrirExpediente]').show();
 				  }
 				  
 			  }
@@ -227,7 +235,7 @@ Ext.define('HreRem.view.common.TareaController', {
 		},
 		
 		enlaceAbrirTrabajo: function(button) {
-			//debugger;
+
 			var me = this,
 			window = button.up('window'),
 			idTrabajo = window.idTrabajo;
@@ -257,7 +265,7 @@ Ext.define('HreRem.view.common.TareaController', {
 		},
 	
 	enlaceAbrirExpediente: function(button) {
-		//debugger;
+
 		var me = this,
 		window = button.up('window'),
 		idExpediente = window.idExpediente;
@@ -272,16 +280,17 @@ Ext.define('HreRem.view.common.TareaController', {
 			  url:url,
 			  params:  {idTarea : me.getView().idTarea},
 			  success: function(response,opts){
-				  idTrabajo = Ext.JSON.decode(response.responseText).idExpediente;					  
-				  titulo = "Expediente " + record.get("idExpediente");
+				  idExpediente = Ext.JSON.decode(response.responseText).idExpediente;					  
+				  titulo = "Expediente " + idExpediente;
 				  me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);
 			  },
 			  callback: function(options, success, response){
 				  window.unmask();
 			  }
 		    });
+		    
 		} else {
-			titulo = "Expediente " + record.get("idExpediente");
+			titulo = "Expediente " + idExpediente;
 			me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);			
 		}
 			

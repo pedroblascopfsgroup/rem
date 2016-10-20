@@ -44,7 +44,7 @@ public class App {
 				if (args.length == 4) {		
 					Integer numcliente = uvemManager.ejecutarNumCliente(args[1], args[2], args[3]);
 					DatosClienteDto datosClienteIns = uvemManager.ejecutarDatosCliente(numcliente, args[3]);
-					System.out.println("Resultado llamada resultadoDatosCliente: " + datosClienteIns.getNombre()+ "\n");
+					System.out.println("Resultado llamada resultadoDatosCliente: " + datosClienteIns.getNombreYApellidosTitularDeOferta()+ "\n");
 					
 				} else {
 					System.out.println("Número de parametros incorrectos: ejem: sh run.sh datosCliente 20036188Z 1 00000/05021");
@@ -123,7 +123,7 @@ public class App {
 			} if (args[0].equals("consultaDatosPrestamo")) {
 				System.out.println("Ejecutando servicio consultaDatosPrestamo");
 				if (args.length == 3) {
-					Long result = uvemManager.consultaDatosPrestamo(args[1], args[2]);
+					Long result = uvemManager.consultaDatosPrestamo(args[1], new Integer(args[2]));
 					System.out.println("Resultado llamada Importex100: " + result);
 				} else {
 					System.out.println("Número de parametros incorrectos: ejem: sh run.sh consultaDatosPrestamo 000000000005 <tipoRiesgo>");

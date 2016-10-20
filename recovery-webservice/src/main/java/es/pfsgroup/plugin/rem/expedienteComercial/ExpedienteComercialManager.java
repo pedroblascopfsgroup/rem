@@ -342,11 +342,16 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(dto.getNumVisita())){
 			Filter filtroVisita = genericDao.createFilter(FilterType.EQUALS, "numVisitaRem",dto.getNumVisita());
 			Visita visita = genericDao.get(Visita.class, filtroVisita);
-			oferta.setVisita(visita);
+
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());	
 			List<GastosExpediente> lista = (List<GastosExpediente>) genericDao.getList(GastosExpediente.class, filtro);
 			
 			if(!Checks.esNulo(visita)){
+				oferta.setVisita(visita);
+				
+				DDEstadosVisitaOferta estadoVisitaOferta= (DDEstadosVisitaOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_REALIZADA);
+				oferta.setEstadoVisitaOferta(estadoVisitaOferta);
+				
 				if(!Checks.esNulo(visita.getApiCustodio()) && Checks.esNulo(oferta.getCustodio())){ //si la visita tiene custodio y la oferta no, lo copiamos
 					oferta.setCustodio(visita.getApiCustodio());
 					GastosExpediente gastoNuevo= new GastosExpediente();

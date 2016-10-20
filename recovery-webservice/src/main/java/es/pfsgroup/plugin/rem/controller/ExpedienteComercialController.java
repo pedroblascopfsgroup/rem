@@ -790,7 +790,7 @@ public class ExpedienteComercialController {
 			
 		} catch (Exception e) {
 			model.put("success", false);
-			model.put("msg", e.getMessage());
+			model.put("msg", "Servicio no disponible");
 		}	
 		
 		return createModelAndViewJson(model);

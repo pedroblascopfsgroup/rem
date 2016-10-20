@@ -126,6 +126,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			                catch (e){ };
 			                if (!Ext.isEmpty(data.msg)) {
 			                	me.fireEvent("errorToast", data.msg);
+			                	// Si recibimos un error controlado, continuamos editando.
+			                	Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+									function (field, index){field.fireEvent('edit');}
+								);
+			                	btn.show();
+								btn.up('tabbar').down('button[itemId=botoncancelar]').show();
+								btn.up('tabbar').down('button[itemId=botoneditar]').hide();
+								me.getViewModel().set("editing", true);
+			                	
 			                } else {
 			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			                }
@@ -941,6 +950,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		comboComitePropuesto = me.lookupReference('comboComitePropuesto');
 		
 		var url =  $AC.getRemoteUrl('expedientecomercial/consultarComiteSancionador');
+		
+			me.getView().mask(HreRem.i18n("msg.mask.espere"));
 			Ext.Ajax.request({
 			     url: url,
 			     params:  {idExpediente : me.getViewModel().get("expediente.id")},
@@ -968,6 +979,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	                } else {
 	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                }
+			     },
+			     
+			     callback: function() {
+			     	me.getView().unmask();
 			     }
 	    		     
 	    	});		

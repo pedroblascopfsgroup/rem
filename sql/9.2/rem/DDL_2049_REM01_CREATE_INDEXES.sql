@@ -129,35 +129,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe un índice sobre las columnas (DD_TGE_CODIGO, DD_TGE_ID) ');  
 	END IF; 
 	
-	
-	
-	
-	
-	
-	DBMS_OUTPUT.PUT_LINE('********Creación índices en ' ||V_TEXT_TABLA5|| '********'); 
-	V_SQL := 'SELECT COUNT(1)
-	  FROM (
-	       SELECT index_name, listagg(column_name,'','') within group (order by column_position) columnas
-	       FROM ALL_IND_COLUMNS
-	       WHERE table_name = ''' || V_TEXT_TABLA5 || ''' and index_owner=''' || V_ESQUEMA || '''
-	       GROUP BY index_name
-	       ) sqli
-	--en el where tenemos cuidado de ponerlos alfabericamente
-	WHERE sqli.columnas = ''ACT_ID, BIE_LOC_ID''';
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
-	IF V_NUM_TABLAS = 0 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] No existe el índice. Se creará '||V_ESQUEMA||'.ACT_BIELOC_IDX.');  
-		
-		SELECT COUNT(1) INTO V_TEXT1 FROM ALL_INDEXES WHERE TABLE_NAME = V_TEXT_TABLA5 AND OWNER=V_ESQUEMA AND INDEX_NAME='ACT_BIELOC_IDX';
-		IF V_TEXT1 = 0 THEN
-			V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.ACT_BIELOC_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA5||'(ACT_ID, BIE_LOC_ID) TABLESPACE '||V_TABLESPACE_IDX;		
-			EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.ACT_BIELOC_IDX... Indice creado.');
-		END IF;
-	ELSE
-		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe un índice sobre las columnas (ACT_ID, BIE_LOC_ID) ');  
-	END IF; 
-	
+
 	
 	
 	DBMS_OUTPUT.PUT_LINE('********Creación índices realizada ********'); 

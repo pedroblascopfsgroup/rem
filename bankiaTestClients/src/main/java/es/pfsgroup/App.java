@@ -1,7 +1,5 @@
 package es.pfsgroup;
 
-import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
-import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.pfsgroup.plugin.rem.api.impl.UvemManager;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;

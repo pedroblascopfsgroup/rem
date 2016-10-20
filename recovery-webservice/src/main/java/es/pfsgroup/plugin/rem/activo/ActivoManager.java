@@ -2046,7 +2046,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(activo)) {
 					// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
 					NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
-					beanUtilNotNull.copyProperty(valoracionBien, "bien", activo.getBien());
+					valoracionBien.setBien(activo.getBien());
+					//beanUtilNotNull.copyProperty(valoracionBien, "bien", activo.getBien());
 					valoracionBien = genericDao.save(NMBValoracionesBien.class, valoracionBien);
 
 					if (!Checks.esNulo(valoracionBien)) {

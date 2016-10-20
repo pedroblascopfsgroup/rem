@@ -813,10 +813,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		List<Activo> listaActivosExpediente= new ArrayList<Activo>();
 		
 		//Se crea un mapa para cada dato que se quiere obtener
-		Map<Activo,Float> activoPorcentajeParti= new HashMap<Activo, Float>();	
-		Map<Activo,Double> activoPrecioAprobado= new HashMap<Activo, Double>();
-		Map<Activo,Double> activoPrecioMinimo= new HashMap<Activo, Double>();
-		Map<Activo,Double> activoImporteParticipacion= new HashMap<Activo, Double>();
+		Map<Long,Float> activoPorcentajeParti= new HashMap<Long, Float>();	
+		Map<Long,Double> activoPrecioAprobado= new HashMap<Long, Double>();
+		Map<Long,Double> activoPrecioMinimo= new HashMap<Long, Double>();
+		Map<Long,Double> activoImporteParticipacion= new HashMap<Long, Double>();
 		
 		//Recorre los activos de la oferta y los añade a la lista de activos a mostrar
 		for(ActivoOferta activoOferta: activosExpediente){
@@ -826,8 +826,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//Recorre la relacion activo-trabajo del expediente, por cada una guarda en un mapa el porcentaje de participacion del activo y el importe calculado a partir de dicho porcentaje
 		if(!Checks.esNulo(expediente.getTrabajo())){
 			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
-				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo(), activoTrabajo.getParticipacion());
-				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo(), 
+				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(), activoTrabajo.getParticipacion());
+				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(), 
 												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
 			}
 		}
@@ -836,10 +836,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		for(Activo activo: listaActivosExpediente){
 			for(ActivoValoraciones valoracion: activo.getValoracion()){
 				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())){
-					activoPrecioAprobado.put(activo, valoracion.getImporte());
+					activoPrecioAprobado.put(activo.getId(), valoracion.getImporte());
 				}
 				if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(valoracion.getTipoPrecio().getCodigo())){
-					activoPrecioMinimo.put(activo, valoracion.getImporte());
+					activoPrecioMinimo.put(activo.getId(), valoracion.getImporte());
 				}
 				
 			}
@@ -857,8 +857,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	 * @param activo
 	 * @return
 	 */
-	private DtoActivosExpediente activosToDto(Activo activo, Map<Activo,Float> activoPorcentajeParti, Map<Activo,Double> activoPrecioAprobado, 
-												Map<Activo,Double> activoPrecioMinimo, Map<Activo,Double> activoImporteParticipacion) {
+	private DtoActivosExpediente activosToDto(Activo activo, Map<Long,Float> activoPorcentajeParti, Map<Long,Double> activoPrecioAprobado, 
+												Map<Long,Double> activoPrecioMinimo, Map<Long,Double> activoImporteParticipacion) {
 		
 		DtoActivosExpediente dtoActivo= new DtoActivosExpediente();
 		
@@ -869,16 +869,16 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			//Falta precio minimo y precio aprobado venta
 			
 			if(!Checks.estaVacio(activoPorcentajeParti)){
-				dtoActivo.setPorcentajeParticipacion(activoPorcentajeParti.get(activo));
+				dtoActivo.setPorcentajeParticipacion(activoPorcentajeParti.get(activo.getId()));
 			}
 			if(!Checks.estaVacio(activoPrecioAprobado)){
-				dtoActivo.setPrecioAprobadoVenta(activoPrecioAprobado.get(activo));
+				dtoActivo.setPrecioAprobadoVenta(activoPrecioAprobado.get(activo.getId()));
 			}
 			if(!Checks.estaVacio(activoPrecioMinimo)){
-				dtoActivo.setPrecioMinimo(activoPrecioMinimo.get(activo));
+				dtoActivo.setPrecioMinimo(activoPrecioMinimo.get(activo.getId()));
 			}
 			if(!Checks.estaVacio(activoImporteParticipacion)){
-				dtoActivo.setImporteParticipacion((activoImporteParticipacion.get(activo)));
+				dtoActivo.setImporteParticipacion((activoImporteParticipacion.get(activo.getId())));
 			}
 			
 			
@@ -2569,6 +2569,30 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		} 
 
 		return true;
+		
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id){
+		
+		ExpedienteComercial expedienteComercial = findOne(id);
+		try{
+		//Recorre la relacion activo-trabajo del expediente, modifica la participacion del que coincida con el activo que estamos buscando
+				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
+					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
+						
+						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
+							activoTrabajo.setParticipacion(dto.getPorcentajeParticipacion());
+							genericDao.update(ActivoTrabajo.class, activoTrabajo);
+							return true;
+						}
+					}
+				}
+		}catch(Exception e) {
+			return false;
+		}
+		
+		return false;
 		
 	}
 

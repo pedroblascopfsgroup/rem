@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -944,6 +945,22 @@ public class ExpedienteComercialController {
 			e.printStackTrace();
 			model.put("success", false);		
 		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateListadoActivos(DtoActivosExpediente dto, @RequestParam Long idEntidad, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.updateListadoActivos(dto, idEntidad));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
 		
 		return createModelAndViewJson(model);
 		

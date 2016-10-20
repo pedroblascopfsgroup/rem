@@ -141,7 +141,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 			
 			if(secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
-				menuItemsPerm.add(item);
+				menuItemsPerm.add(itemObject);
 			}
 		}
 	

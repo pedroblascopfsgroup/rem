@@ -30,6 +30,7 @@ import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ALGORITMO_FIRMA;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -85,10 +86,10 @@ public class RestSecurityFilter implements Filter {
 			String signature = ((HttpServletRequest) request).getHeader("signature");
 			String id = datajson.getId();
 			peticion.setToken(id);
-			String ipClient = restApi.getClientIpAddr(((HttpServletRequest) request));
+			String ipClient = restApi.getClientIpAddr(request);
 
-			((HttpServletRequest) request).getHeader("X-Forwarded-For");
-
+			ALGORITMO_FIRMA algoritmoFirma = restApi.obtenerAlgoritmoFirma(request);
+			
 			Broker broker = restApi.getBrokerByIp(ipClient);
 			if (broker == null) {
 				broker = restApi.getBrokerDefault("");
@@ -99,7 +100,7 @@ public class RestSecurityFilter implements Filter {
 
 			if (broker != null) {
 
-				if (!restApi.validateSignature(broker, signature, restRequest.getBody())) {
+				if (!restApi.validateSignature(broker, signature, restRequest.getBody(),algoritmoFirma)) {
 					logger.error("REST: La firma no es correcta");
 					peticion.setResult(RestApi.CODE_ERROR);
 					peticion.setErrorDesc(RestApi.REST_MSG_INVALID_SIGNATURE);

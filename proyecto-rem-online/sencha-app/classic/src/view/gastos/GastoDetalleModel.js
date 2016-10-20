@@ -91,7 +91,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 	     },
 	     
-	     calcularBaseImponible: function(get) {
+	     sumatorioConceptosgasto: function(get) {
 	     	
 	     	var importePrincipalSujeto = get('detalleeconomico.importePrincipalSujeto');
 			var importePricipalNoSujeto = get('detalleeconomico.importePrincipalNoSujeto');
@@ -113,21 +113,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     calcularImporteTotalGasto: function(get) {
 	     	
 	     	var irpfCuota = get('detalleeconomico.irpfCuota');
-	     	return get('calcularBaseImponible') - irpfCuota;
+	     	var sumatorioConceptosGasto = get('sumatorioConceptosgasto');
+	     	return sumatorioConceptosGasto - irpfCuota; 
 	     	
 	     },
 	     
 	     calcularImpuestoIndirecto: function(get) {
 	     	
 	     	var tipo =  get('detalleeconomico.impuestoIndirectoTipoImpositivo');	     	
-	     	return tipo *  get('calcularBaseImponible') / 100;
+	     	return tipo *  get('detalleeconomico.importePrincipalSujeto') / 100;
 	     	
 	     },
 	     
 	     calcularImpuestoDirecto: function(get) {
 	     	
 	     	var tipo =  get('detalleeconomico.irpfTipoImpositivo');	     	
-	     	return tipo * get('calcularBaseImponible') / 100;
+	     	return tipo * get('detalleeconomico.importePrincipalSujeto') / 100;
 	     	
 	     }
 	     

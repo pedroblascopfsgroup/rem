@@ -209,12 +209,13 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													
 													]
 											},
-											
-												
+											{
+												xtype: 'tbspacer',
+												colspan: 2
+											},											
 											{   
 												xtype:'fieldset',
 												border: false,
-				        						margin: '10 10 10 0',
 				        						defaultType: 'numberfieldbase',
 				        						defaults: {
 				        							style: 'text-align: right',
@@ -226,7 +227,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													[
 														
 														{
-															margin: '10 0 10 0',
 															cls: 'txt-importe-total',
 															readOnly: true,
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
@@ -238,7 +238,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														    }
 														},
 														{
-															margin: '10 0 10 0',
 															cls: 'txt-importe-total',
 															hidden: true,
 															readOnly: true,
@@ -246,12 +245,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														    bind: '{detalleeconomico.importeTotal}'
 														}
 													]
-											}
-											
-										
-										
-										
-											
+											}											
 										]
 					           },
            
@@ -282,18 +276,27 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 							            			value: '{detalleeconomico.repercutibleInquilino}'
 							            		}
 									        },
-									        { 
-												xtype: 'numberfieldbase',
-												symbol: HreRem.i18n("symbol.euro"),
-												margin: '10 0 10 0',
-												cls: 'txt-importe-total',
-												style: 'text-align: right',
-											    fieldStyle:'text-align:right;',
-											    labelStyle: 'text-align:left;',
-												fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.pagado'),
-											    bind: '{detalleeconomico.importePagado}'
-											},
+									        {   
+												xtype:'fieldset',
+												border: false,
+				        						margin: '0 10 10 0',
+												items: [
+									        
+													        { 
+																xtype: 'numberfieldbase',
+																symbol: HreRem.i18n("symbol.euro"),
+																margin: '10 0 10 0',
+																cls: 'txt-importe-total',
+																style: 'text-align: right',
+															    fieldStyle:'text-align:right;',
+															    labelStyle: 'text-align:left;',
+																fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.pagado'),
+															    bind: '{detalleeconomico.importePagado}'
+															}
+												]
+									        },
 											{ 
+												
 												xtype: 'comboboxfieldbase',
 											    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.responsable.pago.fuera.plazo'),
 											    reference: 'destinatariosPago',
@@ -304,34 +307,47 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												allowBlank: true,
 												colspan: 2
 											},
-											{
-									        	xtype:'datefieldbase',
-												formatter: 'date("d/m/Y")',
-												reference: 'fechaPago',
-										       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.pago'),
-										       	bind: '{detalleeconomico.fechaPago}',
-										       	listeners: {
-										       		change: 'onHaCambiadoFechaPago'
-										       	},
-										       	maxValue: null
-										    },
-										    {
-										    	xtype: 'box'
+											{   
+												xtype:'fieldset',
+												border: false,
+				        						margin: '0 10 10 0',
+												items: [
+															{
+													        	xtype:'datefieldbase',
+																formatter: 'date("d/m/Y")',
+																reference: 'fechaPago',
+														       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.pago'),
+														       	bind: '{detalleeconomico.fechaPago}',
+														       	listeners: {
+														       		change: 'onHaCambiadoFechaPago'
+														       	},
+														       	maxValue: null
+														    }
+												]
 											},
 											{
-												xtype: 'box'
+												xtype: 'tbspacer',
+												colspan: 2
 											},
-											{ 
-												xtype: 'comboboxfieldbase',
-											    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.responsable.pagado.por'),
-												bind: {
-													store: '{comboPagadoPor}',
-												    value: '{detalleeconomico.tipoPagadorCodigo}'
-												}
+											{   
+												xtype:'fieldset',
+												border: false,
+				        						margin: '0 10 10 0',
+												items: [
+															{ 
+																xtype: 'comboboxfieldbase',
+															    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.responsable.pagado.por'),
+																bind: {
+																	store: '{comboPagadoPor}',
+																    value: '{detalleeconomico.tipoPagadorCodigo}'
+																}
+															}
+												]
 											},
 											{		                
 											    xtype: 'checkboxfieldbase',
 											    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.reembolsar.pago'),
+											    labelWidth: 200,
 											    bind: {
 										        	value: '{detalleeconomico.reembolsoTercero}'
 							            		},

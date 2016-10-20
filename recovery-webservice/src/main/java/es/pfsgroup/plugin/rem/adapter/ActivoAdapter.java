@@ -121,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -2643,7 +2644,11 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1? true : false);
 			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());
+			if(!Checks.esNulo(tramite.getTrabajo()))
+					if(!DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
+							beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre",  true);
 			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -3278,14 +3283,14 @@ public class ActivoAdapter {
 			
 			Activo activo= activoApi.get(dto.getIdActivo());
 			
-			if(!Checks.esNulo(activo.getAgrupaciones()) && activo.getAgrupaciones().size()!=0){
+			/*if(!Checks.esNulo(activo.getAgrupaciones()) && activo.getAgrupaciones().size()!=0){
 				for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 					ActivoAgrupacion agrupacion = agrupaciones.getAgrupacion();
 					if(agrupacion.getActivoPrincipal().getId().equals(activo.getId())){
 						oferta.setAgrupacion(agrupacion);
 					}
 				}
-			}
+			}*/
 			
 			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 			for (ActivoOferta acof: activo.getOfertas()) {

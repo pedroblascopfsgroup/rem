@@ -367,6 +367,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		 model: 'HreRem.model.Fotos',
 		     proxy: {
 		        type: 'uxproxy',
+		        //remoteUrl: 'activo/getFotosById',
 		        api: {
 		            read: 'activo/getFotosById',
 		            create: 'activo/getFotosById',
@@ -375,6 +376,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        },
 		        extraParams: {id: '{activo.id}', tipoFoto: '01'}
 		     }, autoLoad: false
+		     /*   remoteUrl: 'activo/getFotosById',
+		        extraParams: {id: '{activo.id}'}
+	    	 }*/
     		},
     		
     		storeFotosTecnicas: {    			
@@ -758,8 +762,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getEstadoPublicacionByActivo',
     				extraParams: {id: '{activo.id}'}
-    			},
-				autoload: true
+    			}
     		},
     		
     		historicoInformeComercial:{
@@ -871,6 +874,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getPropuestaActivosVinculadosByActivo',
 				extraParams: {idActivo: '{activo.id}'}
 			}
+		},
+		
+		storeProveedores: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Proveedor',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getProveedorByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
+		storeGastosProveedor: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Gasto',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getGastoByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			remoteSort: false,
+		    remoteFilter: false,	    	
+		    autoLoad: false
 		}
      }    
 });

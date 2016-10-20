@@ -28,6 +28,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
@@ -102,6 +103,10 @@ public class Reserva implements Serializable, Auditable {
     
     @Column(name="RES_IMPORTE_DEVUELTO")
     private Double importeDevuelto;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EDE_ID")
+	private DDEstadoDevolucion estadoDevolucion;
     
     
     @Version   
@@ -247,8 +252,16 @@ public class Reserva implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public DDEstadoDevolucion getEstadoDevolucion() {
+		return estadoDevolucion;
+	}
+
+	public void setEstadoDevolucion(DDEstadoDevolucion estadoDevolucion) {
+		this.estadoDevolucion = estadoDevolucion;
+	}
     
-    
+	
     
     
    

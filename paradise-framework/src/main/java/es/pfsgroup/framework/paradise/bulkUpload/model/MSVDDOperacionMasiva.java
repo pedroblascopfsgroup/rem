@@ -34,6 +34,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_NEW_BUILDING="AGAN";
 	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_ASISTIDA="AGAA";
 	public static final String CODE_FILE_BULKUPLOAD_LISTAACTIVOS="LACT";
+	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA="APBO";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR="APUB";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO="AOAC";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO="ADAC";

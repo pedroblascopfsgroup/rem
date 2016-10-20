@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -89,7 +90,10 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
@@ -1967,5 +1971,94 @@ public class ActivoController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getProveedorByActivo(Long idActivo, ModelMap model){
+		
+		try {
+			
+			List<VBusquedaProveedoresActivo> lista  =  activoApi.getProveedorByActivo(idActivo);
+			
+			model.put("data", lista);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+			return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastoByActivo(Long idActivo,Long idProveedor, ModelMap model){
+		
+		try {
+			
+			List<VBusquedaGastoActivo> lista  =  activoApi.getGastoByActivo(idActivo, idProveedor);
+			
+			model.put("data", lista);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+			return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getReglasPublicacionAutomatica(DtoReglasPublicacionAutomatica dto, ModelMap model){
+
+		try {
+			List<DtoReglasPublicacionAutomatica> dtoReglasPublicacionAutomatica = activoApi.getReglasPublicacionAutomatica(dto);
+
+			model.put("data", dtoReglasPublicacionAutomatica);
+			if(!Checks.estaVacio(dtoReglasPublicacionAutomatica)) {
+				model.put("totalCount", dtoReglasPublicacionAutomatica.get(0).getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto, ModelMap model){
+		
+		try {
+			boolean success = activoApi.createReglaPublicacionAutomatica(dto);
+			model.put("success", success);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto, ModelMap model){
+		try {
+			boolean success = activoApi.deleteReglaPublicacionAutomatica(dto);
+			model.put("success", success);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		return createModelAndViewJson(model);
+	}
+	
 	
 }

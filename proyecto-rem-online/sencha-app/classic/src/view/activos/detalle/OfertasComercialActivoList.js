@@ -50,6 +50,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        {
 		            dataIndex: 'comite',
 		            text: HreRem.i18n('header.oferta.comite'),
+		            flex: 1,
+		            hidden: true
+		        },
+		        {
+		        	dataIndex: 'canalPrescripcionDescripcion',
+		        	text: HreRem.i18n('header.canal.prescripcion'),
 		            flex: 1
 		        },
 		        {
@@ -63,7 +69,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'estadoOferta',
+		            dataIndex: 'codigoEstadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 					editor: {
 						xtype: 'combobox',								        		
@@ -82,6 +88,22 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 						displayField: 'descripcion',
     					valueField: 'codigo'
 					},
+					renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {								        		
+			        		var me = this,
+			        		comboEditor = me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null,
+			        		store, record;
+			        		
+			        		if(!Ext.isEmpty(comboEditor)) {
+				        		store = comboEditor.getStore(),							        		
+				        		record = store.findRecord("codigo", value);
+			        		
+				        		if(!Ext.isEmpty(record)) {								        			
+				        			return record.get("descripcion");								        		
+				        		} else {
+				        			comboEditor.setValue(value);								        			
+				        		}
+			        		}
+			        },
 		            flex: 1
 		        },
 		        /*{
@@ -147,10 +169,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.callParent(); 
         
     },
-   	saveSuccessFn: function () {
-		var me = this;
-		return true;
-	},
 	
 	onAddClick: function (btn) {
 		var me = this;
@@ -181,8 +199,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	editFuncion: function(editor, context){
 		var me= this;
 		
-			var estado = context.record.get("estadoOferta");	
-			if(estado=='01'){
+			var estado = context.record.get("codigoEstadoOferta");	
+			if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
 				
 				Ext.Msg.show({
 				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
@@ -190,36 +208,25 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				   buttons: Ext.MessageBox.YESNO,
 				   fn: function(buttonId) {
 				        if (buttonId == 'yes') {
-				            me.mask(HreRem.i18n("msg.mask.espere"));
+
 							if (me.isValidRecord(context.record)) {				
-			
+								me.mask(HreRem.i18n("msg.mask.espere"));
 				        		context.record.save({
 				
 				                    params: {
 				                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
 				                    },
-				                    success: function (a, operation, c) {
-				                        context.store.load();
-				                        me.unmask();
-				                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-										me.saveSuccessFn();											
-										
-				                    },
+				                    success: function (a, operation, c) {																			
+										me.saveSuccessFn();
+									},
 				                    
 									failure: function (a, operation) {
-				                    	
-				                    	context.store.load();
-				                    	try {
-				                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-				                    		
-				                    	}catch(err) {}
-				                    	
-				                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-				                    		me.fireEvent("errorToast", response.msg);
-				                    	} else {
-				                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				                    	}                        	
-										me.unmask();
+				                    	me.saveFailureFn();
+			                      	
+				                    },
+				                    callback: function() {
+				                    	me.unmask();
+				                    	me.getStore().load();
 				                    }
 				          		});	                            
 					        	me.disableAddButton(false);
@@ -227,12 +234,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					        	me.getSelectionModel().deselectAll();
 					        	editor.isNew = false;
 							}
-							context.store.load();
-							me.unmask(); 
 						}
 				    	else{
-				    		context.store.load();
-				       		me.unmask(); 	
+				    		me.getStore().load(); 	
 				    	}
 					}
 				});
@@ -246,28 +250,17 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	                    params: {
 	                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
 	                    },
-	                    success: function (a, operation, c) {
-	                        context.store.load();
-	                        me.unmask();
-	                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-							me.saveSuccessFn();											
-							
-	                    },
+	                    success: function (a, operation, c) {																			
+							me.saveSuccessFn();
+						},
 	                    
 						failure: function (a, operation) {
-	                    	
-	                    	context.store.load();
-	                    	try {
-	                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-	                    		
-	                    	}catch(err) {}
-	                    	
-	                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-	                    		me.fireEvent("errorToast", response.msg);
-	                    	} else {
-	                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	                    	}                        	
-							me.unmask();
+	                    	me.saveFailureFn();
+                      	
+	                    },
+            			callback: function() {
+	                    	me.unmask();
+	                    	me.getStore().load();
 	                    }
 	                });	                            
 	        		me.disableAddButton(false);
@@ -288,15 +281,15 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
 				codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
 				
-				if(codigoEstadoOferta=='01' && record.data.estadoOferta=='01'){
+				if(codigoEstadoOferta=='01' && record.data.codigoEstadoOferta=='01'){
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
 					return false;
 				}
-				else if(codigoEstadoOferta=='01' && record.data.estadoOferta!='02'){
+				else if(codigoEstadoOferta=='01' && record.data.codigoEstadoOferta!='02'){
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 					return false;
 				}
-				else if(record.data.estadoOferta.length > 2){
+				else if(record.data.codigoEstadoOferta.length > 2){
 					return false
 				}
 			}
@@ -304,7 +297,26 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		return true;		
 	},
-   
+    saveSuccessFn: function () {
+   		var me = this;
+        me.unmask();			                        
+        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));	
+		return true;
+	},
+	
+	saveFailureFn: function() {
+        try {
+    		var response = Ext.JSON.decode(operation.getResponse().responseText)
+    		
+    	}catch(err) {}
+    	
+    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
+    		me.fireEvent("errorToast", response.msg);
+    	} else {
+    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    	}  
+		
+	},
 	
 	
    funcionRecargar: function() {

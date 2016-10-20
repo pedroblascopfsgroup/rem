@@ -188,9 +188,20 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												bind:{
 													value: '{gasto.nombrePropietario}'													
 												},
-												readOnly: true,
-												colspan: 2
-											}/*,
+												readOnly: true
+											},
+											
+											{ 
+												xtype: 'comboboxfieldbase',
+								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.estado.gasto'),
+										      	bind: {
+									           		store: '{comboEstadosGasto}',
+									           		value: '{gasto.estadoGastoCodigo}'
+									         	},
+									         	readOnly: true
+										    }
+											
+											/*,
 										   	{
 												xtype: 'button',
 												text: HreRem.i18n('fieldlabel.gasto.incluir.trabajos.rem'),

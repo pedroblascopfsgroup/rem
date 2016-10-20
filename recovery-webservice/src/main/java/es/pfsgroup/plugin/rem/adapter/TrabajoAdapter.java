@@ -249,6 +249,8 @@ public class TrabajoAdapter {
 	
 	public List<DtoTrabajoListActivos> getListActivosByProceso(Long idProceso){
 		List<DtoTrabajoListActivos> listaActivos = new ArrayList<DtoTrabajoListActivos>();
+		if(Checks.esNulo(idProceso))
+			return listaActivos;
 		//MSVProcesoMasivo proceso = processAdapter.get(idProceso);
 		MSVDocumentoMasivo document = processAdapter.getMSVDocumento(idProceso);
 		

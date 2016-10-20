@@ -92,11 +92,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private CondicionanteExpediente condicionante; 
     
-    @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
     private List<CompradorExpediente> compradores;
     
     @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
     @OrderBy("fechaPosicionamiento DESC")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<Posicionamiento> posicionamientos;
     
     @Column(name="ECO_FECHA_ANULACION")
@@ -170,6 +172,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_ESTADO_PBC")
     private Integer estadoPbc;   
+    
+    @Column(name="ECO_FECHA_VENTA")
+    private Date fechaVenta;
     
     
      
@@ -501,6 +506,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setEstadoPbc(Integer estadoPbc) {
 		this.estadoPbc = estadoPbc;
+	}
+
+	public Date getFechaVenta() {
+		return fechaVenta;
+	}
+
+	public void setFechaVenta(Date fechaVenta) {
+		this.fechaVenta = fechaVenta;
 	}
 	
     

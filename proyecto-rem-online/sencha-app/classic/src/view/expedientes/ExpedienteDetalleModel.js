@@ -12,7 +12,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     },
     
     formulas: {   
-	
 	     
 	     getSrcCartera: function(get) {
 	     	
@@ -30,6 +29,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
+	     },
+	     
+	     esCarteraSareb: function(get) {
+	     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['SAREB'] == carteraCodigo;
 	     },
 	     
 	     getTipoExpedienteCabecera: function(get) {
@@ -114,7 +119,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	}
 	     	}
 	     	return false;
+	     },
+	     
+	     esAlquilerConOpcionCompra: function(get){
+	     	var me = this;
+			if(!Ext.isEmpty(me.getData().expediente)){
+				if(me.getData().expediente.get('alquilerOpcionCompra')==1){
+					return true;
+				}
+			}
+	     	return false;
 	     }
+	     
 		
 	 },
 
@@ -328,7 +344,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
 	    },
 
-				storePosicionamientos: {
+		storePosicionamientos: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Posicionamiento',
 	    	proxy: {
@@ -442,17 +458,53 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
 	    },
 	    
-	    comboComites: {
-			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.Honorario',
+	    comboProvincia: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'provincias'}
+			}
+	    },
+	    
+	    comboMunicipio: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaCodigo}'}
+			}
+    	},
+    	
+    	comboMunicipioRte: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}
+			}
+    	},
+
+		comboComites: {
+	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'generic/getComitesBycartera',
+		        remoteUrl: 'generic/getComitesByCartera',
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
-	    }
+	    },
 	    
-	
+	    storeEstadosDevolucion: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'estadosDevolucion'}
+	    	}	
+	    	
+	    	
+	    }
+	    	
     }
   
 });

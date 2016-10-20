@@ -30,6 +30,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -133,6 +134,10 @@ public class GastoProveedor implements Serializable, Auditable {
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     private List<GastoProveedorActivo> gastoProveedorActivos;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EGA_ID")
+    private DDEstadoGasto estadoGasto;
     
 	@Version   
 	private Long version;
@@ -338,5 +343,12 @@ public class GastoProveedor implements Serializable, Auditable {
         return null;
     }
 
-    
+	public DDEstadoGasto getEstadoGasto() {
+		return estadoGasto;
+	}
+
+	public void setEstadoGasto(DDEstadoGasto estadoGasto) {
+		this.estadoGasto = estadoGasto;
+	}
+
 }

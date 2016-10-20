@@ -49,6 +49,7 @@ import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
@@ -104,12 +105,12 @@ public class UvemManager implements UvemManagerApi {
 	/**
 	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
 	 * 
-	 * @param bienId
+	 * @param numActivoUvem
 	 * @param nombreGestor
 	 * @param gestion
 	 * @return
 	 */
-	public Integer ejecutarSolicitarTasacion(Long bienId, String nombreGestor, String gestion)
+	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, String nombreGestor, String gestion)
 			throws WIMetaServiceException, WIException, TipoDeDatoException {
 
 		leerConfiguracion();
@@ -200,8 +201,8 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPETS07_INS.setCodigoPresupuestocoppre('1');
 		servicioGMPETS07_INS.setFechaDeLaTasacionlfetas(0000000000);
 		Integer numeroActivo = 0;
-		if (!Checks.esNulo(bienId)) {
-			numeroActivo = bienId != null ? bienId.intValue() : null;
+		if (!Checks.esNulo(numActivoUvem)) {
+			numeroActivo = numActivoUvem != null ? numActivoUvem.intValue() : null;
 		}
 
 		VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1 numeroOcurrencias1 = new VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1();
@@ -237,66 +238,6 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	
-	
-	
-	
-	/**
-	 * Devuelve los clientes Ursus a partir de los datos pasados por parámetro
-	 * 
-	 * @param nDocumento: documento identificativo del cliente a consultar
-	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
-	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
-	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
-	 *            Otros persona física. J Otros persona jurídica.
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
-	 */
-	@Override
-	public Integer obtenerNumClienteUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException{
-//		logger.info("------------ LLAMADA WS NUMCLIENTE  -----------------");
-//		
-//		Integer numcliente = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-//		
-//		//GMPAJC11_INS
-//		
-//		return numcliente;
-		return null;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * Devuelve los datos de un cliente Ursus a partir de los datos pasados por parámetro
-	 * 
-	 * @param nDocumento: documento identificativo del cliente a consultar
-	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
-	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
-	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
-	 *            Otros persona física. J Otros persona jurídica.
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
-	 */
-	@Override
-	public GMPAJC93_INS obtenerDatosClienteUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException{
-//		logger.info("------------ LLAMADA WS NUMCLIENTE Y DATOSCLIENTE -----------------");
-//		
-//		Integer numcliente = null;
-//		GMPAJC93_INS datosClienteIns = null;
-//		
-//		numcliente = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-//		
-//		if(!Checks.esNulo(numcliente)){
-//			datosClienteIns = ejecutarDatosCliente(numcliente, qcenre);
-//			
-//		}
-//		
-//		return datosClienteIns;
-		return null;
-	}
 	
 
 	
@@ -461,7 +402,11 @@ public class UvemManager implements UvemManagerApi {
 	
 	
 	@Override
-	public DatosClienteDto  ejecutarDatosClientePorDocumento(String nDocumento, String tipoDocumento, String qcenre) throws Exception {
+	public DatosClienteDto  ejecutarDatosClientePorDocumento(DtoClienteUrsus dtoCliente) throws Exception {
+		
+		String nDocumento= dtoCliente.getNumDocumento();
+		String tipoDocumento= dtoCliente.getTipoDocumento();
+		String qcenre= dtoCliente.getQcenre();
 		
 		Integer numCliente = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
 		return ejecutarDatosCliente(numCliente, qcenre);
@@ -480,8 +425,7 @@ public class UvemManager implements UvemManagerApi {
 	@Override
 	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre) throws Exception {
 		logger.info("------------ LLAMADA WS DATOSCLIENTE -----------------");
-		
-		StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = null;
+	
 		
 		leerConfiguracion();
 		// parametros iniciales
@@ -672,6 +616,7 @@ public class UvemManager implements UvemManagerApi {
 	
 		DatosClienteDto datos = new DatosClienteDto();
 
+		datos.setNumeroClienteUrsus(numcliente.toString());
 		datos.setClaseDeDocumentoIdentificador(servicioGMPAJC93_INS.getClaseDeDocumentoIdentificadorcocldo()+"");
 		datos.setDniNifDelTitularDeLaOferta(servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio().toString());
 		datos.setNombreYApellidosTitularDeOferta(servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof().toString());
@@ -808,7 +753,7 @@ public class UvemManager implements UvemManagerApi {
 		// PorcentajeImpuestoBISA
 		Porcentaje9 porcentajeImpuesto = null;
 		porcentajeImpuesto = new Porcentaje9();
-		if (instanciaDecisionDto.getTipoDeImpuesto() == instanciaDecisionDto.TIPO_IMPUESTO_IVA) {
+		if (instanciaDecisionDto.getTipoDeImpuesto() == InstanciaDecisionDto.TIPO_IMPUESTO_IVA) {
 			porcentajeImpuesto.setPorcentaje(21);
 		} else {
 			porcentajeImpuesto.setPorcentaje(0);
@@ -890,10 +835,9 @@ public class UvemManager implements UvemManagerApi {
 		System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());
 		
 
-
 		// seteamos parametros
 		servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PAHY0170");
-		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(instanciaDecisionDto.getCodigoDeOfertaHaya());
+		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(StringUtils.leftPad(instanciaDecisionDto.getCodigoDeOfertaHaya(), 16, "0"));
 		if (instanciaDecisionDto.isFinanciacionCliente()) {
 			servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_SI);
 		} else {

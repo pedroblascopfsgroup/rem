@@ -147,7 +147,22 @@ Ext.define('HreRem.ux.util.Constants', {
     	PROVEEDOR: 'HAYAPROV',
     	GESTOR_ACTIVOS: 'GESTACT',
     	GESTOR_ADMISION: 'GESTADM'    	
+    },
+    
+    TIPOS_OFERTA: {
+    	VENTA : '01',
+    	ALQUILER: '02'
+    },
+    
+    TIPOS_PROVEEDOR_ESPEDIENTE: {
+    	CAT : '28',
+    	MEDIADOR_OFICINA: '29'
+    },
+    
+    ESTADOS_OFERTA: {
+    	ACEPTADA : '01'
     }
+    
     
 
 });

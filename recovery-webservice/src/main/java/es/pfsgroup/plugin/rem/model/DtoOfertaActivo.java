@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.util.Date;
 
 /**
  * Dto para el grid de ofertas de la pestaña activos
@@ -16,7 +15,7 @@ public class DtoOfertaActivo {
 	private Long idActivo;
 	private Long idAgrupacion;
 	private String estadoOferta;
-	
+	private String codigoEstadoOferta;
 	
 	public Long getIdOferta() {
 		return idOferta;
@@ -42,6 +41,12 @@ public class DtoOfertaActivo {
 	}
 	public void setEstadoOferta(String estadoOferta) {
 		this.estadoOferta = estadoOferta;
+	}
+	public String getCodigoEstadoOferta() {
+		return codigoEstadoOferta;
+	}
+	public void setCodigoEstadoOferta(String codigoEstadoOferta) {
+		this.codigoEstadoOferta = codigoEstadoOferta;
 	}
 
 	

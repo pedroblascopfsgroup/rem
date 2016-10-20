@@ -59,14 +59,20 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "COM_DIRECCION")
 	private String direccion;
 	
-	@Column(name = "COM_MUNICIPIO")
-	private String municipio;
+	@Column(name = "DD_LOC_CODIGO")
+	private String municipioCodigo;
+	
+	@Column(name = "DD_LOC_DESCRIPCION")
+	private String municipioDescripcion;
 	
 	@Column(name = "COM_TELEFONO1")
 	private String telefono1;
 	
-	@Column(name = "COM_PROVINCIA")
-	private String provincia;
+	@Column(name = "DD_PRV_CODIGO")
+	private String provinciaCodigo;
+	
+	@Column(name = "DD_PRV_DESCRIPCION")
+	private String provinciaDescripcion;
 	
 	@Column(name = "COM_TELEFONO2")
 	private String telefono2;
@@ -107,14 +113,20 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "CEX_DIRECCION_RTE")
 	private String direccionRte;
 	
-	@Column(name = "CEX_MUNICIPIO_RTE")
-	private String municipioRte;
+	@Column(name = "DD_LOC_CODIGO_RTE")
+	private String municipioRteCodigo;
+	
+	@Column(name = "DD_LOC_DESCRIPCION_RTE")
+	private String municipioRteDescripcion;
 	
 	@Column(name = "CEX_TELEFONO1_RTE")
 	private String telefono1Rte;
 	
-	@Column(name = "CEX_PROVINCIA_RTE")
-	private String provinciaRte;
+	@Column(name = "DD_PRV_CODIGO_RTE")
+	private String provinciaRteCodigo;
+	
+	@Column(name = "DD_PRV_DESCRIPCION_RTE")
+	private String provinciaRteDescripcion;
 	
 	@Column(name = "CEX_TELEFONO2_RTE")
 	private String telefono2Rte;
@@ -166,6 +178,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "DESC_USO_ACTIVO")
 	private String descripcionUsoActivo;
+	
+	@Column(name = "ID_COMPRADOR_URSUS")
+	private Long numeroClienteUrsus;
     
 
 	public String getId() {
@@ -256,12 +271,20 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.direccion = direccion;
 	}
 
-	public String getMunicipio() {
-		return municipio;
+	public String getMunicipioCodigo() {
+		return municipioCodigo;
 	}
 
-	public void setMunicipio(String municipio) {
-		this.municipio = municipio;
+	public void setMunicipioCodigo(String municipioCodigo) {
+		this.municipioCodigo = municipioCodigo;
+	}
+
+	public String getMunicipioDescripcion() {
+		return municipioDescripcion;
+	}
+
+	public void setMunicipioDescripcion(String municipioDescripcion) {
+		this.municipioDescripcion = municipioDescripcion;
 	}
 
 	public String getTelefono1() {
@@ -272,12 +295,20 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.telefono1 = telefono1;
 	}
 
-	public String getProvincia() {
-		return provincia;
+	public String getProvinciaCodigo() {
+		return provinciaCodigo;
 	}
 
-	public void setProvincia(String provincia) {
-		this.provincia = provincia;
+	public void setProvinciaCodigo(String provinciaCodigo) {
+		this.provinciaCodigo = provinciaCodigo;
+	}
+
+	public String getProvinciaDescripcion() {
+		return provinciaDescripcion;
+	}
+
+	public void setProvinciaDescripcion(String provinciaDescripcion) {
+		this.provinciaDescripcion = provinciaDescripcion;
 	}
 
 	public String getTelefono2() {
@@ -384,28 +415,40 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.direccionRte = direccionRte;
 	}
 
-	public String getMunicipioRte() {
-		return municipioRte;
+	public String getMunicipioRteCodigo() {
+		return municipioRteCodigo;
 	}
 
-	public void setMunicipioRte(String municipioRte) {
-		this.municipioRte = municipioRte;
+	public void setMunicipioRteCodigo(String municipioRteCodigo) {
+		this.municipioRteCodigo = municipioRteCodigo;
+	}
+
+	public String getMunicipioRteDescripcion() {
+		return municipioRteDescripcion;
+	}
+
+	public void setMunicipioRteDescripcion(String municipioRteDescripcion) {
+		this.municipioRteDescripcion = municipioRteDescripcion;
 	}
 
 	public String getTelefono1Rte() {
 		return telefono1Rte;
 	}
 
-	public void setTelefono1Rte(String telefono1Rte) {
-		this.telefono1Rte = telefono1Rte;
+	public String getProvinciaRteCodigo() {
+		return provinciaRteCodigo;
 	}
 
-	public String getProvinciaRte() {
-		return provinciaRte;
+	public void setProvinciaRteCodigo(String provinciaRteCodigo) {
+		this.provinciaRteCodigo = provinciaRteCodigo;
 	}
 
-	public void setProvinciaRte(String provinciaRte) {
-		this.provinciaRte = provinciaRte;
+	public String getProvinciaRteDescripcion() {
+		return provinciaRteDescripcion;
+	}
+
+	public void setProvinciaRteDescripcion(String provinciaRteDescripcion) {
+		this.provinciaRteDescripcion = provinciaRteDescripcion;
 	}
 
 	public String getTelefono2Rte() {
@@ -552,5 +595,18 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	public void setDescripcionUsoActivo(String descripcionUsoActivo) {
 		this.descripcionUsoActivo = descripcionUsoActivo;
 	}
+
+	public void setTelefono1Rte(String telefono1Rte) {
+		this.telefono1Rte = telefono1Rte;
+	}
+
+	public Long getNumeroClienteUrsus() {
+		return numeroClienteUrsus;
+	}
+
+	public void setNumeroClienteUrsus(Long numeroClienteUrsus) {
+		this.numeroClienteUrsus = numeroClienteUrsus;
+	}
+
 
 }

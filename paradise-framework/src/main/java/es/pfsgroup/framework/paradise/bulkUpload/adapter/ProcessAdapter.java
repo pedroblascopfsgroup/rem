@@ -19,6 +19,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVFileUploadParadise;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoMSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ExcelFileBean;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
@@ -52,7 +53,7 @@ public class ProcessAdapter {
 		return apiProxyFactory.proxy(MSVProcesoApi.class).iniciarProcesoMasivo(dto);
 	}
 	
-	public List<MSVProcesoMasivo> mostrarProcesos() {
+	public List<DtoMSVProcesoMasivo> mostrarProcesos() {
 		return procesoManager.mostrarProcesos();
 	}
 	

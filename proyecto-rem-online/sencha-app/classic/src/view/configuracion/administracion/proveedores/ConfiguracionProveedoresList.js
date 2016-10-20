@@ -103,6 +103,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		        }
 		    ];
 		    
+		    // Abrira la ficha del proveedor al crear uno nuevo desde el listado
+		    me.saveSuccessFn = function() {
+		    	var nifProveedor = me.getStore().getAt(0).get('nifProveedor');
+		    	
+		    	me.lookupController().openProveedorByNif(nifProveedor);
+		    },
+		    
 		    me.callParent();
    }
 

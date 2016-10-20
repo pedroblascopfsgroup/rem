@@ -39,6 +39,7 @@ public class DatosClienteDto {
 	 private String NombreDePaisNacionalidad;
 	 private String NombreDePaisResidencia;
 	 private String SubsectorDeActividadEconomica;
+	 private String numeroClienteUrsus;
 	 
 	public String getClaseDeDocumentoIdentificador() {
 		return ClaseDeDocumentoIdentificador;
@@ -261,6 +262,54 @@ public class DatosClienteDto {
 	}
 	public void setSubsectorDeActividadEconomica(String subsectorDeActividadEconomica) {
 		SubsectorDeActividadEconomica = subsectorDeActividadEconomica;
+	}	
+	public String getNumeroClienteUrsus() {
+		return numeroClienteUrsus;
+	}
+	public void setNumeroClienteUrsus(String numeroClienteUrsus) {
+		this.numeroClienteUrsus = numeroClienteUrsus;
+	}
+	
+	public void rellenarDatosDummies(){
+		
+		setClaseDeDocumentoIdentificador("Clase");
+		setDniNifDelTitularDeLaOferta("DNi titular oferta");
+		setNombreYApellidosTitularDeOferta("Nom y Ape Titular Oferta");
+		setNombreDelCliente("Nombre cliente");
+		setPrimerApellido("Primer apellido");
+		setSegundoApellido("Segundo apellido");
+		setCodigoTipoDeVia("codigoTipoDeVia");
+		setDenominacionTipoDeViaTrabajo("DenominacionTipoDeViaTrabajo");
+		setNombreDeLaVia("Nombre via");
+		setPORTAL("Portal");
+		setESCALERA("Escalera");
+		setPISO("Piso");
+		setNumeroDePuerta("Numero de puerta");
+		setCodigoPostal("Codigo postal");
+		setNombreDelMunicipio("Nombre municipio");
+		setNombreDeLaProvincia("Nombre provincia");
+		setCodigoDeProvincia("Codigo provincia");
+		setNombreDePaisDelDomicilio("Nombre pais domicilio");
+		setDatosComplementariosDelDomicilio("Datos complementarios");
+		setBarrioColoniaOApartado("Barrio colonia o apartado");
+		setEdadDelCliente("Edad");
+		setCodigoEstadoCivil("Cod estado civil");
+		setEstadoCivilActual("Estado civil actual");
+		setNumeroDeHijos("Numero hijos");
+		setSEXO("Sexo");
+		setNombreComercialDeLaEmpresa("Nombre comercial empresa");
+		setDELEGACION("Delegación");
+		setTipoDeSociedad("Tipo sociedad");
+		setCodigoDeSituacionDelCliente("Cod situacion cliente");
+		setNombreDeLaSituacionDelCliente("Nom situacion cliente");
+		setFechaDeNacimientoOConstitucion("Fecha nacimiento");
+		setNombreDelPaisDeNacimiento("Pais nacimiento");
+		setNombreDeLaProvinciaNacimiento("Provincia nacimiento");
+		setNombreDePoblacionDeNacimiento("Población nacimiento");
+		setNombreDePaisNacionalidad("Pais nacionalidad");
+		setNombreDePaisResidencia("Pais residencia");
+		setSubsectorDeActividadEconomica("Subsector actividad");
+		setNumeroClienteUrsus("20401");
 	}
 
 }

@@ -58,18 +58,6 @@ public interface ClienteComercialApi {
 	 */
 	public List<ClienteComercial> getListaClienteComercial(ClienteDto clienteDto);
 
-	/**
-	 * Devuelve una lista de errores encontrados en los parámetros de entrada de
-	 * las peticiones POST.
-	 * 
-	 * @param clienteDto
-	 *            con los parametros de entrada
-	 * @param alta
-	 *            true si es para validar el alta, false para validar la
-	 *            actualización
-	 * @return List<String>
-	 */
-	public List<String> validateClientePostRequestData(ClienteDto clienteDto, Boolean alta);
 
 	/**
 	 * Crea un nuevo ClienteComercial a partir de la información pasada por
@@ -77,7 +65,7 @@ public interface ClienteComercialApi {
 	 * 
 	 * @param clienteDto
 	 *            con la información del clienteComercial a dar de alta
-	 * @return List<String> con la lista de errores detectados
+	 * @return void
 	 */
 	public void saveClienteComercial(ClienteDto clienteDto);
 
@@ -91,9 +79,9 @@ public interface ClienteComercialApi {
 	 *            estructura con los parámetros a actualizar. Si no vienen, no
 	 *            hay que actualizar. Si vienen y están a null, hay que seterlos
 	 *            a null
-	 * @return List<String> con la lista de errores detectados
+	 * @return void
 	 */
-	public List<String> updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields);
+	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields);
 
 	/**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de

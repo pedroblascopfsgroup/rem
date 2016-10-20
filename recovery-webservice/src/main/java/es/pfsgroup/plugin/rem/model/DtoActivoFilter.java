@@ -64,6 +64,7 @@ public class DtoActivoFilter extends WebDto {
 	private Integer conFsvRenta;
 	private Integer conBloqueo;
 	private String tipoPropuestaCodigo;
+	private Boolean checkTodosActivos;
 
 	public String getNumActivo() {
 		return numActivo;
@@ -388,6 +389,12 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setTipoPropuestaCodigo(String tipoPropuestaCodigo) {
 		this.tipoPropuestaCodigo = tipoPropuestaCodigo;
+	}
+	public Boolean getCheckTodosActivos() {
+		return checkTodosActivos;
+	}
+	public void setCheckTodosActivos(Boolean checkTodosActivos) {
+		this.checkTodosActivos = checkTodosActivos;
 	}
 	
 }

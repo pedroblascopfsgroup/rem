@@ -3,9 +3,9 @@ package es.pfsgroup.plugin.rem.api;
 import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 
-import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
+import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
@@ -25,7 +25,7 @@ public interface UvemManagerApi {
 	/**
 	 * Solicitar tasación de un bien
 	 * 
-	 * @param bienId
+	 * @param numActivoUvem
 	 * @param nombreGestor
 	 * @param gestion
 	 * @return
@@ -33,7 +33,7 @@ public interface UvemManagerApi {
 	 * @throws WIException
 	 * @throws TipoDeDatoException
 	 */
-	public Integer ejecutarSolicitarTasacion(Long bienId, String nombreGestor, String gestion)
+	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, String nombreGestor, String gestion)
 			throws WIMetaServiceException, WIException, TipoDeDatoException;
 
 	
@@ -65,36 +65,9 @@ public interface UvemManagerApi {
 	 *            Otros persona física. J Otros persona jurídica.
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	DatosClienteDto ejecutarDatosClientePorDocumento(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	DatosClienteDto ejecutarDatosClientePorDocumento(DtoClienteUrsus dtoCliente) throws Exception;
 	
 	
-	
-	/**
-	 * Devuelve los clientes Ursus a partir de los datos pasados por parámetro
-	 * 
-	 * @param nDocumento: documento identificativo del cliente a consultar
-	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
-	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
-	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
-	 *            Otros persona física. J Otros persona jurídica.
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
-	 */
-	public Integer obtenerNumClienteUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException;
-	
-	
-	/**
-	 * Devuelve los datos de un cliente Ursus a partir de los datos pasados por parámetro
-	 * 
-	 * @param nDocumento: documento identificativo del cliente a consultar
-	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
-	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
-	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
-	 *            Otros persona física. J Otros persona jurídica.
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
-	 */
-	public GMPAJC93_INS obtenerDatosClienteUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException;
-	
-
 		
 	/**
 	 * Servicio GMPAJC11_INS que a partir del nº y tipo de documento, así como Entidad del

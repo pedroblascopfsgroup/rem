@@ -142,6 +142,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String estadoExpRiesgoDescripcion;
 	private String estadoExpIncorrienteCodigo;
 	private String estadoExpIncorrienteDescripcion;
+	private String productoDescripcion;
 	
 	//Activo integrado en agrupación asistida
 	private Boolean integradoEnAgrupacionAsistida;
@@ -1128,5 +1129,13 @@ public class DtoActivoFichaCabecera extends WebDto {
 		this.tipoActivoAdmisionMediadorCorresponde = tipoActivoAdmisionMediadorCorresponde;
 	}
 
+	public String getProductoDescripcion() {
+		return productoDescripcion;
+	}
+
+	public void setProductoDescripcion(String productoDescripcion) {
+		this.productoDescripcion = productoDescripcion;
+	}
+	
 
 }

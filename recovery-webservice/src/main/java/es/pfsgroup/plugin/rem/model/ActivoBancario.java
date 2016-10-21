@@ -77,6 +77,9 @@ public class ActivoBancario implements Serializable, Auditable {
     @JoinColumn(name = "DD_EEI_ID")
     private DDEstadoExpIncorrienteBancario estadoExpIncorriente;
 	
+	@Column(name = "ABA_TIPO_PRODUCTO")
+	private String productoDescripcion;
+	
 	@Version   
 	private Long version;
 	
@@ -146,6 +149,14 @@ public class ActivoBancario implements Serializable, Auditable {
 
 	public void setEstadoExpIncorriente(DDEstadoExpIncorrienteBancario estadoExpIncorriente) {
 		this.estadoExpIncorriente = estadoExpIncorriente;
+	}
+
+	public String getProductoDescripcion() {
+		return productoDescripcion;
+	}
+
+	public void setProductoDescripcion(String productoDescripcion) {
+		this.productoDescripcion = productoDescripcion;
 	}
 
 	public Long getVersion() {

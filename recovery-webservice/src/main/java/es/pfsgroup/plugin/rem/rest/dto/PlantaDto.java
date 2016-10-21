@@ -4,35 +4,40 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
-public class PlantaDto implements Serializable{
+public class PlantaDto implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@NotNull(groups = Insert.class)
-	private Long numero;
-	
+	private Integer numero;
+
 	@NotNull(groups = Insert.class)
-	private String codTipoEstancia; //<---------------------------- Diccionario
-	
+	@Diccionary(clase = DDTipoHabitaculo.class, message = "El codTipoEstancia no existe", groups = { Insert.class,
+			Update.class })
+	private String codTipoEstancia;
+
 	@NotNull(groups = Insert.class)
 	private Long numeroEstancias;
-	
+
 	@NotNull(groups = Insert.class)
 	private Float estancias;
-	
+
 	@NotNull(groups = Insert.class)
 	private String descripcionEstancias;
 
-	public Long getNumero() {
+	public Integer getNumero() {
 		return numero;
 	}
 
-	public void setNumero(Long numero) {
+	public void setNumero(Integer numero) {
 		this.numero = numero;
 	}
 
@@ -67,7 +72,5 @@ public class PlantaDto implements Serializable{
 	public void setDescripcionEstancias(String descripcionEstancias) {
 		this.descripcionEstancias = descripcionEstancias;
 	}
-	
-	
-	
+
 }

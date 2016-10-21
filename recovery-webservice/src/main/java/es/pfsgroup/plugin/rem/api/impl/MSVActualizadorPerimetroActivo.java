@@ -150,6 +150,9 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				//Persiste los datos, creando el registro de perimetro
 				// Todos los datos son de PerimetroActivo, a excepcion del tipo comercializacion que es del Activo
 				if(!Checks.esNulo(tmpTipoComercializacion)) activoApi.saveOrUpdate(activo);
+				//Si en la excel se ha indicado que NO esta en perimetro, desmarcamos sus checks
+				if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro)) this.desmarcarChecksFromPerimetro(perimetroActivo);
+				
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 	
 			} //Fin for
@@ -164,6 +167,35 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 			
 		}
 
+	}
+	
+	/**
+	 * Si se indica que esta fuera del perímetro, se desmarcan todos los checks
+	 * @param perimetro
+	 */
+	private void desmarcarChecksFromPerimetro(PerimetroActivo perimetro) {
+		
+		if(!CHECK_VALOR_NO.equals(perimetro.getAplicaAsignarMediador())) {
+			perimetro.setAplicaAsignarMediador(CHECK_VALOR_NO);
+			perimetro.setFechaAplicaAsignarMediador(new Date());
+		}
+		if(!CHECK_VALOR_NO.equals(perimetro.getAplicaComercializar())) {
+			perimetro.setAplicaComercializar(CHECK_VALOR_NO);
+			perimetro.setFechaAplicaComercializar(new Date());
+		}
+		if(!CHECK_VALOR_NO.equals(perimetro.getAplicaFormalizar())) {
+			perimetro.setAplicaFormalizar(CHECK_VALOR_NO);
+			perimetro.setFechaAplicaFormalizar(new Date());
+		}
+		if(!CHECK_VALOR_NO.equals(perimetro.getAplicaGestion())) {
+			perimetro.setAplicaGestion(CHECK_VALOR_NO);
+			perimetro.setFechaAplicaGestion(new Date());
+		}
+		if(!CHECK_VALOR_NO.equals(perimetro.getAplicaTramiteAdmision())) {
+			perimetro.setAplicaTramiteAdmision(CHECK_VALOR_NO);
+			perimetro.setFechaAplicaTramiteAdmision(new Date());
+		}
+		
 	}
 
 }

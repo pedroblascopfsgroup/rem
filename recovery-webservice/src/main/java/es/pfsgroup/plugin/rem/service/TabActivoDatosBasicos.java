@@ -265,9 +265,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "subtipoClaseActivoDescripcion", activoBancario.getSubtipoClaseActivo().getDescripcion());
 		}
 		
-		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getTipoProducto())) {
+		/*if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getTipoProducto())) {
 			BeanUtils.copyProperty(activoDto, "tipoProductoCodigo", activoBancario.getTipoProducto().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoProductoDescripcion", activoBancario.getTipoProducto().getDescripcion());
+		}*/
+		//Como no envian el diccionario de tipoProducto, lo hemos sustituido por texto libre
+		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getProductoDescripcion())) {
+			BeanUtils.copyProperty(activoDto, "productoDescripcion", activoBancario.getProductoDescripcion());
 		}
 		
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpRiesgo())) {
@@ -524,7 +528,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				dto.getEstadoExpRiesgoCodigo() != null || 
 				dto.getEstadoExpRiesgoDescripcion() != null || 
 				dto.getEstadoExpIncorrienteCodigo() != null || 
-				dto.getEstadoExpIncorrienteDescripcion() != null) 
+				dto.getEstadoExpIncorrienteDescripcion() != null ||
+				dto.getProductoDescripcion() != null) 
 			{
 				
 				ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());

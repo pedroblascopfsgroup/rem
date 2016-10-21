@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=CLV
+--## AUTOR=ANAHUAC DE VICENTE
 --## FECHA_CREACION=20160907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
@@ -66,7 +66,7 @@ BEGIN
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
                     'SET DD_TCE_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
-					', DD_TCE_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
+					', DD_TCE_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_TCE_CODIGO  = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;

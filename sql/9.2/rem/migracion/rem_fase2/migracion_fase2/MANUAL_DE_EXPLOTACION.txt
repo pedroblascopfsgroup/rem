@@ -36,3 +36,9 @@
 		- Este modo de lanzamiento trata de ir ejecutando uno a uno todos los procesos de la migración, la principal ventaja que tiene este modo
 				es que si por un casual fallase la migración en el proceso 003_Migrar.sh, se podría relanzar manualmente la migración desde
 				ese punto, evitando tener que cargar de nuevo todas las tablas MIG2, que es un proceso bastante pesado.
+
+		- Hay que tener en cuenta que si a mitad de la migración tenemos que modicar un DML de volcado, por el motivo que sea, es OBLIGATORIO 
+				volver a lanzar el proceso 000_Preparacion_migracion.sh para reempaquetar el DML modificado, ya que si no lo hacemos,
+				cuando volvieramos a lanzar el proceso 003_Migrar.sh, se ejecutaría el DML previo a la migracíon, ya que es el DML que se encuentra
+				en la carpeta 03_MIGRACION.
+	

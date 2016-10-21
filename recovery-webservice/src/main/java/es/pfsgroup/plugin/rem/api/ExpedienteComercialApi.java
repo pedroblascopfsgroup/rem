@@ -10,6 +10,7 @@ import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
@@ -206,6 +207,17 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
+
+		/**
+		 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento.
+		 * Esta verificación está pensada para trámites (ya que se identifica el trabajo)
+		 * @param idTrabajo
+		 * @param codigoSubtipoDocumento Código del subtipo de documento del expediente
+		 * @return
+		 */
+		public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
+		
+
 
 	/**
 	 * Método que guarda el comprador como principal
@@ -424,5 +436,14 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean deleteCompradorExpediente(Long idExpediente, Long idComprador);
+	
+	/**
+	 * Método que actualiza la información de los activos comercializables
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id);
 
 }

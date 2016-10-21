@@ -135,7 +135,11 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   				 	       itemId: 'btnSubirFichero', 
 						        	   						   text: 'Subir fichero',
 						        	   						   handler: 'onClickUploadListaActivos'
-						        	   						 }],
+						        	   						 },
+						        	   						{	itemId: 'btnDownload', 
+						        	   							text: 'Descargar plantilla', 
+						        	   							handler: 'onClickBotonDescargarPlantilla'
+						        	   						}],
 						        	   				reference: 'formSubirListaActivos',
 						        	   				items:[{
 						        	   						xtype: 'filefield',

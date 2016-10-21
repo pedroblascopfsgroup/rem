@@ -863,20 +863,24 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
 		logger.info("IndicadorDeFinanciacionClientebificl: " + servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
 		logger.info("TipoPropuestacotprw: " + servicioGMPDJB13_INS.getTipoPropuestacotprw());
-		logger.info("NumeroDeOcurrenciasnumocu :" + servicioGMPDJB13_INS.getNumeroDeOcurrenciasnumocu());
 		logger.info("NumeroCliente: " + servicioGMPDJB13_INS.getnumeroCliente());
 		logger.info("NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
 		logger.info("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());
-		
+		logger.info("IdentificadorActivoEspecialcoacew: " + struct.getIdentificadorActivoEspecialcoacew());
+		logger.info("ImporteConSigno: " + struct.getImporteMonetarioOfertaBISA().getImporteConSigno());
+		logger.info("TipoDeImpuestocotimw: " + struct.getTipoDeImpuestocotimw());
+	
+	
 		System.out.println("CodigoObjetoAccesocopace: " + servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
 		System.out.println("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
 		System.out.println("IndicadorDeFinanciacionClientebificl: " + servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
 		System.out.println("TipoPropuestacotprw: " + servicioGMPDJB13_INS.getTipoPropuestacotprw());
-		System.out.println("NumeroDeOcurrenciasnumocu :" + servicioGMPDJB13_INS.getNumeroDeOcurrenciasnumocu());
 		System.out.println("NumeroCliente: " + servicioGMPDJB13_INS.getnumeroCliente());
 		System.out.println("NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
 		System.out.println("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());
-		
+		System.out.println("IdentificadorActivoEspecialcoacew: " + struct.getIdentificadorActivoEspecialcoacew());
+		System.out.println("ImporteConSigno: " + struct.getImporteMonetarioOfertaBISA().getImporteConSigno());
+		System.out.println("TipoDeImpuestocotimw: " + struct.getTipoDeImpuestocotimw());
 		
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();
@@ -974,7 +978,7 @@ public class UvemManager implements UvemManagerApi {
 		
 		// seteamos parametros
 		servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
-		numExpedienteRiesgo12 = StringUtils.leftPad(numExpedienteRiesgo12, 12, "0");
+		numExpedienteRiesgo12 = StringUtils.leftPad(numExpedienteRiesgo12, 18, "0");
 		servicioGMPAJC34_INS.setNumeroExpedienteDeRiesgoNumericonuidow(numExpedienteRiesgo12);	
 		servicioGMPAJC34_INS.setTipoRiesgoClaseProductoUrsusCotirx(tipoRiesgo);
 		long numeroCliente = 0;

@@ -31,6 +31,7 @@ DECLARE
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    v_fk_count number(16);
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_PDV_PLAN_DIN_VENTAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
@@ -53,8 +54,9 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         
 	    -- Comprobamos si existe columna 
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and DATA_TYPE = '''||TRIM(V_TMP_TIPO_DATA(2))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+		
+    EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 		
 		IF V_NUM_TABLAS = 1 THEN
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe');
@@ -65,6 +67,40 @@ BEGIN
        	END IF;
       END LOOP;
 	
+    -- Comprobamos si ya existe la UK
+    V_MSQL := 'SELECT count(1) CONSTRAINT_NAME FROM all_constraints where CONSTRAINT_NAME = ''UK_PDV_ACTIVO'' 
+                        AND TABLE_NAME= '''||V_TEXT_TABLA||'''
+                        and owner = '''||V_ESQUEMA||'''
+                        ';
+    EXECUTE IMMEDIATE V_MSQL INTO v_fk_count;
+
+    IF v_fk_count = 0 THEN
+      DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... No existe la UK UK_PDV_ACTIVO EN LA TABLA '||V_TEXT_TABLA||' ');
+    ELSE
+      EXECUTE IMMEDIATE 'ALTER TABLE ' || V_ESQUEMA || '.'||V_TEXT_TABLA||' DROP CONSTRAINT UK_PDV_ACTIVO';
+              
+      DBMS_OUTPUT.PUT_LINE('ALTER TABLE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||'... UK UK_PDV_ACTIVO eliminada ');
+    END IF;
+ 
+    -- Comprobamos si ya existe la INDEX
+    V_MSQL := 'SELECT count(1) INDEX_NAME FROM ALL_INDEXES where INDEX_NAME = ''UK_PDV_ACTIVO'' 
+                        AND TABLE_NAME= '''||V_TEXT_TABLA||'''
+                        and owner = '''||V_ESQUEMA||'''
+                        ';
+    EXECUTE IMMEDIATE V_MSQL INTO v_fk_count;
+
+    IF v_fk_count = 0 THEN
+      DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... No existe la INDEX UK_PDV_ACTIVO EN LA TABLA '||V_TEXT_TABLA||' ');
+    ELSE
+      
+      EXECUTE IMMEDIATE ' DROP INDEX UK_PDV_ACTIVO';
+              
+      DBMS_OUTPUT.PUT_LINE('ALTER TABLE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||'... INDEX UK_PDV_ACTIVO eliminada ');
+    END IF;
+    
+    COMMIT;  
+  
+  
 EXCEPTION
      WHEN OTHERS THEN
           err_num := SQLCODE;

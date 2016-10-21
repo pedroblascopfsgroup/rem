@@ -299,12 +299,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		try {
 			beanUtilNotNull.copyProperties(activo, dto);
 			
-			if (activo.getLocalizacion() == null) {
+			if (Checks.esNulo(activo.getLocalizacion())) {
 				activo.setLocalizacion(new ActivoLocalizacion());
 				activo.getLocalizacion().setActivo(activo);
 			}
 			
-			if (activo.getLocalizacion().getLocalizacionBien() == null ){
+			if (Checks.esNulo(activo.getLocalizacion().getLocalizacionBien())){
 				NMBLocalizacionesBien localizacionesVacia = new NMBLocalizacionesBien();
 				localizacionesVacia.setBien(activo.getBien());
 				activo.getLocalizacion().setLocalizacionBien(localizacionesVacia);
@@ -316,7 +316,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			activo.setLocalizacion(genericDao.save(ActivoLocalizacion.class, activo.getLocalizacion()));
 
-			if (activo.getComunidadPropietarios() == null) {	
+			if (Checks.esNulo(activo.getComunidadPropietarios())) {	
 				activo.setComunidadPropietarios(new ActivoComunidadPropietarios());
 			}
 			
@@ -329,40 +329,40 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			String cuentaCuatro = "";
 			String cuentaCinco = "";
 			
-			if (dto.getNumCuentaUno() != null || dto.getNumCuentaDos() != null || dto.getNumCuentaTres() != null || dto.getNumCuentaCuatro() != null || dto.getNumCuentaCinco() != null) {
+			if (!Checks.esNulo(dto.getNumCuentaUno()) || !Checks.esNulo(dto.getNumCuentaDos()) || !Checks.esNulo(dto.getNumCuentaTres()) || !Checks.esNulo(dto.getNumCuentaCuatro()) || !Checks.esNulo(dto.getNumCuentaCinco())) {
 				
 				String numCuentaTrim = "";
-				if (activo.getComunidadPropietarios().getNumCuenta() != null) {
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
 					numCuentaTrim = activo.getComunidadPropietarios().getNumCuenta().trim();
 				}
 
-				if (dto.getNumCuentaUno() != null) {
+				if (!Checks.esNulo(dto.getNumCuentaUno())) {
 					cuentaUno = dto.getNumCuentaUno();
-				} else if (activo.getComunidadPropietarios().getNumCuenta() != null) {
+				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
 					cuentaUno = numCuentaTrim.substring(0, 4);
 				}
 				
-				if (dto.getNumCuentaDos() != null) {
+				if (!Checks.esNulo(dto.getNumCuentaDos())) {
 					cuentaDos = dto.getNumCuentaDos();
-				} else if (activo.getComunidadPropietarios().getNumCuenta() != null) {
+				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
 					cuentaDos = numCuentaTrim.substring(4, 8);
 				}
 				
-				if (dto.getNumCuentaTres() != null) {
+				if (!Checks.esNulo(dto.getNumCuentaTres())) {
 					cuentaTres = dto.getNumCuentaTres();
-				} else if (activo.getComunidadPropietarios().getNumCuenta() != null) {
+				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
 					cuentaTres = numCuentaTrim.substring(8, 12);
 				}
 				
-				if (dto.getNumCuentaCuatro() != null) {
+				if (!Checks.esNulo(dto.getNumCuentaCuatro())) {
 					cuentaCuatro = dto.getNumCuentaCuatro();
-				} else if (activo.getComunidadPropietarios().getNumCuenta() != null) {
+				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
 					cuentaCuatro = numCuentaTrim.substring(12, 14);
 				}
 				
-				if (dto.getNumCuentaCinco() != null) {
+				if (!Checks.esNulo(dto.getNumCuentaCinco())) {
 					cuentaCinco = dto.getNumCuentaCinco();
-				} else if (activo.getComunidadPropietarios().getNumCuenta() != null) {
+				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
 					cuentaCinco = numCuentaTrim.substring(14);
 				}
 				
@@ -372,30 +372,30 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			activo.setComunidadPropietarios(genericDao.save(ActivoComunidadPropietarios.class, activo.getComunidadPropietarios()));
 
-			if (dto.getPaisCodigo() != null) {
+			if (!Checks.esNulo(dto.getPaisCodigo())) {
 				DDCicCodigoIsoCirbeBKP pais = (DDCicCodigoIsoCirbeBKP) diccionarioApi.dameValorDiccionarioByCod(DDCicCodigoIsoCirbeBKP.class,  dto.getPaisCodigo());
 				activo.getLocalizacion().getLocalizacionBien().setPais(pais);
 			}
 			
-			if (dto.getTipoViaCodigo() != null) {
+			if (!Checks.esNulo(dto.getTipoViaCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoViaCodigo());
 				DDTipoVia tipoViaNueva = (DDTipoVia) genericDao.get(DDTipoVia.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setTipoVia(tipoViaNueva);
 			}
 			
-			if (dto.getProvinciaCodigo() != null) {
+			if (!Checks.esNulo(dto.getProvinciaCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
 				DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setProvincia(provincia);
 			}
 			
-			if (dto.getMunicipioCodigo() != null) {
+			if (!Checks.esNulo(dto.getMunicipioCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
 				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setLocalidad(municipioNuevo);
 			}
 			
-			if (dto.getInferiorMunicipioCodigo() != null) {
+			if (!Checks.esNulo(dto.getInferiorMunicipioCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getInferiorMunicipioCodigo());
 				DDUnidadPoblacional inferiorNuevo = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setUnidadPoblacional(inferiorNuevo);
@@ -403,27 +403,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
 			
-			if (dto.getTipoActivoCodigo() != null) {
+			if (!Checks.esNulo(dto.getTipoActivoCodigo())) {
 				DDTipoActivo tipoActivo = (DDTipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDTipoActivo.class,  dto.getTipoActivoCodigo());
 				activo.setTipoActivo(tipoActivo);
 			}
 			
-			if (dto.getSubtipoActivoCodigo() != null) {
+			if (!Checks.esNulo(dto.getSubtipoActivoCodigo())) {
 				DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class,  dto.getSubtipoActivoCodigo());
 				activo.setSubtipoActivo(subtipoActivo);
 			}
 			
-			if (dto.getTipoTitulo() != null) {
+			if (!Checks.esNulo(dto.getTipoTitulo())) {
 				DDTipoTituloActivo tipoTitulo = (DDTipoTituloActivo) diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class,  dto.getTipoTitulo());
 				activo.setTipoTitulo(tipoTitulo);
 			}
 			
-			if (dto.getTipoUsoDestinoCodigo() != null) {
+			if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
 				DDTipoUsoDestino tipoUsoDestino = (DDTipoUsoDestino) diccionarioApi.dameValorDiccionarioByCod(DDTipoUsoDestino.class,  dto.getTipoUsoDestinoCodigo());
 				activo.setTipoUsoDestino(tipoUsoDestino);
 			}
 			
-			if (dto.getEstadoActivoCodigo() != null) {
+			if (!Checks.esNulo(dto.getEstadoActivoCodigo())) {
 				DDEstadoActivo estadoActivo = (DDEstadoActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoActivo.class,  dto.getEstadoActivoCodigo());
 				activo.setEstadoActivo(estadoActivo);
 			}
@@ -479,31 +479,37 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setAplicaTramiteAdmision(1);
 				}
 				
-				// Conversion manual. En el dto son booleanos y en la entidad Integer
-				if(dto.getAplicaAsignarMediador() != null) {
+				// Conversion manual. En el dto son booleanos y en la entidad Integer.
+				// Asignar al cambiar estado de los checks también la fecha de hoy.
+				if(!Checks.esNulo(dto.getAplicaAsignarMediador())) {
 					perimetroActivo.setAplicaAsignarMediador(dto.getAplicaAsignarMediador() ? 1 : 0);
+					perimetroActivo.setFechaAplicaAsignarMediador(new Date());
 				}
-				if(dto.getAplicaComercializar() != null) {
+				if(!Checks.esNulo(dto.getAplicaComercializar())) {
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
+					perimetroActivo.setFechaAplicaComercializar(new Date());
 				}
-				if(dto.getAplicaFormalizar() != null) {
+				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
 					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
+					perimetroActivo.setFechaAplicaFormalizar(new Date());
 				}
-				if(dto.getAplicaGestion() != null) {
+				if(!Checks.esNulo(dto.getAplicaGestion())) {
 					perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
+					perimetroActivo.setFechaAplicaGestion(new Date());
 				}
-				if(dto.getAplicaTramiteAdmision() != null) {
+				if(!Checks.esNulo(dto.getAplicaTramiteAdmision())) {
 					perimetroActivo.setAplicaTramiteAdmision(dto.getAplicaTramiteAdmision() ? 1 : 0);
+					perimetroActivo.setFechaAplicaTramiteAdmision(new Date());
 				}
 
-				if (dto.getMotivoAplicaComercializarCodigo() != null) {
+				if (!Checks.esNulo(dto.getMotivoAplicaComercializarCodigo())) {
 					DDMotivoComercializacion motivoAplicaComercializar = (DDMotivoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class,  dto.getMotivoAplicaComercializarCodigo());
 					perimetroActivo.setMotivoAplicaComercializar(motivoAplicaComercializar);
 				}
 				
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
 				
-				if (dto.getTipoComercializacionCodigo() != null) {
+				if (!Checks.esNulo(dto.getTipoComercializacionCodigo())) {
 					DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
 					activo.setTipoComercializacion(tipoComercializacion);
 				}
@@ -580,10 +586,5 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		return activo;
-
-		
 	}
-	
-
-
 }

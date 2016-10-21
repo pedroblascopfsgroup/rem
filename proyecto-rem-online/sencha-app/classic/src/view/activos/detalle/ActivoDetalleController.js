@@ -1665,46 +1665,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	// Este método asigna la fecha actual en el perímetro del activo al cambiar de estado un checkbox.
-	// Tambien desmarca el checkbox de formalizar cuando el checkbox de comercializar se desmarca.
+	// Este método desmarca el checkbox de formalizar cuando el checkbox de comercializar se desmarca.
 	onChkbxPerimetroChange: function(chkbx) {
 		var me = this;
 		var ref = chkbx.getReference();
 
 		switch(ref){
-		case 'chkbxPerimetroAdmision':
-			var dateField = me.lookupReference('datefieldPerimetroAdmision');
-			if(!Ext.isEmpty(dateField)) {
-				dateField.setValue(new Date());
-			}
-			break;
-		case 'chkbxPerimetroGestion':
-			var dateField = me.lookupReference('datefieldPerimetroGestion');
-			if(!Ext.isEmpty(dateField)) {
-				dateField.setValue(new Date());
-			}
-			break;
-		case 'chkbxPerimetroMediador':
-			var dateField = me.lookupReference('datefieldPerimetroMediador');
-			if(!Ext.isEmpty(dateField)) {
-				dateField.setValue(new Date());
-			}
-			break;
 		case 'chkbxPerimetroComercializar':
-			var dateField = me.lookupReference('datefieldPerimetroComercializar');
-			if(!Ext.isEmpty(dateField)) {
-				dateField.setValue(new Date());
-			}
-			
 			if(!chkbx.getValue()) {
 				var chkbxFormalizar = me.lookupReference('chkbxPerimetroFormalizar');
-				chkbxFormalizar.setValue(false);
-			}
-			break;
-		case 'chkbxPerimetroFormalizar':
-			var dateField = me.lookupReference('datefieldPerimetroFormalizar');
-			if(!Ext.isEmpty(dateField)) {
-				dateField.setValue(new Date());
+				if(!Ext.isEmpty(chkbxFormalizar.getValue()) && chkbxFormalizar.getValue()) {
+					chkbxFormalizar.setValue(false);
+				}
 			}
 			break;
 		default:

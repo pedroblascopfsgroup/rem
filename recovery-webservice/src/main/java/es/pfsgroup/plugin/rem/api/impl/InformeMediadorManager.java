@@ -15,15 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAnejo;
 import es.pfsgroup.plugin.rem.model.ActivoBanyo;
 import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
 import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
 import es.pfsgroup.plugin.rem.model.ActivoCocina;
+import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
@@ -34,8 +37,8 @@ import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
-import es.pfsgroup.plugin.rem.model.ActivoAnejo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -1099,6 +1102,60 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		// buenEstadoEncimeraMaterialBanyo
 		addObligatorioVivienda("buenEstadoEncimeraMaterialBanyo");
 
+		// buenEstadoSanitariosBanyo
+		addObligatorioVivienda("buenEstadoSanitariosBanyo");
+
+		// buenEstadoSueloBanyo
+		addObligatorioVivienda("buenEstadoSueloBanyo");
+
+		// buenEstadoGriferiaMonomandoBanyo
+		addObligatorioVivienda("buenEstadoGriferiaMonomandoBanyo");
+
+		// otrosBanyo
+		addObligatorioVivienda("otrosBanyo");
+
+		// buenEstadoInstalacionElectrica
+		addObligatorioVivienda("buenEstadoInstalacionElectrica");
+
+		// instalacionElectricaAntiguaODefectuosa
+		addObligatorioVivienda("instalacionElectricaAntiguaODefectuosa");
+
+		// existeCalefaccionGasNatural
+		addObligatorioVivienda("existeCalefaccionGasNatural");
+
+		// existenRadiadoresDeAluminio
+		addObligatorioVivienda("existenRadiadoresDeAluminio");
+
+		// existeAguaCalienteCentral
+		addObligatorioVivienda("existeAguaCalienteCentral");
+
+		// existeAguaCalienteGasNatural
+		addObligatorioVivienda("existeAguaCalienteGasNatural");
+
+		// existeAireAcondicionadoPreinstalacion
+		addObligatorioVivienda("existeAireAcondicionadoPreinstalacion");
+
+		// existeAireAcondicionadoInstalacion
+		addObligatorioVivienda("existeAireAcondicionadoInstalacion");
+
+		// existeAireAcondicionadoCalor
+		addObligatorioVivienda("existeAireAcondicionadoCalor");
+
+		// otrosInstalaciones
+		addObligatorioVivienda("otrosInstalaciones");
+
+		// existenJardinesZonasVerdes
+		addObligatorioVivienda("existenJardinesZonasVerdes");
+
+		// existePiscina
+		addObligatorioVivienda("existePiscina");
+
+		// existePistaPadel
+		addObligatorioVivienda("existePistaPadel");
+
+		// existePistaTenis
+		addObligatorioVivienda("existePistaTenis");
+
 	}
 
 	private void addObligatorioVivienda(String name) {
@@ -1174,17 +1231,13 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			}
 			if (informe.getPlantas() != null) {
 				for (PlantaDto planta : informe.getPlantas()) {
-					List<String> errorsListPlanta = null;
+					HashMap<String, String> errorsListPlanta = null;
 					if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
-						// ----------------------errorsListPlanta =
-						// restApi.validateRequestObject(planta,
-						// TIPO_VALIDACION.INSERT);
+						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
 					} else {
-						/// --------------------------------errorsListPlanta =
-						/// restApi.validateRequestObject(planta,
-						/// TIPO_VALIDACION.UPDATE);
+						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.UPDATE);
 					}
-					// -----------------------------errorsList.addAll(errorsListPlanta);
+					errorsList.putAll(errorsListPlanta);
 				}
 			}
 			this.validateInformeMediadorDto(informe, informe.getCodTipoActivo(), errorsList);
@@ -1196,8 +1249,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 					informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoLocalComercial.class, "activo.numActivo");
-					
-					ActivoAnejo anejo= (ActivoAnejo) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+
+					ActivoAnejo anejo = (ActivoAnejo) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoAnejo.class, "infoComercial.activo.numActivo");
 					anejo.setInfoComercial(informeEntity);
 					entitys.add(informeEntity);
@@ -1275,6 +1328,28 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					informeEntity.setActivo(activoApi.getByNumActivo(informe.getIdActivoHaya()));
 				}
 				informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys);
+				// Si el activo de es de tipo vivienda guardamos las plantas
+				if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
+					List<PlantaDto> plantas = informe.getPlantas();
+					for (PlantaDto planta : plantas) {
+						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
+								genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
+								genericDao.createFilter(FilterType.EQUALS, "vivienda", (ActivoVivienda) informeEntity));
+						if(activoDistribucion == null){
+							activoDistribucion = new ActivoDistribucion();
+						}
+						activoDistribucion.setNumPlanta(planta.getNumero());
+						activoDistribucion.setVivienda((ActivoVivienda) informeEntity);
+						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
+								genericDao.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
+						activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
+						activoDistribucion.setCantidad(planta.getNumero());
+						activoDistribucion.setSuperficie(planta.getEstancias());
+						activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
+						genericDao.save(ActivoDistribucion.class, activoDistribucion);
+					}
+				}
+
 				adapter.crearTramitePublicacion(informeEntity.getActivo().getId());
 
 				map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());

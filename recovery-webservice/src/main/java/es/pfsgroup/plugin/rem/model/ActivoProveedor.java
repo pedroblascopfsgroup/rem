@@ -34,6 +34,7 @@ import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -164,6 +165,10 @@ public class ActivoProveedor implements Serializable, Auditable {
 	
 	@Column(name = "PVE_HOMOLOGADO")
 	private Integer homologado;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_OPE_ID")
+	private DDOperativa operativa;
 	
 	@ManyToOne
 	@JoinColumn(name = "DD_CPR_ID")
@@ -590,6 +595,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setAdjuntos(List<ActivoAdjuntoProveedor> adjuntos) {
 		this.adjuntos = adjuntos;
+	}
+
+	public DDOperativa getOperativa() {
+		return operativa;
+	}
+
+	public void setOperativa(DDOperativa operativa) {
+		this.operativa = operativa;
 	}
 	
 	

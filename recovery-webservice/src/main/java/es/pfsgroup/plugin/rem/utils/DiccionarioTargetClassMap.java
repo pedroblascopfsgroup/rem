@@ -158,6 +158,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposProveedorHonorario", DDTipoProveedorHonorario.class);
 		mapa.put("accionesGasto", DDAccionGastos.class);
 		mapa.put("estadosDevolucion", DDEstadoDevolucion.class);
+		mapa.put("operativa", DDOperativa.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

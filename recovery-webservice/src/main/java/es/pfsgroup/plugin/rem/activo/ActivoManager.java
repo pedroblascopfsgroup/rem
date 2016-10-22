@@ -123,6 +123,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -1700,6 +1702,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// automáticos. Esto podría ir en un proceso al dar de alta el activo.
 		activo.setBloqueoPrecioFechaIni(new Date());
 		activo.setGestorBloqueoPrecio(adapter.getUsuarioLogado());
+		
+		DDTipoComercializar tipoComercializar = (DDTipoComercializar) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, DDTipoComercializar.CODIGO_RETAIL);
+		if(!Checks.esNulo(tipoComercializar)) {
+			activo.setTipoComercializar(tipoComercializar);
+		}
+		
+		DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, DDTipoComercializacion.CODIGO_VENTA);
+		if(!Checks.esNulo(tipoComercializacion)) {
+			activo.setTipoComercializacion(tipoComercializacion);
+		}
 
 		saveOrUpdate(activo);
 		return activo;
@@ -1711,11 +1723,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		perimetroActivo.setIncluidoEnPerimetro(1);
 		perimetroActivo.setAplicaAsignarMediador(0);
 		perimetroActivo.setAplicaComercializar(1);
-		perimetroActivo.setAplicaFormalizar(1);
+		perimetroActivo.setAplicaFormalizar(0);
 		perimetroActivo.setAplicaGestion(0);
 		perimetroActivo.setAplicaTramiteAdmision(0);
 		perimetroActivo.setFechaAplicaComercializar(new Date());
-		perimetroActivo.setFechaAplicaFormalizar(new Date());
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoComercializacion.CODIGO_ASISTIDA);
 		DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, filtro);

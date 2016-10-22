@@ -118,6 +118,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	
 	     },
 	     
+	     esGastoAnulado: function(get) {
+	     	var e= !Ext.isEmpty(get('gestion.comboMotivoAnulado'));
+	     	return e;	     	
+	     },
+	     
 	     calcularImpuestoIndirecto: function(get) {
 	     	
 	     	var tipo =  get('detalleeconomico.impuestoIndirectoTipoImpositivo');	     	
@@ -130,6 +135,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var tipo =  get('detalleeconomico.irpfTipoImpositivo');	     	
 	     	return tipo * get('detalleeconomico.importePrincipalSujeto') / 100;
 	     	
+	     },
+	     
+	     esGastoEditable: function(get){
+	     	return get('gasto.esGastoEditable');
 	     }
 	     
 		

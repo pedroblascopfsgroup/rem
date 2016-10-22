@@ -108,7 +108,11 @@ Ext.define('HreRem.model.GastoProveedor', {
 			convert: function(v) {
 				return v === "true";		
 			}
-		}	
+		},
+		{
+			name: 'esGastoEditable',
+			type: 'boolean'
+		}
     		
     ],
     

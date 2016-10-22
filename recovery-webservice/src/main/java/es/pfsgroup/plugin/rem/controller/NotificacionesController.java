@@ -70,10 +70,11 @@ public class NotificacionesController {
 		JSONObject jsonFields = null;
 		
 		try {
-			
-			jsonData = (NotificacionRequestDto) request.getRequestData(NotificacionRequestDto.class);		
 			jsonFields = request.getJsonObject();
 			logger.debug("PETICIÓN: " + jsonFields);
+			
+			jsonData = (NotificacionRequestDto) request.getRequestData(NotificacionRequestDto.class);		
+			
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
@@ -85,10 +86,10 @@ public class NotificacionesController {
 				for (NotificacionDto notificacion : notificaciones) {
 					map = new HashMap<String, Object>();
 					errorsList = restApi.validateRequestObject(notificacion,TIPO_VALIDACION.INSERT);
-					if (notificacion.getCodTipoNotificacion() == null || (!notificacion.getCodTipoNotificacion().equals("N")
+/*					if (notificacion.getCodTipoNotificacion() == null || (!notificacion.getCodTipoNotificacion().equals("N")
 							&& !notificacion.getCodTipoNotificacion().equals("A"))) {
 						errorsList.put("codTipoNotificacion", RestApi.REST_MSG_UNKNOWN_KEY);
-					}
+					}*/
 					if (errorsList.size() == 0) {
 						Notificacion notificacionBbdd = new Notificacion();
 						notificacionBbdd.setIdActivo(notificacion.getIdActivoHaya());
@@ -115,19 +116,18 @@ public class NotificacionesController {
 					listaRespuesta.add(map);
 				}
 			}
-			model.put("id", jsonData.getId());
+			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", "null");
 			
 		} catch (Exception e) {
 			logger.error(e);
-			model.put("id", jsonData.getId());
+			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			map.put("success", false);
 		} finally {
 			logger.debug("RESPUESTA: " + model);
-			logger.debug("ERRORES: " + errorsList);
 		}
 		restApi.sendResponse(response,model);
 	}

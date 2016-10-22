@@ -42,7 +42,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
@@ -183,10 +185,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "estadoPublicacionCodigo", activo.getEstadoPublicacion().getCodigo());
 		}
 		
+		if(activo.getTipoComercializar() != null){
+			BeanUtils.copyProperty(activoDto, "tipoComercializarCodigo", activo.getTipoComercializar().getCodigo());
+			BeanUtils.copyProperty(activoDto, "tipoComercializarDescripcion", activo.getTipoComercializar().getDescripcion());
+		}
+		//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 		if(activo.getTipoComercializacion() != null){
 			BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getTipoComercializacion().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getTipoComercializacion().getDescripcion());
 		}
+		
+		if(activo.getTipoAlquiler() != null){
+			BeanUtils.copyProperty(activoDto, "tipoAlquilerCodigo", activo.getTipoAlquiler().getCodigo());
+			BeanUtils.copyProperty(activoDto, "tipoAlquilerDescripcion", activo.getTipoAlquiler().getDescripcion());
+		}
+		
 		if(activo.getAgrupaciones().size() > 0){
 			Boolean pertenceAgrupacionRestringida= false;
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
@@ -456,13 +469,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(
 				dto.getAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || dto.getAplicaFormalizar() != null || 
 				dto.getAplicaGestion() != null  || dto.getAplicaTramiteAdmision() != null || dto.getMotivoAplicaComercializarCodigo() != null ||
-				dto.getMotivoNoAplicaComercializar() != null || dto.getTipoComercializacionCodigo() != null ||
+				dto.getMotivoNoAplicaComercializar() != null || 
 				dto.getIncluidoEnPerimetro() != null ||	dto.getFechaAltaActivoRem() != null || dto.getAplicaTramiteAdmision() != null || 
 				dto.getFechaAplicaTramiteAdmision() != null || dto.getMotivoAplicaTramiteAdmision() != null ||	dto.getAplicaGestion() != null ||
 				dto.getFechaAplicaGestion() != null || dto.getMotivoAplicaGestion() != null || dto.getAplicaAsignarMediador() != null ||
 				dto.getFechaAplicaAsignarMediador() != null || dto.getMotivoAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || 
 				dto.getFechaAplicaComercializar() != null || dto.getMotivoAplicaComercializarCodigo() != null || dto.getMotivoAplicaComercializarDescripcion() != null ||
-				dto.getMotivoNoAplicaComercializar() != null || dto.getAplicaFormalizar() != null || dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null ) 
+				dto.getMotivoNoAplicaComercializar() != null || dto.getAplicaFormalizar() != null || dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null)
+				 
 			{
 				
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
@@ -509,15 +523,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
 				
-				if (!Checks.esNulo(dto.getTipoComercializacionCodigo())) {
-					DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
-					activo.setTipoComercializacion(tipoComercializacion);
-				}
-				
-				
+
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 			}
-			// ---------
+			
+			// --------- Perimetro --> Bloque Comercializción
+			if (!Checks.esNulo(dto.getTipoComercializarCodigo())) {
+				DDTipoComercializar tipoComercializar = (DDTipoComercializar) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class,  dto.getTipoComercializarCodigo());
+				activo.setTipoComercializar(tipoComercializar);
+			}
+			//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
+			if (!Checks.esNulo(dto.getTipoComercializacionCodigo())) {
+				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
+				activo.setTipoComercializacion(tipoComercializacion);
+			}
+			
+			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
+				DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) diccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class,  dto.getTipoAlquilerCodigo());
+				activo.setTipoAlquiler(tipoAlquiler);
+			}
 			
 			// Activo bancario -------------
 			// Solo se guardan los datos si el usuario ha cambiado algun campo del activo bancario.
@@ -578,6 +602,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			}
 			// -----
+			
+			
+			
 			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

@@ -31,8 +31,8 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dto) {
 		HQLBuilder hb = new HQLBuilder("select distinct pve.id, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
 
-		if(!Checks.esNulo(dto.getId())) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.id", Long.valueOf(dto.getId()));
+		if(!Checks.esNulo(dto.getCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.codigoProveedorRem", Long.valueOf(dto.getCodigo()));
 		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.estadoProveedorCodigo", dto.getEstadoProveedorCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoProveedorCodigo", dto.getTipoProveedorCodigo());

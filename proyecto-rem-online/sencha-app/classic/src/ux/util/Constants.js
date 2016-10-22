@@ -159,6 +159,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	TERCEROS: '04'
     },
     
+    IMAGENES_CARTERA: {
+    	CAJAMAR: 'logo_cajamar.svg',
+    	SAREB: 'logo_sareb.svg',
+    	BANKIA: 'logo_bankia.svg'
+    },
+    
     PERFILES: {   	
     	PROVEEDOR: 'HAYAPROV',
     	GESTOR_ACTIVOS: 'GESTACT',

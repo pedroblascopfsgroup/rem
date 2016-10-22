@@ -375,39 +375,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		try {
 			ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
-			List<Visita> listaVisitasCliente = new ArrayList<Visita>();
 
-			// Si el activo principal de la oferta aceptada tiene visitas,
-			// asociamos la visita más reciente del mismo cliente comercial a la
-			// oferta
-			if (!Checks.esNulo(oferta.getActivoPrincipal())) {
-				if (!Checks.esNulo(oferta.getActivoPrincipal().getVisitas())
-						&& !oferta.getActivoPrincipal().getVisitas().isEmpty()) {
-
-					for (Visita v : oferta.getActivoPrincipal().getVisitas()) {
-
-						if (oferta.getCliente().getDocumento().equals(v.getCliente().getDocumento())) {
-							listaVisitasCliente.add(v);
-						}
-					}
-
-					if (!listaVisitasCliente.isEmpty()) {
-						oferta.setVisita(listaVisitasCliente.get(0));
-						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
-								.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class,
-										DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_REALIZADA);
-						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
-					} else {
-						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
-								.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class,
-										DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_PENDIENTE);
-						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
-					}
-
-					genericDao.save(Oferta.class, oferta);
-
+			if (!Checks.esNulo(oferta.getVisita())) {
+				DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class,
+							DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_REALIZADA);
+				oferta.setEstadoVisitaOferta(estadoVisitaOferta);
 				}
+			else {
+				DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class,
+								DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_PENDIENTE);
+				oferta.setEstadoVisitaOferta(estadoVisitaOferta);
 			}
+
+			genericDao.save(Oferta.class, oferta);
+
 
 			nuevoExpediente.setOferta(oferta);
 			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi

@@ -432,10 +432,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var me = this,
     	disabled = value == 0;
-
-    	if(!Ext.isEmpty(me.lookupReference('datoscomunidadactivo'))) {
-	    	me.lookupReference('datoscomunidadactivo').setDisabled(disabled);
-    	}
 	    
 	    me.lookupReference('estadoDivHorizontal').setDisabled(disabled);
     	me.lookupReference('estadoDivHorizontalNoInscrita').setDisabled(disabled);
@@ -472,10 +468,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var me = this,
     	disabled = value == 0;
-
-    	if(!Ext.isEmpty(me.lookupReference('datoscomunidadactivo'))) {
-	    	me.lookupReference('datoscomunidadactivo').setDisabled(disabled);
-    	}
     	
     	me.lookupReference('estadoDivHorizontalAdmision').setDisabled(disabled);
     	me.lookupReference('estadoDivHorizontalNoInscritaAdmision').setDisabled(disabled);

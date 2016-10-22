@@ -888,6 +888,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 		
+		storeEntidades: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Proveedor',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getProveedorByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
 		storeGastosProveedor: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.Gasto',

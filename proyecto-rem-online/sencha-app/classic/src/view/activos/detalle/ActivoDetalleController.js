@@ -1472,7 +1472,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		
     		success: function(response, opts){
     			var obj = Ext.decode(response.responseText);
-    		    if (obj.success == true) {
+    		    if (obj.success == 'true') {
     		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
         			btn.up('tasacionesactivo').funcionRecargar();
     		    } else {

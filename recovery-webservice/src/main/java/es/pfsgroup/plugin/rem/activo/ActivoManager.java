@@ -111,7 +111,6 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -2058,7 +2057,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
 					NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
 					valoracionBien.setBien(activo.getBien());
-					//beanUtilNotNull.copyProperty(valoracionBien, "bien", activo.getBien());
 					valoracionBien = genericDao.save(NMBValoracionesBien.class, valoracionBien);
 
 					if (!Checks.esNulo(valoracionBien)) {
@@ -2075,7 +2073,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				return false;
+				throw new Exception("Error al procesar su solicitud");
 			}
 		} else {
 			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");

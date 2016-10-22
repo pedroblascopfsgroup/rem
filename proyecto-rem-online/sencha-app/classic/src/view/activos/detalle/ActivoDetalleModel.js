@@ -672,7 +672,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'acabadosCarpinteria'}
 				}
     		},
-    		
+    		/*
     		comboTipoComercializacionActivo: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -680,7 +680,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposComercializacionActivo'}
 				}
-    		},
+    		},*/
     		
     		comboMotivoAplicaComercializarActivo: {
 				model: 'HreRem.model.ComboBase',
@@ -897,6 +897,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			remoteSort: false,
 		    remoteFilter: false,	    	
 		    autoLoad: false
+		},
+		
+		comboTipoComercializarActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposComercializarActivo'}
+			}
+		},
+		
+		//Se filtra, ya que en principio hay un registro de este diccionario que no corresponde, pero no lo eliminamos de BD
+		comboTipoDestinoComercialCreaFiltered: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoDestinoComercialCreaFiltered'
+			}
+		},
+		
+		comboTipoAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAlquilerActivo'}
+			}
 		}
      }    
 });

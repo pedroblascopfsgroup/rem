@@ -451,27 +451,27 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.comercializacion'),
 										bind: {
-										/*	store: '{comboTipoComercializacionActivo}',
-											value: '{activo.tipoComercializacionCodigo}',
-										*/	visible: '{activo.aplicaComercializar}'
+											store: '{comboTipoComercializarActivo}',
+											value: '{activo.tipoComercializarCodigo}',
+											visible: '{activo.aplicaComercializar}'
 										}
 									},
 									{
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
-										/*	store: '{comboTipoComercializacionActivo}',
+											store: '{comboTipoDestinoComercialCreaFiltered}',
 											value: '{activo.tipoComercializacionCodigo}',
-										*/	visible: '{activo.aplicaComercializar}'
+											visible: '{activo.aplicaComercializar}'
 										}
 									},
 									{
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
 										bind: {
-										/*	store: '{comboTipoComercializacionActivo}',
-											value: '{activo.tipoComercializacionCodigo}',
-										*/	visible: '{activo.aplicaComercializar}'
+											store: '{comboTipoAlquiler}',
+											value: '{activo.tipoAlquilerCodigo}',
+											visible: '{activo.aplicaComercializar}'
 										}
 									},
 									

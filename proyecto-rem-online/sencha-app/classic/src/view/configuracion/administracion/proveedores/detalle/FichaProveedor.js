@@ -154,7 +154,18 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
 									bind: '{proveedor.fechaConstitucionProveedor}'
 					            },
-					         // Fila 5 (Ámbito)
+					         // Fila 5
+					            {
+					            	xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.operativa'),
+						        	reference: 'cbOperativaProveedor',
+						        	bind: {
+									      store: '{comboOperativa}',
+									      value: '{proveedor.operativaCodigo}'
+						        	},
+						        	colspan: 3
+					            },
+					         // Fila 6 (Ámbito)
 					            {
 									xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
@@ -212,7 +223,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 											}
 										]
 					            },
-					         // Fila 6 (Mediador)
+					         // Fila 7 (Mediador)
 					            {
 									xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
@@ -254,9 +265,18 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 											},
 										// Fila 1
 											{
+												xtype : 'comboboxfieldbase',
+											    fieldLabel : HreRem.i18n('fieldlabel.proveedores.homologado'),
+											    reference: 'cbProveedorHomologado',
+											    bind : {
+											      store : '{comboSiNoRem}',
+											      value : '{proveedor.homologadoCodigo}'
+											    }
+											},
+											{
 												// Label vacía para generar un espacio por cuestión de estética.
 												xtype: 'label',
-												colspan: 2
+												colspan: 1
 										    },
 											{
 												xtype : 'comboboxfieldbase',

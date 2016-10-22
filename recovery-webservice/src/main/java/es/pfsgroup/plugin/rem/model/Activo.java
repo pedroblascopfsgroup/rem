@@ -44,7 +44,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
@@ -363,6 +365,14 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_FECHA_IND_PUBLICABLE")
     private Date fechaPublicable;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TCR_ID")
+    private DDTipoComercializar tipoComercializar;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TAL_ID")
+    private DDTipoAlquiler tipoAlquiler;
     
 	@Version   
 	private Long version;
@@ -1423,6 +1433,22 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaPublicable(Date fechaPublicable) {
 		this.fechaPublicable = fechaPublicable;
+	}
+
+	public DDTipoComercializar getTipoComercializar() {
+		return tipoComercializar;
+	}
+
+	public void setTipoComercializar(DDTipoComercializar tipoComercializar) {
+		this.tipoComercializar = tipoComercializar;
+	}
+
+	public DDTipoAlquiler getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
 	}
 	
 	

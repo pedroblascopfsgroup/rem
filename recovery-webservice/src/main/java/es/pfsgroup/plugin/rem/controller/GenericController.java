@@ -234,4 +234,9 @@ public class GenericController {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboProveedorBySubtipo(DDTipoProveedor.COD_NOTARIO)));
 		
 	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboTipoDestinoComercialCreaFiltered() {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoDestinoComercialCreaFiltered()));	
+	}
 }

@@ -144,6 +144,12 @@ Ext.define('HreRem.model.FichaProveedorModel', {
         			return false;
         		},
         		depends: 'tipoProveedorCodigo'
+            },
+            {
+            	name: 'homologadoCodigo'
+            },
+            {
+            	name: 'operativaCodigo'
             }
     ],
     

@@ -263,8 +263,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "tipoRenta", classObj = DDTipoRenta.class)
 	private String codNivelRenta;
 
-	// ?
-	@EntityDefinition(procesar = false, motivo = "no estamos procesando las plantas")
+	//lo procesamos de forma no generica
+	@EntityDefinition(procesar = false)
 	private List<PlantaDto> plantas;
 
 	private Integer numeroTerrazasDescubiertas;

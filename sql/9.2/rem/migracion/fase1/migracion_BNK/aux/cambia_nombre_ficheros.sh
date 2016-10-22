@@ -13,7 +13,7 @@ mv Fich_Propietarios_Activo.dat PROPIETARIOS_ACTIVO.dat
 mv Fich_Cargas_Activo.dat CARGAS_ACTIVO.dat
 mv Fich_Llaves_Activo.dat LLAVES_ACTIVO.dat
 mv Fich_Tasaciones_Activo.dat TASACIONES_ACTIVO.dat
-mv Fich_InfoComercial_Activo.dat INFOCOMERCIAL_ACTIVO.dat
+mv Fich_Infocomercial_Activo.dat INFOCOMERCIAL_ACTIVO.dat
 mv Fich_Calidades_Activo.dat CALIDADES_ACTIVO.dat
 mv Fich_Agrupaciones_Activo.dat AGRUPACIONES_ACTIVO.dat
 mv Fich_Agrupaciones.dat AGRUPACIONES.dat

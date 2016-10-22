@@ -208,6 +208,9 @@ public class ActivoProveedor implements Serializable, Auditable {
     @JoinColumn(name = "PVE_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<ActivoAdjuntoProveedor> adjuntos;
+	
+	@Column(name = "PVE_COD_REM")
+	private Long codigoProveedorRem;
 
 	@Version   
 	private Long version;
@@ -603,6 +606,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setOperativa(DDOperativa operativa) {
 		this.operativa = operativa;
+	}
+	
+	public Long getCodigoProveedorRem() {
+		return codigoProveedorRem;
+	}
+
+	public void setCodigoProveedorRem(Long codigoProveedorRem) {
+		this.codigoProveedorRem = codigoProveedorRem;
 	}
 	
 	

@@ -328,8 +328,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaTramiteAdmision}',
 								reference: 'datefieldPerimetroAdmision',
-								readOnly: true,
-								hidden: true
+								readOnly: true/*,
+								hidden: true*/
 							},
 							{
 								xtype: 'textfieldbase',
@@ -371,8 +371,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaAsignarMediador}',
 								reference: 'datefieldPerimetroMediador',
-								readOnly: true,
-								hidden: true
+								readOnly: true/*,
+								hidden: true*/
 							},
 							{
 								xtype: 'textfieldbase',

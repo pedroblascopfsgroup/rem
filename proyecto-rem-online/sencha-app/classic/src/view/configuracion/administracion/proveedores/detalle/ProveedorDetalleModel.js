@@ -150,6 +150,14 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
      	        extraParams: {id: '{proveedor.id}'}
          	 },
          	 groupField: 'descripcionTipo'
+		},
+		comboOperativa: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'operativa'}
+			}
 		}
     }
     

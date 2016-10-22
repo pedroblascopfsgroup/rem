@@ -81,10 +81,8 @@ public class ResolucionComiteController {
 						notif = new Notificacion();
 						notif.setIdActivo(resol.getOferta().getActivoPrincipal().getId());
 						notif.setDestinatario(29468L);
-						notif.setTitulo("Resolución comité Bankia oferta: " + resol.getOferta().getNumOferta());
-						notif.setDescripcion("El cómite " + resol.getComite().getDescripcion() + " ha " + 
-						resol.getEstadoResolucion().getDescripcion() + " la oferta número " + resol.getOferta().getNumOferta() + 
-						". Acceda a su agenda para resolver la tarea pendiente de esta resolución.");
+						notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resol.getOferta().getNumOferta());
+						notif.setDescripcion(ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_MSG);
 						notif.setFecha(null);
 
 						notifrem = anotacionApi.saveNotificacion(notif);

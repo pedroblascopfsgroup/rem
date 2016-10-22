@@ -1,11 +1,7 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.TypeVariable;
 import java.text.ParseException;
 import java.util.Date;
-
-import org.jdom.IllegalDataException;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;

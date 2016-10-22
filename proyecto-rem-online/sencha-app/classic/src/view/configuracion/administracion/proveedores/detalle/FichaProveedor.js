@@ -47,8 +47,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 				             // Fila 0  
 				                { 
 				                	xtype: 'textfieldbase',
-				                	fieldLabel: HreRem.i18n('fieldlabel.proveedor.id'),
-				                	bind: '{proveedor.id}',
+				                	fieldLabel: HreRem.i18n('fieldlabel.proveedores.codigo'),
+				                	bind: '{proveedor.codigo}',
 				                	readOnly: true
 				                },				                
 				                { 

@@ -10,6 +10,9 @@ Ext.define('HreRem.model.FichaProveedorModel', {
 		    	name: 'id'
 		    },
 		    {
+		    	name: 'codigo'
+		    },
+		    {
 		    	name: 'fechaUltimaActualizacion',
     			type:'date',
     			dateFormat: 'c'

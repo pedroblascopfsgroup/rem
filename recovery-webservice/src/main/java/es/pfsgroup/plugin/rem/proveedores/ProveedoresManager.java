@@ -113,6 +113,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			try {
 				beanUtilNotNull.copyProperty(dto, "fechaUltimaActualizacion", proveedor.getAuditoria().getFechaModificar());
 				beanUtilNotNull.copyProperty(dto, "id", proveedor.getId());
+				beanUtilNotNull.copyProperty(dto, "codigo", proveedor.getCodigoProveedorRem());
 				beanUtilNotNull.copyProperty(dto, "nombreProveedor", proveedor.getNombre());
 				beanUtilNotNull.copyProperty(dto, "fechaAltaProveedor", proveedor.getFechaAlta());
 				if(!Checks.esNulo(proveedor.getTipoProveedor())) {

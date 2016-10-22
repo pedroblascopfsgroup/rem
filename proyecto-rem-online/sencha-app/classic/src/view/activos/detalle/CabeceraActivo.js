@@ -193,7 +193,8 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 															cls: 'cabecera-info-field',
 															width: 70,
 										                	bind: {
-										                		src: '{getSrcCartera}'
+										                		src: '{getSrcCartera}',
+										                		alt: '{activo.entidadPropietariaDescripcion}'
 										                	}
 										                },
 										                { 

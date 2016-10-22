@@ -196,13 +196,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     getSrcCartera: function(get) {
 	     	
 	     	var cartera = get('activo.entidadPropietariaDescripcion');
-	     	
+	     	var src=null;
 	     	if(!Ext.isEmpty(cartera)) {
-	     		return 'resources/images/logo_'+cartera.toLowerCase()+'.svg'	     		
-	     	} else {
-	     		return '';
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
 	     	}
-	     	
+        	if(Ext.isEmpty(src)) {
+        		return 	null;
+        	}else {
+        		return 'resources/images/'+src;	     
+        	}     	
 	     	
 	     },
 	     

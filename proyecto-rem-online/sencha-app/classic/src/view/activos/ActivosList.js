@@ -27,11 +27,17 @@ Ext.define('HreRem.view.activos.ActivosList', {
         	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
         }; 
         
+ 
+        
         var carteraRenderer =  function(value) {
-        	var src = 'logo_'+value.toLowerCase()+'.svg',
+        	var src = CONST.IMAGENES_CARTERA[value.toUpperCase()],
         	alt = value;
-        	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="50px"></div>';
-        };   
+        	if(Ext.isEmpty(src)) {
+        		return '<div class="min-text-logo-cartera">'+value.toUpperCase()+'</div>';	
+        	}else {
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="50px"></div>';
+        	}
+        };
      	
      	me.setTitle(HreRem.i18n('title.activos'));
  		me.ventanaImagen = Ext.create('Ext.window.Window', {

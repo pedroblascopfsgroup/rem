@@ -17,9 +17,13 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContado
         var me = this;
         
         var carteraRenderer =  function(value) {
-        	var src = 'logo_'+value.toLowerCase()+'.svg',
+        	var src = CONST.IMAGENES_CARTERA[value.toUpperCase()],
         	alt = value;
-        	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="100px"></div>';
+        	if(Ext.isEmpty(src)) {
+        		return '<div class="text-logo-cartera">'+value.toUpperCase()+'</div>';	
+        	}else {
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="100px"></div>';
+        	}
         };
         
         me.columns= [

@@ -14,7 +14,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
-import es.pfsgroup.plugin.rem.clienteComercial.ClienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;

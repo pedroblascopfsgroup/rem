@@ -21,15 +21,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaRequestDto;
@@ -42,6 +41,9 @@ public class ReservaController {
 	@Autowired
 	private ActivoApi activoApi;
 
+	@Autowired
+	private ReservaApi reservaApi;
+	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
@@ -56,15 +58,12 @@ public class ReservaController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/reserva")
 	public void reservaInmueble(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
-
-		final String COBRO_RESERVA = "1";
-		final String COBRO_VENTA = "3";
-		final String DEVOLUCION_RESERVA = "5";
-
+		Double importeReserva = null;
 		ReservaRequestDto jsonData = null;
 		ReservaDto reservaDto = null;
 		Map<String, Object> respuesta = new HashMap<String, Object>();
 		JSONObject jsonFields = null;
+		HashMap<String, String> errorList = null;
 		
 		try {
 			
@@ -74,39 +73,22 @@ public class ReservaController {
 			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
 			reservaDto = jsonData.getData();
 
-			HashMap<String, String> errorList = restApi.validateRequestObject(reservaDto, TIPO_VALIDACION.INSERT);
+			errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields) ;
 
 			if (errorList != null && errorList.isEmpty()) {
-				Double importeReserva = null;
+				
 				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
 				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
-				if (oferta == null) {
-					throw new Exception("El activo no tiene ofertas aceptadas");
-				}
-
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-				if (expedienteComercial == null) {
-					throw new Exception("No existe el expediente comericial para esta oferta");
-				}
 				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);
-				Map<String, Object> mapOferta = new HashMap<String, Object>();
-				mapOferta.put("oferta", ofertaUVEM);
+				ArrayList<TitularUVEMDto> listaTitularUVEM = expedienteComercialApi.obtenerListaTitularesUVEM(expedienteComercial);
+				
+				respuesta.put("oferta", ofertaUVEM);
+				respuesta.put("titulares", listaTitularUVEM);				
 				importeReserva = Double.valueOf(ofertaUVEM.getImporteReserva());
 
-				ArrayList<TitularUVEMDto> listaTitularUVEM = expedienteComercialApi.obtenerListaTitularesUVEM(expedienteComercial);
-				Map<String, Object> mapTitulares = new HashMap<String, Object>();
-				mapTitulares.put("titulares", listaTitularUVEM);
-
-				respuesta.put("oferta", mapOferta);
-				respuesta.put("titulares", mapTitulares);
-
-				if (COBRO_RESERVA.equals(reservaDto.getAccion())) {
-					if(!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)){
-						throw new Exception("La reserva debe estar en el estado pendiente de firma");
-					}
-					if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.APROBADO)){
-						throw new Exception("El expediente debe estar aprobado");
-					}
+				if (ReservaApi.COBRO_RESERVA.equals(reservaDto.getAccion())) {
+					
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(importeReserva);
 					Date fechaEntrega = new Date();
@@ -126,16 +108,8 @@ public class ReservaController {
 					}
 				}
 
-				if (DEVOLUCION_RESERVA.equals(reservaDto.getAccion())) {
-					if(!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_ANULADA)){
-						throw new Exception("La reserva debe estar en el estado anulada");
-					}
-					if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.ANULADO)){
-						throw new Exception("El expediente debe estar anulado");
-					}
-					if(expedienteComercial.getReserva().getEstadoDevolucion()!=null && !expedienteComercial.getReserva().getEstadoDevolucion().getCodigo().equals(DDEstadoDevolucion.ESTADO_PENDIENTE)){
-						throw new Exception("La devolucion debe estar pendiente");
-					}
+				if (ReservaApi.DEVOLUCION_RESERVA.equals(reservaDto.getAccion())) {
+
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(-importeReserva);
 					Date fechaEntrega = new Date();
@@ -161,13 +135,8 @@ public class ReservaController {
 					}
 				}
 
-				if (COBRO_VENTA.equals(reservaDto.getAccion())) {
-					if(!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA)){
-						throw new Exception("La reserva debe estar en el estado firmada");
-					}
-					if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.POSICIONADO)){
-						throw new Exception("El expediente debe estar posicionado");
-					}
+				if (ReservaApi.COBRO_VENTA.equals(reservaDto.getAccion())) {
+
 					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
 							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
 					if (estadoReservado == null) {

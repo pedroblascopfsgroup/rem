@@ -28,7 +28,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 public class ResolucionComiteManager extends BusinessOperationOverrider<ResolucionComiteApi> implements ResolucionComiteApi{
 
 	
-	protected static final Log logger = LogFactory.getLog(ClienteComercialManager.class);
+	protected static final Log logger = LogFactory.getLog(ResolucionComiteManager.class);
 
 	@Autowired
 	private RestApi restApi;

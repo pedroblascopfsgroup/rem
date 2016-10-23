@@ -104,7 +104,7 @@ public class ResolucionComiteController {
 			
 			if(!Checks.esNulo(notifrem)){
 				model.put("id", jsonFields.get("id"));
-				model.put("error", null);
+				model.put("error", "");
 			}else{
 				model.put("id", jsonFields.get("id"));
 				model.put("error", errorsList);

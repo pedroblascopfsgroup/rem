@@ -6,6 +6,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -120,9 +121,6 @@ public class AnotacionManager implements AnotacionApi{
 		}
 		
 		CrearAnotacionDto serviceDto = new CrearAnotacionDto();
-		List<String> listaDireccionesCc = new ArrayList<String>();
-		List<String> listaDireccionesPara = new ArrayList<String>();
-		
 		List<DtoCrearAnotacionUsuario> listaUsuarios = new ArrayList<DtoCrearAnotacionUsuario>();
 		DtoCrearAnotacionUsuario du = new DtoCrearAnotacionUsuario();
 		du.setId(notificacion.getDestinatario());
@@ -134,8 +132,28 @@ public class AnotacionManager implements AnotacionApi{
 		serviceDto.setTipoAnotacion("A");
 		serviceDto.setCuerpoEmail(notificacion.getDescripcion());
 		serviceDto.setAsuntoMail(notificacion.getTitulo());
-		serviceDto.setDireccionesMailCc(listaDireccionesCc);
-		serviceDto.setDireccionesMailPara(listaDireccionesPara);
+		
+		List<String> listaDireccionesCc = new ArrayList<String>();
+        if (StringUtils.hasText(notificacion.getCc())) {
+            String direcciones[] = notificacion.getCc().replace(" ", "").split(",");
+            if (direcciones.length > 1) {
+                listaDireccionesCc.addAll(Arrays.asList(direcciones));
+            } else {
+                listaDireccionesCc.add(notificacion.getCc());
+            }
+        }
+        serviceDto.setDireccionesMailCc(listaDireccionesCc);
+
+        List<String> listaDireccionesPara = new ArrayList<String>();
+        if (StringUtils.hasText(notificacion.getPara())) {
+            String direcciones[] = notificacion.getPara().replace(" ", "").split(",");
+            if (direcciones.length > 1) {
+                listaDireccionesPara.addAll(Arrays.asList(direcciones));
+            } else {
+                listaDireccionesPara.add(notificacion.getPara());
+            }
+        }
+        serviceDto.setDireccionesMailPara(listaDireccionesPara);
 
 		serviceDto.setIdUg(notificacion.getIdActivo());
 		serviceDto.setCodUg(DDTipoEntidad.CODIGO_ENTIDAD_ACTIVO);

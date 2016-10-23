@@ -8,7 +8,11 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.map.JsonMappingException;
+
+//import org.codehaus.jackson.map.JsonMappingException;
+//import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
+import es.pfsgroup.plugin.rem.rest.api.NotificatorApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
@@ -45,7 +50,8 @@ public class ResolucionComiteController {
 	@Autowired
 	private RestApi restApi;
 	
-	
+	@Autowired
+	NotificatorApi notificatorApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
@@ -63,8 +69,8 @@ public class ResolucionComiteController {
 
 			jsonFields = request.getJsonObject();
 			logger.debug("PETICIÓN: " + jsonFields);
-			
-			jsonData = (ResolucionComiteRequestDto) request.getRequestData(ResolucionComiteRequestDto.class);
+				
+			jsonData = (ResolucionComiteRequestDto) request.getRequestData(ResolucionComiteRequestDto.class);			
 			resolucionComiteDto = jsonData.getData();
 
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
@@ -84,10 +90,14 @@ public class ResolucionComiteController {
 						notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resol.getOferta().getNumOferta());
 						notif.setDescripcion(ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_MSG);
 						notif.setFecha(null);
-
+						
 						notifrem = anotacionApi.saveNotificacion(notif);
 						if(Checks.esNulo(notifrem)){
 							errorsList.put("error", "Se ha producido un error al enviar la notificación.");
+						}else{
+							notif.setPara("anahuac.devicente@pfsgroup.es");
+							notificatorApi.notificator(resol,notif);
+							logger.debug("\tEnviando correo a: " + notif.getPara());
 						}
 					}
 				}
@@ -101,16 +111,21 @@ public class ResolucionComiteController {
 				model.put("error", errorsList);
 			}
 			
-			
-		} catch (JsonMappingException e1) {
-			logger.error(e1);
-			model.put("id", jsonFields.get("id"));	
-			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");
-		} catch (Exception e) {
-			logger.error(e);
+		} catch (JsonMappingException e3) {
+			logger.error(e3);
 			model.put("id", jsonFields.get("id"));
+			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");			
+		
+		} catch (Exception e2) {	
+			logger.error(e2);
+			model.put("id", jsonFields.get("id"));	
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			
+		} catch (Throwable t) {	
+			logger.error(t);
+			model.put("id", jsonFields.get("id"));	
+			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");
+		
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 		}
@@ -119,4 +134,5 @@ public class ResolucionComiteController {
 
 	}
 	
+
 }

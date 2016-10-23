@@ -8,16 +8,15 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-//import org.codehaus.jackson.map.JsonMappingException;
-//import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+//import org.codehaus.jackson.map.JsonMappingException;
+//import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
@@ -27,7 +26,6 @@ import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.NotificatorApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -77,8 +75,9 @@ public class ResolucionComiteController {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 
 			} else {
+						
+				errorsList = resolucionComiteApi.validateResolucionPostRequestData(resolucionComiteDto, jsonFields);
 				
-				errorsList = restApi.validateRequestObject(jsonData.getData(), TIPO_VALIDACION.INSERT);				
 				if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {
 					resol = resolucionComiteApi.saveResolucionComite(resolucionComiteDto);				
 					

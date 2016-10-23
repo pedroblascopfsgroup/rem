@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.util.HashMap;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 
 @Service("resolucionComiteManager")
@@ -42,7 +45,39 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	
+	
+	
 
+	@Override
+	public HashMap<String, String> validateResolucionPostRequestData(ResolucionComiteDto resolucionComiteDto, Object jsonFields) throws Exception {
+		HashMap<String, String> hashErrores = null;
+
+
+		hashErrores = restApi.validateRequestObject(resolucionComiteDto, TIPO_VALIDACION.INSERT);	
+
+		if (!Checks.esNulo(resolucionComiteDto.getCodigoResolucion())) {
+			DDEstadoResolucion estadoResol = (DDEstadoResolucion) genericDao.get(DDEstadoResolucion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getCodigoResolucion()));
+			if (!Checks.esNulo(estadoResol)){
+				if(!Checks.esNulo(resolucionComiteDto.getImporteContraoferta()) && !estadoResol.getCodigo().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
+					hashErrores.put("importeContraoferta", "La resolución no es una contraoferta.");					
+				}
+				if(!Checks.esNulo(resolucionComiteDto.getFechaAnulacion()) && !estadoResol.getCodigo().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_DENEGADA)){
+					hashErrores.put("fechaAnulacion", "La resolución no es una denegación.");					
+				}
+				if(!Checks.esNulo(resolucionComiteDto.getCodigoDenegacion()) && !estadoResol.getCodigo().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_DENEGADA)){
+					hashErrores.put("codigoDenegacion", "La resolución no es una denegación.");					
+				}
+				if(Checks.esNulo(resolucionComiteDto.getCodigoDenegacion()) && estadoResol.getCodigo().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_DENEGADA)){
+					hashErrores.put("codigoDenegacion", RestApi.REST_MSG_MISSING_REQUIRED);					
+				}
+			}
+		}
+		
+		return hashErrores;
+	}
+	
+	
+	
 
 
 	@Override

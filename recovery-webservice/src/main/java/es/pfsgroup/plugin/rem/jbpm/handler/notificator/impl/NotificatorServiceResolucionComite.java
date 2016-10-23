@@ -1,7 +1,10 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -11,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -84,6 +89,57 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 	}
 	
 	
+	private String getOferta(ResolucionComiteBankia resol){
+		String ofr = "";
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getOferta())){
+			ofr = resol.getOferta().getNumOferta().toString();
+		}
+		return ofr;
+	}
+	
+	private String getComite(ResolucionComiteBankia resol){
+		String comite = "";
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getComite())){
+			comite = resol.getComite().getDescripcion();
+		}
+		return comite;
+	}
+	
+	
+	private String getEstadoResolucion(ResolucionComiteBankia resol){
+		String estado = "";
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getEstadoResolucion())){
+			estado = resol.getEstadoResolucion().getDescripcion();
+		}
+		return estado;
+	}
+	
+	private String getMotivoDenegacion(ResolucionComiteBankia resol){
+		String motivo = "";
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getMotivoDenegacion())){
+			motivo = resol.getMotivoDenegacion().getDescripcion();
+		}
+		return motivo;
+	}
+	
+	private String getFechaAnulacion(ResolucionComiteBankia resol){
+		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		String fecha = "";
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getFechaAnulacion())){
+			fecha = df.format(resol.getFechaAnulacion());
+		}
+		return fecha;
+	}
+	
+	private String getImporteContraoferta(ResolucionComiteBankia resol){
+		String importe = "";
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getImporteContraoferta())){
+			importe = resol.getImporteContraoferta().toString();
+		}
+		return importe;
+	}
+
+	
 	protected String generateCuerpo(ResolucionComiteBankia resol, String contenido){
 		String cuerpo = "<html>"
 				+ "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>"
@@ -100,47 +156,41 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'>Notificación"
 				+ "					resolución comité Bankia</div>"
 				+ "			</div>"
-				+ "			<div style='background: #b7ddf0; width: 785px; min-height: 600px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
-				+ "				<div style='background: #054664; width: 600px; height: 375px; border-radius: 20px; color: #fff; display: inline-block'>"
+				+ "			<div style='background: #b7ddf0; width: 700px; min-height: 400px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
+				+ "				<div style='background: #054664; width: 600px; height: 200px; border-radius: 20px; color: #fff; display: inline-block'>"
 				+ "					<div style='display: table; margin: 20px;'>"
 				+ "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Oferta HRE:<strong>"+resol.getOferta().getNumOferta()+"</strong>"
+				+ "								Oferta HRE:<strong>"+this.getOferta(resol)+"</strong>"
 				+ "							</div>"
 				+ "						</div>"				
 				+ "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Comité decisor: <strong>"+resol.getComite().getDescripcion()+"</strong>"
+				+ "								Comité decisor: <strong>"+this.getComite(resol) +"</strong>"
 				+ "							</div>"
 				+ "						</div>"
 				+ "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Resolución: <strong>"+resol.getEstadoResolucion().getDescripcion()+"</strong>"
+				+ "								Resolución: <strong>"+ this.getEstadoResolucion(resol)+"</strong>"
 				+ "							</div>"
 				+ "						</div>"
 				+ "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Motivo denegación: <strong>"+resol.getMotivoDenegacion().getDescripcion()+"</strong>"
+				+ "								Motivo denegación: <strong>"+ this.getMotivoDenegacion(resol) +"</strong>"
 				+ "							</div>"
 				+ "						</div>"
 				+ "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Fecha anulación: <strong>"+resol.getFechaAnulacion()+"</strong>"
+				+ "								Fecha anulación: <strong>"+ this.getFechaAnulacion(resol) +"</strong>"
 				+ "							</div>"
 				+ "						</div>"
 				+ "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Importe contraoferta: <strong>"+resol.getImporteContraoferta()+"</strong>"
+				+ "								Importe contraoferta: <strong>"+ this.getImporteContraoferta(resol) +"</strong>"
 				+ "							</div>"
 				+ "						</div>"
 				+ "					</div>"
 				+ "				</div>"			
-				+ "				<div style='display: inline-block; width: 140px; vertical-align: top'>"
-				+ "					<img src='"+this.getUrlImagenes()+"logo_haya.png' "
-				+ "						style='display: block; margin: 30px auto' /> "
-				+ "					<img src='"+this.getUrlImagenes()+"logo_rem.png' "
-				+ "						style='display: block; margin: 30px auto' /> "
-				+ "				</div>"
 				+ "				<div style='background: #fff; color: #333; border-radius: 20px; padding: 25px; line-height: 22px; text-align: justify; margin-top: 20px; font-size: 16px'>"
 				+ 					contenido
 				+ "				</div>"

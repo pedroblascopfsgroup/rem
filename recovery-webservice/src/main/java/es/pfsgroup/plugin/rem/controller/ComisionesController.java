@@ -55,35 +55,33 @@ public class ComisionesController {
 	@RequestMapping(method = RequestMethod.POST, value = "/comisiones")
 	public void updateAceptacionGasto(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		ComisionRequestDto jsonData = null;
-		HashMap<String, List<String>> errorsList = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
 
 		try {
-
-			jsonData = (ComisionRequestDto) request.getRequestData(ComisionRequestDto.class);
-			List<ComisionDto> listaComisionDto = jsonData.getData();
 			jsonFields = request.getJsonObject();
 			logger.debug("PETICIÓN: " + jsonFields);
+			
+			jsonData = (ComisionRequestDto) request.getRequestData(ComisionRequestDto.class);
+			List<ComisionDto> listaComisionDto = jsonData.getData();
 
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 
 			} else {
 				listaRespuesta = gastosExpedienteApi.updateAceptacionesGasto(listaComisionDto, jsonFields);
-				model.put("id", jsonData.getId());
+				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
 			}
 
 		} catch (Exception e) {
 			logger.error(e);
-			model.put("id", jsonData.getId());
+			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		} finally {
 			logger.debug("RESPUESTA: " + model);
-			logger.debug("ERRORES: " + errorsList);
 		}
 
 		restApi.sendResponse(response, model);

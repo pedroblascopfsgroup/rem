@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +59,12 @@ public class ReintegroController {
 
 		ReintegroRequestDto jsonData = null;
 		Map<String, Object> respuesta = new HashMap<String, Object>();
-
+		JSONObject jsonFields = null;
+		
 		try {
+			jsonFields = request.getJsonObject();
+			logger.debug("PETICIÓN: " + jsonFields);
+			
 			jsonData = (ReintegroRequestDto) request.getRequestData(ReintegroRequestDto.class);
 
 			HashMap<String, String> errorList = restApi.validateRequestObject(jsonData.getData(),
@@ -115,22 +121,25 @@ public class ReintegroController {
 				expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
 				expedienteComercialApi.update(expedienteComercial);	
 
-				model.put("id", jsonData.getId());
+				model.put("id", jsonFields.get("id"));
 				model.put("data", respuesta);
 				model.put("error", "");
 			} else {
-				model.put("id", jsonData.getId());
+				model.put("id", jsonFields.get("id"));
 				model.put("data", null);
 				model.put("error", errorList);
 			}
 		} catch (Exception e) {
 			logger.error(e);
-			if (jsonData != null) {
-				model.put("id", jsonData.getId());
+			if (jsonFields != null) {
+				model.put("id", jsonFields.get("id"));
 			}
-			model.put("data", "");
-			model.put("error", e.getMessage());
+			model.put("data", respuesta);
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+		} finally {
+			logger.debug("RESPUESTA: " + model);
 		}
+		
 		restApi.sendResponse(response, model);
 	}
 

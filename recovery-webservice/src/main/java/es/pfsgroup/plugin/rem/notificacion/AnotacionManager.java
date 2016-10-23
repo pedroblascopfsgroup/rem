@@ -429,7 +429,7 @@ public class AnotacionManager implements AnotacionApi{
 		}
 		
 		Map<String, String> customize = proxyFactory.proxy(AgendaMultifuncionCustomTemplate.class).getCustomize(dto);
-		String customizeTempate = "template/mailTemplateCDC.html";
+		String customizeTempate = "template/mailTemplate.html";
 
 		if (customize != null) {
 			model.putAll(customize);

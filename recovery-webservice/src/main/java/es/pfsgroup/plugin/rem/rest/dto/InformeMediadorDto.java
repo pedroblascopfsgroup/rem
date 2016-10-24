@@ -250,7 +250,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "ocupado", transform=TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ocupado;
 
-	@EntityDefinition(procesar=false,motivo="Existe en diferentes entidades")
+	@EntityDefinition(propertyName="numPlantasInter")
 	private Integer numeroPlantas;
 
 	@Diccionary(clase = DDTipoOrientacion.class, message = "El codOrientacion no existe", groups = { Insert.class,

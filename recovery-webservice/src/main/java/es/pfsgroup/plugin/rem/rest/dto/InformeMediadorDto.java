@@ -250,7 +250,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "ocupado", transform=TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ocupado;
 
-	@EntityDefinition(procesar=false,motivo="Existe en diferentes entidades")
+	@EntityDefinition(propertyName="numPlantasInter")
 	private Integer numeroPlantas;
 
 	@Diccionary(clase = DDTipoOrientacion.class, message = "El codOrientacion no existe", groups = { Insert.class,
@@ -263,8 +263,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "tipoRenta", classObj = DDTipoRenta.class)
 	private String codNivelRenta;
 
-	// ?
-	@EntityDefinition(procesar = false, motivo = "no estamos procesando las plantas")
+	//lo procesamos de forma no generica
+	@EntityDefinition(procesar = false)
 	private List<PlantaDto> plantas;
 
 	private Integer numeroTerrazasDescubiertas;

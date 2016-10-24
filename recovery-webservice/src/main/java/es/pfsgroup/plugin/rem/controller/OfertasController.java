@@ -1,12 +1,13 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +30,6 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-import net.sf.json.JSONObject;
 
 @Controller
 public class OfertasController {
@@ -115,15 +115,16 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas")
 	public void saveOrUpdateOferta(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		OfertaRequestDto jsonData = null;
-		HashMap<String, String> errorsList = null;
 		ArrayList<Map<String, Object>> listaRespuesta = null;
 		JSONObject jsonFields = null;
 
 		try {
 
+			jsonFields = request.getJsonObject();
+			logger.debug("PETICIÓN: " + jsonFields);
+			
 			jsonData = (OfertaRequestDto) request.getRequestData(OfertaRequestDto.class);
 			List<OfertaDto> listaOfertaDto = jsonData.getData();
-			jsonFields = request.getJsonObject();
 
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
@@ -131,7 +132,7 @@ public class OfertasController {
 			} else {
 
 				listaRespuesta = ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields);
-				model.put("id", jsonData.getId());
+				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
 
@@ -139,12 +140,11 @@ public class OfertasController {
 
 		} catch (Exception e) {
 			logger.error(e);
-			model.put("id", jsonData.getId());
+			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		} finally {
 			logger.debug("RESPUESTA: " + model);
-			logger.debug("ERRORES: " + errorsList);
 		}
 
 		restApi.sendResponse(response, model);

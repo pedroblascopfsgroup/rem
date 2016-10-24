@@ -17,6 +17,9 @@ public class VBusquedaProveedor implements Serializable {
 	@Id
 	@Column(name = "PVE_ID")
 	private Long id;
+	
+	@Column(name = "PVE_COD_REM")
+	private Long codigoProveedorRem;
 
 	@Column(name = "TIPO_PROVEEDOR_CODIGO")
 	private String tipoProveedorCodigo;
@@ -96,6 +99,14 @@ public class VBusquedaProveedor implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getCodigoProveedorRem() {
+		return codigoProveedorRem;
+	}
+
+	public void setCodigoProveedorRem(Long codigoProveedorRem) {
+		this.codigoProveedorRem = codigoProveedorRem;
 	}
 
 	public String getTipoProveedorCodigo() {

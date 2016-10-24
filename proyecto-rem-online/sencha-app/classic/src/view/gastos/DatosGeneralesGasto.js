@@ -24,9 +24,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
        
 	    						{   
 									xtype:'fieldsettable',
-//									bind: {
-//					        			disabled: '{conEmisor}'
-//			            			},
 									title: HreRem.i18n('title.gasto.datos.generales'),
 									items :
 										[

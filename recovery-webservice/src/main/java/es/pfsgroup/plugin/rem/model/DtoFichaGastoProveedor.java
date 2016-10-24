@@ -45,6 +45,7 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private boolean asignadoATrabajos;
 	private boolean asignadoAActivos;
 	private String estadoGastoCodigo;
+	private Boolean esGastoEditable;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -192,5 +193,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setEstadoGastoCodigo(String estadoGastoCodigo) {
 		this.estadoGastoCodigo = estadoGastoCodigo;
 	}
+	public Boolean getEsGastoEditable() {
+		return esGastoEditable;
+	}
+	public void setEsGastoEditable(Boolean esGastoEditable) {
+		this.esGastoEditable = esGastoEditable;
+	}
+	
 	
 }

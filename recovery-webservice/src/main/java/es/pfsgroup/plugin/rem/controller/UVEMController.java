@@ -12,10 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.gfi.webIntegrator.WIException;
 
-import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
-import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
-import es.pfsgroup.plugin.recovery.mejoras.cliente.clienteController;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;

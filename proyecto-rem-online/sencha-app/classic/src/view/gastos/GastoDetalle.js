@@ -13,8 +13,9 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 					var tab = tabPanel.items.items[0];
 					tabPanel.setActiveTab(tab);
 				}
-				
-				if(tab.ocultarBotonesEdicion) {
+				var me= this;
+	        	var viewModel= me.lookupViewModel();
+				if(tab.ocultarBotonesEdicion || viewModel.get('gasto.esGastoEditable')==false) {
 					tabPanel.down("[itemId=botoneditar]").setVisible(false);
 				} else {		
 	            	tabPanel.evaluarBotonesEdicion(tab);
@@ -46,8 +47,10 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 	        			});            		
 	            		return false;
 	        		}
+	        		var me= this;
+	        		var viewModel= me.lookupViewModel();
 	        		// Si la pestaña necesita botones de edición
-	        		if(!tabNext.ocultarBotonesEdicion) {
+	        		if(!tabNext.ocultarBotonesEdicion && viewModel.get('gasto.esGastoEditable')== true) {
 	        			tabPanel.evaluarBotonesEdicion(tabNext);
 	        		}
 	        		return true;

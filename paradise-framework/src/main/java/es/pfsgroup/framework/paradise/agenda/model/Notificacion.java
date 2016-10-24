@@ -13,6 +13,8 @@ public class Notificacion {
 	String strFecha;
 	Date fecha;
 	Long idTareaAppExterna;
+	String cc;
+	String para;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -61,6 +63,18 @@ public class Notificacion {
 	}
 	public void setIdTareaAppExterna(Long idTareaAppExterna) {
 		this.idTareaAppExterna = idTareaAppExterna;
+	}
+	public String getCc() {
+		return cc;
+	}
+	public void setCc(String cc) {
+		this.cc = cc;
+	}
+	public String getPara() {
+		return para;
+	}
+	public void setPara(String para) {
+		this.para = para;
 	}	
 	
 }

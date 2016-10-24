@@ -327,7 +327,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaTramiteAdmision}',
-								reference: 'datefieldPerimetroAdmision'
+								reference: 'datefieldPerimetroAdmision',
+								readOnly: true/*,
+								hidden: true*/
 							},
 							{
 								xtype: 'textfieldbase',
@@ -347,7 +349,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaGestion}',
-								reference: 'datefieldPerimetroGestion'
+								reference: 'datefieldPerimetroGestion',
+								readOnly: true
 							},
 							{
 								xtype: 'textfieldbase',
@@ -367,7 +370,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaAsignarMediador}',
-								reference: 'datefieldPerimetroMediador'
+								reference: 'datefieldPerimetroMediador',
+								readOnly: true/*,
+								hidden: true*/
 							},
 							{
 								xtype: 'textfieldbase',
@@ -387,7 +392,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaComercializar}',
-								reference: 'datefieldPerimetroComercializar'
+								reference: 'datefieldPerimetroComercializar',
+								readOnly: true
 							},
 							{
 								xtype: 'comboboxfieldbase',
@@ -423,7 +429,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaFormalizar}',
-								reference: 'datefieldPerimetroFormalizar'
+								reference: 'datefieldPerimetroFormalizar',
+								readOnly: true
 							},
 							{
 								xtype: 'textfieldbase',
@@ -444,27 +451,27 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.comercializacion'),
 										bind: {
-										/*	store: '{comboTipoComercializacionActivo}',
-											value: '{activo.tipoComercializacionCodigo}',
-										*/	visible: '{activo.aplicaComercializar}'
+											store: '{comboTipoComercializarActivo}',
+											value: '{activo.tipoComercializarCodigo}',
+											visible: '{activo.aplicaComercializar}'
 										}
 									},
 									{
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
-										/*	store: '{comboTipoComercializacionActivo}',
+											store: '{comboTipoDestinoComercialCreaFiltered}',
 											value: '{activo.tipoComercializacionCodigo}',
-										*/	visible: '{activo.aplicaComercializar}'
+											visible: '{activo.aplicaComercializar}'
 										}
 									},
 									{
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
 										bind: {
-										/*	store: '{comboTipoComercializacionActivo}',
-											value: '{activo.tipoComercializacionCodigo}',
-										*/	visible: '{activo.aplicaComercializar}'
+											store: '{comboTipoAlquiler}',
+											value: '{activo.tipoAlquilerCodigo}',
+											visible: '{activo.aplicaComercializar}'
 										}
 									},
 									

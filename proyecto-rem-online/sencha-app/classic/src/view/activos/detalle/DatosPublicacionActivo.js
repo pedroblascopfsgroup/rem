@@ -30,7 +30,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 							[
 			                    {
 				                	xtype: 'textfieldbase',
-				                	fieldLabel:  HreRem.i18n('title.publicaciones.tipoComercializacion'),
+				                	fieldLabel:  HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 				                	bind: '{activo.tipoComercializacionDescripcion}',
 				                	readOnly: true
 			                    },

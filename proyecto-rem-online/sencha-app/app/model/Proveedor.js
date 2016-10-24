@@ -10,6 +10,9 @@ Ext.define('HreRem.model.Proveedor', {
             	name:'id'
             },
             {
+            	name: 'codigo'
+            },
+            {
             	name: 'tipoProveedorDescripcion'
             },
             {

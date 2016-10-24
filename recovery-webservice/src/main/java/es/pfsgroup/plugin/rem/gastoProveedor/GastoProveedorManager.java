@@ -205,6 +205,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setNombreEmisor(gasto.getProveedor().getNombre());
 				dto.setIdEmisor(gasto.getProveedor().getId());
 				dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
+				dto.setBuscadorCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
 			}
 			
 			if(!Checks.esNulo(gasto.getPropietario())){
@@ -246,8 +247,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
 			
-		if(!Checks.esNulo(dto.getNifEmisor())){				
-			ActivoProveedor proveedor = searchProveedorNif(dto.getNifEmisor());
+//		if(!Checks.esNulo(dto.getNifEmisor())){				
+//			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
+//			gastoProveedor.setProveedor(proveedor);
+//		}
+		if(!Checks.esNulo(dto.getBuscadorCodigoProveedorRem())){				
+			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
 			gastoProveedor.setProveedor(proveedor);
 		}
 		
@@ -321,9 +326,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				logger.error(ex.getCause());
 			}
 			
-			if(!Checks.esNulo(dto.getBuscadorNifEmisor())){
-				Filter filtroNifEmisor = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifEmisor());
-				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroNifEmisor);
+			if(!Checks.esNulo(dto.getBuscadorCodigoProveedorRem())){
+				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getBuscadorCodigoProveedorRem());
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
 				gastoProveedor.setProveedor(proveedor);
 			}
 			
@@ -374,10 +379,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
-	public ActivoProveedor searchProveedorNif(String nifProveedor) {
+	public ActivoProveedor searchProveedorCodigo(String codigoUnicoProveedor) {
 		
 		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nifProveedor);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(codigoUnicoProveedor));
 		listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
 
 		if(!Checks.estaVacio(listaProveedores)){

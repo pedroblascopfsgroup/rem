@@ -1674,8 +1674,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		case 'chkbxPerimetroComercializar':
 			if(!chkbx.getValue()) {
 				var chkbxFormalizar = me.lookupReference('chkbxPerimetroFormalizar');
+				var textFieldFormalizar = me.lookupReference('textFieldPerimetroFormalizar');
 				if(!Ext.isEmpty(chkbxFormalizar.getValue()) && chkbxFormalizar.getValue()) {
 					chkbxFormalizar.setValue(false);
+					textFieldFormalizar.reset();
 				}
 			}
 			break;

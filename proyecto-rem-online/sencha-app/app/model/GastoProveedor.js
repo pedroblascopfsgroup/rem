@@ -112,7 +112,10 @@ Ext.define('HreRem.model.GastoProveedor', {
 		{
 			name: 'esGastoEditable',
 			type: 'boolean'
-		}
+		},
+		{
+   			name: 'buscadorCodigoRemEmisor'
+   		}
     		
     ],
     

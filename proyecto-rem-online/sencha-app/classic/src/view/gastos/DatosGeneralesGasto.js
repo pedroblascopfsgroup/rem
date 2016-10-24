@@ -36,11 +36,11 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							                },
 							                {
 												xtype: 'textfieldbase',
-												fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.emisor'),
-												name: 'buscadorNifEmisorField',
+												fieldLabel:  HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),
+												name: 'buscadorCodigoRemEmisorField',
 												flex: 2,
 												bind: {
-													value: '{gasto.buscadorNifEmisor}'
+													value: '{gasto.buscadorCodigoProveedorRem}'
 												},
 												allowBlank: false,
 												readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
@@ -112,32 +112,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												bind:		'{gasto.concepto}',
 												allowBlank: false
 											},
-											{ 
-												xtype: 'comboboxfieldbase',
-								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.gasto'),
-								               	reference: 'tipoGasto',
-				        						chainedStore: 'comboSubtipoGasto',
-												chainedReference: 'subtipoGastoCombo',
-										      	bind: {
-									           		store: '{comboTiposGasto}',
-									           		value: '{gasto.tipoGastoCodigo}'
-									         	},
-									         	listeners: {
-								                	select: 'onChangeChainedCombo'
-								            	},
-									         	allowBlank: false
-										    },
-										    { 
-												xtype: 'comboboxfieldbase',
-								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
-								               	reference: 'subtipoGastoCombo',
-										      	bind: {
-									           		store: '{comboSubtiposGasto}',
-									           		value: '{gasto.subtipoGastoCodigo}',
-									           		disabled: '{!gasto.tipoGastoCodigo}'
-									         	},
-									         	allowBlank: false
-										    },
 										    { 
 												xtype: 'comboboxfieldbase',
 								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.destinatario'),
@@ -151,6 +125,13 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									         	},
 									         	allowBlank: false
 										    },
+										    {
+												xtype: 'textfieldbase',
+												name: 'docIdentificativo',
+												fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),
+												bind:		'{gasto.nifEmisor}',
+												readOnly: true
+											},
 										    
 											{
 												xtype: 'textfieldbase',
@@ -196,6 +177,33 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									           		value: '{gasto.estadoGastoCodigo}'
 									         	},
 									         	readOnly: true
+										    },
+										    
+										    { 
+												xtype: 'comboboxfieldbase',
+								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.gasto'),
+								               	reference: 'tipoGasto',
+				        						chainedStore: 'comboSubtipoGasto',
+												chainedReference: 'subtipoGastoCombo',
+										      	bind: {
+									           		store: '{comboTiposGasto}',
+									           		value: '{gasto.tipoGastoCodigo}'
+									         	},
+									         	listeners: {
+								                	select: 'onChangeChainedCombo'
+								            	},
+									         	allowBlank: false
+										    },
+										    { 
+												xtype: 'comboboxfieldbase',
+								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
+								               	reference: 'subtipoGastoCombo',
+										      	bind: {
+									           		store: '{comboSubtiposGasto}',
+									           		value: '{gasto.subtipoGastoCodigo}',
+									           		disabled: '{!gasto.tipoGastoCodigo}'
+									         	},
+									         	allowBlank: false
 										    }
 											
 											/*,

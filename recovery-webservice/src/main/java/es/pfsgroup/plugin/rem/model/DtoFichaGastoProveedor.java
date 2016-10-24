@@ -46,6 +46,8 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private boolean asignadoAActivos;
 	private String estadoGastoCodigo;
 	private Boolean esGastoEditable;
+	private Long buscadorCodigoProveedorRem;
+	private Long codigoProveedorRem;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -198,6 +200,18 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setEsGastoEditable(Boolean esGastoEditable) {
 		this.esGastoEditable = esGastoEditable;
+	}
+	public Long getBuscadorCodigoProveedorRem() {
+		return buscadorCodigoProveedorRem;
+	}
+	public void setBuscadorCodigoProveedorRem(Long buscadorCodigoProveedorRem) {
+		this.buscadorCodigoProveedorRem = buscadorCodigoProveedorRem;
+	}
+	public Long getCodigoProveedorRem() {
+		return codigoProveedorRem;
+	}
+	public void setCodigoProveedorRem(Long codigoProveedorRem) {
+		this.codigoProveedorRem = codigoProveedorRem;
 	}
 	
 	

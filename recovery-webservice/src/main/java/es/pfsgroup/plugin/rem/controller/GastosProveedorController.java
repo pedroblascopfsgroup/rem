@@ -238,11 +238,11 @@ public class GastosProveedorController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView searchProveedorNif(@RequestParam String nifProveedor) {
+	public ModelAndView searchProveedorCodigo(@RequestParam String codigoUnicoProveedor) {
 		ModelMap model = new ModelMap();
 		
 		try {
-			model.put("data", gastoProveedorApi.searchProveedorNif(nifProveedor));
+			model.put("data", gastoProveedorApi.searchProveedorCodigo(codigoUnicoProveedor));
 			model.put("success", true);			
 		} catch (Exception e) {
 			e.printStackTrace();

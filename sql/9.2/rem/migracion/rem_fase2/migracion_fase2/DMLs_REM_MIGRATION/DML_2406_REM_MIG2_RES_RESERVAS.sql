@@ -137,13 +137,15 @@ BEGIN
                   MIGW.RES_FECHA_ANULACION,
                   MIGW.RES_IND_IMP_ANULACION,
                   MIGW.RES_IMPORTE_DEVUELTO,
-                  MIGW.RES_COD_TIPO_ARRA,
-                  MIGW.RES_COD_ESTADO_RESERVA,
+                  TAR.DD_TAR_ID,
+                  ERE.DD_ERE_ID,
                   MIGW.RES_FECHA_SOLICITUD,
                   MIGW.RES_FECHA_RESOLUCION
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIGW
                   INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIGW.RES_COD_OFERTA
                   INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID
+                  LEFT JOIN '||V_ESQUEMA||'.DD_TAR_TIPOS_ARRAS TAR ON TO_NUMBER(TAR.DD_TAR_CODIGO) = MIGW.RES_COD_TIPO_ARRA
+                  LEFT JOIN '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE ON TO_NUMBER(ERE.DD_ERE_CODIGO) = MIGW.RES_COD_ESTADO_RESERVA
             WHERE NOT EXISTS (
                  SELECT 1 
                  FROM '||V_ESQUEMA||'.'||V_TABLA||' RESW 
@@ -151,26 +153,22 @@ BEGIN
             )
       )
       SELECT 
-      '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL             RES_ID,
-      RES.ECO_ID											ECO_ID,
-      RES.RES_COD_NUM_RESERVA								RES_NUM_RESERVA,
-      RES.RES_FECHA_FIRMA									RES_FECHA_FIRMA,
-      RES.RES_FECHA_VENCIMIENTO							RES_FECHA_VENCIMIENTO,
-      RES.RES_FECHA_ANULACION								RES_FECHA_ANULACION,
-      RES.RES_IND_IMP_ANULACION							RES_IND_IMP_ANULACION,
-      RES.RES_IMPORTE_DEVUELTO							RES_IMPORTE_DEVUELTO,
-      (SELECT DD_TAR_ID
-      FROM '||V_ESQUEMA||'.DD_TAR_TIPOS_ARRAS 
-      WHERE DD_TAR_CODIGO = RES.RES_COD_TIPO_ARRA)		DD_TAR_ID,
-      (SELECT DD_ERE_ID
-      FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA 
-      WHERE DD_ERE_CODIGO = RES.RES_COD_ESTADO_RESERVA)	DD_ERE_ID,
-      RES.RES_FECHA_SOLICITUD								RES_FECHA_SOLICITUD,
-      RES.RES_FECHA_RESOLUCION							RES_FECHA_RESOLUCION,
-      ''0''                                               VERSION,
-      ''MIG2''                                            USUARIOCREAR,
-      SYSDATE                                             FECHACREAR,
-      0                                                   BORRADO
+      '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL             				RES_ID,
+      RES.ECO_ID														ECO_ID,
+      RES.RES_COD_NUM_RESERVA											RES_NUM_RESERVA,
+      RES.RES_FECHA_FIRMA												RES_FECHA_FIRMA,
+      RES.RES_FECHA_VENCIMIENTO											RES_FECHA_VENCIMIENTO,
+      RES.RES_FECHA_ANULACION											RES_FECHA_ANULACION,
+      RES.RES_IND_IMP_ANULACION											RES_IND_IMP_ANULACION,
+      RES.RES_IMPORTE_DEVUELTO											RES_IMPORTE_DEVUELTO,
+      RES.DD_TAR_ID														DD_TAR_ID,
+      DD_ERE_ID															DD_ERE_ID,
+      RES.RES_FECHA_SOLICITUD											RES_FECHA_SOLICITUD,
+      RES.RES_FECHA_RESOLUCION											RES_FECHA_RESOLUCION,
+      ''0''                                              				VERSION,
+      ''MIG2''                                            				USUARIOCREAR,
+      SYSDATE                                             				FECHACREAR,
+      0                                                   				BORRADO
       FROM INSERTAR RES									
       ')
       ;

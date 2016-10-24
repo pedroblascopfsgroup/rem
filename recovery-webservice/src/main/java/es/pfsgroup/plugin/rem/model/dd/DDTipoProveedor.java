@@ -38,6 +38,8 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	public static final String COD_ASEGURADORA = "03";
 	public static final String COD_MEDIADOR = "04";
 	public static final String COD_NOTARIO = "21";
+	public static final String COD_OFICINA_BANKIA = "30";
+	public static final String COD_OFICINA_CAJAMAR = "31";
 
 	@Id
 	@Column(name = "DD_TPR_ID")

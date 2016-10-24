@@ -155,7 +155,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 															cls: 'cabecera-info-field',
 															width: 70,
 										                	bind: {
-										                		src: '{getSrcCartera}'
+										                		src: '{getSrcCartera}',
+										                		alt: '{agrupacionficha.cartera}'
 										                	}
 										                },
 										                { 

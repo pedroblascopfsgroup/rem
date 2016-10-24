@@ -12,15 +12,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     },
     
     formulas: {
-    	
+    		
     	getSrcCartera: function(get) {
 	     	
 	     	var cartera = get('agrupacionficha.cartera');
+	     	var src=null;
 	     	if(!Ext.isEmpty(cartera)) {
-	     		return 'resources/images/logo_'+cartera.toLowerCase()+'.svg'	     		
-	     	} else {
-	     		return '';
-	     	}
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
+	     	}	     	
+        	if(Ext.isEmpty(src)) {
+        		return 	null;
+        	}else {
+        		return 'resources/images/'+src;	     
+        	}
 	     },
 	     
 	     esAgrupacionObraNuevaOrAsistida: function(get) {

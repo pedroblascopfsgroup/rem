@@ -1225,3 +1225,19 @@ body.x-masked > .x-mask {
 .red-row-grid .x-grid-cell{
 	color: #FF0000; 
 }
+
+.text-logo-cartera {
+    color: #0A94D6;
+    font-weight: bold;
+    font-stretch: expanded;
+    font-size: 0.9em !important;
+}
+
+.min-text-logo-cartera {
+    color: #0A94D6;
+    font-weight: bold;
+}
+
+.x-grid-item-selected .min-text-logo-cartera {
+	color: #FFF;
+}

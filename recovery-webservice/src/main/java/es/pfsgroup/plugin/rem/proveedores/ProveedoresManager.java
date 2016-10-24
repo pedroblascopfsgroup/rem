@@ -41,7 +41,6 @@ import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
-import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -58,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
@@ -113,6 +113,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			try {
 				beanUtilNotNull.copyProperty(dto, "fechaUltimaActualizacion", proveedor.getAuditoria().getFechaModificar());
 				beanUtilNotNull.copyProperty(dto, "id", proveedor.getId());
+				beanUtilNotNull.copyProperty(dto, "codigo", proveedor.getCodigoProveedorRem());
 				beanUtilNotNull.copyProperty(dto, "nombreProveedor", proveedor.getNombre());
 				beanUtilNotNull.copyProperty(dto, "fechaAltaProveedor", proveedor.getFechaAlta());
 				if(!Checks.esNulo(proveedor.getTipoProveedor())) {
@@ -134,6 +135,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(dto, "observacionesProveedor", proveedor.getObservaciones());
 				beanUtilNotNull.copyProperty(dto, "webUrlProveedor", proveedor.getPaginaWeb());
 				beanUtilNotNull.copyProperty(dto, "fechaConstitucionProveedor", proveedor.getFechaConstitucion());
+				beanUtilNotNull.copyProperty(dto, "homologadoCodigo", proveedor.getHomologado());
+				
+				if(!Checks.esNulo(proveedor.getOperativa())) {
+					beanUtilNotNull.copyProperty(dto, "operativaCodigo", proveedor.getOperativa().getCodigo());
+				}
 				
 				Filter proveedorIdFiltro = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
 				List<ProveedorTerritorial> proveedorTerritorial = genericDao.getList(ProveedorTerritorial.class, proveedorIdFiltro);
@@ -236,6 +242,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "observaciones", dto.getObservacionesProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "paginaWeb", dto.getWebUrlProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaConstitucion", dto.getFechaConstitucionProveedor());
+			beanUtilNotNull.copyProperty(proveedor, "homologado", dto.getHomologadoCodigo());
+			
+			if(!Checks.esNulo(dto.getOperativaCodigo())) {
+				DDOperativa operativa = (DDOperativa) utilDiccionarioApi.dameValorDiccionarioByCod(DDOperativa.class, dto.getOperativaCodigo());
+				beanUtilNotNull.copyProperty(proveedor, "operativa", operativa);
+			}
+			
 			if(!Checks.esNulo(dto.getTerritorialCodigo())) {
 				List<String> codigosTerritorios = Arrays.asList(dto.getTerritorialCodigo().split(","));
 				

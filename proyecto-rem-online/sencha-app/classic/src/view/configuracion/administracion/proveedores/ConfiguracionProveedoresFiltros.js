@@ -42,8 +42,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											colspan: 3,
 											items :	[
 												{ 
-													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.id'),
-													name: 'id',
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.codigo'),
+													name: 'codigo',
 													colspan: 2
 												},
 												{ 

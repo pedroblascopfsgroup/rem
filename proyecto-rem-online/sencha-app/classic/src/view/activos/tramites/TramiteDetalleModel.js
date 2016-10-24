@@ -12,15 +12,17 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
     formulas: {
     
 		getSrcCartera: function(get) {
-		 	var cartera = get('tramite.cartera');
-		 	
-		 	if(!Ext.isEmpty(cartera)) {
-		 		return 'resources/images/logo_'+cartera.toLowerCase()+'.svg'	     		
-		 	} else {
-		 		return '';
-		 	}
-		 	
-		 	
+	     	
+	     	var cartera = get('tramite.cartera');
+	     	var src=null;
+	     	if(!Ext.isEmpty(cartera)) {
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
+	     	}    	
+        	if(Ext.isEmpty(src)) {
+        		return 	null;
+        	}else {
+        		return 'resources/images/'+src;	     
+        	}		
 		},
 		
 		getSrcMultiActivo: function(get) {

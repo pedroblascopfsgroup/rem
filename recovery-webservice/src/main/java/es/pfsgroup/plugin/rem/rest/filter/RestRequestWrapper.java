@@ -93,9 +93,6 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 			if(Checks.esNulo(json)){
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);	
 				
-			}else if(!json.containsKey("data") ){
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);	
-				
 			}
 			
 		}catch (Exception e) {

@@ -105,7 +105,8 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 																cls: 'cabecera-info-field',
 																width: 70,
 											                	bind: {
-											                		src: '{getSrcCartera}'
+											                		src: '{getSrcCartera}',
+											                		alt: '{tramite.cartera}'
 											                	}
 											                },
 //											                {

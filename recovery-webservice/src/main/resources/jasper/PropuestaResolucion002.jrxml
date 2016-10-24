@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucion001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
+	<property name="ireport.zoom" value="1.3636363636363635"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="NumOfProp" class="java.lang.String"/>
+	<parameter name="Gestor" class="java.lang.String"/>
+	<parameter name="Activo" class="java.lang.String"/>
+	<parameter name="FRecepOf" class="java.lang.String"/>
+	<parameter name="FPublWeb" class="java.lang.String"/>
+	<parameter name="FProp" class="java.lang.String"/>
+	<parameter name="NumVisitasWeb" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="87">
+			<rectangle>
+				<reportElement x="0" y="46" width="555" height="39" uuid="82b43702-baa3-41dd-996e-d87da766061d"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="502" height="32" uuid="51f24aab-725e-4da5-8146-2db0f4176fe4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Verdana" size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[PROPUESTA DE OFERTA COMERCIAL A COMITÉ
+TIPO DE PROPUESTA VENTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="32" width="99" height="13" uuid="bc37a0d6-8df4-4ba8-a4d5-8f4d6f0a9dc6"/>
+				<textElement>
+					<font fontName="Verdana" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Referencia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="50" width="61" height="13" uuid="81a9ddf3-7e1c-45d0-8456-da41b018dda3"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No Of./Prop:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="69" width="36" height="13" uuid="65d89219-0378-49e1-a27d-c561e04741f5"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Gestor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="257" y="50" width="81" height="13" uuid="335060a7-2549-416d-8f35-85236712da8f"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[F. Recepción Of.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="257" y="69" width="92" height="13" uuid="30845c65-b5df-4bd3-b792-1de47817eb6f"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[F. Publicación Web.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="50" width="32" height="13" uuid="a9803665-3883-44ca-bff0-970829cbe928"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="50" width="81" height="13" uuid="19c2a30d-da96-4d01-a438-5a936f670887"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[F. Propuesta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="69" width="81" height="13" uuid="f6e62dc7-4179-45e9-8d9b-1baf604ff381"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No visitas Web:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="66" y="50" width="80" height="13" uuid="46f5ee7a-c1d6-4b29-88bf-15c238582e23"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NumOfProp}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="41" y="69" width="206" height="13" uuid="3ff2e933-b8fa-49d6-921e-d0a8f4fcb4ce"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Gestor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="178" y="50" width="69" height="13" uuid="4807c233-9d70-428c-9ccd-52a14fd9504c"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Activo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="50" width="61" height="13" uuid="d79b12c7-a695-4bd7-b1b7-6a2b3f90d135"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FRecepOf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="69" width="61" height="13" uuid="00b519b1-b7dd-4acb-aa50-a2249b292cb5"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FPublWeb}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="491" y="50" width="61" height="13" uuid="e473ddc8-4d7b-4d00-9731-1a7e8148ccae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FProp}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="491" y="69" width="61" height="13" uuid="c2bfd0fc-a823-4d91-881d-86a4b01dfbdb"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NumVisitasWeb}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="443" y="0" width="93" height="22" backcolor="#000000" uuid="57e0b161-7ddd-41d6-b25a-ea214f70866c"/>
+			</rectangle>
+			<image isLazy="true">
+				<reportElement mode="Transparent" x="455" y="1" width="70" height="32" uuid="fbf118da-5da6-4736-991f-1e2da52dda37"/>
+				<imageExpression><![CDATA[this.getClass().getResourceAsStream("jasper/Bankia_logo_sinfondo.png")]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="331" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="178" height="13" uuid="ef9c2a74-05e2-4eb2-aa09-f65a7f8cdff1"/>
+				<textElement>
+					<font fontName="Verdana" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Caracteristicas del imueble]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="2" y="13" width="555" height="133" uuid="0c480d91-3d0d-41bb-90f7-390f09bd36cf"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="7" y="23" width="59" height="13" uuid="61254284-662d-41bf-8dc1-60a828789df4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Direccion:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="443" y="120" width="61" height="13" uuid="58f1ee56-4f6a-470f-8adb-96c4bb63b104"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No Of./Prop:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="504" y="133" width="51" height="13" uuid="ba93af03-1073-4f5f-990a-d9b1fd205c0d"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No Of./Prop:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="46" width="112" height="13" uuid="4572ce73-f644-4958-8db0-a828936248c2"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Superficie costruida:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="59" width="100" height="13" uuid="9f9a5f43-789e-4c64-8c8e-d2f1d0dd46de"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[F.Entrada Carretera:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="72" width="87" height="13" uuid="db38e026-1294-423a-89ee-7598cb9f8705"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Disponibilidades:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="107" y="72" width="119" height="13" uuid="2dbe6a0d-ad2a-4dc8-b689-4f254cdf94f3"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[-Disponibilidad Juridica:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="107" y="85" width="59" height="13" uuid="5b5c9c20-c64d-42be-b774-60e284484f43"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[-hhh]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="33">
+			<textField isBlankWhenNull="true">
+				<reportElement x="443" y="13" width="72" height="20" uuid="8da9810a-e7d0-4025-99d8-fd0015d74494"/>
+				<textElement textAlignment="Right">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="13" width="40" height="20" uuid="94753ce7-a97a-4474-9f2e-594c4ab3ef34"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="0" width="555" height="1" uuid="21faef73-6b45-47ac-91c2-9c5763dee559"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -32,6 +32,7 @@ public interface RestApi {
 	public static final String REST_MSG_INVALID_SIGNATURE = "INVALID_SIGNATURE";
 	public static final String REST_MSG_REPETEAD_REQUEST = "REPETEAD_REQUEST";
 	public static final String REST_MSG_MISSING_REQUIRED_FIELDS = "MISSING_REQUIRED_FIELDS";
+	public static final String REST_NO_RELATED_ASSET = "SIN_ACTIVO_RELACIONADO_CON_LA_OFERTA";
 	public static final String REST_MSG_MISSING_REQUIRED = "REQUIRED";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
 	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";

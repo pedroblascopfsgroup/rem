@@ -67,6 +67,9 @@ public class ActivoIntegrado implements Serializable, Auditable {
 	
 	@Column(name = "AIN_MOTIVO_EXCLUSION")
 	private String motivoExclusion;
+	
+	@Column(name = "AIN_OBSERVACIONES")
+	private String observaciones;
     
 	@Version   
 	private Long version;

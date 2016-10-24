@@ -6,7 +6,8 @@ import java.util.Date;
 import es.capgemini.devon.dto.WebDto;
 
 /**
- * Dto para el grid de Datos de Contacto > Activos Integrados de la ficha proveedor.
+ * Dto para el grid de Datos de Contacto > Activos Integrados de la ficha proveedor 
+ * y comunidades/entidades de la ficha del activo
  */
 public class DtoActivoIntegrado extends WebDto {
 	private static final long serialVersionUID = 0L;
@@ -18,11 +19,19 @@ public class DtoActivoIntegrado extends WebDto {
 	private String subtipoCodigo;
 	private String carteraCodigo;
 	private String direccion;
+	
+	private String codigoProveedorRem;
+	private String numDocumentoProveedor;
+	private String nombreProveedor;
+	private String estadoProveedorDescripcion;
+	
 	private String participacion;
 	private Date fechaInclusion;
 	private Date fechaExclusion;
 	private String motivoExclusion;
 	private int totalCount;
+	
+	private String observaciones;
 	
 	
 	public int getTotalCount() {
@@ -96,6 +105,36 @@ public class DtoActivoIntegrado extends WebDto {
 	}
 	public void setMotivoExclusion(String motivoExclusion) {
 		this.motivoExclusion = motivoExclusion;
+	}
+	public String getCodigoProveedorRem() {
+		return codigoProveedorRem;
+	}
+	public void setCodigoProveedorRem(String codigoProveedorRem) {
+		this.codigoProveedorRem = codigoProveedorRem;
+	}
+	public String getNumDocumentoProveedor() {
+		return numDocumentoProveedor;
+	}
+	public void setNumDocumentoProveedor(String numDocumentoProveedor) {
+		this.numDocumentoProveedor = numDocumentoProveedor;
+	}
+	public String getNombreProveedor() {
+		return nombreProveedor;
+	}
+	public void setNombreProveedor(String nombreProveedor) {
+		this.nombreProveedor = nombreProveedor;
+	}
+	public String getEstadoProveedorDescripcion() {
+		return estadoProveedorDescripcion;
+	}
+	public void setEstadoProveedorDescripcion(String estadoProveedorDescripcion) {
+		this.estadoProveedorDescripcion = estadoProveedorDescripcion;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 	
 }

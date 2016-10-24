@@ -41,7 +41,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 										columns: [
 													{	  
 											        	xtype: 'actioncolumn',
-											            dataIndex: 'codigoProveedor',
+											            dataIndex: 'codigoProveedorRem',
 											            text: HreRem.i18n('title.activo.administracion.numProveedor'),
 											            flex: 1,
 											            items: [{
@@ -60,31 +60,39 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									//		            menuDisabled: true,
 											            hideable: false,
 											            sortable: true
-											        },
-											       {    text: HreRem.i18n('title.activo.administracion.tipo'),
-											        	dataIndex: 'tipoProveedorDescripcion',
-											        	flex: 1
 											       },
-											       {    text: HreRem.i18n('title.activo.administracion.subtipo'),
+											       {    text: HreRem.i18n('header.subtipo'),
 											        	dataIndex: 'subtipo',
-											        	hidden: true,
 											        	flex: 1
 											       },
-											       {    text: HreRem.i18n('title.activo.administracion.nif'),
+											       {    text: HreRem.i18n('header.nif'),
 											        	dataIndex: 'numDocumentoProveedor',
 											        	flex: 1
 											       },
-											       {    text: HreRem.i18n('title.activo.administracion.nombre'),
+											       {    text: HreRem.i18n('header.nombre'),
 											        	dataIndex: 'nombreProveedor',
 											        	flex: 1
 											       },
-											       {    text: HreRem.i18n('title.activo.administracion.estado'),
+											       {    text: HreRem.i18n('header.estado'),
 											        	dataIndex: 'estadoProveedorDescripcion',
 											        	flex: 1
 											       },
-											       {    text: HreRem.i18n('title.activo.administracion.fecha.exclusion'),
+											       {    text: HreRem.i18n('header.participacion'),
+											        	dataIndex: 'participacion',
+											        	flex: 1
+											       },
+											       {    text: HreRem.i18n('header.fecha.inclusion'),
+											        	dataIndex: 'fechaInclusion',
+											        	formatter: 'date("d/m/Y")',
+											        	flex: 1
+											       },
+											       {    text: HreRem.i18n('header.fecha.exclusion'),
 											        	dataIndex: 'fechaExclusion',
 											        	formatter: 'date("d/m/Y")',
+											        	flex: 1
+											       },
+											       {    text: HreRem.i18n('header.participacion'),
+											        	dataIndex: 'observaciones',
 											        	flex: 1
 											       }
 									    ],

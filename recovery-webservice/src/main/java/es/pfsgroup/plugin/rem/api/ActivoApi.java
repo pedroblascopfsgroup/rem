@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
@@ -672,5 +673,12 @@ public interface ActivoApi {
 	 * @return true si son distintos, false si son iguales
 	 */
 	public Boolean checkTiposDistintos(Activo activo);
+	
+	/**
+	 * 
+	 * @param dtoActivoIntegrado
+	 * @return
+	 */
+	public List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado);
 	
 }

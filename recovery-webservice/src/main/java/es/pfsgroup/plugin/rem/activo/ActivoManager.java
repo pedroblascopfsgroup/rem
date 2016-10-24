@@ -61,21 +61,23 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
@@ -2368,6 +2370,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return gastoExpediente;
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado) {
+		Filter activoIDFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", Long.parseLong(dtoActivoIntegrado.getIdActivo()));
+		Page page = genericDao.getPage(ActivoIntegrado.class, dtoActivoIntegrado, activoIDFilter);
+		List<ActivoIntegrado> activosIntegrados = (List<ActivoIntegrado>) page.getResults();
+		List<DtoActivoIntegrado> dtoList = new ArrayList<DtoActivoIntegrado>();
+		for(ActivoIntegrado activoIntegrado : activosIntegrados) {
+			DtoActivoIntegrado dto = new DtoActivoIntegrado();
+			try {
+				beanUtilNotNull.copyProperty(dto, "id", activoIntegrado.getId());
+				if(!Checks.esNulo(activoIntegrado.getProveedor())) {
+					
+					beanUtilNotNull.copyProperty(dto, "codigoProveedorRem", activoIntegrado.getProveedor().getCodigoProveedorRem());
+					beanUtilNotNull.copyProperty(dto, "numDocumentoProveedor", activoIntegrado.getProveedor().getNif());
+					beanUtilNotNull.copyProperty(dto, "nombreProveedor", activoIntegrado.getProveedor().getNombre());
+					if(!Checks.esNulo(activoIntegrado.getProveedor().getEstadoProveedor())) {
+						beanUtilNotNull.copyProperty(dto, "estadoProveedorDescripcion", activoIntegrado.getProveedor().getEstadoProveedor().getDescripcion());
+					}
+					
+					if(!Checks.esNulo(activoIntegrado.getProveedor().getTipoProveedor())) {
+						beanUtilNotNull.copyProperty(dto, "subtipoCodigo", activoIntegrado.getProveedor().getTipoProveedor().getDescripcion());
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "participacion", activoIntegrado.getParticipacion());
+				beanUtilNotNull.copyProperty(dto, "fechaInclusion", activoIntegrado.getFechaInclusion());
+				beanUtilNotNull.copyProperty(dto, "fechaExclusion", activoIntegrado.getFechaExclusion());
+				
+				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			dtoList.add(dto);
+		}
+		
+		return dtoList;
 	}
 	
 }

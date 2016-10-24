@@ -893,7 +893,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			model: 'HreRem.model.Proveedor',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'activo/getProveedorByActivo',
+				remoteUrl: 'activo/getProveedoresByActivoIntegrado',
 				extraParams: {idActivo: '{activo.id}'}
 			}
 		},

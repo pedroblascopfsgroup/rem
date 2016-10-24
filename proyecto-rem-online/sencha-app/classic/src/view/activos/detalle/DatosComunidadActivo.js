@@ -19,16 +19,17 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 						items :	[
 									{
 									    xtype		: 'gridBase',
-									    idPrincipal : 'id',
+									    idPrincipal : 'activo.id',
 									    colspan: 3,
-						//			    topBar: true,
+									    topBar: true,
+									    removeButton: false,
 									    reference: 'listadoproveedoresref',
 										cls	: 'panel-base shadow-panel',
 										bind: {
 											store: '{storeEntidades}'
 										},
 										listeners : {
-										    	rowclick: 'onProveedoresListClick'
+										    	rowclick: 'onEntidadesListClick'
 										},
 										viewConfig: { 
 									        getRowClass: function(record) { 
@@ -61,11 +62,11 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 											            sortable: true
 											       },
 											       {    text: HreRem.i18n('header.subtipo'),
-											        	dataIndex: 'subtipo',
+											        	dataIndex: 'subtipoProveedorDescripcion',
 											        	flex: 1
 											       },
 											       {    text: HreRem.i18n('header.nif'),
-											        	dataIndex: 'numDocumentoProveedor',
+											        	dataIndex: 'nifProveedor',
 											        	flex: 1
 											       },
 											       {    text: HreRem.i18n('header.nombre'),
@@ -89,6 +90,13 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 											        	dataIndex: 'fechaExclusion',
 											        	formatter: 'date("d/m/Y")',
 											        	flex: 1
+											       },
+											       {    text: HreRem.i18n('header.pagos.retenidos'),
+											        	dataIndex: 'pagosRetenidos',
+											        	flex: 1,
+											        	renderer: function(value) {
+											        		return value == 1? 'Si' : 'No';
+											        	}
 											       },
 											       {    text: HreRem.i18n('header.observaciones'),
 											        	dataIndex: 'observaciones',

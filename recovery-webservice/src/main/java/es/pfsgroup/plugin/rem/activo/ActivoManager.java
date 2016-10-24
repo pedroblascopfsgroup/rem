@@ -2386,19 +2386,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(activoIntegrado.getProveedor())) {
 					
 					beanUtilNotNull.copyProperty(dto, "codigoProveedorRem", activoIntegrado.getProveedor().getCodigoProveedorRem());
-					beanUtilNotNull.copyProperty(dto, "numDocumentoProveedor", activoIntegrado.getProveedor().getNif());
+					beanUtilNotNull.copyProperty(dto, "nifProveedor", activoIntegrado.getProveedor().getDocIdentificativo());
 					beanUtilNotNull.copyProperty(dto, "nombreProveedor", activoIntegrado.getProveedor().getNombre());
 					if(!Checks.esNulo(activoIntegrado.getProveedor().getEstadoProveedor())) {
 						beanUtilNotNull.copyProperty(dto, "estadoProveedorDescripcion", activoIntegrado.getProveedor().getEstadoProveedor().getDescripcion());
 					}
 					
 					if(!Checks.esNulo(activoIntegrado.getProveedor().getTipoProveedor())) {
-						beanUtilNotNull.copyProperty(dto, "subtipoCodigo", activoIntegrado.getProveedor().getTipoProveedor().getDescripcion());
+						beanUtilNotNull.copyProperty(dto, "subtipoProveedorDescripcion", activoIntegrado.getProveedor().getTipoProveedor().getDescripcion());
 					}
 				}
 				beanUtilNotNull.copyProperty(dto, "participacion", activoIntegrado.getParticipacion());
 				beanUtilNotNull.copyProperty(dto, "fechaInclusion", activoIntegrado.getFechaInclusion());
 				beanUtilNotNull.copyProperty(dto, "fechaExclusion", activoIntegrado.getFechaExclusion());
+				beanUtilNotNull.copyProperty(dto, "observaciones", activoIntegrado.getObservaciones());				
 				
 				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
 			} catch (IllegalAccessException e) {

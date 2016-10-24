@@ -21,9 +21,10 @@ public class DtoActivoIntegrado extends WebDto {
 	private String direccion;
 	
 	private String codigoProveedorRem;
-	private String numDocumentoProveedor;
+	private String nifProveedor;
 	private String nombreProveedor;
 	private String estadoProveedorDescripcion;
+	private String subtipoProveedorDescripcion;
 	
 	private String participacion;
 	private Date fechaInclusion;
@@ -112,11 +113,11 @@ public class DtoActivoIntegrado extends WebDto {
 	public void setCodigoProveedorRem(String codigoProveedorRem) {
 		this.codigoProveedorRem = codigoProveedorRem;
 	}
-	public String getNumDocumentoProveedor() {
-		return numDocumentoProveedor;
+	public String getNifProveedor() {
+		return nifProveedor;
 	}
-	public void setNumDocumentoProveedor(String numDocumentoProveedor) {
-		this.numDocumentoProveedor = numDocumentoProveedor;
+	public void setNifProveedor(String nifProveedor) {
+		this.nifProveedor = nifProveedor;
 	}
 	public String getNombreProveedor() {
 		return nombreProveedor;
@@ -129,6 +130,12 @@ public class DtoActivoIntegrado extends WebDto {
 	}
 	public void setEstadoProveedorDescripcion(String estadoProveedorDescripcion) {
 		this.estadoProveedorDescripcion = estadoProveedorDescripcion;
+	}
+	public String getSubtipoProveedorDescripcion() {
+		return subtipoProveedorDescripcion;
+	}
+	public void setSubtipoProveedorDescripcion(String subtipoProveedorDescripcion) {
+		this.subtipoProveedorDescripcion = subtipoProveedorDescripcion;
 	}
 	public String getObservaciones() {
 		return observaciones;

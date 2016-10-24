@@ -42,8 +42,20 @@ public class AgrupacionValidatorAsistida extends AgrupacionValidatorCommonImpl i
 	
 	@Override
 	public String getValidationError(Activo activo, ActivoAgrupacion agrupacion) {
-		
 
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
+		if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getIncluidoEnPerimetro()) && perimetro.getIncluidoEnPerimetro()==1){
+			return ERROR_IS_PERIMETRO;
+		}
+
+		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
+			if(!activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
+				return ERROR_NOT_FINANCIERO;
+			}
+		} else {
+			return ERROR_FINANCIERO_NULL;
+		}
 
 		ActivoAgrupacionActivo primerActivoAgrupacion = activoAgrupacionActivoApi.primerActivoPorActivoAgrupacion(agrupacion.getId());
 		if (primerActivoAgrupacion == null) return "";
@@ -76,22 +88,7 @@ public class AgrupacionValidatorAsistida extends AgrupacionValidatorCommonImpl i
 		} else if (!activo.getCartera().equals(primerActivo.getCartera())) {
 			return ERROR_CARTERA_NOT_EQUAL;
 		}		
-		
-		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
-		if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getIncluidoEnPerimetro()) && perimetro.getIncluidoEnPerimetro()==1){
-			return ERROR_IS_PERIMETRO;
-		}
-		
-		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
-		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
-			if(!activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
-				return ERROR_NOT_FINANCIERO;
-			}
-		} else {
-			return ERROR_FINANCIERO_NULL;
-		}
 
-		
 		return "";
 	}
 }

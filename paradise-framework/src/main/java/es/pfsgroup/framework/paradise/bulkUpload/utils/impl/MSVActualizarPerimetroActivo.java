@@ -54,6 +54,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_MOTIVO_CON_COMERCIAL = 5;
 	public static final int COL_NUM_MOTIVO_SIN_COMERCIAL = 6;
 	public static final int COL_NUM_TIPO_COMERCIALIZACION = 7;
+	public static final int COL_NUM_CON_FORMALIZAR_SN = 8;
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -296,6 +297,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String valorEnPerimetro = "-";
 			String valorConGestion = "-";
 			String valorConComercial = "-";
+			String valorConFormalizar = "-";
 			
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				
@@ -306,11 +308,13 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
 				valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
 				valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
+				valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 				
 				// Valida valores correctos de los campos S/N/<nulo>
 				if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
 						|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))
 						|| !("S".equals(valorConComercial) || "N".equals(valorConComercial) || "-".equals(valorConComercial))
+						|| !("S".equals(valorConFormalizar) || "N".equals(valorConFormalizar) || "-".equals(valorConFormalizar))
 						)
 					listaFilas.add(i);
 			

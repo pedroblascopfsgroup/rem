@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class MSVActualizadorPerimetroActivo implements MSVLiberator {
@@ -43,6 +44,9 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 	
 	@Override
 	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
@@ -115,7 +119,8 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				String  tmpMotivoComercializacion = exc.dameCelda(fila, 5);
 				String  tmpMotivoNoComercializacion = exc.dameCelda(fila, 6);
 				String  tmpTipoComercializacion = exc.dameCelda(fila, 7);
-				
+				Integer tmpAplicaFormalizar = getCheckValueCalculated(exc.dameCelda(fila, 8), tmpIncluidoEnPerimetro);
+				String  tmpMotivoAplicaFormalizar = exc.dameCelda(fila, 9);
 	
 				perimetroActivo.setActivo(activo);
 				//Incluido en perimetro
@@ -129,10 +134,14 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				if(!Checks.esNulo(tmpMotivoAplicaGestion)) perimetroActivo.setMotivoAplicaGestion(tmpMotivoAplicaGestion);
 				
 				//Aplica comercializacion
+				// Si se quita del perimetro, forzamos el quitado de comercializacion y actualizar la situación comercial del activo a No Comercializable
+				if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro) && !CHECK_VALOR_NO.equals(perimetroActivo.getAplicaComercializar())) tmpAplicaComercializar=0;
+				
 				if(!CHECK_NO_CAMBIAR.equals(tmpAplicaComercializar)){
 					perimetroActivo.setAplicaComercializar(tmpAplicaComercializar);
 					perimetroActivo.setFechaAplicaComercializar(new Date());
 				}
+				
 				//Motivo para Si comercializar
 				if(!Checks.esNulo(tmpMotivoComercializacion))
 					perimetroActivo.setMotivoAplicaComercializar((DDMotivoComercializacion)
@@ -147,6 +156,13 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				activo.setTipoComercializacion((DDTipoComercializacion)
 						utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpTipoComercializacion.substring(0, 2)));
 				
+				//Aplica Formalizar
+				if(!CHECK_NO_CAMBIAR.equals(tmpAplicaFormalizar)){
+					perimetroActivo.setAplicaFormalizar(tmpAplicaFormalizar);
+					perimetroActivo.setFechaAplicaFormalizar(new Date());					
+				}
+				if(!Checks.esNulo(tmpMotivoAplicaFormalizar)) perimetroActivo.setMotivoAplicaFormalizar(tmpMotivoAplicaFormalizar);
+				
 				//Persiste los datos, creando el registro de perimetro
 				// Todos los datos son de PerimetroActivo, a excepcion del tipo comercializacion que es del Activo
 				if(!Checks.esNulo(tmpTipoComercializacion)) activoApi.saveOrUpdate(activo);
@@ -154,6 +170,10 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro)) this.desmarcarChecksFromPerimetro(perimetroActivo);
 				
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+				
+				//Actualizar disponibilidad comercial del activo
+				updaterState.updaterStateDisponibilidadComercial(activo);
+				activoApi.saveOrUpdate(activo);
 	
 			} //Fin for
 			

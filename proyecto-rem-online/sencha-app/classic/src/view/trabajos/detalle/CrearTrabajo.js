@@ -398,6 +398,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 										title: HreRem.i18n('title.momento.realizacion'),
 									    collapsible: true,
 									    collapsed: false,
+									    reference: 'fieldSetMomentoRealizacionRef',
 										items :
 											[
 												{	

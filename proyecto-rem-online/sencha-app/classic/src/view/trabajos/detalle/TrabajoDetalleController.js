@@ -63,6 +63,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
    				}
 			}
 		});
+		
+		if(combo.getValue() != "02" && combo.getValue() != "03") {
+			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
+		} 
+		else {
+			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
+		} 
     	
     },
     

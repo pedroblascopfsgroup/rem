@@ -57,7 +57,6 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 												        },
 											            flex     : 1,            
 											            align: 'right',
-									//		            menuDisabled: true,
 											            hideable: false,
 											            sortable: true
 											       },
@@ -91,7 +90,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 											        	formatter: 'date("d/m/Y")',
 											        	flex: 1
 											       },
-											       {    text: HreRem.i18n('header.participacion'),
+											       {    text: HreRem.i18n('header.observaciones'),
 											        	dataIndex: 'observaciones',
 											        	flex: 1
 											       }

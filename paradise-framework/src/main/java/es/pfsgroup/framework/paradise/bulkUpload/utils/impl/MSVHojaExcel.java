@@ -18,6 +18,7 @@ import jxl.CellType;
 import jxl.DateCell;
 import jxl.Sheet;
 import jxl.Workbook;
+import jxl.WorkbookSettings;
 import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
@@ -179,6 +180,7 @@ public class MSVHojaExcel {
 		
 		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroErrores), libroExcel);
 		
+		
 		WritableSheet hoja = copy.getSheet(0);
 		int numColumnas = this.getNumeroColumnas();
 		for (int i=0; i<listaErrores.size(); i++) {
@@ -263,7 +265,9 @@ public class MSVHojaExcel {
 		}
 		
 		try{
-			libroExcel = Workbook.getWorkbook(file);
+			WorkbookSettings workbookSettings = new WorkbookSettings();
+			workbookSettings.setEncoding( "Cp1252" );
+			libroExcel = Workbook.getWorkbook(file,workbookSettings);
 			isOpen = true;
 		} catch (BiffException e) {
 			throw new IOException("Error al parsear el libro excel");
@@ -401,8 +405,10 @@ public class MSVHojaExcel {
 			    fileFinal.createNewFile();
 			} else {
 				// Si tiene que añadir al documento, se copiara el contenido de fileFinal a fileTMP
-				if (append) {								
-					Workbook target_workbook = Workbook.getWorkbook(fileFinal);
+				if (append) {
+					WorkbookSettings workbookSettings = new WorkbookSettings();
+					workbookSettings.setEncoding( "Cp1252" );
+					Workbook target_workbook = Workbook.getWorkbook(fileFinal,workbookSettings);
 					workbook = Workbook.createWorkbook(fileTMP, target_workbook);
 					
 					sheet1 = workbook.getSheet(0);

@@ -135,7 +135,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					    collapsible: true,
 					    collapsed: false,
 						title: HreRem.i18n('title.momento.realizacion'),
-						hidden: (this.codigoTipoTrabajo=="04" || this.codigoTipoTrabajo=="05" || this.codigoTipoTrabajo=="06"),
+						hidden: (this.codigoTipoTrabajo!="02" && this.codigoTipoTrabajo!="03"),
 						items :
 							[
 								{	

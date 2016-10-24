@@ -322,18 +322,20 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'chkbxPerimetroAdmision',
 								listeners: {
 									change: 'onChkbxPerimetroChange'
-								}
+								},
+								hidden: true
 							},
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaTramiteAdmision}',
 								reference: 'datefieldPerimetroAdmision',
-								readOnly: true/*,
-								hidden: true*/
+								readOnly: true,
+								hidden: true
 							},
 							{
 								xtype: 'textfieldbase',
-								bind:		'{activo.motivoAplicaTramiteAdmision}'
+								bind:		'{activo.motivoAplicaTramiteAdmision}',
+								hidden: true
 							},
 
 							//Fila gestion
@@ -357,7 +359,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind:		'{activo.motivoAplicaGestion}'
 							},
 							
-							//Fila mediador 
+							//Fila mediador  (Siempre oculto por el momento)
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.mediador'),
@@ -365,18 +367,20 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'chkbxPerimetroMediador',
 								listeners: {
 									change: 'onChkbxPerimetroChange'
-								}
+								},
+								hidden: true
 							},
 							{
 								xtype: 'datefieldbase',
 								bind:		'{activo.fechaAplicaAsignarMediador}',
 								reference: 'datefieldPerimetroMediador',
-								readOnly: true/*,
-								hidden: true*/
+								readOnly: true,
+								hidden: true
 							},
 							{
 								xtype: 'textfieldbase',
-								bind:		'{activo.motivoAplicaAsignarMediador}'
+								bind:		'{activo.motivoAplicaAsignarMediador}',
+								hidden: true
 							},
 							
 							//Fila comercializar
@@ -419,8 +423,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
 								reference: 'chkbxPerimetroFormalizar',
 								bind: {
-									value: '{activo.aplicaFormalizar}',
-									disabled: '{!activo.aplicaComercializar}'
+									disabled: '{!activo.aplicaComercializar}',
+									value: '{activo.aplicaFormalizar}'
 								},
 								listeners: {
 									change: 'onChkbxPerimetroChange'
@@ -434,7 +438,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							},
 							{
 								xtype: 'textfieldbase',
-								bind:		'{activo.motivoAplicaFormalizar}'
+								reference: 'textFieldPerimetroFormalizar',
+								bind: {
+									disabled: '{!activo.aplicaComercializar}',
+									value: '{activo.motivoAplicaFormalizar}'
+								}
 							},
 							
 							//Bloque Comercialización

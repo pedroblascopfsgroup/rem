@@ -33,6 +33,10 @@ public interface  ParticularValidatorApi {
 	public Boolean estadoDesocultarprecio(String numActivo);
 	
 	public Boolean estadoDespublicar(String numActivo);
+
+	public Boolean estadosValidosDespublicarForzado(String numActivo);
+	
+	public Boolean estadosValidosDesDespublicarForzado(String numActivo);
 	
 	public Boolean estadoAutorizaredicion(String numActivo);
 	

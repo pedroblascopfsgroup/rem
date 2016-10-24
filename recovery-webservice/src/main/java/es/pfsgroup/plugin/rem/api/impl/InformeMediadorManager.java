@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -42,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
 
@@ -64,6 +64,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Autowired
 	private ActivoAdapter adapter;
+
+	@Autowired
+	private GenericaRestDaoImp genericaRestDaoImp;
 
 	public InformeMediadorManager() {
 		obligatorios = new HashMap<String, HashMap<String, Boolean>>();
@@ -1215,6 +1218,32 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	}
 
+	/**
+	 * Cuando cambias el tipo de activo, si pasa de una tabla especifica a otra
+	 * falla()claves duplicadas. Borramos el registro en la tabla general
+	 * 
+	 * @param objeto
+	 * @param informe
+	 * @throws Exception
+	 */
+	private void parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
+		if (objeto instanceof ActivoLocalComercial || objeto instanceof ActivoPlazaAparcamiento
+				|| objeto instanceof ActivoVivienda) {
+
+			ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
+					.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
+
+			if (infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
+					&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo())) {
+				//BeanUtils.copyProperties(((ActivoInfoComercial) objeto), infoAux);
+				genericaRestDaoImp.deleteInformeMediador(infoAux);
+				((ActivoInfoComercial) objeto).setAuditoria(null);
+				((ActivoInfoComercial) objeto).setId(null);
+			}
+
+		}
+	}
+
 	@Override
 	@Transactional(readOnly = false)
 	public ArrayList<Map<String, Object>> saveOrUpdateInformeMediador(List<InformeMediadorDto> informes)
@@ -1249,6 +1278,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 					informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoLocalComercial.class, "activo.numActivo");
+					parcheEspecificacionTablas(informeEntity, informe);
 
 					ActivoAnejo anejo = (ActivoAnejo) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoAnejo.class, "infoComercial.activo.numActivo");
@@ -1256,10 +1286,10 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					entitys.add(informeEntity);
 					entitys.add(anejo);
 				} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
-					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
-							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
 					informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoInfoComercial.class, "activo.numActivo");
+					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
+							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
 					edificioEntity.setInfoComercial(informeEntity);
 					entitys.add(informeEntity);
 					entitys.add(edificioEntity);
@@ -1275,6 +1305,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
 					informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoPlazaAparcamiento.class, "activo.numActivo");
+					parcheEspecificacionTablas(informeEntity, informe);
 					entitys.add(informeEntity);
 				} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
 					informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
@@ -1283,6 +1314,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
 					informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoVivienda.class, "activo.numActivo");
+					parcheEspecificacionTablas(informeEntity, informe);
 					ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
 									"infoComercial.activo.numActivo");
@@ -1335,7 +1367,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
 								genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
 								genericDao.createFilter(FilterType.EQUALS, "vivienda", (ActivoVivienda) informeEntity));
-						if(activoDistribucion == null){
+						if (activoDistribucion == null) {
 							activoDistribucion = new ActivoDistribucion();
 						}
 						activoDistribucion.setNumPlanta(planta.getNumero());

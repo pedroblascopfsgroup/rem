@@ -161,6 +161,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposComercializacionActivo", DDTipoComercializacion.class);
 		mapa.put("tiposComercializarActivo", DDTipoComercializar.class);
 		mapa.put("tiposAlquilerActivo", DDTipoAlquiler.class);
+		mapa.put("resultadoTanteo", DDResultadoTanteo.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

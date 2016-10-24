@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
+import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -95,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -124,9 +126,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	public final String PESTANA_FICHA = "ficha";
 	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
+	public final String PESTANA_TANTEO_Y_RETRACTO_OFERTA= "ofertatanteoyretracto";
 	public final String PESTANA_RESERVA = "reserva";
 	public final String PESTANA_CONDICIONES = "condiciones";
 	public final String PESTANA_FORMALIZACION= "formalizacion";
+
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -179,6 +183,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto = expedienteToDtoFichaExpediente(expediente);
 			} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 				dto = expedienteToDtoDatosBasicosOferta(expediente);
+			} else if(PESTANA_TANTEO_Y_RETRACTO_OFERTA.equals(tab)){
+				dto = expedienteToDtoTanteoYRetractoOferta(expediente);
 			} else if (PESTANA_RESERVA.equals(tab)) {
 				dto = expedienteToDtoReserva(expediente);
 			} else if (PESTANA_CONDICIONES.equals(tab)) {
@@ -293,6 +299,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return true;
 	}
 	
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) {
@@ -471,6 +478,38 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 
 
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dtoTanteoYRetractoOferta, Long idExpediente) {
+	
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		Oferta oferta = expedienteComercial.getOferta();
+		Visita visita = null;
+		
+		if(!Checks.esNulo(oferta)){
+			visita = oferta.getVisita();
+		
+			oferta.setCondicionesTransmision(dtoTanteoYRetractoOferta.getCondicionesTransmision());
+			oferta.setFechaComunicacionRegistro(dtoTanteoYRetractoOferta.getFechaComunicacionReg());
+			oferta.setFechaContestacion(dtoTanteoYRetractoOferta.getFechaContestacion());
+			
+			if(!Checks.esNulo(visita)){
+				visita.setFechaSolicitud(dtoTanteoYRetractoOferta.getFechaSolicitudVisita());
+				visita.setFechaVisita(dtoTanteoYRetractoOferta.getFechaRealizacionVisita());
+			}
+			
+			oferta.setFechaFinTanteo(dtoTanteoYRetractoOferta.getFechaFinTanteo());
+			oferta.setResultadoTanteo((DDResultadoTanteo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoTanteo.class, dtoTanteoYRetractoOferta.getResultadoTanteoCodigo()));
+			oferta.setFechaMaxFormalizacion(dtoTanteoYRetractoOferta.getFechaMaxFormalizacion());
+		}
+		
+		expedienteComercial.setOferta(oferta);		
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		
+		return true;
+		
+	}
+	
 	private DtoFichaExpediente expedienteToDtoFichaExpediente(ExpedienteComercial expediente) {
 
 		DtoFichaExpediente dto = new DtoFichaExpediente();
@@ -654,6 +693,43 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}		
 				
 		return dto;
+	}
+	
+	private DtoTanteoYRetractoOferta expedienteToDtoTanteoYRetractoOferta(ExpedienteComercial expediente) {
+
+		DtoTanteoYRetractoOferta dtoTanteoYRetractoOferta = new DtoTanteoYRetractoOferta();
+		Oferta oferta = expediente.getOferta();
+		Visita visita = null;
+
+		if(!Checks.esNulo(oferta)){
+
+			visita = oferta.getVisita();
+			
+			// ID y NUM Oferta
+			dtoTanteoYRetractoOferta.setIdOferta(oferta.getId());
+			dtoTanteoYRetractoOferta.setNumOferta(oferta.getNumOferta());
+			
+			// Condiciones TX
+			dtoTanteoYRetractoOferta.setCondicionesTransmision(oferta.getCondicionesTransmision());
+			
+			// Fechas Comunicacion y Contestacion
+			dtoTanteoYRetractoOferta.setFechaComunicacionReg(oferta.getFechaComunicacionRegistro());
+			dtoTanteoYRetractoOferta.setFechaContestacion(oferta.getFechaContestacion());
+			
+			// Fechas visita
+			if(!Checks.esNulo(visita)){
+				dtoTanteoYRetractoOferta.setFechaSolicitudVisita(visita.getFechaSolicitud());
+				dtoTanteoYRetractoOferta.setFechaRealizacionVisita(visita.getFechaVisita());
+			}
+			
+			//Fechas y resultado Tanteo
+			dtoTanteoYRetractoOferta.setFechaFinTanteo(oferta.getFechaFinTanteo());
+			dtoTanteoYRetractoOferta.setResultadoTanteoCodigo(oferta.getResultadoTanteo().getCodigo());
+			dtoTanteoYRetractoOferta.setFechaMaxFormalizacion(oferta.getFechaMaxFormalizacion());
+			
+		}
+		
+		return dtoTanteoYRetractoOferta;
 	}
 	
 	private DtoReserva expedienteToDtoReserva(ExpedienteComercial expediente) {

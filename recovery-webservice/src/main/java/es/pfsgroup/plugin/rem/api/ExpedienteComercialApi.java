@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -77,6 +78,14 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
 
+	/**
+	 * Metodo que guarda la informacion de la pestanya Tanteo y Retracto de la oferta
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dto, Long idExpediente);
+	
 	/**
 	 * Método que recupera las entregas de una reserva para un expediente
 	 * 

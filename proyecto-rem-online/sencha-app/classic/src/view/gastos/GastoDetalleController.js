@@ -259,62 +259,66 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	buscarProveedor: function(field, e){
 		var me= this;
-		var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorNif');
-		var nifProveedor= field.getValue();
+		var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorCodigo');
+		var codigoUnicoProveedor= field.getValue();
 		var data;
 		
-		Ext.Ajax.request({
-		    			
-		    		     url: url,
-		    		     params: {nifProveedor : nifProveedor},
-		    		
-		    		     success: function(response, opts) {
-		    		    	 data = Ext.decode(response.responseText);
-		    		    	 var emisorGastoField = field.up('formBase').down('[name=nifEmisor]');
-		    		    	 buscadorNifEmisor = field.up('formBase').down('[name=buscadorNifEmisorField]'),
-		    		    	 nombreEmisorGasto = field.up('formBase').down('[name=nombreEmisor]'),
-		    		    	 codigoEmisorGasto = field.up('formBase').down('[name=codigoEmisor]');
-		    		    	 
-		    		    	 if(!Utils.isEmptyJSON(data.data)){
-		    		    	 	var id= data.data.id;
-		    		    	 	var nombreEmisor= data.data.nombre;
-		    		    	 	var codigoEmisor= data.data.codProveedorUvem;	    		    	 	
-		    		    	 	
-		    		    	 	if(!Ext.isEmpty(emisorGastoField)) {
-		    		    	 		emisorGastoField.setValue(nifProveedor);
-		    		    	 	}
-		    		    	 	
-		    		    	 	if(!Ext.isEmpty(buscadorNifEmisor)) {
-		    		    	 		buscadorNifEmisor.setValue(nifProveedor);
-		    		    	 	}
-		    		    	 	
-		    		    	 	if(!Ext.isEmpty(nombreEmisorGasto)) {
-		    		    	 		nombreEmisorGasto.setValue(nombreEmisor);
-		    		    	 	}
-		    		    	 	
-		    		    	 	if(!Ext.isEmpty(codigoEmisorGasto)) {
-		    		    	 		codigoEmisorGasto.setValue(codigoEmisor);
-		    		    	 	}
-		
-		    		    	 }
-		    		    	 else{
-		    		    	 	if(!Ext.isEmpty(nombreEmisorGasto)) {
-		    		    	 		nombreEmisorGasto.setValue('');
-		    		    	 	}
-		    		    	 	if(!Ext.isEmpty(codigoEmisorGasto)) {
-		    		    	 		codigoEmisorGasto.setValue('');
-		    		    	 	}
-		    		    	 	me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor"));
-		    		    	 }
-		    		    	 
-		    		     },
-		    		     failure: function(response) {
-							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    		     },
-		    		     callback: function(options, success, response){
-		    		     }
-		    		     
-		});
+		if(!Ext.isEmpty(codigoUnicoProveedor)){
+			Ext.Ajax.request({
+			    			
+			    		     url: url,
+			    		     params: {codigoUnicoProveedor : codigoUnicoProveedor},
+			    		
+			    		     success: function(response, opts) {
+			    		    	 var data = Ext.decode(response.responseText);
+			    		    	 var emisorGastoField = field.up('formBase').down('[name=docIdentificativo]');
+			    		    	 buscadorCodigoRemEmisor = field.up('formBase').down('[name=buscadorCodigoRemEmisorField]'),
+			    		    	 nombreEmisorGasto = field.up('formBase').down('[name=nombreEmisor]'),
+			    		    	 codigoEmisorGasto = field.up('formBase').down('[name=codigoEmisor]');
+			    		    	 
+			    		    	 
+			    		    	 if(!Utils.isEmptyJSON(data.data)){
+			    		    	 	var id= data.data.id;
+			    		    	 	var nombreEmisor= data.data.nombre;
+			    		    	 	var codigoEmisor= data.data.codProveedorUvem;	
+			    		    	 	var nifEmisor= data.data.docIdentificativo;
+			    		    	 	
+			    		    	 	if(!Ext.isEmpty(emisorGastoField)) {
+			    		    	 		emisorGastoField.setValue(nifEmisor);
+			    		    	 	}
+			    		    	 	
+			    		    	 	if(!Ext.isEmpty(buscadorCodigoRemEmisor)) {
+			    		    	 		buscadorCodigoRemEmisor.setValue(codigoUnicoProveedor);
+			    		    	 	}
+			    		    	 	
+			    		    	 	if(!Ext.isEmpty(nombreEmisorGasto)) {
+			    		    	 		nombreEmisorGasto.setValue(nombreEmisor);
+			    		    	 	}
+			    		    	 	
+			    		    	 	if(!Ext.isEmpty(codigoEmisorGasto)) {
+			    		    	 		codigoEmisorGasto.setValue(codigoEmisor);
+			    		    	 	}
+			
+			    		    	 }
+			    		    	 else{
+			    		    	 	if(!Ext.isEmpty(nombreEmisorGasto)) {
+			    		    	 		nombreEmisorGasto.setValue('');
+			    		    	 	}
+			    		    	 	if(!Ext.isEmpty(codigoEmisorGasto)) {
+			    		    	 		codigoEmisorGasto.setValue('');
+			    		    	 	}
+			    		    	 	me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor"));
+			    		    	 }
+			    		    	 
+			    		     },
+			    		     failure: function(response) {
+								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    		     },
+			    		     callback: function(options, success, response){
+			    		     }
+			    		     
+			});
+		}
 		
 	},
 	

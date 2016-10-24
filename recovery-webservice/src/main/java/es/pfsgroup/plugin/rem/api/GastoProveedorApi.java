@@ -56,10 +56,10 @@ public interface GastoProveedorApi {
 
 		/**
 		 * Método que recupera un proveedor según su NIF
-		 * @param nifProveedor
+		 * @param codigoUnicoProveedor
 		 * @return Object
 		 */
-		public Object searchProveedorNif(String nifProveedor);
+		public Object searchProveedorCodigo(String codigoUnicoProveedor);
 		
 		/**
 		 * Método que recupera un propietario según su NIF

@@ -6,7 +6,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,6 +47,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrec
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
@@ -109,6 +110,9 @@ public class TrabajoController {
 	
 	@Autowired
 	private PreciosApi preciosApi;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1012,12 +1016,22 @@ public class TrabajoController {
 		
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListActivosByProceso(Long idProceso, ModelMap model){
-		
-		model.put("data", trabajoAdapter.getListActivosByProceso(idProceso));
-			
+	public ModelAndView getListActivosByProceso(Long idProceso, DtoTrabajoListActivos webDto, ModelMap model){
+
+		try {
+
+			Page page = trabajoAdapter.getListActivosByProceso(idProceso, webDto);
+			if(!Checks.esNulo(page)) {
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
 		return createModelAndViewJson(model);
-			
 	}
 	
 	
@@ -1040,35 +1054,34 @@ public class TrabajoController {
 	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
 	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
-		HashMap<String, String> errorsList = null;
 		ArrayList<Map<String, Object>> listaRespuesta = null;
 		JSONObject jsonFields = null;
 		
 		try {
 			
-			jsonData = (TrabajoRequestDto) request.getRequestData(TrabajoRequestDto.class);
-			List<TrabajoDto> listaTrabajoDto = jsonData.getData();			
 			jsonFields = request.getJsonObject();
 			logger.debug("PETICIÓN: " + jsonFields);
 			
+			jsonData = (TrabajoRequestDto) request.getRequestData(TrabajoRequestDto.class);
+			List<TrabajoDto> listaTrabajoDto = jsonData.getData();			
+
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
 				listaRespuesta = trabajoApi.createTrabajos(listaTrabajoDto);			
-				model.put("id", jsonData.getId());	
+				model.put("id", jsonFields.get("id"));	
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
 			}
 
 		} catch (Exception e) {
 			logger.error(e);
-			model.put("id", jsonData.getId());	
+			model.put("id", jsonFields.get("id"));	
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
 		} finally {
 			logger.debug("RESPUESTA: " + model);
-			logger.debug("ERRORES: " + errorsList);
 		}
 
 		restApi.sendResponse(response, model);
@@ -1130,9 +1143,16 @@ public class TrabajoController {
 		return createModelAndViewJson(model);
 		
 	}
-	
-	
-	
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			trabajoApi.downloadTemplateActivosTrabajo(request,response,"LACT");
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+		}
+
+	}
 
 }

@@ -341,47 +341,47 @@ public class AgrupacionAdapter {
 
 	@Transactional(readOnly = false)
 	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal) throws JsonViewerException {
-		
+
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
-		
+
 		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 		try {			
-		
+
 			if(Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
 			}
-			
+
 			// Si la agrupación es asistida, el activo además de existir tiene que ser asistido.
 			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException("El activo no es asistido");
 			}
-			
+
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos
-			if ( num == 0 ) {
-				
+			if (num == 0) {
 				activoAgrupacionValidate(activo, agrupacion);			
 				agrupacion = updateAgrupacionPrimerActivo(activo, agrupacion);			
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
-			
+
 			// Validaciones de agrupación
 			agrupacionValidate(activo, agrupacion);			
-			
+
 			ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
 			activoAgrupacionActivo.setActivo(activo);
 			activoAgrupacionActivo.setAgrupacion(agrupacion);
 			Date today = new Date();
 			activoAgrupacionActivo.setFechaInclusion(today);
-			
+
 			activoAgrupacionActivoApi.save(activoAgrupacionActivo);
-			
+
 			//En asistidas hay que hacer una serie de actualizaciones 'especiales'.
-			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()))
+			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				activoApi.updateActivoAsistida(activo);
-				
+			}
+
 		} catch (JsonViewerException jve) {
 		    throw jve;
 		} catch (Exception e) {

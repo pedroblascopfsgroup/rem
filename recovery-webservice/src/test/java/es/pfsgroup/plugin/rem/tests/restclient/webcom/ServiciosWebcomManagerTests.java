@@ -158,12 +158,12 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		StockDto stock2 = setupDto(new StockDto());
 
 		double actualImporte = 100.00;
-		String codigoAgrupacionObraNueva = "ABCDE";
+		Long codigoAgrupacionObraNueva = 1L;
 
 		stock1.setActualImporte(WebcomDataType.doubleDataType(actualImporte));
 		// ¿El campo idEstado existirá o no?
 		// stock1.setIdEstado(WebcomDataType.booleanDataType(true));
-		stock2.setCodigoAgrupacionObraNueva(WebcomDataType.stringDataType(codigoAgrupacionObraNueva));
+		stock2.setCodigoAgrupacionObraNueva(WebcomDataType.longDataType(codigoAgrupacionObraNueva));
 
 		// Seteamos un campo a Null explícitamente, para indicar un borrado
 		stock2.setCodCee(WebcomDataType.nullStringDataType());

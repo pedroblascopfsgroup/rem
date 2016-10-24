@@ -15,14 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAnejo;
 import es.pfsgroup.plugin.rem.model.ActivoBanyo;
 import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
 import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
 import es.pfsgroup.plugin.rem.model.ActivoCocina;
+import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
@@ -34,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -47,15 +52,18 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
 	@Autowired
 	private RestApi restApi;
-	
+
 	@Autowired
 	private DtoToEntityApi dtoToEntity;
 
 	@Autowired
 	private ActivoApi activoApi;
+
+	@Autowired
+	private ActivoAdapter adapter;
 
 	public InformeMediadorManager() {
 		obligatorios = new HashMap<String, HashMap<String, Boolean>>();
@@ -836,24 +844,342 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		estacionesDeTren.put(DDTipoActivo.COD_VIVIENDA, true);
 		obligatorios.put("estacionesdetren", estacionesDeTren);
 
+		// otrosComunicaciones
+		HashMap<String, Boolean> otrosComunicaciones = new HashMap<String, Boolean>();
+		otrosComunicaciones.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("otroscomunicaciones", otrosComunicaciones);
+
+		// buenEstadoPuertaEntradaNormal
+		HashMap<String, Boolean> buenEstadoPuertaEntradaNormal = new HashMap<String, Boolean>();
+		buenEstadoPuertaEntradaNormal.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopuertaentradanormal", buenEstadoPuertaEntradaNormal);
+
+		// buenEstadoPuertaEntradaBlindada
+		HashMap<String, Boolean> buenEstadoPuertaEntradaBlindada = new HashMap<String, Boolean>();
+		buenEstadoPuertaEntradaBlindada.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopuertaentradablindada", buenEstadoPuertaEntradaBlindada);
+
+		// buenEstadoPuertaEntradaAcorazada
+		HashMap<String, Boolean> buenEstadoPuertaEntradaAcorazada = new HashMap<String, Boolean>();
+		buenEstadoPuertaEntradaAcorazada.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopuertaentradaacorazada", buenEstadoPuertaEntradaAcorazada);
+
+		// buenEstadoPuertaPasoMaciza
+		HashMap<String, Boolean> buenEstadoPuertaPasoMaciza = new HashMap<String, Boolean>();
+		buenEstadoPuertaPasoMaciza.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopuertapasomaciza", buenEstadoPuertaPasoMaciza);
+
+		// buenEstadoPuertaPasoHueca
+		HashMap<String, Boolean> buenEstadoPuertaPasoHueca = new HashMap<String, Boolean>();
+		buenEstadoPuertaPasoHueca.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopuertapasohueca", buenEstadoPuertaPasoHueca);
+
+		// buenEstadoPuertaPasoLacada
+		HashMap<String, Boolean> buenEstadoPuertaPasoLacada = new HashMap<String, Boolean>();
+		buenEstadoPuertaPasoLacada.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopuertapasolacada", buenEstadoPuertaPasoLacada);
+
+		// existenArmariosEmpotrados
+		HashMap<String, Boolean> existenArmariosEmpotrados = new HashMap<String, Boolean>();
+		existenArmariosEmpotrados.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("existenarmariosempotrados", existenArmariosEmpotrados);
+
+		// codAcabadoCarpinteria
+		HashMap<String, Boolean> codAcabadoCarpinteria = new HashMap<String, Boolean>();
+		codAcabadoCarpinteria.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("codacabadocarpinteria", codAcabadoCarpinteria);
+
+		// otrosCarpinteriaInterior
+		HashMap<String, Boolean> otrosCarpinteriaInterior = new HashMap<String, Boolean>();
+		otrosCarpinteriaInterior.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("otroscarpinteriainterior", otrosCarpinteriaInterior);
+
+		// buenEstadoVentanaHierro
+		HashMap<String, Boolean> buenEstadoVentanaHierro = new HashMap<String, Boolean>();
+		buenEstadoVentanaHierro.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadoventanahierro", buenEstadoVentanaHierro);
+
+		// buenEstadoVentanaAnodizado
+		HashMap<String, Boolean> buenEstadoVentanaAnodizado = new HashMap<String, Boolean>();
+		buenEstadoVentanaAnodizado.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadoventanaanodizado", buenEstadoVentanaAnodizado);
+
+		// buenEstadoVentanaLacado
+		HashMap<String, Boolean> buenEstadoVentanaLacado = new HashMap<String, Boolean>();
+		buenEstadoVentanaLacado.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadoventanalacado", buenEstadoVentanaLacado);
+
+		// buenEstadoVentanaPvc
+		HashMap<String, Boolean> buenEstadoVentanaPvc = new HashMap<String, Boolean>();
+		buenEstadoVentanaPvc.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadoventanapvc", buenEstadoVentanaPvc);
+
+		// buenEstadoVentanaMadera
+		HashMap<String, Boolean> buenEstadoVentanaMadera = new HashMap<String, Boolean>();
+		buenEstadoVentanaMadera.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadoventanamadera", buenEstadoVentanaMadera);
+
+		// buenEstadoPersianaPlastico
+		HashMap<String, Boolean> buenEstadoPersianaPlastico = new HashMap<String, Boolean>();
+		buenEstadoPersianaPlastico.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopersianaplastico", buenEstadoPersianaPlastico);
+
+		// buenEstadoPersianaAluminio
+		HashMap<String, Boolean> buenEstadoPersianaAluminio = new HashMap<String, Boolean>();
+		buenEstadoPersianaAluminio.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopersianaaluminio", buenEstadoPersianaAluminio);
+
+		// buenEstadoAperturaVentanaCorrederas
+		HashMap<String, Boolean> buenEstadoAperturaVentanaCorrederas = new HashMap<String, Boolean>();
+		buenEstadoAperturaVentanaCorrederas.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadoaperturaventanacorrederas", buenEstadoAperturaVentanaCorrederas);
+
+		// buenEstadoAperturaVentanaAbatibles
+		HashMap<String, Boolean> buenEstadoAperturaVentanaAbatibles = new HashMap<String, Boolean>();
+		buenEstadoAperturaVentanaAbatibles.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadoaperturaventanaabatibles", buenEstadoAperturaVentanaAbatibles);
+
+		// buenEstadoAperturaVentanaOscilobat
+		HashMap<String, Boolean> buenEstadoAperturaVentanaOscilobat = new HashMap<String, Boolean>();
+		buenEstadoAperturaVentanaOscilobat.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadoaperturaventanaoscilobat", buenEstadoAperturaVentanaOscilobat);
+
+		// buenEstadoDobleAcristalamientoOClimalit
+		HashMap<String, Boolean> buenEstadoDobleAcristalamientoOClimalit = new HashMap<String, Boolean>();
+		buenEstadoDobleAcristalamientoOClimalit.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadodobleacristalamientooclimalit", buenEstadoDobleAcristalamientoOClimalit);
+
+		// otrosCarpinteriaExterior
+		HashMap<String, Boolean> otrosCarpinteriaExterior = new HashMap<String, Boolean>();
+		otrosCarpinteriaExterior.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("otroscarpinteriaexterior", otrosCarpinteriaExterior);
+
+		// humedadesPared
+		HashMap<String, Boolean> humedadesPared = new HashMap<String, Boolean>();
+		humedadesPared.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("humedadespared", humedadesPared);
+
+		// humedadesTecho
+		HashMap<String, Boolean> humedadesTecho = new HashMap<String, Boolean>();
+		humedadesTecho.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("humedadestecho", humedadesTecho);
+
+		// grietasPared
+		HashMap<String, Boolean> grietasPared = new HashMap<String, Boolean>();
+		grietasPared.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("grietaspared", grietasPared);
+
+		// grietasTecho
+		HashMap<String, Boolean> grietasTecho = new HashMap<String, Boolean>();
+		grietasTecho.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("grietastecho", grietasTecho);
+
+		// buenEstadoPinturaParedesGotele
+		HashMap<String, Boolean> buenEstadoPinturaParedesGotele = new HashMap<String, Boolean>();
+		buenEstadoPinturaParedesGotele.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopinturaparedesgotele", buenEstadoPinturaParedesGotele);
+
+		// buenEstadoPinturaParedesLisa
+		HashMap<String, Boolean> buenEstadoPinturaParedesLisa = new HashMap<String, Boolean>();
+		buenEstadoPinturaParedesLisa.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopinturaparedeslisa", buenEstadoPinturaParedesLisa);
+
+		// buenEstadoPinturaParedesPintado
+		HashMap<String, Boolean> buenEstadoPinturaParedesPintado = new HashMap<String, Boolean>();
+		buenEstadoPinturaParedesPintado.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopinturaparedespintado", buenEstadoPinturaParedesPintado);
+
+		// buenEstadoPinturaTechoGotele
+		HashMap<String, Boolean> buenEstadoPinturaTechoGotele = new HashMap<String, Boolean>();
+		buenEstadoPinturaTechoGotele.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopinturatechogotele", buenEstadoPinturaTechoGotele);
+
+		// buenEstadoPinturaTechoLisa
+		HashMap<String, Boolean> buenEstadoPinturaTechoLisa = new HashMap<String, Boolean>();
+		buenEstadoPinturaTechoLisa.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopinturatecholisa", buenEstadoPinturaTechoLisa);
+
+		// buenEstadoPinturaTechoPintado
+		HashMap<String, Boolean> buenEstadoPinturaTechoPintado = new HashMap<String, Boolean>();
+		buenEstadoPinturaTechoPintado.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadopinturatechopintado", buenEstadoPinturaTechoPintado);
+
+		// buenEstadoMolduraEscayola
+		HashMap<String, Boolean> buenEstadoMolduraEscayola = new HashMap<String, Boolean>();
+		buenEstadoMolduraEscayola.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put("buenestadomolduraescayola", buenEstadoMolduraEscayola);
+
+		// otrosParamentosVerticales
+		addObligatorioVivienda("otrosParamentosVerticales");
+
+		// buenEstadoTarimaFlotanteSolados
+		addObligatorioVivienda("buenEstadoTarimaFlotanteSolados");
+
+		// buenEstadoParqueSolados
+		addObligatorioVivienda("buenEstadoParqueSolados");
+
+		// buenEstadoMarmolSolados
+		addObligatorioVivienda("buenEstadoMarmolSolados");
+
+		// buenEstadoPlaquetaSolados
+		addObligatorioVivienda("buenEstadoPlaquetaSolados");
+
+		// otrosSolados
+		addObligatorioVivienda("otrosSolados");
+
+		// buenEstadoCocinaAmuebladaCocina
+		addObligatorioVivienda("buenEstadoCocinaAmuebladaCocina");
+
+		// buenEstadoEncimeraGranitoCocina
+		addObligatorioVivienda("buenEstadoEncimeraGranitoCocina");
+
+		// buenEstadoEncimeraMarmolCocina
+		addObligatorioVivienda("buenEstadoEncimeraMarmolCocina");
+
+		// buenEstadoEncimeraMaterialCocina
+		addObligatorioVivienda("buenEstadoEncimeraMaterialCocina");
+
+		// buenEstadoVitroceramicaCocina
+		addObligatorioVivienda("buenEstadoVitroceramicaCocina");
+
+		// buenEstadoLavadoraCocina
+		addObligatorioVivienda("buenEstadoLavadoraCocina");
+
+		// buenEstadoFrigorificoCocina
+		addObligatorioVivienda("buenEstadoFrigorificoCocina");
+
+		// buenEstadoLavavajillasCocina
+		addObligatorioVivienda("buenEstadoLavavajillasCocina");
+
+		// buenEstadoMicroondasCocina
+		addObligatorioVivienda("buenEstadoMicroondasCocina");
+
+		// buenEstadoHornoCocina
+		addObligatorioVivienda("buenEstadoHornoCocina");
+
+		// buenEstadoSueloCocina
+		addObligatorioVivienda("buenEstadoSueloCocina");
+
+		// buenEstadoAzulejosCocina
+		addObligatorioVivienda("buenEstadoAzulejosCocina");
+
+		// buenEstadoSueloCocina
+		addObligatorioVivienda("buenEstadoSueloCocina");
+
+		// buenEstadoGriferiaMonomandoCocina
+		addObligatorioVivienda("buenEstadoGriferiaMonomandoCocina");
+
+		// otrosCocina
+		addObligatorioVivienda("otrosCocina");
+
+		// buenEstadoDuchaBanyo
+		addObligatorioVivienda("buenEstadoDuchaBanyo");
+
+		// buenEstadoBanyeraNormalBanyo
+		addObligatorioVivienda("buenEstadoBanyeraNormalBanyo");
+
+		// buenEstadoBanyeraHidromasajeBanyo
+		addObligatorioVivienda("buenEstadoBanyeraHidromasajeBanyo");
+
+		// buenEstadoColumnaHidromasajeBanyo
+		addObligatorioVivienda("buenEstadoColumnaHidromasajeBanyo");
+
+		// buenEstadoAlicatadoMarmolBanyo
+		addObligatorioVivienda("buenEstadoAlicatadoMarmolBanyo");
+
+		// buenEstadoAlicatadoGranitoBanyo
+		addObligatorioVivienda("buenEstadoAlicatadoGranitoBanyo");
+
+		// buenEstadoAlicatadoAzulejoBanyo
+		addObligatorioVivienda("buenEstadoAlicatadoAzulejoBanyo");
+
+		// buenEstadoEncimeraMarmolBanyo
+		addObligatorioVivienda("buenEstadoEncimeraMarmolBanyo");
+
+		// buenEstadoEncimeraGranitoBanyo
+		addObligatorioVivienda("buenEstadoEncimeraGranitoBanyo");
+
+		// buenEstadoEncimeraMaterialBanyo
+		addObligatorioVivienda("buenEstadoEncimeraMaterialBanyo");
+
+		// buenEstadoSanitariosBanyo
+		addObligatorioVivienda("buenEstadoSanitariosBanyo");
+
+		// buenEstadoSueloBanyo
+		addObligatorioVivienda("buenEstadoSueloBanyo");
+
+		// buenEstadoGriferiaMonomandoBanyo
+		addObligatorioVivienda("buenEstadoGriferiaMonomandoBanyo");
+
+		// otrosBanyo
+		addObligatorioVivienda("otrosBanyo");
+
+		// buenEstadoInstalacionElectrica
+		addObligatorioVivienda("buenEstadoInstalacionElectrica");
+
+		// instalacionElectricaAntiguaODefectuosa
+		addObligatorioVivienda("instalacionElectricaAntiguaODefectuosa");
+
+		// existeCalefaccionGasNatural
+		addObligatorioVivienda("existeCalefaccionGasNatural");
+
+		// existenRadiadoresDeAluminio
+		addObligatorioVivienda("existenRadiadoresDeAluminio");
+
+		// existeAguaCalienteCentral
+		addObligatorioVivienda("existeAguaCalienteCentral");
+
+		// existeAguaCalienteGasNatural
+		addObligatorioVivienda("existeAguaCalienteGasNatural");
+
+		// existeAireAcondicionadoPreinstalacion
+		addObligatorioVivienda("existeAireAcondicionadoPreinstalacion");
+
+		// existeAireAcondicionadoInstalacion
+		addObligatorioVivienda("existeAireAcondicionadoInstalacion");
+
+		// existeAireAcondicionadoCalor
+		addObligatorioVivienda("existeAireAcondicionadoCalor");
+
+		// otrosInstalaciones
+		addObligatorioVivienda("otrosInstalaciones");
+
+		// existenJardinesZonasVerdes
+		addObligatorioVivienda("existenJardinesZonasVerdes");
+
+		// existePiscina
+		addObligatorioVivienda("existePiscina");
+
+		// existePistaPadel
+		addObligatorioVivienda("existePistaPadel");
+
+		// existePistaTenis
+		addObligatorioVivienda("existePistaTenis");
+
+	}
+
+	private void addObligatorioVivienda(String name) {
+		HashMap<String, Boolean> aux = new HashMap<String, Boolean>();
+		aux.put(DDTipoActivo.COD_VIVIENDA, true);
+		obligatorios.put(name.toLowerCase(), aux);
 	}
 
 	@Override
-	public void validateInformeField(List<String> errorsList, String fiedlName, Object fieldValor,
+	public void validateInformeField(HashMap<String, String> errorsList, String fiedlName, Object fieldValor,
 			String codigoTipoBien) {
 		fiedlName = fiedlName.substring(3);
 		HashMap<String, Boolean> permisos = obligatorios.get(fiedlName.toLowerCase());
 		if (permisos != null) {
 			if (permisos.containsKey(codigoTipoBien)
 					&& (fieldValor == null || (fieldValor instanceof String && ((String) fieldValor).isEmpty()))) {
-				errorsList.add("El campo ".concat(fiedlName)
-						.concat(" no puede ser null para el tipo activo ".concat(codigoTipoBien)));
+				errorsList.put(fiedlName, RestApi.REST_MSG_MISSING_REQUIRED);
 			}
 		}
 	}
 
 	@Override
-	public void validateInformeMediadorDto(InformeMediadorDto informe, String codigoTipoBien, List<String> errorsList)
+	public void validateInformeMediadorDto(InformeMediadorDto informe, String codigoTipoBien,
+			HashMap<String, String> errorsList)
 			throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(InformeMediadorDto.class)
 				.getPropertyDescriptors()) {
@@ -897,7 +1223,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		Map<String, Object> map = null;
 		for (InformeMediadorDto informe : informes) {
 			map = new HashMap<String, Object>();
-			HashMap<String, String>errorsList = null;
+			HashMap<String, String> errorsList = null;
 			if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
 				errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.INSERT);
 			} else {
@@ -905,16 +1231,16 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			}
 			if (informe.getPlantas() != null) {
 				for (PlantaDto planta : informe.getPlantas()) {
-					List<String> errorsListPlanta = null;
+					HashMap<String, String> errorsListPlanta = null;
 					if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
-						//----------------------errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
+						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
 					} else {
-						///--------------------------------errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.UPDATE);
+						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.UPDATE);
 					}
-					//-----------------------------errorsList.addAll(errorsListPlanta);
+					errorsList.putAll(errorsListPlanta);
 				}
 			}
-
+			this.validateInformeMediadorDto(informe, informe.getCodTipoActivo(), errorsList);
 			if (errorsList.size() == 0) {
 
 				ActivoInfoComercial informeEntity = null;
@@ -923,10 +1249,15 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 					informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoLocalComercial.class, "activo.numActivo");
+
+					ActivoAnejo anejo = (ActivoAnejo) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+							ActivoAnejo.class, "infoComercial.activo.numActivo");
+					anejo.setInfoComercial(informeEntity);
 					entitys.add(informeEntity);
+					entitys.add(anejo);
 				} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
 					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
-							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo");
+							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
 					informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoInfoComercial.class, "activo.numActivo");
 					edificioEntity.setInfoComercial(informeEntity);
@@ -958,35 +1289,30 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					ActivoCarpinteriaInterior activoCarpinteriaInt = (ActivoCarpinteriaInterior) dtoToEntity
 							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaInterior.class,
 									"infoComercial.activo.numActivo");
-					
+
 					ActivoCarpinteriaExterior activoCarpinteriaExterior = (ActivoCarpinteriaExterior) dtoToEntity
-					.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaExterior.class,
-							"infoComercial.activo.numActivo");
-					
+							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaExterior.class,
+									"infoComercial.activo.numActivo");
+
 					ActivoParamentoVertical paramientoVertical = (ActivoParamentoVertical) dtoToEntity
 							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoParamentoVertical.class,
 									"infoComercial.activo.numActivo");
-					
-					ActivoSolado solado = (ActivoSolado) dtoToEntity
-							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoSolado.class,
-									"infoComercial.activo.numActivo");
-					
-					ActivoCocina cocina = (ActivoCocina) dtoToEntity
-							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCocina.class,
-									"infoComercial.activo.numActivo");
-					
-					ActivoBanyo banyo = (ActivoBanyo) dtoToEntity
-							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoBanyo.class,
-									"infoComercial.activo.numActivo");
-					
-					ActivoInstalacion instalacion = (ActivoInstalacion) dtoToEntity
-					.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInstalacion.class,
-							"infoComercial.activo.numActivo");
-					
-					ActivoZonaComun zonaComun =(ActivoZonaComun) dtoToEntity
-							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoZonaComun.class,
-									"infoComercial.activo.numActivo");
-					
+
+					ActivoSolado solado = (ActivoSolado) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+							ActivoSolado.class, "infoComercial.activo.numActivo");
+
+					ActivoCocina cocina = (ActivoCocina) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+							ActivoCocina.class, "infoComercial.activo.numActivo");
+
+					ActivoBanyo banyo = (ActivoBanyo) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+							ActivoBanyo.class, "infoComercial.activo.numActivo");
+
+					ActivoInstalacion instalacion = (ActivoInstalacion) dtoToEntity.obtenerObjetoEntity(
+							informe.getIdActivoHaya(), ActivoInstalacion.class, "infoComercial.activo.numActivo");
+
+					ActivoZonaComun zonaComun = (ActivoZonaComun) dtoToEntity.obtenerObjetoEntity(
+							informe.getIdActivoHaya(), ActivoZonaComun.class, "infoComercial.activo.numActivo");
+
 					entitys.add(informeEntity);
 					entitys.add(activoInfraestructura);
 					entitys.add(activoCarpinteriaInt);
@@ -1002,6 +1328,29 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					informeEntity.setActivo(activoApi.getByNumActivo(informe.getIdActivoHaya()));
 				}
 				informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys);
+				// Si el activo de es de tipo vivienda guardamos las plantas
+				if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
+					List<PlantaDto> plantas = informe.getPlantas();
+					for (PlantaDto planta : plantas) {
+						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
+								genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
+								genericDao.createFilter(FilterType.EQUALS, "vivienda", (ActivoVivienda) informeEntity));
+						if(activoDistribucion == null){
+							activoDistribucion = new ActivoDistribucion();
+						}
+						activoDistribucion.setNumPlanta(planta.getNumero());
+						activoDistribucion.setVivienda((ActivoVivienda) informeEntity);
+						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
+								genericDao.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
+						activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
+						activoDistribucion.setCantidad(planta.getNumero());
+						activoDistribucion.setSuperficie(planta.getEstancias());
+						activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
+						genericDao.save(ActivoDistribucion.class, activoDistribucion);
+					}
+				}
+
+				adapter.crearTramitePublicacion(informeEntity.getActivo().getId());
 
 				map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 				map.put("idinformeMediadorRem", informeEntity.getId());

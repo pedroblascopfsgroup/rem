@@ -105,7 +105,8 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 																cls: 'cabecera-info-field',
 																width: 70,
 											                	bind: {
-											                		src: '{getSrcCartera}'
+											                		src: '{getSrcCartera}',
+											                		alt: '{tramite.cartera}'
 											                	}
 											                },
 //											                {
@@ -136,7 +137,7 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 																bind:		'{tramite.estado}'
 															},
 															{
-																fieldLabel: HreRem.i18n('fieldlabel.subtipo.trabajo'),
+																fieldLabel: HreRem.i18n('fieldlabel.subtipo'),
 																bind:		'{tramite.subtipoTrabajo}'
 															}
 														]

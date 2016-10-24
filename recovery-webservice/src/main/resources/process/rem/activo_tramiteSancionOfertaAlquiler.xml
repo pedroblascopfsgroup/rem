@@ -52,6 +52,28 @@
 				</targetBean>
 			</action>
 		</event>
+		<transition to="T014_PosicionamientoFirmaDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="T014_DevolucionLlavesHRE">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 	
@@ -79,6 +101,11 @@
 	
 	<decision name="T014_ResolucionComiteExternoDecision">
 		<transition to="T014_PosicionamientoFirma" name="OK"></transition>
+		<transition to="Fin" name="KO"></transition>
+	</decision>
+
+	<decision name="T014_PosicionamientoFirmaDecision">
+		<transition to="T014_DevolucionLlavesHRE" name="OK"></transition>
 		<transition to="Fin" name="KO"></transition>
 	</decision>
 		

@@ -92,9 +92,6 @@ public class VBusquedaTrabajos implements Serializable {
 	
 	@Column(name="GESTOR_ACTIVO")
 	private String gestorActivo;
-
-	@Column(name="ACTIVOS")
-	private String activos;
 	
 	@Column(name="TBJ_CUBRE_SEGURO")
 	private Integer cubreSeguro;
@@ -114,15 +111,9 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="TBJ_FECHA_CIERRE_ECONOMICO")
 	private Date fechaCierreEconomico;
 	
+	@Column(name="RANGO")
+	private Integer rango;
 	
-	
-	public String getActivos() {
-		return activos;
-	}
-
-	public void setActivos(String activos) {
-		this.activos = activos;
-	}
 
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
@@ -356,7 +347,12 @@ public class VBusquedaTrabajos implements Serializable {
 		this.fechaCierreEconomico = fechaCierreEconomico;
 	}
 
+	public Integer getRango() {
+		return rango;
+	}
 
-
+	public void setRango(Integer rango) {
+		this.rango = rango;
+	}
 
 }

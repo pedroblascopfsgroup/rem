@@ -135,7 +135,11 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   				 	       itemId: 'btnSubirFichero', 
 						        	   						   text: 'Subir fichero',
 						        	   						   handler: 'onClickUploadListaActivos'
-						        	   						 }],
+						        	   						 },
+						        	   						{	itemId: 'btnDownload', 
+						        	   							text: 'Descargar plantilla', 
+						        	   							handler: 'onClickBotonDescargarPlantilla'
+						        	   						}],
 						        	   				reference: 'formSubirListaActivos',
 						        	   				items:[{
 						        	   						xtype: 'filefield',
@@ -394,6 +398,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 										title: HreRem.i18n('title.momento.realizacion'),
 									    collapsible: true,
 									    collapsed: false,
+									    reference: 'fieldSetMomentoRealizacionRef',
 										items :
 											[
 												{	
@@ -674,8 +679,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	me.down("[reference=checkFechaTope]").setValue(false);
     	me.down("[reference=checkFechaContinuado]").setValue(false);
     	
-        idProceso= null;
-    	me.lookupReference('listaActivosSubidaRef').getStore().getProxy().extraParams = {'idProceso':idProceso};
+    	me.lookupReference('listaActivosSubidaRef').getStore().getProxy().extraParams = {'idProceso':null};
     	me.lookupReference('listaActivosSubidaRef').getStore().loadPage(0);
 
     	if(!Ext.isEmpty(me.idAgrupacion)) {

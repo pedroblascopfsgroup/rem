@@ -111,7 +111,6 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -123,6 +122,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -374,39 +375,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		try {
 			ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
-			List<Visita> listaVisitasCliente = new ArrayList<Visita>();
 
-			// Si el activo principal de la oferta aceptada tiene visitas,
-			// asociamos la visita más reciente del mismo cliente comercial a la
-			// oferta
-			if (!Checks.esNulo(oferta.getActivoPrincipal())) {
-				if (!Checks.esNulo(oferta.getActivoPrincipal().getVisitas())
-						&& !oferta.getActivoPrincipal().getVisitas().isEmpty()) {
-
-					for (Visita v : oferta.getActivoPrincipal().getVisitas()) {
-
-						if (oferta.getCliente().getDocumento().equals(v.getCliente().getDocumento())) {
-							listaVisitasCliente.add(v);
-						}
-					}
-
-					if (!listaVisitasCliente.isEmpty()) {
-						oferta.setVisita(listaVisitasCliente.get(0));
-						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
-								.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class,
-										DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_REALIZADA);
-						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
-					} else {
-						DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
-								.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class,
-										DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_PENDIENTE);
-						oferta.setEstadoVisitaOferta(estadoVisitaOferta);
-					}
-
-					genericDao.save(Oferta.class, oferta);
-
+			if (!Checks.esNulo(oferta.getVisita())) {
+				DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class,
+							DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_REALIZADA);
+				oferta.setEstadoVisitaOferta(estadoVisitaOferta);
 				}
+			else {
+				DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class,
+								DDEstadosVisitaOferta.ESTADO_VISITA_OFERTA_PENDIENTE);
+				oferta.setEstadoVisitaOferta(estadoVisitaOferta);
 			}
+
+			genericDao.save(Oferta.class, oferta);
+
 
 			nuevoExpediente.setOferta(oferta);
 			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
@@ -1700,6 +1684,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// automáticos. Esto podría ir en un proceso al dar de alta el activo.
 		activo.setBloqueoPrecioFechaIni(new Date());
 		activo.setGestorBloqueoPrecio(adapter.getUsuarioLogado());
+		
+		DDTipoComercializar tipoComercializar = (DDTipoComercializar) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, DDTipoComercializar.CODIGO_RETAIL);
+		if(!Checks.esNulo(tipoComercializar)) {
+			activo.setTipoComercializar(tipoComercializar);
+		}
+		
+		DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, DDTipoComercializacion.CODIGO_VENTA);
+		if(!Checks.esNulo(tipoComercializacion)) {
+			activo.setTipoComercializacion(tipoComercializacion);
+		}
 
 		saveOrUpdate(activo);
 		return activo;
@@ -1711,11 +1705,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		perimetroActivo.setIncluidoEnPerimetro(1);
 		perimetroActivo.setAplicaAsignarMediador(0);
 		perimetroActivo.setAplicaComercializar(1);
-		perimetroActivo.setAplicaFormalizar(1);
+		perimetroActivo.setAplicaFormalizar(0);
 		perimetroActivo.setAplicaGestion(0);
 		perimetroActivo.setAplicaTramiteAdmision(0);
 		perimetroActivo.setFechaAplicaComercializar(new Date());
-		perimetroActivo.setFechaAplicaFormalizar(new Date());
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoComercializacion.CODIGO_ASISTIDA);
 		DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, filtro);
@@ -2046,7 +2039,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(activo)) {
 					// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
 					NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
-					beanUtilNotNull.copyProperty(valoracionBien, "bien", activo.getBien());
+					valoracionBien.setBien(activo.getBien());
 					valoracionBien = genericDao.save(NMBValoracionesBien.class, valoracionBien);
 
 					if (!Checks.esNulo(valoracionBien)) {
@@ -2063,7 +2056,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				return false;
+				throw new Exception("Error al procesar su solicitud");
 			}
 		} else {
 			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");

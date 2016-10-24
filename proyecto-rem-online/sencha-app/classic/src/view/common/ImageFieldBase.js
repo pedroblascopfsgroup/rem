@@ -8,7 +8,16 @@ Ext.define('HreRem.view.common.ImageFieldBase', {
 
     fieldCls: Ext.baseCSSPrefix + 'form-image-field',
     value: null,
+   	/**
+    * Url de la imagen a mostrar 
+    * @type 
+    */
 	src: null,
+	/**
+	 * En caso de que src sea null, se mostrará unicamente como texto, el valor de esta variable.
+	 * @type 
+	 */
+	alt: null,
 
     initEvents: function () {
         this.callParent();
@@ -23,13 +32,22 @@ Ext.define('HreRem.view.common.ImageFieldBase', {
     setValue: function (v) {
         var me = this;
         me.callParent(arguments);
-        
-        me.value = v;
 
+        me.value = v;
         var imgEl = Ext.getDom(me.id+'-inputEl');
         if(!Ext.isEmpty(imgEl)) {
-	        imgEl.src=v;
-	        imgEl.width=me.width;
+        	if(!Ext.isEmpty(v)) {
+	        	imgEl.src=v;
+	        	imgEl.width=me.width;
+        	} else {
+        		imgEl.hidden=true;
+        		if(!Ext.isEmpty(me.alt)) {
+	        		me.inputEl.insertSibling({
+			            tag: 'div',
+			            html: '<div class="min-text-logo-cartera">'+me.alt+'</div>'
+		        	});
+        		}
+        	}
         }
 
         //Change ur image value here...
@@ -63,5 +81,15 @@ Ext.define('HreRem.view.common.ImageFieldBase', {
     	me.src = value;
     	me.setValue(value)
     	
+    },
+    
+    getAlt: function() {
+    	var me = this;
+    	return me.alt;
+    },
+    
+    setAlt: function(value) {
+    	var me = this;    	
+    	me.alt = value;    	
     }
 });

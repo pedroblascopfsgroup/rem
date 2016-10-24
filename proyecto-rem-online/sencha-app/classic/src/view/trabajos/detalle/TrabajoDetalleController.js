@@ -63,6 +63,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
    				}
 			}
 		});
+		
+		if(combo.getValue() != "02" && combo.getValue() != "03") {
+			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
+		} 
+		else {
+			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
+		} 
     	
     },
     
@@ -668,12 +675,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	   			var window = btn.up('creartrabajowindow');
     	   			window.idProceso = idProceso;
     	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().load();    	   	    	
-    		    		}
-    	
+    	   			window.lookupReference('listaActivosSubidaRef').getStore().load();    
+    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
+    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
+    		    }
     				
-    		    })
-    	    }
+    	    })
+       	}
      },
      
      onClickGenerarPropuesta: function(btn) {
@@ -718,6 +726,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		messageBox.textField.maskRe=/^[A-Za-z0-9\s_/]+$/;
 		messageBox.textField.mon(messageBox.textField.el, 'keypress', messageBox.textField.filterKeys, messageBox.textField);
 		
+     },
+     
+     onClickBotonDescargarPlantilla: function(btn) {
+    	var me = this,
+		config = {};
+		
+		config.url= $AC.getRemoteUrl("trabajo/downloadTemplateActivosTrabajo");
+		
+		me.fireEvent("downloadFile", config);
      }
     	
 });

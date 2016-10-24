@@ -14,6 +14,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             afterdelete: function(grid) {
             	grid.getStore().load();
             }
+        },
+        
+        'compradoresexpediente gridBase': {
+            onClickRemove: 'borrarComprador',
+            afterdelete: function(grid) {
+            	grid.getStore().load();
+            }
         }
     },
 	
@@ -126,6 +133,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			                catch (e){ };
 			                if (!Ext.isEmpty(data.msg)) {
 			                	me.fireEvent("errorToast", data.msg);
+			                	// Si recibimos un error controlado, continuamos editando.
+			                	Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+									function (field, index){field.fireEvent('edit');}
+								);
+			                	btn.show();
+								btn.up('tabbar').down('button[itemId=botoncancelar]').show();
+								btn.up('tabbar').down('button[itemId=botoneditar]').hide();
+								me.getViewModel().set("editing", true);
+			                	
 			                } else {
 			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			                }
@@ -335,11 +351,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onCompradoresListDobleClick : function(gridView,record) {
 		var me=this,
-		idCliente = record.get("id");
+		idCliente = record.get("id"),
+		expediente= me.getViewModel().get("expediente");
 		var storeGrid= gridView.store;
-//		me.getView().fireEvent('openModalWindow',"HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid});
-    	Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid }).show();
-
+	//	me.getView().fireEvent('openModalWindow',"HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid});
+	    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid, expediente: expediente }).show();
 	},
 
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
@@ -895,10 +911,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	abrirFormularioCrearComprador: function(grid) {
 		var me = this,
-		idExpediente = me.getViewModel().get("expediente.id");
-		var ventanaCompradores= grid.up().up();
-		var expediente= me.getViewModel().get("expediente");
-		Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();		
+		idExpediente = me.getViewModel().get("expediente.id"),
+		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
+		
+		if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
+			var ventanaCompradores= grid.up().up();
+			var expediente= me.getViewModel().get("expediente");
+			Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+		}
+		else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
+		}
 	},
 	
 	onChangeChainedCombo: function(combo) {
@@ -941,6 +964,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		comboComitePropuesto = me.lookupReference('comboComitePropuesto');
 		
 		var url =  $AC.getRemoteUrl('expedientecomercial/consultarComiteSancionador');
+		
+			me.getView().mask(HreRem.i18n("msg.mask.espere"));
 			Ext.Ajax.request({
 			     url: url,
 			     params:  {idExpediente : me.getViewModel().get("expediente.id")},
@@ -968,6 +993,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	                } else {
 	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                }
+			     },
+			     
+			     callback: function() {
+			     	me.getView().unmask();
 			     }
 	    		     
 	    	});		
@@ -1079,6 +1108,40 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': nombreBusqueda});
 		ges.storeProveedores.load();
 		
+	},
+	
+	borrarComprador: function(grid, record) {
+		var me = this;
+		idExpediente = me.getViewModel().get("expediente.id"),
+		codigoEstado= me.getViewModel().get("expediente.codigoEstado"),
+		idComprador= record.get('id');
+
+		if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
+			record.erase({
+				params: {idExpediente: idExpediente, idComprador: idComprador},
+	            success: function(record, operation) {
+	           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	           		 grid.fireEvent("afterdelete", grid);
+	            },
+	            failure: function(record, operation) {
+	            	var data = {};
+				    try {
+				    	data = Ext.decode(operation._response.responseText);
+				    }
+				    catch (e){ };
+				    	if (!Ext.isEmpty(data.msg)) {
+				        	me.fireEvent("errorToast", data.msg);
+				        } 
+				        else {
+				        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				        }
+	                  grid.fireEvent("afterdelete", grid);
+	            }
+	            
+	        });	
+		}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
+		}
 	}
 		
 

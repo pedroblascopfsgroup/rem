@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +40,23 @@ public class PortalesController {
 		PortalesRequestDto jsonData = null;
 		List<PortalesDto> listaPortalesDto = null;
 		ArrayList<Map<String, Object>> listaRespuesta = null;
+		JSONObject jsonFields = null;
+		
 		try {
+			jsonFields = request.getJsonObject();
+			logger.debug("PETICIÓN: " + jsonFields);
+			
 			jsonData = (PortalesRequestDto) request.getRequestData(PortalesRequestDto.class);
 			listaPortalesDto = jsonData.getData();
 			listaRespuesta = activoApi.saveOrUpdate(listaPortalesDto);
-			model.put("id", jsonData.getId());
+			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", null);
 
 		} catch (Exception e) {
-
 			logger.error(e);
-			model.put("id", jsonData.getId());
-			model.put("data", null);
+			model.put("id", jsonFields.get("id"));
+			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 
 		} finally {

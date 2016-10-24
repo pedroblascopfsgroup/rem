@@ -60,6 +60,7 @@ Ext.define('HreRem.view.activos.tramites.DatosGeneralesTramite', {
                 {
 		    	xtype: 'fieldset',
 		    	title: 'Trabajo asociado',
+		    	bind: {hidden: '{tramite.tieneEC}'},
 		    	defaults:{
 		    		layout:'column',
 		    		width: '50%'
@@ -76,6 +77,25 @@ Ext.define('HreRem.view.activos.tramites.DatosGeneralesTramite', {
 						{
 							fieldLabel: 'N&ordm; de trabajo',
 							bind: '{tramite.numTrabajo}'
+						}
+		        ]
+			    },
+                {
+		    	xtype: 'fieldset',
+		    	title: 'Expediente comercial asociado',
+		    	bind: {hidden: '{!tramite.tieneEC}'},
+		    	defaults:{
+		    		layout:'column',
+		    		width: '50%'
+		    	},
+		        items: [
+						{
+							fieldLabel: 'Estado',
+							bind: '{tramite.descripcionEstadoEC}'
+						},
+						{
+							fieldLabel: 'N&ordm; de Expediente',
+							bind: '{tramite.numEC}'
 						}
 		        ]
 			    },

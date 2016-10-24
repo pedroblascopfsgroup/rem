@@ -71,4 +71,6 @@ public class GastoManager extends BusinessOperationOverrider<GastoApi> implement
 	}
 	
 	
+	
+	
 }

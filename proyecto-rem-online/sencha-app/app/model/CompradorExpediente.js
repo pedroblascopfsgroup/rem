@@ -48,9 +48,9 @@ Ext.define('HreRem.model.CompradorExpediente', {
     
     proxy: {
 		type: 'uxproxy',
-		writeAll: true,
 		api: {
-			read: 'expedientecomercial/getCompradoresExpediente'
+			read: 'expedientecomercial/getCompradoresExpediente',
+			destroy: 'expedientecomercial/deleteCompradorExpediente'
         }
     }    
 

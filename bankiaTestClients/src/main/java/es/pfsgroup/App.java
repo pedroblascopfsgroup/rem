@@ -1,7 +1,5 @@
 package es.pfsgroup;
 
-import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
-import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.pfsgroup.plugin.rem.api.impl.UvemManager;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -90,7 +88,7 @@ public class App {
 							System.out.println("Resultado llamada Codigo De Oferta Haya: " + instancia.getCodigoDeOfertaHaya());
 							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComite());	
 						}else{
-							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS 0000000000000201 false 0 0 0");
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS 0000000000000201 <financiaCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
 							System.exit(1);			
 						}
 						

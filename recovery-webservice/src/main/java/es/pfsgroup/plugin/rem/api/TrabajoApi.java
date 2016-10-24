@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -597,5 +600,14 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	public String comprobarPropuestaPrecios(TareaExterna tareaExterna);
+	
+	/**
+	 * Devuelve una plantilla pasandole el codigo por parametro
+	 * @param request
+	 * @param response
+	 * @param codPlantilla
+	 * @throws Exception
+	 */
+	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response, String codPlantilla) throws Exception;
 
 }

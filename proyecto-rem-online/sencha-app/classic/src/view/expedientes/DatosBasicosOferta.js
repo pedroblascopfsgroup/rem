@@ -122,15 +122,18 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								                	readOnly: true,								                	
 								                	bind: {
 														store: '{comboComites}',
-														value: '{datosbasicosoferta.comitePropuestoCodigo}',
-														hidden: '{!datosbasicosoferta.comitePropuestoCodigo}'
+														value: '{datosbasicosoferta.comitePropuestoCodigo}'
 													}
 								                },
 								                {
 							                		xtype: 'button',
 							                		text: HreRem.i18n('btn.consultar.comite'),
 							                		handler: 'consultarComiteSancionador',
-							                		margin: '0 40 0 0'
+							                		margin: '0 40 0 0',
+							                		disabled: true,
+							                		bind: {
+							                			disabled: '{!editing}'
+							                		}
 					                			}
 						                	]
 						                	

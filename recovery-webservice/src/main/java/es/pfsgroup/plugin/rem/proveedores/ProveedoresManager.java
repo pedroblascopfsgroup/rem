@@ -33,6 +33,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
@@ -49,12 +50,14 @@ import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
@@ -83,6 +86,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ActivoApi activoApi;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -107,6 +113,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			try {
 				beanUtilNotNull.copyProperty(dto, "fechaUltimaActualizacion", proveedor.getAuditoria().getFechaModificar());
 				beanUtilNotNull.copyProperty(dto, "id", proveedor.getId());
+				beanUtilNotNull.copyProperty(dto, "codigo", proveedor.getCodigoProveedorRem());
 				beanUtilNotNull.copyProperty(dto, "nombreProveedor", proveedor.getNombre());
 				beanUtilNotNull.copyProperty(dto, "fechaAltaProveedor", proveedor.getFechaAlta());
 				if(!Checks.esNulo(proveedor.getTipoProveedor())) {
@@ -128,6 +135,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(dto, "observacionesProveedor", proveedor.getObservaciones());
 				beanUtilNotNull.copyProperty(dto, "webUrlProveedor", proveedor.getPaginaWeb());
 				beanUtilNotNull.copyProperty(dto, "fechaConstitucionProveedor", proveedor.getFechaConstitucion());
+				beanUtilNotNull.copyProperty(dto, "homologadoCodigo", proveedor.getHomologado());
+				
+				if(!Checks.esNulo(proveedor.getOperativa())) {
+					beanUtilNotNull.copyProperty(dto, "operativaCodigo", proveedor.getOperativa().getCodigo());
+				}
 				
 				Filter proveedorIdFiltro = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
 				List<ProveedorTerritorial> proveedorTerritorial = genericDao.getList(ProveedorTerritorial.class, proveedorIdFiltro);
@@ -182,6 +194,22 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		return dto;
 	}
+	
+	public List<ActivoProveedor> getProveedoresByActivoId(Long idActivo){
+		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
+
+		//Obtiene de la vista del buscador, la relacion de proveedores de un activo
+		List<VBusquedaProveedoresActivo> listadoVBProveedores = activoApi.getProveedorByActivo(idActivo);
+
+		//Transforma la lista de la vista en una lista de proveedores
+		for(VBusquedaProveedoresActivo proveedorVB : listadoVBProveedores){
+			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "id", proveedorVB.getId());
+			listaProveedores.add(genericDao.get(ActivoProveedor.class, filtroProveedor));
+		}
+		
+		return listaProveedores;
+		
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -214,6 +242,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "observaciones", dto.getObservacionesProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "paginaWeb", dto.getWebUrlProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaConstitucion", dto.getFechaConstitucionProveedor());
+			beanUtilNotNull.copyProperty(proveedor, "homologado", dto.getHomologadoCodigo());
+			
+			if(!Checks.esNulo(dto.getOperativaCodigo())) {
+				DDOperativa operativa = (DDOperativa) utilDiccionarioApi.dameValorDiccionarioByCod(DDOperativa.class, dto.getOperativaCodigo());
+				beanUtilNotNull.copyProperty(proveedor, "operativa", operativa);
+			}
+			
 			if(!Checks.esNulo(dto.getTerritorialCodigo())) {
 				List<String> codigosTerritorios = Arrays.asList(dto.getTerritorialCodigo().split(","));
 				
@@ -803,6 +838,23 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 
 		return listaAdjuntos;
+	}
+	
+	@Override
+	public Boolean comprobarExisteAdjuntoProveedores(Long idActivo, String codigoDocumento){
+
+		Boolean documentoEncontrado = false;
+		// Recorre todos los proveedores de un activo para comprobar si existe el documento a comprobar
+		for(ActivoProveedor proveedor : this.getProveedoresByActivoId(idActivo)){
+			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+			Filter filtroAdjuntoCodigo = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoProveedor.codigo", codigoDocumento);
+			ActivoAdjuntoProveedor activoAdjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, filtroProveedor, filtroAdjuntoCodigo);			
+		
+			if(!Checks.esNulo(activoAdjuntoProveedor))
+				documentoEncontrado =  true;
+		}
+		
+		return documentoEncontrado;		
 	}
 	
 	@Override

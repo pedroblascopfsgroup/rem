@@ -29,7 +29,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 			
 			form.setBindRecord(Ext.create('HreRem.model.GastoProveedor'));
 			if(!Ext.isEmpty(me.nifEmisor)) {
-		        var fieldEmisor = me.down('field[name=buscadorNifEmisorField]'); 
+		        var fieldEmisor = me.down('field[name=buscadorCodigoProveedorRem]'); 
 	        	fieldEmisor.setValue(me.nifEmisor);
 	        	fieldEmisor.setReadOnly(true);
 	        	fieldEmisor.lookupController().buscarProveedor(fieldEmisor);
@@ -137,10 +137,34 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 										         	},
 										         	allowBlank: false
 											    },
-												{
-													fieldLabel: HreRem.i18n('fieldlabel.nif.emisor'),
-													bind:		'{gastoNuevo.nifEmisor}',
-													name: 'buscadorNifEmisorField',												
+//												{
+//													fieldLabel: HreRem.i18n('fieldlabel.nif.emisor'),
+//													bind:		'{gastoNuevo.nifEmisor}',
+//													name: 'buscadorNifEmisorField',												
+//													triggers: {
+//														
+//														buscarEmisor: {
+//												            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+//												             handler: function(field) {
+//												            	field.lookupController().buscarProveedor(field);
+//												            }
+//												        }
+//													},
+//													cls: 'searchfield-input sf-con-borde',
+//													emptyText: HreRem.i18n('txt.buscar.emisor'),
+//													enableKeyEvents: true,
+//											        listeners: {
+//											        	specialKey: function(field, e) {
+//											        		if (e.getKey() === e.ENTER && !Ext.isEmpty(field.getValue())) {
+//											        			field.lookupController().buscarProveedor(field);											        			
+//											        		}
+//											        	}
+//											        }
+//							            	    },
+											    {
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),
+													bind:		'{gastoNuevo.buscadorCodigoProveedorRem}',
+													name: 'buscadorCodigoProveedorRem',												
 													triggers: {
 														
 														buscarEmisor: {
@@ -195,7 +219,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 			    			if(Ext.isEmpty(nombreEmisor.getValue())) {
 			    				error = HreRem.i18n("txt.validacion.emisor.no.seleccionado");
    								errores.push(error);
-   								me.down('[name=buscadorNifEmisorField]').markInvalid(error); 
+   								me.down('[name=buscadorCodigoProveedorRem]').markInvalid(error); 
 			    			}
 			    		}
 			

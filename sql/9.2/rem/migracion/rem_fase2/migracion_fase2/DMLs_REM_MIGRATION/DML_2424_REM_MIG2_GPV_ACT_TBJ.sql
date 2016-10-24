@@ -199,7 +199,7 @@ BEGIN
           EXECUTE IMMEDIATE '
           INSERT INTO '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS (
             TABLA_MIG,
-            GPV_NUM_GASTO_HAYA,            
+            GPV_NUM_GASTO_GESTORIA,            
             FECHA_COMPROBACION
           )
           WITH NOT_EXISTS AS (

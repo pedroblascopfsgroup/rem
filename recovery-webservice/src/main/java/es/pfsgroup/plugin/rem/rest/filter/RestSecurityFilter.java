@@ -30,6 +30,7 @@ import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ALGORITMO_FIRMA;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -71,6 +72,8 @@ public class RestSecurityFilter implements Filter {
 
 		PeticionRest peticion = restApi.crearPeticionObj(request);
 		RestRequestWrapper restRequest = null;
+		JSONObject jsonFields = null;
+		
 		try {
 
 			restRequest = new RestRequestWrapper((HttpServletRequest) request);
@@ -85,10 +88,10 @@ public class RestSecurityFilter implements Filter {
 			String signature = ((HttpServletRequest) request).getHeader("signature");
 			String id = datajson.getId();
 			peticion.setToken(id);
-			String ipClient = restApi.getClientIpAddr(((HttpServletRequest) request));
+			String ipClient = restApi.getClientIpAddr(request);
 
-			((HttpServletRequest) request).getHeader("X-Forwarded-For");
-
+			ALGORITMO_FIRMA algoritmoFirma = restApi.obtenerAlgoritmoFirma(request);
+			
 			Broker broker = restApi.getBrokerByIp(ipClient);
 			if (broker == null) {
 				broker = restApi.getBrokerDefault("");
@@ -99,12 +102,14 @@ public class RestSecurityFilter implements Filter {
 
 			if (broker != null) {
 
-				if (!restApi.validateSignature(broker, signature, restRequest.getBody())) {
+				jsonFields = restRequest.getJsonObject();
+				
+				if (!restApi.validateSignature(broker, signature, restRequest.getBody(),algoritmoFirma)) {
 					logger.error("REST: La firma no es correcta");
 					peticion.setResult(RestApi.CODE_ERROR);
 					peticion.setErrorDesc(RestApi.REST_MSG_INVALID_SIGNATURE);
 					// throwUnauthorized(response);
-					throwRestException(response, RestApi.REST_MSG_INVALID_SIGNATURE, restRequest.getJsonObject());
+					throwRestException(response, RestApi.REST_MSG_INVALID_SIGNATURE, jsonFields);
 
 				} else {
 					if (!restApi.validateId(broker, id)) {
@@ -112,15 +117,14 @@ public class RestSecurityFilter implements Filter {
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_REPETEAD_REQUEST);
 						// throwInvalidId(response);
-						throwRestException(response, RestApi.REST_MSG_REPETEAD_REQUEST, restRequest.getJsonObject());
+						throwRestException(response, RestApi.REST_MSG_REPETEAD_REQUEST, jsonFields);
 
 					} else if (!restRequest.getBody().contains("data")) {
 						logger.error("REST: Petición no contiene información en el campo data.");
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 						// throwInvalidRequest(response);
-						throwRestException(response, RestApi.REST_MSG_MISSING_REQUIRED_FIELDS,
-								restRequest.getJsonObject());
+						throwRestException(response, RestApi.REST_MSG_MISSING_REQUIRED_FIELDS,jsonFields);
 
 					} else {
 						chain.doFilter(restRequest, response);
@@ -139,8 +143,8 @@ public class RestSecurityFilter implements Filter {
 				peticion.setErrorDesc(e.getMessage());
 			}
 
-			throwErrorGeneral(response, e, null);
-
+			throwErrorGeneral(response, e, null, jsonFields);
+			
 		} catch (Throwable t) {
 			peticion.setResult("ERROR");
 			logger.error(t.getMessage());
@@ -151,12 +155,87 @@ public class RestSecurityFilter implements Filter {
 				peticion.setErrorDesc(t.getMessage());
 			}
 
-			throwErrorGeneral(response, null, t);
+			throwErrorGeneral(response, null, t, jsonFields);
 		} finally {
 			SecurityContextHolder.clearContext();
 			restApi.guardarPeticionRest(peticion);
 		}
 	}
+	
+	
+	
+	
+	/**
+	 * Genera una respuesta de error
+	 * 
+	 * @param res
+	 * @throws IOException
+	 */
+	private void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields) throws IOException {
+		JSONObject jsonResp = null;
+
+		HttpServletResponse response = (HttpServletResponse) res;
+
+		jsonResp = buildJsonResponse(errorCode, jsonFields);
+
+		response.reset();
+		response.setHeader("Content-Type", "application/json;charset=UTF-8");
+
+		if (!Checks.esNulo(jsonResp)) {
+			PrintWriter out = response.getWriter();
+			out.print(jsonResp);
+			out.flush();
+		} else {
+
+		}
+
+	}
+	
+	
+	
+	
+	/**
+	 * Error general
+	 * 
+	 * @param res
+	 * @param e
+	 * @throws IOException
+	 */
+	private void throwErrorGeneral(ServletResponse res, Exception e, Throwable t, JSONObject jsonFields) {
+		JSONObject jsonResp = null;
+		String descError = "";
+		
+		try {
+			HttpServletResponse response = (HttpServletResponse) res;
+
+			if (e != null && e.getMessage() != null && !e.getMessage().isEmpty()) {
+				descError = e.getMessage().toUpperCase();
+			}
+
+			if (t != null && t.getMessage() != null && !t.getMessage().isEmpty()) {
+				descError = t.getMessage().toUpperCase();
+			}
+			descError =StringEscapeUtils.escapeXml(descError);
+			jsonResp = buildJsonResponse(descError, jsonFields);
+
+			response.reset();
+			response.setHeader("Content-Type", "application/json;charset=UTF-8");
+
+			if (!Checks.esNulo(jsonResp)) {
+				PrintWriter out = response.getWriter();
+				out.print(jsonResp);
+				out.flush();
+			} 
+
+		} catch (Exception ex) {
+
+		}
+	}
+
+	
+	
+	
+	
 
 	/**
 	 * Genera el formato de una respuesta de un servicio REST
@@ -166,14 +245,13 @@ public class RestSecurityFilter implements Filter {
 	 * @throws IOException
 	 */
 	private JSONObject buildJsonResponse(String errorCode, JSONObject jsonFields) throws IOException {
-		JSONObject jsonResp = null;
+		JSONObject jsonResp = new JSONObject();
 		Object jsonLine = null;
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 
 		if (!Checks.esNulo(jsonFields)) {
 
-			jsonResp = new JSONObject();
 			if (jsonFields.has("id")) {
 				jsonResp.accumulate("id", jsonFields.get("id"));
 			}
@@ -225,114 +303,28 @@ public class RestSecurityFilter implements Filter {
 					jsonResp.accumulate("data", jsonFields.getJSONArray("data"));
 				}
 			}
+		}else{
+			//json inválido
+			jsonResp.accumulate("id", null);
+			jsonResp.accumulate("error", errorCode);
+			
 		}
 
 		return jsonResp;
 
 	}
 
-	/**
-	 * Genera una respuesta de error
-	 * 
-	 * @param res
-	 * @throws IOException
-	 */
-	private void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields) throws IOException {
-		JSONObject jsonResp = null;
+	
 
-		HttpServletResponse response = (HttpServletResponse) res;
-
-		jsonResp = buildJsonResponse(errorCode, jsonFields);
-
-		response.reset();
-		response.setHeader("Content-Type", "application/json;charset=UTF-8");
-
-		if (!Checks.esNulo(jsonResp)) {
-			PrintWriter out = response.getWriter();
-			out.print(jsonResp);
-			out.flush();
-		} else {
-
-		}
-
-	}
-
-	/**
-	 * Error el operador no permitido
-	 * 
-	 * @param res
-	 * @throws IOException
-	 */
-	@SuppressWarnings("unused")
-	private void throwBrokerNotExist(ServletResponse res) throws IOException {
-
-		HttpServletResponse response = (HttpServletResponse) res;
-
-		String error = "{\"data\":null,\"error\":\"" + RestApi.REST_MSG_BROKER_NOT_EXIST + "\"}";
-
-		response.reset();
-		response.setHeader("Content-Type", "application/json;charset=UTF-8");
-		response.getWriter().write(error);
-	}
-
-	/**
-	 * Error de workingcode
-	 * 
-	 * @param res
-	 * @throws IOException
-	 */
-	private void throwErrorWorkingCodeInvalido(ServletResponse res) throws IOException {
-
-		HttpServletResponse response = (HttpServletResponse) res;
-
-		String error = "{\"data\":null,\"error\":\"" + RestApi.REST_MSG_INVALID_WORKINGCODE + "\"}";
-
-		response.reset();
-		response.setHeader("Content-Type", "application/json;charset=UTF-8");
-		response.getWriter().write(error);
-	}
-
-	/**
-	 * Error general
-	 * 
-	 * @param res
-	 * @param e
-	 * @throws IOException
-	 */
-	private void throwErrorGeneral(ServletResponse res, Exception e, Throwable t) {
-
-		try {
-			HttpServletResponse response = (HttpServletResponse) res;
-
-			String descError = "";
-
-			if (e != null && e.getMessage() != null && !e.getMessage().isEmpty()) {
-				descError = e.getMessage().toUpperCase();
-			}
-
-			if (t != null && t.getMessage() != null && !t.getMessage().isEmpty()) {
-				descError = t.getMessage().toUpperCase();
-			}
-			descError =StringEscapeUtils.escapeXml(descError);
-
-			String error = "{\"data\":null,\"error\":\"".concat(descError).concat("\"}");
-
-			response.reset();
-			response.setHeader("Content-Type", "application/json;charset=UTF-8");
-			response.getWriter().write(error);
-		} catch (Exception ex) {
-
-		}
-	}
 
 	/**
 	 * Realiza la configuracion de la sesión
 	 * 
 	 * @param response
 	 * @param workingCode
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	private void doSessionConfig(ServletResponse response, String workingCode) throws IOException {
+	private void doSessionConfig(ServletResponse response, String workingCode) throws Exception {
 		// Obtenemos la entidad partiendo del working code y establecemos el
 		// contextholder
 		// necesario para acceder al esquema de la entidad
@@ -347,9 +339,7 @@ public class RestSecurityFilter implements Filter {
 		if (entidad != null) {
 			DbIdContextHolder.setDbId(entidad.getId());
 		} else {
-			logger.error("El workingcode no pertenece a ninguna entidad");
-			throwErrorWorkingCodeInvalido(response);
-			return;
+			throw new Exception(RestApi.REST_MSG_INVALID_WORKINGCODE);	
 		}
 
 		// Realizamos login en la plataforma

@@ -204,7 +204,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									           		disabled: '{!gasto.tipoGastoCodigo}'
 									         	},
 									         	allowBlank: false
-										    },
+										    }
 											
 											/*,
 										   	{

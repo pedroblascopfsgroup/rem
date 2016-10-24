@@ -1,35 +1,25 @@
 Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleTabPanel', {
     extend		: 'Ext.tab.Panel',
-    iconCls		: 'x-fa fa-user',
     xtype		: 'proveedoresdetalletabpanel',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
-	flex		: 1,
-	layout		: 'fit',
-    requires : ['HreRem.view.configuracion.administracion.proveedores.detalle.ProveedorDetalleController', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedorDetalleModel',
-                'HreRem.ux.button.BotonFavorito', 'HreRem.view.configuracion.administracion.proveedores.detalle.FichaProveedor', 'HreRem.view.configuracion.administracion.proveedores.detalle.DocumentosProveedor'],
-    
-    controller: 'proveedordetalle',
-    
-    viewModel: {
-        type: 'proveedordetalle'
-    },
+    requires 	: ['HreRem.view.configuracion.administracion.proveedores.detalle.ProveedorDetalleController', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedorDetalleModel',
+                'HreRem.view.configuracion.administracion.proveedores.detalle.FichaProveedor', 'HreRem.view.configuracion.administracion.proveedores.detalle.DocumentosProveedor'],
                 
-   	listeners: {
-   		
+   	listeners	: {
    				boxready: function (tabPanel) {
-   					
+
 					if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 						var tab = tabPanel.items.items[0];
 						tabPanel.setActiveTab(tab);
 					}
-					
+
 					if(tab.ocultarBotonesEdicion) {
 						tabPanel.down("[itemId=botoneditar]").setVisible(false);
 					} else {		
 		            	tabPanel.evaluarBotonesEdicion(tab);
 					} 					
    				},
-			    	
+
 	            beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 
 	            	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
@@ -52,33 +42,25 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		            			        }
 		            			   }
 		        			});
-		            		
+
 		            		return false;
 		            	}
-		            	
+
 		            	// Si la pestaña necesita botones de edición
 						if(!tabNext.ocultarBotonesEdicion) {
 		            		tabPanel.evaluarBotonesEdicion(tabNext);
 						}
-						
+
 		            	return true;
 	            	}
 	            }
 	},
-	
+
    	tabBar: {
-            
         items: [
         		{
         			xtype: 'tbfill'
         		},
-        		{
-					xtype: 'buttontab',
-					itemId: 'botonrefrescar',
-					iconCls: 'ico-refrescar',
-					handler	: 'onClickBotonRefrescar',
-					tooltip: 'Refrescar'
-		    	},
 				{
 					xtype: 'buttontab',
         			itemId: 'botoneditar',
@@ -103,7 +85,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
         		    bind: {hidden: '{!editing}'}
         		}]
     },
-    
+
     items: [
     		{xtype: 'fichaproveedor'},
     		{	
@@ -114,8 +96,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     			}
     		}
     ],
-    
-    evaluarBotonesEdicion: function(tab) {    	
+
+    evaluarBotonesEdicion: function(tab) {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
@@ -128,14 +110,5 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     	} else {
     		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
     	}
-    },
-    
-    /**
-     * Función de utilidad por si es necesario configurar algo de la vista y que no es posible
-     * a través del viewModel.
-     */
-    configCmp: function(data) {
-    	var me = this;
     }
-    
 });

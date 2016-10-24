@@ -50,7 +50,7 @@ public class ExcelGenerarPropuestaPrecios {
 		try {
 			file = new File(ruta);
 			WorkbookSettings workbookSettings = new WorkbookSettings();
-			 workbookSettings.setEncoding( "Cp1252" );
+			workbookSettings.setEncoding( "Cp1252" );
 			libroExcel = Workbook.getWorkbook( file, workbookSettings );
 			
 		} catch (BiffException e) {

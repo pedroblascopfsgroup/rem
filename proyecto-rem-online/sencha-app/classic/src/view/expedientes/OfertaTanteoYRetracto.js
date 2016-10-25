@@ -29,10 +29,12 @@ Ext.define('HreRem.view.expedientes.OfertaTanteoYRetracto', {
 				title: HreRem.i18n('title.oferta.tanteo.retracto.detalle'),
 				items :
 					[
-		                {	
+		                {
 		                	xtype: 'textfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.condiciones'),
 		                	colspan: 3,
+		                	defaultMaxWidth: '100%',
+		                	maxLength: 1999,
 		                	bind: {
 								value: '{ofertatanteoyretracto.condicionesTransmision}'
 							}

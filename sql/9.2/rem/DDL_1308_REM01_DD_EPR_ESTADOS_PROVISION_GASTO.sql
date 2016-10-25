@@ -36,7 +36,7 @@ DECLARE
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EPR_ESTADOS_PROVISION_GASTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que contiene información de los estados de una provisión de gastos'; -- Vble. para los comentarios de las tablas
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que contiene información de los estados de una agrupación de gastos'; -- Vble. para los comentarios de las tablas
 	
 BEGIN
 	

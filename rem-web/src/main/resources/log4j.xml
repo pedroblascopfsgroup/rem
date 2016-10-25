@@ -149,7 +149,6 @@
 	
 	<logger name="es.pfsgroup.plugin.rem.restclient" additivity="false">
 		<level value="debug" />
-		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	

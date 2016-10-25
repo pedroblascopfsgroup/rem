@@ -2265,11 +2265,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						hashErrores.put("idUsuarioRem", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
-				if (!Checks.esNulo(trabajoDto.getIdProveedorRemResponsable())) {
+				if (!Checks.esNulo(trabajoDto.getIdProveedorRem())) {
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
-							.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRemResponsable()));
+							.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRem()));
 					if (Checks.esNulo(apiResp)) {
-						hashErrores.put("idApiResponsable", RestApi.REST_MSG_UNKNOWN_KEY);
+						hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				// Validamos que no vengan los 2 campos a true
@@ -2362,9 +2362,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if (!Checks.esNulo(descripcion) && !descripcion.equalsIgnoreCase("")) {
 					dtoFichaTrabajo.setDescripcion(descripcion);
 				}
-				if (!Checks.esNulo(trabajoDto.getIdProveedorRemResponsable())) {
+				if (!Checks.esNulo(trabajoDto.getIdProveedorRem())) {
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
-							.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRemResponsable()));
+							.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRem()));
 					if (!Checks.esNulo(apiResp)) {
 						dtoFichaTrabajo.setIdMediador(apiResp.getId());
 					}

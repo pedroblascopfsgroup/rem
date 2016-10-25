@@ -492,7 +492,7 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC93_INS.setcabeceraTecnica(cabeceraTecnica);
 
 		// seteamos parametros
-		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0170");
+		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0272");
 		servicioGMPAJC93_INS.setIdentificadorClienteOfertaidclow(numcliente);//<--------?????
 		servicioGMPAJC93_INS.setnumeroUsuario("");//<--------????? Nos lo piden obligatorio
 		servicioGMPAJC93_INS.setidSesionWL("");//<--------????? Nos lo piden obligatorio

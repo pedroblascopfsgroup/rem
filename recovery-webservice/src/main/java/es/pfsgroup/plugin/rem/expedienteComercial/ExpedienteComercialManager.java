@@ -503,8 +503,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			oferta.setFechaMaxFormalizacion(dtoTanteoYRetractoOferta.getFechaMaxFormalizacion());
 		}
 		
-		expedienteComercial.setOferta(oferta);		
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		genericDao.save(Oferta.class, oferta);
 		
 		return true;
 		
@@ -724,7 +723,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			//Fechas y resultado Tanteo
 			dtoTanteoYRetractoOferta.setFechaFinTanteo(oferta.getFechaFinTanteo());
-			dtoTanteoYRetractoOferta.setResultadoTanteoCodigo(oferta.getResultadoTanteo().getCodigo());
+			if(!Checks.esNulo(oferta.getResultadoTanteo()))
+				dtoTanteoYRetractoOferta.setResultadoTanteoCodigo(oferta.getResultadoTanteo().getCodigo());
 			dtoTanteoYRetractoOferta.setFechaMaxFormalizacion(oferta.getFechaMaxFormalizacion());
 			
 		}

@@ -29,14 +29,10 @@ Ext.define('HreRem.view.expedientes.OfertaTanteoYRetracto', {
 				title: HreRem.i18n('title.oferta.tanteo.retracto.detalle'),
 				items :
 					[
-		                {
-		                	fieldLabel:  HreRem.i18n('fieldlabel.num.oferta'),
-		                	bind:		'{ofertatanteoyretracto.numOferta}'
-
-		                },
 		                {	
 		                	xtype: 'textfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.condiciones'),
+		                	colspan: 3,
 		                	bind: {
 								value: '{ofertatanteoyretracto.condicionesTransmision}'
 							}
@@ -51,6 +47,7 @@ Ext.define('HreRem.view.expedientes.OfertaTanteoYRetracto', {
 		                	xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.contestacion'),
+		                	colspan: 2,
 		                	bind:		'{ofertatanteoyretracto.fechaContestacion}'
 		                },
 		                {
@@ -63,6 +60,7 @@ Ext.define('HreRem.view.expedientes.OfertaTanteoYRetracto', {
 		                	xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.realizacion.visita'),
+		                	colspan: 2,
 		                	bind:		'{ofertatanteoyretracto.fechaRealizacionVisita}'
 		                },
 		                {
@@ -73,7 +71,6 @@ Ext.define('HreRem.view.expedientes.OfertaTanteoYRetracto', {
 		                },
 		                {
 		                	xtype: 'comboboxfieldbase',
-		                	readOnly: true,
 		                	bind: {
 								store: '{comboResultadoTanteo}',
 								value: '{ofertatanteoyretracto.resultadoTanteoCodigo}'

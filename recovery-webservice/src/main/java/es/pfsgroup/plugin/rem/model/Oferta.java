@@ -173,7 +173,8 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_FECHA_HASTA_TANTEO")
 	private Date fechaFinTanteo;
 	
-	@Column(name="DD_DRT_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_DRT_ID")
 	private DDResultadoTanteo resultadoTanteo;
 	
 	@Column(name="OFR_FECHA_MAX_FORMALIZACION")

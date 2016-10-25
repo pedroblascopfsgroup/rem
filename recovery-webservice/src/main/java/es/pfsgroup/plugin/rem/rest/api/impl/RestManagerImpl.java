@@ -232,7 +232,7 @@ public class RestManagerImpl implements RestApi {
 		if (value instanceof Integer || value instanceof Long || value instanceof Float) {
 			value = String.valueOf(value);
 		}
-		if (value instanceof String && ((String) value).equals("null")) {
+		if (value instanceof String && (((String) value).equals("null") || ((String) value).isEmpty())) {
 			value = null;
 		}
 		if (value instanceof Date) {

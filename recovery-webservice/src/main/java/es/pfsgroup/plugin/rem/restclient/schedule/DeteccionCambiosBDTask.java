@@ -135,6 +135,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	public void ejecutaTarea(DetectorCambiosBD handler, List listPendientes, Class control) {
+		long startTime = System.currentTimeMillis();
 
 		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
 			logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
@@ -159,6 +160,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		} else {
 			logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
 		}
+
+		logger.debug("TIMER FULL DETECTOR: " + (System.currentTimeMillis() - startTime));
 	}
 
 	/**

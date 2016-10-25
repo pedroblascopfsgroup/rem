@@ -1,18 +1,17 @@
 Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.ActivosIntegradosList', {
     extend		: 'HreRem.view.common.GridBase',
     xtype		: 'activosintegradoslist',
-	topBar: false,
+	topBar		: false,
 	idPrincipal : 'id',
-	
+
     bind: {
         store: '{activosIntegrados}'
     },
-    
+
     initComponent: function () {
-     	
+
      	var me = this;
-		
-	    
+
 		me.columns = [
 				{
 					xtype: 'actioncolumn',
@@ -34,7 +33,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Activos
 		        {
 			        xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboTipoActivo').findRecord('codigo', value);
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoActivo').findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -57,7 +56,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Activos
 		        {
 			        xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboSubtipoActivo').findRecord('codigo', value);
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboSubtipoActivo').findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -80,7 +79,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Activos
 		        {
 			        xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			        	var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboCartera').findRecord('codigo', value);
+			        	var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboCartera').findRecord('codigo', value);
 			        	var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -161,8 +160,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Activos
 		            }
 		        }
 		    ];
-		    
+
 		    me.callParent();
    }
-
 });

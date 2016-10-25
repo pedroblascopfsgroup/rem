@@ -71,7 +71,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 		        {
 		     		xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboCargo').findRecord('codigo', value);
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboCargo').findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;

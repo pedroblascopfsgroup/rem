@@ -1075,7 +1075,8 @@ public class TrabajoController {
 			logger.error(e);
 			model.put("id", jsonFields.get("id"));	
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 		}

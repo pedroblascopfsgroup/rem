@@ -198,8 +198,12 @@ BEGIN
                               WHEN EEC.DD_EEC_CODIGO = ''02''
                                     THEN RES.RES_FECHA_ANULACION
                               ELSE NULL
-                        END                                                                                                                     AS ECO_FECHA_ANULACION,
-                        NULL                                                                                                                    AS ECO_MOTIVO_ANULACION,
+                        END                                                                                                                  AS ECO_FECHA_ANULACION,
+                        CASE
+                              WHEN EEC.DD_EEC_CODIGO = ''02''
+                                    THEN RES.RES_MOTIVO_ANULACION
+                              ELSE NULL
+                        END                                                                                                                    AS ECO_MOTIVO_ANULACION,
                         NULL                                                                                                                   AS ECO_FECHA_CONT_PROPIETARIO,
                         NVL(OFR.USU_ID,
                               (SELECT USU_ID

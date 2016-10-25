@@ -47,6 +47,15 @@ public interface ActivoTramiteApi {
 	 * @return
 	 */
 	public Page getTramitesActivoTrabajo(Long idTrabajo,  WebDto webDto);
+	
+	/**
+	 * Devuelve los trámites de un trabajo
+	 * @param idTrabajo
+	 * @param webDto
+	 * @return
+	 */
+	public List<ActivoTramite>  getTramitesActivoTrabajoList(Long idTrabajo);
+	
 
 	/**
 	 * Devuelve los activos relacionados con un tramite

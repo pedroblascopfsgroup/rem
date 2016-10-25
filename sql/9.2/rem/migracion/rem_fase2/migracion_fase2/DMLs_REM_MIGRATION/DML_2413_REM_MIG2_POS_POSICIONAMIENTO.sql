@@ -119,6 +119,7 @@ BEGIN
               ,USUARIOCREAR
               ,FECHACREAR
               ,BORRADO
+              ,PVE_ID_NOTARIO
           )
           SELECT 
               '||V_ESQUEMA||'.S_POS_POSICIONAMIENTO.NEXTVAL             AS POS_ID,
@@ -127,16 +128,20 @@ BEGIN
             SELECT DISTINCT
               ECO.ECO_ID                                                                    AS ECO_ID,
               MIG2.POS_FECHA_AVISO                                                  AS POS_FECHA_AVISO,
-              MIG2.POS_COD_NOTARIO                                               AS POS_NOTARIA,                             -- este campo esta pendiente de definicion
+              NULL                                                                             AS POS_NOTARIA,                            
               MIG2.POS_FECHA_POSICIONAMIENTO                              AS POS_FECHA_POSICIONAMIENTO,
               MIG2.POS_MOTIVO_APLAZAMIENTO                                 AS POS_MOTIVO_APLAZAMIENTO,
               0                                                                                  AS VERSION,
               ''MIG2''                                                                           AS USUARIOCREAR,
               SYSDATE                                                                     AS FECHACREAR,
-              0                                                                                 AS BORRADO
+              0                                                                                 AS BORRADO,
+              PVE.PVE_ID                                                                  AS PVE_ID_NOTARIO
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
             INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG2.POS_COD_OFERTA AND OFR.BORRADO = 0
             INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+            LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = MIG2.POS_COD_NOTARIO 
+                  AND PVE.DD_TPR_ID = (SELECT TPR.DD_TPR_ID FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR WHERE TPR.DD_TPR_CODIGO = ''21'' AND TPR.BORRADO = 0)
+                  AND PVE.BORRADO = 0
           ) AUX
       '
       ;

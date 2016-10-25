@@ -145,7 +145,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
      */
     onClickBotonRefrescar: function () {
 		var me = this,
-		activeTab = me.getView().getActiveTab();
+		activeTab = me.getView().down('proveedoresdetalletabpanel').getActiveTab();
   		
 		// Marcamos todos los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
@@ -284,7 +284,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
      */
     onDireccionesDelegacionesGridClick: function(grid) {
     	var me = this;
-    	var gridPersonasContactos = grid.up('proveedoresdetalletabpanel').lookupReference('personascontactolistref');
+    	var gridPersonasContactos = grid.up('proveedoresdetallemain').lookupReference('personascontactolistref');
     	var personasContactosStore = gridPersonasContactos.getStore();
     	if(!Ext.isEmpty(personasContactosStore)) {
     		var selection = grid.getSelection()[0];

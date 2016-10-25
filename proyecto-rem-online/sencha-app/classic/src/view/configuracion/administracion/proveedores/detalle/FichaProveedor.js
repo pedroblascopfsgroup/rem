@@ -155,7 +155,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									bind: '{proveedor.fechaConstitucionProveedor}'
 					            },
 					         // Fila 5
-					            {
+					            {// Siempre oculto por el momento.
 					            	xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.operativa'),
 						        	reference: 'cbOperativaProveedor',
@@ -163,7 +163,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									      store: '{comboOperativa}',
 									      value: '{proveedor.operativaCodigo}'
 						        	},
-						        	colspan: 3
+						        	colspan: 3,
+						        	hidden: true
 					            },
 					         // Fila 6 (Ámbito)
 					            {

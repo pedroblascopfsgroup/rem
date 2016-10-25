@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
@@ -2216,18 +2217,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public HashMap<String, String> validateTrabajoPostRequestData(TrabajoDto trabajoDto) {
 		HashMap<String, String> hashErrores = restApi.validateRequestObject(trabajoDto);
 		Boolean existe = null;
+		
+		hashErrores = restApi.validateRequestObject(trabajoDto, TIPO_VALIDACION.INSERT);
+		
 		if (Checks.esNulo(trabajoDto.getIdTrabajoWebcom())) {
 			hashErrores.put("idTrabajoWebcom", RestApi.REST_MSG_MISSING_REQUIRED);
 
 		} else {
 
 			existe = existsTrabajoByIdTrabajoWebcom(trabajoDto.getIdTrabajoWebcom());
-			if (Checks.esNulo(existe)) {
+			if (Checks.esNulo(existe) || (!Checks.esNulo(existe) && existe)) {
 				hashErrores.put("idTrabajoWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 
-			} else if (!Checks.esNulo(existe) && existe) {
-				hashErrores.put("idTrabajoWebcom", "Ya existe en REM el trabajo con id de webcom IdTrabajoWebcom: "
-						+ trabajoDto.getIdTrabajoWebcom() + ". No se dará de alta.");
 			} else {
 
 				if (!Checks.esNulo(trabajoDto.getIdActivoHaya())) {
@@ -2276,42 +2277,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						&& trabajoDto.getUrgentePrioridadRequiriente()
 						&& !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 						&& trabajoDto.getRiesgoPrioridadRequiriente()) {
-					hashErrores.put("urgentePrioridadRequiriente",
-							"Sólo uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente puede valer true.");
+					hashErrores.put("urgentePrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 
-				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
-						&& trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
+				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta()) && trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
 
-					// Validamos que no venga fecha concreta
-					if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
-						hashErrores.put("fechaPrioridadRequiriente",
-								"El campo fechaPrioridadRequiriente debe ser null ya que fechaPrioridadRequirienteEsExacta es true.");
+					// Validamos que venga fecha o alguno de los checks
+					if (Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente()) &&
+						(Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) || (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && !trabajoDto.getUrgentePrioridadRequiriente())) &&
+						(Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())  || (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && !trabajoDto.getRiesgoPrioridadRequiriente()))) {
+						hashErrores.put("fechaPrioridadRequiriente", RestApi.REST_MSG_MISSING_REQUIRED);
 					}
-					// Validamos que no vengan los 2 campos a null
-					if (Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
-							&& Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())) {
-						hashErrores.put("urgentePrioridadRequiriente",
-								"Los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente son nulos. Al menos uno de los 2 campos debe ser True si fechaPrioridadRequirienteEsExacta = true.");
-					}
-					// Validamos que no vengan los 2 campos a false
-					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
-							&& !trabajoDto.getUrgentePrioridadRequiriente()
-							&& !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
-							&& !trabajoDto.getRiesgoPrioridadRequiriente()) {
-						hashErrores.put("urgentePrioridadRequiriente",
-								"Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
-					}
-					// Validamos que no venga 1 campo a null y el otro a false
-					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
-							&& !trabajoDto.getUrgentePrioridadRequiriente()
-							&& Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
-							|| !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
-									&& !trabajoDto.getRiesgoPrioridadRequiriente()
-									&& Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())) {
-						hashErrores.put("urgentePrioridadRequiriente",
-								"Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
-					}
+					
+				}else if(!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta()) && !trabajoDto.getFechaPrioridadRequirienteEsExacta()){
+					
+					if(!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && trabajoDto.getUrgentePrioridadRequiriente()){
+						hashErrores.put("urgentePrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
+						
+					}else if(!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && trabajoDto.getRiesgoPrioridadRequiriente()){
+						hashErrores.put("riesgoPrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
+						
+					}else if(Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())){
+						hashErrores.put("fechaPrioridadRequiriente", RestApi.REST_MSG_MISSING_REQUIRED);
+					}		
 				}
 			}
 		}
@@ -2393,19 +2381,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if (!Checks.esNulo(trabajoDto.getDescripcionRequiriente())) {
 					dtoFichaTrabajo.setTerceroContacto(trabajoDto.getDescripcionRequiriente());
 				}
-				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
-					dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaPrioridadRequiriente());
-				}
-				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())) {
+				
+				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta()) && trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
 					Calendar cal = Calendar.getInstance();
-					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())) {
+					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && trabajoDto.getUrgentePrioridadRequiriente()) {
 						dtoFichaTrabajo.setUrgente(trabajoDto.getUrgentePrioridadRequiriente());
 						dtoFichaTrabajo.setFechaTope(cal.getTime());
-					}
-					if (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())) {
+					}else if (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && trabajoDto.getRiesgoPrioridadRequiriente()) {
 						dtoFichaTrabajo.setRiesgoInminenteTerceros(trabajoDto.getRiesgoPrioridadRequiriente());
 						cal.add(Calendar.DATE, 2);
 						dtoFichaTrabajo.setFechaTope(cal.getTime());
+					}else {
+						dtoFichaTrabajo.setFechaTope(trabajoDto.getFechaPrioridadRequiriente());
+					}
+				}else{
+					if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
+						dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaPrioridadRequiriente());
 					}
 				}
 			}

@@ -232,6 +232,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            poder construir la <code>SELECT</code>
 	 */
 	public void marcaComoEnviados(Class dtoClass, InfoTablasBD infoTablas) {
+		long startTime = System.currentTimeMillis();
+
 		if (dtoClass == null) {
 			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
 		}
@@ -247,7 +249,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		logger.debug("Inicando transacción");
 		Transaction tx = session.beginTransaction();
 		try {
-			String queryDelete = "DELETE FROM " + infoTablas.nombreTablaDatosHistoricos();
+			String queryDelete = "TRUNCATE TABLE " + infoTablas.nombreTablaDatosHistoricos();
 			try {
 				logger.debug("Ejecutando: " + queryDelete);
 				queryExecutor.sqlRunExecuteUpdate(session, queryDelete);
@@ -281,6 +283,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				}
 			}
 		}
+
+		logger.debug("TIMER DETECTOR Marcado de cambios: " + (System.currentTimeMillis() - startTime));
 	}
 
 	/**

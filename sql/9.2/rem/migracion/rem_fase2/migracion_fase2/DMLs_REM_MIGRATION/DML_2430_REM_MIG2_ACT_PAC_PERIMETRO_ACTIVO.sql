@@ -157,9 +157,7 @@ BEGIN
 		  MIG2.PAC_MOTIVO_ASIGNAR_MEDIADOR									                              AS PAC_MOTIVO_ASIGNAR_MEDIADOR,
 		  MIG2.PAC_IND_CHECK_COMERCIALIZAR									                                AS PAC_CHECK_COMERCIALIZAR,
 		  MIG2.PAC_FECHA_COMERCIALIZAR										                                    AS PAC_FECHA_COMERCIALIZAR,
-		  (SELECT DD_MCO_ID 
-            FROM '||V_ESQUEMA||'.DD_MCO_MOTIVO_COMERCIALIZACION
-            WHERE DD_MCO_CODIGO = MIG2.PAC_COD_MOTIVO_COMERCIAL)				AS DD_MCO_ID,
+		  MCO.DD_MCO_ID														                                     AS DD_MCO_ID,
 		  MIG2.PAC_IND_CHECK_FORMALIZAR										                                        AS PAC_CHECK_FORMALIZAR,
 		  MIG2.PAC_FECHA_FORMALIZAR											                                              AS PAC_FECHA_FORMALIZAR,
 		  MIG2.PAC_MOTIVO_FORMALIZAR										                                              AS PAC_MOTIVO_FORMALIZAR,
@@ -167,12 +165,11 @@ BEGIN
           ''MIG2''                                                                                                  AS USUARIOCREAR,                            
           SYSDATE                                                                                               AS FECHACREAR,                             
           0                                                                                                         AS BORRADO,
-          (SELECT DD_MNC_DESCRIPCION 
-            FROM '||V_ESQUEMA||'.DD_MNC_MOT_NOCOMERCIALIZACION
-            WHERE DD_MNC_CODIGO = MIG2.PAC_COD_MOTIVO_NOCOMERCIAL)			AS PAC_MOT_EXCL_COMERCIALIZAR
+          MNC.DD_MNC_DESCRIPCION                                                                                AS PAC_MOT_EXCL_COMERCIALIZAR
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-          INNER JOIN INSERTAR INS 
-          ON INS.PAC_NUMERO_ACTIVO = MIG2.PAC_NUMERO_ACTIVO
+          INNER JOIN INSERTAR INS ON INS.PAC_NUMERO_ACTIVO = MIG2.PAC_NUMERO_ACTIVO
+          LEFT JOIN '||V_ESQUEMA||'.DD_MCO_MOTIVO_COMERCIALIZACION MCO ON MCO.DD_MCO_CODIGO = MIG2.PAC_COD_MOTIVO_COMERCIAL
+          LEFT JOIN '||V_ESQUEMA||'.DD_MNC_MOT_NOCOMERCIALIZACION MNC ON MNC.DD_MNC_CODIGO = MIG2.PAC_COD_MOTIVO_NOCOMERCIAL
         ) AUX
       '
       ;

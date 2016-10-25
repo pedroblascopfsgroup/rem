@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
@@ -29,6 +26,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class ResolucionComiteController {
@@ -42,9 +40,6 @@ public class ResolucionComiteController {
 	@Autowired
 	private AnotacionApi anotacionApi;
 	
-	@Autowired
-	private OfertaApi ofertaApi;
-
 	@Autowired
 	private RestApi restApi;
 	

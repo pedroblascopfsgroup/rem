@@ -1584,82 +1584,63 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var tipoDescuentoAprobado = '07';
 		var tipoDescuentoPublicadoWeb = '13';
 
+		// Recogemos los valores actuales del grid
+		var importeMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().importe;
+		var importeDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().importe;
+		var importeDecuentoPublicadoWeb = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoPublicadoWeb).getData().importe;
+		var importeAprobadoVentaWeb = grid.getStore().findRecord('codigoTipoPrecio', tipoAprobadoVentaWeb).getData().importe;
+		
 		var codTipoPrecio = grid.codTipoPrecio;
 
 		switch(codTipoPrecio) {
-		case tipoMinimoAutorizado: // Mínimo <= descuento.
-			var importeMinimo = importeActualColumn.getEditor().value;
-			var importeDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().importe;
+		case tipoMinimoAutorizado: // MINIMO <= descuento Aprobado <= descuentoPublicado <= precio web.
+
+			var arrayPrecios = [importeActualColumn.getEditor().value, importeDescuentoAprobado, importeDecuentoPublicadoWeb, importeAprobadoVentaWeb]; 
 			
-			if(!Ext.isEmpty(importeMinimo)) {
-				importeMinimo = parseFloat(importeMinimo);
-				if(!Ext.isEmpty(importeDescuentoAprobado)){
-					importeDescuentoAprobado = parseFloat(importeDescuentoAprobado);
-					if(importeMinimo <= importeDescuentoAprobado) {
-						return true;
-					} else {
-						return HreRem.i18n('info.precio.importe.minimo.msg.validacion');
-					}
-				} else {
-					// Todavía no se ha escrito en el campo 'descuento aprobado'.
-					return true;
-				}
-			} else {
-				// Todavía no se ha escrito en el campo 'mínimo'.
+			if(this.comprobarRestriccionesPreciosVigentes(arrayPrecios,0)) {
 				return true;
 			}
-			break;
-		case tipoAprobadoVentaWeb: // Aprovado venta(web) >= descuento.
-			var importeAprobadoVenta = importeActualColumn.getEditor().value;
-			var importeDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().importe;
-			
-			if(!Ext.isEmpty(importeAprobadoVenta)) {
-				importeAprobadoVenta = parseFloat(importeAprobadoVenta);
-				if(!Ext.isEmpty(importeDescuentoAprobado)){
-					importeDescuentoAprobado = parseFloat(importeDescuentoAprobado);
-					if(importeAprobadoVenta >= importeDescuentoAprobado) {
-						return true;
-					} else {
-						return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
-					}
-				} else {
-					// Todavía no se ha escrito en el campo 'aprobado de venta(web)'.
-					return true;
-				}
-			} else {
-				// Todavía no se ha escrito en el campo 'descuento aprobado'.
-				return true;
+			else {
+				return HreRem.i18n('info.precio.importe.minimo.msg.validacion');
 			}
 			break;
-		case tipoDescuentoAprobado: // Descuento <= aprobado venta AND Descuento >= Mínimo.
-			var importeDescuentoAprobado = importeActualColumn.getEditor().value;
-			var importeAprobadoVenta = grid.getStore().findRecord('codigoTipoPrecio', tipoAprobadoVentaWeb).getData().importe;
-			var importeMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().importe;
 			
-			if(!Ext.isEmpty(importeDescuentoAprobado)) {
-				importeDescuentoAprobado = parseFloat(importeDescuentoAprobado);
-				if(!Ext.isEmpty(importeAprobadoVenta)){
-					importeAprobadoVenta = parseFloat(importeAprobadoVenta);
-					if(!Ext.isEmpty(importeMinimo)) {
-						importeMinimo = parseFloat(importeMinimo);
-						if((importeDescuentoAprobado >= importeMinimo) && (importeDescuentoAprobado <= importeAprobadoVenta)) {
-    						return true;
-    					} else {
-    						return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
-    					}
-					} else {
-						// Todavía no se ha escrito en el campo 'mínimo autorizado'.
-						return true;
-					}
-				} else {
-					// Todavía no se ha escrito en el campo 'aprobado de venta(web)'.
-					return true;
-				}
-			} else {
-				// Todavía no se ha escrito en el campo 'descuento aprobado'.
+		case tipoDescuentoAprobado: // mínimo <= DESCUENTO APROBADO <= descuentoPublicado <= precio web.
+			
+			var arrayPrecios = [importeMinimo, importeActualColumn.getEditor().value, importeDecuentoPublicadoWeb, importeAprobadoVentaWeb]; 
+			
+			if(this.comprobarRestriccionesPreciosVigentes(arrayPrecios,1)) {
 				return true;
 			}
+			else {
+				return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
+			}
 			break;
+			
+		case tipoDescuentoPublicadoWeb: // mínimo <= descuento Aprobado <= DESCUENTO PUBLICADO <= precio web.
+			
+			var arrayPrecios = [importeMinimo, importeDescuentoAprobado, importeActualColumn.getEditor().value, importeAprobadoVentaWeb]; 
+			
+			if(this.comprobarRestriccionesPreciosVigentes(arrayPrecios,2)) {
+				return true;
+			}
+			else {
+				return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
+			}
+			break;
+			
+		case tipoAprobadoVentaWeb: // mínimo <= descuento Aprobado <= descuentoPublicado <= PRECIO WEB.
+			
+			var arrayPrecios = [importeMinimo, importeDescuentoAprobado, importeDecuentoPublicadoWeb, importeActualColumn.getEditor().value]; 
+			
+			if(this.comprobarRestriccionesPreciosVigentes(arrayPrecios,3)) {
+				return true;
+			}
+			else {
+				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+			}
+			break;
+			
 		default:
 			return true;
 		}
@@ -1684,5 +1665,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		default:
 			break;
 		}
+	},
+	
+	/**
+	 * Comprueba la condicion para Precios vigentes: Mínimo autorizado <= descuento aprobado <= descuento publicado <= precio web
+	 *
+	 *	arrayPrecios: contiene los cuatro precios [minimoAutorizado, descuetnoAprobado, descuentoPublicado, precioWeb]
+	 *	pos:	es la posicion del precio introducido y que se comparará con el resto por los dos lados ( por los que debe ser mayor y menor)
+	*/
+	comprobarRestriccionesPreciosVigentes: function(arrayPrecios, pos) {
+		
+		for(var i=pos+1 ; i< arrayPrecios.length ; i++) {
+			
+			if(!Ext.isEmpty(arrayPrecios[i]) && parseFloat(arrayPrecios[pos]) > parseFloat(arrayPrecios[i]))
+				return false;
+		}
+		
+		for(var i=pos-1 ; i >= 0 ; i--) {
+			
+			if(!Ext.isEmpty(arrayPrecios[i]) && parseFloat(arrayPrecios[pos]) < parseFloat(arrayPrecios[i]))
+				return false;
+		}
+		
+		return true;	
 	}
+	
 });

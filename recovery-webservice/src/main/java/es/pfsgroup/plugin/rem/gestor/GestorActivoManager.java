@@ -14,6 +14,7 @@ import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -241,6 +242,21 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		} else {
 			return false;
 		}
+	}
+	
+	
+	@Override
+	public Usuario userFromTarea(String codigoTarea, Long idTramite){
+		
+		List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(idTramite);
+		for(TareaExterna tarea : listaTareas){
+			if(codigoTarea.equals(tarea.getTareaProcedimiento().getCodigo()))
+			{
+				TareaActivo tareaActivo = (TareaActivo) tarea.getTareaPadre();
+				return tareaActivo.getUsuario();
+			}
+		}
+		return null;
 	}
 
 }

@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('ADDF', 'Publicación: Desmarcar despublicación forzada del activo', 'Publicación: Desmarcar despublicación forzada del activo', 'MASIVO_DESDESPUBLICAR_FORZADO', 'nD*')
+	  T_FUNCION('ADDF', 'Publicación: Desmarcar despublicación forzada', 'Publicación: Desmarcar despublicación forzada', 'MASIVO_DESDESPUBLICAR_FORZADO', 'nD*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

@@ -150,59 +150,59 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<text><![CDATA[Caracteristicas del imueble]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="2" y="13" width="555" height="133" uuid="0c480d91-3d0d-41bb-90f7-390f09bd36cf"/>
+				<reportElement x="0" y="13" width="555" height="133" uuid="0c480d91-3d0d-41bb-90f7-390f09bd36cf"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="7" y="23" width="59" height="13" uuid="61254284-662d-41bf-8dc1-60a828789df4"/>
+				<reportElement x="5" y="23" width="59" height="13" uuid="61254284-662d-41bf-8dc1-60a828789df4"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Direccion:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="443" y="120" width="61" height="13" uuid="58f1ee56-4f6a-470f-8adb-96c4bb63b104"/>
+				<reportElement x="441" y="120" width="61" height="13" uuid="58f1ee56-4f6a-470f-8adb-96c4bb63b104"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[No Of./Prop:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="504" y="133" width="51" height="13" uuid="ba93af03-1073-4f5f-990a-d9b1fd205c0d"/>
+				<reportElement x="502" y="133" width="51" height="13" uuid="ba93af03-1073-4f5f-990a-d9b1fd205c0d"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[No Of./Prop:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="46" width="112" height="13" uuid="4572ce73-f644-4958-8db0-a828936248c2"/>
+				<reportElement x="5" y="46" width="112" height="13" uuid="4572ce73-f644-4958-8db0-a828936248c2"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Superficie costruida:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="59" width="100" height="13" uuid="9f9a5f43-789e-4c64-8c8e-d2f1d0dd46de"/>
+				<reportElement x="5" y="59" width="100" height="13" uuid="9f9a5f43-789e-4c64-8c8e-d2f1d0dd46de"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[F.Entrada Carretera:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="72" width="87" height="13" uuid="db38e026-1294-423a-89ee-7598cb9f8705"/>
+				<reportElement x="5" y="72" width="87" height="13" uuid="db38e026-1294-423a-89ee-7598cb9f8705"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Disponibilidades:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="107" y="72" width="119" height="13" uuid="2dbe6a0d-ad2a-4dc8-b689-4f254cdf94f3"/>
+				<reportElement x="105" y="72" width="119" height="13" uuid="2dbe6a0d-ad2a-4dc8-b689-4f254cdf94f3"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[-Disponibilidad Juridica:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="107" y="85" width="59" height="13" uuid="5b5c9c20-c64d-42be-b774-60e284484f43"/>
+				<reportElement x="105" y="85" width="59" height="13" uuid="5b5c9c20-c64d-42be-b774-60e284484f43"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>

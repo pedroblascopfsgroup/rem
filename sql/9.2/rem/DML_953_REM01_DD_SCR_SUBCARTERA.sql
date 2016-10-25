@@ -1,9 +1,9 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20160926
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20161025
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
@@ -38,10 +38,19 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01' ,'Asistida'	,'Asistida', '01'),
-        T_TIPO_DATA('02' ,'Asistida'	,'Asistida', '02'),
-        T_TIPO_DATA('03' ,'Asistida'	,'Asistida', '03'),
-        T_TIPO_DATA('04' ,'Asistida'	,'Asistida', '04')
+        T_TIPO_DATA('01' ,'Asistida'		,'Asistida'		,'01'),
+        T_TIPO_DATA('02' ,'Cajamar'			,'Cajamar'		,'01'),
+        T_TIPO_DATA('03' ,'Asistida'		,'Asistida'		,'02'),
+        T_TIPO_DATA('04' ,'Sareb'			,'Sareb'		,'02'),
+        T_TIPO_DATA('05' ,'Asistida'		,'Asistida'		,'03'),
+        T_TIPO_DATA('06' ,'BH'				,'BH'			,'03'),
+        T_TIPO_DATA('07' ,'BFA'				,'BFA'			,'03'),
+        T_TIPO_DATA('08' ,'BK'				,'BK'			,'03'),
+        T_TIPO_DATA('09' ,'Titulizacion'	,'Titulizacion'	,'03'),
+        T_TIPO_DATA('10' ,'Asistida'		,'Asistida'		,'04'),
+        T_TIPO_DATA('11' ,'Inmobiliario'	,'Inmobiliario'	,'04'),
+        T_TIPO_DATA('12' ,'Asistida'		,'Asistida'		,'05'),
+        T_TIPO_DATA('13' ,'Inmobiliario'	,'Inmobiliario'	,'05')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

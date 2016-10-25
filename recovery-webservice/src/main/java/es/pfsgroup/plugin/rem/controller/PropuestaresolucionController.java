@@ -70,6 +70,9 @@ public class PropuestaresolucionController {
 			String ficheroPlantilla = "jasper/"+name+".jrxml";
 			Map<String, Object> mapaValores = new HashMap<String,Object>();
 			
+			File fileSalidaTemporal = null;
+			Map<String, Object> dataResponse = new HashMap<String, Object>();
+			
 			PropuestaRequestDto jsonData = null;
 			PropuestaDto propuestaDto = null;
 			Oferta oferta = null;
@@ -79,110 +82,129 @@ public class PropuestaresolucionController {
 			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
 			try {
 				jsonData = (PropuestaRequestDto) request.getRequestData(PropuestaRequestDto.class);
-				propuestaDto = jsonData.getData();
+				
 				if (Checks.esNulo(jsonData)) {
-					model.put("id", jsonData.getId());
 					model.put("error", RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				} else {
-					oferta = ofertaApi.getOfertaByNumOfertaRem(propuestaDto.getOfertaHRE());
-					mapaValores.put("NumOfProp", oferta.getNumOferta()+"/1");
-					//Obteniedo el activo relacionado con la OFERTA
-					activo = oferta.getActivoPrincipal();
-					if (activo == null) {
-						model.put("error", RestApi.REST_NO_RELATED_ASSET);
-					} else {
-						mapaValores.put("Activo", activo.getNumActivoUvem().toString());
-					}
-					mapaValores.put("FRecepOf", dateFormat.format(oferta.getFechaAlta()).toString() );
-					mapaValores.put("FProp", dateFormat.format(new Date()).toString());
+					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				}
+				
+				model.put("id", jsonData.getId());
+				propuestaDto = jsonData.getData();
+				
+				if (propuestaDto==null || propuestaDto.getOfertaHRE()==null) {
+					model.put("error", RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+				}
+				oferta = ofertaApi.getOfertaByNumOfertaRem(propuestaDto.getOfertaHRE());
+				if (oferta==null) {
+					model.put("error", RestApi.REST_NO_RELATED_OFFER);
+					throw new Exception(RestApi.REST_NO_RELATED_OFFER);					
+				}
+				mapaValores.put("NumOfProp", oferta.getNumOferta()+"/1");
+				
+				//Obteniedo el activo relacionado con la OFERTA
+				activo = oferta.getActivoPrincipal();
+				if (activo == null) {
+					model.put("error", RestApi.REST_NO_RELATED_ASSET);
+					throw new Exception(RestApi.REST_NO_RELATED_ASSET);
+				}
+				mapaValores.put("Activo", activo.getNumActivoUvem().toString());
+				
+				mapaValores.put("FRecepOf", dateFormat.format(oferta.getFechaAlta()).toString() );
+				mapaValores.put("FProp", dateFormat.format(new Date()).toString());
+				
+				mapaValores.put("Gestor", "***");
+				mapaValores.put("FPublWeb", "***");
+				mapaValores.put("NumVisitasWeb", "***");
+				
 			} catch (JsonParseException e1) {
 				e1.printStackTrace();
 			} catch (JsonMappingException e1) {
 				e1.printStackTrace();
 			} catch (IOException e1) {
 				e1.printStackTrace();
+			} catch (Exception e1){
+				e1.printStackTrace();
 			} 
-			
-			
-			mapaValores.put("Gestor", "***");
-			mapaValores.put("FPublWeb", "***");
-			mapaValores.put("NumVisitasWeb", "***");
-			
-			
-			//GENERACION DEL DOCUMENTO EN PDF
-			//Comprobar si existe el fichero de la plantilla
-			InputStream is = this.getClass().getClassLoader().getResourceAsStream(ficheroPlantilla);
-			if (is == null) {
-				logger.error("PropuestaResolucion: No existe el fichero de plantilla" + ficheroPlantilla);
-				throw new IllegalStateException("No existe el fichero de plantilla " + ficheroPlantilla);
-			}
-			File fileSalidaTemporal = null;			
-			
-			try {
-				System.setProperty("java.awt.headless", "true");
-				
-				//Compilar la plantilla
-				JasperReport report = JasperCompileManager.compileReport(is);	
-				
-				//JasperReport report = (JasperReport)JRLoader.loadObject(is);
 
-				//Rellenar los datos del informe
-				JasperPrint print = JasperFillManager.fillReport(report, mapaValores,  new JREmptyDataSource());
+			
+			//GENERACION DEL DOCUMENTO EN PDF		
+			if (model.get("error")==null || model.get("error")=="") {
+				InputStream is = this.getClass().getClassLoader().getResourceAsStream(ficheroPlantilla);
+				//Comprobar si existe el fichero de la plantilla
+				if (is == null) {
+					logger.error("PropuestaResolucion: No existe el fichero de plantilla" + ficheroPlantilla);
+					throw new IllegalStateException("No existe el fichero de plantilla " + ficheroPlantilla);
+				}		
 				
-				//Exportar el informe a PDF
-				fileSalidaTemporal = File.createTempFile("jasper", ".pdf");
-				fileSalidaTemporal.deleteOnExit();
-				if (fileSalidaTemporal.exists()) {
-					JasperExportManager.exportReportToPdfStream(print, new FileOutputStream(fileSalidaTemporal));
-					FileItem fi = new FileItem();
-					fi.setFileName(ficheroPlantilla + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".pdf");
-					fi.setFile(fileSalidaTemporal);
-				} else {
-					throw new IllegalStateException("Error al generar el fichero de salida " + fileSalidaTemporal);
+				try {
+					//System.setProperty("java.awt.headless", "true");
+					
+					//Compilar la plantilla
+					JasperReport report = JasperCompileManager.compileReport(is);	
+					
+					//JasperReport report = (JasperReport)JRLoader.loadObject(is);
+
+					//Rellenar los datos del informe
+					JasperPrint print = JasperFillManager.fillReport(report, mapaValores,  new JREmptyDataSource());
+					
+					//Exportar el informe a PDF
+					fileSalidaTemporal = File.createTempFile("jasper", ".pdf");
+					fileSalidaTemporal.deleteOnExit();
+					if (fileSalidaTemporal.exists()) {
+						JasperExportManager.exportReportToPdfStream(print, new FileOutputStream(fileSalidaTemporal));
+						FileItem fi = new FileItem();
+						fi.setFileName(ficheroPlantilla + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".pdf");
+						fi.setFile(fileSalidaTemporal);
+					} else {
+						throw new IllegalStateException("Error al generar el fichero de salida " + fileSalidaTemporal);
+					}
+					
+				} catch (JRException e) {
+					logger.error("PropuestaResolucion: Error al compilar el informe en JasperReports " + e.getLocalizedMessage(), e);
+					throw new IllegalStateException("Error al compilar el informe en JasperReports " + e.getLocalizedMessage(), e);
+				} catch (IOException e) {
+					logger.error("PropuestaResolucion: No se puede escribir el fichero de salida " + e.getMessage() +"\n" + System.getProperties().getProperty("java.io.tmpdir"));
+					throw new IllegalStateException("No se puede escribir el fichero de salida");
+				} catch (Exception e) {
+					logger.error("PropuestaResolucion: Error al generar el informe en JasperReports " + e.getLocalizedMessage(), e);
+					throw new IllegalStateException("Error al generar el informe en JasperReports " + e.getLocalizedMessage(), e);
 				}
-				
-			} catch (JRException e) {
-				logger.error("PropuestaResolucion: Error al compilar el informe en JasperReports " + e.getLocalizedMessage(), e);
-				throw new IllegalStateException("Error al compilar el informe en JasperReports " + e.getLocalizedMessage(), e);
-			} catch (IOException e) {
-				logger.error("PropuestaResolucion: No se puede escribir el fichero de salida " + e.getMessage() +"\n" + System.getProperties().getProperty("java.io.tmpdir"));
-				throw new IllegalStateException("No se puede escribir el fichero de salida");
-			} catch (Exception e) {
-				logger.error("PropuestaResolucion: Error al generar el informe en JasperReports " + e.getLocalizedMessage(), e);
-				throw new IllegalStateException("Error al generar el informe en JasperReports " + e.getLocalizedMessage(), e);
 			}
-			
-			
-			
+
+
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
-			try {
-				
-			
-				byte[] bytes = read(fileSalidaTemporal);
-				
-				model.put("id", jsonData.getId());
-				model.put("data", base64Encode(bytes));
-				
-//	       		ServletOutputStream salida = response.getOutputStream(); 
-//	       		FileInputStream fileInputStream = new FileInputStream(fileSalidaTemporal.getAbsolutePath());
-//	 
-//	       		if(fileInputStream!= null) {       		
-//		       		response.setHeader("Content-disposition", "attachment; filename="+name+".pdf");
-//		       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-//		       		response.setHeader("Cache-Control", "max-age=0");
-//		       		response.setHeader("Expires", "0");
-//		       		response.setHeader("Pragma", "public");
-//		       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
-//		       		response.setContentType("application/pdf");		
-//		       		FileUtils.copy(fileInputStream, salida);// Write
-//		       		salida.flush();
-//		       		salida.close();
-//	       		}
-	       		
-	       	} catch (Exception e) { 
-	       		e.printStackTrace();
-	       	}
+			if (model.get("error")==null || model.get("error")=="") {
+				try {
+					byte[] bytes = read(fileSalidaTemporal);
+					dataResponse.put("contentType", "application/pdf");
+					dataResponse.put("fileName", "HojaPresentacionPropuesta.pdf");
+					dataResponse.put("hojaPropuesta",base64Encode(bytes));
+					model.put("data", dataResponse);
+					
+					//Si no hay error se pone vacio, por coherencia con los otros métodos.
+					model.put("error", "");
+					
+//		       		ServletOutputStream salida = response.getOutputStream(); 
+//		       		FileInputStream fileInputStream = new FileInputStream(fileSalidaTemporal.getAbsolutePath());
+//		 
+//		       		if(fileInputStream!= null) {       		
+//			       		response.setHeader("Content-disposition", "attachment; filename="+name+".pdf");
+//			       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+//			       		response.setHeader("Cache-Control", "max-age=0");
+//			       		response.setHeader("Expires", "0");
+//			       		response.setHeader("Pragma", "public");
+//			       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+//			       		response.setContentType("application/pdf");		
+//			       		FileUtils.copy(fileInputStream, salida);// Write
+//			       		salida.flush();
+//			       		salida.close();
+//		       		}
+		       		
+		       	} catch (Exception e) { 
+		       		e.printStackTrace();
+		       	}
+			}
 	
 		restApi.sendResponse(response, model);
 			

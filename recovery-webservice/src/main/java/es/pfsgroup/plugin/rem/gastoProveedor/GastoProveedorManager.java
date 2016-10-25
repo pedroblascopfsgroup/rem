@@ -990,6 +990,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setMotivoRetencionPago(retenerPago);
 						gestionGasto.setFechaRetencionPago(new Date());
 						gestionGasto.setUsuarioRetencionPago(usuario);
+						updaterStateApi.updaterStates(gasto, DDEstadoGasto.RETENIDO);
 					}
 					
 					gasto.setGastoGestion(gestionGasto);

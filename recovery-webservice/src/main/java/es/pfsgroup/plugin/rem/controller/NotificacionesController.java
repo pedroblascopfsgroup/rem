@@ -23,9 +23,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -40,6 +41,10 @@ public class NotificacionesController {
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+
 
 	/**
 	 * Inserta una notificacion Ejem: IP:8080/pfs/rest/notificaciones HEADERS:
@@ -77,45 +82,44 @@ public class NotificacionesController {
 			
 			
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				
-			}else{
-
-				List<NotificacionDto> notificaciones = jsonData.getData();
-	
-				for (NotificacionDto notificacion : notificaciones) {
-					map = new HashMap<String, Object>();
-					errorsList = restApi.validateRequestObject(notificacion,TIPO_VALIDACION.INSERT);
-/*					if (notificacion.getCodTipoNotificacion() == null || (!notificacion.getCodTipoNotificacion().equals("N")
-							&& !notificacion.getCodTipoNotificacion().equals("A"))) {
-						errorsList.put("codTipoNotificacion", RestApi.REST_MSG_UNKNOWN_KEY);
-					}*/
-					if (errorsList.size() == 0) {
-						Notificacion notificacionBbdd = new Notificacion();
-						notificacionBbdd.setIdActivo(notificacion.getIdActivoHaya());
-						notificacionBbdd.setIdTareaAppExterna(notificacion.getIdNotificacionWebcom());
-						notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
-						notificacionBbdd.setTitulo(notificacion.getTitulo());
-						notificacionBbdd.setDescripcion(notificacion.getDescripcion());
-						if(!Checks.esNulo(notificacion.getFechaRealizacion())){
-							notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
-						}else{
-							notificacionBbdd.setFecha(null);
-						}
-						
-						Notificacion notifrem = anotacionApi.saveNotificacion(notificacionBbdd);
-						map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
-						map.put("idNotificacionRem", notifrem.getIdsNotificacionCreada().get(0));
-						map.put("success", true);
-						//map.put("errorMessages", errorsList);
-					} else {
-						map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
-						map.put("success", false);
-						map.put("invalidFields", errorsList);
-					}
-					listaRespuesta.add(map);
-				}
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);				
 			}
+				
+			List<NotificacionDto> notificaciones = jsonData.getData();
+	
+			for (NotificacionDto notificacion : notificaciones) {
+				map = new HashMap<String, Object>();
+				errorsList = anotacionApi.validateNotifPostRequestData(notificacion, jsonFields);
+				
+				if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {
+					Notificacion notificacionBbdd = new Notificacion();
+					Activo activo = activoApi.getByNumActivo(notificacion.getIdActivoHaya());
+					if(Checks.esNulo(activo)){
+						throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+					}
+					notificacionBbdd.setIdActivo(activo.getId());
+					notificacionBbdd.setIdTareaAppExterna(notificacion.getIdNotificacionWebcom());
+					notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
+					notificacionBbdd.setTitulo(notificacion.getTitulo());
+					notificacionBbdd.setDescripcion(notificacion.getDescripcion());
+					if(!Checks.esNulo(notificacion.getFechaRealizacion())){
+						notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
+					}else{
+						notificacionBbdd.setFecha(null);
+					}
+					
+					Notificacion notifrem = anotacionApi.saveNotificacion(notificacionBbdd);
+					map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
+					map.put("idNotificacionRem", notifrem.getIdsNotificacionCreada().get(0));
+					map.put("success", true);
+				} else {
+					map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
+					map.put("success", false);
+					map.put("invalidFields", errorsList);
+				}
+				listaRespuesta.add(map);
+			}
+			
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", "null");

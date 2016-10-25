@@ -53,6 +53,7 @@ public class InformemediadorController {
 			model.put("error", null);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e);
 			if (jsonFields != null) {
 				model.put("id", jsonFields.get("id"));

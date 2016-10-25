@@ -58,9 +58,13 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJRegistro;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.notificacion.api.RegistroApi;
 import es.pfsgroup.plugin.rem.notificacion.dto.CrearAnotacionDto;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.recovery.api.AsuntoApi;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -84,6 +88,9 @@ public class AnotacionManager implements AnotacionApi{
 	
 	@Autowired
 	private RegistroApi registroApi;
+	
+	@Autowired
+	private RestApi restApi;
 	
 	@Resource
 	private Properties appProperties;
@@ -597,6 +604,27 @@ public class AnotacionManager implements AnotacionApi{
     		}    		
     	}
 	}
+	
+	
+	
+	
+	@Override
+	public HashMap<String, String> validateNotifPostRequestData(NotificacionDto notificacionDto, Object jsonFields) throws Exception {
+		HashMap<String, String> hashErrores = null;
+
+		hashErrores = restApi.validateRequestObject(notificacionDto ,TIPO_VALIDACION.INSERT);
+
+		if (!Checks.esNulo(notificacionDto.getIdActivoHaya())) {
+			Activo activo = (Activo) genericDao.get(Activo.class,
+					genericDao.createFilter(FilterType.EQUALS, "numActivo", notificacionDto.getIdActivoHaya()));
+			if (Checks.esNulo(activo)) {
+				hashErrores.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
+		}
+
+		return hashErrores;
+	}
+
 
 	
 }

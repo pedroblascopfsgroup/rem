@@ -26,10 +26,10 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     	var items = [
 			
 			{
-				xtype: 'visitascomercialactivo'
+				xtype: 'ofertascomercialactivo'
 			},
 			{
-				xtype: 'ofertascomercialactivo'
+				xtype: 'visitascomercialactivo'
 			}
 			
     	];

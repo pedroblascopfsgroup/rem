@@ -7,7 +7,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion'],
     
     topBar: true,
-        
+   	removeButton: false,
     initComponent: function () {
         
         var me = this;  

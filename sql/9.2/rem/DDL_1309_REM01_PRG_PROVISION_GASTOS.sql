@@ -36,7 +36,7 @@ DECLARE
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'PRG_PROVISION_GASTOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que contiene información de la provisión a la que pertenece un gasto'; -- Vble. para los comentarios de las tablas
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que contiene información de la agrupación a la que pertenece un gasto'; -- Vble. para los comentarios de las tablas
 	
 BEGIN
 	

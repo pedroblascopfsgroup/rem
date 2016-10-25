@@ -869,7 +869,11 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("IdentificadorActivoEspecialcoacew: " + struct.getIdentificadorActivoEspecialcoacew());
 		logger.info("ImporteConSigno: " + struct.getImporteMonetarioOfertaBISA().getImporteConSigno());
 		logger.info("TipoDeImpuestocotimw: " + struct.getTipoDeImpuestocotimw());
-	
+		logger.info("Porcentaje: " + struct.getPorcentajeImpuestoBISA().getPorcentaje());
+		logger.info("PorcentajeNumDecimales: " + struct.getPorcentajeImpuestoBISA().getNumDecimales());
+		logger.info("IndicadorTratamientoImpuestobitrim: " + struct.getIndicadorTratamientoImpuestobitrim());
+		
+		
 	
 		System.out.println("CodigoObjetoAccesocopace: " + servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
 		System.out.println("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
@@ -881,6 +885,9 @@ public class UvemManager implements UvemManagerApi {
 		System.out.println("IdentificadorActivoEspecialcoacew: " + struct.getIdentificadorActivoEspecialcoacew());
 		System.out.println("ImporteConSigno: " + struct.getImporteMonetarioOfertaBISA().getImporteConSigno());
 		System.out.println("TipoDeImpuestocotimw: " + struct.getTipoDeImpuestocotimw());
+		System.out.println("Porcentaje: " + struct.getPorcentajeImpuestoBISA().getPorcentaje());
+		System.out.println("PorcentajeNumDecimales: " + struct.getPorcentajeImpuestoBISA().getNumDecimales());
+		System.out.println("IndicadorTratamientoImpuestobitrim: " + struct.getIndicadorTratamientoImpuestobitrim());
 		
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();

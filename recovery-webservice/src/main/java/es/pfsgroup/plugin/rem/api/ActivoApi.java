@@ -681,4 +681,31 @@ public interface ActivoApi {
 	 */
 	public List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado);
 	
+	/**
+	 * Este método crea una integración de un activo en una entidad.
+	 * 
+	 * @param dto
+	 *            : DTO con los parámetros a almacenar.
+	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 */
+	public boolean createActivoIntegrado(DtoActivoIntegrado dto);
+	
+	/**
+	 * Este método devuelve la información de la relación Activo-Integración
+	 * 
+	 * @param id
+	 *            : id
+	 * @return Devuelve Dto con la información.
+	 */
+	public DtoActivoIntegrado getActivoIntegrado(String id);
+	
+	/**
+	 * Este método crea una integración de un activo en una entidad.
+	 * 
+	 * @param dto
+	 *            : DTO con los parámetros a almacenar.
+	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 */
+	public boolean updateActivoIntegrado(DtoActivoIntegrado dto);
+	
 }

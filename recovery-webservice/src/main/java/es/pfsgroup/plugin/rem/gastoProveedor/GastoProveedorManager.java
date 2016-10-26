@@ -21,6 +21,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -50,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
@@ -1357,5 +1359,30 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return true;
 		
 		
+	}
+	
+	public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor){
+		DtoActivoProveedor dto= new DtoActivoProveedor();
+		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
+		Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(codigoUnicoProveedor));
+//		DDTipoEntidad tipoEntidad = (DDTipoEntidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoEntidad.class, codigoTipoEntidad);	
+		Filter filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.tipoEntidadProveedor.codigo", codigoTipoProveedor);
+		
+		listaProveedores = genericDao.getList(ActivoProveedor.class, filtroCodigo,filtroEntidad);
+
+		if(!Checks.estaVacio(listaProveedores)){
+			ActivoProveedor activoProveedor= listaProveedores.get(0);
+			
+			dto.setId(activoProveedor.getId());
+			dto.setNombreProveedor(activoProveedor.getNombre());
+			dto.setNifProveedor(activoProveedor.getDocIdentificativo());
+			if(!Checks.esNulo(activoProveedor.getTipoProveedor()) && !Checks.esNulo(activoProveedor.getTipoProveedor().getTipoEntidadProveedor())){
+				dto.setSubtipoProveedorDescripcion(activoProveedor.getTipoProveedor().getTipoEntidadProveedor().getDescripcion());
+			}
+			
+			
+			return dto;
+		}
+		return null;
 	}
 }

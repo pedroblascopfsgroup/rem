@@ -118,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -2384,7 +2385,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			try {
 				beanUtilNotNull.copyProperty(dto, "id", activoIntegrado.getId());
 				if(!Checks.esNulo(activoIntegrado.getProveedor())) {
-					
+					beanUtilNotNull.copyProperty(dto, "pagosRetenidos", activoIntegrado.getRetenerPago());
 					beanUtilNotNull.copyProperty(dto, "codigoProveedorRem", activoIntegrado.getProveedor().getCodigoProveedorRem());
 					beanUtilNotNull.copyProperty(dto, "nifProveedor", activoIntegrado.getProveedor().getDocIdentificativo());
 					beanUtilNotNull.copyProperty(dto, "nombreProveedor", activoIntegrado.getProveedor().getNombre());
@@ -2412,6 +2413,164 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return dtoList;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createActivoIntegrado(DtoActivoIntegrado dto){
+		
+		try{
+			if(!Checks.esNulo(dto.getCodigoProveedorRem())){
+				ActivoIntegrado activoIntegrado= new ActivoIntegrado();
+				
+				if(!Checks.esNulo(dto.getCodigoProveedorRem())){
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(dto.getCodigoProveedorRem()));
+					ActivoProveedor proveedor= genericDao.get(ActivoProveedor.class, filter);
+					activoIntegrado.setProveedor(proveedor);
+				}
+				
+				if(!Checks.esNulo(dto.getIdActivo())){
+					Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdActivo()));
+					Activo activo= genericDao.get(Activo.class, filterActivo);
+					activoIntegrado.setActivo(activo);
+				}
+				
+				activoIntegrado.setObservaciones(dto.getObservaciones());
+				if(!Checks.esNulo(dto.getParticipacion())){
+					activoIntegrado.setParticipacion(Double.parseDouble(dto.getParticipacion()));
+				}
+				activoIntegrado.setFechaInclusion(dto.getFechaInclusion());
+				activoIntegrado.setFechaExclusion(dto.getFechaExclusion());
+				if(!Checks.esNulo(dto.getRetenerPagos())){
+					if(dto.getRetenerPagos()){
+						activoIntegrado.setRetenerPago(1);
+					}
+					else{
+						activoIntegrado.setRetenerPago(0);
+					}
+				}
+				
+				if(!Checks.esNulo(dto.getMotivoRetencionPago())){
+					DDMotivoRetencion motivoRetencion = (DDMotivoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencion.class, dto.getMotivoRetencionPago());
+					activoIntegrado.setMotivoRetencion(motivoRetencion);
+				}
+				
+				activoIntegrado.setFechaRetencionPago(dto.getFechaRetencionPago());
+				genericDao.save(ActivoIntegrado.class, activoIntegrado);
+				return true;
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return false;
+	
+	}
+	
+	public DtoActivoIntegrado getActivoIntegrado(String id){
+		DtoActivoIntegrado dto= new DtoActivoIntegrado();
+		
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(id));
+		ActivoIntegrado activoIntegrado= genericDao.get(ActivoIntegrado.class, filter);
+		
+		if(!Checks.esNulo(activoIntegrado)){
+			
+			if(!Checks.esNulo(activoIntegrado.getActivo())){
+				dto.setIdActivo(activoIntegrado.getActivo().getId().toString());
+			}
+			
+			if(!Checks.esNulo(activoIntegrado.getProveedor())){
+				if(!Checks.esNulo(activoIntegrado.getProveedor().getCodigoProveedorRem())){
+					dto.setCodigoProveedorRem(activoIntegrado.getProveedor().getCodigoProveedorRem().toString());
+				}
+				dto.setNombreProveedor(activoIntegrado.getProveedor().getNombre());
+				dto.setNifProveedor(activoIntegrado.getProveedor().getDocIdentificativo());
+				if(!Checks.esNulo(activoIntegrado.getProveedor().getTipoProveedor()) && !Checks.esNulo(activoIntegrado.getProveedor().getTipoProveedor().getTipoEntidadProveedor())){
+					dto.setSubtipoProveedorDescripcion(activoIntegrado.getProveedor().getTipoProveedor().getTipoEntidadProveedor().getDescripcion());
+				}
+			}
+			
+			dto.setObservaciones(activoIntegrado.getObservaciones());
+			if(!Checks.esNulo(activoIntegrado.getParticipacion())){
+				dto.setParticipacion(activoIntegrado.getParticipacion().toString());
+			}
+			dto.setFechaInclusion(activoIntegrado.getFechaInclusion());
+			dto.setFechaExclusion(activoIntegrado.getFechaExclusion());
+			if(!Checks.esNulo(activoIntegrado.getRetenerPago())){
+				if(activoIntegrado.getRetenerPago()==1){
+					dto.setRetenerPagos(true);
+				}
+				else{
+					dto.setRetenerPagos(false);
+				}
+			}
+			
+			if(!Checks.esNulo(activoIntegrado.getMotivoRetencion())){
+				dto.setMotivoRetencionPago(activoIntegrado.getMotivoRetencion().getCodigo());
+			}
+			dto.setFechaRetencionPago(activoIntegrado.getFechaRetencionPago());
+			
+		}
+		
+		return dto;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateActivoIntegrado(DtoActivoIntegrado dto){
+		
+		try{
+			Filter filterActivoIntegrado = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
+			ActivoIntegrado activoIntegrado= genericDao.get(ActivoIntegrado.class, filterActivoIntegrado);
+			
+			beanUtilNotNull.copyProperties(activoIntegrado, dto);
+			
+			if(!Checks.esNulo(dto.getCodigoProveedorRem())){
+				Filter filterProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(dto.getCodigoProveedorRem()));
+				ActivoProveedor proveedor= genericDao.get(ActivoProveedor.class, filterProveedor);
+				activoIntegrado.setProveedor(proveedor);
+			}
+			
+			if(!Checks.esNulo(dto.getIdActivo())){
+				Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdActivo()));
+				Activo activo= genericDao.get(Activo.class, filterActivo);
+				activoIntegrado.setActivo(activo);
+			}
+			
+			if(!Checks.esNulo(dto.getObservaciones())){
+				activoIntegrado.setObservaciones(dto.getObservaciones());
+			}
+			
+			if(!Checks.esNulo(dto.getParticipacion())){
+				activoIntegrado.setParticipacion(Double.parseDouble(dto.getParticipacion()));
+			}
+			if(!Checks.esNulo(dto.getRetenerPagos())){
+				if(dto.getRetenerPagos()){
+					activoIntegrado.setRetenerPago(1);
+				}
+				else{
+					activoIntegrado.setRetenerPago(0);
+					activoIntegrado.setMotivoRetencion(null);
+					activoIntegrado.setFechaRetencionPago(null);
+				}
+			}
+			
+			if(!Checks.esNulo(dto.getMotivoRetencionPago())){
+				DDMotivoRetencion motivoRetencion = (DDMotivoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencion.class, dto.getMotivoRetencionPago());
+				activoIntegrado.setMotivoRetencion(motivoRetencion);
+			}
+			
+			genericDao.update(ActivoIntegrado.class, activoIntegrado);
+			return true;
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 }

@@ -2081,5 +2081,53 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createActivoIntegrado(DtoActivoIntegrado dto, ModelMap model){
+		
+		try {
+			boolean success = activoApi.createActivoIntegrado(dto);
+			model.put("success", success);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivoIntegrado(@RequestParam String id) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", activoApi.getActivoIntegrado(id));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActivoIntegrado(DtoActivoIntegrado dto) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", activoApi.updateActivoIntegrado(dto));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
 	
 }

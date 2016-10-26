@@ -31,8 +31,12 @@ public class DtoActivoIntegrado extends WebDto {
 	private Date fechaExclusion;
 	private String motivoExclusion;
 	private int totalCount;
+	private Boolean retenerPagos;
+	private Integer pagosRetenidos;
 	
 	private String observaciones;
+	private String motivoRetencionPago;
+	private Date fechaRetencionPago;
 	
 	
 	public int getTotalCount() {
@@ -142,6 +146,30 @@ public class DtoActivoIntegrado extends WebDto {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Boolean getRetenerPagos() {
+		return retenerPagos;
+	}
+	public void setRetenerPagos(Boolean retenerPagos) {
+		this.retenerPagos = retenerPagos;
+	}
+	public String getMotivoRetencionPago() {
+		return motivoRetencionPago;
+	}
+	public void setMotivoRetencionPago(String motivoRetencionPago) {
+		this.motivoRetencionPago = motivoRetencionPago;
+	}
+	public Date getFechaRetencionPago() {
+		return fechaRetencionPago;
+	}
+	public void setFechaRetencionPago(Date fechaRetencionPago) {
+		this.fechaRetencionPago = fechaRetencionPago;
+	}
+	public Integer getPagosRetenidos() {
+		return pagosRetenidos;
+	}
+	public void setPagosRetenidos(Integer pagosRetenidos) {
+		this.pagosRetenidos = pagosRetenidos;
 	}
 	
 }

@@ -29,7 +29,8 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 											store: '{storeEntidades}'
 										},
 										listeners : {
-										    	rowclick: 'onEntidadesListClick'
+//										    	rowclick: 'onEntidadesListClick',
+										    	rowdblclick: 'onEntidadesListDobleClick'
 										},
 										viewConfig: { 
 									        getRowClass: function(record) { 

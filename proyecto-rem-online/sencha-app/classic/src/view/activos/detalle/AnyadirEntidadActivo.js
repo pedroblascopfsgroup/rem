@@ -121,7 +121,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 											xtype: 'datefieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.entidad.activo.fecha.inclusion'),
 											bind:		'{activoIntegrado.fechaInclusion}',
-											formatter: 'date("d/m/Y")'
+											formatter: 'date("d/m/Y")',
+											allowBlank: false
 										},
 										{
 				    						fieldLabel:  HreRem.i18n('fieldlabel.entidad.activo.nombre'),
@@ -134,7 +135,11 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 										{
 											xtype: 'datefieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.entidad.activo.fecha.exclusion'),
-											bind:		'{activoIntegrado.fechaExclusion}'
+											bind:	{
+												value: '{activoIntegrado.fechaExclusion}',
+												minValue: '{activoIntegrado.fechaInclusion}'
+											}
+											
 										},
 										
 										{
@@ -182,7 +187,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 												           	value: '{activoIntegrado.motivoRetencionPago}',
 												           	disabled: '{!activoIntegrado.retenerPagos}'
 												        },
-												        name: 'motivoRetencion'
+												        name: 'motivoRetencion',
+												        allowBlank: false
 												        
 													 },
 													 {
@@ -192,7 +198,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 															value: '{activoIntegrado.fechaRetencionPago}',
 															disabled: '{!activoIntegrado.retenerPagos}'
 														},
-														name: 'fechaInicioRetencion'
+														name: 'fechaInicioRetencion',
+														allowBlank: false
 														
 													}
 										            	  

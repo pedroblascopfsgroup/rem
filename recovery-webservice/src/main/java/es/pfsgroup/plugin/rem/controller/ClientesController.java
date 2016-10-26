@@ -92,7 +92,7 @@ public class ClientesController {
 			logger.debug("RESPUESTA: " + model);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 
 	/**
@@ -149,12 +149,13 @@ public class ClientesController {
 
 		} catch (Exception e) {
 			logger.error(e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 
 }

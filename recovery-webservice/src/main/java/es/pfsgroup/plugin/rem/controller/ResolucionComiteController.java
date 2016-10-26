@@ -159,7 +159,7 @@ public class ResolucionComiteController {
 			logger.debug("RESPUESTA: " + model);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 
 	}
 	

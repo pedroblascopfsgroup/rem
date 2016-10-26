@@ -1,7 +1,8 @@
 
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.activodetalle',    
+    alias: 'controller.activodetalle',  
+    requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo'],
     
     control: {
     	
@@ -23,6 +24,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          
          'uxvalidargeolocalizacion': {
          	actualizarCoordenadas: 'actualizarCoordenadas'
+         },
+         
+         'datoscomunidadactivo gridBase': {
+             abrirFormulario: 'abrirFormularioAnyadirEntidadActivo',
+             afterupload: function(grid) {
+             	grid.getStore().load();
+             },
+             afterdelete: function(grid) {
+             	grid.getStore().load();
+             }
          }
          
      },
@@ -181,12 +192,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 			);
-					
-			btn.hide();
-			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
-			btn.up('tabbar').down('button[itemId=botoneditar]').show();
 			
-			me.getViewModel().set("editing", false);
+			if(!Ext.isEmpty(btn)) {
+				btn.hide();
+				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+				btn.up('tabbar').down('button[itemId=botoneditar]').show();
+				
+				me.getViewModel().set("editing", false);
+			}
 		
 			if (!form.saveMultiple) {
 				if(form.getBindRecord() != null && (Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update))) {
@@ -432,10 +445,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var me = this,
     	disabled = value == 0;
-
-    	if(!Ext.isEmpty(me.lookupReference('datoscomunidadactivo'))) {
-	    	me.lookupReference('datoscomunidadactivo').setDisabled(disabled);
-    	}
 	    
 	    me.lookupReference('estadoDivHorizontal').setDisabled(disabled);
     	me.lookupReference('estadoDivHorizontalNoInscrita').setDisabled(disabled);
@@ -472,10 +481,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var me = this,
     	disabled = value == 0;
-
-    	if(!Ext.isEmpty(me.lookupReference('datoscomunidadactivo'))) {
-	    	me.lookupReference('datoscomunidadactivo').setDisabled(disabled);
-    	}
     	
     	me.lookupReference('estadoDivHorizontalAdmision').setDisabled(disabled);
     	me.lookupReference('estadoDivHorizontalNoInscritaAdmision').setDisabled(disabled);
@@ -1688,6 +1693,220 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 		
 		return true;	
-	}
+	},
 	
+	abrirFormularioAnyadirEntidadActivo: function(grid) {
+		var me = this;
+		idActivo = me.getViewModel().get("activo.id");		
+    	Ext.create("HreRem.view.activos.detalle.AnyadirEntidadActivo", {parent: grid, idActivo: idActivo}).show();	
+	},
+	
+	onClickBotonCancelarEntidad: function(btn){
+		var me = this,
+		window = btn.up('window');
+		var form= window.down('formBase');
+		form.reset();
+    	window.destroy();
+	},
+	
+	buscarProveedor: function(field, e){
+		var me= this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorCodigoByTipoEntidad');
+		var codigoUnicoProveedor= field.getValue();
+		var codigoTipoProveedor= CONST.TIPOS_PROVEEDOR['ENTIDAD'];
+		var data;
+		var nifEmisorField = field.up('formBase').down('[name=nifProveedor]');
+		nombreProveedorField = field.up('formBase').down('[name=nombreProveedor]'),
+		subtipoProveedorField = field.up('formBase').down('[name=subtipoProveedorField]');
+		
+		if(!Ext.isEmpty(codigoUnicoProveedor)){
+			Ext.Ajax.request({
+			    			
+				url: url,
+			    params: {codigoUnicoProveedor : codigoUnicoProveedor, codigoTipoProveedor: codigoTipoProveedor},
+			    success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+			    	if(!Utils.isEmptyJSON(data.data)){
+			    		var id= data.data.id;
+			    		var nombreProveedor= data.data.nombreProveedor;
+			    		var nifProveedor= data.data.nifProveedor;
+			    		var subtipoProveedorDescripcion= data.data.subtipoProveedorDescripcion;
+			    		    	 	
+			    		if(!Ext.isEmpty(nifEmisorField)) {
+			    			nifEmisorField.setValue(nifProveedor);
+			    		}	    		    	 	
+			    		if(!Ext.isEmpty(nombreProveedorField)) {
+			    		    nombreProveedorField.setValue(nombreProveedor);
+			    		}
+			    		if(!Ext.isEmpty(subtipoProveedorField)) {
+			    		    subtipoProveedorField.setValue(subtipoProveedorDescripcion);
+			    		}			
+			    	}
+			    	else{
+			    		if(!Ext.isEmpty(nombreProveedorField)) {
+			    		    nombreProveedorField.setValue('');
+			    		}
+			    		if(!Ext.isEmpty(nifEmisorField)) {
+			    		    nifEmisorField.setValue('');
+			    		}
+			    		if(!Ext.isEmpty(subtipoProveedorField)) {
+			    			subtipoProveedorField.setValue('');
+			    		}
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));
+			    	}
+			    },
+			    failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    },
+			    callback: function(options, success, response){
+			    }
+			});
+		}
+		else{
+			nombreProveedorField.setValue('');
+			nifEmisorField.setValue('');
+			subtipoProveedorField.setValue('');
+		}
+	},
+	
+	onClickBotonGuardarEntidad: function(btn){
+		var me= this;
+		var window= btn.up('window'),
+		form= window.down('formBase');
+//		var success = function (a, operation, c) {
+//					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+//					me.getView().unmask();
+//					me.refrescarGasto(btn.up('tabpanel').getActiveTab().refreshAfterSave);
+//		};
+		
+		me.onSaveFormularioCompletoActivoIntegrado(null, form);				
+	},
+	
+	onSaveFormularioCompletoActivoIntegrado: function(btn, form){
+		var me = this;
+		var window = form.up('window');
+		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
+		if(form.isFormValid() || form.disableValidation) {
+			
+			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
+			);
+			
+			if(!Ext.isEmpty(btn)) {
+				btn.hide();
+				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+				btn.up('tabbar').down('button[itemId=botoneditar]').show();
+				
+				me.getViewModel().set("editing", false);
+			}
+		
+			if (!form.saveMultiple) {
+				
+				
+				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create)){
+					form.getBindRecord().getProxy().extraParams.idActivo = form.down('field[name=idActivo]').getValue();
+				}
+				
+				if(form.getBindRecord() != null && (Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update))) {
+					// Si la API tiene metodo de escritura (create or update).
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
+					
+					form.getBindRecord().save({
+						success: function (a, operation, c) {
+							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							me.getView().unmask();
+							form.reset();
+							window.parent.up('datoscomunidadactivo').funcionRecargar();
+							window.close();
+			            },
+				            
+			            failure: function (a, operation) {
+			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							 me.getView().unmask();
+			            }
+					});
+				}
+			//Guardamos múltiples records	
+			} else {
+				var records = form.getBindRecords();
+				var contador = 0;
+				me.saveMultipleRecords(contador, records, form);
+			}
+		} else {
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+		
+	},
+	
+	onRetenerPagosChange: function(combo,a,b){
+		var me= this;
+		var form= combo.up('formBase');
+		var motivoRetencionField= form.down('[name=motivoRetencion]');
+		var fechaInicioRetencionField= form.down('[name=fechaInicioRetencion]');
+		
+		if(!combo.getValue()){
+				motivoRetencionField.reset()
+				fechaInicioRetencionField.reset();
+				motivoRetencionField.setDisabled(true);
+				fechaInicioRetencionField.setDisabled(true);
+		}else{
+			motivoRetencionField.setDisabled(false);
+			fechaInicioRetencionField.setDisabled(false);
+		}
+	},
+	
+	onEntidadesListDobleClick: function(gridView,record){
+		var me= this;
+		var idActivoIntegrado= record.get('id');
+		var idActivo = me.getViewModel().get("activo.id");	
+		var storeGrid= gridView.store;
+	    Ext.create("HreRem.view.activos.detalle.AnyadirEntidadActivo", {idActivoIntegrado: idActivoIntegrado,idActivo: idActivo,parent: gridView, modoEdicion: true, storeGrid:storeGrid}).show();
+
+	},
+	
+	cargarDatosActivoIntegrado: function(window){
+		var me = this,
+		model = null,
+		models = null,
+		nameModels = null,
+		id = window.idActivoIntegrado;
+		
+		if(!Ext.isEmpty(id)){
+			var form= window.down('formBase');
+			form.mask(HreRem.i18n("msg.mask.loading"));
+			if(!form.saveMultiple) {	
+				model = form.getModelInstance(),
+				model.setId(id);
+				if(Ext.isDefined(model.getProxy().getApi().read)) {
+					// Si la API tiene metodo de lectura (read).
+					model.load({
+					    success: function(record) {
+					    	form.setBindRecord(record);			    	
+					    	form.unmask();
+					    	if(Ext.isFunction(form.afterLoad)) {
+					    		form.afterLoad();
+					    	}
+					    },
+					    failure: function(record){
+					    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							me.getView().unmask();
+					    }
+					});
+				}
+			}
+		}
+		
+		var form= window.down('formBase');
+		form.setBindRecord(Ext.create('HreRem.model.ActivoIntegrado'));
+		window.down('field[name=idActivo]').setValue(window.idActivo);
+			        	
+		Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),
+			function (field, index) 
+				{ 								
+					field.fireEvent('edit');
+					if(index == 0) field.focus();
+				}
+		);
+	}
+
 });

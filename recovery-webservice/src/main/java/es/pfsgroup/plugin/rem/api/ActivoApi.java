@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
@@ -672,5 +673,39 @@ public interface ActivoApi {
 	 * @return true si son distintos, false si son iguales
 	 */
 	public Boolean checkTiposDistintos(Activo activo);
+	
+	/**
+	 * 
+	 * @param dtoActivoIntegrado
+	 * @return
+	 */
+	public List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado);
+	
+	/**
+	 * Este método crea una integración de un activo en una entidad.
+	 * 
+	 * @param dto
+	 *            : DTO con los parámetros a almacenar.
+	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 */
+	public boolean createActivoIntegrado(DtoActivoIntegrado dto);
+	
+	/**
+	 * Este método devuelve la información de la relación Activo-Integración
+	 * 
+	 * @param id
+	 *            : id
+	 * @return Devuelve Dto con la información.
+	 */
+	public DtoActivoIntegrado getActivoIntegrado(String id);
+	
+	/**
+	 * Este método crea una integración de un activo en una entidad.
+	 * 
+	 * @param dto
+	 *            : DTO con los parámetros a almacenar.
+	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 */
+	public boolean updateActivoIntegrado(DtoActivoIntegrado dto);
 	
 }

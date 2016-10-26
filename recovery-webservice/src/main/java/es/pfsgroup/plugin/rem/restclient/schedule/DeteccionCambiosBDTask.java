@@ -86,10 +86,14 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		logger.info("[inicio] Envío de información completa a WEBCOM mediante REST");
 		try {
 
-			logger.debug(handler.getClass().getName() + ": obtenemos toda la información de la  BD");
+			long startTime = System.currentTimeMillis();
+
+			logger.debug(handler.getClass().getSimpleName() + ": obtenemos toda la información de la  BD");
 			List listPendientes = handler.listDatosCompletos(control);
 
 			ejecutaTarea(handler, listPendientes, control);
+
+			logger.debug("TIMER DETECTOR FULL enviaInformacionCompleta [" + handler.getClass().getSimpleName() + "]: " + (System.currentTimeMillis() - startTime));
 
 		} finally {
 			running = false;
@@ -116,13 +120,15 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		try {
 			if ((registroCambiosHandlers != null) && (!registroCambiosHandlers.isEmpty())) {
 				for (DetectorCambiosBD handler : registroCambiosHandlers) {
+					long startTime = System.currentTimeMillis();
 
-					logger.debug(handler.getClass().getName() + ": obtenemos los cambios de la BD");
+					logger.debug(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
 					Class control = handler.getDtoClass();
 					List listPendientes = handler.listPendientes(control);
 
 					ejecutaTarea(handler, listPendientes, control);
 
+					logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName() + "]: " + (System.currentTimeMillis() - startTime));
 				}
 			} else {
 				logger.warn("El registro de cambios en BD aún no está disponible");
@@ -135,7 +141,6 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	public void ejecutaTarea(DetectorCambiosBD handler, List listPendientes, Class control) {
-		long startTime = System.currentTimeMillis();
 
 		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
 			logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
@@ -160,8 +165,6 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		} else {
 			logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
 		}
-
-		logger.debug("TIMER FULL DETECTOR: " + (System.currentTimeMillis() - startTime));
 	}
 
 	/**

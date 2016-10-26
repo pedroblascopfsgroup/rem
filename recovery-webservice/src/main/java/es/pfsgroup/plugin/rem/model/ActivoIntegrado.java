@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 
 
 /**
@@ -67,6 +68,20 @@ public class ActivoIntegrado implements Serializable, Auditable {
 	
 	@Column(name = "AIN_MOTIVO_EXCLUSION")
 	private String motivoExclusion;
+	
+	@Column(name = "AIN_OBSERVACIONES")
+	private String observaciones;
+	
+	@Column(name = "AIN_PAGO_RETENIDO")
+	private Integer retenerPago;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_MRE_ID")
+	private DDMotivoRetencion motivoRetencion;
+	
+	@Column(name = "AIN_FECHA_RETENCION_PAGO")
+	private Date fechaRetencionPago;
+	
     
 	@Version   
 	private Long version;
@@ -129,6 +144,38 @@ public class ActivoIntegrado implements Serializable, Auditable {
 
 	public void setMotivoExclusion(String motivoExclusion) {
 		this.motivoExclusion = motivoExclusion;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public Integer getRetenerPago() {
+		return retenerPago;
+	}
+
+	public void setRetenerPago(Integer retenerPago) {
+		this.retenerPago = retenerPago;
+	}
+
+	public Date getFechaRetencionPago() {
+		return fechaRetencionPago;
+	}
+
+	public void setFechaRetencionPago(Date fechaRetencionPago) {
+		this.fechaRetencionPago = fechaRetencionPago;
+	}
+
+	public DDMotivoRetencion getMotivoRetencion() {
+		return motivoRetencion;
+	}
+
+	public void setMotivoRetencion(DDMotivoRetencion motivoRetencion) {
+		this.motivoRetencion = motivoRetencion;
 	}
 
 	public Long getVersion() {

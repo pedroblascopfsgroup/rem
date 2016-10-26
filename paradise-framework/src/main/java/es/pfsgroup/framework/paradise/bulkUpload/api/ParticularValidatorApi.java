@@ -67,4 +67,19 @@ public interface  ParticularValidatorApi {
 	 */
 	public Boolean esActivosMismoPropietario (String inSqlNumActivosRem);
 	
+	/**
+	 * Validacion de un activo si pertenece a alguna agrupacion no compatible 
+	 * @param numActivo
+	 * @param codTiposAgrNoCompatibles
+	 * @return
+	 */
+	public Boolean esActivoEnOtraAgrupacionNoCompatible(Long numActivo, Long numAgrupacion, String codTiposAgrNoCompatibles);
+	
+	/**
+	 * Comprueba si el activo Bancario es de clase Financiero
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean esActivoFinanciero(String numActivo);
+	
 }

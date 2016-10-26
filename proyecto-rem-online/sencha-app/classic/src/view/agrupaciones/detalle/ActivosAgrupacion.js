@@ -20,13 +20,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			    xtype: 'gridBaseEditableRow',
 			    idPrincipal: 'agrupacionficha.id',
 			    //selModel: { selType: 'rowmodel', mode   : 'MULTI'},
-			    editOnSelect: false,
 			    reference: 'listadoactivosagrupacion',
 				cls	: 'panel-base shadow-panel',
 				topBar: true,
+				editOnSelect: true,
 				bind: {
 					store: '{storeActivos}',
-					topBar: '{!agrupacionficha.existeFechaBaja}'
+					topBar: '{agrupacionficha.esEditable}',
+					editOnSelect: '{agrupacionficha.esEditable}'
 				},
 				colspan: 2,
 				listeners: {

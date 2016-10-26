@@ -61,6 +61,8 @@ public class DtoActivoProveedor extends WebDto {
 	
 	private String email;
 	
+	private String subtipoProveedorDescripcion;
+	
 	
 	
 	
@@ -281,5 +283,11 @@ public class DtoActivoProveedor extends WebDto {
 	public void setHomologadoCodigo(String homologadoCodigo) {
 		this.homologadoCodigo = homologadoCodigo;
 	}
-
+	public String getSubtipoProveedorDescripcion() {
+		return subtipoProveedorDescripcion;
+	}
+	public void setSubtipoProveedorDescripcion(String subtipoProveedorDescripcion) {
+		this.subtipoProveedorDescripcion = subtipoProveedorDescripcion;
+	}
+	
 }

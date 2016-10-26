@@ -27,14 +27,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
         	}
 	     },
 	     
-	     esAgrupacionObraNuevaOrAsistida: function(get) {
+	     esAgrupacionAsistida: function(get) {
 	    	 
 	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) || (tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
 	     		return true;
 	     	} else {
 	     		return false;
 	     	}
+	     },
+	     
+	     esAgrupacionObraNueva: function(get) {
+	    	 
+	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'])) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
+	     },
+	     
+	     esAgrupacionObraNuevaOrAsistida: function(get) {
+	    	 
+	     	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida');
 	     },
 	     
 	     existeFechaBaja : function(get) {

@@ -1,6 +1,9 @@
 Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'fichaagrupacion',    
+    mixins: [
+        'HreRem.ux.tab.TabBase'
+    ],
     reference: 'fichaagrupacionref',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
@@ -14,7 +17,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 
 	recordName: "agrupacionficha",
 	recordClass: "HreRem.model.AgrupacionFicha",
-    requires: ['HreRem.model.AgrupacionFicha'],
+    requires: ['HreRem.model.AgrupacionFicha', 'HreRem.ux.tab.TabBase'],
+    
+    bind: {
+    	ocultarBotonesEdicion: '{!agrupacionficha.esEditable}'
+    },
     
     initComponent: function () {
 
@@ -153,7 +160,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                	fieldLabel: HreRem.i18n('header.fecha.inicio.vigencia'),
 		                	maxValue: null,
 			            	bind: {
-			            		value: '{agrupacionficha.fechaInicioVigencia}'
+			            		value: '{agrupacionficha.fechaInicioVigencia}',
+			            		readOnly: '{agrupacionficha.existeFechaBaja}',
+			            		hidden: '{!esAgrupacionAsistida}'
 			            	}		
 						},
 						{ 
@@ -161,7 +170,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                	fieldLabel: HreRem.i18n('header.fecha.fin.vigencia'),
 		                	maxValue: null,
 			            	bind: {
-			            		value: '{agrupacionficha.fechaFinVigencia}'
+			            		value: '{agrupacionficha.fechaFinVigencia}',
+			            		readOnly: '{agrupacionficha.existeFechaBaja}',
+				        		hidden: '{!esAgrupacionAsistida}'
 			            	}		
 						}
 					]

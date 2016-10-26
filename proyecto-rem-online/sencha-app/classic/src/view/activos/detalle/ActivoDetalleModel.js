@@ -888,6 +888,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 		
+		storeEntidades: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Proveedor',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getProveedoresByActivoIntegrado',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
 		storeGastosProveedor: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.Gasto',
@@ -926,6 +936,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposAlquilerActivo'}
 			}
+		},
+
+		comboTipoTenedor: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoTenedor'}
+			},
+			autoLoad: true
+		},
+
+		comboRetencionPago: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoRetencionPago'}
+			}			
 		}
      }    
 });

@@ -502,9 +502,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getDiccionario',
 		        extraParams: {diccionario: 'estadosDevolucion'}
-	    	}	
-	    	
-	    	
+	    	}	    	
+	    },
+	    
+		comboResultadoTanteo: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'resultadoTanteo'}
+	    	}	    	
 	    }
 	    	
     }

@@ -47,6 +47,9 @@ public class VBusquedaProveedoresActivo implements Serializable {
 	
 	@Column(name="PVE_COD_UVEM")
 	private String codigoProveedor;
+	
+	@Column(name="PVE_COD_REM")
+	private String codigoProveedorRem;
 
 	@Column(name="AIN_FECHA_EXCLUSION")
 	private Date fechaExclusion;
@@ -137,6 +140,14 @@ public class VBusquedaProveedoresActivo implements Serializable {
 
 	public void setFechaExclusion(Date fechaExclusion) {
 		this.fechaExclusion = fechaExclusion;
+	}
+
+	public String getCodigoProveedorRem() {
+		return codigoProveedorRem;
+	}
+
+	public void setCodigoProveedorRem(String codigoProveedorRem) {
+		this.codigoProveedorRem = codigoProveedorRem;
 	}
 		
 

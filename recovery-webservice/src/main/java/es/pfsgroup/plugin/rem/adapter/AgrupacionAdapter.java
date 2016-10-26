@@ -773,7 +773,7 @@ public class AgrupacionAdapter {
 	public List<VOfertasActivosAgrupacion>  getListOfertasAgrupacion(Long idAgrupacion) {
 		
 		Filter filtro= genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());	
-		Order order = new Order(OrderType.ASC, "id");
+		Order order = new Order(OrderType.ASC, "fechaCreacion");
 		
 		List<VOfertasActivosAgrupacion> ofertasAgrupacion= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order,filtro);
 	

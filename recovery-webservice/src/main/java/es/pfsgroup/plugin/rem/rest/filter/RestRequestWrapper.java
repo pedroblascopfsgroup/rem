@@ -10,8 +10,6 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,11 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import net.sf.json.JSONObject;
 
 public class RestRequestWrapper extends HttpServletRequestWrapper {
 	private final String body;
 	protected static final Log logger = LogFactory.getLog(RestRequestWrapper.class);
-	
+
 	public RestRequestWrapper(HttpServletRequest request) throws IOException, Exception {
 		super(request);
 		StringBuilder stringBuilder = new StringBuilder();
@@ -54,10 +53,10 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 				}
 			}
 		}
-		
+
 		if (stringBuilder.toString() != null && !stringBuilder.toString().isEmpty()) {
 			body = stringBuilder.toString();
-		}else{
+		} else {
 			body = request.getParameter("data");
 		}
 	}
@@ -81,38 +80,33 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 	public String getBody() {
 		return this.body;
 	}
-	
-	
+
 	public JSONObject getJsonObject() throws Exception {
 		JSONObject json = null;
-		
+
 		try {
-			
+
 			json = JSONObject.fromObject(body);
-			
-			if(Checks.esNulo(json)){
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);	
-				
+
+			if (Checks.esNulo(json)) {
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+
 			}
-			
-		}catch (Exception e) {
-			throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);			
+
+		} catch (Exception e) {
+			throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 		}
 		return json;
 	}
-	
 
-	
-	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Object getRequestData(Class clase) throws JsonParseException, JsonMappingException, IOException {
+	public Object getRequestData(Class clase) throws JsonParseException, JsonMappingException, IOException,
+			InstantiationException, IllegalAccessException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.generateJsonSchema(clase); 
+		mapper.generateJsonSchema(clase);
 		Object dataJson = mapper.readValue(this.body, clase);
 		return dataJson;
 	}
-	
 
-	
 }

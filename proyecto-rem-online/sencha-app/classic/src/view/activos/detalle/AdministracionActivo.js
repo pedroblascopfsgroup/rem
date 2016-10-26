@@ -53,7 +53,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 //				       },
 					{	  
 				        	xtype: 'actioncolumn',
-				            dataIndex: 'codigoProveedor',
+				            dataIndex: 'codigoProveedorRem',
 				            text: HreRem.i18n('title.activo.administracion.numProveedor'),
 				            flex: 1,
 				            items: [{

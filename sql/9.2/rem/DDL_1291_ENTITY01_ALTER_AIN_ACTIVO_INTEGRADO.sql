@@ -1,12 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20160922
+--## FECHA_CREACION=20161020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Realizar cambio en el tipo de la columna AIN_PARTICIPACION de la tabla AIN_ACTIVO_INTEGRADO.
+--## Finalidad: Realizar cambio en el tipo de la columna AIN_PARTICIPACION y añadir la columna AIN_OBSERVACIONES 
+--## en la tabla AIN_ACTIVO_INTEGRADO.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -45,7 +46,6 @@ BEGIN
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] Columna no encontrada. No se modifica nada.');
 	END IF;
-	
 	
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Fin');

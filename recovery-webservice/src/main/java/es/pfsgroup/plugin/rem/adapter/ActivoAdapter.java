@@ -2823,8 +2823,8 @@ public class ActivoAdapter {
 	public List<VOfertasActivosAgrupacion>  getListOfertasActivos(Long idActivo) {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());	
-		Order order = new Order(OrderType.ASC, "id");
-		
+		Order order = new Order(OrderType.DESC, "fechaCreacion");
+
 		return genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order, filtro);
 		
 	}

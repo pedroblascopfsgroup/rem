@@ -6,10 +6,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -124,6 +127,19 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 		return hashErrores;
 	}
 
+	
+	@Transactional(readOnly = true)
+	public DDEstadosReserva getDDEstadosReservaByCodigo (String codigo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		DDEstadosReserva estado = null;
+		try {
+			estado = genericDao.get(DDEstadosReserva.class, filtro);
+		} catch(Exception e) {
+			logger.error(e);
+			return null;
+		}		
+		return estado;
+	}
 	
 
 }

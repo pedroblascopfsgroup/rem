@@ -76,8 +76,8 @@ public class ReintegroManager extends BusinessOperationOverrider<ReintegroApi> i
 							 Checks.esNulo( expedienteComercial.getReserva().getEstadoReserva()) ||
 							 (!Checks.esNulo(expedienteComercial.getReserva()) && 
 								!Checks.esNulo(expedienteComercial.getReserva().getEstadoReserva()) && 
-								!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)) ){
-						hashErrores.put("ofertaHRE", "La reserva de la oferta debe estar en el estado pendiente de firma");
+								!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_ANULADA)) ){
+						hashErrores.put("ofertaHRE", "La reserva de la oferta debe estar en el estado anulada");
 						
 					}else if(Checks.esNulo(expedienteComercial.getEstado()) || 
 							(!Checks.esNulo(expedienteComercial.getEstado()) && !expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.ANULADO))){

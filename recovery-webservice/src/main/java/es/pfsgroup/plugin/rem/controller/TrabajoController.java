@@ -15,8 +15,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,7 +45,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrec
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -81,6 +78,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
+import net.sf.json.JSONObject;
 
 
 
@@ -110,9 +108,7 @@ public class TrabajoController {
 	
 	@Autowired
 	private PreciosApi preciosApi;
-	
-	@Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
+		
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1079,7 +1075,8 @@ public class TrabajoController {
 			logger.error(e);
 			model.put("id", jsonFields.get("id"));	
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 		}

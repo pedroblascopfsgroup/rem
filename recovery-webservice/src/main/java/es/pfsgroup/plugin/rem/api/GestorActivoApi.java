@@ -38,4 +38,11 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	
 	Boolean isGestorPreciosOMarketing(Activo activo, Usuario usuario);
 
+	/**
+	 * Devuelve el usuario de una tarea a partir del código de la tarea (tipo) y el id del trámite.
+	 * @param codigoTarea
+	 * @param idTramite
+	 * @return devuelve el Usuario si existe y null si no existe.
+	 */
+	public Usuario userFromTarea(String codigoTarea, Long idTramite);
 }

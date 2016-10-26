@@ -60,18 +60,19 @@ public class App {
 					}
 					
 					if(args[1].equals("ALTA")){
-						if(args.length == 7){
+						if(args.length == 8){
 							dto.setCodigoDeOfertaHaya(args[2]);
 							dto.setFinanciacionCliente(Boolean.getBoolean(args[3]));
 							dto.setIdentificadorActivoEspecial(Integer.valueOf(args[4]));
 							dto.setImporteConSigno(Long.valueOf(args[5]));
 							dto.setTipoDeImpuesto(Short.valueOf(args[6]));
+							dto.setPorcentajeImpuesto(Integer.valueOf(args[7]));
 							instancia = uvemManager.instanciaDecision(dto, args[1]);
 							System.out.println("Resultado llamada Longitud Mensaje De Salida: " + instancia.getLongitudMensajeSalida());
 							System.out.println("Resultado llamada Codigo De Oferta Haya: " + instancia.getCodigoDeOfertaHaya());
 							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComite());
 						}else{
-							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA 0000000000000201 <financiaCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA 0000000000000201 <financiaCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4> <%Impuesto>");
 							System.exit(1);			
 						}
 						
@@ -88,25 +89,25 @@ public class App {
 							System.out.println("Resultado llamada Codigo De Oferta Haya: " + instancia.getCodigoDeOfertaHaya());
 							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComite());	
 						}else{
-							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS 0000000000000201 <financiaCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision CONS 0000000000000201 <financiaCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4> ");
 							System.exit(1);			
 						}
 						
 					}else if(args[1].equals("MODI")){
 					
-						if(args.length == 7){	
+						if(args.length == 8){	
 							dto.setCodigoDeOfertaHaya(args[2]);
 							dto.setFinanciacionCliente(Boolean.getBoolean(args[3]));
 							dto.setIdentificadorActivoEspecial(Integer.valueOf(args[4]));
 							dto.setImporteConSigno(Long.valueOf(args[5]));
 							dto.setTipoDeImpuesto(Short.valueOf(args[6]));	
-							//dto.setContraoferta(Boolean.getBoolean(args[2]));<-- ¿No se setea en el manager?
+							dto.setPorcentajeImpuesto(Integer.valueOf(args[7]));
 							instancia = uvemManager.instanciaDecision(dto, args[1]);
 							System.out.println("Resultado llamada Longitud Mensaje De Salida: " + instancia.getLongitudMensajeSalida());
 							System.out.println("Resultado llamada Codigo De Oferta Haya: " + instancia.getCodigoDeOfertaHaya());
 							System.out.println("Resultado llamada Codigo Comite: " + instancia.getCodigoComite());	
 						}else{
-							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA <idOfertaHAYA> <finCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4>");
+							System.out.println("Número de parametros incorrectos: ejem: sh run.sh instanciaDecision ALTA <idOfertaHAYA> <finCliente-true/false> <idActivoEspe> <importeSig> <tipoImp-0/1/2/3/4> <%Impuesto>");
 							System.exit(1);			
 						}
 					}

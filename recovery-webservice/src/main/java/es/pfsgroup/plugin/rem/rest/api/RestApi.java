@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.ui.ModelMap;
@@ -14,6 +15,7 @@ import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
+import net.sf.json.JSONObject;
 
 public interface RestApi {
 
@@ -35,6 +37,8 @@ public interface RestApi {
 	public static final String REST_MSG_INVALID_SIGNATURE = "INVALID_SIGNATURE";
 	public static final String REST_MSG_REPETEAD_REQUEST = "REPETEAD_REQUEST";
 	public static final String REST_MSG_MISSING_REQUIRED_FIELDS = "MISSING_REQUIRED_FIELDS";
+	public static final String REST_NO_RELATED_OFFER = "NO_EXISTE_OFERTA_RELACIONADA";
+	public static final String REST_NO_RELATED_ASSET = "SIN_ACTIVO_RELACIONADO_CON_LA_OFERTA";
 	public static final String REST_MSG_MISSING_REQUIRED = "REQUIRED";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
 	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";
@@ -52,7 +56,7 @@ public interface RestApi {
 	 * @param signature
 	 * @return
 	 */
-	public boolean validateSignature(Broker broker, String signature, String peticion,ALGORITMO_FIRMA algoritmoFirma)
+	public boolean validateSignature(Broker broker, String signature, String peticion, ALGORITMO_FIRMA algoritmoFirma)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException;
 
 	/**
@@ -186,6 +190,15 @@ public interface RestApi {
 	 * @param nombreServicio
 	 * @return
 	 */
-	public ALGORITMO_FIRMA obtenerAlgoritmoFirma(String nombreServicio,String ipClient);
+	public ALGORITMO_FIRMA obtenerAlgoritmoFirma(String nombreServicio, String ipClient);
+
+	/**
+	 * Lanza una excepcion rest
+	 * 
+	 * @param res
+	 * @param errorCode
+	 * @param jsonFields
+	 */
+	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields);
 
 }

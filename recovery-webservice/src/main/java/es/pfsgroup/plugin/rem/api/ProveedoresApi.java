@@ -189,7 +189,7 @@ public interface ProveedoresApi {
 	 * Método que devuelve el nif del proveedor que tenga como contacto, el usuario logado.
 	 * @return
 	 */
-	public String getNifProveedorByUsuarioLogado();
+	public Long getCodProveedorByUsuarioLogado();
 	
 	/**
 	 * Método que devuelve el id del proveedor a través de su nif

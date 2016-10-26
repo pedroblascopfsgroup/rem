@@ -225,7 +225,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.id", id);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.agrupaciones.agrupacion.tipoAgrupacion.id", 1);
 		*/
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 2);
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 2);
 
 		/*HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.activo.id", id);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.agrupacion.agrupacion.tipoAgrupacion.id", 1);
@@ -241,7 +241,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     @Override
 	public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado) {
 
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 1);
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 1);
 
     	//Integer cont = ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
 

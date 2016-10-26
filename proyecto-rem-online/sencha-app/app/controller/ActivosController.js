@@ -9,7 +9,7 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
     'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
     'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu',
-    'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleTabPanel', 
+    'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleMain', 
     'HreRem.view.gastos.GastoDetalleMain', 'HreRem.model.GastoProveedor'],
 
     
@@ -913,7 +913,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	tab=null;
 
     	cfg.title = titulo;
-    	tab = me.createTab (me.getActivosMain(), 'proveedor', "proveedoresdetalletabpanel",  id, cfg);
+    	tab = me.createTab (me.getActivosMain(), 'proveedor', "proveedoresdetallemain",  id, cfg);
     	tab.mask(HreRem.i18n('msg.mask.loading'));
     	me.setLogTime(); 
     	

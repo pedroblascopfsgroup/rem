@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,10 +19,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.NotificatorApi;
@@ -43,10 +49,17 @@ public class ResolucionComiteController {
 	private AnotacionApi anotacionApi;
 	
 	@Autowired
-	private OfertaApi ofertaApi;
-
+	private ActivoTramiteApi ActivoTramiteApi;
+	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
 	
 	@Autowired
 	NotificatorApi notificatorApi;
@@ -83,9 +96,24 @@ public class ResolucionComiteController {
 					
 					//Envío correo/notificación
 					if(!Checks.esNulo(resol)){
+						ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(resol.getOferta().getId());
+						if(Checks.esNulo(eco)){
+							throw new Exception("No existe el expediente comercial de la oferta.");
+						}
+						
+						List<ActivoTramite> listaTramites = ActivoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+						if(Checks.esNulo(listaTramites) || listaTramites.size() == 0){
+							throw new Exception("No se ha podido recuperar el trámite de la oferta.");
+						}
+						
+						Usuario usu = gestorActivoApi.userFromTarea("T013_CierreEconomico", listaTramites.get(0).getId());
+						if(Checks.esNulo(usu)){
+							throw new Exception("No se ha podido recuperar el usuario a quién notificar.");
+						}
+						
 						notif = new Notificacion();
 						notif.setIdActivo(resol.getOferta().getActivoPrincipal().getId());
-						notif.setDestinatario(29468L);
+						notif.setDestinatario(usu.getId());
 						notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resol.getOferta().getNumOferta());
 						notif.setDescripcion(ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_MSG);
 						notif.setFecha(null);
@@ -94,7 +122,7 @@ public class ResolucionComiteController {
 						if(Checks.esNulo(notifrem)){
 							errorsList.put("error", "Se ha producido un error al enviar la notificación.");
 						}else{
-							notif.setPara("anahuac.devicente@pfsgroup.es");
+							notif.setPara(usu.getEmail());
 							notificatorApi.notificator(resol,notif);
 							logger.debug("\tEnviando correo a: " + notif.getPara());
 						}

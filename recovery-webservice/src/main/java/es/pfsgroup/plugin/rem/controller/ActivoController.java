@@ -56,7 +56,6 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -65,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -90,7 +91,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -500,6 +501,54 @@ public class ActivoController {
 
 		return createModelAndViewJson(model);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveLlave(DtoLlaves dto, ModelMap model) {
+
+		try {
+			boolean success = adapter.saveLlave(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteLlave(DtoLlaves dto, ModelMap model) {
+
+		try {
+			boolean success = adapter.deleteLlave(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createLlave(DtoLlaves dto, ModelMap model) {
+
+		try {
+			boolean success = adapter.createLlave(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -2060,5 +2109,72 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado, ModelMap model) {
+		
+		try{
+			List<DtoActivoIntegrado> resultados = activoApi.getProveedoresByActivoIntegrado(dtoActivoIntegrado);
+			model.put("data", resultados);
+			if(!Checks.estaVacio(resultados)) {
+				model.put("totalCount", resultados.get(0).getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createActivoIntegrado(DtoActivoIntegrado dto, ModelMap model){
+		
+		try {
+			boolean success = activoApi.createActivoIntegrado(dto);
+			model.put("success", success);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivoIntegrado(@RequestParam String id) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", activoApi.getActivoIntegrado(id));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActivoIntegrado(DtoActivoIntegrado dto) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", activoApi.updateActivoIntegrado(dto));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
 }

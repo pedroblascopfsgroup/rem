@@ -80,9 +80,13 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Serializable obtenerObjetoEntity(Long idValue, Class entity, String fieldActivo)
 			throws InstantiationException, IllegalAccessException {
-		Serializable objetoEntity;
+		Serializable objetoEntity = null;
 		if (idValue != null) {
-			objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
+			try {
+				objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
+			} catch (Exception e) {
+				logger.error(e);
+			}
 			if (objetoEntity == null) {
 				objetoEntity = (Serializable) entity.newInstance();
 			}
@@ -105,7 +109,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 			claseObjeto = Integer.class;
 		} else if (annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
 			claseObjeto = BigDecimal.class;
-		}else if(annotation.transform().equals(TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)){
+		} else if (annotation.transform().equals(TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)) {
 			claseObjeto = Integer.class;
 		}
 		return claseObjeto;
@@ -159,13 +163,14 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 						} else {
 							object = 0;
 						}
-					}else{
-						logger.error("FAIL --------------->" + propertyEntityName + " no se puede pasar de Integer a Boolean");
+					} else {
+						logger.error("FAIL --------------->" + propertyEntityName
+								+ " no se puede pasar de Integer a Boolean");
 					}
 				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
 					object = new BigDecimal((Float) object);
 				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)) {
-					object = Integer.valueOf(((Date)object).getYear());
+					object = Integer.valueOf(((Date) object).getYear());
 				}
 
 				int contador = 0;

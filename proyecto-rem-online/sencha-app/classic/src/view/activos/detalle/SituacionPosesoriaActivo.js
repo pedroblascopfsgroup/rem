@@ -14,7 +14,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 	
 	recordClass: "HreRem.model.ActivoSituacionPosesoria",
 	
-    requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales'],
+    requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList'],
 	
     initComponent: function () {
 
@@ -376,100 +376,18 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                	bind:		'{situacionPosesoria.numJuegos}'
 		                },
 		                {
-		                	xtype: 'gridBase',
-		    				cls	: 'panel-base shadow-panel',
-		    				colspan: 3,
-		    				layout:'fit',
-		    				minHeight: 240,
-		    				bind: {
-		    					store: '{storeLlaves}'
-		    				},
-
-		    				columns: [
-		    				    {   text: 'ID movimiento',
-		    			        	dataIndex: 'idMovimiento',
-		    			        	flex: 1
-		    			        },
-		    			        {
-		    			        	text: 'ID llave',
-		    			        	dataIndex: 'idLlave',
-		    			        	flex: 1
-		    			        },
-		    			        {   text: 'Centro llaves',
-		    			        	dataIndex: 'nomCentroLlave',
-		    			        	flex: 1
-		    			        },	
-		    			        {   text: 'Archivo 1',
-		    			        	dataIndex: 'archivo1',
-		    			        	flex: 1
-		    			        },	
-		    			        {   text: 'Archivo 2',
-		    			        	dataIndex: 'archivo2',
-		    			        	flex: 1
-		    			        },	
-		    			        {   text: 'Archivo 3',
-		    			        	dataIndex: 'archivo3',
-		    			        	flex: 1
-		    			        },	
-		    			        {   text: 'Completo',
-		    			        	dataIndex: 'juegoCompleto',
-		    			        	flex: 1,
-						        	renderer: function(value) {								        		
-						        		return value == "0" ? "No" : value == "1" ? "S&iacute;" : "";
-						        	}
-		    			        },	
-		    			        {   text: 'Motivo incompleto',
-		    			        	dataIndex: 'motivoIncompleto',
-		    			        	flex: 1
-		    			        },
-		    					{
-		    			            text: 'Tipo tenedor',
-		    			            dataIndex: 'descripcionTipoTenedor',
-		    			        	flex: 1
-		    			        },
-		    			        {
-		    			        	text: 'Nombre tenedor',
-		    			            dataIndex: 'nomTenedor',
-		    			        	flex: 1
-		    			        },
-		    			        {
-		    			        	text: 'Fecha entrega',
-		    			            dataIndex: 'fechaEntrega',
-		    			            formatter: 'date("d/m/Y")',
-		    			        	flex: 1
-		    			        },
-		    			        {
-		    			        	text: 'Fecha devoluci&oacute;n',
-		    			            dataIndex: 'fechaDevolucion',
-		    			            formatter: 'date("d/m/Y")',
-		    			        	flex: 1
-		    			        }
-		    			    ],
-		    			    dockedItems : [
-		    			        {
-		    			            xtype: 'pagingtoolbar',
-		    			            dock: 'bottom',
-		    			            displayInfo: true,
-		    			            bind: {
-		    			                store: '{storeLlaves}'
-		    			            }
-		    			        }
-		    			    ]
-		    			}
-					
+		                	xtype: 'llaveslist',
+		                	colspan: 3
+		                }
 					]
-                
             }
-            
-            
      ];
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
-    	
     },
-    
+
     getErrorsExtendedFormBase: function() {
-   		
+
    		var me = this,
    		errores = [],
    		error,
@@ -480,7 +398,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]'),
    		datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
    		datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
-   		
+
    		if(!Ext.isEmpty(fechaTomaPosesion.getValue()) && fechaTomaPosesion.getValue() > fechaRevisionEstadoPosesorio.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaTomaPosesion.mayor.fechaRevisionEstadoPosesorio");
    			errores.push(error);

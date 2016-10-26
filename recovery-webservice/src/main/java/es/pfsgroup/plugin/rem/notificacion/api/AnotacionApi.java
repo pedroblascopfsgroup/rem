@@ -1,16 +1,15 @@
 package es.pfsgroup.plugin.rem.notificacion.api;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
-import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.manager.RecoveryAnotacionApi;
 import es.pfsgroup.plugin.rem.notificacion.dto.CrearAnotacionDto;
+import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 
 /**
  * Api de la entidad Anotacion.
@@ -73,5 +72,13 @@ public interface AnotacionApi {
 	void cambiarFechaTarea(Long idTarea, String nuevaFecha, Long idTraza) throws BusinessOperationException;
 	
 	
-	
+	/**
+	 * Devuelve una lista de errores encontrados en los parámetros de entrada de las peticiones POST.
+	 * @param notificacionDto con los parametros de entrada
+	 * @param jsonFields estructura de parámetros para validar campos en caso de venir informados
+	 * @param alta true si es para validar el alta, false para validar la actualización
+	 * @return HashMap<String,String>
+	 */
+	public HashMap<String,String> validateNotifPostRequestData(NotificacionDto notificacionDto,  Object jsonFields)  throws Exception;
+
 }

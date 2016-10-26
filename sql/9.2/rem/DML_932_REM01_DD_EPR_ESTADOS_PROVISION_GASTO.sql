@@ -40,7 +40,9 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('01'	,'Pendiente de envio'	,'Pendiente de envio'),
         T_TIPO_DATA('02'	,'Enviada'	,'Enviada'),
-        T_TIPO_DATA('03'	,'Recibida'	,'Recibida')
+        T_TIPO_DATA('03'	,'Rechazada subsanable'	,'Rechazada subsanable'),
+        T_TIPO_DATA('04'	,'Rechazada no subsanable', 'Rechazada no subsanable'),
+        T_TIPO_DATA('05'	,'Autorizada por propietario'	,'Autorizada por propietario')
                   
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

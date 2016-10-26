@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20161013
+--## FECHA_CREACION=20161020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -38,7 +38,14 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Pendiente Autorización Haya'									,'Pendiente Autorización Haya')
+        T_TIPO_DATA('01'	,'Pendiente'									,'Pendiente'),
+        T_TIPO_DATA('02'	,'Rechazado'									,'Rechazado'),
+        T_TIPO_DATA('03'	,'Autorizado'									,'Autorizado'),
+        T_TIPO_DATA('04'	,'Contabilizado'								,'Contabilizado'),
+        T_TIPO_DATA('05'	,'Pagado'										,'Pagado'),
+        T_TIPO_DATA('06'	,'Anulado'										,'Anulado'),
+        T_TIPO_DATA('07'	,'Retenido'										,'Retenido')
+        
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -24,12 +24,10 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 
 
-
 /**
  * Modelo que gestiona la informacion de los movimientos de las llaves
  * 
  * @author Anahuac de Vicente
- *
  */
 @Entity
 @Table(name = "ACT_MLV_MOVIMIENTO_LLAVE", schema = "${entity.schema}")
@@ -37,9 +35,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoMovimientoLlave implements Serializable, Auditable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -47,36 +42,35 @@ public class ActivoMovimientoLlave implements Serializable, Auditable {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoMovimientoLlaveGenerator")
     @SequenceGenerator(name = "ActivoMovimientoLlaveGenerator", sequenceName = "S_ACT_MLV_MOVIMIENTO_LLAVE")
     private Long id;
-	
+
 	@ManyToOne
     @JoinColumn(name = "LLV_ID")
 	private ActivoLlave activoLlave;
-	
-	@Column(name = "DD_TTE_ID")
+
+	@ManyToOne
+	@JoinColumn(name = "DD_TTE_ID")
 	private DDTipoTenedor tipoTenedor;
-	
+
 	@Column(name = "MLV_COD_TENEDOR")
 	private String codTenedor;
-	
+
 	@Column(name = "MLV_NOM_TENEDOR")
 	private String nomTenedor;
-	 
+
 	@Column(name = "MLV_FECHA_ENTREGA")
 	private Date fechaEntrega;
-	
+
 	@Column(name = "MLV_FECHA_DEVOLUCION")
 	private Date fechaDevolucion;
-	
-	
-	
+
 	@Version   
 	private Long version;
-	
+
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
+
+
 	public Long getId() {
 		return id;
 	}

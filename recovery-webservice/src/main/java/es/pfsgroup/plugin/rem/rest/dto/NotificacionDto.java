@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoNotificacion;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 
 public class NotificacionDto extends RequestDto{
@@ -24,6 +25,7 @@ public class NotificacionDto extends RequestDto{
 	private Long idActivoHaya;
 	
 	@NotNull(groups = { Insert.class})
+	@Diccionary(clase = DDSubtipoNotificacion.class, message = "El codTipoNotificacion no existe", groups = { Insert.class})
 	private String codTipoNotificacion;
 	
 	@NotNull(groups = { Insert.class})

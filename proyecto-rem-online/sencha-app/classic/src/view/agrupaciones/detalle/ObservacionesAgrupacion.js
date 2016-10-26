@@ -25,8 +25,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion', {
 				cls	: 'grid-editable-row',
 				bind: {
 					store: '{storeObservaciones}',
-					topBar: '{!agrupacionficha.existeFechaBaja}',
-					editOnSelect: '{!agrupacionficha.existeFechaBaja}'
+					topBar: '{agrupacionficha.esEditable}',
+					editOnSelect: '{agrupacionficha.esEditable}'
 				},
 				columns: [
 				   {    text: 'Gestor',

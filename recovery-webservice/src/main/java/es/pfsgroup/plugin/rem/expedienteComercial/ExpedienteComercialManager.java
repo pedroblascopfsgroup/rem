@@ -549,8 +549,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 					dto.setMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
 				}
-				
-				
+
+				dto.setImporte(!Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta(): oferta.getImporteOferta());
 				
 				if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
 					dto.setComprador(expediente.getCompradorPrincipal().getFullName());

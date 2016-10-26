@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
@@ -454,5 +455,15 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id);
+	
+	
+	/**
+	 * Método que construye un InstanciaDecisionDto para el envío de ofertas a Bankia a través de WS 
+	 * 
+	 * @param expediente expedienteComercial de la oferta
+	 * @param porcentajeImpuesto del activo de la oferta.
+	 * @return
+	 */
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception;
 
 }

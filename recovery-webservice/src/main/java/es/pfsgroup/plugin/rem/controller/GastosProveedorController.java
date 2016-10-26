@@ -571,12 +571,12 @@ public class GastosProveedorController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getNifProveedorByUsuario(ModelMap model){
+	public ModelAndView getCodProveedorByUsuario(ModelMap model){
 		
 		
 		
 		try {
-			String nif = proveedoresApi.getNifProveedorByUsuarioLogado();
+			Long nif = proveedoresApi.getCodProveedorByUsuarioLogado();
 			
 			if(Checks.esNulo(nif)) {
 				model.put("msg", "No ha sido posible encontrar un proveedor asignado al usuario identificado.");

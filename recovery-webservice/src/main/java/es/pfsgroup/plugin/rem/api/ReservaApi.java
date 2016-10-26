@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.HashMap;
 
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
 
 public interface ReservaApi {
@@ -18,6 +19,15 @@ public interface ReservaApi {
 	 */
 	public HashMap<String, String> validateReservaPostRequestData(ReservaDto reservaDto, Object jsonFields) throws Exception;
 	
+	
+	/**
+	 * Método que obtiene uno de los estados posibles de una Reserva
+	 * relacionado con una determinado código
+	 * 
+	 * @param codigo
+	 * @return
+	 */
+	public DDEstadosReserva getDDEstadosReservaByCodigo(String codigo);
 	
 
 }

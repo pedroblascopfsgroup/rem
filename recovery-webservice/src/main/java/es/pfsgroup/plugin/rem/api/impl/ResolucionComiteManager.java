@@ -13,10 +13,12 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -32,6 +34,9 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 	@Autowired
 	private RestApi restApi;
 
+	@Autowired
+	private OfertaApi ofertaApi;
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -56,6 +61,12 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 
 		if (!Checks.esNulo(resolucionComiteDto.getCodigoResolucion())) {
 			DDEstadoResolucion estadoResol = (DDEstadoResolucion) genericDao.get(DDEstadoResolucion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getCodigoResolucion()));
+			if(!Checks.esNulo(resolucionComiteDto.getOfertaHRE())){
+				Oferta ofr = ofertaApi.getOfertaByNumOfertaRem(resolucionComiteDto.getOfertaHRE());
+				if(Checks.esNulo(ofr) || (!Checks.esNulo(ofr) && !ofr.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA))){
+					hashErrores.put("ofertaHRE", "La oferta no esta aceptada.");
+				}
+			}
 			if (!Checks.esNulo(estadoResol)){
 				if(!Checks.esNulo(resolucionComiteDto.getImporteContraoferta()) && !estadoResol.getCodigo().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
 					hashErrores.put("importeContraoferta", "La resolución no es una contraoferta.");					

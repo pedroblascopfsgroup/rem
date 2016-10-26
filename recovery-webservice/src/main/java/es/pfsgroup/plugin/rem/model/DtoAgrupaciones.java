@@ -31,6 +31,7 @@ public class DtoAgrupaciones {
 	private Boolean existeFechaBaja;
 	private Date fechaInicioVigencia;
 	private Date fechaFinVigencia;
+	private boolean esEditable;
 	
 	
 	public String getNombre() {
@@ -174,6 +175,12 @@ public class DtoAgrupaciones {
 	}
 	public void setFechaFinVigencia(Date fechaFinVigencia) {
 		this.fechaFinVigencia = fechaFinVigencia;
+	}
+	public boolean getEsEditable() {
+		return esEditable;
+	}
+	public void setEsEditable(boolean esEditable) {
+		this.esEditable = esEditable;
 	}
 	
 }

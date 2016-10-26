@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -238,6 +239,28 @@ public class ExpedienteComercialController {
 		try {		
 			
 			model.put("success", expedienteComercialApi.saveDatosBasicosOferta(dto, id));
+			
+		}catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("msg", e.getMessage());
+			model.put("success", false);
+		}
+		
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveOfertaTanteoYRetracto(dto, id));
 			
 		}catch (JsonViewerException e) {
 			e.printStackTrace();

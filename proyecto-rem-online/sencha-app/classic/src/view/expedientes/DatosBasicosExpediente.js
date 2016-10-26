@@ -4,7 +4,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     disableValidation: true,
-    reference: 'datosbasicosactivo',
+    reference: 'datosbasicosexpediente',
     scrollable	: 'y',
 	recordName: "expediente",
 	

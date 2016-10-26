@@ -69,6 +69,20 @@ public class PeticionRest implements Serializable, Auditable {
 	
 	@Column(name = "RST_PETICION_IP")
 	private String ip;
+	
+	@Column(name = "RST_PETICION_RESPONSE")
+	private String response;
+	
+	@Column(name = "RST_PETICION_TIME")
+	private Long tiempoEjecucion;
+
+	public String getResponse() {
+		return response;
+	}
+
+	public void setResponse(String response) {
+		this.response = response;
+	}
 
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
@@ -113,6 +127,9 @@ public class PeticionRest implements Serializable, Auditable {
 	}
 
 	public void setErrorDesc(String errorDesc) {
+		if(errorDesc.length()>200){
+			errorDesc = errorDesc.substring(0,199);
+		}
 		this.errorDesc = errorDesc;
 	}
 
@@ -146,6 +163,14 @@ public class PeticionRest implements Serializable, Auditable {
 
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+
+	public Long getTiempoEjecucion() {
+		return tiempoEjecucion;
+	}
+
+	public void setTiempoEjecucion(Long tiempoEjecucion) {
+		this.tiempoEjecucion = tiempoEjecucion;
 	}
 	
 	

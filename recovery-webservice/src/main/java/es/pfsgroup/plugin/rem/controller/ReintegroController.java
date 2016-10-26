@@ -107,6 +107,7 @@ public class ReintegroController {
 			
 		} catch (Exception e) {
 			logger.error(e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
 			if (jsonFields != null) {
 				model.put("id", jsonFields.get("id"));
 			}
@@ -117,7 +118,7 @@ public class ReintegroController {
 			logger.debug("RESPUESTA: " + model);
 		}
 		
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 
 }

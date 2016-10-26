@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -500,6 +501,54 @@ public class ActivoController {
 
 		return createModelAndViewJson(model);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveLlave(DtoLlaves dto, ModelMap model) {
+
+		try {
+			boolean success = adapter.saveLlave(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteLlave(DtoLlaves dto, ModelMap model) {
+
+		try {
+			boolean success = adapter.deleteLlave(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createLlave(DtoLlaves dto, ModelMap model) {
+
+		try {
+			boolean success = adapter.createLlave(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -2128,6 +2177,4 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 		
 	}
-	
-	
 }

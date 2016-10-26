@@ -753,10 +753,11 @@ public class UvemManager implements UvemManagerApi {
 		// PorcentajeImpuestoBISA
 		Porcentaje9 porcentajeImpuesto = null;
 		porcentajeImpuesto = new Porcentaje9();
-		if (instanciaDecisionDto.getTipoDeImpuesto() == InstanciaDecisionDto.TIPO_IMPUESTO_IVA) {
-			porcentajeImpuesto.setPorcentaje(21);
+		
+		if(!Checks.esNulo(instanciaDecisionDto.getPorcentajeImpuesto())){
+			porcentajeImpuesto.setPorcentaje(instanciaDecisionDto.getPorcentajeImpuesto());
 		} else {
-			porcentajeImpuesto.setPorcentaje(0);
+			porcentajeImpuesto.setPorcentaje(0000);
 		}
 		porcentajeImpuesto.setNumDecimales("BC");
 		struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);

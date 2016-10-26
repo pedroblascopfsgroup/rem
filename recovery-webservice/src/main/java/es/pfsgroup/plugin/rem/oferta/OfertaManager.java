@@ -621,6 +621,34 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return ofertaAceptada;
 	}
+	
+	@Override
+	public List<Oferta> trabajoToOfertas(Trabajo trabajo){
+		List<Oferta> listaOfertas = new ArrayList<Oferta>();
+		Activo activo = trabajo.getActivo();
+		if(!Checks.esNulo(activo)) {
+			for(ActivoOferta actofr : activo.getOfertas()){
+				listaOfertas.add(actofr.getPrimaryKey().getOferta());
+			}
+		}
+		return listaOfertas;
+	}
+	
+	@Override
+	public void rechazarOferta(Oferta oferta){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+		DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
+		oferta.setEstadoOferta(estado);
+		genericDao.save(Oferta.class, oferta);
+	}
+	
+	@Override
+	public void descongelarOferta(Oferta oferta){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE);
+		DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
+		oferta.setEstadoOferta(estado);
+		genericDao.save(Oferta.class, oferta);
+	}
 
 	@Override
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna) {

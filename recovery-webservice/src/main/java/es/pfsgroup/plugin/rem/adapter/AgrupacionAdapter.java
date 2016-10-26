@@ -893,6 +893,11 @@ public class AgrupacionAdapter {
 				activoOfertaPk.setOferta(oferta);
 				activoOferta.setPrimaryKey(activoOfertaPk);
 				
+				// TODO: Pendiente de definir como sacar el % de participación.
+				String participacion = String.valueOf(100 / agrupacion.getActivos().size());
+				activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
+				activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
+				
 				listaActivosOfertas.add(activoOferta);
 			}
 			

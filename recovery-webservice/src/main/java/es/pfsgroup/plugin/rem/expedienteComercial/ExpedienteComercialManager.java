@@ -894,7 +894,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		List<Activo> listaActivosExpediente= new ArrayList<Activo>();
 		
 		//Se crea un mapa para cada dato que se quiere obtener
-		Map<Long,Float> activoPorcentajeParti= new HashMap<Long, Float>();	
+		Map<Long,Double> activoPorcentajeParti= new HashMap<Long, Double>();	
 		Map<Long,Double> activoPrecioAprobado= new HashMap<Long, Double>();
 		Map<Long,Double> activoPrecioMinimo= new HashMap<Long, Double>();
 		Map<Long,Double> activoImporteParticipacion= new HashMap<Long, Double>();
@@ -902,17 +902,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//Recorre los activos de la oferta y los añade a la lista de activos a mostrar
 		for(ActivoOferta activoOferta: activosExpediente){
 			listaActivosExpediente.add(activoOferta.getPrimaryKey().getActivo());
+			if(!Checks.esNulo(activoOferta.getPorcentajeParticipacion())){
+				activoPorcentajeParti.put(activoOferta.getPrimaryKey().getActivo().getId(),activoOferta.getPorcentajeParticipacion());
+				if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+					activoImporteParticipacion.put(activoOferta.getPrimaryKey().getActivo().getId(), (activoOferta.getImporteActivoOferta()));
+				}
+			}
 		}
 		
 		//Recorre la relacion activo-trabajo del expediente, por cada una guarda en un mapa el porcentaje de participacion del activo y el importe calculado a partir de dicho porcentaje
-		if(!Checks.esNulo(expediente.getTrabajo())){
-			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
-				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(), activoTrabajo.getParticipacion());
-				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(), 
-												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
-			}
-		}
-
+//		if(!Checks.esNulo(expediente.getTrabajo())){
+//			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
+//				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(), activoTrabajo.getParticipacion());
+//				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(), 
+//												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
+//			}
+//		}
+		
 		//Por cada activo recorre todas sus valoraciones para adquirir el precio aprobado de venta y el precio minimo autorizado
 		for(Activo activo: listaActivosExpediente){
 			for(ActivoValoraciones valoracion: activo.getValoracion()){
@@ -938,7 +944,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	 * @param activo
 	 * @return
 	 */
-	private DtoActivosExpediente activosToDto(Activo activo, Map<Long,Float> activoPorcentajeParti, Map<Long,Double> activoPrecioAprobado, 
+	private DtoActivosExpediente activosToDto(Activo activo, Map<Long,Double> activoPorcentajeParti, Map<Long,Double> activoPrecioAprobado, 
 												Map<Long,Double> activoPrecioMinimo, Map<Long,Double> activoImporteParticipacion) {
 		
 		DtoActivosExpediente dtoActivo= new DtoActivosExpediente();
@@ -2670,23 +2676,36 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id){
 		
 		ExpedienteComercial expedienteComercial = findOne(id);
+		Oferta oferta= expedienteComercial.getOferta();
 		try{
 		//Recorre la relacion activo-trabajo del expediente, modifica la participacion del que coincida con el activo que estamos buscando
-				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
-					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
-						
-						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
-							activoTrabajo.setParticipacion(dto.getPorcentajeParticipacion());
-							genericDao.update(ActivoTrabajo.class, activoTrabajo);
-							return true;
+//				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
+//					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
+//						
+//						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
+//							activoTrabajo.setParticipacion(Float.parseFloat(dto.getPorcentajeParticipacion().toString()));
+//							genericDao.update(ActivoTrabajo.class, activoTrabajo);
+//							return true;
+//						}
+//					}
+//				}
+			List<ActivoOferta> activosOferta= expedienteComercial.getOferta().getActivosOferta();
+			for(ActivoOferta activoOferta: activosOferta){
+				if(activoOferta.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
+					if(!Checks.esNulo(dto.getIdActivo())){
+						if(!Checks.esNulo(dto.getPorcentajeParticipacion())){
+							activoOferta.setPorcentajeParticipacion(dto.getPorcentajeParticipacion());
+							activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*dto.getPorcentajeParticipacion())/100);
 						}
 					}
 				}
+			}
+			
 		}catch(Exception e) {
 			return false;
 		}
 		
-		return false;
+		return true;
 		
 	}
 

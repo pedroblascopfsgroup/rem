@@ -1,16 +1,18 @@
 Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'ofertascomercialagrupacionlist',
+    topBar: true,
     bind: {
-        store: '{storeOfertasAgrupacion}'
+        store: '{storeOfertasAgrupacion}',
+        topBar: '{agrupacionficha.esEditable}',
+		editOnSelect: '{agrupacionficha.esEditable}'
     },
     requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion'],
     
-    topBar: true,
    	removeButton: false,
     initComponent: function () {
-        
-        var me = this;  
+    	        
+        var me = this;
         
         me.columns= [
         
@@ -107,10 +109,13 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
         ];
         
          me.addListener ('beforeedit', function(editor, context) {
-            var estado = context.record.get("codigoEstadoOferta");  
-            var allowEdit = estado != '01' && estado != '02';
-            this.editOnSelect = allowEdit;
-            return allowEdit;
+         	
+         	if(this.editOnSelect) {
+	            var estado = context.record.get("codigoEstadoOferta");  
+	            var allowEdit = estado != '01' && estado != '02';
+	            this.editOnSelect = allowEdit;
+         	}
+            return this.editOnSelect;
         });
         
         

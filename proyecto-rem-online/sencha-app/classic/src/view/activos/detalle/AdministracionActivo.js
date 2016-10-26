@@ -130,7 +130,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				{
 					xtype: 'displayfieldbase',
 					value: HreRem.i18n('title.activo.administracion.mensaje.proveedor.excluido'),
-					fieldStyle: 'color: #FF0000;',
+					//fieldStyle: 'color: #FF0000;',
 				    flex: 1
 				}
 			]

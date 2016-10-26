@@ -39,7 +39,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.impl.UvemManager;
+import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -112,6 +112,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
@@ -155,7 +156,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 	@Autowired
-	private UvemManager uvemManager;
+	private UvemManagerApi uvemManagerApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -2203,12 +2204,13 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public String consultarComiteSancionador(Long idExpediente) throws Exception {
 		
 		ExpedienteComercial expediente = findOne(idExpediente);
+		//InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
 		InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
 		String codigoComite = null;
 			
 		ResultadoInstanciaDecisionDto resultadoDto;
 		try {
-			resultadoDto = uvemManager.consultarInstanciaDecision(instancia);
+			resultadoDto = uvemManagerApi.consultarInstanciaDecision(instancia);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new Exception(e);
@@ -2223,14 +2225,14 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 	private InstanciaDecisionDto expedienteComercialToInstanciaDecision(ExpedienteComercial expediente) {
 		
-		InstanciaDecisionDto instancia  = new InstanciaDecisionDto();
+		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		Oferta oferta = expediente.getOferta();
 		Activo activo = oferta.getActivoPrincipal();
 		
 		boolean solicitaFinanciacion = false;
 		int numActivoEspecial = 0;
 		Long importe = new Long(0);
-		short tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_SIN_IMPUESTO;
+		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 		
 		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
 			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
@@ -2241,18 +2243,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
 			String tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo(); 
-			if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IVA;
-			if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IGIC;
-			if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IPSI;
-			if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_ITP;
-		}
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP;
+		}	
+		
+		InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
+		instData.setIdentificadorActivoEspecial(numActivoEspecial);
+		instData.setImporteConSigno(importe);
+		instData.setTipoDeImpuesto(tipoDeImpuesto);
+		
+		List<InstanciaDecisionDataDto> instanciaList  = new ArrayList<InstanciaDecisionDataDto>();
+		instanciaList.add(instData);
 		
 		instancia.setCodigoDeOfertaHaya("0");
 		instancia.setFinanciacionCliente(solicitaFinanciacion);
-		instancia.setIdentificadorActivoEspecial(numActivoEspecial);
-		instancia.setImporteConSigno(importe);
-		instancia.setTipoDeImpuesto(tipoDeImpuesto);
-		
+		instancia.setData(instanciaList);
 		
 		return instancia;
 	}
@@ -2374,7 +2381,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		try {
 			//dtoDatosCliente.rellenarDatosDummies();
-			dtoDatosCliente= uvemManager.ejecutarDatosClientePorDocumento(compradorUrsus);
+			dtoDatosCliente= uvemManagerApi.ejecutarDatosClientePorDocumento(compradorUrsus);
 			if(Checks.esNulo(dtoDatosCliente.getDniNifDelTitularDeLaOferta())){
 				throw new JsonViewerException("Cliente Ursus no encontrado");
 			}

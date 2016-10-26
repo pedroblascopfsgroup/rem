@@ -237,9 +237,12 @@ public class AgrupacionAdapter {
 					BeanUtils.copyProperty(activoDto, "tipoActivoDescripcion", activo.getTipoActivo().getDescripcion());
 				}
 				 */
-					
 				
-				
+				// Resolvemos si la agrupación será editable
+				dtoAgrupacion.setEsEditable(true);
+				if(!Checks.esNulo(agrupacion.getFechaBaja())) {
+					dtoAgrupacion.setEsEditable(false);					
+				}
 			}
 			
 			
@@ -773,7 +776,7 @@ public class AgrupacionAdapter {
 	public List<VOfertasActivosAgrupacion>  getListOfertasAgrupacion(Long idAgrupacion) {
 		
 		Filter filtro= genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());	
-		Order order = new Order(OrderType.ASC, "fechaCreacion");
+		Order order = new Order(OrderType.DESC, "fechaCreacion");
 		
 		List<VOfertasActivosAgrupacion> ofertasAgrupacion= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order,filtro);
 	
@@ -889,6 +892,11 @@ public class AgrupacionAdapter {
 				activoOfertaPk.setActivo(activos.getActivo());
 				activoOfertaPk.setOferta(oferta);
 				activoOferta.setPrimaryKey(activoOfertaPk);
+				
+				// TODO: Pendiente de definir como sacar el % de participación.
+				String participacion = String.valueOf(100 / agrupacion.getActivos().size());
+				activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
+				activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
 				
 				listaActivosOfertas.add(activoOferta);
 			}

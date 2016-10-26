@@ -94,6 +94,9 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 			
 			{
 				xtype: 'datosbasicosoferta'
+			},
+			{
+				xtype: 'ofertatanteoyretracto'
 			}
 			
     	];

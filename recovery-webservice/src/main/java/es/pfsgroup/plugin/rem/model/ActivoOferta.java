@@ -38,6 +38,9 @@ public class ActivoOferta implements Serializable {
 	@Column(name="ACT_OFR_IMPORTE")
 	private Double importeActivoOferta;
 	
+	@Column(name="OFR_ACT_PORCEN_PARTICIPACION")
+	private Double porcentajeParticipacion;
+	
 	
 	public Double getImporteActivoOferta() {
 		return importeActivoOferta;
@@ -53,6 +56,14 @@ public class ActivoOferta implements Serializable {
 
 	public void setPrimaryKey(ActivoOfertaPk primaryKey) {
 		this.primaryKey = primaryKey;
+	}
+
+	public Double getPorcentajeParticipacion() {
+		return porcentajeParticipacion;
+	}
+
+	public void setPorcentajeParticipacion(Double porcentajeParticipacion) {
+		this.porcentajeParticipacion = porcentajeParticipacion;
 	}
 
 

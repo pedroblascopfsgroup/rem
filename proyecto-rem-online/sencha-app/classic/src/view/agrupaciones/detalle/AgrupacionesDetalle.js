@@ -121,13 +121,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
+		
+		var esEditable = me.lookupController().getViewModel().get('agrupacionficha.esEditable');
 
-		// Si la pestaña recibida no tiene asignadas funciones de edicion 
-		if(Ext.isEmpty(tab.funPermEdition)) {
-    		editionEnabled();
-    	} else {
-    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
-    	}    	
+		//Si la agrupación es editable
+		if(esEditable) {
+			// Si la pestaña recibida no tiene asignadas funciones de edicion 
+			if(Ext.isEmpty(tab.funPermEdition)) {
+	    		editionEnabled();
+	    	} else {
+	    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+	    	}   
+    	}
     }
     
 });

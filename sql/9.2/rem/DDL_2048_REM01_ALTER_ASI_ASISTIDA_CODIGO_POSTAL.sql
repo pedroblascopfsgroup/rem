@@ -4,8 +4,8 @@
 --## FECHA_CREACION=20161017
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
---## PRODUCTO=HREOS-1013
+--## INCIDENCIA_LINK=HREOS-1013
+--## PRODUCTO=NO
 --## Finalidad: Converitr column codigo postal a varchar y conservar los datos
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

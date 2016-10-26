@@ -19,53 +19,43 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de los estados de los gastos
+ * Modelo que gestiona el diccionario de portales web.
  * 
- * @author Luis Caballero
+ * @author Bender
  *
  */
 @Entity
-@Table(name = "DD_EGA_ESTADOS_GASTO", schema = "${entity.schema}")
+@Table(name = "DD_DRT_RESULTADO_TANTEO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadoGasto implements Auditable, Dictionary {
+public class DDResultadoTanteo implements Auditable, Dictionary {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3836191709700209057L;
-	
-	public static final String PENDIENTE = "01";
-	public static final String ANULADO = "06";
-	public static final String RETENIDO = "07";
-	
+    public static final String CODIGO_EJERCIDO = "01";
+    public static final String CODIGO_RENUNCIADO = "02";
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_EGA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoGastoGenerator")
-	@SequenceGenerator(name = "DDEstadoGastoGenerator", sequenceName = "S_DD_EGA_ESTADOS_GASTO")
+	@Column(name = "DD_DRT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDResultadoTanteoGenerator")
+	@SequenceGenerator(name = "DDResultadoTanteoGenerator", sequenceName = "S_DD_DRT_RESULTADO_TANTEO")
 	private Long id;
-	 
-	@Column(name = "DD_EGA_CODIGO")   
+	    
+	@Column(name = "DD_DRT_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_EGA_DESCRIPCION")   
+	@Column(name = "DD_DRT_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_EGA_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	    
-	
-	    
+	@Column(name = "DD_DRT_DESCRIPCION_LARGA")   
+	private String descripcionLarga;	    
+
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
 
-	 
-	 
-	 
 	public Long getId() {
 		return id;
 	}
@@ -81,7 +71,7 @@ public class DDEstadoGasto implements Auditable, Dictionary {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	
+
 	public String getDescripcion() {
 		return descripcion;
 	}

@@ -34,7 +34,7 @@ public class TrabajoDto implements Serializable{
 	@Size(max=256)
 	private String descripcion;
 	@NotNull(groups = { Insert.class})
-	private Long idProveedorRemResponsable;
+	private Long idProveedorRem;
 	@Size(max=60,groups = { Insert.class, Update.class })
 	private String nombreContacto;
 	@Size(max=14,groups = { Insert.class, Update.class })
@@ -101,11 +101,11 @@ public class TrabajoDto implements Serializable{
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public Long getIdProveedorRemResponsable() {
-		return idProveedorRemResponsable;
+	public Long getIdProveedorRem() {
+		return idProveedorRem;
 	}
-	public void setIdProveedorRemResponsable(Long idProveedorRemResponsable) {
-		this.idProveedorRemResponsable = idProveedorRemResponsable;
+	public void setIdProveedorRem(Long idProveedorRem) {
+		this.idProveedorRem = idProveedorRem;
 	}
 	public String getNombreContacto() {
 		return nombreContacto;

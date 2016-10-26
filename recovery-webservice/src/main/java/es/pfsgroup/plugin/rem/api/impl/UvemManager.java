@@ -492,7 +492,7 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC93_INS.setcabeceraTecnica(cabeceraTecnica);
 
 		// seteamos parametros
-		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0170");
+		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0272");
 		servicioGMPAJC93_INS.setIdentificadorClienteOfertaidclow(numcliente);//<--------?????
 		servicioGMPAJC93_INS.setnumeroUsuario("");//<--------????? Nos lo piden obligatorio
 		servicioGMPAJC93_INS.setidSesionWL("");//<--------????? Nos lo piden obligatorio
@@ -753,10 +753,11 @@ public class UvemManager implements UvemManagerApi {
 		// PorcentajeImpuestoBISA
 		Porcentaje9 porcentajeImpuesto = null;
 		porcentajeImpuesto = new Porcentaje9();
-		if (instanciaDecisionDto.getTipoDeImpuesto() == InstanciaDecisionDto.TIPO_IMPUESTO_IVA) {
-			porcentajeImpuesto.setPorcentaje(21);
+		
+		if(!Checks.esNulo(instanciaDecisionDto.getPorcentajeImpuesto())){
+			porcentajeImpuesto.setPorcentaje(instanciaDecisionDto.getPorcentajeImpuesto());
 		} else {
-			porcentajeImpuesto.setPorcentaje(0);
+			porcentajeImpuesto.setPorcentaje(0000);
 		}
 		porcentajeImpuesto.setNumDecimales("BC");
 		struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
@@ -869,7 +870,11 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("IdentificadorActivoEspecialcoacew: " + struct.getIdentificadorActivoEspecialcoacew());
 		logger.info("ImporteConSigno: " + struct.getImporteMonetarioOfertaBISA().getImporteConSigno());
 		logger.info("TipoDeImpuestocotimw: " + struct.getTipoDeImpuestocotimw());
-	
+		logger.info("Porcentaje: " + struct.getPorcentajeImpuestoBISA().getPorcentaje());
+		logger.info("PorcentajeNumDecimales: " + struct.getPorcentajeImpuestoBISA().getNumDecimales());
+		logger.info("IndicadorTratamientoImpuestobitrim: " + struct.getIndicadorTratamientoImpuestobitrim());
+		
+		
 	
 		System.out.println("CodigoObjetoAccesocopace: " + servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
 		System.out.println("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
@@ -881,6 +886,9 @@ public class UvemManager implements UvemManagerApi {
 		System.out.println("IdentificadorActivoEspecialcoacew: " + struct.getIdentificadorActivoEspecialcoacew());
 		System.out.println("ImporteConSigno: " + struct.getImporteMonetarioOfertaBISA().getImporteConSigno());
 		System.out.println("TipoDeImpuestocotimw: " + struct.getTipoDeImpuestocotimw());
+		System.out.println("Porcentaje: " + struct.getPorcentajeImpuestoBISA().getPorcentaje());
+		System.out.println("PorcentajeNumDecimales: " + struct.getPorcentajeImpuestoBISA().getNumDecimales());
+		System.out.println("IndicadorTratamientoImpuestobitrim: " + struct.getIndicadorTratamientoImpuestobitrim());
 		
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();

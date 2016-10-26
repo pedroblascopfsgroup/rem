@@ -212,6 +212,12 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(operacionMasiva.getCodigo())){
 					if(!particularValidator.estadoDespublicar(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
+				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
+					if(!particularValidator.estadosValidosDespublicarForzado(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
+					if(!particularValidator.estadosValidosDesDespublicarForzado(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
 				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(operacionMasiva.getCodigo())){
 					if(!particularValidator.estadoAutorizaredicion(exc.dameCelda(i, 0)));
 						listaFilas.add(i);

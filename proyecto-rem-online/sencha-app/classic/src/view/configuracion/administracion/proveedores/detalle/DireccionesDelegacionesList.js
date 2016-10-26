@@ -50,7 +50,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        {
 		        	xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboTipoDireccionProveedor').findRecord('codigo', value);
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoDireccionProveedor').findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -73,7 +73,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        {
 		        	xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboSiNoRem').findRecord('codigo', value);
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboSiNoRem').findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -107,7 +107,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        {
 		        	xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboTipoVia').findRecord('codigo', value);
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoVia').findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -161,7 +161,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        {
 		        	xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetalletabpanel').getViewModel().getStore('comboTerritorial').findRecord('codigo', value);
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboTerritorial').findRecord('codigo', value);
 			            var me = this;
         		       	var comboEditor = me.columns && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor():null;
 			            var descripcion;

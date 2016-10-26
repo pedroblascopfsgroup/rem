@@ -34,6 +34,7 @@ V_REG_MIG NUMBER(10,0) := 0;
 V_REG_INSERTADOS NUMBER(10,0) := 0;
 V_REJECTS NUMBER(10,0) := 0;
 V_COD NUMBER(10,0) := 0;
+V_DUPLICADOS NUMBER(10,0) := 0;
 V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
@@ -124,6 +125,11 @@ BEGIN
             ,BORRADO
             ,DD_LOC_ID
             ,DD_PRV_ID
+          ) WITH DUPLICADOS AS(
+			  SELECT DISTINCT COM_COD_COMPRADOR
+			  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+			  GROUP BY COM_COD_COMPRADOR 
+			  HAVING COUNT(1) > 1
           )
           SELECT
             '||V_ESQUEMA||'.S_COM_COMPRADOR.NEXTVAL                                                           AS COM_ID,
@@ -158,6 +164,10 @@ BEGIN
               FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX2
               WHERE AUX2.CLC_ID = CLC.CLC_ID
             )
+            AND NOT EXISTS (
+            SELECT 1
+            FROM DUPLICADOS DUP
+            WHERE DUP.COM_COD_COMPRADOR = MIG2.COM_COD_COMPRADOR)
           ) AUX      
       '
       ;
@@ -171,6 +181,16 @@ BEGIN
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      
+      --VALIDACION DE DUPLICADOS
+      V_SENTENCIA := '
+      SELECT SUM(COUNT(1))
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+      GROUP BY COM_COD_COMPRADOR 
+      HAVING COUNT(1) > 1
+      '
+      ;  
+      EXECUTE IMMEDIATE V_SENTENCIA INTO V_DUPLICADOS;
       
       -- INFORMAMOS A LA TABLA INFO
       
@@ -192,6 +212,10 @@ BEGIN
         IF TABLE_COUNT != 0 THEN
            V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes. ';
         END IF;
+        
+        IF V_DUPLICADOS != 0 THEN
+			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' COM_COD_COMPRADOR duplicados. ';	
+		END IF;
       END IF;
       
       EXECUTE IMMEDIATE '

@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
+import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -95,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -124,9 +126,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	public final String PESTANA_FICHA = "ficha";
 	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
+	public final String PESTANA_TANTEO_Y_RETRACTO_OFERTA= "ofertatanteoyretracto";
 	public final String PESTANA_RESERVA = "reserva";
 	public final String PESTANA_CONDICIONES = "condiciones";
 	public final String PESTANA_FORMALIZACION= "formalizacion";
+
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -179,6 +183,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto = expedienteToDtoFichaExpediente(expediente);
 			} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 				dto = expedienteToDtoDatosBasicosOferta(expediente);
+			} else if(PESTANA_TANTEO_Y_RETRACTO_OFERTA.equals(tab)){
+				dto = expedienteToDtoTanteoYRetractoOferta(expediente);
 			} else if (PESTANA_RESERVA.equals(tab)) {
 				dto = expedienteToDtoReserva(expediente);
 			} else if (PESTANA_CONDICIONES.equals(tab)) {
@@ -293,6 +299,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return true;
 	}
 	
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) {
@@ -471,6 +478,37 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 
 
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dtoTanteoYRetractoOferta, Long idExpediente) {
+	
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		Oferta oferta = expedienteComercial.getOferta();
+		Visita visita = null;
+		
+		if(!Checks.esNulo(oferta)){
+			visita = oferta.getVisita();
+		
+			oferta.setCondicionesTransmision(dtoTanteoYRetractoOferta.getCondicionesTransmision());
+			oferta.setFechaComunicacionRegistro(dtoTanteoYRetractoOferta.getFechaComunicacionReg());
+			oferta.setFechaContestacion(dtoTanteoYRetractoOferta.getFechaContestacion());
+			
+			if(!Checks.esNulo(visita)){
+				visita.setFechaSolicitud(dtoTanteoYRetractoOferta.getFechaSolicitudVisita());
+				visita.setFechaVisita(dtoTanteoYRetractoOferta.getFechaRealizacionVisita());
+			}
+			
+			oferta.setFechaFinTanteo(dtoTanteoYRetractoOferta.getFechaFinTanteo());
+			oferta.setResultadoTanteo((DDResultadoTanteo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoTanteo.class, dtoTanteoYRetractoOferta.getResultadoTanteoCodigo()));
+			oferta.setFechaMaxFormalizacion(dtoTanteoYRetractoOferta.getFechaMaxFormalizacion());
+		}
+		
+		genericDao.save(Oferta.class, oferta);
+		
+		return true;
+		
+	}
+	
 	private DtoFichaExpediente expedienteToDtoFichaExpediente(ExpedienteComercial expediente) {
 
 		DtoFichaExpediente dto = new DtoFichaExpediente();
@@ -511,8 +549,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 					dto.setMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
 				}
-				
-				
+
+				dto.setImporte(!Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta(): oferta.getImporteOferta());
 				
 				if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
 					dto.setComprador(expediente.getCompradorPrincipal().getFullName());
@@ -654,6 +692,44 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}		
 				
 		return dto;
+	}
+	
+	private DtoTanteoYRetractoOferta expedienteToDtoTanteoYRetractoOferta(ExpedienteComercial expediente) {
+
+		DtoTanteoYRetractoOferta dtoTanteoYRetractoOferta = new DtoTanteoYRetractoOferta();
+		Oferta oferta = expediente.getOferta();
+		Visita visita = null;
+
+		if(!Checks.esNulo(oferta)){
+
+			visita = oferta.getVisita();
+			
+			// ID y NUM Oferta
+			dtoTanteoYRetractoOferta.setIdOferta(oferta.getId());
+			dtoTanteoYRetractoOferta.setNumOferta(oferta.getNumOferta());
+			
+			// Condiciones TX
+			dtoTanteoYRetractoOferta.setCondicionesTransmision(oferta.getCondicionesTransmision());
+			
+			// Fechas Comunicacion y Contestacion
+			dtoTanteoYRetractoOferta.setFechaComunicacionReg(oferta.getFechaComunicacionRegistro());
+			dtoTanteoYRetractoOferta.setFechaContestacion(oferta.getFechaContestacion());
+			
+			// Fechas visita
+			if(!Checks.esNulo(visita)){
+				dtoTanteoYRetractoOferta.setFechaSolicitudVisita(visita.getFechaSolicitud());
+				dtoTanteoYRetractoOferta.setFechaRealizacionVisita(visita.getFechaVisita());
+			}
+			
+			//Fechas y resultado Tanteo
+			dtoTanteoYRetractoOferta.setFechaFinTanteo(oferta.getFechaFinTanteo());
+			if(!Checks.esNulo(oferta.getResultadoTanteo()))
+				dtoTanteoYRetractoOferta.setResultadoTanteoCodigo(oferta.getResultadoTanteo().getCodigo());
+			dtoTanteoYRetractoOferta.setFechaMaxFormalizacion(oferta.getFechaMaxFormalizacion());
+			
+		}
+		
+		return dtoTanteoYRetractoOferta;
 	}
 	
 	private DtoReserva expedienteToDtoReserva(ExpedienteComercial expediente) {
@@ -818,7 +894,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		List<Activo> listaActivosExpediente= new ArrayList<Activo>();
 		
 		//Se crea un mapa para cada dato que se quiere obtener
-		Map<Long,Float> activoPorcentajeParti= new HashMap<Long, Float>();	
+		Map<Long,Double> activoPorcentajeParti= new HashMap<Long, Double>();	
 		Map<Long,Double> activoPrecioAprobado= new HashMap<Long, Double>();
 		Map<Long,Double> activoPrecioMinimo= new HashMap<Long, Double>();
 		Map<Long,Double> activoImporteParticipacion= new HashMap<Long, Double>();
@@ -826,17 +902,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//Recorre los activos de la oferta y los añade a la lista de activos a mostrar
 		for(ActivoOferta activoOferta: activosExpediente){
 			listaActivosExpediente.add(activoOferta.getPrimaryKey().getActivo());
+			if(!Checks.esNulo(activoOferta.getPorcentajeParticipacion())){
+				activoPorcentajeParti.put(activoOferta.getPrimaryKey().getActivo().getId(),activoOferta.getPorcentajeParticipacion());
+				if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+					activoImporteParticipacion.put(activoOferta.getPrimaryKey().getActivo().getId(), (activoOferta.getImporteActivoOferta()));
+				}
+			}
 		}
 		
 		//Recorre la relacion activo-trabajo del expediente, por cada una guarda en un mapa el porcentaje de participacion del activo y el importe calculado a partir de dicho porcentaje
-		if(!Checks.esNulo(expediente.getTrabajo())){
-			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
-				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(), activoTrabajo.getParticipacion());
-				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(), 
-												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
-			}
-		}
-
+//		if(!Checks.esNulo(expediente.getTrabajo())){
+//			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
+//				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(), activoTrabajo.getParticipacion());
+//				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(), 
+//												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
+//			}
+//		}
+		
 		//Por cada activo recorre todas sus valoraciones para adquirir el precio aprobado de venta y el precio minimo autorizado
 		for(Activo activo: listaActivosExpediente){
 			for(ActivoValoraciones valoracion: activo.getValoracion()){
@@ -862,7 +944,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	 * @param activo
 	 * @return
 	 */
-	private DtoActivosExpediente activosToDto(Activo activo, Map<Long,Float> activoPorcentajeParti, Map<Long,Double> activoPrecioAprobado, 
+	private DtoActivosExpediente activosToDto(Activo activo, Map<Long,Double> activoPorcentajeParti, Map<Long,Double> activoPrecioAprobado, 
 												Map<Long,Double> activoPrecioMinimo, Map<Long,Double> activoImporteParticipacion) {
 		
 		DtoActivosExpediente dtoActivo= new DtoActivosExpediente();
@@ -2594,23 +2676,36 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id){
 		
 		ExpedienteComercial expedienteComercial = findOne(id);
+		Oferta oferta= expedienteComercial.getOferta();
 		try{
 		//Recorre la relacion activo-trabajo del expediente, modifica la participacion del que coincida con el activo que estamos buscando
-				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
-					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
-						
-						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
-							activoTrabajo.setParticipacion(dto.getPorcentajeParticipacion());
-							genericDao.update(ActivoTrabajo.class, activoTrabajo);
-							return true;
+//				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
+//					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
+//						
+//						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
+//							activoTrabajo.setParticipacion(Float.parseFloat(dto.getPorcentajeParticipacion().toString()));
+//							genericDao.update(ActivoTrabajo.class, activoTrabajo);
+//							return true;
+//						}
+//					}
+//				}
+			List<ActivoOferta> activosOferta= expedienteComercial.getOferta().getActivosOferta();
+			for(ActivoOferta activoOferta: activosOferta){
+				if(activoOferta.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
+					if(!Checks.esNulo(dto.getIdActivo())){
+						if(!Checks.esNulo(dto.getPorcentajeParticipacion())){
+							activoOferta.setPorcentajeParticipacion(dto.getPorcentajeParticipacion());
+							activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*dto.getPorcentajeParticipacion())/100);
 						}
 					}
 				}
+			}
+			
 		}catch(Exception e) {
 			return false;
 		}
 		
-		return false;
+		return true;
 		
 	}
 

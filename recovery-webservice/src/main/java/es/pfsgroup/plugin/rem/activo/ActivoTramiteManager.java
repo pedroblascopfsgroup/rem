@@ -37,7 +37,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
-import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 /**
@@ -102,6 +101,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		return activoTramiteDao.getTramitesActivoTrabajo(idTrabajo, webDto);		
 	}
 
+	public List<ActivoTramite> getTramitesActivoTrabajoList(Long idTrabajo){		
+		return activoTramiteDao.getTramitesActivoTrabajoList(idTrabajo);		
+	}
 	
 	@Override
 	@BusinessOperation(overrides = "activoTramiteManager.getActivosTramite")

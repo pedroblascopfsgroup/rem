@@ -554,19 +554,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) {
-		
+
 		Oferta ofertaAcepted = null;
-		
+
 		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
 		restApi.doLogin(usuarioSecurity);
-		
-		
+
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
-		ActivoOferta actOfr = listaActivoOferta.get(0);
-		if(!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())){
-			ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+
+		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
+			ActivoOferta actOfr = listaActivoOferta.get(0);
+			if (!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())) {
+				ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+			}
 		}
-			
+
 		if (!Checks.esNulo(ofertaAcepted)) {
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
@@ -574,9 +576,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
 		}
-		
+
 		oferta.setFechaAlta(fechaAccion);
-		
+
 		if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
@@ -605,10 +607,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	@Transactional
 	public void updateStateDispComercialActivosByOferta(Oferta oferta) {
-
-		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
-			updaterState.updaterStateDisponibilidadComercial(activo);
+		if (oferta.getActivosOferta() != null && oferta.getActivosOferta().size() > 0) {
+			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				updaterState.updaterStateDisponibilidadComercial(activo);
+			}
 		}
 	}
 

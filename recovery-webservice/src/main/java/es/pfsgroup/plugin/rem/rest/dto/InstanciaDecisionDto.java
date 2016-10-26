@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
+import es.pfsgroup.commons.utils.Checks;
+
 public class InstanciaDecisionDto {
 
 	public final short PROPUESTA_VENTA = 1;
@@ -15,11 +17,11 @@ public class InstanciaDecisionDto {
 	public final static short TIPO_IMPUESTO_IPSI = 4;
 	
 	private String codigoDeOfertaHaya; //Campo OFR_NUM_OFERTA de la tabla OFR_OFERTAS
-	//private short tipoPropuesta; //1 = Venta o 3 = Modificación precio si es contraoferta  <--AHORA DEPENDE DE SI ES CONS/ALTA/MODI
 	private char indicadorDeFinanciacionCliente; //'S' or 'N'
 	private Integer identificadorActivoEspecial;
 	private Long importeConSigno; //x100
 	private short tipoDeImpuesto;
+	private int porcentajeImpuesto;
 	
 	public String getCodigoDeOfertaHaya() {
 		return codigoDeOfertaHaya;
@@ -37,7 +39,11 @@ public class InstanciaDecisionDto {
 		return importeConSigno;
 	}
 	public void setImporteConSigno(Long importeConSigno) {
-		this.importeConSigno = importeConSigno;
+		if(!Checks.esNulo(importeConSigno)){
+			this.importeConSigno = importeConSigno * 100;
+		}else{
+			this.importeConSigno = importeConSigno;
+		}
 	}
 	public short getTipoDeImpuesto() {
 		return tipoDeImpuesto;
@@ -45,16 +51,16 @@ public class InstanciaDecisionDto {
 	public void setTipoDeImpuesto(short tipoDeImpuesto) {
 		this.tipoDeImpuesto = tipoDeImpuesto;
 	}
-//	public boolean isContraoferta() {
-//		return ( tipoPropuesta == PROPUESTA_CONTRAOFERTA );
-//	}
-//	public void setContraoferta( boolean esContraoferta) {
-//		if (esContraoferta) {
-//			this.tipoPropuesta = PROPUESTA_CONTRAOFERTA;
-//		} else {
-//			this.tipoPropuesta = PROPUESTA_VENTA;
-//		}
-//	}
+	public int getPorcentajeImpuesto() {
+		return porcentajeImpuesto;
+	}
+	public void setPorcentajeImpuesto(int porcentajeImpuesto) {
+		if(!Checks.esNulo(porcentajeImpuesto)){
+			this.porcentajeImpuesto = porcentajeImpuesto*100;
+		}else{
+			this.porcentajeImpuesto = porcentajeImpuesto;
+		}
+	}
 	public boolean isFinanciacionCliente() {
 		return ( indicadorDeFinanciacionCliente ==  FINANCIACION_CLIENTE_SI);
 	}

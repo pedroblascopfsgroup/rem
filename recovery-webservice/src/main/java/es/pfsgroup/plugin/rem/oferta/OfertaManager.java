@@ -562,9 +562,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
-		ActivoOferta actOfr = listaActivoOferta.get(0);
-		if(!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())){
-			ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+		
+		if(listaActivoOferta!= null && listaActivoOferta.size()>0){
+			ActivoOferta actOfr = listaActivoOferta.get(0);
+			if(!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())){
+				ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+			}
 		}
 			
 		if (!Checks.esNulo(ofertaAcepted)) {

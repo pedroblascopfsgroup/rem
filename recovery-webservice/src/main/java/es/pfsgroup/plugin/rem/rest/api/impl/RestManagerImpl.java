@@ -16,6 +16,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
@@ -49,6 +50,7 @@ import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Service("restManager")
@@ -222,7 +224,8 @@ public class RestManagerImpl implements RestApi {
 			out.print(jsonResp);
 			out.flush();
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			logger.error(e);
+			throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonResp);
 		}
 
 	}
@@ -375,5 +378,104 @@ public class RestManagerImpl implements RestApi {
 	@Override
 	public ALGORITMO_FIRMA obtenerAlgoritmoFirma(ServletRequest req) {
 		return obtenerAlgoritmoFirma(obtenerNombreServicio(req), getClientIpAddr(req));
+	}
+
+	
+	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields) {
+		try {
+			JSONObject jsonResp = null;
+
+			HttpServletResponse response = (HttpServletResponse) res;
+
+			jsonResp = buildJsonResponse(errorCode, jsonFields);
+
+			response.reset();
+			response.setHeader("Content-Type", "application/json;charset=UTF-8");
+
+			if (!Checks.esNulo(jsonResp)) {
+				PrintWriter out = response.getWriter();
+				out.print(jsonResp);
+				out.flush();
+			}
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+	}
+
+	/**
+	 * Genera el formato de una respuesta de un servicio REST
+	 * 
+	 * @param errorCode
+	 * @param jsonFields
+	 * @throws IOException
+	 */
+	private JSONObject buildJsonResponse(String errorCode, JSONObject jsonFields) throws IOException {
+		JSONObject jsonResp = new JSONObject();
+		Object jsonLine = null;
+		Map<String, Object> map = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+
+		if (!Checks.esNulo(jsonFields)) {
+
+			if (jsonFields.has("id")) {
+				jsonResp.accumulate("id", jsonFields.get("id"));
+			}
+			if (!Checks.esNulo(errorCode)) {
+				jsonResp.accumulate("error", errorCode);
+			}
+
+			if (jsonFields.has("data") && jsonFields.get("data") instanceof JSONArray) {
+				if (!Checks.esNulo(jsonFields.getJSONArray("data")) && jsonFields.getJSONArray("data").size() > 0) {
+
+					// Construimos mapa de ids a retornar
+					for (int i = 0; i < jsonFields.getJSONArray("data").size(); i++) {
+						map = new HashMap<String, Object>();
+						jsonLine = jsonFields.getJSONArray("data").get(i);
+						if (((JSONObject) jsonLine).containsKey("idInformeMediadorWebcom")) {
+							map.put("idInformeMediadorWebcom", ((JSONObject) jsonLine).get("idInformeMediadorWebcom"));
+							map.put("idActivoHaya", ((JSONObject) jsonLine).get("idActivoHaya"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idClienteWebcom")) {
+							map.put("idClienteWebcom", ((JSONObject) jsonLine).get("idClienteWebcom"));
+							map.put("idClienteRem", ((JSONObject) jsonLine).get("idClienteRem"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idVisitaWebcom")) {
+							map.put("idVisitaWebcom", ((JSONObject) jsonLine).get("idVisitaWebcom"));
+							map.put("idVisitaRem", ((JSONObject) jsonLine).get("idVisitaRem"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idOfertaWebcom")) {
+							map.put("idOfertaWebcom", ((JSONObject) jsonLine).get("idOfertaWebcom"));
+							map.put("idOfertaRem", ((JSONObject) jsonLine).get("idOfertaRem"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idActivoHaya")) {
+							map.put("idActivoHaya", ((JSONObject) jsonLine).get("idActivoHaya"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idTrabajoWebcom")) {
+							map.put("idTrabajoWebcom", ((JSONObject) jsonLine).get("idTrabajoWebcom"));
+							map.put("idTrabajoRem", ((JSONObject) jsonLine).get("idTrabajoRem"));
+						}
+						if (((JSONObject) jsonLine).containsKey("idNotificacionWebcom")) {
+							map.put("idNotificacionWebcom", ((JSONObject) jsonLine).get("idNotificacionWebcom"));
+							map.put("idNotificacionRem", ((JSONObject) jsonLine).get("idNotificacionRem"));
+						}
+						map.put("success", false);
+
+						listaRespuesta.add(map);
+					}
+					jsonResp.accumulate("data", listaRespuesta);
+
+				} else {
+					jsonResp.accumulate("data", jsonFields.getJSONArray("data"));
+				}
+			}
+		} else {
+			// json inválido
+			jsonResp.accumulate("id", null);
+			jsonResp.accumulate("error", errorCode);
+
+		}
+
+		return jsonResp;
 	}
 }

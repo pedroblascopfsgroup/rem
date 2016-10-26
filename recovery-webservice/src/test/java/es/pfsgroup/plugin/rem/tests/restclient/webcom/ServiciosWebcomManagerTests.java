@@ -185,7 +185,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		// assertDataEquals(requestData, 0, ServicioStockConstantes.ID_ESTADO,
 		// Boolean.TRUE);
 		assertDataEquals(requestData, 1, ServicioStockConstantes.CODIGO_AGRUPACION_OBRA_NUEVA,
-				codigoAgrupacionObraNueva);
+				codigoAgrupacionObraNueva.toString());
 
 		// Comprobamos que los campos que ponemos explícitamente a Null
 		// aparezcan como NULL en el JSON

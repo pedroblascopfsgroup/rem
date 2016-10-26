@@ -926,6 +926,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposAlquilerActivo'}
 			}
+		},
+		
+		comboTipoTenedor: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoTenedor'}
+			},
+			autoLoad: true
 		}
      }    
 });

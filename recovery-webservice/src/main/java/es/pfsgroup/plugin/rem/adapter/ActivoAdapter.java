@@ -31,7 +31,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
@@ -42,7 +41,6 @@ import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
@@ -59,14 +57,14 @@ import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoLlave;
+import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -95,6 +93,7 @@ import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
@@ -122,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -129,9 +129,6 @@ import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service
 public class ActivoAdapter {
-	
-    @Autowired
-    private DTOFactory dtoFactory;
 	
     @Autowired
     private ApiProxyFactory proxyFactory;
@@ -147,9 +144,6 @@ public class ActivoAdapter {
 
     @Autowired 
     private ActivoApi activoApi;
-    
-    @Autowired 
-    private ActivoAgrupacionApi activoAgrupacionApi;
     
     @Autowired 
     private ActivoCargasApi activoCargasApi;
@@ -2407,10 +2401,8 @@ public class ActivoAdapter {
 				listaUsuariosDto.add(dtoUsuario);		
 			}
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return listaUsuariosDto;
@@ -2433,10 +2425,8 @@ public class ActivoAdapter {
 				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
 				BeanUtils.copyProperty(dtoGestor, "id", gestor.getUsuario().getId());
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -2455,6 +2445,7 @@ public class ActivoAdapter {
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto){
 
 		List<ActivoTramite> tramitesActivo = (List<ActivoTramite>) activoTramiteApi.getTramitesActivo(idActivo, webDto).getResults();
@@ -2482,10 +2473,8 @@ public class ActivoAdapter {
 
 //				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getAuditoria().getFechaCrear());
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			listadoTramitesDto.add(dtoTramite);
@@ -2662,7 +2651,6 @@ public class ActivoAdapter {
 			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -2705,10 +2693,8 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "codigoTarea", tarea.getTareaProcedimiento().getCodigo());
 				
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			tareasTramiteDto.add(dtoListadoTareas);
@@ -2750,10 +2736,8 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "subtipoTareaCodigoSubtarea", tareaActivo.getSubtipoTarea().getCodigoSubtarea());
 				
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			tareasTramiteDto.add(dtoListadoTareas);
@@ -2791,10 +2775,8 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "subtipoTareaCodigoSubtarea", tareaActivo.getSubtipoTarea().getCodigoSubtarea());
 				
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			tareasTramiteDto.add(dtoListadoTareas);
@@ -2842,8 +2824,6 @@ public class ActivoAdapter {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());	
 		Order order = new Order(OrderType.ASC, "id");
-		List<VOfertasActivosAgrupacion> p= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order, filtro);
-		
 		
 		return genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order, filtro);
 		
@@ -2924,10 +2904,8 @@ public class ActivoAdapter {
 				activoAdmisionDocumento.setEstadoDocumento(estadoDocumento);
 			}
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -3080,6 +3058,7 @@ public class ActivoAdapter {
 		return (Page) activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro, usuarioLogado);
 	}*/
 	
+	@SuppressWarnings("unchecked")
 	public DtoPage findAllHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dtoPresupuestoFiltro) {
 		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -3125,6 +3104,7 @@ public class ActivoAdapter {
 	}
 	
 	//public List<DtoPresupuestoGraficoActivo> findLastPresupuesto(DtoActivosTrabajoFilter dtoFilter) {
+	@SuppressWarnings("unchecked")
 	public DtoPresupuestoGraficoActivo findLastPresupuesto(DtoActivosTrabajoFilter dtoFilter) {
 		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -3336,30 +3316,138 @@ public class ActivoAdapter {
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
-			
+
 			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
 			activoOfertaPk.setActivo(activo);
 			activoOfertaPk.setOferta(oferta);
 			activoOferta.setPrimaryKey(activoOfertaPk);
 			listaActivosOfertas.add(activoOferta);
 			oferta.setActivosOferta(listaActivosOfertas);	
-			
-			
-			
-			
-			oferta.setCliente(clienteComercial);
-			
 
-			
+			oferta.setCliente(clienteComercial);
+
 			genericDao.save(Oferta.class, oferta);
-			
-			
 		}catch(Exception ex) {
 			ex.printStackTrace();
 			return false;
 		}
-		
+
+		return true;
+	}
+
+	@Transactional(readOnly = false)
+	public boolean saveLlave(DtoLlaves dto) {
+		if(Checks.esNulo(dto.getIdLlave()) || Checks.esNulo(dto.getIdMovimiento())) {
+			return false;
+		}
+		Filter llaveIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdLlave()));
+		ActivoLlave llave = genericDao.get(ActivoLlave.class, llaveIDFilter);
+		Filter movimientoIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdMovimiento()));
+		ActivoMovimientoLlave movimientoLlave = genericDao.get(ActivoMovimientoLlave.class, movimientoIDFilter);
+
+		if(!Checks.esNulo(llave)){
+			try {
+				beanUtilNotNull.copyProperty(llave, "codCentroLlave", dto.getCodCentroLlave());
+				beanUtilNotNull.copyProperty(llave, "nomCentroLlave", dto.getNomCentroLlave());
+				beanUtilNotNull.copyProperty(llave, "archivo1", dto.getArchivo1());
+				beanUtilNotNull.copyProperty(llave, "archivo2", dto.getArchivo2());
+				beanUtilNotNull.copyProperty(llave, "archivo3", dto.getArchivo3());
+				beanUtilNotNull.copyProperty(llave, "juegoCompleto", dto.getJuegoCompleto());
+				beanUtilNotNull.copyProperty(llave, "motivoIncompleto", dto.getMotivoIncompleto());
+
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return false;
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		if(!Checks.esNulo(movimientoLlave)){
+			try {
+				if(!Checks.esNulo(dto.getCodigoTipoTenedor())) {
+					DDTipoTenedor tipoTenedor = (DDTipoTenedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
+					beanUtilNotNull.copyProperty(movimientoLlave, "tipoTenedor", tipoTenedor);
+				}
+				beanUtilNotNull.copyProperty(movimientoLlave, "codTenedor", dto.getCodTenedor());
+				beanUtilNotNull.copyProperty(movimientoLlave, "nomTenedor", dto.getNomTenedor());
+				beanUtilNotNull.copyProperty(movimientoLlave, "fechaEntrega", dto.getFechaEntrega());
+				beanUtilNotNull.copyProperty(movimientoLlave, "fechaDevolucion", dto.getFechaDevolucion());
+
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return false;
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Transactional(readOnly = false)
+	public boolean deleteLlave(DtoLlaves dto) {
+		if(Checks.esNulo(dto.getIdLlave())){
+			return false;
+		}
+		Filter llaveIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdLlave()));
+		ActivoLlave llave = genericDao.get(ActivoLlave.class, llaveIDFilter);
+		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+
+		if(!Checks.esNulo(llave) && !Checks.esNulo(usuarioLogado)) {
+			llave.getAuditoria().setBorrado(true);
+			llave.getAuditoria().setFechaBorrar(new Date());
+			llave.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+		} else {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Transactional(readOnly = false)
+	public boolean createLlave(DtoLlaves dto) {
+		ActivoLlave llave = new ActivoLlave();
+		ActivoMovimientoLlave movimientoLlave = new ActivoMovimientoLlave();
+		Filter activoIdFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdActivo()));
+		Activo activo = genericDao.get(Activo.class, activoIdFilter);
+		if(Checks.esNulo(activo)){
+			return false;
+		}
+
+		try {
+			beanUtilNotNull.copyProperty(llave, "activo", activo);
+			beanUtilNotNull.copyProperty(llave, "codCentroLlave", dto.getCodCentroLlave());
+			beanUtilNotNull.copyProperty(llave, "nomCentroLlave", dto.getNomCentroLlave());
+			beanUtilNotNull.copyProperty(llave, "archivo1", dto.getArchivo1());
+			beanUtilNotNull.copyProperty(llave, "archivo2", dto.getArchivo2());
+			beanUtilNotNull.copyProperty(llave, "archivo3", dto.getArchivo3());
+			beanUtilNotNull.copyProperty(llave, "juegoCompleto", dto.getJuegoCompleto());
+			beanUtilNotNull.copyProperty(llave, "motivoIncompleto", dto.getMotivoIncompleto());
+			if(!Checks.esNulo(dto.getCodigoTipoTenedor())) {
+				DDTipoTenedor tipoTenedor = (DDTipoTenedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
+				beanUtilNotNull.copyProperty(movimientoLlave, "tipoTenedor", tipoTenedor);
+			}
+			beanUtilNotNull.copyProperty(movimientoLlave, "codTenedor", dto.getCodTenedor());
+			beanUtilNotNull.copyProperty(movimientoLlave, "nomTenedor", dto.getNomTenedor());
+			beanUtilNotNull.copyProperty(movimientoLlave, "fechaEntrega", dto.getFechaEntrega());
+			beanUtilNotNull.copyProperty(movimientoLlave, "fechaDevolucion", dto.getFechaDevolucion());
+
+			llave = genericDao.save(ActivoLlave.class, llave);
+
+			movimientoLlave.setActivoLlave(llave);
+			genericDao.save(ActivoMovimientoLlave.class, movimientoLlave);
+
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+
 		return true;
 	}	
-
 }

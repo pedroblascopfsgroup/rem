@@ -2385,6 +2385,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			try {
 				beanUtilNotNull.copyProperty(dto, "id", activoIntegrado.getId());
 				if(!Checks.esNulo(activoIntegrado.getProveedor())) {
+					beanUtilNotNull.copyProperty(dto, "idProveedor", activoIntegrado.getProveedor().getId());
 					beanUtilNotNull.copyProperty(dto, "pagosRetenidos", activoIntegrado.getRetenerPago());
 					beanUtilNotNull.copyProperty(dto, "codigoProveedorRem", activoIntegrado.getProveedor().getCodigoProveedorRem());
 					beanUtilNotNull.copyProperty(dto, "nifProveedor", activoIntegrado.getProveedor().getDocIdentificativo());

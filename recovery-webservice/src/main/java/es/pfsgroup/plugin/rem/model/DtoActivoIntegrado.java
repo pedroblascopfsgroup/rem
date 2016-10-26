@@ -37,6 +37,7 @@ public class DtoActivoIntegrado extends WebDto {
 	private String observaciones;
 	private String motivoRetencionPago;
 	private Date fechaRetencionPago;
+	private String idProveedor;
 	
 	
 	public int getTotalCount() {
@@ -170,6 +171,12 @@ public class DtoActivoIntegrado extends WebDto {
 	}
 	public void setPagosRetenidos(Integer pagosRetenidos) {
 		this.pagosRetenidos = pagosRetenidos;
+	}
+	public String getIdProveedor() {
+		return idProveedor;
+	}
+	public void setIdProveedor(String idProveedor) {
+		this.idProveedor = idProveedor;
 	}
 	
 }

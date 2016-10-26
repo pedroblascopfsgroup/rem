@@ -55,7 +55,7 @@ public interface GastoProveedorApi {
 	    boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long id);
 
 		/**
-		 * Método que recupera un proveedor según su NIF
+		 * Método que recupera un proveedor según su código
 		 * @param codigoUnicoProveedor
 		 * @return Object
 		 */
@@ -186,5 +186,13 @@ public interface GastoProveedorApi {
 		 */
 	    @BusinessOperationDefinition("gastoProveedorManager.getFileItemAdjunto")
 		public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto);
+	    
+	    /**
+		 * Método que recupera un proveedor según su Código y su tipo
+		 * @param codigoUnicoProveedor
+		 * @param codigoTipoProveedor
+		 * @return Object
+		 */
+		public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor);
 }
 

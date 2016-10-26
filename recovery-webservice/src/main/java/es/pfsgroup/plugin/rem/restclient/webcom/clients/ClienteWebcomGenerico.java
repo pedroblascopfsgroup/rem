@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacadeInternalError;
+import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
@@ -129,6 +130,10 @@ public class ClienteWebcomGenerico {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
 		} catch (NoSuchAlgorithmException e) {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
+		}finally{
+			if (registroLlamada != null){
+				registroLlamada.logTiempoPeticionRest();
+			}
 		}
 	}
 

@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Where;
 
@@ -59,9 +60,34 @@ public class RestLlamada implements Serializable, Auditable {
 	@Column(name = "RST_LLAMADA_EXCEPTION")
 	private String exception;
 	
-	
 	@Embedded
 	private Auditoria auditoria;
+	
+	@Column(name = "RST_MS_START_TIME")
+	private Long startTime;
+	
+	@Column(name = "RST_MS_SELECT_CAMBIOS")
+	private Long msSelectCambios;
+	
+	@Column(name = "RST_MS_SELECT_TODO")
+	private Long msSelectTodo;
+	
+	@Column(name = "RST_MS_PETICION_REST")
+	private Long msPeticionRest;
+	
+	@Column(name = "RST_MS_BORRAR_HIST")
+	private Long msBorrarHistorico;
+
+	@Column(name = "RST_MS_INSERTAR_HIST")
+	private Long msInsertarHistorico;
+
+	
+	
+	public RestLlamada(){
+		this.startTime = System.currentTimeMillis();
+				
+	}
+	
 
 	@Override
 	public Auditoria getAuditoria() {
@@ -162,6 +188,92 @@ public class RestLlamada implements Serializable, Auditable {
 		this.exception = exception;
 	}
 
+	public void logTiempoSelectCambios() {
+		this.msSelectCambios = System.currentTimeMillis() - this.startTime;
+		
+	}
+
+
+	public void logTiempoSelectTodosDatos() {
+		this.msSelectTodo = System.currentTimeMillis() - this.startTime;
+		
+	}
 	
+	public void logTiempoPeticionRest() {
+		this.msPeticionRest = System.currentTimeMillis() - this.startTime;
+		
+	}
+
+
+	public void logTiempoBorrarHistorico() {
+		this.msBorrarHistorico = System.currentTimeMillis() - this.startTime;
+		
+	}
+
+
+	public void logTiempoInsertarHistorico() {
+		this.msInsertarHistorico = System.currentTimeMillis() - this.startTime;
+		
+	}
+
+
+	public Long getStartTime() {
+		return startTime;
+	}
+
+
+	public void setStartTime(Long startTime) {
+		this.startTime = startTime;
+	}
+
+
+	public Long getMsSelectCambios() {
+		return msSelectCambios;
+	}
+
+
+	public void setMsSelectCambios(Long msSelectCambios) {
+		this.msSelectCambios = msSelectCambios;
+	}
+
+
+	public Long getMsSelectTodo() {
+		return msSelectTodo;
+	}
+
+
+	public void setMsSelectTodo(Long msSelectTodo) {
+		this.msSelectTodo = msSelectTodo;
+	}
+
+
+	public Long getMsBorrarHistorico() {
+		return msBorrarHistorico;
+	}
+
+
+	public void setMsBorrarHistorico(Long msBorrarHistorico) {
+		this.msBorrarHistorico = msBorrarHistorico;
+	}
+
+
+	public Long getMsInsertarHistorico() {
+		return msInsertarHistorico;
+	}
+
+
+	public void setMsInsertarHistorico(Long msInsertarHistorico) {
+		this.msInsertarHistorico = msInsertarHistorico;
+	}
+
+
+	public Long getMsPeticionRest() {
+		return msPeticionRest;
+	}
+
+
+	public void setMsPeticionRest(Long msPeticionRest) {
+		this.msPeticionRest = msPeticionRest;
+	}	
 	
 }

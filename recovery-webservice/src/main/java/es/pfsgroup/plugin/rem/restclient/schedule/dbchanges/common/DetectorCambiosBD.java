@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 
@@ -32,9 +33,10 @@ import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
  *            va a usar para invocar al servicio
  */
 public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements InfoTablasBD {
-	
-	
-	private static interface DataAccessOperation{
+
+	private static final String DTO_CLASS_NO_PUEDE_SER_NULL = "'dtoClass' no puede ser NULL";
+
+	private static interface DataAccessOperation {
 		public List<CambioBD> getDatabaseChanges();
 	}
 
@@ -56,9 +58,12 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 * 
 	 * @param data
 	 *            Lista de DTO's que se queren mandar al servicio.
+	 * @param registro
+	 *            Objeto en el que se irá dejando trazas de tiempos de
+	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 * @throws ErrorServicioWebcom
 	 */
-	public abstract void invocaServicio(List<T> data) throws ErrorServicioWebcom;
+	public abstract void invocaServicio(List<T> data, RestLlamada registro) throws ErrorServicioWebcom;
 
 	/**
 	 * Devuelve la lisa de cambios detectados ya convertidos al DTO
@@ -70,16 +75,19 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 *            esamos invocando el handler correcto. Para ello, la clase que
 	 *            invoca ester método debe obtener este valor usando el método
 	 *            getDtoClass()
+	 * @param registro
+	 *            Objeto en el que se irá dejando trazas de tiempos de
+	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 * 
 	 * @return Este método devolverá NULL si el parámetro dtoClass no coincide
 	 *         con el DTO asociado al detector.
 	 */
-	public List<T> listPendientes(Class dtoClass) {
+	public List<T> listPendientes(Class dtoClass, RestLlamada registro) {
 		if (dtoClass == null) {
-			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
-		
-		final List<CambioBD> cambios = dao.listCambios(dtoClass, this);
+
+		final List<CambioBD> cambios = dao.listCambios(dtoClass, this, registro);
 
 		return extractDtos(dtoClass, new DataAccessOperation() {
 			@Override
@@ -90,14 +98,13 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 
 	}
 
-	
-	public List<T> listDatosCompletos(Class dtoClass) {
-		
+	public List<T> listDatosCompletos(Class dtoClass, RestLlamada registro) {
+
 		if (dtoClass == null) {
-			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
-		
-		final List<CambioBD> cambios = dao.listDatosActuales(dtoClass, this);
+
+		final List<CambioBD> cambios = dao.listDatosActuales(dtoClass, this, registro);
 
 		return extractDtos(dtoClass, new DataAccessOperation() {
 			@Override
@@ -105,7 +112,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 				return cambios;
 			}
 		});
-		
+
 	}
 
 	/**
@@ -117,14 +124,16 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 *            esamos invocando el handler correcto. Para ello, la clase que
 	 *            invoca ester método debe obtener este valor usando el método
 	 *            getDtoClass()
+	 * @param registro  Objeto en el que se irá dejando trazas de tiempos de
+	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
-	public void marcaComoEnviados(Class dtoClass) {
+	public void marcaComoEnviados(Class dtoClass, RestLlamada registro) {
 		if (dtoClass == null) {
-			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
-
+	
 		if (dtoClass.equals(getDtoClass())) {
-			dao.marcaComoEnviados(dtoClass, this);
+			dao.marcaComoEnviados(dtoClass, this, registro);
 		} else {
 			logger.warn("No coincide la clase con el DTO asociado al detctor. Se esperaba " + getDtoClass().getName()
 					+ " pero se ha especificado " + dtoClass.getName());
@@ -144,10 +153,9 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	public Class getDtoClass() {
 		return this.createDtoInstance().getClass();
 	}
-	
-	
+
 	private List<T> extractDtos(Class dtoClass, DataAccessOperation dao) {
-		if (dao == null){
+		if (dao == null) {
 			throw new IllegalArgumentException("Data Access Operation is not defined");
 		}
 		if (dtoClass.equals(getDtoClass())) {
@@ -212,7 +220,6 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 			return null;
 		}
 	}
-	
 
 	/**
 	 * Si dtoClass contiene la anotación @NestedDto en su definición

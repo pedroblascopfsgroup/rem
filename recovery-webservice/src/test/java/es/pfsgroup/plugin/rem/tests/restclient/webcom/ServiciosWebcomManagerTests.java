@@ -64,9 +64,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 	@Mock
 	HttpClientFacade httpClient;
-
-	@Mock
-	private RegistroLlamadasManager registroLlamadas;
 	
 	@InjectMocks
 	private ClienteWebcomGenerico clienteWebcom;
@@ -109,8 +106,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, codEstado);
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
 
-		verificaRegistroPeticionOK();
-
 	}
 
 	@Test
@@ -145,8 +140,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_OFERTA, codEstadoOferta);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_EXPEDIENTE, codEstadoExpediente);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.VENDIDO, vendido);
-
-		verificaRegistroPeticionOK();
 	}
 
 	@Test
@@ -194,8 +187,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		// Comprobamos que algunos de los campos no informados no estén en el
 		// JSON
 		assertDataIsMissing(requestData, 0, ServicioStockConstantes.ANTIGUEDAD);
-
-		verificaRegistroPeticionOK();
 	}
 
 	@Test
@@ -315,17 +306,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		} catch (Exception e) {
 			assertTrue("La excepción no es la esperada", e instanceof ErrorServicioWebcom);
 			assertTrue("El error debe ser reintentable", ((ErrorServicioWebcom) e).isReintentable());
-		} finally {
-
-			RestLlamada registro = compruebaSeGuardaRegistro();
-			compruebaInfoBasicaRegistro(registro);
-
-			assertTrue("El mensaje de error debe contener el error HTTP que se ha producido",
-					registro.getErrorDesc().contains("404"));
-
-			assertNull("La respuesta logada debería ser nula", registro.getResponse());
-
-			assertNotNull("La excepción no se ha logado correctamente", registro.getException());
 		}
 
 	}
@@ -345,11 +325,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		} catch (Exception e) {
 			assertTrue("La excepción no es la esperada", e instanceof ErrorServicioWebcom);
 			assertFalse("El error no debe ser reintentable", ((ErrorServicioWebcom) e).isReintentable());
-		} finally {
-			compruebaSeGuardaRegistro();
-			// El método que rellena el objeto RestLlamada está stubeado, por lo
-			// tanto no podemos comprobar si la hemos rellenado bien aquí
-
 		}
 
 	}
@@ -419,31 +394,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		return Arrays.asList(new EstadoTrabajoDto[] { setupDto(dto) });
 	}
 
-	private RestLlamada compruebaSeGuardaRegistro() {
-		ArgumentCaptor<RestLlamada> llamadaCaptor = ArgumentCaptor.forClass(RestLlamada.class);
-		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture());
-
-		RestLlamada registro = llamadaCaptor.getValue();
-		return registro;
-	}
-
-	private void compruebaInfoBasicaRegistro(RestLlamada registro) {
-		assertNotNull("Se debería haber registrado el endpoint al que nos conectamos", registro.getEndpoint());
-		assertNotNull("Se debería haber registrado el ID de petición que mandamos", registro.getToken());
-		assertNotNull("Se deberría haber registrado la IP desde la que invocamos", registro.getIp());
-		assertNotNull("Se debería haber logado el método HTTP con el que invocamos la petición", registro.getMetodo());
-		assertNotNull("Se debería haber logado la API KEY con la que generamos el signature", registro.getApiKey());
-		assertNotNull("Se debería haber logado el signature generado", registro.getSignature());
-		assertNotNull("Se debería haber logado la petición", registro.getRequest());
-	}
-
-	private void verificaRegistroPeticionOK() {
-		RestLlamada registro = compruebaSeGuardaRegistro();
-		compruebaInfoBasicaRegistro(registro);
-		assertNull("No se debería loguear ningún código de error", registro.getErrorDesc());
-		assertNotNull("Se debería haber logueado la respuesta a la llamada", registro.getResponse());
-		assertNull("No se debería haber logado ninguna excepción", registro.getException());
-	}
 
 	private ProveedorDto createDtoProveedor(long idProveedor, DelegacionDto... delegaciones) {
 		ProveedorDto p = new ProveedorDto();

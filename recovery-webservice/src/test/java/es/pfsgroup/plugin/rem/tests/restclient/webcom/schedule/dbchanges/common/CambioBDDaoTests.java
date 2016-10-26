@@ -101,7 +101,7 @@ public class CambioBDDaoTests {
 		datosHistoricos = new String[] { "7", "2016-10-10T00:00:00", "1", "1", "1", "AAA", "777", null };
 		hibernateExecutionFacadeBehaviour();
 
-		List<CambioBD> cambios = dao.listCambios(TestDto.class, new TestInfoTabla());
+		List<CambioBD> cambios = dao.listCambios(TestDto.class, new TestInfoTabla(), null);
 		assertEquals("La lista de cambios debe contener sólo 1 elemento", 1, cambios.size());
 
 		String query = uniqueQueryCaptor.getValue();
@@ -120,7 +120,7 @@ public class CambioBDDaoTests {
 		TestInfoTabla infoTablas = new TestInfoTabla();
 		infoTablas.cambiaClavePrimaria("ESTO_NO_ES_UN_CAMPO");
 
-		List<CambioBD> cambios = dao.listCambios(TestDto.class, infoTablas);
+		List<CambioBD> cambios = dao.listCambios(TestDto.class, infoTablas, null);
 
 		assertEquals("La lista de cambios debe contener sólo 1 elemento", 1, cambios.size());
 

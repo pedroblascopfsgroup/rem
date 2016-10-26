@@ -28,8 +28,6 @@ public abstract class ServiciosWebcomBaseManager {
 	private static final String REGEXP_4_DOT = "\\.";
 	private final Log logger = LogFactory.getLog(getClass());
 
-	protected abstract RegistroLlamadasManager getRegistroLlamadas();
-
 	protected abstract ClienteWebcomGenerico getClienteWebcom();
 
 	public ServiciosWebcomBaseManager() {
@@ -152,27 +150,22 @@ public abstract class ServiciosWebcomBaseManager {
 	 *
 	 * @throws ErrorServicioWebcom
 	 */
-	protected void invocarServicioRestWebcom(WebcomEndpoint endpoint, ParamsList paramsList)
-			throws ErrorServicioWebcom {
-		
+	protected void invocarServicioRestWebcom(WebcomEndpoint endpoint, ParamsList paramsList,
+			RestLlamada registro) throws ErrorServicioWebcom {
+
 		if (endpoint == null) {
 			throw new IllegalArgumentException("'endpoint' no puede ser NULL");
 		}
-		
+
 		if (paramsList == null) {
 			throw new IllegalArgumentException("'paramsList' no puede ser NULL");
 		}
-
-		if (getClienteWebcom() == null) {
-			IllegalArgumentException e = new IllegalArgumentException(
-					"El Cliente REST Webcom asociado a este servicio es NULL");
-			logger.fatal(
-					"No se va a invocar el servicio porque la implementación del cliente rest no está disponible o es desconocida",
-					e);
-			throw e;
+		
+		RestLlamada registroLlamada = registro;
+		if (registroLlamada == null) {
+			registroLlamada = new RestLlamada();
 		}
-
-		RestLlamada registroLlamada = new RestLlamada();
+		
 		try {
 
 			logger.debug("Invocando al servicio " + endpoint);
@@ -180,14 +173,13 @@ public abstract class ServiciosWebcomBaseManager {
 			logger.debug("Respuesta recibida " + endpoint);
 
 		} catch (ErrorServicioWebcom e) {
-			logger.error("Error al invocar " + endpoint + " con parámetros "
-					+ paramsList.toString(), e);
+			logger.error("Error al invocar " + endpoint + " con parámetros " + paramsList.toString(), e);
 			if (!e.isHttpError()) {
 				logger.fatal("Se ha producido un error no-reintentable en la llamada a servicio REST de Webcom", e);
 				e.setReintentable(false);
 			} else {
-				logger.error("Se va a reintentar la invocación a " + endpoint
-						+ " con parámetros " + paramsList.toString());
+				logger.error(
+						"Se va a reintentar la invocación a " + endpoint + " con parámetros " + paramsList.toString());
 				e.setReintentable(true);
 			}
 
@@ -195,7 +187,7 @@ public abstract class ServiciosWebcomBaseManager {
 
 			throw e;
 		} finally {
-			getRegistroLlamadas().guardaRegistroLlamada(registroLlamada);
+			//getRegistroLlamadas().guardaRegistroLlamada(registroLlamada);
 		}
 	}
 
@@ -295,8 +287,9 @@ public abstract class ServiciosWebcomBaseManager {
 			for (WebcomRESTDto dto : dtoList) {
 				HashMap<String, Object> params = createParametersMap(dto);
 				params.putAll(Converter.dtoToMap(dto));
-				// Comentado con Anahuac. No fallamos si faltan campos obligatorios. Dejamos que falle webcom.
-				//compruebaObligatorios(dto.getClass(), params);
+				// Comentado con Anahuac. No fallamos si faltan campos
+				// obligatorios. Dejamos que falle webcom.
+				// compruebaObligatorios(dto.getClass(), params);
 				paramsList.add(params);
 			}
 		} else {

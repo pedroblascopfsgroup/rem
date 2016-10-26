@@ -63,8 +63,11 @@ public class MSVActualizadorDespublicarForzado implements MSVLiberator {
 	
 		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-			activo.setEstadoPublicacion((DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO));
-			activoApi.saveOrUpdate(activo);
+			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
+			dtoCambioEstadoPublicacion.setActivo(activo.getId());
+			dtoCambioEstadoPublicacion.setPublicacionForzada(false);
+			dtoCambioEstadoPublicacion.setOcultacionPrecio(false);
+			activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 		}
 
 		return true;

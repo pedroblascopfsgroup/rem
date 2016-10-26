@@ -79,52 +79,10 @@ public class MSVActualizadorDesDespublicarForzado implements MSVLiberator {
 	
 		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			Order order = new Order(OrderType.DESC, "id");
-			ActivoHistoricoEstadoPublicacion ultimoActivoHistoricoEstadosPublicacion = genericDao
-					.getListOrdered(ActivoHistoricoEstadoPublicacion.class, order, filtro).get(0);
-			
-			DDEstadoPublicacion estadoPublicacionAnterior;
-			if(!Checks.esNulo(ultimoActivoHistoricoEstadosPublicacion)){
-				estadoPublicacionAnterior  = ultimoActivoHistoricoEstadosPublicacion.getEstadoPublicacion();
-			}else{
-				estadoPublicacionAnterior = (DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_PUBLICADO);
-			}
-			
-			// Se establece en el activo, el estado de publicacion anterior
-			activo.setEstadoPublicacion(estadoPublicacionAnterior);
-			
-			// Se historifica de nuevo el estado que cambiamos
-			ActivoHistoricoEstadoPublicacion estadoHistoricoPublicacion = new ActivoHistoricoEstadoPublicacion();
-			estadoHistoricoPublicacion.setActivo(activo);
-			estadoHistoricoPublicacion.setEstadoPublicacion(estadoPublicacionAnterior);
-			//Fecha desde
-			if(!Checks.esNulo(ultimoActivoHistoricoEstadosPublicacion))
-				estadoHistoricoPublicacion.setFechaDesde(ultimoActivoHistoricoEstadosPublicacion.getFechaDesde());
-			else
-				estadoHistoricoPublicacion.setFechaDesde(new Date());
-			//Fecha hasta
-			if(!Checks.esNulo(ultimoActivoHistoricoEstadosPublicacion))
-				estadoHistoricoPublicacion.setFechaHasta(ultimoActivoHistoricoEstadosPublicacion.getFechaHasta());
-			else
-				estadoHistoricoPublicacion.setFechaHasta(null);
-			//Tipo publicacion: Forzada
-			estadoHistoricoPublicacion.setTipoPublicacion((DDTipoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPublicacion.class, DDTipoPublicacion.CODIGO_FORZADA));
-			//Portal web
-			if(!Checks.esNulo(ultimoActivoHistoricoEstadosPublicacion))
-				estadoHistoricoPublicacion.setPortal(ultimoActivoHistoricoEstadosPublicacion.getPortal());
-			else
-				estadoHistoricoPublicacion.setPortal(null);
-			//Auditoria
-			Auditoria auditoria = new Auditoria();
-			auditoria.setFechaCrear(new Date());
-			auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
-			estadoHistoricoPublicacion.setAuditoria(auditoria);
-			
-			genericDao.save(ActivoHistoricoEstadoPublicacion.class, estadoHistoricoPublicacion);
-			activoApi.saveOrUpdate(activo);
-
+			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
+			dtoCambioEstadoPublicacion.setActivo(activo.getId());
+			dtoCambioEstadoPublicacion.setDespublicacionForzada(false);
+			activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 		}
 
 		return true;

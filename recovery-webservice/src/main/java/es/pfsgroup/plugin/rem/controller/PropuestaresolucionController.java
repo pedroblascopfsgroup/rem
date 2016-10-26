@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,13 +18,9 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JREmptyDataSource;
-import net.sf.jasperreports.engine.JRException;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tools.ant.types.resources.Files;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -49,6 +44,8 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -264,7 +261,7 @@ public class PropuestaresolucionController {
 		       	}
 			}
 	
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 			
 			
 		}

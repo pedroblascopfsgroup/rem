@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     },
     requires: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo'],
     topBar: true,
-
+	removeButton: false,
     listeners: {
     	boxready: function() {
     		me = this;

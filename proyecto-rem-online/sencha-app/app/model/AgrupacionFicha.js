@@ -87,6 +87,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name : 'fechaFinVigencia',
 		    		type : 'date',
 		    		dateFormat: 'c'
+		    	},
+		    	{
+		    		name: 'esEditable',
+		    		type: 'boolean'
 		    	}
     ],
     

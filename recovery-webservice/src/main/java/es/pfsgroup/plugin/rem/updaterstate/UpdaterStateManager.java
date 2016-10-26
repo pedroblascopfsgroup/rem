@@ -6,13 +6,17 @@ import org.springframework.stereotype.Service;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.GastoGestion;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -53,6 +57,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		this.updaterStateDisponibilidadComercial(activo);
 	}
 	
+	@Override
+	public void updaterStates(GastoProveedor gasto, String codigo) {
+		this.updaterStateGastoProveedor(gasto, codigo);
+	}
+
 	private void updaterStateAdmision(Activo activo){
 		//En caso de que esté 'OK' no se modifica el estado.
 		if(!this.getStateAdmision(activo)){
@@ -131,6 +140,35 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 		
 		return codigo;
+	}
+	/**
+	 * Función que actualiza el estado del gasto. 
+	 * Si recibe código, busca el estado y lo inserta, sino, determina el estado en función
+	 * de las situaciones indicadas por los datos del gasto recibido.
+	 * @param gasto
+	 * @param codigo
+	 */
+	private void updaterStateGastoProveedor(GastoProveedor gasto, String codigo) {
+		
+		// Si recibimos un estado, lo buscamos y lo seteamos
+		if(!Checks.esNulo(codigo)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+			DDEstadoGasto estadoGasto = (DDEstadoGasto) genericDao.get(DDEstadoGasto.class, filtro);
+			gasto.setEstadoGasto(estadoGasto);
+		// Si no, iremos añadiendo situaciones que puedan modificar el estado
+		} else {
+			GastoGestion gastoGestion = gasto.getGastoGestion();
+			
+			if(!Checks.esNulo(gastoGestion) && !Checks.esNulo(gastoGestion.getFechaAnulacionGasto())) {
+				codigo = DDEstadoGasto.ANULADO;
+			}
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+			DDEstadoGasto estadoGasto = (DDEstadoGasto) genericDao.get(DDEstadoGasto.class, filtro);
+			gasto.setEstadoGasto(estadoGasto);
+			
+		}
+		
 	}
 
 }

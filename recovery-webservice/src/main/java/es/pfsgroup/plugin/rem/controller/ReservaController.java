@@ -17,6 +17,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -26,8 +27,10 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
@@ -80,6 +83,13 @@ public class ReservaController {
 				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
 				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				if(Checks.esNulo(expedienteComercial)){
+					throw new Exception("No existe el expediente comercial.");
+				}
+				Reserva reserva= expedienteComercial.getReserva();
+				if(Checks.esNulo(reserva)){
+					throw new Exception("No existe la reserva.");
+				}
 				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);
 				ArrayList<TitularUVEMDto> listaTitularUVEM = expedienteComercialApi.obtenerListaTitularesUVEM(expedienteComercial);
 				
@@ -97,17 +107,55 @@ public class ReservaController {
 					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
 						throw new Exception("No se ha podido guardar la reserva entregada en base de datos");
 					}
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
-							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.RESERVADO);
+					
+					//Actualiza estado expediente comercial a RESERVADO
+					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.RESERVADO);
 					if (estadoReservado == null) {
 						throw new Exception("No se ha podido obtener estado RESERVADO de base de datos");
 					}
 					expedienteComercial.setEstado(estadoReservado);
+					
+					//Actualiza estado reserva a FIRMADA
+					DDEstadosReserva estReserva = reservaApi.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_FIRMADA);
+					if (estReserva == null) {
+						throw new Exception("No se ha podido obtener estado FIRMADA de la reserva de base de datos");
+					}
+					reserva.setEstadoReserva(estReserva);
+					expedienteComercial.setReserva(reserva);
+					
+					
 					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
 					}
 				}
 
+				
+				
+				if (ReservaApi.COBRO_VENTA.equals(reservaDto.getAccion())) {
+
+					EntregaReserva entregaReserva = new EntregaReserva();
+					entregaReserva.setImporte(importeReserva);
+					Date fechaEntrega = new Date();
+					entregaReserva.setFechaEntrega(fechaEntrega);
+					entregaReserva.setReserva(expedienteComercial.getReserva());
+					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
+						throw new Exception("No se ha podido guardar la reserva entregada en base de datos");
+					}
+					
+					//Actualiza estado expediente comercial a VENDIDO
+					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
+					if (estadoReservado == null) {
+						throw new Exception("No se ha podido obtener estado VENDIDO de base de datos");
+					}
+					expedienteComercial.setEstado(estadoReservado);
+					
+					if (!expedienteComercialApi.update(expedienteComercial)) {
+						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
+					}
+				}
+
+				
+				
 				if (ReservaApi.DEVOLUCION_RESERVA.equals(reservaDto.getAccion())) {
 
 					EntregaReserva entregaReserva = new EntregaReserva();
@@ -119,13 +167,16 @@ public class ReservaController {
 					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
 						throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
 					}
+					
+		/*			//Actualiza estado expediente comercial a ANULADO
 					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
 							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.ANULADO);
 					if (estadoReservado == null) {
 						throw new Exception("No se ha podido obtener estado ANULADO de base de datos");
 					}
-					expedienteComercial.setEstado(estadoReservado);
+					expedienteComercial.setEstado(estadoReservado);*/
 					
+					//Actualiza estado devolucion a ANULADO
 					DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_DEVUELTA));
 					expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
@@ -135,19 +186,7 @@ public class ReservaController {
 					}
 				}
 
-				if (ReservaApi.COBRO_VENTA.equals(reservaDto.getAccion())) {
-
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
-							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
-					if (estadoReservado == null) {
-						throw new Exception("No se ha podido obtener estado VENDIDO de base de datos");
-					}
-					expedienteComercial.setEstado(estadoReservado);
-					if (!expedienteComercialApi.update(expedienteComercial)) {
-						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
-					}
-				}
-
+				
 				model.put("id", jsonFields.get("id"));
 				model.put("data", respuesta);
 				model.put("error", "");
@@ -159,6 +198,7 @@ public class ReservaController {
 
 		} catch (Exception e) {
 			logger.error(e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));
 			model.put("data", respuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
@@ -166,7 +206,7 @@ public class ReservaController {
 			logger.debug("RESPUESTA: " + model);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 
 }

@@ -396,40 +396,44 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		
     	var me = this;
     	me.gridOrigen = grid;
-		
-		if (rec.data.activoPrincipal != 1) {
-			Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.activo.principal'),
-				   msg: HreRem.i18n('msg.confirmar.activo.principal'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {	
-							me.getView().mask();
-							var url =  $AC.getRemoteUrl('agrupacion/marcarPrincipal');
-							Ext.Ajax.request({
-							
-							     url: url,
-							     params: {
-							     			idAgrupacion: rec.data.agrId,
-							     			idActivo: rec.data.activoId	
-							     		}
+    	
+    	var esEditable = me.getViewModel().get('agrupacionficha.esEditable');
+    	
+		if(esEditable) {
+			if (rec.data.activoPrincipal != 1) {
+				Ext.Msg.show({
+					   title: HreRem.i18n('title.confirmar.activo.principal'),
+					   msg: HreRem.i18n('msg.confirmar.activo.principal'),
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes') {	
+								me.getView().mask();
+								var url =  $AC.getRemoteUrl('agrupacion/marcarPrincipal');
+								Ext.Ajax.request({
 								
-							    ,success: function (a, operation, context) {
-					
-					                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-										me.getView().unmask();
-										me.gridOrigen.getStore().load();
-					            },
-					            
-					            failure: function (a, operation, context) {
-					            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-									 me.getView().unmask();
-					            }
-						     
-							});
+								     url: url,
+								     params: {
+								     			idAgrupacion: rec.data.agrId,
+								     			idActivo: rec.data.activoId	
+								     		}
+									
+								    ,success: function (a, operation, context) {
+						
+						                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+											me.getView().unmask();
+											me.gridOrigen.getStore().load();
+						            },
+						            
+						            failure: function (a, operation, context) {
+						            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+										 me.getView().unmask();
+						            }
+							     
+								});
+							}
 						}
-					}
-				});
+					});
+			}
 		}
 
     	

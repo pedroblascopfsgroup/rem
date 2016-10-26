@@ -146,13 +146,12 @@
 		<appender-ref ref="file" />
 		<appender-ref ref="email" />
 	</logger>
-
+	
 	<logger name="es.pfsgroup.plugin.rem.restclient" additivity="false">
-		<level value="error" />
-		<appender-ref ref="console" />
-		<appender-ref ref="file" />
-		<appender-ref ref="email" />
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
 	</logger>
+	
 	<logger name="es.pfsgroup.plugin.rem.rest" additivity="false">
 		<level value="debug" />
 		<appender-ref ref="console" />
@@ -199,13 +198,25 @@
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
 	</logger>
-	<logger name="es.pfsgroup.plugin.rem.controller.Portales"
+	<logger name="es.pfsgroup.plugin.rem.controller.PortalesController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />
 		<appender-ref ref="console" />
 	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.PropuestaresolucionController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
+	</logger>	
 	<logger name="es.pfsgroup.plugin.rem.controller.ReservaController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="fileRest" />
+		<appender-ref ref="console" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.ReintegroController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="fileRest" />

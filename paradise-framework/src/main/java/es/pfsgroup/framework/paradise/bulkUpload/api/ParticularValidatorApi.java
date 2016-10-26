@@ -33,6 +33,10 @@ public interface  ParticularValidatorApi {
 	public Boolean estadoDesocultarprecio(String numActivo);
 	
 	public Boolean estadoDespublicar(String numActivo);
+
+	public Boolean estadosValidosDespublicarForzado(String numActivo);
+	
+	public Boolean estadosValidosDesDespublicarForzado(String numActivo);
 	
 	public Boolean estadoAutorizaredicion(String numActivo);
 	
@@ -66,5 +70,20 @@ public interface  ParticularValidatorApi {
 	 * @return
 	 */
 	public Boolean esActivosMismoPropietario (String inSqlNumActivosRem);
+	
+	/**
+	 * Validacion de un activo si pertenece a alguna agrupacion no compatible 
+	 * @param numActivo
+	 * @param codTiposAgrNoCompatibles
+	 * @return
+	 */
+	public Boolean esActivoEnOtraAgrupacionNoCompatible(Long numActivo, Long numAgrupacion, String codTiposAgrNoCompatibles);
+	
+	/**
+	 * Comprueba si el activo Bancario es de clase Financiero
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean esActivoFinanciero(String numActivo);
 	
 }

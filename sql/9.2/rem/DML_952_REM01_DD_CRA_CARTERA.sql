@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=CLV
---## FECHA_CREACION=20160803
+--## AUTOR=Pablo Meseguer 
+--## FECHA_CREACION=20161025
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK= HREOS-719
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_CRA_CARTERA los datos añadidos en T_ARRAY_DATA
@@ -38,7 +38,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('03'        ,''     ,'Bankia'                                               ,'Bankia'),
-        T_TIPO_DATA('04'        ,''     ,'Otras carteras'                                               ,'Otras carteras')
+        T_TIPO_DATA('04'        ,''     ,'Otras carteras'                                               ,'Otras carteras'),
         T_TIPO_DATA('05'        ,''     ,'Sin definir'                                               ,'Sin definir')
     ); 
 
@@ -51,7 +51,7 @@ BEGIN
 
          
     -- LOOP para insertar los valores en DD_CRA_CARTERA -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_CRA_CARTERA] ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_CRA_CARTERA ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       

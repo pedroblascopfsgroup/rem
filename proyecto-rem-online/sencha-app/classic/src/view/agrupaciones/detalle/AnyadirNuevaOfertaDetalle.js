@@ -73,17 +73,27 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.nombre.cliente'),
 				            	    	name:		'nombreCliente',
-										bind:		'{oferta.nombreCliente}'
+										bind: {
+											value: '{oferta.nombreCliente}',
+											disabled: '{oferta.razonSocialCliente}'
+										}
+										
 				            	    },
 				            	    {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.apellidos.cliente'),
 				            	    	name:		'apellidosCliente',
-										bind:		'{oferta.apellidosCliente}'
+										bind:		{
+											value: '{oferta.apellidosCliente}',
+											disabled: '{oferta.razonSocialCliente}'
+										}
 				            	    },
 				            	    {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.razonSocial.cliente'),
 				            	    	name:		'razonSocialCliente',
-										bind:		'{oferta.razonSocialCliente}'
+										bind:		{
+											value :'{oferta.razonSocialCliente}',
+											disabled: '{oferta.nombreCliente}'
+										}
 				            	    },
 				            	    {
 										xtype: 'comboboxfieldbase',

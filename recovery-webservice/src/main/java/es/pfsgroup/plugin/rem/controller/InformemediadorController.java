@@ -53,8 +53,8 @@ public class InformemediadorController {
 			model.put("error", null);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
 			if (jsonFields != null) {
 				model.put("id", jsonFields.get("id"));
 			}
@@ -64,6 +64,6 @@ public class InformemediadorController {
 			logger.debug("RESPUESTA: " + model);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 }

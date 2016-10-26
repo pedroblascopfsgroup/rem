@@ -35,7 +35,10 @@ public class DDEstadoGasto implements Auditable, Dictionary {
 	 */
 	private static final long serialVersionUID = -3836191709700209057L;
 	
-	public static final String PENDIENTE_AUTORIZACION_HAYA = "01";
+	public static final String PENDIENTE = "01";
+	public static final String ANULADO = "06";
+	public static final String RETENIDO = "07";
+	
 
 	@Id
 	@Column(name = "DD_EGA_ID")

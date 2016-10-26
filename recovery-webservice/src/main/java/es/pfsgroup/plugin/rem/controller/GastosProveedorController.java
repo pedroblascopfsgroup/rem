@@ -571,12 +571,12 @@ public class GastosProveedorController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getNifProveedorByUsuario(ModelMap model){
+	public ModelAndView getCodProveedorByUsuario(ModelMap model){
 		
 		
 		
 		try {
-			String nif = proveedoresApi.getNifProveedorByUsuarioLogado();
+			Long nif = proveedoresApi.getCodProveedorByUsuarioLogado();
 			
 			if(Checks.esNulo(nif)) {
 				model.put("msg", "No ha sido posible encontrar un proveedor asignado al usuario identificado.");
@@ -595,6 +595,23 @@ public class GastosProveedorController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchProveedorCodigoByTipoEntidad(@RequestParam String codigoUnicoProveedor, @RequestParam String codigoTipoProveedor) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gastoProveedorApi.searchProveedorCodigoByTipoEntidad(codigoUnicoProveedor,codigoTipoProveedor));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
+		
+	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

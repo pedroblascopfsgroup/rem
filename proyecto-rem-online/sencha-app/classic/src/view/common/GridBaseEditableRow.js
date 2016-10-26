@@ -128,7 +128,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         });
         
         me.addListener ('beforeedit', function(editor) {
-        	if (editor.editing)
+        	if (editor.editing || !me.editOnSelect)
         		return false;
         });
         	
@@ -361,7 +361,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	    			return item.tipo == "toolbaredicion";
 	    		}
 	    	);
-    		if(!Ext.isEmpty(toolbarDockItem)) {
+    		if(!Ext.isEmpty(toolbarDockItem) && toolbarDockItem.items.length > 0 ) {
     			toolbarDockItem.items[0].setVisible(topBar);
     		}
     	}

@@ -64,6 +64,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			            xtype: 'combobox',
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
+			            allowBlank: false,
 			            bind: {
 			            	store: '{comboTipoDireccionProveedor}'
 			            },
@@ -121,6 +122,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			            xtype: 'combobox',
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
+			            allowBlank: false,
 			            bind: {
 			            	store: '{comboTipoVia}'
 			            },

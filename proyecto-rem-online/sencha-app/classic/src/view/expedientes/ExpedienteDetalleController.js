@@ -1142,7 +1142,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}else{
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
 		}
-	}
-		
+	},
 
+	// Este método establece el atributo 'allowBlank' en los campos peticionario y motivo anulación
+	// de la ficha del expediente si existe una fecha de anulación.
+	onFechaAnulacionChange: function(dateField) {
+		var me = this;
+
+		var peticionario = dateField.up('expedientedetallemain').lookupReference('textFieldPeticionario');
+		var motivoAnulacion = dateField.up('expedientedetallemain').lookupReference('textFieldMotivoAnulacion');
+		
+		if(Ext.isEmpty(dateField.getValue())) {
+			peticionario.allowBlank = true;
+			motivoAnulacion.allowBlank = true;
+		} else {
+			peticionario.allowBlank = false;
+			motivoAnulacion.allowBlank = false;
+		}
+		// Hacer saltar inmediatamente la validación de los campos.
+		peticionario.validate();
+		motivoAnulacion.validate();
+	}
 });

@@ -60,10 +60,10 @@ public class ActivoProveedorDireccion implements Serializable, Auditable {
 	private String nombreVia;
 
 	@Column(name = "PRD_NUM")
-	private int numeroVia;
+	private Integer numeroVia;
 	 
 	@Column(name = "PRD_PTA")
-	private int puerta;
+	private Integer puerta;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_LOC_ID")
@@ -74,7 +74,7 @@ public class ActivoProveedorDireccion implements Serializable, Auditable {
     private DDProvincia provincia;
 	
 	@Column(name = "PRD_CP")
-	private int codigoPostal;
+	private Integer codigoPostal;
 	
 	@Column(name = "PRD_TELEFONO")
 	private String telefono;
@@ -134,19 +134,19 @@ public class ActivoProveedorDireccion implements Serializable, Auditable {
 		this.nombreVia = nombreVia;
 	}
 
-	public int getNumeroVia() {
+	public Integer getNumeroVia() {
 		return numeroVia;
 	}
 
-	public void setNumeroVia(int numeroVia) {
+	public void setNumeroVia(Integer numeroVia) {
 		this.numeroVia = numeroVia;
 	}
 
-	public int getPuerta() {
+	public Integer getPuerta() {
 		return puerta;
 	}
 
-	public void setPuerta(int puerta) {
+	public void setPuerta(Integer puerta) {
 		this.puerta = puerta;
 	}
 
@@ -158,11 +158,11 @@ public class ActivoProveedorDireccion implements Serializable, Auditable {
 		this.provincia = provincia;
 	}
 
-	public int getCodigoPostal() {
+	public Integer getCodigoPostal() {
 		return codigoPostal;
 	}
 
-	public void setCodigoPostal(int codigoPostal) {
+	public void setCodigoPostal(Integer codigoPostal) {
 		this.codigoPostal = codigoPostal;
 	}
 

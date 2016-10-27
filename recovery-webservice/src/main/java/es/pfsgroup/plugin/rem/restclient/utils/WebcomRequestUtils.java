@@ -84,13 +84,11 @@ public class WebcomRequestUtils {
 	}
 
 	public static String formatDate(Date date) {
-		logger.debug("Date -> String: " + date);
 		SimpleDateFormat f = new SimpleDateFormat(DATETIME_FORMAT);
 		return f.format(date);
 	}
 
 	public static Date parseDate(String string) throws ParseException {
-		logger.debug("String -> Date: " + string);
 		SimpleDateFormat f = new SimpleDateFormat(DATETIME_FORMAT);
 		return f.parse(string);
 	}

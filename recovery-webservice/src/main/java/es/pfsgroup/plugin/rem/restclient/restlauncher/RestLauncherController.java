@@ -29,5 +29,29 @@ public class RestLauncherController {
 		launcher.enviarProveedoresWebcom();
 		return "default";
 	}
+	
+	@RequestMapping
+	public String enviarActivosObraNuevaWebcom() throws ErrorServicioWebcom {
+		launcher.enviarActivosObrasNuevas();
+		return "default";
+	}
+	
+	@RequestMapping
+	public String enviarCabecerasObrasNuevas() throws ErrorServicioWebcom {
+		launcher.enviarCabecerasObrasNuevas();
+		return "default";
+	}
+	
+	@RequestMapping
+	public String enviarEstadosInformeMediador() throws ErrorServicioWebcom {
+		launcher.enviarEstadosInformeMediador();
+		return "default";
+	}
+	
+	@RequestMapping
+	public String enviarEstadoNotificacion() throws ErrorServicioWebcom {
+		launcher.enviarEstadoNotificacion();
+		return "default";
+	}
 
 }

@@ -110,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VLlaves;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -2445,33 +2446,19 @@ public class ActivoAdapter {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto){
 
-		List<ActivoTramite> tramitesActivo = (List<ActivoTramite>) activoTramiteApi.getTramitesActivo(idActivo, webDto).getResults();
+		//List<ActivoTramite> tramitesActivo = (List<ActivoTramite>) activoTramiteApi.getTramitesActivo(idActivo, webDto).getResults();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+		List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class,filtro);
 		List<DtoListadoTramites> listadoTramitesDto = new ArrayList<DtoListadoTramites>();
 		
-		for(ActivoTramite tramite : tramitesActivo){
+		for(VBusquedaTramitesActivo tramite : tramitesActivo){
 			DtoListadoTramites dtoTramite = new DtoListadoTramites();
 			try{
-				beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
-				beanUtilNotNull.copyProperty(dtoTramite, "idTipoTramite", tramite.getTipoTramite().getId());
-				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", tramite.getTipoTramite().getDescripcion());
-				if(!Checks.esNulo(tramite.getTramitePadre()))
-					beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
-				beanUtilNotNull.copyProperty(dtoTramite, "idActivo", tramite.getActivo().getId());
-				beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
-				beanUtilNotNull.copyProperty(dtoTramite, "estado", tramite.getEstadoTramite().getDescripcion());
-				if(!Checks.esNulo(tramite.getTrabajo())){
-					beanUtilNotNull.copyProperty(dtoTramite, "subtipoTrabajo", tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
-					//beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getTrabajo().getFechaInicio());
-					//beanUtilNotNull.copyProperty(dtoTramite, "fechaFin", tramite.getTrabajo().getFechaFin());
-				}
-				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getFechaInicio());
-				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", tramite.getFechaFin());
-				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
+				beanUtilNotNull.copyProperties(dtoTramite, tramite);
 
-//				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getAuditoria().getFechaCrear());
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
@@ -2479,7 +2466,7 @@ public class ActivoAdapter {
 			}
 			listadoTramitesDto.add(dtoTramite);
 		}
-		//return activoTramiteApi.getTramitesActivo(idActivo);
+
 		return listadoTramitesDto;
 	}
 	
@@ -2638,16 +2625,17 @@ public class ActivoAdapter {
 					if(!DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
 							beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre",  true);
 
-			// Trabajos asociados con expediente comercial
-			Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tramite.getTrabajo().getId());	
-			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
-			if(!Checks.esNulo(expedienteComercial)){
-				beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", true);
-				beanUtilNotNull.copyProperty(dtoTramite, "idExpediente", expedienteComercial.getId());
-				beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC", expedienteComercial.getEstado().getDescripcion());
-				beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
-			}else{
-				beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
+			if(!Checks.esNulo(tramite.getTrabajo())) {
+				// Trabajos asociados con expediente comercial
+				Filter filtroEC = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tramite.getTrabajo().getId());	
+				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroEC);
+				if(!Checks.esNulo(expedienteComercial)){
+					beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", true);
+					beanUtilNotNull.copyProperty(dtoTramite, "idExpediente", expedienteComercial.getId());
+					beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC", expedienteComercial.getEstado().getDescripcion());
+					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
+				}
 			}
 
 		} catch (Exception e) {

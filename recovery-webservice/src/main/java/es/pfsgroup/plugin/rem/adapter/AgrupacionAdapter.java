@@ -776,9 +776,8 @@ public class AgrupacionAdapter {
 	public List<VOfertasActivosAgrupacion>  getListOfertasAgrupacion(Long idAgrupacion) {
 		
 		Filter filtro= genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());	
-		Order order = new Order(OrderType.DESC, "fechaCreacion");
-		
-		List<VOfertasActivosAgrupacion> ofertasAgrupacion= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order,filtro);
+
+		List<VOfertasActivosAgrupacion> ofertasAgrupacion= genericDao.getList(VOfertasActivosAgrupacion.class, filtro);
 	
 		
 		return ofertasAgrupacion;
@@ -792,7 +791,7 @@ public class AgrupacionAdapter {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
 			
-			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getEstadoOferta());
+			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 			
 			oferta.setEstadoOferta(tipoOferta);
 			

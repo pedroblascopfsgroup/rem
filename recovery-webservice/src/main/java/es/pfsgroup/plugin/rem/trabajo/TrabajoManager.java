@@ -2434,19 +2434,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return false;
 	}
 
-	// TODO: Dani: Cuando estén definidas y desarrolladas las atribuciones, hay
-	// que desarrollar estos dos métodos. ¿Meterlos en OfertaApi?
-
-	@Override
-	public boolean checkAtribuciones(TareaExterna tareaExterna) {
-		return false;
-	}
-
-	@Override
-	public boolean checkAtribuciones(Trabajo trabajo) {
-		return false;
-	}
-
 	@Override
 	public boolean checkSareb(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);

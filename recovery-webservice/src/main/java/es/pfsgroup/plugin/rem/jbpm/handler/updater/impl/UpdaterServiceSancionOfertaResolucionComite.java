@@ -83,7 +83,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 								ofertaApi.rechazarOferta(ofertaAceptada);
 								List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 								for(Oferta oferta : listaOfertas){
-									if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta()))){
+									if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
 										ofertaApi.descongelarOferta(oferta);
 									}
 								}

@@ -49,26 +49,16 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
 			//Deniega el expediente
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+			expediente.setEstado(estado);
+			genericDao.save(ExpedienteComercial.class, expediente);
 			
 			//Finaliza el trámite
 			Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 			tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 			genericDao.save(ActivoTramite.class, tramite);
-
-			//Rechaza la oferta y descongela el resto
-			ofertaApi.rechazarOferta(ofertaAceptada);
-			List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-			for(Oferta oferta : listaOfertas){
-				if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta()))){
-					ofertaApi.descongelarOferta(oferta);
-				}
-			}
 			
-			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-			expediente.setEstado(estado);
-			
-			genericDao.save(ExpedienteComercial.class, expediente);
 			genericDao.save(Oferta.class, ofertaAceptada);
 			
 		}

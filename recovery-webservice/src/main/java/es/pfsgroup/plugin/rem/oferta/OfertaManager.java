@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -809,6 +810,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		}
 		return listaRespuesta;
+	}
+	
+
+	@Override
+	public boolean checkAtribuciones(TareaExterna tareaExterna) {
+		Oferta oferta = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(oferta)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			if(!Checks.esNulo(expediente)){
+				if(!Checks.esNulo(expediente.getComiteSancion())){
+					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(expediente.getComiteSancion().getCodigo()) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(expediente.getComiteSancion().getCodigo()))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkAtribuciones(Trabajo trabajo) {
+		Oferta oferta = trabajoToOferta(trabajo);
+		if(!Checks.esNulo(oferta)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			if(!Checks.esNulo(expediente)){
+				if(!Checks.esNulo(expediente.getComiteSancion())){
+					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(expediente.getComiteSancion().getCodigo()) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(expediente.getComiteSancion().getCodigo()))
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

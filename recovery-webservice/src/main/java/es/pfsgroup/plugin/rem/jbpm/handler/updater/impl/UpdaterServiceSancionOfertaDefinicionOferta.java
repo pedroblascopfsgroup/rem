@@ -41,7 +41,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		/* Si tiene atribuciones guardamos la fecha de aceptación de la tarea como fecha de sanción,
 			en caso contrario, la fecha de sanción será la de resolución del comité externo.
 		*/
-		if(trabajoApi.checkAtribuciones(tramite.getTrabajo())){
+		if(ofertaApi.checkAtribuciones(tramite.getTrabajo())){
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if(!Checks.esNulo(ofertaAceptada)){
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());

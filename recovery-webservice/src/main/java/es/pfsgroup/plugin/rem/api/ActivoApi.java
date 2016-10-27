@@ -708,4 +708,20 @@ public interface ActivoApi {
 	 */
 	public boolean updateActivoIntegrado(DtoActivoIntegrado dto);
 	
+	/**
+	 * Cantidad de ofertas con estadoOferta 01 ó 04
+	 * para un determinado activo 
+	 * @param activo
+	 * @return
+	 */
+	public int cantidadOfertas(Activo activo);
+	
+	
+	/**
+	 * Mayor oferta con estadoOferta 01 ó 04
+	 * para un determinado activo
+	 * @param activo
+	 * @return
+	 */
+	public Double mayorOfertaRecibida(Activo activo);
 }

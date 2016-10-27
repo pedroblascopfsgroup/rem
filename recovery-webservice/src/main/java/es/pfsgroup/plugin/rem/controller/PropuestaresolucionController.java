@@ -231,30 +231,30 @@ public class PropuestaresolucionController {
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
 			if (model.get("error")==null || model.get("error")=="") {
 				try {
-//					byte[] bytes = read(fileSalidaTemporal);
-//					dataResponse.put("contentType", "application/pdf");
-//					dataResponse.put("fileName", "HojaPresentacionPropuesta.pdf");
-//					dataResponse.put("hojaPropuesta",base64Encode(bytes));
-//					model.put("data", dataResponse);
+					byte[] bytes = read(fileSalidaTemporal);
+					dataResponse.put("contentType", "application/pdf");
+					dataResponse.put("fileName", "HojaPresentacionPropuesta.pdf");
+					dataResponse.put("hojaPropuesta",base64Encode(bytes));
+					model.put("data", dataResponse);
 					
 					//Si no hay error se pone vacio, por coherencia con los otros métodos.
 					model.put("error", "");
 					
-		       		ServletOutputStream salida = response.getOutputStream(); 
-		       		FileInputStream fileInputStream = new FileInputStream(fileSalidaTemporal.getAbsolutePath());
-		 
-		       		if(fileInputStream!= null) {       		
-			       		response.setHeader("Content-disposition", "attachment; filename="+name+".pdf");
-			       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-			       		response.setHeader("Cache-Control", "max-age=0");
-			       		response.setHeader("Expires", "0");
-			       		response.setHeader("Pragma", "public");
-			       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
-			       		response.setContentType("application/pdf");		
-			       		FileUtils.copy(fileInputStream, salida);// Write
-			       		salida.flush();
-			       		salida.close();
-		       		}
+//		       		ServletOutputStream salida = response.getOutputStream(); 
+//		       		FileInputStream fileInputStream = new FileInputStream(fileSalidaTemporal.getAbsolutePath());
+//		 
+//		       		if(fileInputStream!= null) {       		
+//			       		response.setHeader("Content-disposition", "attachment; filename="+name+".pdf");
+//			       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+//			       		response.setHeader("Cache-Control", "max-age=0");
+//			       		response.setHeader("Expires", "0");
+//			       		response.setHeader("Pragma", "public");
+//			       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+//			       		response.setContentType("application/pdf");		
+//			       		FileUtils.copy(fileInputStream, salida);// Write
+//			       		salida.flush();
+//			       		salida.close();
+//		       		}
 		       		
 		       	} catch (Exception e) { 
 		       		e.printStackTrace();

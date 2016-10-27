@@ -37,6 +37,8 @@ import org.springframework.security.providers.preauth.PreAuthenticatedAuthentica
 import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.utils.DbIdContextHolder;
+import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.commons.utils.Checks;
@@ -45,6 +47,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.filter.AuthenticationRestService;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
@@ -61,6 +64,9 @@ public class RestManagerImpl implements RestApi {
 
 	@Autowired
 	PeticionDao peticionDao;
+	
+	@Autowired
+	private EntidadDao entidadDao;
 
 	@Resource
 	private Properties appProperties;
@@ -68,9 +74,11 @@ public class RestManagerImpl implements RestApi {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
-	public boolean validateSignature(Broker broker, String signature, String peticion, ALGORITMO_FIRMA algoritmoFirma)
+	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		boolean resultado = false;
+		String peticion = restRequest.getBody();
+		ALGORITMO_FIRMA algoritmoFirma = this.obtenerAlgoritmoFirma(restRequest);
 		if (broker == null || signature == null || signature.isEmpty() || peticion == null) {
 			resultado = false;
 		} else {
@@ -204,28 +212,42 @@ public class RestManagerImpl implements RestApi {
 		return peticionDao.getLastPeticionByToken(token);
 	}
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void sendResponse(HttpServletResponse response, ModelMap model) {
+	@SuppressWarnings({ "rawtypes" })
+	public void sendResponse(HttpServletResponse response, ModelMap model, RestRequestWrapper request) {
 		JSONObject jsonResp = new JSONObject();
-		response.reset();
-		response.setHeader("Content-Type", "application/json;charset=UTF-8");
 		Iterator it = model.keySet().iterator();
+		String result = RestApi.CODE_OK;
 		while (it.hasNext()) {
 			String key = (String) it.next();
 			Object value = model.get(key);
 			value = transformObject(value);
+			if (key.equals("error") && value != null && value instanceof String
+					&& (!((String) value).isEmpty() && !((String) value).equals("null"))) {
+				result = RestApi.CODE_ERROR;
+			}
 			jsonResp.accumulate(key, value);
 		}
+		this.sendResponse(response, request, jsonResp, result);
+	}
 
+	@Override
+	public void sendResponse(HttpServletResponse response, RestRequestWrapper request,
+			JSONObject jsonResp, String result) {
+		response.reset();
+		response.setHeader("Content-Type", "application/json;charset=UTF-8");
 		PrintWriter out;
 		try {
+			if (request != null && request.getPeticionRest() != null) {
+				request.getPeticionRest().setResult(result);
+				request.getPeticionRest().setResponse(jsonResp.toString());
+				request.setTiempoFin(System.currentTimeMillis());
+				request.getPeticionRest().setTiempoEjecucion(request.getTiempoFin() - request.getTiempoInicio());
+			}
 			out = response.getWriter();
 			out.print(jsonResp);
 			out.flush();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error(e);
-			throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonResp);
 		}
 
 	}
@@ -295,12 +317,12 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public PeticionRest crearPeticionObj(ServletRequest req) {
+	public PeticionRest crearPeticionObj(RestRequestWrapper req) {
 		HttpServletRequest request = (HttpServletRequest) req;
 		PeticionRest peticion = new PeticionRest();
 		peticion.setMetodo(request.getMethod());
 		peticion.setQuery(request.getPathInfo());
-		peticion.setData(request.getParameter("data"));
+		peticion.setData(req.getBody());
 		peticion.setIp(request.getRemoteAddr());
 
 		return peticion;
@@ -380,8 +402,8 @@ public class RestManagerImpl implements RestApi {
 		return obtenerAlgoritmoFirma(obtenerNombreServicio(req), getClientIpAddr(req));
 	}
 
-	
-	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields) {
+	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields,
+			RestRequestWrapper req) {
 		try {
 			JSONObject jsonResp = null;
 
@@ -389,14 +411,7 @@ public class RestManagerImpl implements RestApi {
 
 			jsonResp = buildJsonResponse(errorCode, jsonFields);
 
-			response.reset();
-			response.setHeader("Content-Type", "application/json;charset=UTF-8");
-
-			if (!Checks.esNulo(jsonResp)) {
-				PrintWriter out = response.getWriter();
-				out.print(jsonResp);
-				out.flush();
-			}
+			this.sendResponse(response, req, jsonResp, RestApi.CODE_ERROR);
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -477,5 +492,29 @@ public class RestManagerImpl implements RestApi {
 		}
 
 		return jsonResp;
+	}
+	
+	public void doSessionConfig(ServletResponse response, String workingCode) throws Exception {
+		// Obtenemos la entidad partiendo del working code y establecemos el
+		// contextholder
+		// necesario para acceder al esquema de la entidad
+		Entidad entidad;
+		try {
+			entidad = entidadDao.findByWorkingCode(workingCode);
+		} catch (Exception e) {
+			logger.error("Error obteniendo la entidad: ");
+		}
+
+		entidad = entidadDao.findByWorkingCode(workingCode);
+
+		if (entidad != null) {
+			DbIdContextHolder.setDbId(entidad.getId());
+		} else {
+			throw new Exception(RestApi.REST_MSG_INVALID_WORKINGCODE);
+		}
+
+		// Realizamos login en la plataforma
+		this.doLogin(this.loadUserRest(entidad));
+
 	}
 }

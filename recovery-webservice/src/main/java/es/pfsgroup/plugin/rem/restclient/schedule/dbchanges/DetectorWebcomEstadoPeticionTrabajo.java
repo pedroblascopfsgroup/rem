@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
@@ -22,8 +23,8 @@ public class DetectorWebcomEstadoPeticionTrabajo extends DetectorCambiosBD<Estad
 	}
 
 	@Override
-	public void invocaServicio(List<EstadoTrabajoDto> data) throws ErrorServicioWebcom {
-		this.serviciosWebcom.webcomRestEstadoPeticionTrabajo(data);
+	public void invocaServicio(List<EstadoTrabajoDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		this.serviciosWebcom.webcomRestEstadoPeticionTrabajo(data, registro);
 		
 	}
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
@@ -37,8 +38,8 @@ public class DetectorWebcomVentasYcomisiones extends DetectorCambiosBD<Comisione
 	}
 
 	@Override
-	public void invocaServicio(List<ComisionesDto> data) throws ErrorServicioWebcom {
-		this.serviciosWebcom.webcomRestVentasYcomisiones(data);
+	public void invocaServicio(List<ComisionesDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		this.serviciosWebcom.webcomRestVentasYcomisiones(data, registro);
 		
 	}
 

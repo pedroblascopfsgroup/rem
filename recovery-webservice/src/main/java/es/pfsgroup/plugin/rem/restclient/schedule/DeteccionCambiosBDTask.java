@@ -5,13 +5,17 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomStock;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDaoError;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 
 /**
@@ -32,6 +36,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private boolean running = false;
+
+	private RegistroLlamadasManager registroLlamadas;
 
 	/*
 	 * Esa lista se puebla una vez terminado de cargar el contexto de Spring.
@@ -60,23 +66,24 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 		if (running) {
 			logger.debug("Este proceso está bloqueado por otro hilo de ejecución. Esperando a que finalice");
-
-			int times = 0;
-			while (running && (times < 6)) {
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					logger.warn("Se ha abortado la espera");
-				}
-				times++;
+		}
+		int times = 0;
+		while (running && (times < 6)) {
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				String message = "Se ha abortado la espera";
+				logger.fatal(message);
+				Thread.currentThread().interrupt();
 			}
+			times++;
 		}
 
 		Class control = handler.getDtoClass();
 
 		if (running) {
 			logger.fatal("Ha cadudado el tiempo de espera y el proceso aún está bloqueado");
-			throw new RuntimeException("Ha cadudado el tiempo de espera y el proceso aún está bloqueado");
+			throw new DeteccionCambiosTaskError("Ha cadudado el tiempo de espera y el proceso aún está bloqueado");
 		}
 		synchronized (this) {
 			running = true;
@@ -84,20 +91,27 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 
 		logger.info("[inicio] Envío de información completa a WEBCOM mediante REST");
+		RestLlamada registro = new RestLlamada();
+		boolean somethingdone = false;
 		try {
 
 			long startTime = System.currentTimeMillis();
 
 			logger.debug(handler.getClass().getSimpleName() + ": obtenemos toda la información de la  BD");
-			List listPendientes = handler.listDatosCompletos(control);
+			List listPendientes = handler.listDatosCompletos(control, registro);
+			somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
 
-			ejecutaTarea(handler, listPendientes, control);
+			ejecutaTarea(handler, listPendientes, control, registro);
 
-			logger.debug("TIMER DETECTOR FULL enviaInformacionCompleta [" + handler.getClass().getSimpleName() + "]: " + (System.currentTimeMillis() - startTime));
+			logger.debug("TIMER DETECTOR FULL enviaInformacionCompleta [" + handler.getClass().getSimpleName() + "]: "
+					+ (System.currentTimeMillis() - startTime));
 
 		} finally {
-			running = false;
+			if (somethingdone && (registroLlamadas != null)) {
+				registroLlamadas.guardaRegistroLlamada(registro);
+			}
 			logger.info("[fin] Envío de información completa a WEBCOM mediante REST");
+			running = false;
 		}
 	}
 
@@ -116,36 +130,51 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			this.notifyAll();
 		}
 
-		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST");
+		long iteracion = System.currentTimeMillis();
+		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
 		try {
 			if ((registroCambiosHandlers != null) && (!registroCambiosHandlers.isEmpty())) {
 				for (DetectorCambiosBD handler : registroCambiosHandlers) {
-					long startTime = System.currentTimeMillis();
+					RestLlamada registro = new RestLlamada();
+					registro.setIteracion(iteracion);
+					boolean somethingdone = false;
+					try {
+						long startTime = System.currentTimeMillis();
 
-					logger.debug(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
-					Class control = handler.getDtoClass();
-					List listPendientes = handler.listPendientes(control);
+						logger.debug(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
+						Class control = handler.getDtoClass();
+						List listPendientes = handler.listPendientes(control, registro);
+						somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
 
-					ejecutaTarea(handler, listPendientes, control);
+						ejecutaTarea(handler, listPendientes, control, registro);
 
-					logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName() + "]: " + (System.currentTimeMillis() - startTime));
+						logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName() + "]: "
+								+ (System.currentTimeMillis() - startTime));
+					} catch (CambiosBDDaoError e) {
+						logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
+								+ "], no se han podido obtener los cambios", e);
+					} finally {
+						if (somethingdone && (registroLlamadas != null)) {
+							registroLlamadas.guardaRegistroLlamada(registro);
+						}
+					}
 				}
 			} else {
 				logger.warn("El registro de cambios en BD aún no está disponible");
 			}
 		} finally {
 			running = false;
-			logger.info("[fin] Detección de cambios en BD  WEBCOM mediante REST");
+			logger.info("[fin] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
 		}
 
 	}
 
-	public void ejecutaTarea(DetectorCambiosBD handler, List listPendientes, Class control) {
+	public void ejecutaTarea(DetectorCambiosBD handler, List listPendientes, Class control, RestLlamada registro) {
 
 		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
 			logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
 			try {
-				handler.invocaServicio(listPendientes);
+				handler.invocaServicio(listPendientes, registro);
 			} catch (ErrorServicioWebcom e) {
 				if (e.isReintentable()) {
 					logger.error(
@@ -157,10 +186,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
 							e);
 				}
-			} 
+			}
 
 			logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
-			handler.marcaComoEnviados(control);
+			handler.marcaComoEnviados(control, registro);
 
 		} else {
 			logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
@@ -178,19 +207,52 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				registroCambiosHandlers = new ArrayList<DetectorCambiosBD>();
 			}
 
+			ApplicationContext applicationContext = ((ContextRefreshedEvent) event).getApplicationContext();
+
 			if (registroCambiosHandlers.isEmpty()) {
-				ApplicationContext applicationContext = ((ContextRefreshedEvent) event).getApplicationContext();
 				String[] beanNames = applicationContext.getBeanNamesForType(DetectorCambiosBD.class);
 				if ((beanNames != null) && (beanNames.length >= 1)) {
-					for (String name : beanNames) {
-						DetectorCambiosBD handler = (DetectorCambiosBD) applicationContext.getBean(name);
-						this.addRegistroCambiosBDHandler(handler);
-					}
+					configuraHandlers(applicationContext, beanNames);
 				}
 
 			}
+			
+			if (registroLlamadas == null) {
+				String[] registros = applicationContext.getBeanNamesForType(RegistroLlamadasManager.class);
+				if ((registros != null) && (registros.length > 0)) {
+					configuraRegistroLlamadas(applicationContext, registros);
+
+				} else if (! registroCambiosHandlers.isEmpty()){
+					logger.warn("*************************************************************");
+					logger.warn("No se han encontrado instancias de " + RegistroLlamadasManager.class.getName()
+							+ ". No guardarar trazas en la BD de las llamadas a servicios REST de WEBCOM");
+					logger.warn("*************************************************************");
+				}
+
+			}
+			
+			
 		} // end check event
 
+	}
+
+	private void configuraRegistroLlamadas(ApplicationContext applicationContext, String[] registros) {
+		registroLlamadas = (RegistroLlamadasManager) applicationContext.getBean(registros[0]);
+		if (registros.length > 1) {
+			logger.warn("Se han encontrado " + registros.length + " implementaciones para "
+					+ RegistroLlamadasManager.class.getName() + ". Escogemos una al azar");
+		}
+	}
+
+	private void configuraHandlers(ApplicationContext applicationContext, String[] beanNames) {
+		for (String name : beanNames) {
+			DetectorCambiosBD handler = (DetectorCambiosBD) applicationContext.getBean(name);
+			this.addRegistroCambiosBDHandler(handler);
+		}
+	}
+
+	public List<DetectorCambiosBD> getRegistroCambiosHandlers() {
+		return registroCambiosHandlers;
 	}
 
 }

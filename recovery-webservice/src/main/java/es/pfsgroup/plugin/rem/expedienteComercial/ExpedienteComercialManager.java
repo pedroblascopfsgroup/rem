@@ -46,7 +46,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
@@ -2345,6 +2344,79 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		return instancia;
 	}
+	
+	
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception {
+		
+		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
+		Double importeXActivo = null;
+		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
+		List<InstanciaDecisionDataDto> instanciaList  = new ArrayList<InstanciaDecisionDataDto>();
+		boolean solicitaFinanciacion = false;
+		
+		Oferta oferta = expediente.getOferta();
+		if(Checks.esNulo(oferta)){
+			throw new Exception("No existe oferta para el expediente.");
+		}
+					
+		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
+		if(Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size()>0)){
+			throw new Exception("No hay activos para la oferta indicada.");
+		}
+		
+		
+		for(int i=0; i< listaActivos.size(); i++){
+			Activo activo = listaActivos.get(i).getPrimaryKey().getActivo();
+			if(Checks.esNulo(activo)){
+				throw new Exception("No se ha podido obtener el activo.");
+			}
+			
+			if(Checks.esNulo(activo.getNumActivoUvem())){
+				throw new Exception("El activo no tiene número de UVEM.");
+			}
+			
+			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
+			Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();
+			
+			try {
+				importeXActivo = (importeTotal * porcentajeParti)/100;
+			} catch (Exception e) {
+				logger.error(e);
+			}
+			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
+			//ImportePorActivo
+			instData.setImporteConSigno(importeXActivo.longValue());
+			//NumActivoUvem
+			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
+			
+			//TipoImpuesto
+			if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
+				String tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo(); 
+				if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA;
+				if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC;
+				if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI;
+				if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP;
+			}	
+			instData.setTipoDeImpuesto(tipoDeImpuesto);	
+			//PorcentajeImpuesto
+			instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+			instanciaList.add(instData);
+		}
+		
+		
+		//SolicitaFinaciacion
+		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
+			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
+		}
+		instancia.setFinanciacionCliente(solicitaFinanciacion);
+		//OfertaHRE
+		instancia.setCodigoDeOfertaHaya(oferta.getNumOferta().toString());
+		instancia.setData(instanciaList);
+
+		return instancia;
+	}
+
+	
 
 	@Override
 	@Transactional(readOnly = false)

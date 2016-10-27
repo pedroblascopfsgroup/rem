@@ -1540,7 +1540,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
 	    grid.setSelection(record);
-	    if(!Ext.isEmpty(record.get('id'))){
+	    
+	    if(!Ext.isEmpty(record.get('idProveedor'))){
+	    	var idProveedor = record.get("idProveedor");
+	    	record.data.id= idProveedor;
+//	   		me.redirectTo('activos', true);
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }
+	    else if(!Ext.isEmpty(record.get('id'))){
 	    	var idProveedor = record.get("id");
 //	   		me.redirectTo('activos', true);
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);

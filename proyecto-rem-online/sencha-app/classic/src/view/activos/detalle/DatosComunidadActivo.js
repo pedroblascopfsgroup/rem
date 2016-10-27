@@ -102,6 +102,10 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 											       {    text: HreRem.i18n('header.observaciones'),
 											        	dataIndex: 'observaciones',
 											        	flex: 1
+											       },
+											       {
+											       		dataIndex: 'idProveedor',
+											       		hidden: true
 											       }
 									    ],
 

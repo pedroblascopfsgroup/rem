@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 public class WebcomSignatureUtils {
 	
 	private static final Log logger = LogFactory.getLog(WebcomSignatureUtils.class);
+	private static final int MAX_CHARS_DEBUG_FIRMA = 5000;
 	
 	public static String computeSignatue(String apiKey, String ipAddress, String body) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 		logger.debug("Cálculo del sginature");
@@ -22,7 +23,7 @@ public class WebcomSignatureUtils {
 			firma = firma.concat(body);
 		}
 		
-		logger.debug(firma);
+		logger.debug(firma.length() <= MAX_CHARS_DEBUG_FIRMA ? firma : firma.substring(0, MAX_CHARS_DEBUG_FIRMA) + " [...]" );
 		logger.debug("-------------  FIN FIRMA   -----------------");
 		byte[] bytesOfMessage = firma.getBytes("UTF-8");
 

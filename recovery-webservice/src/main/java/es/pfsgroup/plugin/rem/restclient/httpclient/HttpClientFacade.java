@@ -109,8 +109,6 @@ public class HttpClientFacade {
 		String contentType = "application/json";
 		logger.debug(" - Content Type : " + contentType);
 		logger.debug(" - charset : " + charSet);
-		logger.debug("-- JSON Body --");
-		logger.debug(params.toString());
 
 		StringRequestEntity entity = new StringRequestEntity(params.toString(), contentType, charSet);
 		method.setRequestEntity(entity);

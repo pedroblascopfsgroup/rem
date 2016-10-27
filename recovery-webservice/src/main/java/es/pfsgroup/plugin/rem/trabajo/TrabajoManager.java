@@ -819,9 +819,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (Checks.esNulo(dtoTrabajo.getCubreSeguro()))
 			trabajo.setCubreSeguro(false);
 
-		if (!Checks.esNulo(dtoTrabajo.getFechaConcreta()))
-			trabajo.setFechaHoraConcreta(dtoTrabajo.getFechaConcreta());
-
 		if (dtoTrabajo.getEstadoCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoCodigo());
 			DDEstadoTrabajo estadoTrabajo = (DDEstadoTrabajo) genericDao.get(DDEstadoTrabajo.class, filtro);

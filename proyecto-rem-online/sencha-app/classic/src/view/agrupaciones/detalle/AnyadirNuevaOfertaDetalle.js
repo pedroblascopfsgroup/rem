@@ -73,9 +73,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.nombre.cliente'),
 				            	    	name:		'nombreCliente',
+				            	    	allowBlank: false,
 										bind: {
 											value: '{oferta.nombreCliente}',
-											disabled: '{oferta.razonSocialCliente}'
+											disabled: '{oferta.razonSocialCliente}',
+											allowBlank: '{oferta.razonSocialCliente}'
 										}
 										
 				            	    },
@@ -90,9 +92,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				            	    {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.razonSocial.cliente'),
 				            	    	name:		'razonSocialCliente',
+				            	    	allowBlank: false,
 										bind:		{
 											value :'{oferta.razonSocialCliente}',
-											disabled: '{oferta.nombreCliente}'
+											disabled: '{oferta.nombreCliente}',
+											allowBlank: '{oferta.nombreCliente}'
 										}
 				            	    },
 				            	    {

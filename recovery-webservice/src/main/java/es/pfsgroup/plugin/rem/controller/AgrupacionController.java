@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,7 +92,7 @@ public class AgrupacionController {
 
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         dateFormat.setLenient(false);
-        
+        dateFormat.setTimeZone(TimeZone.getTimeZone("Etc/GMT-2"));
         //binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
         binder.registerCustomEditor(Date.class, new ParadiseCustomDateEditor(dateFormat, true));
         
@@ -296,7 +297,7 @@ public class AgrupacionController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListOfertasAgrupacion(Long id, ModelMap model){
+	public ModelAndView getListOfertasAgrupacion(Long id, WebDto webDto, ModelMap model){
 
 		model.put("data", adapter.getListOfertasAgrupacion(id));
 		

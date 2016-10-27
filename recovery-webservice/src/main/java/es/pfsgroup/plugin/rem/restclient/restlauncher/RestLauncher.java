@@ -6,6 +6,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomActivosObrasNuevas;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomCabecerasObrasNuevas;

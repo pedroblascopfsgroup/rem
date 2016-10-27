@@ -5,6 +5,7 @@ public class DtoCliente {
 	private String nombreCliente;
 	private String direccionCliente;
 	private String dniCliente;
+	private String tlfCliente;
 	
 	public String getNombreCliente() {
 		return nombreCliente;
@@ -24,5 +25,10 @@ public class DtoCliente {
 	public void setDniCliente(String dniCliente) {
 		this.dniCliente = dniCliente;
 	}
-
+	public String getTlfCliente() {
+		return tlfCliente;
+	}
+	public void setTlfCliente(String tlfCliente) {
+		this.tlfCliente = tlfCliente;
+	}
 }

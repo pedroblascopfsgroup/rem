@@ -94,7 +94,5 @@ Ext.define('HreRem.model.Proveedor', {
             read: 'proveedores/getProveedores',
             create: 'proveedores/createProveedor'
 		}
-
     }
-
 });

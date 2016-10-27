@@ -1,5 +1,5 @@
 /**
- * This view is used to present the details of a single Oferta.
+ * This view is used to present the details of a single Reserva.
  */
 
 Ext.define('HreRem.model.Reserva', {
@@ -26,31 +26,17 @@ Ext.define('HreRem.model.Reserva', {
 			name: 'fechaVencimiento',
     		type : 'date',
 			dateFormat: 'c'
-    	},
-    	{
-    		name: 'fechaAnulacion',
-    		type : 'date',
-			dateFormat: 'c'
-    	},
-    	{
-    		name: 'motivoAnulacion'
-    	},
-    	{
-    		name: 'estadoDevolucionCodigo'
     	}
     ],
-    
+
     proxy: {
 		type: 'uxproxy',
 		localUrl: 'reserva.json',
-		
 		api: {
             read: 'expedientecomercial/getTabExpediente',
             update: 'expedientecomercial/saveReserva'
         },
-		
         extraParams: {tab: 'reserva'}
-    }    
-
+    }
 });
           

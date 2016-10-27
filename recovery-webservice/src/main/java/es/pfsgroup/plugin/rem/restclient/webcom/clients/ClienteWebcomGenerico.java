@@ -87,9 +87,9 @@ public class ClienteWebcomGenerico {
 		try {
 			// Llamada al servicio
 			JSONObject requestBody = WebcomRequestUtils.createRequestJson(paramsList);
+			registroLlamada.logTiempPrepararJson();
 			registroLlamada.setToken(requestBody.getString(WebcomRequestUtils.JSON_PROPERTY_ID));
 			registroLlamada.setRequest(requestBody.toString());
-			logger.debug("Cuerpo de la petición: " + requestBody.toString());
 
 			String apiKey = endpoint.getApiKey();
 			String publicAddress = getPublicAddress();
@@ -130,10 +130,8 @@ public class ClienteWebcomGenerico {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
 		} catch (NoSuchAlgorithmException e) {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
-		}finally{
-			if (registroLlamada != null){
-				registroLlamada.logTiempoPeticionRest();
-			}
+		} finally {
+			registroLlamada.logTiempoPeticionRest();
 		}
 	}
 

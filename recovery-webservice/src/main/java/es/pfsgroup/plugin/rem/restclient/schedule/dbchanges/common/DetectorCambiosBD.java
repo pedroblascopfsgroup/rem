@@ -124,14 +124,15 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 *            esamos invocando el handler correcto. Para ello, la clase que
 	 *            invoca ester método debe obtener este valor usando el método
 	 *            getDtoClass()
-	 * @param registro  Objeto en el que se irá dejando trazas de tiempos de
+	 * @param registro
+	 *            Objeto en el que se irá dejando trazas de tiempos de
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
 	public void marcaComoEnviados(Class dtoClass, RestLlamada registro) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
-	
+
 		if (dtoClass.equals(getDtoClass())) {
 			dao.marcaComoEnviados(dtoClass, this, registro);
 		} else {
@@ -176,15 +177,15 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 
 				// main loop
 				for (CambioBD cambio : listCambios) {
-					logger.debug("Obtenemos los cambios registros cambiados en BD");
+					if (logger.isDebugEnabled()) {
+						logger.debug("Obtenemos los cambios registros cambiados en BD");
+					}
 					Map<String, Object> camposActualizados = cambio.getCambios();
 					if (!camposActualizados.isEmpty()) {
 
 						// Obtenemos el contenido que debe tener el DTO
 						Map<String, Object> datos = cambio
 								.getValoresHistoricos(WebcomRequestUtils.camposObligatorios(dtoClass));
-						logger.debug("Valores historicos: " + datos);
-						logger.debug("Campos actualizados: " + camposActualizados);
 						datos.putAll(camposActualizados);
 
 						if (fusionCambios == null) {
@@ -197,7 +198,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 							// cambios
 							fusionCambios.addDataMap(datos);
 						}
-					} else {
+					} else if (logger.isDebugEnabled()){
 						logger.debug("Map de cambios vacío, nada que notificar");
 					}
 				} // fin main loop

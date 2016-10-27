@@ -107,11 +107,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 					+ (System.currentTimeMillis() - startTime));
 
 		} finally {
-			running = false;
 			if (somethingdone && (registroLlamadas != null)) {
 				registroLlamadas.guardaRegistroLlamada(registro);
 			}
 			logger.info("[fin] Envío de información completa a WEBCOM mediante REST");
+			running = false;
 		}
 	}
 
@@ -130,11 +130,13 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			this.notifyAll();
 		}
 
-		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST");
+		long iteracion = System.currentTimeMillis();
+		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
 		try {
 			if ((registroCambiosHandlers != null) && (!registroCambiosHandlers.isEmpty())) {
 				for (DetectorCambiosBD handler : registroCambiosHandlers) {
 					RestLlamada registro = new RestLlamada();
+					registro.setIteracion(iteracion);
 					boolean somethingdone = false;
 					try {
 						long startTime = System.currentTimeMillis();
@@ -162,7 +164,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			}
 		} finally {
 			running = false;
-			logger.info("[fin] Detección de cambios en BD  WEBCOM mediante REST");
+			logger.info("[fin] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
 		}
 
 	}

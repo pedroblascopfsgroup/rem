@@ -21,73 +21,77 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Table(name = "RST_LLAMADA", schema = "${entity.schema}")
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class RestLlamada implements Serializable, Auditable {
-	
+
 	private static final long serialVersionUID = 8551021750962302260L;
-	
+	private static final int MAX_CHARS_JSON = 5000;
+
 	@Id
 	@Column(name = "RST_LLAMADA_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "llamadaRstGenerator")
 	@SequenceGenerator(name = "llamadaRstGenerator", sequenceName = "S_RST_LLAMADA")
 	private Long llamadaId;
-	
+
+	@Column(name = "RST_ITERACION")
+	private Long iteracion;
+
 	@Column(name = "RST_LLAMADA_ENDPOINT")
 	private String endpoint;
-	
+
 	@Column(name = "RST_LLAMADA_METODO")
 	private String metodo;
-	
+
 	@Column(name = "RST_LLAMADA_TOKEN")
 	private String token;
-	
+
 	@Column(name = "RST_LLAMADA_IP")
 	private String ip;
-	
+
 	@Column(name = "RST_LLAMADA_APIKEY")
 	private String apiKey;
-	
+
 	@Column(name = "RST_LLAMADA_SIGNATURE")
 	private String signature;
-	
+
 	@Column(name = "RST_LLAMADA_ERROR_DESC")
 	private String errorDesc;
-	
+
 	@Column(name = "RST_LLAMADA_REQUEST")
 	private String request;
-	
+
 	@Column(name = "RST_LLAMADA_RESPONSE")
 	private String response;
-	
+
 	@Column(name = "RST_LLAMADA_EXCEPTION")
 	private String exception;
-	
+
 	@Embedded
 	private Auditoria auditoria;
-	
+
 	@Column(name = "RST_MS_START_TIME")
 	private Long startTime;
-	
+
 	@Column(name = "RST_MS_SELECT_CAMBIOS")
 	private Long msSelectCambios;
-	
+
+	@Column(name = "RST_MS_PREP_JSON")
+	private Long msPrepararJson;
+
 	@Column(name = "RST_MS_SELECT_TODO")
 	private Long msSelectTodo;
-	
+
 	@Column(name = "RST_MS_PETICION_REST")
 	private Long msPeticionRest;
-	
+
 	@Column(name = "RST_MS_BORRAR_HIST")
 	private Long msBorrarHistorico;
 
 	@Column(name = "RST_MS_INSERTAR_HIST")
 	private Long msInsertarHistorico;
 
-	
-	
-	public RestLlamada(){
+	public RestLlamada() {
 		this.startTime = System.currentTimeMillis();
-				
+
 	}
-	
 
 	@Override
 	public Auditoria getAuditoria() {
@@ -97,7 +101,7 @@ public class RestLlamada implements Serializable, Auditable {
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-		
+
 	}
 
 	public Long getLlamadaId() {
@@ -161,7 +165,11 @@ public class RestLlamada implements Serializable, Auditable {
 	}
 
 	public void setRequest(String request) {
-		this.request = request;
+		if ((request == null) || (request.length() <= MAX_CHARS_JSON)) {
+			this.request = request;
+		} else {
+			this.request = request.substring(0, MAX_CHARS_JSON) + ".... [too long...]";
+		}
 	}
 
 	public String getResponse() {
@@ -190,90 +198,96 @@ public class RestLlamada implements Serializable, Auditable {
 
 	public void logTiempoSelectCambios() {
 		this.msSelectCambios = System.currentTimeMillis() - this.startTime;
-		
-	}
 
+	}
 
 	public void logTiempoSelectTodosDatos() {
 		this.msSelectTodo = System.currentTimeMillis() - this.startTime;
-		
-	}
-	
-	public void logTiempoPeticionRest() {
-		this.msPeticionRest = System.currentTimeMillis() - this.startTime;
-		
+
 	}
 
+	public void logTiempPrepararJson() {
+		this.msPrepararJson = System.currentTimeMillis() - this.startTime;
+
+	}
+
+	public void logTiempoPeticionRest() {
+		this.msPeticionRest = System.currentTimeMillis() - this.startTime;
+
+	}
 
 	public void logTiempoBorrarHistorico() {
 		this.msBorrarHistorico = System.currentTimeMillis() - this.startTime;
-		
-	}
 
+	}
 
 	public void logTiempoInsertarHistorico() {
 		this.msInsertarHistorico = System.currentTimeMillis() - this.startTime;
-		
-	}
 
+	}
 
 	public Long getStartTime() {
 		return startTime;
 	}
 
-
 	public void setStartTime(Long startTime) {
 		this.startTime = startTime;
 	}
-
 
 	public Long getMsSelectCambios() {
 		return msSelectCambios;
 	}
 
-
 	public void setMsSelectCambios(Long msSelectCambios) {
 		this.msSelectCambios = msSelectCambios;
 	}
-
 
 	public Long getMsSelectTodo() {
 		return msSelectTodo;
 	}
 
-
 	public void setMsSelectTodo(Long msSelectTodo) {
 		this.msSelectTodo = msSelectTodo;
 	}
-
 
 	public Long getMsBorrarHistorico() {
 		return msBorrarHistorico;
 	}
 
-
 	public void setMsBorrarHistorico(Long msBorrarHistorico) {
 		this.msBorrarHistorico = msBorrarHistorico;
 	}
-
 
 	public Long getMsInsertarHistorico() {
 		return msInsertarHistorico;
 	}
 
-
 	public void setMsInsertarHistorico(Long msInsertarHistorico) {
 		this.msInsertarHistorico = msInsertarHistorico;
 	}
-
 
 	public Long getMsPeticionRest() {
 		return msPeticionRest;
 	}
 
-
 	public void setMsPeticionRest(Long msPeticionRest) {
 		this.msPeticionRest = msPeticionRest;
-	}	
-	
+	}
+
+	public Long getIteracion() {
+		return iteracion;
+	}
+
+	public void setIteracion(Long iteracion) {
+		this.iteracion = iteracion;
+	}
+
+	public Long getMsPrepararJson() {
+		return msPrepararJson;
+	}
+
+	public void setMsPrepararJson(Long msPrepararJson) {
+		this.msPrepararJson = msPrepararJson;
+	}
+
 }

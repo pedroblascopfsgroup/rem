@@ -49,25 +49,25 @@ public abstract class ServiciosWebcomBaseManager {
 		}
 
 		LongDataType usuarioId = dto.getIdUsuarioRemAccion();
-		if ((usuarioId == null) || (usuarioId.getValue() == null)) {
-			throw new IllegalArgumentException(
-					"El dto no está bien conformado: 'idUsuarioRemAccion' no puede ser null");
-		}
-
 		DateDataType fechaAccion = dto.getFechaAccion();
-		if ((fechaAccion == null) || (fechaAccion.getValue() == null)) {
-			throw new IllegalArgumentException("El dto no está bien conformado: 'fechaAccion' no puede ser null");
-		}
-
-		logger.debug("Inicializando HashMap de parámetros");
+		/*
+		 * Dejamos esto comentado, no validamos los campos obligatorios, que sea
+		 * WEBCOM quien nos devuelva el error
+		 * 
+		 * if ((usuarioId == null) || (usuarioId.getValue() == null)) { throw
+		 * new IllegalArgumentException(
+		 * "El dto no está bien conformado: 'idUsuarioRemAccion' no puede ser null"
+		 * ); }
+		 * 
+		 * if ((fechaAccion == null) || (fechaAccion.getValue() == null)) {
+		 * throw new IllegalArgumentException(
+		 * "El dto no está bien conformado: 'fechaAccion' no puede ser null"); }
+		 */
 
 		HashMap<String, Object> params = new HashMap<String, Object>();
 
 		String strFechaAccion = WebcomRequestUtils.formatDate(fechaAccion.getValue());
-		logger.debug(ConstantesGenericas.FECHA_ACCION + " = " + strFechaAccion);
 		params.put(ConstantesGenericas.FECHA_ACCION, strFechaAccion);
-
-		logger.debug(ConstantesGenericas.ID_USUARIO_REM_ACCION + " = " + usuarioId);
 		params.put(ConstantesGenericas.ID_USUARIO_REM_ACCION, usuarioId);
 		return params;
 	}
@@ -150,8 +150,8 @@ public abstract class ServiciosWebcomBaseManager {
 	 *
 	 * @throws ErrorServicioWebcom
 	 */
-	protected void invocarServicioRestWebcom(WebcomEndpoint endpoint, ParamsList paramsList,
-			RestLlamada registro) throws ErrorServicioWebcom {
+	protected void invocarServicioRestWebcom(WebcomEndpoint endpoint, ParamsList paramsList, RestLlamada registro)
+			throws ErrorServicioWebcom {
 
 		if (endpoint == null) {
 			throw new IllegalArgumentException("'endpoint' no puede ser NULL");
@@ -160,12 +160,12 @@ public abstract class ServiciosWebcomBaseManager {
 		if (paramsList == null) {
 			throw new IllegalArgumentException("'paramsList' no puede ser NULL");
 		}
-		
+
 		RestLlamada registroLlamada = registro;
 		if (registroLlamada == null) {
 			registroLlamada = new RestLlamada();
 		}
-		
+
 		try {
 
 			logger.debug("Invocando al servicio " + endpoint);
@@ -186,8 +186,6 @@ public abstract class ServiciosWebcomBaseManager {
 			registroLlamada.setException(ExceptionUtils.getFullStackTrace(e));
 
 			throw e;
-		} finally {
-			//getRegistroLlamadas().guardaRegistroLlamada(registroLlamada);
 		}
 	}
 

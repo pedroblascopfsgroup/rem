@@ -136,7 +136,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			refreshMaterializedView(infoTablas, session);
 
 			try {
-				logger.debug("Ejecutando: " + queryString);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ejecutando: " + queryString);
+				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al obtener los registros que difieren", queryString,
@@ -152,7 +154,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 						cambio.setDatosActuales(r);
 						selectDatoHistorico = selectFromDatosHistoricos + WHERE + infoTablas.clavePrimaria() + " = "
 								+ r[posPk];
-						logger.debug("Ejecutando: " + selectDatoHistorico);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ejecutando: " + selectDatoHistorico);
+						}
 						Object[] historico = queryExecutor.sqlRunUniqueResult(session, selectDatoHistorico);
 						if (historico != null) {
 							cambio.setDatosHistoricos(historico);
@@ -166,7 +170,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				}
 			}
 		} finally {
-			logger.debug("Cerrando sesión");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cerrando sesión");
+			}
 			if (session != null) {
 				if (session.isOpen()) {
 					session.close();
@@ -203,7 +209,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			refreshMaterializedView(infoTablas, session);
 
 			try {
-				logger.debug("Ejecutando: " + queryString);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ejecutando: " + queryString);
+				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
 				if (resultado != null) {
 					for (Object[] r : resultado) {
@@ -218,7 +226,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 
 		} finally {
-			logger.debug("Cerrando sesión");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cerrando sesión");
+			}
 			if (session != null) {
 				if (session.isOpen()) {
 					session.close();
@@ -271,14 +281,18 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
 		Session session = this.sesionFactoryFacade.getSession(this);
-		logger.debug("Inicando transacción");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Inicando transacción");
+		}
 		Transaction tx = session.beginTransaction();
 		try {
 			String queryDelete = "TRUNCATE TABLE " + infoTablas.nombreTablaDatosHistoricos();
 			try {
-				logger.debug("Ejecutando: " + queryDelete);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ejecutando: " + queryDelete);
+				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryDelete);
-				if (registro != null){
+				if (registro != null) {
 					registro.logTiempoBorrarHistorico();
 				}
 			} catch (Throwable t) {
@@ -289,17 +303,20 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns + ")" + SELECT
 					+ columns + FROM + infoTablas.nombreVistaDatosActuales();
 			try {
-				logger.debug("Ejecutando: " + queryInsert);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ejecutando: " + queryInsert);
+				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryInsert);
-				if (registro != null){
+				if (registro != null) {
 					registro.logTiempoInsertarHistorico();
 				}
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al insertar registros en 'datos históricos'",
 						queryInsert, infoTablas, t);
 			}
-
-			logger.debug("Comiteando transacción");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Comiteando transacción");
+			}
 			tx.commit();
 		} catch (CambiosBDDaoError e) {
 			logger.fatal(
@@ -307,7 +324,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			tx.rollback();
 			throw e;
 		} finally {
-			logger.debug("Cerrando sesión");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cerrando sesión");
+			}
 			if (session != null) {
 				if (session.isOpen()) {
 					session.close();
@@ -315,7 +334,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 		}
 
-		logger.debug("TIMER DETECTOR Marcado de cambios: " + (System.currentTimeMillis() - startTime));
+		if (logger.isDebugEnabled()) {
+			logger.debug("TIMER DETECTOR Marcado de cambios: " + (System.currentTimeMillis() - startTime));
+		}
 	}
 
 	/**
@@ -417,25 +438,32 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	}
 
 	private Long getIdRestUser(Session session) {
-		logger.debug("Obteniendo el ID para el usuario: " + REST_USER);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Obteniendo el ID para el usuario: " + REST_USER);
+		}
 		if (restUserId == null) {
 			try {
-
-				logger.debug("Buscando " + REST_USER + " con criteria");
+				if (logger.isDebugEnabled()) {
+					logger.debug("Buscando " + REST_USER + " con criteria");
+				}
 				Criteria criteria = queryExecutor.createCriteria(session, Usuario.class)
 						.add(Restrictions.eq("username", REST_USER));
 				Usuario restUser = (Usuario) queryExecutor.criteriaRunUniqueResult(criteria);
 				if (restUser == null) {
 					throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER);
 				}
-				logger.debug("Guardando restUserId en caché");
+				if (logger.isDebugEnabled()) {
+					logger.debug("Guardando restUserId en caché");
+				}
 				this.restUserId = restUser.getId();
 
 			} catch (Throwable e) {
 				throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER, e);
 			}
 		}
-		logger.debug("Devolviendo restUserId=" + this.restUserId + " de la caché");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Devolviendo restUserId=" + this.restUserId + " de la caché");
+		}
 		return this.restUserId;
 
 	}
@@ -444,7 +472,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + infoTablas.nombreVistaDatosActuales()
 				+ "','C'); end;";
 		try {
-			logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+			if (logger.isDebugEnabled()) {
+				logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+			}
 			queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
 		} catch (Throwable t) {
 			throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews, infoTablas,

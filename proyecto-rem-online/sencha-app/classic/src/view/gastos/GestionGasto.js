@@ -224,7 +224,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 								store: '{comboMotivoRetenerPago}',
 								value: '{gestion.comboMotivoRetenerPago}',
 								readOnly: '{esGastoAnulado}'
-							}
+							},
+							editable: true
 						}
 						
 						

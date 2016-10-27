@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=ramon llinares
---## FECHA_CREACION=20161017
+--## AUTOR=JOSEVI JIMENEZ
+--## FECHA_CREACION=20161027
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-1047
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar el diccionario de estados de devolución.
+--## Finalidad: Diccionario Resultado Tanteo
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -34,8 +34,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EDE_ESTADOS_DEVOLUCION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de de estados de devolución.'; -- Vble. para los comentarios de las tablas
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_DRT_RESULTADO_TANTEO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Diccionario con los valores de resultado del tanteo.'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
@@ -54,11 +54,11 @@ BEGIN
 	END IF;
 
 	-- Comprobamos si existe la secuencia
-	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
+	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_DD_DRT_RESULTADO_TANTEO'' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
 	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe. Se borrará.');  
-		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_DD_DRT_RESULTADO_TANTEO... Ya existe. Se borrará.');  
+		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_DD_DRT_RESULTADO_TANTEO';
 		
 	END IF; 
 	
@@ -67,10 +67,10 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		DD_EDE_ID           		NUMBER(16)                  NOT NULL,
-		DD_EDE_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
-		DD_EDE_DESCRIPCION			VARCHAR2(100 CHAR),
-		DD_EDE_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
+		DD_DRT_ID           		NUMBER(16)                  NOT NULL,
+		DD_DRT_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
+		DD_DRT_DESCRIPCION			VARCHAR2(100 CHAR),
+		DD_DRT_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
 		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
@@ -91,23 +91,23 @@ BEGIN
 	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_EDE_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.DD_DRT_RESULTADO_TANTEO_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_DRT_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_EDE_ID) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT DD_DRT_RESULTADO_TANTEO_PK PRIMARY KEY (DD_DRT_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	
 	
 	-- Creamos sequence
-	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_DD_DRT_RESULTADO_TANTEO';		
 	EXECUTE IMMEDIATE V_MSQL;		
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
-
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_DD_DRT_RESULTADO_TANTEO... Secuencia creada');
 	
+		
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;

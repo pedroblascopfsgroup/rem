@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucion001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="2627"/>
+	<property name="ireport.y" value="227"/>
 	<subDataset name="dataset1" uuid="859ad764-5c2d-4f72-be54-c78b00433dc1">
 		<queryString>
 			<![CDATA[]]>
@@ -41,6 +41,25 @@
 	<parameter name="ValorTasacion" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="ValorEstColabor" class="java.lang.String"/>
 	<parameter name="ValorAprobVenta" class="java.lang.String"/>
+	<parameter name="Direccion" class="java.lang.String"/>
+	<parameter name="Tipo" class="java.lang.String"/>
+	<parameter name="Subtipo" class="java.lang.String"/>
+	<parameter name="Residencia" class="java.lang.String"/>
+	<parameter name="CertificadoEnergetico" class="java.lang.String"/>
+	<parameter name="SuperficieConstruida" class="java.lang.String"/>
+	<parameter name="Parcela" class="java.lang.String"/>
+	<parameter name="Sociedadpatrimonial" class="java.lang.String"/>
+	<parameter name="FEntradaCartera" class="java.lang.String"/>
+	<parameter name="FincaRegistral" class="java.lang.String"/>
+	<parameter name="FRecepcionLlaves" class="java.lang.String"/>
+	<parameter name="Disponibilidadjuridica" class="java.lang.String"/>
+	<parameter name="SituacionProcesal" class="java.lang.String"/>
+	<parameter name="SituacionLiquidacionInscripcion" class="java.lang.String"/>
+	<parameter name="Situaciondecargas" class="java.lang.String"/>
+	<parameter name="Comercializacion" class="java.lang.String"/>
+	<parameter name="Entrada" class="java.lang.String"/>
+	<parameter name="CantidadOfertas" class="java.lang.String"/>
+	<parameter name="MayorOfertaRecibida" class="java.lang.String"/>
 	<field name="listaCliente" class="java.util.List"/>
 	<field name="listaOferta" class="java.util.List"/>
 	<field name="listaTasacion" class="java.util.List"/>
@@ -522,6 +541,125 @@ TIPO DE PROPUESTA VENTA]]></text>
 				</textElement>
 				<text><![CDATA[Inscripcion:]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="66" y="19" width="134" height="12" uuid="21cb34cc-dfb5-4341-80f9-bd7097d44914"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="116" y="56" width="100" height="13" uuid="ab17b5dd-0b32-4066-99fb-353f35381cd1"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SuperficieConstruida}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="104" y="75" width="100" height="13" uuid="8e5da61b-d755-4de0-874d-3f388c036d61"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FEntradaCartera}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="94" width="100" height="13" uuid="61db8973-a96b-40cf-8ff4-607949f5a0c2"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Disponibilidadjuridica}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="113" width="100" height="13" uuid="ba3447df-caab-4a40-890c-d214442bca33"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FEntradaCartera}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="132" width="100" height="13" uuid="3bfb23e4-4fd8-4263-b003-be8cea351324"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SituacionLiquidacionInscripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="151" width="100" height="13" uuid="5db46f9a-f0f1-4c0a-afa5-f265cbcfe898"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Situaciondecargas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="75" width="82" height="13" uuid="adab0616-5845-44b5-a0b0-b982d856a4a5"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FincaRegistral}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="491" y="75" width="61" height="13" uuid="ad413577-17c4-4f5f-bcfd-dbcbc3fd1f6f"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FRecepcionLlaves}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="104" y="170" width="100" height="13" uuid="ec28547c-c9d8-4f4f-8e65-fa4f5900fb15"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Comercializacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="190" width="100" height="12" uuid="dbded509-c10b-426e-94cb-95077462fef6"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CantidadOfertas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="277" y="169" width="100" height="14" uuid="c56d943f-105a-4c06-bb76-cd3d9389cf92"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Entrada}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="338" y="189" width="100" height="13" uuid="d15099e6-9ba4-4bd7-b2c1-ca0c3efee7b3"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MayorOfertaRecibida}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="19" width="100" height="12" uuid="0f4e83fd-654b-4b84-b519-8d2eb4031308"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="19" width="87" height="13" uuid="54380f4c-8280-4a17-b600-3183566107f6"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Subtipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="38" width="100" height="13" uuid="984f0537-1a4e-480e-a70b-6f1103c8c702"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Residencia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="57" width="100" height="14" uuid="8324a6f1-6331-4828-a1fd-395a369f92c5"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Parcela}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="682">
 			<staticText>

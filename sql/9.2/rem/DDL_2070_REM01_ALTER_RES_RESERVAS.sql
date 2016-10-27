@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20161024
+--## AUTOR=Ramon Llinares 
+--## FECHA_CREACION=20161027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1047
+--## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Ampliar la tabla Oferta, con info de tanteo y retracto
+--## Finalidad: Ampliar la tabla que contiene la información de las reservas
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,35 +35,28 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'OFR_OFERTAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'RES_RESERVAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
-
+    
     /* -- ARRAY CON NUEVAS COLUMNAS */
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'OFR_CONDICIONES_TX',		 		'VARCHAR(2000)',					'Condiciones de transmision del tanteo.'	),
-    	T_ALTER(  'OFR_FECHA_COMUNIC_REG',			'DATE',								'Fecha comunicacion a registro del tanteo.'	),
-    	T_ALTER(  'OFR_FECHA_CONTESTACION',		 	'DATE',								'Fecha de contestacion del tanteo.'	),
-    	T_ALTER(  'OFR_FECHA_HASTA_TANTEO',		 	'DATE',								'Fecha fin del tanteo'	),
-    	T_ALTER(  'DD_DRT_ID',		 				'NUMBER(16)',						'Codigo identificador del resultado del tanteo.'	),
-    	T_ALTER(  'OFR_FECHA_MAX_FORMALIZACION',	'DATE',								'Fecha plazo maximo de formalizacion del tanteo.'	)
+    	T_ALTER(  'DD_EDE_ID',		 					'NUMBER(16,0)',						'Código único del estado de devolución.')
 		);
     V_T_ALTER T_ALTER;
     
-    
-      /* TABLA: ACT_ICO_INFO_COMERCIAL -- ARRAY CON NUEVAS FOREIGN KEYS */
+          /* ARRAY CON NUEVAS FOREIGN KEYS */
     TYPE T_FK IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
-    			--NOMBRE FK 							CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_DRT_ID',							'DD_DRT_ID',		V_ESQUEMA||'.DD_DRT_RESULTADO_TANTEO',					'DD_DRT_ID'			)
+    			--NOMBRE FK 							CAMPO FK 					TABLA DESTINO FK 							CAMPO DESTINO FK
+    	T_FK(	'FK_EDE_ESTADOS_DEVOLUCION',						'DD_EDE_ID',				V_ESQUEMA||'.DD_EDE_ESTADOS_DEVOLUCION',				'DD_EDE_ID'			)
     );
     V_T_FK T_FK;
-
-
+    
 
 
 BEGIN
@@ -98,17 +91,16 @@ BEGIN
 			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
 			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('[INFO] El campo ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] YA EXISTE. NO SE HACE NADA -----------------');
+			DBMS_OUTPUT.PUT_LINE('[INFO] Nuevas columnas de ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... YA CREADAS. NO SE HACE NADA');
 		END IF;
 
 	END LOOP;
-
-
+	
 	
 	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
 	IF V_CREAR_FK = 'SI' THEN
 
-		-- Bucle que CREA las FK de las nuevas columnas
+		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
 		FOR I IN V_FK.FIRST .. V_FK.LAST
 		LOOP
 
@@ -136,15 +128,17 @@ BEGIN
 				EXECUTE IMMEDIATE V_MSQL;
 				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
 				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
+
 			ELSE
-				DBMS_OUTPUT.PUT_LINE('[INFO] ... FK '||V_T_FK(1)||' YA EXISTE ... NO SE HACE NADA.');
+				DBMS_OUTPUT.PUT_LINE('[INFO] Nuevas FK de ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... YA CREADAS. NO SE HACE NADA');
 			END IF;
 
 		END LOOP;
 
 	END IF;
+
 	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKs ... OK *************************************************');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKS .... OK *************************************************');
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
 	

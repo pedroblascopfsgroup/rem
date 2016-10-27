@@ -776,9 +776,8 @@ public class AgrupacionAdapter {
 	public List<VOfertasActivosAgrupacion>  getListOfertasAgrupacion(Long idAgrupacion) {
 		
 		Filter filtro= genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());	
-		Order order = new Order(OrderType.DESC, "fechaCreacion");
-		
-		List<VOfertasActivosAgrupacion> ofertasAgrupacion= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order,filtro);
+
+		List<VOfertasActivosAgrupacion> ofertasAgrupacion= genericDao.getList(VOfertasActivosAgrupacion.class, filtro);
 	
 		
 		return ofertasAgrupacion;
@@ -792,7 +791,7 @@ public class AgrupacionAdapter {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
 			
-			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getEstadoOferta());
+			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 			
 			oferta.setEstadoOferta(tipoOferta);
 			
@@ -892,6 +891,11 @@ public class AgrupacionAdapter {
 				activoOfertaPk.setActivo(activos.getActivo());
 				activoOfertaPk.setOferta(oferta);
 				activoOferta.setPrimaryKey(activoOfertaPk);
+				
+				// TODO: Pendiente de definir como sacar el % de participación.
+				String participacion = String.valueOf(100 / agrupacion.getActivos().size());
+				activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
+				activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
 				
 				listaActivosOfertas.add(activoOferta);
 			}

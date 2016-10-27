@@ -182,7 +182,8 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     ESTADOS_OFERTA: {
-    	ACEPTADA : '01'
+    	ACEPTADA : '01',
+    	RECHAZADA: '02'
     },
     
     ESTADOS_EXPEDIENTE: {

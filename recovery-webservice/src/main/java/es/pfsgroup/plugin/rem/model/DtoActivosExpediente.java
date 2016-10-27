@@ -11,7 +11,7 @@ public class DtoActivosExpediente extends WebDto {
 	private String subtipoActivo;
 	private Double precioMinimo;
 	private Double precioAprobadoVenta;
-	private Float porcentajeParticipacion;
+	private Double porcentajeParticipacion;
 	private Double importeParticipacion;
 	
 
@@ -63,11 +63,11 @@ public class DtoActivosExpediente extends WebDto {
 		this.precioAprobadoVenta = precioAprobadoVenta;
 	}
 
-	public Float getPorcentajeParticipacion() {
+	public Double getPorcentajeParticipacion() {
 		return porcentajeParticipacion;
 	}
 
-	public void setPorcentajeParticipacion(Float porcentajeParticipacion) {
+	public void setPorcentajeParticipacion(Double porcentajeParticipacion) {
 		this.porcentajeParticipacion = porcentajeParticipacion;
 	}
 

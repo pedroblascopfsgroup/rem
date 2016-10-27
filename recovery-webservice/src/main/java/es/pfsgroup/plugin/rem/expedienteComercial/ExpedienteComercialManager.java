@@ -39,14 +39,13 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.impl.UvemManager;
+import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
@@ -114,6 +113,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
@@ -159,7 +159,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 	@Autowired
-	private UvemManager uvemManager;
+	private UvemManagerApi uvemManagerApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -894,7 +894,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		List<Activo> listaActivosExpediente= new ArrayList<Activo>();
 		
 		//Se crea un mapa para cada dato que se quiere obtener
-		Map<Long,Float> activoPorcentajeParti= new HashMap<Long, Float>();	
+		Map<Long,Double> activoPorcentajeParti= new HashMap<Long, Double>();	
 		Map<Long,Double> activoPrecioAprobado= new HashMap<Long, Double>();
 		Map<Long,Double> activoPrecioMinimo= new HashMap<Long, Double>();
 		Map<Long,Double> activoImporteParticipacion= new HashMap<Long, Double>();
@@ -902,17 +902,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//Recorre los activos de la oferta y los añade a la lista de activos a mostrar
 		for(ActivoOferta activoOferta: activosExpediente){
 			listaActivosExpediente.add(activoOferta.getPrimaryKey().getActivo());
+			if(!Checks.esNulo(activoOferta.getPorcentajeParticipacion())){
+				activoPorcentajeParti.put(activoOferta.getPrimaryKey().getActivo().getId(),activoOferta.getPorcentajeParticipacion());
+				if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+					activoImporteParticipacion.put(activoOferta.getPrimaryKey().getActivo().getId(), (activoOferta.getImporteActivoOferta()));
+				}
+			}
 		}
 		
 		//Recorre la relacion activo-trabajo del expediente, por cada una guarda en un mapa el porcentaje de participacion del activo y el importe calculado a partir de dicho porcentaje
-		if(!Checks.esNulo(expediente.getTrabajo())){
-			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
-				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(), activoTrabajo.getParticipacion());
-				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(), 
-												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
-			}
-		}
-
+//		if(!Checks.esNulo(expediente.getTrabajo())){
+//			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
+//				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(), activoTrabajo.getParticipacion());
+//				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(), 
+//												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
+//			}
+//		}
+		
 		//Por cada activo recorre todas sus valoraciones para adquirir el precio aprobado de venta y el precio minimo autorizado
 		for(Activo activo: listaActivosExpediente){
 			for(ActivoValoraciones valoracion: activo.getValoracion()){
@@ -938,7 +944,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	 * @param activo
 	 * @return
 	 */
-	private DtoActivosExpediente activosToDto(Activo activo, Map<Long,Float> activoPorcentajeParti, Map<Long,Double> activoPrecioAprobado, 
+	private DtoActivosExpediente activosToDto(Activo activo, Map<Long,Double> activoPorcentajeParti, Map<Long,Double> activoPrecioAprobado, 
 												Map<Long,Double> activoPrecioMinimo, Map<Long,Double> activoImporteParticipacion) {
 		
 		DtoActivosExpediente dtoActivo= new DtoActivosExpediente();
@@ -2279,12 +2285,13 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public String consultarComiteSancionador(Long idExpediente) throws Exception {
 		
 		ExpedienteComercial expediente = findOne(idExpediente);
+		//InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
 		InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
 		String codigoComite = null;
 			
 		ResultadoInstanciaDecisionDto resultadoDto;
 		try {
-			resultadoDto = uvemManager.consultarInstanciaDecision(instancia);
+			resultadoDto = uvemManagerApi.consultarInstanciaDecision(instancia);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new Exception(e);
@@ -2299,14 +2306,14 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 	private InstanciaDecisionDto expedienteComercialToInstanciaDecision(ExpedienteComercial expediente) {
 		
-		InstanciaDecisionDto instancia  = new InstanciaDecisionDto();
+		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		Oferta oferta = expediente.getOferta();
 		Activo activo = oferta.getActivoPrincipal();
 		
 		boolean solicitaFinanciacion = false;
 		int numActivoEspecial = 0;
 		Long importe = new Long(0);
-		short tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_SIN_IMPUESTO;
+		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 		
 		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
 			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
@@ -2317,21 +2324,99 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
 			String tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo(); 
-			if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IVA;
-			if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IGIC;
-			if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_IPSI;
-			if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDto.TIPO_IMPUESTO_ITP;
-		}
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI;
+			if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP;
+		}	
+		
+		InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
+		instData.setIdentificadorActivoEspecial(numActivoEspecial);
+		instData.setImporteConSigno(importe);
+		instData.setTipoDeImpuesto(tipoDeImpuesto);
+		
+		List<InstanciaDecisionDataDto> instanciaList  = new ArrayList<InstanciaDecisionDataDto>();
+		instanciaList.add(instData);
 		
 		instancia.setCodigoDeOfertaHaya("0");
 		instancia.setFinanciacionCliente(solicitaFinanciacion);
-		instancia.setIdentificadorActivoEspecial(numActivoEspecial);
-		instancia.setImporteConSigno(importe);
-		instancia.setTipoDeImpuesto(tipoDeImpuesto);
-		
+		instancia.setData(instanciaList);
 		
 		return instancia;
 	}
+	
+	
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception {
+		
+		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
+		Double importeXActivo = null;
+		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
+		List<InstanciaDecisionDataDto> instanciaList  = new ArrayList<InstanciaDecisionDataDto>();
+		boolean solicitaFinanciacion = false;
+		
+		Oferta oferta = expediente.getOferta();
+		if(Checks.esNulo(oferta)){
+			throw new Exception("No existe oferta para el expediente.");
+		}
+					
+		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
+		if(Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size()>0)){
+			throw new Exception("No hay activos para la oferta indicada.");
+		}
+		
+		
+		for(int i=0; i< listaActivos.size(); i++){
+			Activo activo = listaActivos.get(i).getPrimaryKey().getActivo();
+			if(Checks.esNulo(activo)){
+				throw new Exception("No se ha podido obtener el activo.");
+			}
+			
+			if(Checks.esNulo(activo.getNumActivoUvem())){
+				throw new Exception("El activo no tiene número de UVEM.");
+			}
+			
+			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
+			Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();
+			
+			try {
+				importeXActivo = (importeTotal * porcentajeParti)/100;
+			} catch (Exception e) {
+				logger.error(e);
+			}
+			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
+			//ImportePorActivo
+			instData.setImporteConSigno(importeXActivo.longValue());
+			//NumActivoUvem
+			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
+			
+			//TipoImpuesto
+			if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
+				String tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo(); 
+				if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA;
+				if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC;
+				if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI;
+				if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP;
+			}	
+			instData.setTipoDeImpuesto(tipoDeImpuesto);	
+			//PorcentajeImpuesto
+			instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+			instanciaList.add(instData);
+		}
+		
+		
+		//SolicitaFinaciacion
+		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
+			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
+		}
+		instancia.setFinanciacionCliente(solicitaFinanciacion);
+		//OfertaHRE
+		instancia.setCodigoDeOfertaHaya(oferta.getNumOferta().toString());
+		instancia.setData(instanciaList);
+
+		return instancia;
+	}
+
+	
 
 	@Override
 	@Transactional(readOnly = false)
@@ -2450,7 +2535,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		try {
 			//dtoDatosCliente.rellenarDatosDummies();
-			dtoDatosCliente= uvemManager.ejecutarDatosClientePorDocumento(compradorUrsus);
+			dtoDatosCliente= uvemManagerApi.ejecutarDatosClientePorDocumento(compradorUrsus);
 			if(Checks.esNulo(dtoDatosCliente.getDniNifDelTitularDeLaOferta())){
 				throw new JsonViewerException("Cliente Ursus no encontrado");
 			}
@@ -2670,23 +2755,36 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id){
 		
 		ExpedienteComercial expedienteComercial = findOne(id);
+		Oferta oferta= expedienteComercial.getOferta();
 		try{
 		//Recorre la relacion activo-trabajo del expediente, modifica la participacion del que coincida con el activo que estamos buscando
-				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
-					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
-						
-						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
-							activoTrabajo.setParticipacion(dto.getPorcentajeParticipacion());
-							genericDao.update(ActivoTrabajo.class, activoTrabajo);
-							return true;
+//				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
+//					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
+//						
+//						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
+//							activoTrabajo.setParticipacion(Float.parseFloat(dto.getPorcentajeParticipacion().toString()));
+//							genericDao.update(ActivoTrabajo.class, activoTrabajo);
+//							return true;
+//						}
+//					}
+//				}
+			List<ActivoOferta> activosOferta= expedienteComercial.getOferta().getActivosOferta();
+			for(ActivoOferta activoOferta: activosOferta){
+				if(activoOferta.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
+					if(!Checks.esNulo(dto.getIdActivo())){
+						if(!Checks.esNulo(dto.getPorcentajeParticipacion())){
+							activoOferta.setPorcentajeParticipacion(dto.getPorcentajeParticipacion());
+							activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*dto.getPorcentajeParticipacion())/100);
 						}
 					}
 				}
+			}
+			
 		}catch(Exception e) {
 			return false;
 		}
 		
-		return false;
+		return true;
 		
 	}
 

@@ -88,6 +88,7 @@ public class VisitasController {
 
 		} catch (Exception e) {
 			logger.error(e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
@@ -95,7 +96,7 @@ public class VisitasController {
 			logger.debug("RESPUESTA: " + model);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 
 	@SuppressWarnings("unchecked")

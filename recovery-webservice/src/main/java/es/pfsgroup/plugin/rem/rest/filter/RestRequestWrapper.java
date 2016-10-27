@@ -20,11 +20,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import net.sf.json.JSONObject;
 
 public class RestRequestWrapper extends HttpServletRequestWrapper {
 	private final String body;
 	protected static final Log logger = LogFactory.getLog(RestRequestWrapper.class);
+	private PeticionRest peticionRest = null;
+	
+	private long tiempoInicio;
+	private long tiempoFin;
+	
 
 	public RestRequestWrapper(HttpServletRequest request) throws IOException, Exception {
 		super(request);
@@ -108,5 +114,30 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 		Object dataJson = mapper.readValue(this.body, clase);
 		return dataJson;
 	}
+
+	public PeticionRest getPeticionRest() {
+		return peticionRest;
+	}
+
+	public void setPeticionRest(PeticionRest peticionRest) {
+		this.peticionRest = peticionRest;
+	}
+
+	public long getTiempoInicio() {
+		return tiempoInicio;
+	}
+
+	public void setTiempoInicio(long tiempoInicio) {
+		this.tiempoInicio = tiempoInicio;
+	}
+
+	public long getTiempoFin() {
+		return tiempoFin;
+	}
+
+	public void setTiempoFin(long tiempoFin) {
+		this.tiempoFin = tiempoFin;
+	}
+	
 
 }

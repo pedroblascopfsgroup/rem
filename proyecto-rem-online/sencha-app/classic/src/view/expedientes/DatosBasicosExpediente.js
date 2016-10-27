@@ -205,38 +205,50 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							formatter: 'date("d/m/Y")',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
 							bind: '{expediente.fechaAnulacion}',
-							readOnly: true
+							listeners: {
+								change: 'onFechaAnulacionChange'
+							}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.peticionario'),
+							reference: 'textFieldPeticionario',
+							bind: '{expediente.peticionarioAnulacion}'
 						},
 						{
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.motivo.anulacion'),
-							bind: '{expediente.motivoAnulacion}',
-							colspan: 2,
-							readOnly: true
-						},	
-						{
-							xtype: 'textfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.peticionario'),
-							bind: '{expediente.peticionarioAnulacion}',
-							readOnly: true
+							reference: 'textFieldMotivoAnulacion',
+							bind: '{expediente.motivoAnulacion}'
 						},
 						{
 							xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.entregas.a.cuenta'),
-							bind: '{expediente.fechaDevolucionEntregas}',
-							readOnly: true
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.reserva'),
+							bind: {
+								disabled: '{!expediente.tieneReserva}',
+								value: '{expediente.fechaDevolucionEntregas}'
+							}
 						},
 						{
 							xtype: 'numberfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.importe.devolucion'),
-							bind: '{expediente.importeDevolucionEntregas}',
-							readOnly: true
-						}
-						
-				
+							bind: {
+								disabled: '{!expediente.tieneReserva}',
+								value: '{expediente.importeDevolucionEntregas}'
+							}
+						},
+						{ 
+							xtype: 'comboboxfieldbase',
+							reference: 'comboEstadoDevolucion',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.devolucion'),
+				        	bind: {
+				        		disabled: '{!expediente.tieneReserva}',
+				        		store: '{storeEstadosDevolucion}',
+			            		value: '{expediente.estadoDevolucionCodigo}'
+			            	}
+				        }
 				]
-				
            },
            {
 				xtype:'fieldsettable',

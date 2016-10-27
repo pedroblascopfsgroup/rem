@@ -482,20 +482,16 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		Oferta oferta = expedienteComercial.getOferta();
-		Visita visita = null;
 		
 		if(!Checks.esNulo(oferta)){
-			visita = oferta.getVisita();
 		
 			oferta.setCondicionesTransmision(dtoTanteoYRetractoOferta.getCondicionesTransmision());
 			oferta.setFechaComunicacionRegistro(dtoTanteoYRetractoOferta.getFechaComunicacionReg());
 			oferta.setFechaContestacion(dtoTanteoYRetractoOferta.getFechaContestacion());
 			
-			if(!Checks.esNulo(visita)){
-				visita.setFechaSolicitud(dtoTanteoYRetractoOferta.getFechaSolicitudVisita());
-				visita.setFechaVisita(dtoTanteoYRetractoOferta.getFechaRealizacionVisita());
-			}
-			
+			oferta.setFechaSolicitudVisita(dtoTanteoYRetractoOferta.getFechaSolicitudVisita());
+			oferta.setFechaRealizacionVisita(dtoTanteoYRetractoOferta.getFechaRealizacionVisita());
+		
 			oferta.setFechaFinTanteo(dtoTanteoYRetractoOferta.getFechaFinTanteo());
 			oferta.setResultadoTanteo((DDResultadoTanteo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoTanteo.class, dtoTanteoYRetractoOferta.getResultadoTanteoCodigo()));
 			oferta.setFechaMaxFormalizacion(dtoTanteoYRetractoOferta.getFechaMaxFormalizacion());
@@ -703,11 +699,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 		DtoTanteoYRetractoOferta dtoTanteoYRetractoOferta = new DtoTanteoYRetractoOferta();
 		Oferta oferta = expediente.getOferta();
-		Visita visita = null;
 
 		if(!Checks.esNulo(oferta)){
-
-			visita = oferta.getVisita();
 			
 			// ID y NUM Oferta
 			dtoTanteoYRetractoOferta.setIdOferta(oferta.getId());
@@ -721,10 +714,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			dtoTanteoYRetractoOferta.setFechaContestacion(oferta.getFechaContestacion());
 			
 			// Fechas visita
-			if(!Checks.esNulo(visita)){
-				dtoTanteoYRetractoOferta.setFechaSolicitudVisita(visita.getFechaSolicitud());
-				dtoTanteoYRetractoOferta.setFechaRealizacionVisita(visita.getFechaVisita());
-			}
+			dtoTanteoYRetractoOferta.setFechaSolicitudVisita(oferta.getFechaSolicitudVisita());
+			dtoTanteoYRetractoOferta.setFechaRealizacionVisita(oferta.getFechaRealizacionVisita());
 			
 			//Fechas y resultado Tanteo
 			dtoTanteoYRetractoOferta.setFechaFinTanteo(oferta.getFechaFinTanteo());

@@ -170,6 +170,12 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_FECHA_CONTESTACION")
 	private Date fechaContestacion;
 	
+	@Column(name="OFR_FECHA_SOLICITUD_VISITA")
+	private Date fechaSolicitudVisita;
+	
+	@Column(name="OFR_FECHA_REALIZACION_VISITA")
+	private Date fechaRealizacionVisita;
+	
 	@Column(name="OFR_FECHA_HASTA_TANTEO")
 	private Date fechaFinTanteo;
 	
@@ -470,6 +476,22 @@ public class Oferta implements Serializable, Auditable {
 		this.fechaContestacion = fechaContestacion;
 	}
 
+	public Date getFechaSolicitudVisita() {
+		return fechaSolicitudVisita;
+	}
+
+	public void setFechaSolicitudVisita(Date fechaSolicitudVisita) {
+		this.fechaSolicitudVisita = fechaSolicitudVisita;
+	}
+	
+	public Date getFechaRealizacionVisita() {
+		return fechaRealizacionVisita;
+	}
+
+	public void setFechaRealizacionVisita(Date fechaRealizacionVisita) {
+		this.fechaRealizacionVisita = fechaRealizacionVisita;
+	}
+	
 	public Date getFechaFinTanteo() {
 		return fechaFinTanteo;
 	}

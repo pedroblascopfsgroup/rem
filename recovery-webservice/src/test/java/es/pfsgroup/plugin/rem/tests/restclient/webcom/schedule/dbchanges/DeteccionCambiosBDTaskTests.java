@@ -8,6 +8,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +30,8 @@ import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomEstadoPeticionTrabajo;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomStock;
@@ -50,6 +53,9 @@ public class DeteccionCambiosBDTaskTests {
 
 	@Mock
 	private CambiosBDDao detectorCambiosDao;
+	
+	@Mock
+	private RegistroLlamadasManager registroLlamadas;
 
 	@InjectMocks
 	private DetectorWebcomStock detectorCambiosStock;
@@ -96,14 +102,15 @@ public class DeteccionCambiosBDTaskTests {
 		data2.put(ServicioStockConstantes.ID_ACTIVO_HAYA, "2");
 		cambiosBD.add(new CambioBDStub(data2));
 
-		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
+		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class)))
+				.thenReturn(cambiosBD);
 
 		//////////////////////////
 		task.detectaCambios();
 		//////////////////////////
 
 		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).webcomRestStock(stockArgumentCaptor.capture());
+		verify(servicios).webcomRestStock(stockArgumentCaptor.capture(), any(RestLlamada.class));
 
 		List<StockDto> stockEnviado = stockArgumentCaptor.getValue();
 		assertEquals("No se ha enviado la cantidad de elementos esparada", 2, stockEnviado.size());
@@ -120,6 +127,8 @@ public class DeteccionCambiosBDTaskTests {
 
 		assertEquals("ID_ACTIVO HAYA tiene el valor esperado", new Long(2),
 				stockEnviado.get(1).getIdActivoHaya().getValue());
+		
+		verificaRegistroPeticionOK();
 
 	}
 
@@ -133,14 +142,15 @@ public class DeteccionCambiosBDTaskTests {
 
 		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
 		cambiosBD.add(new CambioBDStub(data));
-		when(detectorCambiosDao.listCambios(eq(EstadoTrabajoDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
+		when(detectorCambiosDao.listCambios(eq(EstadoTrabajoDto.class), any(InfoTablasBD.class),
+				any(RestLlamada.class))).thenReturn(cambiosBD);
 
 		//////////////////////////
 		task.detectaCambios();
 		//////////////////////////
 
 		ArgumentCaptor<List> argumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).webcomRestEstadoPeticionTrabajo(argumentCaptor.capture());
+		verify(servicios).webcomRestEstadoPeticionTrabajo(argumentCaptor.capture(), any(RestLlamada.class));
 
 		List<EstadoTrabajoDto> dtoList = argumentCaptor.getValue();
 		assertFalse("La lista de cambios enviada al servicio no puede estar vacía", dtoList.isEmpty());
@@ -148,6 +158,8 @@ public class DeteccionCambiosBDTaskTests {
 				dtoList.get(0).getIdTrabajoRem().getValue());
 		assertEquals("El valor de COD_ESTADO_TRABAJO no coincide", "Z",
 				dtoList.get(0).getCodEstadoTrabajo().getValue());
+		
+		verificaRegistroPeticionOK();
 	}
 
 	@Test
@@ -170,14 +182,15 @@ public class DeteccionCambiosBDTaskTests {
 
 		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
 		cambiosBD.add(new CambioBDStub(data));
-		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
+		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class)))
+				.thenReturn(cambiosBD);
 
 		//////////////////////////
 		task.detectaCambios();
 		//////////////////////////
 
 		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).webcomRestStock(stockArgumentCaptor.capture());
+		verify(servicios).webcomRestStock(stockArgumentCaptor.capture(), any(RestLlamada.class));
 		StockDto stock = (StockDto) stockArgumentCaptor.getValue().get(0);
 
 		// NullStringDataType
@@ -194,6 +207,8 @@ public class DeteccionCambiosBDTaskTests {
 		// Finalmente comprobamos que los campos que no hayamos seteado
 		// explícitamente permanecen a null. Elegimos uno no seteado al azar.
 		assertNull("El campo debería ser null ya que no se ha Nulleado explicitamente", stock.getBanyos());
+		
+		verificaRegistroPeticionOK();
 	}
 
 	@Test
@@ -224,15 +239,16 @@ public class DeteccionCambiosBDTaskTests {
 		vh.put(VentasYComisionesConstantes.IMPORTE, 100.66);
 		vh.put(VentasYComisionesConstantes.OBSERVACIONES, "observaciones antiguas");
 		stub.setValoresHistoricos(vh);
-		
-		when(detectorCambiosDao.listCambios(eq(ComisionesDto.class), any(InfoTablasBD.class))).thenReturn(cambiosBD);
+
+		when(detectorCambiosDao.listCambios(eq(ComisionesDto.class), any(InfoTablasBD.class), any(RestLlamada.class)))
+				.thenReturn(cambiosBD);
 
 		//////////////////////////
 		task.detectaCambios();
 		//////////////////////////
 
 		ArgumentCaptor<List> comisionesArtgumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).webcomRestVentasYcomisiones(comisionesArtgumentCaptor.capture());
+		verify(servicios).webcomRestVentasYcomisiones(comisionesArtgumentCaptor.capture(), any(RestLlamada.class));
 		ComisionesDto dto = (ComisionesDto) comisionesArtgumentCaptor.getValue().get(0);
 
 		// Comprobamos algunos de los campos que son obligatorios en este DTO.
@@ -241,10 +257,30 @@ public class DeteccionCambiosBDTaskTests {
 		assertNotNull("Este campo debería venir informado por ser obligatorio", dto.getEsPrescripcion());
 
 		assertNotNull("Este campo debería venir informado por ser obligatorio", dto.getImporte());
-		
+
 		// Comprobamos que el dato histórico está actualziado
 		assertEquals("No se ha actualizado el dato histórico", newValue, dto.getObservaciones().getValue());
+		
+		verificaRegistroPeticionOK();
 
 	}
+	
+	
+	private RestLlamada compruebaSeGuardaRegistro() {
+		ArgumentCaptor<RestLlamada> llamadaCaptor = ArgumentCaptor.forClass(RestLlamada.class);
+		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture());
+
+		RestLlamada registro = llamadaCaptor.getValue();
+		return registro;
+	}
+	
+	
+	private void verificaRegistroPeticionOK() {
+		RestLlamada registro = compruebaSeGuardaRegistro();
+		assertNotNull("Se debería haber logueado el startTime", registro.getStartTime());
+	}
+	
+	
+	
 
 }

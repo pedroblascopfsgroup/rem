@@ -356,13 +356,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    	    	 }
        		},
        		storeOfertasActivo: {    	
-       		 pageSize: $AC.getDefaultPageSize(),
-       		 model: 'HreRem.model.OfertaActivo',
-   		     proxy: {
-   		        type: 'uxproxy',
-   		        remoteUrl: 'activo/getListOfertasActivos',
-   		        extraParams: {id: '{activo.id}'}
-   	    	 }
+	       		 pageSize: $AC.getDefaultPageSize(),
+	       		 model: 'HreRem.model.OfertaActivo',
+	       		 sorters: [
+				 			{
+				        		property: 'estadoOferta',
+				        		direction: 'ASC'	
+				 			},
+				 			{
+				        		property: 'fechaCreacion',
+				        		direction: 'DESC'	
+				 			}
+				 ],
+	   		     proxy: {
+	   		        type: 'uxproxy',
+	   		        remoteUrl: 'activo/getListOfertasActivos',
+	   		        extraParams: {id: '{activo.id}'}
+	   	    	 }
        		},
     		
     		storeFotos: {    			

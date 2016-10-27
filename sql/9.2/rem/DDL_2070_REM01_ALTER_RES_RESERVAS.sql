@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=Ramon Llinares 
---## FECHA_CREACION=20161018
+--## FECHA_CREACION=20161027
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --## Finalidad: Ampliar la tabla que contiene la información de las reservas

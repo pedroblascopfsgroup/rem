@@ -29,7 +29,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dto) {
-		HQLBuilder hb = new HQLBuilder("select distinct pve.id, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
+		HQLBuilder hb = new HQLBuilder("select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
 
 		if(!Checks.esNulo(dto.getCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.codigoProveedorRem", Long.valueOf(dto.getCodigo()));
@@ -76,13 +76,14 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			DtoProveedorFilter nuevoDto = new DtoProveedorFilter();
 			try {
 				beanUtilNotNull.copyProperty(nuevoDto, "id", busqueda[0]);
-				beanUtilNotNull.copyProperty(nuevoDto, "tipoProveedorDescripcion", busqueda[1]);
-				beanUtilNotNull.copyProperty(nuevoDto, "subtipoProveedorDescripcion", busqueda[2]);
-				beanUtilNotNull.copyProperty(nuevoDto, "nifProveedor", busqueda[3]);
-				beanUtilNotNull.copyProperty(nuevoDto, "nombreProveedor", busqueda[4]);
-				beanUtilNotNull.copyProperty(nuevoDto, "nombreComercialProveedor", busqueda[5]);
-				beanUtilNotNull.copyProperty(nuevoDto, "estadoProveedorDescripcion", busqueda[6]);
-				beanUtilNotNull.copyProperty(nuevoDto, "observaciones", busqueda[7]);
+				beanUtilNotNull.copyProperty(nuevoDto, "codigo", busqueda[1]);
+				beanUtilNotNull.copyProperty(nuevoDto, "tipoProveedorDescripcion", busqueda[2]);
+				beanUtilNotNull.copyProperty(nuevoDto, "subtipoProveedorDescripcion", busqueda[3]);
+				beanUtilNotNull.copyProperty(nuevoDto, "nifProveedor", busqueda[4]);
+				beanUtilNotNull.copyProperty(nuevoDto, "nombreProveedor", busqueda[5]);
+				beanUtilNotNull.copyProperty(nuevoDto, "nombreComercialProveedor", busqueda[6]);
+				beanUtilNotNull.copyProperty(nuevoDto, "estadoProveedorDescripcion", busqueda[7]);
+				beanUtilNotNull.copyProperty(nuevoDto, "observaciones", busqueda[8]);
 				beanUtilNotNull.copyProperty(nuevoDto, "totalCount", p.getTotalCount());
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();

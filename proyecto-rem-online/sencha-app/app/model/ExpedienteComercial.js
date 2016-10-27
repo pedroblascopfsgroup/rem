@@ -100,7 +100,8 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'tipoExpedienteDescripcion'
     		}, 
     		{
-    			name: 'tieneReserva'	
+    			name: 'tieneReserva',
+       			type: 'boolean'
     		},
     		{
     			name: 'fechaInicioAlquiler',
@@ -146,21 +147,19 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'codigoEstado'
+    		},
+    		{
+    			name: 'estadoDevolucionCodigo'
     		}
-    		
-    		
     ],
     
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'expedienteComercial.json',
-		
 		api: {
             read: 'expedientecomercial/getTabExpediente',
             update: 'expedientecomercial/saveFichaExpediente'
         },
-		
         extraParams: {tab: 'ficha'}
-    }    
-
+    }
 });

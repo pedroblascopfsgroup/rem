@@ -20,8 +20,8 @@ public class DtoDireccionDelegacion extends WebDto {
 	private String puerta;
 	private String localidadCodigo;
 	private String provincia;
-	private int codigoPostal;
-	private int telefono;
+	private Integer codigoPostal;
+	private String telefono;
 	private String email;
 	private int totalCount;
 	
@@ -98,10 +98,10 @@ public class DtoDireccionDelegacion extends WebDto {
 	public void setProvincia(String provincia) {
 		this.provincia = provincia;
 	}
-	public int getTelefono() {
+	public String getTelefono() {
 		return telefono;
 	}
-	public void setTelefono(int telefono) {
+	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
 	public String getEmail() {

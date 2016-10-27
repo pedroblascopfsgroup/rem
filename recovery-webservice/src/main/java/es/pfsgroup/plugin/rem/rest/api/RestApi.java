@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import net.sf.json.JSONObject;
@@ -56,7 +57,7 @@ public interface RestApi {
 	 * @param signature
 	 * @return
 	 */
-	public boolean validateSignature(Broker broker, String signature, String peticion, ALGORITMO_FIRMA algoritmoFirma)
+	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException;
 
 	/**
@@ -138,7 +139,18 @@ public interface RestApi {
 	 * @param response
 	 * @param model
 	 */
-	public void sendResponse(HttpServletResponse response, ModelMap model);
+	public void sendResponse(HttpServletResponse response, ModelMap model,RestRequestWrapper request);
+	
+	/**
+	 * Escribe en la salida standard una respuesta JSON
+	 * 
+	 * @param response
+	 * @param model
+	 * @param request
+	 * @param jsonResp
+	 * @param result
+	 */
+	public void sendResponse(HttpServletResponse response, RestRequestWrapper request,JSONObject jsonResp,String result);
 
 	/**
 	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir
@@ -166,7 +178,7 @@ public interface RestApi {
 	 * @param req
 	 * @return
 	 */
-	public PeticionRest crearPeticionObj(ServletRequest req);
+	public PeticionRest crearPeticionObj(RestRequestWrapper req);
 
 	/**
 	 * Obtiene el nombre del del servicio ejecutado
@@ -199,6 +211,15 @@ public interface RestApi {
 	 * @param errorCode
 	 * @param jsonFields
 	 */
-	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields);
+	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields,RestRequestWrapper req);
+	
+	/**
+	 * Realiza la configuracion de la sesión
+	 * 
+	 * @param response
+	 * @param workingCode
+	 * @throws Exception
+	 */
+	public void doSessionConfig(ServletResponse response, String workingCode) throws Exception;
 
 }

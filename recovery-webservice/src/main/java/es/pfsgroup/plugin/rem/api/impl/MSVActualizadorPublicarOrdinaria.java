@@ -50,14 +50,17 @@ public class MSVActualizadorPublicarOrdinaria implements MSVLiberator {
 	@Override
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
 
-		// Publicacion ordinaria solo activa el check de publicacion (ordinaria) SIN cambiar el estado de publicacion.
+		// Publicacion ordinaria: Cambia el estado de publicacion
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 	
 		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-			activo.setFechaPublicable(new Date());
-			activoApi.saveOrUpdate(activo);
+			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
+			dtoCambioEstadoPublicacion.setActivo(activo.getId());
+			dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+			dtoCambioEstadoPublicacion.setPublicacionForzada(false);
+			activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 		}
 
 		return true;

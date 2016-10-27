@@ -3320,6 +3320,8 @@ public class ActivoAdapter {
 			activoOfertaPk.setActivo(activo);
 			activoOfertaPk.setOferta(oferta);
 			activoOferta.setPrimaryKey(activoOfertaPk);
+			activoOferta.setPorcentajeParticipacion(100.00);
+			activoOferta.setImporteActivoOferta(oferta.getImporteOferta());			
 			listaActivosOfertas.add(activoOferta);
 			oferta.setActivosOferta(listaActivosOfertas);	
 

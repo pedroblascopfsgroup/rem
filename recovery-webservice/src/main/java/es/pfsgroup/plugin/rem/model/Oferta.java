@@ -33,6 +33,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 
@@ -156,9 +157,31 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "DD_CAP_ID")
 	private DDCanalPrescripcion canalPrescripcion;
     
+    // Datos de Tanteo y Retracto +-+-+-+-+-+ TR
 	@Column(name="OFR_DESDE_TANTEO")
 	private Boolean desdeTanteo;
 
+	@Column(name="OFR_CONDICIONES_TX")
+	private String condicionesTransmision;
+	
+	@Column(name="OFR_FECHA_COMUNIC_REG")
+	private Date fechaComunicacionRegistro;
+	
+	@Column(name="OFR_FECHA_CONTESTACION")
+	private Date fechaContestacion;
+	
+	@Column(name="OFR_FECHA_HASTA_TANTEO")
+	private Date fechaFinTanteo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_DRT_ID")
+	private DDResultadoTanteo resultadoTanteo;
+	
+	@Column(name="OFR_FECHA_MAX_FORMALIZACION")
+	private Date fechaMaxFormalizacion;	
+	//+-+-+-+-+-+ TR
+	
+	
 	public Date getFechaAlta() {
 		return fechaAlta;
 	}
@@ -423,6 +446,54 @@ public class Oferta implements Serializable, Auditable {
 		this.canalPrescripcion = canalPrescripcion;
 	}
 	
+	public String getCondicionesTransmision() {
+		return condicionesTransmision;
+	}
+
+	public void setCondicionesTransmision(String condicionesTransmision) {
+		this.condicionesTransmision = condicionesTransmision;
+	}
+
+	public Date getFechaComunicacionRegistro() {
+		return fechaComunicacionRegistro;
+	}
+
+	public void setFechaComunicacionRegistro(Date fechaComunicacionRegistro) {
+		this.fechaComunicacionRegistro = fechaComunicacionRegistro;
+	}
+
+	public Date getFechaContestacion() {
+		return fechaContestacion;
+	}
+
+	public void setFechaContestacion(Date fechaContestacion) {
+		this.fechaContestacion = fechaContestacion;
+	}
+
+	public Date getFechaFinTanteo() {
+		return fechaFinTanteo;
+	}
+
+	public void setFechaFinTanteo(Date fechaFinTanteo) {
+		this.fechaFinTanteo = fechaFinTanteo;
+	}
+
+	public DDResultadoTanteo getResultadoTanteo() {
+		return resultadoTanteo;
+	}
+
+	public void setResultadoTanteo(DDResultadoTanteo resultadoTanteo) {
+		this.resultadoTanteo = resultadoTanteo;
+	}
+
+	public Date getFechaMaxFormalizacion() {
+		return fechaMaxFormalizacion;
+	}
+
+	public void setFechaMaxFormalizacion(Date fechaMaxFormalizacion) {
+		this.fechaMaxFormalizacion = fechaMaxFormalizacion;
+	}
+
 	public Boolean getDesdeTanteo() {
 		return desdeTanteo;
 	}

@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,21 +8,19 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JREmptyDataSource;
-import net.sf.jasperreports.engine.JRException;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tools.ant.types.resources.Files;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -38,16 +35,23 @@ import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.DtoCliente;
+import es.pfsgroup.plugin.rem.model.DtoOferta;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaOferta;
+import es.pfsgroup.plugin.rem.model.DtoTasacionInforme;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Controller
 public class PropuestaresolucionController {
@@ -69,6 +73,7 @@ public class PropuestaresolucionController {
 			String name = "PropuestaResolucion001";
 			String ficheroPlantilla = "jasper/"+name+".jrxml";
 			Map<String, Object> mapaValores = new HashMap<String,Object>();
+			List<Object> array = new ArrayList();
 			
 			File fileSalidaTemporal = null;
 			Map<String, Object> dataResponse = new HashMap<String, Object>();
@@ -116,6 +121,7 @@ public class PropuestaresolucionController {
 				mapaValores.put("Gestor", "***");
 				mapaValores.put("FPublWeb", "***");
 				mapaValores.put("NumVisitasWeb", "***");
+
 				
 			} catch (JsonParseException e1) {
 				e1.printStackTrace();
@@ -145,8 +151,57 @@ public class PropuestaresolucionController {
 					
 					//JasperReport report = (JasperReport)JRLoader.loadObject(is);
 
+					DtoPropuestaOferta propuestaOferta = new DtoPropuestaOferta();
+					
+					DtoCliente cliente = new DtoCliente();
+					cliente.setNombreCliente("***");
+					cliente.setDireccionCliente("***");
+					cliente.setDniCliente("***");
+					
+					DtoCliente cliente2 = new DtoCliente();
+					cliente2.setNombreCliente("***");
+					cliente2.setDireccionCliente("***");
+					cliente2.setDniCliente("***");
+
+					List<Object> listaCliente = new ArrayList<Object>();
+					listaCliente.add(cliente);
+					listaCliente.add(cliente2);
+					propuestaOferta.setListaCliente(listaCliente);
+					
+					DtoOferta ofertaActivo = new DtoOferta();
+					ofertaActivo.setNumOferta("***");
+					ofertaActivo.setTitularOferta("***");
+					ofertaActivo.setImporteOferta("***");
+					ofertaActivo.setFechaOferta("***");
+					ofertaActivo.setSituacionOferta("***");
+					
+					DtoOferta ofertaActivo2 = new DtoOferta();
+					ofertaActivo2.setNumOferta("***");
+					ofertaActivo2.setTitularOferta("***");
+					ofertaActivo2.setImporteOferta("***");
+					ofertaActivo2.setFechaOferta("***");
+					ofertaActivo2.setSituacionOferta("***");
+					
+					List<Object> listaOferta = new ArrayList<Object>();
+					listaOferta.add(ofertaActivo);
+					listaOferta.add(ofertaActivo2);
+					propuestaOferta.setListaOferta(listaOferta);
+					
+					DtoTasacionInforme tasacion = new DtoTasacionInforme();
+					tasacion.setNumTasacion("***");
+					tasacion.setTipoTasacion("***");
+					tasacion.setImporteTasacion("***");
+					tasacion.setFechaTasacion("***");
+					tasacion.setFirmaTasacion("***");
+					
+					List<Object> listaTasacion = new ArrayList<Object>();
+					listaTasacion.add(tasacion);
+					propuestaOferta.setListaTasacion(listaTasacion);
+					
+					array.add(propuestaOferta);
+					
 					//Rellenar los datos del informe
-					JasperPrint print = JasperFillManager.fillReport(report, mapaValores,  new JREmptyDataSource());
+					JasperPrint print = JasperFillManager.fillReport(report, mapaValores,  new JRBeanCollectionDataSource(array));
 					
 					//Exportar el informe a PDF
 					fileSalidaTemporal = File.createTempFile("jasper", ".pdf");
@@ -206,7 +261,7 @@ public class PropuestaresolucionController {
 		       	}
 			}
 	
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 			
 			
 		}

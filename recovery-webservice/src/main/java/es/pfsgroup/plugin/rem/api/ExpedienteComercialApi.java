@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -27,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
@@ -77,6 +79,14 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
 
+	/**
+	 * Metodo que guarda la informacion de la pestanya Tanteo y Retracto de la oferta
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dto, Long idExpediente);
+	
 	/**
 	 * Método que recupera las entregas de una reserva para un expediente
 	 * 
@@ -445,5 +455,15 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id);
+	
+	
+	/**
+	 * Método que construye un InstanciaDecisionDto para el envío de ofertas a Bankia a través de WS 
+	 * 
+	 * @param expediente expedienteComercial de la oferta
+	 * @param porcentajeImpuesto del activo de la oferta.
+	 * @return
+	 */
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception;
 
 }

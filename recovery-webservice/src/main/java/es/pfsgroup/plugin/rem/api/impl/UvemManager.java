@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -51,6 +52,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 
@@ -724,54 +726,62 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	public ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion) throws WIException {
-
-		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-
-		// IdentificadorActivoEspecial
-		if (instanciaDecisionDto.getIdentificadorActivoEspecial() != null) {
-			struct.setIdentificadorActivoEspecialcoacew(instanciaDecisionDto.getIdentificadorActivoEspecial());
-		}
-
-		// ImporteMonetarioOfertaBISA
-		if (instanciaDecisionDto.getImporteConSigno() == null) {
-			throw new WIException("El importe con signo no puede estar vacio.");
-		} else {
-			ImporteMonetario importeMonetario = new ImporteMonetario();
-			importeMonetario.setImporteConSigno(instanciaDecisionDto.getImporteConSigno());
-			es.cajamadrid.servicios.ARQ.Moneda moneda = new es.cajamadrid.servicios.ARQ.Moneda();
-			moneda.setDivisa("D");
-			moneda.setDigitoControlDivisa('-');
-			importeMonetario.setMonedaBISA(moneda);
-			importeMonetario.setNumeroDecimalesImporte('-');
-			struct.setImporteMonetarioOfertaBISA(importeMonetario);
-		}
-
-		// TipoDeImpuesto
-		struct.setTipoDeImpuestocotimw(instanciaDecisionDto.getTipoDeImpuesto());
-
-		// PorcentajeImpuestoBISA
-		Porcentaje9 porcentajeImpuesto = null;
-		porcentajeImpuesto = new Porcentaje9();
 		
-		if(!Checks.esNulo(instanciaDecisionDto.getPorcentajeImpuesto())){
-			porcentajeImpuesto.setPorcentaje(instanciaDecisionDto.getPorcentajeImpuesto());
-		} else {
-			porcentajeImpuesto.setPorcentaje(0000);
+		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+		
+		List<InstanciaDecisionDataDto>  instanciaListData = instanciaDecisionDto.getData();
+		if(Checks.esNulo(instanciaListData) || (!Checks.esNulo(instanciaListData) && instanciaListData.size() == 0)){
+			throw new WIException("El campo data de la instancia es obligatorio.");
 		}
-		porcentajeImpuesto.setNumDecimales("BC");
-		struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
+		
+		//Bucle para cargar el array numOcurrencias con la info de cada activo
+		for(int i = 0; i< instanciaListData.size(); i++){
+			InstanciaDecisionDataDto instanciaData = instanciaListData.get(i);
+			StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+			
+			// IdentificadorActivoEspecial
+			if (instanciaData.getIdentificadorActivoEspecial() != null) {
+				struct.setIdentificadorActivoEspecialcoacew(instanciaData.getIdentificadorActivoEspecial());
+			}
+			
+			// TipoDeImpuesto
+			struct.setTipoDeImpuestocotimw(instanciaData.getTipoDeImpuesto());
+			
+			// ImporteMonetarioOfertaBISA
+			if (instanciaData.getImporteConSigno() == null) {
+				throw new WIException("El importe con signo no puede estar vacio.");
+			} else {
+				ImporteMonetario importeMonetario = new ImporteMonetario();
+				importeMonetario.setImporteConSigno(instanciaData.getImporteConSigno());
+				es.cajamadrid.servicios.ARQ.Moneda moneda = new es.cajamadrid.servicios.ARQ.Moneda();
+				moneda.setDivisa("D");
+				moneda.setDigitoControlDivisa('-');
+				importeMonetario.setMonedaBISA(moneda);
+				importeMonetario.setNumeroDecimalesImporte('-');
+				struct.setImporteMonetarioOfertaBISA(importeMonetario);
+			}
 
-		// IndicadorTratamientoImpuesto
-		struct.setIndicadorTratamientoImpuestobitrim('A'); // 'A' or 'B' or '\'
-															// or '-'
-															// <----?????????
+			// PorcentajeImpuestoBISA
+			Porcentaje9 porcentajeImpuesto = null;
+			porcentajeImpuesto = new Porcentaje9();
+			if(!Checks.esNulo(instanciaData.getPorcentajeImpuesto())){
+				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto());
+				porcentajeImpuesto.setNumDecimales("BC");
+				struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
+			}
+			
+			// IndicadorTratamientoImpuesto
+			struct.setIndicadorTratamientoImpuestobitrim('A'); // 'A' or 'B' or '\'
+			
+			//Es un array al que se le meteran cada activo de la oferta
+			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
+		}
 
-		// Aunque es un array solo usamos el 1er campo
-		numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
-		// Este codigo de BANKIA aunque parezca setear una variable, esta haciendo una add a un Array.
+		
+		//Este codigo de BANKIA aunque parezca setear una variable, esta haciendo una add a un Array.
+		//El vector numeroOcurrencias debe tener 40 elementos si o si. Para ello, rellenamos el resto de ocurrencias con structuras vacías.
 		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu structEmpty = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-		for(int i=1; i<40; i++){
+		for(int i=0; i< 40-instanciaListData.size(); i++){
 			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(structEmpty);
 		}
 
@@ -846,9 +856,9 @@ public class UvemManager implements UvemManagerApi {
 		}
 		//Según llamada telefonica con Antonio Rios Muñoz(Atos Origin)
 		if (accion.equals(INSTANCIA_DECISION_MODIFICACION)) { 	
-			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONTRAOFERTA);
 		} else {
-			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_VENTA);
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
 		}
 		
 		if (numeroOcurrencias!=null) {			
@@ -866,16 +876,8 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("TipoPropuestacotprw: " + servicioGMPDJB13_INS.getTipoPropuestacotprw());
 		logger.info("NumeroCliente: " + servicioGMPDJB13_INS.getnumeroCliente());
 		logger.info("NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
-		logger.info("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());
-		logger.info("IdentificadorActivoEspecialcoacew: " + struct.getIdentificadorActivoEspecialcoacew());
-		logger.info("ImporteConSigno: " + struct.getImporteMonetarioOfertaBISA().getImporteConSigno());
-		logger.info("TipoDeImpuestocotimw: " + struct.getTipoDeImpuestocotimw());
-		logger.info("Porcentaje: " + struct.getPorcentajeImpuestoBISA().getPorcentaje());
-		logger.info("PorcentajeNumDecimales: " + struct.getPorcentajeImpuestoBISA().getNumDecimales());
-		logger.info("IndicadorTratamientoImpuestobitrim: " + struct.getIndicadorTratamientoImpuestobitrim());
+		logger.info("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());	
 		
-		
-	
 		System.out.println("CodigoObjetoAccesocopace: " + servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
 		System.out.println("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
 		System.out.println("IndicadorDeFinanciacionClientebificl: " + servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
@@ -883,12 +885,23 @@ public class UvemManager implements UvemManagerApi {
 		System.out.println("NumeroCliente: " + servicioGMPDJB13_INS.getnumeroCliente());
 		System.out.println("NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
 		System.out.println("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());
-		System.out.println("IdentificadorActivoEspecialcoacew: " + struct.getIdentificadorActivoEspecialcoacew());
-		System.out.println("ImporteConSigno: " + struct.getImporteMonetarioOfertaBISA().getImporteConSigno());
-		System.out.println("TipoDeImpuestocotimw: " + struct.getTipoDeImpuestocotimw());
-		System.out.println("Porcentaje: " + struct.getPorcentajeImpuestoBISA().getPorcentaje());
-		System.out.println("PorcentajeNumDecimales: " + struct.getPorcentajeImpuestoBISA().getNumDecimales());
-		System.out.println("IndicadorTratamientoImpuestobitrim: " + struct.getIndicadorTratamientoImpuestobitrim());
+		
+		for(int i = 0; i< instanciaListData.size(); i++){
+			logger.info("IdentificadorActivoEspecialcoacew: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIdentificadorActivoEspecialcoacew());
+			logger.info("ImporteConSigno: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getImporteMonetarioOfertaBISA().getImporteConSigno());
+			logger.info("TipoDeImpuestocotimw: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getTipoDeImpuestocotimw());
+			logger.info("Porcentaje: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getPorcentajeImpuestoBISA().getPorcentaje());
+			logger.info("PorcentajeNumDecimales: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getPorcentajeImpuestoBISA().getNumDecimales());
+			logger.info("IndicadorTratamientoImpuestobitrim: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIndicadorTratamientoImpuestobitrim());	
+		
+			System.out.println("IdentificadorActivoEspecialcoacew: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIdentificadorActivoEspecialcoacew());
+			System.out.println("ImporteConSigno: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getImporteMonetarioOfertaBISA().getImporteConSigno());
+			System.out.println("TipoDeImpuestocotimw: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getTipoDeImpuestocotimw());
+			System.out.println("Porcentaje: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getPorcentajeImpuestoBISA().getPorcentaje());
+			System.out.println("PorcentajeNumDecimales: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getPorcentajeImpuestoBISA().getNumDecimales());
+			System.out.println("IndicadorTratamientoImpuestobitrim: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIndicadorTratamientoImpuestobitrim());
+		}
+
 		
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();

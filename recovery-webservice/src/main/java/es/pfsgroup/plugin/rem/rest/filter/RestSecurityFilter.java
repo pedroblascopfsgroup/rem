@@ -14,11 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import es.capgemini.devon.utils.DbIdContextHolder;
-import es.capgemini.pfs.dsm.dao.EntidadDao;
-import es.capgemini.pfs.dsm.model.Entidad;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ALGORITMO_FIRMA;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -33,14 +29,9 @@ import net.sf.json.JSONObject;
 public class RestSecurityFilter implements Filter {
 
 	@Autowired
-	private EntidadDao entidadDao;
-
-	@Autowired
 	private RestApi restApi;
 
 	private String WORKINGCODE = "2038";
-
-	private Entidad entidad = null;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -59,28 +50,26 @@ public class RestSecurityFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
 
-		PeticionRest peticion = restApi.crearPeticionObj(request);
+		PeticionRest peticion = null;
 		RestRequestWrapper restRequest = null;
 		JSONObject jsonFields = null;
 
 		try {
 
 			restRequest = new RestRequestWrapper((HttpServletRequest) request);
-			// obtenemos los datos de la peticion
+			restRequest.setTiempoInicio(System.currentTimeMillis());
+			peticion = restApi.crearPeticionObj(restRequest);
 			RequestDto datajson = (RequestDto) restRequest.getRequestData(RequestDto.class);
 			logger.debug("Ejecutando request id:".concat(datajson.getId()));
 			logger.debug("Datos de la peticion id:".concat(restRequest.getBody()));
 
 			jsonFields = restRequest.getJsonObject();
-			doSessionConfig(response, WORKINGCODE);
+			restApi.doSessionConfig(response, WORKINGCODE);
 
-			// logamos el operador partiendo del parametro signature
 			String signature = ((HttpServletRequest) request).getHeader("signature");
 			String id = datajson.getId();
 			peticion.setToken(id);
 			String ipClient = restApi.getClientIpAddr(request);
-
-			ALGORITMO_FIRMA algoritmoFirma = restApi.obtenerAlgoritmoFirma(request);
 
 			Broker broker = restApi.getBrokerByIp(ipClient);
 			if (broker == null) {
@@ -89,78 +78,47 @@ public class RestSecurityFilter implements Filter {
 			} else {
 				peticion.setBroker(broker);
 			}
-
+			restRequest.setPeticionRest(peticion);
 			if (broker != null) {
 
-				if (!restApi.validateSignature(broker, signature, restRequest.getBody(), algoritmoFirma)) {
+				if (!restApi.validateSignature(broker, signature, restRequest)) {
 					logger.error("REST: La firma no es correcta");
 					peticion.setResult(RestApi.CODE_ERROR);
 					peticion.setErrorDesc(RestApi.REST_MSG_INVALID_SIGNATURE);
-					restApi.throwRestException(response, RestApi.REST_MSG_INVALID_SIGNATURE, jsonFields);
+					restApi.throwRestException(response, RestApi.REST_MSG_INVALID_SIGNATURE, jsonFields, restRequest);
 
 				} else {
 					if (!restApi.validateId(broker, id)) {
 						logger.error("REST: El id de la petición ya se ha ejecutado previamente");
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_REPETEAD_REQUEST);
-						restApi.throwRestException(response, RestApi.REST_MSG_REPETEAD_REQUEST, jsonFields);
+						restApi.throwRestException(response, RestApi.REST_MSG_REPETEAD_REQUEST, jsonFields,
+								restRequest);
 
 					} else if (!restRequest.getBody().contains("data")) {
 						logger.error("REST: Petición no contiene información en el campo data.");
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-						restApi.throwRestException(response, RestApi.REST_MSG_MISSING_REQUIRED_FIELDS, jsonFields);
+						restApi.throwRestException(response, RestApi.REST_MSG_MISSING_REQUIRED_FIELDS, jsonFields,
+								restRequest);
 
 					} else {
 						chain.doFilter(restRequest, response);
-						peticion.setResult(RestApi.CODE_OK);
 					}
 				}
 			}
-			// securityContext.getAuthentication().setAuthenticated(false);
 		} catch (Exception e) {
 			peticion.setResult("ERROR");
 			logger.error(e.getMessage());
-			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields);
+			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 
 		} catch (Throwable t) {
 			peticion.setResult("ERROR");
 			logger.error(t.getMessage());
-			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields);
+			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 		} finally {
 			SecurityContextHolder.clearContext();
 			restApi.guardarPeticionRest(peticion);
 		}
 	}
-
-	/**
-	 * Realiza la configuracion de la sesión
-	 * 
-	 * @param response
-	 * @param workingCode
-	 * @throws Exception
-	 */
-	private void doSessionConfig(ServletResponse response, String workingCode) throws Exception {
-		// Obtenemos la entidad partiendo del working code y establecemos el
-		// contextholder
-		// necesario para acceder al esquema de la entidad
-		try {
-			entidad = entidadDao.findByWorkingCode(workingCode);
-		} catch (Exception e) {
-			logger.error("Error obteniendo la entidad: ");
-		}
-
-		entidad = entidadDao.findByWorkingCode(workingCode);
-
-		if (entidad != null) {
-			DbIdContextHolder.setDbId(entidad.getId());
-		} else {
-			throw new Exception(RestApi.REST_MSG_INVALID_WORKINGCODE);
-		}
-
-		// Realizamos login en la plataforma
-		restApi.doLogin(restApi.loadUserRest(entidad));
-
-	}
-
 }

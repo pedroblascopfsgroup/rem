@@ -11,12 +11,14 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     
     requires: ['HreRem.model.FichaTrabajo'],
     
-    
     initComponent: function () {
 
         var me = this;
         
         me.setTitle(HreRem.i18n('title.ficha'));
+        
+        //Si el tipo es de Precios/Publicacion/Sancion no mostrar el bloque -Cuando hay que hacerlo...-
+        me.codigoTipoTrabajo = me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo');
         
         me.items= [
         			{    
@@ -133,6 +135,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					    collapsible: true,
 					    collapsed: false,
 						title: HreRem.i18n('title.momento.realizacion'),
+						hidden: (this.codigoTipoTrabajo!="02" && this.codigoTipoTrabajo!="03"),
 						items :
 							[
 								{	
@@ -495,7 +498,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     	var me = this; 
 		me.recargar = false;		
 		//me.lookupController().cargarTabData(me);
-    	
     },
     
     getErrorsExtendedFormBase: function() {

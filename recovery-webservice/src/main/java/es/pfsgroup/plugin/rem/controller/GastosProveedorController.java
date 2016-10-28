@@ -208,7 +208,11 @@ public class GastosProveedorController {
 			boolean respuesta = gastoProveedorApi.saveGastosProveedor(dto, id);
 			model.put("success", respuesta );
 			
-		} catch (Exception e) {
+		}
+		catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		}catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
 		}	
@@ -238,11 +242,11 @@ public class GastosProveedorController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView searchProveedorNif(@RequestParam String nifProveedor) {
+	public ModelAndView searchProveedorCodigo(@RequestParam String codigoUnicoProveedor) {
 		ModelMap model = new ModelMap();
 		
 		try {
-			model.put("data", gastoProveedorApi.searchProveedorNif(nifProveedor));
+			model.put("data", gastoProveedorApi.searchProveedorCodigo(codigoUnicoProveedor));
 			model.put("success", true);			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -571,12 +575,12 @@ public class GastosProveedorController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getNifProveedorByUsuario(ModelMap model){
+	public ModelAndView getCodProveedorByUsuario(ModelMap model){
 		
 		
 		
 		try {
-			String nif = proveedoresApi.getNifProveedorByUsuarioLogado();
+			Long nif = proveedoresApi.getCodProveedorByUsuarioLogado();
 			
 			if(Checks.esNulo(nif)) {
 				model.put("msg", "No ha sido posible encontrar un proveedor asignado al usuario identificado.");
@@ -595,6 +599,41 @@ public class GastosProveedorController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchProveedorCodigoByTipoEntidad(@RequestParam String codigoUnicoProveedor, @RequestParam String codigoTipoProveedor) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gastoProveedorApi.searchProveedorCodigoByTipoEntidad(codigoUnicoProveedor,codigoTipoProveedor));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchGastoNumHaya(@RequestParam String numeroGastoHaya, @RequestParam String proveedorEmisor, @RequestParam String destinatario) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gastoProveedorApi.searchGastoNumHaya(numeroGastoHaya,proveedorEmisor,destinatario));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
+		
+	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

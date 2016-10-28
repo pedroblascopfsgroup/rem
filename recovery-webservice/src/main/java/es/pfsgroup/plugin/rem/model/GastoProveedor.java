@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 
 
@@ -138,6 +141,25 @@ public class GastoProveedor implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EGA_ID")
     private DDEstadoGasto estadoGasto;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TOG_ID")
+    private DDTipoOperacionGasto tipoOperacion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="NUM_GASTO_ABONADO")
+    private GastoProveedor gastoProveedorAbonado;
+
+//    @OneToMany(mappedBy="gastoProveedorAbonado", cascade = CascadeType.ALL)
+//    private Set<GastoProveedor> gastoProveedor = new HashSet<GastoProveedor>();
+    
+//    @OneToOne(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "NUM_GASTO_ABONADO")
+//    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+//    private GastoProveedor gastoProveedorAbonado;
+    
+	@Column(name="NUM_GASTO_DESTINATARIO")
+	private String numGastoDestinatario;
     
 	@Version   
 	private Long version;
@@ -349,6 +371,30 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setEstadoGasto(DDEstadoGasto estadoGasto) {
 		this.estadoGasto = estadoGasto;
+	}
+
+	public DDTipoOperacionGasto getTipoOperacion() {
+		return tipoOperacion;
+	}
+
+	public void setTipoOperacion(DDTipoOperacionGasto tipoOperacion) {
+		this.tipoOperacion = tipoOperacion;
+	}
+
+	public GastoProveedor getGastoProveedorAbonado() {
+		return gastoProveedorAbonado;
+	}
+
+	public void setGastoProveedorAbonado(GastoProveedor gastoProveedorAbonado) {
+		this.gastoProveedorAbonado = gastoProveedorAbonado;
+	}
+
+	public String getNumGastoDestinatario() {
+		return numGastoDestinatario;
+	}
+
+	public void setNumGastoDestinatario(String numGastoDestinatario) {
+		this.numGastoDestinatario = numGastoDestinatario;
 	}
 
 }

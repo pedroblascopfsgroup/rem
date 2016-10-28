@@ -6,7 +6,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -15,8 +14,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONObject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -70,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
@@ -80,6 +78,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
+import net.sf.json.JSONObject;
 
 
 
@@ -109,6 +108,7 @@ public class TrabajoController {
 	
 	@Autowired
 	private PreciosApi preciosApi;
+		
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1012,12 +1012,22 @@ public class TrabajoController {
 		
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListActivosByProceso(Long idProceso, ModelMap model){
-		
-		model.put("data", trabajoAdapter.getListActivosByProceso(idProceso));
-			
+	public ModelAndView getListActivosByProceso(Long idProceso, DtoTrabajoListActivos webDto, ModelMap model){
+
+		try {
+
+			Page page = trabajoAdapter.getListActivosByProceso(idProceso, webDto);
+			if(!Checks.esNulo(page)) {
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
 		return createModelAndViewJson(model);
-			
 	}
 	
 	
@@ -1040,74 +1050,39 @@ public class TrabajoController {
 	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
 	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
-		HashMap<String, String> errorsList = null;
-		TrabajoDto trabajoDto = null;		
-		DtoFichaTrabajo dtoFichaTrabajo = null;
-		Map<String, Object> map = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		ArrayList<Map<String, Object>> listaRespuesta = null;
 		JSONObject jsonFields = null;
 		
 		try {
 			
-			jsonData = (TrabajoRequestDto) request.getRequestData(TrabajoRequestDto.class);
-			List<TrabajoDto> listaTrabajoDto = jsonData.getData();			
 			jsonFields = request.getJsonObject();
 			logger.debug("PETICIÓN: " + jsonFields);
 			
+			jsonData = (TrabajoRequestDto) request.getRequestData(TrabajoRequestDto.class);
+			List<TrabajoDto> listaTrabajoDto = jsonData.getData();			
+
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
-				for(int i=0; i < listaTrabajoDto.size();i++){
-
-					Long idTrabajo = null;
-					Trabajo trabajo = null;
-					errorsList = new HashMap<String, String>();
-					map = new HashMap<String, Object>();
-					trabajoDto = listaTrabajoDto.get(i);
-					
-					errorsList = trabajoApi.validateTrabajoPostRequestData(trabajoDto);
-					if(!Checks.esNulo(errorsList) && errorsList.isEmpty()){					
-						dtoFichaTrabajo = trabajoApi.convertTrabajoDto2DtoFichaTrabajo(trabajoDto);
-						if(!Checks.esNulo(dtoFichaTrabajo)){
-							idTrabajo = trabajoApi.create(dtoFichaTrabajo);
-							if(!Checks.esNulo(idTrabajo)){
-								trabajo = trabajoApi.findOne(idTrabajo);
-							}
-						}					
-					}
-					
-					
-					if(!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(trabajo)){
-						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
-						map.put("idTrabajoRem", trabajo.getNumTrabajo());
-						map.put("success", true);
-					}else{
-						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
-						map.put("idTrabajoRem", "");
-						map.put("success", false);
-						map.put("invalidFields", errorsList);
-					}
-					listaRespuesta.add(map);
-					
-				}
-			
-				model.put("id", jsonData.getId());	
+				listaRespuesta = trabajoApi.createTrabajos(listaTrabajoDto);			
+				model.put("id", jsonFields.get("id"));	
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
 			}
 
 		} catch (Exception e) {
 			logger.error(e);
-			model.put("id", jsonData.getId());	
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", jsonFields.get("id"));	
 			model.put("data", listaRespuesta);
-			model.put("error", e.getMessage().toUpperCase());
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			
 		} finally {
 			logger.debug("RESPUESTA: " + model);
-			logger.debug("ERRORES: " + errorsList);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -1166,9 +1141,16 @@ public class TrabajoController {
 		return createModelAndViewJson(model);
 		
 	}
-	
-	
-	
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			trabajoApi.downloadTemplateActivosTrabajo(request,response,"LACT");
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+		}
+
+	}
 
 }

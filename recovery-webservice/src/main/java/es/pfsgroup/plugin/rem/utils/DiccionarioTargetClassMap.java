@@ -45,6 +45,7 @@ public class DiccionarioTargetClassMap{
 		
 		mapa.put("tiposVia", DDTipoVia.class);		
 		mapa.put("entidadesPropietarias", DDCartera.class);
+		mapa.put("subentidadesPropietarias", DDSubcartera.class);
 		mapa.put("tiposUsoDestino", DDTipoUsoDestino.class);
 		mapa.put("acabadosCarpinteria", DDAcabadoCarpinteria.class);
 		mapa.put("estadosActivo", DDEstadoActivo.class);
@@ -126,7 +127,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoDireccionProveedor", DDTipoDireccionProveedor.class);
 		mapa.put("cargoProveedor", DDCargoProveedorContacto.class);
 		mapa.put("tipoDocumentoProveedor", DDTipoDocumentoProveedor.class);
-		mapa.put("tiposComercializacionActivo", DDTipoComercializacion.class);
 		mapa.put("motivoAplicaComercializarActivo", DDMotivoComercializacion.class);
 		mapa.put("claseActivoBancario", DDClaseActivoBancario.class);
 		mapa.put("subtipoClaseActivoBancario", DDSubtipoClaseActivoBancario.class);
@@ -155,6 +155,16 @@ public class DiccionarioTargetClassMap{
 //		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 		mapa.put("estadosPublicacion", DDEstadoPublicacion.class);
 		mapa.put("comitesSancion", DDComiteSancion.class);
+		mapa.put("tiposProveedorHonorario", DDTipoProveedorHonorario.class);
+		mapa.put("accionesGasto", DDAccionGastos.class);
+		mapa.put("estadosDevolucion", DDEstadoDevolucion.class);
+		mapa.put("operativa", DDOperativa.class);
+		mapa.put("tiposComercializacionActivo", DDTipoComercializacion.class);
+		mapa.put("tiposComercializarActivo", DDTipoComercializar.class);
+		mapa.put("tiposAlquilerActivo", DDTipoAlquiler.class);
+		mapa.put("resultadoTanteo", DDResultadoTanteo.class);
+		mapa.put("tipoTenedor", DDTipoTenedor.class);
+		mapa.put("tipoOperacionGasto", DDTipoOperacionGasto.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

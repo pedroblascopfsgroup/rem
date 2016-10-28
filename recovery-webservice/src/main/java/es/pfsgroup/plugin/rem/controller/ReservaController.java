@@ -3,32 +3,35 @@ package es.pfsgroup.plugin.rem.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaRequestDto;
@@ -42,190 +45,168 @@ public class ReservaController {
 	private ActivoApi activoApi;
 
 	@Autowired
+	private ReservaApi reservaApi;
+	
+	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/reserva")
 	public void reservaInmueble(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
-
-		final String COBRO_RESERVA = "1";
-		final String COBRO_VENTA = "3";
-		final String DEVOLUCION_RESERVA = "5";
-
+		Double importeReserva = null;
 		ReservaRequestDto jsonData = null;
 		ReservaDto reservaDto = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		JSONObject jsonFields = null;
+		HashMap<String, String> errorList = null;
+		
 		try {
-
+			
+			jsonFields = request.getJsonObject();
+			logger.debug("PETICIÓN: " + jsonFields);
+			
 			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
 			reservaDto = jsonData.getData();
 
-			HashMap<String, String> errorList = restApi.validateRequestObject(reservaDto, TIPO_VALIDACION.INSERT);
+			errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields) ;
 
 			if (errorList != null && errorList.isEmpty()) {
-				Double importeReserva = null;
-				Activo activo = activoApi.getByNumActivo(reservaDto.getActivo());
-				List<ActivoOferta> listaActivoOferta = activo.getOfertas();
-				boolean isAccepted = false;
-				int i = 0;
-				Oferta oferta = null;
-				while (i < listaActivoOferta.size() && !isAccepted) {
-					ActivoOferta tmp = listaActivoOferta.get(i);
-					i++;
-					oferta = tmp.getPrimaryKey().getOferta();
-					if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-						isAccepted = true;
-					}
+				
+				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
+				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
+				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				if(Checks.esNulo(expedienteComercial)){
+					throw new Exception("No existe el expediente comercial.");
 				}
-				if (!isAccepted || oferta == null) {
-					throw new Exception("El activo no tiene ofertas aceptadas");
+				Reserva reserva= expedienteComercial.getReserva();
+				if(Checks.esNulo(reserva)){
+					throw new Exception("No existe la reserva.");
 				}
+				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);
+				ArrayList<TitularUVEMDto> listaTitularUVEM = expedienteComercialApi.obtenerListaTitularesUVEM(expedienteComercial);
+				
+				respuesta.put("oferta", ofertaUVEM);
+				respuesta.put("titulares", listaTitularUVEM);				
+				importeReserva = Double.valueOf(ofertaUVEM.getImporteReserva());
 
-				ExpedienteComercial expC = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-				if (expC == null) {
-					throw new Exception("No existe el expediente comericial para esta oferta");
-				}
-				CondicionanteExpediente condExp = expC.getCondicionante();
-				OfertaUVEMDto ofertaUVEM = new OfertaUVEMDto();
-				if (oferta.getTipoOferta() != null) {
-					ofertaUVEM.setCodOpcion(oferta.getTipoOferta().getCodigo());
-				}
-				if (oferta.getNumOferta() != null) {
-					ofertaUVEM.setCodOfertaHRE(oferta.getNumOferta().toString());
-				}
-				if (oferta.getPrescriptor() != null) {
-					ofertaUVEM.setCodPrescriptor(oferta.getPrescriptor().getCodProveedorUvem());
-				}
-				if (condExp != null) {
-					if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva())) {
-						importeReserva = condExp.getPorcentajeReserva() * oferta.getImporteOferta();
-						if (importeReserva != null) {
-							ofertaUVEM.setImporteReserva(importeReserva.toString());
-						}
-					} else {
-						importeReserva = condExp.getImporteReserva();
-						if (importeReserva != null) {
-							ofertaUVEM.setImporteReserva(importeReserva.toString());
-						}
-					}
-				}
-				if (oferta.getImporteOferta() != null) {
-					ofertaUVEM.setImporteVenta(oferta.getImporteOferta().toString());
-				}
-				Map<String, Object> mapOferta = new HashMap<String, Object>();
-				mapOferta.put("oferta", ofertaUVEM);
-
-				ArrayList<TitularUVEMDto> listaTitularUVEM = new ArrayList<TitularUVEMDto>();
-				for (int k = 0; k < expC.getCompradores().size(); k++) {
-					CompradorExpediente compradorExpediente = expC.getCompradores().get(k);
-					TitularUVEMDto titularUVEM = new TitularUVEMDto();
-					if (compradorExpediente.getComprador() != null) {
-						titularUVEM.setCliente(compradorExpediente.getComprador().toString());
-					}
-					if (compradorExpediente.getImporteProporcionalOferta() != null) {
-						titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
-					}
-					if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
-						titularUVEM.setImpuestos("S");
-					} else {
-						titularUVEM.setImpuestos("N");
-					}
-					if (condExp.getEntidadFinanciacion() != null) {
-						titularUVEM.setEntidad(condExp.getEntidadFinanciacion());
-					}
-					if (expC.getReserva() != null) {
-						if (expC.getReserva().getTipoArras() != null) {
-							if (DDTiposArras.CONFIRMATORIAS.equals(expC.getReserva().getTipoArras().getCodigo())) {
-								titularUVEM.setArras("A");
-							} else {
-								titularUVEM.setArras("B");
-							}
-						} else {
-							titularUVEM.setArras("");
-						}
-					}
-					listaTitularUVEM.add(titularUVEM);
-				}
-				Map<String, Object> mapTitulares = new HashMap<String, Object>();
-				mapTitulares.put("titulares", listaTitularUVEM);
-
-				listaRespuesta.add(mapOferta);
-				listaRespuesta.add(mapTitulares);
-
-				if (COBRO_RESERVA.equals(reservaDto.getAccion())) {
+				if (ReservaApi.COBRO_RESERVA.equals(reservaDto.getAccion())) {
+					
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(importeReserva);
 					Date fechaEntrega = new Date();
 					entregaReserva.setFechaEntrega(fechaEntrega);
-					entregaReserva.setReserva(expC.getReserva());
-					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expC.getId())) {
+					entregaReserva.setReserva(expedienteComercial.getReserva());
+					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
 						throw new Exception("No se ha podido guardar la reserva entregada en base de datos");
 					}
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
-							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.RESERVADO);
+					
+					//Actualiza estado expediente comercial a RESERVADO
+					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.RESERVADO);
 					if (estadoReservado == null) {
 						throw new Exception("No se ha podido obtener estado RESERVADO de base de datos");
 					}
-					expC.setEstado(estadoReservado);
-					if (!expedienteComercialApi.update(expC)) {
+					expedienteComercial.setEstado(estadoReservado);
+					
+					//Actualiza estado reserva a FIRMADA
+					DDEstadosReserva estReserva = reservaApi.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_FIRMADA);
+					if (estReserva == null) {
+						throw new Exception("No se ha podido obtener estado FIRMADA de la reserva de base de datos");
+					}
+					reserva.setEstadoReserva(estReserva);
+					expedienteComercial.setReserva(reserva);
+					
+					
+					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
 					}
 				}
 
-				if (DEVOLUCION_RESERVA.equals(reservaDto.getAccion())) {
+				
+				
+				if (ReservaApi.COBRO_VENTA.equals(reservaDto.getAccion())) {
+
+					EntregaReserva entregaReserva = new EntregaReserva();
+					entregaReserva.setImporte(importeReserva);
+					Date fechaEntrega = new Date();
+					entregaReserva.setFechaEntrega(fechaEntrega);
+					entregaReserva.setReserva(expedienteComercial.getReserva());
+					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
+						throw new Exception("No se ha podido guardar la reserva entregada en base de datos");
+					}
+					
+					//Actualiza estado expediente comercial a VENDIDO
+					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
+					if (estadoReservado == null) {
+						throw new Exception("No se ha podido obtener estado VENDIDO de base de datos");
+					}
+					expedienteComercial.setEstado(estadoReservado);
+					
+					if (!expedienteComercialApi.update(expedienteComercial)) {
+						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
+					}
+				}
+
+				
+				
+				if (ReservaApi.DEVOLUCION_RESERVA.equals(reservaDto.getAccion())) {
+
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(-importeReserva);
 					Date fechaEntrega = new Date();
 					entregaReserva.setFechaEntrega(fechaEntrega);
-					entregaReserva.setReserva(expC.getReserva());
+					entregaReserva.setReserva(expedienteComercial.getReserva());
 
-					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expC.getId())) {
+					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
 						throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
 					}
+					
+		/*			//Actualiza estado expediente comercial a ANULADO
 					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
 							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.ANULADO);
 					if (estadoReservado == null) {
 						throw new Exception("No se ha podido obtener estado ANULADO de base de datos");
 					}
-					expC.setEstado(estadoReservado);
-					if (!expedienteComercialApi.update(expC)) {
+					expedienteComercial.setEstado(estadoReservado);*/
+					
+					//Actualiza estado devolucion a ANULADO
+					DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_DEVUELTA));
+					expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
+					
+					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
 					}
 				}
 
-				if (COBRO_VENTA.equals(reservaDto.getAccion())) {
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
-							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
-					if (estadoReservado == null) {
-						throw new Exception("No se ha podido obtener estado VENDIDO de base de datos");
-					}
-					expC.setEstado(estadoReservado);
-					if (!expedienteComercialApi.update(expC)) {
-						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
-					}
-				}
-
-				model.put("id", jsonData.getId());
-				model.put("data", listaRespuesta);
+				
+				model.put("id", jsonFields.get("id"));
+				model.put("data", respuesta);
 				model.put("error", "");
 			} else {
-				model.put("id", jsonData.getId());
+				model.put("id", jsonFields.get("id"));
 				model.put("data", null);
 				model.put("error", errorList);
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			model.put("id", jsonData.getId());
-			model.put("data", "");
-			model.put("error", e.getMessage());
+			logger.error(e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", jsonFields.get("id"));
+			model.put("data", respuesta);
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+		} finally {
+			logger.debug("RESPUESTA: " + model);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 
 }

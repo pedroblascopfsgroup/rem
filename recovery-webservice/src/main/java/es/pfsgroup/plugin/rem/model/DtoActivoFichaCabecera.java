@@ -69,6 +69,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	// Mapeo manual
 	private Boolean informeComercialAceptado;
+	private Boolean tipoActivoAdmisionMediadorCorresponde;
 
 	// Mapeo automático beanutils
 	private Integer constituida;
@@ -103,8 +104,8 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoInfoComercialCodigo;
 	private String estadoPublicacionDescripcion;
 	private String estadoPublicacionCodigo;
-	private String tipoComercializacionCodigo;
-	private String tipoComercializacionDescripcion;
+	private String tipoComercializarCodigo;
+	private String tipoComercializarDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
 	private String situacionComercialDescripcion;
 	
@@ -128,6 +129,10 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private Boolean aplicaFormalizar;
 	private Date fechaAplicaFormalizar;
 	private String motivoAplicaFormalizar;
+	private String tipoComercializacionCodigo;
+	private String tipoComercializacionDescripcion;
+	private String tipoAlquilerCodigo;
+	private String tipoAlquilerDescripcion;
 
 	//Activo Bancarico datos:
 	private String claseActivoCodigo;
@@ -141,6 +146,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String estadoExpRiesgoDescripcion;
 	private String estadoExpIncorrienteCodigo;
 	private String estadoExpIncorrienteDescripcion;
+	private String productoDescripcion;
 	
 	//Activo integrado en agrupación asistida
 	private Boolean integradoEnAgrupacionAsistida;
@@ -821,20 +827,20 @@ public class DtoActivoFichaCabecera extends WebDto {
 		this.estadoPublicacionDescripcion = estadoPublicacionDescripcion;
 	}
 
-	public String getTipoComercializacionCodigo() {
-		return tipoComercializacionCodigo;
+	public String getTipoComercializarCodigo() {
+		return tipoComercializarCodigo;
 	}
 
-	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
-		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	public void setTipoComercializarCodigo(String tipoComercializarCodigo) {
+		this.tipoComercializarCodigo = tipoComercializarCodigo;
 	}
 
-	public String getTipoComercializacionDescripcion() {
-		return tipoComercializacionDescripcion;
+	public String getTipoComercializarDescripcion() {
+		return tipoComercializarDescripcion;
 	}
 
-	public void setTipoComercializacionDescripcion(String tipoComercializacionDescripcion) {
-		this.tipoComercializacionDescripcion = tipoComercializacionDescripcion;
+	public void setTipoComercializarDescripcion(String tipoComercializarDescripcion) {
+		this.tipoComercializarDescripcion = tipoComercializarDescripcion;
 	}
 
 	public String getEstadoPublicacionCodigo() {
@@ -1119,5 +1125,54 @@ public class DtoActivoFichaCabecera extends WebDto {
 		this.informeComercialAceptado = informeComercialAceptado;
 	}
 
+	public Boolean getTipoActivoAdmisionMediadorCorresponde() {
+		return tipoActivoAdmisionMediadorCorresponde;
+	}
+
+	public void setTipoActivoAdmisionMediadorCorresponde(Boolean tipoActivoAdmisionMediadorCorresponde) {
+		this.tipoActivoAdmisionMediadorCorresponde = tipoActivoAdmisionMediadorCorresponde;
+	}
+
+	public String getProductoDescripcion() {
+		return productoDescripcion;
+	}
+
+	public void setProductoDescripcion(String productoDescripcion) {
+		this.productoDescripcion = productoDescripcion;
+	}
+
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+
+	public String getTipoComercializacionDescripcion() {
+		return tipoComercializacionDescripcion;
+	}
+
+	public void setTipoComercializacionDescripcion(
+			String tipoComercializacionDescripcion) {
+		this.tipoComercializacionDescripcion = tipoComercializacionDescripcion;
+	}
+
+	public String getTipoAlquilerCodigo() {
+		return tipoAlquilerCodigo;
+	}
+
+	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
+		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
+	}
+
+	public String getTipoAlquilerDescripcion() {
+		return tipoAlquilerDescripcion;
+	}
+
+	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
+		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
+	}
+	
 
 }

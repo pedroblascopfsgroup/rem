@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -79,9 +80,13 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Serializable obtenerObjetoEntity(Long idValue, Class entity, String fieldActivo)
 			throws InstantiationException, IllegalAccessException {
-		Serializable objetoEntity;
+		Serializable objetoEntity = null;
 		if (idValue != null) {
-			objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
+			try {
+				objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
+			} catch (Exception e) {
+				logger.error(e);
+			}
 			if (objetoEntity == null) {
 				objetoEntity = (Serializable) entity.newInstance();
 			}
@@ -104,6 +109,8 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 			claseObjeto = Integer.class;
 		} else if (annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
 			claseObjeto = BigDecimal.class;
+		} else if (annotation.transform().equals(TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)) {
+			claseObjeto = Integer.class;
 		}
 		return claseObjeto;
 	}
@@ -138,7 +145,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @param objetoEntitys
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
 	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
 			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys) {
 		boolean resultado = false;
@@ -150,13 +157,20 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 
 			if (object != null) {
 				if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
-					if ((Boolean) object) {
-						object = 1;
+					if (object instanceof Boolean) {
+						if ((Boolean) object) {
+							object = 1;
+						} else {
+							object = 0;
+						}
 					} else {
-						object = 0;
+						logger.error("FAIL --------------->" + propertyEntityName
+								+ " no se puede pasar de Integer a Boolean");
 					}
 				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
 					object = new BigDecimal((Float) object);
+				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)) {
+					object = Integer.valueOf(((Date) object).getYear());
 				}
 
 				int contador = 0;
@@ -348,8 +362,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	private Object getValue(Object dto, Class claseDto, String methodName)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
 		Object obj = null;
-		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(claseDto)
-				.getPropertyDescriptors()) {
+		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(claseDto).getPropertyDescriptors()) {
 			if (propertyDescriptor.getReadMethod() != null
 					&& propertyDescriptor.getReadMethod().getName().equals(methodName)) {
 				obj = propertyDescriptor.getReadMethod().invoke(dto);

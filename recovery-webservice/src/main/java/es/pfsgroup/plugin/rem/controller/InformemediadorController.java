@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,25 +38,32 @@ public class InformemediadorController {
 	public void saveInformeMediador(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		InformemediadorRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-
+		JSONObject jsonFields = null;
+		
 		try {
+			jsonFields = request.getJsonObject();
+			logger.debug("PETICIÓN: " + jsonFields);
+			
 			jsonData = (InformemediadorRequestDto) request.getRequestData(InformemediadorRequestDto.class);
 			List<InformeMediadorDto> informes = jsonData.getData();
 
 			listaRespuesta = informeMediadorApi.saveOrUpdateInformeMediador(informes);
-			model.put("id", jsonData.getId());
+			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", null);
+			
 		} catch (Exception e) {
 			logger.error(e);
-			if (jsonData != null) {
-				model.put("id", jsonData.getId());
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			if (jsonFields != null) {
+				model.put("id", jsonFields.get("id"));
 			}
-
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+		} finally {
+			logger.debug("RESPUESTA: " + model);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 }

@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
@@ -21,6 +22,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -50,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
@@ -71,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
@@ -79,11 +83,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {
@@ -126,6 +132,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private UpdaterStateApi updaterStateApi;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -205,6 +214,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setNombreEmisor(gasto.getProveedor().getNombre());
 				dto.setIdEmisor(gasto.getProveedor().getId());
 				dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
+				dto.setBuscadorCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
 			}
 			
 			if(!Checks.esNulo(gasto.getPropietario())){
@@ -223,9 +233,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setPeriodicidad(gasto.getTipoPeriocidad().getCodigo());
 			}
 			dto.setConcepto(gasto.getConcepto());
-			dto.setAutorizado(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo()));
+			if(!Checks.esNulo(gasto.getGastoGestion()) && !Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())){
+				dto.setAutorizado(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo()));
+			}
 			dto.setAsignadoATrabajos(!Checks.estaVacio(gasto.getGastoProveedorTrabajos()));
 			dto.setAsignadoAActivos(Checks.estaVacio(gasto.getGastoProveedorTrabajos()) && !Checks.estaVacio(gasto.getGastoProveedorActivos()));
+			
+			dto.setEsGastoEditable(esGastoEditable(gasto));
+			
+			dto.setNumGastoDestinatario(gasto.getNumGastoDestinatario());
+			if(!Checks.esNulo(gasto.getTipoOperacion())){
+				dto.setTipoOperacionCodigo(gasto.getTipoOperacion().getCodigo());
+			}
+			if(!Checks.esNulo(gasto.getGastoProveedorAbonado())){
+				dto.setNumGastoAbonado(gasto.getGastoProveedorAbonado().getNumGastoHaya());
+			}
 			
 			
 		}
@@ -242,8 +264,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
 			
-		if(!Checks.esNulo(dto.getNifEmisor())){				
-			ActivoProveedor proveedor = searchProveedorNif(dto.getNifEmisor());
+//		if(!Checks.esNulo(dto.getNifEmisor())){				
+//			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
+//			gastoProveedor.setProveedor(proveedor);
+//		}
+		if(!Checks.esNulo(dto.getBuscadorCodigoProveedorRem())){				
+			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
 			gastoProveedor.setProveedor(proveedor);
 		}
 		
@@ -263,6 +289,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 		gastoProveedor.setFechaEmision(dto.getFechaEmision());
 		gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
+		
+		updaterStateApi.updaterStates(gastoProveedor, DDEstadoGasto.PENDIENTE);
 		
 		// Primero comprobamos que el gasto no está dado de alta.
 		boolean existeGasto  = existeGasto(gastoProveedor);
@@ -317,9 +345,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				logger.error(ex.getCause());
 			}
 			
-			if(!Checks.esNulo(dto.getBuscadorNifEmisor())){
-				Filter filtroNifEmisor = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifEmisor());
-				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroNifEmisor);
+			if(!Checks.esNulo(dto.getBuscadorCodigoProveedorRem())){
+				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getBuscadorCodigoProveedorRem());
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
 				gastoProveedor.setProveedor(proveedor);
 			}
 			
@@ -345,6 +373,33 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				DDTipoPeriocidad periodicidad = (DDTipoPeriocidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPeriocidad.class, dto.getPeriodicidad());
 				gastoProveedor.setTipoPeriocidad(periodicidad);
 			}
+			if(!Checks.esNulo(dto.getTipoOperacionCodigo())){
+				DDTipoOperacionGasto tipoOperacion = (DDTipoOperacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOperacionGasto.class, dto.getTipoOperacionCodigo());
+				gastoProveedor.setTipoOperacion(tipoOperacion);
+			}
+			if(!Checks.esNulo(dto.getNumGastoAbonado())){
+				List<GastoProveedor> listaGastos= new ArrayList<GastoProveedor>();
+				Filter filtroGastoAbonado = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya",dto.getNumGastoAbonado());
+				listaGastos = genericDao.getList(GastoProveedor.class, filtroGastoAbonado);
+				
+				if(!Checks.estaVacio(listaGastos)){
+					GastoProveedor gasto= listaGastos.get(0);
+					if(!Checks.esNulo(gasto.getProveedor()) && !Checks.esNulo(gastoProveedor.getProveedor())){
+						if(gasto.getProveedor().getCodigoProveedorRem().equals(gastoProveedor.getProveedor().getCodigoProveedorRem()) && gasto.getDestinatarioGasto().equals(gastoProveedor.getDestinatarioGasto())){
+							gastoProveedor.setGastoProveedorAbonado(gasto);
+						}
+						else{
+							throw new JsonViewerException("Destinatario o proveedor del gasto abonado son diferentes");
+						}
+					}
+					
+				}
+				else{
+					throw new JsonViewerException("El gasto no existe");
+				}
+				
+			}
+			
 			
 			genericDao.update(GastoProveedor.class, gastoProveedor);	
 			
@@ -370,10 +425,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
-	public ActivoProveedor searchProveedorNif(String nifProveedor) {
+	public ActivoProveedor searchProveedorCodigo(String codigoUnicoProveedor) {
 		
 		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nifProveedor);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(codigoUnicoProveedor));
 		listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
 
 		if(!Checks.estaVacio(listaProveedores)){
@@ -914,49 +969,81 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			Usuario usuario = genericAdapter.getUsuarioLogado();
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-			GastoGestion gestionGasto = genericDao.get(GastoGestion.class, filtro);
-			
-			if(!Checks.esNulo(gestionGasto)){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+			GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtro);
+
+			if(!Checks.esNulo(gasto)){
 				
-				beanUtilNotNull.copyProperties(gestionGasto, dtoGestionGasto);
+				GastoGestion gestionGasto = gasto.getGastoGestion();
 				
-				if(!Checks.esNulo(dtoGestionGasto.getNecesariaAutorizacionPropietario())){
-					gestionGasto.setAutorizaPropietario(dtoGestionGasto.getNecesariaAutorizacionPropietario());
-				}
-				if(("").equals(dtoGestionGasto.getComboMotivoAutorizacionPropietario())){
-					gestionGasto.setMotivoAutorizacionPropietario(null);
-				}
-				if(!Checks.esNulo(dtoGestionGasto.getComboMotivoAutorizacionPropietario()) && !dtoGestionGasto.getComboMotivoAutorizacionPropietario().equals("")){
-					DDMotivoAutorizacionPropietario motivoAutoPro= (DDMotivoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAutorizacionPropietario.class, dtoGestionGasto.getComboMotivoAutorizacionPropietario());
-					gestionGasto.setMotivoAutorizacionPropietario(motivoAutoPro);
+				if(!Checks.esNulo(gestionGasto)){
+
+					beanUtilNotNull.copyProperties(gestionGasto, dtoGestionGasto);
 					
-				}
-				if(!Checks.esNulo(dtoGestionGasto.getComboEstadoAutorizacionHaya())){
-					DDEstadoAutorizacionHaya estadoAutoHaya= (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, dtoGestionGasto.getComboEstadoAutorizacionHaya());
-					gestionGasto.setEstadoAutorizacionHaya(estadoAutoHaya);
-					gestionGasto.setFechaEstadoAutorizacionHaya(new Date());
-					gestionGasto.setUsuarioEstadoAutorizacionHaya(usuario);
-				}
-				if(!Checks.esNulo(dtoGestionGasto.getComboMotivoRechazoHaya())){
-					DDMotivoRechazoAutorizacionHaya motivoAutoHaya= (DDMotivoRechazoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAutorizacionHaya.class, dtoGestionGasto.getComboMotivoRechazoHaya());
-					gestionGasto.setMotivoRechazoAutorizacionHaya(motivoAutoHaya);
-				}
-				if(!Checks.esNulo(dtoGestionGasto.getComboMotivoAnulado())){
-					DDMotivoAnulacionGasto motivoAnulacion= (DDMotivoAnulacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionGasto.class, dtoGestionGasto.getComboMotivoAnulado());
-					gestionGasto.setMotivoAnulacion(motivoAnulacion);
-					gestionGasto.setFechaAnulacionGasto(new Date());
-					gestionGasto.setUsuarioAnulacion(usuario);
-				}
-				if(!Checks.esNulo(dtoGestionGasto.getComboMotivoRetenerPago())){
-					DDMotivoRetencionPago retenerPago= (DDMotivoRetencionPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencionPago.class, dtoGestionGasto.getComboMotivoRetenerPago());
-					gestionGasto.setMotivoRetencionPago(retenerPago);
-					gestionGasto.setFechaRetencionPago(new Date());
-					gestionGasto.setUsuarioRetencionPago(usuario);
+					if(!Checks.esNulo(dtoGestionGasto.getNecesariaAutorizacionPropietario())){
+						gestionGasto.setAutorizaPropietario(dtoGestionGasto.getNecesariaAutorizacionPropietario());
+					}
+					if(("").equals(dtoGestionGasto.getComboMotivoAutorizacionPropietario())){
+						gestionGasto.setMotivoAutorizacionPropietario(null);
+					}
+					if(!Checks.esNulo(dtoGestionGasto.getComboMotivoAutorizacionPropietario()) && !dtoGestionGasto.getComboMotivoAutorizacionPropietario().equals("")){
+						DDMotivoAutorizacionPropietario motivoAutoPro= (DDMotivoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAutorizacionPropietario.class, dtoGestionGasto.getComboMotivoAutorizacionPropietario());
+						gestionGasto.setMotivoAutorizacionPropietario(motivoAutoPro);
+						
+					}
+					if(!Checks.esNulo(dtoGestionGasto.getComboEstadoAutorizacionHaya())){
+						DDEstadoAutorizacionHaya estadoAutoHaya= (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, dtoGestionGasto.getComboEstadoAutorizacionHaya());
+						gestionGasto.setEstadoAutorizacionHaya(estadoAutoHaya);
+						gestionGasto.setFechaEstadoAutorizacionHaya(new Date());
+						gestionGasto.setUsuarioEstadoAutorizacionHaya(usuario);
+					}
+					if(!Checks.esNulo(dtoGestionGasto.getComboMotivoRechazoHaya())){
+						DDMotivoRechazoAutorizacionHaya motivoAutoHaya= (DDMotivoRechazoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAutorizacionHaya.class, dtoGestionGasto.getComboMotivoRechazoHaya());
+						gestionGasto.setMotivoRechazoAutorizacionHaya(motivoAutoHaya);
+					}
+					if(!Checks.esNulo(dtoGestionGasto.getComboMotivoAnulado())){
+						DDMotivoAnulacionGasto motivoAnulacion= (DDMotivoAnulacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionGasto.class, dtoGestionGasto.getComboMotivoAnulado());
+						gestionGasto.setMotivoAnulacion(motivoAnulacion);
+						gestionGasto.setFechaAnulacionGasto(new Date());
+						gestionGasto.setUsuarioAnulacion(usuario);
+						
+						//Al anular el gasto borro los estados de autorización y retener pago
+						gestionGasto.setEstadoAutorizacionHaya(null);
+						gestionGasto.setFechaEstadoAutorizacionHaya(null);
+						gestionGasto.setUsuarioEstadoAutorizacionHaya(null);
+						gestionGasto.setMotivoRechazoAutorizacionHaya(null);
+						
+						gestionGasto.setEstadoAutorizacionPropietario(null);
+						gestionGasto.setFechaEstadoAutorizacionPropietario(null);
+						gestionGasto.setMotivoRechazoAutorizacionPropietario(null);
+						
+						gestionGasto.setFechaRetencionPago(null);
+						gestionGasto.setUsuarioRetencionPago(null);
+						gestionGasto.setMotivoRetencionPago(null);
+						// Actualizamos el estado del gasto a anulado
+						updaterStateApi.updaterStates(gasto, DDEstadoGasto.ANULADO);
+						
+					}
+					if(!Checks.esNulo(dtoGestionGasto.getComboMotivoRetenerPago())){
+						DDMotivoRetencionPago retenerPago= (DDMotivoRetencionPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencionPago.class, dtoGestionGasto.getComboMotivoRetenerPago());
+						gestionGasto.setMotivoRetencionPago(retenerPago);
+						gestionGasto.setFechaRetencionPago(new Date());
+						gestionGasto.setUsuarioRetencionPago(usuario);
+						updaterStateApi.updaterStates(gasto, DDEstadoGasto.RETENIDO);
+					}
+					else if(dtoGestionGasto.getComboMotivoRetenerPago().equals("")){//Si borro el campo eliminamos los detalles de retencion y podemos el gasto en estado pendiente
+						gestionGasto.setMotivoRetencionPago(null);
+						gestionGasto.setFechaRetencionPago(null);
+						gestionGasto.setUsuarioRetencionPago(null);
+						updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
+						DDEstadoAutorizacionHaya estadoPendienteAutorizacionHaya= (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
+						gestionGasto.setEstadoAutorizacionHaya(estadoPendienteAutorizacionHaya);
+					}
+					
+					gasto.setGastoGestion(gestionGasto);
 				}
 				
-				genericDao.update(GastoGestion.class, gestionGasto);
-				
+				genericDao.update(GastoProveedor.class, gasto);
 				
 				return true;
 			}
@@ -1307,4 +1394,62 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 	}	
 
+	public boolean esGastoEditable(GastoProveedor gasto){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+		GastoGestion gastoGestion = genericDao.get(GastoGestion.class, filtro);
+		
+		if(!Checks.esNulo(gastoGestion) && !Checks.esNulo(gastoGestion.getFechaAnulacionGasto())){
+			return false;
+		}
+		
+		return true;
+		
+		
+	}
+	
+	public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor){
+		DtoActivoProveedor dto= new DtoActivoProveedor();
+		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
+		Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(codigoUnicoProveedor));
+//		DDTipoEntidad tipoEntidad = (DDTipoEntidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoEntidad.class, codigoTipoEntidad);	
+		Filter filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.tipoEntidadProveedor.codigo", codigoTipoProveedor);
+		
+		listaProveedores = genericDao.getList(ActivoProveedor.class, filtroCodigo,filtroEntidad);
+
+		if(!Checks.estaVacio(listaProveedores)){
+			ActivoProveedor activoProveedor= listaProveedores.get(0);
+			
+			dto.setId(activoProveedor.getId());
+			dto.setNombreProveedor(activoProveedor.getNombre());
+			dto.setNifProveedor(activoProveedor.getDocIdentificativo());
+			if(!Checks.esNulo(activoProveedor.getTipoProveedor()) && !Checks.esNulo(activoProveedor.getTipoProveedor().getTipoEntidadProveedor())){
+				dto.setSubtipoProveedorDescripcion(activoProveedor.getTipoProveedor().getTipoEntidadProveedor().getDescripcion());
+			}
+			
+			
+			return dto;
+		}
+		return null;
+	}
+	
+	public Object searchGastoNumHaya(String numeroGastoHaya, String proveedorEmisor, String destinatario){
+		
+		List<GastoProveedor> listaGastos= new ArrayList<GastoProveedor>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(numeroGastoHaya));
+		listaGastos = genericDao.getList(GastoProveedor.class, filtro);
+
+		DDDestinatarioGasto destinatarioGasto = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, destinatario);	
+		
+		if(!Checks.estaVacio(listaGastos)){
+			GastoProveedor gasto= listaGastos.get(0);
+			if(!Checks.esNulo(gasto.getProveedor()) && !Checks.esNulo(proveedorEmisor)){
+				if(gasto.getProveedor().getCodigoProveedorRem().equals(Long.parseLong(proveedorEmisor)) && gasto.getDestinatarioGasto().equals(destinatarioGasto)){
+					return gasto;
+				}
+			}
+			
+		}
+		return null;
+		
+	}
 }

@@ -12,24 +12,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     },
     
     formulas: {   
-	
-	     
+
 	     getSrcCartera: function(get) {
 	     	
 	     	var cartera = get('expediente.entidadPropietariaDescripcion');
-	     	
+	     	var src=null;
 	     	if(!Ext.isEmpty(cartera)) {
-	     		return 'resources/images/logo_'+cartera.toLowerCase()+'.svg'	     		
-	     	} else {
-	     		return '';
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
 	     	}
-
+        	if(Ext.isEmpty(src)) {
+        		return 	null;
+        	}else {
+        		return 'resources/images/'+src;	     
+        	} 
 	     },
 	     
 	     esCarteraBankia: function(get) {
 	     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
+	     },
+	     
+	     esCarteraSareb: function(get) {
+	     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['SAREB'] == carteraCodigo;
 	     },
 	     
 	     getTipoExpedienteCabecera: function(get) {
@@ -114,7 +121,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	}
 	     	}
 	     	return false;
+	     },
+	     
+	     esAlquilerConOpcionCompra: function(get){
+	     	var me = this;
+			if(!Ext.isEmpty(me.getData().expediente)){
+				if(me.getData().expediente.get('alquilerOpcionCompra')==1){
+					return true;
+				}
+			}
+	     	return false;
 	     }
+	     
 		
 	 },
 
@@ -470,17 +488,32 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     	},
 
 		comboComites: {
-			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.Honorario',
+	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getComitesByCartera',
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
+	    },
+	    
+	    storeEstadosDevolucion: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'estadosDevolucion'}
+	    	}	    	
+	    },
+	    
+		comboResultadoTanteo: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'resultadoTanteo'}
+	    	}	    	
 	    }
-	    
-	    
-	
+	    	
     }
   
 });

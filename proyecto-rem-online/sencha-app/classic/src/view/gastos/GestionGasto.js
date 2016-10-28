@@ -107,6 +107,9 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			{   
 				xtype:'fieldsettable',
 				title: HreRem.i18n('title.gasto.gestion.gestion'),
+//				bind:{
+//					disabled: '{!esGastoAnulado}'
+//				},
 				items :
 					[
 						{
@@ -116,7 +119,10 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						{
 							xtype:'displayfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.gestor'),
-							bind: '{gestion.fechaYGestorAltaRem}',
+							bind: {
+								value: '{gestion.fechaYGestorAltaRem}',
+								readOnly: '{esGastoAnulado}'
+							},
 							colspan: 2
 						},
 			            { 
@@ -125,7 +131,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			              	fieldLabel : 'Estado Autorización Haya',
 							bind: {
 								store: '{comboEstadoAutorizacionHaya}',
-								value: '{gestion.comboEstadoAutorizacionHaya}'
+								value: '{gestion.comboEstadoAutorizacionHaya}',
+								readOnly: '{esGastoAnulado}'
 							}
 						},
 			           	{
@@ -139,7 +146,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 							fieldLabel:  HreRem.i18n('fieldlabel.motivo.rechazo'),
 							bind: {
 								store: '{comboMotivoRechazoHaya}',
-								value: '{gestion.comboMotivoRechazoHaya}'
+								value: '{gestion.comboMotivoRechazoHaya}',
+								readOnly: '{esGastoAnulado}'
 							}
 						},
 						
@@ -151,7 +159,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			              	fieldLabel : 'Estado Autorización Propietario',
 							bind: {
 								store: '{comboEstadoAutorizacionPropietario}',
-								value: '{gestion.comboEstadoAutorizacionPropietario}'
+								value: '{gestion.comboEstadoAutorizacionPropietario}',
+								readOnly: '{esGastoAnulado}'
 							},
 							readOnly: true
 						},
@@ -164,7 +173,11 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						{
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.motivo.rechazo'),
-							bind:		'{gestion.motivoRechazoAutorizacionPropietario}'
+							bind:		{
+								value: '{gestion.motivoRechazoAutorizacionPropietario}',
+								readOnly: '{esGastoAnulado}'
+							}
+							
 						},
 						
 						
@@ -186,7 +199,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 							fieldLabel:  HreRem.i18n('fieldlabel.gasto.motivo'),
 							bind: {
 								store: '{comboMotivoAnulado}',
-								value: '{gestion.comboMotivoAnulado}'
+								value: '{gestion.comboMotivoAnulado}',
+								readOnly: '{esGastoAnulado}'
 							}
 						},
 						
@@ -208,8 +222,10 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 							fieldLabel:  HreRem.i18n('fieldlabel.gasto.motivo'),
 							bind: {
 								store: '{comboMotivoRetenerPago}',
-								value: '{gestion.comboMotivoRetenerPago}'
-							}
+								value: '{gestion.comboMotivoRetenerPago}',
+								readOnly: '{esGastoAnulado}'
+							},
+							editable: true
 						}
 						
 						

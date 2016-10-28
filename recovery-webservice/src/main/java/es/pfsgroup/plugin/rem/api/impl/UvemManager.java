@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -51,6 +52,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 
@@ -105,12 +107,12 @@ public class UvemManager implements UvemManagerApi {
 	/**
 	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
 	 * 
-	 * @param bienId
+	 * @param numActivoUvem
 	 * @param nombreGestor
 	 * @param gestion
 	 * @return
 	 */
-	public Integer ejecutarSolicitarTasacion(Long bienId, String nombreGestor, String gestion)
+	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, String nombreGestor, String gestion)
 			throws WIMetaServiceException, WIException, TipoDeDatoException {
 
 		leerConfiguracion();
@@ -201,8 +203,8 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPETS07_INS.setCodigoPresupuestocoppre('1');
 		servicioGMPETS07_INS.setFechaDeLaTasacionlfetas(0000000000);
 		Integer numeroActivo = 0;
-		if (!Checks.esNulo(bienId)) {
-			numeroActivo = bienId != null ? bienId.intValue() : null;
+		if (!Checks.esNulo(numActivoUvem)) {
+			numeroActivo = numActivoUvem != null ? numActivoUvem.intValue() : null;
 		}
 
 		VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1 numeroOcurrencias1 = new VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1();
@@ -238,66 +240,6 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	
-	
-	
-	
-	/**
-	 * Devuelve los clientes Ursus a partir de los datos pasados por parámetro
-	 * 
-	 * @param nDocumento: documento identificativo del cliente a consultar
-	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
-	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
-	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
-	 *            Otros persona física. J Otros persona jurídica.
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
-	 */
-	@Override
-	public Integer obtenerNumClienteUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException{
-//		logger.info("------------ LLAMADA WS NUMCLIENTE  -----------------");
-//		
-//		Integer numcliente = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-//		
-//		//GMPAJC11_INS
-//		
-//		return numcliente;
-		return null;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * Devuelve los datos de un cliente Ursus a partir de los datos pasados por parámetro
-	 * 
-	 * @param nDocumento: documento identificativo del cliente a consultar
-	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
-	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
-	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
-	 *            Otros persona física. J Otros persona jurídica.
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
-	 */
-	@Override
-	public GMPAJC93_INS obtenerDatosClienteUrsus(String nDocumento, String tipoDocumento, String qcenre)  throws WIException{
-//		logger.info("------------ LLAMADA WS NUMCLIENTE Y DATOSCLIENTE -----------------");
-//		
-//		Integer numcliente = null;
-//		GMPAJC93_INS datosClienteIns = null;
-//		
-//		numcliente = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-//		
-//		if(!Checks.esNulo(numcliente)){
-//			datosClienteIns = ejecutarDatosCliente(numcliente, qcenre);
-//			
-//		}
-//		
-//		return datosClienteIns;
-		return null;
-	}
 	
 
 	
@@ -485,8 +427,7 @@ public class UvemManager implements UvemManagerApi {
 	@Override
 	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre) throws Exception {
 		logger.info("------------ LLAMADA WS DATOSCLIENTE -----------------");
-		
-		StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = null;
+	
 		
 		leerConfiguracion();
 		// parametros iniciales
@@ -553,7 +494,7 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC93_INS.setcabeceraTecnica(cabeceraTecnica);
 
 		// seteamos parametros
-		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0170");
+		servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0272");
 		servicioGMPAJC93_INS.setIdentificadorClienteOfertaidclow(numcliente);//<--------?????
 		servicioGMPAJC93_INS.setnumeroUsuario("");//<--------????? Nos lo piden obligatorio
 		servicioGMPAJC93_INS.setidSesionWL("");//<--------????? Nos lo piden obligatorio
@@ -677,6 +618,7 @@ public class UvemManager implements UvemManagerApi {
 	
 		DatosClienteDto datos = new DatosClienteDto();
 
+		datos.setNumeroClienteUrsus(numcliente.toString());
 		datos.setClaseDeDocumentoIdentificador(servicioGMPAJC93_INS.getClaseDeDocumentoIdentificadorcocldo()+"");
 		datos.setDniNifDelTitularDeLaOferta(servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio().toString());
 		datos.setNombreYApellidosTitularDeOferta(servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof().toString());
@@ -784,53 +726,62 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	public ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion) throws WIException {
-
+		
 		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+		
+		List<InstanciaDecisionDataDto>  instanciaListData = instanciaDecisionDto.getData();
+		if(Checks.esNulo(instanciaListData) || (!Checks.esNulo(instanciaListData) && instanciaListData.size() == 0)){
+			throw new WIException("El campo data de la instancia es obligatorio.");
+		}
+		
+		//Bucle para cargar el array numOcurrencias con la info de cada activo
+		for(int i = 0; i< instanciaListData.size(); i++){
+			InstanciaDecisionDataDto instanciaData = instanciaListData.get(i);
+			StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+			
+			// IdentificadorActivoEspecial
+			if (instanciaData.getIdentificadorActivoEspecial() != null) {
+				struct.setIdentificadorActivoEspecialcoacew(instanciaData.getIdentificadorActivoEspecial());
+			}
+			
+			// TipoDeImpuesto
+			struct.setTipoDeImpuestocotimw(instanciaData.getTipoDeImpuesto());
+			
+			// ImporteMonetarioOfertaBISA
+			if (instanciaData.getImporteConSigno() == null) {
+				throw new WIException("El importe con signo no puede estar vacio.");
+			} else {
+				ImporteMonetario importeMonetario = new ImporteMonetario();
+				importeMonetario.setImporteConSigno(instanciaData.getImporteConSigno());
+				es.cajamadrid.servicios.ARQ.Moneda moneda = new es.cajamadrid.servicios.ARQ.Moneda();
+				moneda.setDivisa("D");
+				moneda.setDigitoControlDivisa('-');
+				importeMonetario.setMonedaBISA(moneda);
+				importeMonetario.setNumeroDecimalesImporte('-');
+				struct.setImporteMonetarioOfertaBISA(importeMonetario);
+			}
 
-		// IdentificadorActivoEspecial
-		if (instanciaDecisionDto.getIdentificadorActivoEspecial() != null) {
-			struct.setIdentificadorActivoEspecialcoacew(instanciaDecisionDto.getIdentificadorActivoEspecial());
+			// PorcentajeImpuestoBISA
+			Porcentaje9 porcentajeImpuesto = null;
+			porcentajeImpuesto = new Porcentaje9();
+			if(!Checks.esNulo(instanciaData.getPorcentajeImpuesto())){
+				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto());
+				porcentajeImpuesto.setNumDecimales("BC");
+				struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
+			}
+			
+			// IndicadorTratamientoImpuesto
+			struct.setIndicadorTratamientoImpuestobitrim('A'); // 'A' or 'B' or '\'
+			
+			//Es un array al que se le meteran cada activo de la oferta
+			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
 		}
 
-		// ImporteMonetarioOfertaBISA
-		if (instanciaDecisionDto.getImporteConSigno() == null) {
-			throw new WIException("El importe con signo no puede estar vacio.");
-		} else {
-			ImporteMonetario importeMonetario = new ImporteMonetario();
-			importeMonetario.setImporteConSigno(instanciaDecisionDto.getImporteConSigno());
-			es.cajamadrid.servicios.ARQ.Moneda moneda = new es.cajamadrid.servicios.ARQ.Moneda();
-			moneda.setDivisa("D");
-			moneda.setDigitoControlDivisa('-');
-			importeMonetario.setMonedaBISA(moneda);
-			importeMonetario.setNumeroDecimalesImporte('-');
-			struct.setImporteMonetarioOfertaBISA(importeMonetario);
-		}
-
-		// TipoDeImpuesto
-		struct.setTipoDeImpuestocotimw(instanciaDecisionDto.getTipoDeImpuesto());
-
-		// PorcentajeImpuestoBISA
-		Porcentaje9 porcentajeImpuesto = null;
-		porcentajeImpuesto = new Porcentaje9();
-		if (instanciaDecisionDto.getTipoDeImpuesto() == instanciaDecisionDto.TIPO_IMPUESTO_IVA) {
-			porcentajeImpuesto.setPorcentaje(21);
-		} else {
-			porcentajeImpuesto.setPorcentaje(0);
-		}
-		porcentajeImpuesto.setNumDecimales("BC");
-		struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
-
-		// IndicadorTratamientoImpuesto
-		struct.setIndicadorTratamientoImpuestobitrim('A'); // 'A' or 'B' or '\'
-															// or '-'
-															// <----?????????
-
-		// Aunque es un array solo usamos el 1er campo
-		numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
-		// Este codigo de BANKIA aunque parezca setear una variable, esta haciendo una add a un Array.
+		
+		//Este codigo de BANKIA aunque parezca setear una variable, esta haciendo una add a un Array.
+		//El vector numeroOcurrencias debe tener 40 elementos si o si. Para ello, rellenamos el resto de ocurrencias con structuras vacías.
 		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu structEmpty = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-		for(int i=1; i<40; i++){
+		for(int i=0; i< 40-instanciaListData.size(); i++){
 			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(structEmpty);
 		}
 
@@ -895,10 +846,9 @@ public class UvemManager implements UvemManagerApi {
 		System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());
 		
 
-
 		// seteamos parametros
 		servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PAHY0170");
-		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(instanciaDecisionDto.getCodigoDeOfertaHaya());
+		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(StringUtils.leftPad(instanciaDecisionDto.getCodigoDeOfertaHaya(), 16, "0"));
 		if (instanciaDecisionDto.isFinanciacionCliente()) {
 			servicioGMPDJB13_INS.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_SI);
 		} else {
@@ -906,9 +856,9 @@ public class UvemManager implements UvemManagerApi {
 		}
 		//Según llamada telefonica con Antonio Rios Muñoz(Atos Origin)
 		if (accion.equals(INSTANCIA_DECISION_MODIFICACION)) { 	
-			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_CONTRAOFERTA);
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONTRAOFERTA);
 		} else {
-			servicioGMPDJB13_INS.setTipoPropuestacotprw(instanciaDecisionDto.PROPUESTA_VENTA);
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
 		}
 		
 		if (numeroOcurrencias!=null) {			
@@ -924,20 +874,34 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
 		logger.info("IndicadorDeFinanciacionClientebificl: " + servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
 		logger.info("TipoPropuestacotprw: " + servicioGMPDJB13_INS.getTipoPropuestacotprw());
-		logger.info("NumeroDeOcurrenciasnumocu :" + servicioGMPDJB13_INS.getNumeroDeOcurrenciasnumocu());
 		logger.info("NumeroCliente: " + servicioGMPDJB13_INS.getnumeroCliente());
 		logger.info("NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
-		logger.info("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());
+		logger.info("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());	
 		
 		System.out.println("CodigoObjetoAccesocopace: " + servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
 		System.out.println("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
 		System.out.println("IndicadorDeFinanciacionClientebificl: " + servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
 		System.out.println("TipoPropuestacotprw: " + servicioGMPDJB13_INS.getTipoPropuestacotprw());
-		System.out.println("NumeroDeOcurrenciasnumocu :" + servicioGMPDJB13_INS.getNumeroDeOcurrenciasnumocu());
 		System.out.println("NumeroCliente: " + servicioGMPDJB13_INS.getnumeroCliente());
 		System.out.println("NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
 		System.out.println("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());
 		
+		for(int i = 0; i< instanciaListData.size(); i++){
+			logger.info("IdentificadorActivoEspecialcoacew: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIdentificadorActivoEspecialcoacew());
+			logger.info("ImporteConSigno: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getImporteMonetarioOfertaBISA().getImporteConSigno());
+			logger.info("TipoDeImpuestocotimw: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getTipoDeImpuestocotimw());
+			logger.info("Porcentaje: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getPorcentajeImpuestoBISA().getPorcentaje());
+			logger.info("PorcentajeNumDecimales: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getPorcentajeImpuestoBISA().getNumDecimales());
+			logger.info("IndicadorTratamientoImpuestobitrim: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIndicadorTratamientoImpuestobitrim());	
+		
+			System.out.println("IdentificadorActivoEspecialcoacew: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIdentificadorActivoEspecialcoacew());
+			System.out.println("ImporteConSigno: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getImporteMonetarioOfertaBISA().getImporteConSigno());
+			System.out.println("TipoDeImpuestocotimw: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getTipoDeImpuestocotimw());
+			System.out.println("Porcentaje: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getPorcentajeImpuestoBISA().getPorcentaje());
+			System.out.println("PorcentajeNumDecimales: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getPorcentajeImpuestoBISA().getNumDecimales());
+			System.out.println("IndicadorTratamientoImpuestobitrim: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIndicadorTratamientoImpuestobitrim());
+		}
+
 		
 		servicioGMPDJB13_INS.setAlias(ALIAS);
 		servicioGMPDJB13_INS.execute();
@@ -1035,7 +999,7 @@ public class UvemManager implements UvemManagerApi {
 		
 		// seteamos parametros
 		servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
-		numExpedienteRiesgo12 = StringUtils.leftPad(numExpedienteRiesgo12, 12, "0");
+		numExpedienteRiesgo12 = StringUtils.leftPad(numExpedienteRiesgo12, 18, "0");
 		servicioGMPAJC34_INS.setNumeroExpedienteDeRiesgoNumericonuidow(numExpedienteRiesgo12);	
 		servicioGMPAJC34_INS.setTipoRiesgoClaseProductoUrsusCotirx(tipoRiesgo);
 		long numeroCliente = 0;

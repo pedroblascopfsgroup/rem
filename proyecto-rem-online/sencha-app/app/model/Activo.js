@@ -287,9 +287,13 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
+    			name: 'tipoActivoAdmisionMediadorCorresponde',
+    			type: 'boolean'
+    		},
+    		{
     			name: 'isPublicable',
     			calculate: function(data) {
-    				if(data.admision && data.gestion && data.informeComercialAceptado) {
+    				if(data.admision && data.gestion && data.informeComercialAceptado && data.tipoActivoAdmisionMediadorCorresponde) {
     					return true;
     				} else {
     					return false;
@@ -432,6 +436,10 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'motivoNoAplicaComercializar'
+			},
+			{
+				name: 'pertenceAgrupacionRestringida',
+				type: 'boolean'
 			}
     ],
     

@@ -10,6 +10,18 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 
     initComponent: function () {
         var me = this;
+        var codigoTipoProveedorFilter= null;
+        me.codigoTipoProveedorFilter=null;
+        var storeProveedores=null;
+       	me.storeProveedores = new Ext.data.Store({
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getComboProveedoresExpediente'
+			},
+			autoLoad: false
+		});
+        
 		me.setTitle(HreRem.i18n('title.gestion.economica'));
         var items= [
 
@@ -22,7 +34,9 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
             	
                 	{
 					    xtype		: 'gridBaseEditableRow',
+					    topBar: true,
 					    reference: 'listadohoronarios',
+					    idPrincipal : 'expediente.id',
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storeHoronarios}'
@@ -32,18 +46,80 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						   {
 					            text: HreRem.i18n('fieldlabel.participacion'),
 					            dataIndex: 'participacion',
-					            flex: 1
-						   },						   
+					            flex: 1,
+					            editor: {
+									xtype: 'combobox',	
+									reference: 'comboParticipacionRef',
+									store: new Ext.data.Store({
+										model: 'HreRem.model.ComboBase',
+										proxy: {
+											type: 'uxproxy',
+											remoteUrl: 'generic/getDiccionario',
+											extraParams: {diccionario: 'accionesGasto'}
+										},
+										autoLoad: true
+									}),
+									displayField: 'descripcion',
+    								valueField: 'codigo'
+					            }
+						   },
+						   {
+						   		text: HreRem.i18n('header.tipo.proveedor'),
+					            dataIndex: 'codigoTipoProveedor',
+					            reference: 'tipoProveedorVistaRef',
+					            flex: 1,
+					            editor: {
+									xtype: 'combobox',	
+									reference: 'tipoProveedorRef',
+									store: new Ext.data.Store({
+										model: 'HreRem.model.ComboBase',
+										proxy: {
+											type: 'uxproxy',
+											remoteUrl: 'generic/getDiccionario',
+											extraParams: {diccionario: 'tiposProveedorHonorario'}
+										},
+										autoLoad: true
+									}),
+									editable: false,
+									chainedStore: me.storeProveedores,
+									chainedReference: 'proveedorRef',
+									displayField: 'descripcion',
+    								valueField: 'codigo',
+    								listeners: {
+    									select: 'changeComboTipoProveedor'
+    								}
+								},
+								renderer: function(value, a, record, e) {
+									return record.data.tipoProveedor;
+								}
+						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.proveedor'),
-					            dataIndex: 'proveedor',
-					            flex: 1						   
+					            dataIndex: 'idProveedor',
+					            reference: 'proveedorVistaRef',
+					            flex: 1,
+					            editor: {
+									xtype: 'combobox',	
+									reference: 'proveedorRef',
+									store: me.storeProveedores,
+									enableKeyEvents: true,
+									displayField: 'nombre',
+    								valueField: 'id',
+    								listeners: {
+										'keyup': 'changeComboProveedor',
+										'expand': 'expandeComboProveedor'
+									}
+								},
+								renderer: function(value, a, record, e) {
+									return record.data.proveedor;
+								}
+								
 						   },
-						   {
-						   		text: HreRem.i18n('fieldlabel.id'),
-					            dataIndex: 'codigoId',
-					            flex: 1						   
-						   },
+//						   {
+//						   		text: HreRem.i18n('fieldlabel.id'),
+//					            dataIndex: 'codigoId',
+//					            flex: 1						   
+//						   },
 						   {
 						   		text: HreRem.i18n('header.tipo.calculo'),
 					            dataIndex: 'tipoCalculo',

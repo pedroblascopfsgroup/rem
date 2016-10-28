@@ -6,6 +6,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,9 +58,13 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJRegistro;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.notificacion.api.RegistroApi;
 import es.pfsgroup.plugin.rem.notificacion.dto.CrearAnotacionDto;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.recovery.api.AsuntoApi;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -83,6 +88,9 @@ public class AnotacionManager implements AnotacionApi{
 	
 	@Autowired
 	private RegistroApi registroApi;
+	
+	@Autowired
+	private RestApi restApi;
 	
 	@Resource
 	private Properties appProperties;
@@ -120,9 +128,6 @@ public class AnotacionManager implements AnotacionApi{
 		}
 		
 		CrearAnotacionDto serviceDto = new CrearAnotacionDto();
-		List<String> listaDireccionesCc = new ArrayList<String>();
-		List<String> listaDireccionesPara = new ArrayList<String>();
-		
 		List<DtoCrearAnotacionUsuario> listaUsuarios = new ArrayList<DtoCrearAnotacionUsuario>();
 		DtoCrearAnotacionUsuario du = new DtoCrearAnotacionUsuario();
 		du.setId(notificacion.getDestinatario());
@@ -134,8 +139,28 @@ public class AnotacionManager implements AnotacionApi{
 		serviceDto.setTipoAnotacion("A");
 		serviceDto.setCuerpoEmail(notificacion.getDescripcion());
 		serviceDto.setAsuntoMail(notificacion.getTitulo());
-		serviceDto.setDireccionesMailCc(listaDireccionesCc);
-		serviceDto.setDireccionesMailPara(listaDireccionesPara);
+		
+		List<String> listaDireccionesCc = new ArrayList<String>();
+        if (StringUtils.hasText(notificacion.getCc())) {
+            String direcciones[] = notificacion.getCc().replace(" ", "").split(",");
+            if (direcciones.length > 1) {
+                listaDireccionesCc.addAll(Arrays.asList(direcciones));
+            } else {
+                listaDireccionesCc.add(notificacion.getCc());
+            }
+        }
+        serviceDto.setDireccionesMailCc(listaDireccionesCc);
+
+        List<String> listaDireccionesPara = new ArrayList<String>();
+        if (StringUtils.hasText(notificacion.getPara())) {
+            String direcciones[] = notificacion.getPara().replace(" ", "").split(",");
+            if (direcciones.length > 1) {
+                listaDireccionesPara.addAll(Arrays.asList(direcciones));
+            } else {
+                listaDireccionesPara.add(notificacion.getPara());
+            }
+        }
+        serviceDto.setDireccionesMailPara(listaDireccionesPara);
 
 		serviceDto.setIdUg(notificacion.getIdActivo());
 		serviceDto.setCodUg(DDTipoEntidad.CODIGO_ENTIDAD_ACTIVO);
@@ -429,7 +454,7 @@ public class AnotacionManager implements AnotacionApi{
 		}
 		
 		Map<String, String> customize = proxyFactory.proxy(AgendaMultifuncionCustomTemplate.class).getCustomize(dto);
-		String customizeTempate = "template/mailTemplateCDC.html";
+		String customizeTempate = "template/mailTemplate.html";
 
 		if (customize != null) {
 			model.putAll(customize);
@@ -579,6 +604,27 @@ public class AnotacionManager implements AnotacionApi{
     		}    		
     	}
 	}
+	
+	
+	
+	
+	@Override
+	public HashMap<String, String> validateNotifPostRequestData(NotificacionDto notificacionDto, Object jsonFields) throws Exception {
+		HashMap<String, String> hashErrores = null;
+
+		hashErrores = restApi.validateRequestObject(notificacionDto ,TIPO_VALIDACION.INSERT);
+
+		if (!Checks.esNulo(notificacionDto.getIdActivoHaya())) {
+			Activo activo = (Activo) genericDao.get(Activo.class,
+					genericDao.createFilter(FilterType.EQUALS, "numActivo", notificacionDto.getIdActivoHaya()));
+			if (Checks.esNulo(activo)) {
+				hashErrores.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
+		}
+
+		return hashErrores;
+	}
+
 
 	
 }

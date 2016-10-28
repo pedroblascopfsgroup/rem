@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 
 @Repository("ActivoDao")
@@ -224,7 +225,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.id", id);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.agrupaciones.agrupacion.tipoAgrupacion.id", 1);
 		*/
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 2);
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 2);
 
 		/*HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.activo.id", id);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.agrupacion.agrupacion.tipoAgrupacion.id", 1);
@@ -240,7 +241,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     @Override
 	public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado) {
 
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 1);
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 1);
 
     	//Integer cont = ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
 
@@ -534,5 +535,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto) {
+		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosCrearTrabajo act");
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "numActivoHaya", listIdActivos);
+		
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 }

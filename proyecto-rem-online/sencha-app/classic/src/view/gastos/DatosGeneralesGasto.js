@@ -24,9 +24,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
        
 	    						{   
 									xtype:'fieldsettable',
-//									bind: {
-//					        			disabled: '{conEmisor}'
-//			            			},
 									title: HreRem.i18n('title.gasto.datos.generales'),
 									items :
 										[
@@ -39,11 +36,11 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							                },
 							                {
 												xtype: 'textfieldbase',
-												fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.emisor'),
-												name: 'buscadorNifEmisorField',
+												fieldLabel:  HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),
+												name: 'buscadorCodigoRemEmisorField',
 												flex: 2,
 												bind: {
-													value: '{gasto.buscadorNifEmisor}'
+													value: '{gasto.buscadorCodigoProveedorRem}'
 												},
 												allowBlank: false,
 												readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
@@ -115,35 +112,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												bind:		'{gasto.concepto}',
 												allowBlank: false
 											},
-											{ 
-												xtype: 'comboboxfieldbase',
-								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.gasto'),
-								               	reference: 'tipoGasto',
-				        						chainedStore: 'comboSubtipoGasto',
-												chainedReference: 'subtipoGastoCombo',
-										      	bind: {
-									           		store: '{comboTiposGasto}',
-									           		value: '{gasto.tipoGastoCodigo}'
-									         	},
-									         	listeners: {
-								                	select: 'onChangeChainedCombo'
-								            	},
-									         	allowBlank: false
-										    },
-										    { 
-												xtype: 'comboboxfieldbase',
-								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
-								               	reference: 'subtipoGastoCombo',
-										      	bind: {
-									           		store: '{comboSubtiposGasto}',
-									           		value: '{gasto.subtipoGastoCodigo}',
-									           		disabled: '{!gasto.tipoGastoCodigo}'
-									         	},
-									         	allowBlank: false
-										    },
 										    { 
 												xtype: 'comboboxfieldbase',
 								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.destinatario'),
+								               	name: 'destinatarioField',
 										      	bind: {
 									           		store: '{comboDestinatarios}',
 									           		value: '{gasto.destinatario}',
@@ -154,6 +126,13 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									         	},
 									         	allowBlank: false
 										    },
+										    {
+												xtype: 'textfieldbase',
+												name: 'docIdentificativo',
+												fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),
+												bind:		'{gasto.nifEmisor}',
+												readOnly: true
+											},
 										    
 											{
 												xtype: 'textfieldbase',
@@ -199,7 +178,97 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									           		value: '{gasto.estadoGastoCodigo}'
 									         	},
 									         	readOnly: true
-										    }
+										    },
+										    
+										    { 
+												xtype: 'comboboxfieldbase',
+								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.gasto'),
+								               	reference: 'tipoGasto',
+				        						chainedStore: 'comboSubtipoGasto',
+												chainedReference: 'subtipoGastoCombo',
+										      	bind: {
+									           		store: '{comboTiposGasto}',
+									           		value: '{gasto.tipoGastoCodigo}'
+									         	},
+									         	listeners: {
+								                	select: 'onChangeChainedCombo'
+								            	},
+									         	allowBlank: false
+										    },
+										    { 
+												xtype: 'comboboxfieldbase',
+								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
+								               	reference: 'subtipoGastoCombo',
+										      	bind: {
+									           		store: '{comboSubtiposGasto}',
+									           		value: '{gasto.subtipoGastoCodigo}',
+									           		disabled: '{!gasto.tipoGastoCodigo}'
+									         	},
+									         	allowBlank: false
+										    },
+										    { 
+												xtype: 'comboboxfieldbase',
+								               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.operacion'),
+										      	bind: {
+									           		store: '{comboTipoOperacion}',
+									           		value: '{gasto.tipoOperacionCodigo}'
+									         	}
+										    },
+										    {
+												xtype: 'textfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.gasto.id.gasto.destinatario'),
+												name: 'numGastoDestinatario',
+												bind:{
+													value: '{gasto.numGastoDestinatario}'													
+												}
+											},
+//											{
+//												xtype: 'numberfieldbase',
+//												fieldLabel: HreRem.i18n('fieldlabel.gasto.id.gasto.abonado'),
+//												name: 'numGastoAbonado',
+//												bind:{
+//													value: '{gasto.numGastoAbonado}'													
+//												}
+//											},
+											{
+												xtype: 'numberfieldbase',
+												fieldLabel:  HreRem.i18n('fieldlabel.gasto.id.gasto.abonado'),
+												name: 'numGastoAbonado',
+												flex: 2,
+												bind: {
+													value: '{gasto.numGastoAbonado}'
+												},
+//												allowBlank: false,
+//												readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
+												triggers: {
+													
+														buscarEmisor: {
+												            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+												             handler: 'buscarGasto'
+												        }
+												        
+												},
+												cls: 'searchfield-input sf-con-borde',
+												emptyText:  HreRem.i18n('txt.buscar.gasto'),
+												enableKeyEvents: true,
+										        listeners: {
+											        	specialKey: function(field, e) {
+											        		if (e.getKey() === e.ENTER) {
+											        			field.lookupController().buscarGasto(field);											        			
+											        		}
+											        	}
+											        }
+							                },
+							                {
+												xtype: 'numberfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.gasto.id.gasto.abonado'),
+												name: 'idGastoAbonado',
+												bind:{
+													value: '{gasto.idGastoAbonado}'													
+												},
+												hidden: true
+											}
+										    
 											
 											/*,
 										   	{

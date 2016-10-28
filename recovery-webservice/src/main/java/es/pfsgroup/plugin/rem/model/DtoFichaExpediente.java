@@ -4,97 +4,93 @@ import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
 
-
 /**
  * Dto que gestiona la informacion de un expediente.
- *  
+ * 
  * @author Jose Villel
  *
  */
 public class DtoFichaExpediente extends WebDto {
-	
-	
-  
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 3574353502838449106L;
-	
 
 	private Long id;
-	
-    private Long idOferta;
-    
-    private Long idAgrupacion;
-    
-    private Long numAgrupacion;
-    
-    private Long idActivo;
-    
-    private Long numActivo;
-    
-    private Long numExpediente;
-    
-    private Long numEntidad;
-    
-    private String tipoExpedienteCodigo;
-    
-    private String tipoExpedienteDescripcion;
+
+	private Long idOferta;
+
+	private Long idAgrupacion;
+
+	private Long numAgrupacion;
+
+	private Long idActivo;
+
+	private Long numActivo;
+
+	private Long numExpediente;
+
+	private Long numEntidad;
+
+	private String tipoExpedienteCodigo;
+
+	private String tipoExpedienteDescripcion;
 
 	private String mediador;
-    
-    private String propietario;
-    
-    private String comprador;
-    
-    private String estado;
-    
-    private Double importe;
-    
-  	private String entidadPropietariaDescripcion;
-  	
-  	private String entidadPropietariaCodigo;
-    
-    private Date fechaAlta;
 
-   	private Date fechaSancion;
-   	
-    private Date fechaReserva;
-       
-   	private Date fechaFin;
-   	
-   	private Date fechaAltaOferta;
-   	
-   	private Date fechaPosicionamiento;
-   	
-   	private String motivoAnulacion;
-   	
-   	private Date fechaAnulacion;
-   	
-    private Date fechaContabilizacionPropietario;
-    
-    private String peticionarioAnulacion;
-    
-    private Double importeDevolucionEntregas;
-    
-    private Date fechaDevolucionEntregas;
-    
-    private boolean tieneReserva;
-    
-    private Date fechaInicioAlquiler;
-    private Date fechaFinAlquiler;
-    private Double importeRentaAlquiler;
-    private Integer numContratoAlquiler;
-    private Date fechaPlazoOpcionCompraAlquiler;
-    private Double primaOpcionCompraAlquiler;
-    private Double precioOpcionCompraAlquiler;
-    private String condicionesOpcionCompraAlquiler;
-    private Integer conflictoIntereses;
-    private Integer riesgoReputacional;    
-    private Integer estadoPbc;
-    
-    
-   	
+	private String propietario;
+
+	private String comprador;
+
+	private String estado;
+
+	private Double importe;
+
+	private String entidadPropietariaDescripcion;
+
+	private String entidadPropietariaCodigo;
+
+	private Date fechaAlta;
+
+	private Date fechaSancion;
+
+	private Date fechaReserva;
+
+	private Date fechaFin;
+
+	private Date fechaAltaOferta;
+
+	private Date fechaPosicionamiento;
+
+	private String motivoAnulacion;
+
+	private Date fechaAnulacion;
+
+	private Date fechaContabilizacionPropietario;
+
+	private String peticionarioAnulacion;
+
+	private Double importeDevolucionEntregas;
+
+	private Date fechaDevolucionEntregas;
+
+	private boolean tieneReserva;
+
+	private Date fechaInicioAlquiler;
+	private Date fechaFinAlquiler;
+	private Double importeRentaAlquiler;
+	private Integer numContratoAlquiler;
+	private Date fechaPlazoOpcionCompraAlquiler;
+	private Double primaOpcionCompraAlquiler;
+	private Double precioOpcionCompraAlquiler;
+	private String condicionesOpcionCompraAlquiler;
+	private Integer conflictoIntereses;
+	private Integer riesgoReputacional;
+	private Integer estadoPbc;
+	private Date fechaVenta;
+
+	private Integer alquilerOpcionCompra;
+	private String codigoEstado;
+
+	private String estadoDevolucionCodigo;
 
 	public Long getId() {
 		return id;
@@ -196,8 +192,7 @@ public class DtoFichaExpediente extends WebDto {
 		return entidadPropietariaDescripcion;
 	}
 
-	public void setEntidadPropietariaDescripcion(
-			String entidadPropietariaDescripcion) {
+	public void setEntidadPropietariaDescripcion(String entidadPropietariaDescripcion) {
 		this.entidadPropietariaDescripcion = entidadPropietariaDescripcion;
 	}
 
@@ -232,8 +227,8 @@ public class DtoFichaExpediente extends WebDto {
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
 	}
-	
-    public String getTipoExpedienteCodigo() {
+
+	public String getTipoExpedienteCodigo() {
 		return tipoExpedienteCodigo;
 	}
 
@@ -293,8 +288,7 @@ public class DtoFichaExpediente extends WebDto {
 		return fechaContabilizacionPropietario;
 	}
 
-	public void setFechaContabilizacionPropietario(
-			Date fechaContabilizacionPropietario) {
+	public void setFechaContabilizacionPropietario(Date fechaContabilizacionPropietario) {
 		this.fechaContabilizacionPropietario = fechaContabilizacionPropietario;
 	}
 
@@ -325,10 +319,10 @@ public class DtoFichaExpediente extends WebDto {
 	public void setTieneReserva(boolean tieneReserva) {
 		this.tieneReserva = tieneReserva;
 	}
-	
+
 	public boolean getTieneReserva() {
 		return this.tieneReserva;
-		
+
 	}
 
 	public Date getFechaInicioAlquiler() {
@@ -367,8 +361,7 @@ public class DtoFichaExpediente extends WebDto {
 		return fechaPlazoOpcionCompraAlquiler;
 	}
 
-	public void setFechaPlazoOpcionCompraAlquiler(
-			Date fechaPlazoOpcionCompraAlquiler) {
+	public void setFechaPlazoOpcionCompraAlquiler(Date fechaPlazoOpcionCompraAlquiler) {
 		this.fechaPlazoOpcionCompraAlquiler = fechaPlazoOpcionCompraAlquiler;
 	}
 
@@ -392,8 +385,7 @@ public class DtoFichaExpediente extends WebDto {
 		return condicionesOpcionCompraAlquiler;
 	}
 
-	public void setCondicionesOpcionCompraAlquiler(
-			String condicionesOpcionCompraAlquiler) {
+	public void setCondicionesOpcionCompraAlquiler(String condicionesOpcionCompraAlquiler) {
 		this.condicionesOpcionCompraAlquiler = condicionesOpcionCompraAlquiler;
 	}
 
@@ -428,7 +420,37 @@ public class DtoFichaExpediente extends WebDto {
 	public void setEstadoPbc(Integer estadoPbc) {
 		this.estadoPbc = estadoPbc;
 	}
-   	
-   	
-   	
+
+	public Integer getAlquilerOpcionCompra() {
+		return alquilerOpcionCompra;
+	}
+
+	public void setAlquilerOpcionCompra(Integer alquilerOpcionCompra) {
+		this.alquilerOpcionCompra = alquilerOpcionCompra;
+	}
+
+	public Date getFechaVenta() {
+		return fechaVenta;
+	}
+
+	public void setFechaVenta(Date fechaVenta) {
+		this.fechaVenta = fechaVenta;
+	}
+
+	public String getCodigoEstado() {
+		return codigoEstado;
+	}
+
+	public void setCodigoEstado(String codigoEstado) {
+		this.codigoEstado = codigoEstado;
+	}
+
+	public String getEstadoDevolucionCodigo() {
+		return estadoDevolucionCodigo;
+	}
+
+	public void setEstadoDevolucionCodigo(String estadoDevolucionCodigo) {
+		this.estadoDevolucionCodigo = estadoDevolucionCodigo;
+	}
+
 }

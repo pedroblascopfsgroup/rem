@@ -52,7 +52,7 @@ public class DDAccionGastos implements Auditable, Dictionary {
 	
 	public static final String CODIGO_PRESCRIPCION = "04";
 	public static final String CODIGO_COLABORACION = "05";
-	public static final String CODIGO_DOBLE_PRESCRIPCION = "06";
+	public static final String CODIGO_RESPONSABLE_CLIENTE = "06";
 	    
 	
 	    

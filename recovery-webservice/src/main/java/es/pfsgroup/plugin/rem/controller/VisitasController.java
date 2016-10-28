@@ -68,17 +68,19 @@ public class VisitasController {
 
 		try {
 
-			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
-			List<VisitaDto> listaVisitaDto = jsonData.getData();
 			jsonFields = request.getJsonObject();
 			logger.debug("PETICIÓN: " + jsonFields);
+			
+			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
+			List<VisitaDto> listaVisitaDto = jsonData.getData();
+
 
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 
 			} else {
 				listaRespuesta = visitaApi.saveOrUpdateVisitas(listaVisitaDto, jsonFields);
-				model.put("id", jsonData.getId());
+				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
 
@@ -86,14 +88,15 @@ public class VisitasController {
 
 		} catch (Exception e) {
 			logger.error(e);
-			model.put("id", jsonData.getId());
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 		}
 
-		restApi.sendResponse(response, model);
+		restApi.sendResponse(response, model,request);
 	}
 
 	@SuppressWarnings("unchecked")

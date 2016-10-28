@@ -37,7 +37,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
-import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 /**
@@ -102,6 +101,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		return activoTramiteDao.getTramitesActivoTrabajo(idTrabajo, webDto);		
 	}
 
+	public List<ActivoTramite> getTramitesActivoTrabajoList(Long idTrabajo){		
+		return activoTramiteDao.getTramitesActivoTrabajoList(idTrabajo);		
+	}
 	
 	@Override
 	@BusinessOperation(overrides = "activoTramiteManager.getActivosTramite")
@@ -241,14 +243,13 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		}
 		
 		// Si no hemos pasado codigo por param y el mapeo de documentos tampoco nos da un documento, NO realizamos validación
-		if (!Checks.esNulo(codigoDocAdjunto)){
-
+		if (!Checks.esNulo(codigoDocAdjunto)){			
 			if (("A".equals(uGestion) || "T".equals(uGestion)) && !Checks.esNulo(codigoDocAdjunto) ){
 				return activoApi.comprobarExisteAdjuntoActivo(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getActivo().getId(), codigoDocAdjunto);
 			}else if("E".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
-				return trabajoApi.comprobarExisteAdjuntoTrabajo(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getId(), codigoDocAdjunto);
-			}else if("P".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
 				return expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getId(), codigoDocAdjunto);
+			}else if("P".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
+				return proveedoresApi.comprobarExisteAdjuntoProveedores(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getActivo().getId(), codigoDocAdjunto);
 //			}else if("G".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
 //				return proveedoresApi.comprobarExisteAdjuntoProveedores(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getActivo().getId(), codigoDocAdjunto);
 			} else {

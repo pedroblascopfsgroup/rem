@@ -63,6 +63,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
    				}
 			}
 		});
+		
+		if(combo.getValue() != "02" && combo.getValue() != "03") {
+			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
+		} 
+		else {
+			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
+		} 
     	
     },
     
@@ -95,6 +102,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  }
 		    });
 		}
+    	
+    	if(combo.getValue() == "44" || combo.getValue() == "45") {
+    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(true);
+    		me.lookupReference("checkEnglobaTodosActivosRef").setValue(true);
+    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
+    		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
+    	}
+    	else {
+    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(false);
+    		me.lookupReference("checkEnglobaTodosActivosRef").setValue(false);
+    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
+    		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
+    	}
 	    
     },
     	
@@ -206,10 +226,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		window = btn.up("window"),
 		form = window.down("form"),
 		idAgrupacion = window.idAgrupacion,
-		idActivo = window.idActivo;
-		
+		idActivo = window.idActivo,
 		idProceso = window.idProceso;
-
+		
 		form.getBindRecord().set("idActivo", idActivo);
 		form.getBindRecord().set("idAgrupacion", idAgrupacion);
 		form.getBindRecord().set("idProceso", idProceso);
@@ -656,12 +675,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	   			var window = btn.up('creartrabajowindow');
     	   			window.idProceso = idProceso;
     	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().load();    	   	    	
-    		    		}
-    	
+    	   			window.lookupReference('listaActivosSubidaRef').getStore().load();    
+    	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
+    	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
+    		    }
     				
-    		    })
-    	    }
+    	    })
+       	}
      },
      
      onClickGenerarPropuesta: function(btn) {
@@ -703,9 +723,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    }
     	});
 
-		messageBox.textField.maskRe=/^[a-z0-9\s_/]+$/;
+		messageBox.textField.maskRe=/^[A-Za-z0-9\s_/]+$/;
 		messageBox.textField.mon(messageBox.textField.el, 'keypress', messageBox.textField.filterKeys, messageBox.textField);
 		
+     },
+     
+     onClickBotonDescargarPlantilla: function(btn) {
+    	var me = this,
+		config = {};
+		
+		config.url= $AC.getRemoteUrl("trabajo/downloadTemplateActivosTrabajo");
+		
+		me.fireEvent("downloadFile", config);
      }
     	
 });

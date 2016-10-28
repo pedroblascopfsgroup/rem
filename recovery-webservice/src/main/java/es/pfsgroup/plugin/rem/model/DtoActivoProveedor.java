@@ -13,6 +13,7 @@ public class DtoActivoProveedor extends WebDto {
 	// Datos generales.
 	private Date fechaUltimaActualizacion;
 	private Long id;
+	private String codigo;
 	private String nombreProveedor;
 	private Date fechaAltaProveedor;
 	private String tipoProveedorCodigo;
@@ -26,6 +27,8 @@ public class DtoActivoProveedor extends WebDto {
 	private String observacionesProveedor;
 	private String webUrlProveedor;
 	private Date fechaConstitucionProveedor;
+	private String operativaCodigo;
+	
 	
 	// Ambito.
 	private String territorialCodigo;
@@ -37,6 +40,7 @@ public class DtoActivoProveedor extends WebDto {
 	private String tipoActivosCarteraCodigo;
 	private String calificacionCodigo;
 	private String incluidoTopCodigo;
+	private String homologadoCodigo;
 	
 	//Datos economicos.
 	private String numCuentaIBAN;
@@ -57,6 +61,8 @@ public class DtoActivoProveedor extends WebDto {
 	
 	private String email;
 	
+	private String subtipoProveedorDescripcion;
+	
 	
 	
 	
@@ -72,6 +78,12 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 	public String getNombreProveedor() {
 		return nombreProveedor;
@@ -259,5 +271,23 @@ public class DtoActivoProveedor extends WebDto {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	public String getOperativaCodigo() {
+		return operativaCodigo;
+	}
+	public void setOperativaCodigo(String operativaCodigo) {
+		this.operativaCodigo = operativaCodigo;
+	}
+	public String getHomologadoCodigo() {
+		return homologadoCodigo;
+	}
+	public void setHomologadoCodigo(String homologadoCodigo) {
+		this.homologadoCodigo = homologadoCodigo;
+	}
+	public String getSubtipoProveedorDescripcion() {
+		return subtipoProveedorDescripcion;
+	}
+	public void setSubtipoProveedorDescripcion(String subtipoProveedorDescripcion) {
+		this.subtipoProveedorDescripcion = subtipoProveedorDescripcion;
+	}
+	
 }

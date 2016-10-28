@@ -12,25 +12,44 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     },
     
     formulas: {
-    	
+    		
     	getSrcCartera: function(get) {
 	     	
 	     	var cartera = get('agrupacionficha.cartera');
+	     	var src=null;
 	     	if(!Ext.isEmpty(cartera)) {
-	     		return 'resources/images/logo_'+cartera.toLowerCase()+'.svg'	     		
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
+	     	}	     	
+        	if(Ext.isEmpty(src)) {
+        		return 	null;
+        	}else {
+        		return 'resources/images/'+src;	     
+        	}
+	     },
+	     
+	     esAgrupacionAsistida: function(get) {
+	    	 
+	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
+	     		return true;
 	     	} else {
-	     		return '';
+	     		return false;
+	     	}
+	     },
+	     
+	     esAgrupacionObraNueva: function(get) {
+	    	 
+	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'])) {
+	     		return true;
+	     	} else {
+	     		return false;
 	     	}
 	     },
 	     
 	     esAgrupacionObraNuevaOrAsistida: function(get) {
 	    	 
-	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) || (tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
-	     		return true;
-	     	} else {
-	     		return false;
-	     	}
+	     	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida');
 	     },
 	     
 	     existeFechaBaja : function(get) {
@@ -123,6 +142,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     	storeOfertasAgrupacion: {  
 	   	     pageSize: $AC.getDefaultPageSize(),
 			 model: 'HreRem.model.OfertasAgrupacion',
+			 sorters: [
+			 			{
+			        		property: 'estadoOferta',
+			        		direction: 'ASC'	
+			 			},
+			 			{
+			        		property: 'fechaCreacion',
+			        		direction: 'DESC'	
+			 			}
+			 ],
 		     proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'agrupacion/getListOfertasAgrupacion',

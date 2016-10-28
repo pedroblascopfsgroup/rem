@@ -17,7 +17,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
@@ -68,4 +68,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public PropuestaActivosVinculados getPropuestaActivosVinculadosByID(Long id);
 
 	public ActivoTasacion getActivoTasacion(Long id);
+	
+	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto);
 }

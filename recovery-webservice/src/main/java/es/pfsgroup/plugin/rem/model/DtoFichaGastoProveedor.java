@@ -45,6 +45,13 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private boolean asignadoATrabajos;
 	private boolean asignadoAActivos;
 	private String estadoGastoCodigo;
+	private Boolean esGastoEditable;
+	private Long buscadorCodigoProveedorRem;
+	private Long codigoProveedorRem;
+   	private String tipoOperacionCodigo;
+   	private String numGastoDestinatario;
+   	private Long numGastoAbonado;
+   	private Long idGastoAbonado; 
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -192,5 +199,48 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setEstadoGastoCodigo(String estadoGastoCodigo) {
 		this.estadoGastoCodigo = estadoGastoCodigo;
 	}
+	public Boolean getEsGastoEditable() {
+		return esGastoEditable;
+	}
+	public void setEsGastoEditable(Boolean esGastoEditable) {
+		this.esGastoEditable = esGastoEditable;
+	}
+	public Long getBuscadorCodigoProveedorRem() {
+		return buscadorCodigoProveedorRem;
+	}
+	public void setBuscadorCodigoProveedorRem(Long buscadorCodigoProveedorRem) {
+		this.buscadorCodigoProveedorRem = buscadorCodigoProveedorRem;
+	}
+	public Long getCodigoProveedorRem() {
+		return codigoProveedorRem;
+	}
+	public void setCodigoProveedorRem(Long codigoProveedorRem) {
+		this.codigoProveedorRem = codigoProveedorRem;
+	}
+	public String getTipoOperacionCodigo() {
+		return tipoOperacionCodigo;
+	}
+	public void setTipoOperacionCodigo(String tipoOperacionCodigo) {
+		this.tipoOperacionCodigo = tipoOperacionCodigo;
+	}
+	public String getNumGastoDestinatario() {
+		return numGastoDestinatario;
+	}
+	public void setNumGastoDestinatario(String numGastoDestinatario) {
+		this.numGastoDestinatario = numGastoDestinatario;
+	}
+	public Long getNumGastoAbonado() {
+		return numGastoAbonado;
+	}
+	public void setNumGastoAbonado(Long numGastoAbonado) {
+		this.numGastoAbonado = numGastoAbonado;
+	}
+	public Long getIdGastoAbonado() {
+		return idGastoAbonado;
+	}
+	public void setIdGastoAbonado(Long idGastoAbonado) {
+		this.idGastoAbonado = idGastoAbonado;
+	}
+	
 	
 }

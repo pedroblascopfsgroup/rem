@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
@@ -155,6 +156,13 @@ public interface GenericApi {
 	 * @return
 	 */
 	public List<DtoDiccionario> getComboProveedorBySubtipo(String subtipoProveedorCodigo);
+	
+	/**
+	 * Devuelve una Lista de tipos de destino comercial (Confunde el nombre con el diccionario, preguntar a Fernando)
+	 * filtrada, ya que 
+	 * @return
+	 */
+	public List<DDTipoComercializacion> getComboTipoDestinoComercialCreaFiltered();
 
 }
 

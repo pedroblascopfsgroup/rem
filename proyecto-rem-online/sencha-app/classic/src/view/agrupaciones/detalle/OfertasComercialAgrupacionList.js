@@ -1,16 +1,18 @@
 Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'ofertascomercialagrupacionlist',
+    topBar: true,
     bind: {
-        store: '{storeOfertasAgrupacion}'
+        store: '{storeOfertasAgrupacion}',
+        topBar: '{agrupacionficha.esEditable}',
+		editOnSelect: '{agrupacionficha.esEditable}'
     },
     requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion'],
     
-    topBar: true,
-        
+   	removeButton: false,
     initComponent: function () {
-        
-        var me = this;  
+    	        
+        var me = this;
         
         me.columns= [
         
@@ -22,7 +24,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		        {
 		            dataIndex: 'fechaCreacion',
 		            text: HreRem.i18n('header.oferta.fechaAlta'),
-		            formatter: 'date("d/m/Y")',
+		            formatter: 'date("d/m/Y H:i")',
 		            flex: 1
 		        },
 		        {
@@ -56,7 +58,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'estadoOferta',
+		            dataIndex: 'codigoEstadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 					editor: {
 						xtype: 'combobox',								        		
@@ -72,6 +74,22 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						displayField: 'descripcion',
     					valueField: 'codigo'
 					},
+					renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {								        		
+			        		var me = this,
+			        		comboEditor = me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null,
+			        		store, record;
+			        		
+			        		if(!Ext.isEmpty(comboEditor)) {
+				        		store = comboEditor.getStore(),							        		
+				        		record = store.findRecord("codigo", value);
+			        		
+				        		if(!Ext.isEmpty(record)) {								        			
+				        			return record.get("descripcion");								        		
+				        		} else {
+				        			comboEditor.setValue(value);								        			
+				        		}
+			        		}
+			        },
 		            flex: 1
 		        },
 		        {
@@ -107,10 +125,13 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
         ];
         
          me.addListener ('beforeedit', function(editor, context) {
-            var estado = context.record.get("codigoEstadoOferta");  
-            var allowEdit = estado != '01' && estado != '02';
-            this.editOnSelect = allowEdit;
-            return allowEdit;
+         	
+         	if(this.editOnSelect) {
+	            var estado = context.record.get("codigoEstadoOferta");  
+	            var allowEdit = estado != '01' && estado != '02';
+	            this.editOnSelect = allowEdit;
+         	}
+            return this.editOnSelect;
         });
         
         
@@ -153,9 +174,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	editFuncion: function(editor, context){
 
 		var me= this;
-		me.mask(HreRem.i18n("msg.mask.espere"));
-			var estado = context.record.get("estadoOferta");	
-			if(estado=='01'){
+			var estado = context.record.get("codigoEstadoOferta");	
+			if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
 				
 				Ext.Msg.show({
 				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
@@ -165,47 +185,34 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				        if (buttonId == 'yes') {
 				            
 							if (me.isValidRecord(context.record)) {				
-			
+								me.mask(HreRem.i18n("msg.mask.espere"));
 				        		context.record.save({
 				
 				                    params: {
 				                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
 				                    },
-				                    success: function (a, operation, c) {
-				                        context.store.load();
-				                        me.unmask();
-				                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-										me.saveSuccessFn();											
-										
+				                    success: function (a, operation, c) {																
+										me.saveSuccessFn();
 				                    },
 				                    
 									failure: function (a, operation) {
-				                    	
-				                    	context.store.load();
-				                    	try {
-				                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-				                    		
-				                    	}catch(err) {}
-				                    	
-				                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-				                    		me.fireEvent("errorToast", response.msg);
-				                    	} else {
-				                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				                    	}                        	
-										me.unmask();
+				                    	me.saveFailureFn(operation);				                    	                       	
+				                    },
+				                    callback: function() {
+				                    	me.unmask();
+				                    	me.getStore().load();
 				                    }
 				          		});	                            
 					        	me.disableAddButton(false);
 					        	me.disablePagingToolBar(false);
 					        	me.getSelectionModel().deselectAll();
 					        	editor.isNew = false;
+							} else {
+								me.getStore().load();
 							}
-							context.store.load();
-							me.unmask(); 
 						}
 				    	else{
-				    		context.store.load();
-				       		me.unmask(); 	
+				    		me.getStore().load();	
 				    	}
 					}
 				});
@@ -219,37 +226,26 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	                    params: {
 	                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
 	                    },
-	                    success: function (a, operation, c) {
-	                        context.store.load();
-	                        me.unmask();
-	                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
+	                    success: function (a, operation, c) {																	
 							me.saveSuccessFn();											
 							
 	                    },
 	                    
 						failure: function (a, operation) {
-	                    	
-	                    	context.store.load();
-	                    	try {
-	                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-	                    		
-	                    	}catch(err) {}
-	                    	
-	                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-	                    		me.fireEvent("errorToast", response.msg);
-	                    	} else {
-	                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	                    	}                        	
-							me.unmask();
+	                    	me.saveFailureFn(operation);
+	                    },
+	                    callback: function() {
+	                    	me.unmask();
+	                    	me.getStore().load();
 	                    }
 	                });	                            
 	        		me.disableAddButton(false);
 	        		me.disablePagingToolBar(false);
 	        		me.getSelectionModel().deselectAll();
 	        		editor.isNew = false;
+				} else {
+					me.getStore().load();
 				}
-				context.store.load();
-				me.unmask();
 			}
 					
 	},
@@ -257,26 +253,52 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	isValidRecord: function (record, context) {
 		
 		var me = this;
-		for (i=0; i<me.getStore().getData().items.length;i++){
+		var hayOfertaAceptada=false;
+		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
 				var codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
-				
-				if(codigoEstadoOferta=='01' && record.data.estadoOferta=='01'){
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
-					return false;
-				}
-				else if(codigoEstadoOferta=='01' && record.data.estadoOferta!='02'){
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
-					return false;
-				}
-				else if(record.data.estadoOferta.length > 2){
-					return false
-				}
+				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta;
 			}
 		}
 		
+		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
+		
+		if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
+			return false;
+		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
+			return false;
+		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo ){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.aceptar.rechazar"));
+			return false;
+		}
+		
 		return true;		
+	},
+	
+	saveSuccessFn: function () {
+   		var me = this;
+        me.unmask();
+        me.getStore().load();
+        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		return true;
+	},
+	
+	saveFailureFn: function(operation) {
+		var me = this;
+        try {
+    		var response = Ext.JSON.decode(operation.getResponse().responseText)
+    		
+    	}catch(err) {}
+    	
+    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
+    		me.fireEvent("errorToast", response.msg);
+    	} else {
+    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    	}  
+		
 	}
 
 

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 
@@ -34,7 +35,7 @@ public class DetectorCambiosEjemplo extends DetectorCambiosBD<ExampleDto>{
 	}
 
 	@Override
-	public void invocaServicio(List<ExampleDto> data) throws ErrorServicioWebcom {
+	public void invocaServicio(List<ExampleDto> data, RestLlamada registro) throws ErrorServicioWebcom {
 	}
 
 }

@@ -159,6 +159,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	TERCEROS: '04'
     },
     
+    IMAGENES_CARTERA: {
+    	CAJAMAR: 'logo_cajamar.svg',
+    	SAREB: 'logo_sareb.svg',
+    	BANKIA: 'logo_bankia.svg'
+    },
+    
     PERFILES: {   	
     	PROVEEDOR: 'HAYAPROV',
     	GESTOR_ACTIVOS: 'GESTACT',
@@ -168,7 +174,35 @@ Ext.define('HreRem.ux.util.Constants', {
     TIPOS_OFERTA: {
     	VENTA : '01',
     	ALQUILER: '02'
+    },
+    
+    TIPOS_PROVEEDOR_ESPEDIENTE: {
+    	CAT : '28',
+    	MEDIADOR_OFICINA: '29'
+    },
+    
+    ESTADOS_OFERTA: {
+    	ACEPTADA : '01',
+    	RECHAZADA: '02'
+    },
+    
+    ESTADOS_EXPEDIENTE: {
+    	EN_TRAMITACION: '01',
+    	ANULADO: '02',
+    	FIRMADO: '03',
+    	CONTRAOFERTADO: '04',
+    	BLOQUEO_ADM: '05',
+    	RESERVADO: '06',
+    	POSICIONADO: '07',
+    	VENDIDO: '08',
+    	RESUELTO: '09',
+    	PENDIENTE_SANCION: '10',
+    	APROBADO: '11',
+    	DENEGADO: '12',
+    	PTE_DOBLE_FIRMA: '13',
+    	RPTA_OFERTANTE: '14'
     }
+    
     
 
 });

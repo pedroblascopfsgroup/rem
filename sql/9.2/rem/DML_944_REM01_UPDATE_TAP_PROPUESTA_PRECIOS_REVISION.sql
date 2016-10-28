@@ -1,11 +1,11 @@
 --/*
 --##########################################
 --## AUTOR=JORGE ROS
---## FECHA_CREACION=20161013
+--## FECHA_CREACION=20161018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-928
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --##
 --## Finalidad: Realiza las modificaciones necesarias para el trámite de información.
 --## INSTRUCCIONES: 
@@ -82,8 +82,10 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TFI;
     V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
     --		   TAP_CODIGO						TFI_ORDEN	TFI_TIPO		TFI_NOMBRE			TFI_LABEL							TFI_ERROR_VALIDACION			TFI_VALIDACION			TFI_BUSINESS_OPERATION
- 		T_TFI('T009_GenerarPropuestaPrecios'	,'2'  		,'textarea'		,'observaciones'	,'Observaciones'					,''								,''			 			,''					),
-    	T_TFI('T009_GenerarPropuestaPrecios'	,'3'		,'elctrabajo'	,'ACTIVOS'			,'TRABAJO > Listado de activos'		,''								,''						,''					)
+ 		T_TFI('T009_GenerarPropuestaPrecios'	,'1'   		,'date'   		,'fechaGeneracion'  ,'Fecha generación de la propuesta'	,''								,''						,''					),
+    	T_TFI('T009_GenerarPropuestaPrecios'	,'2'  		,'textinf'		,'nombrePropuesta'	,'Nombre propuesta'					,''								,''			 			,''					),
+    	T_TFI('T009_GenerarPropuestaPrecios'	,'3'  		,'textarea'		,'observaciones'	,'Observaciones'					,''								,''			 			,''					),
+    	T_TFI('T009_GenerarPropuestaPrecios'	,'4'		,'elctrabajo'	,'ACTIVOS'			,'TRABAJO > Listado de activos'		,''								,''						,''					)
 
 		);
     V_TMP_T_TFI T_TFI;
@@ -141,7 +143,7 @@ BEGIN
 					
 				 	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS (' ||
           			  'TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, TFI_BUSINESS_OPERATION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) '||
-          			  'VALUES ('||V_ENTIDAD_ID||', (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T010_AnalisisPeticionCargaList''),'||
+          			  'VALUES ('||V_ENTIDAD_ID||', (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TFI(1)||'''),'||
           			  ''''||V_TMP_T_TFI(2)||''','''||V_TMP_T_TFI(3)||''','''||V_TMP_T_TFI(4)||''','''||V_TMP_T_TFI(5)||''', '''||V_TMP_T_TFI(6)||''', '''||V_TMP_T_TFI(7)||''', '||
           			  ''''||V_TMP_T_TFI(8)||''',1, ''HREOS-928_REM_F2'', SYSDATE, 0)';
 		          

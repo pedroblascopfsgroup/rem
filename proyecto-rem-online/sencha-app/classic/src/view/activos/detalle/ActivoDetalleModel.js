@@ -196,13 +196,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     getSrcCartera: function(get) {
 	     	
 	     	var cartera = get('activo.entidadPropietariaDescripcion');
-	     	
+	     	var src=null;
 	     	if(!Ext.isEmpty(cartera)) {
-	     		return 'resources/images/logo_'+cartera.toLowerCase()+'.svg'	     		
-	     	} else {
-	     		return '';
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
 	     	}
-	     	
+        	if(Ext.isEmpty(src)) {
+        		return 	null;
+        	}else {
+        		return 'resources/images/'+src;	     
+        	}     	
 	     	
 	     },
 	     
@@ -354,13 +356,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    	    	 }
        		},
        		storeOfertasActivo: {    	
-       		 pageSize: $AC.getDefaultPageSize(),
-       		 model: 'HreRem.model.OfertaActivo',
-   		     proxy: {
-   		        type: 'uxproxy',
-   		        remoteUrl: 'activo/getListOfertasActivos',
-   		        extraParams: {id: '{activo.id}'}
-   	    	 }
+	       		 pageSize: $AC.getDefaultPageSize(),
+	       		 model: 'HreRem.model.OfertaActivo',
+	       		 sorters: [
+				 			{
+				        		property: 'estadoOferta',
+				        		direction: 'ASC'	
+				 			},
+				 			{
+				        		property: 'fechaCreacion',
+				        		direction: 'DESC'	
+				 			}
+				 ],
+	   		     proxy: {
+	   		        type: 'uxproxy',
+	   		        remoteUrl: 'activo/getListOfertasActivos',
+	   		        extraParams: {id: '{activo.id}'}
+	   	    	 }
        		},
     		
     		storeFotos: {    			
@@ -672,7 +684,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'acabadosCarpinteria'}
 				}
     		},
-    		
+    		/*
     		comboTipoComercializacionActivo: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -680,7 +692,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposComercializacionActivo'}
 				}
-    		},
+    		},*/
     		
     		comboMotivoAplicaComercializarActivo: {
 				model: 'HreRem.model.ComboBase',
@@ -762,8 +774,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getEstadoPublicacionByActivo',
     				extraParams: {id: '{activo.id}'}
-    			},
-				autoload: true
+    			}
     		},
     		
     		historicoInformeComercial:{
@@ -828,7 +839,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadoDisponibilidadComercial'}
 				},
-				autoload: true
+				autoLoad: true
 			},
 			
 		comboEstadoOferta: {
@@ -874,8 +885,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getPropuestaActivosVinculadosByActivo',
 				extraParams: {idActivo: '{activo.id}'}
-			},
-			autoload: true
+			}
 		},
 		
 		storeProveedores: {
@@ -885,11 +895,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getProveedorByActivo',
 				extraParams: {idActivo: '{activo.id}'}
-			},
-			autoload: true
-//			listeners: {
-//				load: 'storeProveedoresLoad'
-//			}
+			}
+		},
+		
+		storeEntidades: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Proveedor',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getProveedoresByActivoIntegrado',
+				extraParams: {idActivo: '{activo.id}'}
+			}
 		},
 		
 		storeGastosProveedor: {
@@ -903,6 +919,52 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			remoteSort: false,
 		    remoteFilter: false,	    	
 		    autoLoad: false
+		},
+		
+		comboTipoComercializarActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposComercializarActivo'}
+			}
+		},
+		
+		//Se filtra, ya que en principio hay un registro de este diccionario que no corresponde, pero no lo eliminamos de BD
+		comboTipoDestinoComercialCreaFiltered: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoDestinoComercialCreaFiltered'
+			}
+		},
+		
+		comboTipoAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAlquilerActivo'}
+			}
+		},
+
+		comboTipoTenedor: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoTenedor'}
+			},
+			autoLoad: true
+		},
+
+		comboRetencionPago: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoRetencionPago'}
+			}			
 		}
      }    
 });

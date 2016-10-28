@@ -41,7 +41,9 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -53,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -237,7 +240,35 @@ public class ExpedienteComercialController {
 			
 			model.put("success", expedienteComercialApi.saveDatosBasicosOferta(dto, id));
 			
-		} catch (Exception e) {
+		}catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("msg", e.getMessage());
+			model.put("success", false);
+		}
+		
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveOfertaTanteoYRetracto(dto, id));
+			
+		}catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("msg", e.getMessage());
+			model.put("success", false);
+		}
+		
+		catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
 		}	
@@ -782,9 +813,8 @@ public class ExpedienteComercialController {
 			model.put("success", true);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			model.put("success", false);
-			model.put("msg", "No se ha podido conectar con el servicio");
+			model.put("msg", "Servicio no disponible");
 		}	
 		
 		return createModelAndViewJson(model);
@@ -844,28 +874,120 @@ public class ExpedienteComercialController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView buscarNumeroUrsus(@RequestParam Long numCompradorUrsus,@RequestParam String tipoDocumento, ModelMap model) {
+	public ModelAndView buscarNumeroUrsus(@RequestParam String numeroDocumento,@RequestParam String tipoDocumento, ModelMap model) {
 		try {		
-			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numCompradorUrsus, tipoDocumento));
+			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numeroDocumento, tipoDocumento));
 			model.put("success", true);
 			
 		} 
 		catch (JsonViewerException e) {
-			e.printStackTrace();
 			model.put("success", false);
 			model.put("msg", e.getMessage());
 			
 		}	catch (Exception e) {
-			e.printStackTrace();
 			model.put("success", false);
-			model.put("msg", "No se ha podido conectar con el servicio");
+			model.put("msg", "Servicio no disponible");
 		}
 		
 		return createModelAndViewJson(model);
 		
 	}
-
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboProveedoresExpediente(@RequestParam String codigoTipoProveedor, @RequestParam String nombreBusqueda,WebDto dto, ModelMap model) {
+		
+		try {
+			List<ActivoProveedor> proveedores = expedienteComercialApi.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, dto);
+			model.put("data", proveedores);
+			model.put("success", true);
+		}catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+		}		
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createHonorario(DtoGastoExpediente dto, Long idEntidad) {
+		ModelMap model = new ModelMap();
+		try {
+			boolean success = expedienteComercialApi.createHonorario(dto, idEntidad);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteHonorario(@RequestParam Long id){
+		
+		ModelMap model = new ModelMap();		
+		try {
+			boolean success = expedienteComercialApi.deleteHonorario(id);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteCompradorExpediente(@RequestParam Long idExpediente, @RequestParam Long idComprador){
+		
+		ModelMap model = new ModelMap();		
+		try {
+			boolean success = expedienteComercialApi.deleteCompradorExpediente(idExpediente, idComprador);
+			model.put("success", success);
+			
+		}
+		catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+		}catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateListadoActivos(DtoActivosExpediente dto, @RequestParam Long idEntidad, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.updateListadoActivos(dto, idEntidad));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

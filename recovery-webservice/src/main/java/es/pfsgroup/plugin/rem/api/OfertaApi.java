@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -11,6 +13,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import net.sf.json.JSONObject;
 
 public interface OfertaApi {
 
@@ -109,6 +112,16 @@ public interface OfertaApi {
 	 */
 	public HashMap<String,String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception;
+	
+	/**
+	 * Actualiza una lista de ofertas a partir de la información pasada por parámetro.
+	 * 
+	 * @param listaOfertaDto
+	 * @param jsonFields
+	 * @return
+	 * @throws Exception
+	 */
+	public ArrayList<Map<String, Object>> saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields)throws Exception;
 
 	/**
 	 * Actualizar el estado de disponibilidad comercial en los activos
@@ -128,6 +141,18 @@ public interface OfertaApi {
 	public DDEstadoOferta getDDEstadosOfertaByCodigo(String codigo);
 
 	/**
+	 * Método que rechaza una oferta
+	 * @param oferta
+	 */
+	public void rechazarOferta(Oferta oferta);
+	
+	/**
+	 * Método que descongela una oferta
+	 * @param oferta
+	 */
+	public void descongelarOferta(Oferta oferta);
+	
+	/**
 	 * Método que saca la oferta a partir de una tarea externa
 	 * 
 	 * @param tareaExterna
@@ -135,12 +160,21 @@ public interface OfertaApi {
 	 */
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna);
 
+	
 	/**
 	 * Método que saca la oferta aceptada a partir de un trabajo
 	 * @param trabajo
 	 * @return
 	 */
 	public Oferta trabajoToOferta(Trabajo trabajo);
+	
+	
+	/**
+	 * Método que saca las ofertas a partir de un trabajo
+	 * @param trabajo
+	 * @return
+	 */
+	public List<Oferta> trabajoToOfertas(Trabajo trabajo);
 	
 	/**
 	 * Método que obtiene la oferta aceptada de un activo en caso de haberla.
@@ -211,6 +245,23 @@ public interface OfertaApi {
 	 */
 	public boolean checkConflictoIntereses(TareaExterna tareaExterna);	
 	
+	/**
+	 * Método que comprueba si el activo tiene atribuciones para sancionar el
+	 * expediente
+	 * 
+	 * @param tareaExterna
+	 * @return true si tiene atribuciones, false si no las tiene
+	 */
+	public boolean checkAtribuciones(TareaExterna tareaExterna);
+
+	/**
+	 * Método que comprueba si el activo tiene atribuciones para sancionar el
+	 * expediente
+	 * 
+	 * @param trabajo
+	 * @return true si tiene atribuciones, false si no las tiene
+	 */
+	public boolean checkAtribuciones(Trabajo trabajo);
 	
 
 }

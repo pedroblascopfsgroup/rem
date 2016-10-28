@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     },
     requires: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo'],
     topBar: true,
-
+	removeButton: false,
     listeners: {
     	boxready: function() {
     		me = this;
@@ -29,7 +29,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        {
 		            dataIndex: 'fechaCreacion',
 		            text: HreRem.i18n('header.oferta.fechaAlta'),
-		            formatter: 'date("d/m/Y")',
+		            formatter: 'date("d/m/Y H:i")',
 		            flex: 1
 		        },
 		        {
@@ -69,7 +69,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'estadoOferta',
+		            dataIndex: 'codigoEstadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 					editor: {
 						xtype: 'combobox',								        		
@@ -88,6 +88,22 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 						displayField: 'descripcion',
     					valueField: 'codigo'
 					},
+					renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {								        		
+			        		var me = this,
+			        		comboEditor = me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null,
+			        		store, record;
+			        		
+			        		if(!Ext.isEmpty(comboEditor)) {
+				        		store = comboEditor.getStore(),							        		
+				        		record = store.findRecord("codigo", value);
+			        		
+				        		if(!Ext.isEmpty(record)) {								        			
+				        			return record.get("descripcion");								        		
+				        		} else {
+				        			comboEditor.setValue(value);								        			
+				        		}
+			        		}
+			        },
 		            flex: 1
 		        },
 		        /*{
@@ -153,42 +169,24 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.callParent(); 
         
     },
-   	saveSuccessFn: function () {
-		var me = this;
-		return true;
-	},
 	
 	onAddClick: function (btn) {
 		var me = this;
-		var items= me.up('activosdetalle').getRefItems();
-		
-		for(var i=0;i<=items.length;i++){
-			if(items[i].getXType()=='datosgeneralesactivo'){
-				
-				var datosBasicos= items[i].down('datosbasicosactivo');
-				var record= datosBasicos.getBindRecord(),
-				idActivo= record.get('id'),
-				numActivo= record.get('numActivo'),
-				pertenceAgrupacionRestringida= record.get('pertenceAgrupacionRestringida');
-				break;
-			}
-		}
-		
-		if(pertenceAgrupacionRestringida=="false" || pertenceAgrupacionRestringida==undefined){
-			var parent= me.up('ofertascomercialactivo'),
-			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
-			Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent}).show();
-		}else{
-			me.fireEvent("errorToast", HreRem.i18n("msg.boton.add.oferta.activo"));
-		}
+		var activo = me.lookupController().getViewModel().get('activo'),
+		idActivo= activo.get('id'),
+		numActivo= activo.get('numActivo');
+
+		var parent= me.up('ofertascomercialactivo'),
+		oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
+		Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent}).show();
 	    				    	
 	},
 	
 	editFuncion: function(editor, context){
 		var me= this;
 		
-			var estado = context.record.get("estadoOferta");	
-			if(estado=='01'){
+			var estado = context.record.get("codigoEstadoOferta");	
+			if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
 				
 				Ext.Msg.show({
 				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
@@ -196,49 +194,36 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				   buttons: Ext.MessageBox.YESNO,
 				   fn: function(buttonId) {
 				        if (buttonId == 'yes') {
-				            me.mask(HreRem.i18n("msg.mask.espere"));
+
 							if (me.isValidRecord(context.record)) {				
-			
+								me.mask(HreRem.i18n("msg.mask.espere"));
 				        		context.record.save({
 				
 				                    params: {
 				                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
 				                    },
-				                    success: function (a, operation, c) {
-				                        context.store.load();
-				                        me.unmask();
-				                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-										me.saveSuccessFn();											
-										
-				                    },
+				                    success: function (a, operation, c) {																			
+										me.saveSuccessFn();
+									},
 				                    
 									failure: function (a, operation) {
-				                    	
-				                    	context.store.load();
-				                    	try {
-				                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-				                    		
-				                    	}catch(err) {}
-				                    	
-				                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-				                    		me.fireEvent("errorToast", response.msg);
-				                    	} else {
-				                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				                    	}                        	
-										me.unmask();
+				                    	me.saveFailureFn(operation);
+			                      	
+				                    },
+				                    callback: function() {
+				                    	me.unmask();
+				                    	me.getStore().load();
 				                    }
 				          		});	                            
 					        	me.disableAddButton(false);
 					        	me.disablePagingToolBar(false);
 					        	me.getSelectionModel().deselectAll();
 					        	editor.isNew = false;
-							}
-							context.store.load();
-							me.unmask(); 
-						}
-				    	else{
-				    		context.store.load();
-				       		me.unmask(); 	
+							} else {
+				    			me.getStore().load(); 	
+				    		}
+						} else{
+				    		me.getStore().load(); 	
 				    	}
 					}
 				});
@@ -252,65 +237,78 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	                    params: {
 	                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
 	                    },
-	                    success: function (a, operation, c) {
-	                        context.store.load();
-	                        me.unmask();
-	                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-							me.saveSuccessFn();											
-							
-	                    },
+	                    success: function (a, operation, c) {																			
+							me.saveSuccessFn();
+						},
 	                    
 						failure: function (a, operation) {
-	                    	
-	                    	context.store.load();
-	                    	try {
-	                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-	                    		
-	                    	}catch(err) {}
-	                    	
-	                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-	                    		me.fireEvent("errorToast", response.msg);
-	                    	} else {
-	                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	                    	}                        	
-							me.unmask();
+	                    	me.saveFailureFn(operation);
+                      	
+	                    },
+            			callback: function() {
+	                    	me.unmask();
+	                    	me.getStore().load();
 	                    }
 	                });	                            
 	        		me.disableAddButton(false);
 	        		me.disablePagingToolBar(false);
 	        		me.getSelectionModel().deselectAll();
 	        		editor.isNew = false;
+				} else {
+				   me.getStore().load(); 	
 				}
-				context.store.load();
-				me.unmask();
 			}
 					
 	},
 	
 	isValidRecord: function (record, context) {
+		
 		var me = this;
-		for (i=0; i<me.getStore().getData().items.length;i++){
+		var hayOfertaAceptada=false;
+		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
-				codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
-				
-				if(codigoEstadoOferta=='01' && record.data.estadoOferta=='01'){
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
-					return false;
-				}
-				else if(codigoEstadoOferta=='01' && record.data.estadoOferta!='02'){
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
-					return false;
-				}
-				else if(record.data.estadoOferta.length > 2){
-					return false
-				}
+				var codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
+				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta;
 			}
 		}
 		
-		return true;		
+		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
+		
+		if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
+			return false;
+		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
+			return false;
+		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo ){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.aceptar.rechazar"));
+			return false;
+		}
+		
+		return true;			
 	},
-   
+    saveSuccessFn: function () {
+   		var me = this;
+        me.unmask();			                        
+        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));	
+		return true;
+	},
+	
+	saveFailureFn: function(operation) {
+		var me = this;
+        try {
+    		var response = Ext.JSON.decode(operation.getResponse().responseText)
+    		
+    	}catch(err) {}
+    	
+    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
+    		me.fireEvent("errorToast", response.msg);
+    	} else {
+    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    	}  
+		
+	},
 	
 	
    funcionRecargar: function() {
@@ -324,8 +322,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    evaluarEdicion: function() {    	
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo');
-		
-		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar')) {
+
+		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

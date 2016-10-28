@@ -28,6 +28,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFac
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 
@@ -63,6 +64,18 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 @Repository
 public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
+	private static final String MINUS = " MINUS ";
+
+	private static final String WHERE = " WHERE ";
+
+	private static final String FROM = " FROM ";
+
+	private static final String SELECT = "SELECT ";
+
+	private static final String INFO_TABLAS_NO_PUEDE_SER_NULL = "'infoTablas' no puede ser NULL";
+
+	private static final String DTO_CLASS_NO_PUEDE_SER_NULL = "'dtoClass' no puede ser NULL";
+
 	public static final String SEPARADOR_COLUMNAS = ",";
 
 	private static final String REST_USER = "REST-USER";
@@ -90,15 +103,18 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            Este objeto debe proporcionar métodos con los que podamos
 	 *            saber los nombres de la vista, tabla y clave primaria, para
 	 *            poder construir la <code>SELECT</code>
+	 * @param registro
+	 *            Objeto en el que se irá dejando trazas de tiempos de
+	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 * @return
 	 */
-	public List<CambioBD> listCambios(Class dtoClass, InfoTablasBD infoTablas) {
+	public List<CambioBD> listCambios(Class dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
 		if (dtoClass == null) {
-			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
 
 		if (infoTablas == null) {
-			throw new IllegalArgumentException("'infoTablas' no puede ser NULL");
+			throw new IllegalArgumentException(INFO_TABLAS_NO_PUEDE_SER_NULL);
 		}
 
 		Session session = this.sesionFactoryFacade.getSession(this);
@@ -110,17 +126,19 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			DbIdContextHolder.setDbId(1L);
 
 			String columIdUsuarioRemAccion = field2column(ConstantesGenericas.ID_USUARIO_REM_ACCION);
-			String selectFromDatosActuales = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales()
-					+ " WHERE " + columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
-			String selectFromDatosHistoricos = "SELECT " + columns + " FROM " + infoTablas.nombreTablaDatosHistoricos();
-			String queryString = selectFromDatosActuales + " MINUS " + selectFromDatosHistoricos;
+			String selectFromDatosActuales = SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales() + WHERE
+					+ columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
+			String selectFromDatosHistoricos = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos();
+			String queryString = selectFromDatosActuales + MINUS + selectFromDatosHistoricos;
 
 			List<Object[]> resultado = null;
 
 			refreshMaterializedView(infoTablas, session);
 
 			try {
-				logger.debug("Ejecutando: " + queryString);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ejecutando: " + queryString);
+				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al obtener los registros que difieren", queryString,
@@ -134,9 +152,11 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					for (Object[] r : resultado) {
 						CambioBD cambio = new CambioBD(fields);
 						cambio.setDatosActuales(r);
-						selectDatoHistorico = selectFromDatosHistoricos + " WHERE " + infoTablas.clavePrimaria() + " = "
+						selectDatoHistorico = selectFromDatosHistoricos + WHERE + infoTablas.clavePrimaria() + " = "
 								+ r[posPk];
-						logger.debug("Ejecutando: " + selectDatoHistorico);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ejecutando: " + selectDatoHistorico);
+						}
 						Object[] historico = queryExecutor.sqlRunUniqueResult(session, selectDatoHistorico);
 						if (historico != null) {
 							cambio.setDatosHistoricos(historico);
@@ -150,11 +170,16 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				}
 			}
 		} finally {
-			logger.debug("Cerrando sesión");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cerrando sesión");
+			}
 			if (session != null) {
 				if (session.isOpen()) {
 					session.close();
 				}
+			}
+			if (registro != null) {
+				registro.logTiempoSelectCambios();
 			}
 		}
 
@@ -162,13 +187,13 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	}
 
-	public List<CambioBD> listDatosActuales(Class dtoClass, InfoTablasBD infoTablas) {
+	public List<CambioBD> listDatosActuales(Class dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
 		if (dtoClass == null) {
-			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
 
 		if (infoTablas == null) {
-			throw new IllegalArgumentException("'infoTablas' no puede ser NULL");
+			throw new IllegalArgumentException(INFO_TABLAS_NO_PUEDE_SER_NULL);
 		}
 
 		Session session = this.sesionFactoryFacade.getSession(this);
@@ -177,14 +202,16 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		FieldInfo[] fields = getDtoFields(dtoClass);
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
-		String queryString = "SELECT " + columns + " FROM " + infoTablas.nombreVistaDatosActuales();
+		String queryString = SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales();
 		try {
 			DbIdContextHolder.setDbId(1L);
 			List<Object[]> resultado = null;
 			refreshMaterializedView(infoTablas, session);
 
 			try {
-				logger.debug("Ejecutando: " + queryString);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ejecutando: " + queryString);
+				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
 				if (resultado != null) {
 					for (Object[] r : resultado) {
@@ -199,11 +226,16 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 
 		} finally {
-			logger.debug("Cerrando sesión");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cerrando sesión");
+			}
 			if (session != null) {
 				if (session.isOpen()) {
 					session.close();
 				}
+			}
+			if (registro != null) {
+				registro.logTiempoSelectTodosDatos();
 			}
 		}
 
@@ -230,43 +262,61 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            Este objeto debe proporcionar métodos con los que podamos
 	 *            saber los nombres de la vista, tabla y clave primaria, para
 	 *            poder construir la <code>SELECT</code>
+	 * @param registro
+	 *            Objeto en el que se irá dejando trazas de tiempos de
+	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
-	public void marcaComoEnviados(Class dtoClass, InfoTablasBD infoTablas) {
+	public void marcaComoEnviados(Class dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
+		long startTime = System.currentTimeMillis();
+
 		if (dtoClass == null) {
-			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
+			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
 
 		if (infoTablas == null) {
-			throw new IllegalArgumentException("'infoTablas' no puede ser NULL");
+			throw new IllegalArgumentException(INFO_TABLAS_NO_PUEDE_SER_NULL);
 		}
 
 		FieldInfo[] fields = getDtoFields(dtoClass);
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
 		Session session = this.sesionFactoryFacade.getSession(this);
-		logger.debug("Inicando transacción");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Inicando transacción");
+		}
 		Transaction tx = session.beginTransaction();
 		try {
-			String queryDelete = "DELETE FROM " + infoTablas.nombreTablaDatosHistoricos();
+			String queryDelete = "TRUNCATE TABLE " + infoTablas.nombreTablaDatosHistoricos();
 			try {
-				logger.debug("Ejecutando: " + queryDelete);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ejecutando: " + queryDelete);
+				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryDelete);
+				if (registro != null) {
+					registro.logTiempoBorrarHistorico();
+				}
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al borrar la tabla de 'datos históricos'",
 						queryDelete, infoTablas, t);
 			}
 
-			String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns + ") SELECT "
-					+ columns + " FROM " + infoTablas.nombreVistaDatosActuales();
+			String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns + ")" + SELECT
+					+ columns + FROM + infoTablas.nombreVistaDatosActuales();
 			try {
-				logger.debug("Ejecutando: " + queryInsert);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ejecutando: " + queryInsert);
+				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryInsert);
+				if (registro != null) {
+					registro.logTiempoInsertarHistorico();
+				}
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al insertar registros en 'datos históricos'",
 						queryInsert, infoTablas, t);
 			}
-
-			logger.debug("Comiteando transacción");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Comiteando transacción");
+			}
 			tx.commit();
 		} catch (CambiosBDDaoError e) {
 			logger.fatal(
@@ -274,12 +324,18 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			tx.rollback();
 			throw e;
 		} finally {
-			logger.debug("Cerrando sesión");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cerrando sesión");
+			}
 			if (session != null) {
 				if (session.isOpen()) {
 					session.close();
 				}
 			}
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("TIMER DETECTOR Marcado de cambios: " + (System.currentTimeMillis() - startTime));
 		}
 	}
 
@@ -309,7 +365,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					if (nestedFields != null) {
 						for (FieldInfo fi : nestedFields) {
 							String columnName = (fi.getMappedColumnName() == null ? null
-									: field2column(f.getName())+ "_" + fi.getMappedColumnName());
+									: field2column(f.getName()) + "_" + fi.getMappedColumnName());
 							FieldInfo field = new FieldInfo(f.getName() + "." + fi.getFieldName(), columnName);
 							fields.add(field);
 						}
@@ -382,25 +438,32 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	}
 
 	private Long getIdRestUser(Session session) {
-		logger.debug("Obteniendo el ID para el usuario: " + REST_USER);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Obteniendo el ID para el usuario: " + REST_USER);
+		}
 		if (restUserId == null) {
 			try {
-
-				logger.debug("Buscando " + REST_USER + " con criteria");
+				if (logger.isDebugEnabled()) {
+					logger.debug("Buscando " + REST_USER + " con criteria");
+				}
 				Criteria criteria = queryExecutor.createCriteria(session, Usuario.class)
 						.add(Restrictions.eq("username", REST_USER));
 				Usuario restUser = (Usuario) queryExecutor.criteriaRunUniqueResult(criteria);
 				if (restUser == null) {
 					throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER);
 				}
-				logger.debug("Guardando restUserId en caché");
+				if (logger.isDebugEnabled()) {
+					logger.debug("Guardando restUserId en caché");
+				}
 				this.restUserId = restUser.getId();
 
 			} catch (Throwable e) {
 				throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER, e);
 			}
 		}
-		logger.debug("Devolviendo restUserId=" + this.restUserId + " de la caché");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Devolviendo restUserId=" + this.restUserId + " de la caché");
+		}
 		return this.restUserId;
 
 	}
@@ -409,7 +472,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + infoTablas.nombreVistaDatosActuales()
 				+ "','C'); end;";
 		try {
-			logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+			if (logger.isDebugEnabled()) {
+				logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+			}
 			queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
 		} catch (Throwable t) {
 			throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews, infoTablas,

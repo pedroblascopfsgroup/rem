@@ -65,8 +65,8 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType distribucion;
 	private StringDataType condicionesEspecificas;
 	private StringDataType codDetallePublicacion;
-	private StringDataType codigoAgrupacionObraNueva;
-	private StringDataType codigoCabeceraObraNueva;
+	private LongDataType codigoAgrupacionObraNueva;
+	private LongDataType codigoCabeceraObraNueva;
 	private LongDataType idProveedorRemAnterior;
 	private LongDataType idProveedorRem;
 	private StringDataType nombreGestorComercial;
@@ -334,16 +334,16 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodDetallePublicacion(StringDataType codDetallePublicacion) {
 		this.codDetallePublicacion = codDetallePublicacion;
 	}
-	public StringDataType getCodigoAgrupacionObraNueva() {
+	public LongDataType getCodigoAgrupacionObraNueva() {
 		return codigoAgrupacionObraNueva;
 	}
-	public void setCodigoAgrupacionObraNueva(StringDataType codigoAgrupacionObraNueva) {
+	public void setCodigoAgrupacionObraNueva(LongDataType codigoAgrupacionObraNueva) {
 		this.codigoAgrupacionObraNueva = codigoAgrupacionObraNueva;
 	}
-	public StringDataType getCodigoCabeceraObraNueva() {
+	public LongDataType getCodigoCabeceraObraNueva() {
 		return codigoCabeceraObraNueva;
 	}
-	public void setCodigoCabeceraObraNueva(StringDataType codigoCabeceraObraNueva) {
+	public void setCodigoCabeceraObraNueva(LongDataType codigoCabeceraObraNueva) {
 		this.codigoCabeceraObraNueva = codigoCabeceraObraNueva;
 	}
 	public LongDataType getIdProveedorRemAnterior() {

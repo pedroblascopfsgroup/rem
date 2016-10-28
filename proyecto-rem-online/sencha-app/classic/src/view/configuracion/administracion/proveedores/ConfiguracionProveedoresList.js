@@ -26,6 +26,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		            hidden: true
 		        },
 		        {
+		            dataIndex: 'codigo',
+		            text: HreRem.i18n('fieldlabel.codigo'),
+		            flex: 0.5,
+		            hidden: true
+		        },
+		        {
 		        	dataIndex: 'tipoProveedorDescripcion',
 		            text: HreRem.i18n('header.proveedorer.tipo'),
 		            flex: 0.5,
@@ -102,6 +108,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		            }
 		        }
 		    ];
+		    
+		    // Abrira la ficha del proveedor al crear uno nuevo desde el listado
+		    me.saveSuccessFn = function() {
+		    	var nifProveedor = me.getStore().getAt(0).get('nifProveedor');
+		    	
+		    	me.lookupController().openProveedorByNif(nifProveedor);
+		    },
 		    
 		    me.callParent();
    }

@@ -13,6 +13,8 @@ public class DtoGastosFilter extends WebDto {
 
 	private Long id;
 	private Long numGastoHaya;
+	private Long idActivo;
+	private Long numActivo;
 	private Long numFactura;
 	private String tipo;
 	private String subtipo;
@@ -30,6 +32,15 @@ public class DtoGastosFilter extends WebDto {
 	
 	private String estadoAutorizacionHayaCodigo;
 	private String estadoAutorizacionPropietarioCodigo;
+	private String estadoGastoCodigo;
+	private String estadoGastoDescripcion;
+	
+	private String entidadPropietariaCodigo;
+	private String entidadPropietariaDescripcion;
+	
+	private String subentidadPropietariaCodigo;
+	private String subentidadPropietariaDescripcion;
+	
 	private String otrosEstados;
 //	private Long numGastoHaya;
 	private String tipoGastoCodigo;
@@ -51,7 +62,6 @@ public class DtoGastosFilter extends WebDto {
 	private String nombreProveedor;
 	
 	
-	
 	public Long getId() {
 		return id;
 	}
@@ -63,6 +73,18 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setNumGastoHaya(Long numGastoHaya) {
 		this.numGastoHaya = numGastoHaya;
+	}
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+	public Long getNumActivo() {
+		return numActivo;
+	}
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
 	}
 	public Long getNumFactura() {
 		return numFactura;
@@ -258,6 +280,43 @@ public class DtoGastosFilter extends WebDto {
 	public void setNombreProveedor(String nombreProveedor) {
 		this.nombreProveedor = nombreProveedor;
 	}
-
+	public String getEstadoGastoCodigo() {
+		return estadoGastoCodigo;
+	}
+	public void setEstadoGastoCodigo(String estadoGastoCodigo) {
+		this.estadoGastoCodigo = estadoGastoCodigo;
+	}
+	public String getEstadoGastoDescripcion() {
+		return estadoGastoDescripcion;
+	}
+	public void setEstadoGastoDescripcion(String estadoGastoDescripcion) {
+		this.estadoGastoDescripcion = estadoGastoDescripcion;
+	}
+	public String getEntidadPropietariaCodigo() {
+		return entidadPropietariaCodigo;
+	}
+	public void setEntidadPropietariaCodigo(String entidadPropietariaCodigo) {
+		this.entidadPropietariaCodigo = entidadPropietariaCodigo;
+	}
+	public String getEntidadPropietariaDescripcion() {
+		return entidadPropietariaDescripcion;
+	}
+	public void setEntidadPropietariaDescripcion(
+			String entidadPropietariaDescripcion) {
+		this.entidadPropietariaDescripcion = entidadPropietariaDescripcion;
+	}
+	public String getSubentidadPropietariaCodigo() {
+		return subentidadPropietariaCodigo;
+	}
+	public void setSubentidadPropietariaCodigo(String subentidadPropietariaCodigo) {
+		this.subentidadPropietariaCodigo = subentidadPropietariaCodigo;
+	}
+	public String getSubentidadPropietariaDescripcion() {
+		return subentidadPropietariaDescripcion;
+	}
+	public void setSubentidadPropietariaDescripcion(
+			String subentidadPropietariaDescripcion) {
+		this.subentidadPropietariaDescripcion = subentidadPropietariaDescripcion;
+	}
 	
 }

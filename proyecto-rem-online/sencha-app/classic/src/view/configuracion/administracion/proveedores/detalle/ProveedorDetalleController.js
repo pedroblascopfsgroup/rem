@@ -145,7 +145,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
      */
     onClickBotonRefrescar: function () {
 		var me = this,
-		activeTab = me.getView().getActiveTab();
+		activeTab = me.getView().down('proveedoresdetalletabpanel').getActiveTab();
   		
 		// Marcamos todos los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
@@ -176,10 +176,20 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 	/**
 	 * Función que habilita o deshabilita y filtra el combo de Municipio dentro del grid DireccionesDelegacionesList.
 	 */
-	onChangeProvinciaChainedCombo: function(boundList) {
-    	var me = this,
-    	combo = boundList.up(),
-    	chainedCombo = me.lookupReference(combo.chainedReference);   
+	onChangeProvinciaChainedCombo: function(boundList, record , item , index , e , eOpts) {
+		
+		if(boundList.xtype === 'combobox' && record.getKey() != 13) {
+			return;
+		}
+
+    	var me = this;
+    	var combo;
+    	if(boundList.xtype === 'combobox') {
+    		combo = boundList;
+    	} else {
+    		combo = boundList.up();
+    	}
+    	var chainedCombo = me.lookupReference(combo.chainedReference);   
     	
     	me.getViewModel().notify();
     	
@@ -189,10 +199,20 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     	
     	var chainedStore = chainedCombo.getStore();
     	
-    	var highlightedIdxValue = boundList.highlightedItem.attributes.getNamedItem('data-recordindex').nodeValue;
+    	var highlightedIdxValue;
+    	if(boundList.xtype === 'boundlist') {
+    		highlightedIdxValue = boundList.highlightedItem.attributes.getNamedItem('data-recordindex').nodeValue;
+    	}
     	
-    	if(!Ext.isEmpty(chainedStore) && !Ext.isEmpty(highlightedIdxValue)) {
-    		var codigoValue = boundList.getStore().getAt(highlightedIdxValue).getData().codigo;
+    	if(!Ext.isEmpty(chainedStore) && (!Ext.isEmpty(highlightedIdxValue) || !Ext.isEmpty(combo.getSelectedRecord()))) {
+    		
+    		var codigoValue;
+    		if(boundList.xtype === 'combobox') {
+    			codigoValue = combo.getSelectedRecord().getData().codigo;
+    		} else {
+    			codigoValue = boundList.getStore().getAt(highlightedIdxValue).getData().codigo;
+    		}
+    		
     		combo.setValue(codigoValue);
     		chainedStore.clearFilter();
     		chainedStore.filter([{
@@ -204,6 +224,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
                 }
             }]);
     		chainedCombo.setDisabled(false);
+    		chainedCombo.validate();
     	}
     	
 		if (me.lookupReference(chainedCombo.chainedReference) != null) {
@@ -284,7 +305,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
      */
     onDireccionesDelegacionesGridClick: function(grid) {
     	var me = this;
-    	var gridPersonasContactos = grid.up('proveedoresdetalletabpanel').lookupReference('personascontactolistref');
+    	var gridPersonasContactos = grid.up('proveedoresdetallemain').lookupReference('personascontactolistref');
     	var personasContactosStore = gridPersonasContactos.getStore();
     	if(!Ext.isEmpty(personasContactosStore)) {
     		var selection = grid.getSelection()[0];

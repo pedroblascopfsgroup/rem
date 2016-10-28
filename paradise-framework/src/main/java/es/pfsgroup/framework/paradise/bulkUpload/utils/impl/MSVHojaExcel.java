@@ -18,6 +18,7 @@ import jxl.CellType;
 import jxl.DateCell;
 import jxl.Sheet;
 import jxl.Workbook;
+import jxl.WorkbookSettings;
 import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
@@ -110,6 +111,11 @@ public class MSVHojaExcel {
 			this.columnasReales = 0;
 			Sheet hoja = libroExcel.getSheet(0);
 			Cell[] cabeceras = hoja.getRow(0);
+			
+			//Masivo propuesta precios: Si no se detecta la cabecera en fila0, prueba con fila7
+			if(cabeceras.length == 0)
+				cabeceras = hoja.getRow(7);
+
 			//for (int i=cabeceras.length - 1; i>0; i--) {
 			for (int i=cabeceras.length -1; i>=0; i--){
 				Cell celda = cabeceras[i];
@@ -173,6 +179,7 @@ public class MSVHojaExcel {
 		String nombreFicheroErrores = getNombreFicheroErrores();
 		
 		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroErrores), libroExcel);
+		
 		
 		WritableSheet hoja = copy.getSheet(0);
 		int numColumnas = this.getNumeroColumnas();
@@ -258,7 +265,9 @@ public class MSVHojaExcel {
 		}
 		
 		try{
-			libroExcel = Workbook.getWorkbook(file);
+			WorkbookSettings workbookSettings = new WorkbookSettings();
+			workbookSettings.setEncoding( "Cp1252" );
+			libroExcel = Workbook.getWorkbook(file,workbookSettings);
 			isOpen = true;
 		} catch (BiffException e) {
 			throw new IOException("Error al parsear el libro excel");
@@ -396,8 +405,10 @@ public class MSVHojaExcel {
 			    fileFinal.createNewFile();
 			} else {
 				// Si tiene que añadir al documento, se copiara el contenido de fileFinal a fileTMP
-				if (append) {								
-					Workbook target_workbook = Workbook.getWorkbook(fileFinal);
+				if (append) {
+					WorkbookSettings workbookSettings = new WorkbookSettings();
+					workbookSettings.setEncoding( "Cp1252" );
+					Workbook target_workbook = Workbook.getWorkbook(fileFinal,workbookSettings);
 					workbook = Workbook.createWorkbook(fileTMP, target_workbook);
 					
 					sheet1 = workbook.getSheet(0);

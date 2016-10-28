@@ -36,17 +36,12 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                },
 		                {
 		                	xtype: 'comboboxfieldbase',
+		                	readOnly: true,
 		                	bind: {
 								store: '{comboTipoOferta}',
 								value: '{datosbasicosoferta.tipoOfertaCodigo}'
 							},
 		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo')
-		                },
-		                {
-		                	xtype:'datefieldbase',
-							formatter: 'date("d/m/Y")',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.notificacion'),
-		                	bind:		'{datosbasicosoferta.fechaNotificacion}'
 		                },
 		                {
 		                	xtype:'datefieldbase',
@@ -60,6 +55,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								store: '{comboEstadoOferta}',
 								value: '{datosbasicosoferta.estadoCodigo}'
 							},
+							readOnly: true,
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                },
 		                {	
@@ -71,17 +67,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 							readOnly: true
 		                },
 		                {
-		                	xtype: 'numberfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.inicial.oferta'),
-		                	bind:		'{datosbasicosoferta.importeOferta}'
-		                },
-		                {	
-		                	xtype: 'numberfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.contraoferta'),
-		                	bind:		'{datosbasicosoferta.importeContraOferta}',
-		                	colspan: 1
-		                },
-		                {
 		                	xtype: 'comboboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.canal.prescripcion'),
 		                	bind: {
@@ -90,6 +75,21 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 							},
 							editable: true
 		                },
+		                {
+		                	xtype: 'numberfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.inicial.oferta'),
+		                	bind:		'{datosbasicosoferta.importeOferta}'
+		                },
+		                {	
+		                	xtype: 'numberfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.contraoferta'),
+		                	bind:		{
+		                		value: '{datosbasicosoferta.importeContraOferta}',
+		                		disabled: '{esCarteraSareb}'
+		                	},
+		                	colspan: 2
+		                },
+
 		                {
 		                	xtype: 'fieldset',
 		                	title:  HreRem.i18n('title.comite.sancionador'),
@@ -122,15 +122,18 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								                	readOnly: true,								                	
 								                	bind: {
 														store: '{comboComites}',
-														value: '{datosbasicosoferta.comitePropuestoCodigo}',
-														hidden: '{!datosbasicosoferta.comitePropuestoCodigo}'
+														value: '{datosbasicosoferta.comitePropuestoCodigo}'
 													}
 								                },
 								                {
 							                		xtype: 'button',
 							                		text: HreRem.i18n('btn.consultar.comite'),
 							                		handler: 'consultarComiteSancionador',
-							                		margin: '0 40 0 0'
+							                		margin: '0 40 0 0',
+							                		disabled: true,
+							                		bind: {
+							                			disabled: '{!editing}'
+							                		}
 					                			}
 						                	]
 						                	
@@ -168,7 +171,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 							                		
 							                	},
 							                	{
-							                		xtype: 'displayfieldbase',
+							                		xtype: 'numberfieldbase',
 							                		fieldLabel:  HreRem.i18n('fieldlabel.numero.visita'),
 							                		bind: {
 							                			value : '{datosbasicosoferta.numVisita}'

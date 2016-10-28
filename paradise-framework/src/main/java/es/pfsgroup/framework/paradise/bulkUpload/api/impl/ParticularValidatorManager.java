@@ -1,13 +1,10 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 
@@ -213,18 +210,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean estadoNoPublicado(String numActivo){
+	public Boolean estadoNoPublicadoOrNull(String numActivo){
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
-				+ "			AND BORRADO = 0"
-				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
-				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
-				+ "				WHERE DD_EPU_CODIGO IN ('06'))");
+				+ "			AND BORRADO = 0 "
+				+ "			AND ( DD_EPU_ID IS NULL "
+				+ "			      OR DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				     FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				     WHERE DD_EPU_CODIGO IN ('06')) )");
 		if("0".equals(resultado))
-			return true;
-		else
 			return false;
+		else
+			return true;
 	}
 	
 	@Override
@@ -289,17 +287,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean estadoDespublicar(String numActivo){
+		//Despublicar Forzado solo admite activos en estado publicado (ordinario)
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO WHERE"
 				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
 				+ "			AND BORRADO = 0"
 				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
 				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
-				+ "				WHERE DD_EPU_CODIGO IN ('02'))");
+				+ "				WHERE DD_EPU_CODIGO IN ('01'))");
 		if("0".equals(resultado))
 			return false;
 		else
 			return true;
+	}
+	
+	@Override
+	public Boolean estadosValidosDespublicarForzado(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				WHERE DD_EPU_CODIGO IN ('02', '07'))");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	public Boolean estadosValidosDesDespublicarForzado(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				WHERE DD_EPU_CODIGO IN ('05'))");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;		
 	}
 	
 	@Override
@@ -425,6 +453,60 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return true;
 		else
 			return false;
+	}
+	
+	@Override
+	public Boolean esActivoEnOtraAgrupacionNoCompatible(Long numActivo, Long numAgrupacion, String codTiposAgrNoCompatibles) {
+		String cadenaCodigosSql = convertStringToGroupSql(codTiposAgrNoCompatibles);
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
+				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
+				+ "			    ACT_AGR_AGRUPACION agr, "
+				+ "			    ACT_ACTIVO act,"
+				+ "				DD_TAG_TIPO_AGRUPACION tag "
+				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
+				+ "			    AND act.act_id   = aga.act_id "
+				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "				AND agr.DD_TAG_ID = tag.DD_TAG_ID "
+				+ "			    AND tag.DD_TAG_CODIGO in ("+cadenaCodigosSql+") "
+				+ "			    AND agr.AGR_NUM_AGRUP_REM  <> "+numAgrupacion+" "
+				+ "				AND agr.AGR_FECHA_BAJA IS NULL "
+				+ "			    AND aga.BORRADO  = 0 "
+				+ "			    AND agr.BORRADO  = 0 "
+				+ "			    AND act.BORRADO  = 0 "
+				+ "				AND tag.BORRADO  = 0 ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	private String convertStringToGroupSql(String cadena) {
+		String resultado = "";
+		String[] arrayCodigos = cadena.split(",");
+		
+		for(String codigo : arrayCodigos) {
+			resultado = "'"+codigo+"',";
+			
+		}
+		resultado = resultado.substring(0, resultado.length()-1);
+		
+		return resultado;
+	}
+	
+	@Override
+	public Boolean esActivoFinanciero(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		FROM ACT_ABA_ACTIVO_BANCARIO aba "
+				+ "		INNER JOIN DD_CLA_CLASE_ACTIVO cla "
+				+ "		ON cla.DD_CLA_ID = aba.DD_CLA_ID "
+				+ "		WHERE " 
+				+ "		cla.DD_CLA_CODIGO ='01' "
+				+ "		AND aba.ACT_ID = (select act_id from act_activo where act_num_activo = '"+numActivo+"') ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
 	}
 	
 }

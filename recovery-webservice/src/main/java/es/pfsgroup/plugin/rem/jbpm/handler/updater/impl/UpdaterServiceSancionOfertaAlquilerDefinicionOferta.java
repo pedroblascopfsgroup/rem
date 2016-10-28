@@ -48,7 +48,7 @@ public class UpdaterServiceSancionOfertaAlquilerDefinicionOferta implements Upda
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
-		if(trabajoApi.checkAtribuciones(tramite.getTrabajo())){
+		if(ofertaApi.checkAtribuciones(tramite.getTrabajo())){
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if(!Checks.esNulo(ofertaAceptada)){
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());

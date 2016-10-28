@@ -20,6 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
@@ -66,10 +67,10 @@ public class DetectorCambiosBDTests {
 		cambios.add(creaMock(1L, data2));
 		cambios.add(creaMock(2L, data3));
 
-		when(dao.listCambios(any(Class.class), any(InfoTablasBD.class))).thenReturn(cambios);
+		when(dao.listCambios(any(Class.class), any(InfoTablasBD.class), any(RestLlamada.class))).thenReturn(cambios);
 
 		////////////////////////
-		List<ExampleDto> lista = detector.listPendientes(ExampleDto.class);
+		List<ExampleDto> lista = detector.listPendientes(ExampleDto.class, null);
 		////////////////////////
 
 		assertEquals("No se han creado la cantidad de DTOS esperada", 2, lista.size());

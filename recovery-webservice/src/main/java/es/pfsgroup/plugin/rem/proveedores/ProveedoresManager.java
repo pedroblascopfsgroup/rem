@@ -27,6 +27,8 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -39,7 +41,6 @@ import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
-import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
@@ -111,6 +113,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			try {
 				beanUtilNotNull.copyProperty(dto, "fechaUltimaActualizacion", proveedor.getAuditoria().getFechaModificar());
 				beanUtilNotNull.copyProperty(dto, "id", proveedor.getId());
+				beanUtilNotNull.copyProperty(dto, "codigo", proveedor.getCodigoProveedorRem());
 				beanUtilNotNull.copyProperty(dto, "nombreProveedor", proveedor.getNombre());
 				beanUtilNotNull.copyProperty(dto, "fechaAltaProveedor", proveedor.getFechaAlta());
 				if(!Checks.esNulo(proveedor.getTipoProveedor())) {
@@ -132,6 +135,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(dto, "observacionesProveedor", proveedor.getObservaciones());
 				beanUtilNotNull.copyProperty(dto, "webUrlProveedor", proveedor.getPaginaWeb());
 				beanUtilNotNull.copyProperty(dto, "fechaConstitucionProveedor", proveedor.getFechaConstitucion());
+				beanUtilNotNull.copyProperty(dto, "homologadoCodigo", proveedor.getHomologado());
+				
+				if(!Checks.esNulo(proveedor.getOperativa())) {
+					beanUtilNotNull.copyProperty(dto, "operativaCodigo", proveedor.getOperativa().getCodigo());
+				}
 				
 				Filter proveedorIdFiltro = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
 				List<ProveedorTerritorial> proveedorTerritorial = genericDao.getList(ProveedorTerritorial.class, proveedorIdFiltro);
@@ -234,6 +242,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "observaciones", dto.getObservacionesProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "paginaWeb", dto.getWebUrlProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaConstitucion", dto.getFechaConstitucionProveedor());
+			beanUtilNotNull.copyProperty(proveedor, "homologado", dto.getHomologadoCodigo());
+			
+			if(!Checks.esNulo(dto.getOperativaCodigo())) {
+				DDOperativa operativa = (DDOperativa) utilDiccionarioApi.dameValorDiccionarioByCod(DDOperativa.class, dto.getOperativaCodigo());
+				beanUtilNotNull.copyProperty(proveedor, "operativa", operativa);
+			}
+			
 			if(!Checks.esNulo(dto.getTerritorialCodigo())) {
 				List<String> codigosTerritorios = Arrays.asList(dto.getTerritorialCodigo().split(","));
 				
@@ -449,7 +464,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(personaContacto, "usuario", usuario);
 			}
 			if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
-				Filter direccionFilter = genericDao.createFilter(FilterType.EQUALS, "id", dtoPersonaContacto.getDelegacion());
+				Filter direccionFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getDelegacion()));
 				ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, direccionFilter);
 				beanUtilNotNull.copyProperty(personaContacto, "delegacion", delegacion);
 			}
@@ -706,7 +721,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(direccionDelegacion, "provincia", provincia);
 			}
 			if(!Checks.esNulo(dtoDireccionDelegacion.getLocalidadCodigo())) {
-				Filter filterLocalidad = genericDao.createFilter(FilterType.EQUALS, "id", dtoDireccionDelegacion.getLocalidadCodigo());
+				Filter filterLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoDireccionDelegacion.getLocalidadCodigo());
 				Localidad localidad = (Localidad) genericDao.get(Localidad.class, filterLocalidad);
 				beanUtilNotNull.copyProperty(direccionDelegacion, "localidad", localidad);
 			}
@@ -961,22 +976,28 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	}
 
 	@Override
-	public String getNifProveedorByUsuarioLogado() {
+	public Long getCodProveedorByUsuarioLogado() {
 		
 		Usuario usuario = genericAdapter.getUsuarioLogado();
-		String nifProveedor = null;
+		Long codProveedor = null;
 		
 		Filter idUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 		List<ActivoProveedorContacto> listaPersonasContacto = genericDao.getList(ActivoProveedorContacto.class, idUsuario);
 		
 		if(!Checks.estaVacio(listaPersonasContacto) && !Checks.esNulo(listaPersonasContacto.get(0).getProveedor())) {			
-			nifProveedor = listaPersonasContacto.get(0).getProveedor().getDocIdentificativo();
-		} else if (!Checks.estaVacio(listaPersonasContacto)) {
-			nifProveedor = listaPersonasContacto.get(0).getDocIdentificativo();
-		} else {
-			nifProveedor = usuario.getUsername();
+			codProveedor = listaPersonasContacto.get(0).getProveedor().getCodigoProveedorRem();
 		}
 
-		return nifProveedor;
+		return codProveedor;
+	}
+	
+	@Override
+	public Long getIdProveedorByNif(String nif) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nif);
+		Order orden = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		ActivoProveedor proveedor = genericDao.getListOrdered(ActivoProveedor.class, orden, filtro).get(0);
+		
+		return proveedor.getId();
 	}
 }

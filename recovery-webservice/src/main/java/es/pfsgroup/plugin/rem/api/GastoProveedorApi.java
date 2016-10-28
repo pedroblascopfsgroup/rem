@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -55,11 +57,11 @@ public interface GastoProveedorApi {
 	    boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long id);
 
 		/**
-		 * Método que recupera un proveedor según su NIF
-		 * @param nifProveedor
+		 * Método que recupera un proveedor según su código
+		 * @param codigoUnicoProveedor
 		 * @return Object
 		 */
-		public Object searchProveedorNif(String nifProveedor);
+		public Object searchProveedorCodigo(String codigoUnicoProveedor);
 		
 		/**
 		 * Método que recupera un propietario según su NIF
@@ -186,5 +188,20 @@ public interface GastoProveedorApi {
 		 */
 	    @BusinessOperationDefinition("gastoProveedorManager.getFileItemAdjunto")
 		public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto);
+	    
+	    /**
+		 * Método que recupera un proveedor según su Código y su tipo
+		 * @param codigoUnicoProveedor
+		 * @param codigoTipoProveedor
+		 * @return Object
+		 */
+		public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor);
+		
+		/**
+		 * Método que recupera un gasto según su número haya
+		 * @param codigoUnicoProveedor
+		 * @return Object
+		 */
+		public Object searchGastoNumHaya(String numeroGastoHaya, String proveedorEmisor, String destinatario);
 }
 

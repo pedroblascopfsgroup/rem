@@ -50,12 +50,15 @@ public class DtoTramite extends WebDto {
 	private Boolean esMultiActivo;
 	
 	private Long countActivos;
-	
+
+	private Boolean ocultarBotonCierre;
+
 	private Boolean tieneEC;
 	
 	private String descripcionEstadoEC;
 	
 	private Long numEC;
+
 	
 
 	public Long getIdTramite() {
@@ -210,6 +213,14 @@ public class DtoTramite extends WebDto {
 		this.countActivos = countActivos;
 	}
 
+	public Boolean getOcultarBotonCierre() {
+		return ocultarBotonCierre;
+	}
+
+	public void setOcultarBotonCierre(Boolean ocultarBotonCierre) {
+		this.ocultarBotonCierre = ocultarBotonCierre;
+	}
+
 	public Boolean getTieneEC() {
 		return tieneEC;
 	}
@@ -233,6 +244,5 @@ public class DtoTramite extends WebDto {
 	public void setNumEC(Long numEC) {
 		this.numEC = numEC;
 	}
-	
 	
 }

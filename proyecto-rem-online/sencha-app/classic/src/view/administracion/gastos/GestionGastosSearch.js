@@ -50,10 +50,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 							},
 							{
 								xtype: 'comboboxfieldbase',
-								name: 'otrosEstados',
-				              	fieldLabel : 'Otras situaciones',
+								name: 'estadoGastoCodigo',
+				              	fieldLabel : 'Estado',
 								bind: {
-									store: '{otrasSituacionesGasto}'
+									store: '{estadosGasto}'
 								}						
 							}
 				        				
@@ -220,6 +220,49 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						    	fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
 						        name: 'nombreProveedor'								            	
 						    }
+				        				
+						]
+				    },
+				    {
+						
+			    		title: HreRem.i18n('title.filtro.por.activo.agrupacion'),
+			    		defaultType: 'textfieldbase',
+			    		defaults: {							        
+							addUxReadOnlyEditFieldPlugin: false
+						},
+			    		items: [
+			    		
+			    			{ 
+						    	fieldLabel: HreRem.i18n('fieldlabel.numero.activo'),
+						        name: 'numActivo'								            	
+						    },    		
+			    						    		
+					    	{ 
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.cartera'),
+					        	reference: 'filtroEntidadPropietaria',
+					        	name: 'entidadPropietariaCodigo',
+					        	bind: {
+				            		store: '{comboEntidadPropietaria}'
+				            	},
+				            	publish: 'value'
+			    						
+							},
+							
+							{ 
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
+					        	name: 'subentidadPropietariaCodigo',
+					        	bind: {
+				            		store: '{comboSubentidadPropietaria}',
+				            		disabled: '{!filtroEntidadPropietaria.value}',
+				                    filters: {
+				                        property: 'carteraCodigo',
+				                        value: '{filtroComboTipoGasto.value}'
+				                    }
+				            	}
+			    						
+							}
 				        				
 						]
 				    }

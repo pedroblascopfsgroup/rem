@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
@@ -141,7 +142,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 			
 			if(secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
-				menuItemsPerm.add(item);
+				menuItemsPerm.add(itemObject);
 			}
 		}
 	
@@ -465,5 +466,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		
 		return listaDD;
+	}
+	
+	@Override
+	public List<DDTipoComercializacion> getComboTipoDestinoComercialCreaFiltered() {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		List<DDTipoComercializacion> listaDD = (List<DDTipoComercializacion>) genericDao.getListOrdered(DDTipoComercializacion.class, order);
+		List<DDTipoComercializacion> listaTiposFiltered = new ArrayList<DDTipoComercializacion>();
+		
+		for(DDTipoComercializacion tipo : listaDD) {
+			if(!DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipo.getCodigo())) {
+					listaTiposFiltered.add(tipo);
+			}
+		}
+
+		return listaTiposFiltered;
 	}
 }

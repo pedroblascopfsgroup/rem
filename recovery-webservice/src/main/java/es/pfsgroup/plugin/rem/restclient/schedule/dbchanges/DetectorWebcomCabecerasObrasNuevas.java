@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
@@ -28,7 +29,7 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 
 	@Override
 	public String clavePrimaria() {
-		return "ID_SUBDIVISION_REM";
+		return "ID_SUBDB_AGRUP_REM";
 	}
 
 	@Override
@@ -37,8 +38,8 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 	}
 
 	@Override
-	public void invocaServicio(List<CabeceraObrasNuevasDto> data) throws ErrorServicioWebcom {
-		this.serviciosWebcom.webcomRestCabeceraObrasNuevas(data);
+	public void invocaServicio(List<CabeceraObrasNuevasDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		this.serviciosWebcom.webcomRestCabeceraObrasNuevas(data, registro);
 		
 	}
 

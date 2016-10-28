@@ -2,7 +2,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'datoscompradorwindow',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() /1.8,    
+    width	: Ext.Element.getViewportWidth() /1.6,    
     height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50,
 	reference: 'datoscompradorwindowref',
 	y:Ext.Element.getViewportHeight()*(10/150),
@@ -16,7 +16,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 
     
     idComprador: null,
-    
+    expediente: null,
     
     
     requires: ['HreRem.model.FichaComprador'],
@@ -49,8 +49,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	me.setTitle(HreRem.i18n("title.windows.datos.comprador"));
     	
     	me.buttonAlign = 'right';   
-    	    	
-    	if(!Ext.isEmpty(me.idComprador)){
+    	if(!Ext.isEmpty(me.idComprador) && CONST.ESTADOS_EXPEDIENTE['APROBADO'] == me.expediente.data.codigoEstado){
+    		me.buttons = [ { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
+    	}
+    	else if(!Ext.isEmpty(me.idComprador)){
     		me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador'},{ itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
     	}
     	else{
@@ -117,6 +119,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	xtype: 'comboboxfieldbase',
 										        	fieldLabel: HreRem.i18n('fieldlabel.titular.reserva'),
 													reference: 'titularReserva',
+													hidden: true,
 													margin: '10 0 10 0',
 										        	bind: {
 									            		store: '{comboSiNoRem}',
@@ -265,33 +268,80 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													
 										        },
 										        {
-													xtype: 'textfieldbase',
-													fieldLabel:  HreRem.i18n('header.numero.ursus'),
-													name: 'buscadorNumUrsus',
-													flex: 2,
-													bind: {
-														value: '{comprador.numeroUrsus}',
-														hidden: '{!esCarteraBankia}'
-													},
-													triggers: {
-														
-															buscarEmisor: {
-													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
-													             handler: 'buscarNumeroUrsus'
-													        }
-													        
-													},
-													cls: 'searchfield-input sf-con-borde',
-													emptyText:  HreRem.i18n('txt.buscar.numero.ursus'),
-													enableKeyEvents: true,
-											        listeners: {
-												        	specialKey: function(field, e) {
-												        		if (e.getKey() === e.ENTER) {
-												        			field.lookupController().buscarNumeroUrsus(field);											        			
-												        		}
-												        	}
-												        }
-								                }
+										        	xtype: 'box'
+										        },
+										        {
+										        	xtype      : 'container',
+							                        layout: 'box',
+							                        items: [
+							                            {
+							                            	xtype: 'textfieldbase',
+							                            	width: 360,
+													        fieldLabel:  HreRem.i18n('header.numero.ursus'),
+													        reference: 'numeroClienteUrsusRef',
+													        bind: {
+												            	value: '{comprador.numeroClienteUrsus}',
+												            	hidden: '{!esCarteraBankia}'
+												            },
+												            editable: false
+							                            }, 
+							                            {
+							                                xtype: 'button',
+//												            cls: 'searchfield-input sf-con-borde',
+												            handler: 'buscarNumeroUrsus',
+												            bind: {
+												            	hidden: '{!esCarteraBankia}'
+												            },
+												            cls: 'search-button-buscador',
+															iconCls: 'app-buscador-ico ico-search'
+							                            }
+							                        ]
+										        }
+										        
+										        
+//										        {
+//													xtype: 'textfieldbase',
+//													fieldLabel:  HreRem.i18n('header.numero.ursus'),
+//													name: 'buscadorNumUrsus',
+//													reference: 'numeroClienteUrsusRef',
+//													flex: 2,
+//													colspan: 2,
+//													bind: {
+//														value: '{comprador.numeroClienteUrsus}',
+//														hidden: '{!esCarteraBankia}'
+//													},
+//													triggers: {
+//														
+//															buscarEmisor: {
+//													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+//													             handler: 'buscarNumeroUrsus'
+//													        }
+//													        
+//													},
+//													cls: 'searchfield-input sf-con-borde',
+//													emptyText:  HreRem.i18n('txt.buscar.numero.ursus'),
+//													enableKeyEvents: true,
+//											        listeners: {
+//												        	specialKey: function(field, e) {
+//												        		if (e.getKey() === e.ENTER) {
+//												        			field.lookupController().buscarNumeroUrsus(field);											        			
+//												        		}
+//												        	}
+//												        }
+//								                }
+								                
+//								                {
+//								                	xtype: 'box'
+//							                	},
+//								                
+//								                {
+//								                	xtype:'displayfieldbase',
+//								                	fieldLabel:  HreRem.i18n('fieldlabel.respuesta.numero.cliente.ursus'),
+//										        	reference: 'numeroClienteUrsusRef',
+//										        	bind: {
+//									            		value: '{comprador.numeroClienteUrsus}'
+//									            	}
+//								                }
 
 											]
 						           },

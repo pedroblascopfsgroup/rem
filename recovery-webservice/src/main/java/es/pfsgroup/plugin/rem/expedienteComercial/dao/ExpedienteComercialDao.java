@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.expedienteComercial.dao;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial, Long> {
@@ -22,4 +23,21 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @return
 	 */
 	public Page getObservacionesByExpediente(Long idExpediente, WebDto dto);
+	
+	/**
+	 * Recupera una lista de proveedores filtrado por tipoProveedor y nombre
+	 * @param codigoTipoProveedor
+	 * @param nombreBusqueda
+	 * @return 
+	 */
+	public Page getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto webDto);
+	
+	/**
+	 * Eliminar la relación entre un comprador y un expediente
+	 * @param idExpediente
+	 * @param idComprador
+	 * @return 
+	 */
+	public void deleteCompradorExpediente(Long idExpediente, Long idComprador);
+	
 }

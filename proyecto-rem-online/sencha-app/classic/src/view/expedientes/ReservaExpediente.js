@@ -71,30 +71,6 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                }		               
 		        ]
 			},
-			{   
-				xtype:'fieldsettable',
-				defaultType: 'displayfieldbase',				
-				title: HreRem.i18n('title.detalle.reserva.anulacion'),
-				items :
-					[
-		                {
-		                	xtype:'textfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.motivo.anulacion'),
-		                	bind:		'{reserva.motivoAnulacion}',
-		                	readOnly: true
-		                },
-		                {
-		                	xtype:'datefieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.anulacion'),
-		                	bind:		'{reserva.fechaAnulacion}',
-		                	readOnly: true
-		                },
-		                {
-		                	xtype: 'displayfield'
-		                }
-		                
-		            ]
-			},
 			{
 				
             	xtype: 'fieldset',

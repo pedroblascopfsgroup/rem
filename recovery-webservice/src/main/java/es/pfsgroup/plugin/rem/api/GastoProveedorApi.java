@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -194,5 +196,12 @@ public interface GastoProveedorApi {
 		 * @return Object
 		 */
 		public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor);
+		
+		/**
+		 * Método que recupera un gasto según su número haya
+		 * @param codigoUnicoProveedor
+		 * @return Object
+		 */
+		public Object searchGastoNumHaya(String numeroGastoHaya, String proveedorEmisor, String destinatario);
 }
 

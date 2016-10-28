@@ -904,6 +904,54 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		config.params.idGasto=record.get("idGasto");
 		
 		me.fireEvent("downloadFile", config);
+	},
+	
+	buscarGasto: function(field, e){
+		var me= this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/searchGastoNumHaya');
+		var numeroGastoHaya= field.getValue();
+		var proveedorEmisor = field.up('formBase').down('[name=buscadorCodigoRemEmisorField]').getValue();
+		var destinatario = field.up('formBase').down('[name=destinatarioField]').getValue();
+		var data;
+		
+		if(!Ext.isEmpty(numeroGastoHaya) && !Ext.isEmpty(proveedorEmisor) && !Ext.isEmpty(destinatario)){
+			if(!Ext.isEmpty(proveedorEmisor) && !Ext.isEmpty(destinatario)){
+				Ext.Ajax.request({
+				    			
+				    		     url: url,
+				    		     params: {numeroGastoHaya : numeroGastoHaya, proveedorEmisor: proveedorEmisor, destinatario: destinatario},
+				    		
+				    		     success: function(response, opts) {
+				    		    	 var data = Ext.decode(response.responseText);
+				    		    	 var numeroGastoAbonado = field.up('formBase').down('[name=numGastoAbonado]');
+				    		    	 var idGastoAbonadoField = field.up('formBase').down('[name=idGastoAbonado]');
+				    		    	 
+				    		    	 
+				    		    	 if(!Utils.isEmptyJSON(data.data)){
+				    		    	 	var id= data.data.id;
+				    		    	 	idGastoAbonadoField.setValue(id);
+				    		    	 	me.fireEvent("infoToast", HreRem.i18n("msg.buscador.encuentra.gasto"));
+				    		    	 }
+				    		    	 else{
+				    		    	 	
+				    		    	 	if(!Ext.isEmpty(numeroGastoAbonado)) {
+				    		    	 		numeroGastoAbonado.setValue('');
+				    		    	 	}
+				    		    	 	me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.gasto"));
+				    		    	 }
+				    		    	 
+				    		     },
+				    		     failure: function(response) {
+									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    		     },
+				    		     callback: function(options, success, response){
+				    		     }
+				});
+			}else{
+				me.fireEvent("errorToast", HreRem.i18n("msg.buscador.gasto.faltan.campos"));
+			}
+		}
+	
 	}
 
 });

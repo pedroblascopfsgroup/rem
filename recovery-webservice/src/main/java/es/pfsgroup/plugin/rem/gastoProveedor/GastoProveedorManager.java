@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
@@ -82,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -239,6 +241,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			dto.setEsGastoEditable(esGastoEditable(gasto));
 			
+			dto.setNumGastoDestinatario(gasto.getNumGastoDestinatario());
+			if(!Checks.esNulo(gasto.getTipoOperacion())){
+				dto.setTipoOperacionCodigo(gasto.getTipoOperacion().getCodigo());
+			}
+			if(!Checks.esNulo(gasto.getGastoProveedorAbonado())){
+				dto.setNumGastoAbonado(gasto.getGastoProveedorAbonado().getNumGastoHaya());
+			}
+			
 			
 		}
 
@@ -363,6 +373,33 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				DDTipoPeriocidad periodicidad = (DDTipoPeriocidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPeriocidad.class, dto.getPeriodicidad());
 				gastoProveedor.setTipoPeriocidad(periodicidad);
 			}
+			if(!Checks.esNulo(dto.getTipoOperacionCodigo())){
+				DDTipoOperacionGasto tipoOperacion = (DDTipoOperacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOperacionGasto.class, dto.getTipoOperacionCodigo());
+				gastoProveedor.setTipoOperacion(tipoOperacion);
+			}
+			if(!Checks.esNulo(dto.getNumGastoAbonado())){
+				List<GastoProveedor> listaGastos= new ArrayList<GastoProveedor>();
+				Filter filtroGastoAbonado = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya",dto.getNumGastoAbonado());
+				listaGastos = genericDao.getList(GastoProveedor.class, filtroGastoAbonado);
+				
+				if(!Checks.estaVacio(listaGastos)){
+					GastoProveedor gasto= listaGastos.get(0);
+					if(!Checks.esNulo(gasto.getProveedor()) && !Checks.esNulo(gastoProveedor.getProveedor())){
+						if(gasto.getProveedor().getCodigoProveedorRem().equals(gastoProveedor.getProveedor().getCodigoProveedorRem()) && gasto.getDestinatarioGasto().equals(gastoProveedor.getDestinatarioGasto())){
+							gastoProveedor.setGastoProveedorAbonado(gasto);
+						}
+						else{
+							throw new JsonViewerException("Destinatario o proveedor del gasto abonado son diferentes");
+						}
+					}
+					
+				}
+				else{
+					throw new JsonViewerException("El gasto no existe");
+				}
+				
+			}
+			
 			
 			genericDao.update(GastoProveedor.class, gastoProveedor);	
 			
@@ -1393,5 +1430,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return dto;
 		}
 		return null;
+	}
+	
+	public Object searchGastoNumHaya(String numeroGastoHaya, String proveedorEmisor, String destinatario){
+		
+		List<GastoProveedor> listaGastos= new ArrayList<GastoProveedor>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(numeroGastoHaya));
+		listaGastos = genericDao.getList(GastoProveedor.class, filtro);
+
+		DDDestinatarioGasto destinatarioGasto = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, destinatario);	
+		
+		if(!Checks.estaVacio(listaGastos)){
+			GastoProveedor gasto= listaGastos.get(0);
+			if(!Checks.esNulo(gasto.getProveedor()) && !Checks.esNulo(proveedorEmisor)){
+				if(gasto.getProveedor().getCodigoProveedorRem().equals(Long.parseLong(proveedorEmisor)) && gasto.getDestinatarioGasto().equals(destinatarioGasto)){
+					return gasto;
+				}
+			}
+			
+		}
+		return null;
+		
 	}
 }

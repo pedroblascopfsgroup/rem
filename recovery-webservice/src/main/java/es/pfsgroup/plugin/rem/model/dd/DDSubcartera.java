@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -19,6 +20,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Modelo que gestiona el diccionario de subcarteras.
@@ -56,7 +58,8 @@ public class DDSubcartera implements Auditable, Dictionary {
 	@Column(name = "DD_SCR_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
-	
+	@Transient
+	private String carteraCodigo;	
 	    
 	@Version   
 	private Long version;
@@ -102,6 +105,14 @@ public class DDSubcartera implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+	
+	public String getCarteraCodigo() {
+		return !Checks.esNulo(carteraCodigo) ? this.carteraCodigo = cartera.getCodigo(): null;
+	}
+
+	public void setCarteraCodigo(String carteraCodigo) {
+		this.carteraCodigo = !Checks.esNulo(carteraCodigo) ? carteraCodigo : cartera.getCodigo();
 	}
 
 

@@ -51,6 +51,10 @@ Ext.define('HreRem.model.Gasto', {
 		},
 		{
 			name: 'estadoGastoDescripcion'
+		},
+		{
+			name: 'tieneDocumentosAdjuntos',
+			type: 'boolean'
 		}
     		
     ],

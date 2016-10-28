@@ -115,6 +115,19 @@ Ext.define('HreRem.model.GastoProveedor', {
 		},
 		{
    			name: 'buscadorCodigoRemEmisor'
+   		},
+   		{
+   			name: 'tipoOperacionCodigo'
+   		},
+   		{
+   			name: 'numGastoDestinatario'
+   		},
+   		{
+   			name: 'numGastoAbonado'
+   		},
+   		{
+   			name: 'idGastoAbonado',
+   			critical: true
    		}
     		
     ],

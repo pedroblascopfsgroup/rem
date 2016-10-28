@@ -50,7 +50,7 @@
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
 				<targetBean>
-					activoGenericEnterActionHandler
+					activoGenericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -155,7 +155,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T013_RespuestaOfertanteDecision" name="avanzaBPM"></transition>
+		<transition to="T013_RespuestaOfertante" name="avanzaBPM"></transition>
 	</state>
 	
 	<state name="T013_InformeJuridico">

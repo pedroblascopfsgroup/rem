@@ -45,6 +45,7 @@ public class DiccionarioTargetClassMap{
 		
 		mapa.put("tiposVia", DDTipoVia.class);		
 		mapa.put("entidadesPropietarias", DDCartera.class);
+		mapa.put("subentidadesPropietarias", DDSubcartera.class);
 		mapa.put("tiposUsoDestino", DDTipoUsoDestino.class);
 		mapa.put("acabadosCarpinteria", DDAcabadoCarpinteria.class);
 		mapa.put("estadosActivo", DDEstadoActivo.class);
@@ -163,6 +164,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposAlquilerActivo", DDTipoAlquiler.class);
 		mapa.put("resultadoTanteo", DDResultadoTanteo.class);
 		mapa.put("tipoTenedor", DDTipoTenedor.class);
+		mapa.put("tipoOperacionGasto", DDTipoOperacionGasto.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

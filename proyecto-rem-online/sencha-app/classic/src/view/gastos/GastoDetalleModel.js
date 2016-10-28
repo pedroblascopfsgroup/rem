@@ -174,6 +174,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			}   
     	},
     	
+    	comboTipoOperacion: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoOperacionGasto'}
+			}   
+    	},
+    	
     	comboSubtiposGasto: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {

@@ -246,15 +246,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Validación para la actualización de ofertas
 			oferta = getOfertaByIdOfertaWebcomNumOfertaRem(ofertaDto.getIdOfertaWebcom(), ofertaDto.getIdOfertaRem());
 			if (Checks.esNulo(oferta)) {
-				errorsList.put("idVisitaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 
 			// Mirar si hace falta validar que no se pueda modificar la
 			// oferta si ha pasado al comité
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
 					&& !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)) {
-				errorsList.put("idVisitaWebcom", "No es posible actualizar la oferta porque se encuentra en el estado: "
-						+ oferta.getEstadoOferta().getDescripcion());
+				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdVisitaRem())) {

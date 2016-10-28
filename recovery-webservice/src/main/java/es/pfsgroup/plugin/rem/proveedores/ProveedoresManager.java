@@ -464,7 +464,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(personaContacto, "usuario", usuario);
 			}
 			if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
-				Filter direccionFilter = genericDao.createFilter(FilterType.EQUALS, "id", dtoPersonaContacto.getDelegacion());
+				Filter direccionFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getDelegacion()));
 				ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, direccionFilter);
 				beanUtilNotNull.copyProperty(personaContacto, "delegacion", delegacion);
 			}
@@ -721,7 +721,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(direccionDelegacion, "provincia", provincia);
 			}
 			if(!Checks.esNulo(dtoDireccionDelegacion.getLocalidadCodigo())) {
-				Filter filterLocalidad = genericDao.createFilter(FilterType.EQUALS, "id", dtoDireccionDelegacion.getLocalidadCodigo());
+				Filter filterLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoDireccionDelegacion.getLocalidadCodigo());
 				Localidad localidad = (Localidad) genericDao.get(Localidad.class, filterLocalidad);
 				beanUtilNotNull.copyProperty(direccionDelegacion, "localidad", localidad);
 			}

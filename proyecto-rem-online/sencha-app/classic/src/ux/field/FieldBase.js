@@ -57,6 +57,17 @@ Ext.define('HreRem.ux.field.FieldBase', {
 	            me.publishState('value', me.getValue());
 	        }
 	    }
+    },
+    
+    setAllowBlank: function(allowBlank) {
+    	var me = this;
+    	me.allowBlank = allowBlank;
+    },
+    
+    getAllowBlank: function() {
+    	var me = this;
+    	return me.allowBlank;
+    	
     }
  
 

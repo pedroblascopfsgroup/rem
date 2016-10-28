@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import net.sf.json.JSONObject;
@@ -38,6 +39,9 @@ public interface RestApi {
 	public static final String REST_MSG_REPETEAD_REQUEST = "REPETEAD_REQUEST";
 	public static final String REST_MSG_MISSING_REQUIRED_FIELDS = "MISSING_REQUIRED_FIELDS";
 	public static final String REST_NO_RELATED_OFFER = "NO_EXISTE_OFERTA_RELACIONADA";
+	public static final String REST_NO_RELATED_OFFER_ACCEPTED = "NO_EXISTE_OFERTA_ACEPTADA_RELACIONADA";
+	public static final String REST_NO_RELATED_EXPEDIENT = "NO_EXISTE_EXPEDIENTE_RELACIONADO";
+	public static final String REST_NO_RELATED_COND_EXPEDIENT = "NO_EXISTE_CONDICIONANTE_EXPEDIENTE_RELACIONADO";	
 	public static final String REST_NO_RELATED_ASSET = "SIN_ACTIVO_RELACIONADO_CON_LA_OFERTA";
 	public static final String REST_MSG_MISSING_REQUIRED = "REQUIRED";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
@@ -56,7 +60,7 @@ public interface RestApi {
 	 * @param signature
 	 * @return
 	 */
-	public boolean validateSignature(Broker broker, String signature, String peticion, ALGORITMO_FIRMA algoritmoFirma)
+	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException;
 
 	/**
@@ -138,7 +142,18 @@ public interface RestApi {
 	 * @param response
 	 * @param model
 	 */
-	public void sendResponse(HttpServletResponse response, ModelMap model);
+	public void sendResponse(HttpServletResponse response, ModelMap model,RestRequestWrapper request);
+	
+	/**
+	 * Escribe en la salida standard una respuesta JSON
+	 * 
+	 * @param response
+	 * @param model
+	 * @param request
+	 * @param jsonResp
+	 * @param result
+	 */
+	public void sendResponse(HttpServletResponse response, RestRequestWrapper request,JSONObject jsonResp,String result);
 
 	/**
 	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir
@@ -166,7 +181,7 @@ public interface RestApi {
 	 * @param req
 	 * @return
 	 */
-	public PeticionRest crearPeticionObj(ServletRequest req);
+	public PeticionRest crearPeticionObj(RestRequestWrapper req);
 
 	/**
 	 * Obtiene el nombre del del servicio ejecutado
@@ -199,6 +214,15 @@ public interface RestApi {
 	 * @param errorCode
 	 * @param jsonFields
 	 */
-	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields);
+	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields,RestRequestWrapper req);
+	
+	/**
+	 * Realiza la configuracion de la sesión
+	 * 
+	 * @param response
+	 * @param workingCode
+	 * @throws Exception
+	 */
+	public void doSessionConfig(ServletResponse response, String workingCode) throws Exception;
 
 }

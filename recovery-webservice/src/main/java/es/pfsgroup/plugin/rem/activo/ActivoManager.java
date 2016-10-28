@@ -2385,6 +2385,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			try {
 				beanUtilNotNull.copyProperty(dto, "id", activoIntegrado.getId());
 				if(!Checks.esNulo(activoIntegrado.getProveedor())) {
+					beanUtilNotNull.copyProperty(dto, "idProveedor", activoIntegrado.getProveedor().getId());
 					beanUtilNotNull.copyProperty(dto, "pagosRetenidos", activoIntegrado.getRetenerPago());
 					beanUtilNotNull.copyProperty(dto, "codigoProveedorRem", activoIntegrado.getProveedor().getCodigoProveedorRem());
 					beanUtilNotNull.copyProperty(dto, "nifProveedor", activoIntegrado.getProveedor().getDocIdentificativo());
@@ -2571,6 +2572,32 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	@Override
+	public int cantidadOfertas(Activo activo) {
+		int res = 0;
+		for (ActivoOferta activoOferta : activo.getOfertas()) {
+			if (activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals("01") || 
+				activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals("04")) {
+				res++;
+			}
+		}
+		return res;
+	}
+	
+	@Override
+	public Double mayorOfertaRecibida(Activo activo){
+		Double importeMax = new Double(0);
+		for (ActivoOferta activoOferta : activo.getOfertas()) {
+			if (activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals("01") || 
+				activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals("04")) {
+				if ( Double.compare(activoOferta.getPrimaryKey().getOferta().getImporteOferta(), importeMax)>0 ) {
+					importeMax = activoOferta.getPrimaryKey().getOferta().getImporteOferta();
+				}
+			}
+		}
+		return importeMax;
 	}
 	
 }

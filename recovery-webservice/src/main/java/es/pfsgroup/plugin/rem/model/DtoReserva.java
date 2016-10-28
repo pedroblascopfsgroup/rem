@@ -9,17 +9,11 @@ import es.capgemini.devon.dto.WebDto;
  * Dto que gestiona la informacion de los datos básicos de una reserva.
  *  
  * @author Jose Villel
- *
  */
 public class DtoReserva extends WebDto {
-	
-	
-  
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 3574353502838449106L;
-	
+
 
 	private Long idReserva;
 	
@@ -44,12 +38,8 @@ public class DtoReserva extends WebDto {
 	private String comprador;
 	
 	private String Observaciones;
-	
-	private Date fechaAnulacion;
-	
-	private String motivoAnulacion;
-	
-	private String estadoDevolucionCodigo;
+
+
 
 	public Long getIdReserva() {
 		return idReserva;
@@ -146,30 +136,4 @@ public class DtoReserva extends WebDto {
 	public void setObservaciones(String observaciones) {
 		Observaciones = observaciones;
 	}
-
-	public Date getFechaAnulacion() {
-		return fechaAnulacion;
-	}
-
-	public void setFechaAnulacion(Date fechaAnulacion) {
-		this.fechaAnulacion = fechaAnulacion;
-	}
-
-	public String getMotivoAnulacion() {
-		return motivoAnulacion;
-	}
-
-	public void setMotivoAnulacion(String motivoAnulacion) {
-		this.motivoAnulacion = motivoAnulacion;
-	}
-
-	public String getEstadoDevolucionCodigo() {
-		return estadoDevolucionCodigo;
-	}
-
-	public void setEstadoDevolucionCodigo(String estadoDevolucionCodigo) {
-		this.estadoDevolucionCodigo = estadoDevolucionCodigo;
-	}  
-
-   	
 }

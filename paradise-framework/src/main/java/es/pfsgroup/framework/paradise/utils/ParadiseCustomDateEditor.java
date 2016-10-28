@@ -56,5 +56,13 @@ public class ParadiseCustomDateEditor extends CustomDateEditor {
 			}
 		}
 	}
+    
+    /**
+	 * Format the Date as String, using the specified DateFormat.
+	 */
+	public String getAsText() {
+		Date value = (Date) getValue();
+		return (value != null ? this.dateFormat.format(value) : "");
+	}
 
 }

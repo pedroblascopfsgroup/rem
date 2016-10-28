@@ -899,7 +899,7 @@ Ext.define('HreRem.controller.ActivosController', {
     
     abrirDetalleProveedor: function(record, refLinks) {
     	var me = this,
-    	titulo = "Proveedor " + record.get("id"),
+    	titulo = "Proveedor " + record.get("codigo"),
     	id = record.get("id");
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleProveedorById(id, titulo, refLinks);    	

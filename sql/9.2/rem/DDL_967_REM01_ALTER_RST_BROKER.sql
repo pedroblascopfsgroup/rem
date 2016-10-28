@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=Ramon Llinares 
---## FECHA_CREACION=20161018
+--## AUTOR=Ramon Llinares
+--## FECHA_CREACION=20161025
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
---## PRODUCTO=NO
---## Finalidad: Ampliar la tabla que contiene la información de las reservas
+--## PRODUCTO=HREOS-1013
+--## Finalidad: Añadir columna response
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,8 +35,8 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'RES_RESERVAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'RST_PETICION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     
     /* -- ARRAY CON NUEVAS COLUMNAS */
@@ -44,19 +44,12 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'DD_EDE_ID',		 					'NUMBER(16,0)',						'Código único del estado de devolución.')
+    	T_ALTER(  'RST_PETICION_RESPONSE',				'CLOB',		'Datos de la respuesta'),
+    	T_ALTER(  'RST_PETICION_TIME',				'NUMBER(16,0)',		'Tiempo ejecucion')
 		);
     V_T_ALTER T_ALTER;
     
-          /* ARRAY CON NUEVAS FOREIGN KEYS */
-    TYPE T_FK IS TABLE OF VARCHAR2(4000);
-    TYPE T_ARRAY_FK IS TABLE OF T_FK;
-    V_FK T_ARRAY_FK := T_ARRAY_FK(
-    			--NOMBRE FK 							CAMPO FK 					TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_EDE_ESTADOS_DEVOLUCION',						'DD_EDE_ID',				V_ESQUEMA||'.DD_EDE_ESTADOS_DEVOLUCION',				'DD_EDE_ID'			)
-    );
-    V_T_FK T_FK;
-    
+
 
 
 BEGIN
@@ -93,48 +86,10 @@ BEGIN
 		END IF;
 
 	END LOOP;
-	
-	
-	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
-	IF V_CREAR_FK = 'SI' THEN
 
-		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
-		FOR I IN V_FK.FIRST .. V_FK.LAST
-		LOOP
-
-			V_T_FK := V_FK(I);	
-
-			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
-			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_FK(1)||'''';
-			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-			IF V_NUM_TABLAS = 0 THEN
-				--No existe la FK y la creamos
-				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
-				V_MSQL := '
-					ALTER TABLE '||V_TEXT_TABLA||'
-					ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
-					(
-					  '||V_T_FK(2)||'
-					)
-					REFERENCES '||V_T_FK(3)||'
-					(
-					  '||V_T_FK(4)||' 
-					)
-					ON DELETE SET NULL ENABLE
-				';
-
-				EXECUTE IMMEDIATE V_MSQL;
-				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
-				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
-
-			END IF;
-
-		END LOOP;
-
-	END IF;
 
 	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKS .... OK *************************************************');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKs ... OK *************************************************');
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
 	

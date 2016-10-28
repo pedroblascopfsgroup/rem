@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -154,7 +155,7 @@ public class ActivoController {
 
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         dateFormat.setLenient(false);
-
+        dateFormat.setTimeZone(TimeZone.getTimeZone("Etc/GMT-2"));
         binder.registerCustomEditor(Date.class, new ParadiseCustomDateEditor(dateFormat, true));
         
         binder.registerCustomEditor(boolean.class, new CustomBooleanEditor("true", "false", true));

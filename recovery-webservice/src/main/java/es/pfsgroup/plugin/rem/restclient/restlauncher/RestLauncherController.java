@@ -31,26 +31,26 @@ public class RestLauncherController {
 	}
 	
 	@RequestMapping
-	public String enviarActivosObraNuevaWebcom() throws ErrorServicioWebcom {
-		launcher.enviarActivosObrasNuevas();
+	public String enviarCambiosActivosObraNuevaWebcom() throws ErrorServicioWebcom {
+		launcher.enviarCambiosActivosObrasNuevas();
 		return "default";
 	}
 	
 	@RequestMapping
-	public String enviarCabecerasObrasNuevas() throws ErrorServicioWebcom {
-		launcher.enviarCabecerasObrasNuevas();
+	public String enviarCambiosCabecerasObrasNuevas() throws ErrorServicioWebcom {
+		launcher.enviarCambiosCabecerasObrasNuevas();
 		return "default";
 	}
 	
 	@RequestMapping
-	public String enviarEstadosInformeMediador() throws ErrorServicioWebcom {
-		launcher.enviarEstadosInformeMediador();
+	public String enviarCambiosEstadosInformeMediador() throws ErrorServicioWebcom {
+		launcher.enviarCambiosEstadosInformeMediador();
 		return "default";
 	}
 	
 	@RequestMapping
-	public String enviarEstadoNotificacion() throws ErrorServicioWebcom {
-		launcher.enviarEstadoNotificacion();
+	public String enviarCambiosEstadoNotificacion() throws ErrorServicioWebcom {
+		launcher.enviarCambiosEstadoNotificacion();
 		return "default";
 	}
 

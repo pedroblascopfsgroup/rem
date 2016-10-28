@@ -13,6 +13,8 @@ public class DtoGastosFilter extends WebDto {
 
 	private Long id;
 	private Long numGastoHaya;
+	private Long idActivo;
+	private Long numActivo;
 	private Long numFactura;
 	private String tipo;
 	private String subtipo;
@@ -63,6 +65,18 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setNumGastoHaya(Long numGastoHaya) {
 		this.numGastoHaya = numGastoHaya;
+	}
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+	public Long getNumActivo() {
+		return numActivo;
+	}
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
 	}
 	public Long getNumFactura() {
 		return numFactura;

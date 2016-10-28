@@ -51,7 +51,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.proveedor.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'codigoProveedor'
+	    	                    	 dataIndex: 'nombreProveedor'
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.fecha.emision.gasto'),

@@ -36,12 +36,18 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCliente;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaOferta;
 import es.pfsgroup.plugin.rem.model.DtoTasacionInforme;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.recovery.api.ExpedienteApi;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -63,6 +69,9 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ExpedienteApi expedienteApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -134,6 +143,71 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			mapaValores.put("Entrada","***");
 			mapaValores.put("CantidadOfertas", notNull(activoApi.cantidadOfertas(activo)));
 			mapaValores.put("MayorOfertaRecibida", String.valueOf(activoApi.mayorOfertaRecibida(activo)));
+			
+			mapaValores.put("ImportePropuesta", notNull(oferta.getImporteOfertaAprobado()));
+			mapaValores.put("ImporteInicial", notNull(oferta.getImporteOferta()));
+			mapaValores.put("FechaContraoferta", formatDate(oferta.getFechaContraoferta()));
+			mapaValores.put("GastosCompraventa", "***");
+			
+			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
+			if (ofertaAceptada==null) {
+				model.put("error", RestApi.REST_NO_RELATED_OFFER_ACCEPTED);
+				throw new Exception(RestApi.REST_NO_RELATED_OFFER_ACCEPTED);					
+			}
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
+			ExpedienteComercial expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
+			if (ofertaAceptada==null) {
+				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
+				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
+			}
+			CondicionanteExpediente condExp = expediente.getCondicionante();
+			if (condExp==null) {
+				model.put("error", RestApi.REST_NO_RELATED_COND_EXPEDIENT);
+				throw new Exception(RestApi.REST_NO_RELATED_COND_EXPEDIENT);					
+			}
+
+			mapaValores.put("Contraoferta", notNull(oferta.getImporteContraOferta()));
+			
+//			ActivoProveedor proveedor = null;
+//			if (expediente.getPosicionamientos()!=null && expediente.getPosicionamientos().get(0)!=null &&
+//				expediente.getPosicionamientos().get(0).getNotario()!=null) {
+//				mapaValores.put("Notaria", notNull(expediente.getPosicionamientos().get(0).getNotario().getNombre()));
+//			}
+
+			mapaValores.put("Impuestos", notNull(condExp.getCargasImpuestos()));
+			mapaValores.put("Comunidades", notNull(condExp.getCargasComunidad()));
+			mapaValores.put("Otros", notNull(condExp.getCargasOtros()));
+			mapaValores.put("Importe", notNull(condExp.getGastosNotaria()));
+			mapaValores.put("OpCondicionadaa", "***");
+			
+			DDSituacionesPosesoria sitaPosesion = condExp.getSituacionPosesoria();
+			Integer poseInicial = condExp.getPosesionInicial();
+			if (sitaPosesion!=null && poseInicial!=null) {
+				mapaValores.put("Posesion", sitaPosesion.getDescripcionLarga()+"/"); //<---------????
+			}
+			
+			mapaValores.put("Tratamientodecargas", "***");
+			
+			DDTiposPorCuenta tipoPlusValia = condExp.getTipoPorCuentaPlusvalia();
+			if (tipoPlusValia!=null) {
+				mapaValores.put("Plusvalia", notNull(tipoPlusValia.getDescripcionLarga()));
+			}
+			DDTiposPorCuenta tipoNotaria = condExp.getTipoPorCuentaNotaria();
+			if (tipoNotaria!=null) {
+				mapaValores.put("Notaria", notNull(tipoNotaria.getDescripcionLarga()));
+			}
+			DDTiposPorCuenta tipoOtros = condExp.getTipoPorCuentaGastosOtros();
+			if (tipoOtros!=null) {
+				mapaValores.put("OtrosImporteOferta",  notNull(tipoOtros.getDescripcionLarga()));
+			}
+			mapaValores.put("Reserva", "");
+			if (activo.getInfoRegistral()!=null && activo.getInfoRegistral().getInfoRegistralBien()!=null) {
+				if (activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()==null) {
+					mapaValores.put("Inscripcion", "SI");
+				} else {
+					mapaValores.put("Inscripcion", "NO");
+				}
+			}
 			
 			
 		} catch (JsonParseException e1) {

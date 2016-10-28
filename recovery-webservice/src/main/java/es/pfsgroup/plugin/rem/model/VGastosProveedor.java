@@ -94,6 +94,12 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "DD_EAP_DESCRIPCION")
 	private String estadoAutorizacionPropietarioDescripcion;
 	
+	@Column(name = "DD_EGA_CODIGO")
+	private String estadoGastoCodigo;
+	
+	@Column(name = "DD_EGA_DESCRIPCION")
+	private String estadoGastoDescripcion;
+	
 	@Column(name = "GPV_NUM_GASTO_GESTORIA")
 	private Long numGastoGestoria;
 	
@@ -139,6 +145,17 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="RANGO")
 	private Integer rango;
 	
+	@Column(name="DD_CRA_CODIGO")
+	private String entidadPropietariaCodigo;
+	
+	@Column(name="DD_CRA_DESCRIPCION")
+	private String entidadPropietariaDescripcion;
+	
+	@Column(name="DD_SCR_CODIGO")
+	private String subentidadPropietariaCodigo;
+	
+	@Column(name="DD_SCR_DESCRIPCION")
+	private String subentidadPropietariaDescripcion;
 	
 
 	public String getId() {
@@ -344,6 +361,22 @@ public class VGastosProveedor implements Serializable {
 		this.estadoAutorizacionPropietarioDescripcion = estadoAutorizacionPropietarioDescripcion;
 	}
 
+	public String getEstadoGastoCodigo() {
+		return estadoGastoCodigo;
+	}
+
+	public void setEstadoGastoCodigo(String estadoGastoCodigo) {
+		this.estadoGastoCodigo = estadoGastoCodigo;
+	}
+
+	public String getEstadoGastoDescripcion() {
+		return estadoGastoDescripcion;
+	}
+
+	public void setEstadoGastoDescripcion(String estadoGastoDescripcion) {
+		this.estadoGastoDescripcion = estadoGastoDescripcion;
+	}
+
 	public Long getNumGastoGestoria() {
 		return numGastoGestoria;
 	}
@@ -463,6 +496,39 @@ public class VGastosProveedor implements Serializable {
 	public void setRango(Integer rango) {
 		this.rango = rango;
 	}
-	
+
+	public String getEntidadPropietariaCodigo() {
+		return entidadPropietariaCodigo;
+	}
+
+	public void setEntidadPropietariaCodigo(String entidadPropietariaCodigo) {
+		this.entidadPropietariaCodigo = entidadPropietariaCodigo;
+	}
+
+	public String getEntidadPropietariaDescripcion() {
+		return entidadPropietariaDescripcion;
+	}
+
+	public void setEntidadPropietariaDescripcion(
+			String entidadPropietariaDescripcion) {
+		this.entidadPropietariaDescripcion = entidadPropietariaDescripcion;
+	}
+
+	public String getSubentidadPropietariaCodigo() {
+		return subentidadPropietariaCodigo;
+	}
+
+	public void setSubentidadPropietariaCodigo(String subentidadPropietariaCodigo) {
+		this.subentidadPropietariaCodigo = subentidadPropietariaCodigo;
+	}
+
+	public String getSubentidadPropietariaDescripcion() {
+		return subentidadPropietariaDescripcion;
+	}
+
+	public void setSubentidadPropietariaDescripcion(
+			String subentidadPropietariaDescripcion) {
+		this.subentidadPropietariaDescripcion = subentidadPropietariaDescripcion;
+	}	
 	 
 }

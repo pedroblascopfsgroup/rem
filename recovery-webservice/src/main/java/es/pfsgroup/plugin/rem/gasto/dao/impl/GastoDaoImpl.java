@@ -39,6 +39,10 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
    		if(!Checks.esNulo(dtoGastosFilter.getEstadoAutorizacionPropietarioCodigo())){
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.estadoAutorizacionPropietarioCodigo",dtoGastosFilter.getEstadoAutorizacionPropietarioCodigo());
    		}
+   		if(!Checks.esNulo(dtoGastosFilter.getEstadoGastoCodigo())){
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.estadoGastoCodigo",dtoGastosFilter.getEstadoGastoCodigo());
+   		}
+   		
    		
    		//////////////////////// Por gasto
    		
@@ -126,11 +130,22 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
    			HQLBuilder.addFiltroLikeSiNotNull(hb,"vgasto.nombreProveedor",dtoGastosFilter.getNombreProveedor(), true);
    		}
    		
-   		if(Checks.esNulo(dtoGastosFilter.getNumActivo()) && Checks.esNulo(dtoGastosFilter.getIdActivo())) {
+   		if(Checks.esNulo(dtoGastosFilter.getNumActivo())) {
    			HQLBuilder.addFiltroIgualQue(hb, "vgasto.rango", 1);
-   		} 
+   		} else {
+   			HQLBuilder.addFiltroIgualQue(hb, "vgasto.numActivo", dtoGastosFilter.getNumActivo());
+   		}
    		
+   		////////////////////// Por activo / agrupación
    		
+   		if(!Checks.esNulo(dtoGastosFilter.getEntidadPropietariaCodigo())){
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.entidadPropietariaCodigo",dtoGastosFilter.getEntidadPropietariaCodigo());
+   		}
+   		
+   		if(!Checks.esNulo(dtoGastosFilter.getSubentidadPropietariaCodigo())){
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.entidadPropietariaCodigo",dtoGastosFilter.getSubentidadPropietariaCodigo());
+   		}
+
 	
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		

@@ -116,11 +116,13 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 			}   
     	},
     	
-    	otrasSituacionesGasto: {
-			data : [
-		        {"codigo":"01", "descripcion":"Anulado"},
-		        {"codigo":"02", "descripcion":"Retenido Pago"}
-		    ]
+    	estadosGasto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoGasto'}
+			}   
 			
     	},
     	
@@ -140,8 +142,25 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'subtipoProveedor'}
 			}
-		}
+		},
 		
-    		
+		comboEntidadPropietaria: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesPropietarias'}
+			}
+		},
+		
+		comboSubentidadPropietaria: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subentidadesPropietarias'}
+			}
+		}
     }
+	    
 });

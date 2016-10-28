@@ -224,6 +224,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
                 }
             }]);
     		chainedCombo.setDisabled(false);
+    		chainedCombo.validate();
     	}
     	
 		if (me.lookupReference(chainedCombo.chainedReference) != null) {

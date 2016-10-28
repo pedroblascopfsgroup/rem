@@ -24,7 +24,7 @@ public class DtoPersonaContacto extends WebDto {
 	private String telefono;
 	private String email;
 	private String direccion;
-	private Long delegacion;
+	private String delegacion;
 	private Date fechaAlta;
 	private Date fechaBaja;
 	private String observaciones;
@@ -136,10 +136,10 @@ public class DtoPersonaContacto extends WebDto {
 	public void setProveedorID(String proveedorID) {
 		this.proveedorID = proveedorID;
 	}
-	public Long getDelegacion() {
+	public String getDelegacion() {
 		return delegacion;
 	}
-	public void setDelegacion(Long delegacion) {
+	public void setDelegacion(String delegacion) {
 		this.delegacion = delegacion;
 	}
 	

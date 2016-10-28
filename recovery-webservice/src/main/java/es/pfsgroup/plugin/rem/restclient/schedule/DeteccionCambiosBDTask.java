@@ -114,13 +114,17 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			running = false;
 		}
 	}
+	
+	public void detectaCambios() {
+		detectaCambios(null);
+	}
 
 	/**
 	 * Inicia la detección de cambios en BD.
 	 * 
 	 * @param class1
 	 */
-	public void detectaCambios() {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute) {
 		if (running) {
 			logger.warn("El detector de cambios en BD ya se está ejecutando");
 			return;
@@ -133,8 +137,14 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		long iteracion = System.currentTimeMillis();
 		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
 		try {
-			if ((registroCambiosHandlers != null) && (!registroCambiosHandlers.isEmpty())) {
-				for (DetectorCambiosBD handler : registroCambiosHandlers) {
+			List<DetectorCambiosBD> registroCambiosHandlersAjecutar = registroCambiosHandlers;
+			if(handlerToExecute!=null){
+				registroCambiosHandlersAjecutar = new ArrayList<DetectorCambiosBD>();
+				registroCambiosHandlersAjecutar.add(handlerToExecute);
+			}
+			
+			if ((registroCambiosHandlersAjecutar != null) && (!registroCambiosHandlersAjecutar.isEmpty())) {
+				for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
 					RestLlamada registro = new RestLlamada();
 					registro.setIteracion(iteracion);
 					boolean somethingdone = false;

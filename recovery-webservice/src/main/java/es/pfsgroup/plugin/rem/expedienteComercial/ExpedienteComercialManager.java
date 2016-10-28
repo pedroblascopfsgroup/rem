@@ -481,20 +481,26 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public boolean saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dtoTanteoYRetractoOferta, Long idExpediente) {
 	
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
-		Oferta oferta = expedienteComercial.getOferta();
+		Oferta oferta = null;
+		
+		if(!Checks.esNulo(expedienteComercial))
+			oferta = expedienteComercial.getOferta();
 		
 		if(!Checks.esNulo(oferta)){
-		
-			oferta.setCondicionesTransmision(dtoTanteoYRetractoOferta.getCondicionesTransmision());
-			oferta.setFechaComunicacionRegistro(dtoTanteoYRetractoOferta.getFechaComunicacionReg());
-			oferta.setFechaContestacion(dtoTanteoYRetractoOferta.getFechaContestacion());
-			
-			oferta.setFechaSolicitudVisita(dtoTanteoYRetractoOferta.getFechaSolicitudVisita());
-			oferta.setFechaRealizacionVisita(dtoTanteoYRetractoOferta.getFechaRealizacionVisita());
-		
-			oferta.setFechaFinTanteo(dtoTanteoYRetractoOferta.getFechaFinTanteo());
-			oferta.setResultadoTanteo((DDResultadoTanteo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoTanteo.class, dtoTanteoYRetractoOferta.getResultadoTanteoCodigo()));
-			oferta.setFechaMaxFormalizacion(dtoTanteoYRetractoOferta.getFechaMaxFormalizacion());
+			try {
+				
+				beanUtilNotNull.copyProperties(oferta, dtoTanteoYRetractoOferta);
+				
+				if(!Checks.esNulo(dtoTanteoYRetractoOferta.getResultadoTanteoCodigo()))
+					oferta.setResultadoTanteo((DDResultadoTanteo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoTanteo.class, dtoTanteoYRetractoOferta.getResultadoTanteoCodigo()));
+				
+			} catch (IllegalAccessException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 		
 		genericDao.save(Oferta.class, oferta);
@@ -698,31 +704,29 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	private DtoTanteoYRetractoOferta expedienteToDtoTanteoYRetractoOferta(ExpedienteComercial expediente) {
 
 		DtoTanteoYRetractoOferta dtoTanteoYRetractoOferta = new DtoTanteoYRetractoOferta();
-		Oferta oferta = expediente.getOferta();
+		Oferta oferta = null;
+		
+		if(!Checks.esNulo(expediente))
+			oferta = expediente.getOferta();
 
 		if(!Checks.esNulo(oferta)){
-			
-			// ID y NUM Oferta
-			dtoTanteoYRetractoOferta.setIdOferta(oferta.getId());
-			dtoTanteoYRetractoOferta.setNumOferta(oferta.getNumOferta());
-			
-			// Condiciones TX
-			dtoTanteoYRetractoOferta.setCondicionesTransmision(oferta.getCondicionesTransmision());
-			
-			// Fechas Comunicacion y Contestacion
-			dtoTanteoYRetractoOferta.setFechaComunicacionReg(oferta.getFechaComunicacionRegistro());
-			dtoTanteoYRetractoOferta.setFechaContestacion(oferta.getFechaContestacion());
-			
-			// Fechas visita
-			dtoTanteoYRetractoOferta.setFechaSolicitudVisita(oferta.getFechaSolicitudVisita());
-			dtoTanteoYRetractoOferta.setFechaRealizacionVisita(oferta.getFechaRealizacionVisita());
-			
-			//Fechas y resultado Tanteo
-			dtoTanteoYRetractoOferta.setFechaFinTanteo(oferta.getFechaFinTanteo());
-			if(!Checks.esNulo(oferta.getResultadoTanteo()))
-				dtoTanteoYRetractoOferta.setResultadoTanteoCodigo(oferta.getResultadoTanteo().getCodigo());
-			dtoTanteoYRetractoOferta.setFechaMaxFormalizacion(oferta.getFechaMaxFormalizacion());
-			
+			try {
+				
+				beanUtilNotNull.copyProperties(dtoTanteoYRetractoOferta, oferta);
+				dtoTanteoYRetractoOferta.setIdOferta(oferta.getId());
+				
+				if(!Checks.esNulo(oferta.getResultadoTanteo())){
+					dtoTanteoYRetractoOferta.setResultadoTanteoCodigo(oferta.getResultadoTanteo().getCodigo());
+					dtoTanteoYRetractoOferta.setResultadoTanteoDescripcion(oferta.getResultadoTanteo().getDescripcion());
+				}
+				
+			} catch (IllegalAccessException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 		
 		return dtoTanteoYRetractoOferta;

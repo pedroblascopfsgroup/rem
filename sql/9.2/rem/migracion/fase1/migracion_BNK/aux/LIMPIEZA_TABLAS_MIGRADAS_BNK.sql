@@ -203,6 +203,14 @@ BEGIN
   delete from rem01.VIS_VISITAS vis where EXISTS (SELECT 1 FROM rem01.ACT_ACTIVO ACT WHERE ACT.ACT_ID = VIS.ACT_ID AND ACT.usuariocrear= 'MIGRAREM01BNK');
   commit;
   delete from rem01.ACT_ACTIVO where usuariocrear= 'MIGRAREM01BNK';
+  commit;
+  delete from rem01.ACT_NOT_EXISTS where TABLA_MIG LIKE '%_BNK%';
+  delete from rem01.AGR_NOT_EXISTS where TABLA_MIG LIKE '%_BNK%'; 
+  delete from rem01.CPR_NOT_EXISTS where TABLA_MIG LIKE '%_BNK%'; 
+  delete from rem01.TBJ_NOT_EXISTS where TABLA_MIG LIKE '%_BNK%'; 
+  delete from rem01.PVE_NOT_EXISTS where TABLA_MIG LIKE '%_BNK%'; 
+  delete from rem01.PRO_NOT_EXISTS where TABLA_MIG LIKE '%_BNK%'; 
+  delete from rem01.DD_COD_NOT_EXISTS
   commit;  
   /*FIN BORRADO*/
   

@@ -90,6 +90,8 @@ BEGIN
 			EXECUTE IMMEDIATE V_MSQL;
 			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
 			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('[INFO] Nuevas columnas de ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... YA CREADAS. NO SE HACE NADA');
 		END IF;
 
 	END LOOP;
@@ -127,6 +129,8 @@ BEGIN
 				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
 				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
 
+			ELSE
+				DBMS_OUTPUT.PUT_LINE('[INFO] Nuevas FK de ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... YA CREADAS. NO SE HACE NADA');
 			END IF;
 
 		END LOOP;

@@ -115,10 +115,12 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			Long tipo = genericDao.get(EXTDDTipoGestor.class, filter).getId();		
 			if (gestorActivoApi.getGestorByActivoYTipo(activo, tipo)!=null) {
 				mapaValores.put("Gestor", gestorActivoApi.getGestorByActivoYTipo(activo, tipo).getApellidoNombre());
-			} 
+			} else {
+				mapaValores.put("Gestor", notNull(null));
+			}
 			
 			mapaValores.put("FPublWeb", formatDate(activo.getFechaPublicable()));
-			mapaValores.put("NumVisitasWeb", "***");
+			mapaValores.put("NumVisitasWeb", notNull(activo.getVisitas().size()));
 			
 			mapaValores.put("Direccion",notNull(activo.getDireccion()));
 			if (activo.getTipoActivo()!=null) {
@@ -156,7 +158,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			}
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
 			ExpedienteComercial expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
-			if (ofertaAceptada==null) {
+			if (expediente==null) {
 				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
 				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
 			}
@@ -180,35 +182,56 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			mapaValores.put("Importe", notNull(condExp.getGastosNotaria()));
 			mapaValores.put("OpCondicionadaa", "***");
 			
+			
+//			Si con posesión inicial "sí": El ofertante requiere que haya posesión inicial.
+//			Si con posesión inicial "no": El ofertante acepta que no haya posesión inicial.
+//			Si con situación posesoria "vacío": El ofertante acepta cualquier situación posesoria.
+//			Si con situación posesoria "libre": El ofertante requiere que el activo esté libre de ocupantes.
+//			Si con situación posesoria "ocupado con título": El ofertante acepta que el activo esté arrendado.
 			DDSituacionesPosesoria sitaPosesion = condExp.getSituacionPosesoria();
 			Integer poseInicial = condExp.getPosesionInicial();
 			if (sitaPosesion!=null && poseInicial!=null) {
-				mapaValores.put("Posesion", sitaPosesion.getDescripcionLarga()+"/"); //<---------????
+				mapaValores.put("Posesion", "***");
+			} else {
+				mapaValores.put("Posesion", notNull(null));
 			}
 			
+			
+//			Si hay contenido en impuestos y en el combo "por cuenta de" pone "comprador": El comprador asume el pago de los impuestos pendientes.
+//			Si hay contenido en comunidades y en el combo "por cuenta de" pone "vendedor": El comprador no asume el pago de los impuestos pendientes.
+//			Si hay contenido en otros y en el combo "por cuenta de" pone "según ley": El comprador requiere que los gastos sean asumidos por quien corresponda según ley.
 			mapaValores.put("Tratamientodecargas", "***");
 			
 			DDTiposPorCuenta tipoPlusValia = condExp.getTipoPorCuentaPlusvalia();
 			if (tipoPlusValia!=null) {
 				mapaValores.put("Plusvalia", notNull(tipoPlusValia.getDescripcionLarga()));
+			} else {
+				mapaValores.put("Plusvalia", notNull(null));
 			}
 			DDTiposPorCuenta tipoNotaria = condExp.getTipoPorCuentaNotaria();
 			if (tipoNotaria!=null) {
 				mapaValores.put("Notaria", notNull(tipoNotaria.getDescripcionLarga()));
+			} else {
+				mapaValores.put("Notaria", notNull(null));
 			}
 			DDTiposPorCuenta tipoOtros = condExp.getTipoPorCuentaGastosOtros();
 			if (tipoOtros!=null) {
 				mapaValores.put("OtrosImporteOferta",  notNull(tipoOtros.getDescripcionLarga()));
+			} else {
+				mapaValores.put("OtrosImporteOferta", notNull(null));
 			}
-			mapaValores.put("Reserva", "");
+			mapaValores.put("Reserva", "***");
 			if (activo.getInfoRegistral()!=null && activo.getInfoRegistral().getInfoRegistralBien()!=null) {
 				if (activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()==null) {
 					mapaValores.put("Inscripcion", "SI");
 				} else {
 					mapaValores.put("Inscripcion", "NO");
 				}
-			}
+			}			
 			
+			mapaValores.put("ValorTasacion", "***");
+			mapaValores.put("ValorEstColabor", "***");
+			mapaValores.put("ValorAprobVenta", "***");
 			
 		} catch (JsonParseException e1) {
 			e1.printStackTrace();
@@ -234,11 +257,13 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 		cliente.setNombreCliente("***");
 		cliente.setDireccionCliente("***");
 		cliente.setDniCliente("***");
+		cliente.setTlfCliente("***");
 		
 		DtoCliente cliente2 = new DtoCliente();
 		cliente2.setNombreCliente("***");
 		cliente2.setDireccionCliente("***");
 		cliente2.setDniCliente("***");
+		cliente2.setTlfCliente("***");
 
 		List<Object> listaCliente = new ArrayList<Object>();
 		listaCliente.add(cliente);

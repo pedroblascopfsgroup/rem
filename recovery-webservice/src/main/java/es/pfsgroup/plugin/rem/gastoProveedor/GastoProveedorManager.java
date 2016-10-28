@@ -994,6 +994,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setUsuarioRetencionPago(usuario);
 						updaterStateApi.updaterStates(gasto, DDEstadoGasto.RETENIDO);
 					}
+					else if(dtoGestionGasto.getComboMotivoRetenerPago().equals("")){//Si borro el campo eliminamos los detalles de retencion y podemos el gasto en estado pendiente
+						gestionGasto.setMotivoRetencionPago(null);
+						gestionGasto.setFechaRetencionPago(null);
+						gestionGasto.setUsuarioRetencionPago(null);
+						updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
+						DDEstadoAutorizacionHaya estadoPendienteAutorizacionHaya= (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
+						gestionGasto.setEstadoAutorizacionHaya(estadoPendienteAutorizacionHaya);
+					}
 					
 					gasto.setGastoGestion(gestionGasto);
 				}

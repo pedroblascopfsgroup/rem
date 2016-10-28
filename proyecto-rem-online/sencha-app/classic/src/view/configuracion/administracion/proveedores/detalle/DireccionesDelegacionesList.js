@@ -64,6 +64,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			            xtype: 'combobox',
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
+			            allowBlank: false,
 			            bind: {
 			            	store: '{comboTipoDireccionProveedor}'
 			            },
@@ -121,6 +122,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			            xtype: 'combobox',
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
+			            allowBlank: false,
 			            bind: {
 			            	store: '{comboTipoVia}'
 			            },
@@ -133,6 +135,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            flex: 1,
 		            editor: {
 		            	xtype: 'textfield',
+		            	allowBlank: false,
 		            	maxLength: 100
 		            }
 		        },
@@ -187,6 +190,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			            reference: 'cbDDColProvincia',
 			            chainedStore: me.storeMunicipios,
 						chainedReference: 'cbDDColMunicipio',
+						editable: false,
+						allowBlank: false,
+						queryMode: 'local',
+						enableKeyEvents:true,
+						listeners: {
+					        keyup: 'onChangeProvinciaChainedCombo'
+						},
 						listConfig: {
 					        listeners: {
 					            itemclick: 'onChangeProvinciaChainedCombo'
@@ -201,7 +211,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			        	descripcion,
         		       	comboEditor = me.columns && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor():null,
         		       	chainedComboEditor = me.columns && me.columns[colIndex-1].getEditor ? me.columns[colIndex-1].getEditor() : null;
-        		       	
+
         		       	if(!Ext.isEmpty(comboEditor)) {
             		       	var store = comboEditor.getStore();
             		       	if(!Ext.isEmpty(store) && !Ext.isEmpty(chainedComboEditor)) {
@@ -209,10 +219,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 	            		       		store.clearFilter();
 	            		       		var record = store.findRecord("codigo", value);
 		            		       	if(!Ext.isEmpty(record)) {
-		            		       		metaData.lastValue = record.getData().descripcion;
+		            		       		if(!(metaData.lastValue instanceof Array)) {
+		            		       			metaData.lastValue = Ext.Array;
+		            		       		}
+		            		       		metaData.lastValue[rowIndex] = record.getData().descripcion;
 		            		       		return record.getData().descripcion;
 		            		       	} else {
-		            		       		return metaData.lastValue ? metaData.lastValue : null;
+		            		       		return metaData.lastValue[rowIndex] ? metaData.lastValue[rowIndex] : null;
 		            		       	}
 	            		       	} else {
 	            		       		if(!store.isLoading()){
@@ -231,10 +244,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            text: HreRem.i18n('header.direcciones.delegaciones.localidad'),
 		            flex: 1,
 		            editor: {
-			            xtype: 'combobox',
+			            xtype: 'comboboxfieldbase',
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
 			            store: me.storeMunicipios,
+			            allowBlank: false,
+			            editable: false,
+			            addUxReadOnlyEditFieldPlugin: false,
 			            reference: 'cbDDColMunicipio'
 			        }
 		        },

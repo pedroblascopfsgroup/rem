@@ -2573,5 +2573,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return false;
 		}
 	}
+
+	@Override
+	public int cantidadOfertas(Activo activo) {
+		int res = 0;
+		for (ActivoOferta activoOferta : activo.getOfertas()) {
+			if (activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals("01") || 
+				activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals("04")) {
+				res++;
+			}
+		}
+		return res;
+	}
+	
+	@Override
+	public Double mayorOfertaRecibida(Activo activo){
+		Double importeMax = new Double(0);
+		for (ActivoOferta activoOferta : activo.getOfertas()) {
+			if (activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals("01") || 
+				activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals("04")) {
+				if ( Double.compare(activoOferta.getPrimaryKey().getOferta().getImporteOferta(), importeMax)>0 ) {
+					importeMax = activoOferta.getPrimaryKey().getOferta().getImporteOferta();
+				}
+			}
+		}
+		return importeMax;
+	}
 	
 }

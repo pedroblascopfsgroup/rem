@@ -174,7 +174,6 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	editFuncion: function(editor, context){
 
 		var me= this;
-			debugger;
 			var estado = context.record.get("codigoEstadoOferta");	
 			if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
 				

@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Ramon Llinares
+--## AUTOR=Luis Caballero
 --## FECHA_CREACION=20161027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-1081
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_EDE_ESTADOS_DEVOLUCION los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_TOG_TIPOS_OPERACION_GASTO los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -38,10 +38,11 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'		,'No procede'			,'No procede'),
-        T_TIPO_DATA('02'		,'Devuelta'			,'Devuelta'),
-        T_TIPO_DATA('03'		,'Bloqueada'			,'Bloqueada'),
-	T_TIPO_DATA('04'		,'Pendiente'			,'Pendiente')
+        T_TIPO_DATA('01'	,'Pago gasto'									,'Pago gasto'),
+        T_TIPO_DATA('02'	,'Pago gasto inversión'				        ,'Pago gasto inversión'),
+        T_TIPO_DATA('03'	,'Abono/factura rectificada'				        ,'Abono/factura rectificada'),
+        T_TIPO_DATA('04'	,'Cobro de renta de alquiler'				        ,'Cobro de renta de alquiler'),
+        T_TIPO_DATA('05'	,'Cobro precio venta'				        ,'Cobro precio venta')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -50,26 +51,26 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    -- LOOP para insertar los valores en DD_EPB_ESTADOS_PBC -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_EDE_ESTADOS_DEVOLUCION] ');
+    -- LOOP para insertar los valores en DD_TOG_TIPO_OPERACION_GASTO -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TOG_TIPO_OPERACION_GASTO] ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_EDE_ESTADOS_DEVOLUCION WHERE DD_EDE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO WHERE DD_TOG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_EDE_ESTADOS_DEVOLUCION '||
-                    'SET DD_EDE_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_EDE_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_TOG_TIPO_OPERACION_GASTO '||
+                    'SET DD_TOG_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+					', DD_TOG_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_EDE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					'WHERE DD_TOG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
@@ -77,10 +78,10 @@ BEGIN
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_EDE_ESTADOS_DEVOLUCION.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TOG_TIPO_OPERACION_GASTO.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_EDE_ESTADOS_DEVOLUCION (' ||
-                      'DD_EDE_ID, DD_EDE_CODIGO, DD_EDE_DESCRIPCION, DD_EDE_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TOG_TIPO_OPERACION_GASTO (' ||
+                      'DD_TOG_ID, DD_TOG_CODIGO, DD_TOG_DESCRIPCION, DD_TOG_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
@@ -88,7 +89,7 @@ BEGIN
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_EDE_ESTADOS_DEVOLUCION ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TOG_TIPO_OPERACION_GASTO ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION

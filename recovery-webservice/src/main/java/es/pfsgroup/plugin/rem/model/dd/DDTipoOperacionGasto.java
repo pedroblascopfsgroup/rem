@@ -3,15 +3,11 @@ package es.pfsgroup.plugin.rem.model.dd;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -21,52 +17,57 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.pfsgroup.commons.utils.Checks;
 
 /**
- * Modelo que gestiona el diccionario de comités sancionadores
- * @author Jose Villel
+ * Modelo que gestiona el diccionario de los tipos de operación de los gastos
+ * 
+ * @author Luis Caballero
  *
  */
 @Entity
-@Table(name = "DD_COS_COMITES_SANCION", schema = "${entity.schema}")
+@Table(name = "DD_TOG_TIPO_OPERACION_GASTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDComiteSancion implements Auditable, Dictionary {
+public class DDTipoOperacionGasto implements Auditable, Dictionary {
 	
-	public static final String CODIGO_HAYA_CAJAMAR = "1";
-	public static final String CODIGO_HAYA_SAREB = "12";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3836191709700209057L;
 	
-	private static final long serialVersionUID = 1L;
+	public static final String PAGO_GASTO = "01";
+	public static final String PAGO_GASTO_INVERSION = "02";
+	public static final String ABONO_FACURA_RECTIFICADA = "03";
+	public static final String COBRO_RENTA_ALQUILER = "04";
+	public static final String COBRO_PRECIO_VENTA = "05";
+	
 
 	@Id
-	@Column(name = "DD_COS_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDComiteSancionGenerator")
-	@SequenceGenerator(name = "DDComiteSancionGenerator", sequenceName = "S_DD_COS_COMITES_SANCION")
+	@Column(name = "DD_TOG_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoOperacionGastoGenerator")
+	@SequenceGenerator(name = "DDTipoOperacionGastoGenerator", sequenceName = "S_DD_TOG_TIPOS_OPERACION_GASTO")
 	private Long id;
-	    
-	@Column(name = "DD_COS_CODIGO")   
+	 
+	@Column(name = "DD_TOG_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_COS_DESCRIPCION")   
+	@Column(name = "DD_TOG_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_COS_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TOG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
+	    
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_CRA_ID")
-	private DDCartera cartera;
-    
-    @Transient
-    private String carteraCodigo;
-
+	    
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
 
+	 
+	 
+	 
 	public Long getId() {
 		return id;
 	}
@@ -82,7 +83,7 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-
+	
 	public String getDescripcion() {
 		return descripcion;
 	}
@@ -97,22 +98,6 @@ public class DDComiteSancion implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
-	}
-
-	public DDCartera getCartera() {
-		return cartera;
-	}
-
-	public void setCartera(DDCartera cartera) {
-		this.cartera = cartera;
-	}
-
-	public String getCarteraCodigo() {
-		return Checks.esNulo(cartera) ? carteraCodigo : cartera.getCodigo();
-	}
-
-	public void setCarteraCodigo(String carteraCodigo) {
-		this.carteraCodigo = Checks.esNulo(cartera) ? carteraCodigo : cartera.getCodigo();
 	}
 
 	public Long getVersion() {

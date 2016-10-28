@@ -1,5 +1,5 @@
 /**
- * This view is used to present the details of a single Expediente Comercial.
+ * This view is used to present the details of a single Oferta > Tanteo y Retracto.
  */
 Ext.define('HreRem.model.OfertaTanteoYRetracto', {
     extend: 'HreRem.model.Base',
@@ -13,20 +13,33 @@ Ext.define('HreRem.model.OfertaTanteoYRetracto', {
 		    {
     			name:'numOferta'
     		},
-    		{
-    			name:'fechaComunicacionReg'
+		    {
+    			name:'condicionesTransmision'
     		},
     		{
-    			name:'fechaContestacion'
+    			name:'fechaComunicacionReg',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name:'fechaSolicitudVisita'
+    			name:'fechaContestacion',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name:'fechaRealizacionVisita'
+    			name:'fechaSolicitudVisita',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name:'fechaFinTanteo'
+    			name:'fechaRealizacionVisita',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaFinTanteo',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'resultadoTanteoCodigo'
@@ -35,7 +48,9 @@ Ext.define('HreRem.model.OfertaTanteoYRetracto', {
     			name:'resultadoTanteoDescripcion'
     		},
     		{
-    			name:'fechaMaxFormalizacion'
+    			name:'plazoMaxFormalizacion',
+    			type:'date',
+    			dateFormat: 'c'
     		}
     ],
     

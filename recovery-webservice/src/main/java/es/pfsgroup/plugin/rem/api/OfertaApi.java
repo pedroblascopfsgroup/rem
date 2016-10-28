@@ -141,6 +141,18 @@ public interface OfertaApi {
 	public DDEstadoOferta getDDEstadosOfertaByCodigo(String codigo);
 
 	/**
+	 * Método que rechaza una oferta
+	 * @param oferta
+	 */
+	public void rechazarOferta(Oferta oferta);
+	
+	/**
+	 * Método que descongela una oferta
+	 * @param oferta
+	 */
+	public void descongelarOferta(Oferta oferta);
+	
+	/**
 	 * Método que saca la oferta a partir de una tarea externa
 	 * 
 	 * @param tareaExterna
@@ -148,12 +160,21 @@ public interface OfertaApi {
 	 */
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna);
 
+	
 	/**
 	 * Método que saca la oferta aceptada a partir de un trabajo
 	 * @param trabajo
 	 * @return
 	 */
 	public Oferta trabajoToOferta(Trabajo trabajo);
+	
+	
+	/**
+	 * Método que saca las ofertas a partir de un trabajo
+	 * @param trabajo
+	 * @return
+	 */
+	public List<Oferta> trabajoToOfertas(Trabajo trabajo);
 	
 	/**
 	 * Método que obtiene la oferta aceptada de un activo en caso de haberla.
@@ -224,6 +245,23 @@ public interface OfertaApi {
 	 */
 	public boolean checkConflictoIntereses(TareaExterna tareaExterna);	
 	
+	/**
+	 * Método que comprueba si el activo tiene atribuciones para sancionar el
+	 * expediente
+	 * 
+	 * @param tareaExterna
+	 * @return true si tiene atribuciones, false si no las tiene
+	 */
+	public boolean checkAtribuciones(TareaExterna tareaExterna);
+
+	/**
+	 * Método que comprueba si el activo tiene atribuciones para sancionar el
+	 * expediente
+	 * 
+	 * @param trabajo
+	 * @return true si tiene atribuciones, false si no las tiene
+	 */
+	public boolean checkAtribuciones(Trabajo trabajo);
 	
 
 }

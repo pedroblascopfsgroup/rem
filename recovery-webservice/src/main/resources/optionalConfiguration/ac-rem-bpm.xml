@@ -392,6 +392,10 @@
 				def activoManager = ctx.getBean("activoManager");
 				return activoManager.checkTiposDistintos(tareaExterna);
 			}
+			def checkVPO = {
+				def activoManager = ctx.getBean("activoManager");
+				return activoManager.checkVPO(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

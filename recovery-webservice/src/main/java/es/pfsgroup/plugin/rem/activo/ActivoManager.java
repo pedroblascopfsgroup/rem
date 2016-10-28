@@ -2600,4 +2600,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return importeMax;
 	}
 	
+	@Override
+	public boolean checkVPO(TareaExterna tareaExterna){
+		Activo activo = tareaExternaToActivo(tareaExterna);
+		return ("1".equals(activo.getVpo()));
+	}
+	
 }

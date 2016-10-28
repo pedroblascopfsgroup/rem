@@ -724,4 +724,13 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Double mayorOfertaRecibida(Activo activo);
+	
+	
+	/**
+	 * Método que comprueba que si el activo es VPO
+	 * @param tareaExterna
+	 * @return devuelve true si es VPO, false en caso contrario
+	 */
+	public boolean checkVPO(TareaExterna tareaExterna);
+	
 }

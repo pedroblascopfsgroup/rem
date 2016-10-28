@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20161014
+--## FECHA_CREACION=20161028
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=0
@@ -47,6 +47,13 @@ BEGIN
 	/*VALIDACIONES DE DOCUMENTO */
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? existeAdjuntoUGValidacion("23","E") : (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? existeAdjuntoUGValidacion("22","E") : null) '' '||	  
+			  ' WHERE TAP_CODIGO = ''T013_ResolucionComite'' ';
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+	
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
 			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGValidacion("10","E")'' '||
 			  ' WHERE TAP_CODIGO = ''T013_InformeJuridico'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
@@ -61,7 +68,7 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGValidacion("11,E;12,E")'' '||
+			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGValidacion("06,E;12,E")'' '||
 			  ' WHERE TAP_CODIGO = ''T013_ObtencionContratoReserva'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);

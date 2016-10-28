@@ -176,10 +176,20 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 	/**
 	 * Función que habilita o deshabilita y filtra el combo de Municipio dentro del grid DireccionesDelegacionesList.
 	 */
-	onChangeProvinciaChainedCombo: function(boundList) {
-    	var me = this,
-    	combo = boundList.up(),
-    	chainedCombo = me.lookupReference(combo.chainedReference);   
+	onChangeProvinciaChainedCombo: function(boundList, record , item , index , e , eOpts) {
+		
+		if(boundList.xtype === 'combobox' && record.getKey() != 13) {
+			return;
+		}
+
+    	var me = this;
+    	var combo;
+    	if(boundList.xtype === 'combobox') {
+    		combo = boundList;
+    	} else {
+    		combo = boundList.up();
+    	}
+    	var chainedCombo = me.lookupReference(combo.chainedReference);   
     	
     	me.getViewModel().notify();
     	
@@ -189,10 +199,20 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     	
     	var chainedStore = chainedCombo.getStore();
     	
-    	var highlightedIdxValue = boundList.highlightedItem.attributes.getNamedItem('data-recordindex').nodeValue;
+    	var highlightedIdxValue;
+    	if(boundList.xtype === 'boundlist') {
+    		highlightedIdxValue = boundList.highlightedItem.attributes.getNamedItem('data-recordindex').nodeValue;
+    	}
     	
-    	if(!Ext.isEmpty(chainedStore) && !Ext.isEmpty(highlightedIdxValue)) {
-    		var codigoValue = boundList.getStore().getAt(highlightedIdxValue).getData().codigo;
+    	if(!Ext.isEmpty(chainedStore) && (!Ext.isEmpty(highlightedIdxValue) || !Ext.isEmpty(combo.getSelectedRecord()))) {
+    		
+    		var codigoValue;
+    		if(boundList.xtype === 'combobox') {
+    			codigoValue = combo.getSelectedRecord().getData().codigo;
+    		} else {
+    			codigoValue = boundList.getStore().getAt(highlightedIdxValue).getData().codigo;
+    		}
+    		
     		combo.setValue(codigoValue);
     		chainedStore.clearFilter();
     		chainedStore.filter([{

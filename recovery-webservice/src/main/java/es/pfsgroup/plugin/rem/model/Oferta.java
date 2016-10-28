@@ -165,10 +165,16 @@ public class Oferta implements Serializable, Auditable {
 	private String condicionesTransmision;
 	
 	@Column(name="OFR_FECHA_COMUNIC_REG")
-	private Date fechaComunicacionRegistro;
+	private Date fechaComunicacionReg;
 	
 	@Column(name="OFR_FECHA_CONTESTACION")
 	private Date fechaContestacion;
+	
+	@Column(name="OFR_FECHA_SOLICITUD_VISITA")
+	private Date fechaSolicitudVisita;
+	
+	@Column(name="OFR_FECHA_REALIZACION_VISITA")
+	private Date fechaRealizacionVisita;
 	
 	@Column(name="OFR_FECHA_HASTA_TANTEO")
 	private Date fechaFinTanteo;
@@ -178,7 +184,7 @@ public class Oferta implements Serializable, Auditable {
 	private DDResultadoTanteo resultadoTanteo;
 	
 	@Column(name="OFR_FECHA_MAX_FORMALIZACION")
-	private Date fechaMaxFormalizacion;	
+	private Date plazoMaxFormalizacion;	
 	//+-+-+-+-+-+ TR
 	
 	
@@ -454,12 +460,12 @@ public class Oferta implements Serializable, Auditable {
 		this.condicionesTransmision = condicionesTransmision;
 	}
 
-	public Date getFechaComunicacionRegistro() {
-		return fechaComunicacionRegistro;
+	public Date getFechaComunicacionReg() {
+		return fechaComunicacionReg;
 	}
 
-	public void setFechaComunicacionRegistro(Date fechaComunicacionRegistro) {
-		this.fechaComunicacionRegistro = fechaComunicacionRegistro;
+	public void setFechaComunicacionReg(Date fechaComunicacionReg) {
+		this.fechaComunicacionReg = fechaComunicacionReg;
 	}
 
 	public Date getFechaContestacion() {
@@ -470,6 +476,22 @@ public class Oferta implements Serializable, Auditable {
 		this.fechaContestacion = fechaContestacion;
 	}
 
+	public Date getFechaSolicitudVisita() {
+		return fechaSolicitudVisita;
+	}
+
+	public void setFechaSolicitudVisita(Date fechaSolicitudVisita) {
+		this.fechaSolicitudVisita = fechaSolicitudVisita;
+	}
+	
+	public Date getFechaRealizacionVisita() {
+		return fechaRealizacionVisita;
+	}
+
+	public void setFechaRealizacionVisita(Date fechaRealizacionVisita) {
+		this.fechaRealizacionVisita = fechaRealizacionVisita;
+	}
+	
 	public Date getFechaFinTanteo() {
 		return fechaFinTanteo;
 	}
@@ -486,12 +508,12 @@ public class Oferta implements Serializable, Auditable {
 		this.resultadoTanteo = resultadoTanteo;
 	}
 
-	public Date getFechaMaxFormalizacion() {
-		return fechaMaxFormalizacion;
+	public Date getPlazoMaxFormalizacion() {
+		return plazoMaxFormalizacion;
 	}
 
-	public void setFechaMaxFormalizacion(Date fechaMaxFormalizacion) {
-		this.fechaMaxFormalizacion = fechaMaxFormalizacion;
+	public void setPlazoMaxFormalizacion(Date plazoMaxFormalizacion) {
+		this.plazoMaxFormalizacion = plazoMaxFormalizacion;
 	}
 
 	public Boolean getDesdeTanteo() {

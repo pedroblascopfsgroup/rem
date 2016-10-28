@@ -28,7 +28,7 @@ public class DtoTanteoYRetractoOferta extends WebDto {
 	private Date fechaFinTanteo;
 	private String resultadoTanteoCodigo;
 	private String resultadoTanteoDescripcion;
-	private Date fechaMaxFormalizacion;
+	private Date plazoMaxFormalizacion;
 	
 	
 	public Long getIdOferta() {
@@ -91,11 +91,11 @@ public class DtoTanteoYRetractoOferta extends WebDto {
 	public void setResultadoTanteoDescripcion(String resultadoTanteoDescripcion) {
 		this.resultadoTanteoDescripcion = resultadoTanteoDescripcion;
 	}
-	public Date getFechaMaxFormalizacion() {
-		return fechaMaxFormalizacion;
+	public Date getPlazoMaxFormalizacion() {
+		return plazoMaxFormalizacion;
 	}
-	public void setFechaMaxFormalizacion(Date fechaMaxFormalizacion) {
-		this.fechaMaxFormalizacion = fechaMaxFormalizacion;
+	public void setPlazoMaxFormalizacion(Date plazoMaxFormalizacion) {
+		this.plazoMaxFormalizacion = plazoMaxFormalizacion;
 	}
 	
 	

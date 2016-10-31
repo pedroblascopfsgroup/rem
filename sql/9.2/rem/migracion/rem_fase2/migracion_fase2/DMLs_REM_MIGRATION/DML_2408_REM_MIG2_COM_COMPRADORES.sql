@@ -208,14 +208,14 @@ BEGIN
      
       -- Observaciones
       IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros. Solo se migra lo que cruza con COMPRADORES_EXPEDIENTES.';
         
         IF TABLE_COUNT != 0 THEN
-           V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes. ';
+           V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes.';
         END IF;
         
         IF V_DUPLICADOS != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' COM_COD_COMPRADOR duplicados. ';	
+			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' COM_COD_COMPRADOR duplicados.';	
 		END IF;
       END IF;
       

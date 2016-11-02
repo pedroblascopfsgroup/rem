@@ -269,19 +269,22 @@ Ext.define('HreRem.view.common.TareaController', {
 		var me = this,
 		window = button.up('window'),
 		idExpediente = window.idExpediente;
+		numExpediente = window.numExpediente;
 
-		if(Ext.isEmpty(idExpediente)) {
+		if(Ext.isEmpty(idExpediente) || Ext.isEmpty(numExpediente)) {
 			
 			window.mask();
 					
 			//Llamada Ajax para obtener el idExpediente relacionado con la tarea (idTarea)
-		    var url = $AC.getRemoteUrl('agenda/getIdExpediente');
+		    var url = $AC.getRemoteUrl('agenda/getNumIdExpediente');
 		    Ext.Ajax.request({
 			  url:url,
 			  params:  {idTarea : me.getView().idTarea},
 			  success: function(response,opts){
-				  idExpediente = Ext.JSON.decode(response.responseText).idExpediente;					  
-				  titulo = "Expediente " + idExpediente;
+				  idExpediente = Ext.JSON.decode(response.responseText).idExpediente;
+				  numExpediente = Ext.JSON.decode(response.responseText).numExpediente;		
+				  debugger;			  
+				  titulo = "Expediente " + numExpediente;
 				  me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);
 			  },
 			  callback: function(options, success, response){
@@ -290,7 +293,7 @@ Ext.define('HreRem.view.common.TareaController', {
 		    });
 		    
 		} else {
-			titulo = "Expediente " + idExpediente;
+			titulo = "Expediente " + numExpediente;
 			me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);			
 		}
 			

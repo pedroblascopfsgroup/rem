@@ -167,7 +167,6 @@ public class AgendaAdapter {
 	
 	public String getIdExpediente(Long id){
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(id);
-//		TareaActivo tareaActivo = proxyFactory.proxy(TareaActivoApi.class).getByIdTareaExterna(tar.getTareaExterna().getId());
 		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
 		
 		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
@@ -175,6 +174,20 @@ public class AgendaAdapter {
 		
 		if(!Checks.esNulo(expedienteComercial)){
 			return expedienteComercial.getId().toString();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getNumExpediente(Long id){
+		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(id);
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
+		
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
+		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+		
+		if(!Checks.esNulo(expedienteComercial)){
+			return expedienteComercial.getNumExpediente().toString();
 		} else {
 			return null;
 		}

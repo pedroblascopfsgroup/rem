@@ -478,7 +478,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			if (!Checks.esNulo(ofertaDto.getIdProveedorRemCustodio())) {
 				ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));
+						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemCustodio()));
 				if (!Checks.esNulo(cust)) {
 					oferta.setCustodio(cust);
 				}

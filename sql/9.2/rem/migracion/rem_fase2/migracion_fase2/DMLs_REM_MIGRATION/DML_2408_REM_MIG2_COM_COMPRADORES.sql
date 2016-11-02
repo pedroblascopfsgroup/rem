@@ -155,6 +155,7 @@ BEGIN
               PRV.DD_PRV_ID                                                                                               AS DD_PRV_ID
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
             INNER JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_NUM_CLIENTE_HAYA = MIG2.COM_COD_COMPRADOR
+            INNER JOIN '||V_ESQUEMA||'.MIG2_CEX_COMPRADOR_EXPEDIENTE MCEX ON MCEX.CEX_COD_COMPRADOR = MIG2.COM_COD_COMPRADOR
             LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = MIG2.COM_COD_TIPO_PERSONA AND TPE.BORRADO = 0
             LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG2.COM_COD_TIPO_DOCUMENTO AND TDI.BORRADO = 0
             LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG2.COM_COD_LOCALIDAD AND LOC.BORRADO = 0
@@ -207,14 +208,14 @@ BEGIN
      
       -- Observaciones
       IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros. Comprobar unicidad de COM_COD_COMPRADOR.';
+        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros. Solo se migra lo que cruza con COMPRADORES_EXPEDIENTES.';
         
         IF TABLE_COUNT != 0 THEN
-           V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes. ';
+           V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes.';
         END IF;
         
         IF V_DUPLICADOS != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' COM_COD_COMPRADOR duplicados. ';	
+			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' COM_COD_COMPRADOR duplicados.';	
 		END IF;
       END IF;
       

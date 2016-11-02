@@ -108,7 +108,7 @@ Ext.define('HreRem.controller.AgendaController', {
         }
     },
     
-    abrirtarea: function(record, grid, target, idTrabajo, idActivo) {	
+    abrirtarea: function(record, grid, target, idTrabajo, idActivo, idExpediente) {	
     		var me = this;
 			// Abrimos primero el activo para evitar problemas de carga
 //			var me = this;
@@ -223,7 +223,7 @@ Ext.define('HreRem.controller.AgendaController', {
 	        			url:url,
 	        			params: {idTarea : idTarea, subtipoTarea: sta},
 	        			success: function(response,opts){
-	        				window = Ext.create('HreRem.view.agenda.TareaGenerica',{idTarea : idTarea, codigoTarea : codigoTarea, titulo : titulo, campos:response.responseText, parent: grid, idTrabajo: idTrabajo, idActivo: idActivo});
+	        				window = Ext.create('HreRem.view.agenda.TareaGenerica',{idTarea : idTarea, codigoTarea : codigoTarea, titulo : titulo, campos:response.responseText, parent: grid, idTrabajo: idTrabajo, idActivo: idActivo, idExpediente: idExpediente});
 	        			},
 	        			callback: function(options, success, response){
 	        				target.add(window);

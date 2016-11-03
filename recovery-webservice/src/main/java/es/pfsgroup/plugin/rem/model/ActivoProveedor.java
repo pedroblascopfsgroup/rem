@@ -211,6 +211,9 @@ public class ActivoProveedor implements Serializable, Auditable {
 	
 	@Column(name = "PVE_COD_REM")
 	private Long codigoProveedorRem;
+	
+	@Column(name = "PVE_AUTORIZACION_WEB")
+	private Integer autorizacionWeb;
 
 	@Version   
 	private Long version;
@@ -614,6 +617,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setCodigoProveedorRem(Long codigoProveedorRem) {
 		this.codigoProveedorRem = codigoProveedorRem;
+	}
+
+	public Integer getAutorizacionWeb() {
+		return autorizacionWeb;
+	}
+
+	public void setAutorizacionWeb(Integer autorizacionWeb) {
+		this.autorizacionWeb = autorizacionWeb;
 	}
 	
 	

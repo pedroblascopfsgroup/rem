@@ -1,43 +1,32 @@
 package es.pfsgroup.framework.paradise.agenda.controller;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
-import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
-import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.agenda.adapter.TareaAdapter;
 import es.pfsgroup.framework.paradise.agenda.formulario.ParadiseFormManager;
+import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.utils.JsonViewer;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 
 @Controller
-public class TareaController {
+public class TareaController extends ParadiseJsonController{
 
 	@Autowired
 	private TareaAdapter tareaAdapter;
@@ -80,7 +69,7 @@ public class TareaController {
 		tareaAdapter.advance(tarea);
 		
 		//return JsonViewer.createModelAndViewJson(new ModelMap("data", tarea));
-		return JsonViewer.createModelAndViewJson(new ModelMap("sucess",true));
+		return createModelAndViewJson(new ModelMap("sucess",true));
 	}
 	
     @SuppressWarnings("rawtypes")

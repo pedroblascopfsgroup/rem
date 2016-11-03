@@ -48,6 +48,8 @@ public class DtoActivoProveedor extends WebDto {
 	private String retencionPagoCodigo;
 	private Date fechaRetencion;
 	private String motivoRetencionCodigo;
+	private String criterioCajaIVA;
+	private Date fechaEjercicioOpcion;
 	
 	// Control PBC.
 	private Date fechaProceso;
@@ -234,6 +236,18 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setMotivoRetencionCodigo(String motivoRetencionCodigo) {
 		this.motivoRetencionCodigo = motivoRetencionCodigo;
+	}
+	public String getCriterioCajaIVA() {
+		return criterioCajaIVA;
+	}
+	public void setCriterioCajaIVA(String criterioCajaIVA) {
+		this.criterioCajaIVA = criterioCajaIVA;
+	}
+	public Date getFechaEjercicioOpcion() {
+		return fechaEjercicioOpcion;
+	}
+	public void setFechaEjercicioOpcion(Date fechaEjercicioOpcion) {
+		this.fechaEjercicioOpcion = fechaEjercicioOpcion;
 	}
 	public Date getFechaProceso() {
 		return fechaProceso;

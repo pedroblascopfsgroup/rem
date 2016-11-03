@@ -4,7 +4,7 @@
 Ext.define('HreRem.model.FichaProveedorModel', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
-    
+
     fields: [
 		    {
 		    	name: 'id'
@@ -153,12 +153,19 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             },
             {
             	name: 'operativaCodigo'
+            },
+            {
+            	name: 'criterioCajaIVA'
+            },
+            {
+            	name: 'fechaEjercicioOpcion',
+    			type:'date',
+    			dateFormat: 'c'
             }
     ],
-    
+
 	proxy: {
 		type: 'uxproxy',
-		
 		api: {
             read: 'proveedores/getProveedorById',
             create: 'proveedores/createProveedor',
@@ -166,5 +173,4 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             destroy: 'proveedores/deleteProveedorById'
         }
     }    
-
 });

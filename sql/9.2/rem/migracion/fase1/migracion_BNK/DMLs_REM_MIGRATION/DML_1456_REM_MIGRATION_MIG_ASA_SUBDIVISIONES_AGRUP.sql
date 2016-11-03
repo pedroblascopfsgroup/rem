@@ -140,8 +140,6 @@ BEGIN
 	SYSDATE                                                                                 FECHACREAR,
 	0                                                                                           BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG	
-	INNER JOIN AGR_UVEM AGR
-	ON AGR.AGR_UVEM = MIG.AGR_UVEM
 	INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
 	ON AGR.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM
 	INNER JOIN '||V_ESQUEMA||'.ACT_ONV_OBRA_NUEVA ONV

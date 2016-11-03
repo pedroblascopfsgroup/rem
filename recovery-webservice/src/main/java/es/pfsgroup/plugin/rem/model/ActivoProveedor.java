@@ -211,6 +211,12 @@ public class ActivoProveedor implements Serializable, Auditable {
 	
 	@Column(name = "PVE_COD_REM")
 	private Long codigoProveedorRem;
+	
+	@Column(name = "PVE_CRITERIO_CAJA_IVA")
+	private Integer criterioCajaIVA;
+	
+	@Column(name = "PVE_FECHA_EJERCICIO_OPCION")
+	private Date fechaEjercicioOpcion;
 
 	@Version   
 	private Long version;
@@ -614,6 +620,22 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setCodigoProveedorRem(Long codigoProveedorRem) {
 		this.codigoProveedorRem = codigoProveedorRem;
+	}
+
+	public Integer getCriterioCajaIVA() {
+		return criterioCajaIVA;
+	}
+
+	public void setCriterioCajaIVA(Integer criterioCajaIVA) {
+		this.criterioCajaIVA = criterioCajaIVA;
+	}
+
+	public Date getFechaEjercicioOpcion() {
+		return fechaEjercicioOpcion;
+	}
+
+	public void setFechaEjercicioOpcion(Date fechaEjercicioOpcion) {
+		this.fechaEjercicioOpcion = fechaEjercicioOpcion;
 	}
 	
 	

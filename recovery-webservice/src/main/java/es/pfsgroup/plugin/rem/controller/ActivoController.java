@@ -3,15 +3,10 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -19,20 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomBooleanEditor;
-import org.springframework.beans.propertyeditors.CustomNumberEditor;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
-import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
-import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -40,10 +27,10 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -103,7 +90,7 @@ import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
 
 @Controller
-public class ActivoController {
+public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -130,14 +117,17 @@ public class ActivoController {
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 	
 	
-	/**getHistoricoValoresPrecios
+	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * 
 	 * @param request
 	 * @param binder
 	 * @throws Exception
-	 */
-	@InitBinder
+	 *
+	 * ******************************************************
+	 * NOTA FASE II : Se refactoriza en ParadiseJsonController.java
+	 * *******************************************************/
+	/*@InitBinder
 	protected void initBinder(HttpServletRequest request,  ServletRequestDataBinder binder) throws Exception{
         
 	    JsonWriterConfiguratorTemplateRegistry registry = JsonWriterConfiguratorTemplateRegistry.load(request);             
@@ -152,10 +142,9 @@ public class ActivoController {
 	         }
 	   );
 
-
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         dateFormat.setLenient(false);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("Etc/GMT-2"));
+        dateFormat.setTimeZone(TimeZone.getDefault());
         binder.registerCustomEditor(Date.class, new ParadiseCustomDateEditor(dateFormat, true));
         
         binder.registerCustomEditor(boolean.class, new CustomBooleanEditor("true", "false", true));
@@ -171,11 +160,11 @@ public class ActivoController {
         
         /*binder.registerCustomEditor(Float.class, new CustomNumberEditor(Float.class, true));
         binder.registerCustomEditor(Long.class, new CustomNumberEditor(Long.class, true));
-        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));*/
+        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));
 
         
         
-	}
+	}*/
 
 	/**
 	 * Método que recupera una Activo según su id y lo mapea a un DTO
@@ -918,10 +907,10 @@ public class ActivoController {
 
 	}
 
-	private ModelAndView createModelAndViewJson(ModelMap model) {
+	/*private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

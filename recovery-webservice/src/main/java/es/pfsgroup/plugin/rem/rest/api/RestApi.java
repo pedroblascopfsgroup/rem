@@ -47,6 +47,7 @@ public interface RestApi {
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
 	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";
 	public static final String REST_MSG_OVERFLOW = "OVERFLOW";
+	public static final String REST_UNIQUE_VIOLATED = "UNIQUE_CONSTRAINT_VIOLATED";
 	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
 	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";
 	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";

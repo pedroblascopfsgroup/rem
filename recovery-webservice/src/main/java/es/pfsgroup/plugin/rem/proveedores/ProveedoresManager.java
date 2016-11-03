@@ -69,7 +69,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresApi> implements  ProveedoresApi {
 	public static final String PROVEEDOR_EXISTS_EXCEPTION_CODE = "0001";
 	public static final String USUARIO_NOT_EXISTS_EXCEPTION_CODE = "0002";
-	public static final String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "El NIF de proveedor proporcionado ya existe";
+	public static final String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "Ya existe un proveedor con el NIF y características proporcionadas";
 	public static final String USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE = "No se ha encontrado el usuario especificado";
 	
 	@Autowired
@@ -184,6 +184,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				if(!Checks.esNulo(proveedor.getResultadoProcesoBlanqueo())) {
 					beanUtilNotNull.copyProperty(dto, "resultadoBlanqueoCodigo", proveedor.getResultadoProcesoBlanqueo().getCodigo());
 				}
+				beanUtilNotNull.copyProperty(dto, "criterioCajaIVA", proveedor.getCriterioCajaIVA());
+				beanUtilNotNull.copyProperty(dto, "fechaEjercicioOpcion", proveedor.getFechaEjercicioOpcion());
 				
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
@@ -344,6 +346,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				DDResultadoProcesoBlanqueo resutladoProcesoBlanqueo = (DDResultadoProcesoBlanqueo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoProcesoBlanqueo.class, dto.getResultadoBlanqueoCodigo());
 				beanUtilNotNull.copyProperty(proveedor, "resultadoProcesoBlanqueo", resutladoProcesoBlanqueo);
 			}
+			beanUtilNotNull.copyProperty(proveedor, "criterioCajaIVA", dto.getCriterioCajaIVA());
+			beanUtilNotNull.copyProperty(proveedor, "fechaEjercicioOpcion", dto.getFechaEjercicioOpcion());
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -910,10 +914,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		ActivoProveedor proveedor = null;
 		
 		if(!Checks.esNulo(dtoProveedorFilter.getNifProveedor())) { // Si se ha definido NIF.
-			proveedor = proveedoresDao.getProveedorByNIF(dtoProveedorFilter.getNifProveedor());
+			proveedor = proveedoresDao.getProveedorByNIFTipoSubtipo(dtoProveedorFilter);
 			if (Checks.esNulo(proveedor)){ // Si no se ha encontrado proveedor por el NIF definido.
 				proveedor = new ActivoProveedor();
-			} else { // Si existe un proveedor con el NIF ya definido.
+			} else { // Si existe un proveedor con el NIF, tipo y subtipo definidos.
 				throw new Exception(ProveedoresManager.PROVEEDOR_EXISTS_EXCEPTION_CODE);
 			}
 		} else { // Si no se ha definido NIF.
@@ -933,6 +937,17 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				DDTipoProveedor tipoProveedor = (DDTipoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoProveedor.class, dtoProveedorFilter.getSubtipoProveedorDescripcion());
 				beanUtilNotNull.copyProperty(proveedor, "tipoProveedor", tipoProveedor);
 			}
+			
+			// Obtener un nuevo codigo REM para proveedor al generar un nuevo proveedor.
+			beanUtilNotNull.copyProperty(proveedor, "codigoProveedorRem", proveedoresDao.getNextNumCodigoProveedor());
+			
+			// Se rellenan los campos de modificación para mostrar la fecha de actualización.
+			Auditoria auditoria = new Auditoria();
+			auditoria.setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+			auditoria.setFechaModificar(new Date());
+			auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+			auditoria.setFechaCrear(new Date());
+			proveedor.setAuditoria(auditoria);
 			
 			proveedoresDao.save(proveedor);
 		} catch (IllegalAccessException e) {

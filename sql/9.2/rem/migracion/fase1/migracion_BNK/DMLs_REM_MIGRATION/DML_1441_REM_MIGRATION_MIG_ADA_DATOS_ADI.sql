@@ -548,11 +548,16 @@ BEGIN
 		SELECT 
 		ACT_NUMERO_ACTIVO, BIE_LOC_ID, LOC_ID
 		FROM  '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-    WHERE NOT EXISTS (
-      SELECT 1
-      FROM  '||V_ESQUEMA||'.'||V_TABLA_5||' BIE
-      WHERE BIE.BIE_LOC_ID = MIG.BIE_LOC_ID
-		)
+		WHERE NOT EXISTS (
+			SELECT 1
+			FROM  '||V_ESQUEMA||'.'||V_TABLA_5||' BIE1
+			WHERE BIE1.BIE_LOC_ID = MIG.BIE_LOC_ID)
+		AND NOT EXISTS(
+			SELECT 1
+			FROM  '||V_ESQUEMA||'.'||V_TABLA_5||' BIE2   
+			WHERE  BIE2.BIE_ID = (SELECT BIE_ID
+                                 FROM ACT_ACTIVO ACT
+                                 WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO))
 	)
   SELECT
   ACT.BIE_LOC_ID							                    	                                        BIE_LOC_ID,

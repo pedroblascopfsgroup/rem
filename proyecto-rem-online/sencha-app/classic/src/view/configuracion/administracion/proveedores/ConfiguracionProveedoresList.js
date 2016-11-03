@@ -22,14 +22,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		        {
 		            dataIndex: 'id',
 		            text: HreRem.i18n('header.proveedorer.id'),
-		            flex: 0.5,
+		            flex: 0.3,
 		            hidden: true
 		        },
 		        {
 		            dataIndex: 'codigo',
 		            text: HreRem.i18n('fieldlabel.codigo'),
-		            flex: 0.5,
-		            hidden: true
+		            flex: 0.3
 		        },
 		        {
 		        	dataIndex: 'tipoProveedorDescripcion',
@@ -67,7 +66,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		        {
 		            dataIndex: 'nifProveedor',
 		            text: HreRem.i18n('header.proveedorer.NIF'),
-		            flex: 0.5,
+		            flex: 0.6,
 		            editor: {
 		            	xtype: 'textfield',
 		            	maxLength: 20

@@ -1,37 +1,37 @@
-package es.pfsgroup.plugin.rem.controller;
+package es.pfsgroup.framework.paradise.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.propertyeditors.CustomBooleanEditor;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
+import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
+import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
-import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
-import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.api.ProvisionGastosApi;
-import es.pfsgroup.plugin.rem.model.DtoProvisionGastosFilter;
+import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 
 
-@Controller
-public class ProvisionGastosController extends ParadiseJsonController {
+public class ParadiseJsonController {
 
-	
-	@Autowired
-	private ProvisionGastosApi provisionGastosApi;
-	
-	
-	
-	/**
+	 /**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * 
 	 * @param request
 	 * @param binder
 	 * @throws Exception
-	 /*******************************************************
-	 * NOTA FASE II : Se refactoriza en ParadiseJsonController.java
-	 * *******************************************************/
-	/*@InitBinder
+	 */
+	@InitBinder
 	protected void initBinder(HttpServletRequest request,  ServletRequestDataBinder binder) throws Exception{
         
 	    JsonWriterConfiguratorTemplateRegistry registry = JsonWriterConfiguratorTemplateRegistry.load(request);             
@@ -46,10 +46,9 @@ public class ProvisionGastosController extends ParadiseJsonController {
 	         }
 	   );
 
-
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         dateFormat.setLenient(false);
-
+        dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Madrid"));
         binder.registerCustomEditor(Date.class, new ParadiseCustomDateEditor(dateFormat, true));
         
         binder.registerCustomEditor(boolean.class, new CustomBooleanEditor("true", "false", true));
@@ -65,26 +64,14 @@ public class ProvisionGastosController extends ParadiseJsonController {
         
         /*binder.registerCustomEditor(Float.class, new CustomNumberEditor(Float.class, true));
         binder.registerCustomEditor(Long.class, new CustomNumberEditor(Long.class, true));
-        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));
+        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));*/
 
         
         
-	}*/
+	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView findAll(DtoProvisionGastosFilter dto, ModelMap model){
+	public ModelAndView createModelAndViewJson(ModelMap model) {
 
-		DtoPage page = provisionGastosApi.findAll(dto);
-		
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
-
-		
-		return createModelAndViewJson(model);
-		
-	}	
-	
-
-	
+		return new ModelAndView("jsonView", model);
+	}
 }

@@ -109,8 +109,7 @@ BEGIN
   -- Ejemplo: Si hay X filas para migrar en MIG_ASA de las cuales el AGR_ID de sus corresponientes AGRUPACIONES no estan insertados en
   --  la tabla ACT_ONV, no se hara el migrado de tales filas, ya que daria error por FK de ACT_ONV a ACT_AGR.
   
-  -- El WITH obtiene los AGR_UVEM de MIG que existen en AGRUPACIONES y OBRA_NUEVA, no estan insertados en la tabla de volcado
-  --  ACT_SDV y pasan el filtro de UNDEFINED en el DD de MIG
+  -- El WITH obtiene los AGR_UVEM de MIG que existen en AGRUPACIONES y OBRA_NUEVA, no estan insertados en la tabla de volcado ACT_SDV 
   
 	EXECUTE IMMEDIATE ('
 	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
@@ -125,13 +124,6 @@ BEGIN
 	FECHACREAR,
 	BORRADO
 	)
-	WITH AGR_UVEM AS (
-	  SELECT DISTINCT MIGW.AGR_UVEM
-	  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIGW
-	  INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION NOTT
-		ON NOTT.AGR_UVEM = MIGW.AGR_UVEM
-	  WHERE NOTT.AGR_UVEM IS NULL	  
-  )
 	SELECT
 	'||V_ESQUEMA||'.S_ACT_SDV_SUBDIVISION_ACTIVO.NEXTVAL      SDV_ID,
 	(SELECT AGRID.AGR_ID
@@ -154,7 +146,6 @@ BEGIN
 	ON AGR.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM
 	INNER JOIN '||V_ESQUEMA||'.ACT_ONV_OBRA_NUEVA ONV
 	ON ONV.AGR_ID = AGR.AGR_ID
-	AND MIG.TIPO_SUBDIVISION != ''UNDEFINED''
 	') 
 	;
 

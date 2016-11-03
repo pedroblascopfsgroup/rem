@@ -14,8 +14,10 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
 	public ActivoProveedor getProveedorById(Long id);
 
-	public ActivoProveedor getProveedorByNIF(String nifProveedor);
+	public ActivoProveedor getProveedorByNIFTipoSubtipo(DtoProveedorFilter dtoProveedorFilter);
 
 	public List<ActivoProveedor> getMediadorListFiltered(Activo activo, DtoMediador dto);
+
+	public Long getNextNumCodigoProveedor();
 
 }

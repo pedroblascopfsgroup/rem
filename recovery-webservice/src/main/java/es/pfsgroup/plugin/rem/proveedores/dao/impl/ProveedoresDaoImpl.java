@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.proveedores.dao.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -109,12 +110,20 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	}
 
 	@Override
-	public ActivoProveedor getProveedorByNIF(String nifProveedor) {
+	public ActivoProveedor getProveedorByNIFTipoSubtipo(DtoProveedorFilter dtoProveedorFilter) {
 		HQLBuilder hb = new HQLBuilder(" from ActivoProveedor pve");
 
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.docIdentificativo", nifProveedor);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.docIdentificativo", dtoProveedorFilter.getNifProveedor());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoProveedor.tipoEntidadProveedor.codigo", dtoProveedorFilter.getTipoProveedorDescripcion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoProveedor.codigo", dtoProveedorFilter.getSubtipoProveedorDescripcion());
 
 		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+	
+	@Override
+	public Long getNextNumCodigoProveedor() {
+		String sql = "SELECT S_PVE_COD_REM.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 
 	@Override

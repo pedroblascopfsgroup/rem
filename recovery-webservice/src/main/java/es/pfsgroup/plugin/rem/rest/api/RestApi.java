@@ -25,7 +25,7 @@ public interface RestApi {
 	}
 
 	public enum TRANSFORM_TYPE {
-		NONE, BOOLEAN_TO_INTEGER, FLOAT_TO_BIGDECIMAL, DATE_TO_YEAR_INTEGER
+		NONE, BOOLEAN_TO_INTEGER, FLOAT_TO_BIGDECIMAL, DATE_TO_YEAR_INTEGER, LONG_TO_STRING
 	}
 
 	public enum ALGORITMO_FIRMA {
@@ -41,12 +41,13 @@ public interface RestApi {
 	public static final String REST_NO_RELATED_OFFER = "NO_EXISTE_OFERTA_RELACIONADA";
 	public static final String REST_NO_RELATED_OFFER_ACCEPTED = "NO_EXISTE_OFERTA_ACEPTADA_RELACIONADA";
 	public static final String REST_NO_RELATED_EXPEDIENT = "NO_EXISTE_EXPEDIENTE_RELACIONADO";
-	public static final String REST_NO_RELATED_COND_EXPEDIENT = "NO_EXISTE_CONDICIONANTE_EXPEDIENTE_RELACIONADO";	
+	public static final String REST_NO_RELATED_COND_EXPEDIENT = "NO_EXISTE_CONDICIONANTE_EXPEDIENTE_RELACIONADO";
 	public static final String REST_NO_RELATED_ASSET = "SIN_ACTIVO_RELACIONADO_CON_LA_OFERTA";
 	public static final String REST_MSG_MISSING_REQUIRED = "REQUIRED";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
 	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";
 	public static final String REST_MSG_OVERFLOW = "OVERFLOW";
+	public static final String REST_UNIQUE_VIOLATED = "INVALID";//"UNIQUE_CONSTRAINT_VIOLATED";
 	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
 	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";
 	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";
@@ -142,8 +143,8 @@ public interface RestApi {
 	 * @param response
 	 * @param model
 	 */
-	public void sendResponse(HttpServletResponse response, ModelMap model,RestRequestWrapper request);
-	
+	public void sendResponse(HttpServletResponse response, ModelMap model, RestRequestWrapper request);
+
 	/**
 	 * Escribe en la salida standard una respuesta JSON
 	 * 
@@ -153,7 +154,8 @@ public interface RestApi {
 	 * @param jsonResp
 	 * @param result
 	 */
-	public void sendResponse(HttpServletResponse response, RestRequestWrapper request,JSONObject jsonResp,String result);
+	public void sendResponse(HttpServletResponse response, RestRequestWrapper request, JSONObject jsonResp,
+			String result);
 
 	/**
 	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir
@@ -214,8 +216,9 @@ public interface RestApi {
 	 * @param errorCode
 	 * @param jsonFields
 	 */
-	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields,RestRequestWrapper req);
-	
+	public void throwRestException(ServletResponse res, String errorCode, JSONObject jsonFields,
+			RestRequestWrapper req);
+
 	/**
 	 * Realiza la configuracion de la sesión
 	 * 

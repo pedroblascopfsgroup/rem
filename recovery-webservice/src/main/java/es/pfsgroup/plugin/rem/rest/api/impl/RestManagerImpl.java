@@ -43,6 +43,7 @@ import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
@@ -64,7 +65,7 @@ public class RestManagerImpl implements RestApi {
 
 	@Autowired
 	PeticionDao peticionDao;
-	
+
 	@Autowired
 	private EntidadDao entidadDao;
 
@@ -194,6 +195,9 @@ public class RestManagerImpl implements RestApi {
 				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
 						.equals(Size.class)) {
 					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_OVERFLOW);
+				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
+						.equals(UniqueKey.class)) {
+					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_UNIQUE_VIOLATED);
 				} else {
 					error.put(visitaFailure.getPropertyPath().toString(), "DEFAULT");
 				}
@@ -231,8 +235,8 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public void sendResponse(HttpServletResponse response, RestRequestWrapper request,
-			JSONObject jsonResp, String result) {
+	public void sendResponse(HttpServletResponse response, RestRequestWrapper request, JSONObject jsonResp,
+			String result) {
 		response.reset();
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
 		PrintWriter out;
@@ -493,7 +497,7 @@ public class RestManagerImpl implements RestApi {
 
 		return jsonResp;
 	}
-	
+
 	public void doSessionConfig(ServletResponse response, String workingCode) throws Exception {
 		// Obtenemos la entidad partiendo del working code y establecemos el
 		// contextholder

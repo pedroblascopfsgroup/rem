@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -107,11 +108,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Override
 	@BusinessOperationDefinition("genericManager.getMenuItems")
-	public JSONArray getMenuItems(String tipo) {
+	public List<DtoMenuItem> getMenuItems(String tipo) {
 		
 		AuthenticationData authData =  getAuthenticationData();
 		JsonParser jsonParser = new JsonParser(); 
-		JSONArray menuItemsPerm = new JSONArray();
+		List<DtoMenuItem> menuItemsPerm = new ArrayList<DtoMenuItem>();
 		// Buscamos el fichero json que incluye todas las opciones del menú
 		File menuItemsJsonFile = new File(getClass().getResource("/").getPath()+"menuitems_"+tipo+"_"+MessageUtils.DEFAULT_LOCALE.getLanguage()+".json");
 				
@@ -142,7 +143,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 			
 			if(secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
-				menuItemsPerm.add(itemObject);
+				DtoMenuItem menuItem = new DtoMenuItem();
+				try {
+					beanUtilNotNull.copyProperties(menuItem, itemObject);
+					
+				} catch (Exception e) {
+					logger.error(e.getCause());					
+				}
+				menuItemsPerm.add(menuItem);
 			}
 		}
 	
@@ -419,10 +427,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				beanUtilNotNull.copyProperty(propietarioDD, "descripcion", propietario.getFullName());
 				beanUtilNotNull.copyProperty(propietarioDD, "codigo", propietario.getCartera().getCodigo());
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			listaDD.add(propietarioDD);

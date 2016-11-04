@@ -318,6 +318,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	@Column(name="ICO_ADMINISTRADOR_TELF")
 	private String telefonoAdministradorComunidadEdificio;
+	
+	@Column(name="ICO_WEBCOM_ID")
+	private Long idWebcom;
 
 	public Float getCuotaOrientativaComunidad() {
 		return cuotaOrientativaComunidad;
@@ -909,6 +912,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setTelefonoAdministradorComunidadEdificio(String telefonoAdministradorComunidadEdificio) {
 		this.telefonoAdministradorComunidadEdificio = telefonoAdministradorComunidadEdificio;
+	}
+
+	public Long getIdWebcom() {
+		return idWebcom;
+	}
+
+	public void setIdWebcom(Long idWebcom) {
+		this.idWebcom = idWebcom;
 	}
 	
 

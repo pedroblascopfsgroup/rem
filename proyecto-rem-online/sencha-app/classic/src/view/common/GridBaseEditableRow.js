@@ -128,8 +128,10 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         });
         
         me.addListener ('beforeedit', function(editor) {
-        	if (editor.editing || !me.editOnSelect)
+        	//Si ya estamos editando o no estamos creando un registro nuevo ni se permiete la edición
+        	if (editor.editing || (!editor.isNew && !me.editOnSelect)) {
         		return false;
+        	}
         });
         	
         me.addListener('canceledit', function(editor){
@@ -210,8 +212,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 		me.getStore().sorters.clear();
 		me.editPosition = 0;
         me.getStore().insert(me.editPosition, rec);
-        me.rowEditing.startEdit(me.editPosition, 0);
         me.rowEditing.isNew = true;
+        me.rowEditing.startEdit(me.editPosition, 0);
         me.disableAddButton(true);
         me.disablePagingToolBar(true);
         me.disableRemoveButton(true);

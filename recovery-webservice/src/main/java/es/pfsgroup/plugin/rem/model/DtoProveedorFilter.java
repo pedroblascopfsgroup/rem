@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.model;
 
-
 import es.capgemini.devon.dto.WebDto;
 
 /**
@@ -233,5 +232,4 @@ public class DtoProveedorFilter extends WebDto {
 	public void setNombreProveedor(String nombreProveedor) {
 		this.nombreProveedor = nombreProveedor;
 	}
-	
 }

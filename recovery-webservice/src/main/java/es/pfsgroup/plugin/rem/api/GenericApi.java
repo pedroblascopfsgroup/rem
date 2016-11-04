@@ -10,6 +10,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -38,7 +39,7 @@ public interface GenericApi {
 	 * @return Devuelve los items permitidos de menú según tipo y usuario identificado
 	 */
 	@BusinessOperationDefinition("genericManager.getMenuItems")
-	public JSONArray getMenuItems(String tipo);	
+	public List<DtoMenuItem> getMenuItems(String tipo);	
 	
 	/**
 	 * Devuelve los municipios de la provincia que recibe

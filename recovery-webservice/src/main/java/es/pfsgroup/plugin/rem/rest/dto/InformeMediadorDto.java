@@ -12,7 +12,9 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -37,8 +39,9 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private static final long serialVersionUID = 1L;
 
-	@EntityDefinition(procesar = false)
 	@NotNull(groups = { Insert.class, Update.class })
+	@UniqueKey(clase=ActivoInfoComercial.class,field="idWebcom",message="El idwebcom ya existe",groups={Insert.class,Update.class})
+	@EntityDefinition(propertyName = "idWebcom")
 	private Long idInformeMediadorWebcom;
 
 	@NotNull(groups = { Insert.class, Update.class })
@@ -82,7 +85,6 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
 	private String motivoNoPosibleInforme;
-
 
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDSubtipoActivo.class, message = "El codSubtipoImueble no existe", groups = { Insert.class,
@@ -247,10 +249,10 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "ultimaPlanta", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ultimaPlanta;
 
-	@EntityDefinition(propertyName = "ocupado", transform=TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "ocupado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ocupado;
 
-	@EntityDefinition(propertyName="numPlantasInter")
+	@EntityDefinition(propertyName = "numPlantasInter")
 	private Integer numeroPlantas;
 
 	@Diccionary(clase = DDTipoOrientacion.class, message = "El codOrientacion no existe", groups = { Insert.class,
@@ -263,7 +265,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "tipoRenta", classObj = DDTipoRenta.class)
 	private String codNivelRenta;
 
-	//lo procesamos de forma no generica
+	// lo procesamos de forma no generica
 	@EntityDefinition(procesar = false)
 	private List<PlantaDto> plantas;
 
@@ -319,7 +321,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "edificioDivisible")
 	private Boolean divisible;
 
-	@EntityDefinition(propertyName = "ascensor",transform=TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "ascensor", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ascensor;
 
 	@EntityDefinition(propertyName = "numAscensores")
@@ -385,14 +387,14 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "mtsAlturaLibre")
 	private Float altura;
 
-	@EntityDefinition(propertyName="cantidad")
+	@EntityDefinition(propertyName = "cantidad")
 	private Long numeroPlazasGaraje;
 
-	@EntityDefinition(propertyName="superficie")
+	@EntityDefinition(propertyName = "superficie")
 	private Float superficiePlazasGaraje;
 
-	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codSubtipoPlazasGaraje no existe", groups = { Insert.class,
-			Update.class })
+	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codSubtipoPlazasGaraje no existe", groups = {
+			Insert.class, Update.class })
 	@EntityDefinition(propertyName = "subTipo", classObj = DDSubtipoPlazaGaraje.class)
 	private String codSubtipoPlazasGaraje;
 
@@ -422,7 +424,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "profundidad")
 	private Float largo;
 
-	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codUso no existe", groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codUso no existe", groups = { Insert.class,
+			Update.class })
 	@EntityDefinition(propertyName = "subtipoPlazagaraje", classObj = DDSubtipoPlazaGaraje.class)
 	private String codUso;
 
@@ -469,7 +472,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "estadoConservacionEdificio", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacionEdificio;
 
-	@EntityDefinition(propertyName = "anyoRehabilitacion",transform=TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)
+	@EntityDefinition(propertyName = "anyoRehabilitacion", transform = TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)
 	private Date anyoRehabilitacionEdificio;
 
 	@EntityDefinition(propertyName = "numPlantas")
@@ -706,7 +709,7 @@ public class InformeMediadorDto implements Serializable {
 
 	@EntityDefinition(propertyName = "dobleCristal", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean buenEstadoDobleAcristalamientoOClimalit;
-	
+
 	@EntityDefinition(propertyName = "carpinteriaExteriorOtros")
 	private String otrosCarpinteriaExterior;
 

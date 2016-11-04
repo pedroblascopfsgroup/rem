@@ -6,7 +6,10 @@ import javax.validation.constraints.NotNull;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
+import es.pfsgroup.plugin.rem.model.VNotificacionesWebcom;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoNotificacion;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 
 public class NotificacionDto extends RequestDto{
@@ -17,6 +20,7 @@ public class NotificacionDto extends RequestDto{
 	private static final long serialVersionUID = -3044750907326664322L;
 	
 	@NotNull(groups = { Insert.class})
+	@UniqueKey(clase=VNotificacionesWebcom.class,field="idWebcom",message="La notificacion para este idwebcom existe",groups={Insert.class},transform=TRANSFORM_TYPE.LONG_TO_STRING)
 	private Long idNotificacionWebcom;
 	
 	private Long idNotificacionRem;

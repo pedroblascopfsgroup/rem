@@ -58,6 +58,8 @@ public class DtoTramite extends WebDto {
 	private String descripcionEstadoEC;
 	
 	private Long numEC;
+	
+	private Long idExpediente;
 
 	
 
@@ -243,6 +245,14 @@ public class DtoTramite extends WebDto {
 
 	public void setNumEC(Long numEC) {
 		this.numEC = numEC;
+	}
+
+	public Long getIdExpediente() {
+		return idExpediente;
+	}
+
+	public void setIdExpediente(Long idExpediente) {
+		this.idExpediente = idExpediente;
 	}
 	
 }

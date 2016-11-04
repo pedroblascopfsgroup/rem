@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_COM_COMPRADOR -> COM_COMPRADOR
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'COM_COMPRADOR';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_COM_COMPRADORES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -39,7 +39,7 @@ V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
       
-	  --COMPROBACIONES PREVIAS - CLIENTE_COMERCIAL (CLC_NUM_CLIENTE_HAYA)
+          --COMPROBACIONES PREVIAS - CLIENTE_COMERCIAL (CLC_NUM_CLIENTE_HAYA)
       DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO CLIENTE_COMERCIAL...');
       
       V_SENTENCIA := '
@@ -91,7 +91,7 @@ BEGIN
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
           MIG2.COM_COD_COMPRADOR                                   CODIGO_RECHAZADO,
-          ''CLC_NUM_CLIENTE_HAYA''	                                      CAMPO_CLC_MOTIVO_RECHAZO,
+          ''CLC_NUM_CLIENTE_HAYA''                                            CAMPO_CLC_MOTIVO_RECHAZO,
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.COM_COD_COMPRADOR = MIG2.COM_COD_COMPRADOR
@@ -126,10 +126,10 @@ BEGIN
             ,DD_LOC_ID
             ,DD_PRV_ID
           ) WITH DUPLICADOS AS(
-			  SELECT DISTINCT COM_COD_COMPRADOR
-			  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-			  GROUP BY COM_COD_COMPRADOR 
-			  HAVING COUNT(1) > 1
+                          SELECT DISTINCT COM_COD_COMPRADOR
+                          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+                          GROUP BY COM_COD_COMPRADOR 
+                          HAVING COUNT(1) > 1
           )
           SELECT
             '||V_ESQUEMA||'.S_COM_COMPRADOR.NEXTVAL                                                           AS COM_ID,
@@ -203,7 +203,7 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
      
       -- Observaciones
@@ -215,8 +215,8 @@ BEGIN
         END IF;
         
         IF V_DUPLICADOS != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' COM_COD_COMPRADOR duplicados.';	
-		END IF;
+                        V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' COM_COD_COMPRADOR duplicados.';    
+                END IF;
       END IF;
       
       EXECUTE IMMEDIATE '

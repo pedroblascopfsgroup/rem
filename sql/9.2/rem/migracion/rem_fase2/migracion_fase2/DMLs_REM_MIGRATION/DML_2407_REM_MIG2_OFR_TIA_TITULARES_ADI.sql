@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG2_OFR_TIA_TITULARES_ADI' -> 'OFR_TIA_TITULARES_ADICIONALES'
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'OFR_TIA_TITULARES_ADICIONALES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OFR_TIA_TITULARES_ADI';
 V_SENTENCIA VARCHAR2(2000 CHAR);
@@ -79,15 +79,15 @@ BEGIN
     FECHA_COMPROBACION
     )
     WITH OFR_NUM_OFERTA AS (
-		SELECT
-		MIG.OFR_TIA_COD_OFERTA 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE MIG.OFR_TIA_COD_OFERTA = OFR_NUM_OFERTA
-		)
+                SELECT
+                MIG.OFR_TIA_COD_OFERTA 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE MIG.OFR_TIA_COD_OFERTA = OFR_NUM_OFERTA
+                )
     )
     SELECT DISTINCT
-    MIG.OFR_TIA_COD_OFERTA                              					OFR_NUM_OFERTA,
+    MIG.OFR_TIA_COD_OFERTA                                                                      OFR_NUM_OFERTA,
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -104,43 +104,43 @@ BEGIN
   --Inicio del proceso de volcado sobre OFR_TIA_TITULARES_ADICIONALES
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
  
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-	TIA_ID,
-	OFR_ID,
-	TIA_NOMBRE,
-	DD_TDI_ID,
-	TIA_DOCUMENTO,
-	VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	BORRADO
-	)
-	WITH INSERTAR AS (
+        EXECUTE IMMEDIATE ('
+        INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+        TIA_ID,
+        OFR_ID,
+        TIA_NOMBRE,
+        DD_TDI_ID,
+        TIA_DOCUMENTO,
+        VERSION,
+        USUARIOCREAR,
+        FECHACREAR,
+        BORRADO
+        )
+        WITH INSERTAR AS (
     SELECT DISTINCT 
-		OFR.OFR_ID,
-		MIG.OFR_TIA_NOMBRE,
-		MIG.OFR_TIA_COD_TIPO_DOC_TITUL_ADI,
-		MIG.OFR_TIA_DOCUMENTO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                OFR.OFR_ID,
+                MIG.OFR_TIA_NOMBRE,
+                MIG.OFR_TIA_COD_TIPO_DOC_TITUL_ADI,
+                MIG.OFR_TIA_DOCUMENTO
+        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
     INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR
       ON OFR.OFR_NUM_OFERTA = MIG.OFR_TIA_COD_OFERTA
   )
-	SELECT
-	'||V_ESQUEMA||'.S_OFR_TIA_TIT_ADICIONALES.NEXTVAL 					TIA_ID,
-	TIA.OFR_ID  														OFR_ID,
-	TIA.OFR_TIA_NOMBRE													TIA_NOMBRE,
-	(SELECT DD_TDI_ID 
-	FROM '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID
-	WHERE DD_TDI_CODIGO = TIA.OFR_TIA_COD_TIPO_DOC_TITUL_ADI)			DD_TDI_ID,
-	TIA.OFR_TIA_DOCUMENTO												TIA_DOCUMENTO,
-	''0''                                               				VERSION,
-	''MIG2''                                            				USUARIOCREAR,
-	SYSDATE                                            					FECHACREAR,
-	0                                                   				BORRADO
-	FROM INSERTAR TIA
-	')
-	;
+        SELECT
+        '||V_ESQUEMA||'.S_OFR_TIA_TIT_ADICIONALES.NEXTVAL                                       TIA_ID,
+        TIA.OFR_ID                                                                                                              OFR_ID,
+        TIA.OFR_TIA_NOMBRE                                                                                                      TIA_NOMBRE,
+        (SELECT DD_TDI_ID 
+        FROM '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID
+        WHERE DD_TDI_CODIGO = TIA.OFR_TIA_COD_TIPO_DOC_TITUL_ADI)                       DD_TDI_ID,
+        TIA.OFR_TIA_DOCUMENTO                                                                                           TIA_DOCUMENTO,
+        ''0''                                                                           VERSION,
+        ''MIG2''                                                                        USUARIOCREAR,
+        SYSDATE                                                                                 FECHACREAR,
+        0                                                                               BORRADO
+        FROM INSERTAR TIA
+        ')
+        ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -178,26 +178,26 @@ BEGIN
   END IF;
 
 EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-	TABLA_MIG,
-	TABLA_REM,
-	REGISTROS_TABLA_MIG,
-	REGISTROS_INSERTADOS,
-	REGISTROS_RECHAZADOS,
-	DD_COD_INEXISTENTES,
-	FECHA,
-	OBSERVACIONES
-	)
-	SELECT
-	'''||V_TABLA_MIG||''',
-	'''||V_TABLA||''',
-	'||V_REG_MIG||',
-	'||V_REG_INSERTADOS||',
-	'||V_REJECTS||',
-	'||V_COD||',
-	SYSDATE,
-	'''||V_OBSERVACIONES||'''
-	FROM DUAL
+        INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
+        TABLA_MIG,
+        TABLA_REM,
+        REGISTROS_TABLA_MIG,
+        REGISTROS_INSERTADOS,
+        REGISTROS_RECHAZADOS,
+        DD_COD_INEXISTENTES,
+        FECHA,
+        OBSERVACIONES
+        )
+        SELECT
+        '''||V_TABLA_MIG||''',
+        '''||V_TABLA||''',
+        '||V_REG_MIG||',
+        '||V_REG_INSERTADOS||',
+        '||V_REJECTS||',
+        '||V_COD||',
+        SYSDATE,
+        '''||V_OBSERVACIONES||'''
+        FROM DUAL
   ')
   ;
   

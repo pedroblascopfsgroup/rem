@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_GPV_ACT_TBJ -> GPV_ACT & GPC_TBJ
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -27,8 +27,8 @@ DECLARE
 TABLE_COUNT    NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
 TABLE_COUNT_3 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA_1 VARCHAR2(40 CHAR) := 'GPV_ACT';
 V_TABLA_2 VARCHAR2(40 CHAR) := 'GPV_TBJ';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GPV_ACT_TBJ';
@@ -81,15 +81,15 @@ BEGIN
     FECHA_COMPROBACION
     )
     WITH ACT_NUM_ACTIVO AS (
-		SELECT
-		MIG.GPT_ACT_NUMERO_ACTIVO 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.GPT_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-		)
+                SELECT
+                MIG.GPT_ACT_NUMERO_ACTIVO 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.GPT_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
+                )
     )
     SELECT DISTINCT
-    MIG.GPT_ACT_NUMERO_ACTIVO                              					ACT_NUM_ACTIVO,
+    MIG.GPT_ACT_NUMERO_ACTIVO                                                                   ACT_NUM_ACTIVO,
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -152,7 +152,7 @@ BEGIN
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GPT_TBJ_NUM_TRABAJO    						      TBJ_NUM_TRABAJO,          
+          MIG2.GPT_TBJ_NUM_TRABAJO                                                    TBJ_NUM_TRABAJO,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.GPT_TBJ_NUM_TRABAJO = MIG2.GPT_TBJ_NUM_TRABAJO
@@ -163,7 +163,7 @@ BEGIN
       
       END IF;
 
-	  --COMPROBACIONES PREVIAS - GASTOS_PROVEEDOR
+          --COMPROBACIONES PREVIAS - GASTOS_PROVEEDOR
       DBMS_OUTPUT.PUT_LINE('[INFO] COMPROBANDO GASTOS_PROVEEDOR...');
       
       V_SENTENCIA := '
@@ -213,7 +213,7 @@ BEGIN
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GPT_GPV_ID    						      			  			  GPV_NUM_GASTO_HAYA,          
+          MIG2.GPT_GPV_ID                                                                                                 GPV_NUM_GASTO_HAYA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.GPT_GPV_ID = MIG2.GPT_GPV_ID
@@ -224,29 +224,29 @@ BEGIN
       
       END IF;
 
-	  --Inicio del proceso de volcado sobre GPV_ACT
+          --Inicio del proceso de volcado sobre GPV_ACT
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_1||'.');
       
       V_SENTENCIA := '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_1||' (
-		GPV_ACT_ID,
-		GPV_ID,
-		ACT_ID,
-		VERSION
-		)
-		SELECT
-		'||V_ESQUEMA||'.S_'||V_TABLA_1||'.NEXTVAL            		 	GPV_ACT_ID, 
-		GPV.GPV_ID														GPV_ID,
-		ACT.ACT_ID                            							ACT_ID,
-		0                                                  				VERSION
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
-			ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
-		INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT 
-			ON ACT.ACT_NUM_ACTIVO = MIG.GPT_ACT_NUMERO_ACTIVO
-		'
-		;
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+                GPV_ACT_ID,
+                GPV_ID,
+                ACT_ID,
+                VERSION
+                )
+                SELECT
+                '||V_ESQUEMA||'.S_'||V_TABLA_1||'.NEXTVAL                               GPV_ACT_ID, 
+                GPV.GPV_ID                                                                                                              GPV_ID,
+                ACT.ACT_ID                                                                              ACT_ID,
+                0                                                                               VERSION
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
+                        ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
+                INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT 
+                        ON ACT.ACT_NUM_ACTIVO = MIG.GPT_ACT_NUMERO_ACTIVO
+                '
+                ;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -255,23 +255,23 @@ BEGIN
        V_SENTENCIA := '
         MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_1||' GPV
         USING ( 
-				WITH SUMATORIO AS(
-					SELECT GPT_ACT_NUMERO_ACTIVO, SUM(GPT_BASE_IMPONIBLE) AS SUMA
-					FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
-					GROUP BY GPT_ACT_NUMERO_ACTIVO
-				)
-				SELECT MIG2.GPT_GPV_ID, ACT.ACT_ID, GPT_BASE_IMPONIBLE, ROUND(100*GPT_BASE_IMPONIBLE/OPERACION.SUMA,4) AS SUMA FROM MIG2_GPV_ACT_TBJ MIG2
-				INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
-				  ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO
-				INNER JOIN SUMATORIO OPERACION
-				  ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO					
-			  ) AUX
-		ON (GPV.ACT_ID = AUX.ACT_ID AND GPV.GPV_ID = AUX.GPT_GPV_ID)
-		WHEN MATCHED THEN UPDATE SET
-		  GPV.GPV_PARTICIPACION_GASTO = AUX.SUMA
+                                WITH SUMATORIO AS(
+                                        SELECT GPT_ACT_NUMERO_ACTIVO, SUM(GPT_BASE_IMPONIBLE) AS SUMA
+                                        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
+                                        GROUP BY GPT_ACT_NUMERO_ACTIVO
+                                )
+                                SELECT MIG2.GPT_GPV_ID, ACT.ACT_ID, GPT_BASE_IMPONIBLE, ROUND(100*GPT_BASE_IMPONIBLE/OPERACION.SUMA,4) AS SUMA FROM MIG2_GPV_ACT_TBJ MIG2
+                                INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                                  ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO
+                                INNER JOIN SUMATORIO OPERACION
+                                  ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO                                       
+                          ) AUX
+                ON (GPV.ACT_ID = AUX.ACT_ID AND GPV.GPV_ID = AUX.GPT_GPV_ID)
+                WHEN MATCHED THEN UPDATE SET
+                  GPV.GPV_PARTICIPACION_GASTO = AUX.SUMA
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' actualizada (GPV_PARTICIPACION_GASTO). '||SQL%ROWCOUNT||' Filas.');
       
@@ -286,24 +286,24 @@ BEGIN
       
       V_SENTENCIA := '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_2||' (
-		GPV_TBJ_ID,
-		GPV_ID,
-		TBJ_ID,
-		VERSION
-		)
-		SELECT
-		'||V_ESQUEMA||'.S_'||V_TABLA_2||'.NEXTVAL            		 	GPV_TBJ_ID, 
-		GPV.GPV_ID														GPV_ID,
-		TBJ.TBJ_ID                            							TBJ_ID,
-		0                                                  				VERSION
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
-			ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
-		INNER JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ 
-			ON TBJ.TBJ_NUM_TRABAJO = MIG.GPT_TBJ_NUM_TRABAJO
-		'
-		;
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+                GPV_TBJ_ID,
+                GPV_ID,
+                TBJ_ID,
+                VERSION
+                )
+                SELECT
+                '||V_ESQUEMA||'.S_'||V_TABLA_2||'.NEXTVAL                               GPV_TBJ_ID, 
+                GPV.GPV_ID                                                                                                              GPV_ID,
+                TBJ.TBJ_ID                                                                              TBJ_ID,
+                0                                                                               VERSION
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
+                        ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
+                INNER JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ 
+                        ON TBJ.TBJ_NUM_TRABAJO = MIG.GPT_TBJ_NUM_TRABAJO
+                '
+                ;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -322,7 +322,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
             
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS_1;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS_1;      
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
@@ -371,7 +371,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS_2;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS_2;      
       
       -- Observaciones
             IF V_REJECTS != 0 THEN

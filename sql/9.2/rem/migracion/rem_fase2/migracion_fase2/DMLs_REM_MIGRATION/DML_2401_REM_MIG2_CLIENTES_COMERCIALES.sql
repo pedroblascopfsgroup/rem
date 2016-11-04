@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_CLC_CLIENTE_COMERCIAL -> CLC_CLIENTE_COMERCIAL
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'CLC_CLIENTE_COMERCIAL';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_CLC_CLIENTE_COMERCIAL';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -175,15 +175,15 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
           
       -- Observaciones
       IF V_REJECTS != 0 THEN
         V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' CLIENTES_COMERCIALES, comprobar CLC_COD_CLIENTE_WEBCOM duplicados en la MIG2 o que ya existan en la tabla de volcado.';
         
         IF V_DUPLICADOS != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' VIS_COD_VISITA_WEBCOM duplicados. ';	
-		END IF;
+                        V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' VIS_COD_VISITA_WEBCOM duplicados. ';       
+                END IF;
       END IF;
       
       EXECUTE IMMEDIATE '

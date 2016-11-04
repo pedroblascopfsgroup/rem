@@ -427,10 +427,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				beanUtilNotNull.copyProperty(propietarioDD, "descripcion", propietario.getFullName());
 				beanUtilNotNull.copyProperty(propietarioDD, "codigo", propietario.getCartera().getCodigo());
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			listaDD.add(propietarioDD);

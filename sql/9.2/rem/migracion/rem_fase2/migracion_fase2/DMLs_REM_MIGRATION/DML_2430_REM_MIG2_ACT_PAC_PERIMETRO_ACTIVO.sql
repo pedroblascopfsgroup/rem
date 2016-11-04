@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_PAC_PERIMETRO_ACTIVO -> ACT_PAC_PERIMETRO_ACTIVO
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_PAC_PERIMETRO_ACTIVO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_PAC_PERIMETRO_ACTIVO';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -38,72 +38,72 @@ V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
 
-	  --COMPROBACIONES PREVIAS - ACTIVOS
-	  DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO ACTIVOS...');
-	  
-	  V_SENTENCIA := '
-	  SELECT COUNT(1) 
-	  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-	  WHERE NOT EXISTS (
-		SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = MIG.PAC_NUMERO_ACTIVO
-	  )
-	  '
-	  ;
-	  
-	  EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
-	  
-	  IF TABLE_COUNT = 0 THEN
-	  
-		DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS ACTIVOS EXISTEN EN ACT_ACTIVO');
-		
-	  ELSE
-	  
-		DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' ACTIVOS INEXISTENTES EN ACT_ACTIVO. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS.');
-		
-		--BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
-		
-		EXECUTE IMMEDIATE '
-		DELETE FROM '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS
-		WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
-		'
-		;
-		
-		COMMIT;
-	  
-		EXECUTE IMMEDIATE '
-		INSERT INTO '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS (
-		ACT_NUM_ACTIVO,
-		TABLA_MIG,
-		FECHA_COMPROBACION
-		)
-		WITH ACT_NUM_ACTIVO AS (
-			SELECT
-			MIG.PAC_NUMERO_ACTIVO 
-			FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-			WHERE NOT EXISTS (
-			  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.PAC_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-			)
-		)
-		SELECT DISTINCT
-		MIG.PAC_NUMERO_ACTIVO                              						ACT_NUM_ACTIVO,
-		'''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-		SYSDATE                                                                 FECHA_COMPROBACION
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
-		INNER JOIN ACT_NUM_ACTIVO
-		ON ACT_NUM_ACTIVO.PAC_NUMERO_ACTIVO = MIG.PAC_NUMERO_ACTIVO
-		'
-		;
-		
-		COMMIT;
+          --COMPROBACIONES PREVIAS - ACTIVOS
+          DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO ACTIVOS...');
+          
+          V_SENTENCIA := '
+          SELECT COUNT(1) 
+          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+          WHERE NOT EXISTS (
+                SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = MIG.PAC_NUMERO_ACTIVO
+          )
+          '
+          ;
+          
+          EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
+          
+          IF TABLE_COUNT = 0 THEN
+          
+                DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS ACTIVOS EXISTEN EN ACT_ACTIVO');
+                
+          ELSE
+          
+                DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' ACTIVOS INEXISTENTES EN ACT_ACTIVO. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS.');
+                
+                --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
+                
+                EXECUTE IMMEDIATE '
+                DELETE FROM '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS
+                WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
+                '
+                ;
+                
+                COMMIT;
+          
+                EXECUTE IMMEDIATE '
+                INSERT INTO '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS (
+                ACT_NUM_ACTIVO,
+                TABLA_MIG,
+                FECHA_COMPROBACION
+                )
+                WITH ACT_NUM_ACTIVO AS (
+                        SELECT
+                        MIG.PAC_NUMERO_ACTIVO 
+                        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                        WHERE NOT EXISTS (
+                          SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.PAC_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
+                        )
+                )
+                SELECT DISTINCT
+                MIG.PAC_NUMERO_ACTIVO                                                                           ACT_NUM_ACTIVO,
+                '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
+                SYSDATE                                                                 FECHA_COMPROBACION
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
+                INNER JOIN ACT_NUM_ACTIVO
+                ON ACT_NUM_ACTIVO.PAC_NUMERO_ACTIVO = MIG.PAC_NUMERO_ACTIVO
+                '
+                ;
+                
+                COMMIT;
 
-	  END IF;
+          END IF;
 
 
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       V_SENTENCIA := '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-		   PAC_ID
+                   PAC_ID
           ,ACT_ID
           ,PAC_INCLUIDO
           ,PAC_CHECK_TRA_ADMISION
@@ -139,29 +139,29 @@ BEGIN
           )  
         )
         SELECT 
-          '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                        	AS PAC_ID,
+          '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                               AS PAC_ID,
           AUX.*
         FROM (      
           SELECT DISTINCT      
           (SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
           WHERE ACT.ACT_NUM_ACTIVO = MIG2.PAC_NUMERO_ACTIVO)           AS ACT_ID,      
           MIG2.PAC_IND_INCLUIDO                                                                  AS PAC_INCLUIDO,
-		  MIG2.PAC_IND_CHECK_TRA_ADMISION									                                  AS PAC_CHECK_TRA_ADMISION,
-		  MIG2.PAC_FECHA_TRA_ADMISION										                                      AS PAC_FECHA_TRA_ADMISION,
-		  MIG2.PAC_MOTIVO_TRA_ADMISION										                                    AS PAC_MOTIVO_TRA_ADMISION,
-		  MIG2.PAC_IND_CHECK_GESTIONAR										                                    AS PAC_CHECK_GESTIONAR,
-		  MIG2.PAC_FECHA_GESTIONAR											                                          AS PAC_FECHA_GESTIONAR,
-		  MIG2.PAC_MOTIVO_GESTIONAR											                                        AS PAC_MOTIVO_GESTIONAR,
-		  MIG2.PAC_IND_CHECK_ASIG_MEDIA										                                    AS PAC_CHECK_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_FECHA_ASIGNAR_MEDIADOR									                                AS PAC_FECHA_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_MOTIVO_ASIGNAR_MEDIADOR									                              AS PAC_MOTIVO_ASIGNAR_MEDIADOR,
-		  MIG2.PAC_IND_CHECK_COMERCIALIZAR									                                AS PAC_CHECK_COMERCIALIZAR,
-		  MIG2.PAC_FECHA_COMERCIALIZAR										                                    AS PAC_FECHA_COMERCIALIZAR,
-		  MCO.DD_MCO_ID														                                     AS DD_MCO_ID,
-		  MIG2.PAC_IND_CHECK_FORMALIZAR										                                        AS PAC_CHECK_FORMALIZAR,
-		  MIG2.PAC_FECHA_FORMALIZAR											                                              AS PAC_FECHA_FORMALIZAR,
-		  MIG2.PAC_MOTIVO_FORMALIZAR										                                              AS PAC_MOTIVO_FORMALIZAR,
-          0                                                               	                                          AS VERSION, 
+                  MIG2.PAC_IND_CHECK_TRA_ADMISION                                                                                                         AS PAC_CHECK_TRA_ADMISION,
+                  MIG2.PAC_FECHA_TRA_ADMISION                                                                                                                 AS PAC_FECHA_TRA_ADMISION,
+                  MIG2.PAC_MOTIVO_TRA_ADMISION                                                                                                              AS PAC_MOTIVO_TRA_ADMISION,
+                  MIG2.PAC_IND_CHECK_GESTIONAR                                                                                                              AS PAC_CHECK_GESTIONAR,
+                  MIG2.PAC_FECHA_GESTIONAR                                                                                                                                AS PAC_FECHA_GESTIONAR,
+                  MIG2.PAC_MOTIVO_GESTIONAR                                                                                                                             AS PAC_MOTIVO_GESTIONAR,
+                  MIG2.PAC_IND_CHECK_ASIG_MEDIA                                                                                                             AS PAC_CHECK_ASIGNAR_MEDIADOR,
+                  MIG2.PAC_FECHA_ASIGNAR_MEDIADOR                                                                                                       AS PAC_FECHA_ASIGNAR_MEDIADOR,
+                  MIG2.PAC_MOTIVO_ASIGNAR_MEDIADOR                                                                                                    AS PAC_MOTIVO_ASIGNAR_MEDIADOR,
+                  MIG2.PAC_IND_CHECK_COMERCIALIZAR                                                                                                      AS PAC_CHECK_COMERCIALIZAR,
+                  MIG2.PAC_FECHA_COMERCIALIZAR                                                                                                              AS PAC_FECHA_COMERCIALIZAR,
+                  MCO.DD_MCO_ID                                                                                                                                              AS DD_MCO_ID,
+                  MIG2.PAC_IND_CHECK_FORMALIZAR                                                                                                                 AS PAC_CHECK_FORMALIZAR,
+                  MIG2.PAC_FECHA_FORMALIZAR                                                                                                                                   AS PAC_FECHA_FORMALIZAR,
+                  MIG2.PAC_MOTIVO_FORMALIZAR                                                                                                                          AS PAC_MOTIVO_FORMALIZAR,
+          0                                                                                                               AS VERSION, 
           ''MIG2''                                                                                                  AS USUARIOCREAR,                            
           SYSDATE                                                                                               AS FECHACREAR,                             
           0                                                                                                         AS BORRADO,
@@ -173,7 +173,7 @@ BEGIN
         ) AUX
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -195,15 +195,15 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
       IF V_REJECTS != 0 THEN
-		V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
-		
-		IF TABLE_COUNT != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES || ' Hay un total de '||TABLE_COUNT||' ACTIVOS inexistentes.';
-		END IF;
+                V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
+                
+                IF TABLE_COUNT != 0 THEN
+                        V_OBSERVACIONES := V_OBSERVACIONES || ' Hay un total de '||TABLE_COUNT||' ACTIVOS inexistentes.';
+                END IF;
       END IF;
       
       V_SENTENCIA := '

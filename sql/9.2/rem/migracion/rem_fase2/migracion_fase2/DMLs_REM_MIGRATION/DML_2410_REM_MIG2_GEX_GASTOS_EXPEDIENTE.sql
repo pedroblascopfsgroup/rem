@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_GEX_GASTOS_EXPEDIENTE -> GEX_GASTOS_EXPEDIENTE
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'GEX_GASTOS_EXPEDIENTE';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GEX_GASTOS_EXPEDIENTE';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -91,7 +91,7 @@ BEGIN
           )
         )
         SELECT DISTINCT
-        MIG.GEX_COD_OFERTA                              						RES_COD_OFERTA,
+        MIG.GEX_COD_OFERTA                                                                              RES_COD_OFERTA,
         '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
         SYSDATE                                                                 FECHA_COMPROBACION
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -133,8 +133,8 @@ BEGIN
             ,DD_DEG_ID
           )
           SELECT  
-            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL      				AS GEX_ID
-            ,ECO.ECO_ID													AS ECO_ID
+            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                     AS GEX_ID
+            ,ECO.ECO_ID                                                                                                 AS ECO_ID
             ,(SELECT DD_ACC.DD_ACC_ID FROM '||V_ESQUEMA||'.DD_ACC_ACCION_GASTOS DD_ACC WHERE DD_ACC.DD_ACC_CODIGO = MIG2.GEX_COD_CONCEPTO_GASTO AND DD_ACC.BORRADO = 0) DD_ACC_ID
             ,MIG2.GEX_CODIGO
             ,MIG2.GEX_NOMBRE
@@ -157,9 +157,9 @@ BEGIN
             ,(SELECT DD_DEG.DD_DEG_ID FROM '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DD_DEG WHERE DD_DEG.DD_DEG_CODIGO = MIG2.GEX_COD_DESTINATARIO AND DD_DEG.BORRADO = 0) DD_DEG_ID
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR 
-			ON OFR.OFR_NUM_OFERTA = MIG2.GEX_COD_OFERTA
-		  INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-			ON ECO.OFR_ID = OFR.OFR_ID
+                        ON OFR.OFR_NUM_OFERTA = MIG2.GEX_COD_OFERTA
+                  INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                        ON ECO.OFR_ID = OFR.OFR_ID
       '
       ;
    
@@ -183,7 +183,7 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
       IF V_REJECTS != 0 THEN      

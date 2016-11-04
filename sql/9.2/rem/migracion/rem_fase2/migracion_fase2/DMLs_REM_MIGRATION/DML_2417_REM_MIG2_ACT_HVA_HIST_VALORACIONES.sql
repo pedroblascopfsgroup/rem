@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_ACT_HEP_HIST_EST_PUBLI -> ACT_HEP_HIST_EST_PUBLICACION
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -26,8 +26,8 @@ DECLARE
 
 TABLE_COUNT_1 NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_HVA_HIST_VALORACIONES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_ACT_HVA_HIST_VALORACIONES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -39,23 +39,23 @@ V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
 
-	  --COMPROBACIONES PREVIAS - ACTIVOS
-	  DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO ACTIVOS...');
-	  
-	  V_SENTENCIA := '
-	  SELECT COUNT(1) 
-	  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-	  WHERE NOT EXISTS (
-		SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = MIG.HVA_ACT_NUMERO_ACTIVO
-	  )
-	  '
-	  ;
-	  
-	  EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_1;
-	  
-	  IF TABLE_COUNT_1 = 0 THEN	  
-        DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS ACTIVOS EXISTEN EN ACT_ACTIVO');		
-	  ELSE
+          --COMPROBACIONES PREVIAS - ACTIVOS
+          DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO ACTIVOS...');
+          
+          V_SENTENCIA := '
+          SELECT COUNT(1) 
+          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+          WHERE NOT EXISTS (
+                SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = MIG.HVA_ACT_NUMERO_ACTIVO
+          )
+          '
+          ;
+          
+          EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_1;
+          
+          IF TABLE_COUNT_1 = 0 THEN       
+        DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS ACTIVOS EXISTEN EN ACT_ACTIVO');         
+          ELSE
         
         DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT_1||' ACTIVOS INEXISTENTES EN ACT_ACTIVO. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS.');
         
@@ -84,7 +84,7 @@ BEGIN
           )
         )
         SELECT DISTINCT
-        MIG.HVA_ACT_NUMERO_ACTIVO                              						ACT_NUM_ACTIVO,
+        MIG.HVA_ACT_NUMERO_ACTIVO                                                                       ACT_NUM_ACTIVO,
         '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
         SYSDATE                                                                 FECHA_COMPROBACION
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -95,7 +95,7 @@ BEGIN
         
         COMMIT;
 
-	  END IF;
+          END IF;
 
     --COMPROBACIONES PREVIAS - TIPO PRECIO
     DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO TIPO PRECIO...');
@@ -203,7 +203,7 @@ BEGIN
           ) AUX       
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -225,7 +225,7 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
       IF V_REJECTS != 0 THEN

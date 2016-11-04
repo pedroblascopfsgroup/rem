@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_AGR_AGRUPACION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_AGR_AGRUPACIONES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -42,7 +42,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       V_SENTENCIA:= '
-        MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' DEST	
+        MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' DEST   
                USING '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 ON (DEST.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM)
         WHEN MATCHED THEN UPDATE
@@ -53,7 +53,7 @@ BEGIN
              DEST.USUARIOMODIFICAR = ''MIG2''           ,
              DEST.FECHAMODIFICAR = SYSDATE  ';
 
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -72,10 +72,10 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
             
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
             
       -- Observaciones
-	  IF V_REJECTS != 0 THEN
+          IF V_REJECTS != 0 THEN
       V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
     END IF;
         
@@ -105,7 +105,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA;
       
       COMMIT; 
-			
+                        
 EXCEPTION
       WHEN OTHERS THEN
             DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

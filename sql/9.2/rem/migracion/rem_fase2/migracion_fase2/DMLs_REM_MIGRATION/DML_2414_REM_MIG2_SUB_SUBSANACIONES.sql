@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'SUB_SUBSANACIONES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_SUB_SUBSANACIONES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -76,7 +76,7 @@ BEGIN
              OFR_NUM_OFERTA,
              TABLA_MIG,
              FECHA_COMPROBACION
-		        )
+                        )
         SELECT 
              MIG.SUB_COD_OFERTA,        
              '''||V_TABLA_MIG||'''         TABLA_MIG,
@@ -146,7 +146,7 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
       IF V_REJECTS != 0 THEN      

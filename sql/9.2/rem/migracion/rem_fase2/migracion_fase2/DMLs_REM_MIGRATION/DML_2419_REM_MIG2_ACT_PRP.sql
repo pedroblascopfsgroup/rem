@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG2_ACT_PRP' -> 'ACT_PRP'
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -26,8 +26,8 @@ DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_PRP';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_ACT_PRP';
 V_SENTENCIA VARCHAR2(2000 CHAR);
@@ -80,15 +80,15 @@ BEGIN
     FECHA_COMPROBACION
     )
     WITH ACT_NUM_ACTIVO AS (
-		SELECT
-		MIG.ACT_PRP_ACT_NUMERO_ACTIVO 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.ACT_PRP_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-		)
+                SELECT
+                MIG.ACT_PRP_ACT_NUMERO_ACTIVO 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.ACT_PRP_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
+                )
     )
     SELECT DISTINCT
-    MIG.ACT_PRP_ACT_NUMERO_ACTIVO                              				ACT_NUM_ACTIVO,
+    MIG.ACT_PRP_ACT_NUMERO_ACTIVO                                                       ACT_NUM_ACTIVO,
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -141,15 +141,15 @@ BEGIN
     FECHA_COMPROBACION
     )
     WITH PRP_NUM_PROPUESTA AS (
-		SELECT
-		MIG.ACT_PRP_NUM_PROPUESTA 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.PRP_PROPUESTAS_PRECIOS PRP WHERE MIG.ACT_PRP_NUM_PROPUESTA = PRP.PRP_NUM_PROPUESTA
-		)
+                SELECT
+                MIG.ACT_PRP_NUM_PROPUESTA 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM '||V_ESQUEMA||'.PRP_PROPUESTAS_PRECIOS PRP WHERE MIG.ACT_PRP_NUM_PROPUESTA = PRP.PRP_NUM_PROPUESTA
+                )
     )
     SELECT DISTINCT
-    MIG.ACT_PRP_NUM_PROPUESTA                              					PRP_NUM_PROPUESTA,
+    MIG.ACT_PRP_NUM_PROPUESTA                                                                   PRP_NUM_PROPUESTA,
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -165,39 +165,39 @@ BEGIN
   --Inicio del proceso de volcado sobre RES_RESERVAS
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
  
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-	ACT_ID,
-	PRP_ID,
-	ACT_PRP_PRECIO_PROPUESTO,
-	ACT_PRP_PRECIO_SANCIONADO,
-	ACT_PRP_MOTIVO_DESCARTE,
-	VERSION
-	) WITH DUPLICADOS AS(
-			  SELECT DISTINCT ACT_PRP_ACT_NUMERO_ACTIVO, ACT_PRP_NUM_PROPUESTA
-			  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-			  GROUP BY ACT_PRP_ACT_NUMERO_ACTIVO, ACT_PRP_NUM_PROPUESTA 
-			  HAVING COUNT(1) > 1
+        EXECUTE IMMEDIATE ('
+        INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+        ACT_ID,
+        PRP_ID,
+        ACT_PRP_PRECIO_PROPUESTO,
+        ACT_PRP_PRECIO_SANCIONADO,
+        ACT_PRP_MOTIVO_DESCARTE,
+        VERSION
+        ) WITH DUPLICADOS AS(
+                          SELECT DISTINCT ACT_PRP_ACT_NUMERO_ACTIVO, ACT_PRP_NUM_PROPUESTA
+                          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+                          GROUP BY ACT_PRP_ACT_NUMERO_ACTIVO, ACT_PRP_NUM_PROPUESTA 
+                          HAVING COUNT(1) > 1
           )
-	SELECT 
-	ACT.ACT_ID															ACT_ID,
-	PRP.PRP_ID															PRP_ID,
-	MIG.ACT_PRP_PRECIO_PROPUESTO										ACT_PRP_PRECIO_PROPUESTO,
-	MIG.ACT_PRP_PRECIO_SANCIONADO										ACT_PRP_PRECIO_SANCIONADO,
-	MIG.ACT_PRP_MOTIVO_DESCARTE											ACT_PRP_MOTIVO_DESCARTE,
-	''0''                                               				VERSION
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG		
-	INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
-		ON ACT.ACT_NUM_ACTIVO = MIG.ACT_PRP_ACT_NUMERO_ACTIVO
-	INNER JOIN '||V_ESQUEMA||'.PRP_PROPUESTAS_PRECIOS PRP
-		ON PRP.PRP_NUM_PROPUESTA = MIG.ACT_PRP_NUM_PROPUESTA
-	WHERE NOT EXISTS (
+        SELECT 
+        ACT.ACT_ID                                                                                                                      ACT_ID,
+        PRP.PRP_ID                                                                                                                      PRP_ID,
+        MIG.ACT_PRP_PRECIO_PROPUESTO                                                                            ACT_PRP_PRECIO_PROPUESTO,
+        MIG.ACT_PRP_PRECIO_SANCIONADO                                                                           ACT_PRP_PRECIO_SANCIONADO,
+        MIG.ACT_PRP_MOTIVO_DESCARTE                                                                                     ACT_PRP_MOTIVO_DESCARTE,
+        ''0''                                                                           VERSION
+        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG              
+        INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                ON ACT.ACT_NUM_ACTIVO = MIG.ACT_PRP_ACT_NUMERO_ACTIVO
+        INNER JOIN '||V_ESQUEMA||'.PRP_PROPUESTAS_PRECIOS PRP
+                ON PRP.PRP_NUM_PROPUESTA = MIG.ACT_PRP_NUM_PROPUESTA
+        WHERE NOT EXISTS (
             SELECT 1
             FROM DUPLICADOS DUP
             WHERE DUP.ACT_PRP_ACT_NUMERO_ACTIVO = MIG.ACT_PRP_ACT_NUMERO_ACTIVO
             AND DUP.ACT_PRP_NUM_PROPUESTA = MIG.ACT_PRP_NUM_PROPUESTA)
-	')
-	;
+        ')
+        ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -244,31 +244,31 @@ BEGIN
     END IF; 
     
     IF V_DUPLICADOS != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' ACT_PRP_ACT_NUMERO_ACTIVO, ACT_PRP_NUM_PROPUESTA duplicados. ';	
-		END IF;
+                        V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' ACT_PRP_ACT_NUMERO_ACTIVO, ACT_PRP_NUM_PROPUESTA duplicados. ';    
+                END IF;
   END IF;
 
 EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-	TABLA_MIG,
-	TABLA_REM,
-	REGISTROS_TABLA_MIG,
-	REGISTROS_INSERTADOS,
-	REGISTROS_RECHAZADOS,
-	DD_COD_INEXISTENTES,
-	FECHA,
-	OBSERVACIONES
-	)
-	SELECT
-	'''||V_TABLA_MIG||''',
-	'''||V_TABLA||''',
-	'||V_REG_MIG||',
-	'||V_REG_INSERTADOS||',
-	'||V_REJECTS||',
-	'||V_COD||',
-	SYSDATE,
-	'''||V_OBSERVACIONES||'''
-	FROM DUAL
+        INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
+        TABLA_MIG,
+        TABLA_REM,
+        REGISTROS_TABLA_MIG,
+        REGISTROS_INSERTADOS,
+        REGISTROS_RECHAZADOS,
+        DD_COD_INEXISTENTES,
+        FECHA,
+        OBSERVACIONES
+        )
+        SELECT
+        '''||V_TABLA_MIG||''',
+        '''||V_TABLA||''',
+        '||V_REG_MIG||',
+        '||V_REG_INSERTADOS||',
+        '||V_REJECTS||',
+        '||V_COD||',
+        SYSDATE,
+        '''||V_OBSERVACIONES||'''
+        FROM DUAL
   ')
   ;
   

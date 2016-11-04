@@ -24,8 +24,8 @@ SET DEFINE OFF;
 DECLARE
 
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
@@ -35,54 +35,54 @@ DECLARE
 BEGIN
 
 
-	DBMS_OUTPUT.PUT_LINE('******** MIG2_ACT_NOT_EXISTS ********'); 
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS... Comprobaciones previas');
-	
+        DBMS_OUTPUT.PUT_LINE('******** MIG2_ACT_NOT_EXISTS ********'); 
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS... Comprobaciones previas');
+        
 
-	
-	-- Verificar si la tabla nueva ya existe
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG2_ACT_NOT_EXISTS'' and owner = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS = 1 THEN
+        
+        -- Verificar si la tabla nueva ya existe
+        V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG2_ACT_NOT_EXISTS'' and owner = '''||V_ESQUEMA||'''';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+        
+        IF V_NUM_TABLAS = 1 THEN
   
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG2_ACT_NOT_EXISTS... Ya existe. Se borrará.');
-		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS CASCADE CONSTRAINTS';
-		
-	END IF;
-	
-	
-	-- Creamos la tabla
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.MIG2_ACT_NOT_EXISTS...');
-	V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS
-	(
-		TABLA_MIG 			VARCHAR2(30 CHAR),
-		ACT_NUM_ACTIVO		NUMBER(16,0),
-		FECHA_COMPROBACION 	DATE
-	)
-	LOGGING 
-	NOCOMPRESS 
-	NOCACHE
-	NOPARALLEL
-	NOMONITORING
-	';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS... Tabla creada.');
-	
-	-- Creamos comentario	
-	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS IS '''||V_COMMENT_TABLE||'''';		
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS... Comentario creado.');
-	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS... OK');
+                DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG2_ACT_NOT_EXISTS... Ya existe. Se borrará.');
+                EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS CASCADE CONSTRAINTS';
+                
+        END IF;
+        
+        
+        -- Creamos la tabla
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.MIG2_ACT_NOT_EXISTS...');
+        V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS
+        (
+                TABLA_MIG                       VARCHAR2(30 CHAR),
+                ACT_NUM_ACTIVO          NUMBER(16,0),
+                FECHA_COMPROBACION      DATE
+        )
+        LOGGING 
+        NOCOMPRESS 
+        NOCACHE
+        NOPARALLEL
+        NOMONITORING
+        ';
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS... Tabla creada.');
+        
+        -- Creamos comentario   
+        V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS IS '''||V_COMMENT_TABLE||'''';          
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS... Comentario creado.');
+        
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS... OK');
 
 
-	COMMIT;
+        COMMIT;
 
 
 EXCEPTION
      WHEN OTHERS THEN 
-		  DBMS_OUTPUT.PUT_LINE('KO!');
+                  DBMS_OUTPUT.PUT_LINE('KO!');
           err_num := SQLCODE;
           err_msg := SQLERRM;
 

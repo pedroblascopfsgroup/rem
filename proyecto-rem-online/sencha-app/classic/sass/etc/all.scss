@@ -77,6 +77,11 @@ white-space: normal !important;
 	  background: url(images/ficha_activo_eliminartodo_des.svg) center center no-repeat;
 }
 
+.red-color{
+	color: $color-red;
+}
+
+
 .green-color{
 	color: #3C997A !important;
 }
@@ -814,7 +819,7 @@ body.x-masked > .x-mask {
 
 .tbar-grid-button.x-btn-default-toolbar-small {
 	background-image: none;
-	background-color: #26607c;
+	background-color: #26607c !important;
 	border-color: #004465;
 	border-radius: 3px;
 	padding: 3px 3px 3px 3px;
@@ -1241,3 +1246,6 @@ body.x-masked > .x-mask {
 .x-grid-item-selected .min-text-logo-cartera {
 	color: #FFF;
 }
+
+.
+

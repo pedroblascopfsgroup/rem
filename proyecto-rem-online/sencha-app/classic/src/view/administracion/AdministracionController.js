@@ -47,7 +47,28 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     
     control: {
     	
-    	'gestiongastoslist' : {    	
+    	'gestiongastoslist' : {
+    		
+    		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
+    			var me = this;
+    			var autorizarBtn = grid.down('button[itemId=autorizarBtn]');
+    			var rechazarBtn = grid.down('button[itemId=rechazarBtn]');
+    			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
+    			var disabled = Ext.isEmpty(persistedSelection);
+    			autorizarBtn.setDisabled(disabled);    		
+    			rechazarBtn.setDisabled(disabled);
+
+    			if(disabled) {
+    				displaySelection.setValue("No seleccionados");
+    			} else if (persistedSelection.length > 1) {
+    				displaySelection.setValue(persistedSelection.length +  " gastos seleccionados"); 
+    			} else {
+    				displaySelection.setValue("1 gasto seleccionado"); 
+    			}
+    			
+    			
+    		},    		
+    		
     		onClickAddGasto: 'onClickAddGasto'
     	}
 

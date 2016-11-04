@@ -5,6 +5,7 @@ Ext.define('HreRem.view.administracion.gastos.ProvisionGastosList', {
     bind: {
         store: '{provisionGastos}'
     },
+    plugins: 'pagingselectpersist',
     loadAfterBind: false,
     initComponent: function () {
         
@@ -91,7 +92,10 @@ Ext.define('HreRem.view.administracion.gastos.ProvisionGastosList', {
                      }
         ];
         
-        
+       	me.selModel = {
+          selType: 'checkboxmodel'
+      	}; 
+      	
         me.dockedItems = [
 		        {
 		            xtype: 'pagingtoolbar',

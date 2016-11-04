@@ -6,7 +6,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
     stores: {
     	
     	gastosAdministracion: {
-			pageSize: $AC.getDefaultPageSize(),
+			pageSize: 5,// $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Gasto',
 	    	proxy: {
 		        type: 'uxproxy',

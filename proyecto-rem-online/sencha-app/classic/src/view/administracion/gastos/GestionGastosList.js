@@ -1,12 +1,11 @@
 Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     extend: 'HreRem.view.common.GridBase',
     xtype: 'gestiongastoslist',
-    requires: ['HreRem.view.administracion.gastos.AnyadirNuevoGasto'],
-	topBar: true,
-	removeButton: false,
+    requires: ['HreRem.view.administracion.gastos.AnyadirNuevoGasto','HreRem.view.common.CheckBoxModelBase', 'HreRem.ux.plugin.PagingSelectionPersistence'],
 	bind: {
        	store: '{gastosAdministracion}'
     },
+    plugins: 'pagingselectpersist',
     listeners:{
        rowdblclick: 'onClickAbrirGastoProveedor'
     },
@@ -14,7 +13,20 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     initComponent: function() {
     	
     	var me = this;
-    	
+    	      	
+      	var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this};
+      	var labelSeleccionados = {xtype: 'displayfieldbase', itemId: 'displaySelection'/*, cls: 'logo-headerbar'*/};
+		var configAutorizarBtn = {text:'Autorizar', cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizar', scope: this, disabled: true};
+		var configRechazarButton = {text: 'Rechazar', cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazar', scope: this, disabled: true};
+		var separador = {xtype: 'tbfill'};
+		var espacio = {xtype: 'tbspacer'};
+			
+		me.tbar = {
+    		xtype: 'toolbar',
+    		dock: 'top',
+    		items: [configAddBtn, separador, labelSeleccionados, espacio, configAutorizarBtn, configRechazarButton]
+		};
+      	
     	me.columns = [
 	 							{   
 						        	dataIndex: 'id',
@@ -103,35 +115,35 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 		            }
 		        }
 		];
+		
+		me.selModel = Ext.create('HreRem.view.common.CheckBoxModelBase');
     	
     	me.callParent();
+    	
+    	me.getSelectionModel().on({
+        	'selectionchange': function(sm,record,e) {
+        		me.fireEvent('persistedsselectionchange', sm, record, e, me, me.getPersistedSelection());
+        	},
+        	
+        	'selectall': function(sm) {
+        		me.getPlugin('pagingselectpersist').selectAll();
+        	},
+        	   	
+        	'deselectall': function(sm) {
+        		me.getPlugin('pagingselectpersist').deselectAll();
+        	}
+        });
     },
     
     onClickAdd: function (btn) {
 		var me = this;
-		
 		me.fireEvent("onClickAddGasto", me);
-		
 	},
-	
-	onClickRemove: function (btn) {
-		var me  = this;
-		
-		Ext.Msg.show({
-			   title: HreRem.i18n('title.confirmar.eliminacion'),
-			   msg: HreRem.i18n('msg.desea.eliminar'),
-			   buttons: Ext.MessageBox.YESNO,
-			   fn: function(buttonId) {
-			        if (buttonId == 'yes') {
-			            var sm = me.getSelectionModel();
-			            sm.getSelection()[0].erase();
-			       }
-			   }
-		});
-		
-		
-	}
-   
+    
+    getPersistedSelection: function() {
+    	var me = this;
+    	return me.getPlugin('pagingselectpersist').getPersistedSelection();     	
+    }
     	        
 				
 

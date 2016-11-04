@@ -1,8 +1,11 @@
 Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
-    extend		: 'HreRem.view.common.FormBase',
+    extend		: 'Ext.panel.Panel',
     xtype		: 'gestiongastos',
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
     requires	: ['HreRem.view.administracion.gastos.GestionGastosList', 'HreRem.view.administracion.gastos.GestionGastosSearch'],
-//	layout: 'fit',
 	scrollable: true,
 	cls	: 'panel-base shadow-panel',
 	scrollable	: 'y',

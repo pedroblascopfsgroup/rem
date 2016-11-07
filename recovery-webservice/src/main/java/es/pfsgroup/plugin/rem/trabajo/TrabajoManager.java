@@ -2264,7 +2264,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 				if (!Checks.esNulo(trabajoDto.getIdProveedorRem())) {
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
-							.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRem()));
+							.createFilter(FilterType.EQUALS, "codigoProveedorRem", trabajoDto.getIdProveedorRem()));
 					if (Checks.esNulo(apiResp)) {
 						hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
@@ -2361,7 +2361,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 				if (!Checks.esNulo(trabajoDto.getIdProveedorRem())) {
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
-							.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRem()));
+							.createFilter(FilterType.EQUALS, "codigoProveedorRem", trabajoDto.getIdProveedorRem()));
 					if (!Checks.esNulo(apiResp)) {
 						dtoFichaTrabajo.setIdMediador(apiResp.getId());
 					}

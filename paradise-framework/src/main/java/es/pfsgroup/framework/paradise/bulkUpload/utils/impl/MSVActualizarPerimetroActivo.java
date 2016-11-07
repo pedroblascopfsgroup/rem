@@ -46,7 +46,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_PERIMETRO_RESPUESTA_SN = "En columnas cuyo nombre acaba en SN, debe indicar como valor la letra 'S' (Si) o la letra 'N' (No).";
 	public static final String VALID_PERIMETRO_MOTIVO_CON_COMERCIAL = "Debe indicar un codigo valido para el motivo de inclusion comercial";
 	public static final String VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL = "Debe indicar un codigo valido para el motivo de exclusion comercial";
-
+	public static final String VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO = "Si indica 'N' en la columna 'En Perimetro Haya', el resto de columnas de tipo SN no pueden tener el valor 'S'.";
+	public static final String VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL = "El valor en la columna 'Con Formalizar' debe ser el mismo que en la columna 'Con Comercial'.";
+	
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_EN_PERIMETRO_SN = 1;
 	public static final int COL_NUM_CON_GESTION_SN = 2;
@@ -103,14 +105,18 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL, getPerimetroConComerRows(exc));
 //				mapaErrores.put(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL, getPerimetroSinComerRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_RESPUESTA_SN, getPerimetroRespuestaSNRows(exc));
-
+				mapaErrores.put(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO, getFueraPerimetroIsRestoChecksNegativos(exc));
+				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL, getFormalizarConComercial(exc));
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
 							!mapaErrores.get(VALID_PERIMETRO_TIPO_COMERCIALIZACION).isEmpty() ||
 							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL).isEmpty()  ||
 //							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL).isEmpty()  ||
-							!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty() ){
+							!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty() 		  ||
+							!mapaErrores.get(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO).isEmpty() ||
+							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty()) {
+						
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -318,6 +324,62 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 						)
 					listaFilas.add(i);
 			
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> getFueraPerimetroIsRestoChecksNegativos(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		// Validacion que evalua si el registro indica que NO esta dentro del perimetro, ha de comprobar
+		// que el resto de CHECKS no esten activados afirmativamente
+		try{
+			String valorEnPerimetro = "-";
+			for(int i=1; i<exc.getNumeroFilas();i++){
+				
+				valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
+				if("N".equals(valorEnPerimetro)) {
+					
+					String valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
+					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
+					String valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
+				
+					if("S".equals(valorConGestion) || "S".equals(valorConComercial) || "S".equals(valorConFormalizar) )
+						listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> getFormalizarConComercial(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		// Validacion que evalua en el caso de poner valor S/N en Formalizar, éste, coincida con el valor de Comercial
+		try{
+			String valorConFormalizar = "-";
+			for(int i=1; i<exc.getNumeroFilas();i++){
+				
+				valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
+				if(!"-".equals(valorConFormalizar)) {
+					
+					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
+					if(!valorConFormalizar.equals(valorConComercial) )
+						listaFilas.add(i);
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage());

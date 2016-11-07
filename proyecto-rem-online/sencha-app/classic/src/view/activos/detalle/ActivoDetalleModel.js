@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel',
-    'HreRem.model.MediadorModel'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave'],
     
     data: {
     	activo: null,
@@ -416,14 +416,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    	    	 }
        		},
        		
-    		storeLlaves: {    			
-     		 model: 'HreRem.model.Llaves',
- 		     proxy: {
- 		        type: 'uxproxy',
- 		        remoteUrl: 'activo/getListLlavesById',
- 		        extraParams: {id: '{activo.id}'}
- 	    	 }
+    		storeLlaves: {
+	    		pageSize: 10,
+	     		model: 'HreRem.model.Llaves',
+	 		    proxy: {
+	 		        type: 'uxproxy',
+	 		        remoteUrl: 'activo/getListLlavesById',
+			        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+	 	    	},
+	       		remoteSort: true,
+		    	remoteFilter: true,
+		    	listeners : {
+		            beforeload : 'beforeLoadLlaves'
+		    	}
          	},
+         	
+         	storeMovimientosLlave: {
+         		pageSize: 10,
+         		model: 'HreRem.model.MovimientosLlave',
+         		proxy: {
+         			type: 'uxproxy',
+         			remoteUrl: 'activo/getListMovimientosLlaveByLlave',
+			        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+		    	},
+	         	remoteSort: true,
+		    	remoteFilter: true,
+		    	listeners : {
+		            beforeload : 'beforeLoadMovimientosLlave'
+		        }
+        	},
     		
     		storeCatastro: {    			
     		 model: 'HreRem.model.Catastro',

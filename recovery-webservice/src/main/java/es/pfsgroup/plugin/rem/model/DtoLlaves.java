@@ -1,19 +1,16 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.util.Date;
-
 import es.capgemini.devon.dto.WebDto;
 
 
 /**
  * Dto para el grid de llaves en la pestaña situacion posesoria y llaves del Activo.
  */
-public class DtoLlaves extends WebDto{
+public class DtoLlaves extends WebDto {
 
 	private static final long serialVersionUID = 1L;
 
-	private String idMovimiento;
-	private String idLlave;
+	private String id;// id LLave
 	private String idActivo;
 	private String nomCentroLlave;
 	private String codCentroLlave;
@@ -22,26 +19,14 @@ public class DtoLlaves extends WebDto{
 	private String archivo3;
 	private Integer juegoCompleto;
 	private String motivoIncompleto;
-	private String codigoTipoTenedor;
-	private String descripcionTipoTenedor;
-	private String codTenedor;	
-	private String nomTenedor;
-	private Date fechaEntrega;
-	private Date fechaDevolucion;
+	private String numLlave;
 
 
-
-	public String getIdMovimiento() {
-		return idMovimiento;
+	public String getId() {
+		return id;
 	}
-	public void setIdMovimiento(String idMovimiento) {
-		this.idMovimiento = idMovimiento;
-	}
-	public String getIdLlave() {
-		return idLlave;
-	}
-	public void setIdLlave(String idLlave) {
-		this.idLlave = idLlave;
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getIdActivo() {
 		return idActivo;
@@ -88,46 +73,17 @@ public class DtoLlaves extends WebDto{
 	public void setMotivoIncompleto(String motivoIncompleto) {
 		this.motivoIncompleto = motivoIncompleto;
 	}
-	public String getCodigoTipoTenedor() {
-		return codigoTipoTenedor;
-	}
-	public void setCodigoTipoTenedor(String codigoTipoTenedor) {
-		this.codigoTipoTenedor = codigoTipoTenedor;
-	}
-	public String getDescripcionTipoTenedor() {
-		return descripcionTipoTenedor;
-	}
-	public void setDescripcionTipoTenedor(String descripcionTipoTenedor) {
-		this.descripcionTipoTenedor = descripcionTipoTenedor;
-	}
-	public String getCodTenedor() {
-		return codTenedor;
-	}
-	public void setCodTenedor(String codTenedor) {
-		this.codTenedor = codTenedor;
-	}
-	public String getNomTenedor() {
-		return nomTenedor;
-	}
-	public void setNomTenedor(String nomTenedor) {
-		this.nomTenedor = nomTenedor;
-	}
-	public Date getFechaEntrega() {
-		return fechaEntrega;
-	}
-	public void setFechaEntrega(Date fechaEntrega) {
-		this.fechaEntrega = fechaEntrega;
-	}
-	public Date getFechaDevolucion() {
-		return fechaDevolucion;
-	}
-	public void setFechaDevolucion(Date fechaDevolucion) {
-		this.fechaDevolucion = fechaDevolucion;
-	}
 	public String getCodCentroLlave() {
 		return codCentroLlave;
 	}
 	public void setCodCentroLlave(String codCentroLlave) {
 		this.codCentroLlave = codCentroLlave;
 	}
+	public String getNumLlave() {
+		return numLlave;
+	}
+	public void setNumLlave(String numLlave) {
+		this.numLlave = numLlave;
+	}
+	
 }

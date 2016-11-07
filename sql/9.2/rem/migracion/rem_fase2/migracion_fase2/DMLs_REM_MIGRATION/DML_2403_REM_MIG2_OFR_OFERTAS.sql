@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración [MIG2_OFR_OFERTAS -> OFR_OFERTAS] Y carga de ECO_EXPEDIENTE_COMERCIAL
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -27,8 +27,8 @@ DECLARE
     TABLE_COUNT_2 NUMBER(10,0) := 0;
     MAX_NUM_OFR NUMBER(10,0) := 0;
     V_NUM_TABLAS NUMBER(10,0) := 0;
-    V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-    V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+    V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+    V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
     V_TABLA VARCHAR2(40 CHAR) := 'OFR_OFERTAS';
     V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OFR_OFERTAS';
     V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -77,36 +77,36 @@ BEGIN
           HAVING COUNT(1) > 1
           )
         SELECT 
-            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL            		 	OFR_ID, 
-            MIG.OFR_COD_OFERTA											OFR_COD_OFERTA,            
-            AGR.AGR_ID													AGR_ID,
+            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                             OFR_ID, 
+            MIG.OFR_COD_OFERTA                                                                                  OFR_COD_OFERTA,            
+            AGR.AGR_ID                                                                                                  AGR_ID,
             CASE WHEN MIG.OFR_IMPORTE = 0 THEN null
-            ELSE MIG.OFR_IMPORTE END									OFR_IMPORTE,
-            CLC.CLC_ID													CLC_ID,
-            EOF.DD_EOF_ID												DD_EOF_ID,
-            TOF.DD_TOF_ID												DD_TOF_ID,
-            VIS.VIS_ID													VIS_ID,
-            EVO.DD_EVO_ID												DD_EVO_ID,            
-            MIG.OFR_FECHA_ALTA											OFR_FECHA_ALTA,
+            ELSE MIG.OFR_IMPORTE END                                                                    OFR_IMPORTE,
+            CLC.CLC_ID                                                                                                  CLC_ID,
+            EOF.DD_EOF_ID                                                                                               DD_EOF_ID,
+            TOF.DD_TOF_ID                                                                                               DD_TOF_ID,
+            VIS.VIS_ID                                                                                                  VIS_ID,
+            EVO.DD_EVO_ID                                                                                               DD_EVO_ID,            
+            MIG.OFR_FECHA_ALTA                                                                                  OFR_FECHA_ALTA,
             CASE WHEN MIG.OFR_FECHA_NOTIFICACION IS null 
-            AND  MIG.OFR_COD_ESTADO_OFERTA = ''01'' THEN SYSDATE		
-            ELSE MIG.OFR_FECHA_NOTIFICACION END							OFR_FECHA_NOTIFICACION,
+            AND  MIG.OFR_COD_ESTADO_OFERTA = ''01'' THEN SYSDATE                
+            ELSE MIG.OFR_FECHA_NOTIFICACION END                                                 OFR_FECHA_NOTIFICACION,
             CASE WHEN MIG.OFR_IMPORTE_CONTRAOFERTA = 0 THEN null
-            ELSE MIG.OFR_IMPORTE_CONTRAOFERTA END						OFR_IMPORTE_CONTRAOFERTA,
+            ELSE MIG.OFR_IMPORTE_CONTRAOFERTA END                                               OFR_IMPORTE_CONTRAOFERTA,
             CASE WHEN MIG.OFR_IMPORTE_CONTRAOFERTA != 0 
             AND MIG.OFR_FECHA_CONTRAOFERTA is null THEN SYSDATE
-            ELSE MIG.OFR_FECHA_CONTRAOFERTA END							OFR_FECHA_CONTRAOFERTA,
-            USU.USU_ID													USU_ID,
+            ELSE MIG.OFR_FECHA_CONTRAOFERTA END                                                 OFR_FECHA_CONTRAOFERTA,
+            USU.USU_ID                                                                                                  USU_ID,
             CASE WHEN MIG.OFR_FECHA_RECHAZO IS null 
             AND  MIG.OFR_COD_ESTADO_OFERTA = ''02'' THEN SYSDATE
-            ELSE MIG.OFR_FECHA_RECHAZO END								OFR_FECHA_RECHAZO,
-            MIG.OFR_IND_LOTE_RESTRINGIDO								OFR_IND_LOTE_RESTRINGIDO,
+            ELSE MIG.OFR_FECHA_RECHAZO END                                                              OFR_FECHA_RECHAZO,
+            MIG.OFR_IND_LOTE_RESTRINGIDO                                                                OFR_IND_LOTE_RESTRINGIDO,
             CASE WHEN MIG.OFR_IMPORTE_APROBADO = 0 THEN null
-            ELSE MIG.OFR_IMPORTE_APROBADO END							OFR_IMPORTE_APROBADO,
-            0															VERSION,
-            ''MIG2''                                            		USUARIOCREAR,
-            SYSDATE                                            			FECHACREAR,
-            0                                                  			BORRADO
+            ELSE MIG.OFR_IMPORTE_APROBADO END                                                   OFR_IMPORTE_APROBADO,
+            0                                                                                                                   VERSION,
+            ''MIG2''                                                            USUARIOCREAR,
+            SYSDATE                                                             FECHACREAR,
+            0                                                                   BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
             LEFT JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_NUM_AGRUP_UVEM = MIG.OFR_COD_AGRUPACION
             LEFT JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_WEBCOM_ID = MIG.OFR_COD_CLIENTE_WEBCOM
@@ -121,7 +121,7 @@ BEGIN
             WHERE DUP.OFR_COD_OFERTA = MIG.OFR_COD_OFERTA)
     '
     ;
-    EXECUTE IMMEDIATE V_SENTENCIA	;
+    EXECUTE IMMEDIATE V_SENTENCIA       ;
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
     
@@ -241,7 +241,7 @@ BEGIN
     -- V_REG_INSERTADOS
     
     -- Total registros rechazados
-    V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+    V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;  
     
     -- Observaciones
     IF V_TABLE_ECO != 0 THEN
@@ -252,8 +252,8 @@ BEGIN
         V_OBSERVACIONES := V_OBSERVACIONES ||' Se han rechazado un total de '||V_REJECTS||' OFERTAS.';
         
         IF V_DUPLICADOS != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' OFR_COD_OFERTA duplicados. ';	
-		END IF;
+                        V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' OFR_COD_OFERTA duplicados. ';      
+                END IF;
     END IF;
     
     V_SENTENCIA := '

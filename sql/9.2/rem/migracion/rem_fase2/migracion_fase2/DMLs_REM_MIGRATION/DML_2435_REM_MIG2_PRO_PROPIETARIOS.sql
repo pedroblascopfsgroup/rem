@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_PRO_PROPIETARIO -> ACT_PRO_PROPIETARIO
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_PRO_PROPIETARIO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_PRO_PROPIETARIOS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -77,15 +77,15 @@ BEGIN
     FECHA_COMPROBACION
     )
     WITH PRO_CODIGO_UVEM AS (
-		SELECT
-		MIG.PRO_PROPIETARIO_CODIGO_UVEM 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE MIG.PRO_PROPIETARIO_CODIGO_UVEM = PRO.PRO_CODIGO_UVEM
-		)
+                SELECT
+                MIG.PRO_PROPIETARIO_CODIGO_UVEM 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE MIG.PRO_PROPIETARIO_CODIGO_UVEM = PRO.PRO_CODIGO_UVEM
+                )
     )
     SELECT DISTINCT
-    MIG.PRO_PROPIETARIO_CODIGO_UVEM                              			PRO_CODIGO_UVEM,
+    MIG.PRO_PROPIETARIO_CODIGO_UVEM                                                     PRO_CODIGO_UVEM,
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -98,25 +98,25 @@ BEGIN
 
   END IF;
 
-	  --Inicio del proceso de volcado sobre ACT_PRO_PROPIETARIO
+          --Inicio del proceso de volcado sobre ACT_PRO_PROPIETARIO
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       V_SENTENCIA := '
         MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' PRO
         USING ( SELECT  
-				MIG.PRO_PROPIETARIO_CODIGO_UVEM,
-				MIG.PRO_COD_CARTERA,
-				MIG.PRO_COD_SUBCARTERA
-				FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-			  ) AUX
-		ON (PRO.PRO_CODIGO_UVEM = AUX.PRO_PROPIETARIO_CODIGO_UVEM)
-		WHEN MATCHED THEN UPDATE SET
+                                MIG.PRO_PROPIETARIO_CODIGO_UVEM,
+                                MIG.PRO_COD_CARTERA,
+                                MIG.PRO_COD_SUBCARTERA
+                                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                          ) AUX
+                ON (PRO.PRO_CODIGO_UVEM = AUX.PRO_PROPIETARIO_CODIGO_UVEM)
+                WHEN MATCHED THEN UPDATE SET
           PRO.DD_CRA_ID = (SELECT DD_CRA_ID FROM DD_CRA_CARTERA WHERE DD_CRA_CODIGO = AUX.PRO_COD_CARTERA)
           ,PRO.USUARIOMODIFICAR = ''MIG2''
           ,PRO.FECHAMODIFICAR = SYSDATE
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -135,16 +135,16 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
             
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
-	  IF V_REJECTS != 0 THEN
+          IF V_REJECTS != 0 THEN
          V_OBSERVACIONES := ' Se han rechazado  '||V_REJECTS||' registros.';
-		IF TABLE_COUNT != 0 THEN
-		
-		  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' PROPIETARIOS inexistentes. ';
-		
-		END IF;
+                IF TABLE_COUNT != 0 THEN
+                
+                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' PROPIETARIOS inexistentes. ';
+                
+                END IF;
       END IF;
         
       V_SENTENCIA := '

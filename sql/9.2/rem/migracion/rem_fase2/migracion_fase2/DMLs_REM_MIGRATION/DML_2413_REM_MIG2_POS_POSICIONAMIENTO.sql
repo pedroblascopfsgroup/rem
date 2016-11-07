@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_POS_POSICIONAMIENTO -> POS_POSICIONAMIENTO
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'POS_POSICIONAMIENTO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_POS_POSICIONAMIENTO';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -91,7 +91,7 @@ BEGIN
           )
         )
         SELECT DISTINCT
-        MIG.POS_COD_OFERTA                              						RES_COD_OFERTA,
+        MIG.POS_COD_OFERTA                                                                              RES_COD_OFERTA,
         '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
         SYSDATE                                                                 FECHA_COMPROBACION
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -166,7 +166,7 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
       IF V_REJECTS != 0 THEN      

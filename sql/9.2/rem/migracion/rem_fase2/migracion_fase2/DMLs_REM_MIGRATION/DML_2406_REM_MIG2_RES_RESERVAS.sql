@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG2_RES_RESERVAS' -> 'RES_RESERVAS'
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
       TABLE_COUNT NUMBER(10,0) := 0;
-      V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+      V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
       V_TABLA VARCHAR2(40 CHAR) := 'RES_RESERVAS';
       V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_RES_RESERVAS';
       V_SENTENCIA VARCHAR2(2000 CHAR);
@@ -93,7 +93,7 @@ BEGIN
             )
             )
             SELECT DISTINCT
-                  MIG.RES_COD_OFERTA                              						OFR_NUM_OFERTA,
+                  MIG.RES_COD_OFERTA                                                                            OFR_NUM_OFERTA,
                   '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
                   SYSDATE                                                                 FECHA_COMPROBACION
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -153,23 +153,23 @@ BEGIN
             )
       )
       SELECT 
-      '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL             				RES_ID,
-      RES.ECO_ID														ECO_ID,
-      RES.RES_COD_NUM_RESERVA											RES_NUM_RESERVA,
-      RES.RES_FECHA_FIRMA												RES_FECHA_FIRMA,
-      RES.RES_FECHA_VENCIMIENTO											RES_FECHA_VENCIMIENTO,
-      RES.RES_FECHA_ANULACION											RES_FECHA_ANULACION,
-      RES.RES_IND_IMP_ANULACION											RES_IND_IMP_ANULACION,
-      RES.RES_IMPORTE_DEVUELTO											RES_IMPORTE_DEVUELTO,
-      RES.DD_TAR_ID														DD_TAR_ID,
-      DD_ERE_ID															DD_ERE_ID,
-      RES.RES_FECHA_SOLICITUD											RES_FECHA_SOLICITUD,
-      RES.RES_FECHA_RESOLUCION											RES_FECHA_RESOLUCION,
-      ''0''                                              				VERSION,
-      ''MIG2''                                            				USUARIOCREAR,
-      SYSDATE                                             				FECHACREAR,
-      0                                                   				BORRADO
-      FROM INSERTAR RES									
+      '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                           RES_ID,
+      RES.ECO_ID                                                                                                                ECO_ID,
+      RES.RES_COD_NUM_RESERVA                                                                                   RES_NUM_RESERVA,
+      RES.RES_FECHA_FIRMA                                                                                               RES_FECHA_FIRMA,
+      RES.RES_FECHA_VENCIMIENTO                                                                                 RES_FECHA_VENCIMIENTO,
+      RES.RES_FECHA_ANULACION                                                                                   RES_FECHA_ANULACION,
+      RES.RES_IND_IMP_ANULACION                                                                                 RES_IND_IMP_ANULACION,
+      RES.RES_IMPORTE_DEVUELTO                                                                                  RES_IMPORTE_DEVUELTO,
+      RES.DD_TAR_ID                                                                                                             DD_TAR_ID,
+      DD_ERE_ID                                                                                                                 DD_ERE_ID,
+      RES.RES_FECHA_SOLICITUD                                                                                   RES_FECHA_SOLICITUD,
+      RES.RES_FECHA_RESOLUCION                                                                                  RES_FECHA_RESOLUCION,
+      ''0''                                                                             VERSION,
+      ''MIG2''                                                                          USUARIOCREAR,
+      SYSDATE                                                                           FECHACREAR,
+      0                                                                                 BORRADO
+      FROM INSERTAR RES                                                                 
       ')
       ;
       

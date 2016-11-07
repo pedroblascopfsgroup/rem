@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
 import es.pfsgroup.plugin.rem.rest.validator.UniqueKeyValidator;
 
 @Target(ElementType.FIELD)
@@ -25,6 +26,8 @@ public @interface UniqueKey {
 	Class<? extends Payload>[] payload() default {};
 	
 	String field();
+	
+	TRANSFORM_TYPE transform() default TRANSFORM_TYPE.NONE;
 	
 
 }

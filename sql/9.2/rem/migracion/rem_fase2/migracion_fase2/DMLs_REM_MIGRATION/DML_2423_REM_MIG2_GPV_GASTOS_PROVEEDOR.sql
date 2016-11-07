@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_GPV_ACT -> GPV_ACT
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -28,8 +28,8 @@ DECLARE
       TABLE_COUNT_2 NUMBER(10,0) := 0;
       MAX_NUM_GASTO_HAYA NUMBER(10,0) := 0;
       V_NUM_TABLAS NUMBER(10,0) := 0;
-      V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+      V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
       V_TABLA VARCHAR2(40 CHAR) := 'GPV_GASTOS_PROVEEDOR';
       V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GPV_GASTOS_PROVEEDORES';
       V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -185,10 +185,10 @@ BEGIN
             ,GPV_CUBRE_SEGURO
             ,GPV_OBSERVACIONES
             ,GPV_COD_GASTO_AGRUPADO
-			,GPV_COD_TIPO_OPERACION
-			,GPV_NUMERO_FACTURA_UVEM
-			,GPV_NUMERO_PROVISION_FONDOS
-			,GPV_NUMERO_PRESUPUESTO
+                        ,GPV_COD_TIPO_OPERACION
+                        ,GPV_NUMERO_FACTURA_UVEM
+                        ,GPV_NUMERO_PROVISION_FONDOS
+                        ,GPV_NUMERO_PRESUPUESTO
             ,VERSION
             ,USUARIOCREAR
             ,FECHACREAR
@@ -210,35 +210,35 @@ BEGIN
             )  
       )
       SELECT
-            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL  						GPV_ID
-            ,MIG2.GPV_ID													GPV_NUM_GASTO_HAYA
-            ,MIG2.GPV_COD_GASTO_PROVEEDOR									GPV_NUM_GASTO_GESTORIA
-            ,MIG2.GPV_REFERENCIA_EMISOR										GPV_REF_EMISOR
-            ,TGA.DD_TGA_ID													DD_TGA_ID
-            ,STG.DD_STG_ID													DD_STG_ID
-            ,MIG2.GPV_CONCEPTO												GPV_CONCEPTO
-            ,TPE.DD_TPE_ID													DD_TPE_ID
-            ,PVE.PVE_ID														PVE_ID_EMISOR
-            ,NULL 															PRO_ID
-            ,MIG2.GPV_FECHA_EMISION											GPV_FECHA_EMISION
-            ,MIG2.GPV_FECHA_NOTIFICACION									GPV_FECHA_NOTIFICACION
-            ,DEG.DD_DEG_ID													DD_DEG_ID
-            ,MIG2.GPV_IND_CUBRE_SEGURO										GPV_CUBRE_SEGURO
-            ,MIG2.GPV_OBSERVACIONES											GPV_OBSERVACIONES
-            ,MIG2.GPV_COD_GASTO_AGRUPADO									GPV_COD_GASTO_AGRUPADO
-            ,MIG2.GPV_COD_TIPO_OPERACION									PV_COD_TIPO_OPERACION	
-            ,MIG2.GPV_NUMERO_FACTURA_UVEM									GPV_NUMERO_FACTURA_UVEM
-            ,MIG2.GPV_NUMERO_PROVISION_FONDOS								GPV_NUMERO_PROVISION_FONDOS
-            ,MIG2.GPV_NUMERO_PRESUPUESTO									GPV_NUMERO_PRESUPUESTO
-            ,0 																VERSION
-            ,''MIG2'' 														USUARIOCREAR
-            ,SYSDATE 														FECHACREAR
-            ,NULL 															USUARIOMODIFICAR
-            ,NULL 															FECHAMODIFICAR
-            ,NULL 															USUARIOBORRAR
-            ,NULL 															FECHABORRAR
-            ,0 																BORRADO
-            ,NULL 															PRG_ID
+            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                             GPV_ID
+            ,MIG2.GPV_ID                                                                                                        GPV_NUM_GASTO_HAYA
+            ,MIG2.GPV_COD_GASTO_PROVEEDOR                                                                       GPV_NUM_GASTO_GESTORIA
+            ,MIG2.GPV_REFERENCIA_EMISOR                                                                         GPV_REF_EMISOR
+            ,TGA.DD_TGA_ID                                                                                                      DD_TGA_ID
+            ,STG.DD_STG_ID                                                                                                      DD_STG_ID
+            ,MIG2.GPV_CONCEPTO                                                                                          GPV_CONCEPTO
+            ,TPE.DD_TPE_ID                                                                                                      DD_TPE_ID
+            ,PVE.PVE_ID                                                                                                         PVE_ID_EMISOR
+            ,NULL                                                                                                                       PRO_ID
+            ,MIG2.GPV_FECHA_EMISION                                                                                     GPV_FECHA_EMISION
+            ,MIG2.GPV_FECHA_NOTIFICACION                                                                        GPV_FECHA_NOTIFICACION
+            ,DEG.DD_DEG_ID                                                                                                      DD_DEG_ID
+            ,MIG2.GPV_IND_CUBRE_SEGURO                                                                          GPV_CUBRE_SEGURO
+            ,MIG2.GPV_OBSERVACIONES                                                                                     GPV_OBSERVACIONES
+            ,MIG2.GPV_COD_GASTO_AGRUPADO                                                                        GPV_COD_GASTO_AGRUPADO
+            ,MIG2.GPV_COD_TIPO_OPERACION                                                                        PV_COD_TIPO_OPERACION   
+            ,MIG2.GPV_NUMERO_FACTURA_UVEM                                                                       GPV_NUMERO_FACTURA_UVEM
+            ,MIG2.GPV_NUMERO_PROVISION_FONDOS                                                           GPV_NUMERO_PROVISION_FONDOS
+            ,MIG2.GPV_NUMERO_PRESUPUESTO                                                                        GPV_NUMERO_PRESUPUESTO
+            ,0                                                                                                                          VERSION
+            ,''MIG2''                                                                                                           USUARIOCREAR
+            ,SYSDATE                                                                                                            FECHACREAR
+            ,NULL                                                                                                                       USUARIOMODIFICAR
+            ,NULL                                                                                                                       FECHAMODIFICAR
+            ,NULL                                                                                                                       USUARIOBORRAR
+            ,NULL                                                                                                                       FECHABORRAR
+            ,0                                                                                                                          BORRADO
+            ,NULL                                                                                                                       PRG_ID
       FROM INSERTAR INS
             INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_NUM_GASTO_GESTORIA = MIG2.GPV_COD_GASTO_PROVEEDOR
             INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
@@ -250,7 +250,7 @@ BEGIN
       ;
       
       
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -290,19 +290,19 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       
       -- Observaciones
       IF V_REJECTS != 0 THEN      
             V_OBSERVACIONES := 'Se han rechazado, '||V_REJECTS||' registros. ';
             
-            IF TABLE_COUNT != 0 THEN		
-                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CODIGOS DD_TGA_TIPOS_GASTO inexistentes. ';		
+            IF TABLE_COUNT != 0 THEN            
+                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CODIGOS DD_TGA_TIPOS_GASTO inexistentes. ';             
             END IF;
             
-            IF TABLE_COUNT_2 != 0 THEN		
-                  V_OBSERVACIONES := V_OBSERVACIONES ||  ' Hay, '||TABLE_COUNT_2||' CODIGOS DD_STG_SUBTIPOS_GASTO inexistentes. ';		
+            IF TABLE_COUNT_2 != 0 THEN          
+                  V_OBSERVACIONES := V_OBSERVACIONES ||  ' Hay, '||TABLE_COUNT_2||' CODIGOS DD_STG_SUBTIPOS_GASTO inexistentes. ';              
             END IF;
       END IF;
       

@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG2_OFA_OFERTAS_ACTIVO' -> 'ACT_OFR'
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -26,8 +26,8 @@ DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_OFR';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OFA_OFERTAS_ACTIVO';
 V_SENTENCIA VARCHAR2(2000 CHAR);
@@ -80,15 +80,15 @@ BEGIN
     FECHA_COMPROBACION
     )
     WITH ACT_NUM_ACTIVO AS (
-		SELECT
-		MIG.OFA_ACT_NUMERO_ACTIVO 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.OFA_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-		)
+                SELECT
+                MIG.OFA_ACT_NUMERO_ACTIVO 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.OFA_ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
+                )
     )
     SELECT DISTINCT
-    MIG.OFA_ACT_NUMERO_ACTIVO                              					ACT_NUM_ACTIVO,
+    MIG.OFA_ACT_NUMERO_ACTIVO                                                                   ACT_NUM_ACTIVO,
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -141,15 +141,15 @@ BEGIN
     FECHA_COMPROBACION
     )
     WITH OFR_NUM_OFERTA AS (
-		SELECT
-		MIG.OFA_COD_OFERTA 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE MIG.OFA_COD_OFERTA = OFR_NUM_OFERTA
-		)
+                SELECT
+                MIG.OFA_COD_OFERTA 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE MIG.OFA_COD_OFERTA = OFR_NUM_OFERTA
+                )
     )
     SELECT DISTINCT
-    MIG.OFA_COD_OFERTA                              						OFA_COD_OFERTA,
+    MIG.OFA_COD_OFERTA                                                                          OFA_COD_OFERTA,
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -166,31 +166,31 @@ BEGIN
   --Inicio del proceso de volcado sobre ACT_OFR
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
  
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-	ACT_ID,
-	OFR_ID,
-	ACT_OFR_IMPORTE,
-	VERSION,
-	OFR_ACT_PORCEN_PARTICIPACION
-	)
-	WITH INSERTAR AS (
+        EXECUTE IMMEDIATE ('
+        INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+        ACT_ID,
+        OFR_ID,
+        ACT_OFR_IMPORTE,
+        VERSION,
+        OFR_ACT_PORCEN_PARTICIPACION
+        )
+        WITH INSERTAR AS (
     SELECT DISTINCT ACT.ACT_ID, OFR.OFR_ID, MIG.OFA_IMPORTE_PARTICIPACION, MIG.OFA_PORCENTAJE_PARTICIPACION
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
     INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR
       ON OFR.OFR_NUM_OFERTA = MIG.OFA_COD_OFERTA
     INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
       ON ACT.ACT_NUM_ACTIVO = MIG.OFA_ACT_NUMERO_ACTIVO
   )
-	SELECT 
-	ACT_OFR.ACT_ID  					ACT_ID,
-	ACT_OFR.OFR_ID						OFR_ID,
-	ACT_OFR.OFA_IMPORTE_PARTICIPACION	CT_OFR_IMPORTE,
-	0									VERSION,
-	OFA_PORCENTAJE_PARTICIPACION		OFR_ACT_PORCEN_PARTICIPACION
-	FROM INSERTAR ACT_OFR
-	')
-	;
+        SELECT 
+        ACT_OFR.ACT_ID                                          ACT_ID,
+        ACT_OFR.OFR_ID                                          OFR_ID,
+        ACT_OFR.OFA_IMPORTE_PARTICIPACION       CT_OFR_IMPORTE,
+        0                                                                       VERSION,
+        OFA_PORCENTAJE_PARTICIPACION            OFR_ACT_PORCEN_PARTICIPACION
+        FROM INSERTAR ACT_OFR
+        ')
+        ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -232,26 +232,26 @@ BEGIN
   END IF;
 
 EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-	TABLA_MIG,
-	TABLA_REM,
-	REGISTROS_TABLA_MIG,
-	REGISTROS_INSERTADOS,
-	REGISTROS_RECHAZADOS,
-	DD_COD_INEXISTENTES,
-	FECHA,
-	OBSERVACIONES
-	)
-	SELECT
-	'''||V_TABLA_MIG||''',
-	'''||V_TABLA||''',
-	'||V_REG_MIG||',
-	'||V_REG_INSERTADOS||',
-	'||V_REJECTS||',
-	'||V_COD||',
-	SYSDATE,
-	'''||V_OBSERVACIONES||'''
-	FROM DUAL
+        INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
+        TABLA_MIG,
+        TABLA_REM,
+        REGISTROS_TABLA_MIG,
+        REGISTROS_INSERTADOS,
+        REGISTROS_RECHAZADOS,
+        DD_COD_INEXISTENTES,
+        FECHA,
+        OBSERVACIONES
+        )
+        SELECT
+        '''||V_TABLA_MIG||''',
+        '''||V_TABLA||''',
+        '||V_REG_MIG||',
+        '||V_REG_INSERTADOS||',
+        '||V_REJECTS||',
+        '||V_COD||',
+        SYSDATE,
+        '''||V_OBSERVACIONES||'''
+        FROM DUAL
   ')
   ;
   

@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG2_PRD_PROVEEDOR_DIRECCION' -> 'ACT_PRD_PROVEEDOR_DIRECCION'
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -27,8 +27,8 @@ DECLARE
       TABLE_COUNT NUMBER(10,0) := 0;
       TABLE_COUNT_2 NUMBER(10,0) := 0;
       TABLE_COUNT_3 NUMBER(10,0) := 0;
-      V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+      V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
       V_TABLA VARCHAR2(40 CHAR) := 'ACT_PRD_PROVEEDOR_DIRECCION';
       V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_PRD_PROVEEDOR_DIRECCION';
       V_SENTENCIA VARCHAR2(2000 CHAR);
@@ -86,7 +86,7 @@ BEGIN
                   )
             )
             SELECT DISTINCT
-                  MIG.PVE_COD_UVEM                              							PVE_COD_UVEM,
+                  MIG.PVE_COD_UVEM                                                                                      PVE_COD_UVEM,
                   '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
                   SYSDATE                                                                 FECHA_COMPROBACION
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -248,31 +248,31 @@ BEGIN
                   PVE_COD_DIRECC_UVEM
             )
             SELECT 
-                  '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL      						PRD_ID,
-                  PVE.PVE_ID															PVE_ID,
-                  TDP.DD_TDP_ID														DD_TDP_ID,
-                  TVI.DD_TVI_ID														DD_TVI_ID,
-                  MIG.PRD_NOMBRE														PRD_NOMBRE,
-                  MIG.PRD_NUMERO														PRD_NUM,
-                  MIG.PRD_PUERTA														PRD_PTA,
-                  UPO.DD_UPO_ID														DD_UPO_ID,
-                  PRV.DD_PRV_ID														DD_PRV_ID,
-                  MIG.PRD_CODIGO_POSTAL												PRD_CP,
-                  MIG.PRD_TELEFONO													PRD_TELEFONO,
-                  MIG.PRD_EMAIL														PRD_EMAIL,
-                  LOC.DD_LOC_ID														DD_LOC_ID,
+                  '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                               PRD_ID,
+                  PVE.PVE_ID                                                                                                                    PVE_ID,
+                  TDP.DD_TDP_ID                                                                                                         DD_TDP_ID,
+                  TVI.DD_TVI_ID                                                                                                         DD_TVI_ID,
+                  MIG.PRD_NOMBRE                                                                                                                PRD_NOMBRE,
+                  MIG.PRD_NUMERO                                                                                                                PRD_NUM,
+                  MIG.PRD_PUERTA                                                                                                                PRD_PTA,
+                  UPO.DD_UPO_ID                                                                                                         DD_UPO_ID,
+                  PRV.DD_PRV_ID                                                                                                         DD_PRV_ID,
+                  MIG.PRD_CODIGO_POSTAL                                                                                         PRD_CP,
+                  MIG.PRD_TELEFONO                                                                                                      PRD_TELEFONO,
+                  MIG.PRD_EMAIL                                                                                                         PRD_EMAIL,
+                  LOC.DD_LOC_ID                                                                                                         DD_LOC_ID,
                   0                                                                   VERSION,
                   ''MIG2''                                                            USUARIOCREAR,
                   SYSDATE                                                             FECHACREAR,
                   0                                                                   BORRADO,
                   MIG.PVD_COD_DIRECCION                             PVE_COD_DIRECC_UVEM
-            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG		
-                  INNER JOIN ACT_PVE_PROVEEDOR PVE 	ON PVE.PVE_COD_UVEM = MIG.PVE_COD_UVEM
+            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG          
+                  INNER JOIN ACT_PVE_PROVEEDOR PVE      ON PVE.PVE_COD_UVEM = MIG.PVE_COD_UVEM
                   INNER JOIN '||V_ESQUEMA||'.DD_TDP_TIPO_DIR_PROVEEDOR TDP ON TDP.DD_TDP_CODIGO = MIG.PRD_COD_TIPO_DIRECCION AND TDP.BORRADO = 0
-                  INNER JOIN '||V_ESQUEMA_MASTER||'.DD_TVI_TIPO_VIA TVI	ON TVI.DD_TVI_CODIGO = MIG.PRD_COD_TIPO_VIA AND TVI.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_UPO_UNID_POBLACIONAL UPO	ON UPO.DD_UPO_CODIGO = MIG.PRD_COD_UNIDADPOBLACIONAL AND UPO.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV	ON PRV.DD_PRV_CODIGO = MIG.PRD_COD_PROVINCIA AND PRV.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC	ON LOC.DD_LOC_CODIGO = MIG.PRD_COD_LOCALIDAD AND LOC.BORRADO = 0
+                  INNER JOIN '||V_ESQUEMA_MASTER||'.DD_TVI_TIPO_VIA TVI ON TVI.DD_TVI_CODIGO = MIG.PRD_COD_TIPO_VIA AND TVI.BORRADO = 0
+                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_UPO_UNID_POBLACIONAL UPO  ON UPO.DD_UPO_CODIGO = MIG.PRD_COD_UNIDADPOBLACIONAL AND UPO.BORRADO = 0
+                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = MIG.PRD_COD_PROVINCIA AND PRV.BORRADO = 0
+                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG.PRD_COD_LOCALIDAD AND LOC.BORRADO = 0
       ')
       ;
       

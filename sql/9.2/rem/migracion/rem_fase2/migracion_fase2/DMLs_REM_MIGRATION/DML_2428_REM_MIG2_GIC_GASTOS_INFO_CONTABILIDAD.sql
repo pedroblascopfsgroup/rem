@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_GIC_GASTOS_INFO_CONTABI -> GIC_GASTOS_INFO_CONTABILIDAD
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -26,8 +26,8 @@ DECLARE
 
 TABLE_COUNT_1 NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'GIC_GASTOS_INFO_CONTABILIDAD';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GIC_GASTOS_INFO_CONTABI';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -39,7 +39,7 @@ V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
       
-	  --COMPROBACIONES PREVIAS - GASTOS_PROVEEDOR
+          --COMPROBACIONES PREVIAS - GASTOS_PROVEEDOR
       DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO GASTOS_PROVEEDOR...');
       
       V_SENTENCIA := '
@@ -87,7 +87,7 @@ BEGIN
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GIC_GPV_ID			    						      			  GPV_NUM_GASTO_HAYA,          
+          MIG2.GIC_GPV_ID                                                                                                 GPV_NUM_GASTO_HAYA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.GIC_GPV_ID = MIG2.GIC_GPV_ID
@@ -147,7 +147,7 @@ BEGIN
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GIC_EJERCICIO                                						      EJE_ANYO,          
+          MIG2.GIC_EJERCICIO                                                                                  EJE_ANYO,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.GIC_EJERCICIO = MIG2.GIC_EJERCICIO
@@ -229,7 +229,7 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
            
       -- Observaciones
       IF V_REJECTS != 0 THEN

@@ -283,7 +283,7 @@ Ext.define('HreRem.view.common.TareaController', {
 			  success: function(response,opts){
 				  idExpediente = Ext.JSON.decode(response.responseText).idExpediente;
 				  numExpediente = Ext.JSON.decode(response.responseText).numExpediente;		
-				  debugger;			  
+				  //debugger;			  
 				  titulo = "Expediente " + numExpediente;
 				  me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);
 			  },

@@ -675,7 +675,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	   			var window = btn.up('creartrabajowindow');
     	   			window.idProceso = idProceso;
     	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
-    	   			window.lookupReference('listaActivosSubidaRef').getStore().load();    
+    	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    
     	   			//Si carga correctametne desde listado, ya no sera obligatorio insertar archivo
     	   			window.lookupReference('filefieldActivosRef').allowBlank=true;
     		    }

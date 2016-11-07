@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Entit
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -72,10 +73,14 @@ public class InformeMediadorDto implements Serializable {
 
 	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
+	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRemAnterior no existe", groups = { Insert.class,
+		Update.class })
 	private Long idProveedorRemAnterior;
 
 	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
+	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
+		Update.class })
 	private Long idProveedorRem;
 
 	@NotNull(groups = Insert.class)

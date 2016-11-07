@@ -203,14 +203,14 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 			if (!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())) {
 				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemPrescriptor()));
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemPrescriptor()));
 				if (!Checks.esNulo(prescriptor)) {
 					cliente.setProvPrescriptor(prescriptor);
 				}
 			}
 			if (!Checks.esNulo(clienteDto.getIdProveedorRemResponsable())) {
 				ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemResponsable()));
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemResponsable()));
 				if (!Checks.esNulo(apiResp)) {
 					cliente.setProvApiResponsable(apiResp);
 				}
@@ -323,7 +323,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
 				if (!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())) {
 					ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
-							.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemPrescriptor()));
+							.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemPrescriptor()));
 					if (!Checks.esNulo(prescriptor)) {
 						cliente.setProvPrescriptor(prescriptor);
 					}
@@ -334,7 +334,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			if (((JSONObject) jsonFields).containsKey("idProveedorRemResponsable")) {
 				if (!Checks.esNulo(clienteDto.getIdProveedorRemResponsable())) {
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
-							.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemResponsable()));
+							.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemResponsable()));
 					if (!Checks.esNulo(apiResp)) {
 						cliente.setProvApiResponsable(apiResp);
 					}

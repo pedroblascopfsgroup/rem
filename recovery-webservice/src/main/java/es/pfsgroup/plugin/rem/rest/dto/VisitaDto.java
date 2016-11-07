@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -31,11 +32,21 @@ public class VisitaDto implements Serializable {
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codDetalleEstadoVisita;
 	@NotNull(groups = { Insert.class})
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
+		Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemPrescriptor;
 	@NotNull(groups = { Insert.class})
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemCustodio no existe", groups = { Insert.class,
+		Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemCustodio;
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemResponsable no existe", groups = { Insert.class,
+		Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemResponsable;
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemFdv no existe", groups = { Insert.class,
+		Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemFdv;
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemVisita no existe", groups = { Insert.class,
+		Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemVisita;
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String observaciones;

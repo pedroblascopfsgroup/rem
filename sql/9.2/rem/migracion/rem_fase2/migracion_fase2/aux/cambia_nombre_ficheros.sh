@@ -15,6 +15,11 @@ mv Fich_Propietarios.dat PROPIETARIOS.dat
 mv Fich_Propuestas_Precio.dat PROPUESTAS_PRECIOS.dat
 mv Fich_Proveedor_Direccion.dat PROVEEDORES_DIRECCIONES.dat
 mv Fich_Visitas.dat VISITAS.dat
+mv Fich_Observaciones_Oferta.dat OFERTAS_OBSERVACIONES.dat
+mv Fich_Ofertas_Activo OFERTAS_ACTIVO.dat
+mv Fich_Posicionamiento POSICIONAMIENTOS.dat
+mv Fich_Reservas RESERVAS.dat
+mv Fich_Titulares_Adicionales TITULARES_ADICIONALES_OFERTA.dat
 
 
 echo "Nombres cambiados, verificar cambios"

@@ -1988,6 +1988,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			grid.setTopBar(false);
 			grid.editOnSelect = false;
 		}
+	},
+	
+	// Este método filtra los anyos de construcción y rehabilitación de una vivienda
+	// de modo que si el value es '0' lo quita. Es una medida de protección al v-type
+	// por que en la DB están establecidos a 0 todos los activos.
+	onAnyoChange: function(field) {
+		if(!Ext.isEmpty(field.getValue()) && field.getValue() === '0') {
+			field.setValue('');
+		}
 	}
 
 });

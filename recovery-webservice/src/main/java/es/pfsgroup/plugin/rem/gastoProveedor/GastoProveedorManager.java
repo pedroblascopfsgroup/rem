@@ -897,10 +897,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!Checks.esNulo(gastoGestion.getMotivoAutorizacionPropietario())){
 					dtoGestion.setComboMotivoAutorizacionPropietario(gastoGestion.getMotivoAutorizacionPropietario().getCodigo());
 				}
-				if(!Checks.esNulo(gasto.getProvision())){
-					if(!Checks.esNulo(gasto.getProvision().getGestoria())){
-						dtoGestion.setGestoria(gasto.getProvision().getGestoria().getNombre());
-					}
+				if(!Checks.esNulo(gasto.getGestoria())){
+					dtoGestion.setGestoria(gasto.getGestoria().getNombre());
+				}
+				if(!Checks.esNulo(gasto.getProvision())){					
 					dtoGestion.setNumProvision(gasto.getProvision().getNumProvision());
 				}
 				dtoGestion.setObservaciones(gastoGestion.getObservaciones());

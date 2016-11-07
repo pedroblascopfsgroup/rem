@@ -157,6 +157,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="DD_SCR_DESCRIPCION")
 	private String subentidadPropietariaDescripcion;
 	
+	@Column(name="NIF_GESTORIA")
+	private String nifGestoria;
+	
 
 	public String getId() {
 		return id;
@@ -529,6 +532,14 @@ public class VGastosProveedor implements Serializable {
 	public void setSubentidadPropietariaDescripcion(
 			String subentidadPropietariaDescripcion) {
 		this.subentidadPropietariaDescripcion = subentidadPropietariaDescripcion;
+	}
+
+	public String getNifGestoria() {
+		return nifGestoria;
+	}
+
+	public void setNifGestoria(String nifGestoria) {
+		this.nifGestoria = nifGestoria;
 	}	
 	 
 }

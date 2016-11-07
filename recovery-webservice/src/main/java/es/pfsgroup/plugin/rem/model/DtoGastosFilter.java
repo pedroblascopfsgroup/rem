@@ -60,6 +60,7 @@ public class DtoGastosFilter extends WebDto {
 	private String codigoTipoProveedor;
 	private String codigoSubtipoProveedor;
 	private String nombreProveedor;
+	private String nifGestoria;
 	
 	
 	public Long getId() {
@@ -317,6 +318,12 @@ public class DtoGastosFilter extends WebDto {
 	public void setSubentidadPropietariaDescripcion(
 			String subentidadPropietariaDescripcion) {
 		this.subentidadPropietariaDescripcion = subentidadPropietariaDescripcion;
+	}
+	public String getNifGestoria() {
+		return nifGestoria;
+	}
+	public void setNifGestoria(String nifGestoria) {
+		this.nifGestoria = nifGestoria;
 	}
 	
 }

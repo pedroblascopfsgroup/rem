@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -32,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
@@ -732,5 +734,19 @@ public interface ActivoApi {
 	 * @return devuelve true si es VPO, false en caso contrario
 	 */
 	public boolean checkVPO(TareaExterna tareaExterna);
+	
+	/**
+	 * Método que devuelve la lista de llaves asociadas a un activo
+	 * @param idActivo
+	 * @return
+	 */
+	public DtoPage getListLlavesByActivo(DtoLlaves dto);
+	
+	/**
+	 * Método que devuelve una lista de movimientos de una llave
+	 * @param dto
+	 * @return
+	 */
+	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);
 	
 }

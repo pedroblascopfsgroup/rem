@@ -14,7 +14,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 	
 	recordClass: "HreRem.model.ActivoSituacionPosesoria",
 	
-    requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList'],
+    requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList', 'HreRem.view.activos.detalle.MovimientosLlaveList'],
 	
     initComponent: function () {
 
@@ -378,6 +378,20 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                {
 		                	xtype: 'llaveslist',
 		                	colspan: 3
+		                },
+		                {
+		                	xtype: 'fieldsettable',
+		    				title: HreRem.i18n('title.situacion.posesoria.movimientos.llave'),
+		    				defaultType: 'textfieldbase',
+		    				reference: 'fieldsetmovimientosllavelist',
+		    				collapsed: true,
+		    				colspan: 4,
+		    				items : [
+		    				    {
+				                	xtype: 'movimientosllavelist',
+				                	colspan: 3
+		    				    }
+		                	]
 		                }
 					]
             }

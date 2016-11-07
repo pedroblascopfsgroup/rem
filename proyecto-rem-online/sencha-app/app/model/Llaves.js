@@ -1,17 +1,20 @@
 Ext.define('HreRem.model.Llaves', {
     extend: 'HreRem.model.Base',
-    idProperty: 'idLlave',
+    idProperty: 'id',
 
     fields: [    
   
      		{
-    			name:'idMovimiento'
+    			name:'id'
     		},
-     		{
-    			name:'idLlave'
+    		{
+    			name:'numLlave'
     		},
     		{
     			name:'idActivo'
+    		},
+    		{
+    			name:'codCentroLlave'
     		},
     		{
     			name:'nomCentroLlave'
@@ -30,34 +33,12 @@ Ext.define('HreRem.model.Llaves', {
     		},
     		{
     			name:'motivoIncompleto'
-    		},
-    		{
-    			name:'codigoTipoTenedor'
-    		},
-    		{
-    			name:'descripcionTipoTenedor'
-    		},
-    		{
-    			name:'codTenedor'
-    		},
-    		{
-    			name:'nomTenedor'
-    		},
-    		{
-    			name:'fechaEntrega',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name:'fechaDevolucion',
-    			type:'date',
-    			dateFormat: 'c'
     		}
     ],
     
     proxy: {
 		type: 'uxproxy',
-		writeAll: true,
+		//writeAll: true,
 		api: {
 			read: 'activo/getListLlavesById',
             create: 'activo/createLlave',

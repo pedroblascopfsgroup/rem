@@ -94,6 +94,7 @@ import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
@@ -112,7 +113,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
-import es.pfsgroup.plugin.rem.model.VLlaves;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
@@ -2196,15 +2196,6 @@ public class ActivoAdapter {
 		return listaDtoOcupanteLegal;	
 				
 	}	
-	
-	public List<VLlaves> getListLlavesById(Long id) {
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", id);
-
-		return (List<VLlaves>) genericDao.getList(VLlaves.class, filtro);
-		
-	}
-
 
 	public List<DtoAdmisionDocumento> getListDocumentacionAdministrativaById(Long id) {
 		
@@ -3326,16 +3317,15 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean saveLlave(DtoLlaves dto) {
-		if(Checks.esNulo(dto.getIdLlave()) || Checks.esNulo(dto.getIdMovimiento())) {
+		if(Checks.esNulo(dto.getId()) ) {
 			return false;
 		}
-		Filter llaveIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdLlave()));
+		Filter llaveIDFilter = genericDao.createFilter(FilterType.EQUALS, "id",Long.parseLong(dto.getId()));
 		ActivoLlave llave = genericDao.get(ActivoLlave.class, llaveIDFilter);
-		Filter movimientoIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdMovimiento()));
-		ActivoMovimientoLlave movimientoLlave = genericDao.get(ActivoMovimientoLlave.class, movimientoIDFilter);
 
 		if(!Checks.esNulo(llave)){
 			try {
+				beanUtilNotNull.copyProperty(llave, "numLlave", dto.getNumLlave());
 				beanUtilNotNull.copyProperty(llave, "codCentroLlave", dto.getCodCentroLlave());
 				beanUtilNotNull.copyProperty(llave, "nomCentroLlave", dto.getNomCentroLlave());
 				beanUtilNotNull.copyProperty(llave, "archivo1", dto.getArchivo1());
@@ -3353,35 +3343,15 @@ public class ActivoAdapter {
 			}
 		}
 
-		if(!Checks.esNulo(movimientoLlave)){
-			try {
-				if(!Checks.esNulo(dto.getCodigoTipoTenedor())) {
-					DDTipoTenedor tipoTenedor = (DDTipoTenedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
-					beanUtilNotNull.copyProperty(movimientoLlave, "tipoTenedor", tipoTenedor);
-				}
-				beanUtilNotNull.copyProperty(movimientoLlave, "codTenedor", dto.getCodTenedor());
-				beanUtilNotNull.copyProperty(movimientoLlave, "nomTenedor", dto.getNomTenedor());
-				beanUtilNotNull.copyProperty(movimientoLlave, "fechaEntrega", dto.getFechaEntrega());
-				beanUtilNotNull.copyProperty(movimientoLlave, "fechaDevolucion", dto.getFechaDevolucion());
-
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				return false;
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-
 		return true;
 	}
 
 	@Transactional(readOnly = false)
 	public boolean deleteLlave(DtoLlaves dto) {
-		if(Checks.esNulo(dto.getIdLlave())){
+		if(Checks.esNulo(dto.getId())){
 			return false;
 		}
-		Filter llaveIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdLlave()));
+		Filter llaveIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
 		ActivoLlave llave = genericDao.get(ActivoLlave.class, llaveIDFilter);
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
@@ -3398,8 +3368,9 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean createLlave(DtoLlaves dto) {
+		
 		ActivoLlave llave = new ActivoLlave();
-		ActivoMovimientoLlave movimientoLlave = new ActivoMovimientoLlave();
+
 		Filter activoIdFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdActivo()));
 		Activo activo = genericDao.get(Activo.class, activoIdFilter);
 		if(Checks.esNulo(activo)){
@@ -3414,20 +3385,11 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(llave, "archivo2", dto.getArchivo2());
 			beanUtilNotNull.copyProperty(llave, "archivo3", dto.getArchivo3());
 			beanUtilNotNull.copyProperty(llave, "juegoCompleto", dto.getJuegoCompleto());
-			beanUtilNotNull.copyProperty(llave, "motivoIncompleto", dto.getMotivoIncompleto());
-			if(!Checks.esNulo(dto.getCodigoTipoTenedor())) {
-				DDTipoTenedor tipoTenedor = (DDTipoTenedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
-				beanUtilNotNull.copyProperty(movimientoLlave, "tipoTenedor", tipoTenedor);
-			}
-			beanUtilNotNull.copyProperty(movimientoLlave, "codTenedor", dto.getCodTenedor());
-			beanUtilNotNull.copyProperty(movimientoLlave, "nomTenedor", dto.getNomTenedor());
-			beanUtilNotNull.copyProperty(movimientoLlave, "fechaEntrega", dto.getFechaEntrega());
-			beanUtilNotNull.copyProperty(movimientoLlave, "fechaDevolucion", dto.getFechaDevolucion());
+			if(!Checks.esNulo(dto.getJuegoCompleto()) && dto.getJuegoCompleto() == 0)
+				beanUtilNotNull.copyProperty(llave, "motivoIncompleto", dto.getMotivoIncompleto());
+			beanUtilNotNull.copyProperty(llave, "numLlave", dto.getNumLlave());
 
 			llave = genericDao.save(ActivoLlave.class, llave);
-
-			movimientoLlave.setActivoLlave(llave);
-			genericDao.save(ActivoMovimientoLlave.class, movimientoLlave);
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -3439,4 +3401,100 @@ public class ActivoAdapter {
 
 		return true;
 	}	
+	
+	@Transactional(readOnly = false)
+	public boolean createMovimientoLlave(DtoMovimientoLlave dto) {
+		
+		ActivoMovimientoLlave movimiento = new ActivoMovimientoLlave();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdLlave()));
+		ActivoLlave llave = genericDao.get(ActivoLlave.class, filtro);
+		
+		if(Checks.esNulo(llave)){
+			return false;
+		}
+		
+		DDTipoTenedor tipoTenedor = (DDTipoTenedor) proxyFactory.proxy
+				(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
+		
+		try {
+			beanUtilNotNull.copyProperties(movimiento, dto);
+			beanUtilNotNull.copyProperty(movimiento,"activoLlave",llave);
+			beanUtilNotNull.copyProperty(movimiento,"tipoTenedor",tipoTenedor);
+			
+			genericDao.save(ActivoMovimientoLlave.class, movimiento);
+					
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean saveMovimientoLlave(DtoMovimientoLlave dto) {
+		
+		if(Checks.esNulo(dto.getId())) {
+			return false;
+		}
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id",Long.parseLong(dto.getId()));
+		ActivoMovimientoLlave movimiento = genericDao.get(ActivoMovimientoLlave.class, filtro);
+
+		if(!Checks.esNulo(movimiento)){
+			try {
+				
+				beanUtilNotNull.copyProperties(movimiento, dto);
+				
+				if(!Checks.esNulo(dto.getCodigoTipoTenedor())) {
+					DDTipoTenedor tipoTenedor = (DDTipoTenedor) proxyFactory.proxy
+							(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDTipoTenedor.class, dto.getCodigoTipoTenedor());
+					movimiento.setTipoTenedor(tipoTenedor);
+				}
+				
+				//Datos auditoria
+				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				if(!Checks.esNulo(usuarioLogado)) {
+					movimiento.getAuditoria().setFechaModificar(new Date());
+					movimiento.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
+				} else {
+					return false;
+				}
+
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return false;
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean deleteMovimientoLlave(DtoMovimientoLlave dto) {
+		
+		if(Checks.esNulo(dto.getId())){
+			return false;
+		}
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
+		ActivoMovimientoLlave movimiento = genericDao.get(ActivoMovimientoLlave.class, filtro);
+		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+
+		//Datos auditoria
+		if(!Checks.esNulo(movimiento) && !Checks.esNulo(usuarioLogado)) {
+			movimiento.getAuditoria().setBorrado(true);
+			movimiento.getAuditoria().setFechaBorrar(new Date());
+			movimiento.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+		} else {
+			return false;
+		}
+
+		return true;
+	}
 }

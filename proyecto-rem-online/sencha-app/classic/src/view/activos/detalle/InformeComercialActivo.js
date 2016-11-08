@@ -762,7 +762,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										colspan: 2
 									}
 							]
-						},
+						}
 				]
             },
 

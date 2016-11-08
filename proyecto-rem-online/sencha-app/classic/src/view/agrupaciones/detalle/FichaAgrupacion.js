@@ -129,11 +129,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						{ 
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.baja'),
-			            	bind:
-			            	{
+			            	bind: {
 			            		value: 	'{agrupacionficha.fechaBaja}',
 			            		minValue: '{agrupacionficha.fechaAlta}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}'
+			            		readOnly: '{agrupacionficha.existeFechaBaja}',
+			            		disabled: '{esAgrupacionAsistida}'
 			            	}
 						},
 						{ 

@@ -262,6 +262,13 @@ public interface OfertaApi {
 	 * @return true si tiene atribuciones, false si no las tiene
 	 */
 	public boolean checkAtribuciones(Trabajo trabajo);
+
+	/**
+	 * Método que da de alta el comité externo en Bankia
+	 * @param tareaExterna
+	 * @return
+	 */
+	boolean altaComite(TareaExterna tareaExterna);
 	
 
 }

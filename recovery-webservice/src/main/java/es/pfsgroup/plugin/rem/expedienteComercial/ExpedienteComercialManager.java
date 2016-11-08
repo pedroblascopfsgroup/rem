@@ -2346,7 +2346,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 					
 		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
-		if(Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size()>0)){
+		if(Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size()==0)){
 			throw new Exception("No hay activos para la oferta indicada.");
 		}
 		

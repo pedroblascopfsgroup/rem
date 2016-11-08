@@ -573,6 +573,25 @@ public interface TrabajoApi {
 	 */
 	public boolean checkSareb(Trabajo trabajo);
 
+	
+
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Bankia.
+	 * 
+	 * @param tareaExterna
+	 * @return true si pertenece a la cartera, false si no.
+	 */
+	public boolean checkBankia(TareaExterna tareaExterna);
+
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Bankia.
+	 * 
+	 * @param trabajo
+	 * @return true si pertenece a la cartera, false si no
+	 */
+	public boolean checkBankia(Trabajo trabajo);
+	
+	
 	/**
 	 * Comprueba la existencia de una propuesta en el tramite de Propuestas, en
 	 * la tarea Generacion de propuesta, devolviendo mensaje en caso de que se

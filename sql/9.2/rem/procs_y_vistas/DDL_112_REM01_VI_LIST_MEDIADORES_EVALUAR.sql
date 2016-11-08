@@ -1,0 +1,87 @@
+  --/*
+--##########################################
+--## AUTOR=JOSEVI JIMENEZ
+--## FECHA_CREACION=20161107
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-1062
+--## PRODUCTO=NO
+--## Finalidad: DDL
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE
+    seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
+    table_count number(3); -- Vble. para validar la existencia de las Tablas.
+    v_column_count number(3); -- Vble. para validar la existencia de las Columnas.    
+    v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
+    err_num NUMBER; -- N?mero de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
+    V_MSQL VARCHAR2(4000 CHAR); 
+
+    CUENTA NUMBER;
+    
+BEGIN
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_LIST_MEDIADORES_EVALUAR' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_LIST_MEDIADORES_EVALUAR...');
+    EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW ' || V_ESQUEMA || '.V_LIST_MEDIADORES_EVALUAR';  
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_LIST_MEDIADORES_EVALUAR... borrada OK');
+  END IF;
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_LIST_MEDIADORES_EVALUAR' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_LIST_MEDIADORES_EVALUAR...');
+    EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.V_LIST_MEDIADORES_EVALUAR';  
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_LIST_MEDIADORES_EVALUAR... borrada OK');
+  END IF;
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_LIST_MEDIADORES_EVALUAR...');
+  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_LIST_MEDIADORES_EVALUAR 
+		
+	AS	
+    SELECT PVE.PVE_ID        AS ID_MEDIADOR,
+      PVE.PVE_COD_REM        AS CODIGO_REM ,
+      PVE.PVE_NOMBRE         AS NOMBRE_MEDIADOR ,
+      PVE.DD_PRV_ID          AS PROVINCIA_MEDIADOR ,
+      PVE.DD_LOC_ID          AS LOCALIDAD_MEDIADOR ,
+      PVE.PVE_FECHA_ALTA     AS FECHA_ALTA ,
+      PVE.PVE_CUSTODIO       AS ES_CUSTODIO ,
+      PVE.DD_EPR_ID          AS EPR_ESTADO_PROVEEDOR ,
+      ETP.DD_CRA_ID          AS CRA_CARTERA ,
+      (
+        SELECT CPR.DD_CPR_ID
+        FROM '|| V_ESQUEMA ||'.DD_CPR_CALIFICACION_PROVEEDOR CPR
+        WHERE CPR.DD_CPR_ID = PVE.DD_CPR_ID
+      ) AS CPR_CALIFICACION_VIGENTE ,
+      PVE.PVE_TOP AS ES_TOP_150_VIGENTE ,
+      (
+        SELECT CPR.DD_CPR_ID
+        FROM '|| V_ESQUEMA ||'.DD_CPR_CALIFICACION_PROVEEDOR CPR
+        WHERE CPR.DD_CPR_ID = PVE.DD_CPR_ID_PROP
+      ) AS CPR_CALIFICACION_PROPUESTA ,
+      PVE.PVE_TOP_PROP AS ES_TOP_150_PROPUESTO,
+      PVE.PVE_HOMOLOGADO      AS ES_HOMOLOGADO
+    FROM '|| V_ESQUEMA ||'.ACT_PVE_PROVEEDOR PVE
+    INNER JOIN '|| V_ESQUEMA ||'.ACT_ETP_ENTIDAD_PROVEEDOR ETP on PVE.PVE_ID = ETP.PVE_ID
+';
+
+      	
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_LIST_MEDIADORES_EVALUAR...Creada OK');
+  
+END;
+/
+
+EXIT;

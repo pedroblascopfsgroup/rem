@@ -220,6 +220,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 	
 	@Column(name = "PVE_FECHA_EJERCICIO_OPCION")
 	private Date fechaEjercicioOpcion;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_CPR_ID_PROP")
+	private DDCalificacionProveedor calificacionProveedorPropuesta;
+	
+	@Column(name = "PVE_TOP_PROP")
+	private Integer topPropuesto;
+	
 
 	@Version   
 	private Long version;
@@ -647,6 +655,22 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setFechaEjercicioOpcion(Date fechaEjercicioOpcion) {
 		this.fechaEjercicioOpcion = fechaEjercicioOpcion;
+	}
+
+	public DDCalificacionProveedor getCalificacionProveedorPropuesta() {
+		return calificacionProveedorPropuesta;
+	}
+
+	public void setCalificacionProveedorPropuesta(DDCalificacionProveedor calificacionProveedorPropuesta) {
+		this.calificacionProveedorPropuesta = calificacionProveedorPropuesta;
+	}
+
+	public Integer getTopPropuesto() {
+		return topPropuesto;
+	}
+
+	public void setTopPropuesto(Integer topPropuesto) {
+		this.topPropuesto = topPropuesto;
 	}
 	
 	

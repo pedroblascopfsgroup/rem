@@ -71,6 +71,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	public ActivoTasacion getActivoTasacion(Long id);
 	
+	public List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo);
+	
 	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto);
 	
 	public Page getLlavesByActivo(DtoLlaves dto);

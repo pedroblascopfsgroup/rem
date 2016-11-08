@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoPlazaGaraje;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -239,7 +240,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private Float parcelaSuperficie;
 
-	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacion no existe", groups = {
+	@Diccionary(clase = DDEstadoConstruccion.class, message = "El codEstadoConservacion no existe", groups = {
 			Insert.class, Update.class })
 	@EntityDefinition(propertyName = "estadoConservacion", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacion;

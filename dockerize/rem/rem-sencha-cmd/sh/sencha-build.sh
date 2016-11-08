@@ -12,6 +12,9 @@ if [[ ! -d /output ]]; then
 	echo "No se ha encontrado el directorio output"
 fi
 
+# Seteando esto evitamos que se cree el directorio /input/?
+export _JAVA_OPTIONS="-Duser.home=/tmp -Djava.util.prefs.systemRoot=/tmp/.java -Djava.util.prefs.userRoot=/tmp/.java/.userPrefs"
+
 rm -Rf /input/build
 rm -Rf /output/*
 

@@ -359,7 +359,7 @@ public class AgrupacionAdapter {
 
 			// Si la agrupación es asistida, el activo además de existir tiene que ser asistido.
 			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !activoApi.isActivoAsistido(activo)) {
-				throw new JsonViewerException("El activo no es asistido");
+				throw new JsonViewerException(AgrupacionValidator.ERROR_NOT_ASISTIDA);
 			}
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos

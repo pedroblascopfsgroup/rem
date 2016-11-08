@@ -492,6 +492,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 											value: '{informeComercial.anyoConstruccion}',
 											hidden: '{informeComercial.isSuelo}'
 										},
+										listeners: {
+											change: 'onAnyoChange'
+										},
 										maskRe: /^\d*$/,
 										vtype: 'anyo'
 									},
@@ -501,6 +504,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                		value: '{informeComercial.anyoRehabilitacion}',
 						    				hidden: '{informeComercial.isSuelo}'
 					                	},
+					                	listeners: {
+											change: 'onAnyoChange'
+										},
 										maskRe: /^\d*$/,
 										vtype: 'anyo'
 									},

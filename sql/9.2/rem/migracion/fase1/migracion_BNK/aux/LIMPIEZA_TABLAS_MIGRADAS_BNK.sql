@@ -153,11 +153,11 @@ BEGIN
   delete from rem01.ACT_PRO_PROPIETARIO where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_PRT_PRESUPUESTO_TRABAJO where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_PRV_PARAMENTO_VERTICAL where usuariocrear= 'MIGRAREM01BNK';
-  delete from rem01.ACT_PVC_PROVEEDOR_CONTACTO where usuariocrear= 'MIGRAREM01BNK';
+  delete from rem01.ACT_PVC_PROVEEDOR_CONTACTO where usuariocrear= 'MIG2';
   delete from rem01.ACT_PAC_PROPIETARIO_ACTIVO where usuariocrear= 'MIGRAREM01BNK';
   commit;
   delete from rem01.ACT_ETP_ENTIDAD_PROVEEDOR ETP where EXISTS (SELECT 1 FROM REM01.ACT_PVE_PROVEEDOR PVE WHERE PVE.PVE_ID = ETP.PVE_ID AND PVE.usuariocrear= 'MIGRAREM01BNK');
-  delete from rem01.ACT_PVE_PROVEEDOR where usuariocrear= 'MIGRAREM01BNK';
+  delete from rem01.ACT_PVE_PROVEEDOR where usuariocrear= 'MIG2';
   delete from rem01.ACT_REG_INFO_REGISTRAL where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_ONV_OBRA_NUEVA ONV where EXISTS (SELECT 1 FROM REM01.ACT_AGR_AGRUPACION AGR WHERE AGR.AGR_ID = ONV.AGR_ID AND AGR.usuariocrear= 'MIGRAREM01BNK');
   delete from rem01.ACT_RES_RESTRINGIDA RES where EXISTS (SELECT 1 FROM REM01.ACT_AGR_AGRUPACION AGR WHERE AGR.AGR_ID = RES.AGR_ID AND AGR.usuariocrear= 'MIGRAREM01BNK');

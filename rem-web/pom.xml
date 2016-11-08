@@ -1367,7 +1367,7 @@
             <plugin>
 				<groupId>es.pfsgroup.maven</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.1-SNAPSHOT</version>
+				<version>1.0.2</version>
 				<configuration>
 					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>

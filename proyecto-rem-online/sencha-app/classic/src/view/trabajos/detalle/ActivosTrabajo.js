@@ -7,9 +7,10 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 	listeners: {
     	boxready: function() {
     		me = this;
-    		//Si el trabajo no es de tipo PRECIOS, se oculta el boton de generar propuesta
-    		if(me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo')!='04') {
-    			me.down("[itemId=generarPropuestaFromTrabajo]").hide();
+    		//Si el trabajo es de tipo PRECIOS y subtipo 'tramitar propuesta de precio' o 'tramitar propuesta de precios de descuento', se muestra el boton de generar propuesta.
+    		if(me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo')==='44'
+    			|| me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo')==='45') {
+    			me.down("[itemId=generarPropuestaFromTrabajo]").show();
     		}
     	}
     },
@@ -151,7 +152,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 					    xtype: 'toolbar',
 					    dock: 'top',
 					    items: [
-							{cls:'tbar-grid-button', text: HreRem.i18n('title.generar.propuesta'), itemId:'generarPropuestaFromTrabajo', handler: 'onClickGenerarPropuesta'}
+							{cls:'tbar-grid-button', text: HreRem.i18n('title.generar.propuesta'), itemId:'generarPropuestaFromTrabajo', handler: 'onClickGenerarPropuesta', hidden: true}
 					    ]
 					},
 			        {

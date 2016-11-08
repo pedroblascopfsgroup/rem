@@ -103,7 +103,16 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							colspan: 2
 						},
 					// Fila 4
-						{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
+						{
+							xtype:'fieldsettable',
+							title:HreRem.i18n('title.grid.historico.mediador.info.comercial'),
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							items :
+								[
+									{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
+								]
+						}
 				]
 			},
 
@@ -125,7 +134,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				defaultType: 'textfieldbase',
 				items :
 					[
-			            {
+			         // Datos admisión
+						{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
 							title:HreRem.i18n('title.datos.admision'),
@@ -270,8 +280,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 
 							]               
 			          	},
-						{    
-			  
+
+			         // Datos Mediador
+						{
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.datos.mediador'),
 							defaultType: 'textfieldbase',
@@ -437,6 +448,72 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                	},
 					                	text: HreRem.i18n('btn.verificar.coordenadas'),
 					                	handler: 'onClickVerificarDireccion'
+					                }
+							]
+						},
+
+					// Valores Económicos
+						{
+							xtype:'fieldsettable',
+							title:HreRem.i18n('title.valores.economicos'),
+							defaultType: 'textfieldbase',
+							layout: {
+							    type: 'table',
+								columns: 2
+							},
+							items :
+								[
+								 	// Venta
+									{
+										xtype: 'currencyfieldbase', 
+										fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta'),
+										width:		280,
+										bind:		'{informeComercial.valorEstimadoVenta}',
+										editable: true,
+										renderer: function(value) {
+			   				        		return Ext.util.Format.currency(value);
+			   				        	}
+									},
+									{
+										xtype: 'textareafieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.justificacion.venta'),
+										bind:		'{informeComercial.justificacionVenta}',
+										margin: '0 0 26 0',
+										rowspan: 2,
+										width: 600,
+										maxWidth: 600
+					                },
+					                {
+					                	xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta.fecha'),
+										bind: '{informeComercial.fechaEstimacionVenta}',
+							            margin: '0 0 26 0',
+							            width: 280
+					                },
+					                // Alquiler
+									{
+										xtype: 'currencyfieldbase', 
+										fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.alquiler'),
+										width:		280,
+										bind:		'{informeComercial.valorEstimadoRenta}',
+										editable: true,
+										renderer: function(value) {
+			   				        		return Ext.util.Format.currency(value);
+			   				        	}
+									},
+									{
+										xtype: 'textareafieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.justificacion.renta'),
+										bind:		'{informeComercial.justificacionRenta}',
+										rowspan: 2,
+										width: 600,
+										maxWidth: 600
+					                },
+					                {
+					                	xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta.fecha'),
+										bind: '{informeComercial.fechaEstimacionRenta}',
+							            width: 280
 					                }
 							]
 						}
@@ -624,135 +701,71 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							maxLength:	500,
 			            	bind:		'{informeComercial.ediDescripcion}',
 					 		labelAlign: 'top'
-						}
+						},
+
+					// Datos de la Comunidad
+						{
+							xtype:'fieldsettable',
+							title:HreRem.i18n('title.datos.comunidad'),
+							defaultType: 'textfieldbase',
+							colspan: 2,
+							collapsible: false,
+							height: 	230,
+							items :	[
+									{
+										xtype : 'comboboxfieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.comunidad.propietarios.constituida'),
+									    bind : {
+									      store : '{comboSiNoRem}',
+									      value : '{informeComercial.inscritaComunidad}'
+									    }
+										// TODO: Revisar si el cambio de este combo afecta a otros datos de comunidad y rehabilitarlo si es el caso.
+//									    ,
+//										listeners: {
+//									    	change: 'onComunidadNoConstituida'
+//										}
+									},
+									{
+										xtype: 'numberfieldbase',
+										maxLength: 9,
+										decimalPrecision: 2,
+										renderer: Ext.util.Format.numberRenderer('0,000.00'),
+										fieldLabel : HreRem.i18n('fieldlabel.cuota.orientativa'),
+										bind : '{informeComercial.cuotaOrientativaComunidad}'
+									},
+									{
+										xtype: 'numberfieldbase',
+										maxLength: 17,
+										decimalPrecision: 2,
+										renderer: Ext.util.Format.numberRenderer('0,000.00'),
+										fieldLabel : HreRem.i18n('fieldlabel.derrama.orientativa'),
+										bind : '{informeComercial.derramaOrientativaComunidad}'
+									},
+									{
+										fieldLabel : HreRem.i18n('fieldlabel.nombre.presidente'),							
+										bind : '{informeComercial.nomPresidenteComunidad}'
+									},
+									{
+										fieldLabel : HreRem.i18n('fieldlabel.telefono'),
+										vtype: 'telefono',
+										bind : '{informeComercial.telPresidenteComunidad}',
+										colspan: 2
+									},
+									{
+										fieldLabel : HreRem.i18n('fieldlabel.nombre.administrador'),
+										bind : '{informeComercial.nomAdministradorComunidad}'
+									}, 
+									{
+										fieldLabel : HreRem.i18n('fieldlabel.telefono'),
+										vtype: 'telefono',
+										bind : '{informeComercial.telAdministradorComunidad}',
+										colspan: 2
+									}
+							]
+						},
 				]
             },
 
-// Valores Económicos
-			{    
-  
-				xtype:'fieldsettable',
-				title:HreRem.i18n('title.valores.economicos'),
-				defaultType: 'textfieldbase',
-				layout: {
-				    type: 'table',
-					columns: 2
-				},
-				items :
-					[
-					 	// Venta
-						{
-							xtype: 'currencyfieldbase', 
-							fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta'),
-							width:		280,
-							bind:		'{informeComercial.valorEstimadoVenta}',
-							editable: true,
-							renderer: function(value) {
-   				        		return Ext.util.Format.currency(value);
-   				        	}
-						},
-						{
-							xtype: 'textareafieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.justificacion.venta'),
-							bind:		'{informeComercial.justificacionVenta}',
-							margin: '0 0 26 0',
-							rowspan: 2,
-							width: 600,
-							maxWidth: 600
-		                },
-		                {
-		                	xtype: 'datefieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta.fecha'),
-							bind: '{informeComercial.fechaEstimacionVenta}',
-				            margin: '0 0 26 0',
-				            width: 280
-		                },
-		                // Alquiler
-						{
-							xtype: 'currencyfieldbase', 
-							fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.alquiler'),
-							width:		280,
-							bind:		'{informeComercial.valorEstimadoRenta}',
-							editable: true,
-							renderer: function(value) {
-   				        		return Ext.util.Format.currency(value);
-   				        	}
-						},
-						{
-							xtype: 'textareafieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.justificacion.renta'),
-							bind:		'{informeComercial.justificacionRenta}',
-							rowspan: 2,
-							width: 600,
-							maxWidth: 600
-		                },
-		                {
-		                	xtype: 'datefieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta.fecha'),
-							bind: '{informeComercial.fechaEstimacionRenta}',
-				            width: 280
-		                }
-				]
-			},
-
-// Datos de la Comunidad
-			{
-				xtype:'fieldsettable',
-				title:HreRem.i18n('title.datos.comunidad'),
-				defaultType: 'textfieldbase',
-				items :	[
-						{
-							xtype : 'comboboxfieldbase',
-						    fieldLabel : HreRem.i18n('fieldlabel.comunidad.propietarios.constituida'),
-						    bind : {
-						      store : '{comboSiNoRem}',
-						      value : '{informeComercial.inscritaComunidad}'
-						    }
-// TODO: Revisar si el cambio de este combo afecta a otros datos de comunidad y rehabilitarlo si es el caso
-//						    ,
-//							listeners: {
-//						    	change: 'onComunidadNoConstituida'
-//							}
-						},
-						{
-							xtype: 'numberfieldbase',
-							maxLength: 9,
-							decimalPrecision: 2,
-							renderer: Ext.util.Format.numberRenderer('0,000.00'),
-							fieldLabel : HreRem.i18n('fieldlabel.cuota.orientativa'),
-							bind : '{informeComercial.cuotaOrientativaComunidad}'
-						},
-						{
-							xtype: 'numberfieldbase',
-							maxLength: 17,
-							decimalPrecision: 2,
-							renderer: Ext.util.Format.numberRenderer('0,000.00'),
-							fieldLabel : HreRem.i18n('fieldlabel.derrama.orientativa'),
-							bind : '{informeComercial.derramaOrientativaComunidad}'
-						},
-						{
-							fieldLabel : HreRem.i18n('fieldlabel.nombre.presidente'),							
-							bind : '{informeComercial.nomPresidenteComunidad}'
-						},
-						{
-							fieldLabel : HreRem.i18n('fieldlabel.telefono'),
-							vtype: 'telefono',
-							bind : '{informeComercial.telPresidenteComunidad}',
-							colspan: 2
-						},
-						{
-							fieldLabel : HreRem.i18n('fieldlabel.nombre.administrador'),
-							bind : '{informeComercial.nomAdministradorComunidad}'
-						}, 
-						{
-							fieldLabel : HreRem.i18n('fieldlabel.telefono'),
-							vtype: 'telefono',
-							bind : '{informeComercial.telAdministradorComunidad}',
-							colspan: 2
-						}
-				]
-			},
-			
 // Añadir sección por tipo de activo
 			{
 				xtype: 'infovivienda',

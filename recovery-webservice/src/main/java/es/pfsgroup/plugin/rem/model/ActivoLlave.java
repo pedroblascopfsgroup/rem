@@ -82,6 +82,8 @@ public class ActivoLlave implements Serializable, Auditable {
 	@Column(name = "LLV_MOTIVO_INCOMPLETO")
 	private String motivoIncompleto;
 	
+	@Column(name ="LLV_NUM_LLAVE")
+	private String numLlave;
 	
 	
 	@Version   
@@ -171,6 +173,14 @@ public class ActivoLlave implements Serializable, Auditable {
 	public void setActivoMovimientoLlave(
 			List<ActivoMovimientoLlave> activoMovimientoLlave) {
 		this.activoMovimientoLlave = activoMovimientoLlave;
+	}
+	
+	public String getNumLlave() {
+		return numLlave;
+	}
+
+	public void setNumLlave(String numLlave) {
+		this.numLlave = numLlave;
 	}
 
 	public Long getVersion() {

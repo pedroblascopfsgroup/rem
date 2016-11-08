@@ -51,30 +51,33 @@ public class PeticionRest implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "RST_BROKER_ID")
 	private Broker broker;
-	
+
 	@Column(name = "RST_PETICION_RESULT")
 	private String result;
-	
+
 	@Column(name = "RST_PETICION_ERROR_DESC")
 	private String errorDesc;
-	
+
 	@Column(name = "RST_PETICION_METODO")
 	private String metodo;
-	
+
 	@Column(name = "RST_PETICION_QUERY")
 	private String query;
-	
+
 	@Column(name = "RST_PETICION_DATA")
 	private String data;
-	
+
 	@Column(name = "RST_PETICION_IP")
 	private String ip;
-	
+
 	@Column(name = "RST_PETICION_RESPONSE")
 	private String response;
-	
+
 	@Column(name = "RST_PETICION_TIME")
 	private Long tiempoEjecucion;
+
+	@Column(name = "RST_PETICION_SIGNATURE")
+	private String signature;
 
 	public String getResponse() {
 		return response;
@@ -127,8 +130,8 @@ public class PeticionRest implements Serializable, Auditable {
 	}
 
 	public void setErrorDesc(String errorDesc) {
-		if(errorDesc.length()>200){
-			errorDesc = errorDesc.substring(0,199);
+		if (errorDesc.length() > 200) {
+			errorDesc = errorDesc.substring(0, 199);
 		}
 		this.errorDesc = errorDesc;
 	}
@@ -172,7 +175,16 @@ public class PeticionRest implements Serializable, Auditable {
 	public void setTiempoEjecucion(Long tiempoEjecucion) {
 		this.tiempoEjecucion = tiempoEjecucion;
 	}
-	
-	
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public void setSignature(String signature) {
+		if (signature != null && signature.length() > 50) {
+			signature = signature.substring(0, 49);
+		}
+		this.signature = signature;
+	}
 
 }

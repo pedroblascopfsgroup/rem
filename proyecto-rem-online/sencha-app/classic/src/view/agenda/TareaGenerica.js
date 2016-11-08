@@ -32,6 +32,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 				     * @type Long
 				     */
 				    idExpediente: null,
+		            numExpediente: null,
 		                   
 					initComponent : function() {
 

@@ -157,10 +157,15 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 						utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpTipoComercializacion.substring(0, 2)));
 				
 				//Aplica Formalizar
+				//Si Comercializar es NO, forzamos también a NO => Formalizar (por si no venía informado)
+				if(CHECK_VALOR_NO.equals(tmpAplicaComercializar))
+					tmpAplicaFormalizar = CHECK_VALOR_NO;
+				
 				if(!CHECK_NO_CAMBIAR.equals(tmpAplicaFormalizar)){
 					perimetroActivo.setAplicaFormalizar(tmpAplicaFormalizar);
 					perimetroActivo.setFechaAplicaFormalizar(new Date());					
-				}
+				} 
+
 				if(!Checks.esNulo(tmpMotivoAplicaFormalizar)) perimetroActivo.setMotivoAplicaFormalizar(tmpMotivoAplicaFormalizar);
 				
 				//Persiste los datos, creando el registro de perimetro

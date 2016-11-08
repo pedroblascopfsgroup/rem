@@ -1,39 +1,27 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomBooleanEditor;
-import org.springframework.beans.propertyeditors.CustomNumberEditor;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
-import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
-import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
@@ -51,7 +39,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 
 
 @Controller
-public class GastosProveedorController {
+public class GastosProveedorController extends ParadiseJsonController {
 
 	
 	@Autowired
@@ -74,7 +62,10 @@ public class GastosProveedorController {
 	 * @param binder
 	 * @throws Exception
 	 */
-	@InitBinder
+	 /*******************************************************
+	 * NOTA FASE II : Se refactoriza en ParadiseJsonController.java
+	 * *******************************************************/
+	/*@InitBinder
 	protected void initBinder(HttpServletRequest request,  ServletRequestDataBinder binder) throws Exception{
         
 	    JsonWriterConfiguratorTemplateRegistry registry = JsonWriterConfiguratorTemplateRegistry.load(request);             
@@ -92,7 +83,7 @@ public class GastosProveedorController {
 
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         dateFormat.setLenient(false);
-
+        dateFormat.setTimeZone(TimeZone.getDefault());
         binder.registerCustomEditor(Date.class, new ParadiseCustomDateEditor(dateFormat, true));
         
         binder.registerCustomEditor(boolean.class, new CustomBooleanEditor("true", "false", true));
@@ -108,11 +99,11 @@ public class GastosProveedorController {
         
         /*binder.registerCustomEditor(Float.class, new CustomNumberEditor(Float.class, true));
         binder.registerCustomEditor(Long.class, new CustomNumberEditor(Long.class, true));
-        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));*/
+        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));
 
         
         
-	}
+	}*/
 	
 	
 	/**
@@ -635,10 +626,10 @@ public class GastosProveedorController {
 		
 	}
 	
-	private ModelAndView createModelAndViewJson(ModelMap model) {
+	/*private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);
-	}
+	}*/
 	
 	
 

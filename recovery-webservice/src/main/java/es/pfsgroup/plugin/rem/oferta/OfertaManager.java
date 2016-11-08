@@ -318,28 +318,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemPrescriptor())) {
 			ActivoProveedor pres = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemPrescriptor()));
+					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemPrescriptor()));
 			if (Checks.esNulo(pres)) {
 				errorsList.put("idProveedorRemPrescriptor", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemCustodio())) {
 			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemCustodio()));
+					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
 				errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {
 			ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemResponsable()));
+					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemResponsable()));
 			if (Checks.esNulo(apiResp)) {
 				errorsList.put("idProveedorRemResponsable", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemFdv())) {
 			ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));
+					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemFdv()));
 			if (Checks.esNulo(fdv)) {
 				errorsList.put("idProveedorRemResponsable", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
@@ -454,14 +454,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setUsuarioAccion(user);
 				}
 			}
-			/*
-			 * DDEstadoOferta estadoOfr = null; if
-			 * (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) { estadoOfr =
-			 * (DDEstadoOferta) genericDao.get(DDEstadoOferta.class,
-			 * genericDao.createFilter(FilterType.EQUALS, "codigo",
-			 * ofertaDto.getCodEstadoOferta())); if (!Checks.esNulo(estadoOfr))
-			 * { oferta.setEstadoOferta(estadoOfr); } }
-			 */
 			if (!Checks.esNulo(ofertaDto.getCodTipoOferta())) {
 				DDTipoOferta tipoOfr = (DDTipoOferta) genericDao.get(DDTipoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodTipoOferta()));
@@ -471,28 +463,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			if (!Checks.esNulo(ofertaDto.getIdProveedorRemPrescriptor())) {
 				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemPrescriptor()));
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemPrescriptor()));
 				if (!Checks.esNulo(prescriptor)) {
 					oferta.setPrescriptor(prescriptor);
 				}
 			}
 			if (!Checks.esNulo(ofertaDto.getIdProveedorRemCustodio())) {
 				ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemCustodio()));
 				if (!Checks.esNulo(cust)) {
 					oferta.setCustodio(cust);
 				}
 			}
 			if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {
 				ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemResponsable()));
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemResponsable()));
 				if (!Checks.esNulo(apiResp)) {
 					oferta.setApiResponsable(apiResp);
 				}
 			}
 			if (!Checks.esNulo(ofertaDto.getIdProveedorRemFdv())) {
 				ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemFdv()));
 				if (!Checks.esNulo(fdv)) {
 					oferta.setFdv(fdv);
 				}

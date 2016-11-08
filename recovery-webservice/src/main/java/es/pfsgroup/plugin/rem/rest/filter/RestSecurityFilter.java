@@ -67,6 +67,7 @@ public class RestSecurityFilter implements Filter {
 			restApi.doSessionConfig(response, WORKINGCODE);
 
 			String signature = ((HttpServletRequest) request).getHeader("signature");
+			peticion.setSignature(signature);
 			String id = datajson.getId();
 			peticion.setToken(id);
 			String ipClient = restApi.getClientIpAddr(request);

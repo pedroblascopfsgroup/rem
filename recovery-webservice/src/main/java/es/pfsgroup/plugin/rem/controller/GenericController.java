@@ -1,15 +1,11 @@
 package es.pfsgroup.plugin.rem.controller;
 
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONArray;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -22,15 +18,17 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 
 
 @Controller
-public class GenericController {
+public class GenericController extends ParadiseJsonController{
 	
 	@Autowired
 	private GenericAdapter adapter;
@@ -46,8 +44,11 @@ public class GenericController {
 	 * @throws Exception
 	 */
 	@InitBinder
+	@Override
 	protected void initBinder(HttpServletRequest request,  ServletRequestDataBinder binder) throws Exception{
         
+		super.initBinder(request, binder);
+		
 	    JsonWriterConfiguratorTemplateRegistry registry = JsonWriterConfiguratorTemplateRegistry.load(request);             
 	    registry.registerConfiguratorTemplate(
 	         new SojoJsonWriterConfiguratorTemplate(){
@@ -60,10 +61,6 @@ public class GenericController {
 	        	 	}
 	         }
 	   );
-
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        dateFormat.setLenient(false);
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
 	}
 	
 	
@@ -111,7 +108,7 @@ public class GenericController {
 
 		ModelMap map = new ModelMap();
 		
-		JSONArray menuItemsPerm = genericApi.getMenuItems(tipo);			
+		List<DtoMenuItem> menuItemsPerm = genericApi.getMenuItems(tipo);			
 		
 		if (menuItemsPerm != null && menuItemsPerm.size()>0) {
 			//Devolvemos las opciones de menu permitidas.
@@ -192,11 +189,7 @@ public class GenericController {
 	public ModelAndView getComboSubtipoClaseActivo(String tipoClaseActivoCodigo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoClaseActivo(tipoClaseActivoCodigo)));	
 	}
-	
-		
-	private ModelAndView createModelAndViewJson(ModelMap model) {
-		return new ModelAndView("jsonView", model);
-	}
+
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -206,6 +199,7 @@ public class GenericController {
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getJuzgadosPlaza(Long idPlaza, ModelMap model){
 		model.put("data", genericApi.getComboTipoJuzgadoPlaza(idPlaza));

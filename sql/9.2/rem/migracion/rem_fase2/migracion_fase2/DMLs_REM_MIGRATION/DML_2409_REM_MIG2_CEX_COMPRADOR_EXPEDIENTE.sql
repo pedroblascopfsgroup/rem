@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_CEX_COMPRADOR_EXPEDIENTE -> CEX_COMPRADOR_EXPEDIENTE
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -26,8 +26,8 @@ DECLARE
 
 TABLE_COUNT_1 NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'CEX_COMPRADOR_EXPEDIENTE';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_CEX_COMPRADOR_EXPEDIENTE';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -40,7 +40,7 @@ V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
       
-	  --COMPROBACIONES PREVIAS - CLIENTE_COMERCIAL (CLC_NUM_CLIENTE_HAYA)
+          --COMPROBACIONES PREVIAS - CLIENTE_COMERCIAL (CLC_NUM_CLIENTE_HAYA)
       DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO CLIENTE_COMERCIAL...');
       
       V_SENTENCIA := '
@@ -92,7 +92,7 @@ BEGIN
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
           MIG2.CEX_COD_COMPRADOR                                   CODIGO_RECHAZADO,
-          ''CLC_NUM_CLIENTE_HAYA''	                                      CAMPO_CLC_MOTIVO_RECHAZO,
+          ''CLC_NUM_CLIENTE_HAYA''                                            CAMPO_CLC_MOTIVO_RECHAZO,
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.CEX_COD_COMPRADOR = MIG2.CEX_COD_COMPRADOR
@@ -156,7 +156,7 @@ BEGIN
           )
         )
         SELECT DISTINCT
-        MIG.CEX_COD_OFERTA                              						RES_COD_OFERTA,
+        MIG.CEX_COD_OFERTA                                                                              RES_COD_OFERTA,
         '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
         SYSDATE                                                                 FECHA_COMPROBACION
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -203,10 +203,10 @@ BEGIN
               ,DD_LOC_ID_RTE
               ,DD_PRV_ID_RTE
           ) WITH DUPLICADOS AS(
-			  SELECT DISTINCT CEX_COD_COMPRADOR, CEX_COD_OFERTA
-			  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-			  GROUP BY CEX_COD_COMPRADOR, CEX_COD_OFERTA 
-			  HAVING COUNT(1) > 1
+                          SELECT DISTINCT CEX_COD_COMPRADOR, CEX_COD_OFERTA
+                          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+                          GROUP BY CEX_COD_COMPRADOR, CEX_COD_OFERTA 
+                          HAVING COUNT(1) > 1
           )
           SELECT DISTINCT 
             COM.COM_ID                                            AS COM_ID,
@@ -286,7 +286,7 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
       IF V_REJECTS != 0 THEN      
@@ -301,8 +301,8 @@ BEGIN
           END IF;
           
           IF V_DUPLICADOS != 0 THEN
-			V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' CEX_COD_COMPRADOR, CEX_COD_OFERTA duplicados. ';	
-		END IF;        
+                        V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' CEX_COD_COMPRADOR, CEX_COD_OFERTA duplicados. ';   
+                END IF;        
       END IF;
       
       EXECUTE IMMEDIATE '

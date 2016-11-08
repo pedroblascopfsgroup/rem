@@ -25,7 +25,7 @@ public class GastosExpedienteDaoImpl extends AbstractEntityDao<GastosExpediente,
 		HQLBuilder hql = new HQLBuilder("from GastosExpediente ge");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "ge.expediente.oferta.numOferta", comisionDto.getIdOfertaRem());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "ge.expediente.oferta.idWebCom", comisionDto.getIdOfertaWebcom());		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "ge.proveedor.id", comisionDto.getIdProveedorRem());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "ge.proveedor.codigoProveedorRem", comisionDto.getIdProveedorRem());
 		
 		if(!Checks.esNulo(comisionDto.getEsPrescripcion()) && comisionDto.getEsPrescripcion()){			
 			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "ge.accionGastos.codigo", DDAccionGastos.CODIGO_PRESCRIPCION);

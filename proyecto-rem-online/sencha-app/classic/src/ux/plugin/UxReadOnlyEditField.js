@@ -200,7 +200,7 @@ Ext.define('HreRem.ux.plugin.UxReadOnlyEditField', {
 					this.parent.errorEl.hide();
 				}
 				
-				this.parent.titleDisplayEl.show();
+				//this.parent.titleDisplayEl.show(); // Comentado para ocultar la cabecera en readOnly.
 				this.parent.displayEl.show();
 				this.parent.ariaEl.component.containerEl.hide();
 				
@@ -308,7 +308,7 @@ Ext.define('HreRem.ux.plugin.UxReadOnlyEditField', {
 			if(this.parent.rendered){
 	
 				this.onUpdate();
-				this.parent.titleDisplayEl.show();
+				//this.parent.titleDisplayEl.show(); // Comentado para ocultar la cabecera en readOnly.
 				this.parent.displayEl.show();
 				this.parent.ariaEl.component.containerEl.hide();
 				if(!Ext.isEmpty(this.parent.errorEl)) {
@@ -359,7 +359,7 @@ Ext.define('HreRem.ux.plugin.UxReadOnlyEditField', {
 			if(this.parent.rendered){
 	
 				this.onUpdate();
-				this.parent.titleDisplayEl.show();
+				//this.parent.titleDisplayEl.show(); // Comentado para ocultar la cabecera en readOnly.
 				this.parent.displayEl.show();
 				this.parent.ariaEl.component.containerEl.hide();
 				if(!Ext.isEmpty(this.parent.errorEl)) {

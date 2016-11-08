@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración Fase 2, para la generacion de tramites.
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -24,8 +24,8 @@ SET DEFINE OFF;
 
 DECLARE
 
-      V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+      V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
       V_TABLA VARCHAR2(40 CHAR) := 'MIG2_TRA_TRAMITES_OFERTAS'; -- Vble. Tabla pivote
       
       -- Vbls. para el cursor
@@ -57,9 +57,9 @@ DECLARE
       
 BEGIN
     
-		  DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
-		  DBMS_OUTPUT.PUT_LINE('PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2....') ;
-		  DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
+                  DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
+                  DBMS_OUTPUT.PUT_LINE('PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2....') ;
+                  DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
 
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT MIG2_TRA_TRAMITES_OFERTAS --
@@ -222,7 +222,7 @@ BEGIN
       
       CLOSE CURSOR_OFERTAS; 
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada.';
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada.');
       
 --      COMMIT;
       

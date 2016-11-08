@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -107,11 +108,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Override
 	@BusinessOperationDefinition("genericManager.getMenuItems")
-	public JSONArray getMenuItems(String tipo) {
+	public List<DtoMenuItem> getMenuItems(String tipo) {
 		
 		AuthenticationData authData =  getAuthenticationData();
 		JsonParser jsonParser = new JsonParser(); 
-		JSONArray menuItemsPerm = new JSONArray();
+		List<DtoMenuItem> menuItemsPerm = new ArrayList<DtoMenuItem>();
 		// Buscamos el fichero json que incluye todas las opciones del menú
 		File menuItemsJsonFile = new File(getClass().getResource("/").getPath()+"menuitems_"+tipo+"_"+MessageUtils.DEFAULT_LOCALE.getLanguage()+".json");
 				
@@ -142,7 +143,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 			
 			if(secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
-				menuItemsPerm.add(itemObject);
+				DtoMenuItem menuItem = new DtoMenuItem();
+				try {
+					beanUtilNotNull.copyProperties(menuItem, itemObject);
+					
+				} catch (Exception e) {
+					logger.error(e.getCause());					
+				}
+				menuItemsPerm.add(menuItem);
 			}
 		}
 	
@@ -268,6 +276,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return (List<EXTDDTipoGestor>) genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
 	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo) {
@@ -275,12 +284,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>)(List)adapter.getDiccionario("tiposTrabajo"));
-				
+
 		if(!Checks.esNulo(idActivo)){
 			Long activo = Long.parseLong(idActivo);
-			
+
 			for(DDTipoTrabajo tipoTrabajo : tiposTrabajo){
-	
 				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni OBTENCION DOCUMENTAL
 				// cuando el activo no tiene condicion de gestion en el perimetro (check gestion = false)
 				if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
@@ -293,15 +301,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						// Activo con Gestion en perimetro
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
-				} else {
-					// El resto de tipos si se pueden crear
+				} else if(!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
+						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
+					// El resto de tipos, si no es comercialización o tasación, se pueden generar.
 					tiposTrabajoFiltered.add(tipoTrabajo);
 				}
 			}
-			
+
 			return tiposTrabajoFiltered;
 		} else {
-			return tiposTrabajo;
+
+			for(DDTipoTrabajo tipoTrabajo : tiposTrabajo){
+				// No se generan los tipos de trabajo tasación o comercialización.
+				if(!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
+						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
+					// El resto de tipos, si no es comercialización o tasación, se pueden generar.
+					tiposTrabajoFiltered.add(tipoTrabajo);
+				}
+			}
+			return tiposTrabajoFiltered;
 		}
 	}
 	
@@ -419,10 +437,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				beanUtilNotNull.copyProperty(propietarioDD, "descripcion", propietario.getFullName());
 				beanUtilNotNull.copyProperty(propietarioDD, "codigo", propietario.getCartera().getCodigo());
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			listaDD.add(propietarioDD);

@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_GGE_GASTOS_GESTION -> GGE_GASTOS_GESTION
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'GGE_GASTOS_GESTION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GGE_GASTOS_GESTION';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -38,7 +38,7 @@ V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
 
-	  --COMPROBACIONES PREVIAS - GASTOS_PROVEEDOR
+          --COMPROBACIONES PREVIAS - GASTOS_PROVEEDOR
       DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO GASTOS_PROVEEDOR...');
       
       V_SENTENCIA := '
@@ -88,7 +88,7 @@ BEGIN
           )
           SELECT DISTINCT
           '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GGE_GPV_ID			    						      			  GPV_NUM_GASTO_HAYA,          
+          MIG2.GGE_GPV_ID                                                                                                 GPV_NUM_GASTO_HAYA,          
           SYSDATE                                                                 FECHA_COMPROBACION
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
           INNER JOIN NOT_EXISTS ON NOT_EXISTS.GGE_GPV_ID = MIG2.GGE_GPV_ID
@@ -102,38 +102,38 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       V_SENTENCIA := '
-		INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-				   GGE_ID
-				  ,GPV_ID
-				  ,GGE_AUTORIZACION_PROPIETARIO
-				  ,DD_MAP_ID
-				  ,GGE_OBSERVACIONES
-				  ,GGE_FECHA_ALTA
-				  ,USU_ID_ALTA
-				  ,DD_EAH_ID
-				  ,GGE_FECHA_EAH
-				  ,USU_ID_EAH
-				  ,DD_MRH_ID
-				  ,DD_EAP_ID
-				  ,GGE_FECHA_EAP
-				  ,GGE_MOTIVO_RECHAZO_PROP
-				  ,GGE_FECHA_ANULACION
-				  ,USU_ID_ANULACION
-				  ,DD_MAG_ID
-				  ,GGE_FECHA_RP
-				  ,USU_ID_RP
-				  ,DD_MRP_ID
-				  ,VERSION
-				  ,USUARIOCREAR
-				  ,FECHACREAR
-				  ,USUARIOMODIFICAR
-				  ,FECHAMODIFICAR
-				  ,USUARIOBORRAR
-				  ,FECHABORRAR
+                INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+                                   GGE_ID
+                                  ,GPV_ID
+                                  ,GGE_AUTORIZACION_PROPIETARIO
+                                  ,DD_MAP_ID
+                                  ,GGE_OBSERVACIONES
+                                  ,GGE_FECHA_ALTA
+                                  ,USU_ID_ALTA
+                                  ,DD_EAH_ID
+                                  ,GGE_FECHA_EAH
+                                  ,USU_ID_EAH
+                                  ,DD_MRH_ID
+                                  ,DD_EAP_ID
+                                  ,GGE_FECHA_EAP
+                                  ,GGE_MOTIVO_RECHAZO_PROP
+                                  ,GGE_FECHA_ANULACION
+                                  ,USU_ID_ANULACION
+                                  ,DD_MAG_ID
+                                  ,GGE_FECHA_RP
+                                  ,USU_ID_RP
+                                  ,DD_MRP_ID
+                                  ,VERSION
+                                  ,USUARIOCREAR
+                                  ,FECHACREAR
+                                  ,USUARIOMODIFICAR
+                                  ,FECHAMODIFICAR
+                                  ,USUARIOBORRAR
+                                  ,FECHABORRAR
           ,BORRADO
-		)
-		WITH INSERTAR AS (
-		SELECT DISTINCT MIG.GGE_GPV_ID
+                )
+                WITH INSERTAR AS (
+                SELECT DISTINCT MIG.GGE_GPV_ID
                 ,MIG.GGE_IND_AUTORIZ_PROP
                 ,MIG.GGE_COD_MOT_AUTORIZ_PROP
                 ,MIG.GGE_COD_EST_AUTORIZ_PROP
@@ -152,12 +152,12 @@ BEGIN
                 ,MIG.GGE_FECHA_RETENCION_PAGO
                 ,MIG.GGE_COD_USUARIO_RETENCION_PAGO
                 ,MIG.GGE_COD_MOTIVO_RETENCION_PAGO
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-		  ON GPV.GPV_NUM_GASTO_HAYA = MIG.GGE_GPV_ID
-	  )
-		SELECT
-		       '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL           		 		GGE_ID
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
+                  ON GPV.GPV_NUM_GASTO_HAYA = MIG.GGE_GPV_ID
+          )
+                SELECT
+                       '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                          GGE_ID
           ,INS.GGE_GPV_ID GPV_ID
           ,INS.GGE_IND_AUTORIZ_PROP GGE_AUTORIZACION_PROPIETARIO
           ,(SELECT DD_MAP.DD_MAP_ID FROM '||V_ESQUEMA||'.DD_MAP_MOT_AUT_PROP_GASTO DD_MAP WHERE DD_MAP.DD_MAP_CODIGO = INS.GGE_COD_MOT_AUTORIZ_PROP) DD_MAP_ID
@@ -185,10 +185,10 @@ BEGIN
           ,NULL USUARIOBORRAR
           ,NULL FECHABORRAR
           ,0 BORRADO    
-		FROM INSERTAR INS
-		'
-		;
-      EXECUTE IMMEDIATE V_SENTENCIA	;
+                FROM INSERTAR INS
+                '
+                ;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -207,18 +207,18 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
-	  IF V_REJECTS != 0 THEN
-	  
+          IF V_REJECTS != 0 THEN
+          
       V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
       
-		IF TABLE_COUNT != 0 THEN
-		
-		  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' GASTOS_PROVEEDOR inexistentes.';
-		
-		END IF;
+                IF TABLE_COUNT != 0 THEN
+                
+                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' GASTOS_PROVEEDOR inexistentes.';
+                
+                END IF;
       END IF;
         
       V_SENTENCIA := '

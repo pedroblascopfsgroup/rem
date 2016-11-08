@@ -41,7 +41,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',						
 						title: HreRem.i18n('title.datos.generales'),
-						collapsible: false,
+						collapsible: true,
 						items :
 							[
 				             // Fila 0  
@@ -131,6 +131,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								    reference: 'cbTipoPersona',
 								    bind : {
 								      store : '{comboTipoPersona}',
+								      disabled: '{!proveedor.isProveedor}',
 								      value : '{proveedor.tipoPersonaProveedorCodigo}'
 								    }
 								},
@@ -171,7 +172,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.proveedor.ambito'),
-									collapsible: false,
+									collapsible: true,
 									bind: {
 										disabled: '{!proveedor.isProveedor}'
 									},
@@ -229,7 +230,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.mediador'),
-									collapsible: false,
+									collapsible: true,
 									bind: {
 										disabled: '{!proveedor.isMediador}'
 									},
@@ -297,7 +298,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',						
 						title: HreRem.i18n('title.datos.economicos'),
-						collapsible: false,
+						collapsible: true,
 						items :
 							[
 							 	{
@@ -306,6 +307,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									title: HreRem.i18n('title.datos.bancarios'),
 									collapsible: false,
 									colspan: 1,
+									margin: '-10 12 0 0',
 									layout: {
 										type : 'table',
 										columns: 1
@@ -363,7 +365,21 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 											    }
 											}
 										]
-					            }
+					            },
+					            {
+									xtype : 'comboboxfieldbase',
+								    fieldLabel : HreRem.i18n('fieldlabel.proveedor.criterio.caja.iva'),
+								    reference: 'cbProveedorCriterioCajaIVA',
+								    bind : {
+								      store : '{comboSiNoRem}',
+								      value : '{proveedor.criterioCajaIVA}'
+								    }
+								},
+								{ 
+									xtype: 'datefieldbase',
+									fieldLabel:  HreRem.i18n('fieldlabel.proveedor.ejercicio.opcion.fecha'),						        	
+									bind: '{proveedor.fechaEjercicioOpcion}'
+								}
 							]
 		            },
 // Datos de Contacto
@@ -371,7 +387,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 		            	xtype:'fieldsettable',
 						defaultType: 'textfieldbase',						
 						title: HreRem.i18n('title.datos.contacto'),
-						collapsible: false,
+						collapsible: true,
 						items :
 							[
 							// Fila 0 (Direcciones y Delegaciones)
@@ -379,7 +395,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								 xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.direcciones.delegaciones'),
-									collapsible: false,
+									collapsible: true,
 									colspan: 3,
 									items :
 										[
@@ -391,7 +407,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								 xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.personas.contacto'),
-									collapsible: false,
+									collapsible: true,
 									colspan: 3,
 									items :
 										[
@@ -405,7 +421,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 		            	 xtype:'fieldsettable',
 							defaultType: 'textfieldbase',						
 							title: HreRem.i18n('title.activos.integrados'),
-							collapsible: false,
+							collapsible: true,
 							bind: {
 								disabled: '{!proveedor.isEntidadOrAdministracionOrMediador}'
 							},
@@ -420,7 +436,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 		            	 xtype:'fieldsettable',
 							defaultType: 'textfieldbase',						
 							title: HreRem.i18n('title.control.pbc'),
-							collapsible: false,
+							collapsible: true,
 							bind: {
 								disabled: '{!proveedor.isProveedor}'
 							},

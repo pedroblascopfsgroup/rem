@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_OBF_OBSERVACIONES_OFERTAS -> TXO_TEXTOS_OFERTA
---##			
+--##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -26,8 +26,8 @@ DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'TXO_TEXTOS_OFERTA';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OBF_OBSERVACIONES_OFERTAS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -78,15 +78,15 @@ BEGIN
     FECHA_COMPROBACION
     )
     WITH OFR_NUM_OFERTA AS (
-		SELECT
-		MIG.OBF_COD_OFERTA 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-		WHERE NOT EXISTS (
-		  SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE MIG.OBF_COD_OFERTA = OFR_NUM_OFERTA
-		)
+                SELECT
+                MIG.OBF_COD_OFERTA 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
+                WHERE NOT EXISTS (
+                  SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE MIG.OBF_COD_OFERTA = OFR_NUM_OFERTA
+                )
     )
     SELECT DISTINCT
-    MIG.OBF_COD_OFERTA                              						OFR_NUM_OFERTA,
+    MIG.OBF_COD_OFERTA                                                                          OFR_NUM_OFERTA,
     '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
     SYSDATE                                                                 FECHA_COMPROBACION
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -215,7 +215,7 @@ BEGIN
           )
         )
         SELECT DISTINCT
-        MIG.OBF_COD_OFERTA                              						RES_COD_OFERTA,
+        MIG.OBF_COD_OFERTA                                                                              RES_COD_OFERTA,
         '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
         SYSDATE                                                                 FECHA_COMPROBACION
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
@@ -243,9 +243,9 @@ BEGIN
           ,BORRADO
           )
           SELECT
-            '||V_ESQUEMA||'.S_TXO_TEXTOS_OFERTA.NEXTVAL  				AS TXO_ID,
+            '||V_ESQUEMA||'.S_TXO_TEXTOS_OFERTA.NEXTVAL                                 AS TXO_ID,
             OFR.OFR_ID                                                  AS OFR_ID,
-            TTX.DD_TTX_ID												AS DD_TTX_ID,
+            TTX.DD_TTX_ID                                                                                               AS DD_TTX_ID,
             MIG2.OBF_OBSERVACION                                        AS TXO_TEXTO,
             0                                                           AS VERSION,
             ''MIG2''                                                    AS USUARIOCREAR,
@@ -277,7 +277,7 @@ BEGIN
       -- V_REG_INSERTADOS
       
       -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
       
       -- Observaciones
       IF V_REJECTS != 0 THEN      

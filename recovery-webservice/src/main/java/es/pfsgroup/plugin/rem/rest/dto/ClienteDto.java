@@ -54,13 +54,11 @@ public class ClienteDto implements Serializable{
 	private String telefono2;
 	@Size(max=50,groups = { Insert.class, Update.class })
 	private String email;
-	//@Size(max=20)
-	//private String codTipoPrescriptor;
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
-			Update.class },foreingField="id")
+			Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemPrescriptor;
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemResponsable no existe", groups = { Insert.class,
-			Update.class },foreingField="id")
+			Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemResponsable;
 	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoVia.class, message = "El codTipoVia de activo no existe", groups = { Insert.class,

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.activo.dao;
 import java.math.BigDecimal;
 import java.util.List;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -15,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
@@ -72,4 +74,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo);
 	
 	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto);
+	
+	public Page getLlavesByActivo(DtoLlaves dto);
+	
+	public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);
 }

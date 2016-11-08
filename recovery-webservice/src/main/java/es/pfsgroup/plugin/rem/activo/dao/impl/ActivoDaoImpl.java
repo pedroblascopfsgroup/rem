@@ -537,6 +537,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
+		hb.appendWhere(" tas.activo.id = " + idActivo);
+		hb.orderBy("tas.id", HQLBuilder.ORDER_DESC);
+		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) getSession().createQuery(hb.toString()).list();
+		return activoTasacionList;
+	}
+	
 	@Override
 	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto) {
 		

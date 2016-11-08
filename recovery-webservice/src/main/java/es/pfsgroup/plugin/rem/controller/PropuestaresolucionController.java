@@ -17,7 +17,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
@@ -31,6 +34,9 @@ public class PropuestaresolucionController {
 		
 		@Autowired
 		private PropuestaOfertaApi propuestaOfertaApi;
+		
+		@Autowired 
+		private OfertaApi ofertaApi;
 		
 		@SuppressWarnings("unchecked")
 		@RequestMapping(method = RequestMethod.POST, value = "/propuestaresolucion")
@@ -67,12 +73,24 @@ public class PropuestaresolucionController {
 				e1.printStackTrace();
 			}
 			
+			//Primero comprabar que existe OFERTA
+			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(propuestaDto.getOfertaHRE());
+			if (oferta==null) {
+				model.put("error", RestApi.REST_NO_RELATED_OFFER);				
+			}
+			
+			//Despueś comprabar que existe un ACTIVO relacionado
+			Activo activo = oferta.getActivoPrincipal();
+			if (activo==null) {
+				model.put("error", RestApi.REST_NO_RELATED_ASSET);				
+			}
+			
 			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
 			if (model.get("error")==null || model.get("error")=="") {
-				params = propuestaOfertaApi.paramsPropuestaSimple(propuestaDto.getOfertaHRE(), model);
+				params = propuestaOfertaApi.paramsPropuestaSimple(oferta, model);
 			}
 			if (model.get("error")==null || model.get("error")=="") {
-				dataSource = propuestaOfertaApi.dataSourcePropuestaSimple(propuestaDto.getOfertaHRE(), model);
+				dataSource = propuestaOfertaApi.dataSourcePropuestaSimple(oferta, activo, model);
 			}
 			
 			//GENERACION DEL DOCUMENTO EN PDF		

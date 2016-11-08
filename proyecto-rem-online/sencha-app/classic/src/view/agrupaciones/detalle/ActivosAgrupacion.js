@@ -5,7 +5,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
     layout: 'fit',
     scrollable	: 'y',
     
-    requires: ['HreRem.view.common.GridBaseEditableRowSinEdicion', 'HreRem.model.ActivoAgrupacion', 'HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel'],
+    requires: ['HreRem.view.common.GridBaseEditableRow', 'HreRem.model.ActivoAgrupacion', 'HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel'],
 
     initComponent: function () {
      	
@@ -19,11 +19,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 				title: 'Listado de Activos',
 			    xtype: 'gridBaseEditableRow',
 			    idPrincipal: 'agrupacionficha.id',
-			    //selModel: { selType: 'rowmodel', mode   : 'MULTI'},
 			    reference: 'listadoactivosagrupacion',
 				cls	: 'panel-base shadow-panel',
 				topBar: true,
-				editOnSelect: true,
+				editOnSelect: false,
 				bind: {
 					store: '{storeActivos}',
 					topBar: '{agrupacionficha.esEditable}',

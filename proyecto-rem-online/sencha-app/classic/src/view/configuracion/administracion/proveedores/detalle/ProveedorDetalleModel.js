@@ -132,7 +132,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 			},
 			autoLoad: true
 		},
-		comboCargo: {
+		comboColCargo: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',

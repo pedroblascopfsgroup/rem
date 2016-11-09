@@ -1010,8 +1010,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setTipoTrabajoCodigo(trabajo.getTipoTrabajo().getCodigo());
 		}
 
-		if (trabajo.getSubtipoTrabajo() != null)
+		if (trabajo.getSubtipoTrabajo() != null) {
 			dtoTrabajo.setSubtipoTrabajoDescripcion(trabajo.getSubtipoTrabajo().getDescripcion());
+			dtoTrabajo.setSubtipoTrabajoCodigo(trabajo.getSubtipoTrabajo().getCodigo());
+		}
 
 		if (trabajo.getEstado() != null) {
 			dtoTrabajo.setEstadoCodigo(trabajo.getEstado().getCodigo());

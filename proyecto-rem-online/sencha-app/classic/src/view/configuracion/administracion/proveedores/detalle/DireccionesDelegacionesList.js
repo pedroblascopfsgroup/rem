@@ -84,6 +84,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            dataIndex: 'localAbiertoPublicoCodigo',
 		            text: HreRem.i18n('header.direccion.delegacion.local.abierto'),
 		            flex: 1,
+		            bind: {
+			        	hidden: '{!proveedor.isMediador}'
+			        },
 		            editor: {
 			            xtype: 'combobox',
 			            displayField: 'descripcion',

@@ -30,7 +30,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTiposTextoOferta implements Auditable, Dictionary {
 	
-
+	public final static String TIPOS_TEXTO_OFERTA_INTERES = "01";
+	public final static String TIPOS_TEXTO_OFERTA_GESTOR = "02";
+	public final static String TIPOS_TEXTO_OFERTA_RATIFICACION = "03";
+	public final static String TIPOS_TEXTO_OFERTA_COMITE = "04";	
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

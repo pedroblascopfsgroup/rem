@@ -105,13 +105,25 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 									enableKeyEvents: true,
 									displayField: 'nombre',
     								valueField: 'id',
+    								
     								listeners: {
 										'keyup': 'changeComboProveedor',
 										'expand': 'expandeComboProveedor'
 									}
 								},
-								renderer: function(value, a, record, e) {
-									return record.data.proveedor;
+								renderer: function(value, a, record, e) {								        		
+					        		var me = this;					        		
+					        		var comboEditor = me.columns && me.down('gridcolumn[dataIndex=idProveedor]').getEditor ? me.down('gridcolumn[dataIndex=idProveedor]').getEditor() : me.getEditor ? me.getEditor():null;
+					        		if(!Ext.isEmpty(comboEditor)) {
+						        		var store = comboEditor.getStore(),							        		
+						        		prov = store.findRecord("id", value);
+						        		if(!Ext.isEmpty(prov)) {								        			
+						        			return prov.get("descripcion");								        		
+						        		} else if (!Ext.isEmpty(record)) {
+						        			comboEditor.setValue(record.data.proveedor);	
+						        			return record.data.proveedor;							        			
+						        		}
+					        		}
 								}
 								
 						   },

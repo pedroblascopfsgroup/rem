@@ -6,14 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aopalliance.intercept.Joinpoint;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -25,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 import net.sf.json.JSONObject;
-import net.sf.sojo.interchange.json.JsonParser;
 
 @Component
 public class HttpClientFacade {

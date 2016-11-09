@@ -2,9 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,6 +29,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -86,6 +86,10 @@ public class GastoProveedor implements Serializable, Auditable {
 	private ActivoProveedor proveedor;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_GESTORIA")
+	private ActivoProveedor gestoria;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRO_ID")
 	private ActivoPropietario propietario;
 	
@@ -119,7 +123,12 @@ public class GastoProveedor implements Serializable, Auditable {
     @OneToOne(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private GastoDetalleEconomico gastoDetalleEconomico;    
+	private GastoDetalleEconomico gastoDetalleEconomico;
+    
+    @OneToOne(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GastoInfoContabilidad gastoInfoContabilidad;    
 	
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="PRG_ID")
@@ -221,6 +230,14 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setProveedor(ActivoProveedor proveedor) {
 		this.proveedor = proveedor;
+	}
+
+	public ActivoProveedor getGestoria() {
+		return gestoria;
+	}
+
+	public void setGestoria(ActivoProveedor gestoria) {
+		this.gestoria = gestoria;
 	}
 
 	public Date getFechaEmision() {
@@ -395,6 +412,26 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setNumGastoDestinatario(String numGastoDestinatario) {
 		this.numGastoDestinatario = numGastoDestinatario;
+	}
+
+	public GastoInfoContabilidad getGastoInfoContabilidad() {
+		return gastoInfoContabilidad;
+	}
+
+	public void setGastoInfoContabilidad(GastoInfoContabilidad gastoInfoContabilidad) {
+		this.gastoInfoContabilidad = gastoInfoContabilidad;
+	}
+	
+	public DDCartera getCartera() {
+		
+		DDCartera cartera = null;
+		
+		if(!Checks.estaVacio(this.gastoProveedorActivos)) {
+			cartera = this.gastoProveedorActivos.get(0).getActivo().getCartera();			
+		}
+	
+		return cartera;
+	
 	}
 
 }

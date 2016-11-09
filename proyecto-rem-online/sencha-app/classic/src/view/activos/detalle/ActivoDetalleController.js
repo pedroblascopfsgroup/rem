@@ -1575,6 +1575,46 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    }
 	},
 
+	//Este método obtiene el valor del campo fecha fin que se está editando y comprueba las validaciones oportunas.
+	validateFechasFin: function(value){
+		var me = this;
+		var grid = me.lookupReference('gridPreciosVigentes');
+		if(Ext.isEmpty(grid)){ return true;}
+		var selected = grid.getSelectionModel().getSelection();
+		// Obtener columna automáticamente por 'dataindex = fechaFin'.
+		var importeActualColumn = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'fechaFin')];
+
+		if(!Ext.isEmpty(selected)) {
+			// Almacenar la fila fila selecciona para cuando esté siendo editada.
+			grid.codigoTipoPrecio = selected[0].getData().codigoTipoPrecio;
+		}
+
+		// Constantes.
+		var tipoMinimoAutorizado = '04';
+		var tipoAprobadoVentaWeb = '02';
+
+		// Recogemos los valores actuales del grid
+		var fechaFinMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().fechaFin;
+		var fechaFinAprobadoVentaWeb = importeActualColumn.getEditor().value;
+
+		var codTipoPrecio = grid.codTipoPrecio;
+
+		switch(codTipoPrecio) {
+			case tipoAprobadoVentaWeb: // Si se está editando la fecha de la fila aprobado venta web.
+				if(Ext.isEmpty(fechaFinMinimo) || Ext.isEmpty(fechaFinAprobadoVentaWeb)) {
+					return true;
+				}
+				if(fechaFinAprobadoVentaWeb <= fechaFinMinimo) {
+					return true;
+				} else {
+					return false;
+				}
+				break;
+			default:
+				return true;
+		}
+	},
+
 	// Este método obtiene el valor del campo importe que se está editando y comprueba las validaciones oportunas.
 	validatePreciosVigentes: function(value) {
 		var me = this;

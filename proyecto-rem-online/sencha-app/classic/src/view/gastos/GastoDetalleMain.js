@@ -27,19 +27,42 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     configCmp: function(data) {
     	
     	var me = this;
+    	
+    	me.menu = Ext.create("Ext.menu.Menu", {
+	    	width: 150,
+		    cls: 'menu-favoritos',
+		    plain: true,
+		    floating: true,
+	    	items: [
+	    		{
+	    			text: HreRem.i18n('btn.cerrar.pestanya'),
+	    			handler: 'onClickBotonCerrarPestanya'
+	    		},
+	    		{
+	    			text: HreRem.i18n('btn.cerrar.todas'),
+	    			handler: 'onClickBotonCerrarTodas'
+	    		},
+        		{
+        			text:  HreRem.i18n('btn.autorizar'),
+        			handler: 'onClickAutorizar'
+        		},
+        		{
+        			text:  HreRem.i18n('btn.rechazar'),
+        			handler: 'onClickRechazar'
+        		}
+	    		
+	    	]
+	    	
+	    });
 
     	if(me.down('[cls=container-mask-background]')) {
     		me.removeAll();
-//    		me.add({xtype: 'cabeceraexpediente'});
     		me.add(
     			{
 			    		xtype:'toolfieldset',			   		         						   		        
 			        	cls: 'fieldsetBase cabecera',
 			        	height: 20,
 			        	title: ' ',
-//			        	bind:{
-			        		title: ' ',
-//			        	},
 			        	scrollable: 'y',
 			        	border: false,			        	
 					    layout: {
@@ -47,6 +70,28 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 					    },
 						tools: [
 								{	xtype: 'tbfill'},
+								{
+									xtype: 'button',
+									margin: '10 6 0 0',
+									text: HreRem.i18n("btn.autorizar"),
+									cls: 'boton-cabecera',
+									handler: 'onClickAutorizar',
+									hidden: true,
+									bind: {
+										hidden: '{!esAutorizable}'
+									}
+								},
+								{
+									xtype: 'button',
+									margin: '10 6 0 0',
+									text: HreRem.i18n("btn.rechazar"),
+									cls: 'boton-cabecera',
+									handler: 'onClickRechazar',
+									hidden: true,
+									bind: {
+										hidden: '{!esRechazable}'
+									}
+								},								
 								{
 									xtype: 'button',
 									margin: '10 6 0 0',
@@ -68,3 +113,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     }
 
 });
+
+
+
+

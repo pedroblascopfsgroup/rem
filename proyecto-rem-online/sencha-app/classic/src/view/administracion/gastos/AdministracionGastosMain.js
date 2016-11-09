@@ -4,15 +4,12 @@ Ext.define('HreRem.view.administracion.gastos.AdministracionGastosMain', {
     xtype		: 'administraciongastosmain',
     requires	: ['HreRem.view.administracion.gastos.GestionGastos', 'HreRem.view.administracion.gastos.GestionProvisiones','HreRem.view.administracion.AdministracionModel',
     				'HreRem.view.administracion.AdministracionController'],
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
-    
-        controller: 'administracion',
+    controller: 'administracion',
     viewModel: {
         type: 'administracion'
     },
+    
+    flex: 1,
 
     initComponent: function () {
         

@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
@@ -22,7 +21,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -235,6 +233,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setConcepto(gasto.getConcepto());
 			if(!Checks.esNulo(gasto.getGastoGestion()) && !Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())){
 				dto.setAutorizado(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo()));
+			}
+			if(!Checks.esNulo(gasto.getGastoGestion()) && !Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())){
+				dto.setRechazado(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo()));
 			}
 			dto.setAsignadoATrabajos(!Checks.estaVacio(gasto.getGastoProveedorTrabajos()));
 			dto.setAsignadoAActivos(Checks.estaVacio(gasto.getGastoProveedorTrabajos()) && !Checks.estaVacio(gasto.getGastoProveedorActivos()));
@@ -897,10 +898,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!Checks.esNulo(gastoGestion.getMotivoAutorizacionPropietario())){
 					dtoGestion.setComboMotivoAutorizacionPropietario(gastoGestion.getMotivoAutorizacionPropietario().getCodigo());
 				}
-				if(!Checks.esNulo(gasto.getProvision())){
-					if(!Checks.esNulo(gasto.getProvision().getGestoria())){
-						dtoGestion.setGestoria(gasto.getProvision().getGestoria().getNombre());
-					}
+				if(!Checks.esNulo(gasto.getGestoria())){
+					dtoGestion.setGestoria(gasto.getGestoria().getNombre());
+				}
+				if(!Checks.esNulo(gasto.getProvision())){					
 					dtoGestion.setNumProvision(gasto.getProvision().getNumProvision());
 				}
 				dtoGestion.setObservaciones(gastoGestion.getObservaciones());
@@ -1451,5 +1452,64 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		return null;
 		
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean autorizarGastos(Long[] idsGastos) {
+		
+		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
+		
+		for(Long id : idsGastos) {			
+			GastoProveedor gasto = findOne(id);
+			autorizarGasto(estadoAutorizacionHaya, gasto);
+		}		
+		
+		return true;
+	}
+
+	private void autorizarGasto(DDEstadoAutorizacionHaya estadoAutorizacionHaya, GastoProveedor gasto) {
+		
+		GastoGestion gastoGestion =  gasto.getGastoGestion();
+		gastoGestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
+		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
+		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
+		gasto.setGastoGestion(gastoGestion);
+		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO);
+		genericDao.update(GastoProveedor.class, gasto);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo) {
+		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_RECHAZADO);
+		DDMotivoRechazoAutorizacionHaya motivo = null;
+		if(!Checks.esNulo(motivoRechazo)) {
+			motivo = (DDMotivoRechazoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAutorizacionHaya.class, motivoRechazo);
+		}
+		
+		for(Long id : idsGastos) {
+			
+			GastoProveedor gasto = findOne(id);
+			rechazarGasto(estadoAutorizacionHaya, motivo, gasto);
+
+		}		
+		
+		return true;
+	}
+
+	private void rechazarGasto(DDEstadoAutorizacionHaya estadoAutorizacionHaya,
+			DDMotivoRechazoAutorizacionHaya motivo, GastoProveedor gasto) {
+		GastoGestion gastoGestion =  gasto.getGastoGestion();
+		gastoGestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
+		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
+		if(!Checks.esNulo(motivo)) {
+			gastoGestion.setMotivoRechazoAutorizacionHaya(motivo);
+		}
+		gasto.setGastoGestion(gastoGestion);
+		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO);
+		genericDao.update(GastoProveedor.class, gasto);
 	}
 }

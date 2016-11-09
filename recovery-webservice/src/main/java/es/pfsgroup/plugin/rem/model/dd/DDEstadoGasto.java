@@ -38,6 +38,8 @@ public class DDEstadoGasto implements Auditable, Dictionary {
 	public static final String PENDIENTE = "01";
 	public static final String ANULADO = "06";
 	public static final String RETENIDO = "07";
+	public static final String RECHAZADO = "02";
+	public static final String AUTORIZADO = "03";
 	
 
 	@Id

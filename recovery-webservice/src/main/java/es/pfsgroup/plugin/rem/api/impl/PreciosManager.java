@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,12 +11,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -24,6 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoExcelPropuestaUnificada;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -35,6 +42,8 @@ import es.pfsgroup.plugin.rem.factory.PropuestaPreciosExcelFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPropuesta;
 import es.pfsgroup.plugin.rem.model.ActivoPropuesta.ActivoPropuestaPk;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
@@ -47,14 +56,18 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.VActivosPropuestaDao;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.VNumActivosTipoPrecioDao;
 import es.pfsgroup.plugin.rem.service.PropuestaPreciosExcelService;
+import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 
 @Service("preciosManager")
 public class PreciosManager extends BusinessOperationOverrider<PreciosApi> implements  PreciosApi {
+	
+	protected static final Log logger = LogFactory.getLog(PreciosManager.class);
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -82,6 +95,12 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private TrabajoDao trabajoDao;
 	
 	//Porcentajes para el calculo de precios propuestos
 	private static final Double porc120 = 1.20;
@@ -489,6 +508,76 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			propuesta = listaPropuestas.get(0);
 		
 		return propuesta;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void guardarFileEnTrabajo(File file, Trabajo trabajo) {
+		FileItem fileItem = new FileItem(file);
+		fileItem.setContentType("application/vnd.ms-excel");
+		fileItem.setFileName(file.getName());
+		fileItem.setLength(file.length());
+		
+		try {
+			Adjunto adj = uploadAdapter.saveBLOB(fileItem);
+			
+			AdjuntoTrabajo adjuntoTrabajo = new AdjuntoTrabajo();
+			adjuntoTrabajo.setAdjunto(adj);
+			adjuntoTrabajo.setTrabajo(trabajo);
+
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_LISTADO_PROPUESTA_PRECIOS);
+			DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+			
+			adjuntoTrabajo.setTipoDocumentoActivo(tipoDocumento);
+			adjuntoTrabajo.setContentType(fileItem.getContentType());
+			adjuntoTrabajo.setTamanyo(fileItem.getLength());
+			adjuntoTrabajo.setNombre(fileItem.getFileName());
+			adjuntoTrabajo.setFechaDocumento(new Date());
+			Auditoria.save(adjuntoTrabajo);
+			
+			List<AdjuntoTrabajo> adjuntosTrabajo = new ArrayList<AdjuntoTrabajo>();
+			if(!Checks.estaVacio(trabajo.getAdjuntos()))
+			{
+				adjuntosTrabajo.addAll(trabajo.getAdjuntos());
+				adjuntosTrabajo.add(adjuntoTrabajo);
+				
+				trabajo.getAdjuntos().clear();
+				trabajo.getAdjuntos().addAll(adjuntosTrabajo);
+	
+				trabajoDao.save(trabajo);
+			}
+			else {
+				genericDao.save(AdjuntoTrabajo.class, adjuntoTrabajo);
+			}
+			
+			// Copia de adjunto al Activo
+			ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+			
+			adjuntoActivo.setAdjunto(adj);
+			adjuntoActivo.setActivo(trabajo.getActivo());
+			adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+			adjuntoActivo.setContentType(fileItem.getContentType());
+			adjuntoActivo.setTamanyo(fileItem.getLength());
+			adjuntoActivo.setNombre(fileItem.getFileName());
+			adjuntoActivo.setFechaDocumento(new Date());
+			Auditoria.save(adjuntoActivo);
+			
+			List<ActivoAdjuntoActivo> adjuntosActivo = new ArrayList<ActivoAdjuntoActivo>();
+			if(!Checks.estaVacio(trabajo.getActivo().getAdjuntos())) {
+				adjuntosActivo.addAll(trabajo.getActivo().getAdjuntos());
+				adjuntosActivo.add(adjuntoActivo);
+				
+				trabajo.getActivo().getAdjuntos().clear();
+				trabajo.getActivo().getAdjuntos().addAll(adjuntosActivo);
+			}
+			else {
+				genericDao.save(ActivoAdjuntoActivo.class, adjuntoActivo);
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
+		}
 	}
 
 }

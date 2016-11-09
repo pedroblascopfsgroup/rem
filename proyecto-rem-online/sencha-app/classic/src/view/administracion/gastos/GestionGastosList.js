@@ -16,8 +16,8 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     	      	
       	var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this};
       	var labelSeleccionados = {xtype: 'displayfieldbase', itemId: 'displaySelection'/*, cls: 'logo-headerbar'*/};
-		var configAutorizarBtn = {text:'Autorizar', cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizar', scope: this, disabled: true};
-		var configRechazarButton = {text: 'Rechazar', cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazar', scope: this, disabled: true};
+		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizar', disabled: true};
+		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazar', disabled: true};
 		var separador = {xtype: 'tbfill'};
 		var espacio = {xtype: 'tbspacer'};
 			
@@ -37,17 +37,18 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 						       	{   
 						       		text: HreRem.i18n('header.num.gasto'),
 						        	dataIndex: 'numGastoHaya',
-						        	flex: 1
+						        	flex: 0.4
 						       	},
-	    	                     {
+	    	                    {
 									text: HreRem.i18n('header.num.factura.liquidacion'),
 									dataIndex: 'numFactura',
-									flex: 1
-							   },
+									flex: 0.4
+							   	},
 	    	                     
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.tipo.gasto'),
 	    	                    	 flex: 1,
+	    	                    	 hidden: true,
 	    	                    	 dataIndex: 'tipoDescripcion'
 	    	                     },
 	    	                     {
@@ -58,12 +59,14 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.concepto.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'concepto'
+	    	                    	 dataIndex: 'concepto',
+	    	                    	 hidden: true
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.numero.proveedor'),
-	    	                     	flex: 1,
-	    	                     	dataIndex: 'codigoProveedorRem'
+	    	                     	flex: 0.4,
+	    	                     	dataIndex: 'codigoProveedorRem',
+	    	                     	hidden: true
 	    	                     },
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.proveedor.gasto'),
@@ -72,36 +75,59 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.fecha.emision.gasto'),
-	    	                     	flex: 1,
+	    	                     	flex: 0.4,
 	    	                    	dataIndex: 'fechaEmision',
 		   	                    	formatter: 'date("d/m/Y")'	
 	    	                     },
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.importe.gasto'),
-	    	                    	 flex: 1,
+	    	                    	 flex: 0.4,
 	    	                    	 dataIndex: 'importeTotal'
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.fecha.tope.pago.gasto'),
-	    	                     	flex: 1,
+	    	                     	flex: 0.4,
 	    	                    	dataIndex: 'fechaTopePago',
 	    	                    	formatter: 'date("d/m/Y")'	
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.fecha.pago.gasto'),
-	    	                     	flex: 1,
+	    	                     	flex: 0.4,
 	    	                    	dataIndex: 'fechaPago',
-	    	                    	formatter: 'date("d/m/Y")'	
+	    	                    	formatter: 'date("d/m/Y")',
+	    	                    	hidden: true
 	    	                     },
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.periodicidad.gasto'),
-	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'periodicidadDescripcion'
+	    	                    	 flex: 0.4,
+	    	                    	 dataIndex: 'periodicidadDescripcion',
+	    	                    	 hidden: true
 	    	                     },
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.destinatario.gasto'),
 	    	                    	 flex: 1,
 	    	                    	 dataIndex: 'destinatarioDescripcion'
+	    	                     },
+	    	                     {
+	    	                     	text: HreRem.i18n('header.estado'),
+	    	                     	flex: 0.4,
+	    	                     	dataIndex: 'estadoGastoDescripcion'
+	    	                     },
+	    	                     {
+	    	                     	
+	    	                     	width: 30,
+	    	                     	menuDisabled: true,
+	    	                     	hideable: false,
+	    	                     	dataIndex: 'tieneDocAdjuntos',
+	    	                     	renderer: function(tieneDocAdjuntos) {
+	    	                     		var css = "";
+	    	                     		if(tieneDocAdjuntos) {
+	    	                     			css = "x-fa fa-paperclip";
+	    	                     		}
+	    	                     		
+	    	                     		return "<div class='"+css+"'></div>"
+	    	                     	}
+	    	                     	
 	    	                     }
 		];
 		
@@ -143,6 +169,11 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     getPersistedSelection: function() {
     	var me = this;
     	return me.getPlugin('pagingselectpersist').getPersistedSelection();     	
+    },
+    
+    deselectAll: function() {
+    	var me = this;
+    	return me.getPlugin('pagingselectpersist').deselectAll();     		
     }
     	        
 				

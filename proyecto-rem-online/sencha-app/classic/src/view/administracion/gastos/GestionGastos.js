@@ -1,15 +1,12 @@
 Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'gestiongastos',
+    scrollable: 'y',
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
     requires	: ['HreRem.view.administracion.gastos.GestionGastosList', 'HreRem.view.administracion.gastos.GestionGastosSearch'],
-	scrollable: true,
-	cls	: 'panel-base shadow-panel',
-	scrollable	: 'y',
-//	cls	: 'panel-base shadow-panel tabPanel-tercer-nivel',
     initComponent: function () {        
         var me = this;
         
@@ -19,7 +16,8 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
         
 	        {
 	        	xtype:'gestiongastossearch',
-	        	reference: 'gestiongastossearchref'
+	        	reference: 'gestiongastossearchref',
+	        	scrollable: 'y'
 	        },       			
 	        {
 	        	xtype: 'gestiongastoslist',

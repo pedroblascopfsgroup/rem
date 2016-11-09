@@ -139,6 +139,23 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     
 	     esGastoEditable: function(get){
 	     	return get('gasto.esGastoEditable');
+	     },
+	     
+	     esAutorizable: function(get) {
+	     	debugger;
+	     	var esEditable = get('esGastoEditable');
+	     	var autorizado = get('gasto.autorizado');
+	     	
+	     	return esEditable && !autorizado;
+	     },
+	     
+	     esRechazable: function(get) {	     
+	     	debugger;
+	     	var esEditable = get('esGastoEditable');
+	     	var rechazado = get('gasto.rechazado');
+	     	
+	     	return esEditable && !rechazado
+
 	     }
 	     
 		

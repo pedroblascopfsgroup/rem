@@ -27,6 +27,33 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     configCmp: function(data) {
     	
     	var me = this;
+    	
+    	me.menu = Ext.create("Ext.menu.Menu", {
+	    	width: 150,
+		    cls: 'menu-favoritos',
+		    plain: true,
+		    floating: true,
+	    	items: [
+	    		{
+	    			text: HreRem.i18n('btn.cerrar.pestanya'),
+	    			handler: 'onClickBotonCerrarPestanya'
+	    		},
+	    		{
+	    			text: HreRem.i18n('btn.cerrar.todas'),
+	    			handler: 'onClickBotonCerrarTodas'
+	    		},
+        		{
+        			text:  HreRem.i18n('btn.autorizar'),
+        			handler: 'onClickAutorizar'
+        		},
+        		{
+        			text:  HreRem.i18n('btn.rechazar'),
+        			handler: 'onClickRechazar'
+        		}
+	    		
+	    	]
+	    	
+	    });
 
     	if(me.down('[cls=container-mask-background]')) {
     		me.removeAll();
@@ -50,6 +77,26 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 								{
 									xtype: 'button',
 									margin: '10 6 0 0',
+									text: HreRem.i18n("btn.autorizar"),
+									cls: 'boton-cabecera ',
+									handler: 'onClickAutorizar',
+									bind: {
+										hidden: '{!esAutorizable}'
+									}
+								},
+								{
+									xtype: 'button',
+									margin: '10 6 0 0',
+									text: HreRem.i18n("btn.rechazar"),
+									cls: 'boton-cabecera',
+									handler: 'onClickRechazar',
+									bind: {
+										hidden: '{!esRechazable}'
+									}
+								},								
+								{
+									xtype: 'button',
+									margin: '10 6 0 0',
 									cls: 'boton-cabecera',
 									iconCls: 'ico-refrescar',
 									handler	: 'onClickBotonRefrescar',
@@ -68,3 +115,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     }
 
 });
+
+
+
+

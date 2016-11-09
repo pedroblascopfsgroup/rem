@@ -80,8 +80,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var initialData = {};
 
 		var searchForm = btn.up('formBase');
-		
+
 		if (searchForm.isValid()) {
+			this.lookupReference('gestiongastoslistref').deselectAll();
 			this.lookupReference('gestiongastoslistref').getStore().loadPage(1);
         }
 		
@@ -215,6 +216,125 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	parent= grid.up('gestiongastos');
 		Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent, nifEmisor: me.nifProveedorIdentificado}).show();
 	                
+    },
+    
+    onClickAutorizar: function(btn) {
+    	var me = this,
+    	listaGastos = btn.up('gridBase');
+    	
+    	Ext.Msg.show({
+		   title: HreRem.i18n('title.mensaje.confirmacion'),
+		   msg: HreRem.i18n('msg.desea.autorizar.gastos.seleccionados'),
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+		        if (buttonId == 'yes') {
+					var gastos = listaGastos.getPersistedSelection(),
+					url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastos'),		
+					idsGasto = [];
+					
+					// Recuperamos todos los ids de los trabajos seleccionados
+					Ext.Array.each(gastos, function(gasto, index) {
+					    idsGasto.push(gasto.get("id"));
+					});
+	
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	
+					Ext.Ajax.request({
+				    			
+					     url: url,
+					     params: {idsGasto: idsGasto},
+					
+					     success: function(response, opts) {
+					         me.getView().unmask();		         
+					         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					         listaGastos.getStore().loadPage(1);
+					     },
+					     failure: function(response) {
+					     	me.getView().unmask();
+				     		var data = {};
+			                try {
+			                	data = Ext.decode(operation._response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
+					     }
+				    		    
+				    });
+		        }
+		   }
+		});
+    	
+    	
+    	
+    },
+    
+    onClickRechazar: function(btn) {
+    	
+    	var me = this,
+    	listaGastos = btn.up('gridBase');
+    	
+    	Ext.Msg.show({
+		   title: HreRem.i18n('title.mensaje.confirmacion'),
+		   msg: HreRem.i18n('msg.desea.rechazar.gastos.seleccionados'),
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+ 				if (buttonId == 'yes') {
+ 					
+ 					var combo = Ext.create("HreRem.view.common.ComboBoxFieldBase", {
+ 						addUxReadOnlyEditFieldPlugin: false, store: {model: 'HreRem.model.ComboBase',proxy: {type: 'uxproxy',remoteUrl: 'generic/getDiccionario',extraParams: {diccionario: 'motivosRechazoHaya'}}}
+ 					});
+ 						
+					HreRem.Msg.promptCombo(HreRem.i18n('title.motivo.rechazo'),"", function(btn, text){    
+					    if (btn == 'ok'){
+					    	
+					    	var gastos = listaGastos.getPersistedSelection(),
+							url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastos'),		
+							idsGasto = [];
+							
+							// Recuperamos todos los ids de los trabajos seleccionados
+							Ext.Array.each(gastos, function(gasto, index) {
+							    idsGasto.push(gasto.get("id"));
+							});
+			
+							me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			
+							Ext.Ajax.request({
+						    			
+							     url: url,
+							     params: {idsGasto: idsGasto, motivoRechazo: text},
+							
+							     success: function(response, opts) {
+							         me.getView().unmask();		         
+							         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							         listaGastos.getStore().loadPage(1);
+							     },
+							     failure: function(response) {
+							     	me.getView().unmask();
+						     		var data = {};
+					                try {
+					                	data = Ext.decode(operation._response.responseText);
+					                }
+					                catch (e){ };
+					                if (!Ext.isEmpty(data.msg)) {
+					                	me.fireEvent("errorToast", data.msg);
+					                } else {
+					                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					                }
+							     }
+						    		    
+						    });
+					    	 
+							
+					    }
+		    		}, null, null, null, combo);
+		        }
+		   }
+		});
+    	
     }
 
 });

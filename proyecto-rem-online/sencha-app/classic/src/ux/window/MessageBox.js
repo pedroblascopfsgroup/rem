@@ -210,8 +210,8 @@ Ext.define('HreRem.ux.window.MessageBox', {
     baseIconCls: Ext.baseCSSPrefix + 'message-box-icon',
     
     ariaRole: 'alertdialog',
-    
-    mensajesCancelados: [],
+        
+    //mensajesCancelados: [],
 
     makeButton: function(btnIdx) {
         var btnId = this.buttonIds[btnIdx];
@@ -246,18 +246,25 @@ Ext.define('HreRem.ux.window.MessageBox', {
         if (me.cfg.prompt || me.cfg.multiline) {
             if (me.cfg.multiline) {
                 field = me.textArea;
-            } else {
+                value = field.getValue();
+            	field.reset();
+            } else if(Ext.isEmpty(me.cfg.combo)){
                 field = me.textField;
+                value = field.getValue();
+            	field.reset();
+            } else {
+            	field = me.comboBox;
+            	value = field.getValue();
+            	field.destroy();
             }
-            value = field.getValue();
-            field.reset();
+
         }
         
         // Comprobamos
-        if(me.checkbox.checked) {
+        /*if(me.checkbox.checked) {
         	me.mensajesCancelados.push({msg: me.msg.html, parent: me.cfg.parent});
         	me.checkbox.setValue(false);
-        }
+        }*/
 
         // Component.onHide blurs the active element if the Component contains the active element
         me.hide();
@@ -339,7 +346,13 @@ Ext.define('HreRem.ux.window.MessageBox', {
                         me.textArea = new Ext.form.field.TextArea({
                             id: baseId + '-textarea',
                             height: 75
+                        }),
+                        me.comboBoxContainer = new Ext.container.Container({
+                            height: 75,
+                            hidden: true,
+                            items: []
                         })
+                        
                     ]
                 })
             ]
@@ -350,13 +363,13 @@ Ext.define('HreRem.ux.window.MessageBox', {
             margin: '0 10 10 10'
         });
         
-        me.checkbox = new Ext.form.field.Checkbox({
+        /*me.checkbox = new Ext.form.field.Checkbox({
             boxLabel  : Ext.MessageBox.checkboxText, 
             padding	  : '10 10 10 10'
             
-        });
+        });*/
 
-        me.items = [me.topContainer, me.progressBar, me.checkbox];
+        me.items = [me.topContainer, me.progressBar/*, me.checkbox*/];
 
         // Create the buttons based upon passed bitwise config
         me.msgButtons = [];
@@ -417,11 +430,10 @@ Ext.define('HreRem.ux.window.MessageBox', {
             headerCfg = header && !header.isHeader,
             message = cfg && (cfg.message || cfg.msg),
             resizeTracker, width, height, i, textArea,
-            textField, msg, progressBar, msgButtons, wait, tool;
+            textField, comboBox, msg, progressBar, msgButtons, wait, tool;
 
         // Restore default buttonText before reconfiguring.
         me.updateButtonText();
-
         me.cfg = cfg = cfg || {};
 
         wait = cfg.wait;
@@ -543,23 +555,35 @@ Ext.define('HreRem.ux.window.MessageBox', {
         // Hide or show the input field
         textArea = me.textArea;
         textField = me.textField;
+
         if (cfg.prompt || cfg.multiline) {
             me.multiline = cfg.multiline;
             if (cfg.multiline) {
-                textArea.setValue(cfg.value);
+                textArea.setValue(cfg.combo);
                 textArea.setHeight(cfg.defaultTextHeight || me.defaultTextHeight);
                 textArea.show();
                 textField.hide();
+                me.comboBoxContainer.hide();
                 me.defaultFocus = textArea;
-            } else {
+            } else if(Ext.isEmpty(cfg.combo)) {
                 textField.setValue(cfg.value);
                 textArea.hide();
+                if(!Ext.isEmpty(me.comboBox)) {
+                	me.comboBoxContainer.remove(me.comboBox);
+                }
                 textField.show();
                 me.defaultFocus = textField;
+            } else {
+            	textArea.hide();
+            	textField.hide();
+            	me.comboBox = cfg.combo;
+            	me.comboBoxContainer.add(me.comboBox);
+            	me.comboBoxContainer.show();
             }
         } else {
             textArea.hide();
             textField.hide();
+            me.comboBoxContainer.hide();
         }
 
         // Hide or show the progress bar
@@ -778,16 +802,16 @@ Ext.define('HreRem.ux.window.MessageBox', {
 
         cfg = cfg || {};
         
-        if(Ext.isEmpty(cfg.parent)) {
+        /*if(Ext.isEmpty(cfg.parent)) {
         	Ext.raise("[HreRem.Msg.show] El argumento parent es obligatorio");        
-        }
+        }*/
         
         var showPermited = true;
-        Ext.Array.each(me.mensajesCancelados, function(mensaje, index){
+        /*Ext.Array.each(me.mensajesCancelados, function(mensaje, index){
             if (mensaje.msg == cfg.msg && mensaje.parent == cfg.parent) {
                 showPermited= false;
             }
-        });
+        });*/
        
         if(showPermited) {
 
@@ -950,6 +974,37 @@ Ext.define('HreRem.ux.window.MessageBox', {
                 scope: scope,
                 multiline: multiline,
                 value: value
+            };
+        }
+        return this.show(title);
+    },
+    
+    /**
+	 * 
+	 * @param {} combo
+	 * @param {} title
+	 * @param {} message
+	 * @param {} fn
+	 * @param {} scope
+	 * @param {} multiline
+	 * @param {} value
+	 * @return {}
+	 */
+    promptCombo : function(title, message, fn, scope, multiline, value, combo){
+    	if(Ext.isEmpty(combo)) {
+    		Ext.raise("Parámetro necesario: combo");
+    	}else if (Ext.isString(title)) {
+            title = {
+                prompt: true,
+                title: title,
+                minWidth: this.minPromptWidth,
+                message: message,
+                buttons: this.OKCANCEL,
+                callback: fn,
+                scope: scope,
+                multiline: multiline,
+                value: value,
+                combo: combo
             };
         }
         return this.show(title);

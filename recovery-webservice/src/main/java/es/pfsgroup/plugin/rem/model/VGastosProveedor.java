@@ -160,6 +160,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="NIF_GESTORIA")
 	private String nifGestoria;
 	
+	@Column(name="TIENE_DOC_ADJUNTOS")
+	private Boolean tieneDocAdjuntos;
+	
 
 	public String getId() {
 		return id;
@@ -540,6 +543,14 @@ public class VGastosProveedor implements Serializable {
 
 	public void setNifGestoria(String nifGestoria) {
 		this.nifGestoria = nifGestoria;
+	}
+
+	public Boolean getTieneDocAdjuntos() {
+		return tieneDocAdjuntos;
+	}
+
+	public void setTieneDocAdjuntos(Boolean tieneDocAdjuntos) {
+		this.tieneDocAdjuntos = tieneDocAdjuntos;
 	}	
 	 
 }

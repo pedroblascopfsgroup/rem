@@ -268,7 +268,13 @@ public interface OfertaApi {
 	 * @param tareaExterna
 	 * @return
 	 */
-	boolean altaComite(TareaExterna tareaExterna);
+	public boolean altaComite(TareaExterna tareaExterna);
 	
+	/**
+	 * Método que comprueba si existe conflicto de intereses y/o riesgo computacional
+	 * @param tareaExterna
+	 * @return true si el valor es NO en ambos combos, false en caso de que no estén rellenos o alguno tenga SI.
+	 */
+	public boolean checkPoliticaCorporativa(TareaExterna tareaExterna);
 
 }

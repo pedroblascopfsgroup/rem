@@ -864,5 +864,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 	}
+	
+	@Override
+	public boolean checkPoliticaCorporativa(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		if(Checks.esNulo(expediente.getConflictoIntereses()) || Checks.esNulo(expediente.getRiesgoReputacional()))
+			return false;
+		else
+			if((expediente.getConflictoIntereses() == 1) || (expediente.getRiesgoReputacional() == 1))
+				return false;
+			else
+				return true;
+	}
 
 }

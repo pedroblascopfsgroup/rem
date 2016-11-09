@@ -215,12 +215,8 @@ BEGIN
 	)
 	SELECT
 	'||V_ESQUEMA||'.S_ACT_PAC_PROPIETARIO_ACTIVO.NEXTVAL						    PAC_ID,
-	(SELECT ACT_ID
-	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT 
-	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)     	     ACT_ID,
-	(SELECT PRO_ID
-	FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO ACT 
-	WHERE ACT.PRO_CODIGO_UVEM = MIG.PRO_CODIGO_UVEM)		         PRO_ID,
+        act.act_id, 
+        pro.pro_id, 
 	(SELECT DD_TGP_ID
 	FROM '||V_ESQUEMA||'.DD_TGP_TIPO_GRADO_PROPIEDAD  
 	WHERE DD_TGP_CODIGO = MIG.GRADO_PROPIEDAD)				                DD_TGP_ID,
@@ -230,6 +226,10 @@ BEGIN
 	SYSDATE                                                                                	FECHACREAR,
 	0                                                                                           	BORRADO
 	FROM MIG
+        inner join  '||V_ESQUEMA||'.ACT_ACTIVO ACT 
+	     on ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO 
+        inner join  '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO pro
+             on pro.PRO_CODIGO_UVEM = MIG.PRO_CODIGO_UVEM and act.dd_cra_id = pro.dd_cra_id
 	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTA
       ON NOTA.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
   LEFT JOIN '||V_ESQUEMA||'.PRO_NOT_EXISTS NOTP

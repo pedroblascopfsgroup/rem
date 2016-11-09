@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.restclient.webcom.clients;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -13,11 +15,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacadeInternalError;
-import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
@@ -106,6 +108,29 @@ public class ClienteWebcomGenerico {
 			registroLlamada.setMetodo(httpMethod);
 			String endpointUrl = endpoint.getEndpointUrl();
 			registroLlamada.setEndpoint(endpointUrl);
+
+			String DEBUG_FILE = !Checks.esNulo(appProperties.getProperty("rest.client.json.debug.file"))
+					? appProperties.getProperty("rest.client.json.debug.file") : "true";
+
+			if (DEBUG_FILE.equals("true")) {
+				FileWriter fileW = null;
+
+				try {
+					fileW = new FileWriter(System.getProperty("user.dir").concat(System.getProperty("file.separator"))
+							.concat("call.json"));
+					fileW.write(requestBody.toString());
+				} catch (Exception e) {
+					logger.error("error al guardar el fichero JSON");
+				} finally {
+					try {
+						if (fileW != null) {
+							fileW.close();
+						}
+					} catch (IOException e) {
+						logger.error("error al cerrar el fichero");
+					}
+				}
+			}
 			JSONObject response = httpClient.processRequest(endpointUrl, httpMethod, headers, requestBody,
 					(endpoint.getTimeout() * 1000), endpoint.getCharset());
 			registroLlamada.setResponse(response.toString());

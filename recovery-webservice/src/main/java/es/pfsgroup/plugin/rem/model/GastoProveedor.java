@@ -2,9 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -84,6 +82,10 @@ public class GastoProveedor implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_EMISOR")
 	private ActivoProveedor proveedor;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_GESTORIA")
+	private ActivoProveedor gestoria;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRO_ID")
@@ -221,6 +223,14 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setProveedor(ActivoProveedor proveedor) {
 		this.proveedor = proveedor;
+	}
+
+	public ActivoProveedor getGestoria() {
+		return gestoria;
+	}
+
+	public void setGestoria(ActivoProveedor gestoria) {
+		this.gestoria = gestoria;
 	}
 
 	public Date getFechaEmision() {

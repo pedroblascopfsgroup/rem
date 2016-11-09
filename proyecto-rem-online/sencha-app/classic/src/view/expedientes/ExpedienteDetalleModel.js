@@ -131,6 +131,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				}
 			}
 	     	return false;
+	     },
+	     
+	     esExpedienteNoSujetoTramiteTanteo: function(get) {
+		     	
+	     	var ocultarPestTanteo = get('expediente.ocultarPestTanteoRetracto');
+	     	return ocultarPestTanteo === "true";
+	     	
 	     }
 	     
 		

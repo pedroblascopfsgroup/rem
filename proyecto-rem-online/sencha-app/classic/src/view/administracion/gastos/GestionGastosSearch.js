@@ -32,7 +32,15 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						},
 			    		items: [
 			    		
-			    			 { 
+			    			{
+								xtype: 'comboboxfieldbase',
+								name: 'estadoGastoCodigo',
+				              	fieldLabel : 'Estado',
+								bind: {
+									store: '{estadosGasto}'
+								}					
+							},			    		
+			    			{ 
 								xtype: 'comboboxfieldbase',
 								name: 'estadoAutorizacionHayaCodigo',
 				              	fieldLabel : 'Estado Autorización Haya',
@@ -47,14 +55,6 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 								bind: {
 									store: '{comboEstadoAutorizacionPropietario}'
 								}
-							},
-							{
-								xtype: 'comboboxfieldbase',
-								name: 'estadoGastoCodigo',
-				              	fieldLabel : 'Estado',
-								bind: {
-									store: '{estadosGasto}'
-								}						
 							}
 				        				
 						]
@@ -162,6 +162,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						 		name: 'fechaTopePagoHasta',
 						 		formatter: 'date("d/m/Y")'					 		
 							},
+							{
+						    	fieldLabel: HreRem.i18n('fieldlabel.nif.gestoria'),
+						        name: 'nifGestoria'						    	
+						    },
 							{ 
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),

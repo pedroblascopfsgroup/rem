@@ -75,6 +75,9 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
    		if(!Checks.esNulo(dtoGastosFilter.getNumGastoGestoria())){
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numGastoGestoria",Long.parseLong(dtoGastosFilter.getNumGastoGestoria()));
    		}
+   		if(!Checks.esNulo(dtoGastosFilter.getNifGestoria())){
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.nifGestoria", dtoGastosFilter.getNifGestoria());
+   		}   		
    		if(!Checks.esNulo(dtoGastosFilter.getReferenciaEmisor())){
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numFactura",dtoGastosFilter.getReferenciaEmisor());
    		}

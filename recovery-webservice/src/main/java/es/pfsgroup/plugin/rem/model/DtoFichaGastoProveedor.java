@@ -42,6 +42,7 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private String codigoEmisor;
 	private String destinatarioGastoCodigo;
 	private boolean autorizado;
+	private boolean rechazado;
 	private boolean asignadoATrabajos;
 	private boolean asignadoAActivos;
 	private String estadoGastoCodigo;
@@ -180,6 +181,13 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
    	public boolean getAutorizado() {
    		return this.autorizado;
+   	}
+	public void setRechazado(boolean rechazado) {
+		this.rechazado = rechazado;
+		
+	}
+   	public boolean getRechazado() {
+   		return this.rechazado;
    	}
 	public boolean getAsignadoATrabajos() {
 		return asignadoATrabajos;

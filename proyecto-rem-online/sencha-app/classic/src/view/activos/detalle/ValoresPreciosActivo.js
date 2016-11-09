@@ -137,7 +137,8 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						                            validationEvent: 'change',
 						                            validator: function(value){
 						                            	me.endValidityDate=value;
-						                            	return true;
+						                            	//return true;
+						                            	return this.up('activosdetallemain').getController().validateFechasFin(value);
 						                            }
 						                          }
 											   },

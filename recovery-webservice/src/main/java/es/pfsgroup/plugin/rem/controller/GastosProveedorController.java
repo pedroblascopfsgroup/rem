@@ -626,6 +626,39 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView autorizarGastos(Long[] idsGasto, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.autorizarGastos(idsGasto);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView rechazarGastos(Long[] idsGasto, String motivoRechazo, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.rechazarGastos(idsGasto, motivoRechazo);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	
 	/*private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);

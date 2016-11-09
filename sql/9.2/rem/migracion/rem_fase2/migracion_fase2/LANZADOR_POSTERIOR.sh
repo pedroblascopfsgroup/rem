@@ -4,11 +4,10 @@ if [ "$#" -ne 1 ]; then
     exit
 fi
 
-
-sql_dir="PRE_MIGRACION/"
+sql_dir="DMLs_REM_MIGRATION/"
 
 echo "#################################################################"
-echo "#####    INICIO POSTERIOR
+echo "#####    INICIO POSTERIOR #######################################"
 echo "#################################################################"
 
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DML_2401_REM_MIG2_CLIENTES_COMERCIALES.sql

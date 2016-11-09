@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -131,6 +134,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public final String PESTANA_CONDICIONES = "condiciones";
 	public final String PESTANA_FORMALIZACION= "formalizacion";
 
+	
+	//Textos a mostrar por defecto
+	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -160,6 +166,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
+	
+	@Resource
+    MessageService messageServices;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -596,6 +605,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 				if(!Checks.esNulo(expediente.getCondicionante())) {
 					dto.setTieneReserva(expediente.getCondicionante().getTipoCalculoReserva() != null);
+
+					Integer ocultar = expediente.getCondicionante().getSujetoTanteoRetracto();
+					dto.setOcultarPestTanteoRetracto(!Checks.esNulo(ocultar) && ocultar == 1 ? false : true);
 				}
 
 				if(!Checks.esNulo(expediente.getFechaInicioAlquiler())){
@@ -708,7 +720,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		if(!Checks.esNulo(expediente))
 			oferta = expediente.getOferta();
-
+		
 		if(!Checks.esNulo(oferta)){
 			try {
 				
@@ -720,6 +732,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dtoTanteoYRetractoOferta.setResultadoTanteoDescripcion(oferta.getResultadoTanteo().getDescripcion());
 				}
 				
+				if(Checks.esNulo(oferta.getCondicionesTransmision())) 
+					dtoTanteoYRetractoOferta.setCondicionesTransmision(messageServices.getMessage(TANTEO_CONDICIONES_TRANSMISION));
+				
 			} catch (IllegalAccessException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
@@ -728,7 +743,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				e.printStackTrace();
 			}
 		}
-		
+	
 		return dtoTanteoYRetractoOferta;
 	}
 	

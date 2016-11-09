@@ -19,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
-import es.pfsgroup.framework.paradise.agenda.formulario.dao.impl.ParadiseFormItemDaoImpl;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrecios;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -163,6 +162,8 @@ public class PreciosController extends ParadiseJsonController{
 			excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
 		
 			excelReportGeneratorApi.sendReport(excel.getFile(), response);
+			
+			preciosApi.guardarFileEnTrabajo(excel.getFile(),propuesta.getTrabajo());
 			excel.vaciarLibros();
 			
 		} catch (IllegalAccessException ex) {

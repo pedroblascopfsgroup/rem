@@ -60,6 +60,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						expediente.setEstadoPbc(0);
 						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						//Finaliza el trámite
@@ -75,6 +76,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								ofertaApi.descongelarOferta(oferta);
 							}
 						}
+					}else{
+						expediente.setEstadoPbc(1);
+						genericDao.save(ExpedienteComercial.class, expediente);
 					}
 				}
 			}

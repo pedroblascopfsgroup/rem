@@ -242,7 +242,7 @@ public class InformeMediadorDto implements Serializable {
 
 	@Diccionary(clase = DDEstadoConstruccion.class, message = "El codEstadoConservacion no existe", groups = {
 			Insert.class, Update.class })
-	@EntityDefinition(propertyName = "estadoConservacion", classObj = DDEstadoConservacion.class)
+	@EntityDefinition(propertyName = "estadoConstruccion", classObj = DDEstadoConstruccion.class)
 	private String codEstadoConservacion;
 
 	// ok

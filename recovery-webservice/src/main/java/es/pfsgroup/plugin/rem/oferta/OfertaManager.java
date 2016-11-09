@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -53,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -90,6 +92,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private UsuarioSecurityManager usuarioSecurityManager;
 
+	@Autowired
+	private UvemManagerApi uvemManagerApi;
+	
 	@Override
 	public String managerName() {
 		return "ofertaManager";
@@ -844,6 +849,45 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean altaComite(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		Long porcentajeImpuesto = null;
+		if(!Checks.esNulo(expediente.getCondicionante())){
+			if(!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())){
+				//porcentajeImpuesto = Long.parseLong(String.format("%.0f",expediente.getCondicionante().getTipoAplicable()));
+				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+			}else{
+				return false;
+			}
+		}
+
+		try {
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
+			return true;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+
+	}
+	
+	@Override
+	public boolean checkPoliticaCorporativa(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		if(Checks.esNulo(expediente.getConflictoIntereses()) || Checks.esNulo(expediente.getRiesgoReputacional()))
+			return false;
+		else
+			if((expediente.getConflictoIntereses() == 1) || (expediente.getRiesgoReputacional() == 1))
+				return false;
+			else
+				return true;
 	}
 
 }

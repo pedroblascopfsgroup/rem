@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -25,29 +24,37 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.capgemini.devon.files.FileItem;
-import es.capgemini.devon.utils.FileUtils;
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCliente;
+import es.pfsgroup.plugin.rem.model.DtoHonorarios;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaOferta;
 import es.pfsgroup.plugin.rem.model.DtoTasacionInforme;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TextosOferta;
+import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import net.sf.jasperreports.engine.JRException;
@@ -62,7 +69,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 public class PropuestaOfertaManager implements PropuestaOfertaApi{
 
 	private final String CODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-	
+
 	@Autowired 
 	private OfertaApi ofertaApi;
 	
@@ -72,11 +79,17 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 	@Autowired
 	private ActivoApi activoApi;
 	
+//	@Autowired
+//	private ExpedienteApi expedienteApi;
+	
 	@Autowired
-	private ExpedienteApi expedienteApi;
+	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	private String formatDate (Date date) {
 		if (date==null) return "-";
@@ -86,20 +99,20 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 	
 	private String notNull (Object obj) {
 		if (obj==null) return "-";
+		if (obj instanceof Date) {
+			return formatDate ((Date) obj);
+		}
+		//TODO: obj instanceof Double --> formatear con un par de decimales.
 		return obj.toString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> paramsPropuestaSimple(Long numOfertaHRE, ModelMap model) {
+	public Map<String, Object> paramsPropuestaSimple(Oferta oferta, ModelMap model) {
 		
 		Map<String, Object> mapaValores = new HashMap<String,Object>();
-		Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOfertaHRE);
-		
 		try {
-			if (oferta==null) {
-				model.put("error", RestApi.REST_NO_RELATED_OFFER);
-				throw new Exception(RestApi.REST_NO_RELATED_OFFER);					
-			}
+
 			mapaValores.put("NumOfProp", oferta.getNumOferta()+"/1");
 			
 			//Obteniedo el activo relacionado con la OFERTA
@@ -110,8 +123,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			}
 			mapaValores.put("Activo", activo.getNumActivoUvem().toString());
 			
-			mapaValores.put("FRecepOf", formatDate(oferta.getFechaAlta()) );
-			mapaValores.put("FProp", formatDate(new Date()));
+			mapaValores.put("FRecepOf", notNull(oferta.getFechaAlta()) );
+			mapaValores.put("FProp", notNull(new Date()));
 
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
 			Long tipo = genericDao.get(EXTDDTipoGestor.class, filter).getId();		
@@ -121,7 +134,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				mapaValores.put("Gestor", notNull(null));
 			}
 			
-			mapaValores.put("FPublWeb", formatDate(activo.getFechaPublicable()));
+			mapaValores.put("FPublWeb", notNull(activo.getFechaPublicable()));
 			mapaValores.put("NumVisitasWeb", notNull(activo.getVisitas().size()));
 			
 			mapaValores.put("Direccion",notNull(activo.getDireccion()));
@@ -146,11 +159,12 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			mapaValores.put("Comercializacion","-");
 			mapaValores.put("Entrada","-");
 			mapaValores.put("CantidadOfertas", notNull(activoApi.cantidadOfertas(activo)));
-			mapaValores.put("MayorOfertaRecibida", String.valueOf(activoApi.mayorOfertaRecibida(activo)));
+			Double mayorOfertaRecibida = activoApi.mayorOfertaRecibida(activo);
+			mapaValores.put("MayorOfertaRecibida", notNull(mayorOfertaRecibida));
 			
 			mapaValores.put("ImportePropuesta", notNull(oferta.getImporteOfertaAprobado()));
 			mapaValores.put("ImporteInicial", notNull(oferta.getImporteOferta()));
-			mapaValores.put("FechaContraoferta", formatDate(oferta.getFechaContraoferta()));
+			mapaValores.put("FechaContraoferta", notNull(oferta.getFechaContraoferta()));
 			mapaValores.put("GastosCompraventa", "-");
 			
 			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
@@ -177,34 +191,53 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 //			Si con situación posesoria "vacío": El ofertante acepta cualquier situación posesoria.
 //			Si con situación posesoria "libre": El ofertante requiere que el activo esté libre de ocupantes.
 //			Si con situación posesoria "ocupado con título": El ofertante acepta que el activo esté arrendado.
-			DDSituacionesPosesoria sitaPosesion = condExp.getSituacionPosesoria();
 			Integer poseInicial = condExp.getPosesionInicial();
-			if (sitaPosesion!=null && poseInicial!=null) {
-				if (poseInicial.equals(new Integer(1))) {
-					mapaValores.put("Posesion", "El ofertante requiere que haya posesión inicial.");
-				} else {
-					if (sitaPosesion==null) {
-						mapaValores.put("Posesion", "El ofertante acepta cualquier situación posesoria.");
-					} else if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)) {
-						mapaValores.put("Posesion", "El ofertante requiere que el activo esté libre de ocupantes.");
-					} else if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)) {
-						mapaValores.put("Posesion", "El ofertante acepta que el activo esté arrendado.");
-					}
-				}
+			DDSituacionesPosesoria sitaPosesion = condExp.getSituacionPosesoria();
+			String txtPosesion = "";
+			if (poseInicial==null) {
+				txtPosesion += "";
 			} else {
-				mapaValores.put("Posesion", notNull(null));
+				if (poseInicial.equals(new Integer(1))) {
+					txtPosesion += "El ofertante requiere que haya posesión inicial.";
+				} else {
+					txtPosesion += "El ofertante acepta que no haya posesión inicial.";
+				}
 			}
+			if (sitaPosesion==null) {
+				txtPosesion += "El ofertante acepta cualquier situación posesoria.";
+			} else {
+				if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)) {
+					txtPosesion += "El ofertante requiere que el activo esté libre de ocupantes.";
+				} else if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)) {
+					txtPosesion += "El ofertante acepta que el activo esté arrendado.";
+				}
+			}
+			mapaValores.put("Posesion", txtPosesion);
 			
 			mapaValores.put("Impuestos", notNull(condExp.getCargasImpuestos()));
 			mapaValores.put("Comunidades", notNull(condExp.getCargasComunidad()));
 			mapaValores.put("Otros", notNull(condExp.getCargasOtros()));
-			mapaValores.put("Importe", notNull(condExp.getGastosNotaria()));
-			mapaValores.put("OpCondicionadaa", "-");
-			
 //			Si hay contenido en impuestos y en el combo "por cuenta de" pone "comprador": El comprador asume el pago de los impuestos pendientes.
 //			Si hay contenido en comunidades y en el combo "por cuenta de" pone "vendedor": El comprador no asume el pago de los impuestos pendientes.
 //			Si hay contenido en otros y en el combo "por cuenta de" pone "según ley": El comprador requiere que los gastos sean asumidos por quien corresponda según ley.
-			mapaValores.put("Tratamientodecargas", "-");
+			DDTiposPorCuenta porCuentaImpuestos = condExp.getTipoPorCuentaImpuestos();
+			DDTiposPorCuenta porCuentaComunidad = condExp.getTipoPorCuentaComunidad();
+			DDTiposPorCuenta porCuentaOtros = condExp.getTipoPorCuentaCargasOtros();
+			String txtCargas = "";
+			if (condExp.getCargasImpuestos()!=null && porCuentaImpuestos!=null && porCuentaImpuestos.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_COMPRADOR)) {
+				txtCargas += "El comprador asume el pago de los impuestos pendientes. ";
+			}
+			if (condExp.getCargasComunidad()!=null && porCuentaComunidad!=null && porCuentaComunidad.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_VENDEDOR)) {
+				txtCargas += "El comprador no asume el pago de los impuestos pendientes. ";
+			}
+			if (condExp.getCargasOtros()!=null && porCuentaOtros!=null && porCuentaOtros.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_SEGUN_LEY)) {
+				txtCargas += "El comprador requiere que los gastos sean asumidos por quien corresponda según ley. ";
+			}
+			mapaValores.put("Tratamientodecargas", txtCargas);
+			
+			mapaValores.put("Importe", notNull(condExp.getGastosNotaria()));
+			mapaValores.put("OpCondicionadaa", "-");
+			
 			
 			DDTiposPorCuenta tipoPlusValia = condExp.getTipoPorCuentaPlusvalia();
 			if (tipoPlusValia!=null) {
@@ -233,9 +266,118 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				}
 			}			
 			
-			mapaValores.put("ValorTasacion", "-");
-			mapaValores.put("ValorEstColabor", "-");
-			mapaValores.put("ValorAprobVenta", "-");
+			
+			if (!Checks.estaVacio(activo.getTasacion()))
+			{
+				//De la lista de tasaciones que tiene el activo cojemos la más reciente
+				ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
+				if (tasacionMasReciente!=null) {
+					Date fechaValorTasacionMasReciente = new Date();
+					if (tasacionMasReciente.getValoracionBien().getFechaValorTasacion() != null)
+					{
+						fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
+					}
+					for (int i = 0; i < activo.getTasacion().size(); i++) {
+						ActivoTasacion tas = activo.getTasacion().get(i);
+						if (tas.getValoracionBien().getFechaValorTasacion() != null
+								&& tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {
+							fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
+							tasacionMasReciente = tas;
+						}
+					}
+					mapaValores.put("ValorTasacion",  notNull(tasacionMasReciente.getValoracionBien().getImporteValorTasacion()));
+					mapaValores.put("ValorTasacionFecha", notNull(tasacionMasReciente.getValoracionBien().getFechaValorTasacion()));
+					Double importeTasacion = tasacionMasReciente.getValoracionBien().getImporteValorTasacion().doubleValue();
+					if (tasacionMasReciente.getValoracionBien().getImporteValorTasacion()!=null && importeTasacion!=0) {						
+						Double valorTasacionDto = 100*( (importeTasacion - mayorOfertaRecibida) / importeTasacion );
+						mapaValores.put("ValorTasacionDto", notNull(valorTasacionDto));
+					} else {
+						mapaValores.put("ValorTasacionDto", notNull(null));
+					}
+				}  else {
+					mapaValores.put("ValorTasacion",  notNull(null));
+					mapaValores.put("ValorTasacionFecha", notNull(null));
+					mapaValores.put("ValorTasacionDto", notNull(null));
+				}
+				
+				//De la lista de valoraciones del activo obtenemos aquella que tiene en el tipo de precio el valor ESTIMADO_VENTA
+				Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Filter estimadoVentaTPCFilter = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA);
+				ActivoValoraciones activoValoracion = (ActivoValoraciones) genericDao.get(ActivoValoraciones.class, activoFilter, estimadoVentaTPCFilter);
+				if (activoValoracion!=null) {
+					mapaValores.put("ValorEstColabor", notNull(activoValoracion.getImporte()));
+					mapaValores.put("ValorEstColaborFecha", notNull(activoValoracion.getFechaInicio()));
+					Double importeTasacion = activoValoracion.getImporte();
+					if (importeTasacion!=0) {
+						Double valorTasacionDto = 100*( (importeTasacion - mayorOfertaRecibida) / importeTasacion );
+						mapaValores.put("ValorEstColaborDto", notNull(valorTasacionDto));
+					} else {
+						mapaValores.put("ValorEstColaborDto", notNull(null));
+					}
+				} else {
+					mapaValores.put("ValorEstColabor", notNull(null));
+					mapaValores.put("ValorEstColaborFecha", notNull(null));
+					mapaValores.put("ValorEstColaborDto", notNull(null));
+				}
+				
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_INTERES);
+				TextosOferta textoOfertaInteres = genericDao.get(TextosOferta.class, filtro1, filtro2);
+				if (textoOfertaInteres!=null){
+					mapaValores.put("ComentarioInteres", notNull(textoOfertaInteres.getTexto()));
+				} else {
+					mapaValores.put("ComentarioInteres", notNull(null));
+				}
+				filtro1 = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+				filtro2 = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_GESTOR);
+				TextosOferta textoOfertaGestor = genericDao.get(TextosOferta.class, filtro1, filtro2);
+				if (textoOfertaGestor!=null){
+					mapaValores.put("ComentarioGestor", notNull(textoOfertaGestor.getTexto()));
+				} else {
+					mapaValores.put("ComentarioGestor", notNull(null));
+				}
+				filtro1 = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+				filtro2 = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_COMITE);
+				TextosOferta textoOfertaComite = genericDao.get(TextosOferta.class, filtro1, filtro2);
+				if (textoOfertaComite!=null){
+					mapaValores.put("ComentarioComite", notNull(textoOfertaComite.getTexto()));
+				} else {
+					mapaValores.put("ComentarioComite", notNull(null));
+				}
+				
+				//De la lista de valoraciones del activo obtenemos aquella que tiene el codigo APROVADO_VENTA
+				List<ActivoValoraciones> listActivoValoracion = activo.getValoracion();
+				if (listActivoValoracion!=null) {
+					ActivoValoraciones activoAprobVenta = null;
+					Boolean isAprobado = false;
+					for (int j = 0; j < listActivoValoracion.size() && !isAprobado; j++)
+					{
+							ActivoValoraciones tmp = listActivoValoracion.get(j);
+							if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(tmp.getTipoPrecio().getCodigo())) {
+								activoAprobVenta = tmp;
+								isAprobado = true;
+							}
+					}			
+					if (activoAprobVenta!=null) {
+						mapaValores.put("ValorAprobVenta", notNull(activoAprobVenta.getImporte()));
+						mapaValores.put("ValorAprobVentaFecha", notNull(activoAprobVenta.getFechaInicio()));
+						Double importeTasacion = activoAprobVenta.getImporte();
+						if (importeTasacion!=0) {
+							Double valorTasacionDto = 100*( (importeTasacion - mayorOfertaRecibida) / importeTasacion );
+							mapaValores.put("ValorAprobVentaDto", notNull(valorTasacionDto));
+						} else {
+							mapaValores.put("ValorAprobVentaDto", notNull(null));
+						}
+					} else {
+						mapaValores.put("ValorAprobVenta", notNull(null));
+						mapaValores.put("ValorAprobVentaFecha", notNull(null));
+						mapaValores.put("ValorAprobVentaDto", notNull(null));
+					}
+				}
+				
+			}
+			
+
 			
 		} catch (JsonParseException e1) {
 			e1.printStackTrace();
@@ -251,28 +393,69 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 	}
 
 	@Override
-	public List<Object> dataSourcePropuestaSimple(Long numOfertaHRE, ModelMap model) {
-		
+	public List<Object> dataSourcePropuestaSimple(Oferta oferta, Activo activo, ModelMap model) {
+
 		List<Object> array = new ArrayList();
 		
 		DtoPropuestaOferta propuestaOferta = new DtoPropuestaOferta();
 		
-		DtoCliente cliente = new DtoCliente();
-		cliente.setNombreCliente("-");
-		cliente.setDireccionCliente("-");
-		cliente.setDniCliente("-");
-		cliente.setTlfCliente("-");
-		
-		DtoCliente cliente2 = new DtoCliente();
-		cliente2.setNombreCliente("-");
-		cliente2.setDireccionCliente("-");
-		cliente2.setDniCliente("-");
-		cliente2.setTlfCliente("-");
-
+		List<CompradorExpediente> clientes = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getCompradores();
 		List<Object> listaCliente = new ArrayList<Object>();
-		listaCliente.add(cliente);
-		listaCliente.add(cliente2);
+		DtoCliente cliente = null;
+		for (int i = 0; i < clientes.size(); i++) {
+			VBusquedaDatosCompradorExpediente datosComprador = expedienteComercialApi.getDatosCompradorById(clientes.get(i).getComprador()); 
+			cliente = new DtoCliente();
+			cliente.setNombreCliente(notNull(datosComprador.getNombreRazonSocial()));
+			String direccion = "";
+			if (datosComprador.getDireccion() != null) {
+				direccion += datosComprador.getDireccion();
+			}
+			if (datosComprador.getCodigoPostal() != null) {
+				direccion += " ";
+				direccion += datosComprador.getCodigoPostal();
+			}
+			if (datosComprador.getMunicipioDescripcion() != null) {
+				direccion = direccion + "(" +datosComprador.getMunicipioDescripcion()+ ")";
+			}
+			cliente.setDireccionCliente(direccion);
+			cliente.setDniCliente(notNull(datosComprador.getNumDocumento()));
+			cliente.setTlfCliente(notNull(datosComprador.getTelefono1()));
+			if (datosComprador.getAntiguoDeudor() != null) {
+				if (datosComprador.getAntiguoDeudor() == 1) {
+					cliente.setDeudor("SI");
+				} else {
+					cliente.setDeudor("NO");
+				}
+			} else {
+				cliente.setDeudor(notNull(null));
+			}
+			if (datosComprador.getRelacionAntDeudor() != null) {
+				if (datosComprador.getRelacionAntDeudor() == 1) {
+					cliente.setrBienes("SI");
+				} else {
+					cliente.setrBienes("NO");
+				}
+			} else {
+				cliente.setrBienes(notNull(null));
+			}
+			listaCliente.add(cliente);
+		}
 		propuestaOferta.setListaCliente(listaCliente);
+		
+		List<Object> listaHonorarios = new ArrayList<Object>();
+		DtoHonorarios honorarios = null;
+		Long idExpediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getId();
+		List<GastosExpediente> listaGastosExpediente = genericDao.getList(GastosExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
+		for (int j = 0; j < listaGastosExpediente.size(); j++) {
+			honorarios = new DtoHonorarios();
+			honorarios.setNombreHonorarios(notNull(listaGastosExpediente.get(j).getNombre()));
+			honorarios.setConceptoHonorarios(notNull(listaGastosExpediente.get(j).getAccionGastos().getDescripcion()));
+			honorarios.setPorcentajeHonorarios(notNull(listaGastosExpediente.get(j).getImporteCalculo()));
+			honorarios.setImporteHonorarios(notNull(listaGastosExpediente.get(j).getImporteFinal()));
+			listaHonorarios.add(honorarios);
+		}
+		listaHonorarios.add(honorarios);
+		propuestaOferta.setListaHonorarios(listaHonorarios);
 		
 		DtoOferta ofertaActivo = new DtoOferta();
 		ofertaActivo.setNumOferta("-");
@@ -292,16 +475,21 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 		listaOferta.add(ofertaActivo);
 		listaOferta.add(ofertaActivo2);
 		propuestaOferta.setListaOferta(listaOferta);
-		
-		DtoTasacionInforme tasacion = new DtoTasacionInforme();
-		tasacion.setNumTasacion("-");
-		tasacion.setTipoTasacion("-");
-		tasacion.setImporteTasacion("-");
-		tasacion.setFechaTasacion("-");
-		tasacion.setFirmaTasacion("-");
-		
+
+		DtoTasacionInforme tasacion = null;
 		List<Object> listaTasacion = new ArrayList<Object>();
-		listaTasacion.add(tasacion);
+		List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
+		if (listActivoTasacion!=null) {
+			for (int k = 0; k < listActivoTasacion.size(); k++) {
+				tasacion = new DtoTasacionInforme();
+				tasacion.setNumTasacion(notNull(listActivoTasacion.get(k).getIdExterno()));
+				tasacion.setTipoTasacion(notNull(listActivoTasacion.get(k).getTipoTasacion().getDescripcion()));
+				tasacion.setImporteTasacion(notNull(listActivoTasacion.get(k).getImporteTasacionFin()));
+				tasacion.setFechaTasacion(notNull(listActivoTasacion.get(k).getFechaRecepcionTasacion()));
+				tasacion.setFirmaTasacion(notNull(listActivoTasacion.get(k).getNomTasador()));
+				listaTasacion.add(tasacion);
+			}
+		}
 		propuestaOferta.setListaTasacion(listaTasacion);
 		
 		array.add(propuestaOferta);

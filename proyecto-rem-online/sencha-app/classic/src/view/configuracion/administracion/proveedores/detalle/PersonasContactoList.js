@@ -71,7 +71,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 		        {
 		     		xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboCargo').findRecord('codigo', value);
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboColCargo').findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -89,7 +89,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
 			            bind: {
-			            	store: '{comboCargo}'
+			            	store: '{comboColCargo}'
 			            },
 			            reference: 'cbDDColCargo'
 			        }

@@ -32,6 +32,10 @@ public class DDTiposPorCuenta implements Auditable, Dictionary {
 	
 
 	private static final long serialVersionUID = 1L;
+	
+	public final static String TIPOS_POR_CUENTA_COMPRADOR = "01";
+	public final static String TIPOS_POR_CUENTA_VENDEDOR = "02";
+	public final static String TIPOS_POR_CUENTA_SEGUN_LEY = "03";
 
 	@Id
 	@Column(name = "DD_TPC_ID")

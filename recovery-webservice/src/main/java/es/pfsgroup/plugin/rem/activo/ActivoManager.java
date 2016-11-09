@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
@@ -62,6 +63,8 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.ActivoLlave;
+import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -89,6 +92,8 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
@@ -2606,4 +2611,83 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return ("1".equals(activo.getVpo()));
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public DtoPage getListLlavesByActivo(DtoLlaves dto) {
+		
+		Page page = activoDao.getLlavesByActivo(dto);
+		
+		List<DtoLlaves> llaves = new ArrayList<DtoLlaves>();
+		
+		for(ActivoLlave llave : (List<ActivoLlave>) page.getResults()) {
+			
+			DtoLlaves dtoLlave = this.llavesToDto(llave);
+			llaves.add(dtoLlave);
+		}
+		
+		return new DtoPage(llaves,page.getTotalCount());
+	}
+	
+	private DtoLlaves llavesToDto(ActivoLlave llave) {
+		DtoLlaves dtoLLave = new DtoLlaves();
+		
+		try {
+			BeanUtils.copyProperties(dtoLLave, llave);
+			
+			if(!Checks.esNulo(llave.getActivo())) {
+				BeanUtils.copyProperty(dtoLLave, "idActivo", llave.getActivo().getId().toString());
+			}
+			
+		} catch (IllegalAccessException ex) {
+			logger.error(ex.getMessage());
+		} catch (InvocationTargetException ex) {
+			logger.error(ex.getMessage());
+		}
+		
+		return dtoLLave;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave) {
+		
+		Page page = activoDao.getListMovimientosLlaveByLlave(dto, idLlave);
+		
+		List<DtoMovimientoLlave> movimientos = new ArrayList<DtoMovimientoLlave>();
+		
+		for(ActivoMovimientoLlave movimiento : (List<ActivoMovimientoLlave>) page.getResults()) {
+			
+			DtoMovimientoLlave dtoMov = this.movimientoToDto(movimiento);
+			
+			movimientos.add(dtoMov);
+		}
+		
+		return new DtoPage(movimientos,page.getTotalCount());
+	}
+	
+	private DtoMovimientoLlave movimientoToDto(ActivoMovimientoLlave movimiento) {
+		
+		DtoMovimientoLlave dtoMov = new DtoMovimientoLlave();
+		
+		try {
+			BeanUtils.copyProperties(dtoMov, movimiento);
+			
+			if(!Checks.esNulo(movimiento.getActivoLlave())) {
+				BeanUtils.copyProperty(dtoMov, "idLlave", movimiento.getActivoLlave().getId().toString());
+				BeanUtils.copyProperty(dtoMov, "numLlave", movimiento.getActivoLlave().getNumLlave());
+			}
+			
+			if(!Checks.esNulo(movimiento.getTipoTenedor())) {
+				BeanUtils.copyProperty(dtoMov, "codigoTipoTenedor", movimiento.getTipoTenedor().getCodigo());
+				BeanUtils.copyProperty(dtoMov, "descripcionTipoTenedor", movimiento.getTipoTenedor().getDescripcion());
+			}
+			
+		} catch (IllegalAccessException ex) {
+			logger.error(ex.getMessage());
+		} catch (InvocationTargetException ex) {
+			logger.error(ex.getMessage());
+		}
+		
+		return dtoMov;
+	}
 }

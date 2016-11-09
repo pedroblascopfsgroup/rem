@@ -6,6 +6,8 @@ public class DtoCliente {
 	private String direccionCliente;
 	private String dniCliente;
 	private String tlfCliente;
+	private String deudor;
+	private String rBienes;
 	
 	public String getNombreCliente() {
 		return nombreCliente;
@@ -30,5 +32,17 @@ public class DtoCliente {
 	}
 	public void setTlfCliente(String tlfCliente) {
 		this.tlfCliente = tlfCliente;
+	}
+	public String getDeudor() {
+		return deudor;
+	}
+	public void setDeudor(String deudor) {
+		this.deudor = deudor;
+	}
+	public String getrBienes() {
+		return rBienes;
+	}
+	public void setrBienes(String rBienes) {
+		this.rBienes = rBienes;
 	}
 }

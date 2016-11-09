@@ -31,7 +31,7 @@ rm -Rf $OUTPUT/*
 
 docker build -t rem/base $CURRENT/../dockerize/rem/rem-base/. \
 	&& docker build -t rem/sencha-cmd $CURRENT/../dockerize/rem/rem-sencha-cmd/. \
-	&& docker run --rm -i -v $(pwd)/sencha-app:/input -v $(pwd)/src/web/js/plugin/rem/:/output rem/sencha-cmd sencha-build.sh $(id -u) $(id -g) $*
+	&& docker run -u $(id -u):$(id -g) --rm -i -v $(pwd)/sencha-app:/input -v $(pwd)/src/web/js/plugin/rem/:/output rem/sencha-cmd sencha-build.sh $(id -u) $(id -g) $*
 
 
 if [[ ! -f $(pwd)/src/web/js/plugin/rem/index.jsp ]]; then

@@ -72,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -484,11 +485,21 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListLlavesById(Long id, ModelMap model) {
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListLlavesById(DtoLlaves dto, ModelMap model) {
+		
+		try {
+			DtoPage page = activoApi.getListLlavesByActivo(dto);
 
-		model.put("data", adapter.getListLlavesById(id));
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
 		return createModelAndViewJson(model);
 
 	}
@@ -2166,5 +2177,73 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListMovimientosLlaveByLlave(ModelMap model, WebDto dto, Long idLlave) {
+		
+		try {
+
+			DtoPage page = activoApi.getListMovimientosLlaveByLlave(dto, idLlave);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createMovimientoLlave(DtoMovimientoLlave dtoMovimiento, ModelMap model) {
+		try {
+			
+			boolean success = adapter.createMovimientoLlave(dtoMovimiento);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveMovimientoLlave(DtoMovimientoLlave dto, ModelMap model) {
+
+		try {
+			boolean success = adapter.saveMovimientoLlave(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteMovimientoLlave(DtoMovimientoLlave dto, ModelMap model) {
+
+		try {
+			boolean success = adapter.deleteMovimientoLlave(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
 	}
 }

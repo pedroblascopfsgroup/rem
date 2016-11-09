@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20161104
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=HREOS-1077
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

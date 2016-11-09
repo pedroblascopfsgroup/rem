@@ -8,7 +8,7 @@ fi
 sql_dir="PRE_MIGRACION/"
 
 echo "#################################################################"
-echo "#####    INICIO PREVIAS
+echo "#####    INICIO PREVIAS   #######################################"
 echo "#################################################################"
 
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_3101_REM_MIG2_ACT_NOT_EXISTS.sql
@@ -28,6 +28,9 @@ $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_3111_REM_MIG2_ECO_NOT_EXISTS.sql
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_3112_REM_MIG2_PRP_NOT_EXISTS.sql
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_3113_REM_MIG2_PVE_NOT_EXISTS.sql
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_9999_REM_MIG2_TRA_TRAMITES_OFERTAS.sql
+
+sql_dir="DDLs_MIG/"
+
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_2201_REM_MIG2_CLIENTE_COMERCIAL.sql
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_2202_REM_MIG2_VIS_VISITAS.sql
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_2203_REM_MIG2_OFR_OFERTAS.sql
@@ -62,8 +65,6 @@ $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_2233_REM_MIG2_ACQ_ACTIVO_ALQUILER.s
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_2234_REM_MIG2_AGR_AGRUPACIONES.sql
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_2235_REM_MIG2_PRO_PROPIETARIO.sql
 $ORACLE_HOME/bin/sqlplus "$1" @"$sql_dir"DDL_2236_REM_MIG2_PRH_PROPIETARIOS_HISTORICO.sql
-
-
 
 echo "Fin CJM_RECOVERY-2021_MIGRACION_LIQUIDACIONES. Revise el fichero de log"
 exit 0

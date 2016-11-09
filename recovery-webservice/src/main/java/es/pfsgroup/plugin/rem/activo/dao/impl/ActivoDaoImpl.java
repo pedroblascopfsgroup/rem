@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -33,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -537,11 +539,39 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
+		hb.appendWhere(" tas.activo.id = " + idActivo);
+		hb.orderBy("tas.id", HQLBuilder.ORDER_DESC);
+		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) getSession().createQuery(hb.toString()).list();
+		return activoTasacionList;
+	}
+	
 	@Override
 	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto) {
 		
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosCrearTrabajo act");
 		HQLBuilder.addFiltroWhereInSiNotNull(hb, "numActivoHaya", listIdActivos);
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
+	public Page getLlavesByActivo(DtoLlaves dto) {
+		
+		HQLBuilder hb = new HQLBuilder(" from ActivoLlave lla");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", Long.parseLong(dto.getIdActivo()));
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
+	public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave) {
+		
+		HQLBuilder hb = new HQLBuilder(" from ActivoMovimientoLlave mov");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activoLlave.id", idLlave);
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

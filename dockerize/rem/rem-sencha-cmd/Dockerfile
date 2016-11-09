@@ -32,6 +32,9 @@ RUN cd $INSTALL_DIR \
 	&& unzip -q sencha-cmd.zip \
 	&& rm sencha-cmd.zip
 
+# Actualizamos permisos
+RUN chmod 777 $INSTALL_DIR/Sencha/Cmd
+
 # Solucionamos bug en la instalación de sencha cmd
 RUN cd $INSTALL_DIR/Sencha/Cmd/$SENCHA_VERSION/bin && ln -s linux-x64/ linux
 

@@ -1575,6 +1575,46 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    }
 	},
 
+	//Este método obtiene el valor del campo fecha fin que se está editando y comprueba las validaciones oportunas.
+	validateFechasFin: function(value){
+		var me = this;
+		var grid = me.lookupReference('gridPreciosVigentes');
+		if(Ext.isEmpty(grid)){ return true;}
+		var selected = grid.getSelectionModel().getSelection();
+		// Obtener columna automáticamente por 'dataindex = fechaFin'.
+		var importeActualColumn = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'fechaFin')];
+
+		if(!Ext.isEmpty(selected)) {
+			// Almacenar la fila fila selecciona para cuando esté siendo editada.
+			grid.codigoTipoPrecio = selected[0].getData().codigoTipoPrecio;
+		}
+
+		// Constantes.
+		var tipoMinimoAutorizado = '04';
+		var tipoAprobadoVentaWeb = '02';
+
+		// Recogemos los valores actuales del grid
+		var fechaFinMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().fechaFin;
+		var fechaFinAprobadoVentaWeb = importeActualColumn.getEditor().value;
+
+		var codTipoPrecio = grid.codTipoPrecio;
+
+		switch(codTipoPrecio) {
+			case tipoAprobadoVentaWeb: // Si se está editando la fecha de la fila aprobado venta web.
+				if(Ext.isEmpty(fechaFinMinimo) || Ext.isEmpty(fechaFinAprobadoVentaWeb)) {
+					return true;
+				}
+				if(fechaFinAprobadoVentaWeb <= fechaFinMinimo) {
+					return true;
+				} else {
+					return false;
+				}
+				break;
+			default:
+				return true;
+		}
+	},
+
 	// Este método obtiene el valor del campo importe que se está editando y comprueba las validaciones oportunas.
 	validatePreciosVigentes: function(value) {
 		var me = this;
@@ -1914,6 +1954,89 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					if(index == 0) field.focus();
 				}
 		);
+	},
+	
+	beforeLoadLlaves: function(store, operation, opts) {
+		var me = this,
+		idActivo = this.getViewModel().get('activo').id;
+		
+		if(idActivo != null) {
+			store.getProxy().extraParams = {idActivo: idActivo};	
+			
+			return true;
+		}
+	},
+	
+	onLlavesListClick: function() {
+		var me = this;
+		
+		me.lookupReference('fieldsetmovimientosllavelist').expand();	
+		me.lookupReference('movimientosllavelistref').getStore().loadPage(1);
+		
+		me.lookupReference('movimientosllavelistref').disableAddButton(false);
+	},
+	
+	onLlavesListDeselected: function() {
+		var me = this;
+		
+		me.lookupReference('movimientosllavelistref').disableAddButton(true);
+		me.lookupReference('movimientosllavelistref').getStore().loadPage(0);
+	},
+	
+	beforeLoadMovimientosLlave: function(store, operation, opts) {
+
+		var me = this;		
+		if(!Ext.isEmpty(me.getViewModel().get('llaveslistref').selection)) {
+			var idLlave = me.getViewModel().get('llaveslistref').selection.id;
+			
+			if(idLlave != null && Ext.isNumber(parseInt(idLlave))) {
+				store.getProxy().extraParams = {idLlave: idLlave};	
+				
+				return true;
+			}
+		}
+	},
+	
+	changeComboJuegoCompleto: function(combo,value,c){
+		var me= this;
+		
+		if(combo.getValue()=="1"){
+				me.lookupReference('motivoIncompletoRef').setValue();
+				me.lookupReference('motivoIncompletoRef').setDisabled(true);
+				me.lookupReference('motivoIncompletoRef').allowBlank = true;
+		}
+		else{
+			me.lookupReference('motivoIncompletoRef').setDisabled(false);
+			me.lookupReference('motivoIncompletoRef').allowBlank = false;
+		}
+	},
+	
+	onClickEditRowMovimientosLlaveList: function(editor, context, eOpts) {
+		var me = this;
+		
+		if(context.rowIdx == 0) {
+			var idLlave = me.getViewModel().get('llaveslistref').selection.id;
+			context.record.data.idLlave = idLlave;
+		}
+	},
+	
+	//Llamar desde cualquier GridEditableRow, y así se desactivaran las ediciones.
+	quitarEdicionEnGridEditablePorFueraPerimetro: function(grid,record) {
+		var me = this; 
+		
+		if(me.getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			grid.setTopBar(false);
+			grid.editOnSelect = false;
+		}
+	},
+	
+	// Este método filtra los anyos de construcción y rehabilitación de una vivienda
+	// de modo que si el value es '0' lo quita. Es una medida de protección al v-type
+	// por que en la DB están establecidos a 0 todos los activos.
+	onAnyoChange: function(field) {
+		if(!Ext.isEmpty(field.getValue()) && field.getValue() === '0') {
+			field.setValue('');
+		}
 	}
 
 });

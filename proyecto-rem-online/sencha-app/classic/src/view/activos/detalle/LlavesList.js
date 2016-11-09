@@ -9,26 +9,50 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
         store: '{storeLlaves}'
     },
     
+    listeners: { 	
+    	boxready:'quitarEdicionEnGridEditablePorFueraPerimetro'
+    },
+    
     initComponent: function () {
      	
      	var me = this;
+     	
+    	me.listeners = {	    	
+ 			rowclick: 'onLlavesListClick',
+ 			deselect: 'onLlavesListDeselected'
+ 	    };
 
 		me.columns = [
-		        {
+		      /*  {
 		        	dataIndex: 'idActivo',
 		        	text: HreRem.i18n('header.publicacion.activos.vinculados.idActivo'),
 		        	flex:0.8,
 		        	hidden:true
 		        },
-		        {   
-		        	text: HreRem.i18n('header.situacion.posesoria.llaves.idMovimiento'),
-		        	dataIndex: 'idMovimiento',
-		        	flex:0.9
-		        },
 		        {
 		        	text: HreRem.i18n('header.situacion.posesoria.llaves.idLlave'),
-		        	dataIndex: 'idLlave',
-		        	flex:0.6
+		        	dataIndex: 'id',
+		        	flex:0.6,
+		        	hidden:true
+		        },*/
+
+		        {
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.numLlave'),
+		        	dataIndex: 'numLlave',
+		        	flex: 1,
+		            editor: {
+		            	xtype: 'textfield',
+		            	maxLength: 20
+		            }
+		        },
+		        {   
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.codigoCentroLlaves'),
+		        	dataIndex: 'codCentroLlave',
+		        	flex: 1,
+		            editor: {
+		            	xtype: 'textfield',
+		            	maxLength: 20
+		            }
 		        },
 		        {   
 		        	text: HreRem.i18n('header.situacion.posesoria.llaves.centroLlaves'),
@@ -85,7 +109,11 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
 			            bind: {
 			            	store: '{comboSiNoRem}'
 			            },
-			            reference: 'cbColCompleto'
+			            reference: 'cbColCompleto',
+			            listeners: {
+							select: 'changeComboJuegoCompleto'
+						},
+		            	allowBlank: false
 			        }
 		        },	
 		        {   
@@ -94,56 +122,10 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
 		        	flex: 1,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maxLength: 100
-		            }
-		        },
-				{
-		            text: HreRem.i18n('header.situacion.posesoria.llaves.tipoTenedor'),
-		            dataIndex: 'codigoTipoTenedor',
-		        	flex: 1,
-		        	renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboTipoTenedor').findRecord('codigo', value);
-			            var descripcion;
-			        	if(!Ext.isEmpty(foundedRecord)) {
-			        		descripcion = foundedRecord.getData().descripcion;
-			        	}
-			            return descripcion;
-			        },
-			        editor: {
-			            xtype: 'combobox',
-			            displayField: 'descripcion',
-			            valueField: 'codigo',
-			            bind: {
-			            	store: '{comboTipoTenedor}'
-			            },
-			            reference: 'cbColTipoTenedor'
-			        }
-		        },
-		        {
-		        	text: HreRem.i18n('header.situacion.posesoria.llaves.nombreTenedor'),
-		            dataIndex: 'nomTenedor',
-		        	flex: 1,
-		            editor: {
-		            	xtype: 'textfield',
-		            	maxLength: 100
-		            }
-		        },
-		        {
-		        	text: HreRem.i18n('header.situacion.posesoria.llaves.fechaEntrega'),
-		            dataIndex: 'fechaEntrega',
-		            formatter: 'date("d/m/Y")',
-		        	flex: 1,
-	            	editor: {
-		            	xtype: 'datefield'
-		            }
-		        },
-		        {
-		        	text: HreRem.i18n('header.situacion.posesoria.llaves.fechaDevolucion'),
-		            dataIndex: 'fechaDevolucion',
-		            formatter: 'date("d/m/Y")',
-		        	flex: 1,
-	            	editor: {
-		            	xtype: 'datefield'
+		            	reference: 'motivoIncompletoRef',
+		            	maxLength: 100,
+		            	disabled: true,
+		            	allowBlank: true
 		            }
 		        }
 		    ];

@@ -179,7 +179,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private PropuestaPrecioDao propuestaDao;
-	
+
 	@Autowired
 	private ProcessAdapter processAdapter;
 
@@ -2216,9 +2216,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public HashMap<String, String> validateTrabajoPostRequestData(TrabajoDto trabajoDto) {
 		HashMap<String, String> hashErrores = restApi.validateRequestObject(trabajoDto);
 		Boolean existe = null;
-		
+
 		hashErrores = restApi.validateRequestObject(trabajoDto, TIPO_VALIDACION.INSERT);
-		
+
 		if (Checks.esNulo(trabajoDto.getIdTrabajoWebcom())) {
 			hashErrores.put("idTrabajoWebcom", RestApi.REST_MSG_MISSING_REQUIRED);
 
@@ -2269,6 +2269,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							.createFilter(FilterType.EQUALS, "codigoProveedorRem", trabajoDto.getIdProveedorRem()));
 					if (Checks.esNulo(apiResp)) {
 						hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
+					} else {
+						//el proveedor tiene que ser custodio
+						if ((apiResp.getCustodio() != null && apiResp.getCustodio() != new Integer(1))
+								|| apiResp.getCustodio() == null) {
+							hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
+						}
 					}
 				}
 				// Validamos que no vengan los 2 campos a true
@@ -2279,26 +2285,34 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					hashErrores.put("urgentePrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 
-				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta()) && trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
+				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
+						&& trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
 
 					// Validamos que venga fecha o alguno de los checks
-					if (Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente()) &&
-						(Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) || (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && !trabajoDto.getUrgentePrioridadRequiriente())) &&
-						(Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())  || (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && !trabajoDto.getRiesgoPrioridadRequiriente()))) {
+					if (Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())
+							&& (Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
+									|| (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
+											&& !trabajoDto.getUrgentePrioridadRequiriente()))
+							&& (Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
+									|| (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
+											&& !trabajoDto.getRiesgoPrioridadRequiriente()))) {
 						hashErrores.put("fechaPrioridadRequiriente", RestApi.REST_MSG_MISSING_REQUIRED);
 					}
-					
-				}else if(!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta()) && !trabajoDto.getFechaPrioridadRequirienteEsExacta()){
-					
-					if(!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && trabajoDto.getUrgentePrioridadRequiriente()){
+
+				} else if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
+						&& !trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
+
+					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
+							&& trabajoDto.getUrgentePrioridadRequiriente()) {
 						hashErrores.put("urgentePrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
-						
-					}else if(!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && trabajoDto.getRiesgoPrioridadRequiriente()){
+
+					} else if (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
+							&& trabajoDto.getRiesgoPrioridadRequiriente()) {
 						hashErrores.put("riesgoPrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
-						
-					}else if(Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())){
+
+					} else if (Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
 						hashErrores.put("fechaPrioridadRequiriente", RestApi.REST_MSG_MISSING_REQUIRED);
-					}		
+					}
 				}
 			}
 		}
@@ -2380,20 +2394,23 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if (!Checks.esNulo(trabajoDto.getDescripcionRequiriente())) {
 					dtoFichaTrabajo.setTerceroContacto(trabajoDto.getDescripcionRequiriente());
 				}
-				
-				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta()) && trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
+
+				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
+						&& trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
 					Calendar cal = Calendar.getInstance();
-					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && trabajoDto.getUrgentePrioridadRequiriente()) {
+					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
+							&& trabajoDto.getUrgentePrioridadRequiriente()) {
 						dtoFichaTrabajo.setUrgente(trabajoDto.getUrgentePrioridadRequiriente());
 						dtoFichaTrabajo.setFechaTope(cal.getTime());
-					}else if (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && trabajoDto.getRiesgoPrioridadRequiriente()) {
+					} else if (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
+							&& trabajoDto.getRiesgoPrioridadRequiriente()) {
 						dtoFichaTrabajo.setRiesgoInminenteTerceros(trabajoDto.getRiesgoPrioridadRequiriente());
 						cal.add(Calendar.DATE, 2);
 						dtoFichaTrabajo.setFechaTope(cal.getTime());
-					}else {
+					} else {
 						dtoFichaTrabajo.setFechaTope(trabajoDto.getFechaPrioridadRequiriente());
 					}
-				}else{
+				} else {
 					if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
 						dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaPrioridadRequiriente());
 					}
@@ -2516,35 +2533,38 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return listaRespuesta;
 	}
-	
+
 	@Override
-	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response, String codPlantilla) throws Exception {
+	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response,
+			String codPlantilla) throws Exception {
 
 		try {
 
-			MSVDDOperacionMasiva plantilla = (MSVDDOperacionMasiva) utilDiccionarioApi.dameValorDiccionarioByCod(MSVDDOperacionMasiva.class, codPlantilla);
-			
-       		ServletOutputStream salida = response.getOutputStream(); 
-       		FileItem fileItem = processAdapter.downloadTemplate(plantilla.getId());
-       		
-       		if(fileItem!= null) {
-       		
-	       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
-	       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-	       		response.setHeader("Cache-Control", "max-age=0");
-	       		response.setHeader("Expires", "0");
-	       		response.setHeader("Pragma", "public");
-	       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
-	       		response.setContentType(fileItem.getContentType());       		
-	       		// Write
-	       		FileUtils.copy(fileItem.getInputStream(), salida);
-	       		salida.flush();
-	       		salida.close();
-       		}
-       		
-       	} catch (Exception e) { 
-       		e.printStackTrace();
-       	}
+			MSVDDOperacionMasiva plantilla = (MSVDDOperacionMasiva) utilDiccionarioApi
+					.dameValorDiccionarioByCod(MSVDDOperacionMasiva.class, codPlantilla);
+
+			ServletOutputStream salida = response.getOutputStream();
+			FileItem fileItem = processAdapter.downloadTemplate(plantilla.getId());
+
+			if (fileItem != null) {
+
+				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+				response.setHeader("Cache-Control", "max-age=0");
+				response.setHeader("Expires", "0");
+				response.setHeader("Pragma", "public");
+				response.setDateHeader("Expires", 0); // prevents caching at the
+														// proxy
+				response.setContentType(fileItem.getContentType());
+				// Write
+				FileUtils.copy(fileItem.getInputStream(), salida);
+				salida.flush();
+				salida.close();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 }

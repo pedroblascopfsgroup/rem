@@ -152,7 +152,7 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPETS07_INS.setNumeroIdentificadorDeTasacionlnuita(0000000000);
 		String codigoUsuarioSolicitante = StringUtils.rightPad(nombreGestor, 8, ' ').substring(0, 8);
 		servicioGMPETS07_INS.setCodigoDeUsuariocousae(codigoUsuarioSolicitante);
-		servicioGMPETS07_INS.setNumeroDeTarifalntari(0000000002);
+		servicioGMPETS07_INS.setNumeroDeTarifalntari(0000000005);
 		servicioGMPETS07_INS.setIndicadorDocumentacionindido(' ');
 		servicioGMPETS07_INS.setCodigoTasadoracodtas('2');
 		String nifcifProveedor = " A78029774";

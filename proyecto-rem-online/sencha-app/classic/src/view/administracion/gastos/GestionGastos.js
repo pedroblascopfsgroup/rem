@@ -6,6 +6,9 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
         type: 'vbox',
         align: 'stretch'
     },
+    listeners: {
+    	activate: function(){this.refreshOnActivate()}
+	},
     requires	: ['HreRem.view.administracion.gastos.GestionGastosList', 'HreRem.view.administracion.gastos.GestionGastosSearch'],
     initComponent: function () {        
         var me = this;
@@ -32,13 +35,22 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
         
     },
     
+    refreshOnActivate: function() {
+    	var me = this;
+    	if(me.refreshOnActivate) {
+    		me.funcionRecargar();
+    		me.refreshOnActivate = false;
+    	}
+    	
+    },
+    
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().loadPage(1);
   		});
-    } 
+    }
 
 
 });

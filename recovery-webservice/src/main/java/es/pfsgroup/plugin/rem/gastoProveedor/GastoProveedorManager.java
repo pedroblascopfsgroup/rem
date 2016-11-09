@@ -1476,6 +1476,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
 		gasto.setGastoGestion(gastoGestion);
+		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO);
 		genericDao.update(GastoProveedor.class, gasto);
 	}
 
@@ -1508,6 +1509,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gastoGestion.setMotivoRechazoAutorizacionHaya(motivo);
 		}
 		gasto.setGastoGestion(gastoGestion);
+		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO);
 		genericDao.update(GastoProveedor.class, gasto);
 	}
 }

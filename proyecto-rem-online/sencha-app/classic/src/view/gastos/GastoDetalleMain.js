@@ -57,16 +57,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 
     	if(me.down('[cls=container-mask-background]')) {
     		me.removeAll();
-//    		me.add({xtype: 'cabeceraexpediente'});
     		me.add(
     			{
 			    		xtype:'toolfieldset',			   		         						   		        
 			        	cls: 'fieldsetBase cabecera',
 			        	height: 20,
 			        	title: ' ',
-//			        	bind:{
-			        		title: ' ',
-//			        	},
 			        	scrollable: 'y',
 			        	border: false,			        	
 					    layout: {
@@ -78,8 +74,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 									xtype: 'button',
 									margin: '10 6 0 0',
 									text: HreRem.i18n("btn.autorizar"),
-									cls: 'boton-cabecera ',
+									cls: 'boton-cabecera',
 									handler: 'onClickAutorizar',
+									hidden: true,
 									bind: {
 										hidden: '{!esAutorizable}'
 									}
@@ -90,6 +87,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 									text: HreRem.i18n("btn.rechazar"),
 									cls: 'boton-cabecera',
 									handler: 'onClickRechazar',
+									hidden: true,
 									bind: {
 										hidden: '{!esRechazable}'
 									}

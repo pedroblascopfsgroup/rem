@@ -255,6 +255,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			}
 		}
 		
+		var id = me.getView().getViewModel().get('gasto.id');
+		HreRem.model.GastoProveedor.load(id, {
+    		scope: this,
+		    success: function(gasto) {	
+		    	me.getView().getViewModel().set("gasto", gasto);
+		    	me.getView().configCmp(gasto);
+		    }
+		});
+		
 	},
 	
 	buscarProveedor: function(field, e){
@@ -978,6 +987,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					         me.getView().unmask();		         
 					         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					         me.refrescarGasto(true);
+					         me.getView().fireEvent("refreshComponentOnActivate", "panel[reference=gestiongastosref]");
 					     },
 					     failure: function(response) {
 					     	me.getView().unmask();
@@ -1034,6 +1044,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 							         me.getView().unmask();		         
 							         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							         me.refrescarGasto(true);
+							         me.getView().fireEvent("refreshComponentOnActivate", "panel[reference=gestiongastosref]");
 							     },
 							     failure: function(response) {
 							     	me.getView().unmask();

@@ -255,6 +255,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			}
 		}
 		
+		var id = me.getView().getViewModel().get('gasto.id');
+		HreRem.model.GastoProveedor.load(id, {
+    		scope: this,
+		    success: function(gasto) {	
+		    	me.getView().getViewModel().set("gasto", gasto);
+		    	me.getView().configCmp(gasto);
+		    }
+		});
+		
 	},
 	
 	buscarProveedor: function(field, e){
@@ -952,6 +961,114 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			}
 		}
 	
-	}
+	},
+	
+	onClickAutorizar: function(btn) {
+    	var me = this;
+    	
+    	Ext.Msg.show({
+		   title: HreRem.i18n('title.mensaje.confirmacion'),
+		   msg: HreRem.i18n('msg.desea.autorizar.gasto'),
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+		        if (buttonId == 'yes') {
+					var url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastos'),		
+					idsGasto = [];
+					idsGasto.push(me.getViewModel().get("gasto.id"));				
+	
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	
+					Ext.Ajax.request({
+				    			
+					     url: url,
+					     params: {idsGasto: idsGasto},
+					
+					     success: function(response, opts) {
+					         me.getView().unmask();		         
+					         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					         me.refrescarGasto(true);
+					         me.getView().fireEvent("refreshComponentOnActivate", "panel[reference=gestiongastosref]");
+					     },
+					     failure: function(response) {
+					     	me.getView().unmask();
+				     		var data = {};
+			                try {
+			                	data = Ext.decode(operation._response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
+					     }
+				    		    
+				    });
+		        }
+		   }
+		});
+    	
+    	
+    	
+    },
+    
+    onClickRechazar: function(btn) {
+    	
+    	var me = this;
+    	
+    	Ext.Msg.show({
+		   title: HreRem.i18n('title.mensaje.confirmacion'),
+		   msg: HreRem.i18n('msg.desea.rechazar.gasto'),
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+ 				if (buttonId == 'yes') {
+ 					
+ 					var combo = Ext.create("HreRem.view.common.ComboBoxFieldBase", {
+ 						addUxReadOnlyEditFieldPlugin: false, store: {model: 'HreRem.model.ComboBase',proxy: {type: 'uxproxy',remoteUrl: 'generic/getDiccionario',extraParams: {diccionario: 'motivosRechazoHaya'}}}
+ 					});
+ 						
+					HreRem.Msg.promptCombo(HreRem.i18n('title.motivo.rechazo'),"", function(btn, text){    
+					    if (btn == 'ok'){
+							
+							var url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastos'),		
+							idsGasto = [];
+							idsGasto.push(me.getViewModel().get("gasto.id"));		
+							me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			
+							Ext.Ajax.request({
+						    			
+							     url: url,
+							     params: {idsGasto: idsGasto, motivoRechazo: text},
+							
+							     success: function(response, opts) {
+							         me.getView().unmask();		         
+							         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							         me.refrescarGasto(true);
+							         me.getView().fireEvent("refreshComponentOnActivate", "panel[reference=gestiongastosref]");
+							     },
+							     failure: function(response) {
+							     	me.getView().unmask();
+						     		var data = {};
+					                try {
+					                	data = Ext.decode(operation._response.responseText);
+					                }
+					                catch (e){ };
+					                if (!Ext.isEmpty(data.msg)) {
+					                	me.fireEvent("errorToast", data.msg);
+					                } else {
+					                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					                }
+							     }
+						    		    
+						    });
+					    	 
+							
+					    }
+		    		}, null, null, null, combo);
+		        }
+		   }
+		});
+    	
+    }
 
 });

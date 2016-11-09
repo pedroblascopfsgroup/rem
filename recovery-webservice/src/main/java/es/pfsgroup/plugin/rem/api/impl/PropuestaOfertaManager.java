@@ -29,7 +29,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -37,8 +36,13 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAnejo;
+import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
+import es.pfsgroup.plugin.rem.model.ActivoEdificio;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCliente;
@@ -52,6 +56,8 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAnejo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
@@ -69,6 +75,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 public class PropuestaOfertaManager implements PropuestaOfertaApi{
 
 	private final String CODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	private final String NOT_AVAILABLE_ROOM = "NO";
 
 	@Autowired 
 	private OfertaApi ofertaApi;
@@ -377,6 +384,254 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				
 			}
 			
+			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoInfoComercial infoComercial = (ActivoInfoComercial) genericDao.get(ActivoInfoComercial.class, activoFilter);
+			
+			Filter comercialFilter = genericDao.createFilter(FilterType.EQUALS, "id", infoComercial.getId());
+			ActivoVivienda vivienda = (ActivoVivienda) genericDao.get(ActivoVivienda.class, comercialFilter);
+			
+			Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", infoComercial.getId());
+			List<ActivoAnejo> listAnejo = genericDao.getList(ActivoAnejo.class, infoComercialFilter);
+			ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
+			
+			//Descripción fisica del ACTIVO
+			if (edificio!=null) {
+				mapaValores.put("ActivoEdificio",notNull(edificio.getEdiDescripcion()));
+			} else {
+				mapaValores.put("ActivoEdificio",notNull(null));
+			}
+			
+			//Todo lo relacionado con la tabla VIVIENDA
+			if (vivienda!=null) {
+				mapaValores.put("ActivoInterior",notNull(vivienda.getDistribucionTxt()));
+				mapaValores.put("ActivoPlantas",notNull(vivienda.getNumPlantasInter()));
+				if (vivienda.getEstadoConservacion()!=null) {
+					mapaValores.put("ActivoConservacion",notNull(vivienda.getEstadoConservacion().getDescripcionLarga()));
+				} else {
+					mapaValores.put("ActivoConservacion",notNull(null));
+				}
+				if (vivienda.getTipoOrientacion()!=null) {
+					mapaValores.put("ActivoOrientacion",vivienda.getTipoOrientacion().getDescripcionLarga());
+				} else {
+					mapaValores.put("ActivoOrientacion",notNull(null));
+				}
+				Integer dormitorio = null;
+				Integer aseo = null;
+				Integer patio = null;
+				Integer porche = null;
+				Integer banyo = null;
+				Float salon = null;
+				Integer balcon = null;
+				Integer hall = null;
+				List<ActivoDistribucion> distribucion = vivienda.getDistribucion();
+				if (distribucion!=null) {
+					for (int i = 0; i < distribucion.size(); i++) {
+						if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_DORMITORIO)) {
+							if (dormitorio==null) {
+								dormitorio=1;
+							} else {
+								dormitorio++;
+							}
+						}
+						if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_ASEO)) {
+							if (aseo==null) {
+								aseo=1;
+							} else {
+								aseo++;
+							}
+						}	
+						if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_PATIO)) {
+							if (patio==null) {
+								patio=1;
+							} else {
+								patio++;
+							}
+						}	
+						if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_PORCHE)) {
+							if (porche==null) {
+								porche=1;
+							} else {
+								porche++;
+							}
+						}
+						if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_SALON)) {
+							if (salon==null) {
+								salon=distribucion.get(i).getSuperficie();
+							} else {
+								salon+=distribucion.get(i).getSuperficie();
+							}
+						}	
+						if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_BANYO)) {
+							if (banyo==null) {
+								banyo=1;
+							} else {
+								banyo++;
+							}
+						}
+						if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_BALCON)) {
+							if (balcon==null) {
+								balcon=1;
+							} else {
+								balcon++;
+							}
+						}	
+						if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_HALL)) {
+							if (hall==null) {
+								hall=1;
+							} else {
+								hall++;
+							}
+						}						
+					}
+					if (dormitorio!=null) {
+						mapaValores.put("ActivoDormitorios", notNull(dormitorio));
+					} else {
+						mapaValores.put("ActivoDormitorios", NOT_AVAILABLE_ROOM);
+					}
+					if (aseo!=null) {
+						mapaValores.put("ActivoAseos", notNull(aseo));
+					} else {
+						mapaValores.put("ActivoAseos", NOT_AVAILABLE_ROOM);
+					}
+					if (patio!=null) {
+						mapaValores.put("ActivoPatio", notNull(patio));
+					} else {
+						mapaValores.put("ActivoPatio", NOT_AVAILABLE_ROOM);
+					}
+					if (porche!=null) {
+						mapaValores.put("ActivoPorche", notNull(porche));
+					} else {
+						mapaValores.put("ActivoPorche", NOT_AVAILABLE_ROOM);
+					}
+					if (salon!=null) {
+						mapaValores.put("ActivoSalon", notNull(salon+" m2"));
+					} else {
+						mapaValores.put("ActivoSalon", NOT_AVAILABLE_ROOM);
+					}
+					if (banyo!=null) {
+						mapaValores.put("ActivoBanyos", notNull(banyo));
+					} else {
+						mapaValores.put("ActivoBanyos", NOT_AVAILABLE_ROOM);
+					}
+					if (balcon!=null) {
+						mapaValores.put("ActivoBalcones", notNull(balcon));
+					} else {
+						mapaValores.put("ActivoBalcones", NOT_AVAILABLE_ROOM);
+					}
+					if (hall!=null) {
+						mapaValores.put("ActivoHall", notNull(hall));
+					} else {
+						mapaValores.put("ActivoHall", NOT_AVAILABLE_ROOM);
+					}					
+				}
+				if (vivienda.getUltimaPlanta()!=null) {
+					if (vivienda.getUltimaPlanta().equals(new Integer(1))) {
+						mapaValores.put("ActivoUltPlanta","SI");
+					} else {
+						mapaValores.put("ActivoUltPlanta","NO");
+					}
+				} else {
+					mapaValores.put("ActivoUltPlanta",notNull(null));
+				}
+				if (vivienda.getOcupado()!=null) {
+					if (vivienda.getOcupado().equals(new Integer(1))) {
+						mapaValores.put("ActivoOcupada","SI");
+					} else {
+						mapaValores.put("ActivoOcupada","NO");
+					}
+				} else {
+					mapaValores.put("ActivoOcupada",notNull(null));
+				}
+				if (vivienda.getUbicacionActivo()!=null) {
+					mapaValores.put("ActivoUbicacion",notNull(vivienda.getUbicacionActivo().getDescripcionLarga()));
+				} else {
+					mapaValores.put("ActivoUbicacion",notNull(null));
+				}				
+				mapaValores.put("ActivoDistrito",notNull(vivienda.getDistrito()));
+				mapaValores.put("ActivoAntiguedad",notNull(vivienda.getAnyoConstruccion()));
+				mapaValores.put("ActivoRehabilitacion",notNull(vivienda.getAnyoRehabilitacion()));
+				if (vivienda.getTipoVivienda()!=null) {
+					mapaValores.put("ActivoTipo",notNull(vivienda.getTipoVivienda().getDescripcionLarga()));
+				} else {
+					mapaValores.put("ActivoTipo",notNull(null));
+				}				
+			} else {
+				mapaValores.put("ActivoInterior",notNull(null));
+				mapaValores.put("ActivoConservacion",notNull(null));
+				mapaValores.put("ActivoOrientacion",notNull(null));
+				mapaValores.put("ActivoDormitorios",notNull(null));
+				mapaValores.put("ActivoAseos",notNull(null));
+				mapaValores.put("ActivoPatio",notNull(null));
+				mapaValores.put("ActivoPorche",notNull(null));
+				mapaValores.put("ActivoSalon",notNull(null));
+				mapaValores.put("ActivoBanyos",notNull(null));
+				mapaValores.put("ActivoBalcones",notNull(null));
+				mapaValores.put("ActivoHall",notNull(null));
+				mapaValores.put("ActivoUltPlanta",notNull(null));
+				mapaValores.put("ActivoOcupada",notNull(null));
+				mapaValores.put("ActivoUbicacion",notNull(null));
+				mapaValores.put("ActivoUbicacion",notNull(null));
+				mapaValores.put("ActivoDistrito",notNull(null));
+				mapaValores.put("ActivoAntiguedad",notNull(null));
+				mapaValores.put("ActivoRehabilitacion",notNull(null));
+				mapaValores.put("ActivoTipo",notNull(null));
+			}
+			
+			//Todo lo relacionado con la tabla INFORMACION COMERCIAL
+			if (infoComercial!=null) {
+				mapaValores.put("ActivoZona",notNull(infoComercial.getZona()));
+			} else {
+				mapaValores.put("ActivoZona",notNull(null));
+			}
+
+			//Todo lo relacionado con la tabla ANEJO
+			if (listAnejo!=null) {
+				Integer plazas = 0;
+				Integer trastero = null;
+				Integer garaje = null;
+				Float superficie = new Float(0);
+				String subtipo = null;
+				for (int j = 0; j < listAnejo.size(); j++) {
+					ActivoAnejo anejo = listAnejo.get(j);
+					if (anejo.getTipoAnejo().getCodigo().equals(DDTipoAnejo.TIPO_ANEJO_GARAJE)) {
+						if (garaje==null) {
+							garaje = 1;
+						} else {
+							garaje++;
+						}
+						if (anejo.getSuperficie()!=null) {
+							superficie+=anejo.getSuperficie();
+						}
+						if (plazas==null) {
+							plazas = 1;
+						} else {
+							plazas++;
+						}
+						if (anejo.getSubTipo()!=null) {
+							subtipo = notNull(anejo.getSubTipo().getDescripcionLarga());
+						} else {
+							subtipo = notNull(null);
+						}						
+					} else if (anejo.getTipoAnejo().getCodigo().equals(DDTipoAnejo.TIPO_ANEJO_TRASTERO)) {
+						if (trastero==null) {
+							trastero = 1;
+						} else {
+							trastero++;
+						}
+					} 				
+				}
+				mapaValores.put("ActivoPlazas",notNull(plazas));
+				mapaValores.put("ActivoTrastero",notNull(trastero));
+				mapaValores.put("ActivoGaraje",notNull(garaje));
+				mapaValores.put("ActivoSubtipologia",notNull(subtipo));
+				mapaValores.put("ActivoSuperficie",notNull(superficie));
+			} else {
+				mapaValores.put("ActivoPlazas",notNull(null));
+				mapaValores.put("ActivoTrastero",notNull(null));
+				mapaValores.put("ActivoGaraje",notNull(null));
+				mapaValores.put("ActivoSubtipologia",notNull(null));
+				mapaValores.put("ActivoSuperficie",notNull(null));
+			}
 
 			
 		} catch (JsonParseException e1) {

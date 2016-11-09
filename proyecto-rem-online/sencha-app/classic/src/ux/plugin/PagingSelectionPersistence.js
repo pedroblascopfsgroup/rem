@@ -196,6 +196,7 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
     deselectAll: function(suppressEvent) {
         this.selModel.deselectAll();
         this.clearSelection();
+        this.selModel.fireEvent("selectionchange",this.selModel);
     },
 
     getCount: function() {
@@ -229,30 +230,26 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
      * careful using this on very large datasets
      */
     selectAll: function() {
+    	var me = this;
         var storeB = this.grid.getStore();
+        var originalData = [];
+        Ext.Array.each(storeB.getData().items, function(item, index) {
+		    originalData.push(item);
+		});
         storeB.suspendEvents();
         //alert(storeB.getTotalCount());
-
         storeB.load({
             params: {
                 start: 0,
                 limit: storeB.getTotalCount()
             },
             callback: function(records, operation, success) {
-                if (records.length > 0) { // Issue is here: Records returns as NULL 
-                    //alert('Num Records: ' + records.length);
-
-                    this.selectRecords(records);
-
+                if (!Ext.isEmpty(records) && records.length > 0) { 
+                    me.selectRecords(records);
+                    storeB.setData(originalData);
                     storeB.resumeEvents();
-                    this.onViewRefresh();
-
-                    /*
-                     * this.selection = storeB.data.items.slice(0);
-                     * this.selected = {}; for (var i = this.selection.length -
-                     * 1; i >= 0; i--) { this.selected[this.selection[i].id] =
-                     * true; };
-                     */
+                    me.onViewRefresh();
+                    me.selModel.fireEvent("selectionchange",me.selModel);
                 }
                 else {
                     console.warn('No records');

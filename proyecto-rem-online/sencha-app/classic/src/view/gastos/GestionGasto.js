@@ -127,12 +127,11 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						},
 			            { 
 							xtype: 'comboboxfieldbase',
-							
-			              	fieldLabel : 'Estado Autorización Haya',
+							readOnly: true,
+			              	fieldLabel : 'Estado Autorización Haya',			              	
 							bind: {
 								store: '{comboEstadoAutorizacionHaya}',
-								value: '{gestion.comboEstadoAutorizacionHaya}',
-								readOnly: '{esGastoAnulado}'
+								value: '{gestion.comboEstadoAutorizacionHaya}'
 							}
 						},
 			           	{
@@ -143,11 +142,11 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						
 						{ 
 							xtype: 'comboboxfieldbase',
+							readOnly: true,
 							fieldLabel:  HreRem.i18n('fieldlabel.motivo.rechazo'),
 							bind: {
 								store: '{comboMotivoRechazoHaya}',
-								value: '{gestion.comboMotivoRechazoHaya}',
-								readOnly: '{esGastoAnulado}'
+								value: '{gestion.comboMotivoRechazoHaya}'
 							}
 						},
 						
@@ -159,8 +158,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			              	fieldLabel : 'Estado Autorización Propietario',
 							bind: {
 								store: '{comboEstadoAutorizacionPropietario}',
-								value: '{gestion.comboEstadoAutorizacionPropietario}',
-								readOnly: '{esGastoAnulado}'
+								value: '{gestion.comboEstadoAutorizacionPropietario}'
 							},
 							readOnly: true
 						},

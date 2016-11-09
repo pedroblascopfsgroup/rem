@@ -47,6 +47,7 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
     public static final String CODIGO_BOLETIN_AGUA = "15";
     public static final String CODIGO_BOLETIN_ELECTRICIDAD = "16";
     public static final String CODIGO_BOLETIN_GAS = "17";
+    public static final String CODIGO_LISTADO_PROPUESTA_PRECIOS = "21";
     
 	/**
 	 * 

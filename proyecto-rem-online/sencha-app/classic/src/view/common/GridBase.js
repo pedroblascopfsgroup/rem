@@ -72,7 +72,7 @@ Ext.define('HreRem.view.common.GridBase', {
 		};
 		
 		me.addListener('selectionchange', function(grid, records) {
-				if(!records.length) {
+				if(!Ext.isEmpty(records) && !records.length) {
 					me.disableRemoveButton(true);
 				} else {
 					me.disableRemoveButton(false);

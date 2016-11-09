@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 
@@ -103,4 +105,11 @@ public interface PreciosApi {
 	 * @return
 	 */
 	public PropuestaPrecio getPropuestaByTrabajo(Long idTrabajo);
+	
+	/**
+	 * Guarda la propuesta como adjunto del Trabajo asociado.
+	 * @param file
+	 * @param trabajo
+	 */
+	public void guardarFileEnTrabajo(File file, Trabajo trabajo);
 }

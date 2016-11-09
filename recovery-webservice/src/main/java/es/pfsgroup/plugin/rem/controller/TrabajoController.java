@@ -1105,6 +1105,7 @@ public class TrabajoController extends ParadiseJsonController {
 			excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), genericAdapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
 		
 			excelReportGeneratorApi.sendReport(excel.getFile(), response);
+			preciosApi.guardarFileEnTrabajo(excel.getFile(),propuesta.getTrabajo());
 			excel.vaciarLibros();
 			
 		} catch (IllegalAccessException ex) {

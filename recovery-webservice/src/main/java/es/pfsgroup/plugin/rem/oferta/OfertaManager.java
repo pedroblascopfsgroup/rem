@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -333,6 +334,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
 				errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
+			}else {
+				//el proveedor tiene que ser custodio
+				if ((cust.getCustodio() != null && cust.getCustodio() != new Integer(1))
+						|| cust.getCustodio() == null) {
+					errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {
@@ -346,7 +353,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemFdv()));
 			if (Checks.esNulo(fdv)) {
-				errorsList.put("idProveedorRemResponsable", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
+			}else {
+				//el proveedor tiene que ser custodio
+				if(fdv.getTipoProveedor()==null || !fdv.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)){
+					errorsList.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {

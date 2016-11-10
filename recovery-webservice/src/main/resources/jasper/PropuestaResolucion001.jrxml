@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucion001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="2862"/>
+	<property name="ireport.y" value="24"/>
 	<subDataset name="dataset1" uuid="859ad764-5c2d-4f72-be54-c78b00433dc1">
 		<queryString>
 			<![CDATA[]]>
@@ -97,6 +97,32 @@
 	<parameter name="ComentarioGestor" class="java.lang.String"/>
 	<parameter name="ComentarioInteres" class="java.lang.String"/>
 	<parameter name="ComentarioComite" class="java.lang.String"/>
+	<parameter name="ActivoEdificio" class="java.lang.String"/>
+	<parameter name="ActivoInterior" class="java.lang.String"/>
+	<parameter name="ActivoZona" class="java.lang.String"/>
+	<parameter name="ActivoTipo" class="java.lang.String"/>
+	<parameter name="ActivoConservacion" class="java.lang.String"/>
+	<parameter name="ActivoPlantas" class="java.lang.String"/>
+	<parameter name="ActivoOrientacion" class="java.lang.String"/>
+	<parameter name="ActivoDormitorios" class="java.lang.String"/>
+	<parameter name="ActivoAseos" class="java.lang.String"/>
+	<parameter name="ActivoPatio" class="java.lang.String"/>
+	<parameter name="ActivoPorche" class="java.lang.String"/>
+	<parameter name="ActivoTrastero" class="java.lang.String"/>
+	<parameter name="ActivoGaraje" class="java.lang.String"/>
+	<parameter name="ActivoSubtipologia" class="java.lang.String"/>
+	<parameter name="ActivoAntiguedad" class="java.lang.String"/>
+	<parameter name="ActivoSalon" class="java.lang.String"/>
+	<parameter name="ActivoDistrito" class="java.lang.String"/>
+	<parameter name="ActivoBanyos" class="java.lang.String"/>
+	<parameter name="ActivoOcupada" class="java.lang.String"/>
+	<parameter name="ActivoBalcones" class="java.lang.String"/>
+	<parameter name="ActivoRehabilitacion" class="java.lang.String"/>
+	<parameter name="ActivoHall" class="java.lang.String"/>
+	<parameter name="ActivoUbicacion" class="java.lang.String"/>
+	<parameter name="ActivoUltPlanta" class="java.lang.String"/>
+	<parameter name="ActivoPlazas" class="java.lang.String"/>
+	<parameter name="ActivoSuperficie" class="java.lang.String"/>
 	<field name="listaCliente" class="java.util.List"/>
 	<field name="listaOferta" class="java.util.List"/>
 	<field name="listaTasacion" class="java.util.List"/>
@@ -1022,7 +1048,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				</staticText>
 			</elementGroup>
 			<staticText>
-				<reportElement x="2" y="169" width="219" height="13" uuid="292cd80d-03e6-4b55-8374-501ea7982f28"/>
+				<reportElement x="1" y="169" width="219" height="13" uuid="292cd80d-03e6-4b55-8374-501ea7982f28"/>
 				<textElement>
 					<font fontName="Verdana" isBold="true" isItalic="true"/>
 				</textElement>
@@ -1119,7 +1145,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 		</band>
 		<band height="682">
 			<staticText>
-				<reportElement x="2" y="1" width="219" height="13" uuid="292cd80d-03e6-4b55-8374-501ea7982f28"/>
+				<reportElement x="1" y="1" width="219" height="13" uuid="292cd80d-03e6-4b55-8374-501ea7982f28"/>
 				<textElement>
 					<font fontName="Verdana" isBold="true" isItalic="true"/>
 				</textElement>
@@ -1214,12 +1240,12 @@ TIPO DE PROPUESTA VENTA]]></text>
 				</componentElement>
 			</elementGroup>
 		</band>
-		<band height="483">
+		<band height="682">
 			<rectangle>
 				<reportElement x="0" y="15" width="555" height="459" uuid="c77e81f6-ecc9-4593-b1d0-48a5964c650d"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="2" y="0" width="219" height="13" uuid="828dc6e1-4bd0-41e8-9675-1910fdf43985"/>
+				<reportElement x="1" y="0" width="219" height="13" uuid="828dc6e1-4bd0-41e8-9675-1910fdf43985"/>
 				<textElement>
 					<font fontName="Verdana" isBold="true" isItalic="true"/>
 				</textElement>
@@ -1236,6 +1262,394 @@ TIPO DE PROPUESTA VENTA]]></text>
 			<textField>
 				<reportElement x="4" y="321" width="548" height="153" uuid="4e3e9708-0fbd-438c-bc42-840bc9ec6296"/>
 				<textFieldExpression><![CDATA[$P{ComentarioInteres}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="682">
+			<staticText>
+				<reportElement x="1" y="0" width="219" height="13" uuid="8d3c30a2-8660-455d-b324-71f3e7688eae"/>
+				<textElement>
+					<font fontName="Verdana" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Descripcion fisica del activo]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="13" width="555" height="305" uuid="25ddcf5a-9e60-4d55-b38c-266e66b764bf"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="6" y="13" width="210" height="11" uuid="4b54d635-c755-4570-98b4-4c1c412c0480"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Descripcion del edificio (Texto para web)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="24" width="555" height="1" uuid="61c8eab8-85a1-4dee-af39-00c871415306"/>
+			</line>
+			<line>
+				<reportElement x="0" y="44" width="555" height="1" uuid="82e06bd0-9fd1-44f4-92c9-ac1489ea7d08"/>
+			</line>
+			<staticText>
+				<reportElement x="5" y="45" width="210" height="11" uuid="92043d0b-b55a-4b28-9f65-13d556c52b3f"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Descripcion interior (Texto para web)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="56" width="555" height="1" uuid="35d2e62c-f950-4b61-8339-36bd73c25a66"/>
+			</line>
+			<line>
+				<reportElement x="0" y="76" width="555" height="1" uuid="07c05d1e-39e2-40c7-8111-97f1670c5504"/>
+			</line>
+			<staticText>
+				<reportElement x="5" y="80" width="83" height="11" uuid="92fe0073-3b9c-45b0-8077-091f0ab7b470"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Zona:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="80" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoZona}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="100" width="83" height="11" uuid="61f5888a-d4af-4fe2-8557-260b80ddcf91"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tipo de vivienda:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="100" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoTipo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="120" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[E. conservacion:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="120" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoConservacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="140" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No Plantas:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="140" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoPlantas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="160" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Orientacion:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="160" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoOrientacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="180" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No Dormitorios:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="180" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoDormitorios}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="200" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Aseos:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="200" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoAseos}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="220" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Patio:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="220" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoPatio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="240" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Porche:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="240" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoPorche}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="260" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Anejo trastero:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="260" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoTrastero}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="280" width="83" height="11" uuid="e45abdf0-4336-42ae-adc7-f706c4c1efa4"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Anejo garaje:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="280" width="100" height="11" uuid="d53da9e2-ea20-4a64-8a54-911bab1790ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoGaraje}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="272" y="120" width="83" height="11" uuid="7f4968e4-7b13-40b6-9d99-0e126e49044f"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Antiguedad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="220" width="83" height="11" uuid="388a5133-366c-4309-bca0-a2eb6f702717"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No baños:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="260" width="83" height="11" uuid="5653d6ee-779b-47cf-afde-c297224cabe8"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Hall:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="100" width="83" height="11" uuid="a939ce45-ce7d-4ad0-9605-65ba13fc0a4d"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Distrito:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="140" width="83" height="11" uuid="25997b8f-e96a-4181-8142-e01bb1305629"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Rehabilitacion:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="240" width="83" height="11" uuid="2376296b-2ac9-42b6-9e8b-03f848cd1a52"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Balcones:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="359" y="280" width="100" height="11" uuid="399e8663-e089-4092-b8e2-60660b31afc9"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoSubtipologia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="272" y="80" width="83" height="11" uuid="eebfe16a-154d-4394-a6b8-91466284da99"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Ubicacion:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="359" y="120" width="100" height="11" uuid="5b70deb8-a7e0-478f-968f-3c2d9fe28343"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoAntiguedad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="272" y="160" width="83" height="11" uuid="c51934f7-7490-4d15-8b6e-6f807840d6fa"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Ult. Planta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="280" width="83" height="11" uuid="4d4bbe3a-7d50-4c14-b7df-a54a0df47c0f"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Subtipologia:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="359" y="200" width="100" height="11" uuid="23bab50f-1b65-48ca-8fe2-0a3c171e3997"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoSalon}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="100" width="100" height="11" uuid="81aaddc1-740e-49ad-a0b4-edf5c8a38d72"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoDistrito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="220" width="100" height="11" uuid="0dd22a60-3465-4ebe-938a-e3db98b521c1"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoBanyos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="180" width="100" height="11" uuid="cb77e118-3626-49b2-b731-d87b3dbaae70"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoOcupada}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="240" width="100" height="11" uuid="0712069b-3eba-48ea-9455-60e6533cc857"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoBalcones}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="140" width="100" height="11" uuid="d9430d54-ba65-4904-a095-7d091fb2e618"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoRehabilitacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="260" width="100" height="11" uuid="9ac63954-260e-4d62-8925-7b1aafe63103"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoHall}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="80" width="100" height="11" uuid="6bc33cb8-5850-4d55-9dbc-f3d136902979"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoUbicacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="272" y="180" width="83" height="11" uuid="4b5804cb-2624-438e-9605-5ff0a0ea4cb1"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Ocupada:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="200" width="83" height="11" uuid="1aef9be9-5a02-48bb-b07e-22e6f8ade4ae"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Sup. Salon:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="359" y="160" width="100" height="11" uuid="1acea9b8-2d6a-4cae-99e5-3d6221b038ad"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoUltPlanta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="300" width="83" height="11" uuid="5f2d0835-1b85-4b81-9f78-b87b72b0269b"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No Plazas:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="300" width="100" height="11" uuid="19e9f91d-3562-402a-a074-ef04ac2d6b66"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoPlazas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="272" y="300" width="83" height="11" uuid="a1a68186-1c84-444a-a8d7-fb87e02150c3"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Superficie:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="359" y="300" width="100" height="11" uuid="71344886-02ab-4819-8634-9744ddf011e8"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoSuperficie}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="25" width="548" height="20" uuid="85161e2e-cba4-460c-86cd-4d1e398f0796"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoEdificio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="57" width="548" height="20" uuid="3260e43c-3854-4cfa-833e-7514770121db"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ActivoInterior}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

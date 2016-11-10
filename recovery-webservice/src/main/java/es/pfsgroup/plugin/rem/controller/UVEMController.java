@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.gfi.webIntegrator.WIException;
 
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -22,6 +23,9 @@ public class UVEMController {
 
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
+	
+	@Autowired
+	private GenericAdapter adapter;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -42,7 +46,7 @@ public class UVEMController {
 	public ModelAndView solicitarTasacion(ModelMap model, @RequestParam(required = true) Long bienId,
 			@RequestParam(required = true) String nombreGestor, @RequestParam(required = false) String gestion) {
 		try {
-			uvemManagerApi.ejecutarSolicitarTasacion(bienId, nombreGestor, gestion);
+			uvemManagerApi.ejecutarSolicitarTasacion(bienId, adapter.getUsuarioLogado());
 			int numeroIdentificadorTasacion = uvemManagerApi.resultadoSolicitarTasacion()
 					.getNumeroIdentificadorDeTasacionlnuita2();
 			model.put("numeroIdentificadorTasacion", numeroIdentificadorTasacion);

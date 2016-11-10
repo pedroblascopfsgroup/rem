@@ -35,12 +35,12 @@ public class UpdaterServiceSancionOfertaDobleFirma implements UpdaterService {
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
+    private static final String IMPORTE_CONTRAOFERTA = "numImporte";
    	private static final String CODIGO_T013_DOBLE_FIRMA = "T013_DobleFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -48,6 +48,16 @@ public class UpdaterServiceSancionOfertaDobleFirma implements UpdaterService {
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
 			genericDao.save(ExpedienteComercial.class, expediente);
+			
+			for(TareaExternaValor valor :  valores){
+				if(IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
+				{
+					ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
+					genericDao.save(Oferta.class, ofertaAceptada);
+				}
+				
+			}
+			
 		}
 
 	}

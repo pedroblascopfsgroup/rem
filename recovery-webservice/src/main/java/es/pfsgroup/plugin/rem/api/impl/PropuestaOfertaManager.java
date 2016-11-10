@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAnejo;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
@@ -384,6 +385,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				
 			}
 			
+			//Obtenemos la información de todas las tablas relacionadas con la DESCRIPCION FISICA DEL ACTIVO
 			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			ActivoInfoComercial infoComercial = (ActivoInfoComercial) genericDao.get(ActivoInfoComercial.class, activoFilter);
 			
@@ -394,7 +396,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			List<ActivoAnejo> listAnejo = genericDao.getList(ActivoAnejo.class, infoComercialFilter);
 			ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
 			
-			//Descripción fisica del ACTIVO
+			//Descripción fisica del EDIFICIO
 			if (edificio!=null) {
 				mapaValores.put("ActivoEdificio",notNull(edificio.getEdiDescripcion()));
 			} else {
@@ -415,6 +417,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				} else {
 					mapaValores.put("ActivoOrientacion",notNull(null));
 				}
+				//Obtener cuantos habitaciones de cada tipo hay y
+				//la superficie en m2 del salon
 				Integer dormitorio = null;
 				Integer aseo = null;
 				Integer patio = null;
@@ -557,6 +561,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				}				
 			} else {
 				mapaValores.put("ActivoInterior",notNull(null));
+				mapaValores.put("ActivoPlantas",notNull(null));
 				mapaValores.put("ActivoConservacion",notNull(null));
 				mapaValores.put("ActivoOrientacion",notNull(null));
 				mapaValores.put("ActivoDormitorios",notNull(null));
@@ -650,7 +655,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 	@Override
 	public List<Object> dataSourcePropuestaSimple(Oferta oferta, Activo activo, ModelMap model) {
 
-		List<Object> array = new ArrayList();
+		List<Object> array = new ArrayList<Object>();
 		
 		DtoPropuestaOferta propuestaOferta = new DtoPropuestaOferta();
 		
@@ -712,23 +717,28 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 		listaHonorarios.add(honorarios);
 		propuestaOferta.setListaHonorarios(listaHonorarios);
 		
-		DtoOferta ofertaActivo = new DtoOferta();
-		ofertaActivo.setNumOferta("-");
-		ofertaActivo.setTitularOferta("-");
-		ofertaActivo.setImporteOferta("-");
-		ofertaActivo.setFechaOferta("-");
-		ofertaActivo.setSituacionOferta("-");
-		
-		DtoOferta ofertaActivo2 = new DtoOferta();
-		ofertaActivo2.setNumOferta("-");
-		ofertaActivo2.setTitularOferta("-");
-		ofertaActivo2.setImporteOferta("-");
-		ofertaActivo2.setFechaOferta("-");
-		ofertaActivo2.setSituacionOferta("-");
-		
+		//Ofertas asociadas a las 
+		List<ActivoOferta> listaOfertaPorActivo = activo.getOfertas();
 		List<Object> listaOferta = new ArrayList<Object>();
-		listaOferta.add(ofertaActivo);
-		listaOferta.add(ofertaActivo2);
+		DtoOferta ofertaActivo =null;
+		for (int k = 0; k < listaOfertaPorActivo.size(); k++) {
+			Oferta tmpOferta = listaOfertaPorActivo.get(k).getPrimaryKey().getOferta();
+			ofertaActivo = new DtoOferta();
+			ofertaActivo.setNumOferta(notNull(tmpOferta.getNumOferta()));
+			if (tmpOferta.getCliente()!=null) {
+				ofertaActivo.setTitularOferta(notNull(tmpOferta.getCliente().getNombreCompleto()));
+			} else {
+				ofertaActivo.setTitularOferta(notNull(null));
+			}
+			ofertaActivo.setImporteOferta(notNull(tmpOferta.getImporteOferta()));
+			ofertaActivo.setFechaOferta(notNull(tmpOferta.getFechaAlta()));
+			if (tmpOferta.getEstadoOferta()!=null) {
+				ofertaActivo.setSituacionOferta(notNull(tmpOferta.getEstadoOferta().getDescripcionLarga()));
+			} else {
+				ofertaActivo.setSituacionOferta(notNull(null));
+			}
+			listaOferta.add(ofertaActivo);
+		}
 		propuestaOferta.setListaOferta(listaOferta);
 
 		DtoTasacionInforme tasacion = null;
@@ -752,6 +762,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 		return array;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public File getPDFFilePropuestaSimple(Map<String, Object> params, List<Object> dataSource, ModelMap model) {
 		
@@ -768,7 +779,6 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			try {
 				//Compilar la plantilla
 				JasperReport report = JasperCompileManager.compileReport(is);	
-				
 				//JasperReport report = (JasperReport)JRLoader.loadObject(is);
 
 				//Rellenar los datos del informe
@@ -799,6 +809,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void sendFileBase64(HttpServletResponse response, File file, ModelMap model) {
 		
@@ -810,23 +821,6 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			dataResponse.put("fileName", "HojaPresentacionPropuesta.pdf");
 			dataResponse.put("hojaPropuesta",base64Encode(bytes));
 			model.put("data", dataResponse);
-			
-//       		ServletOutputStream salida = response.getOutputStream(); 
-//       		FileInputStream fileInputStream = new FileInputStream(file.getAbsolutePath());
-// 
-//       		if(fileInputStream!= null) {       		
-//	       		response.setHeader("Content-disposition", "attachment; filename=PropuestaOferta.pdf");
-//	       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-//	       		response.setHeader("Cache-Control", "max-age=0");
-//	       		response.setHeader("Expires", "0");
-//	       		response.setHeader("Pragma", "public");
-//	       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
-//	       		response.setContentType("application/pdf");		
-//	       		FileUtils.copy(fileInputStream, salida);// Write
-//	       		salida.flush();
-//	       		salida.close();
-//       		}
-       		
        	} catch (Exception e) { 
        		e.printStackTrace();
        	}

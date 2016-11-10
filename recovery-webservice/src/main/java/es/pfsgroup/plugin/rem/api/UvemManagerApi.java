@@ -4,6 +4,7 @@ import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -33,7 +34,7 @@ public interface UvemManagerApi {
 	 * @throws WIException
 	 * @throws TipoDeDatoException
 	 */
-	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, String nombreGestor, String gestion)
+	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor)
 			throws WIMetaServiceException, WIException, TipoDeDatoException;
 
 	

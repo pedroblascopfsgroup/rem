@@ -276,5 +276,12 @@ public interface OfertaApi {
 	 * @return true si el valor es NO en ambos combos, false en caso de que no estén rellenos o alguno tenga SI.
 	 */
 	public boolean checkPoliticaCorporativa(TareaExterna tareaExterna);
+	
+	/**
+	 * Método que comprueba si el expediente tiene algún posicionamiento creado
+	 * @param tareaExterna
+	 * @return true si tiene algún posicionamiento, false en caso contrario.
+	 */
+	public boolean checkPosicionamiento(TareaExterna tareaExterna);
 
 }

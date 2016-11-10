@@ -1162,5 +1162,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		// Hacer saltar inmediatamente la validación de los campos.
 		peticionario.validate();
 		motivoAnulacion.validate();
+	},
+	
+	cargaValorVpo: function() {
+		var me = this,
+    	disabled = me.lookupReference('comboVpo').getValue() == 0,
+    	procedeDescalificacion = me.lookupReference('procedeDescalificacionRef');
+    	
+		procedeDescalificacion.setDisabled(disabled);
 	}
+	
 });

@@ -138,6 +138,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var ocultarPestTanteo = get('expediente.ocultarPestTanteoRetracto');
 	     	return ocultarPestTanteo === "true";
 	     	
+	     },
+	     
+	     esExpedienteTipoAlquiler: function(get) {
+	    	 var tipoExpediente = get('expediente.tipoExpedienteCodigo');
+		     return tipoExpediente === "02";
 	     }
 	     
 		

@@ -40,6 +40,7 @@ DECLARE
     V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
     V_OFR_ID NUMBER(16,0);    -- Varaible que almacenara las OFR_ID de aquellas ofertas aceptadas
     V_TABLE_ECO NUMBER(16,0); -- Variable que almacenara los Expedientes Comerciales creados
+    V_TABLE_DD_OEF NUMBER(16,0); -- Variable que almacenara los ESTADOS_OFERTAS modificados
     
 BEGIN
 
@@ -220,6 +221,35 @@ BEGIN
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL COMPUTE STATISTICS');
     
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ANALIZADA.');
+    
+    -----------------------------------------
+    -- ACTUALIZACION DE ESTADOS DE OFERTAS --
+    -----------------------------------------   
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION DE LOS ESTADOS DE LAS OFERTAS');
+    
+    EXECUTE IMMEDIATE '
+    MERGE INTO OFR_OFERTAS OFR
+        USING ( SELECT  OFRW.OFR_ID
+                    FROM '||V_ESQUEMA||'.'||V_TABLA||' OFRW
+                    INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                          ON ECO.OFR_ID = OFRW.OFR_ID
+                    WHERE OFRW.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
+                    AND (ECO.DD_EEC_ID =  (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''02'') OR ECO.DD_EEC_ID =  (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''12''))
+                          ) AUX
+                ON (OFR.OFR_ID = AUX.OFR_ID)
+                WHEN MATCHED THEN UPDATE SET
+                  OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''02'')
+    
+    '
+    ;   
+    
+    V_TABLE_DD_EOF := SQL%ROWCOUNT;
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' ACTUALIZADAS. '||V_TABLE_DD_EOF||' Filas.');
+    
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
     
     --VALIDACION DE DUPLICADOS
       V_SENTENCIA := '

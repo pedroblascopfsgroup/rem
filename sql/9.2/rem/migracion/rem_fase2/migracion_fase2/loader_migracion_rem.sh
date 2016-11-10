@@ -39,9 +39,9 @@ $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/COND_ESPEC_ACTIVOS_PUBLICA
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/HIST_ACTIVOS_PRECIOS.ctl				log=./CTLs_DATs/logs/HIST_ACTIVOS_PRECIOS.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROPUESTAS_PRECIOS.ctl				log=./CTLs_DATs/logs/PROPUESTAS_PRECIOS.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVO_PROPUESTAS.ctl					log=./CTLs_DATs/logs/ACTIVO_PROPUESTAS.log
-$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDORES.ctl						log=./CTLs_DATs/logs/PROVEEDORES.log
+#$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDORES.ctl						log=./CTLs_DATs/logs/PROVEEDORES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDORES_DIRECCIONES.ctl			log=./CTLs_DATs/logs/PROVEEDORES_DIRECCIONES.log
-$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDOR_CONTACTO.ctl				log=./CTLs_DATs/logs/PROVEEDOR_CONTACTO.log
+#$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDOR_CONTACTO.ctl				log=./CTLs_DATs/logs/PROVEEDOR_CONTACTO.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_PROVEEDORES.ctl				log=./CTLs_DATs/logs/GASTOS_PROVEEDORES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_PROVEEDORES_ACT_TBJ.ctl		log=./CTLs_DATs/logs/GASTOS_PROVEEDORES_ACT_TBJ.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/DETALLE_ECONOMICO_GASTOS.ctl			log=./CTLs_DATs/logs/DETALLE_ECONOMICO_GASTOS.log
@@ -54,7 +54,7 @@ $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVOS_ESTADOS.ctl					lo
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVOS_DATOS_ALQUILERES.ctl			log=./CTLs_DATs/logs/ACTIVOS_DATOS_ALQUILERES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/AGRUPACIONES.ctl						log=./CTLs_DATs/logs/AGRUPACIONES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PERIMETRO_ACTIVOS.ctl					log=./CTLs_DATs/logs/PERIMETRO_ACTIVOS.log
-$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROPIETARIOS.ctl						log=./CTLs_DATs/logs/PROPIETARIOS.log
+#$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROPIETARIOS.ctl						log=./CTLs_DATs/logs/PROPIETARIOS.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROPIETARIOS_HISTORICO.ctl			log=./CTLs_DATs/logs/PROPIETARIOS_HISTORICO.log
 
 echo "[INFO] Fin de la carga de ficheros en Tablas MIG2_. Revise directorio de logs y el directorio /bad."

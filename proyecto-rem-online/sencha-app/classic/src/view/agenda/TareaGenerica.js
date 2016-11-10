@@ -953,6 +953,48 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						})
 					},
 					
+					T013_ResolucionComiteValidacion: function() {
+						var me = this;
+						
+						me.deshabilitarCampo(me.down('[name=numImporte]'));
+						
+						me.down('[name=comboResolucion]').addListener('change', function(combo){
+							if(combo.value == '03'){
+								me.habilitarCampo(me.down('[name=numImporte]'));
+							}else{
+								me.deshabilitarCampo(me.down('[name=numImporte]'));
+							}
+						})
+					},
+					
+				    T013_InformeJuridicoValidacion: function() {
+				    	var me = this;
+				    	
+				    	me.deshabilitarCampo(me.down('[name=tipoIncidencia]'));
+				    	
+				    	me.down('[name=comboResultado]').addListener('change', function(combo){
+				    		if(combo.value == '01'){
+				    			me.deshabilitarCampo(me.down('[name=tipoIncidencia]'));
+				    		}else{
+				    			me.habilitarCampo(me.down('[name=tipoIncidencia]'));
+				    		}
+				    	})
+				    },
+				    
+				    T013_PosicionamientoYFirmaValidacion: function() {
+				    	var me = this;
+				    	
+				    	me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+				    	
+				    	me.down('[name=comboFirma]').addListener('change', function(combo){
+				    		if(combo.value == '01'){
+				    			me.habilitarCampo(me.down('[name=fechaFirma]'));
+				    		}else{
+				    			me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+				    		}
+				    	})
+				    },
+						
 					T014_PosicionamientoFirmaValidacion: function(){
 						var me = this;
 
@@ -971,6 +1013,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 								me.deshabilitarCampo(me.down('[name=numContrato]'));
 							}
 						})	 
+					},
+					
+					T014_DefinicionOfertaValidacion: function() {
+						var me = this;
+						
+						me.deshabilitarCampo(me.down('[name=fechaEnvio]'));
+						
+						if (me.down('[name=comite]').value != 'Haya'){
+							me.habilitarCampo(me.down('[name=fechaEnvio]'));
+						}
 					},
 				     
 					habilitarCampo: function(campo) {				    	

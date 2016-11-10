@@ -408,6 +408,10 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkPoliticaCorporativa(tareaExterna);
 			}
+			def checkPosicionamiento = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkPosicionamiento(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

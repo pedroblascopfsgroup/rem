@@ -55,6 +55,21 @@ public class UpdaterServiceSancionOfertaAlquilerDefinicionOferta implements Upda
 				expedienteComercial.setFechaSancion(new Date());
 			}
 		}
+		else {
+			List<Oferta> ofertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+			if(!Checks.estaVacio(ofertas)) {
+				ExpedienteComercial expedienteComercial = null;
+				for(Oferta oferta : ofertas) {
+					expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+					if(!Checks.esNulo(expedienteComercial))
+						break;
+				}
+				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION);
+				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+				expedienteComercial.setEstado(estado);
+			}
+		}
 
 	}
 

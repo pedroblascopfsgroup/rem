@@ -72,7 +72,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						}
 					}
 					else{
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESUELTO);
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
 						genericDao.save(ExpedienteComercial.class, expediente);

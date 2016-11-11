@@ -85,8 +85,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								        		tdCls: 'grid-no-seleccionable-td',
 												dataIndex: 'fechaAprobacion',
 												formatter: 'date("d/m/Y")',
-												flex: 1,
-												hidden: true
+												flex: 1
 											   },
 											   {
 												text: HreRem.i18n('header.fecha.carga'),
@@ -105,20 +104,18 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												flex: 1,
 												editor:{
 						                            xtype: 'datefield',
-						                            maxValue: Ext.Date.format(new Date(),'d/m/Y'),
-						                            maxText: 'No se puede establecer la fecha en el futuro',
 						                            validationEvent: 'change',
 						                            reference: 'dateFieldStartDate',
 						                            validator: function(value){
 						                                me.startValidityDate=value;
 						                                if(typeof me.endValidityDate !== 'undefined' && !Ext.isEmpty(me.endValidityDate)) {
 						                                    if(!Ext.isEmpty(me.startValidityDate) && me.startValidityDate <= me.endValidityDate) {
-						                                        return true;
+						                                    	return this.up('activosdetallemain').getController().validateFechas(this, value);
 						                                    } else {
-						                                        return false;
+						                                        return HreRem.i18n('info.datefield.begin.date.msg.validacion');
 						                                    }
 						                                } else {
-						                                    return true;
+						                                	return this.up('activosdetallemain').getController().validateFechas(this, value);
 						                                }
 						                            }
 												  }
@@ -133,12 +130,11 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												editor: {
 						                            xtype: 'datefield',
 						                            minValue: Ext.Date.format(new Date(),'d/m/Y'),
-						                            minText: 'No se puede establecer la fecha en el pasado',
+						                            minText: HreRem.i18n('info.datefield.min.date.msg.validacion'),
 						                            validationEvent: 'change',
 						                            validator: function(value){
 						                            	me.endValidityDate=value;
-						                            	//return true;
-						                            	return this.up('activosdetallemain').getController().validateFechasFin(value);
+						                            	return this.up('activosdetallemain').getController().validateFechas(this, value);
 						                            }
 						                          }
 											   },

@@ -717,18 +717,23 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								bind: {
 			            			store: '{comboSiNoRem}',
 			            			value: '{condiciones.vpo}'
+			            		},
+		    					listeners: {
+		    						edit:  'cargaValorVpo'
 			            		}
 					        },
 					        { 
 								xtype: 'comboboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.procede.descalificacion'),
+			                	reference: 'procedeDescalificacionRef',
 					        	bind: {
 				            		store: '{comboSiNoRem}',
 				            		value: '{condiciones.procedeDescalificacion}'
 				            	},
 				            	listeners: {
 				            		change: 'onHaCambiadoProcedeDescalificacion'
-				            	}
+				            	},
+		    					disabled: true
 					        },
 					        { 
 								xtype: 'comboboxfieldbase',

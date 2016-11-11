@@ -89,7 +89,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		DDEstadoPublicacion estadoPublicacion= null;
 		DDEstadoPublicacion estadoPublicacionActual = null;
 		String motivo = null;
-		
+
 		//Iniciativa: Si el activo no tuviera estado de publicación (null), debe tomarse como "NO PUBLICADO"
 		estadoPublicacionActual = activo.getEstadoPublicacion();
 		if(Checks.esNulo(estadoPublicacionActual)){
@@ -162,24 +162,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			return true;
 		}		
 
-		// Completa datos del historico si ha habido un cambio de estado de publicacion
+		// Completa datos del historico si ha habido un cambio de estado de publicación
 		try {
 			if(!Checks.esNulo(activoHistoricoEstadoPublicacion) && !Checks.esNulo(activoHistoricoEstadoPublicacion.getEstadoPublicacion())){
 
 				// Establecer la fecha de hoy en el campo 'Fecha Hasta' del anterior/último histórico y el usuario que lo ha modificado.
 				// Situado al principio en caso de que todavía no existan historicos para el el Activo en concreto.
 				ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
-				if(!Checks.esNulo(ultimoHistorico)){
+				if(!Checks.esNulo(ultimoHistorico)) {
 					Date ahora = new Date(System.currentTimeMillis());
 					ultimoHistorico.setFechaHasta(ahora);
 					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 					ultimoHistorico.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
 				}
 				
-				// Calcula el DDPortal en relacion a los condicionantes
+				// Calcula el DDPortal en relación a los condicionantes
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
 				VCondicionantesDisponibilidad condicionantesDisponibilidad = (VCondicionantesDisponibilidad) genericDao.get(VCondicionantesDisponibilidad.class, filtroActivo);
-				if(!Checks.esNulo(condicionantesDisponibilidad)){
+				if(!Checks.esNulo(condicionantesDisponibilidad)) {
 					if(!condicionantesDisponibilidad.getRuina() &&
 							!condicionantesDisponibilidad.getPendienteInscripcion() &&
 							!condicionantesDisponibilidad.getObraNuevaSinDeclarar() &&
@@ -190,18 +190,29 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							!condicionantesDisponibilidad.getTapiado() &&
 							!condicionantesDisponibilidad.getPortalesExternos() &&
 							!condicionantesDisponibilidad.getOcupadoSinTitulo() &&
-							!condicionantesDisponibilidad.getDivHorizontalNoInscrita())
+							!condicionantesDisponibilidad.getDivHorizontalNoInscrita()) {
 						activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
-					else
+					} else {
 						activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_INVERSORES));
-				} else
+					}
+				} else {
 					activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
-				
+				}
 				activoHistoricoEstadoPublicacion.setActivo(activo);
 				beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "motivo", motivo);
 				beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "fechaDesde" , new Date());
 				beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "estadoPublicacion", estadoPublicacion);
 				
+				if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionForzada()) && dtoCambioEstadoPublicacion.getPublicacionForzada()) {
+					Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_FORZADA);
+					DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
+					beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
+				} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) && dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) {
+					Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_ORDINARIA);
+					DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
+					beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
+				}
+
 				genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
 			}			
 			return true;
@@ -226,7 +237,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = list.get(0);
 			String tipoPublicacionInicial = null;
 			
-			// Obtener el tipo de publicación de la que viene, si la hubiera.
+			// Obtener el tipo de publicación de la que viene, si la hubiera, y su motivo si viene de publicación forzada.
 			for(ActivoHistoricoEstadoPublicacion estado: list){
 				if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())) {
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO;
@@ -234,7 +245,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					break;
 				} else if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO;
-					dto.setMotivoPublicacion(estado.getMotivo());
 					break;
 				}
 			}

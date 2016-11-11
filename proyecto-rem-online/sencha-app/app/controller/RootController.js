@@ -108,7 +108,13 @@ Ext.define('HreRem.controller.RootController', {
     	
     	var me = this;    	    	
     	me.initi18nConfig();    	
-    	me.initAjaxConfig();    	
+    	me.initAjaxConfig();
+    	
+    	//TODO: implementar manera de avisar al usuario de que ExtJS ha dejado de funcionar.
+//    	window.onerror=function(){
+//    		 alert('Ha ocurrido un error')
+//    		 return true
+//    	}
     },
     
     initConfigRem: function() {
@@ -135,7 +141,7 @@ Ext.define('HreRem.controller.RootController', {
     	var me = this;
     	
     	// Si ya hemos creado el viewport y hay un fallo de conexión o por inactividad volveremos al login, por eso
-    	// hacemos un destroy de cualquier window que pueda existir a excecpción de la ventana de login. 
+    	// hacemos un destroy de cualquier window que pueda existir a excepción de la ventana de login. 
     	if(!Ext.isEmpty(me.viewport)) {
 	  		me.viewport.destroy();
 	  		

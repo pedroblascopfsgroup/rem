@@ -28,14 +28,13 @@ public class HttpClientFacade {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	public JSONObject processRequest(String serviceUrl, String sendMethod, Map<String, String> headers,
-			JSONObject requestJson, int responseTimeOut, String charSet) throws HttpClientException {
+	public JSONObject processRequest(String serviceUrl, String sendMethod, Map<String, String> headers, String jsonString,int responseTimeOut, String charSet) throws HttpClientException {
 
 		if (StringUtils.isBlank(serviceUrl)) {
 			throw new HttpClientFacadeInternalError("Service URL is required");
 		}
 
-		if (requestJson == null) {
+		if (jsonString == null) {
 			throw new HttpClientFacadeInternalError("JSON request is required");
 		}
 
@@ -48,7 +47,7 @@ public class HttpClientFacade {
 		Integer responseCode = null;
 		try {
 			HttpClient httpclient = new HttpClient();
-			method = getHttpMethodFromString(sendMethod, requestJson, charSet);
+			method = getHttpMethodFromString(sendMethod, jsonString, charSet);
 			logger.debug("Método de conexión: " + method.toString());
 
 			if (headers != null && (!headers.isEmpty())) {
@@ -99,19 +98,19 @@ public class HttpClientFacade {
 		}
 	}
 
-	private void setRequestParams(PostMethod method, JSONObject params, String charSet)
+	private void setRequestParams(PostMethod method, String jsonString, String charSet)
 			throws UnsupportedEncodingException {
 		logger.debug("Configurando PostMethod");
 		String contentType = "application/json";
 		logger.debug(" - Content Type : " + contentType);
 		logger.debug(" - charset : " + charSet);
 
-		StringRequestEntity entity = new StringRequestEntity(params.toString(), contentType, charSet);
+		StringRequestEntity entity = new StringRequestEntity(jsonString, contentType, charSet);
 		method.setRequestEntity(entity);
 
 	}
 
-	private HttpMethod getHttpMethodFromString(String methodString, JSONObject params, String charSet)
+	private HttpMethod getHttpMethodFromString(String methodString, String jsonString, String charSet)
 			throws UnsupportedEncodingException {
 		if (StringUtils.isNotBlank(methodString)) {
 			int method = HttpClientMethods.valueOf(methodString);
@@ -121,7 +120,7 @@ public class HttpClientFacade {
 				return new GetMethod();
 			case HttpClientMethods.POST:
 				PostMethod postMethod = new PostMethod();
-				setRequestParams(postMethod, params, charSet);
+				setRequestParams(postMethod, jsonString, charSet);
 				return postMethod;
 			default:
 				return new GetMethod();

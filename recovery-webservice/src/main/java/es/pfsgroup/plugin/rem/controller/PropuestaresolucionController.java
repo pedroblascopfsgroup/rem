@@ -73,16 +73,22 @@ public class PropuestaresolucionController {
 				e1.printStackTrace();
 			}
 			
+			Oferta oferta = null;
 			//Primero comprabar que existe OFERTA
-			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(propuestaDto.getOfertaHRE());
-			if (oferta==null) {
-				model.put("error", RestApi.REST_NO_RELATED_OFFER);				
+			if (model.get("error")==null || model.get("error")=="") {
+				oferta = ofertaApi.getOfertaByNumOfertaRem(propuestaDto.getOfertaHRE());
+				if (oferta==null) {
+					model.put("error", RestApi.REST_NO_RELATED_OFFER);				
+				}
 			}
 			
 			//Despueś comprabar que existe un ACTIVO relacionado
-			Activo activo = oferta.getActivoPrincipal();
-			if (activo==null) {
-				model.put("error", RestApi.REST_NO_RELATED_ASSET);				
+			Activo activo = null;
+			if (model.get("error")==null || model.get("error")=="") {
+				activo = oferta.getActivoPrincipal();
+				if (activo==null) {
+					model.put("error", RestApi.REST_NO_RELATED_ASSET);				
+				}
 			}
 			
 			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO

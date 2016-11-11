@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,11 +25,13 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -36,11 +39,15 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAnejo;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
@@ -54,10 +61,13 @@ import es.pfsgroup.plugin.rem.model.DtoTasacionInforme;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAnejo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -105,12 +115,15 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 		return dateFormat.format(date).toString();
 	}
 	
+	//Este método evita nulos hacia el PDF y formatea Fechas, Double...
 	private String notNull (Object obj) {
 		if (obj==null) return "-";
 		if (obj instanceof Date) {
 			return formatDate ((Date) obj);
 		}
-		//TODO: obj instanceof Double --> formatear con un par de decimales.
+		if (obj instanceof Double) {
+			return new DecimalFormat("#.##").format(obj);
+		}
 		return obj.toString();
 	}
 	
@@ -148,24 +161,100 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			mapaValores.put("Direccion",notNull(activo.getDireccion()));
 			if (activo.getTipoActivo()!=null) {
 				mapaValores.put("Tipo",notNull(activo.getTipoActivo().getDescripcionLarga()));
+			} else {
+				mapaValores.put("Tipo",notNull(null));
 			}
 			if (activo.getSubtipoActivo()!=null) {
 				mapaValores.put("Subtipo",notNull(activo.getSubtipoActivo().getDescripcionLarga()));
+			} else {
+				mapaValores.put("Subtipo",notNull(null));
 			}
-			mapaValores.put("Residencia","-");
-			mapaValores.put("CertificadoEnergetico","-");
+			if (activo.getTipoUsoDestino()!=null) {
+				mapaValores.put("Residencia",activo.getTipoUsoDestino().getDescripcionLarga());
+			} else {
+				mapaValores.put("Residencia",notNull(null)); 
+			}
+			List<ActivoAdmisionDocumento> listaAdmisionDocumento = activo.getAdmisionDocumento();
+			boolean isFoundCalificacion = false;
+			for (int m = 0; m < listaAdmisionDocumento.size(); m++) {
+				ActivoAdmisionDocumento admisionDocumento = listaAdmisionDocumento.get(m);
+				if (admisionDocumento.getTipoCalificacionEnergetica()!=null && 
+					admisionDocumento.getEstadoDocumento()!=null && 
+					DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO.equals(admisionDocumento.getEstadoDocumento().getCodigo())) {
+					mapaValores.put("CertificadoEnergetico", admisionDocumento.getTipoCalificacionEnergetica().getDescripcionLarga());
+					isFoundCalificacion = true;
+				} 				
+			}
+			if (!isFoundCalificacion) {
+				mapaValores.put("CertificadoEnergetico",notNull(null));
+			}
 			mapaValores.put("SuperficieConstruida",notNull(activo.getTotalSuperficieConstruida()));
 			mapaValores.put("Parcela",notNull(activo.getTotalSuperficieParcela()));
-			mapaValores.put("Sociedadpatrimonial","-");
-			mapaValores.put("FEntradaCartera","-");
-			mapaValores.put("FincaRegistral","-");
-			mapaValores.put("FRecepcionLlaves","-");
-			mapaValores.put("Disponibilidadjuridica","-");
-			mapaValores.put("SituacionProcesal","-");
-			mapaValores.put("SituacionLiquidacionInscripcion","-");
-			mapaValores.put("Situaciondecargas","-"); //?? -> activo.getCargas().getCargaBien());
-			mapaValores.put("Comercializacion","-");
-			mapaValores.put("Entrada","-");
+			List<ActivoPropietarioActivo> listaPropietarios = activo.getPropietariosActivo();
+			if (listaPropietarios!=null && listaPropietarios.get(0).getPropietario()!=null && listaPropietarios.get(0).getPropietario().getFullName()!=null){
+				mapaValores.put("Sociedadpatrimonial",listaPropietarios.get(0).getPropietario().getFullName()); 
+			} else {
+				mapaValores.put("Sociedadpatrimonial",notNull(null)); 
+			}
+			NMBBien bien =  activo.getBien();
+		
+			if (bien!=null) {
+				if (bien.getDatosRegistrales()!=null) {
+					mapaValores.put("FincaRegistral",notNull(bien.getDatosRegistrales()));
+				} else {
+					mapaValores.put("FincaRegistral",notNull(null));
+				}
+			} else {
+				mapaValores.put("FincaRegistral",notNull(null));
+			}
+			if (activo.getInfoComercial()!=null) {
+				mapaValores.put("FRecepcionLlaves",notNull(activo.getInfoComercial().getFechaRecepcionLlaves()));
+			} else {
+				mapaValores.put("FRecepcionLlaves",notNull(null));
+			}
+			ActivoAdjudicacionJudicial adjudicacionJudicial = activo.getAdjJudicial();
+			mapaValores.put("FEntradaCartera",notNull(adjudicacionJudicial.getFechaAdjudicacion()));
+			if (adjudicacionJudicial.getEstadoAdjudicacion()!=null) {
+				mapaValores.put("SituacionProcesal",notNull(adjudicacionJudicial.getEstadoAdjudicacion().getDescripcion()));				
+			}
+
+			boolean estaInscrito = false;
+			boolean estaLiquidado = false;
+			if (activo.getAdjJudicial()!=null && activo.getAdjJudicial().getAdjudicacionBien()!=null) {
+				estaInscrito = (activo.getAdjJudicial().getAdjudicacionBien().getFechaPresentacionIns()!=null);
+				estaLiquidado = (activo.getAdjJudicial().getAdjudicacionBien().getFechaPresentacionHacienda()!=null);
+				if (activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion()!=null) {
+					mapaValores.put("Disponibilidadjuridica","Disponible");
+				} else {
+					mapaValores.put("Disponibilidadjuridica","No disponible.");
+				}
+			}
+			if (estaInscrito && estaLiquidado) {
+				mapaValores.put("SituacionLiquidacionInscripcion","Titulo inscrito y liquidado.");
+			} else if (!estaInscrito && estaLiquidado) {
+				mapaValores.put("SituacionLiquidacionInscripcion","Titulo liquidado pero no inscrito.");
+			} else if (estaInscrito && !estaLiquidado) {
+				mapaValores.put("SituacionLiquidacionInscripcion","Titulo inscrito pero no liquidado.");
+			} else if (!estaInscrito && !estaLiquidado) {
+				mapaValores.put("SituacionLiquidacionInscripcion","Titulo sin inscribir ni liquidar.");
+			} 
+			
+			if (new Integer(1).equals(activo.getConCargas())) {
+				mapaValores.put("Situaciondecargas","CON CARGAS");
+			} else {
+				mapaValores.put("Situaciondecargas","SIN CARGAS");
+			}
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			if (new Integer(1).equals(perimetroActivo.getAplicaComercializar())) {
+				mapaValores.put("Comercializacion","SI");
+			} else {
+				mapaValores.put("Comercializacion","NO");
+			}
+			if (activo.getTipoTitulo()!=null) {
+				mapaValores.put("Entrada",notNull(activo.getTipoTitulo().getDescripcionLarga()));
+			} else {
+				mapaValores.put("Entrada",notNull(null));
+			}
 			mapaValores.put("CantidadOfertas", notNull(activoApi.cantidadOfertas(activo)));
 			Double mayorOfertaRecibida = activoApi.mayorOfertaRecibida(activo);
 			mapaValores.put("MayorOfertaRecibida", notNull(mayorOfertaRecibida));
@@ -173,7 +262,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			mapaValores.put("ImportePropuesta", notNull(oferta.getImporteOfertaAprobado()));
 			mapaValores.put("ImporteInicial", notNull(oferta.getImporteOferta()));
 			mapaValores.put("FechaContraoferta", notNull(oferta.getFechaContraoferta()));
-			mapaValores.put("GastosCompraventa", "-");
+			mapaValores.put("Contraoferta", notNull(oferta.getImporteContraOferta())); 
 			
 			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
 			if (ofertaAceptada==null) {
@@ -246,7 +335,6 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			mapaValores.put("Importe", notNull(condExp.getGastosNotaria()));
 			mapaValores.put("OpCondicionadaa", "-");
 			
-			
 			DDTiposPorCuenta tipoPlusValia = condExp.getTipoPorCuentaPlusvalia();
 			if (tipoPlusValia!=null) {
 				mapaValores.put("Plusvalia", notNull(tipoPlusValia.getDescripcionLarga()));
@@ -265,7 +353,19 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			} else {
 				mapaValores.put("OtrosImporteOferta", notNull(null));
 			}
-			mapaValores.put("Reserva", "-");
+			if (condExp!=null) {
+				if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva()) ) {
+					mapaValores.put("Reserva", notNull(condExp.getPorcentajeReserva()*oferta.getImporteOferta()));
+				} else {
+					Double importeReserva = condExp.getImporteReserva();
+					Double importeOferta = oferta.getImporteOferta();
+					if (importeOferta != null) {
+						mapaValores.put("Reserva", notNull( 100*(importeReserva/importeOferta) ));
+					}						
+				}
+			}
+			//importe RESERVA/importe OFERTA duda COE_CONDICIONANTES_EXPEDIENTE -> RES_RESERVAS
+			//sumatorio de ERE_ENTREGAS_RESERVA para el exp
 			if (activo.getInfoRegistral()!=null && activo.getInfoRegistral().getInfoRegistralBien()!=null) {
 				if (activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()==null) {
 					mapaValores.put("Inscripcion", "SI");
@@ -277,7 +377,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			
 			if (!Checks.estaVacio(activo.getTasacion()))
 			{
-				//De la lista de tasaciones que tiene el activo cojemos la más reciente
+				//De la lista de tasaciones que tiene el activo cogemos la más reciente
 				ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
 				if (tasacionMasReciente!=null) {
 					Date fechaValorTasacionMasReciente = new Date();
@@ -708,9 +808,17 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 		List<GastosExpediente> listaGastosExpediente = genericDao.getList(GastosExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
 		for (int j = 0; j < listaGastosExpediente.size(); j++) {
 			honorarios = new DtoHonorarios();
-			honorarios.setNombreHonorarios(notNull(listaGastosExpediente.get(j).getNombre()));
+			if (listaGastosExpediente.get(j).getProveedor()!=null) {
+				honorarios.setNombreHonorarios(notNull(listaGastosExpediente.get(j).getProveedor().getNombre()));
+			} else {
+				honorarios.setNombreHonorarios(notNull(null));
+			}			
 			honorarios.setConceptoHonorarios(notNull(listaGastosExpediente.get(j).getAccionGastos().getDescripcion()));
-			honorarios.setPorcentajeHonorarios(notNull(listaGastosExpediente.get(j).getImporteCalculo()));
+			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(listaGastosExpediente.get(j).getTipoCalculo().getCodigo())) {
+				honorarios.setPorcentajeHonorarios(notNull(listaGastosExpediente.get(j).getImporteCalculo()+"%"));
+			} else {
+				honorarios.setPorcentajeHonorarios("0");
+			}
 			honorarios.setImporteHonorarios(notNull(listaGastosExpediente.get(j).getImporteFinal()));
 			listaHonorarios.add(honorarios);
 		}
@@ -751,7 +859,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				tasacion.setTipoTasacion(notNull(listActivoTasacion.get(k).getTipoTasacion().getDescripcion()));
 				tasacion.setImporteTasacion(notNull(listActivoTasacion.get(k).getImporteTasacionFin()));
 				tasacion.setFechaTasacion(notNull(listActivoTasacion.get(k).getFechaRecepcionTasacion()));
-				tasacion.setFirmaTasacion(notNull(listActivoTasacion.get(k).getNomTasador()));
+				tasacion.setFirmaTasacion(notNull(listActivoTasacion.get(k).getCodigoFirma()));
 				listaTasacion.add(tasacion);
 			}
 		}

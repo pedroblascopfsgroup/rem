@@ -1014,6 +1014,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 							}
 						})	 
 					},
+					
+					T014_DefinicionOfertaValidacion: function() {
+						var me = this;
+						
+						me.deshabilitarCampo(me.down('[name=fechaEnvio]'));
+						
+						if (me.down('[name=comite]').value != 'Haya'){
+							me.habilitarCampo(me.down('[name=fechaEnvio]'));
+						}
+					},
 				     
 					habilitarCampo: function(campo) {				    	
 					    	var me = this;

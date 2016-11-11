@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucion001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="24"/>
+	<property name="ireport.y" value="2347"/>
 	<subDataset name="dataset1" uuid="859ad764-5c2d-4f72-be54-c78b00433dc1">
 		<queryString>
 			<![CDATA[]]>
@@ -1104,7 +1104,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 						</datasetRun>
 						<jr:listContents height="20" width="554">
 							<textField>
-								<reportElement x="209" y="0" width="100" height="20" uuid="c83988ec-149b-4867-b300-341d2ea996dd"/>
+								<reportElement x="199" y="0" width="72" height="20" uuid="c83988ec-149b-4867-b300-341d2ea996dd"/>
 								<textElement textAlignment="Right">
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
@@ -1530,7 +1530,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[Subtipologia:]]></text>
+				<text><![CDATA[Tipologia garaje:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="359" y="200" width="100" height="11" uuid="23bab50f-1b65-48ca-8fe2-0a3c171e3997"/>
@@ -1614,7 +1614,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[No Plazas:]]></text>
+				<text><![CDATA[No Plazas garaje:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="92" y="300" width="100" height="11" uuid="19e9f91d-3562-402a-a074-ef04ac2d6b66"/>
@@ -1628,7 +1628,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[Superficie:]]></text>
+				<text><![CDATA[Superficie garaje:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="359" y="300" width="100" height="11" uuid="71344886-02ab-4819-8634-9744ddf011e8"/>

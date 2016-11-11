@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -748,5 +749,11 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);
+	
+	/**
+	 * Guarda la propuesta
+	 * @param popuesta
+	 */
+	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta);
 	
 }

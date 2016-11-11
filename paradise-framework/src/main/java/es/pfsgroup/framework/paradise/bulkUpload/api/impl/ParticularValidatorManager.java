@@ -509,4 +509,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return true;
 	}
 	
+	@Override
+	public Boolean esPropuestaYaCargada(Long numPropuesta) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		FROM PRP_PROPUESTAS_PRECIOS prp "
+				+ "		INNER JOIN DD_EPP_ESTADO_PROP_PRECIO epp "
+				+ " 	ON epp.DD_EPP_ID = prp.DD_EPP_ID "
+				+ " 	WHERE "
+				+ " 	epp.DD_EPP_CODIGO = '04'"
+				+ " 	AND prp.PRP_NUM_PROPUESTA = "+ numPropuesta );
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
 }

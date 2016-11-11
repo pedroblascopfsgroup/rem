@@ -107,7 +107,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     esExpedienteSinReserva: function(get) {
 	     	
 	     	var tieneReserva = get('expediente.tieneReserva');
-	     	return tieneReserva === "false";
+	     	
+	     	return tieneReserva === false;
 	     	
 	     },
 		
@@ -138,6 +139,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var ocultarPestTanteo = get('expediente.ocultarPestTanteoRetracto');
 	     	return ocultarPestTanteo === "true";
 	     	
+	     },
+	     
+	     esExpedienteSinReservaOdeTipoAlquiler: function(get) {
+	    	 var me = this;
+
+	    	 if(me.getData().esExpedienteSinReserva)
+	    		 return true;
+	    	 else {
+	    		 var tipoExpediente = get('expediente.tipoExpedienteCodigo');
+			     return tipoExpediente === "02";
+	    	 }
 	     }
 	     
 		

@@ -90,7 +90,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 								
 							}else
 								if(DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor()))
-									if(trabajoApi.checkSareb(tramite.getTrabajo()))
+									if(!trabajoApi.checkSareb(tramite.getTrabajo()))
 										filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO);
 									else
 										filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DOBLE_FIRMA);

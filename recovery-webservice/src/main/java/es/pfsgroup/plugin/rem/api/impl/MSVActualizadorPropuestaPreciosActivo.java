@@ -69,6 +69,9 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 
 		try {
+			//Cambiar estado de la propuesta, y asignarle fecha de carga
+			activoApi.actualizarFechaYEstadoCargaPropuesta(Long.parseLong(exc.dameCelda(1, 2)));
+			
 			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilas(); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, EXCEL_COL_NUMACTIVO)));
 				

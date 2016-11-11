@@ -889,5 +889,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			else
 				return true;
 	}
-
+	
+	@Override
+	public boolean checkPosicionamiento(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		if(!Checks.estaVacio(expediente.getPosicionamientos()))
+			return true;
+		else
+			return false;
+	}
 }

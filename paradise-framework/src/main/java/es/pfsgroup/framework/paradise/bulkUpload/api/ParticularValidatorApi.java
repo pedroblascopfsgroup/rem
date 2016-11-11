@@ -86,4 +86,11 @@ public interface  ParticularValidatorApi {
 	 */
 	public Boolean esActivoFinanciero(String numActivo);
 	
+	/**
+	 * Comprueba si la propuesta ya ha sido cargada
+	 * @param idPropuesta
+	 * @return
+	 */
+	public Boolean esPropuestaYaCargada(Long idPropuesta);
+	
 }

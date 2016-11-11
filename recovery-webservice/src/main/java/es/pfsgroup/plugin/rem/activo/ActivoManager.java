@@ -557,7 +557,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public boolean saveActivoValoracion(Activo activo, ActivoValoraciones activoValoracion, DtoPrecioVigente dto) {
 		try {
-
 			// Actualizacion Valoracion existente
 			if (!Checks.esNulo(activoValoracion)) {
 				// Si ya existia una valoracion, actualizamos el importe que se
@@ -567,6 +566,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				saveActivoValoracionHistorico(activoValoracion);
 
 				beanUtilNotNull.copyProperties(activoValoracion, dto);
+
+				// Las fechas de inicio y fin pueden ser establecidas a null.
+				activoValoracion.setFechaInicio(dto.getFechaInicio());
+				activoValoracion.setFechaFin(dto.getFechaFin());
+
 				activoValoracion.setFechaCarga(new Date());
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);

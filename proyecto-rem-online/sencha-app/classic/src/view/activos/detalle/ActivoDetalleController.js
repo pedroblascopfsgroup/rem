@@ -1575,41 +1575,136 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    }
 	},
 
-	//Este método obtiene el valor del campo fecha fin que se está editando y comprueba las validaciones oportunas.
-	validateFechasFin: function(value){
+	//Este método obtiene los valores de las fechas fin e inicio de la fila que se está editando y comprueba las validaciones oportunas.
+	validateFechas: function(datefield, value){
 		var me = this;
 		var grid = me.lookupReference('gridPreciosVigentes');
 		if(Ext.isEmpty(grid)){ return true;}
 		var selected = grid.getSelectionModel().getSelection();
-		// Obtener columna automáticamente por 'dataindex = fechaFin'.
-		var importeActualColumn = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'fechaFin')];
+		// Obtener columnas automáticamente por 'dataindex = fechaFin' y 'dataindex = fechaInicio'.
+		var fechaFinActualRow = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'fechaFin')];
+		var fechaInicioActualRow = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'fechaInicio')];
 
 		if(!Ext.isEmpty(selected)) {
-			// Almacenar la fila fila selecciona para cuando esté siendo editada.
+			// Almacenar la fila selecciona para cuando esté siendo editada.
 			grid.codigoTipoPrecio = selected[0].getData().codigoTipoPrecio;
 		}
 
 		// Constantes.
 		var tipoMinimoAutorizado = '04';
 		var tipoAprobadoVentaWeb = '02';
+		var tipoAprobadoRentaWeb = '03';
+		var tipoDescuentoAprobado = '07';
+		var tipoDescuentoPublicadoWeb = '13';
 
-		// Recogemos los valores actuales del grid
+		// Recogemos los valores actuales del grid y los mismos almacenados en el store según casos.
+		var fechaInicioMinimo = fechaInicioActualRow.getEditor().value;
+		var fechaInicioExistenteMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().fechaInicio;
 		var fechaFinMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().fechaFin;
-		var fechaFinAprobadoVentaWeb = importeActualColumn.getEditor().value;
+		var fechaFinAprobadoVentaWeb = fechaFinActualRow.getEditor().value;
+		var fechaFinExistenteAprobadoVentaWeb = grid.getStore().findRecord('codigoTipoPrecio', tipoAprobadoVentaWeb).getData().fechaFin;
+		var fechaInicioAprobadoVentaWeb = fechaInicioActualRow.getEditor().value;
+		var fechaInicioExistenteAprobadoVentaWeb = grid.getStore().findRecord('codigoTipoPrecio', tipoAprobadoVentaWeb).getData().fechaInicio;
+		var fechaInicioDescuentoAprobado = fechaInicioActualRow.getEditor().value;
+		var fechaInicioExistenteDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().fechaInicio;
+		var fechaFinDescuentoAprobado = fechaFinActualRow.getEditor().value;
+		var fechaFinExistenteDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().fechaFin;
+		var fechaInicioDescuentoPublicadoWeb = fechaInicioActualRow.getEditor().value;
+		var fechaFinDescuentoPublicadoWeb = fechaFinActualRow.getEditor().value;
 
 		var codTipoPrecio = grid.codTipoPrecio;
 
 		switch(codTipoPrecio) {
-			case tipoAprobadoVentaWeb: // Si se está editando la fecha de la fila aprobado venta web.
-				if(Ext.isEmpty(fechaFinMinimo) || Ext.isEmpty(fechaFinAprobadoVentaWeb)) {
-					return true;
+			case tipoMinimoAutorizado:
+				if(datefield.dataIndex === 'fechaInicio') {
+					// La fecha de inicio
+					if(Ext.isEmpty(fechaInicioMinimo)) {
+						// No puede estar vacía
+						return HreRem.i18n('info.fecha.precios.msg.validacion');
+					} else {
+						if(fechaInicioMinimo > new Date()) {
+							// Ha de ser menor o igual a hoy
+							return HreRem.i18n('info.datefield.begin.date.today.msg.validacion');
+						}
+					}
 				}
-				if(fechaFinAprobadoVentaWeb <= fechaFinMinimo) {
-					return true;
+				return true;
+			case tipoAprobadoVentaWeb: // La fecha de fin de aprobado venta(web) debe ser menor o igual a la fecha fin mínimo.
+				if(datefield.dataIndex === 'fechaFin') {
+					// La fecha de fin
+					if(Ext.isEmpty(fechaFinMinimo) || Ext.isEmpty(fechaFinAprobadoVentaWeb)) {
+						// Si la fecha contra la que compara o la misma no están definidas, se valida positivo.
+						return true;
+					}
+					if(fechaFinAprobadoVentaWeb > fechaFinMinimo) {
+						// Ha de ser menor o igual a la fecha fin mínimo.
+						return HreRem.i18n('info.fecha.fin.aprobadoVentaWeb.msg.validacion');
+					}
 				} else {
-					return false;
+					// La fecha de inicio
+					if(!Ext.isEmpty(fechaInicioExistenteMinimo)) {
+						// Si la fecha inicio mínimo está definida
+						if(!Ext.isEmpty(fechaInicioAprobadoVentaWeb) && fechaInicioAprobadoVentaWeb < fechaInicioExistenteMinimo) {
+							// Si la propia fecha está definida, ha de ser mayor o igual que la fecha inicio mínimo
+							return HreRem.i18n('info.datefield.begin.date.pav.msg.validacion');
+						}
+					}
 				}
-				break;
+				return true;
+			case tipoDescuentoAprobado:
+				if(datefield.dataIndex === 'fechaFin') {
+					// La fecha de fin
+					if(Ext.isEmpty(fechaFinDescuentoAprobado)) {
+						// No puede estar vacía
+						return HreRem.i18n('info.fecha.precios.msg.validacion');
+					}
+					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaFinDescuentoAprobado > fechaFinExistenteAprobadoVentaWeb) {
+						// Ha de ser menor o igual que la fecha fin aprobado venta web
+						return HreRem.i18n('info.datefield.end.date.pda.msg.validacion');
+					}
+				} else {
+					// La fecha de inicio
+					if(Ext.isEmpty(fechaInicioDescuentoAprobado)) {
+						// No puede estar vacía
+						return HreRem.i18n('info.fecha.precios.msg.validacion');
+					}
+					if(!Ext.isEmpty(fechaInicioExistenteAprobadoVentaWeb) && fechaInicioDescuentoAprobado < fechaInicioExistenteAprobadoVentaWeb) {
+						// Ha de ser mayor o igual que la fecha inicio aprobado venta web
+						return HreRem.i18n('info.datefield.begin.date.pda.msg.validacion');
+					}
+				}
+				return true;
+			case tipoDescuentoPublicadoWeb:
+				if(datefield.dataIndex === 'fechaFin') {
+					// La fecha de fin
+					if(Ext.isEmpty(fechaFinDescuentoPublicadoWeb)) {
+						// No puede estar vacía
+						return HreRem.i18n('info.fecha.precios.msg.validacion');
+					}
+					if(!Ext.isEmpty(fechaInicioExistenteDescuentoAprobado) && fechaInicioDescuentoPublicadoWeb < fechaInicioExistenteDescuentoAprobado) {
+						// Ha de ser mayor o igual que la fecha fin descuento aprobado, si existe
+						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion');
+					}
+					if(!Ext.isEmpty(fechaInicioExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb < fechaInicioExistenteAprobadoVentaWeb) {
+						// Ha de ser mayor o igual que la fecha fin aprobado venta web, si existe
+						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
+					}
+				} else {
+					// La fecha de inicio
+					if(Ext.isEmpty(fechaInicioDescuentoPublicadoWeb)){
+						// No puede estar vacía
+						return HreRem.i18n('info.fecha.precios.msg.validacion');
+					}
+					if(!Ext.isEmpty(fechaFinExistenteDescuentoAprobado) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteDescuentoAprobado) {
+						// Ha de ser menor o igual que la fecha inicio descuento aprobado, si existe
+						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion');
+					}
+					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteAprobadoVentaWeb) {
+						// Ha de ser menor o igual que la fecha inicio aprobado venta web, si existe
+						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
+					}
+				}
+				return true;
 			default:
 				return true;
 		}
@@ -1625,7 +1720,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var importeActualColumn = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'importe')];
 
 		if(!Ext.isEmpty(selected)) {
-			// Almacenar la fila fila selecciona para cuando esté siendo editada.
+			// Almacenar la fila selecciona para cuando esté siendo editada.
 			grid.codTipoPrecio = selected[0].getData().codigoTipoPrecio;
 		}
 
@@ -1645,59 +1740,57 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var codTipoPrecio = grid.codTipoPrecio;
 
 		switch(codTipoPrecio) {
-		case tipoMinimoAutorizado: // MINIMO <= descuento Aprobado <= descuentoPublicado <= precio web.
+		case tipoMinimoAutorizado: // Mínimo <= Aprobado venta web.
 
-			var arrayPrecios = [importeActualColumn.getEditor().value, importeDescuentoAprobado, importeDecuentoPublicadoWeb, importeAprobadoVentaWeb]; 
+			var importeActualMinimo = importeActualColumn.getEditor().value; 
 			
-			if(this.comprobarRestriccionesPreciosVigentes(arrayPrecios,0)) {
-				return true;
-			}
-			else {
+			if(!Ext.isEmpty(importeActualMinimo) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualMinimo > importeAprobadoVentaWeb)) {
 				return HreRem.i18n('info.precio.importe.minimo.msg.validacion');
 			}
-			break;
+			return true;
 			
-		case tipoDescuentoAprobado: // mínimo <= DESCUENTO APROBADO <= descuentoPublicado <= precio web.
-			
-			var arrayPrecios = [importeMinimo, importeActualColumn.getEditor().value, importeDecuentoPublicadoWeb, importeAprobadoVentaWeb]; 
-			
-			if(this.comprobarRestriccionesPreciosVigentes(arrayPrecios,1)) {
-				return true;
-			}
-			else {
+		case tipoDescuentoAprobado: // Aprobado venta web <= Descuento aprobado <= Descuento web
+
+			var importeActualDescuentoAprobado = importeActualColumn.getEditor().value;
+
+			if(!Ext.isEmpty(importeActualDescuentoAprobado) && !Ext.isEmpty(importeDecuentoPublicadoWeb) && (importeActualDescuentoAprobado > importeDecuentoPublicadoWeb)){
 				return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
 			}
-			break;
-			
-		case tipoDescuentoPublicadoWeb: // mínimo <= descuento Aprobado <= DESCUENTO PUBLICADO <= precio web.
-			
-			var arrayPrecios = [importeMinimo, importeDescuentoAprobado, importeActualColumn.getEditor().value, importeAprobadoVentaWeb]; 
-			
-			if(this.comprobarRestriccionesPreciosVigentes(arrayPrecios,2)) {
-				return true;
+
+			if(!Ext.isEmpty(importeActualDescuentoAprobado) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualDescuentoAprobado > importeAprobadoVentaWeb)){
+				return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
 			}
-			else {
+
+			return true;
+
+		case tipoDescuentoPublicadoWeb: // Descuento aprobado <= Descuento Web <= Aprobado venta web.
+
+			var importeActualDescuentoWeb = importeActualColumn.getEditor().value;
+
+			if(!Ext.isEmpty(importeActualDescuentoWeb) && !Ext.isEmpty(importeDescuentoAprobado) && (importeActualDescuentoWeb < importeDescuentoAprobado)) {
 				return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
 			}
-			break;
-			
-		case tipoAprobadoVentaWeb: // mínimo <= descuento Aprobado <= descuentoPublicado <= PRECIO WEB.
-			
-			var arrayPrecios = [importeMinimo, importeDescuentoAprobado, importeDecuentoPublicadoWeb, importeActualColumn.getEditor().value]; 
-			
-			if(this.comprobarRestriccionesPreciosVigentes(arrayPrecios,3)) {
-				return true;
+
+			if(!Ext.isEmpty(importeActualDescuentoWeb) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualDescuentoWeb > importeAprobadoVentaWeb)) {
+				return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
 			}
-			else {
+
+			return true;
+
+		case tipoAprobadoVentaWeb: // Mínimo <= Aprobado venta web.
+
+			var importeActualAprobadoVentaWeb = importeActualColumn.getEditor().value;
+
+			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeMinimo) && (importeActualAprobadoVentaWeb < importeMinimo)) {
 				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
 			}
-			break;
-			
+
+			return true;	
 		default:
 			return true;
 		}
 	},
-	
+
 	// Este método desmarca el checkbox de formalizar cuando el checkbox de comercializar se desmarca.
 	onChkbxPerimetroChange: function(chkbx) {
 		var me = this;
@@ -1718,36 +1811,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			break;
 		}
 	},
-	
-	/**
-	 * Comprueba la condicion para Precios vigentes: Mínimo autorizado <= descuento aprobado <= descuento publicado <= precio web
-	 *
-	 *	arrayPrecios: contiene los cuatro precios [minimoAutorizado, descuetnoAprobado, descuentoPublicado, precioWeb]
-	 *	pos:	es la posicion del precio introducido y que se comparará con el resto por los dos lados ( por los que debe ser mayor y menor)
-	*/
-	comprobarRestriccionesPreciosVigentes: function(arrayPrecios, pos) {
-		
-		for(var i=pos+1 ; i< arrayPrecios.length ; i++) {
-			
-			if(!Ext.isEmpty(arrayPrecios[i]) && parseFloat(arrayPrecios[pos]) > parseFloat(arrayPrecios[i]))
-				return false;
-		}
-		
-		for(var i=pos-1 ; i >= 0 ; i--) {
-			
-			if(!Ext.isEmpty(arrayPrecios[i]) && parseFloat(arrayPrecios[pos]) < parseFloat(arrayPrecios[i]))
-				return false;
-		}
-		
-		return true;	
-	},
-	
+
 	abrirFormularioAnyadirEntidadActivo: function(grid) {
 		var me = this;
 		idActivo = me.getViewModel().get("activo.id");		
     	Ext.create("HreRem.view.activos.detalle.AnyadirEntidadActivo", {parent: grid, idActivo: idActivo}).show();	
 	},
-	
+
 	onClickBotonCancelarEntidad: function(btn){
 		var me = this,
 		window = btn.up('window');
@@ -1755,7 +1825,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		form.reset();
     	window.destroy();
 	},
-	
+
 	buscarProveedor: function(field, e){
 		var me= this;
 		var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorCodigoByTipoEntidad');
@@ -1765,7 +1835,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var nifEmisorField = field.up('formBase').down('[name=nifProveedor]');
 		nombreProveedorField = field.up('formBase').down('[name=nombreProveedor]'),
 		subtipoProveedorField = field.up('formBase').down('[name=subtipoProveedorField]');
-		
+
 		if(!Ext.isEmpty(codigoUnicoProveedor)){
 			Ext.Ajax.request({
 			    			

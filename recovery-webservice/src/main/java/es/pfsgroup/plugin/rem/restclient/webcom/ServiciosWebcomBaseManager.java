@@ -15,7 +15,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosExcept
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
-import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
@@ -94,7 +93,7 @@ public abstract class ServiciosWebcomBaseManager {
 	 * 
 	 * 
 	 */
-	public void compruebaObligatorios(Class dtoClass, Map<String, Object> params) {
+	public void compruebaObligatorios(Class<?> dtoClass, Map<String, Object> params) {
 
 		if (dtoClass == null) {
 			throw new IllegalArgumentException("'dtoClass' no puede ser NULL");
@@ -238,12 +237,13 @@ public abstract class ServiciosWebcomBaseManager {
 	 * @param f
 	 * @return Si complexObject es null o es una colección vacía devuelve NULL.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private String checkMissingInNestedObject(Object complexObject, String f) {
 		if ((complexObject != null) && (f != null)) {
 			if (Collection.class.isAssignableFrom(complexObject.getClass())) {
 				// Si se trata de una colección de objetos
 				String missing = null;
-				for (Object o : ((Collection) complexObject)) {
+				for (Object o : ((Collection<?>) complexObject)) {
 					// Volvemos a llamar recursivamente por cada uno de los
 					// objetos
 					missing = checkMissingInNestedObject(o, f);

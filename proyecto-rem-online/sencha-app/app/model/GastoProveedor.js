@@ -96,6 +96,13 @@ Ext.define('HreRem.model.GastoProveedor', {
 			}
 		},
 		{
+			name: 'rechazado',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}
+		},
+		{
 			name: 'asignadoATrabajos',
 			type: 'boolean',
 			convert: function(v) {

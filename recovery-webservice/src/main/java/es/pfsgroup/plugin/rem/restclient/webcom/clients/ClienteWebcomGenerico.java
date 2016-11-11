@@ -65,6 +65,7 @@ public class ClienteWebcomGenerico {
 	 * @return
 	 * @throws ErrorServicioWebcom
 	 */
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> send(WebcomEndpoint endpoint, ParamsList paramsList, RestLlamada registroLlamada)
 			throws ErrorServicioWebcom {
 
@@ -89,16 +90,17 @@ public class ClienteWebcomGenerico {
 		try {
 			// Llamada al servicio
 			JSONObject requestBody = WebcomRequestUtils.createRequestJson(paramsList);
+			String jsonString = requestBody.toString();
 			registroLlamada.logTiempPrepararJson();
 			registroLlamada.setToken(requestBody.getString(WebcomRequestUtils.JSON_PROPERTY_ID));
-			registroLlamada.setRequest(requestBody.toString());
+			registroLlamada.setRequest(jsonString);
 
 			String apiKey = endpoint.getApiKey();
 			String publicAddress = getPublicAddress();
 			registroLlamada.setApiKey(apiKey);
 			registroLlamada.setIp(publicAddress);
 
-			String signature = WebcomSignatureUtils.computeSignatue(apiKey, publicAddress, requestBody.toString());
+			String signature = WebcomSignatureUtils.computeSignatue(apiKey, publicAddress, jsonString);
 			registroLlamada.setSignature(signature);
 			logger.debug("Cálculo del signature [apiKey=" + apiKey + ", ip=" + publicAddress + "] => " + signature);
 
@@ -109,31 +111,11 @@ public class ClienteWebcomGenerico {
 			String endpointUrl = endpoint.getEndpointUrl();
 			registroLlamada.setEndpoint(endpointUrl);
 
-			String DEBUG_FILE = !Checks.esNulo(appProperties.getProperty("rest.client.json.debug.file"))
-					? appProperties.getProperty("rest.client.json.debug.file") : "true";
-
-			if (DEBUG_FILE.equals("true")) {
-				FileWriter fileW = null;
-
-				try {
-					fileW = new FileWriter(System.getProperty("user.dir").concat(System.getProperty("file.separator"))
-							.concat("call.json"));
-					fileW.write(requestBody.toString());
-				} catch (Exception e) {
-					logger.error("error al guardar el fichero JSON");
-				} finally {
-					try {
-						if (fileW != null) {
-							fileW.close();
-						}
-					} catch (IOException e) {
-						logger.error("error al cerrar el fichero");
-					}
-				}
-			}
-			JSONObject response = httpClient.processRequest(endpointUrl, httpMethod, headers, requestBody,
+			debugJsonFile(jsonString);
+			
+			JSONObject response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
 					(endpoint.getTimeout() * 1000), endpoint.getCharset());
-			registroLlamada.setResponse(response.toString());
+			registroLlamada.setResponse(jsonString);
 
 			logger.debug("Respuesta recibida " + response);
 
@@ -157,6 +139,31 @@ public class ClienteWebcomGenerico {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
 		} finally {
 			registroLlamada.logTiempoPeticionRest();
+		}
+	}
+
+	private void debugJsonFile(String jsonString) {
+		String DEBUG_FILE = !Checks.esNulo(appProperties.getProperty("rest.client.json.debug.file"))
+				? appProperties.getProperty("rest.client.json.debug.file") : "true";
+
+		if (DEBUG_FILE.equals("true")) {
+			FileWriter fileW = null;
+
+			try {
+				fileW = new FileWriter(System.getProperty("user.dir").concat(System.getProperty("file.separator"))
+						.concat("call.json"));
+				fileW.write(jsonString);
+			} catch (Exception e) {
+				logger.error("error al guardar el fichero JSON");
+			} finally {
+				try {
+					if (fileW != null) {
+						fileW.close();
+					}
+				} catch (IOException e) {
+					logger.error("error al cerrar el fichero");
+				}
+			}
 		}
 	}
 

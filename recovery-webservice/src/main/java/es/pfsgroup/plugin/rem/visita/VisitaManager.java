@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
@@ -233,6 +234,31 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				}
 			}
 		}
+		if (!Checks.esNulo(visitaDto.getIdProveedorRemFdv())) {
+			ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemFdv()));
+			if (Checks.esNulo(fdv)) {
+				hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
+			}else {
+				//el proveedor tiene que ser custodio
+				if(fdv.getTipoProveedor()==null || !fdv.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)){
+					hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
+			}
+		}
+		if (!Checks.esNulo(visitaDto.getIdProveedorRemCustodio())) {
+			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemCustodio()));
+			if (Checks.esNulo(cust)) {
+				hashErrores.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
+			}else {
+				//el proveedor tiene que ser custodio
+				if ((cust.getCustodio() != null && cust.getCustodio() != new Integer(1))
+						|| cust.getCustodio() == null) {
+					hashErrores.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
+			}
+		}
 	
 
 		return hashErrores;
@@ -315,7 +341,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemFdv()));
 				if (!Checks.esNulo(fdv)) {
 					visita.setFdv(fdv);
-					;
 				}
 			}
 			if (!Checks.esNulo(visitaDto.getIdProveedorRemVisita())) {

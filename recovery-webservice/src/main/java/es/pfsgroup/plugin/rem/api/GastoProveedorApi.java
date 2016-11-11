@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -203,5 +201,21 @@ public interface GastoProveedorApi {
 		 * @return Object
 		 */
 		public Object searchGastoNumHaya(String numeroGastoHaya, String proveedorEmisor, String destinatario);
+
+
+		/**
+		 * Método que autoriza los gastos recibidos 
+		 * @param idsGastos
+		 * @return
+		 */
+		public boolean autorizarGastos(Long[] idsGastos);
+
+		/**
+		 * Método que rechaza los gastos recibidos
+		 * @param idsGastos
+		 * @param motivoRechazo
+		 * @return
+		 */
+		public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo);
 }
 

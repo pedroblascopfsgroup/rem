@@ -179,8 +179,20 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>es.pfsgroup</groupId>
-			<artifactId>pfs-commons-java</artifactId>
+			<groupId>es.pfsgroup.recovery</groupId>
+			<artifactId>rec-encrypt</artifactId>
+			<scope>compile</scope>
+			<version>9.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.recovery</groupId>
+			<artifactId>rec-common</artifactId>
 			<scope>compile</scope>
 			<version>9.1-SNAPSHOT</version>
 			<exclusions>

@@ -352,6 +352,10 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkSareb(tareaExterna);
             }
+            def checkBankia = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkBankia(tareaExterna);
+            }
             def comprobarActivoComercializable = {
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.comprobarActivoComercializable(idActivo);
@@ -395,6 +399,18 @@
 			def checkVPO = {
 				def activoManager = ctx.getBean("activoManager");
 				return activoManager.checkVPO(tareaExterna);
+			}
+			def altaComite = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.altaComite(tareaExterna);
+			}
+			def checkPoliticaCorporativa = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkPoliticaCorporativa(tareaExterna);
+			}
+			def checkPosicionamiento = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkPosicionamiento(tareaExterna);
 			}
   			 ]]></value>
   		</list>

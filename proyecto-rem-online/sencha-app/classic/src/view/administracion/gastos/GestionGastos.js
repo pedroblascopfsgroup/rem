@@ -1,12 +1,15 @@
 Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
-    extend		: 'HreRem.view.common.FormBase',
+    extend		: 'Ext.panel.Panel',
     xtype		: 'gestiongastos',
+    scrollable: 'y',
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+    listeners: {
+    	activate: function(){this.refreshOnActivate()}
+	},
     requires	: ['HreRem.view.administracion.gastos.GestionGastosList', 'HreRem.view.administracion.gastos.GestionGastosSearch'],
-//	layout: 'fit',
-	scrollable: true,
-	cls	: 'panel-base shadow-panel',
-	scrollable	: 'y',
-//	cls	: 'panel-base shadow-panel tabPanel-tercer-nivel',
     initComponent: function () {        
         var me = this;
         
@@ -16,7 +19,8 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
         
 	        {
 	        	xtype:'gestiongastossearch',
-	        	reference: 'gestiongastossearchref'
+	        	reference: 'gestiongastossearchref',
+	        	scrollable: 'y'
 	        },       			
 	        {
 	        	xtype: 'gestiongastoslist',
@@ -31,13 +35,22 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
         
     },
     
+    refreshOnActivate: function() {
+    	var me = this;
+    	if(me.refreshOnActivate) {
+    		me.funcionRecargar();
+    		me.refreshOnActivate = false;
+    	}
+    	
+    },
+    
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().loadPage(1);
   		});
-    } 
+    }
 
 
 });

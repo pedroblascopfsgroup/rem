@@ -95,15 +95,19 @@ BEGIN
 	VERSION,
 	USUARIOCREAR,
 	FECHACREAR,
-	BORRADO
+	BORRADO,
+	DD_CRA_ID
 	)
 	WITH PRO_CODIGO_UVEM AS (
-  SELECT MIGW.PRO_CODIGO_UVEM
+  SELECT MIGW.PRO_CODIGO_UVEM, MIGW.PRO_COD_CARTERA
   FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIGW
+  INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA
+	ON CRA.DD_CRA_CODIGO = MIGW.PRO_COD_CARTERA
   WHERE NOT EXISTS (
     SELECT 1 
     FROM '||V_ESQUEMA||'.'||V_TABLA||' PROW
     WHERE PROW.PRO_CODIGO_UVEM = MIGW.PRO_CODIGO_UVEM
+    AND DD_CRA_ID = CRA.DD_CRA_ID
   )
 	)
 	SELECT
@@ -146,10 +150,14 @@ BEGIN
 	''0''                                                                                            	VERSION,
 	''MIGRAREM01BNK''                                                                                        	USUARIOCREAR,
 	SYSDATE                                                                                 	FECHACREAR,
-	0                                                                                           	BORRADO
+	0                                                                                           	BORRADO,
+	(SELECT DD_CRA_ID
+	FROM '||V_ESQUEMA||'.DD_CRA_CARTERA
+	WHERE DD_CRA_CODIGO = MIG.PRO_COD_CARTERA)                   		DD_CRA_ID
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
 	INNER JOIN PRO_CODIGO_UVEM PRO
 	ON PRO.PRO_CODIGO_UVEM = MIG.PRO_CODIGO_UVEM
+	AND PRO.PRO_COD_CARTERA = MIG.PRO_COD_CARTERA
 	')
 	;
 

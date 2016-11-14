@@ -20,7 +20,7 @@ public class UpdaterServicePropuestaPreciosEnvioProp implements UpdaterService {
     @Autowired
     private GenericABMDao genericDao;
     
-	private static final String FECHA_ENVIO = "fechaRespuesta";
+	private static final String FECHA_ENVIO = "fechaEnvio";
 	private static final String CODIGO_T009_ENVIO_PROPUESTA = "T009_EnvioPropuestaPropietario";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");

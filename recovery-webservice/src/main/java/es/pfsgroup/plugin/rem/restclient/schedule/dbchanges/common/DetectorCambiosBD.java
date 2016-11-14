@@ -82,7 +82,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 * @return Este método devolverá NULL si el parámetro dtoClass no coincide
 	 *         con el DTO asociado al detector.
 	 */
-	public List<T> listPendientes(Class dtoClass, RestLlamada registro) {
+	public List<T> listPendientes(Class<?> dtoClass, RestLlamada registro) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -98,7 +98,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 
 	}
 
-	public List<T> listDatosCompletos(Class dtoClass, RestLlamada registro) {
+	public List<T> listDatosCompletos(Class<?> dtoClass, RestLlamada registro) {
 
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
@@ -128,7 +128,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 *            Objeto en el que se irá dejando trazas de tiempos de
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
-	public void marcaComoEnviados(Class dtoClass, RestLlamada registro) {
+	public void marcaComoEnviados(Class<?> dtoClass, RestLlamada registro) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -151,11 +151,11 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 * 
 	 * @return
 	 */
-	public Class getDtoClass() {
+	public Class<?> getDtoClass() {
 		return this.createDtoInstance().getClass();
 	}
 
-	private List<T> extractDtos(Class dtoClass, DataAccessOperation dao) {
+	private List<T> extractDtos(Class<?> dtoClass, DataAccessOperation dao) {
 		if (dao == null) {
 			throw new IllegalArgumentException("Data Access Operation is not defined");
 		}
@@ -233,7 +233,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	 * @param dtoClass
 	 * @return
 	 */
-	private FusionCambios necesitaFusionarCambios(Class dtoClass) {
+	private FusionCambios necesitaFusionarCambios(Class<?> dtoClass) {
 		List<Field> containers = new ArrayList<Field>();
 		for (Field f : dtoClass.getDeclaredFields()) {
 			NestedDto nested = f.getAnnotation(NestedDto.class);
@@ -248,7 +248,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 		}
 	}
 
-	private T creaYRellenaDto(Class dtoClass, Map<String, Object> datos) {
+	private T creaYRellenaDto(Class<?> dtoClass, Map<String, Object> datos) {
 		T dto = createDtoInstance();
 		logger.debug("Relenamos el dto " + dtoClass + " con " + datos);
 		Converter.updateObjectFromHashMap(datos, dto, null);

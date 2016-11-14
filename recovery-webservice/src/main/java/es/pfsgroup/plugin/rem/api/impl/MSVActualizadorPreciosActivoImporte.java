@@ -69,6 +69,8 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 			for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				
+				// Si alguno de los precios está vacío, comprobar si existe anterior y pasarlo al histórico sin crear o actualizar ningún otro.
+				
 				//Si hay Valoracion = Precio Aprobado venta para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 1))){
 					actualizarCrearValoresPrecios(activo,
@@ -116,7 +118,6 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 			}
 
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -148,11 +149,11 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 			Date fechaFin = simpleDate.parse(fechaFinExcel);
 			dtoActivoValoracion.setFechaFin(fechaFin);
 		}
-		if(Checks.esNulo(fechaInicioExcel)){
-			dtoActivoValoracion.setFechaInicio(new Date());
-		} else {
+		if(!Checks.esNulo(fechaInicioExcel)){
 			Date fechaInicio = simpleDate.parse(fechaInicioExcel);
 			dtoActivoValoracion.setFechaInicio(fechaInicio);
+		} else {
+			dtoActivoValoracion.setFechaInicio(new Date());
 		}
 		
 		//El metodo saveActivoValoracion actualizara el importe y las fechas del precio existente (encontrado en activoValoracion

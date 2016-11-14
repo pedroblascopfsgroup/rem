@@ -32,7 +32,23 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoHabitaculo implements Auditable, Dictionary {
 
-
+	public static String TIPO_HABITACULO_DORMITORIO = "01";
+	public static String TIPO_HABITACULO_BANYO = "02";
+	public static String TIPO_HABITACULO_SALON = "03";
+	public static String TIPO_HABITACULO_ASEO = "04";
+	public static String TIPO_HABITACULO_BALCON = "05";
+	public static String TIPO_HABITACULO_COCINA = "06";
+	public static String TIPO_HABITACULO_TENDEDERO = "07";
+	public static String TIPO_HABITACULO_HALL = "08";
+	public static String TIPO_HABITACULO_PATIO = "09";
+	public static String TIPO_HABITACULO_PORCHE = "10";
+	public static String TIPO_HABITACULO_TRASTERO = "11";
+	public static String TIPO_HABITACULO_GARAJE = "12";
+	public static String TIPO_HABITACULO_DESPENSA = "13";
+	public static String TIPO_HABITACULO_LAVADERO = "14";
+	public static String TIPO_HABITACULO_T_CUBIERTA = "15";
+	public static String TIPO_HABITACULO_T_DESCUBIERTA = "16";
+	
 	/**
 	 * 
 	 */

@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -18,16 +17,12 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import es.capgemini.devon.hibernate.dao.AbstractHibernateDao;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
@@ -108,7 +103,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 * @return
 	 */
-	public List<CambioBD> listCambios(Class dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
+	public List<CambioBD> listCambios(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -187,7 +182,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	}
 
-	public List<CambioBD> listDatosActuales(Class dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
+	public List<CambioBD> listDatosActuales(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -266,7 +261,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            Objeto en el que se irá dejando trazas de tiempos de
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
-	public void marcaComoEnviados(Class dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
+	public void marcaComoEnviados(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
 		long startTime = System.currentTimeMillis();
 
 		if (dtoClass == null) {
@@ -345,7 +340,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @param dtoClass
 	 * @return
 	 */
-	public FieldInfo[] getDtoFields(Class dtoClass) {
+	public FieldInfo[] getDtoFields(Class<?> dtoClass) {
 		ArrayList<FieldInfo> fields = new ArrayList<FieldInfo>();
 
 		for (Field f : dtoClass.getDeclaredFields()) {

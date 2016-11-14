@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -14,7 +13,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomStock;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDaoError;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 
@@ -44,6 +42,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * Esto se hace capturando el evento ContextRefreshedEvent. Ver el método
 	 * onApplicationEvent(ApplicationEvent event)
 	 */
+	@SuppressWarnings("rawtypes")
 	private List<DetectorCambiosBD> registroCambiosHandlers = new ArrayList<DetectorCambiosBD>();
 
 	/**
@@ -52,14 +51,14 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * 
 	 * @param handler
 	 */
-	public void addRegistroCambiosBDHandler(DetectorCambiosBD handler) {
+	public void addRegistroCambiosBDHandler(DetectorCambiosBD<?> handler) {
 		if (handler != null) {
 			logger.debug("Añadiendo un nuevo handler para detectar cambios en BD: " + handler.getClass());
 			this.registroCambiosHandlers.add(handler);
 		}
 	}
 
-	public void enviaInformacionCompleta(DetectorCambiosBD handler) {
+	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) {
 		if (handler == null) {
 			throw new IllegalArgumentException("'handler' no puede ser NULL");
 		}
@@ -79,7 +78,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			times++;
 		}
 
-		Class control = handler.getDtoClass();
+		Class<?> control = handler.getDtoClass();
 
 		if (running) {
 			logger.fatal("Ha cadudado el tiempo de espera y el proceso aún está bloqueado");
@@ -98,7 +97,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			long startTime = System.currentTimeMillis();
 
 			logger.debug(handler.getClass().getSimpleName() + ": obtenemos toda la información de la  BD");
-			List listPendientes = handler.listDatosCompletos(control, registro);
+			List<?> listPendientes = handler.listDatosCompletos(control, registro);
 			somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
 
 			ejecutaTarea(handler, listPendientes, control, registro);
@@ -124,6 +123,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * 
 	 * @param class1
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void detectaCambios(DetectorCambiosBD handlerToExecute) {
 		if (running) {
 			logger.warn("El detector de cambios en BD ya se está ejecutando");
@@ -179,7 +179,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	}
 
-	public void ejecutaTarea(DetectorCambiosBD handler, List listPendientes, Class control, RestLlamada registro) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void ejecutaTarea(DetectorCambiosBD<?> handler, List listPendientes, Class control, RestLlamada registro) {
 
 		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
 			logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
@@ -210,6 +211,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * Este método puebla la lista de detectores de cambios una vez el contexto
 	 * de Spring ya se encuentra inicializado.
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
 		if (event instanceof ContextRefreshedEvent) {
@@ -254,6 +256,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void configuraHandlers(ApplicationContext applicationContext, String[] beanNames) {
 		for (String name : beanNames) {
 			DetectorCambiosBD handler = (DetectorCambiosBD) applicationContext.getBean(name);
@@ -261,6 +264,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public List<DetectorCambiosBD> getRegistroCambiosHandlers() {
 		return registroCambiosHandlers;
 	}

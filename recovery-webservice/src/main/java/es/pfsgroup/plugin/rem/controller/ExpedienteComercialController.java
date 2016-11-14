@@ -886,7 +886,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboProveedoresExpediente(@RequestParam String codigoTipoProveedor, @RequestParam String nombreBusqueda,WebDto dto, ModelMap model) {
+	public ModelAndView getComboProveedoresExpediente(@RequestParam(required = false) String codigoTipoProveedor, @RequestParam(required = false) String nombreBusqueda,WebDto dto, ModelMap model) {
 		
 		try {
 			List<ActivoProveedor> proveedores = expedienteComercialApi.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, dto);

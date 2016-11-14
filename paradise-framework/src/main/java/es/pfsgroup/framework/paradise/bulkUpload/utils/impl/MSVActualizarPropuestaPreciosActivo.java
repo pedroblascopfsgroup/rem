@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
@@ -91,6 +89,8 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 	public static final String ACTIVE_VRF_DATE_INIT_FORMAT = "La fecha del valor de referencia no tiene un formato correcto (DD/MM/AAAA)";
 	public static final String ACTIVE_VEV_DATE_INIT_FORMAT = "La fecha del valor estimado de venta no tiene un formato correcto (DD/MM/AAAA)";
 	
+	public static final String PROPUESTA_YA_CARGADA = "Esta propuesta ya ha sido cargada anteriormente.";
+	
 //	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
 //	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
 //	public static final String ACTIVE_OFERTA_APROBADA = "El activo tiene ofertas aprobadas. No se pueden actualizar precios";
@@ -136,23 +136,27 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 //			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
-				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZE_NAN), getNANPrecioIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED, getLimitePreciosDescAprobDescWebIncorrectoRows(exc));
-				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED), getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_PAR_DATE_INIT_EXCEEDED, getFechaInicioAprobadoRentaIncorrectaRows(exc));
-				mapaErrores.put(messageServices.getMessage(ACTIVE_PMA_DATE_INIT_EXCEEDED), getFechaInicioMinimoAuthIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_PDA_DATE_INIT_EXCEEDED, getFechaInicioDescuentoAprobIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_PDP_DATE_INIT_EXCEEDED, getFechaInicioDescuentoPubIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_VEV_DATE_INIT_FORMAT, getFechaVEVIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_VRF_DATE_INIT_FORMAT, getFechaVRFIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_FSV_DATE_INIT_FORMAT, getFechaFSVIncorrectaRows(exc));
-				
+				mapaErrores.put(PROPUESTA_YA_CARGADA, isPropuestaYaCargada(exc));
+				//Si la propuesta ya ha sido cargada, no se realizan el resto de comprobaciones
+				if(mapaErrores.get(PROPUESTA_YA_CARGADA).isEmpty()) {
+					mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
+					mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZE_NAN), getNANPrecioIncorrectoRows(exc));
+					mapaErrores.put(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED, getLimitePreciosDescAprobDescWebIncorrectoRows(exc));
+					mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED), getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
+					mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
+					mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
+					mapaErrores.put(ACTIVE_PAR_DATE_INIT_EXCEEDED, getFechaInicioAprobadoRentaIncorrectaRows(exc));
+					mapaErrores.put(messageServices.getMessage(ACTIVE_PMA_DATE_INIT_EXCEEDED), getFechaInicioMinimoAuthIncorrectaRows(exc));
+					mapaErrores.put(ACTIVE_PDA_DATE_INIT_EXCEEDED, getFechaInicioDescuentoAprobIncorrectaRows(exc));
+					mapaErrores.put(ACTIVE_PDP_DATE_INIT_EXCEEDED, getFechaInicioDescuentoPubIncorrectaRows(exc));
+					mapaErrores.put(ACTIVE_VEV_DATE_INIT_FORMAT, getFechaVEVIncorrectaRows(exc));
+					mapaErrores.put(ACTIVE_VRF_DATE_INIT_FORMAT, getFechaVRFIncorrectaRows(exc));
+					mapaErrores.put(ACTIVE_FSV_DATE_INIT_FORMAT, getFechaFSVIncorrectaRows(exc));
+				}
 
 				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
+					if(!mapaErrores.get(PROPUESTA_YA_CARGADA).isEmpty() ||
+							!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
 							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty() ||
 							!mapaErrores.get(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED).isEmpty() ||
 							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED)).isEmpty() ||
@@ -718,6 +722,32 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}		
+		return listaFilas;
+	}
+	
+	private List<Integer> isPropuestaYaCargada(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		Long numPropuesta = null;
+		
+		try {
+			numPropuesta = Long.parseLong(exc.dameCelda(1, 2));
+			if(!Checks.esNulo(numPropuesta)) {
+				if(particularValidator.esPropuestaYaCargada(numPropuesta))
+					listaFilas.add(1);
+			}
+			
+		} catch (NumberFormatException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
 		return listaFilas;
 	}
 }

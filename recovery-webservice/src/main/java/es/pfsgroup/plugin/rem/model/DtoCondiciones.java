@@ -53,7 +53,7 @@ public class DtoCondiciones extends WebDto {
 	private String procedeDescalificacionPorCuentaDe;
 	private Double impuestos;
 	private Double comunidades;
-	private Integer sujetoTramiteTanteo;
+	private Boolean sujetoTramiteTanteo;
 	private String licencia;
 	private String estadoTramite;
 	private Double cargasOtros;
@@ -382,11 +382,11 @@ public class DtoCondiciones extends WebDto {
 		this.comunidades = comunidades;
 	}
 
-	public Integer getSujetoTramiteTanteo() {
+	public Boolean getSujetoTramiteTanteo() {
 		return sujetoTramiteTanteo;
 	}
 
-	public void setSujetoTramiteTanteo(Integer sujetoTramiteTanteo) {
+	public void setSujetoTramiteTanteo(Boolean sujetoTramiteTanteo) {
 		this.sujetoTramiteTanteo = sujetoTramiteTanteo;
 	}
 

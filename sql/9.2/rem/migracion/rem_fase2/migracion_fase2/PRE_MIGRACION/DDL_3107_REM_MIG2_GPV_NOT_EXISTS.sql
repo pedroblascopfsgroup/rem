@@ -56,7 +56,7 @@ BEGIN
         V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS
         (
                 TABLA_MIG                                       VARCHAR2(30 CHAR),
-                GPV_NUM_GASTO_GESTORIA          NUMBER(16,0),
+                GPV_NUM_GASTO_HAYA          NUMBER(16,0),
                 FECHA_COMPROBACION                      DATE
         )
         LOGGING 

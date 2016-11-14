@@ -8,11 +8,11 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.dao.AbstractEntityDao;
 
 @Component
 public class HibernateExecutionFacade {
 
+	@SuppressWarnings("unchecked")
 	public List<Object[]> sqlRunList(Session session, String queryString) {
 		List<Object[]> resultado;
 		Query query = createQuery(session, queryString);
@@ -28,7 +28,7 @@ public class HibernateExecutionFacade {
 		return createQuery(session, queryDelete).executeUpdate();
 	}
 
-	public Criteria createCriteria(Session session, Class persitentClass) {
+	public Criteria createCriteria(Session session, Class<?> persitentClass) {
 		return session.createCriteria(persitentClass);
 	}
 

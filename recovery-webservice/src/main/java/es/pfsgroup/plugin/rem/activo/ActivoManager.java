@@ -106,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -119,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
@@ -555,7 +557,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public boolean saveActivoValoracion(Activo activo, ActivoValoraciones activoValoracion, DtoPrecioVigente dto) {
 		try {
-
 			// Actualizacion Valoracion existente
 			if (!Checks.esNulo(activoValoracion)) {
 				// Si ya existia una valoracion, actualizamos el importe que se
@@ -565,6 +566,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				saveActivoValoracionHistorico(activoValoracion);
 
 				beanUtilNotNull.copyProperties(activoValoracion, dto);
+
+				// Las fechas de inicio y fin pueden ser establecidas a null.
+				activoValoracion.setFechaInicio(dto.getFechaInicio());
+				activoValoracion.setFechaFin(dto.getFechaFin());
+
 				activoValoracion.setFechaCarga(new Date());
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
@@ -2791,5 +2797,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return dtoMov;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idPropuesta);
+		PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, filtro);
+		
+		propuesta.setFechaCarga(new Date());
+		
+		DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_CARGADA);
+		propuesta.setEstado(estado);
+		
+		genericDao.update(PropuestaPrecio.class, propuesta);
 	}
 }

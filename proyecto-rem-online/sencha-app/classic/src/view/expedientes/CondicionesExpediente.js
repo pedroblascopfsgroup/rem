@@ -560,22 +560,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							{
 				        		xtype:'displayfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
-					        	bind: '{condiciones.fechaTomaPosesion}'					        						        	
+					        	bind: '{condiciones.fechaTomaPosesion}'
 					        },
-					        {		                
+					        {
 							    xtype: 'checkboxfieldbase',
 							    fieldLabel:  HreRem.i18n('fieldlabel.sujeto.tramite.tanteo'),
-							    readOnly: true,
-							    bind:		'{condiciones.sujetoTramiteTanteo}'		                
+							    bind: '{condiciones.sujetoTramiteTanteo}',
+							    colspan: 2
 		                	},
-					        { 
-								xtype: 'textfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.tramite'),
-			                	bind: {
-					        		value: '{condiciones.estadoTramite}',
-					        		disabled: '{!onEstaSujetoTanteo}'
-			                	}
-					        },
 					        { 
 								xtype:'comboboxfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.ocupado'),
@@ -717,18 +709,23 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								bind: {
 			            			store: '{comboSiNoRem}',
 			            			value: '{condiciones.vpo}'
+			            		},
+		    					listeners: {
+		    						edit:  'cargaValorVpo'
 			            		}
 					        },
 					        { 
 								xtype: 'comboboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.procede.descalificacion'),
+			                	reference: 'procedeDescalificacionRef',
 					        	bind: {
 				            		store: '{comboSiNoRem}',
 				            		value: '{condiciones.procedeDescalificacion}'
 				            	},
 				            	listeners: {
 				            		change: 'onHaCambiadoProcedeDescalificacion'
-				            	}
+				            	},
+		    					disabled: true
 					        },
 					        { 
 								xtype: 'comboboxfieldbase',

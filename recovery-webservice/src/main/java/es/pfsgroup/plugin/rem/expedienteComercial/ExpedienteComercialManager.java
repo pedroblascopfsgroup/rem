@@ -1171,8 +1171,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			if(!Checks.esNulo(condiciones.getEstadoFinanciacion())){
 				dto.setEstadosFinanciacion(condiciones.getEstadoFinanciacion().getCodigo());
 			}
-			dto.setEntidadFinanciacion(condiciones.getEntidadFinanciacion());			
-			dto.setEstadoTramite(condiciones.getEstadoTramite());
+			dto.setEntidadFinanciacion(condiciones.getEntidadFinanciacion());
 			dto.setFechaInicioExpediente(condiciones.getFechaInicioExpediente());
 			dto.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
 			dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
@@ -1244,7 +1243,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 			//Juridicas-situacion del activo
-			dto.setSujetoTramiteTanteo(condiciones.getSujetoTanteoRetracto());
+			if(!Checks.esNulo(condiciones.getSujetoTanteoRetracto())) {
+				dto.setSujetoTramiteTanteo(condiciones.getSujetoTanteoRetracto() == 1 ? true : false);
+			}
 			dto.setEstadoTramite(condiciones.getEstadoTramite());
 			
 			//Juridicas-Requerimientos del comprador
@@ -1276,25 +1277,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente){
-		
+
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
-		
-		if(!Checks.esNulo(condiciones)){
+
+		if(!Checks.esNulo(condiciones)) {
 			//condiciones.setExpediente(expedienteComercial);
 			condiciones= dtoCondicionantestoCondicionante(condiciones, dto);
-		}
-		
-		else{	
+		} else {	
 			condiciones= new CondicionanteExpediente();
 			condiciones.setExpediente(expedienteComercial);
 			condiciones= dtoCondicionantestoCondicionante(condiciones, dto);		
 		}
-		
+
 		genericDao.save(CondicionanteExpediente.class, condiciones);
-		
+
 		Reserva reserva = expedienteComercial.getReserva();
-		
+
 		// Creamos la reserva si se existe en condiciones y no se ha creado todavia
 		if(!Checks.esNulo(condiciones.getTipoCalculoReserva()) && Checks.esNulo(reserva)) {
 			reserva = new Reserva();
@@ -1302,22 +1301,20 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			reserva.setEstadoReserva(estadoReserva);
 			reserva.setExpediente(expedienteComercial);
 			reserva.setNumReserva(reservaDao.getNextNumReservaRem());
-			
+
 			genericDao.save(Reserva.class, reserva);
-			
+
 			//Actualiza la disponibilidad comercial del activo
 			ofertaApi.updateStateDispComercialActivosByOferta(expedienteComercial.getOferta());
 		} 
-		
+
 		return true;
-		
 	}
 	
 	public CondicionanteExpediente dtoCondicionantestoCondicionante(CondicionanteExpediente condiciones, DtoCondiciones dto){
 		try{
-			
 			beanUtilNotNull.copyProperties(condiciones, dto); 
-			
+
 			if(!Checks.esNulo(dto.getEstadosFinanciacion())){
 				DDEstadoFinanciacion estadoFinanciacion = (DDEstadoFinanciacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoFinanciacion.class, dto.getEstadosFinanciacion());
 				condiciones.setEstadoFinanciacion(estadoFinanciacion);
@@ -1337,7 +1334,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					condiciones.setPlazoFirmaReserva(null);
 				}
 			}
-			
+
 			//Fiscales
 			if(!Checks.esNulo(dto.getTipoImpuestoCodigo())){
 				DDTiposImpuesto tipoImpuesto= (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigo());
@@ -1440,6 +1437,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			if(!Checks.esNulo(dto.getLicenciaPorCuentaDe()) || "".equals(dto.getLicenciaPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaLicencia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getLicenciaPorCuentaDe());
 				condiciones.setTipoPorCuentaLicencia(tipoPorCuentaLicencia);
+			}
+			
+			//Juridicas-situacion del activo
+			if(!Checks.esNulo(dto.getSujetoTramiteTanteo())) {
+				condiciones.setSujetoTanteoRetracto(dto.getSujetoTramiteTanteo() == true ? 1 : 0);
 			}
 		}catch(Exception ex) {
 			logger.error(ex.getMessage());
@@ -1947,7 +1949,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 			}
 			
-			if(Checks.esNulo(gastoExpediente.getTipoCalculo())){
+			if(!Checks.esNulo(gastoExpediente.getTipoCalculo())){
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, dtoGastoExpediente.getTipoCalculo());
 				gastoExpediente.setTipoCalculo(tipoCalculo);
 			}

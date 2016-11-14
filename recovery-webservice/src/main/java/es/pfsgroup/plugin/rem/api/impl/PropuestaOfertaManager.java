@@ -213,10 +213,18 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				mapaValores.put("FRecepcionLlaves",notNull(null));
 			}
 			ActivoAdjudicacionJudicial adjudicacionJudicial = activo.getAdjJudicial();
-			mapaValores.put("FEntradaCartera",notNull(adjudicacionJudicial.getFechaAdjudicacion()));
-			if (adjudicacionJudicial.getEstadoAdjudicacion()!=null) {
-				mapaValores.put("SituacionProcesal",notNull(adjudicacionJudicial.getEstadoAdjudicacion().getDescripcion()));				
+			if (adjudicacionJudicial!=null) {
+				mapaValores.put("FEntradaCartera",notNull(adjudicacionJudicial.getFechaAdjudicacion()));
+				if (adjudicacionJudicial.getEstadoAdjudicacion()!=null) {
+					mapaValores.put("SituacionProcesal",notNull(adjudicacionJudicial.getEstadoAdjudicacion().getDescripcion()));				
+				} else {
+					mapaValores.put("SituacionProcesal",notNull(null));			
+				}
+			} else {
+				mapaValores.put("FEntradaCartera",notNull(null));		
+				mapaValores.put("SituacionProcesal",notNull(null));		
 			}
+
 
 			boolean estaInscrito = false;
 			boolean estaLiquidado = false;
@@ -228,6 +236,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				} else {
 					mapaValores.put("Disponibilidadjuridica","No disponible.");
 				}
+			} else {
+				mapaValores.put("Disponibilidadjuridica",notNull(null));
 			}
 			if (estaInscrito && estaLiquidado) {
 				mapaValores.put("SituacionLiquidacionInscripcion","Titulo inscrito y liquidado.");
@@ -359,9 +369,11 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 				} else {
 					Double importeReserva = condExp.getImporteReserva();
 					Double importeOferta = oferta.getImporteOferta();
-					if (importeOferta != null) {
+					if (importeOferta!= null && importeReserva!=null ) {
 						mapaValores.put("Reserva", notNull( 100*(importeReserva/importeOferta) ));
-					}						
+					} else {
+						mapaValores.put("Reserva", notNull(null));
+					}
 				}
 			}
 			//importe RESERVA/importe OFERTA duda COE_CONDICIONANTES_EXPEDIENTE -> RES_RESERVAS
@@ -822,7 +834,6 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi{
 			honorarios.setImporteHonorarios(notNull(listaGastosExpediente.get(j).getImporteFinal()));
 			listaHonorarios.add(honorarios);
 		}
-		listaHonorarios.add(honorarios);
 		propuestaOferta.setListaHonorarios(listaHonorarios);
 		
 		//Ofertas asociadas a las 

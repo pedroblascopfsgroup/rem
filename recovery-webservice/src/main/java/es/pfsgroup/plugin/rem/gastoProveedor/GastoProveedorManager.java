@@ -801,6 +801,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			genericDao.update(GastoProveedorActivo.class, gastoActivo);
 			
 		}catch(Exception e) {
+			logger.error(e.getStackTrace());
 			return false;
 		}
 		
@@ -828,6 +829,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 
 		}catch(Exception e) {
+			logger.error(e.getStackTrace());
 			return false;
 		}
 		
@@ -844,6 +846,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			genericDao.deleteById(GastoProveedor.class, id);
 
 		}catch(Exception e) {
+			logger.error(e.getStackTrace());
 			return false;
 		}
 		
@@ -920,6 +923,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return true;
 			
 		}catch(Exception e) {
+			logger.error(e.getStackTrace());
 			return false;
 		}
 		
@@ -1092,6 +1096,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			
 		}catch(Exception e) {
+			logger.error(e.getStackTrace());
 			return false;
 		}
 		
@@ -1143,6 +1148,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			
 		}catch(Exception e) {
+			logger.error(e.getStackTrace());
 			return false;
 		}
 		
@@ -1235,7 +1241,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		
 		}catch(Exception ex){
-			ex.printStackTrace();
+			logger.error(ex.getStackTrace());
 		}
 
 		return listaAdjuntos;
@@ -1324,7 +1330,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		    genericDao.save(GastoProveedor.class, gasto);
 		    
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getStackTrace());
+			return false;
 		}
 	    
 	    
@@ -1401,8 +1408,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Double importeProvisionesSuplidos = new Double(0);
 
 		for(GastoProveedorTrabajo gastoTrabajo : gasto.getGastoProveedorTrabajos()) {
-			importeGasto += gastoTrabajo.getTrabajo().getImporteTotal();
-			importeProvisionesSuplidos += gastoTrabajo.getTrabajo().getImporteProvisionesSuplidos();			
+			if(!Checks.esNulo(gastoTrabajo.getTrabajo().getImporteTotal())) {
+				importeGasto += gastoTrabajo.getTrabajo().getImporteTotal();
+			}
+			if(!Checks.esNulo(gastoTrabajo.getTrabajo().getImporteProvisionesSuplidos())) {
+				importeProvisionesSuplidos += gastoTrabajo.getTrabajo().getImporteProvisionesSuplidos();
+			}
 		}
 	
 		gasto.getGastoDetalleEconomico().setImportePrincipalSujeto(importeGasto);
@@ -1415,25 +1426,30 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private GastoProveedor calcularParticipacionActivosGasto(GastoProveedor gasto) {
 		
 		Double importeTotal = gasto.getGastoDetalleEconomico().getImportePrincipalSujeto();
+		importeTotal = Checks.esNulo(importeTotal) ? new Double("0L") : importeTotal;  
 		Map<Long, Double> mapa = new HashMap<Long,Double>();
 		
 		for(GastoProveedorTrabajo gastoTrabajo : gasto.getGastoProveedorTrabajos()) {
 			Double importeTrabajo = gastoTrabajo.getTrabajo().getImporteTotal();
-			for(ActivoTrabajo activoTrabajo : gastoTrabajo.getTrabajo().getActivosTrabajo()) {
-				Activo activo = activoTrabajo.getPrimaryKey().getActivo();
-				Float participacion = activoTrabajo.getParticipacion();
-				if(mapa.containsKey(activo.getId())) {
-					Double importe = mapa.get(activo.getId());
-					mapa.put(activo.getId(), importe + importeTrabajo * participacion / 100);					
-				} else {
-					mapa.put(activo.getId(), importeTrabajo * participacion / 100);
-				}				
-			}			
+			if(!Checks.esNulo(importeTrabajo)) {
+				for(ActivoTrabajo activoTrabajo : gastoTrabajo.getTrabajo().getActivosTrabajo()) {
+					Activo activo = activoTrabajo.getPrimaryKey().getActivo();
+					Float participacion = activoTrabajo.getParticipacion();
+					if(mapa.containsKey(activo.getId())) {
+						Double importe = mapa.get(activo.getId());
+						mapa.put(activo.getId(), importe + importeTrabajo * participacion / 100);					
+					} else {
+						mapa.put(activo.getId(), importeTrabajo * participacion / 100);
+					}				
+				}
+			}
 		}
 		
 		for(GastoProveedorActivo gastoActivo : gasto.getGastoProveedorActivos()) {
 			Long idActivo = gastoActivo.getActivo().getId();
-			gastoActivo.setParticipacionGasto((float) (mapa.get(idActivo)*100/importeTotal));
+			if(!mapa.isEmpty()) {
+				gastoActivo.setParticipacionGasto((float) (mapa.get(idActivo)*100/importeTotal));
+			}
 			//genericDao.save(GastoProveedorActivo.class, gastoActivo);
 		}
 		

@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
@@ -719,6 +720,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
 				gasto= genericDao.get(GastoProveedor.class, filtroGasto);
 				
+				if(!Checks.esNulo(gasto.getPropietario())) {
+					if(Checks.estaVacio(activo.getPropietariosActivo())) {
+						ActivoPropietario propietario = activo.getPropietariosActivo().get(0).getPropietario();
+						if(gasto.getPropietario().equals(propietario)) {
+							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
+						}
+					}
+					
+					
+				}
 				
 				Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 				Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
@@ -748,20 +759,37 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
 				gasto= genericDao.get(GastoProveedor.class, filtroGasto);
 				
-				for(ActivoAgrupacionActivo activoAgrupacion: agrupacion.getActivos()){
+				
+				if(!Checks.estaVacio(agrupacion.getActivos())) {					
+				
+					Activo activo = agrupacion.getActivos().get(0).getActivo();
 					
-					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
-					Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-					List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
-					
-					GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
-					gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
-					gastoProveedorActivo.setGastoProveedor(gasto);
-					gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
-					
-					gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
-					
-					genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+					if(!Checks.esNulo(gasto.getPropietario())) {
+						if(Checks.estaVacio(activo.getPropietariosActivo())) {
+							ActivoPropietario propietario = activo.getPropietariosActivo().get(0).getPropietario();
+							if(gasto.getPropietario().equals(propietario)) {
+								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
+							}
+						}
+						
+						
+					}
+				
+					for(ActivoAgrupacionActivo activoAgrupacion: agrupacion.getActivos()){
+						
+						Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
+						Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+						List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+						
+						GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
+						gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
+						gastoProveedorActivo.setGastoProveedor(gasto);
+						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+						
+						gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
+						
+						genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+					}
 				}
 
 			}
@@ -770,8 +798,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return false;
 		}
 		
-		// Si hemos asignado algún activo 
-		if(!Checks.esNulo(gasto)) {			
+		if(!Checks.esNulo(gasto)) {				
+			// establecemos propietario si es necesario
+			gasto = asignarPropietarioGasto(gasto);
+			// volvemos a establecer la cuenta contable y partida;
 			gasto = asignarCuentaContableYPartidaGasto(gasto);
 			genericDao.save(GastoProveedor.class, gasto);
 		}
@@ -790,8 +820,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtro);
 			
 			if(!Checks.esNulo(dtoActivoGasto.getParticipacion())){
-				gastoActivo.setParticipacionGasto(dtoActivoGasto.getParticipacion());
-				
+				gastoActivo.setParticipacionGasto(dtoActivoGasto.getParticipacion());				
 			}
 			
 			if(!Checks.esNulo(dtoActivoGasto.getReferenciaCatastral())){
@@ -823,6 +852,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			GastoProveedor gasto = findOne(dtoActivoGasto.getIdGasto());			
 			gasto.getGastoProveedorActivos().remove(gastoActivo);
 			
+			// volvemos a establecer propietario
+			gasto = asignarPropietarioGasto(gasto);
 			// volvemos a establecer la cuenta contable y partida;
 			gasto = asignarCuentaContableYPartidaGasto(gasto);
 			genericDao.save(GastoProveedor.class, gasto);
@@ -1183,6 +1214,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		gasto = calcularParticipacionActivosGasto(gasto);
 		
+		gasto = asignarPropietarioGasto(gasto);
+		
 		gasto = asignarCuentaContableYPartidaGasto(gasto);
 		
 		genericDao.save(GastoProveedor.class, gasto);
@@ -1384,6 +1417,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		gasto = calcularParticipacionActivosGasto(gasto);
 		
+		gasto = asignarPropietarioGasto(gasto);
+		
 		gasto = asignarCuentaContableYPartidaGasto(gasto);
 		
 		genericDao.save(GastoProveedor.class, gasto);
@@ -1573,6 +1608,24 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gasto.setGastoGestion(gastoGestion);
 		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO);
 		genericDao.update(GastoProveedor.class, gasto);
+	}
+	
+	public GastoProveedor asignarPropietarioGasto(GastoProveedor gasto) {
+		
+		if(!Checks.estaVacio(gasto.getGastoProveedorActivos())) {
+			
+			GastoProveedorActivo gastoActivo = gasto.getGastoProveedorActivos().get(0);
+			List<ActivoPropietarioActivo> listaPropietariosActivo = gastoActivo.getActivo().getPropietariosActivo();
+			
+			if(!Checks.estaVacio(listaPropietariosActivo)) {
+				gasto.setPropietario(listaPropietariosActivo.get(0).getPropietario());
+			}
+		} else {
+			gasto.setPropietario(null);
+		}
+		
+		return gasto;	
+		
 	}
 	
 	public GastoProveedor asignarCuentaContableYPartidaGasto(GastoProveedor gasto) {

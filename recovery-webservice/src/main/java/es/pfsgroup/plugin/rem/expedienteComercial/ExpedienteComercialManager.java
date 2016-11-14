@@ -1949,7 +1949,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 			}
 			
-			if(Checks.esNulo(gastoExpediente.getTipoCalculo())){
+			if(!Checks.esNulo(gastoExpediente.getTipoCalculo())){
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, dtoGastoExpediente.getTipoCalculo());
 				gastoExpediente.setTipoCalculo(tipoCalculo);
 			}

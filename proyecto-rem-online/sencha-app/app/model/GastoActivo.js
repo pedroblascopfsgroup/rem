@@ -7,7 +7,8 @@ Ext.define('HreRem.model.GastoActivo', {
     fields: [    
   
             {
-            	name: 'idGasto'
+            	name: 'idGasto',
+            	critical: true
             },
             {
             	name:'idActivo'

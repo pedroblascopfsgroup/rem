@@ -721,9 +721,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto= genericDao.get(GastoProveedor.class, filtroGasto);
 				
 				if(!Checks.esNulo(gasto.getPropietario())) {
-					if(Checks.estaVacio(activo.getPropietariosActivo())) {
+					if(!Checks.estaVacio(activo.getPropietariosActivo())) {
 						ActivoPropietario propietario = activo.getPropietariosActivo().get(0).getPropietario();
-						if(gasto.getPropietario().equals(propietario)) {
+						if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
 							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
 						}
 					}
@@ -765,9 +765,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					Activo activo = agrupacion.getActivos().get(0).getActivo();
 					
 					if(!Checks.esNulo(gasto.getPropietario())) {
-						if(Checks.estaVacio(activo.getPropietariosActivo())) {
+						if(!Checks.estaVacio(activo.getPropietariosActivo())) {
 							ActivoPropietario propietario = activo.getPropietariosActivo().get(0).getPropietario();
-							if(gasto.getPropietario().equals(propietario)) {
+							if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
 								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
 							}
 						}
@@ -830,7 +830,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			genericDao.update(GastoProveedorActivo.class, gastoActivo);
 			
 		}catch(Exception e) {
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -844,12 +844,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 
 		try{
-			// borramos la asignación del activo
-			genericDao.deleteById(GastoProveedorActivo.class, dtoActivoGasto.getId());
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoGasto.getId());
 			GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtro);
-			GastoProveedor gasto = findOne(dtoActivoGasto.getIdGasto());			
+			GastoProveedor gasto = gastoActivo.getGastoProveedor(); 
+			
+			// borramos la asignación del activo
+			genericDao.deleteById(GastoProveedorActivo.class, dtoActivoGasto.getId());
+					
 			gasto.getGastoProveedorActivos().remove(gastoActivo);
 			
 			// volvemos a establecer propietario
@@ -860,7 +862,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 
 		}catch(Exception e) {
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -877,7 +879,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			genericDao.deleteById(GastoProveedor.class, id);
 
 		}catch(Exception e) {
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -954,7 +956,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return true;
 			
 		}catch(Exception e) {
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -1127,7 +1129,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			
 		}catch(Exception e) {
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -1179,7 +1181,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			
 		}catch(Exception e) {
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -1363,7 +1365,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		    genericDao.save(GastoProveedor.class, gasto);
 		    
 		}catch (Exception e) {
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
 			return false;
 		}
 	    

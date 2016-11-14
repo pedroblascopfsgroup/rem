@@ -31,8 +31,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							                	xtype: 'textfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.id.gasto.haya'),
 							                	bind:		'{gasto.numGastoHaya}',
-							                	readOnly: true
-					
+							                	readOnly: true					
 							                },
 							                {
 												xtype: 'textfieldbase',

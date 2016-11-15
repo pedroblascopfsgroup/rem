@@ -117,7 +117,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        },	
 			   				        {   
 			   				        	text: HreRem.i18n('header.listado.tasacion.importe'),
-			   				        	dataIndex: 'importeValorTasacion',
+			   				        	dataIndex: 'importeTasacionFin',
 			   				        	renderer: function(value) {
 			   				        		return Ext.util.Format.currency(value);
 			   				        	},

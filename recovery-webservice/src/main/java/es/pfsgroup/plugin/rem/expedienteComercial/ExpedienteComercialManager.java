@@ -2518,7 +2518,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(tipoDocumento)){
 			if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;	
 			if (DDTiposDocumentos.CIF.equals(tipoDocumento))  tipoDoc = DtoClienteUrsus.CIF;
-			if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;
+			if (DDTiposDocumentos.NIF.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;
 			if (DDTiposDocumentos.TARJETA_RESIDENTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_RESIDENTE;
 			if (DDTiposDocumentos.PASAPORTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.PASAPORTE;
 			if (DDTiposDocumentos.CIF_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.CIF_EXTRANJERO;

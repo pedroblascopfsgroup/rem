@@ -2107,6 +2107,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(!Ext.isEmpty(field.getValue()) && field.getValue() === '0') {
 			field.setValue('');
 		}
-	}
+	},
+    
+    ocultarChkPublicacionOrdinaria: function(record) {
+    	var me = this,
+    	ocultar = me.getViewModel().get('activo').get('isPublicable'),
+    	chkbxpublicacionordinaria = me.lookupReference('chkbxpublicacionordinaria');
+
+    	chkbxpublicacionordinaria.setHidden(ocultar);
+    }
 
 });

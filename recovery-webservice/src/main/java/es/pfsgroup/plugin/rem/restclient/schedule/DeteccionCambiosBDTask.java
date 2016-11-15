@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.restclient.schedule;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -117,6 +118,15 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	public void detectaCambios() {
 		detectaCambios(null);
 	}
+	
+	/**
+	 * Refresca vista materializada
+	 */
+	public void actualizaVistasMaterializadas(){
+		for (DetectorCambiosBD<?> handler : registroCambiosHandlers) {
+			handler.actualizarVistaMaterializada();
+		}
+	}
 
 	/**
 	 * Inicia la detección de cambios en BD.
@@ -144,7 +154,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			}
 			
 			if ((registroCambiosHandlersAjecutar != null) && (!registroCambiosHandlersAjecutar.isEmpty())) {
+				//ordenamos los handlers por peso
+				Collections.sort(registroCambiosHandlersAjecutar);
 				for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
+					logger.debug("EJECUTANDO HANDLER: "+handler.getClass().getName());
 					RestLlamada registro = new RestLlamada();
 					registro.setIteracion(iteracion);
 					boolean somethingdone = false;

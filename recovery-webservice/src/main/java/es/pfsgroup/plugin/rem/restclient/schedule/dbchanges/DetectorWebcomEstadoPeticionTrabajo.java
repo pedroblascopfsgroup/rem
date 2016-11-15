@@ -43,4 +43,9 @@ public class DetectorWebcomEstadoPeticionTrabajo extends DetectorCambiosBD<Estad
 		return "ID_TRABAJO_REM";
 	}
 
+	@Override
+	protected Integer getWeight() {
+		return 9992;
+	}
+
 }

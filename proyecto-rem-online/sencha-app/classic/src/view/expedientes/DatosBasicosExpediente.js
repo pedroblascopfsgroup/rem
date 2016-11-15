@@ -277,7 +277,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                {
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboEstadoPbc',
-							readOnly: true,
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc'),
 				        	bind: {
 			            		store: '{comboAceptadoRechazado}',

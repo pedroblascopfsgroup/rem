@@ -106,7 +106,7 @@ public class ResolucionComiteController {
 							throw new Exception("No se ha podido recuperar el trámite de la oferta.");
 						}
 						
-						Usuario usu = gestorActivoApi.userFromTarea("T013_CierreEconomico", listaTramites.get(0).getId());
+						Usuario usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", listaTramites.get(0).getId());
 						if(Checks.esNulo(usu)){
 							throw new Exception("No se ha podido recuperar el usuario a quién notificar.");
 						}

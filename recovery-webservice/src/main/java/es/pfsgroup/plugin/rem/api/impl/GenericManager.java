@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 
 
 @Service("genericManager")
@@ -498,5 +499,31 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 
 		return listaTiposFiltered;
+	}
+
+	@Override
+	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo) {
+		List<DDTiposPorCuenta> listaTiposPorCuenta = (List<DDTiposPorCuenta>) genericDao.getList(DDTiposPorCuenta.class);
+		List<DDTiposPorCuenta> listaTiposPorCuentaFiltered = new ArrayList<DDTiposPorCuenta>();
+		
+		if(!Checks.esNulo(tipoCodigo)){
+			if("01".equals(tipoCodigo)) { // Venta.
+				for(DDTiposPorCuenta tipo : listaTiposPorCuenta) {
+					if(!DDTiposPorCuenta.TIPOS_POR_CUENTA_ARRENDADOR.equals(tipo.getCodigo()) && !DDTiposPorCuenta.TIPOS_POR_CUENTA_ARRENDATARIO.equals(tipo.getCodigo())) {
+						listaTiposPorCuentaFiltered.add(tipo);
+					}
+				}
+			} else { // Alquiler.
+				for(DDTiposPorCuenta tipo : listaTiposPorCuenta) {
+					if(!DDTiposPorCuenta.TIPOS_POR_CUENTA_COMPRADOR.equals(tipo.getCodigo()) && !DDTiposPorCuenta.TIPOS_POR_CUENTA_VENDEDOR.equals(tipo.getCodigo())) {
+						listaTiposPorCuentaFiltered.add(tipo);
+					}
+				}
+			}
+			
+			return listaTiposPorCuentaFiltered;
+		}
+		
+		return listaTiposPorCuenta;
 	}
 }

@@ -70,6 +70,7 @@ Ext.define('HreRem.view.expedientes.OfertaTanteoYRetracto', {
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.fin.tanteo'),
 		                	maxValue: null,
+		                	minValue: new Date(),
 		                	bind:		'{ofertatanteoyretracto.fechaFinTanteo}'
 		                },
 		                {
@@ -85,6 +86,7 @@ Ext.define('HreRem.view.expedientes.OfertaTanteoYRetracto', {
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.max.formalizacion'),
 		                	maxValue: null,
+		                	minValue: new Date(),
 		                	bind:		'{ofertatanteoyretracto.plazoMaxFormalizacion}'
 		                }
 				]

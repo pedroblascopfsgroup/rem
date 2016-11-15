@@ -43,4 +43,9 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 		
 	}
 
+	@Override
+	protected Integer getWeight() {
+		return 9996;
+	}
+
 }

@@ -43,4 +43,9 @@ public class DetectorWebcomVentasYcomisiones extends DetectorCambiosBD<Comisione
 		
 	}
 
+	@Override
+	protected Integer getWeight() {
+		return 9989;
+	}
+
 }

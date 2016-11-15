@@ -163,7 +163,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	
-	onTasacionListDobleClick: function (grid, record) {
+	onTasacionListClick: function (grid, record) {
 		
 		var me = this,
 		form = grid.up("form"),

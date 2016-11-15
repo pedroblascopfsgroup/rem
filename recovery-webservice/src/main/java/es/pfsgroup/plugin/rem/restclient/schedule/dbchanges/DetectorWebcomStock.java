@@ -43,4 +43,9 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 		return "ID_ACTIVO_HAYA";
 	}
 
+	@Override
+	protected Integer getWeight() {
+		return 9995;
+	}
+
 }

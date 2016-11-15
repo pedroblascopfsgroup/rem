@@ -76,12 +76,12 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 							editable: true
 		                },
 		                {
-		                	xtype: 'numberfieldbase',
+		                	xtype: 'currencyfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.inicial.oferta'),
 		                	bind:		'{datosbasicosoferta.importeOferta}'
 		                },
 		                {	
-		                	xtype: 'numberfieldbase',
+		                	xtype: 'currencyfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.contraoferta'),
 		                	bind:		{
 		                		value: '{datosbasicosoferta.importeContraOferta}',

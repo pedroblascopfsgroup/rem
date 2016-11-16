@@ -12,6 +12,9 @@ Ext.define('HreRem.model.TasacionBankiaModel', {
     			name:'externoID'
     		},
     		{
+    			name:'id'
+    		},
+    		{
     			name:'gestorSolicitud'
     		},
     		{

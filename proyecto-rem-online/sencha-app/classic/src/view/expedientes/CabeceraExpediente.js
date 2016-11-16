@@ -98,8 +98,9 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 										                		alt: '{expediente.entidadPropietariaDescripcion}'
 										                	}
 										                },
-										                { 
-															fieldLabel: HreRem.i18n('fieldlabel.importe'),
+										                {
+										                	xtype: 'currencyfieldbase',
+										                	fieldLabel: HreRem.i18n('fieldlabel.importe'),
 															cls: 'cabecera-info-field',
 															bind:		'{expediente.importe}'
 														},

@@ -372,6 +372,8 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC11_INS.setAlias(ALIAS);
 		servicioGMPAJC11_INS.execute();
 
+		System.out.println("IndicadorDePaginacionindipg: " + servicioGMPAJC11_INS.getIndicadorDePaginacionindipg());
+		
 		if (servicioGMPAJC11_INS.getIndicadorDePaginacionindipg() == '0') {
 			struct = servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu()
 					.getStructGMPAJC11_INS_NumeroDeOcurrenciasnumocuAt(0);

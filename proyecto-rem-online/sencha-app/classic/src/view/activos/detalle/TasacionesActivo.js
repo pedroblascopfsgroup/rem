@@ -63,9 +63,16 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						    },
 						    {
 						    	xtype: 'textfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.id.ultima.solicitud'),
+								fieldLabel: HreRem.i18n('fieldlabel.id.ultima.solicitud.bankia'),
 								width:		250,
 								bind:		'{tasacionBankia.externoID}',
+								readOnly: true
+						    },
+						    {
+						    	xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.id.ultima.solicitud.rem'),
+								width:		250,
+								bind:		'{tasacionBankia.id}',
 								readOnly: true
 						    },
 						    {
@@ -73,7 +80,8 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.gestor.solicitante'),
 								width:		250,
 								bind:		'{tasacionBankia.gestorSolicitud}',
-								readOnly: true
+								readOnly: true,
+								colspan: 2
 						    },
 						    {
 			                	xtype: 'button',
@@ -109,7 +117,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        },	
 			   				        {   
 			   				        	text: HreRem.i18n('header.listado.tasacion.importe'),
-			   				        	dataIndex: 'importeValorTasacion',
+			   				        	dataIndex: 'importeTasacionFin',
 			   				        	renderer: function(value) {
 			   				        		return Ext.util.Format.currency(value);
 			   				        	},
@@ -138,7 +146,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        }
 			   				    ],
 			   				    listeners: [
-			   				        {rowdblclick: 'onTasacionListDobleClick'}
+			   				        {rowclick: 'onTasacionListClick'}
 			   					    
 			   		    		]
 							}

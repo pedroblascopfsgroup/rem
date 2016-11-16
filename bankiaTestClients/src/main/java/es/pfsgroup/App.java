@@ -8,7 +8,6 @@ import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
-import es.capgemini.pfs.users.domain.Usuario;
 
 /**
  * Test clientes bankia
@@ -29,11 +28,7 @@ public class App {
 				System.out.println("Ejecutando servicio tasaciones");
 				if (args.length == 2) {
 					Long idBien = Long.valueOf(args[1]);
-					Usuario usuario = new Usuario();
-					usuario.setUsername("SUPER");
-					usuario.setEmail("noexisto@pfs.es");
-					usuario.setTelefono("99999999");
-					Integer respValue = uvemManager.ejecutarSolicitarTasacion(idBien,usuario);
+					Integer respValue = uvemManager.ejecutarSolicitarTasacion(idBien, "SUPER", "noexisto@pfs.es", "99999999");
 					System.out.println("Resultado llamada tasaciones: " + respValue);
 					
 				} else {

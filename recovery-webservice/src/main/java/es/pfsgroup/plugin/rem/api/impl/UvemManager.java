@@ -97,6 +97,26 @@ public class UvemManager implements UvemManagerApi {
 		this.ALIAS = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.alias.integrador"))
 				? appProperties.getProperty("rest.client.uvem.alias.integrador") : "";
 	}
+	
+	/**
+	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
+	 * @param numActivoUvem
+	 * @param userName
+	 * @param email
+	 * @param telefono
+	 * @return
+	 * @throws WIMetaServiceException
+	 * @throws WIException
+	 * @throws TipoDeDatoException
+	 */
+	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, String userName,String email,String telefono)
+			throws WIMetaServiceException, WIException, TipoDeDatoException {
+		Usuario usuario = new Usuario();
+		usuario.setUsername(userName);
+		usuario.setEmail(email);
+		usuario.setTelefono(telefono);
+		return ejecutarSolicitarTasacion(numActivoUvem, usuario);
+	}
 
 	/**
 	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación

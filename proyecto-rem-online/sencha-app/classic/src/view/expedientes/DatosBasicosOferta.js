@@ -14,7 +14,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
     requires: ['HreRem.model.DatosBasicosOferta'],
     
     listeners: {
-			boxready:'cargarTabData'
+			boxready:'cargarTabData',
+			beforeedit: 'numVisitaIsEditable'
 	},
     
     initComponent: function () {
@@ -157,7 +158,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								        	bind: {
 							            		store: '{comboEstadosVisitaOferta}',
 							            		value: '{datosbasicosoferta.estadoVisitaOfertaCodigo}'
-							            	}
+							            	},
+					                		listeners: {change: 'numVisitaIsEditable'}
 								        },	
 		                				{
 		                					xtype: 'container',
@@ -173,9 +175,11 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 							                	{
 							                		xtype: 'numberfieldbase',
 							                		fieldLabel:  HreRem.i18n('fieldlabel.numero.visita'),
+							                		reference: 'numVistaFromOfertaRef',
 							                		bind: {
 							                			value : '{datosbasicosoferta.numVisita}'
-							                		}   		
+							                		}
+							                		
 							                	}
 							                ]
 			                			}

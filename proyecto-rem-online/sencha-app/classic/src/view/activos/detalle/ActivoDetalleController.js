@@ -1284,9 +1284,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var view = me.getView();
 
     	if(combo.getValue() === '0'){
-    		view.lookupReference('fieldtextCondicionanteOtro').reset();
-    		view.lookupReference('fieldtextCondicionanteOtro').hide();
     		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=true;
+    		view.lookupReference('fieldtextCondicionanteOtro').setValue('');
+    		view.lookupReference('fieldtextCondicionanteOtro').hide();
     	} else {
     		view.lookupReference('fieldtextCondicionanteOtro').show();
     		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=false;

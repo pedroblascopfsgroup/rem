@@ -74,7 +74,7 @@ BEGIN
           EXECUTE IMMEDIATE '
           INSERT INTO '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS (
             TABLA_MIG,
-            GPV_NUM_GASTO_GESTORIA,            
+            GPV_NUM_GASTO_HAYA,            
             FECHA_COMPROBACION
           )
           WITH NOT_EXISTS AS (
@@ -142,7 +142,7 @@ BEGIN
                 GDE_OFICINA_BANKIA
                 )
                 WITH INSERTAR AS (
-                SELECT DISTINCT MIG.GDE_GPV_ID, 
+                SELECT DISTINCT GPV.GPV_ID, 
                                                 MIG.GDE_PRINCIPAL_SUJETO,
                                                 MIG.GDE_PRINCIPAL_NO_SUJETO,
                                                 MIG.GDE_RECARGO,
@@ -180,7 +180,7 @@ BEGIN
           )
                 SELECT
                 '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                         GDE_ID, 
-                GDE.GDE_GPV_ID                                                                                                  GPV_ID,
+                GDE.GPV_ID                                                                                                  GPV_ID,
                 GDE.GDE_PRINCIPAL_SUJETO                                                                                GDE_PRINCIPAL_SUJETO,
                 GDE.GDE_PRINCIPAL_NO_SUJETO                                                                             GDE_PRINCIPAL_NO_SUJETO,
                 GDE.GDE_RECARGO                                                                                                 GDE_RECARGO,

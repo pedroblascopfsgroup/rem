@@ -46,7 +46,7 @@ BEGIN
         CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
         (
                 GPV_COD_GASTO_PROVEEDOR                 NUMBER(16),
-                GPV_REFERENCIA_EMISOR                   VARCHAR2(128 CHAR)              NOT NULL,
+                GPV_REFERENCIA_EMISOR                   VARCHAR2(128 CHAR),
                 GPV_COD_PVE_UVEM_EMISOR                 NUMBER(16)                              NOT NULL,
                 GPV_COD_TIPO_GASTO                              VARCHAR2(20 CHAR),
                 GPV_COD_SUBTIPO_GASTO                   VARCHAR2(20 CHAR),

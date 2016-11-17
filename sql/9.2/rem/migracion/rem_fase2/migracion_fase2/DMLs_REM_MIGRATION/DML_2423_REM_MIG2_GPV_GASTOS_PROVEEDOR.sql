@@ -204,13 +204,12 @@ BEGIN
             ,PRG_ID
       )
       WITH INSERTAR AS (
-            SELECT DISTINCT GPV.GPV_NUM_GASTO_GESTORIA    
+            SELECT DISTINCT MIG.GPV_ID    
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-            INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_GESTORIA = MIG.GPV_COD_GASTO_PROVEEDOR
-            AND NOT EXISTS ( 
+            WHERE NOT EXISTS ( 
                   SELECT 1
                   FROM '||V_ESQUEMA||'.'||V_TABLA||' GPV2
-                  WHERE GPV2.GPV_ID = GPV.GPV_ID
+                  WHERE GPV2.GPV_NUM_GASTO_HAYA = MIG.GPV_ID
             )  
       )
       SELECT
@@ -244,19 +243,19 @@ BEGIN
             ,0                                                          BORRADO
             ,NULL                                                       PRG_ID
       FROM INSERTAR INS
-            INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_NUM_GASTO_GESTORIA = MIG2.GPV_COD_GASTO_PROVEEDOR
+            INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_ID = MIG2.GPV_ID
             INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = MIG2.GPV_COD_SUBTIPO_GASTO
-            INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = MIG2.GPV_COD_PVE_UVEM_EMISOR
+            INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = TO_CHAR(MIG2.GPV_COD_PVE_UVEM_EMISOR)
             LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = MIG2.GPV_COD_PERIODICIDAD            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO
-      WHERE (TGA.DD_TGA_CODIGO IN (''01'',''02'',''03'',''04''))
+      WHERE TGA.DD_TGA_CODIGO IN (''01'',''02'',''03'',''04'')
        AND  ((SELECT TPR.DD_TPR_CODIGO FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR WHERE PVE.DD_TPR_ID = TPR.DD_TPR_ID) IN (''13'', ''15'', ''16'', ''17''))
       '
       ;
       
       
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas de gastos de proveedores de tipo ADMINISTRACION.');
       
@@ -303,13 +302,12 @@ BEGIN
             ,PRG_ID
       )
       WITH INSERTAR AS (
-            SELECT DISTINCT GPV.GPV_NUM_GASTO_GESTORIA    
+            SELECT DISTINCT MIG.GPV_ID    
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-            INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_GESTORIA = MIG.GPV_COD_GASTO_PROVEEDOR
-            AND NOT EXISTS ( 
+            WHERE NOT EXISTS ( 
                   SELECT 1
                   FROM '||V_ESQUEMA||'.'||V_TABLA||' GPV2
-                  WHERE GPV2.GPV_ID = GPV.GPV_ID
+                  WHERE GPV2.GPV_NUM_GASTO_HAYA = MIG.GPV_ID
             )  
       )
       SELECT
@@ -343,19 +341,19 @@ BEGIN
             ,0                                                          BORRADO
             ,NULL                                                       PRG_ID
       FROM INSERTAR INS
-            INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_NUM_GASTO_GESTORIA = MIG2.GPV_COD_GASTO_PROVEEDOR
+            INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_ID = MIG2.GPV_ID
             INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = MIG2.GPV_COD_SUBTIPO_GASTO
-            INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = MIG2.GPV_COD_PVE_UVEM_EMISOR
+            INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = TO_CHAR(MIG2.GPV_COD_PVE_UVEM_EMISOR)
             LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = MIG2.GPV_COD_PERIODICIDAD            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO
-      WHERE (TGA.DD_TGA_CODIGO IN (''05'',''06'',''07'',''08''))
+      WHERE TGA.DD_TGA_CODIGO IN (''05'',''06'',''07'',''08'')
        AND  ((SELECT TPR.DD_TPR_CODIGO FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR WHERE PVE.DD_TPR_ID = TPR.DD_TPR_ID) IN (''07'', ''08'', ''10'', ''12''))
       '
       ;
       
       
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas de gastos de proveedores de tipo ENTIDAD.');
       
@@ -402,14 +400,13 @@ BEGIN
             ,PRG_ID
       )
       WITH INSERTAR AS (
-            SELECT DISTINCT GPV.GPV_NUM_GASTO_GESTORIA    
+            SELECT DISTINCT MIG.GPV_ID    
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-            INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_GESTORIA = MIG.GPV_COD_GASTO_PROVEEDOR
-            AND NOT EXISTS ( 
+            WHERE NOT EXISTS ( 
                   SELECT 1
                   FROM '||V_ESQUEMA||'.'||V_TABLA||' GPV2
-                  WHERE GPV2.GPV_ID = GPV.GPV_ID
-            )  
+                  WHERE GPV2.GPV_NUM_GASTO_HAYA = MIG.GPV_ID
+            ) 
       )
       SELECT
             '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                     GPV_ID
@@ -442,20 +439,19 @@ BEGIN
             ,0                                                          BORRADO
             ,NULL                                                       PRG_ID
       FROM INSERTAR INS
-            INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_NUM_GASTO_GESTORIA = MIG2.GPV_COD_GASTO_PROVEEDOR
+            INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_ID = MIG2.GPV_ID
             INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = MIG2.GPV_COD_SUBTIPO_GASTO
-            INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = MIG2.GPV_COD_PVE_UVEM_EMISOR
+            INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = TO_CHAR(MIG2.GPV_COD_PVE_UVEM_EMISOR)
             LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = MIG2.GPV_COD_PERIODICIDAD            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO
-      WHERE (TGA.DD_TGA_CODIGO IN (''09'',''10'',''11'',''12'', ''13'', ''14'', ''15'', ''16'', ''17'', ''18''))
-       AND  ((SELECT TPR.DD_TPR_CODIGO FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR WHERE PVE.DD_TPR_ID = TPR.DD_TPR_ID) IN (''01'', ''02'', ''03'', ''04'', ''05'', ''06'', ''18'',
-				''19'', ''21'', ''24'', ''25'', ''27''))
+      WHERE TGA.DD_TGA_CODIGO IN (''09'',''10'',''11'',''12'', ''13'', ''14'', ''15'', ''16'', ''17'', ''18'')
+       AND  ((SELECT TPR.DD_TPR_CODIGO FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR WHERE PVE.DD_TPR_ID = TPR.DD_TPR_ID) IN (''01'', ''02'', ''03'', ''04'', ''05'', ''06'', ''18'', ''19'', ''21'', ''24'', ''25'', ''27''))
       '
       ;
       
       
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas de gastos de proveedores de tipo PROVEEDOR.');
       

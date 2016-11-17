@@ -16,12 +16,22 @@ Ext.define('HreRem.model.Posicionamiento', {
 				dateFormat: 'c'
     		},
     		{
+    			name:'horaAviso',
+    			type : 'date',
+    			dateFormat: 'c'
+    		},
+    		{
     			name:'idProveedorNotario'
     		},
     		{
     			name: 'fechaPosicionamiento',
     			type : 'date',
 				dateFormat: 'c'
+    		},
+    		{
+    			name:'horaPosicionamiento',
+    			type : 'date',
+    			dateFormat: 'c'
     		},
     		{
     			name: 'motivoAplazamiento'

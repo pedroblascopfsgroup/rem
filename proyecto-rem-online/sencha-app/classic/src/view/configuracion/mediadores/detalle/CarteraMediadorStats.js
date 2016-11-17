@@ -1,15 +1,15 @@
-Ext.define('HreRem.view.configuracion.administracion.mediadores.detalle.CarteraMediadorStats', {
+Ext.define('HreRem.view.configuracion.mediadores.detalle.CarteraMediadorStats', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'carteramediadorstats',
-	topBar: true,
-	idPrincipal : 'proveedor.id',
+    reference: 'carteraMediadorStats',
+	topBar: false,
+	idPrincipal : 'id',
 	editOnSelect: false,
 	disabledDeleteBtn: true,
 	
-//TODO: Build stats data store on ConfiguracionModel
-//    bind: {
-//        store: '{evaluacionesmediador}'
-//    },
+    bind: {
+        store: '{listaStatsCarteraMediadores}'
+    },
     
     
     initComponent: function () {
@@ -17,28 +17,64 @@ Ext.define('HreRem.view.configuracion.administracion.mediadores.detalle.CarteraM
 		
 // TODO: Event on click data stats
 //     	me.listeners = {
-//    			rowdblclick: 'abrirPestañaProveedor'
+//    			rowdblclick: ''
 //    	    };
-	    
 
-//TODO: Data stats grid columns
 		me.columns = [
-		
+				{
+					dataIndex: 'id',
+					text: HreRem.i18n('header.evaluacion.mediadores.detail.id'),
+					flex: 0.3
+				},
+				{
+					dataIndex: 'numActivos',
+					text: HreRem.i18n('header.evaluacion.mediadores.detail.numActivos'),
+					flex: 0.3
+				},
+				{
+					dataIndex: 'numVisitas',
+					text: HreRem.i18n('header.evaluacion.mediadores.detail.numVisitas'),
+					flex: 0.3
+				},
+				{
+					dataIndex: 'numOfertas',
+					text: HreRem.i18n('header.evaluacion.mediadores.detail.numOfertas'),
+					flex: 0.3
+				},
+				{
+					dataIndex: 'numReservas',
+					text: HreRem.i18n('header.evaluacion.mediadores.detail.numReservas'),
+					flex: 0.5
+				},
+				{
+					dataIndex: 'numVentas',
+					text: HreRem.i18n('header.evaluacion.mediadores.detail.numVentas'),
+					flex: 0.3
+				},
+				{
+					dataIndex: 'descripcionCalificacion',
+					text: HreRem.i18n('header.evaluacion.mediadores.detail.Calificacion'),
+					flex: 1
+				},
+				{
+					dataIndex: 'esTop',
+					text: HreRem.i18n('header.evaluacion.mediadores.detail.esTop'),
+					flex: 1
+				}		
 		    ];
 		    
-// TODO: Grid pagination
-//		    me.dockedItems = [
-//		        {
-//		            xtype: 'pagingtoolbar',
-//		            dock: 'bottom',
-//		            itemId: 'activosPaginationToolbar',
-//		            inputItemWidth: 60,
-//		            displayInfo: true,
-//		            bind: {
-//		                store: '{evaluacionesmediador}'
-//		            }
-//		        }
-//		    ];
+		    me.dockedItems = [
+		        {
+		            xtype: 'pagingtoolbar',
+		            dock: 'bottom',
+		            itemId: 'activosPaginationToolbar',
+		            inputItemWidth: 60,
+		            displayInfo: true,
+		            bind: {
+		                store: '{listaStatsCarteraMediadores}'
+		            }
+		        }
+		    ];
 		    
 		    me.callParent();
    }

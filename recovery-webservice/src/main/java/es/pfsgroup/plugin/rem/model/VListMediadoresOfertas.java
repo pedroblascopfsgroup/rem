@@ -26,6 +26,7 @@ public class VListMediadoresOfertas implements Serializable {
 	 */
 	private static final long serialVersionUID = 101L;
 
+
 	@Id
 	@Column(name = "ID_MEDIADOR")
 	private Long id;
@@ -42,28 +43,36 @@ public class VListMediadoresOfertas implements Serializable {
 	@Column(name = "ID_ACTIVO")
 	private Long idActivo;  
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "EOF_ESTADO_OFERTA")
-    private DDEstadoOferta estadoOferta;
+	@Column(name = "COD_ESTADO_OFERTA")
+    private String codEstadoOferta;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TOF_TIPO_OFERTA")
-   	private DDTipoOferta tipoOferta;
+	@Column(name = "DES_ESTADO_OFERTA")
+    private String desEstadoOferta;
+	
+	@Column(name = "COD_TIPO_OFERTA")
+   	private String codTipoOferta;
 
+	@Column(name = "DES_TIPO_OFERTA")
+   	private String desTipoOferta;
+	
 	@Column(name = "ID_EXPEDIENTE")
 	private Long idExpediente;
 	
 	@Column(name= "NUM_EXPEDIENTE")
 	private Long numExpediente;
+
+	@Column(name = "COD_ESTADO_EXPEDIENTE")
+	private String codEstadoExpediente;
+
+	@Column(name = "DES_ESTADO_EXPEDIENTE")
+	private String desEstadoExpediente;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "EEC_ESTADO_EXPEDIENTE")
-	private DDEstadoExpediente estadoExpediente;
+	@Column(name = "COD_SUBTIPO_ACTIVO")
+   	private String codSubtipoActivo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SAC_SUBTIPO_ACTIVO")
-   	private DDSubtipoActivo subtipoActivo;
-
+	@Column(name = "DES_SUBTIPO_ACTIVO")
+   	private String desSubtipoActivo;
+	
 	@Column(name = "IMPORTE_OFERTA")
 	private Double importeAprobadoOferta;
 	
@@ -73,6 +82,7 @@ public class VListMediadoresOfertas implements Serializable {
 	@Column(name = "NOMBRE_OFERTANTE")
 	private String nombreOfertante;
 
+	
 	
 	public Long getId() {
 		return id;
@@ -114,20 +124,36 @@ public class VListMediadoresOfertas implements Serializable {
 		this.idActivo = idActivo;
 	}
 
-	public DDEstadoOferta getEstadoOferta() {
-		return estadoOferta;
+	public String getCodEstadoOferta() {
+		return codEstadoOferta;
 	}
 
-	public void setEstadoOferta(DDEstadoOferta estadoOferta) {
-		this.estadoOferta = estadoOferta;
+	public void setCodEstadoOferta(String codEstadoOferta) {
+		this.codEstadoOferta = codEstadoOferta;
 	}
 
-	public DDTipoOferta getTipoOferta() {
-		return tipoOferta;
+	public String getDesEstadoOferta() {
+		return desEstadoOferta;
 	}
 
-	public void setTipoOferta(DDTipoOferta tipoOferta) {
-		this.tipoOferta = tipoOferta;
+	public void setDesEstadoOferta(String desEstadoOferta) {
+		this.desEstadoOferta = desEstadoOferta;
+	}
+
+	public String getCodTipoOferta() {
+		return codTipoOferta;
+	}
+
+	public void setCodTipoOferta(String codTipoOferta) {
+		this.codTipoOferta = codTipoOferta;
+	}
+
+	public String getDesTipoOferta() {
+		return desTipoOferta;
+	}
+
+	public void setDesTipoOferta(String desTipoOferta) {
+		this.desTipoOferta = desTipoOferta;
 	}
 
 	public Long getIdExpediente() {
@@ -146,20 +172,36 @@ public class VListMediadoresOfertas implements Serializable {
 		this.numExpediente = numExpediente;
 	}
 
-	public DDEstadoExpediente getEstadoExpediente() {
-		return estadoExpediente;
+	public String getCodEstadoExpediente() {
+		return codEstadoExpediente;
 	}
 
-	public void setEstadoExpediente(DDEstadoExpediente estadoExpediente) {
-		this.estadoExpediente = estadoExpediente;
+	public void setCodEstadoExpediente(String codEstadoExpediente) {
+		this.codEstadoExpediente = codEstadoExpediente;
 	}
 
-	public DDSubtipoActivo getSubtipoActivo() {
-		return subtipoActivo;
+	public String getDesEstadoExpediente() {
+		return desEstadoExpediente;
 	}
 
-	public void setSubtipoActivo(DDSubtipoActivo subtipoActivo) {
-		this.subtipoActivo = subtipoActivo;
+	public void setDesEstadoExpediente(String desEstadoExpediente) {
+		this.desEstadoExpediente = desEstadoExpediente;
+	}
+
+	public String getCodSubtipoActivo() {
+		return codSubtipoActivo;
+	}
+
+	public void setCodSubtipoActivo(String codSubtipoActivo) {
+		this.codSubtipoActivo = codSubtipoActivo;
+	}
+
+	public String getDesSubtipoActivo() {
+		return desSubtipoActivo;
+	}
+
+	public void setDesSubtipoActivo(String desSubtipoActivo) {
+		this.desSubtipoActivo = desSubtipoActivo;
 	}
 
 	public Double getImporteAprobadoOferta() {

@@ -14,7 +14,7 @@ public class DtoMediadorEvaluaFilter extends WebDto {
 
 	private String codigoRem;	
 	private String nombreApellidos; 
-   	private String codPprovincia;
+   	private String codProvincia;
    	private String codLocalidad;
 	private Integer esCustodio;
     private String codEstadoProveedor;
@@ -37,11 +37,11 @@ public class DtoMediadorEvaluaFilter extends WebDto {
 	public void setNombreApellidos(String nombreApellidos) {
 		this.nombreApellidos = nombreApellidos;
 	}
-	public String getCodPprovincia() {
-		return codPprovincia;
+	public String getCodProvincia() {
+		return codProvincia;
 	}
-	public void setCodPprovincia(String codPprovincia) {
-		this.codPprovincia = codPprovincia;
+	public void setCodProvincia(String codProvincia) {
+		this.codProvincia = codProvincia;
 	}
 	public String getCodLocalidad() {
 		return codLocalidad;

@@ -17,18 +17,23 @@ public class DtoMediadorEvalua extends WebDto {
 	private Long id;
 	private String codigoRem;	
 	private String nombreApellidos; 
-   	private String codPprovincia;
+   	private String codProvincia;
+   	private String desProvincia;
    	private String codLocalidad;
+   	private String desLocalidad;
 	private Date fechaAlta;  
 	private Integer esCustodio;
     private String codEstadoProveedor;
+    private String desEstadoProveedor;
    	private String codCartera;
+   	private String desCartera;
 	private String codCalificacion;
+	private String desCalificacion;
 	private Integer esTop;
 	private String codCalificacionPropuesta;
+	private String desCalificacionPropuesta;
 	private Integer esTopPropuesto;
 	private Integer esHomologado;
-	
 	
 	
 	public Long getId() {
@@ -49,17 +54,29 @@ public class DtoMediadorEvalua extends WebDto {
 	public void setNombreApellidos(String nombreApellidos) {
 		this.nombreApellidos = nombreApellidos;
 	}
-	public String getCodPprovincia() {
-		return codPprovincia;
+	public String getCodProvincia() {
+		return codProvincia;
 	}
-	public void setCodPprovincia(String codPprovincia) {
-		this.codPprovincia = codPprovincia;
+	public void setCodProvincia(String codProvincia) {
+		this.codProvincia = codProvincia;
+	}
+	public String getDesProvincia() {
+		return desProvincia;
+	}
+	public void setDesProvincia(String desProvincia) {
+		this.desProvincia = desProvincia;
 	}
 	public String getCodLocalidad() {
 		return codLocalidad;
 	}
 	public void setCodLocalidad(String codLocalidad) {
 		this.codLocalidad = codLocalidad;
+	}
+	public String getDesLocalidad() {
+		return desLocalidad;
+	}
+	public void setDesLocalidad(String desLocalidad) {
+		this.desLocalidad = desLocalidad;
 	}
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -79,17 +96,35 @@ public class DtoMediadorEvalua extends WebDto {
 	public void setCodEstadoProveedor(String codEstadoProveedor) {
 		this.codEstadoProveedor = codEstadoProveedor;
 	}
+	public String getDesEstadoProveedor() {
+		return desEstadoProveedor;
+	}
+	public void setDesEstadoProveedor(String desEstadoProveedor) {
+		this.desEstadoProveedor = desEstadoProveedor;
+	}
 	public String getCodCartera() {
 		return codCartera;
 	}
 	public void setCodCartera(String codCartera) {
 		this.codCartera = codCartera;
 	}
+	public String getDesCartera() {
+		return desCartera;
+	}
+	public void setDesCartera(String desCartera) {
+		this.desCartera = desCartera;
+	}
 	public String getCodCalificacion() {
 		return codCalificacion;
 	}
 	public void setCodCalificacion(String codCalificacion) {
 		this.codCalificacion = codCalificacion;
+	}
+	public String getDesCalificacion() {
+		return desCalificacion;
+	}
+	public void setDesCalificacion(String desCalificacion) {
+		this.desCalificacion = desCalificacion;
 	}
 	public Integer getEsTop() {
 		return esTop;
@@ -102,6 +137,12 @@ public class DtoMediadorEvalua extends WebDto {
 	}
 	public void setCodCalificacionPropuesta(String codCalificacionPropuesta) {
 		this.codCalificacionPropuesta = codCalificacionPropuesta;
+	}
+	public String getDesCalificacionPropuesta() {
+		return desCalificacionPropuesta;
+	}
+	public void setDesCalificacionPropuesta(String desCalificacionPropuesta) {
+		this.desCalificacionPropuesta = desCalificacionPropuesta;
 	}
 	public Integer getEsTopPropuesto() {
 		return esTopPropuesto;
@@ -116,4 +157,28 @@ public class DtoMediadorEvalua extends WebDto {
 		this.esHomologado = esHomologado;
 	}
 	
+	public void clear(){
+		this.id = null;
+		this.codigoRem = null;
+		this.nombreApellidos = null;
+		this.codProvincia = null;
+		this.desProvincia = null;
+		this.codLocalidad = null;
+		this.desLocalidad = null;
+		this.fechaAlta  = null;
+		this.esCustodio = null;
+		this.codEstadoProveedor = null;
+		this.desEstadoProveedor = null;
+		this.codCartera = null;
+		this.desCartera = null;
+		this.codCalificacion = null;
+		this.desCalificacion = null;
+		this.esTop = null;
+		this.codCalificacionPropuesta = null;
+		this.desCalificacionPropuesta = null;
+		this.esTopPropuesto = null;
+		this.esHomologado = null;
+	}
+	
+
 }

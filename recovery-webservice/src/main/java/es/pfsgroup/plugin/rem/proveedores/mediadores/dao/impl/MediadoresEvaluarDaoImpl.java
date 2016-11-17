@@ -1,0 +1,105 @@
+package es.pfsgroup.plugin.rem.proveedores.mediadores.dao.impl;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
+import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
+import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
+import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
+import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresEvaluarDao;
+
+@Repository("MediadoresEvaluarDao")
+public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresEvaluar, Long> implements MediadoresEvaluarDao {
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	@Override
+	public Page getListMediadoresEvaluar(DtoMediadorEvaluaFilter dtoFilter){
+		DtoMediadorEvalua dto = new DtoMediadorEvalua();
+		try {
+			beanUtilNotNull.copyProperties(dto, dtoFilter);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		HQLBuilder hb = new HQLBuilder(" FROM VListMediadoresEvaluar mev ");
+		
+		if(!Checks.esNulo(dto.getCodCalificacion()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "codCalificacion", dto.getCodCalificacion());
+		
+		if(!Checks.esNulo(dto.getCodCartera()))
+			HQLBuilder.addFiltroIgualQue(hb, "codCartera", dto.getCodCartera());
+		
+		if(!Checks.esNulo(dto.getCodEstadoProveedor()))
+			HQLBuilder.addFiltroIgualQue(hb, "codEstadoProveedor", dto.getCodEstadoProveedor());
+
+		if(!Checks.esNulo(dto.getCodigoRem()))
+			HQLBuilder.addFiltroIgualQue(hb, "codigoRem", dto.getCodigoRem());
+		
+		if(!Checks.esNulo(dto.getCodLocalidad()))
+			HQLBuilder.addFiltroIgualQue(hb, "codLocalidad", dto.getCodLocalidad());
+		
+		if(!Checks.esNulo(dto.getCodProvincia()))
+			HQLBuilder.addFiltroIgualQue(hb, "codProvincia", dto.getCodProvincia());
+		
+		if(!Checks.esNulo(dto.getEsCustodio()))
+			HQLBuilder.addFiltroIgualQue(hb, "esCustodio", String.valueOf(dto.getEsCustodio()));
+		
+		if(!Checks.esNulo(dto.getEsHomologado())){
+			if(dto.getEsHomologado() == 1)
+				HQLBuilder.addFiltroIgualQue(hb, "esHomologado", String.valueOf(dto.getEsHomologado()));
+		}
+		
+		if(!Checks.esNulo(dto.getEsTop())){
+			if(dto.getEsTop() == 1)
+				HQLBuilder.addFiltroIgualQue(hb, "esTop", String.valueOf(dto.getEsTop()));
+		}
+
+		if(!Checks.esNulo(dto.getNombreApellidos()))
+			HQLBuilder.addFiltroLikeSiNotNull(hb, "nombreApellidos", dto.getNombreApellidos());
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean evaluarMediadoresConPropuestas(){
+		
+		// Actualiza las calificaciones y top vigentes copiando los datos de propuestos
+		StringBuilder updateHQL = new StringBuilder("update ActivoProveedor pve ");
+		updateHQL.append(" set pve.calificacionProveedor = pve.calificacionProveedorPropuesta ");
+		updateHQL.append("   , pve.top = pve.topPropuesto ");
+		updateHQL.append(" where pve.calificacionProveedorPropuesta is not null ");
+		updateHQL.append("    or pve.topPropuesto is not null ");
+		
+        Query queryUpdate = this.getSession().createQuery(updateHQL.toString());
+        queryUpdate.executeUpdate();
+        
+        // Vacia los datos de propuestos
+//		StringBuilder updateHQLKiller = new StringBuilder("update ActivoProveedor pve ");
+//		updateHQLKiller.append(" set pve.calificacionProveedorPropuesta = null ");
+//		updateHQLKiller.append("   , pve.topPropuesto = null ");
+		
+//        Query queryUpdateKiller = this.getSession().createQuery(updateHQLKiller.toString());
+//        queryUpdateKiller.executeUpdate();
+        
+        return true;
+	}
+
+}

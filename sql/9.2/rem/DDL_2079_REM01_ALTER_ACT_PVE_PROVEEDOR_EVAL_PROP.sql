@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20161103
+--## FECHA_CREACION=20161117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1062
@@ -45,7 +45,7 @@ DECLARE
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
     	T_ALTER(  'DD_CPR_ID_PROP',			'NUMBER(16,0)',								'Calificacion proveedor propuesta'	),
-    	T_ALTER(  'PVE_TOP_PROP',			'NUMBER(1,0) DEFAULT 0 NOT NULL',			'Proveedor en TOP 150 propuesto')
+    	T_ALTER(  'PVE_TOP_PROP',			'NUMBER(1,0)',								'Proveedor en TOP 150 propuesto')
 		);
     V_T_ALTER T_ALTER;
     

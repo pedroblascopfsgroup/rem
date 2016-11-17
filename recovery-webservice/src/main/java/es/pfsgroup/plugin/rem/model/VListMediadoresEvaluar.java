@@ -26,7 +26,7 @@ public class VListMediadoresEvaluar implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 101L;
-	
+
 	@Id
 	@Column(name = "ID_MEDIADOR")
 	private Long id;
@@ -37,46 +37,57 @@ public class VListMediadoresEvaluar implements Serializable {
 	@Column(name = "NOMBRE_MEDIADOR")
 	private String nombreApellidos; 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PROVINCIA_MEDIADOR")
-   	private DDProvincia provincia;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LOCALIDAD_MEDIADOR")
-   	private Localidad localidad;
-    
+	@Column(name = "COD_PROVINCIA")
+   	private String codProvincia;
+
+	@Column(name = "DES_PROVINCIA")
+   	private String desProvincia;
+	
+	@Column(name = "COD_LOCALIDAD")
+   	private String codLocalidad;
+
+	@Column(name = "DES_LOCALIDAD")
+   	private String desLocalidad;
+	
 	@Column(name = "FECHA_ALTA")
 	private Date fechaAlta;  
 	
     @Column(name = "ES_CUSTODIO")
     private Integer esCustodio;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "EPR_ESTADO_PROVEEDOR")
-   	private DDEstadoProveedor estadoProveedor;
+    @Column(name = "COD_ESTADO_PROVEEDOR")
+   	private String codEstadoProveedor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CRA_CARTERA")
-   	private DDCartera cartera;
+    @Column(name = "DES_ESTADO_PROVEEDOR")
+   	private String desEstadoProveedor;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="CPR_CALIFICACION_VIGENTE")
-	private DDCalificacionProveedor calificacion;
-	
+    @Column(name = "COD_CARTERA")
+   	private String codCartera;
+
+    @Column(name = "DES_CARTERA")
+   	private String desCartera;
+    
+    @Column(name = "COD_CALIFICACION_VIGENTE")
+	private String codCalificacion;
+
+    @Column(name = "DES_CALIFICACION_VIGENTE")
+	private String desCalificacion;
+    
 	@Column(name = "ES_TOP_150_VIGENTE")
 	private Integer esTop;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CPR_CALIFICACION_PROPUESTA")
-	private DDCalificacionProveedor calificacionPropuesta;
-	
+    @Column(name = "COD_CALIFICACION_PROPUESTA")
+	private String codCalificacionPropuesta;
+
+    @Column(name = "DES_CALIFICACION_PROPUESTA")
+	private String desCalificacionPropuesta;
+    
 	@Column(name = "ES_TOP_150_PROPUESTO")
 	private Integer esTopPropuesto;
 
 	@Column(name = "ES_HOMOLOGADO")
 	private Integer esHomologado;
 
-	
 	
 	public Long getId() {
 		return id;
@@ -102,20 +113,36 @@ public class VListMediadoresEvaluar implements Serializable {
 		this.nombreApellidos = nombreApellidos;
 	}
 
-	public DDProvincia getProvincia() {
-		return provincia;
+	public String getCodProvincia() {
+		return codProvincia;
 	}
 
-	public void setProvincia(DDProvincia provincia) {
-		this.provincia = provincia;
+	public void setCodProvincia(String codProvincia) {
+		this.codProvincia = codProvincia;
 	}
 
-	public Localidad getLocalidad() {
-		return localidad;
+	public String getDesProvincia() {
+		return desProvincia;
 	}
 
-	public void setLocalidad(Localidad localidad) {
-		this.localidad = localidad;
+	public void setDesProvincia(String desProvincia) {
+		this.desProvincia = desProvincia;
+	}
+
+	public String getCodLocalidad() {
+		return codLocalidad;
+	}
+
+	public void setCodLocalidad(String codLocalidad) {
+		this.codLocalidad = codLocalidad;
+	}
+
+	public String getDesLocalidad() {
+		return desLocalidad;
+	}
+
+	public void setDesLocalidad(String desLocalidad) {
+		this.desLocalidad = desLocalidad;
 	}
 
 	public Date getFechaAlta() {
@@ -134,28 +161,52 @@ public class VListMediadoresEvaluar implements Serializable {
 		this.esCustodio = esCustodio;
 	}
 
-	public DDEstadoProveedor getEstadoProveedor() {
-		return estadoProveedor;
+	public String getCodEstadoProveedor() {
+		return codEstadoProveedor;
 	}
 
-	public void setEstadoProveedor(DDEstadoProveedor estadoProveedor) {
-		this.estadoProveedor = estadoProveedor;
+	public void setCodEstadoProveedor(String codEstadoProveedor) {
+		this.codEstadoProveedor = codEstadoProveedor;
 	}
 
-	public DDCartera getCartera() {
-		return cartera;
+	public String getDesEstadoProveedor() {
+		return desEstadoProveedor;
 	}
 
-	public void setCartera(DDCartera cartera) {
-		this.cartera = cartera;
+	public void setDesEstadoProveedor(String desEstadoProveedor) {
+		this.desEstadoProveedor = desEstadoProveedor;
 	}
 
-	public DDCalificacionProveedor getCalificacion() {
-		return calificacion;
+	public String getCodCartera() {
+		return codCartera;
 	}
 
-	public void setCalificacion(DDCalificacionProveedor calificacion) {
-		this.calificacion = calificacion;
+	public void setCodCartera(String codCartera) {
+		this.codCartera = codCartera;
+	}
+
+	public String getDesCartera() {
+		return desCartera;
+	}
+
+	public void setDesCartera(String desCartera) {
+		this.desCartera = desCartera;
+	}
+
+	public String getCodCalificacion() {
+		return codCalificacion;
+	}
+
+	public void setCodCalificacion(String codCalificacion) {
+		this.codCalificacion = codCalificacion;
+	}
+
+	public String getDesCalificacion() {
+		return desCalificacion;
+	}
+
+	public void setDesCalificacion(String desCalificacion) {
+		this.desCalificacion = desCalificacion;
 	}
 
 	public Integer getEsTop() {
@@ -166,12 +217,20 @@ public class VListMediadoresEvaluar implements Serializable {
 		this.esTop = esTop;
 	}
 
-	public DDCalificacionProveedor getCalificacionPropuesta() {
-		return calificacionPropuesta;
+	public String getCodCalificacionPropuesta() {
+		return codCalificacionPropuesta;
 	}
 
-	public void setCalificacionPropuesta(DDCalificacionProveedor calificacionPropuesta) {
-		this.calificacionPropuesta = calificacionPropuesta;
+	public void setCodCalificacionPropuesta(String codCalificacionPropuesta) {
+		this.codCalificacionPropuesta = codCalificacionPropuesta;
+	}
+
+	public String getDesCalificacionPropuesta() {
+		return desCalificacionPropuesta;
+	}
+
+	public void setDesCalificacionPropuesta(String desCalificacionPropuesta) {
+		this.desCalificacionPropuesta = desCalificacionPropuesta;
 	}
 
 	public Integer getEsTopPropuesto() {
@@ -189,5 +248,5 @@ public class VListMediadoresEvaluar implements Serializable {
 	public void setEsHomologado(Integer esHomologado) {
 		this.esHomologado = esHomologado;
 	}
-	
+
 }

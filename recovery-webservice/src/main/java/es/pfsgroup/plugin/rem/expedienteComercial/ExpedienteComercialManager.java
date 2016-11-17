@@ -323,7 +323,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(dto.getEstadoCodigo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo());
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);	
-			oferta.setEstadoOferta(estado);;	
+			oferta.setEstadoOferta(estado);	
 		}
 		
 		if(!Checks.esNulo(dto.getTipoOfertaCodigo())){
@@ -360,7 +360,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		if(!Checks.esNulo(dto.getNumVisita())){
-			Filter filtroVisita = genericDao.createFilter(FilterType.EQUALS, "numVisitaRem",dto.getNumVisita());
+			Filter filtroVisita = genericDao.createFilter(FilterType.EQUALS, "numVisitaRem",Long.parseLong(dto.getNumVisita()));
 			Visita visita = genericDao.get(Visita.class, filtroVisita);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());	
@@ -467,6 +467,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 
 		}
+		if("".equals(dto.getNumVisita()))
+			oferta.setVisita(null);
 		
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
@@ -693,7 +695,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//dto.setComite();
 		
 		if(!Checks.esNulo(oferta.getVisita())) {
-			dto.setNumVisita(oferta.getVisita().getNumVisitaRem());
+			dto.setNumVisita(oferta.getVisita().getNumVisitaRem().toString());
 		}
 		
 		if(!Checks.esNulo(oferta.getEstadoVisitaOferta())) {

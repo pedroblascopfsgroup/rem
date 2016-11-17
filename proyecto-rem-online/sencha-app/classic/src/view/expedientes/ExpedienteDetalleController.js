@@ -1211,6 +1211,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoHora.wasValid = false;
 		else
 			campoHora.wasValid = true;
+	},
+	
+	numVisitaIsEditable: function() {
+		var me = this,
+		campoNumVisita = me.lookupReference('numVistaFromOfertaRef');
+		// Si el estado de la visita no es REALIZADA, no debe haber numVisita relacionada
+		if(me.lookupReference('comboEstadosVisita').getValue() == "03" )
+			campoNumVisita.setDisabled(false);
+		else {
+			campoNumVisita.setValue();
+			campoNumVisita.setDisabled(true);
+		}
 	}
 	
 });

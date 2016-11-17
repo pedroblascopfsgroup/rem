@@ -114,15 +114,15 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			running = false;
 		}
 	}
-	
+
 	public void detectaCambios() {
 		detectaCambios(null);
 	}
-	
+
 	/**
 	 * Refresca vista materializada
 	 */
-	public void actualizaVistasMaterializadas(){
+	public void actualizaVistasMaterializadas() {
 		for (DetectorCambiosBD<?> handler : registroCambiosHandlers) {
 			handler.actualizarVistaMaterializada();
 		}
@@ -148,37 +148,39 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
 		try {
 			List<DetectorCambiosBD> registroCambiosHandlersAjecutar = registroCambiosHandlers;
-			if(handlerToExecute!=null){
+			if (handlerToExecute != null) {
 				registroCambiosHandlersAjecutar = new ArrayList<DetectorCambiosBD>();
 				registroCambiosHandlersAjecutar.add(handlerToExecute);
 			}
-			
+
 			if ((registroCambiosHandlersAjecutar != null) && (!registroCambiosHandlersAjecutar.isEmpty())) {
-				//ordenamos los handlers por peso
+				// ordenamos los handlers por peso
 				Collections.sort(registroCambiosHandlersAjecutar);
 				for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
-					logger.debug("EJECUTANDO HANDLER: "+handler.getClass().getName());
-					RestLlamada registro = new RestLlamada();
-					registro.setIteracion(iteracion);
-					boolean somethingdone = false;
-					try {
-						long startTime = System.currentTimeMillis();
+					if (handler.isActivo()) {
+						logger.debug("EJECUTANDO HANDLER: " + handler.getClass().getName());
+						RestLlamada registro = new RestLlamada();
+						registro.setIteracion(iteracion);
+						boolean somethingdone = false;
+						try {
+							long startTime = System.currentTimeMillis();
 
-						logger.debug(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
-						Class control = handler.getDtoClass();
-						List listPendientes = handler.listPendientes(control, registro);
-						somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
+							logger.debug(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
+							Class control = handler.getDtoClass();
+							List listPendientes = handler.listPendientes(control, registro);
+							somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
 
-						ejecutaTarea(handler, listPendientes, control, registro);
+							ejecutaTarea(handler, listPendientes, control, registro);
 
-						logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName() + "]: "
-								+ (System.currentTimeMillis() - startTime));
-					} catch (CambiosBDDaoError e) {
-						logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
-								+ "], no se han podido obtener los cambios", e);
-					} finally {
-						if (somethingdone && (registroLlamadas != null)) {
-							registroLlamadas.guardaRegistroLlamada(registro);
+							logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
+									+ "]: " + (System.currentTimeMillis() - startTime));
+						} catch (CambiosBDDaoError e) {
+							logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
+									+ "], no se han podido obtener los cambios", e);
+						} finally {
+							if (somethingdone && (registroLlamadas != null)) {
+								registroLlamadas.guardaRegistroLlamada(registro);
+							}
 						}
 					}
 				}
@@ -241,13 +243,13 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				}
 
 			}
-			
+
 			if (registroLlamadas == null) {
 				String[] registros = applicationContext.getBeanNamesForType(RegistroLlamadasManager.class);
 				if ((registros != null) && (registros.length > 0)) {
 					configuraRegistroLlamadas(applicationContext, registros);
 
-				} else if (! registroCambiosHandlers.isEmpty()){
+				} else if (!registroCambiosHandlers.isEmpty()) {
 					logger.warn("*************************************************************");
 					logger.warn("No se han encontrado instancias de " + RegistroLlamadasManager.class.getName()
 							+ ". No guardarar trazas en la BD de las llamadas a servicios REST de WEBCOM");
@@ -255,8 +257,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				}
 
 			}
-			
-			
+
 		} // end check event
 
 	}

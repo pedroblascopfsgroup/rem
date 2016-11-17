@@ -47,5 +47,10 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	protected Integer getWeight() {
 		return 9995;
 	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
 
 }

@@ -47,5 +47,10 @@ public class DetectorWebcomUsuarios  extends DetectorCambiosBD<UsuarioDto> {
 	protected Integer getWeight() {
 		return 9998;
 	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
 
 }

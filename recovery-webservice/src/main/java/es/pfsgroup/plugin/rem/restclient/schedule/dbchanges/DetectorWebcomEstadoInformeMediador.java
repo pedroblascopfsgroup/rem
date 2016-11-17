@@ -47,5 +47,10 @@ public class DetectorWebcomEstadoInformeMediador  extends DetectorCambiosBD<Info
 	protected Integer getWeight() {
 		return 9990;
 	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
 
 }

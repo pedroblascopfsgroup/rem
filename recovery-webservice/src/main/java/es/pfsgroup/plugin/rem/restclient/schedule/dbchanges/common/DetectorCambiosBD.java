@@ -53,6 +53,13 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * @return
 	 */
 	protected abstract Integer getWeight();
+	
+	/**
+	 * Permite activar y desactivar el envio del servicio
+	 * 
+	 * @return
+	 */
+	public abstract boolean isActivo();
 
 	/**
 	 * Implementa este método en cada detector simplemente haciendo un 'new' que

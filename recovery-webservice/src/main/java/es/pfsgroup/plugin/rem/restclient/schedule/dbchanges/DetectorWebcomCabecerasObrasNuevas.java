@@ -48,4 +48,9 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 		return 9996;
 	}
 
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
+
 }

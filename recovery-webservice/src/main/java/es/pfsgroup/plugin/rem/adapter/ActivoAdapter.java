@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -196,6 +197,7 @@ public class ActivoAdapter {
 
 	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
+	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 
 	
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -3243,16 +3245,28 @@ public class ActivoAdapter {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean createOfertaActivo(DtoOfertasFilter dto){
+	public boolean createOfertaActivo(DtoOfertasFilter dto) throws Exception{
+		Activo activo= activoApi.get(dto.getIdActivo());
+		
+		// Comprobar el tipo de destino comercial que tiene actualmente el activo y contrastar con la oferta.
+		if(!Checks.esNulo(activo.getTipoComercializacion())){
+			String comercializacion = activo.getTipoComercializacion().getCodigo();
+			
+			if(DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion) || !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
+				throw new Exception(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
+			}
+			
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion) || !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
+				throw new Exception(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
+			}
+		}
 		
 		try{
 			Oferta oferta= new Oferta();
 			ActivoOferta activoOferta= new ActivoOferta();
 			ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
 			ClienteComercial clienteComercial= new ClienteComercial();
-			
-			Activo activo= activoApi.get(dto.getIdActivo());
-			
+
 			/*if(!Checks.esNulo(activo.getAgrupaciones()) && activo.getAgrupaciones().size()!=0){
 				for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 					ActivoAgrupacion agrupacion = agrupaciones.getAgrupacion();
@@ -3261,14 +3275,13 @@ public class ActivoAdapter {
 					}
 				}
 			}*/
-			
+
 			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 			for (ActivoOferta acof: activo.getOfertas()) {
 				Oferta of = acof.getPrimaryKey().getOferta();
 				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
 					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
 				}
-				
 			}
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
@@ -3283,12 +3296,10 @@ public class ActivoAdapter {
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
 			clienteComercial.setIdClienteRem(clcremid);
-			
+
 			genericDao.save(ClienteComercial.class, clienteComercial);
-			
-			
+
 			oferta.setNumOferta(numOferta);
-			
 			oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);

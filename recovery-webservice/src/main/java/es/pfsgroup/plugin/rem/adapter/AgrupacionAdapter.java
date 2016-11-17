@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
@@ -129,6 +130,8 @@ public class AgrupacionAdapter {
 	private TrabajoApi trabajoApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
+	
+	public static final String OFERTA_INCOMPATIBLE_AGR_MSG = "El tipo de oferta es incompatible con el destino comercial de algún activo";
     
 	public DtoAgrupaciones getAgrupacionById(Long id){
 		
@@ -838,40 +841,53 @@ public class AgrupacionAdapter {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean createOfertaAgrupacion(DtoOfertasFilter dto){
+	public boolean createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception{
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
+
+		for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
+
+			// Comprobar el tipo de destino comercial que tiene actualmente el activo y contrastar con la oferta.
+			if(!Checks.esNulo(activos.getActivo().getTipoComercializacion())){
+				String comercializacion = activos.getActivo().getTipoComercializacion().getCodigo();
+				
+				if(DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion) || !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
+					throw new Exception(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
+				}
+				
+				if(DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion) || !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
+					throw new Exception(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
+				}
+			}
+		}
 		
 		try{
-			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
 			ClienteComercial clienteComercial= new ClienteComercial();
-			
+
 			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 			for (Oferta of: agrupacion.getOfertas()) {
 
 				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
 					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
 				}
-				
 			}
-			
+
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumento());
 			Long numOferta= activoDao.getNextNumOferta();
 			Long clcremid= activoDao.getNextClienteRemId();
-			
+
 			clienteComercial.setNombre(dto.getNombreCliente());
 			clienteComercial.setApellidos(dto.getApellidosCliente());
 			clienteComercial.setDocumento(dto.getNumDocumentoCliente());
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
 			clienteComercial.setIdClienteRem(clcremid);
-			
+
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta= new Oferta();
-			
-			
-			
+
 			oferta.setNumOferta(numOferta);
 			oferta.setAgrupacion(agrupacion);
 			oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
@@ -879,37 +895,35 @@ public class AgrupacionAdapter {
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
-			
+
 			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
-			
+
 			//En cada activo de la agrupacion se añade una oferta en la tabla ACT_OFR
 			for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
-				
+
 				ActivoOferta activoOferta= new ActivoOferta();
 				ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
-				
+
 				activoOfertaPk.setActivo(activos.getActivo());
 				activoOfertaPk.setOferta(oferta);
 				activoOferta.setPrimaryKey(activoOfertaPk);
-				
+
 				// TODO: Pendiente de definir como sacar el % de participación.
 				String participacion = String.valueOf(100 / agrupacion.getActivos().size());
 				activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
 				activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
-				
+
 				listaActivosOfertas.add(activoOferta);
 			}
-			
+
 			oferta.setActivosOferta(listaActivosOfertas);
 			oferta.setCliente(clienteComercial);
 			genericDao.save(Oferta.class, oferta);
-			
-			
 		}catch(Exception ex) {
 			logger.error(ex.getMessage());
 			return false;
 		}
-		
+
 		return true;
 	}	
 	

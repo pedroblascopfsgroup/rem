@@ -62,7 +62,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					       		text: HreRem.i18n('fieldlabel.hora.aviso'),
 					       		dataIndex: 'horaAviso',
 					       		formatter: 'date("H:i")',
-					       		flex: 1,
+					       		flex: 0.5,
 								editor: {
 						       		xtype: 'timefieldbase',
 						       		addUxReadOnlyEditFieldPlugin: false,
@@ -95,7 +95,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					       		text: HreRem.i18n('fieldlabel.hora.posicionamiento'),
 					       		dataIndex: 'horaPosicionamiento',
 					       		formatter: 'date("H:i")',
-					       		flex: 1,
+					       		flex: 0.5,
 								editor: {
 						       		xtype: 'timefieldbase',
 						       		addUxReadOnlyEditFieldPlugin: false,

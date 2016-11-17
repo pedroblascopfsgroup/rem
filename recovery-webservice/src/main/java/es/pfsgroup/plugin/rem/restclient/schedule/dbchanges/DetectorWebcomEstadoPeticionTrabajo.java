@@ -47,5 +47,10 @@ public class DetectorWebcomEstadoPeticionTrabajo extends DetectorCambiosBD<Estad
 	protected Integer getWeight() {
 		return 9992;
 	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
 
 }

@@ -48,4 +48,9 @@ public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoO
 		return 9994;
 	}
 
+	@Override
+	public boolean isActivo() {
+		return false;
+	}
+
 }

@@ -46,7 +46,7 @@ public class DtoDatosBasicosOferta extends WebDto {
     
     private String comite;
     
-    private Long numVisita;   
+    private String numVisita;   
     
     private String estadoVisitaOfertaCodigo;
     
@@ -143,11 +143,11 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.comite = comite;
 	}
 
-	public Long getNumVisita() {
+	public String getNumVisita() {
 		return numVisita;
 	}
 
-	public void setNumVisita(Long numVisita) {
+	public void setNumVisita(String numVisita) {
 		this.numVisita = numVisita;
 	}
 

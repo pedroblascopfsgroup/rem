@@ -47,7 +47,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL = "Si indica 'N' en la columna 'Comercializar' no puede marcar 'S' en la columna 'Formalizar'";
 	public static final String VALID_PERIMETRO_DESTINO_COMERCIAL = "Debe indicar un codigo valido para el destino comercial";
 	public static final String VALID_PERIMETRO_TIPO_ALQUILER = "Debe indicar un codigo valido para el tipo de alquiler";
-	public static final String VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE = "No pueda indicar 'S' en la columna 'Formalizar' porque el activo no es comercializable";
+	public static final String VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE = "No puede indicar 'S' en la columna 'Formalizar' porque el activo no es comercializable";
 	
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_EN_PERIMETRO_SN = 1;

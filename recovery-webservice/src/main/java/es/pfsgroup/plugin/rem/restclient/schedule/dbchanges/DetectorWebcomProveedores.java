@@ -48,5 +48,10 @@ public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 		return 9999;
 	}
 	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
+	
 
 }

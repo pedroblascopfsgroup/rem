@@ -385,10 +385,12 @@ BEGIN
 	NULL                            						  BIE_DREG_INSCRIPCION,
 	NULL                      								  BIE_DREG_FECHA_INSCRIPCION,
 	MIG.REG_NUM_REGISTRO                                      BIE_DREG_NUM_REGISTRO,
-	NULL                        							  BIE_DREG_MUNICIPIO_LIBRO,
+	(SELECT DD_LOC_ID
+	FROM '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD
+	WHERE DD_LOC_CODIGO = MIG.MUNICIPIO_REGISTRO)             BIE_DREG_MUNICIPIO_LIBRO,
 	NULL                        							  BIE_DREG_CODIGO_REGISTRO,
 	''0''                                                     VERSION,
-	''MIGRAREM01BNK''                                                   USUARIOCREAR,
+	''MIGRAREM01BNK''                                         USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -398,7 +400,7 @@ BEGIN
 	MIG.REG_NUM_FINCA                                         BIE_DREG_NUM_FINCA,
 	(SELECT DD_LOC_ID
 	FROM '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD
-	WHERE DD_LOC_CODIGO = MIG.MUNICIPIO)                      DD_LOC_ID,
+	WHERE DD_LOC_CODIGO = MIG.MUNICIPIO_REGISTRO)             DD_LOC_ID,
 	(SELECT DD_PRV_ID
 	FROM '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA
 	WHERE DD_PRV_CODIGO = MIG.PROVINCIA)                      DD_PRV_ID

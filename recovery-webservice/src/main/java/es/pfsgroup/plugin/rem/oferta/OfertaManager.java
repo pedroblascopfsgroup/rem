@@ -336,7 +336,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
 			}else {
 				//el proveedor tiene que ser custodio
-				if ((cust.getCustodio() != null && cust.getCustodio() != new Integer(1))
+				if ((cust.getCustodio() != null && !cust.getCustodio().equals(new Integer(1)))
 						|| cust.getCustodio() == null) {
 					errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
 				}

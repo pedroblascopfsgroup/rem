@@ -39,6 +39,10 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							store: '{storePosicionamientos}'
 						},			    
 			    		topBar: true,
+			    		listeners: { 
+		    				rowdblclick: 'comprobarCamposFechas',
+		    				beforeedit: 'comprobarCamposFechas'
+			    		},
 						columns: [
 						
 							{   
@@ -47,18 +51,65 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					            formatter: 'date("d/m/Y")',
 					        	flex: 1,
 					        	editor: {
-		                  			xtype: 'datefield'
+		                  			xtype: 'datefield',
+		                  			reference: 'fechaAvisoRef',
+						            listeners: {
+										change: 'changeFecha'
+									}
 					        	}
 					       	},
+					       	{
+					       		text: HreRem.i18n('fieldlabel.hora.aviso'),
+					       		dataIndex: 'horaAviso',
+					       		formatter: 'date("H:i")',
+					       		flex: 1,
+								editor: {
+						       		xtype: 'timefieldbase',
+						       		addUxReadOnlyEditFieldPlugin: false,
+									labelWidth	: 150,
+									format: 'H:i',
+									increment: 15,
+									reference: 'horaAvisoRef',
+									disabled: true,
+									allowBlank: true,
+						            listeners: {
+										change: 'changeHora'
+									}
+								}
+							},	
 					       	{   
 					       		text: HreRem.i18n('fieldlabel.fecha.posicionamiento'),
 						  		dataIndex: 'fechaPosicionamiento',
 					            formatter: 'date("d/m/Y")',
 					        	flex: 1,
 					        	editor: {
-		                  			xtype: 'datefield'
+		                  			xtype: 'datefield',
+		                  			reference: 'fechaPosicionamientoRef',
+		                  			allowBlank: false,
+						            listeners: {
+										change: 'changeFecha'
+									}
 					        	}
-					       	},	
+					       	},
+					    	{
+					       		text: HreRem.i18n('fieldlabel.hora.posicionamiento'),
+					       		dataIndex: 'horaPosicionamiento',
+					       		formatter: 'date("H:i")',
+					       		flex: 1,
+								editor: {
+						       		xtype: 'timefieldbase',
+						       		addUxReadOnlyEditFieldPlugin: false,
+									labelWidth	: 150,
+									format: 'H:i',
+									increment: 15,
+									reference: 'horaPosicionamientoRef',
+									disabled: true,
+									allowBlank: true,
+						            listeners: {
+										change: 'changeHora'
+									}
+								}
+					    	},
 						   	{
 					            text: HreRem.i18n('fieldlabel.notaria'),
 					            dataIndex: 'idProveedorNotario',

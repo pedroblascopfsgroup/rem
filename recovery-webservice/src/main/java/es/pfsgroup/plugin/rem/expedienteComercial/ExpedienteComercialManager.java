@@ -1,8 +1,12 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1464,38 +1468,85 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return new DtoPage(posicionamientos, posicionamientos.size());
-		
-		
 	}
 	
 	public DtoPosicionamiento posicionamientoToDto(Posicionamiento posicionamiento){
 		
 		DtoPosicionamiento posicionamientoDto= new DtoPosicionamiento();
-		posicionamientoDto.setIdPosicionamiento(posicionamiento.getId());
-		posicionamientoDto.setFechaAviso(posicionamiento.getFechaAviso());
-		if(!Checks.esNulo(posicionamiento.getNotario())) {
-			posicionamientoDto.setIdProveedorNotario(posicionamiento.getNotario().getId());
+		
+		try {
+			beanUtilNotNull.copyProperties(posicionamientoDto, posicionamiento);
+			
+			beanUtilNotNull.copyProperty(posicionamientoDto, "idPosicionamiento", posicionamiento.getId());
+			if(!Checks.esNulo(posicionamiento.getNotario()))
+				beanUtilNotNull.copyProperty(posicionamientoDto, "idProveedorNotario", posicionamiento.getNotario().getId());
+			
+			beanUtilNotNull.copyProperty(posicionamientoDto, "horaAviso", posicionamiento.getFechaAviso());
+			beanUtilNotNull.copyProperty(posicionamientoDto, "horaPosicionamiento", posicionamiento.getFechaPosicionamiento());
+			
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
-		posicionamientoDto.setFechaPosicionamiento(posicionamiento.getFechaPosicionamiento());
-		posicionamientoDto.setMotivoAplazamiento(posicionamiento.getMotivoAplazamiento());
-		
+
 		return posicionamientoDto;
-		
 	}
 	
 	public Posicionamiento dtoToPosicionamiento(DtoPosicionamiento dto, Posicionamiento posicionamiento){
 		
-		posicionamiento.setFechaAviso(dto.getFechaAviso());
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		try {//Comprobacion necesaria para cuando actualizan un registro donde han quitado la fecha
+			if(!Checks.esNulo(dto.getHoraAviso()) && dto.getFechaAviso().after(sdf.parse("01/01/1970")))
+				dto.setFechaAviso(this.setHourAndMinutesToDate(dto.getFechaAviso(),dto.getHoraAviso()));
+			
+			if(!Checks.esNulo(dto.getHoraPosicionamiento()) && dto.getFechaPosicionamiento().after(sdf.parse("01/01/1970")))
+				dto.setFechaPosicionamiento(this.setHourAndMinutesToDate(dto.getFechaPosicionamiento(),dto.getHoraPosicionamiento()));
+			
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		try {
+			
+			beanUtilNotNull.copyProperty(posicionamiento, "motivoAplazamiento", dto.getMotivoAplazamiento());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaAviso", dto.getFechaAviso());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaPosicionamiento());
+
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
 		if(!Checks.esNulo(dto.getIdProveedorNotario())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdProveedorNotario());
 			ActivoProveedor notario = genericDao.get(ActivoProveedor.class, filtro);
 			posicionamiento.setNotario(notario);
 		}
-		posicionamiento.setFechaPosicionamiento(dto.getFechaPosicionamiento());
-		posicionamiento.setMotivoAplazamiento(dto.getMotivoAplazamiento());
 		
 		return posicionamiento;
 		
+	}
+	
+	private Date setHourAndMinutesToDate(Date fecha, Date horaMinutos) {
+		
+		Calendar calFecha = new GregorianCalendar();
+		Calendar calHora = new GregorianCalendar();
+		
+		calFecha.setTime(fecha);
+		calHora.setTime(horaMinutos);
+		calFecha.set(Calendar.HOUR_OF_DAY,calHora.get(Calendar.HOUR_OF_DAY));
+		calFecha.set(Calendar.MINUTE,calHora.get(Calendar.MINUTE));
+		
+		return calFecha.getTime();
 	}
 	
 	public DtoPage getComparecientesExpediente(Long idExpediente){
@@ -2470,9 +2521,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		for(Posicionamiento posicionamiento : expediente.getPosicionamientos()) {
 			
 			ActivoProveedor notario = posicionamiento.getNotario();
-			DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);		
-			notarios.add(dtoNotario);
-
+			if(!Checks.esNulo(notario)) {
+				DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);		
+				notarios.add(dtoNotario);
+			}
 		}
 		
 		return notarios;

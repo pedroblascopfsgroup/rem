@@ -3,8 +3,7 @@ Ext.define('HreRem.view.configuracion.administracion.ConfiguracionAdministracion
     xtype		: 'configuracionadministraciontabpanel',
 	cls			: 'panel-base shadow-panel, tabPanel-segundo-nivel',
     
-    requires	: ['HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedores',
-    				'HreRem.view.configuracion.administracion.mediadores.ConfiguracionMediadores'],
+    requires	: ['HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedores'],
 
     initComponent: function () {
         
@@ -13,10 +12,7 @@ Ext.define('HreRem.view.configuracion.administracion.ConfiguracionAdministracion
         me.items = [
 	        			{	
 	        				xtype: 'configuracionproveedores'
-	        			},
-	        			{	
-	        				xtype: 'configuracionmediadores'
-	        			} 
+	        			}
         ];
 
         me.callParent();

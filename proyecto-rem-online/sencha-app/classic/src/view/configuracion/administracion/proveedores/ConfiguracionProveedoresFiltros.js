@@ -40,6 +40,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											defaultType: 'textfield',
 											title:HreRem.i18n('title.configuracion.proveedores.datosgenerales'),
 											colspan: 3,
+								    		defaults: {							        
+												addUxReadOnlyEditFieldPlugin: false						    
+											},
 											items :	[
 												{ 
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.codigo'),
@@ -163,20 +166,18 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 										            	},
 										            	displayField: 'descripcion',
 														valueField: 'codigo',
-														published: 'value'
+														publishes: 'value'
 												 	},
 												 	{
 												 		xtype: 'combo',
 												 		name: 'municipioCodigo',
 												 		reference: 'municipioCombo',
 												 		fieldLabel:	HreRem.i18n('fieldlabel.proveedores.municipio'),
-												 		queryMode: 'remote',
-												 		forceSelection: true,
 											        	bind: {
 										            		store: '{comboMunicipio}',
 										            		disabled: '{!provinciaCombo.value}',
 										            		filters: {
-										            			property: 'codigo',
+										            			property: 'codigoProvincia',
 										            			value: '{provinciaCombo.value}'
 										            		}
 										            	},

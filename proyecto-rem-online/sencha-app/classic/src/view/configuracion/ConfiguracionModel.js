@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.configuracion',
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Proveedor'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Proveedor', 'HreRem.model.ComboMunicipio'],
 
     stores: { 
     	
@@ -96,7 +96,7 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 			}   	
     	},
 		comboMunicipio: {
-			model: 'HreRem.model.ComboBase',
+			model: 'HreRem.model.ComboMunicipio',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
@@ -111,6 +111,7 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 					extraParams: {diccionario: 'calificacionProveedor'}
     			}
 		}
+		
 // No es un diccionario, son todos los nombres de los contactos del provedor seleccionado
 //		comboContacto: {
 //			model: 'HreRem.model.ComboBase',

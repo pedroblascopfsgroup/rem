@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 
 
 public interface GenericApi {
@@ -164,6 +165,9 @@ public interface GenericApi {
 	 * @return
 	 */
 	public List<DDTipoComercializacion> getComboTipoDestinoComercialCreaFiltered();
+
+	
+	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo);
 
 }
 

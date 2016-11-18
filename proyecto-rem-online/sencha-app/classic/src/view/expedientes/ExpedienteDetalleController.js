@@ -1170,6 +1170,59 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	procedeDescalificacion = me.lookupReference('procedeDescalificacionRef');
     	
 		procedeDescalificacion.setDisabled(disabled);
+	},
+	
+	comprobarCamposFechas: function(editor, gridNfo) {
+		var me = this;
+		
+		if(editor.isNew) {
+			me.lookupReference('fechaAvisoRef').setValue();
+			me.lookupReference('fechaPosicionamientoRef').setValue();
+			me.lookupReference('horaAvisoRef').setValue();
+			me.lookupReference('horaPosicionamientoRef').setValue();
+		}
+		me.changeFecha(me.lookupReference('fechaAvisoRef'));
+		me.changeFecha(me.lookupReference('fechaPosicionamientoRef'));
+		me.changeHora(me.lookupReference('horaAvisoRef'));
+		me.changeHora(me.lookupReference('horaPosicionamientoRef'));
+	},
+	
+	changeFecha: function(campoFecha) {
+		var me = this,
+		referencia = campoFecha.getReference().replace('fecha','hora'),
+		campoHora = me.lookupReference(referencia);
+		
+		if(campoFecha.getValue() != null) {
+			campoHora.setDisabled(false);
+			campoHora.allowBlank = false;
+		}
+		else {
+			campoHora.setValue();
+			campoHora.setDisabled(true);
+			campoHora.allowBlank = true;
+		}
+		
+	},
+	
+	changeHora: function(campoHora) {
+		var me = this;
+		
+		if(campoHora.getValue() != null)
+			campoHora.wasValid = false;
+		else
+			campoHora.wasValid = true;
+	},
+	
+	numVisitaIsEditable: function() {
+		var me = this,
+		campoNumVisita = me.lookupReference('numVistaFromOfertaRef');
+		// Si el estado de la visita no es REALIZADA, no debe haber numVisita relacionada
+		if(me.lookupReference('comboEstadosVisita').getValue() == "03" )
+			campoNumVisita.setDisabled(false);
+		else {
+			campoNumVisita.setValue();
+			campoNumVisita.setDisabled(true);
+		}
 	}
 	
 });

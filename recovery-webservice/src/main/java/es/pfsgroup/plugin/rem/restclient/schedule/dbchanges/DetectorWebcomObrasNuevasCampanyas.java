@@ -43,4 +43,14 @@ public class DetectorWebcomObrasNuevasCampanyas  extends DetectorCambiosBD<Campa
 		
 	}
 
+	@Override
+	protected Integer getWeight() {
+		return 9997;
+	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
+
 }

@@ -238,7 +238,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperties(activoDto, perimetroActivo);
 		
 		// Si no esta en el perimetro, el activo se considera SOLO CONSULTA
-		BeanUtils.copyProperty(activoDto, "incluidoEnPerimetro", activoApi.isActivoIncluidoEnPerimetro(activo.getId()));
+		BeanUtils.copyProperty(activoDto, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
 		
 		if(!Checks.esNulo(activo.getAuditoria()) && !Checks.esNulo(activo.getAuditoria().getFechaCrear())) {
 			BeanUtils.copyProperty(activoDto, "fechaAltaActivoRem", activo.getAuditoria().getFechaCrear());

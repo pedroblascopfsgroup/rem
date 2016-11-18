@@ -19,5 +19,6 @@ public class DDTiposDocumentos{
 	public static final String NIE= "12";
 	public static final String NIF_PAIS_ORIGEN= "13";
 	public static final String OTRO= "14";
+	public static final String NIF= "15";
 	
 }

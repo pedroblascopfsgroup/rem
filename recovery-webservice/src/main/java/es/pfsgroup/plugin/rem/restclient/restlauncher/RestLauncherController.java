@@ -11,6 +11,30 @@ public class RestLauncherController {
 
 	@Autowired
 	private RestLauncher launcher;
+	
+	/*
+	 * ACTUALIZAR VISTAS MATERIALIZADAS
+	 */
+	
+	@RequestMapping
+	public String actualizarVistasMaterializadas() throws ErrorServicioWebcom {
+		launcher.actualizarVistasMaterializadas();
+		return "default";
+	}
+	
+	
+	/*
+	 * 
+	 * TODOS LOS CAMBIOS 
+	 * 
+	 * 
+	 */
+	
+	@RequestMapping
+	public String enviarCambiosWebcom() throws ErrorServicioWebcom {
+		launcher.enviarCambios();
+		return "default";
+	}
 
 	/*
 	 * 

@@ -97,6 +97,26 @@ public class UvemManager implements UvemManagerApi {
 		this.ALIAS = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.alias.integrador"))
 				? appProperties.getProperty("rest.client.uvem.alias.integrador") : "";
 	}
+	
+	/**
+	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
+	 * @param numActivoUvem
+	 * @param userName
+	 * @param email
+	 * @param telefono
+	 * @return
+	 * @throws WIMetaServiceException
+	 * @throws WIException
+	 * @throws TipoDeDatoException
+	 */
+	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, String userName,String email,String telefono)
+			throws WIMetaServiceException, WIException, TipoDeDatoException {
+		Usuario usuario = new Usuario();
+		usuario.setUsername(userName);
+		usuario.setEmail(email);
+		usuario.setTelefono(telefono);
+		return ejecutarSolicitarTasacion(numActivoUvem, usuario);
+	}
 
 	/**
 	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
@@ -352,6 +372,8 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPAJC11_INS.setAlias(ALIAS);
 		servicioGMPAJC11_INS.execute();
 
+		System.out.println("IndicadorDePaginacionindipg: " + servicioGMPAJC11_INS.getIndicadorDePaginacionindipg());
+		
 		if (servicioGMPAJC11_INS.getIndicadorDePaginacionindipg() == '0') {
 			struct = servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu()
 					.getStructGMPAJC11_INS_NumeroDeOcurrenciasnumocuAt(0);

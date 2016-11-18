@@ -163,7 +163,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	
-	onTasacionListDobleClick: function (grid, record) {
+	onTasacionListClick: function (grid, record) {
 		
 		var me = this,
 		form = grid.up("form"),
@@ -1284,9 +1284,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var view = me.getView();
 
     	if(combo.getValue() === '0'){
-    		view.lookupReference('fieldtextCondicionanteOtro').reset();
-    		view.lookupReference('fieldtextCondicionanteOtro').hide();
     		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=true;
+    		view.lookupReference('fieldtextCondicionanteOtro').setValue('');
+    		view.lookupReference('fieldtextCondicionanteOtro').hide();
     	} else {
     		view.lookupReference('fieldtextCondicionanteOtro').show();
     		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=false;
@@ -1367,19 +1367,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		record = form.getBindRecord();
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
-		
+
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));
-			
+
 			record.save({
-				
 			    success: success,
 			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			 		form.unmask();
+			 		var response = Ext.decode(operation.getResponse().responseText);
+			 		if(response.success === "false" && Ext.isDefined(response.msg)) {
+						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+						form.unmask();
+					} else {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				 		form.unmask();
+					}
 			    }
-			    		    
+
 			});
 		} else {
 		

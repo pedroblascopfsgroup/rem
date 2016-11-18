@@ -93,4 +93,11 @@ public interface  ParticularValidatorApi {
 	 */
 	public Boolean esPropuestaYaCargada(Long idPropuesta);
 	
+	/**
+	 * Comprueba si el activo no es comercializable
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean isActivoNoComercializable(String numActivo);
+	
 }

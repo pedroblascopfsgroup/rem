@@ -524,4 +524,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return true;
 	}
 	
+	@Override
+	public Boolean isActivoNoComercializable(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO act"
+				+ "		INNER JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
+				+ " 	ON pac.ACT_ID = act.ACT_ID "
+				+ "		WHERE " 
+				+ "		act.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		and pac.PAC_CHECK_COMERCIALIZAR = 0 "
+				+ "		AND act.BORRADO = 0"
+				+ "		AND pac.BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
 }

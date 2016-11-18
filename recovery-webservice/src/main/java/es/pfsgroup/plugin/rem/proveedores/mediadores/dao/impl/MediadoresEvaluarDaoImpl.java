@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
 import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
 import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresEvaluarDao;
 
 @Repository("MediadoresEvaluarDao")
@@ -85,18 +86,20 @@ public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresE
 		StringBuilder updateHQLRetireCal = new StringBuilder("update ActivoProveedor pve ");
 		updateHQLRetireCal.append(" set pve.calificacionProveedor = null ");
 		updateHQLRetireCal.append(" where pve.calificacionProveedorPropuesta = ");
-		updateHQLRetireCal.append(" (select cpr1.id from DDCalificacionProveedor cpr1 where cpr1.codigo = '00') ");
+		updateHQLRetireCal.append(" (select cpr1.id from DDCalificacionProveedorRetirar cpr1 where cpr1.codigo = :codigoRetirar ) ");
 		
         Query queryUpdateRetireCal = this.getSession().createQuery(updateHQLRetireCal.toString());
+        queryUpdateRetireCal.setParameter("codigoRetirar", DDCalificacionProveedorRetirar.CPR_CODIGO_RETIRAR);
         queryUpdateRetireCal.executeUpdate();
         
         // Elimina las calificaciones propuestas del tipo retirar para que no interfieran en el proceso de calificar
 		StringBuilder updateHQLRemoveRetire = new StringBuilder("update ActivoProveedor pve ");
 		updateHQLRemoveRetire.append(" set pve.calificacionProveedorPropuesta = null ");
 		updateHQLRemoveRetire.append(" where pve.calificacionProveedorPropuesta = ");
-		updateHQLRemoveRetire.append(" (select cpr1.id from DDCalificacionProveedor cpr1 where cpr1.codigo = '00') ");
+		updateHQLRemoveRetire.append(" (select cpr1.id from DDCalificacionProveedorRetirar cpr1 where cpr1.codigo = :codigoRetirar) ");
 		
         Query queryUpdateRemoveRetire = this.getSession().createQuery(updateHQLRemoveRetire.toString());
+        queryUpdateRemoveRetire.setParameter("codigoRetirar", DDCalificacionProveedorRetirar.CPR_CODIGO_RETIRAR);
         queryUpdateRemoveRetire.executeUpdate();
         
 		// Actualiza las calificaciones vigentes copiando los datos de propuestas

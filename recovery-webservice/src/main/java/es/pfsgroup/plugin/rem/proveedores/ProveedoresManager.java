@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
 import es.pfsgroup.plugin.rem.model.VListMediadoresOfertas;
 import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
@@ -1074,8 +1075,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			
 			//Actualiza la calificacion propuesta
 			if(!Checks.esNulo(dtoMediadorEvalua.getDesCalificacionPropuesta())){
-				DDCalificacionProveedor calificacionPropuesta = 
-						(DDCalificacionProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDCalificacionProveedor.class, dtoMediadorEvalua.getDesCalificacionPropuesta());
+				DDCalificacionProveedorRetirar calificacionPropuesta = 
+						(DDCalificacionProveedorRetirar) utilDiccionarioApi.dameValorDiccionarioByCod(DDCalificacionProveedorRetirar.class, dtoMediadorEvalua.getDesCalificacionPropuesta());
 				proveedor.setCalificacionProveedorPropuesta(calificacionPropuesta);
 			} else
 				proveedor.setCalificacionProveedorPropuesta(null);

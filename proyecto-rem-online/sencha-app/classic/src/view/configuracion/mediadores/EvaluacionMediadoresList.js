@@ -72,33 +72,33 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
      	var medalRenderer =  function(value) {
         	
         	var src = '';
-        	
-        	if (value == 'Platino') {
-        		src = 'ico_medal_platinum.png';
-        		alt = 'OK';
-        	}
-        	if (value == 'Oro') { 
-        		src = 'ico_medal_gold2.png';
-        		alt = 'OK';
-        	}
-        	if (value == 'Plata') { 
-        		src = 'ico_medal_silver.png';
-        		alt = 'OK';
-        	}
-        	if (value == 'Bronce') { 
-        		src = 'ico_medal_bronze.png';
-        		alt = 'OK';
-        	}
-        	if (value == 'Retirar') { 
-        		src = 'ico_medal_remove.png';
-        		alt = 'OK';
-        	}
-        	
+
+			if (value != undefined) {
+	        	if (value == 'Platino') {
+	        		src = 'ico_medal_platinum.png';
+	        		alt = 'OK';
+	        	} else if (value == 'Oro') { 
+	        		src = 'ico_medal_gold2.png';
+	        		alt = 'OK';
+	        	} else if (value == 'Plata') { 
+	        		src = 'ico_medal_silver.png';
+	        		alt = 'OK';
+	        	} else if (value == 'Bronce') { 
+	        		src = 'ico_medal_bronze.png';
+	        		alt = 'OK';
+	        	} else if (value.substr(0,7) == 'Retirar') { 
+	        		src = 'ico_medal_remove.png';
+	        		alt = 'OK';
+	        	}
+
+	        }
+	        	        	
         	if (src != '') {
         		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="18px"></div>';
         	} else {
         		return null;
-        	} 
+        	}
+ 
         };
         
 		me.setTitle(HreRem.i18n("title.evaluacion.mediadores.list"));

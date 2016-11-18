@@ -31,6 +31,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDCalificacionProveedor implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CPR_CODIGO_PLATINO = "01"; 
+	public static final String CPR_CODIGO_ORO = "02";
+	public static final String CPR_CODIGO_PLATA = "03";
+	public static final String CPR_CODIGO_BRONCE = "04";
 
 	@Id
 	@Column(name = "DD_CPR_ID")

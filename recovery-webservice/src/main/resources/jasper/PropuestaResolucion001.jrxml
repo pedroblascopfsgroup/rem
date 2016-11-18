@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucion001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="240"/>
+	<property name="ireport.y" value="70"/>
 	<subDataset name="dataset1" uuid="859ad764-5c2d-4f72-be54-c78b00433dc1">
 		<queryString>
 			<![CDATA[]]>
@@ -66,7 +66,7 @@
 	<parameter name="CertificadoEnergetico" class="java.lang.String"/>
 	<parameter name="SuperficieConstruida" class="java.lang.String"/>
 	<parameter name="Parcela" class="java.lang.String"/>
-	<parameter name="Sociedadpatrimonial" class="java.lang.String"/>
+	<parameter name="SociedadPatrimonial" class="java.lang.String"/>
 	<parameter name="FEntradaCartera" class="java.lang.String"/>
 	<parameter name="FincaRegistral" class="java.lang.String"/>
 	<parameter name="FRecepcionLlaves" class="java.lang.String"/>
@@ -382,21 +382,21 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<text><![CDATA[Finca Registral:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="401" y="19" width="54" height="13" uuid="eeae81d1-9ef1-429c-b585-642a0537c031"/>
+				<reportElement x="391" y="19" width="54" height="13" uuid="eeae81d1-9ef1-429c-b585-642a0537c031"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[SubTipo:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="401" y="57" width="114" height="13" uuid="cf3d3a92-f1cd-4049-a548-de99442b2fc7"/>
+				<reportElement x="367" y="57" width="99" height="13" uuid="cf3d3a92-f1cd-4049-a548-de99442b2fc7"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[Sociedad Patrimonial:]]></text>
+				<text><![CDATA[Sociedad Patrimonial:SociedadPatrimonial]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="401" y="75" width="114" height="13" uuid="4dd22567-6fd0-4bbd-9559-05b36f20908a"/>
+				<reportElement x="367" y="75" width="99" height="13" uuid="4dd22567-6fd0-4bbd-9559-05b36f20908a"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
@@ -683,14 +683,14 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<textFieldExpression><![CDATA[$P{Situaciondecargas}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="308" y="75" width="82" height="13" uuid="adab0616-5845-44b5-a0b0-b982d856a4a5"/>
+				<reportElement x="308" y="75" width="59" height="13" uuid="adab0616-5845-44b5-a0b0-b982d856a4a5"/>
 				<textElement>
 					<font fontName="Verdana" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{FincaRegistral}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="491" y="75" width="61" height="13" uuid="ad413577-17c4-4f5f-bcfd-dbcbc3fd1f6f"/>
+				<reportElement x="466" y="75" width="84" height="13" uuid="ad413577-17c4-4f5f-bcfd-dbcbc3fd1f6f"/>
 				<textElement>
 					<font fontName="Verdana" size="8"/>
 				</textElement>
@@ -718,7 +718,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<textFieldExpression><![CDATA[$P{Entrada}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="338" y="189" width="100" height="13" uuid="d15099e6-9ba4-4bd7-b2c1-ca0c3efee7b3"/>
+				<reportElement x="338" y="189" width="114" height="13" uuid="d15099e6-9ba4-4bd7-b2c1-ca0c3efee7b3"/>
 				<textElement>
 					<font fontName="Verdana" size="8"/>
 				</textElement>
@@ -746,7 +746,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<textFieldExpression><![CDATA[$P{Residencia}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="290" y="57" width="100" height="14" uuid="8324a6f1-6331-4828-a1fd-395a369f92c5"/>
+				<reportElement x="290" y="57" width="59" height="14" uuid="8324a6f1-6331-4828-a1fd-395a369f92c5"/>
 				<textElement>
 					<font fontName="Verdana" size="8"/>
 				</textElement>
@@ -781,7 +781,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<textFieldExpression><![CDATA[$P{Impuestos}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="272" y="315" width="73" height="13" uuid="705a7050-f748-4920-a999-942ea3d150d9"/>
+				<reportElement x="272" y="315" width="87" height="13" uuid="705a7050-f748-4920-a999-942ea3d150d9"/>
 				<textElement>
 					<font fontName="Verdana" size="8"/>
 				</textElement>
@@ -856,6 +856,13 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<font fontName="Verdana" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Contraoferta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="466" y="57" width="84" height="13" uuid="0f5cea4c-966f-4031-80ba-598f26596b84"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SociedadPatrimonial}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="682">

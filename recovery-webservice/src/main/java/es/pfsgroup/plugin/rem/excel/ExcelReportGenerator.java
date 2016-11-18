@@ -36,14 +36,24 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	public void sendReport(File reportFile, HttpServletResponse response) throws IOException{
 		
 		ServletOutputStream salida = response.getOutputStream();
+		String fileName = reportFile.getName();
+		String extension = "";
+		int i = fileName.lastIndexOf('.');
+		if (i > 0) {
+		    extension = fileName.substring(i+1);
+		}
 		
-		response.setHeader("Content-disposition", "attachment; filename='"+ reportFile.getName() + "'");
+		response.setHeader("Content-disposition", "attachment; filename='"+ fileName + "'");
 		response.setHeader("Cache-Control","must-revalidate, post-check=0,pre-check=0");
 		response.setHeader("Cache-Control", "max-age=0");
 		response.setHeader("Expires", "0");
 		response.setHeader("Pragma", "public");
 		response.setDateHeader("Expires", 0);
-		response.setContentType("application/vnd.ms-excel");
+		if (extension.equals("pdf")) {
+			response.setContentType("application/pdf");
+		} else {
+			response.setContentType("application/vnd.ms-excel");
+		}
 
 		InputStream in;
 		in = new BufferedInputStream(new FileInputStream(reportFile));

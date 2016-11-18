@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.impl.PropuestaOfertaManager;
+import es.pfsgroup.plugin.rem.api.impl.OperacionVentaManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -26,30 +27,36 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 
-@Controller
-public class PropuestaresolucionController {
+import es.pfsgroup.plugin.rem.excel.ExcelReportGenerator;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 
-		final String templatePropuestaSimple = "PropuestaResolucion001";
+@Controller
+public class OperacionVentaController {
+
+		final String templateOperacionVenta = "OperativaVenta001";
 	
 		@Autowired
 		private RestApi restApi;
 		
 		@Autowired
-		private PropuestaOfertaManager propuestaOfertaManager;
+		private OperacionVentaManager operacionVentaManager;
 		
 		@Autowired 
 		private OfertaApi ofertaApi;
 		
+		@Autowired
+		private ExcelReportGeneratorApi excelReportGeneratorApi;
+		
 		@SuppressWarnings("unchecked")
-		@RequestMapping(method = RequestMethod.POST, value = "/propuestaresolucion")
-		public void propuestaResolucion(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {	
+		@RequestMapping(method = RequestMethod.POST, value = "/operacionventa")
+		public void operacionVenta(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {	
 			
 			PropuestaRequestDto jsonData = null;
-			OfertaSimpleDto propuestaDto = null;
+			OfertaSimpleDto operacionDto = null;
 			
 			Map<String, Object> params = null;
 			List<Object> dataSource = null;			
-			File fileSalidaTemporal = null;			
+			File fileSalidaTemporal = null;		
 			
 			//VALIDACIÓN DEL JSON ENTRADA
 			try {
@@ -59,8 +66,8 @@ public class PropuestaresolucionController {
 					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				}
 				model.put("id", jsonData.getId());
-				propuestaDto = jsonData.getData();
-				if (propuestaDto==null || propuestaDto.getOfertaHRE()==null) {
+				operacionDto = jsonData.getData();
+				if (operacionDto==null || operacionDto.getOfertaHRE()==null) {
 					model.put("error", RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				}
@@ -78,7 +85,7 @@ public class PropuestaresolucionController {
 			Oferta oferta = null;
 			//Primero comprabar que existe OFERTA
 			if (model.get("error")==null || model.get("error")=="") {
-				oferta = ofertaApi.getOfertaByNumOfertaRem(propuestaDto.getOfertaHRE());
+				oferta = ofertaApi.getOfertaByNumOfertaRem(operacionDto.getOfertaHRE());
 				if (oferta==null) {
 					model.put("error", RestApi.REST_NO_RELATED_OFFER);				
 				}
@@ -95,29 +102,30 @@ public class PropuestaresolucionController {
 			
 			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
 			if (model.get("error")==null || model.get("error")=="") {
-				params = propuestaOfertaManager.paramsHojaDatos(oferta, model);
+				params = operacionVentaManager.paramsHojaDatos(oferta, model);
 			}
 			if (model.get("error")==null || model.get("error")=="") {
-				dataSource = propuestaOfertaManager.dataSourceHojaDatos(oferta, activo, model);
+				dataSource = operacionVentaManager.dataSourceHojaDatos(oferta, activo, model);
 			}
 			
 			//GENERACION DEL DOCUMENTO EN PDF		
 			if (model.get("error")==null || model.get("error")=="") {
-				fileSalidaTemporal = propuestaOfertaManager.getPDFFile(params, dataSource, templatePropuestaSimple, model);
+				fileSalidaTemporal = operacionVentaManager.getPDFFile(params, dataSource, templateOperacionVenta, model);
 			}
 
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
 			if (model.get("error")==null || model.get("error")=="") {
-				propuestaOfertaManager.sendFileBase64(response, fileSalidaTemporal, model);
-			}
-			
-			//Si no hay error se pone vacio, por coherencia con los otros métodos.
-			if (model.get("error")==null) {
-				model.put("error", "");
-			}
-			
-			restApi.sendResponse(response, model,request);
+				try {
+					excelReportGeneratorApi.sendReport(fileSalidaTemporal, response);
+				} catch (IOException e) {
+					model.put("error",e.getMessage()); //<--- vore este error					
+				}
+			} 
 
+			//Si hay algún error se envía un JSON(model) con información.
+			if (model.get("error")!=null) {				
+				restApi.sendResponse(response, model,request);
+			}
 		}
 			
 }

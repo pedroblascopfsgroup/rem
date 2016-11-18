@@ -62,6 +62,7 @@ public class ReservaController {
 	@RequestMapping(method = RequestMethod.POST, value = "/reserva")
 	public void reservaInmueble(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		Double importeReserva = null;
+		Double importeTotal = null;
 		ReservaRequestDto jsonData = null;
 		ReservaDto reservaDto = null;
 		Map<String, Object> respuesta = new HashMap<String, Object>();
@@ -96,6 +97,7 @@ public class ReservaController {
 				respuesta.put("oferta", ofertaUVEM);
 				respuesta.put("titulares", listaTitularUVEM);				
 				importeReserva = Double.valueOf(ofertaUVEM.getImporteReserva());
+				importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta()-importeReserva;
 
 				if (ReservaApi.COBRO_RESERVA.equals(reservaDto.getAccion())) {
 					
@@ -134,7 +136,7 @@ public class ReservaController {
 				if (ReservaApi.COBRO_VENTA.equals(reservaDto.getAccion())) {
 
 					EntregaReserva entregaReserva = new EntregaReserva();
-					entregaReserva.setImporte(importeReserva);
+					entregaReserva.setImporte(importeTotal);
 					Date fechaEntrega = new Date();
 					entregaReserva.setFechaEntrega(fechaEntrega);
 					entregaReserva.setReserva(expedienteComercial.getReserva());

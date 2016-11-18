@@ -142,7 +142,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     esAutorizable: function(get) {
-	     	var esEditable = get('esGastoEditable');
+	     	var esEditable = get('esGastoEditable') && !$AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
 	     	var autorizado = get('gasto.autorizado');
 	     	var estaPendiente = CONST.ESTADOS_GASTO['PENDIENTE'] == get('gasto.estadoGastoCodigo');
 	     	
@@ -150,7 +150,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     esRechazable: function(get) {	     
-	     	var esEditable = get('esGastoEditable');
+	     	var esEditable = get('esGastoEditable') && !$AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
 	     	var rechazado = get('gasto.rechazado');
 	     	var estaPendiente = CONST.ESTADOS_GASTO['PENDIENTE'] == get('gasto.estadoGastoCodigo');
 	     	

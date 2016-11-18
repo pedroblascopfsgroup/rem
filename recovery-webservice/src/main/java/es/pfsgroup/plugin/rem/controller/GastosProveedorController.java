@@ -571,13 +571,14 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		
 		try {
-			Long nif = proveedoresApi.getCodProveedorByUsuarioLogado();
+			Long codProveedor = proveedoresApi.getCodProveedorByUsuarioLogado();
 			
-			if(Checks.esNulo(nif)) {
+			if(Checks.esNulo(codProveedor)) {
 				model.put("msg", "No ha sido posible encontrar un proveedor asignado al usuario identificado.");
+				model.put("data", -1);
 				model.put("success", false);
 			} else {
-				model.put("data", nif);
+				model.put("data", codProveedor);
 				model.put("success", true);
 			}
 
@@ -634,6 +635,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 			boolean success = gastoProveedorApi.autorizarGastos(idsGasto);
 			model.put("success", success);
 			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
@@ -650,6 +654,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 			boolean success = gastoProveedorApi.rechazarGastos(idsGasto, motivoRechazo);
 			model.put("success", success);
 			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
@@ -658,13 +665,42 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView autorizarGasto(Long idGasto, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.autorizarGasto(idGasto, true);
+			model.put("success", success);
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 	
-	/*private ModelAndView createModelAndViewJson(ModelMap model) {
-
-		return new ModelAndView("jsonView", model);
-	}*/
-	
-	
-
-	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView rechazarGasto(Long idGasto, String motivoRechazo, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.rechazarGasto(idGasto, motivoRechazo);
+			model.put("success", success);
+		
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}	
 }

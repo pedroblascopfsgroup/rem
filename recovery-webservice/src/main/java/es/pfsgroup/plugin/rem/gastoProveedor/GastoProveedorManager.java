@@ -401,7 +401,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					
 				}
 				else{
-					throw new JsonViewerException("El gasto no existe");
+					throw new JsonViewerException("El numero de gasto abonado no existe");
 				}
 				
 			}
@@ -433,7 +433,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			for (int i = 0; !existeGasto && i<lista.size(); i++){
 				GastoProveedor g = lista.get(i);
 				if (!DDEstadoGasto.ANULADO.equals(g.getEstadoGasto().getCodigo()) &&
-						!DDEstadoGasto.RECHAZADO.equals(g.getEstadoGasto().getCodigo())) {
+						!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(g.getEstadoGasto().getCodigo())) {
 					existeGasto = true;
 				}
 				
@@ -905,21 +905,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dto.setPeriodicidadDescripcion(gasto.getTipoPeriocidad().getDescripcion());
 				}
 				if(!Checks.esNulo(contabilidadGasto.getPartidaPresupuestaria())){
-					dto.setPartidaPresupuestariaDescripcion(contabilidadGasto.getPartidaPresupuestaria());
+					dto.setPartidaPresupuestaria(contabilidadGasto.getPartidaPresupuestaria());
 				}
 				if(!Checks.esNulo(contabilidadGasto.getCuentaContable())){
-					dto.setCuentaContableDescripcion(contabilidadGasto.getCuentaContable());
+					dto.setCuentaContable(contabilidadGasto.getCuentaContable());
 				}
 				
-				dto.setFechaDevengo(contabilidadGasto.getFechaDevengoEspecial());
+				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
 				if(!Checks.esNulo(contabilidadGasto.getTipoPeriocidadEspecial())){
 					dto.setPeriodicidadEspecialDescripcion(contabilidadGasto.getTipoPeriocidadEspecial().getDescripcion());
 				}
 				if(!Checks.esNulo(contabilidadGasto.getPartidaPresupuestariaEspecial())){
-					dto.setPartidaPresupuestariaEspecialDescripcion(contabilidadGasto.getPartidaPresupuestariaEspecial());
+					dto.setPartidaPresupuestariaEspecial(contabilidadGasto.getPartidaPresupuestariaEspecial());
 				}
 				if(!Checks.esNulo(contabilidadGasto.getCuentaContableEspecial())){
-					dto.setCuentaContableEspecialDescripcion(contabilidadGasto.getCuentaContableEspecial());
+					dto.setCuentaContableEspecial(contabilidadGasto.getCuentaContableEspecial());
 				}
 				
 				dto.setFechaContabilizacion(contabilidadGasto.getFechaContabilizacion());
@@ -942,6 +942,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
 			
+			beanUtilNotNull.copyProperties(contabilidadGasto, dtoContabilidadGasto);
+			
 			if(!Checks.esNulo(dtoContabilidadGasto.getEjercicioImputaGasto())){
 				
 				Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getEjercicioImputaGasto());
@@ -952,6 +954,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				genericDao.update(GastoInfoContabilidad.class, contabilidadGasto);
 				
 			}
+			
+			
 			
 			return true;
 			
@@ -1495,13 +1499,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}	
 
 	public boolean esGastoEditable(GastoProveedor gasto){
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
-		GastoGestion gastoGestion = genericDao.get(GastoGestion.class, filtro);
+
+		Usuario usuario = genericAdapter.getUsuarioLogado();
 		
-		if(!Checks.esNulo(gastoGestion) && !Checks.esNulo(gastoGestion.getFechaAnulacionGasto())){
-			return false;
+		// NO ES EDITABLE SI.... 
+		
+		// Si es proveedor y...
+		if(genericAdapter.isProveedor(usuario)) {
+			
+			//el estado no es pendiente o rechazado por gestor
+			if(!DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()) &&
+					!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()))  {
+				return false;
+			}
+			
+		} else {
+			
+			if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo())){
+				return false;
+			}
 		}
-		
 		return true;
 		
 		
@@ -1557,17 +1574,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Transactional(readOnly = false)
 	public boolean autorizarGastos(Long[] idsGastos) {
 		
-		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
-		
-		for(Long id : idsGastos) {			
-			GastoProveedor gasto = findOne(id);
-			autorizarGasto(estadoAutorizacionHaya, gasto);
+		for(Long id : idsGastos) {
+			
+			autorizarGasto(id, true);
 		}		
 		
 		return true;
 	}
 
-	private void autorizarGasto(DDEstadoAutorizacionHaya estadoAutorizacionHaya, GastoProveedor gasto) {
+	@Override
+	@Transactional(readOnly = false)
+	public boolean autorizarGasto(Long idGasto, boolean validarAutorizacion) {
+		
+		GastoProveedor gasto = findOne(idGasto);
+		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
+		
+		if(validarAutorizacion) {			
+			String error = validarAutorizacionGasto(gasto);
+			if(!Checks.esNulo(error)) {				
+				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede autorizar: " + error);	
+			}
+		}
 		
 		GastoGestion gastoGestion =  gasto.getGastoGestion();
 		gastoGestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
@@ -1575,41 +1602,93 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
 		gasto.setGastoGestion(gastoGestion);
-		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO);
+		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO_ADMINISTRACION);
 		genericDao.update(GastoProveedor.class, gasto);
+		
+		return true;
+		
+	}
+
+	public String validarAutorizacionGasto(GastoProveedor gasto) {
+		
+		String error = null;
+		
+		if(Checks.esNulo(gasto.getTipoGasto()) || Checks.esNulo(gasto.getSubtipoGasto())) {
+			error = "El tipo y subtipo de gasto es obligatorio";
+			return error;
+		}
+		
+		if(Checks.esNulo(gasto.getPropietario())) {
+			error = "El propietario es obligatorio";
+			return error;
+		}
+		
+		if(Checks.esNulo(gasto.getTipoOperacion())) {
+			error = "el tipo de operación es obligatorio";
+			return error;
+		}
+		
+		if(Checks.esNulo(gasto.getTipoPeriocidad())) {
+			error = "el tipo de periodicidad es obligatorio";
+			return error;
+		}
+		
+		if(Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())) {
+			error = "El importe total del gasto es obligatorio";
+			return error;
+		}
+		
+		if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())) {
+			error = "La cuenta contable es obligatoria";
+			return error;
+		}
+		
+		if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
+			error = "La partida presupuestaria es obligatoria";
+			return error;
+		}
+		
+		if(Checks.estaVacio(gasto.getGastoProveedorActivos()) && !gasto.esAutorizadoSinActivos()) {
+			error = "Es obligatorio asignar al menos un activo";
+			return error;
+		}
+		
+		return error;
 	}
 
 	@Override
 	@Transactional(readOnly = false)
 	public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo) {
-		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_RECHAZADO);
-		DDMotivoRechazoAutorizacionHaya motivo = null;
-		if(!Checks.esNulo(motivoRechazo)) {
-			motivo = (DDMotivoRechazoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAutorizacionHaya.class, motivoRechazo);
-		}
-		
-		for(Long id : idsGastos) {
-			
-			GastoProveedor gasto = findOne(id);
-			rechazarGasto(estadoAutorizacionHaya, motivo, gasto);
 
+		for(Long id : idsGastos) {
+			rechazarGasto(id, motivoRechazo);
 		}		
 		
 		return true;
 	}
 
-	private void rechazarGasto(DDEstadoAutorizacionHaya estadoAutorizacionHaya,
-			DDMotivoRechazoAutorizacionHaya motivo, GastoProveedor gasto) {
+	@Override
+	@Transactional(readOnly = false)
+	public boolean rechazarGasto(Long idGasto, String motivoRechazo) {
+		
+		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_RECHAZADO);
+		DDMotivoRechazoAutorizacionHaya motivo = null;
+		if(!Checks.esNulo(motivoRechazo)) {
+			motivo = (DDMotivoRechazoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAutorizacionHaya.class, motivoRechazo);
+		}
+		GastoProveedor gasto = findOne(idGasto);
+		
 		GastoGestion gastoGestion =  gasto.getGastoGestion();
 		gastoGestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
 		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
-		if(!Checks.esNulo(motivo)) {
-			gastoGestion.setMotivoRechazoAutorizacionHaya(motivo);
-		}
+		gastoGestion.setMotivoRechazoAutorizacionHaya(motivo);
+		
 		gasto.setGastoGestion(gastoGestion);
-		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO);
+		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_ADMINISTRACION);
 		genericDao.update(GastoProveedor.class, gasto);
+		
+		return true;
 	}
 	
 	public GastoProveedor asignarPropietarioGasto(GastoProveedor gasto) {

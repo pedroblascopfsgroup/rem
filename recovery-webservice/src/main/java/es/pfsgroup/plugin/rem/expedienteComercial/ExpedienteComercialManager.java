@@ -2470,9 +2470,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		for(Posicionamiento posicionamiento : expediente.getPosicionamientos()) {
 			
 			ActivoProveedor notario = posicionamiento.getNotario();
-			DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);		
-			notarios.add(dtoNotario);
-
+			if(!Checks.esNulo(notario)) {
+				DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);	
+				notarios.add(dtoNotario);
+			}
 		}
 		
 		return notarios;

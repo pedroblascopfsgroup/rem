@@ -29,6 +29,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -121,7 +123,12 @@ public class GastoProveedor implements Serializable, Auditable {
     @OneToOne(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private GastoDetalleEconomico gastoDetalleEconomico;    
+	private GastoDetalleEconomico gastoDetalleEconomico;
+    
+    @OneToOne(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GastoInfoContabilidad gastoInfoContabilidad;    
 	
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="PRG_ID")
@@ -405,6 +412,26 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setNumGastoDestinatario(String numGastoDestinatario) {
 		this.numGastoDestinatario = numGastoDestinatario;
+	}
+
+	public GastoInfoContabilidad getGastoInfoContabilidad() {
+		return gastoInfoContabilidad;
+	}
+
+	public void setGastoInfoContabilidad(GastoInfoContabilidad gastoInfoContabilidad) {
+		this.gastoInfoContabilidad = gastoInfoContabilidad;
+	}
+	
+	public DDCartera getCartera() {
+		
+		DDCartera cartera = null;
+		
+		if(!Checks.estaVacio(this.gastoProveedorActivos)) {
+			cartera = this.gastoProveedorActivos.get(0).getActivo().getCartera();			
+		}
+	
+		return cartera;
+	
 	}
 
 }

@@ -40,7 +40,7 @@ DECLARE
     V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
     V_OFR_ID NUMBER(16,0);    -- Varaible que almacenara las OFR_ID de aquellas ofertas aceptadas
     V_TABLE_ECO NUMBER(16,0); -- Variable que almacenara los Expedientes Comerciales creados
-    V_TABLE_DD_OEF NUMBER(16,0); -- Variable que almacenara los ESTADOS_OFERTAS modificados
+    V_TABLE_DD_EOF NUMBER(16,0); -- Variable que almacenara los ESTADOS_OFERTAS modificados
     
 BEGIN
 

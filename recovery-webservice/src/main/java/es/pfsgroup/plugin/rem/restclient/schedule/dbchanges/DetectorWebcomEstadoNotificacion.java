@@ -43,4 +43,14 @@ public class DetectorWebcomEstadoNotificacion extends DetectorCambiosBD<Notifica
 
 	}
 
+	@Override
+	protected Integer getWeight() {
+		return 9993;
+	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
+
 }

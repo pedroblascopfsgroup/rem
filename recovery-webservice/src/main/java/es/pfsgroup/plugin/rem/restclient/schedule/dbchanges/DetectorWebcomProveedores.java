@@ -42,6 +42,16 @@ public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 		serviciosWebcom.webcomRestProveedores(data, registro);
 		
 	}
+
+	@Override
+	protected Integer getWeight() {
+		return 9999;
+	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
 	
 
 }

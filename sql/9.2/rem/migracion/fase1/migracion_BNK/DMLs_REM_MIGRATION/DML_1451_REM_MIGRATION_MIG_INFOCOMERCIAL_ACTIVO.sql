@@ -667,6 +667,23 @@ INSERT INTO '||V_ESQUEMA||'.'||V_TABLA6||' (
 	  ;
 	  
 	COMMIT;
+	
+	-- Actualizamos el campo DD_TPA_ID de todos los ICO
+	EXECUTE IMMEDIATE ('
+		MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' ICO
+		USING
+		(
+		  SELECT ACT2.ACT_ID, ACT2.DD_TPA_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT2
+		  INNER JOIN '||V_ESQUEMA||'.'||V_TABLA||' ICO2
+		  ON ICO2.ACT_ID = ACT2.ACT_ID
+		) AUX
+		ON (AUX.ACT_ID = ICO.ACT_ID)
+		WHEN MATCHED THEN UPDATE
+			SET ICO.DD_TPA_ID = AUX.DD_TPA_ID
+	  ')
+	  ;
+	  
+	COMMIT;
   
   END IF;
   

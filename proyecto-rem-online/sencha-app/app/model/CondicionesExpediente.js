@@ -158,7 +158,8 @@ Ext.define('HreRem.model.CondicionesExpediente', {
     			}
 	    },
 	    {
-	    	name: 'sujetoTramiteTanteo'
+	    	name: 'sujetoTramiteTanteo',
+			type: 'boolean'
 	    },
 	    {
 	    	name: 'estadoTramite'

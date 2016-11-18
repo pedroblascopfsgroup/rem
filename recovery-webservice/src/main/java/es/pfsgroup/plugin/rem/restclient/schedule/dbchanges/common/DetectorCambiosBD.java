@@ -32,7 +32,9 @@ import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
  *            Tipo del DTO asociado a este detector de cambios, es decir, que se
  *            va a usar para invocar al servicio
  */
-public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements InfoTablasBD {
+@SuppressWarnings("rawtypes")
+public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
+		implements InfoTablasBD, Comparable<DetectorCambiosBD> {
 
 	private static final String DTO_CLASS_NO_PUEDE_SER_NULL = "'dtoClass' no puede ser NULL";
 
@@ -44,6 +46,20 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 	private CambiosBDDao dao;
 
 	private final Log logger = LogFactory.getLog(getClass());
+
+	/**
+	 * Obtener el peso del handler. A mayor peso antes se ejecutará
+	 * 
+	 * @return
+	 */
+	protected abstract Integer getWeight();
+	
+	/**
+	 * Permite activar y desactivar el envio del servicio
+	 * 
+	 * @return
+	 */
+	public abstract boolean isActivo();
 
 	/**
 	 * Implementa este método en cada detector simplemente haciendo un 'new' que
@@ -155,6 +171,20 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 		return this.createDtoInstance().getClass();
 	}
 
+	/**
+	 * A mas peso mayor es el handler
+	 */
+	public int compareTo(DetectorCambiosBD o) {
+		return o.getWeight().compareTo(getWeight());
+	}
+
+	/**
+	 * Actualiza la vista materializada
+	 */
+	public void actualizarVistaMaterializada() {
+		dao.refreshMaterializedView(this);
+	}
+
 	private List<T> extractDtos(Class<?> dtoClass, DataAccessOperation dao) {
 		if (dao == null) {
 			throw new IllegalArgumentException("Data Access Operation is not defined");
@@ -198,7 +228,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 							// cambios
 							fusionCambios.addDataMap(datos);
 						}
-					} else if (logger.isDebugEnabled()){
+					} else if (logger.isDebugEnabled()) {
 						logger.debug("Map de cambios vacío, nada que notificar");
 					}
 				} // fin main loop

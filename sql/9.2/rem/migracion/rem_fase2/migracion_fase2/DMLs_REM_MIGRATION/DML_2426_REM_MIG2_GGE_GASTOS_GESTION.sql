@@ -133,7 +133,7 @@ BEGIN
           ,BORRADO
                 )
                 WITH INSERTAR AS (
-                SELECT DISTINCT MIG.GGE_GPV_ID
+                SELECT DISTINCT GPV.GPV_ID
                 ,MIG.GGE_IND_AUTORIZ_PROP
                 ,MIG.GGE_COD_MOT_AUTORIZ_PROP
                 ,MIG.GGE_COD_EST_AUTORIZ_PROP
@@ -158,7 +158,7 @@ BEGIN
           )
                 SELECT
                        '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                          GGE_ID
-          ,INS.GGE_GPV_ID GPV_ID
+          ,INS.GPV_ID GPV_ID
           ,INS.GGE_IND_AUTORIZ_PROP GGE_AUTORIZACION_PROPIETARIO
           ,(SELECT DD_MAP.DD_MAP_ID FROM '||V_ESQUEMA||'.DD_MAP_MOT_AUT_PROP_GASTO DD_MAP WHERE DD_MAP.DD_MAP_CODIGO = INS.GGE_COD_MOT_AUTORIZ_PROP) DD_MAP_ID
           ,INS.GGE_OBSERVACIONES

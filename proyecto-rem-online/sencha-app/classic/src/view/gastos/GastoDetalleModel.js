@@ -142,19 +142,23 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     esAutorizable: function(get) {
-	     	var esEditable = get('esGastoEditable') && !$AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
-	     	var autorizado = get('gasto.autorizado');
-	     	var estaPendiente = CONST.ESTADOS_GASTO['PENDIENTE'] == get('gasto.estadoGastoCodigo');
+	     	var esProveedor = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+	     	var estaAutorizado = get('gasto.autorizado');
+	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	
-	     	return esEditable && !autorizado;
+	     	return !esProveedor && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado;
 	     },
 	     
 	     esRechazable: function(get) {	     
-	     	var esEditable = get('esGastoEditable') && !$AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
-	     	var rechazado = get('gasto.rechazado');
-	     	var estaPendiente = CONST.ESTADOS_GASTO['PENDIENTE'] == get('gasto.estadoGastoCodigo');
+	     	var esProveedor = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+	     	var estaRechazado = get('gasto.rechazado');
+	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	
-	     	return esEditable && !rechazado;
+	     	return !esProveedor && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado;
 
 	     }
 	     

@@ -159,7 +159,7 @@ public class GastoProveedor implements Serializable, Auditable {
     @JoinColumn(name="NUM_GASTO_ABONADO")
     private GastoProveedor gastoProveedorAbonado;
     
-    @Column(name="GPV_GASTO_SIN_ACTVOS")
+    @Column(name="GPV_GASTO_SIN_ACTIVOS")
     private Integer gastoSinActivos;
 
 //    @OneToMany(mappedBy="gastoProveedorAbonado", cascade = CascadeType.ALL)

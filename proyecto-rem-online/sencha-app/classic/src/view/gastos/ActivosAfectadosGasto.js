@@ -9,6 +9,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
  
 	requires: ['HreRem.view.gastos.ActivosAfectadosGastoList'],
 	
+	recordName: "gasto",
+		
 	recordClass: "HreRem.model.GastoProveedor",
     
     requires: ['HreRem.model.GastoProveedor'],
@@ -19,18 +21,23 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 		
 		me.setTitle(HreRem.i18n('title.gasto.activos.afectados'));
 		var items = [
-
 				
 				{   
 					xtype:'fieldset',
 					padding: 10,
 					layout: 'hbox',
 					collapsible: false,
+					bind: {
+						hidden: '{gasto.asignadoAActivos}'
+					},
 					items :	[
 				                {
 				                	xtype: 'checkboxfieldbase',
-				                	bind:		'{gasto.gastoSinActivos}',
+				                	bind:	{
+				                		value:	'{gasto.gastoSinActivos}'
+				                	},
 				                	width: 30
+				                	
 				                }, 
 				                {
 				                	xtype: 'label',

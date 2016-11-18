@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -103,6 +107,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public final String PESTANA_CONTABILIDAD = "contabilidad";
 	public final String PESTANA_GESTION = "gestion";
 	public final String PESTANA_IMPUGNACION = "impugnacion";
+	
+	//Textos de validación
+	private static final String VALIDACION_DOCUMENTO_ADJUNTO_GASTO = "msg.validacion.gasto.documento.adjunto";
+	private static final String VALIDACION_ACTIVOS_ASIGNADOS = "msg.validacion.gasto.activos.asignados";
+	private static final String VALIDACION_PARTIDA_PRESUPUESTARIA = "msg.validacion.gasto.partida.presupuestaria";
+	private static final String VALIDACION_CUENTA_CONTABLE = "msg.validacion.gasto.cuenta.contable";
+	private static final String VALIDACION_IMPORTE_TOTAL = "msg.validacion.gasto.importe.total";
+	private static final String VALIDACION_TIPO_PERIODICIDAD = "msg.validacion.gasto.tipo.periodicidad";
+	private static final String VALIDACION_TIPO_OPERACION = "msg.validacion.gasto.tipo.operacion";
+	private static final String VALIDACION_PROPIETARIO = "msg.validacion.gasto.propietario";
+	private static final String VALIDACION_TIPO_SUBTIPO = "msg.validacion.gasto.tipo.subtipo";
+	
+	
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -139,6 +156,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private UpdaterStateApi updaterStateApi;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	@Resource
+    MessageService messageServices;
 	
 
 	@Override
@@ -242,7 +262,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setRechazado(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo()));
 			}
 			dto.setAsignadoATrabajos(!Checks.estaVacio(gasto.getGastoProveedorTrabajos()));
-			dto.setAsignadoAActivos(Checks.estaVacio(gasto.getGastoProveedorTrabajos()) && !Checks.estaVacio(gasto.getGastoProveedorActivos()));
+			dto.setAsignadoAActivos(!Checks.estaVacio(gasto.getGastoProveedorTrabajos()) ||  (Checks.estaVacio(gasto.getGastoProveedorTrabajos()) && !Checks.estaVacio(gasto.getGastoProveedorActivos())));
 			
 			dto.setEsGastoEditable(esGastoEditable(gasto));
 			
@@ -294,8 +314,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 		gastoProveedor.setFechaEmision(dto.getFechaEmision());
 		gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
-		
-		updaterStateApi.updaterStates(gastoProveedor, DDEstadoGasto.PENDIENTE);
+
+		updaterStateApi.updaterStates(gastoProveedor, DDEstadoGasto.INCOMPLETO);
 		
 		// Primero comprobamos que el gasto no está dado de alta.
 		boolean existeGasto  = existeGasto(gastoProveedor);
@@ -589,6 +609,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setOficina(detalleGasto.getOficinaBankia());
 			dto.setNumeroConexion(detalleGasto.getNumeroConexionBankia());
 			
+			if(!Checks.esNulo(gasto.getProveedor().getCriterioCajaIVA())) {
+				dto.setOptaCriterioCaja(BooleanUtils.toBooleanObject(gasto.getProveedor().getCriterioCajaIVA()));
+			}
 			
 		}
 		
@@ -1515,7 +1538,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 		} else {
 			
-			if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo())){
+			if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo()) || 
+				DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
 				return false;
 			}
 		}
@@ -1614,42 +1638,47 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		String error = null;
 		
 		if(Checks.esNulo(gasto.getTipoGasto()) || Checks.esNulo(gasto.getSubtipoGasto())) {
-			error = "El tipo y subtipo de gasto es obligatorio";
+			error = messageServices.getMessage(VALIDACION_TIPO_SUBTIPO);
 			return error;
 		}
 		
 		if(Checks.esNulo(gasto.getPropietario())) {
-			error = "El propietario es obligatorio";
+			error = messageServices.getMessage(VALIDACION_PROPIETARIO);
 			return error;
 		}
 		
 		if(Checks.esNulo(gasto.getTipoOperacion())) {
-			error = "el tipo de operación es obligatorio";
+			error = messageServices.getMessage(VALIDACION_TIPO_OPERACION);
 			return error;
 		}
 		
 		if(Checks.esNulo(gasto.getTipoPeriocidad())) {
-			error = "el tipo de periodicidad es obligatorio";
+			error = messageServices.getMessage(VALIDACION_TIPO_PERIODICIDAD);
 			return error;
 		}
 		
 		if(Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())) {
-			error = "El importe total del gasto es obligatorio";
+			error = messageServices.getMessage(VALIDACION_IMPORTE_TOTAL);
 			return error;
 		}
 		
 		if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())) {
-			error = "La cuenta contable es obligatoria";
+			error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 			return error;
 		}
 		
 		if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
-			error = "La partida presupuestaria es obligatoria";
+			error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
 			return error;
 		}
 		
 		if(Checks.estaVacio(gasto.getGastoProveedorActivos()) && !gasto.esAutorizadoSinActivos()) {
-			error = "Es obligatorio asignar al menos un activo";
+			error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
+			return error;
+		}
+		
+		if(Checks.estaVacio(gasto.getAdjuntos())) {
+			error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
 			return error;
 		}
 		

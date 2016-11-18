@@ -156,6 +156,9 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		},
 		{
 			name: 'numeroConexion'
+		},
+		{
+			name: 'optaCriterioCaja'
 		}
     ],
     

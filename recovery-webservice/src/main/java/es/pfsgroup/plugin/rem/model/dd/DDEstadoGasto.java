@@ -35,6 +35,7 @@ public class DDEstadoGasto implements Auditable, Dictionary {
 	 */
 	private static final long serialVersionUID = -3836191709700209057L;
 	
+	public static final String INCOMPLETO = "12";
 	public static final String PENDIENTE = "01";
 	public static final String ANULADO = "06";
 	public static final String RETENIDO = "07";

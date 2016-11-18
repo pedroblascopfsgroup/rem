@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20161116
+--## FECHA_CREACION=20161117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -38,17 +38,18 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Pendiente'									,'Pendiente'),
+        T_TIPO_DATA('01'	,'Pendiente autorizar'							,'Pendiente autorizar'),
         T_TIPO_DATA('02'	,'Rechazado administración'						,'Rechazado administración'),
         T_TIPO_DATA('03'	,'Autorizado administración'					,'Autorizado administración'),
+        T_TIPO_DATA('04'	,'Contabilizado'								,'Contabilizado'),
+        T_TIPO_DATA('05'	,'Pagado'										,'Pagado'),
+        T_TIPO_DATA('06'	,'Anulado'										,'Anulado'),
+        T_TIPO_DATA('07'	,'Retenido'										,'Retenido'),
         T_TIPO_DATA('08'	,'Rechazado propietario'						,'Rechazado propietario'),
         T_TIPO_DATA('09'	,'Autorizado propietario'						,'Autorizado propietario'),
         T_TIPO_DATA('10'	,'Subsanado emisor'								,'Subsanado emisor'),
         T_TIPO_DATA('11'	,'Subsanado gestor'								,'Subsanado gestor'),
-        T_TIPO_DATA('04'	,'Contabilizado'								,'Contabilizado'),
-        T_TIPO_DATA('05'	,'Pagado'										,'Pagado'),
-        T_TIPO_DATA('06'	,'Anulado'										,'Anulado'),
-        T_TIPO_DATA('07'	,'Retenido'										,'Retenido')
+       	T_TIPO_DATA('12'	,'Incompleto'									,'Incompleto')
         
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

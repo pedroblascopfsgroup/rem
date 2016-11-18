@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
 import es.pfsgroup.plugin.rem.model.VListMediadoresOfertas;
 import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.proveedores.ProveedoresManager;
 
 
@@ -489,10 +490,10 @@ public class ProveedoresController extends ParadiseJsonController {
 		try {
 			// La obtencion de datos solo se hace si se pasa 1 mediador
 			Page resultPage = null;
-//			if(!Checks.esNulo(idMediador)){
+			if(!Checks.esNulo(dtoMediadorStats.getId())){
 				resultPage = proveedoresApi.getStatsCarteraMediadores(dtoMediadorStats);
 				model.put("data", resultPage.getResults());
-//			}
+			}
 			
 			if(!Checks.esNulo(resultPage)) {
 				model.put("totalCount", resultPage.getTotalCount());
@@ -516,10 +517,10 @@ public class ProveedoresController extends ParadiseJsonController {
 
 			// La obtencion de datos solo se hace si se pasa 1 mediador
 			Page resultPage = null;
-//			if(!Checks.esNulo(dtoMediadorOferta.getId())){
+			if(!Checks.esNulo(dtoMediadorOferta.getId())){
 				resultPage = proveedoresApi.getOfertasCarteraMediadores(dtoMediadorOferta);
 				model.put("data", resultPage.getResults());
-//			}
+			}
 			if(!Checks.esNulo(resultPage)) {
 				model.put("totalCount", resultPage.getTotalCount());
 			} else {

@@ -80,24 +80,49 @@ public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresE
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean evaluarMediadoresConPropuestas(){
+
+		// Procesa primero los datos para retirar calificaciones
+		StringBuilder updateHQLRetireCal = new StringBuilder("update ActivoProveedor pve ");
+		updateHQLRetireCal.append(" set pve.calificacionProveedor = null ");
+		updateHQLRetireCal.append(" where pve.calificacionProveedorPropuesta = ");
+		updateHQLRetireCal.append(" (select cpr1.id from DDCalificacionProveedor cpr1 where cpr1.codigo = '00') ");
 		
-		// Actualiza las calificaciones y top vigentes copiando los datos de propuestos
-		StringBuilder updateHQL = new StringBuilder("update ActivoProveedor pve ");
-		updateHQL.append(" set pve.calificacionProveedor = pve.calificacionProveedorPropuesta ");
-		updateHQL.append("   , pve.top = pve.topPropuesto ");
-		updateHQL.append(" where pve.calificacionProveedorPropuesta is not null ");
-		updateHQL.append("    or pve.topPropuesto is not null ");
-		
-        Query queryUpdate = this.getSession().createQuery(updateHQL.toString());
-        queryUpdate.executeUpdate();
+        Query queryUpdateRetireCal = this.getSession().createQuery(updateHQLRetireCal.toString());
+        queryUpdateRetireCal.executeUpdate();
         
-        // Vacia los datos de propuestos
-//		StringBuilder updateHQLKiller = new StringBuilder("update ActivoProveedor pve ");
-//		updateHQLKiller.append(" set pve.calificacionProveedorPropuesta = null ");
-//		updateHQLKiller.append("   , pve.topPropuesto = null ");
+        // Elimina las calificaciones propuestas del tipo retirar para que no interfieran en el proceso de calificar
+		StringBuilder updateHQLRemoveRetire = new StringBuilder("update ActivoProveedor pve ");
+		updateHQLRemoveRetire.append(" set pve.calificacionProveedorPropuesta = null ");
+		updateHQLRemoveRetire.append(" where pve.calificacionProveedorPropuesta = ");
+		updateHQLRemoveRetire.append(" (select cpr1.id from DDCalificacionProveedor cpr1 where cpr1.codigo = '00') ");
 		
-//        Query queryUpdateKiller = this.getSession().createQuery(updateHQLKiller.toString());
-//        queryUpdateKiller.executeUpdate();
+        Query queryUpdateRemoveRetire = this.getSession().createQuery(updateHQLRemoveRetire.toString());
+        queryUpdateRemoveRetire.executeUpdate();
+        
+		// Actualiza las calificaciones vigentes copiando los datos de propuestas
+		StringBuilder updateHQLCal = new StringBuilder("update ActivoProveedor pve ");
+		updateHQLCal.append(" set pve.calificacionProveedor = pve.calificacionProveedorPropuesta ");
+		updateHQLCal.append(" where pve.calificacionProveedorPropuesta is not null ");
+		
+        Query queryUpdateCal = this.getSession().createQuery(updateHQLCal.toString());
+        queryUpdateCal.executeUpdate();
+        
+        // Actualiza Top vigentes copiando los datos de propuestos
+		StringBuilder updateHQLTop = new StringBuilder("update ActivoProveedor pve ");
+		updateHQLTop.append(" set pve.top = pve.topPropuesto ");
+		updateHQLTop.append(" where pve.topPropuesto is not null ");
+		
+        Query queryUpdateTop = this.getSession().createQuery(updateHQLTop.toString());
+        queryUpdateTop.executeUpdate();
+        
+
+        // Vacia los datos de propuestos de calificaciones y Top
+		StringBuilder updateHQLKiller = new StringBuilder("update ActivoProveedor pve ");
+		updateHQLKiller.append(" set pve.calificacionProveedorPropuesta = null ");
+		updateHQLKiller.append("   , pve.topPropuesto = null ");
+		
+        Query queryUpdateKiller = this.getSession().createQuery(updateHQLKiller.toString());
+        queryUpdateKiller.executeUpdate();
         
         return true;
 	}

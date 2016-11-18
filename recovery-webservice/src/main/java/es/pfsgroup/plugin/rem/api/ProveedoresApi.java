@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
 import es.pfsgroup.plugin.rem.model.VListMediadoresOfertas;
 import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 
 public interface ProveedoresApi {
 	
@@ -228,7 +229,7 @@ public interface ProveedoresApi {
 	 * @return
 	 */
 	public Page getOfertasCarteraMediadores(DtoMediadorOferta dtoMediadorOferta);
-	
+
 	/**
 	 * Metodo que actualiza los datos editados del grid de mediadores en la pantalla de evaluar mediadores
 	 * @param dtoMediadorEvalua

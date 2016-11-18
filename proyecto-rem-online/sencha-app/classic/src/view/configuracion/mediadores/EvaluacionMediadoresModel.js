@@ -53,7 +53,16 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresModel', {
 	    	session: true,
 	    	remoteSort: true,
 	    	remoteFilter: true
-   		}
+   		},
+   		
+		comboCalificacionProveedorConRetirar: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'calificacionProveedorRetirar'}
+    			}
+		}
     }
     
 });

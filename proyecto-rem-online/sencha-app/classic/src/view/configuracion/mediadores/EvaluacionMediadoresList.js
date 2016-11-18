@@ -78,7 +78,7 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
         		alt = 'OK';
         	}
         	if (value == 'Oro') { 
-        		src = 'ico_medal_gold.png';
+        		src = 'ico_medal_gold2.png';
         		alt = 'OK';
         	}
         	if (value == 'Plata') { 
@@ -89,7 +89,11 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
         		src = 'ico_medal_bronze.png';
         		alt = 'OK';
         	}
-			
+        	if (value == 'Retirar') { 
+        		src = 'ico_medal_remove.png';
+        		alt = 'OK';
+        	}
+        	
         	if (src != '') {
         		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="18px"></div>';
         	} else {
@@ -175,7 +179,7 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
 			            editable: true,
 			            addUxReadOnlyEditFieldPlugin: false,
 			            bind: {
-			            	store: '{comboCalificacionProveedor}'
+			            	store: '{comboCalificacionProveedorConRetirar}'
 			            }
 			        },
 			        renderer: medalRenderer,

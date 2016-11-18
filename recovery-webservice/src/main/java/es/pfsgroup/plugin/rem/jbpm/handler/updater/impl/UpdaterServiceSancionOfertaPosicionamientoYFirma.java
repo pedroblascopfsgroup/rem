@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -25,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -65,11 +68,31 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 						for(ActivoOferta activoOferta : ofertaAceptada.getActivosOferta())
 						{
-							activoOferta.getPrimaryKey().getActivo();
-							PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
+							Activo activo = activoOferta.getPrimaryKey().getActivo();
+							
+							PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 							perimetro.setAplicaComercializar(0);
 							//TODO: Cuando esté el motivo de no comercialización como texto libre, poner el texto: "Vendido".
+							genericDao.save(PerimetroActivo.class, perimetro);
+							
+							//Marcamos el activo como vendido
+							Filter filtroSituacionComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+							activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, filtroSituacionComercial));
+							
+							activo.setBloqueoPrecioFechaIni(new Date());
+							
+							genericDao.save(Activo.class, activo);
 						}
+						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+						
+						//Rechazamos el resto de ofertas
+						for(Oferta oferta : listaOfertas){
+							if(DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())){
+								ofertaApi.rechazarOferta(oferta);
+							}
+						}
+						
+						
 					}
 					else{
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);

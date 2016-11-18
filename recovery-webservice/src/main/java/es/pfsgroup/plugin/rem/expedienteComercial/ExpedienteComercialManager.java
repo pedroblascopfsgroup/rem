@@ -141,6 +141,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	//Textos a mostrar por defecto
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
+	public static final String VISITA_SIN_RELACION_OFERTA = "oferta.validacion.numVisita";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -360,8 +361,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		if(!Checks.esNulo(dto.getNumVisita())){
+			
 			Filter filtroVisita = genericDao.createFilter(FilterType.EQUALS, "numVisitaRem",Long.parseLong(dto.getNumVisita()));
-			Visita visita = genericDao.get(Visita.class, filtroVisita);
+			Filter filtroActivoVisita = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
+			Visita visita = genericDao.get(Visita.class, filtroVisita,filtroActivoVisita);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());	
 			List<GastosExpediente> lista = (List<GastosExpediente>) genericDao.getList(GastosExpediente.class, filtro);
@@ -463,7 +466,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 			else{
-				throw new JsonViewerException("La visita no existe");
+				throw new JsonViewerException(messageServices.getMessage(VISITA_SIN_RELACION_OFERTA));
 			}
 
 		}

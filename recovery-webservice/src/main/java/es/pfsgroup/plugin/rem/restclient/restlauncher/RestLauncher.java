@@ -59,8 +59,23 @@ public class RestLauncher {
 	@Autowired
 	private DeteccionCambiosBDTask task;
 	
-	
+	/**
+	 * ACTUALIZA VISTA MATERIALIZADA
+	 * @throws ErrorServicioWebcom
+	 */	
+	@ManagedOperation(description = "Actualiza vista materializada")
+	public void actualizarVistasMaterializadas() throws ErrorServicioWebcom {
+		task.actualizaVistasMaterializadas();
+	}
 
+	/**
+	 * ENVIA TODOS LOS CAMBIOS A WEBCOM
+	 * @throws ErrorServicioWebcom
+	 */
+	@ManagedOperation(description = "Envia todos los cambios a Webcom")
+	public void enviarCambios() throws ErrorServicioWebcom {
+		task.detectaCambios();		
+	}
 	
 	/*
 	 * 

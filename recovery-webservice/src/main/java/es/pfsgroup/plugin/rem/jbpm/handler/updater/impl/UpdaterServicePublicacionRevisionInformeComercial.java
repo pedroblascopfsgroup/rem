@@ -83,8 +83,8 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 				activoEstadosInformeComercialHistorico.setFecha(new Date());
 					
-				// Marca activo como publicable directamente
-				activo.setFechaPublicable(new Date());
+				// Marca activo como publicable directamente 
+				//activo.setFechaPublicable(new Date());
 			}
 		}else{
 				// Ha rechazado proceso

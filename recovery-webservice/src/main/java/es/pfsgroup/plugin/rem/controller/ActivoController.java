@@ -1941,13 +1941,18 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.createOfertaActivo(dtoOferta);//trabajoApi.createPresupuestoTrabajo(presupuestoDto, idTrabajo);
 			model.put("success", success);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			model.put("success", false);		
-		}
-		return createModelAndViewJson(model);
 
+		} catch (Exception e) {
+			if(e.getMessage().equals(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG)) {
+				model.put("msg", ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
+				model.put("success", false);
+			} else {
+				e.printStackTrace();
+				model.put("success", false);
+			}
+		}
+
+		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")

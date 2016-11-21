@@ -42,4 +42,14 @@ public class DetectorWebcomEstadoOferta  extends DetectorCambiosBD<EstadoOfertaD
 		serviciosWebcom.webcomRestEstadoOferta(data, registro);
 	}
 
+	@Override
+	protected Integer getWeight() {
+		return 9991;
+	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
+
 }

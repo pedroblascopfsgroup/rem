@@ -1,8 +1,12 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,6 +142,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	//Textos a mostrar por defecto
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
+	public static final String VISITA_SIN_RELACION_OFERTA = "oferta.validacion.numVisita";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -320,7 +325,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(dto.getEstadoCodigo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo());
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);	
-			oferta.setEstadoOferta(estado);;	
+			oferta.setEstadoOferta(estado);	
 		}
 		
 		if(!Checks.esNulo(dto.getTipoOfertaCodigo())){
@@ -357,8 +362,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		if(!Checks.esNulo(dto.getNumVisita())){
-			Filter filtroVisita = genericDao.createFilter(FilterType.EQUALS, "numVisitaRem",dto.getNumVisita());
-			Visita visita = genericDao.get(Visita.class, filtroVisita);
+			
+			Filter filtroVisita = genericDao.createFilter(FilterType.EQUALS, "numVisitaRem",Long.parseLong(dto.getNumVisita()));
+			Filter filtroActivoVisita = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
+			Visita visita = genericDao.get(Visita.class, filtroVisita,filtroActivoVisita);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());	
 			List<GastosExpediente> lista = (List<GastosExpediente>) genericDao.getList(GastosExpediente.class, filtro);
@@ -460,10 +467,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 			else{
-				throw new JsonViewerException("La visita no existe");
+				throw new JsonViewerException(messageServices.getMessage(VISITA_SIN_RELACION_OFERTA));
 			}
 
 		}
+		if("".equals(dto.getNumVisita()))
+			oferta.setVisita(null);
 		
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
@@ -691,7 +700,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//dto.setComite();
 		
 		if(!Checks.esNulo(oferta.getVisita())) {
-			dto.setNumVisita(oferta.getVisita().getNumVisitaRem());
+			dto.setNumVisita(oferta.getVisita().getNumVisitaRem().toString());
 		}
 		
 		if(!Checks.esNulo(oferta.getEstadoVisitaOferta())) {
@@ -1466,38 +1475,85 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return new DtoPage(posicionamientos, posicionamientos.size());
-		
-		
 	}
 	
 	public DtoPosicionamiento posicionamientoToDto(Posicionamiento posicionamiento){
 		
 		DtoPosicionamiento posicionamientoDto= new DtoPosicionamiento();
-		posicionamientoDto.setIdPosicionamiento(posicionamiento.getId());
-		posicionamientoDto.setFechaAviso(posicionamiento.getFechaAviso());
-		if(!Checks.esNulo(posicionamiento.getNotario())) {
-			posicionamientoDto.setIdProveedorNotario(posicionamiento.getNotario().getId());
+		
+		try {
+			beanUtilNotNull.copyProperties(posicionamientoDto, posicionamiento);
+			
+			beanUtilNotNull.copyProperty(posicionamientoDto, "idPosicionamiento", posicionamiento.getId());
+			if(!Checks.esNulo(posicionamiento.getNotario()))
+				beanUtilNotNull.copyProperty(posicionamientoDto, "idProveedorNotario", posicionamiento.getNotario().getId());
+			
+			beanUtilNotNull.copyProperty(posicionamientoDto, "horaAviso", posicionamiento.getFechaAviso());
+			beanUtilNotNull.copyProperty(posicionamientoDto, "horaPosicionamiento", posicionamiento.getFechaPosicionamiento());
+			
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
-		posicionamientoDto.setFechaPosicionamiento(posicionamiento.getFechaPosicionamiento());
-		posicionamientoDto.setMotivoAplazamiento(posicionamiento.getMotivoAplazamiento());
-		
+
 		return posicionamientoDto;
-		
 	}
 	
 	public Posicionamiento dtoToPosicionamiento(DtoPosicionamiento dto, Posicionamiento posicionamiento){
 		
-		posicionamiento.setFechaAviso(dto.getFechaAviso());
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		try {//Comprobacion necesaria para cuando actualizan un registro donde han quitado la fecha
+			if(!Checks.esNulo(dto.getHoraAviso()) && dto.getFechaAviso().after(sdf.parse("01/01/1970")))
+				dto.setFechaAviso(this.setHourAndMinutesToDate(dto.getFechaAviso(),dto.getHoraAviso()));
+			
+			if(!Checks.esNulo(dto.getHoraPosicionamiento()) && dto.getFechaPosicionamiento().after(sdf.parse("01/01/1970")))
+				dto.setFechaPosicionamiento(this.setHourAndMinutesToDate(dto.getFechaPosicionamiento(),dto.getHoraPosicionamiento()));
+			
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		try {
+			
+			beanUtilNotNull.copyProperty(posicionamiento, "motivoAplazamiento", dto.getMotivoAplazamiento());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaAviso", dto.getFechaAviso());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaPosicionamiento());
+
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
 		if(!Checks.esNulo(dto.getIdProveedorNotario())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdProveedorNotario());
 			ActivoProveedor notario = genericDao.get(ActivoProveedor.class, filtro);
 			posicionamiento.setNotario(notario);
 		}
-		posicionamiento.setFechaPosicionamiento(dto.getFechaPosicionamiento());
-		posicionamiento.setMotivoAplazamiento(dto.getMotivoAplazamiento());
 		
 		return posicionamiento;
 		
+	}
+	
+	private Date setHourAndMinutesToDate(Date fecha, Date horaMinutos) {
+		
+		Calendar calFecha = new GregorianCalendar();
+		Calendar calHora = new GregorianCalendar();
+		
+		calFecha.setTime(fecha);
+		calHora.setTime(horaMinutos);
+		calFecha.set(Calendar.HOUR_OF_DAY,calHora.get(Calendar.HOUR_OF_DAY));
+		calFecha.set(Calendar.MINUTE,calHora.get(Calendar.MINUTE));
+		
+		return calFecha.getTime();
 	}
 	
 	public DtoPage getComparecientesExpediente(Long idExpediente){
@@ -1951,7 +2007,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 			}
 			
-			if(Checks.esNulo(gastoExpediente.getTipoCalculo())){
+			if(!Checks.esNulo(gastoExpediente.getTipoCalculo())){
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, dtoGastoExpediente.getTipoCalculo());
 				gastoExpediente.setTipoCalculo(tipoCalculo);
 			}
@@ -2472,9 +2528,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		for(Posicionamiento posicionamiento : expediente.getPosicionamientos()) {
 			
 			ActivoProveedor notario = posicionamiento.getNotario();
-			DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);		
-			notarios.add(dtoNotario);
-
+			if(!Checks.esNulo(notario)) {
+				DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);		
+				notarios.add(dtoNotario);
+			}
 		}
 		
 		return notarios;
@@ -2520,7 +2577,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(tipoDocumento)){
 			if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;	
 			if (DDTiposDocumentos.CIF.equals(tipoDocumento))  tipoDoc = DtoClienteUrsus.CIF;
-			if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;
+			if (DDTiposDocumentos.NIF.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;
 			if (DDTiposDocumentos.TARJETA_RESIDENTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_RESIDENTE;
 			if (DDTiposDocumentos.PASAPORTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.PASAPORTE;
 			if (DDTiposDocumentos.CIF_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.CIF_EXTRANJERO;

@@ -54,7 +54,7 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_1;
       
-      IF TABLE_COUNT_1 = 0 THEN      
+      /*IF TABLE_COUNT_1 = 0 THEN      
           DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS GASTOS_PROVEEDOR EXISTEN EN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR');      
       ELSE
       
@@ -96,7 +96,7 @@ BEGIN
           
           COMMIT;      
       
-      END IF;
+      END IF;*/
 
 
       --COMPROBACIONES PREVIAS - EJERCICIO
@@ -114,7 +114,7 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_2;
       
-      IF TABLE_COUNT_2 = 0 THEN      
+      /*IF TABLE_COUNT_2 = 0 THEN      
           DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS EJERCICIOS EXISTEN EN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO');      
       ELSE
       
@@ -156,7 +156,7 @@ BEGIN
           
           COMMIT;      
       
-      END IF;
+      END IF;*/
       
       --Inicio del proceso de volcado sobre GIC_GASTOS_INFO_CONTABILIDAD
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
@@ -166,44 +166,40 @@ BEGIN
                   GIC_ID
                   ,GPV_ID
                   ,EJE_ID
-                  ,DD_PPR_ID
-                  ,DD_CCO_ID
                   ,GIC_FECHA_CONTABILIZACION
                   ,DD_DEG_ID_CONTABILIZA
                   ,GIC_FECHA_DEVENGO_ESPECIAL
                   ,DD_TPE_ID_ESPECIAL
-                  ,DD_PPR_ID_ESPECIAL
-                  ,DD_CCO_ID_ESPECIAL
                   ,VERSION
                   ,USUARIOCREAR
                   ,FECHACREAR
                   ,BORRADO
+                  ,GIC_CUENTA_CONTABLE
+                  ,GIC_PTDA_PRESUPUESTARIA
+                  ,GIC_CUENTA_CONTABLE_ESP
+                  ,GIC_PTDA_PRESUPUESTARIA_ESP
             )
             SELECT
                   '||V_ESQUEMA||'.S_GIC_GASTOS_INFO_CONTABILIDAD.NEXTVAL        AS GIC_ID,
-                  GPV.GPV_ID                                                                     AS GPV_ID,
-                  EJE.EJE_ID                                                                        AS EJE_ID,
-                  PPR.DD_PPR_ID                                                               AS DD_PPR_ID,
-                  CCO.DD_CCO_ID                                                              AS DD_CCO_ID,
+                  GPV.GPV_ID                                                    AS GPV_ID,
+                  EJE.EJE_ID                                                    AS EJE_ID,                 
                   MIG2.GIC_FECHA_CONTABILIZACION                                AS GIC_FECHA_CONTABILIZACION,
-                  DEP.DD_DEP_ID                                                             AS DD_DEG_ID_CONTABILIZA,
-                  MIG2.GIC_FECHA_DEVENGO_ESPECIAL                             AS GIC_FECHA_DEVENGO_ESPECIAL,
-                  TPE.DD_TPE_ID                                                             AS DD_TPE_ID_ESPECIAL,
-                  PPR2.DD_PPR_ID                                                          AS DD_PPR_ID_ESPECIAL,
-                  CCO2.DD_CCO_ID                                                         AS DD_CCO_ID_ESPECIAL,
-                  0                                                                                 AS VERSION,
-                  ''MIG2''                                                                         AS USUARIOCREAR,
-                  SYSDATE                                                                    AS FECHACREAR,
-                  0                                                                                 AS BORRADO
+                  DEP.DD_DEP_ID                                                 AS DD_DEG_ID_CONTABILIZA,
+                  MIG2.GIC_FECHA_DEVENGO_ESPECIAL                               AS GIC_FECHA_DEVENGO_ESPECIAL,
+                  TPE.DD_TPE_ID                                                 AS DD_TPE_ID_ESPECIAL,                
+                  0                                                             AS VERSION,
+                  ''MIG2''                                                      AS USUARIOCREAR,
+                  SYSDATE                                                       AS FECHACREAR,
+                  0                                                             AS BORRADO,
+                  MIG2.GIC_COD_CUENTA_CONTABLE									AS GIC_CUENTA_CONTABLE,
+                  MIG2.GIC_COD_PARTIDA_PRESUPUES								AS GIC_PTDA_PRESUPUESTARIA,
+                  MIG2.GIC_COD_CUENTA_CONT_ESPECIAL								AS GIC_CUENTA_CONTABLE_ESP,
+                  MIG2.GIC_COD_PAR_PRESUP_ESPECIAL								AS GIC_PTDA_PRESUPUESTARIA_ESP
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
                   INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GIC_GPV_ID AND GPV.BORRADO = 0
                   INNER JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ANYO = MIG2.GIC_EJERCICIO AND EJE.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR ON PPR.DD_PPR_CODIGO = MIG2.GIC_COD_PARTIDA_PRESUPUES AND PPR.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO ON CCO.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONTABLE AND CCO.BORRADO = 0
                   LEFT JOIN '||V_ESQUEMA||'.DD_DEP_DESTINATARIOS_PAGO DEP ON DEP.DD_DEP_CODIGO = MIG2.GIC_COD_DESTINA_CONTABILIZA AND DEP.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = MIG2.GIC_COD_PERIODICIDAD_ESPECIAL AND TPE.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA||'.DD_PPR_PDAS_PRESUPUESTARIAS PPR2 ON PPR2.DD_PPR_CODIGO = MIG2.GIC_COD_PAR_PRESUP_ESPECIAL AND PPR2.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA||'.DD_CCO_CUENTAS_CONTABLES CCO2 ON CCO2.DD_CCO_CODIGO = MIG2.GIC_COD_CUENTA_CONT_ESPECIAL AND CCO2.BORRADO = 0          
+                  LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = MIG2.GIC_COD_PERIODICIDAD_ESPECIAL AND TPE.BORRADO = 0                 
       '
       ;
       

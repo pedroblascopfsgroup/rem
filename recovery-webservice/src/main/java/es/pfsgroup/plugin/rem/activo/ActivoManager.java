@@ -1625,13 +1625,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (Checks.esNulo(perimetroActivo)) {
 			perimetroActivo = new PerimetroActivo();
 			perimetroActivo.setAuditoria(new Auditoria());
-			// Si no existia perimetro en BBDD, se deben tomar todas las
-			// condiciones marcadas
+			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Activo activo = genericDao.get(Activo.class, filterActivo);
+			if(!Checks.esNulo(activo))
+				perimetroActivo.setActivo(activo);
+			// Si no existia perimetro en BBDD, por defecto esta INCLUIDO en perimetro
+			// y se deben tomar todas las condiciones como marcadas
+			perimetroActivo.setIncluidoEnPerimetro(1);
 			perimetroActivo.setAplicaTramiteAdmision(1);
 			perimetroActivo.setAplicaGestion(1);
 			perimetroActivo.setAplicaAsignarMediador(1);
 			perimetroActivo.setAplicaComercializar(1);
 			perimetroActivo.setAplicaFormalizar(1);
+			genericDao.save(PerimetroActivo.class, perimetroActivo);
 		}
 
 		return perimetroActivo;

@@ -57,19 +57,19 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
    															valueField		: 'id'
 												        },
 														{ 
-															xtype: 'displayfieldbase',
+															xtype: 'textfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad'),
 											                bind: '{contabilidad.periodicidadDescripcion}'
 														},
 														{ 
-															xtype: 'displayfieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
-											                bind: '{contabilidad.partidaPresupuestariaDescripcion}'
-														},
-														{ 
-															xtype: 'displayfieldbase',
+															xtype: 'textfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
 											                bind: '{contabilidad.cuentaContableDescripcion}'
+														},
+														{ 
+															xtype: 'textfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
+											                bind: '{contabilidad.partidaPresupuestariaDescripcion}'
 														}
 													
 													]
@@ -86,23 +86,22 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 															xtype: 'datefieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.devengo'),
 															bind:		'{contabilidad.fechaDevengo}',
-															formatter: 'date("d/m/Y")',
-															readOnly: true
+															formatter: 'date("d/m/Y")'
 														},
 													    { 
-															xtype: 'displayfieldbase',
+															xtype: 'textfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad.especial'),
 											                bind: '{contabilidad.periodicidadEspecialDescripcion}'
 														},
-					                					{ 
-															xtype: 'displayfieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partida.presupuestaria.especial'),
-											                bind: '{contabilidad.partidaPresupuestariaEspecialDescripcion}'
-														},
-					                					{ 
-															xtype: 'displayfieldbase',
+														{ 
+															xtype: 'textfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable.especial'),
 											                bind: '{contabilidad.cuentaContableEspecialDescripcion}'
+														},
+					                					{ 
+															xtype: 'textfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partida.presupuestaria.especial'),
+											                bind: '{contabilidad.partidaPresupuestariaEspecialDescripcion}'
 														}
 														
 													

@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160923
+--## FECHA_CREACION=20161110
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar el diccionario de partidas presupuestarias
+--## Finalidad: Tabla para gestionar el diccionario de partidas presupuestarias. NO ES NECESARIO, SE BORRA SI EXISTE
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -61,60 +61,6 @@ BEGIN
 		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';
 		
 	END IF; 
-	
-	
-	-- Creamos la tabla
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
-	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-	(
-		DD_PPR_ID           		NUMBER(16)                  NOT NULL,
-		DD_PPR_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
-		DD_PPR_DESCRIPCION			VARCHAR2(100 CHAR),
-		DD_PPR_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
-		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
-		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
-		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
-		USUARIOMODIFICAR 			VARCHAR2(50 CHAR), 
-		FECHAMODIFICAR 				TIMESTAMP (6), 
-		USUARIOBORRAR 				VARCHAR2(50 CHAR), 
-		FECHABORRAR 				TIMESTAMP (6), 
-		BORRADO 					NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE
-	)
-	LOGGING 
-	NOCOMPRESS 
-	NOCACHE
-	NOPARALLEL
-	NOMONITORING
-	';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
-	
-
-	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_PPR_ID) TABLESPACE '||V_TABLESPACE_IDX;		
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
-	
-	
-	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_PPR_ID) USING INDEX)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
-	
-	
-	-- Creamos sequence
-	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
-	EXECUTE IMMEDIATE V_MSQL;		
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
-	
-		
-	-- Creamos comentario	
-	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
-	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
-
 
 	COMMIT;
 

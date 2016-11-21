@@ -13,8 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.jamonapi.utils.Logger;
-
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -31,7 +29,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
@@ -47,7 +44,10 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_PERIMETRO_MOTIVO_CON_COMERCIAL = "Debe indicar un codigo valido para el motivo de inclusion comercial";
 	public static final String VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL = "Debe indicar un codigo valido para el motivo de exclusion comercial";
 	public static final String VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO = "Si indica 'N' en la columna 'En Perimetro Haya', el resto de columnas de tipo SN no pueden tener el valor 'S'.";
-	public static final String VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL = "El valor en la columna 'Con Formalizar' debe ser el mismo que en la columna 'Con Comercial'.";
+	public static final String VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL = "Si indica 'N' en la columna 'Comercializar' no puede marcar 'S' en la columna 'Formalizar'";
+	public static final String VALID_PERIMETRO_DESTINO_COMERCIAL = "Debe indicar un codigo valido para el destino comercial";
+	public static final String VALID_PERIMETRO_TIPO_ALQUILER = "Debe indicar un codigo valido para el tipo de alquiler";
+	public static final String VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE = "No puede indicar 'S' en la columna 'Formalizar' porque el activo no es comercializable";
 	
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_EN_PERIMETRO_SN = 1;
@@ -56,7 +56,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_MOTIVO_CON_COMERCIAL = 5;
 	public static final int COL_NUM_MOTIVO_SIN_COMERCIAL = 6;
 	public static final int COL_NUM_TIPO_COMERCIALIZACION = 7;
-	public static final int COL_NUM_CON_FORMALIZAR_SN = 8;
+	public static final int COL_NUM_DESTINO_COMERCIAL = 8;
+	public static final int COL_NUM_TIPO_ALQUILER = 9;
+	public static final int COL_NUM_CON_FORMALIZAR_SN = 10;
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -107,15 +109,21 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(VALID_PERIMETRO_RESPUESTA_SN, getPerimetroRespuestaSNRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO, getFueraPerimetroIsRestoChecksNegativos(exc));
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL, getFormalizarConComercial(exc));
+				mapaErrores.put(VALID_PERIMETRO_DESTINO_COMERCIAL, getPerimetroConDestinoComercial(exc));
+				mapaErrores.put(VALID_PERIMETRO_TIPO_ALQUILER, getPerimetroTipoAlquilerRows(exc));
+				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE, getFormalizarActivoNoComercializable(exc));
 				
 				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(VALID_PERIMETRO_TIPO_COMERCIALIZACION).isEmpty() ||
-							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL).isEmpty()  ||
-//							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL).isEmpty()  ||
-							!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty() 		  ||
-							!mapaErrores.get(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO).isEmpty() ||
-							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty()) {
+					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() 								||
+							!mapaErrores.get(VALID_PERIMETRO_TIPO_COMERCIALIZACION).isEmpty() 		||
+							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL).isEmpty()  		||
+//							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL).isEmpty()  		||
+							!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty() 		  		||
+							!mapaErrores.get(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO).isEmpty() 		||
+							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty() 	|| 
+							!mapaErrores.get(VALID_PERIMETRO_DESTINO_COMERCIAL).isEmpty()			||
+							!mapaErrores.get(VALID_PERIMETRO_TIPO_ALQUILER).isEmpty() 				||
+							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE).isEmpty() ) {
 						
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -222,7 +230,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		// Validacion que evalua si el registro de perimetro tiene un Tipo de comercializacion valido.
-		// Codigos validos 00 (ninguno) 01 (venta) 02 (alquiler) 03 (alquiler & venta) 04 (alquiler opcion compra) 
+		// Codigos validos 00 (ninguno) 01 (Singular) 02 (Retail) 
 		try{
 			String codigoTipoComercial = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
@@ -231,7 +239,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				else 
 					codigoTipoComercial = null;
 				
-				if(!(Checks.esNulo(codigoTipoComercial) || "01".equals(codigoTipoComercial) || "02".equals(codigoTipoComercial) || "03".equals(codigoTipoComercial) || "04".equals(codigoTipoComercial)) )
+				if(!(Checks.esNulo(codigoTipoComercial) || "01".equals(codigoTipoComercial) || "02".equals(codigoTipoComercial)) )
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
@@ -258,7 +266,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				else 
 					codigoMotivoConComercial = null;
 				
-				if(!(Checks.esNulo(codigoMotivoConComercial) || "01".equals(codigoMotivoConComercial) || "02".equals(codigoMotivoConComercial) || "03".equals(codigoMotivoConComercial)) )
+				if(!(Checks.esNulo(codigoMotivoConComercial) || "01".equals(codigoMotivoConComercial) || "02".equals(codigoMotivoConComercial) || "03".equals(codigoMotivoConComercial) ) )
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
@@ -368,7 +376,10 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	private List<Integer> getFormalizarConComercial(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-		// Validacion que evalua en el caso de poner valor S/N en Formalizar, éste, coincida con el valor de Comercial
+		/* Validacion que evalua en el caso de poner valor S/N en Formalizar cummpla con: 
+		 * - Si Formalizar viene informado, comercializar debe venir informado
+		 * - Si Comercializar(N) ==> Formalizar(N)
+		 */
 		try{
 			String valorConFormalizar = "-";
 			for(int i=1; i<exc.getNumeroFilas();i++){
@@ -377,8 +388,94 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				if(!"-".equals(valorConFormalizar)) {
 					
 					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
-					if(!valorConFormalizar.equals(valorConComercial) )
+					if("N".equals(valorConComercial) && "S".equals(valorConFormalizar) )
 						listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> getPerimetroConDestinoComercial(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		// Validacion que evalua si el registro de perimetro tiene un motivo "con" comercializacion valido.
+		// Codigos validos 00 (ninguno) 01 (Venta) 02 (Alquiler y venta) 03 (Alquiler) 
+		try{
+			String codigoDestinoComercial = null;
+			for(int i=1; i<exc.getNumeroFilas();i++){
+
+				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL)))
+					codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
+				else 
+					codigoDestinoComercial = null;
+				
+				if(!(Checks.esNulo(codigoDestinoComercial) || "01".equals(codigoDestinoComercial) || "02".equals(codigoDestinoComercial) || "03".equals(codigoDestinoComercial) ) )
+					listaFilas.add(i);
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> getPerimetroTipoAlquilerRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		// Validacion que evalua si el registro de perimetro tiene un motivo "con" comercializacion valido.
+		// Codigos validos 00 (ninguno) 01 (Ordinario) 02 (Con opción a compra) 03 (Fondo social) 04 (Especial) 
+		try{
+			String codigoTipoAlquiler = null;
+			for(int i=1; i<exc.getNumeroFilas();i++){
+
+				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_ALQUILER)))
+					codigoTipoAlquiler = exc.dameCelda(i, COL_NUM_TIPO_ALQUILER).substring(0, 2);
+				else 
+					codigoTipoAlquiler = null;
+				
+				if(!(Checks.esNulo(codigoTipoAlquiler) || "01".equals(codigoTipoAlquiler) || "02".equals(codigoTipoAlquiler) || "03".equals(codigoTipoAlquiler) || "04".equals(codigoTipoAlquiler) ) )
+					listaFilas.add(i);
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> getFormalizarActivoNoComercializable(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		/* Validacion que evalua en el caso de poner valor S en Formalizar y no informar Comercializar.
+		 * Comprueba que el activo sea comercializable para poder activar Formalizar.
+		 */
+		try{
+			String valorConFormalizar = "-";
+			String valorConComercializar = "-";
+			for(int i=1; i<exc.getNumeroFilas();i++){
+				
+				valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
+				if("S".equals(valorConFormalizar)) {
+					
+					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
+					if("-".equals(valorConComercial) ) {
+						
+						if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, 0)));
+							listaFilas.add(i);
+					}
 				}
 			}
 		} catch (IllegalArgumentException e) {

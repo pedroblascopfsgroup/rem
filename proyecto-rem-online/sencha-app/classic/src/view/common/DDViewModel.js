@@ -3,34 +3,34 @@ Ext.define('HreRem.view.common.DDViewModel', {
     alias: 'viewmodel.ddviewmodel',
 
     stores: {
-    	
+
     		comboFiltroProvincias: {
     	   		source: 'provincias',
     	   		loadSource: true
     		},
-    		
+
     	   	comboEntidadPropietaria: {
     	   		source: 'entidadPropietaria',
     	   		loadSource: true
     		},
-    		
+
     		comboEstadosPropuesta: {
     			source: 'estadosPropuesta',
-    	   		loadSource: true    			
+    	   		loadSource: true
     		},
-    		
+
     		comboEstadosPropuestaActivo: {
     			source: 'estadosPropuestaActivo',
-    	   		loadSource: true    			
+    	   		loadSource: true
     		},
-    		
+
     		comboSiNoRem: {
 				data : [
 			        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
 			        {"codigo":"0", "descripcion":"No"}
 			    ]
 			},
-			
+
 			comboTiposComercializacion: {
 				data : [
 			        {"codigo":"01", "descripcion": "Alquiler"},
@@ -38,14 +38,14 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			        {"codigo":"03", "descripcion": "Ambos"}
 			    ]
     		},
-    		
+
     		comboEstadoInformeComercial: {
 				data : [
 			        {"codigo":"01", "descripcion": "Emitido"},
 			        {"codigo":"02", "descripcion": "Aprobado"}
 			    ]
     		},
-    		
+
     		comboTiposPropuesta: {
     			data : [
 			        {"codigo":"01", "descripcion": "Preciar"},
@@ -53,7 +53,7 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			        {"codigo":"03", "descripcion": "De descuento"}
 			    ]
     		},
-    		
+
     		comboTiposFecha: {
     			data : [
 			        {"codigo":"01", "descripcion": "Fecha de generacion"},
@@ -61,22 +61,13 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			        {"codigo":"03", "descripcion": "Fecha de sancion"},
 			        {"codigo":"04", "descripcion": "Fecha de carga"}
 			    ]
-    			
     		},
-    		
-    		comboPorCuenta: {
-    			source: 'porCuenta',
-    			loadSource: true
-    		},
-    		
+
     		comboAceptadoRechazado: {
 				data : [
 			        {"codigo": 0, "descripcion": "Rechazado"},
 			        {"codigo": 1, "descripcion": "Aprobado"}
 			    ]
     		}
-    		
-    	
-			
-     }    
+     }
 });

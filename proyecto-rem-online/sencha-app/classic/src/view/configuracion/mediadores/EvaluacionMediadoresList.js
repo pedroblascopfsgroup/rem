@@ -143,8 +143,7 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
 		        {
 		            dataIndex: 'esHomologado',
 		            text: HreRem.i18n('header.evaluacion.mediadores.homologado'),
-		            flex: 0.3,
-		            hidden: true
+		            flex: 0.3
 		        },	
 		        {
 		            dataIndex: 'desEstadoProveedor',

@@ -18,7 +18,13 @@ Ext.define('HreRem.model.OfertaMediadorEvaluarModel', {
 			name: 'idAgrupacion'
 		},
 		{
+			name: 'numAgrupacion'
+		},
+		{
 			name: 'idActivo'
+		},
+		{
+			name: 'numActivo'
 		},
 		{
 			name: 'codEstadoOferta'

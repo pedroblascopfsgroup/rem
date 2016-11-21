@@ -95,7 +95,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	private String getCodigoSituacionComercialFromActivo(Activo activo) {
 		
 		String codigo = null;
-		PerimetroActivo perimetro = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 		
 		if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
 			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;

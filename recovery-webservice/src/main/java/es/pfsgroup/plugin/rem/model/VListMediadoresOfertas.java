@@ -38,10 +38,16 @@ public class VListMediadoresOfertas implements Serializable {
 	private Long numOferta;	
 	
 	@Column(name = "ID_AGRUPACION")
-	private Long idAgrupacion; 
-		
+	private Long idAgrupacion;
+
+	@Column(name = "NUM_AGRUPACION")
+	private Long numAgrupacion;
+	
 	@Column(name = "ID_ACTIVO")
-	private Long idActivo;  
+	private Long idActivo;
+
+	@Column(name = "NUM_ACTIVO")
+	private Long numActivo;
 	
 	@Column(name = "COD_ESTADO_OFERTA")
     private String codEstadoOferta;
@@ -116,6 +122,14 @@ public class VListMediadoresOfertas implements Serializable {
 		this.idAgrupacion = idAgrupacion;
 	}
 
+	public Long getNumAgrupacion() {
+		return numAgrupacion;
+	}
+
+	public void setNumAgrupacion(Long numAgrupacion) {
+		this.numAgrupacion = numAgrupacion;
+	}	
+	
 	public Long getIdActivo() {
 		return idActivo;
 	}
@@ -123,7 +137,15 @@ public class VListMediadoresOfertas implements Serializable {
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
 	}
+	
+	public Long getNumActivo() {
+		return numActivo;
+	}
 
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
+	}	
+	
 	public String getCodEstadoOferta() {
 		return codEstadoOferta;
 	}

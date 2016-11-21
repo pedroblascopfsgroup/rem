@@ -1624,7 +1624,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// Si no existia un registro de activo bancario, crea un nuevo
 		if (Checks.esNulo(perimetroActivo)) {
 			perimetroActivo = new PerimetroActivo();
-			perimetroActivo.setAuditoria(new Auditoria());
+			Auditoria auditoria = new Auditoria();
+			auditoria.setUsuarioCrear("REM");
+			auditoria.setFechaCrear(new Date());
+			perimetroActivo.setAuditoria(auditoria);
+			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Activo activo = genericDao.get(Activo.class, filterActivo);
+			if(!Checks.esNulo(activo))
+				perimetroActivo.setActivo(activo);
 			// Si no existia perimetro en BBDD, por defecto esta INCLUIDO en perimetro
 			// y se deben tomar todas las condiciones como marcadas
 			perimetroActivo.setIncluidoEnPerimetro(1);
@@ -1633,6 +1640,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			perimetroActivo.setAplicaAsignarMediador(1);
 			perimetroActivo.setAplicaComercializar(1);
 			perimetroActivo.setAplicaFormalizar(1);
+			genericDao.save(PerimetroActivo.class, perimetroActivo);
 		}
 
 		return perimetroActivo;

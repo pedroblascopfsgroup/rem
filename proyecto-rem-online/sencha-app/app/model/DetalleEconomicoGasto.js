@@ -73,7 +73,8 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		{
 			name : 'importeTotal',
 			type: 'number',
-			defaultValue: 0
+			defaultValue: 0,
+			critical: true
 		},
 		{
 			name : 'baseImponibleCalculo',

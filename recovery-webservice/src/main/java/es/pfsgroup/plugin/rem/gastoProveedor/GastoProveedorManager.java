@@ -95,7 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {
@@ -108,16 +108,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public final String PESTANA_GESTION = "gestion";
 	public final String PESTANA_IMPUGNACION = "impugnacion";
 	
-	//Textos de validación
-	private static final String VALIDACION_DOCUMENTO_ADJUNTO_GASTO = "msg.validacion.gasto.documento.adjunto";
-	private static final String VALIDACION_ACTIVOS_ASIGNADOS = "msg.validacion.gasto.activos.asignados";
-	private static final String VALIDACION_PARTIDA_PRESUPUESTARIA = "msg.validacion.gasto.partida.presupuestaria";
-	private static final String VALIDACION_CUENTA_CONTABLE = "msg.validacion.gasto.cuenta.contable";
-	private static final String VALIDACION_IMPORTE_TOTAL = "msg.validacion.gasto.importe.total";
-	private static final String VALIDACION_TIPO_PERIODICIDAD = "msg.validacion.gasto.tipo.periodicidad";
-	private static final String VALIDACION_TIPO_OPERACION = "msg.validacion.gasto.tipo.operacion";
-	private static final String VALIDACION_PROPIETARIO = "msg.validacion.gasto.propietario";
-	private static final String VALIDACION_TIPO_SUBTIPO = "msg.validacion.gasto.tipo.subtipo";
+
 	
 	
 
@@ -153,7 +144,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private ActivoAdapter activoAdapter;
 	
 	@Autowired
-	private UpdaterStateApi updaterStateApi;
+	private UpdaterStateGastoApi updaterStateApi;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -314,8 +305,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 		gastoProveedor.setFechaEmision(dto.getFechaEmision());
 		gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
-
-		updaterStateApi.updaterStates(gastoProveedor, DDEstadoGasto.INCOMPLETO);
 		
 		// Primero comprobamos que el gasto no está dado de alta.
 		boolean existeGasto  = existeGasto(gastoProveedor);
@@ -323,6 +312,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(existeGasto) {
 			throw new JsonViewerException("Gasto ya dado de alta");			
 		} else {
+			
+			updaterStateApi.updaterStates(gastoProveedor, DDEstadoGasto.INCOMPLETO);
 			// Creamos el gasto y las entidades relacionadas
 			genericDao.save(GastoProveedor.class, gastoProveedor);
 			
@@ -425,11 +416,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 				
 			}
-			
-			
-			genericDao.update(GastoProveedor.class, gastoProveedor);	
-			
-		
+
+			updaterStateApi.updaterStates(gastoProveedor, null);			
+			genericDao.update(GastoProveedor.class, gastoProveedor);
 		
 		return true;
 		
@@ -623,8 +612,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Transactional(readOnly = false)
 	public boolean saveDetalleEconomico(DtoDetalleEconomicoGasto dto, Long idGasto){
 		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-		GastoDetalleEconomico detalleGasto= genericDao.get(GastoDetalleEconomico.class, filtro);
+		GastoProveedor gasto = findOne(idGasto);		
+		GastoDetalleEconomico detalleGasto= gasto.getGastoDetalleEconomico();
 		
 		try{
 			if(!Checks.esNulo(detalleGasto)){
@@ -668,34 +657,34 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 					
 					
-						if(!Checks.esNulo(dto.getIncluirPagoProvision())){
-							detalleGasto.setIncluirPagoProvision(dto.getIncluirPagoProvision() ? 1 : 0);
-						}
-						
-						if(!Checks.esNulo(dto.getAbonoCuenta())){
-							detalleGasto.setAbonoCuenta(dto.getAbonoCuenta() ? 1 : 0);
-						}
-						if(!Checks.esNulo(dto.getIban())){
-							detalleGasto.setIbanAbonar(dto.getIban());
-						}
-						if(!Checks.esNulo(dto.getTitularCuenta())){
-							detalleGasto.setTitularCuentaAbonar(dto.getTitularCuenta());
-						}
-						if(!Checks.esNulo(dto.getNifTitularCuenta())){
-							detalleGasto.setNifTitularCuentaAbonar(dto.getNifTitularCuenta());
-						}
+					if(!Checks.esNulo(dto.getIncluirPagoProvision())){
+						detalleGasto.setIncluirPagoProvision(dto.getIncluirPagoProvision() ? 1 : 0);
+					}
 					
-						if(!Checks.esNulo(dto.getPagadoConexionBankia())){
-							detalleGasto.setPagadoConexionBankia(dto.getPagadoConexionBankia() ? 1 : 0);
-						}
-						if(!Checks.esNulo(dto.getOficina())){
-							detalleGasto.setOficinaBankia(dto.getOficina());
-						}
-						if(!Checks.esNulo(dto.getNumeroConexion())){
-							detalleGasto.setNumeroConexionBankia(dto.getNumeroConexion());
-						}
-							
-						
+					if(!Checks.esNulo(dto.getAbonoCuenta())){
+						detalleGasto.setAbonoCuenta(dto.getAbonoCuenta() ? 1 : 0);
+					}
+					if(!Checks.esNulo(dto.getIban())){
+						detalleGasto.setIbanAbonar(dto.getIban());
+					}
+					if(!Checks.esNulo(dto.getTitularCuenta())){
+						detalleGasto.setTitularCuentaAbonar(dto.getTitularCuenta());
+					}
+					if(!Checks.esNulo(dto.getNifTitularCuenta())){
+						detalleGasto.setNifTitularCuentaAbonar(dto.getNifTitularCuenta());
+					}
+				
+					if(!Checks.esNulo(dto.getPagadoConexionBankia())){
+						detalleGasto.setPagadoConexionBankia(dto.getPagadoConexionBankia() ? 1 : 0);
+					}
+					if(!Checks.esNulo(dto.getOficina())){
+						detalleGasto.setOficinaBankia(dto.getOficina());
+					}
+					if(!Checks.esNulo(dto.getNumeroConexion())){
+						detalleGasto.setNumeroConexionBankia(dto.getNumeroConexion());
+					}
+					
+					updaterStateApi.updaterStates(gasto, null);
 					
 					
 				} catch (IllegalAccessException e) {
@@ -733,45 +722,59 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if(!Checks.esNulo(idGasto) && !Checks.esNulo(numActivo)){
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
-			Activo activo= genericDao.get(Activo.class, filtro);
+			Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+			Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
+			GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtroG, filtroA);
 			
-			if(Checks.esNulo(activo)) {
-				throw new JsonViewerException("Este activo no existe");	
-			} else {
+			if(Checks.esNulo(gastoActivo)) {
 			
-				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
-				gasto= genericDao.get(GastoProveedor.class, filtroGasto);
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+				Activo activo= genericDao.get(Activo.class, filtro);
 				
-				if(!Checks.esNulo(gasto.getPropietario())) {
-					if(!Checks.estaVacio(activo.getPropietariosActivo())) {
-						ActivoPropietario propietario = activo.getPropietariosActivo().get(0).getPropietario();
-						if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
-							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
+				if(Checks.esNulo(activo)) {
+					throw new JsonViewerException("Este activo no existe");	
+				} else {
+				
+					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+					gasto= genericDao.get(GastoProveedor.class, filtroGasto);
+					
+					if(!Checks.esNulo(gasto.getPropietario())) {
+						if(!Checks.estaVacio(activo.getPropietariosActivo())) {
+							ActivoPropietario propietario = activo.getPropietariosActivo().get(0).getPropietario();
+							if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
+							}
 						}
+						
+						
 					}
 					
+					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+					List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
 					
+					GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
+					gastoProveedorActivo.setActivo(activo);
+					gastoProveedorActivo.setGastoProveedor(gasto);
+					if(!Checks.estaVacio(activosCatastro)) {
+						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+					}
+					
+					gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
+					
+					genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 				}
-				
-				Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-				List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
-				
-				GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
-				gastoProveedorActivo.setActivo(activo);
-				gastoProveedorActivo.setGastoProveedor(gasto);
-				if(!Checks.estaVacio(activosCatastro)) {
-					gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
-				}
-				
-				gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
-				
-				genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+			} else {
+				throw new JsonViewerException("Este activo ya está asignado");
 			}
 			
 		}
 		else if(!Checks.esNulo(idGasto) && !Checks.esNulo(numAgrupacion)){
+			
+			
+			
+			
+			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", numAgrupacion);
 			ActivoAgrupacion agrupacion= genericDao.get(ActivoAgrupacion.class, filtro);
 			
@@ -800,18 +803,25 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 					for(ActivoAgrupacionActivo activoAgrupacion: agrupacion.getActivos()){
 						
-						Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
-						Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-						List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+						Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+						Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activoAgrupacion.getActivo().getNumActivo());
+						GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtroG, filtroA);
 						
-						GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
-						gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
-						gastoProveedorActivo.setGastoProveedor(gasto);
-						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
-						
-						gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
-						
-						genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+						if(!Checks.esNulo(gastoActivo)) {
+							
+							Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
+							Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+							List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+							
+							GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
+							gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
+							gastoProveedorActivo.setGastoProveedor(gasto);
+							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+							
+							gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
+							
+							genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+						}
 					}
 				}
 
@@ -826,6 +836,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gasto = asignarPropietarioGasto(gasto);
 			// volvemos a establecer la cuenta contable y partida;
 			gasto = asignarCuentaContableYPartidaGasto(gasto);
+			// Comprobamos si el estado del gasto cambia.
+			updaterStateApi.updaterStates(gasto, null);
+			
 			genericDao.save(GastoProveedor.class, gasto);
 		}
 
@@ -962,23 +975,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto){
 		
 		try{
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
+			GastoProveedor gasto = findOne(idGasto);	
+			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
 			
-			beanUtilNotNull.copyProperties(contabilidadGasto, dtoContabilidadGasto);
+			if(!Checks.esNulo(contabilidadGasto)) {
 			
-			if(!Checks.esNulo(dtoContabilidadGasto.getEjercicioImputaGasto())){
+				beanUtilNotNull.copyProperties(contabilidadGasto, dtoContabilidadGasto);				
 				
-				Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getEjercicioImputaGasto());
-				Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
+				if(!Checks.esNulo(dtoContabilidadGasto.getEjercicioImputaGasto())){					
+					Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getEjercicioImputaGasto());
+					Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
+					
+					contabilidadGasto.setEjercicio(ejercicio);
+				}				
 				
-				contabilidadGasto.setEjercicio(ejercicio);
-				
-				genericDao.update(GastoInfoContabilidad.class, contabilidadGasto);
-				
+				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}
 			
-			
+			updaterStateApi.updaterStates(gasto, null); 
+					
+			genericDao.update(GastoProveedor.class, gasto);
 			
 			return true;
 			
@@ -1137,14 +1153,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setFechaRetencionPago(new Date());
 						gestionGasto.setUsuarioRetencionPago(usuario);
 						updaterStateApi.updaterStates(gasto, DDEstadoGasto.RETENIDO);
-					}
-					else if(dtoGestionGasto.getComboMotivoRetenerPago().equals("")){//Si borro el campo eliminamos los detalles de retencion y podemos el gasto en estado pendiente
+					} else if(("").equals(dtoGestionGasto.getComboMotivoRetenerPago())){//Si borro el campo eliminamos los detalles de retencion y ponemos el gasto en estado incompleto o pendiente 
 						gestionGasto.setMotivoRetencionPago(null);
 						gestionGasto.setFechaRetencionPago(null);
 						gestionGasto.setUsuarioRetencionPago(null);
-						updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
-						DDEstadoAutorizacionHaya estadoPendienteAutorizacionHaya= (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
-						gestionGasto.setEstadoAutorizacionHaya(estadoPendienteAutorizacionHaya);
+						updaterStateApi.updaterStates(gasto, null);
 					}
 					
 					gasto.setGastoGestion(gestionGasto);
@@ -1247,6 +1260,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		gasto = asignarCuentaContableYPartidaGasto(gasto);
 		
+		updaterStateApi.updaterStates(gasto, null);
+		
 		genericDao.save(GastoProveedor.class, gasto);
 		
 		return true;
@@ -1314,64 +1329,57 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Transactional(readOnly = false)
 	public String upload(WebFileItem fileItem) throws Exception {
 
-			ActivoAdjuntoActivo adjuntoActivo= null;
-			GastoProveedor gasto= findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
-			
-			Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
-			
-			AdjuntoGasto adjuntoGasto= new AdjuntoGasto();
-			adjuntoGasto.setAdjunto(adj);
-			
-			adjuntoGasto.setGastoProveedor(gasto);
-			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-			DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao.get(DDTipoDocumentoGasto.class, filtro);
-			adjuntoGasto.setTipoDocumentoGasto(tipoDocumento);
-			
-			adjuntoGasto.setContentType(fileItem.getFileItem().getContentType());
-			
-			adjuntoGasto.setTamanyo(fileItem.getFileItem().getLength());
-			
-			adjuntoGasto.setNombre(fileItem.getFileItem().getFileName());
+		ActivoAdjuntoActivo adjuntoActivo= null;
+		GastoProveedor gasto= findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
+		
+		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		
+		AdjuntoGasto adjuntoGasto= new AdjuntoGasto();
+		adjuntoGasto.setAdjunto(adj);
+		
+		adjuntoGasto.setGastoProveedor(gasto);
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao.get(DDTipoDocumentoGasto.class, filtro);
+		adjuntoGasto.setTipoDocumentoGasto(tipoDocumento);
+		
+		adjuntoGasto.setContentType(fileItem.getFileItem().getContentType());
+		
+		adjuntoGasto.setTamanyo(fileItem.getFileItem().getLength());
+		
+		adjuntoGasto.setNombre(fileItem.getFileItem().getFileName());
 
-			adjuntoGasto.setDescripcion(fileItem.getParameter("descripcion"));			
-			
-			adjuntoGasto.setFechaDocumento(new Date());
+		adjuntoGasto.setDescripcion(fileItem.getParameter("descripcion"));			
+		
+		adjuntoGasto.setFechaDocumento(new Date());
 
-			Auditoria.save(adjuntoGasto);
-	        
-			genericDao.save(AdjuntoGasto.class, adjuntoGasto);
+		Auditoria.save(adjuntoGasto);
+        
+		genericDao.save(AdjuntoGasto.class, adjuntoGasto);
+		
+		gasto.getAdjuntos().add(adjuntoGasto);
+		
+		for(GastoProveedorActivo g: gasto.getGastoProveedorActivos()){
 			
-			for(GastoProveedorActivo g: gasto.getGastoProveedorActivos()){
-				
-				if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto()) 
-						&& !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto().getMatricula())){
-					activoAdapter.uploadDocumento(fileItem, g.getActivo(), adjuntoGasto.getTipoDocumentoGasto().getMatricula());
-					adjuntoActivo= g.getActivo().getAdjuntos().get(g.getActivo().getAdjuntos().size()-1);
-				}
-				
+			if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto()) 
+					&& !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto().getMatricula())){
+				activoAdapter.uploadDocumento(fileItem, g.getActivo(), adjuntoGasto.getTipoDocumentoGasto().getMatricula());
+				adjuntoActivo= g.getActivo().getAdjuntos().get(g.getActivo().getAdjuntos().size()-1);
 			}
 			
-			if(!Checks.esNulo(adjuntoActivo)){
-				adjuntoGasto.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
-				genericDao.update(AdjuntoGasto.class, adjuntoGasto);
-			}
-			
-			//Copia de adjunto al Activo
-//			ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
-//
-//			adjuntoActivo.setAdjunto(adj);
-//			adjuntoActivo.setActivo(trabajo.getActivo());
-//			adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-//			adjuntoActivo.setContentType(fileItem.getFileItem().getContentType());
-//			adjuntoActivo.setTamanyo(fileItem.getFileItem().getLength());
-//			adjuntoActivo.setNombre(fileItem.getFileItem().getFileName());
-//			adjuntoActivo.setDescripcion(fileItem.getParameter("descripcion"));			
-//			adjuntoActivo.setFechaDocumento(new Date());
-//			Auditoria.save(adjuntoActivo);
-//			trabajo.getActivo().getAdjuntos().add(adjuntoActivo);
-			
-	        
+		}
+		
+		if(!Checks.esNulo(adjuntoActivo)){
+			adjuntoGasto.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
+			genericDao.update(AdjuntoGasto.class, adjuntoGasto);
+		}
+		
+		// Comprobamos si tenemos que cambiar el estado del gasto.
+		boolean estadoCambiado = updaterStateApi.updaterStates(gasto, null);	  
+		if(estadoCambiado) {
+			genericDao.save(GastoProveedor.class, gasto);
+		}
+		
 		return null;
 
 	}
@@ -1450,6 +1458,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		gasto = asignarCuentaContableYPartidaGasto(gasto);
 		
+		updaterStateApi.updaterStates(gasto, null);
+		
 		genericDao.save(GastoProveedor.class, gasto);
 		
 		
@@ -1482,6 +1492,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 		gasto.getGastoDetalleEconomico().setImportePrincipalSujeto(importeGasto);
 		gasto.getGastoDetalleEconomico().setImporteProvisionesSuplidos(importeProvisionesSuplidos);
+		gasto.getGastoDetalleEconomico().setImporteTotal(importeGasto + importeProvisionesSuplidos);
 		
 		return gasto;
 		
@@ -1614,7 +1625,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
 		
 		if(validarAutorizacion) {			
-			String error = validarAutorizacionGasto(gasto);
+			String error = updaterStateApi.validarAutorizacionGasto(gasto);
 			if(!Checks.esNulo(error)) {				
 				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede autorizar: " + error);	
 			}
@@ -1633,57 +1644,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 	}
 
-	public String validarAutorizacionGasto(GastoProveedor gasto) {
-		
-		String error = null;
-		
-		if(Checks.esNulo(gasto.getTipoGasto()) || Checks.esNulo(gasto.getSubtipoGasto())) {
-			error = messageServices.getMessage(VALIDACION_TIPO_SUBTIPO);
-			return error;
-		}
-		
-		if(Checks.esNulo(gasto.getPropietario())) {
-			error = messageServices.getMessage(VALIDACION_PROPIETARIO);
-			return error;
-		}
-		
-		if(Checks.esNulo(gasto.getTipoOperacion())) {
-			error = messageServices.getMessage(VALIDACION_TIPO_OPERACION);
-			return error;
-		}
-		
-		if(Checks.esNulo(gasto.getTipoPeriocidad())) {
-			error = messageServices.getMessage(VALIDACION_TIPO_PERIODICIDAD);
-			return error;
-		}
-		
-		if(Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())) {
-			error = messageServices.getMessage(VALIDACION_IMPORTE_TOTAL);
-			return error;
-		}
-		
-		if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())) {
-			error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-			return error;
-		}
-		
-		if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
-			error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
-			return error;
-		}
-		
-		if(Checks.estaVacio(gasto.getGastoProveedorActivos()) && !gasto.esAutorizadoSinActivos()) {
-			error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
-			return error;
-		}
-		
-		if(Checks.estaVacio(gasto.getAdjuntos())) {
-			error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
-			return error;
-		}
-		
-		return error;
-	}
 
 	@Override
 	@Transactional(readOnly = false)

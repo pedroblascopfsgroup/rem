@@ -21,7 +21,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
              onClickRemove: 'borrarDocumentoAdjunto',
              download: 'downloadDocumentoAdjunto',
              afterupload: function(grid) {
-             	grid.getStore().load();
+             	grid.up('form').funcionRecargar();
              },
              afterdelete: function(grid) {
              	grid.getStore().load();
@@ -263,6 +263,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    	me.getView().configCmp(gasto);
 		    }
 		});
+		
+		me.getView().fireEvent("refreshComponent", "panel[reference=gestiongastosref]");
 		
 	},
 	
@@ -998,8 +1000,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					            }
 				            } else {
 						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-						         me.refrescarGasto(true);
-						         me.getView().fireEvent("refreshComponent", "panel[reference=gestiongastosref]");
+						         me.refrescarGasto(true);						         
 				            }
 					     },
 					     failure: function(response) {
@@ -1068,8 +1069,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 							            }
 						            } else {
 								         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								         me.refrescarGasto(true);
-								         me.getView().fireEvent("refreshComponent", "panel[reference=gestiongastosref]");
+								         me.refrescarGasto(true);								    
 						            }
 							     },
 							     failure: function(response) {

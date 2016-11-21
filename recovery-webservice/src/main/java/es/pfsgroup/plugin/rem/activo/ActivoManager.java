@@ -1640,7 +1640,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			perimetroActivo.setAplicaAsignarMediador(1);
 			perimetroActivo.setAplicaComercializar(1);
 			perimetroActivo.setAplicaFormalizar(1);
-			genericDao.save(PerimetroActivo.class, perimetroActivo);
 		}
 
 		return perimetroActivo;

@@ -15,8 +15,10 @@ public class DtoMediadorOferta extends WebDto {
 	private Long id;
 	private Long idOferta;
 	private Long numOferta;	
-	private Long idAgrupacion; 
-	private Long idActivo;  
+	private Long idAgrupacion;
+	private Long numAgrupacion;
+	private Long idActivo;
+	private Long numActivo;
 	private String codEstadoOferta;
 	private String desEstadoOferta;
 	private String codTipoOferta;
@@ -57,11 +59,23 @@ public class DtoMediadorOferta extends WebDto {
 	public void setIdAgrupacion(Long idAgrupacion) {
 		this.idAgrupacion = idAgrupacion;
 	}
+	public Long getNumAgrupacion() {
+		return numAgrupacion;
+	}
+	public void setNumAgrupacion(Long numAgrupacion) {
+		this.numAgrupacion = numAgrupacion;
+	}
 	public Long getIdActivo() {
 		return idActivo;
 	}
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
+	}
+	public Long getNumActivo() {
+		return numActivo;
+	}
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
 	}
 	public String getCodEstadoOferta() {
 		return codEstadoOferta;

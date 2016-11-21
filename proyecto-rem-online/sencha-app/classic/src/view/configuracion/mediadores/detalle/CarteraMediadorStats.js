@@ -15,16 +15,64 @@ Ext.define('HreRem.view.configuracion.mediadores.detalle.CarteraMediadorStats', 
     initComponent: function () {
      	var me = this;
 		
-// TODO: Event on click data stats
-//     	me.listeners = {
-//    			rowdblclick: ''
-//    	    };
+     	var esTopRenderer =  function(value) {
+        	
+        	var src = '',
+        	alt = '';
+        	
+        	if (value == 1) {
+        		src = 'ico_favorito_added.svg';
+        		alt = 'OK';
+        	} else { 
+        		src = 'ico_favorito_off.png';
+        		alt = 'KO';
+        	} 
+
+        	if (src != '') {
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="18px"></div>';
+        	} else {
+        		return null;
+        	}
+        }; 
+
+     	var medalRenderer =  function(value) {
+        	
+        	var src = '';
+
+			if (value != undefined) {
+	        	if (value == 'Platino') {
+	        		src = 'ico_medal_platinum.png';
+	        		alt = 'OK';
+	        	} else if (value == 'Oro') { 
+	        		src = 'ico_medal_gold2.png';
+	        		alt = 'OK';
+	        	} else if (value == 'Plata') { 
+	        		src = 'ico_medal_silver.png';
+	        		alt = 'OK';
+	        	} else if (value == 'Bronce') { 
+	        		src = 'ico_medal_bronze.png';
+	        		alt = 'OK';
+	        	} else if (value.substr(0,7) == 'Retirar') { 
+	        		src = 'ico_medal_remove.png';
+	        		alt = 'OK';
+	        	}
+
+	        }
+	        	        	
+        	if (src != '') {
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="18px"></div>';
+        	} else {
+        		return null;
+        	}
+ 
+        };
 
 		me.columns = [
 				{
 					dataIndex: 'id',
 					text: HreRem.i18n('header.evaluacion.mediadores.detail.id'),
-					flex: 0.3
+					flex: 0.3,
+					hidden: true
 				},
 				{
 					dataIndex: 'numActivos',
@@ -54,11 +102,13 @@ Ext.define('HreRem.view.configuracion.mediadores.detalle.CarteraMediadorStats', 
 				{
 					dataIndex: 'descripcionCalificacion',
 					text: HreRem.i18n('header.evaluacion.mediadores.detail.Calificacion'),
+					renderer: medalRenderer,
 					flex: 1
 				},
 				{
 					dataIndex: 'esTop',
 					text: HreRem.i18n('header.evaluacion.mediadores.detail.esTop'),
+					renderer: esTopRenderer,
 					flex: 1
 				}		
 		    ];

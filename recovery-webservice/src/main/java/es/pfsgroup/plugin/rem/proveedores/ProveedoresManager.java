@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -21,6 +22,8 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -46,12 +49,20 @@ import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
+import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
+import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
+import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
+import es.pfsgroup.plugin.rem.model.VListMediadoresOfertas;
+import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
@@ -64,19 +75,36 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
+import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresCarteraDao;
+import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresEvaluarDao;
+import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresOfertasDao;
 
 @Service("proveedoresManager")
 public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresApi> implements  ProveedoresApi {
 	public static final String PROVEEDOR_EXISTS_EXCEPTION_CODE = "0001";
 	public static final String USUARIO_NOT_EXISTS_EXCEPTION_CODE = "0002";
+	public static final String ERROR_EVALUAR_MEDIADORES_CODE = "0003";
 	public static final String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "Ya existe un proveedor con el NIF y características proporcionadas";
 	public static final String USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE = "No se ha encontrado el usuario especificado";
+	public static final String ERROR_EVALUAR_MEDIADORES_MESSAGE = "Error al evaluar mediadores con calificaciones propuestas";
+	
+	public static final Integer comboOK = 1;
+	public static final Integer comboKO = 0;
 	
 	@Autowired
 	private GenericABMDao genericDao;
 	
 	@Autowired
 	private ProveedoresDao proveedoresDao;
+	
+	@Autowired
+	private MediadoresEvaluarDao mediadoresEvaluarDao;
+	
+	@Autowired
+	private MediadoresCarteraDao mediadoresCarteraDao;
+	
+	@Autowired
+	private MediadoresOfertasDao mediadoresOfertasDao;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -1015,4 +1043,67 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		return proveedor.getId();
 	}
+	
+	@Override
+	public Page getMediadoresEvaluar(DtoMediadorEvaluaFilter dtoMediadorEvaluaFilter) {
+		
+		return  mediadoresEvaluarDao.getListMediadoresEvaluar(dtoMediadorEvaluaFilter);
+		
+	}
+	
+	@Override
+	public Page getStatsCarteraMediadores(DtoMediadorStats dtoMediadorStats) {
+		
+		return mediadoresCarteraDao.getStatsCarteraMediador(dtoMediadorStats);
+		
+	}
+	
+	@Override
+	public Page getOfertasCarteraMediadores(DtoMediadorOferta dtoMediadorOferta) {
+		
+		return mediadoresOfertasDao.getListMediadorOfertas(dtoMediadorOferta);
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateMediadoresEvaluar(DtoMediadorEvalua dtoMediadorEvalua){
+		
+		ActivoProveedor proveedor = proveedoresDao.getProveedorById(dtoMediadorEvalua.getId());
+		
+		if(!Checks.esNulo(dtoMediadorEvalua.getId())){
+			
+			//Actualiza la calificacion propuesta
+			if(!Checks.esNulo(dtoMediadorEvalua.getDesCalificacionPropuesta())){
+				DDCalificacionProveedorRetirar calificacionPropuesta = 
+						(DDCalificacionProveedorRetirar) utilDiccionarioApi.dameValorDiccionarioByCod(DDCalificacionProveedorRetirar.class, dtoMediadorEvalua.getDesCalificacionPropuesta());
+				proveedor.setCalificacionProveedorPropuesta(calificacionPropuesta);
+			} else
+				proveedor.setCalificacionProveedorPropuesta(null);
+
+			//Actualiza el Top150 propuesto
+			if(!Checks.esNulo(dtoMediadorEvalua.getEsTopPropuesto()))
+				if(comboOK.equals(dtoMediadorEvalua.getEsTopPropuesto()) )
+					proveedor.setTopPropuesto(dtoMediadorEvalua.getEsTopPropuesto());
+				else
+					proveedor.setTopPropuesto(comboKO);
+						
+		}
+		
+		proveedoresDao.saveOrUpdate(proveedor);
+		
+		return true;		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean setVigentesConPropuestas(){
+
+		mediadoresEvaluarDao.evaluarMediadoresConPropuestas();
+		
+		return true;
+		
+	}
+	
+	
 }

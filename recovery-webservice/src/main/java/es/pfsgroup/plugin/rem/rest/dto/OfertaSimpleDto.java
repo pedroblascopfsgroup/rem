@@ -7,7 +7,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
-public class PropuestaDto {
+public class OfertaSimpleDto {
 
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = Oferta.class, message = "La oferta no existe", foreingField = "numOferta", groups = {

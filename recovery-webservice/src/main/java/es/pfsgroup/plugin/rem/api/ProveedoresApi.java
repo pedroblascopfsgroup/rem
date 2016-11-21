@@ -2,15 +2,25 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
+import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
+import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
+import es.pfsgroup.plugin.rem.model.VListMediadoresOfertas;
+import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 
 public interface ProveedoresApi {
 	
@@ -197,5 +207,40 @@ public interface ProveedoresApi {
 	 * @return
 	 */
 	public Long getIdProveedorByNif(String nif);
+	
+	/**
+	 * Metodo que devuelve una lista con los datos de mediadores para evaluar
+	 * @param dtoMediadorEvaluaFilter
+	 * @return
+	 */
+	public Page getMediadoresEvaluar(DtoMediadorEvaluaFilter dtoMediadorEvaluaFilter);
 
+	/**
+	 * Metodo que devuelve una lista con las estadisticas de la cartera de un mediador
+	 * Se plantea como lista para una futura mejora en la que se retornara el historico de estadisticas de un mediador
+	 * @param idMediador
+	 * @return
+	 */
+	public Page getStatsCarteraMediadores(DtoMediadorStats dtoMediadorStats);
+
+	/**
+	 * Metodo que devuelve una lista con algunos datos de las ofertas aceptadas o congeladas de un mediador
+	 * @param idMediador
+	 * @return
+	 */
+	public Page getOfertasCarteraMediadores(DtoMediadorOferta dtoMediadorOferta);
+
+	/**
+	 * Metodo que actualiza los datos editados del grid de mediadores en la pantalla de evaluar mediadores
+	 * @param dtoMediadorEvalua
+	 * @return
+	 */
+	public boolean updateMediadoresEvaluar(DtoMediadorEvalua dtoMediadorEvalua);
+	
+	/**
+	 * Metodo que settea en vigentes, las calificaciones propuestas para la lista entera de mediadores
+	 * @return
+	 */
+	public boolean setVigentesConPropuestas();
+	
 }

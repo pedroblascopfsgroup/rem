@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -78,7 +79,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							//Marcamos el activo como vendido
 							Filter filtroSituacionComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
 							activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, filtroSituacionComercial));
-							
+														
 							activo.setBloqueoPrecioFechaIni(new Date());
 							
 							genericDao.save(Activo.class, activo);

@@ -4,13 +4,13 @@ public class PropuestaRequestDto extends RequestDto {
 
 	private static final long serialVersionUID = 1L;
 	
-	private PropuestaDto data;
+	private OfertaSimpleDto data;
 
-	public PropuestaDto getData() {
+	public OfertaSimpleDto getData() {
 		return data;
 	}
 
-	public void setData(PropuestaDto data) {
+	public void setData(OfertaSimpleDto data) {
 		this.data = data;
 	}
 

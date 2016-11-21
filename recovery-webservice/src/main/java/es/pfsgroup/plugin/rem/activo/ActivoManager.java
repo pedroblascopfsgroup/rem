@@ -1624,7 +1624,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// Si no existia un registro de activo bancario, crea un nuevo
 		if (Checks.esNulo(perimetroActivo)) {
 			perimetroActivo = new PerimetroActivo();
-			perimetroActivo.setAuditoria(new Auditoria());
+			Auditoria auditoria = new Auditoria();
+			auditoria.setUsuarioCrear("REM");
+			auditoria.setFechaCrear(new Date());
+			perimetroActivo.setAuditoria(auditoria);
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
 			Activo activo = genericDao.get(Activo.class, filterActivo);
 			if(!Checks.esNulo(activo))

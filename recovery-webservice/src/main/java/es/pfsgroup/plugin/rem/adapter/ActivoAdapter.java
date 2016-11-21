@@ -3343,7 +3343,11 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(llave, "archivo2", dto.getArchivo2());
 				beanUtilNotNull.copyProperty(llave, "archivo3", dto.getArchivo3());
 				beanUtilNotNull.copyProperty(llave, "juegoCompleto", dto.getJuegoCompleto());
+				if(!Checks.esNulo(llave.getJuegoCompleto()) && llave.getJuegoCompleto()==1)
+					dto.setMotivoIncompleto("");
 				beanUtilNotNull.copyProperty(llave, "motivoIncompleto", dto.getMotivoIncompleto());
+				
+					
 
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();

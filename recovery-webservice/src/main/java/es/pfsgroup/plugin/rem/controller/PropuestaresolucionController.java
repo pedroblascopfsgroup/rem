@@ -18,22 +18,24 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
+import es.pfsgroup.plugin.rem.api.impl.PropuestaOfertaManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.dto.PropuestaDto;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 
 @Controller
 public class PropuestaresolucionController {
 
+		final String templatePropuestaSimple = "PropuestaResolucion001";
+	
 		@Autowired
 		private RestApi restApi;
 		
 		@Autowired
-		private PropuestaOfertaApi propuestaOfertaApi;
+		private PropuestaOfertaManager propuestaOfertaManager;
 		
 		@Autowired 
 		private OfertaApi ofertaApi;
@@ -43,7 +45,7 @@ public class PropuestaresolucionController {
 		public void propuestaResolucion(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {	
 			
 			PropuestaRequestDto jsonData = null;
-			PropuestaDto propuestaDto = null;
+			OfertaSimpleDto propuestaDto = null;
 			
 			Map<String, Object> params = null;
 			List<Object> dataSource = null;			
@@ -93,20 +95,20 @@ public class PropuestaresolucionController {
 			
 			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
 			if (model.get("error")==null || model.get("error")=="") {
-				params = propuestaOfertaApi.paramsPropuestaSimple(oferta, model);
+				params = propuestaOfertaManager.paramsHojaDatos(oferta, model);
 			}
 			if (model.get("error")==null || model.get("error")=="") {
-				dataSource = propuestaOfertaApi.dataSourcePropuestaSimple(oferta, activo, model);
+				dataSource = propuestaOfertaManager.dataSourceHojaDatos(oferta, activo, model);
 			}
 			
 			//GENERACION DEL DOCUMENTO EN PDF		
 			if (model.get("error")==null || model.get("error")=="") {
-				fileSalidaTemporal = propuestaOfertaApi.getPDFFilePropuestaSimple(params, dataSource, model);
+				fileSalidaTemporal = propuestaOfertaManager.getPDFFile(params, dataSource, templatePropuestaSimple, model);
 			}
 
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
 			if (model.get("error")==null || model.get("error")=="") {
-				propuestaOfertaApi.sendFileBase64(response, fileSalidaTemporal, model);
+				propuestaOfertaManager.sendFileBase64(response, fileSalidaTemporal, model);
 			}
 			
 			//Si no hay error se pone vacio, por coherencia con los otros métodos.

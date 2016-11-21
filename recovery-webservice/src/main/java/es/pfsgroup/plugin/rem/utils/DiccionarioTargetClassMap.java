@@ -121,6 +121,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("regimenesMatrimoniales", DDRegimenesMatrimoniales.class);
 		mapa.put("tiposComparecientes", DDTiposCompareciente.class);
 		mapa.put("calificacionProveedor", DDCalificacionProveedor.class);
+		mapa.put("calificacionProveedorRetirar", DDCalificacionProveedorRetirar.class);		
 		mapa.put("resultadoProcesoBlanqueo", DDResultadoProcesoBlanqueo.class);
 		mapa.put("motivoRetencionPago", DDMotivoRetencion.class);
 		mapa.put("tipoActivosCartera", DDTipoActivosCartera.class);

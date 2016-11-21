@@ -114,16 +114,11 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 					[
 						{
 							xtype:'displayfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.gasto.alta.rem')
-						},
-						{
-							xtype:'displayfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.gestor'),
+							fieldLabel: HreRem.i18n('fieldlabel.gasto.alta.rem'),
 							bind: {
-								value: '{gestion.fechaYGestorAltaRem}',
-								readOnly: '{esGastoAnulado}'
+								value: '{gestion.fechaYGestorAltaRem}'
 							},
-							colspan: 2
+							colspan: 3
 						},
 			            { 
 							xtype: 'comboboxfieldbase',
@@ -201,7 +196,6 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 								readOnly: '{esGastoAnulado}'
 							}
 						},
-						
 						///////////////////////////////
 						
 						{

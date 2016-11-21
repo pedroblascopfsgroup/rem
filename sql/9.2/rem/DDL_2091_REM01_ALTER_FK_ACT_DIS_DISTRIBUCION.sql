@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161111
+--## FECHA_CREACION=20161104
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -35,17 +35,24 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'GPV_GASTOS_PROVEEDOR'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_DIS_DISTRIBUCION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
+	/* -- ARRAY NOMBRES COLUMNAS AUXILIARES */
+	TYPE T_ALTER_RENAME IS TABLE OF VARCHAR2(4000);
+    TYPE T_ARRAY_ALTER_RENAME IS TABLE OF T_ALTER_RENAME;
+    V_ALTER_RENAME T_ARRAY_ALTER_RENAME := T_ARRAY_ALTER_RENAME(
+    				--  NOMBRE NUEVO	--FK del nombre antiguo para borrar
+    	T_ALTER_RENAME(  'ICO_AUX', 	'FK_DIST_VIVIENDA'	)
+		);
+    V_T_ALTER_RENAME T_ALTER_RENAME;
     
     /* -- ARRAY CON NUEVAS COLUMNAS */
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'PVE_ID_GESTORIA',		 		'NUMBER(16,0)',						'Gestoria responsable del gasto'	),
-    	T_ALTER(  'GPV_GASTO_SIN_ACTIVOS',		 	'NUMBER(1,0)',						'Marca para poder autorizar gastos sin activos'	)
+    	T_ALTER(  'ICO_ID',		 					'NUMBER(16,0)',						'Código identificador único de la información comercial'	)
 		);
     V_T_ALTER T_ALTER;
     
@@ -55,7 +62,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 							CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_PVE_GESTORIA',				'PVE_ID_GESTORIA',		V_ESQUEMA||'.ACT_PVE_PROVEEDOR',					'PVE_ID'			)
+    	T_FK(	'FK_INFOCOMER_VIVIENDA',				'ICO_ID',		V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL',					'ICO_ID'			)
     );
     V_T_FK T_FK;
 
@@ -67,37 +74,113 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
 
+	-- Renombramos columna, para luego copiar sus datos en la nueva columna, y borrarla finalmente.
+	
+	
 	
 	-- Bucle que CREA las nuevas columnas 
 	FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
 	LOOP
 
 		V_T_ALTER := V_ALTER(I);
+		V_T_ALTER_RENAME := V_ALTER_RENAME(I);
+		
+		
 
-		-- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
+		-- Verificar si la columna ya existe. Si ya existe la columna, la renombramos.
 		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS = 0 THEN
-			--No existe la columna y la creamos
-			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
+		IF V_NUM_TABLAS = 1 THEN -- Si existe, renombramos la columna
+			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] renombrar a: ['||V_T_ALTER_RENAME(1)||' ]-------------------------------------------');
+			V_MSQL := 'ALTER TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA|| ' 
+					   RENAME COLUMN '||V_T_ALTER(1)||' TO '||V_T_ALTER_RENAME(1)||' 
+			';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Columna renombrada.');
+			
+			
+		END IF;
+		
+		-- Comprobado FK de la columna antigua
+		V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_ALTER_RENAME(2)||'''';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+		IF V_NUM_TABLAS = 1 THEN -- Si existe, borramos la fk
+			--Borramos su FK
+			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] borrar su FK: ['||V_T_ALTER_RENAME(2)||' ]-------------------------------------------');
+			V_MSQL := 'ALTER TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA|| ' 
+					   DROP CONSTRAINT '||V_T_ALTER_RENAME(2)||' 
+			';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER_RENAME(2)||'... FK BORRADA.');
+		
+		END IF;
+		
+		--No existe la columna y la creamos
+			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] ADD COLUMN------------------------------');
 			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
+					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||')
 			';
 
 			EXECUTE IMMEDIATE V_MSQL;
 			--DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
 			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
+			
 
 			-- Creamos comentario	
 			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
 			EXECUTE IMMEDIATE V_MSQL;
 			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
 			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
-		END IF;
 
 	END LOOP;
 
 
+	
+	
+	-- Bucle para volcar los datos de la columna auxiliar a la nueva, y luego borra la auxiliar
+	FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
+	LOOP
+	
+		V_T_ALTER := V_ALTER(I);
+		V_T_ALTER_RENAME := V_ALTER_RENAME(I);
+	
+		-- Verificar que existe la columna auxiliar, para volcar los datos de la original
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER_RENAME(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;		
+		IF V_NUM_TABLAS = 1 THEN -- Si existe, volcamos los datos de la auxiliar, a la nueva creada
+			DBMS_OUTPUT.PUT_LINE('[INFO] INSERTAR DATOS EN ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
+			V_MSQL := 'UPDATE '||V_TEXT_TABLA|| ' 
+					   SET '||V_T_ALTER(1)||' = '||V_T_ALTER_RENAME(1)||' 
+			';
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			-- Hacemos que la columna no pueda ser nula
+			DBMS_OUTPUT.PUT_LINE('[INFO] hacer no nula la columna nueva ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
+			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
+					   MODIFY '||V_T_ALTER(1)||' NOT NULL ENABLE
+			';
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			--Quitamos la UK existente para poder borrar la columna auxiliar, y luego la crearemos con la nueva columna
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.ACT_DIS_DISTRIBUCION DROP CONSTRAINT UK_DIST_PLANTA_HAB ';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.UK_DIST_PLANTA_HAB... Unique key creada.');
+			
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] BORRAR COLUMNA AUXILIAR ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER_RENAME(1)||'] -------------------------------------------');
+			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
+					   DROP COLUMN '||V_T_ALTER_RENAME(1)||' 
+			';
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			-- Creamos unique key (ICO_ID, DIS_NUM_PLANTA, DD_TPH_ID)
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.ACT_DIS_DISTRIBUCION ADD CONSTRAINT UK_DIST_PLANTA_HAB UNIQUE (ICO_ID, DIS_NUM_PLANTA, DD_TPH_ID) ENABLE';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.UK_DIST_PLANTA_HAB... Unique key creada.');
+			
+		END IF;
+		
+	END LOOP;
 	
 	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
 	IF V_CREAR_FK = 'SI' THEN
@@ -136,6 +219,9 @@ BEGIN
 		END LOOP;
 
 	END IF;
+	
+	
+	
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKs ... OK *************************************************');
 	COMMIT;

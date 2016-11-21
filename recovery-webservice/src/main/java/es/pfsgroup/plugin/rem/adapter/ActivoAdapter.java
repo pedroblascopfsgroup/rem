@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
@@ -1846,7 +1847,7 @@ public class ActivoAdapter {
 		
 		ActivoDistribucion activoDistribucion = new ActivoDistribucion();
 		Activo activo = activoApi.get(idActivo);
-		ActivoVivienda vivienda = (ActivoVivienda)activo.getInfoComercial();
+		ActivoInfoComercial infoComercial = activo.getInfoComercial();
 		
 		try {
 			
@@ -1857,7 +1858,7 @@ public class ActivoAdapter {
 	
 				activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
 			}
-			activoDistribucion.setVivienda(vivienda);
+			activoDistribucion.setInfoComercial(infoComercial);
 			ActivoDistribucion distribucionNueva = genericDao.save(ActivoDistribucion.class, activoDistribucion);
 			
 			ActivoVivienda viviendaTemp = (ActivoVivienda)activo.getInfoComercial();

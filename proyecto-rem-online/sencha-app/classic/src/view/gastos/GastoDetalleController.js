@@ -21,7 +21,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
              onClickRemove: 'borrarDocumentoAdjunto',
              download: 'downloadDocumentoAdjunto',
              afterupload: function(grid) {
-             	grid.getStore().load();
+             	grid.up('form').funcionRecargar();
              },
              afterdelete: function(grid) {
              	grid.getStore().load();
@@ -263,6 +263,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    	me.getView().configCmp(gasto);
 		    }
 		});
+		
+		me.getView().fireEvent("refreshComponent", "panel[reference=gestiongastosref]");
 		
 	},
 	
@@ -972,28 +974,40 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
 		        if (buttonId == 'yes') {
-					var url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastos'),		
-					idsGasto = [];
-					idsGasto.push(me.getViewModel().get("gasto.id"));				
+					var url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto'),		
+					idGasto = me.getViewModel().get("gasto.id");		
 	
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 	
 					Ext.Ajax.request({
 				    			
 					     url: url,
-					     params: {idsGasto: idsGasto},
+					     params: {idGasto: idGasto},
 					
 					     success: function(response, opts) {
-					         me.getView().unmask();		         
-					         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					         me.refrescarGasto(true);
-					         me.getView().fireEvent("refreshComponentOnActivate", "panel[reference=gestiongastosref]");
+					        me.getView().unmask();
+					     	var data = {};
+				            try {
+				               	data = Ext.decode(response.responseText);
+				            }
+				            catch (e){ };
+				            
+				            if(data.success === "false") {
+					            if (!Ext.isEmpty(data.msg)) {
+					               	me.fireEvent("errorToast", data.msg);
+					            } else {
+					             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					            }
+				            } else {
+						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						         me.refrescarGasto(true);						         
+				            }
 					     },
 					     failure: function(response) {
 					     	me.getView().unmask();
 				     		var data = {};
 			                try {
-			                	data = Ext.decode(operation._response.responseText);
+			                	data = Ext.decode(response.responseText);
 			                }
 			                catch (e){ };
 			                if (!Ext.isEmpty(data.msg)) {
@@ -1030,27 +1044,39 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					HreRem.Msg.promptCombo(HreRem.i18n('title.motivo.rechazo'),"", function(btn, text){    
 					    if (btn == 'ok'){
 							
-							var url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastos'),		
-							idsGasto = [];
-							idsGasto.push(me.getViewModel().get("gasto.id"));		
+							var url =  $AC.getRemoteUrl('gastosproveedor/rechazarGasto'),		
+							idGasto = me.getViewModel().get("gasto.id");		
 							me.getView().mask(HreRem.i18n("msg.mask.loading"));
 			
 							Ext.Ajax.request({
 						    			
 							     url: url,
-							     params: {idsGasto: idsGasto, motivoRechazo: text},
+							     params: {idGasto: idGasto, motivoRechazo: text},
 							
 							     success: function(response, opts) {
-							         me.getView().unmask();		         
-							         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-							         me.refrescarGasto(true);
-							         me.getView().fireEvent("refreshComponentOnActivate", "panel[reference=gestiongastosref]");
+							        me.getView().unmask();							        
+							        var data = {};
+						            try {
+						               	data = Ext.decode(response.responseText);
+						            }
+						            catch (e){ };
+						            
+						            if(data.success === "false") {
+							            if (!Ext.isEmpty(data.msg)) {
+							               	me.fireEvent("errorToast", data.msg);
+							            } else {
+							             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							            }
+						            } else {
+								         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								         me.refrescarGasto(true);								    
+						            }
 							     },
 							     failure: function(response) {
 							     	me.getView().unmask();
 						     		var data = {};
 					                try {
-					                	data = Ext.decode(operation._response.responseText);
+					                	data = Ext.decode(response.responseText);
 					                }
 					                catch (e){ };
 					                if (!Ext.isEmpty(data.msg)) {

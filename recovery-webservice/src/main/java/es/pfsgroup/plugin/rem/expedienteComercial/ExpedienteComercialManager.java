@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
@@ -656,8 +657,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dto.setFechaVenta(expediente.getFechaVenta());
 				}
 				if(!Checks.esNulo(activo.getTipoComercializacion())){
-					DDTipoComercializacion comercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA);
-					if(comercializacion.equals(activo.getTipoComercializacion())){
+					DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA);
+					//DDTipoComercializacion comercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA);
+					if(tipoAlquiler.equals(activo.getTipoAlquiler())){
 						dto.setAlquilerOpcionCompra(1);
 					}
 					else{
@@ -1473,6 +1475,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return new DtoPage(posicionamientos, posicionamientos.size());
+		
+		
 	}
 	
 	public DtoPosicionamiento posicionamientoToDto(Posicionamiento posicionamiento){
@@ -1499,6 +1503,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 
 		return posicionamientoDto;
+		
 	}
 	
 	public Posicionamiento dtoToPosicionamiento(DtoPosicionamiento dto, Posicionamiento posicionamiento){
@@ -1536,6 +1541,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			ActivoProveedor notario = genericDao.get(ActivoProveedor.class, filtro);
 			posicionamiento.setNotario(notario);
 		}
+		posicionamiento.setFechaPosicionamiento(dto.getFechaPosicionamiento());
+		posicionamiento.setMotivoAplazamiento(dto.getMotivoAplazamiento());
 		
 		return posicionamiento;
 		

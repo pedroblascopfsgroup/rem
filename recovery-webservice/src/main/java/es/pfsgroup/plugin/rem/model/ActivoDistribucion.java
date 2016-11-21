@@ -53,7 +53,7 @@ public class ActivoDistribucion implements Serializable, Auditable {
 
 	@ManyToOne
     @JoinColumn(name = "ICO_ID")
-    private ActivoVivienda vivienda;   
+    private ActivoInfoComercial infoComercial;   
 
 	@Column(name = "DIS_NUM_PLANTA")
 	private Integer numPlanta;
@@ -89,12 +89,12 @@ public class ActivoDistribucion implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public ActivoVivienda getVivienda() {
-		return vivienda;
+	public ActivoInfoComercial getInfoComercial() {
+		return infoComercial;
 	}
 
-	public void setVivienda(ActivoVivienda vivienda) {
-		this.vivienda = vivienda;
+	public void setInfoComercial(ActivoInfoComercial infoComercial) {
+		this.infoComercial = infoComercial;
 	}
 
 	public Integer getNumPlanta() {

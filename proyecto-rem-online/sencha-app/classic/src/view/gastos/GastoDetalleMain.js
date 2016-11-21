@@ -28,7 +28,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
     	
     	var me = this;
     	
-    	me.menu = Ext.create("Ext.menu.Menu", {
+    	/*me.menu = Ext.create("Ext.menu.Menu", {
 	    	width: 150,
 		    cls: 'menu-favoritos',
 		    plain: true,
@@ -53,7 +53,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleMain', {
 	    		
 	    	]
 	    	
-	    });
+	    });*/
 
     	if(me.down('[cls=container-mask-background]')) {
     		me.removeAll();

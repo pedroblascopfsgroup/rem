@@ -135,6 +135,10 @@ Ext.define('HreRem.model.GastoProveedor', {
    		{
    			name: 'idGastoAbonado',
    			critical: true
+   		},
+   		
+   		{
+   			name: 'gastoSinActivos'
    		}
     		
     ],

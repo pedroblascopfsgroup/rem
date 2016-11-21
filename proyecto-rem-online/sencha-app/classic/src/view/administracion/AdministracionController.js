@@ -8,7 +8,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	// y todas las listas de selección de proveedores estarán deshabilitadas.
     	var me = this;
     	
-    	me.nifProveedorIdentificado= null;
+    	me.codProveedorIdentificado= null;
     	
     	if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
 			var url =  $AC.getRemoteUrl('gastosproveedor/getCodProveedorByUsuario');
@@ -20,9 +20,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	                	data = Ext.decode(response.responseText);
 	                }  catch (e){ };
 	                
-	                if(data.success === "true") {
-						me.nifProveedorIdentificado = data.data;
-	                }else {
+	                me.codProveedorIdentificado = data.data;
+	                
+	                if(data.success != "true") {	                	
 	                	me.fireEvent("errorToast", data.msg);
 	                }
 			     },
@@ -31,6 +31,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		     		var data = {};
 	                try {
 	                	data = Ext.decode(response.responseText);
+	                	me.codProveedorIdentificado = data.data;
 	                }
 	                catch (e){ };
 	                if (!Ext.isEmpty(data.msg)) {
@@ -55,8 +56,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			var rechazarBtn = grid.down('button[itemId=rechazarBtn]');
     			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
     			var disabled = Ext.isEmpty(persistedSelection);
-    			autorizarBtn.setDisabled(disabled);    		
-    			rechazarBtn.setDisabled(disabled);
+    			
+    			if (!Ext.isEmpty(autorizarBtn)) autorizarBtn.setDisabled(disabled);    		
+    			if (!Ext.isEmpty(rechazarBtn)) rechazarBtn.setDisabled(disabled);
 
     			if(disabled) {
     				displaySelection.setValue("No seleccionados");
@@ -116,7 +118,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			});	
 		    
 			if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
-				criteria.nifProveedor = me.nifProveedorIdentificado;
+				criteria.codigoProveedorRem = me.codProveedorIdentificado;
 			}
 			store.getProxy().extraParams = criteria;
 			
@@ -214,7 +216,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     	var me =this,
     	parent= grid.up('gestiongastos');
-		Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent, nifEmisor: me.nifProveedorIdentificado}).show();
+		Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent, codEmisor: me.codProveedorIdentificado}).show();
 	                
     },
     
@@ -230,40 +232,68 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		        if (buttonId == 'yes') {
 					var gastos = listaGastos.getPersistedSelection(),
 					url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastos'),		
-					idsGasto = [];
+					idsGasto = [], error=null;
 					
 					// Recuperamos todos los ids de los trabajos seleccionados
+					// y validamos que se pueden autorizar
 					Ext.Array.each(gastos, function(gasto, index) {
-					    idsGasto.push(gasto.get("id"));
+					    error = me.validarSeleccionGasto("A", gasto);
+					    if(Ext.isEmpty(error)) {
+					    	idsGasto.push(gasto.get("id"));	
+					    } else {
+					    	// Salimos del foreach y mostramos el error
+					    	return false;	
+					    }
 					});
 	
-					me.getView().mask(HreRem.i18n("msg.mask.loading"));
-	
-					Ext.Ajax.request({
-				    			
-					     url: url,
-					     params: {idsGasto: idsGasto},
-					
-					     success: function(response, opts) {
-					         me.getView().unmask();		         
-					         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					         listaGastos.getStore().loadPage(1);
-					     },
-					     failure: function(response) {
-					     	me.getView().unmask();
-				     		var data = {};
-			                try {
-			                	data = Ext.decode(operation._response.responseText);
-			                }
-			                catch (e){ };
-			                if (!Ext.isEmpty(data.msg)) {
-			                	me.fireEvent("errorToast", data.msg);
-			                } else {
-			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			                }
-					     }
-				    		    
-				    });
+					if(Ext.isEmpty(error)){
+						me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+						Ext.Ajax.request({
+					    			
+						     url: url,
+						     params: {idsGasto: idsGasto},
+						
+						     success: function(response, opts) {
+						     	me.getView().unmask();
+						        var data = {};
+					            try {
+					                data = Ext.decode(response.responseText);
+					            } catch (e){ };
+					            
+					            if(data.success === "false") {
+						            if (!Ext.isEmpty(data.msg)) {
+						              	me.fireEvent("errorToast", data.msg);
+						            } else {
+						            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						            }
+					            } else {							         
+							         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							         listaGastos.deselectAll();
+							         listaGastos.getStore().loadPage(1);
+							         Ext.Array.each(gastos, function(gasto, index) {
+									    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+									});
+					            }
+						     },
+						     failure: function(response) {
+						     	me.getView().unmask();
+					     		var data = {};
+				                try {
+				                	data = Ext.decode(response.responseText);
+				                }
+				                catch (e){ };
+				                if (!Ext.isEmpty(data.msg)) {
+				                	me.fireEvent("errorToast", data.msg);
+				                } else {
+				                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				                }
+						     }
+					    		    
+					    });
+					} else {
+						me.fireEvent("errorToast", error);
+					}
 		        }
 		   }
 		});
@@ -293,40 +323,69 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 					    	
 					    	var gastos = listaGastos.getPersistedSelection(),
 							url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastos'),		
-							idsGasto = [];
-							
+							idsGasto = [], error=null;
+					
 							// Recuperamos todos los ids de los trabajos seleccionados
+							// y validamos que se pueden rechazar
 							Ext.Array.each(gastos, function(gasto, index) {
-							    idsGasto.push(gasto.get("id"));
+							    error = me.validarSeleccionGasto("R", gasto);
+							    if(Ext.isEmpty(error)) {
+							    	idsGasto.push(gasto.get("id"));	
+							    } else {
+							    	// Salimos del foreach y mostramos el error
+							    	return false;	
+							    }
 							});
 			
-							me.getView().mask(HreRem.i18n("msg.mask.loading"));
-			
-							Ext.Ajax.request({
-						    			
-							     url: url,
-							     params: {idsGasto: idsGasto, motivoRechazo: text},
-							
-							     success: function(response, opts) {
-							         me.getView().unmask();		         
-							         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-							         listaGastos.getStore().loadPage(1);
-							     },
-							     failure: function(response) {
-							     	me.getView().unmask();
-						     		var data = {};
-					                try {
-					                	data = Ext.decode(operation._response.responseText);
-					                }
-					                catch (e){ };
-					                if (!Ext.isEmpty(data.msg)) {
-					                	me.fireEvent("errorToast", data.msg);
-					                } else {
-					                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					                }
-							     }
-						    		    
-						    });
+							if(Ext.isEmpty(error)) {
+								me.getView().mask(HreRem.i18n("msg.mask.loading"));
+				
+								Ext.Ajax.request({
+							    			
+								     url: url,
+								     params: {idsGasto: idsGasto, motivoRechazo: text},
+								
+								     success: function(response, opts) {
+								     	
+								     	var data = {};
+								     	me.getView().unmask();	
+							            try {
+							                data = Ext.decode(response.responseText);
+							            } catch (e){ };
+							            
+							            if(data.success === "false") {
+								            if (!Ext.isEmpty(data.msg)) {
+								              	me.fireEvent("errorToast", data.msg);
+								            } else {
+								            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+								            }
+							            } else {							         
+									         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+									         listaGastos.deselectAll();
+									         listaGastos.getStore().loadPage(1);
+									         Ext.Array.each(gastos, function(gasto, index) {
+									    		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+											 });
+							            }
+								     },
+								     failure: function(response) {
+								     	me.getView().unmask();
+							     		var data = {};
+						                try {
+						                	data = Ext.decode(response.responseText);
+						                }
+						                catch (e){ };
+						                if (!Ext.isEmpty(data.msg)) {
+						                	me.fireEvent("errorToast", data.msg);
+						                } else {
+						                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						                }
+								     }
+							    		    
+							    });
+							} else {
+								me.fireEvent("errorToast", error);								
+							}
 					    	 
 							
 					    }
@@ -335,6 +394,31 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		   }
 		});
     	
+    },
+    
+    validarSeleccionGasto: function(operacion, gasto) {
+    	
+    	var me = this, error = null;
+    	
+    	var OPERACION_AUTORIZAR = "A";
+    	var OPERACION_RECHAZAR = "R";
+
+    	if(CONST.ESTADOS_GASTO['ANULADO'] == gasto.get("estadoGastoCodigo") ||
+			CONST.ESTADOS_GASTO['PAGADO'] == gasto.get("estadoGastoCodigo") ||
+			CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+					    		
+			error = ("<span>Se han seleccionado gastos anulados, contabilizados o pagados</span></br>")
+		} else if(OPERACION_AUTORIZAR == operacion && CONST.ESTADOS_AUTORIZACION_HAYA['AUTORIZADO'] == gasto.get("estadoAutorizacionHayaCodigo")) {
+			error = ("<span>Se han seleccionado gastos ya autorizados</span></br>")
+		} else if(OPERACION_RECHAZAR == operacion && CONST.ESTADOS_AUTORIZACION_HAYA['RECHAZADO'] == gasto.get("estadoAutorizacionHayaCodigo")) {
+			error = ("<span>Se han seleccionado gastos ya rechazados</span></br>")
+		}
+
+
+		
+		return error;
+    	
     }
+    	
 
 });

@@ -1235,7 +1235,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 			if (infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
 					&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo())) {
-				//BeanUtils.copyProperties(((ActivoInfoComercial) objeto), infoAux);
+				// BeanUtils.copyProperties(((ActivoInfoComercial) objeto),
+				// infoAux);
 				genericaRestDaoImp.deleteInformeMediador(infoAux);
 				((ActivoInfoComercial) objeto).setAuditoria(null);
 				((ActivoInfoComercial) objeto).setId(null);
@@ -1361,25 +1362,23 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				}
 				informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys);
 				// Si el activo de es de tipo vivienda guardamos las plantas
-				if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
-					List<PlantaDto> plantas = informe.getPlantas();
-					for (PlantaDto planta : plantas) {
-						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
-								genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
-								genericDao.createFilter(FilterType.EQUALS, "infoComercial", informeEntity));
-						if (activoDistribucion == null) {
-							activoDistribucion = new ActivoDistribucion();
-						}
-						activoDistribucion.setNumPlanta(planta.getNumero());
-						activoDistribucion.setInfoComercial(informeEntity);
-						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
-						activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
-						activoDistribucion.setCantidad(planta.getNumero());
-						activoDistribucion.setSuperficie(planta.getEstancias());
-						activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
-						genericDao.save(ActivoDistribucion.class, activoDistribucion);
+				List<PlantaDto> plantas = informe.getPlantas();
+				for (PlantaDto planta : plantas) {
+					ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
+							genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
+							genericDao.createFilter(FilterType.EQUALS, "infoComercial", informeEntity));
+					if (activoDistribucion == null) {
+						activoDistribucion = new ActivoDistribucion();
 					}
+					activoDistribucion.setNumPlanta(planta.getNumero());
+					activoDistribucion.setInfoComercial(informeEntity);
+					DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
+					activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
+					activoDistribucion.setCantidad(planta.getNumero());
+					activoDistribucion.setSuperficie(planta.getEstancias());
+					activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
+					genericDao.save(ActivoDistribucion.class, activoDistribucion);
 				}
 
 				adapter.crearTramitePublicacion(informeEntity.getActivo().getId());

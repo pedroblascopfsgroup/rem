@@ -60,7 +60,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 				{
 					Filter filtro;
 					if(DDSiNo.SI.equals(valor.getValor())){
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RPTA_OFERTANTE);
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 					}
 					else{
 						//Resuelve el expediente

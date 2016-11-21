@@ -19,19 +19,20 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de calificación de proveedor.
+ * Modelo que gestiona el diccionario de calificación de proveedor para el modo edicion
  * 
- * @author Daniel Gutiérrez
+ * @author Bender
  *
  */
 @Entity
-@Table(name = "DD_CPR_CALIFICACION_PROVEEDOR", schema = "${entity.schema}")
+@Table(name = "DD_CPR_CALIFICACION_RETIRAR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDCalificacionProveedor implements Auditable, Dictionary {
+public class DDCalificacionProveedorRetirar implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
-	
+
+	public static final String CPR_CODIGO_RETIRAR = "00";
 	public static final String CPR_CODIGO_PLATINO = "01"; 
 	public static final String CPR_CODIGO_ORO = "02";
 	public static final String CPR_CODIGO_PLATA = "03";
@@ -39,8 +40,8 @@ public class DDCalificacionProveedor implements Auditable, Dictionary {
 
 	@Id
 	@Column(name = "DD_CPR_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDCalificacionProveedorGenerator")
-	@SequenceGenerator(name = "DDCalificacionProveedorGenerator", sequenceName = "S_DD_CPR_CAL_PROVEEDOR")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDCalificacionRetirarGenerator")
+	@SequenceGenerator(name = "DDCalificacionRetirarGenerator", sequenceName = "S_DD_CPR_CAL_RETIRAR")
 	private Long id;
 	    
 	@Column(name = "DD_CPR_CODIGO")   

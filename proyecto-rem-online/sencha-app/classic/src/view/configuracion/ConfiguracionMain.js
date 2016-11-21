@@ -5,8 +5,10 @@ Ext.define('HreRem.view.configuracion.ConfiguracionMain', {
     reference	: 'configuracionMain',
     layout: 'fit',
     
-    requires	: ['HreRem.view.configuracion.ConfiguracionController','HreRem.view.configuracion.ConfiguracionModel',
-    'HreRem.view.configuracion.administracion.ConfiguracionAdministracionMain'],
+    requires	: ['HreRem.view.configuracion.ConfiguracionController',
+    				'HreRem.view.configuracion.ConfiguracionModel',
+    				'HreRem.view.configuracion.administracion.ConfiguracionAdministracionMain',
+    				'HreRem.view.configuracion.mediadores.EvaluacionMediadores'],
     
     controller: 'configuracion',
     viewModel: {
@@ -20,6 +22,9 @@ Ext.define('HreRem.view.configuracion.ConfiguracionMain', {
         me.items = [
 		    {	
 				xtype: 'configuracionadministracionmain', reference: 'configuracionAdministracionMain'
+			},
+			{
+				xtype: 'evaluacionmediadores', reference: 'evaluacionMediadores'
 			}
         ];
         

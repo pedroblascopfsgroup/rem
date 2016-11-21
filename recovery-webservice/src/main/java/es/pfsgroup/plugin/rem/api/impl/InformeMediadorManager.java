@@ -1366,12 +1366,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					for (PlantaDto planta : plantas) {
 						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
 								genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
-								genericDao.createFilter(FilterType.EQUALS, "vivienda", (ActivoVivienda) informeEntity));
+								genericDao.createFilter(FilterType.EQUALS, "infoComercial", informeEntity));
 						if (activoDistribucion == null) {
 							activoDistribucion = new ActivoDistribucion();
 						}
 						activoDistribucion.setNumPlanta(planta.getNumero());
-						activoDistribucion.setVivienda((ActivoVivienda) informeEntity);
+						activoDistribucion.setInfoComercial(informeEntity);
 						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
 								genericDao.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
 						activoDistribucion.setTipoHabitaculo(tipoHabitaculo);

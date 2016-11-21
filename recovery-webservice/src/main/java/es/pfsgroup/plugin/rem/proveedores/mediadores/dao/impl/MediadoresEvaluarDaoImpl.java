@@ -60,16 +60,16 @@ public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresE
 			HQLBuilder.addFiltroIgualQue(hb, "codProvincia", dto.getCodProvincia());
 		
 		if(!Checks.esNulo(dto.getEsCustodio()))
-			HQLBuilder.addFiltroIgualQue(hb, "esCustodio", String.valueOf(dto.getEsCustodio()));
+			HQLBuilder.addFiltroIgualQue(hb, "esCustodio", dto.getEsCustodio());
 		
 		if(!Checks.esNulo(dto.getEsHomologado())){
 			if(dto.getEsHomologado() == 1)
-				HQLBuilder.addFiltroIgualQue(hb, "esHomologado", String.valueOf(dto.getEsHomologado()));
+				HQLBuilder.addFiltroIgualQue(hb, "esHomologado", dto.getEsHomologado());
 		}
 		
 		if(!Checks.esNulo(dto.getEsTop())){
 			if(dto.getEsTop() == 1)
-				HQLBuilder.addFiltroIgualQue(hb, "esTop", String.valueOf(dto.getEsTop()));
+				HQLBuilder.addFiltroIgualQue(hb, "esTop", dto.getEsTop());
 		}
 
 		if(!Checks.esNulo(dto.getNombreApellidos()))

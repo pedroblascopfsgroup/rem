@@ -20,12 +20,14 @@ Ext.define('HreRem.view.configuracion.mediadores.detalle.OfertasVivasList', {
 			{
 				dataIndex: 'id',
 				text: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.id'),
-				flex: 1
+				flex: 1,
+				hidden: true
 			},
 			{
 				dataIndex: 'idOferta',
 				text: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idOferta'),
-				flex: 1
+				flex: 1,
+				hidden: true
 			},
 			{
 				dataIndex: 'numOferta',
@@ -35,11 +37,23 @@ Ext.define('HreRem.view.configuracion.mediadores.detalle.OfertasVivasList', {
 			{
 				dataIndex: 'idAgrupacion',
 				text: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idAgrupacion'),
+				flex: 1,
+				hidden: true
+			},
+			{
+				dataIndex: 'numAgrupacion',
+				text: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.numAgrupacion'),
 				flex: 1
 			},
 			{
 				dataIndex: 'idActivo',
 				text: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
+				flex: 1,
+				hidden: true
+			},
+			{
+				dataIndex: 'numActivo',
+				text: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.numActivo'),
 				flex: 1
 			},
 			{
@@ -55,7 +69,8 @@ Ext.define('HreRem.view.configuracion.mediadores.detalle.OfertasVivasList', {
 			{
 				dataIndex: 'idExpediente',
 				text: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idExpediente'),
-				flex: 1
+				flex: 1,
+				hidden: true
 			},
 			{
 				dataIndex: 'numExpediente',
@@ -83,7 +98,8 @@ Ext.define('HreRem.view.configuracion.mediadores.detalle.OfertasVivasList', {
 			{
 				dataIndex: 'idOfertante',
 				text: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idOfertante'),
-				flex: 1
+				flex: 1,
+				hidden: true
 			},
 			{
 				dataIndex: 'nombreOfertante',

@@ -24,7 +24,8 @@ Ext.define('HreRem.view.configuracion.mediadores.detalle.CarteraMediadorStats', 
 				{
 					dataIndex: 'id',
 					text: HreRem.i18n('header.evaluacion.mediadores.detail.id'),
-					flex: 0.3
+					flex: 0.3,
+					hidden: true
 				},
 				{
 					dataIndex: 'numActivos',

@@ -31,6 +31,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
    		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());   		
+   		
    		////////////////////////Por situación del gasto
    		
    		if(!Checks.esNulo(dtoGastosFilter.getEstadoAutorizacionHayaCodigo())){

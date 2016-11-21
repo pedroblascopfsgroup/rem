@@ -126,6 +126,17 @@ public class GastoGestion implements Serializable, Auditable {
     @JoinColumn(name="DD_MRP_ID")
     private DDMotivoRetencionPago motivoRetencionPago;
     
+    @Column(name="GGE_FECHA_ENVIO_GESTORIA")
+    private Date fechaEnvioGestoria;
+    
+    @Column(name="GGE_FECHA_ENVIO_PRPTRIO")
+    private Date fechaEnvioPropietario;
+    
+    @Column(name="GGE_FECHA_RECEPCION_GESTORIA")
+    private Date fechaRecepcionGestoria;
+    
+    @Column(name="GGE_FECHA_RECEPCION_PRPTRIO")
+    private Date fechaRecepcionPropietario;
     
 	@Version   
 	private Long version;
@@ -298,6 +309,42 @@ public class GastoGestion implements Serializable, Auditable {
 
 	public void setMotivoRetencionPago(DDMotivoRetencionPago motivoRetencionPago) {
 		this.motivoRetencionPago = motivoRetencionPago;
+	}
+
+	public Date getFechaEnvioGestoria() {
+		return fechaEnvioGestoria;
+	}
+
+	public void setFechaEnvioGestoria(Date fechaEnvioGestoria) {
+		this.fechaEnvioGestoria = fechaEnvioGestoria;
+	}
+
+	public Date getFechaEnvioPropietario() {
+		return fechaEnvioPropietario;
+	}
+
+	public void setFechaEnvioPropietario(Date fechaEnvioPropietario) {
+		this.fechaEnvioPropietario = fechaEnvioPropietario;
+	}
+
+	public Date getFechaRecepcionGestoria() {
+		return fechaRecepcionGestoria;
+	}
+
+	public void setFechaRecepcionGestoria(Date fechaRecepcionGestoria) {
+		this.fechaRecepcionGestoria = fechaRecepcionGestoria;
+	}
+
+	public Date getFechaRecepcionPropietario() {
+		return fechaRecepcionPropietario;
+	}
+
+	public void setFechaRecepcionPropietario(Date fechaRecepcionPropietario) {
+		this.fechaRecepcionPropietario = fechaRecepcionPropietario;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	public Long getVersion() {

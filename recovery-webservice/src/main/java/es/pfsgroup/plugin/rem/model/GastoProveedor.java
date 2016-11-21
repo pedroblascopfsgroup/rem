@@ -158,6 +158,9 @@ public class GastoProveedor implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="NUM_GASTO_ABONADO")
     private GastoProveedor gastoProveedorAbonado;
+    
+    @Column(name="GPV_GASTO_SIN_ACTIVOS")
+    private Integer gastoSinActivos;
 
 //    @OneToMany(mappedBy="gastoProveedorAbonado", cascade = CascadeType.ALL)
 //    private Set<GastoProveedor> gastoProveedor = new HashSet<GastoProveedor>();
@@ -167,6 +170,7 @@ public class GastoProveedor implements Serializable, Auditable {
 //    @Where(clause = Auditoria.UNDELETED_RESTICTION)
 //    private GastoProveedor gastoProveedorAbonado;
     
+
 	@Column(name="NUM_GASTO_DESTINATARIO")
 	private String numGastoDestinatario;
     
@@ -432,6 +436,18 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 		return cartera;
 	
+	}
+	
+	public Integer getGastoSinActivos() {
+		return gastoSinActivos;
+	}
+
+	public void setGastoSinActivos(Integer gastoSinActivos) {
+		this.gastoSinActivos = gastoSinActivos;
+	}
+
+	public boolean esAutorizadoSinActivos() {
+		return new Integer(1).equals(this.gastoSinActivos);
 	}
 
 }

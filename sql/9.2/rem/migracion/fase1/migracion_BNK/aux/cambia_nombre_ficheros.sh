@@ -13,7 +13,7 @@ mv Fich_Propietarios_Activo.dat PROPIETARIOS_ACTIVO.dat
 mv Fich_Cargas_Activo.dat CARGAS_ACTIVO.dat
 mv Fich_Llaves_Activo.dat LLAVES_ACTIVO.dat
 mv Fich_Tasaciones_Activo.dat TASACIONES_ACTIVO.dat
-mv Fich_Infocomercial_Activo.dat INFOCOMERCIAL_ACTIVO.dat
+mv Fich_InfoComercial_Activo.dat INFOCOMERCIAL_ACTIVO.dat
 mv Fich_Calidades_Activo.dat CALIDADES_ACTIVO.dat
 mv Fich_Agrupaciones_Activo.dat AGRUPACIONES_ACTIVO.dat
 mv Fich_Agrupaciones.dat AGRUPACIONES.dat
@@ -22,12 +22,12 @@ mv Fich_Catastro_Activo.dat CATASTRO_ACTIVO.dat
 mv Fich_InfoComercial_Distribucion.dat INFOCOMERCIAL_DISTRIBUCION.dat
 mv Fich_Observaciones_Agrupacion.dat OBSERVACIONES_AGRUPACION.dat
 mv Fich_Presupuesto_Trabajo.dat PRESUPUESTO_TRABAJO.dat
-mv Fich_Subdivisiones_Agrupacion.dat SUBDIVISIONES_AGRUPACION.dat
 mv Fich_Movimientos_Llave.dat MOVIMIENTOS_LLAVE.dat
 mv Fich_Propietarios_Cabecera.dat PROPIETARIOS_CABECERA.dat
 mv Fich_Proveedor_Contacto.dat PROVEEDOR_CONTACTO.dat
-mv Fich_Proveedores.dat ACTIVO_PROVEEDORES.dat
+mv Fich_Proveedores.dat PROVEEDORES.dat
 mv Fich_Trabajo.dat TRABAJO.dat
+mv Fich_Propietarios.dat PROPIETARIOS.dat
 
 echo "Nombres cambiados, verificar cambios"
 

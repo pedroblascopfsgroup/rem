@@ -162,7 +162,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
-	public Object getTabGasto(Long id, String tab) {
+	public Object getTabGasto(Long id, String tab) throws Exception {
 		
 		GastoProveedor gasto = findOne(id);
 		
@@ -188,6 +188,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			throw new Exception(e.getMessage());
 		}
 		
 		return dto;
@@ -1157,6 +1158,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setMotivoRetencionPago(null);
 						gestionGasto.setFechaRetencionPago(null);
 						gestionGasto.setUsuarioRetencionPago(null);
+						gasto.setGastoGestion(gestionGasto);
 						updaterStateApi.updaterStates(gasto, null);
 					}
 					
@@ -1538,25 +1540,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		// NO ES EDITABLE SI.... 
 		
-		// Si es proveedor y...
-		if(genericAdapter.isProveedor(usuario)) {
-			
-			//el estado no es pendiente o rechazado por gestor
-			if(!DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()) &&
-					!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()))  {
-				return false;
-			}
-			
-		} else {
-			
-			if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo()) || 
-				DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
-				return false;
-			}
+		if(!Checks.esNulo(gasto.getEstadoGasto())) {	
+		
+			// Si es proveedor y...
+			if(genericAdapter.isProveedor(usuario)) {				
+				//el estado no es pendiente o rechazado por gestor
+				if(!DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()) &&
+						!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()))  {
+					return false;
+				}
+				
+			} else {
+				
+				if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo()) || 
+					DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
+					return false;
+				}
+			}			
 		}
+		
 		return true;
-		
-		
 	}
 	
 	public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor){

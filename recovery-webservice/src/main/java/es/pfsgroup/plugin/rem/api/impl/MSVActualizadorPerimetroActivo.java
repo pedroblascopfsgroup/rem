@@ -21,7 +21,9 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -83,7 +85,7 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	 * Método que evalua el valor de un check en funcion de las columnas S/N/<nulo>
 	 * @param cellValue
 	 * @return
-	 */
+	 *//*
 	private Integer getCheckValueCalculated(String cellValue, Integer chkIncluidoPerimetro){
 		if(!Checks.esNulo(cellValue)){
 			if("S".equalsIgnoreCase(cellValue) || String.valueOf(CHECK_VALOR_SI).equalsIgnoreCase(cellValue))
@@ -93,7 +95,7 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 		} else {
 			return getCheckValue(String.valueOf(chkIncluidoPerimetro));
 		}
-	}
+	}*/
 	
 	@Override
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
@@ -113,27 +115,31 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	
 				//Variables temporales para asignar valores de filas excel
 				Integer tmpIncluidoEnPerimetro = getCheckValue(exc.dameCelda(fila, 1));
-				Integer tmpAplicaGestion = getCheckValueCalculated(exc.dameCelda(fila, 2), tmpIncluidoEnPerimetro);
+				Integer tmpAplicaGestion = getCheckValue(exc.dameCelda(fila, 2));
 				String  tmpMotivoAplicaGestion = exc.dameCelda(fila, 3);
-				Integer tmpAplicaComercializar = getCheckValueCalculated(exc.dameCelda(fila, 4), tmpIncluidoEnPerimetro);
+				Integer tmpAplicaComercializar = getCheckValue(exc.dameCelda(fila, 4));
 				String  tmpMotivoComercializacion = exc.dameCelda(fila, 5);
 				String  tmpMotivoNoComercializacion = exc.dameCelda(fila, 6);
 				String  tmpTipoComercializacion = exc.dameCelda(fila, 7);
-				Integer tmpAplicaFormalizar = getCheckValueCalculated(exc.dameCelda(fila, 8), tmpIncluidoEnPerimetro);
-				String  tmpMotivoAplicaFormalizar = exc.dameCelda(fila, 9);
+				String 	tmpDestinoComercial = exc.dameCelda(fila, 8);
+				String	tmpTipoAlquiler = exc.dameCelda(fila, 9);
+				Integer tmpAplicaFormalizar = getCheckValue(exc.dameCelda(fila, 10));
+				String  tmpMotivoAplicaFormalizar = exc.dameCelda(fila,11);
 	
 				perimetroActivo.setActivo(activo);
-				//Incluido en perimetro
+				//Incluido en perimetro		---------------------------
 				if(!CHECK_NO_CAMBIAR.equals(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
 				
-				//Aplica gestion
+				
+				//Aplica gestion 			---------------------------
 				if(!CHECK_NO_CAMBIAR.equals(tmpAplicaGestion)){
 					perimetroActivo.setAplicaGestion(tmpAplicaGestion);
 					perimetroActivo.setFechaAplicaGestion(new Date());					
 				}
 				if(!Checks.esNulo(tmpMotivoAplicaGestion)) perimetroActivo.setMotivoAplicaGestion(tmpMotivoAplicaGestion);
 				
-				//Aplica comercializacion
+				
+				//Aplica comercializacion	---------------------------
 				// Si se quita del perimetro, forzamos el quitado de comercializacion y actualizar la situación comercial del activo a No Comercializable
 				if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro) && !CHECK_VALOR_NO.equals(perimetroActivo.getAplicaComercializar())) tmpAplicaComercializar=0;
 				
@@ -153,10 +159,21 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 				
 				//Tipo de comercializacion en el activo
 				if(!Checks.esNulo(tmpTipoComercializacion))
-				activo.setTipoComercializacion((DDTipoComercializacion)
-						utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpTipoComercializacion.substring(0, 2)));
+					activo.setTipoComercializar((DDTipoComercializar)
+						utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, tmpTipoComercializacion.substring(0, 2)));
 				
-				//Aplica Formalizar
+				//Tipo de Destino comercial en el activo
+				if(!Checks.esNulo(tmpDestinoComercial))
+					activo.setTipoComercializacion((DDTipoComercializacion)
+							utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpDestinoComercial.substring(0, 2)));
+				
+				//Tipo de alquiler del activo
+				if(!Checks.esNulo(tmpTipoAlquiler))
+					activo.setTipoAlquiler((DDTipoAlquiler)
+							utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, tmpTipoAlquiler.substring(0, 2)));
+				
+				
+				//Aplica Formalizar			---------------------------
 				//Si Comercializar es NO, forzamos también a NO => Formalizar (por si no venía informado)
 				if(CHECK_VALOR_NO.equals(tmpAplicaComercializar))
 					tmpAplicaFormalizar = CHECK_VALOR_NO;
@@ -168,11 +185,14 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 
 				if(!Checks.esNulo(tmpMotivoAplicaFormalizar)) perimetroActivo.setMotivoAplicaFormalizar(tmpMotivoAplicaFormalizar);
 				
+				
+				// ---------------------------
 				//Persiste los datos, creando el registro de perimetro
 				// Todos los datos son de PerimetroActivo, a excepcion del tipo comercializacion que es del Activo
-				if(!Checks.esNulo(tmpTipoComercializacion)) activoApi.saveOrUpdate(activo);
+				if(!Checks.esNulo(tmpTipoComercializacion) || !Checks.esNulo(tmpDestinoComercial) || !Checks.esNulo(tmpTipoAlquiler)) 
+					activoApi.saveOrUpdate(activo);
 				//Si en la excel se ha indicado que NO esta en perimetro, desmarcamos sus checks
-				if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro)) this.desmarcarChecksFromPerimetro(perimetroActivo);
+				if(CHECK_VALOR_NO.equals(perimetroActivo.getIncluidoEnPerimetro())) this.desmarcarChecksFromPerimetro(perimetroActivo);
 				
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 				
@@ -189,7 +209,6 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			return false;
-			
 		}
 
 	}

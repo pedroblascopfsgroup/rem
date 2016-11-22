@@ -432,7 +432,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			createTramiteTrabajo(trabajo);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(e.getMessage()));
 		}
@@ -454,10 +453,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = new Trabajo();
 
 		if (!Checks.esNulo(dtoTrabajo.getIdProceso())) {
-			// TODO: Llegados a este punto tenemos que crear un trabajo del
-			// listado de activos
-			trabajo = crearTrabajoPorSubidaActivos(dtoTrabajo);
-			createTramiteTrabajo(trabajo);
+			List<Trabajo> trabajos = crearTrabajoPorSubidaActivos(dtoTrabajo);
+
+			for (Trabajo trabajoActivo : trabajos) {
+				createTramiteTrabajo(trabajoActivo);
+			}
+
 		} else {
 			if (dtoTrabajo.getIdActivo() != null) {
 				Activo activo = activoDao.get(dtoTrabajo.getIdActivo());
@@ -474,7 +475,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			} else {
 				trabajo = crearTrabajoPorAgrupacion(dtoTrabajo);
-				// TODO Tramite del trabajo de una Agrupación
 				createTramiteTrabajo(trabajo);
 			}
 
@@ -599,13 +599,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return listaActivos;
@@ -633,11 +630,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		try {
 			upload(webFileItem);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//
-		//
 		// List<AdjuntoTrabajo> adjuntosTrabajo = new
 		// ArrayList<AdjuntoTrabajo>();
 		// AdjuntoTrabajo adjuntoMasivo = new AdjuntoTrabajo(fileItem);
@@ -646,23 +640,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// trabajoDao.saveOrUpdate(trabajo);
 	}
 
-	private Trabajo crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo) {
+	private List<Trabajo> crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo) {
 
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
-
 		Trabajo trabajo = new Trabajo();
+		List<Trabajo> listaTrabajos = new ArrayList<Trabajo>();
+
 		try {
-			dtoToTrabajo(dtoTrabajo, trabajo);
-			trabajo.setFechaSolicitud(new Date());
-			trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
-			trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
 
 			Boolean isFirstLoop = true;
 			for (Activo activo : listaActivos) {
 				dtoTrabajo.setParticipacion("100");// TODO: Pendiente de definir
 													// como sacar el % de
 													// participación.
-				if (isFirstLoop) {
+				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
+					trabajo = new Trabajo();
+					dtoToTrabajo(dtoTrabajo, trabajo);
+					trabajo.setFechaSolicitud(new Date());
+					trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
+					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
 					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
 
 					// El gestor de activo se salta tareas de estos trámites y
@@ -671,8 +667,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					if (gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado())) {
 						if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
 								|| DDTipoTrabajo.CODIGO_TASACION.equals(trabajo.getTipoTrabajo().getCodigo())
-								|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS
-										.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
+								|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 							trabajo.setFechaAprobacion(new Date());
 						}
 					}
@@ -682,29 +677,35 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					if (DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 						trabajo.setFechaAprobacion(new Date());
 					}
+
+					if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())) {
+						trabajo.setEsTarificado(true);
+					}
 				}
 
 				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 				isFirstLoop = false;
+
+				if(!dtoTrabajo.getEsSolicitudConjunta()) {
+					trabajoDao.saveOrUpdate(trabajo);
+					listaTrabajos.add(trabajo);
+				}
 			}
 
-			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()))
-				trabajo.setEsTarificado(true);
-
-			trabajoDao.saveOrUpdate(trabajo);
+			if(dtoTrabajo.getEsSolicitudConjunta()) {
+				trabajoDao.saveOrUpdate(trabajo);
+				listaTrabajos.add(trabajo);
+				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);
+			}
 
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);
-
-		return trabajo;
+		return listaTrabajos;
 	}
 
 	private Trabajo crearTrabajoPorActivo(Activo activo, DtoFichaTrabajo dtoTrabajo) {
@@ -2269,13 +2270,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							.createFilter(FilterType.EQUALS, "codigoProveedorRem", trabajoDto.getIdProveedorRem()));
 					if (Checks.esNulo(apiResp)) {
 						hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
-					} else {
+					} 
+					/*else {
 						//el proveedor tiene que ser custodio
 						if ((apiResp.getCustodio() != null && apiResp.getCustodio() != new Integer(1))
 								|| apiResp.getCustodio() == null) {
 							hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
 						}
-					}
+					}*/
 				}
 				// Validamos que no vengan los 2 campos a true
 				if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())

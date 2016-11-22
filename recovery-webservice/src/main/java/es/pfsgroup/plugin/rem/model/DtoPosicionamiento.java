@@ -12,9 +12,7 @@ import es.capgemini.devon.dto.WebDto;
  *
  */
 public class DtoPosicionamiento extends WebDto {
-	
-	
-  
+
 	/**
 	 * 
 	 */
@@ -26,6 +24,8 @@ public class DtoPosicionamiento extends WebDto {
 	private Long idProveedorNotario;
 	private Date fechaPosicionamiento;
 	private String motivoAplazamiento;
+	private Date horaAviso;
+	private Date horaPosicionamiento;
 	
 	
 	public Long getIdPosicionamiento() {
@@ -58,10 +58,17 @@ public class DtoPosicionamiento extends WebDto {
 	public void setIdProveedorNotario(Long idProveedorNotario) {
 		this.idProveedorNotario = idProveedorNotario;
 	}
-	
-	
-	
-	
-   	
+	public Date getHoraAviso() {
+		return horaAviso;
+	}
+	public void setHoraAviso(Date horaAviso) {
+		this.horaAviso = horaAviso;
+	}
+	public Date getHoraPosicionamiento() {
+		return horaPosicionamiento;
+	}
+	public void setHoraPosicionamiento(Date horaPosicionamiento) {
+		this.horaPosicionamiento = horaPosicionamiento;
+	} 	
    	
 }

@@ -24,6 +24,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		    	form.setBindRecord(record);
 		    	
 		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 		    }
 		});
 	},
@@ -456,14 +460,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		var me =this;
 		var window= btn.up('window'),
 		form= window.down('formBase');
-	
+
 		var success = function(record, operation) {
-			
 			form.unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
-	    	window.destroy();    	
-   		
+	    	window.destroy();
 		};
 
 		me.onSaveFormularioCompleto(form, success);	
@@ -483,8 +485,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 				
 			    success: success,
 			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-			 		form.unmask();
+			 		var response = Ext.decode(operation.getResponse().responseText);
+			 		if(response.success === "false" && Ext.isDefined(response.msg)) {
+						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+						form.unmask();
+					} else {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				 		form.unmask();
+					}
 			    }
 			    		    
 			});

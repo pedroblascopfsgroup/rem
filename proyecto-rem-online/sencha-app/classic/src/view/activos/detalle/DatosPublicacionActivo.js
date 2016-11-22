@@ -271,11 +271,11 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	colspan: 3,
 								        	bind: {
 								        		value	: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
-								        		readOnly: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
-								        		hidden	: '{!activo.isPublicable}'
+								        		readOnly: '{activohistoricoestadopublicacion.publicacionOrdinaria}'
 								        	},
 								        	listeners:{
-								        		change: 'onchkbxEstadoPublicacionChange'
+								        		change: 	'onchkbxEstadoPublicacionChange',
+								        		boxready:	'ocultarChkPublicacionOrdinaria'
 								        	}
 								        },
 								        {

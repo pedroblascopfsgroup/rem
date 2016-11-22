@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161104
+--## FECHA_CREACION=20161111
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -44,7 +44,8 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'PVE_ID_GESTORIA',		 		'NUMBER(16,0)',						'Gestoria responsable del gasto'	)
+    	T_ALTER(  'PVE_ID_GESTORIA',		 		'NUMBER(16,0)',						'Gestoria responsable del gasto'	),
+    	T_ALTER(  'GPV_GASTO_SIN_ACTIVOS',		 	'NUMBER(1,0)',						'Marca para poder autorizar gastos sin activos'	)
 		);
     V_T_ALTER T_ALTER;
     

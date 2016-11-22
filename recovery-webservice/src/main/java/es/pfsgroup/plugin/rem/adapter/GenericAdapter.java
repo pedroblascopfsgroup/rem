@@ -124,5 +124,12 @@ public class GenericAdapter {
 				
 		return usuario.getPerfiles().contains(perfilSuper);
 	}
+	
+	public Boolean isProveedor(Usuario usuario){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAPROV");
+		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
+				
+		return usuario.getPerfiles().contains(perfilProveedor);
+	}
 
 }

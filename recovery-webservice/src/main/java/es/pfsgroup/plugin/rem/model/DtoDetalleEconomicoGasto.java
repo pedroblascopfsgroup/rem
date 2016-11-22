@@ -59,6 +59,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Boolean pagadoConexionBankia;
 	private String oficina;
 	private String numeroConexion;
+	private Boolean optaCriterioCaja;
 	
 
 	public Long getGastoProveedor() {
@@ -290,6 +291,12 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	}
 	public void setNumeroConexion(String numeroConexion) {
 		this.numeroConexion = numeroConexion;
+	}
+	public Boolean getOptaCriterioCaja() {
+		return optaCriterioCaja;
+	}
+	public void setOptaCriterioCaja(Boolean optaCriterioCaja) {
+		this.optaCriterioCaja = optaCriterioCaja;
 	}
 
    	

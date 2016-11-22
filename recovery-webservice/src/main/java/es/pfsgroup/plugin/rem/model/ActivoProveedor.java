@@ -32,6 +32,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
@@ -220,6 +221,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 	
 	@Column(name = "PVE_FECHA_EJERCICIO_OPCION")
 	private Date fechaEjercicioOpcion;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_CPR_ID_PROP")
+	private DDCalificacionProveedorRetirar calificacionProveedorPropuesta;
+	
+	@Column(name = "PVE_TOP_PROP")
+	private Integer topPropuesto;
+	
 
 	@Version   
 	private Long version;
@@ -647,6 +656,22 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setFechaEjercicioOpcion(Date fechaEjercicioOpcion) {
 		this.fechaEjercicioOpcion = fechaEjercicioOpcion;
+	}
+
+	public DDCalificacionProveedorRetirar getCalificacionProveedorPropuesta() {
+		return calificacionProveedorPropuesta;
+	}
+
+	public void setCalificacionProveedorPropuesta(DDCalificacionProveedorRetirar calificacionProveedorPropuesta) {
+		this.calificacionProveedorPropuesta = calificacionProveedorPropuesta;
+	}
+
+	public Integer getTopPropuesto() {
+		return topPropuesto;
+	}
+
+	public void setTopPropuesto(Integer topPropuesto) {
+		this.topPropuesto = topPropuesto;
 	}
 	
 	

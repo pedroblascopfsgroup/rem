@@ -133,8 +133,8 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 		try {
 			model.put("data", expedienteComercialApi.getTabExpediente(id, tab));
+			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
 			model.put("success", false);
 			model.put("error", e.getMessage());
 		}

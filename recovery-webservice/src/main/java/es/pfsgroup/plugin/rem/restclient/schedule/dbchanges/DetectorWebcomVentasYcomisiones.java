@@ -43,4 +43,14 @@ public class DetectorWebcomVentasYcomisiones extends DetectorCambiosBD<Comisione
 		
 	}
 
+	@Override
+	protected Integer getWeight() {
+		return 9989;
+	}
+	
+	@Override
+	public boolean isActivo() {
+		return true;
+	}
+
 }

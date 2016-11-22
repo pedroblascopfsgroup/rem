@@ -44,6 +44,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    	
 		    	form.setBindRecord(record);		    	
 		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 		    }
 		});
 	},
@@ -220,8 +224,35 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 							});
 	},
 	
+	// Este método es llamado cuando se pulsa el botón de 'crear' en la ventana pop-up
+	// de crear trabajo. Comprueba si se ha seleccionado el checkbox de agrupar activos
+	// en un sólo trabajo. Si no se ha seleccionado informa al usuario de que se va a
+	// generar un trabajo por cada activo.
 	onClickBotonCrearTrabajo: function(btn) {
-		
+
+		var me =this;
+
+		// Comprobar el estado del checkbox para agrupar los activos en un trabajo.
+		var check = me.lookupReference('checkEnglobaTodosActivosRef').getValue();
+		if(!check) {
+			// Si el check no está seleccionado avisar de que se van a crear tantos trabajos como activos.
+			Ext.MessageBox.confirm(
+					HreRem.i18n("msgbox.multiples.trabajos.title"),
+					HreRem.i18n("msgbox.multiples.trabajos.mensaje"),
+					function(result) {
+		        		if(result === 'yes'){
+		        			me.crearTrabajo(btn);
+		        		}
+		    		}
+			);
+		} else {
+			// Si el checkbox está seleccionado no es necesario informar.
+			me.crearTrabajo(btn);
+		}
+	},
+	
+	// Este método crea el trabajo especificado en la ventana pop-up de crear trabajo.
+	crearTrabajo: function(btn) {
 		var me =this,
 		window = btn.up("window"),
 		form = window.down("form"),
@@ -242,7 +273,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		};
 
 		me.onSaveFormularioCompleto(form, success);
-
 	},
 	
 	onClickBotonCancelarTrabajo: function(btn) {		

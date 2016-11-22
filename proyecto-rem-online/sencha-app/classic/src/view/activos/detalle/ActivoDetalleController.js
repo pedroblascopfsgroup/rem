@@ -59,6 +59,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();
 				    	}
+				    },
+				    failure: function(operation) {		    	
+				    	form.up("tabpanel").unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 				    }
 				});
 			} else {
@@ -163,7 +167,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	
-	onTasacionListDobleClick: function (grid, record) {
+	onTasacionListClick: function (grid, record) {
 		
 		var me = this,
 		form = grid.up("form"),
@@ -1284,9 +1288,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var view = me.getView();
 
     	if(combo.getValue() === '0'){
-    		view.lookupReference('fieldtextCondicionanteOtro').reset();
-    		view.lookupReference('fieldtextCondicionanteOtro').hide();
     		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=true;
+    		view.lookupReference('fieldtextCondicionanteOtro').setValue('');
+    		view.lookupReference('fieldtextCondicionanteOtro').hide();
     	} else {
     		view.lookupReference('fieldtextCondicionanteOtro').show();
     		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=false;
@@ -1367,19 +1371,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		record = form.getBindRecord();
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
-		
+
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));
-			
+
 			record.save({
-				
 			    success: success,
 			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			 		form.unmask();
+			 		var response = Ext.decode(operation.getResponse().responseText);
+			 		if(response.success === "false" && Ext.isDefined(response.msg)) {
+						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+						form.unmask();
+					} else {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				 		form.unmask();
+					}
 			    }
-			    		    
+
 			});
 		} else {
 		
@@ -2067,20 +2076,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	changeComboJuegoCompleto: function(combo,value,c){
-		var me= this;
-		
-		if(combo.getValue()=="1"){
-				me.lookupReference('motivoIncompletoRef').setValue();
-				me.lookupReference('motivoIncompletoRef').setDisabled(true);
-				me.lookupReference('motivoIncompletoRef').allowBlank = true;
-		}
-		else{
-			me.lookupReference('motivoIncompletoRef').setDisabled(false);
-			me.lookupReference('motivoIncompletoRef').allowBlank = false;
-		}
-	},
-	
 	onClickEditRowMovimientosLlaveList: function(editor, context, eOpts) {
 		var me = this;
 		
@@ -2107,6 +2102,56 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(!Ext.isEmpty(field.getValue()) && field.getValue() === '0') {
 			field.setValue('');
 		}
-	}
+	},
+    
+    ocultarChkPublicacionOrdinaria: function(record) {
+    	var me = this,
+    	ocultar = me.getViewModel().get('activo').get('isPublicable'),
+    	chkbxpublicacionordinaria = me.lookupReference('chkbxpublicacionordinaria');
 
+    	chkbxpublicacionordinaria.setHidden(ocultar);
+    },
+    
+    valdacionesEdicionLlavesList: function(editor, grid) {
+    	var me = this,
+    	textMotivo = me.lookupReference('motivoIncompletoRef'),
+    	comboCompleto = me.lookupReference('cbColCompleto');
+    	
+    	if(editor.isNew) {
+    		comboCompleto.setValue();
+    		textMotivo.setValue();
+    	}
+    	
+    	var activar = comboCompleto.getValue() == "0" && textMotivo.getValue()!=null;
+    	me.activarDesactivarCampo(textMotivo,activar);
+    	
+    	var mostrarObligatoriedad = comboCompleto.getValue() == "0" && (textMotivo.getValue()==null || textMotivo.getValue() == "");
+    	me.vaciarCampoMostrarRojoObligatoriedad(textMotivo,mostrarObligatoriedad, comboCompleto.getValue() == "1" )
+
+    },
+    
+    //Activa o desactiva el campo
+    activarDesactivarCampo: function(campo, activar) {
+    	
+    	if(activar) {
+    		campo.setDisabled(false);
+    		campo.allowBlank = false;
+    	}
+    	else {
+    		campo.setValue();
+    		campo.setDisabled(true);
+    		campo.allowBlank = true;
+    		
+    	}
+    },
+    
+    //Este método se usa para marcar en rojo el campo en primera instancia, o vaciar su contenido
+    vaciarCampoMostrarRojoObligatoriedad: function(campo, mostrarObligatoriedad, vaciarCampo) {
+    	if(mostrarObligatoriedad) {
+    		campo.setValue(' ');
+    		campo.setValue();
+    	}
+    	else if(vaciarCampo)
+    		campo.setValue();
+    }
 });

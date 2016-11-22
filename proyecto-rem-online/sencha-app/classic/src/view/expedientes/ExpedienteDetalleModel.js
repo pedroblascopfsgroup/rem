@@ -225,16 +225,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'tiposCalculo'}
 			}   
     	},
-    	
+
     	comboTiposPorCuenta: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposPorCuenta'}
-			}   
+				remoteUrl: 'generic/getDiccionarioPorCuenta',
+				extraParams: {
+					tipoCodigo: '{expediente.tipoExpedienteCodigo}'
+				}
+			}
     	},
-    	
+
     	comboTiposImpuesto: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {

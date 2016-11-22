@@ -53,6 +53,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String numGastoDestinatario;
    	private Long numGastoAbonado;
    	private Long idGastoAbonado; 
+   	private Integer gastoSinActivos;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -248,6 +249,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setIdGastoAbonado(Long idGastoAbonado) {
 		this.idGastoAbonado = idGastoAbonado;
+	}
+	public Integer getGastoSinActivos() {
+		return gastoSinActivos;
+	}
+	public void setGastoSinActivos(Integer gastoSinActivos) {
+		this.gastoSinActivos = gastoSinActivos;
 	}
 	
 	

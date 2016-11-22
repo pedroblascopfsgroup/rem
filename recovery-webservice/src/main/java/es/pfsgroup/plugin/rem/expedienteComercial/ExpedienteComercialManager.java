@@ -1475,6 +1475,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return new DtoPage(posicionamientos, posicionamientos.size());
+		
+		
 	}
 	
 	public DtoPosicionamiento posicionamientoToDto(Posicionamiento posicionamiento){
@@ -1501,6 +1503,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 
 		return posicionamientoDto;
+		
 	}
 	
 	public Posicionamiento dtoToPosicionamiento(DtoPosicionamiento dto, Posicionamiento posicionamiento){
@@ -1538,6 +1541,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			ActivoProveedor notario = genericDao.get(ActivoProveedor.class, filtro);
 			posicionamiento.setNotario(notario);
 		}
+		posicionamiento.setFechaPosicionamiento(dto.getFechaPosicionamiento());
+		posicionamiento.setMotivoAplazamiento(dto.getMotivoAplazamiento());
 		
 		return posicionamiento;
 		

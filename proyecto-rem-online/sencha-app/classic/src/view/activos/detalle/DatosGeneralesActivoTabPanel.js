@@ -104,7 +104,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
     	// Pasa a ser Precios, pestaña de primer nivel 
     	//$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'valoracionesactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_VALORACIONES']);
     	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: true, funPermEdition: ['EDITAR_DATOS_COMUNIDAD_ACTIVO'], disabled: me.lookupController().getViewModel().get("activo.divHorizontal") == "0"})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: true, funPermEdition: ['EDITAR_DATOS_COMUNIDAD_ACTIVO']})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);
 		
      	me.callParent(); 		
 

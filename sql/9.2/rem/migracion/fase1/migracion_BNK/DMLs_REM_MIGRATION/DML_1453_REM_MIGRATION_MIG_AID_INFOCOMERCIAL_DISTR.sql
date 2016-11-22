@@ -217,7 +217,7 @@ WHERE DES.ACT_NUMERO_ACTIVO IS NULL
   EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;
   
   -- Observaciones
-  IF V_REJECTS != 0 THEN
+  /*IF V_REJECTS != 0 THEN
   
 	EXECUTE IMMEDIATE '
 	select count(act_numero_activo) from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig
@@ -238,7 +238,7 @@ WHERE DES.ACT_NUMERO_ACTIVO IS NULL
 	
 		V_OBSERVACIONES := V_OBSERVACIONES||' '||VAR1||' han sido rechazados por registros inexistentes en ACT_VIV_VIVIENDA. ';
 		
-	END IF;
+	END IF;*/
 	
 	EXECUTE IMMEDIATE '
 	select count(act_numero_activo) from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig

@@ -48,6 +48,17 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresController'
 		},
 		
 		onClickEvaluar: function() {
+		//*************************************************************************************
+		// IMPORTANTE: Esta forma de evaluar los mediadores ha sido desarrollada deliveradamente
+		//   En lugar de ir actualizando los datos de calificaciones y top en el modelo que utiliza
+		//   la lista de mediadores, los cambios se realizan masivamente con unas pocas consultas.
+		//   La intencion es que esta pantalla pueda utilizarse para actualizar datos MASIVAMENTE 
+		//   y de esta forma se evita lanzar una o 2 consultas para actualizar los datos de cada
+		//   mediador (las listas de mediadores pueden contener mas de 4000 registros)
+		//   De esta forma todo el proceso de actualizacion lo asume la BBDD mediante 4 o 5 consultas
+		//   independientemente de los mediadores que tengan que actualizar datos.
+		//   El proceso se optimiza a algo mas eficiente para esta tarea.
+		//************************************************************************************* 
 			var me = this;
 			Ext.Msg.confirm(
 				HreRem.i18n("title.evaluacion.mediadores"),

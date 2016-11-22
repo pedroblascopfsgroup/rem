@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -49,6 +51,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     private ExpedienteComercialApi expedienteComercialApi;
     
     private static final String COMBO_FIRMA = "comboFirma";
+    private static final String FECHA_FIRMA = "fechaFirma";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_POSICIONAMIENTOYFIRMA = "T013_PosicionamientoYFirma";
 
@@ -119,6 +122,24 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 					
+				}
+				//La fecha de firma la guardamos como la fecha de toma de posesión
+				if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					for(ActivoOferta activoOferta : ofertaAceptada.getActivosOferta())
+					{
+						Activo activo = activoOferta.getPrimaryKey().getActivo();
+						
+						ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
+						situacionPosesoria.setConTitulo(1);
+						situacionPosesoria.setOcupado(1);
+						try {
+							situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						activo.setSituacionPosesoria(situacionPosesoria);
+					}
 				}
 			}
 		}

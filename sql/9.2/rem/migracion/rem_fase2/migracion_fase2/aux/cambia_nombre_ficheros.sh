@@ -11,7 +11,6 @@ mv Fich_Historico_Publicacion.dat 										HIST_ESTADOS_PUBLICACIONES.dat
 mv Fich_Ofertas.dat 													OFERTAS.dat
 mv Fich_Ofertas_Alquiler.dat 											ACTIVOS_DATOS_ALQUILERES.dat
 mv Fich_Perimetro_Activo.dat 											PERIMETRO_ACTIVOS.dat
-mv Fich_Propietarios.dat 												PROPIETARIOS.dat
 mv Fich_Propuestas_Precio.dat 											PROPUESTAS_PRECIOS.dat
 mv Fich_Proveedor_Direccion.dat 										PROVEEDORES_DIRECCIONES.dat
 mv Fich_Visitas.dat 													VISITAS.dat
@@ -34,6 +33,7 @@ mv Fich_Formalizaciones.dat												FORMALIZACIONES.dat
 mv Fich_Gastos_Detalle_Economico.dat									DETALLE_ECONOMICO_GASTOS.dat
 mv Fich_Gastos_Provision.dat											GASTOS_PROVISIONES.dat
 mv Fich_Subsanaciones.dat												SUBSANACIONES.dat
+mv Fich_Propietarios_Historico.dat										PROPIETARIOS_HISTORICO.dat
 
 echo "Nombres cambiados, verificar cambios"
 

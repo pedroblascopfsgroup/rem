@@ -18,16 +18,17 @@ Ext.define('HreRem.controller.RefreshController', {
    		var me = this,
    		cmp, resultQuery;   		
 		resultQuery = Ext.ComponentQuery.query(query);
-
+		
 		if(resultQuery.length==1) {			
 			cmp = resultQuery[0];
 			cmp.fireEvent("refrescar", cmp);
-		} else if(resultQuery.length==0) {	
-			Ext.rise("No se ha encontrado el componente a refrescar");
-		} else {
-			Ext.rise("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
 		}
-   		
+// TODO: Controlar error de otra forma
+//		else if(resultQuery.length==0) {	
+//			Ext.raise("No se ha encontrado el componente a refrescar");
+//		} else {
+//			Ext.raise("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
+//		}
    	},
    	
    	
@@ -36,15 +37,18 @@ Ext.define('HreRem.controller.RefreshController', {
    		cmp, resultQuery;
    		
 		resultQuery = Ext.ComponentQuery.query(query);
+		
 		if(resultQuery.length == 1) {
 			cmp = resultQuery[0];
 			cmp.refreshOnActivate= true;
-		} else if(resultQuery.length==0) {	
-			Ext.rise("No se ha encontrado el componente a refrescar");
-		} else {
-			Ext.rise("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
 		}
-   		
+// TODO: Controlar error de otra forma		
+//		else if(resultQuery.length==0) {	
+//			Ext.raise("No se ha encontrado el componente a refrescar");
+//		} else {
+//			Ext.raise("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
+//		}
+  		
    	},
    	
    	refreshEntityOnActivate: function(entity, idEntity) {

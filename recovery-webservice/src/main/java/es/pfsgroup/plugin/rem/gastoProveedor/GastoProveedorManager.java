@@ -442,14 +442,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(!Checks.esNulo(lista) && !lista.isEmpty()) {
 			for (int i = 0; !existeGasto && i<lista.size(); i++){
 				GastoProveedor g = lista.get(i);
-				if (!DDEstadoGasto.ANULADO.equals(g.getEstadoGasto().getCodigo()) &&
-						!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(g.getEstadoGasto().getCodigo())) {
+				if(!Checks.esNulo(gasto.getEstadoGasto())) {	
+					if (!DDEstadoGasto.ANULADO.equals(g.getEstadoGasto().getCodigo()) &&
+							!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(g.getEstadoGasto().getCodigo())) {
+						existeGasto = true;
+					}
+				} else {
 					existeGasto = true;
 				}
 				
 			}
-		}
-		
+		}		
 		
 		return existeGasto;
 	}

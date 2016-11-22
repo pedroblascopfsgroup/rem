@@ -1215,8 +1215,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	changeHora: function(campoHora) {
 		var me = this;
 		
-		if(campoHora.getValue() != null)
+		if(campoHora.getValue() != null) {
 			campoHora.wasValid = false;
+			
+			//Le metemos la hora a la fecha completa que contiene fecha y hora, que es la que se guardará en bd.
+			var fechaHora = me.lookupReference(campoHora.getReference().replace('hora','fechaHora'));
+			var fechaRef = campoHora.getReference().replace('hora','fecha')
+			
+			fechaHora.setValue(me.lookupReference(fechaRef).getValue());
+			fechaHora.value.setTime(me.lookupReference(fechaRef).value);
+			fechaHora.value.setHours(campoHora.value.getHours());
+			fechaHora.value.setMinutes(campoHora.value.getMinutes());
+		}
 		else
 			campoHora.wasValid = true;
 	},

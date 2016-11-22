@@ -190,7 +190,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListEntregasReserva(@RequestParam Long id, ModelMap model) {
+	public ModelAndView getListEntregasReserva(@RequestParam Long id,WebDto dto, ModelMap model) {
 		
 	try {
 		
@@ -504,7 +504,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getPosicionamientosExpediente(ModelMap model, Long idExpediente) {
+	public ModelAndView getPosicionamientosExpediente(Long idExpediente, WebDto webDto, ModelMap model) {
 		
 		try {
 			DtoPage dto= expedienteComercialApi.getPosicionamientosExpediente(idExpediente);

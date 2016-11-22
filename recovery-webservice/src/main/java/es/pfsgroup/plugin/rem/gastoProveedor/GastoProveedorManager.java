@@ -1233,7 +1233,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return true;
 
 		}catch(Exception e) {
-			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -1552,9 +1551,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 			// Si es proveedor y...
 			if(genericAdapter.isProveedor(usuario)) {				
-				//el estado no es pendiente o rechazado por gestor
-				if(!DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()) &&
-						!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()))  {
+				//el estado no está incompleto o no es pendiente o no es rechazado por gestor
+				if(!DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && 
+					!DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()) &&
+					!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()))  {
 					return false;
 				}
 				

@@ -3253,11 +3253,11 @@ public class ActivoAdapter {
 		if(!Checks.esNulo(activo.getTipoComercializacion())){
 			String comercializacion = activo.getTipoComercializacion().getCodigo();
 			
-			if(DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion) || !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
+			if(DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion) && !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
 				throw new Exception(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
 			}
 			
-			if(DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion) || !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion) && !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
 				throw new Exception(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
 			}
 		}

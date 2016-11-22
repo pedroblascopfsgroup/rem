@@ -1190,14 +1190,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
 			GastoImpugnacion gastoImpugnacion = genericDao.get(GastoImpugnacion.class, filtro);
 			
-			dtoImpugnacion.setFechaTope(gastoImpugnacion.getFechaTope());
-			dtoImpugnacion.setFechaPresentacion(gastoImpugnacion.getFechaPresentacion());
-			dtoImpugnacion.setFechaResolucion(gastoImpugnacion.getFechaResolucion());
-			
-			if(!Checks.esNulo(gastoImpugnacion.getResultadoImpugnacion())){
-				dtoImpugnacion.setResultadoCodigo(gastoImpugnacion.getResultadoImpugnacion().getCodigo());
+			if(!Checks.esNulo(gastoImpugnacion)) {
+				dtoImpugnacion.setFechaTope(gastoImpugnacion.getFechaTope());
+				dtoImpugnacion.setFechaPresentacion(gastoImpugnacion.getFechaPresentacion());
+				dtoImpugnacion.setFechaResolucion(gastoImpugnacion.getFechaResolucion());
+				
+				if(!Checks.esNulo(gastoImpugnacion.getResultadoImpugnacion())){
+					dtoImpugnacion.setResultadoCodigo(gastoImpugnacion.getResultadoImpugnacion().getCodigo());
+				}
+				dtoImpugnacion.setObservaciones(gastoImpugnacion.getObservaciones());
 			}
-			dtoImpugnacion.setObservaciones(gastoImpugnacion.getObservaciones());
 		}
 		
 		return dtoImpugnacion;
@@ -1211,26 +1213,29 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 			GastoImpugnacion gastoImpugnacion = genericDao.get(GastoImpugnacion.class, filtro);
 			
-			if(!Checks.esNulo(gastoImpugnacion)){
-				beanUtilNotNull.copyProperties(gastoImpugnacion, dto);
-				
-				if(!Checks.esNulo(dto.getResultadoCodigo())){
-					DDResultadoImpugnacionGasto resultado= (DDResultadoImpugnacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoImpugnacionGasto.class, dto.getResultadoCodigo());
-					gastoImpugnacion.setResultadoImpugnacion(resultado);
-				}
-				
-				genericDao.update(GastoImpugnacion.class, gastoImpugnacion);
-				return true;
-				
+			if(Checks.esNulo(gastoImpugnacion)){
+				gastoImpugnacion = new GastoImpugnacion();
+			}
+			
+			beanUtilNotNull.copyProperties(gastoImpugnacion, dto);
+			
+			if(!Checks.esNulo(dto.getResultadoCodigo())){
+				DDResultadoImpugnacionGasto resultado= (DDResultadoImpugnacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoImpugnacionGasto.class, dto.getResultadoCodigo());
+				gastoImpugnacion.setResultadoImpugnacion(resultado);
 			}
 			
 			
+			if(Checks.esNulo(gastoImpugnacion.getId())){
+				genericDao.save(GastoImpugnacion.class, gastoImpugnacion);
+			} else {
+				genericDao.update(GastoImpugnacion.class, gastoImpugnacion);
+			}
+			return true;
+
 		}catch(Exception e) {
 			logger.error(e.getMessage());
 			return false;
 		}
-		
-		return false;
 		
 	}
 	@Transactional(readOnly = false)

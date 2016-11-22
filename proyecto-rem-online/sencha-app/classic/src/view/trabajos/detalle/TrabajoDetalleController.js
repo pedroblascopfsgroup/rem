@@ -44,6 +44,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    	
 		    	form.setBindRecord(record);		    	
 		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 		    }
 		});
 	},

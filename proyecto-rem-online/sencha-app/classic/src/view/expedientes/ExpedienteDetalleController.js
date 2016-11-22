@@ -44,6 +44,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();
 				    	}
+				    }, 		    
+				    failure: function(operation) {		    	
+				    	form.unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 				    }
 				});
 			} else {

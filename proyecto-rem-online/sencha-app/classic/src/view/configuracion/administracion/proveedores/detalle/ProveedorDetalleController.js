@@ -36,6 +36,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		    	
 		    	form.setBindRecord(record);		    	
 		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 		    }
 		});
 	},

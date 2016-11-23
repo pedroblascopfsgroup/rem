@@ -23,7 +23,8 @@ Ext.define('HreRem.ux.util.Constants', {
         TRABAJO: 2,
         TRAMITE: 3,
         TAREA: 4,
-        EXPEDIENTE: 5
+        EXPEDIENTE: 5,
+        GASTO: 6
     },
     
     TIPOS_AGRUPACION: {
@@ -204,6 +205,9 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     ESTADOS_GASTO: {
+    	PAGADO: '06',
+    	ANULADO: '05',
+    	CONTABILIZADO: '04',
     	AUTORIZADO: '03',
     	RECHAZADO: '02',
     	PENDIENTE: '01'    	

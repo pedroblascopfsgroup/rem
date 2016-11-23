@@ -43,7 +43,7 @@ public interface GastoProveedorApi {
 		 * @param tab
 		 * @return Object
 		 */
-	    public Object getTabGasto(Long id, String tab);
+	    public Object getTabGasto(Long id, String tab) throws Exception;
 	    
 	    
 	    /**
@@ -217,5 +217,23 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo);
+
+		/**
+		 * Método que autoriza un gasto, validandolo antes si validarAutorizacion = true
+		 * @param idGasto id del gasto
+		 * @param validarAutorizacion A true para validar si el gasto se puede autorizar
+		 */
+		public boolean autorizarGasto(Long idGasto, boolean validarAutorización);
+
+		
+		/**
+		 * 
+		 * @param idGasto
+		 * @param motivoRechazo
+		 * @return
+		 */
+		public boolean rechazarGasto(Long idGasto, String motivoRechazo);
+		
+		
 }
 

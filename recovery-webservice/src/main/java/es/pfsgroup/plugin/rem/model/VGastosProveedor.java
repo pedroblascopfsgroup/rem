@@ -44,7 +44,7 @@ public class VGastosProveedor implements Serializable {
 	private String proveedor;
 	
 	@Column(name = "GPV_FECHA_EMISION")
-	private String fechaEmision;
+	private Date fechaEmision;
 	
 	@Column(name = "DD_TPE_DESCRIPCION")
 	private String periodicidadDescripcion;
@@ -196,11 +196,11 @@ public class VGastosProveedor implements Serializable {
 		this.proveedor = proveedor;
 	}
 
-	public String getFechaEmision() {
+	public Date getFechaEmision() {
 		return fechaEmision;
 	}
 
-	public void setFechaEmision(String fechaEmision) {
+	public void setFechaEmision(Date fechaEmision) {
 		this.fechaEmision = fechaEmision;
 	}
 

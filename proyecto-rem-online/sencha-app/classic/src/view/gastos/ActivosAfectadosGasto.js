@@ -6,9 +6,12 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 	disableValidation : true,
 	reference : 'activosafectadosgastoref',
 	scrollable : 'y',
- 
-	requires: ['HreRem.view.gastos.ActivosAfectadosGastoList'],
-
+	
+	recordName: "gasto",
+		
+	recordClass: "HreRem.model.GastoProveedor",
+    
+    requires: ['HreRem.model.GastoProveedor', 'HreRem.view.gastos.ActivosAfectadosGastoList'],
 
 	initComponent : function() {
 
@@ -16,7 +19,31 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 		
 		me.setTitle(HreRem.i18n('title.gasto.activos.afectados'));
 		var items = [
-
+				
+				{   
+					xtype:'fieldset',
+					padding: 10,
+					layout: 'hbox',
+					collapsible: false,
+					bind: {
+						hidden: '{gasto.asignadoAActivos}'
+					},
+					items :	[
+				                {
+				                	xtype: 'checkboxfieldbase',
+				                	bind:	{
+				                		value:	'{gasto.gastoSinActivos}'
+				                	},
+				                	width: 30
+				                	
+				                }, 
+				                {
+				                	xtype: 'label',
+				                	padding: '4 0 0 0',
+				                	text: HreRem.i18n('fieldlabel.permite.gasto.sin.activos')
+				                }
+				     ]
+				},
 				{
 					xtype : 'activosafectadosgastolist',
 					reference : 'listadoActivosAfectadosRef'					
@@ -36,11 +63,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 
 	funcionRecargar : function() {
 		var me = this;
-		me.recargar = false;
-		me.lookupController().refrescarGasto(false);
+		me.recargar = false;		
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
-  		});	
+  		});
+  		me.lookupController().refrescarGasto(false);
 
 	}
 });

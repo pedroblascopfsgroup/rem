@@ -145,12 +145,10 @@ WITH DESCARTES AS (
 ICO AS (
     SELECT ICOW.ICO_ID, ICOW.ACT_ID  
     FROM '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICOW
-    INNER JOIN '||V_ESQUEMA||'.ACT_VIV_VIVIENDA VIVW
-      ON VIVW.ICO_ID = ICOW.ICO_ID
     WHERE NOT EXISTS (
       SELECT 1 
       FROM '||V_ESQUEMA||'.ACT_DIS_DISTRIBUCION DISW
-      WHERE DISW.ICO_ID = VIVW.ICO_ID
+      WHERE DISW.ICO_ID = ICOW.ICO_ID
       )
   )
 SELECT	'||V_ESQUEMA||'.S_ACT_DIS_DISTRIBUCION.NEXTVAL							DIS_ID,
@@ -173,7 +171,6 @@ ON ICO.ACT_ID = ACT.ACT_ID
 LEFT JOIN DESCARTES DES
 ON DES.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
 WHERE DES.ACT_NUMERO_ACTIVO IS NULL
-AND MIG.TIPO_HABITACULO != ''UNDEFINED''
 	')
   ;
 
@@ -222,7 +219,7 @@ AND MIG.TIPO_HABITACULO != ''UNDEFINED''
   -- Observaciones
   IF V_REJECTS != 0 THEN
   
-	EXECUTE IMMEDIATE '
+	/*EXECUTE IMMEDIATE '
 	select count(act_numero_activo) from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig
 	left join '||V_ESQUEMA||'.act_activo act
 	on act.act_num_activo = mig.act_numero_activo
@@ -241,7 +238,7 @@ AND MIG.TIPO_HABITACULO != ''UNDEFINED''
 	
 		V_OBSERVACIONES := V_OBSERVACIONES||' '||VAR1||' han sido rechazados por registros inexistentes en ACT_VIV_VIVIENDA. ';
 		
-	END IF;
+	END IF;*/
 	
 	EXECUTE IMMEDIATE '
 	select count(act_numero_activo) from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig

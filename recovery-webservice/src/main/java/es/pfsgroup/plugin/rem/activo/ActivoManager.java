@@ -570,8 +570,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Las fechas de inicio y fin pueden ser establecidas a null.
 				activoValoracion.setFechaInicio(dto.getFechaInicio());
 				activoValoracion.setFechaFin(dto.getFechaFin());
-
 				activoValoracion.setFechaCarga(new Date());
+				
+				// Si los nuevos datos no traen observaciones (null), 
+				// debe quitar las escritas para el precio o valoracion anterior
+				activoValoracion.setObservaciones(dto.getObservaciones());
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
 
@@ -1624,7 +1627,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// Si no existia un registro de activo bancario, crea un nuevo
 		if (Checks.esNulo(perimetroActivo)) {
 			perimetroActivo = new PerimetroActivo();
-			perimetroActivo.setAuditoria(new Auditoria());
+			Auditoria auditoria = new Auditoria();
+			auditoria.setUsuarioCrear("REM");
+			auditoria.setFechaCrear(new Date());
+			perimetroActivo.setAuditoria(auditoria);
+			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Activo activo = genericDao.get(Activo.class, filterActivo);
+			if(!Checks.esNulo(activo))
+				perimetroActivo.setActivo(activo);
 			// Si no existia perimetro en BBDD, por defecto esta INCLUIDO en perimetro
 			// y se deben tomar todas las condiciones como marcadas
 			perimetroActivo.setIncluidoEnPerimetro(1);

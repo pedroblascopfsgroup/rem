@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -28,8 +31,16 @@ import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
+import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
+import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
+import es.pfsgroup.plugin.rem.model.VListMediadoresOfertas;
+import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.proveedores.ProveedoresManager;
 
 
@@ -450,4 +461,116 @@ public class ProveedoresController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getMediadoresEvaluar(DtoMediadorEvaluaFilter dtoMediadorEvaluarFilter, WebDto webDto, ModelMap model) {
+		try {
+			Page resultPage = proveedoresApi.getMediadoresEvaluar(dtoMediadorEvaluarFilter);
+			model.put("data", resultPage.getResults());
+			
+			if(!Checks.esNulo(resultPage)) {
+				model.put("totalCount", resultPage.getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getStatsCarteraMediadores(DtoMediadorStats dtoMediadorStats, ModelMap model) {
+		try {
+			// La obtencion de datos solo se hace si se pasa 1 mediador
+			Page resultPage = null;
+			if(!Checks.esNulo(dtoMediadorStats.getId())){
+				resultPage = proveedoresApi.getStatsCarteraMediadores(dtoMediadorStats);
+				model.put("data", resultPage.getResults());
+			}
+			
+			if(!Checks.esNulo(resultPage)) {
+				model.put("totalCount", resultPage.getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getOfertasCarteraMediadores(DtoMediadorOferta dtoMediadorOferta, ModelMap model) {
+		try {
+
+			// La obtencion de datos solo se hace si se pasa 1 mediador
+			Page resultPage = null;
+			if(!Checks.esNulo(dtoMediadorOferta.getId())){
+				resultPage = proveedoresApi.getOfertasCarteraMediadores(dtoMediadorOferta);
+				model.put("data", resultPage.getResults());
+			}
+			if(!Checks.esNulo(resultPage)) {
+				model.put("totalCount", resultPage.getTotalCount());
+			} else {
+				model.put("totalCount", 0);
+			}
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateMediadoresEvaluar(DtoMediadorEvalua dtoMediadorEvalua, ModelMap model) {
+		
+		try{
+			boolean success = proveedoresApi.updateMediadoresEvaluar(dtoMediadorEvalua);
+			model.put("success", success);
+		} catch(Exception e) {
+			if(e.getMessage().equals(ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_CODE)) {
+				model.put("msg", ProveedoresManager.USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE);
+				model.put("success", false);
+			} else {
+				e.printStackTrace();
+				model.put("success", false);
+			}
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView setVigentesConPropuestas() {
+		
+		ModelMap model = new ModelMap();
+		
+		try{
+			boolean success = proveedoresApi.setVigentesConPropuestas();
+			model.put("success", success);
+		} catch(Exception e) {
+			model.put("msg", ProveedoresManager.ERROR_EVALUAR_MEDIADORES_MESSAGE);
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+
 }

@@ -276,7 +276,11 @@ Ext.define('HreRem.controller.ActivosController', {
 				}
 				
 		     	me.logTime("Fin Set values " + id);
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 		
     },
@@ -401,7 +405,11 @@ Ext.define('HreRem.controller.ActivosController', {
 
 				tab.unmask();
 		    	me.logTime("Fin Set values"); 
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 
     },    
@@ -457,7 +465,11 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	
 		    	me.getActivosMain().unmask();
 		    	me.logTime("Fin Set values"); 
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 
     },
@@ -542,7 +554,11 @@ Ext.define('HreRem.controller.ActivosController', {
 				tab.unmask();
 
 		    	me.logTime("Fin Set values"); 
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 
     },
@@ -624,7 +640,11 @@ Ext.define('HreRem.controller.ActivosController', {
 				tab.unmask();
 
 		    	me.logTime("Fin Set values"); 
-		    }
+		    },
+		   	failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 
     },
@@ -672,7 +692,11 @@ Ext.define('HreRem.controller.ActivosController', {
 				}
 				
 		    	me.logTime("Fin Set values"); 
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 
     },
@@ -801,7 +825,11 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	me.setLogTime(); 
 		    	tab.getViewModel().set("tramite", tramite);
 		    	me.logTime("Fin Set values");
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
     },
     
@@ -825,7 +853,11 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	//tab.configCmp(tramite);
 		    	me.logTime("Fin Set values");
 		    	me.idActivo = tramite.get("idActivo");
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 
     	var tabTramites = tab.down('[xtype=tramitesdetalletab]');
@@ -934,7 +966,11 @@ Ext.define('HreRem.controller.ActivosController', {
 				tab.unmask();
 
 		    	me.logTime("Fin Set values"); 
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 
     },
@@ -959,10 +995,10 @@ Ext.define('HreRem.controller.ActivosController', {
     	tab = me.createTab (me.getActivosMain(), 'gasto', "gastodetallemain",  id, cfg);
     	tab.mask(HreRem.i18n('msg.mask.loading'));
     	me.setLogTime(); 
-    	
     	HreRem.model.GastoProveedor.load(id, {
     		scope: this,
 		    success: function(gasto) {
+
 		    	me.logTime("Load gasto success"); 
 		    	me.setLogTime();	    	
 		    	if(Ext.isEmpty(titulo)) {		    		
@@ -985,7 +1021,11 @@ Ext.define('HreRem.controller.ActivosController', {
 				tab.unmask();
 
 		    	me.logTime("Fin Set values"); 
-		    }
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
 		});
 
     }

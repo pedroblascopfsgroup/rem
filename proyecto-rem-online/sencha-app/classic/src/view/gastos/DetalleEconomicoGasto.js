@@ -153,6 +153,12 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                bind: '{detalleeconomico.impuestoIndirectoCuota}',
 											                hidden: true,
 											                readOnly: true
+														},
+														{
+															xtype: 'checkboxfieldbase',
+															bind: '{detalleeconomico.optaCriterioCaja}',
+															fieldLabel: HreRem.i18n('fieldlabel.proveedor.criterio.caja.iva'),								
+															readOnly: true
 														}
 													
 													]

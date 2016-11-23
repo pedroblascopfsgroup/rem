@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteSancionOfertaAlquiler" width="751" height="673">
+<root-container name="activo_tramiteSancionOfertaAlquiler" width="885" height="685">
   <node name="inicio" x="190" y="19" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -41,9 +41,6 @@
     </edge>
     <edge>
       <label x="5" y="-20"/>
-    </edge>
-    <edge>
-      <label x="14" y="-1"/>
     </edge>
   </node>
   <node name="T014_PosicionamientoFirmaDecision" x="136" y="480" width="251" height="36">

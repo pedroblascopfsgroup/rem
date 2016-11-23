@@ -2,16 +2,33 @@
  * Controlador global de aplicación que gestiona la funcionalidad del menú de favoritos
  */
 Ext.define('HreRem.controller.RefreshController', {
-    extend: 'Ext.app.Controller',
+    extend: 'HreRem.ux.controller.ControllerBase',
 
     listen: {
     	component : {
     		'*': {
+    			refreshComponent: 'refreshComponent',
 				refreshComponentOnActivate: 'refreshComponentOnActivate',
 				refreshEntityOnActivate: 'refreshEntityOnActivate'
              }
     	}
-   	},	
+   	},
+   	
+	refreshComponent: function(query) {
+   		var me = this,
+   		cmp, resultQuery;   		
+		resultQuery = Ext.ComponentQuery.query(query);
+
+		if(resultQuery.length==1) {			
+			cmp = resultQuery[0];
+			cmp.fireEvent("refrescar", cmp);
+		}
+		else if(resultQuery.length==0) {	
+			me.log("No se ha encontrado el componente a refrescar");
+		} else {
+			me.log("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
+		}
+   	},
    	
    	
    	refreshComponentOnActivate: function(query) {
@@ -19,11 +36,17 @@ Ext.define('HreRem.controller.RefreshController', {
    		cmp, resultQuery;
    		
 		resultQuery = Ext.ComponentQuery.query(query);
-		if(resultQuery.length>0) {
+		
+		if(resultQuery.length == 1) {
 			cmp = resultQuery[0];
 			cmp.refreshOnActivate= true;
 		}
-   		
+		else if(resultQuery.length==0) {	
+			me.log("No se ha encontrado el componente a refrescar");
+		} else {
+			me.log("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
+		}
+  		
    	},
    	
    	refreshEntityOnActivate: function(entity, idEntity) {
@@ -51,9 +74,18 @@ Ext.define('HreRem.controller.RefreshController', {
    				
    			
    				break;
-			case $CONST.ENTITY_TYPES['TRAMITE']:
+			case CONST.ENTITY_TYPES['TRAMITE']:
 				break;
-			
+				
+			case CONST.ENTITY_TYPES['GASTO']:
+   				var entities =  Ext.ComponentQuery.query('gastodetallemain');
+   				Ext.Array.each(entities, function(entity, index ) {
+   					if(entity.getViewModel().get("gasto.id") == idEntity) {   						
+   						entity.lookupController().onClickBotonRefrescar();
+   					}   				 
+   				});
+   			
+   				break;
 			default: Ext.raise("ENTITY TYPE NOT EXIST");
    		}	
    	}

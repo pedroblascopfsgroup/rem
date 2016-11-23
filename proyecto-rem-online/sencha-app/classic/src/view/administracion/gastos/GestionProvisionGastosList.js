@@ -1,6 +1,6 @@
-Ext.define('HreRem.view.administracion.gastos.ProvisionGastosList', {
+Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
 	extend		: 'HreRem.view.common.GridBase',
-    xtype		: 'provisiongastoslist',
+    xtype		: 'gestionprovisiongastoslist',
 
     bind: {
         store: '{provisionGastos}'

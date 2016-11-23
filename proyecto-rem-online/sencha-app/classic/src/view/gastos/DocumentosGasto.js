@@ -113,6 +113,7 @@ Ext.define('HreRem.view.gastos.DocumentosGasto', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
+  		me.lookupController().refrescarGasto(false);
     }
 
 

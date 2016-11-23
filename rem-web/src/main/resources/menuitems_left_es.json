@@ -52,7 +52,8 @@
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-precios",
 		                "cls": "app-menu-item",
-		                "routeId": "precios"
+		                "routeId": "precios",
+		                "secFunPermToRender": "MENU_PRECIOS"
 		            },
 		           	{
 		                "text":   "Publicación",
@@ -60,7 +61,8 @@
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-publicacion",
 		                "cls": "app-menu-item",
-		                "routeId": "publicacion"
+		                "routeId": "publicacion",
+		                "secFunPermToRender": "MENU_PUBLICACION"
 		            },
 		            {
 		                "text":   "Comercial",
@@ -68,7 +70,8 @@
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-comercializacion",
 		                "cls": "app-menu-item",
-		                "routeId": "comercial"
+		                "routeId": "comercial",
+		                "secFunPermToRender": "MENU_COMERCIAL"
 		            },
 		            {
 		                "text":   "Administración",
@@ -76,7 +79,8 @@
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-administracion",
 		                "cls": "app-menu-item",
-		                "routeId": "administracion"
+		                "routeId": "administracion",
+		                "secFunPermToRender": "MENU_ADMINISTRACION"
 		            },       
 		            {
 		                "text":   "Carga Masiva",
@@ -93,7 +97,8 @@
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-configuracion",
 		                "cls": "app-menu-item",
-		                "routeId": "configuracion"
+		                "routeId": "configuracion",
+		                "secFunPermToRender": "MENU_CONFIGURACION"
 		            }
             
             

@@ -1,12 +1,11 @@
 Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
-    extend: 'Ext.panel.Panel',
-    xtype: 'activostrabajo',    
-    cls	: 'panel-base shadow-panel',
-	layout: 'fit',
-	
+    extend	 : 'Ext.panel.Panel',
+    xtype	 : 'activostrabajo',    
+    cls		 : 'panel-base shadow-panel',
+	layout	 : 'fit',
 	listeners: {
     	boxready: function() {
-    		me = this;
+    		var me = this;
     		//Si el trabajo es de tipo PRECIOS y subtipo 'tramitar propuesta de precio' o 'tramitar propuesta de precios de descuento', se muestra el boton de generar propuesta.
     		if(me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo')==='44'
     			|| me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo')==='45') {
@@ -14,14 +13,12 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
     		}
     	}
     },
-	
+
     initComponent: function () {
-    	
     	var me = this;
     	me.setTitle(HreRem.i18n('title.activos'));
-    	
-    	var items= [
-    	   	
+
+    	me.items= [
 			{
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal	: 'trabajo.id',
@@ -31,9 +28,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 					title: '{tituloActivosTrabajo}',
 					store: '{activosTrabajo}'
 				},
-				
 				secFunToEdit: 'EDITAR_LIST_ACTIVOS_TRABAJO',
-				
 				features: [{
 				            id: 'summary',
 				            ftype: 'summary',
@@ -143,10 +138,9 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 			            renderer: function(value) {
 			            	return Ext.util.Format.currency(value);
 			            }
-			        }
-			        
-			       	        
+			        }       
 			    ],
+
 			    dockedItems : [
 					{
 					    xtype: 'toolbar',
@@ -165,24 +159,16 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 			        }
 			    ]
 			}
-    	
-    	
-    	]
-    	
-    	me.addPlugin({ptype: 'lazyitems', items: items });
+    	];
+
     	me.callParent();
-    	
     },
     
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		var listadoActivosTrabajo = me.down("[reference=listadoActivosTrabajo]");
-		
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoActivosTrabajo.getStore().load();
     }
-    
-    
-    
 });

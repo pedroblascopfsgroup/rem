@@ -2,32 +2,28 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     extend		: 'Ext.tab.Panel',
     xtype		: 'expedientedetalle',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
-    requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente',
+    requires 	: ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente',
     			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente',
     			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente',
     			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
     			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente',
 				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.OfertaTanteoYRetracto'],
 
-    listeners: {
-   		
+    listeners	: {
 			boxready: function (tabPanel) {
-
 				if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 					var tab = tabPanel.items.items[0];
 					tabPanel.setActiveTab(tab);
 				}
-				
+
 				if(tab.ocultarBotonesEdicion) {
 					tabPanel.down("[itemId=botoneditar]").setVisible(false);
 				} else {		
 	            	tabPanel.evaluarBotonesEdicion(tab);
 				}
-				  					
 			},
-	    	
-			beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 
+			beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 	        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
 	        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
 	        	if (tabCurrent != null) {
@@ -58,9 +54,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        	}
 			}
 		},
-		
+
 		tabBar: {
-		    
 			items: [
 					{
 						xtype: 'tbfill'
@@ -87,44 +82,27 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 					}
 			]
 		},
-		items: [
-		        {
-		        	xtype: 'datosbasicosexpediente', ocultarBotonesEdicion: false
-		        	
-		        },
-		        {
-		        	xtype: 'ofertaexpediente', ocultarBotonesEdicion: true
-		        },
-		        {
-		        	xtype: 'condicionesexpediente'
-		        },
-		        {
-		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
-		        },
-		        {
-		        	xtype: 'reservaexpediente' , bind: {disabled: '{esExpedienteSinReservaOdeTipoAlquiler}'}
-		        },
-				{
-		        	xtype: 'compradoresexpediente', ocultarBotonesEdicion: true
-		        },
-		        {
-		        	xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true
-		        },
-		        {
-		        	xtype: 'tramitestareasexpediente', ocultarBotonesEdicion: true
-		        },
-		        {
-		        	xtype: 'documentosexpediente', ocultarBotonesEdicion: true
-		        },
-		        {
-		        	xtype: 'formalizacionexpediente', ocultarBotonesEdicion: true
-		        },
-		        {
-		        	xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true
-		        }
 
-		],
-		
+		initComponent: function () {
+	        var me = this;
+
+	        var items = [];
+	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertaexpediente', ocultarBotonesEdicion: true})}, ['TAB_OFERTA_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'condicionesexpediente', funPermEdition: ['EDITAR_TAB_CONDICIONES_EXPEDIENTES']})}, ['TAB_CONDICIONES_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosexpediente', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_COMERCIALIZABLES_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', bind: {disabled: '{esExpedienteSinReservaOdeTipoAlquiler}'}, funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'compradoresexpediente', ocultarBotonesEdicion: true})}, ['TAB_COMPRADORES_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareasexpediente', ocultarBotonesEdicion: true})}, ['TAB_TRÁMITES_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosexpediente', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionexpediente', ocultarBotonesEdicion: true})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTION_ECONOMICA_EXPEDIENTES']);
+
+	        me.addPlugin({ptype: 'lazyitems', items: items});
+	        me.callParent();
+	    },
+
 		evaluarBotonesEdicion: function(tab) {    	
 			var me = this;
 			me.down("[itemId=botoneditar]").setVisible(false);
@@ -138,8 +116,5 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			} else {
 				$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 			}
-			
 		}
-    
 });
-

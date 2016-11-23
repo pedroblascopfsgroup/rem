@@ -3,30 +3,25 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
     xtype		: 'ofertascomercialactivo',
     requires	: ['HreRem.view.activos.detalle.OfertasComercialActivoList'],
     scrollable	: 'y',
-    layout: {
+    layout		: {
         type: 'vbox',
         align: 'stretch'
     },
+
     initComponent: function () {        
         var me = this;
-        
         me.setTitle(HreRem.i18n("title.activos.listado.ofertas"));
-        
-        var items = [
-        			
-        			{	
-        				xtype: 'ofertascomercialactivolist',
-        				reference: 'ofertascomercialactivolistref'        				
-        			}
-        
+
+        me.items = [
+				{	
+					xtype: 'ofertascomercialactivolist',
+					reference: 'ofertascomercialactivolistref'        				
+				}
         ];
-        
-        me.addPlugin({ptype: 'lazyitems', items: items });
-        
+
         me.callParent(); 
-        
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -34,6 +29,4 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
   			grid.getStore().loadPage(1);
   		});
     } 
-
-
 });

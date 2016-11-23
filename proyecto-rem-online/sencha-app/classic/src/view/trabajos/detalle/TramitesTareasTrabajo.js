@@ -1,35 +1,28 @@
 Ext.define('HreRem.view.trabajos.detalle.TramitesTareasTrabajo', {
-    extend: 'Ext.panel.Panel',
-    xtype: 'tramitestareastrabajo',
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
-    reference: 'tramitestareastrabajoref',
-    layout: 'fit',
+    extend		: 'Ext.panel.Panel',
+    xtype		: 'tramitestareastrabajo',
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
+    reference	: 'tramitestareastrabajoref',
+    layout		: 'fit',
+
     initComponent: function () {
-    	
     	var me = this;
     	me.setTitle(HreRem.i18n('title.tramites.tareas'));
-    	var items= [
-    	
+
+    	me.items= [
 			{
-			    xtype		: 'gridBase',
+			    xtype: 'gridBase',
 			    reference: 'listadoTareasTramiteTrabajo',
 				cls	: 'panel-base shadow-panel',
 				bind: {
 					store: '{tareasTramiteTrabajo}'
 				},
-				
 				listeners: {
 					rowdblclick: 'onListadoTramitesTareasTrabajoDobleClick'
 				},
-				
+
 				columns: [
-						  /*
-				        {
-				            dataIndex: 'idTramite',
-				            text: HreRem.i18n("header.tramite"),
-				            flex: 1
-				        }, */ 
 				        {
 				            dataIndex: 'tipoTramite',
 				            text: HreRem.i18n("header.tipo.tramite"),
@@ -67,7 +60,7 @@ Ext.define('HreRem.view.trabajos.detalle.TramitesTareasTrabajo', {
 				            flex: 1
 				        }
 				],
-				
+
 			    dockedItems : [
 			        {
 			            xtype: 'pagingtoolbar',
@@ -79,21 +72,17 @@ Ext.define('HreRem.view.trabajos.detalle.TramitesTareasTrabajo', {
 			        }
 			    ]
 			}
-    	
-    	
     	];
-    	me.addPlugin({ptype: 'lazyitems', items: items });
+
     	me.callParent();    	
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		var listadoTareasTramiteTrabajo = me.down("[reference=listadoTareasTramiteTrabajo]");
-		
+
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoTareasTramiteTrabajo.getStore().load();
     }
-    
-    
 });

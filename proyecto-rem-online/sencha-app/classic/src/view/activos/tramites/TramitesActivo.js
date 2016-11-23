@@ -58,15 +58,11 @@ Ext.define('HreRem.view.activos.tramites.TramitesActivo', {
     	                     	text: 'Fecha de inicio',
     	                     	flex: 1,
     	                    	dataIndex: 'fechaInicio'
-//    	                    		,
-//    	                    	formatter: 'date("d/m/Y")'	
     	                     },
     	                     {
     	                     	text: 'Fecha de finalización',
     	                     	flex: 1,
     	                    	dataIndex: 'fechaFinalizacion'
-//    	                    		,
-//    	                    	formatter: 'date("d/m/Y")'	
     	                     }
     	                     ]}
     	          ];

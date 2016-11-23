@@ -2,19 +2,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
     extend		: 'Ext.tab.Panel',
     xtype		: 'agrupacionesdetalle',
 	cls			: 'panel-base shadow-panel, tabPanel-segundo-nivel',
-	flex: 1,
+	flex		: 1,
 	layout		: 'fit',
-    requires : ['HreRem.view.agrupaciones.detalle.FichaAgrupacion',
-        'HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion',
-        'HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacionMain',
-        'HreRem.view.agrupaciones.detalle.FotosAgrupacion',
-        'HreRem.view.agrupaciones.detalle.ActivosAgrupacion',
-        'HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion','Ext.ux.TabReorderer',
-        'HreRem.view.agrupacion.detalle.ComercialAgrupacion'],
-        
-    	listeners: {
-			    	
+    requires 	: ['HreRem.view.agrupaciones.detalle.FichaAgrupacion','HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion',
+        			'HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacionMain','HreRem.view.agrupaciones.detalle.FotosAgrupacion',
+        			'HreRem.view.agrupaciones.detalle.ActivosAgrupacion','HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion',
+        			'Ext.ux.TabReorderer','HreRem.view.agrupacion.detalle.ComercialAgrupacion'],
+    listeners: {
     	boxready: function (tabPanel) {
+    		if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
+				var tab = tabPanel.items.items[0];
+				tabPanel.setActiveTab(tab);
+			}
+
 			var tab = tabPanel.getActiveTab();		
 			if(tab.ocultarBotonesEdicion) {
 				me.down("[itemId=botoneditar]").setVisible(false);
@@ -22,9 +22,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
             	tabPanel.evaluarBotonesEdicion(tab);
 			}		  					
 		},
-			    	
-        beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 
+        beforetabchange: function (tabPanel, tabNext, tabCurrent) {
         	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null)
@@ -47,7 +46,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
             			        }
             			   }
         			});
-            		
+
             		return false;
             	}
             	// Si la pestaña necesita botones de edición
@@ -58,7 +57,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
         	}
         }
     },
-	layout: 'fit',
+
 	tabBar: {
 		items: [
         		{
@@ -90,38 +89,36 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
         ]
     },
 
-    items: [
-    		
-    		{	xtype: 'fichaagrupacion', funPermEdition: ['EDITAR_AGRUPACION']},
-    		{	xtype: 'activosagrupacion', ocultarBotonesEdicion: true},
-    		{	xtype: 'fotosagrupacion', ocultarBotonesEdicion: true},
-    		{	xtype: 'observacionesagrupacion', ocultarBotonesEdicion: true},
-    		{	xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistida}'}},
-    		{	xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{esAgrupacionObraNuevaOrAsistida}'}}
-    		
+    initComponent: function () {
+        var me = this;
 
-    ],
-    
-  
-    
-    
-        
+        var items = [];
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaagrupacion', funPermEdition: ['EDITAR_AGRUPACION']})}, ['TAB_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosagrupacion', ocultarBotonesEdicion: true})}, ['TAB_LISTA_ACTIVOS_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotosagrupacion', ocultarBotonesEdicion: true})}, ['TAB_FOTOS_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'observacionesagrupacion', ocultarBotonesEdicion: true})}, ['TAB_OBSERVACIONES_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistida}'}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{esAgrupacionObraNuevaOrAsistida}'}})}, ['TAB_COMERCIAL_AGRUPACION'])
+
+        me.addPlugin({ptype: 'lazyitems', items: items});
+        me.callParent(); 
+    },
+
     /**
      * Función de utilidad por si es necesario configurar algo de la vista y que no es posible
      * a través del viewModel 
      */
     configCmp: function(data) {
     	var me = this;
-
     },
-    
+
     evaluarBotonesEdicion: function(tab) {    	
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
-		
+
 		var esEditable = me.lookupController().getViewModel().get('agrupacionficha.esEditable');
 
 		//Si la agrupación es editable
@@ -134,5 +131,4 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 	    	}   
     	}
     }
-    
 });

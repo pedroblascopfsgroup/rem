@@ -278,7 +278,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 										emptyDisplayText: '-',
 										bind: {
 											store: '{comboSiNoNSRem}',
-											value: '{infoComercial.instituos}'
+											value: '{infoComercial.institutos}'
 										},
 										readOnly: true
 									},

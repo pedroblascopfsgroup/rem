@@ -1,10 +1,11 @@
-Ext.define('HreRem.view.administracion.gastos.ProvisionesList', {
+Ext.define('HreRem.view.administracion.gastos.GestionProvisionesList', {
 	extend		: 'HreRem.view.common.GridBase',
-    xtype		: 'provisioneslist',
+    xtype		: 'gestionprovisioneslist',
 
     bind: {
         store: '{provisiones}'
     },
+    plugins: 'pagingselectpersist',
     listeners : {
     	rowclick: 'onRowClickProvisionesList'
     },

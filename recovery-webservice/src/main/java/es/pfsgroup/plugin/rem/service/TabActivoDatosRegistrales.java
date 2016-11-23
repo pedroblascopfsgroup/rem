@@ -10,6 +10,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -65,8 +66,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
 		}
 		
-		if (activo.getPdv() != null) {
-			BeanUtils.copyProperties(activoDto, activo.getPdv());
+		if (!Checks.estaVacio(activo.getPdvs())) {
+			BeanUtils.copyProperties(activoDto, activo.getPdvs().get(0));
 		}
 		
 		if (activo.getTitulo() != null) {
@@ -280,14 +281,19 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					activo.setAdjNoJudicial((genericDao.save(ActivoAdjudicacionNoJudicial.class, activo.getAdjNoJudicial())));
 					
 				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloPDV)) {
-					
-					if (activo.getPdv() == null) {
-						activo.setPdv(new ActivoPlanDinVentas());
-						activo.getPdv().setActivo(activo);
+					ActivoPlanDinVentas pdv = null;
+					if (Checks.estaVacio(activo.getPdvs())) {
+						 pdv = new ActivoPlanDinVentas();
+						 pdv.setActivo(activo);
+						 beanUtilNotNull.copyProperties(pdv, dto);
+						 genericDao.save(ActivoPlanDinVentas.class, pdv);
+						 activo.getPdvs().add(pdv);
+					} else {
+						pdv = activo.getPdvs().get(0);						
+						beanUtilNotNull.copyProperties(pdv, dto);
+						genericDao.update(ActivoPlanDinVentas.class, pdv);
 					}
-					beanUtilNotNull.copyProperties(activo.getPdv(), dto);
-					
-					activo.setPdv((genericDao.save(ActivoPlanDinVentas.class, activo.getPdv())));
+
 
 				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloJudicial)) {
 					

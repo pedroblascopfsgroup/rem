@@ -45,14 +45,7 @@ DECLARE
         T_TIPO_DATA('05'	,'Autorizada'	,'Autorizada'),
         T_TIPO_DATA('06'	,'Contabilizada'	,'Contabilizada'),
         T_TIPO_DATA('07'	,'Pagada'	,'Pagada')
-        
-
-02	Enviada
-03	Rechazada subsanable
-04	Rechazada no subsanable
-05	Contabilizada
-06	Pagada
-	); 
+    ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN	

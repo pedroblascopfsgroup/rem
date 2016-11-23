@@ -2,12 +2,13 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.List;
 
-public class DtoPropuestaOferta {
+public class DtoDataSource {
 	
 	private List<Object> listaCliente;
 	private List<Object> listaOferta;
 	private List<Object> listaTasacion;
-	private List<Object> listaHonorarios;
+	private List<Object> listaHonorario;
+	private List<Object> listaComprador;
 
 	public List<Object> getListaCliente() {
 		return listaCliente;
@@ -33,13 +34,19 @@ public class DtoPropuestaOferta {
 		this.listaTasacion = listaTasacion;
 	}
 
-	public List<Object> getListaHonorarios() {
-		return listaHonorarios;
+	public List<Object> getListaHonorario() {
+		return listaHonorario;
 	}
 
-	public void setListaHonorarios(List<Object> listaHonorarios) {
-		this.listaHonorarios = listaHonorarios;
+	public void setListaHonorario(List<Object> listaHonorario) {
+		this.listaHonorario = listaHonorario;
 	}
-	
-	
+
+	public List<Object> getListaComprador() {
+		return listaComprador;
+	}
+
+	public void setListaComprador(List<Object> listaComprador) {
+		this.listaComprador = listaComprador;
+	}
 }

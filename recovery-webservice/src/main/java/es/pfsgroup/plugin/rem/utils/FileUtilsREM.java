@@ -25,7 +25,7 @@ public class FileUtilsREM {
 		Map<String, Object> dataResponse = new HashMap<String, Object>();
 		try {
 			byte[] bytes = read(file);
-			dataResponse.put("fileName", "fileName");
+			dataResponse.put("fileName", fileName);
 			dataResponse.put("hojaPropuesta",base64Encode(bytes));
 			model.put("data", dataResponse);
        	} catch (Exception e) { 
@@ -97,6 +97,13 @@ public class FileUtilsREM {
 		}
 		if (obj instanceof Double) {
 			return new DecimalFormat("#.##").format(obj);
+		}
+		if (obj instanceof Boolean) {
+			if ((Boolean) obj) {
+				return "SI";
+			} else {
+				return "NO";
+			}
 		}
 		return obj.toString();
 	}

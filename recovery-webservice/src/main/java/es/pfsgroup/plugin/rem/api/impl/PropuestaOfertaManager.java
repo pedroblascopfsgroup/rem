@@ -45,9 +45,9 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCliente;
+import es.pfsgroup.plugin.rem.model.DtoDataSource;
 import es.pfsgroup.plugin.rem.model.DtoHonorarios;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaOferta;
 import es.pfsgroup.plugin.rem.model.DtoTasacionInforme;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
@@ -733,7 +733,7 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 
 		List<Object> array = new ArrayList<Object>();
 		
-		DtoPropuestaOferta propuestaOferta = new DtoPropuestaOferta();
+		DtoDataSource propuestaOferta = new DtoDataSource();
 		
 		List<CompradorExpediente> clientes = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getCompradores();
 		List<Object> listaCliente = new ArrayList<Object>();
@@ -778,7 +778,7 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 		}
 		propuestaOferta.setListaCliente(listaCliente);
 		
-		List<Object> listaHonorarios = new ArrayList<Object>();
+		List<Object> listaHonorario = new ArrayList<Object>();
 		DtoHonorarios honorarios = null;
 		Long idExpediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getId();
 		List<GastosExpediente> listaGastosExpediente = genericDao.getList(GastosExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
@@ -796,9 +796,9 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 				honorarios.setPorcentajeHonorarios("0");
 			}
 			honorarios.setImporteHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getImporteFinal()));
-			listaHonorarios.add(honorarios);
+			listaHonorario.add(honorarios);
 		}
-		propuestaOferta.setListaHonorarios(listaHonorarios);
+		propuestaOferta.setListaHonorario(listaHonorario);
 		
 		//Ofertas asociadas a las 
 		List<ActivoOferta> listaOfertaPorActivo = activo.getOfertas();

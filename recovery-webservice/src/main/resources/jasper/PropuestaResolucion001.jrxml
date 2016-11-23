@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucion001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="70"/>
+	<property name="ireport.y" value="816"/>
 	<subDataset name="dataset1" uuid="859ad764-5c2d-4f72-be54-c78b00433dc1">
 		<queryString>
 			<![CDATA[]]>
@@ -126,7 +126,7 @@
 	<field name="listaCliente" class="java.util.List"/>
 	<field name="listaOferta" class="java.util.List"/>
 	<field name="listaTasacion" class="java.util.List"/>
-	<field name="listaHonorarios" class="java.util.List"/>
+	<field name="listaHonorario" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -434,6 +434,20 @@ TIPO DE PROPUESTA VENTA]]></text>
 					</textElement>
 					<text><![CDATA[Telefono]]></text>
 				</staticText>
+				<staticText>
+					<reportElement x="410" y="423" width="56" height="11" uuid="7c75298e-0340-4acf-bfb9-a5dd6f77cbd2"/>
+					<textElement>
+						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Deudor]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="488" y="423" width="56" height="11" uuid="08e354f0-38e5-43e2-8e42-c148487d1606"/>
+					<textElement textAlignment="Center">
+						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[R. Bienes]]></text>
+				</staticText>
 				<line>
 					<reportElement x="1" y="433" width="554" height="1" uuid="10eb96d7-d65e-45fb-ae72-a6b6919f95a5"/>
 				</line>
@@ -489,20 +503,6 @@ TIPO DE PROPUESTA VENTA]]></text>
 						</jr:listContents>
 					</jr:list>
 				</componentElement>
-				<staticText>
-					<reportElement x="410" y="423" width="56" height="11" uuid="7c75298e-0340-4acf-bfb9-a5dd6f77cbd2"/>
-					<textElement>
-						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
-					</textElement>
-					<text><![CDATA[Deudor]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="488" y="423" width="56" height="11" uuid="08e354f0-38e5-43e2-8e42-c148487d1606"/>
-					<textElement textAlignment="Center">
-						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
-					</textElement>
-					<text><![CDATA[R. Bienes]]></text>
-				</staticText>
 			</elementGroup>
 			<staticText>
 				<reportElement x="1" y="207" width="178" height="13" uuid="f5aa607d-3b5e-4cc1-88e6-783759e2b6be"/>
@@ -995,8 +995,8 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<componentElement>
 					<reportElement x="1" y="110" width="554" height="15" uuid="c4214d4d-740f-467f-8d5d-b719aa82d125"/>
 					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-						<datasetRun subDataset="dataset4" uuid="dcc52164-3964-4a44-94ad-3909909a82ba">
-							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaHonorarios})]]></dataSourceExpression>
+						<datasetRun subDataset="dataset4" uuid="597dfdbd-2fe0-4f19-8bdc-490e0b42e7e9">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaHonorario})]]></dataSourceExpression>
 						</datasetRun>
 						<jr:listContents height="15" width="554">
 							<textField>

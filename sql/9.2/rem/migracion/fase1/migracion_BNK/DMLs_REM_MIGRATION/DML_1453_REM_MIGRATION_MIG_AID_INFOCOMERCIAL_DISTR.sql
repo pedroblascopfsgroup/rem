@@ -217,9 +217,9 @@ WHERE DES.ACT_NUMERO_ACTIVO IS NULL
   EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;
   
   -- Observaciones
-  /*IF V_REJECTS != 0 THEN
+  IF V_REJECTS != 0 THEN
   
-	EXECUTE IMMEDIATE '
+	/*EXECUTE IMMEDIATE '
 	select count(act_numero_activo) from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig
 	left join '||V_ESQUEMA||'.act_activo act
 	on act.act_num_activo = mig.act_numero_activo

@@ -99,7 +99,7 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 		     height: 100,
 		     align: 't',
 		     cls: 'x-toast-warn',
-		     autoCloseDelay: 8000
+		     autoCloseDelay: 4000
 		 });
 		
 
@@ -117,7 +117,7 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 		     height: 100,
 		     align: 't',
 		     cls: 'x-toast-error',
-		     autoCloseDelay: 8000
+		     autoCloseDelay: 4000
 		 });
 		
 	}

@@ -35,9 +35,17 @@ Ext.define('HreRem.model.Posicionamiento', {
     		},
     		{
     			name: 'motivoAplazamiento'
+    		},
+    		{
+    			name:'fechaHoraPosicionamiento',
+    			type : 'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaHoraAviso',
+    			type : 'date',
+    			dateFormat: 'c'
     		}
-
-    		
     ],
     
 	proxy: {

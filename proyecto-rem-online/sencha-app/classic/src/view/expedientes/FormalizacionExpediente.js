@@ -149,7 +149,33 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					            editor: {
 		                  			xtype: 'textarea'
 					        	}
-						   	}
+						   	},
+						   	{
+					       		dataIndex: 'fechaHoraPosicionamiento',
+					       		formatter: 'date("d/m/Y H:i")',
+					       		hidden: true,
+					       		resizble: false,
+					       		width: 0,
+					       		editor: {
+						       		xtype: 'timefieldbase',
+						       		hidden: true,
+						       		format: 'd/m/Y H:i',
+						       		reference: 'fechaHoraPosicionamientoRef'
+					       		}
+					    	},
+					    	{
+					       		dataIndex: 'fechaHoraAviso',
+					       		formatter: 'date("d/m/Y H:i")',
+					       		hidden: true,
+					       		resizble: false,
+					       		width: 0,
+					       		editor: {
+						       		xtype: 'timefieldbase',
+						       		hidden: true,
+						       		format: 'd/m/Y H:i',
+						       		reference: 'fechaHoraAvisoRef'
+					       		}
+					    	}
 						],
 
 					    dockedItems : [

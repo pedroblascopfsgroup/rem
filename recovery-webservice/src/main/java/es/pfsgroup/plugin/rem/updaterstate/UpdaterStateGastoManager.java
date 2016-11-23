@@ -111,18 +111,19 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 		// Comprobamos la situación del gasto y determinamos el próximo código de estado
 			GastoGestion gastoGestion = gasto.getGastoGestion();
-			
+			if(!Checks.esNulo(gasto.getEstadoGasto())){
 			// Si el pago sigue retenido, ningún cambio en el gasto implica cambio de estado.
-			if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
-				
-				// Si estado es INCOMPLETO, comprobamos si ya no lo está para pasarlo a pendiente.
-				if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())) {
-					String error = validarAutorizacionGasto(gasto);
-					if(Checks.esNulo(error)) {
-						codigo = DDEstadoGasto.PENDIENTE;
-					}				
+				if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
+					
+					// Si estado es INCOMPLETO, comprobamos si ya no lo está para pasarlo a pendiente.
+					if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())) {
+						String error = validarAutorizacionGasto(gasto);
+						if(Checks.esNulo(error)) {
+							codigo = DDEstadoGasto.PENDIENTE;
+						}				
+					}
 				}
-			}			
+			}				
 		}
 		
 		// Si tenemos definido un gasto, lo búscamos y modificamos en el gasto

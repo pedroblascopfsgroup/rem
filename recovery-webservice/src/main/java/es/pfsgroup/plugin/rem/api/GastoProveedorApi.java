@@ -43,7 +43,7 @@ public interface GastoProveedorApi {
 		 * @param tab
 		 * @return Object
 		 */
-	    public Object getTabGasto(Long id, String tab);
+	    public Object getTabGasto(Long id, String tab) throws Exception;
 	    
 	    
 	    /**

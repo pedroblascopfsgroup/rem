@@ -26,6 +26,8 @@ public class DtoPosicionamiento extends WebDto {
 	private String motivoAplazamiento;
 	private Date horaAviso;
 	private Date horaPosicionamiento;
+	private Date fechaHoraPosicionamiento;
+	private Date fechaHoraAviso;
 	
 	
 	public Long getIdPosicionamiento() {
@@ -69,6 +71,19 @@ public class DtoPosicionamiento extends WebDto {
 	}
 	public void setHoraPosicionamiento(Date horaPosicionamiento) {
 		this.horaPosicionamiento = horaPosicionamiento;
+	}
+	public Date getFechaHoraPosicionamiento() {
+		return fechaHoraPosicionamiento;
+	}
+	public void setFechaHoraPosicionamiento(Date fechaHoraPosicionamiento) {
+		this.fechaHoraPosicionamiento = fechaHoraPosicionamiento;
+	}
+	public Date getFechaHoraAviso() {
+		return fechaHoraAviso;
+	}
+	public void setFechaHoraAviso(Date fechaHoraAviso) {
+		this.fechaHoraAviso = fechaHoraAviso;
 	} 	
+	
    	
 }

@@ -20,8 +20,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     	me.setTitle(HreRem.i18n('title.comercial'));
 
 		var items = [];
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertascomercialactivo', funPermEdition: ['EDITAR_TAB_COMERCIAL_OFERTAS']})}, ['TAB_COMERCIAL_OFERTAS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'visitascomercialactivo', funPermEdition: ['EDITAR_TAB_COMERCIAL_VISITAS']})}, ['TAB_COMERCIAL_VISITAS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertascomercialactivo'})}, ['TAB_COMERCIAL_OFERTAS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'visitascomercialactivo'})}, ['TAB_COMERCIAL_VISITAS']);
 
     	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();

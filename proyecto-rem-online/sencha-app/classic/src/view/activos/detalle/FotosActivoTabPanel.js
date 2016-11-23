@@ -19,8 +19,8 @@ Ext.define('HreRem.view.activos.detalle.FotosActivoTabPanel', {
         var me = this;
 
         me.items = [];
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebactivo', funPermEdition: ['EDITAR_TAB_FOTOS_ACTIVO_WEB']})}, ['TAB_FOTOS_ACTIVO_WEB']);
-        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostecnicasactivo', funPermEdition: ['EDITAR_TAB_FOTOS_ACTIVO_TECNICAS']})}, ['TAB_FOTOS_ACTIVO_TECNICAS']);
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebactivo'})}, ['TAB_FOTOS_ACTIVO_WEB']);
+        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostecnicasactivo'})}, ['TAB_FOTOS_ACTIVO_TECNICAS']);
 
         me.callParent();
     }

@@ -12,10 +12,10 @@ Ext.define('HreRem.view.activos.tramites.TramitesDetalleTab', {
        var me = this;
 
        var items = [];
-       $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosgeneralestramite', funPermEdition: ['EDITAR_TAB_DATOS_GENERALES_TRAMITE']})}, ['TAB_DATOS_GENERALES_TRAMITE']);
-       $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tareaslist', funPermEdition: ['EDITAR_TAB_TAREAS_TRAMITE']})}, ['TAB_TAREAS_TRAMITE']);
-       $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'historicotareaslist', funPermEdition: ['EDITAR_TAB_HISTORICO_TAREAS_TRAMITE']})}, ['TAB_HISTORICO_TAREAS_TRAMITE']);
-       $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activostramite', funPermEdition: ['EDITAR_TAB_ACTIVOS_TRAMITE']})}, ['TAB_ACTIVOS_TRAMITE']);
+       $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosgeneralestramite'})}, ['TAB_DATOS_GENERALES_TRAMITE']);
+       $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tareaslist'})}, ['TAB_TAREAS_TRAMITE']);
+       $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'historicotareaslist'})}, ['TAB_HISTORICO_TAREAS_TRAMITE']);
+       $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activostramite'})}, ['TAB_ACTIVOS_TRAMITE']);
 
        me.addPlugin({ptype: 'lazyitems', items: items});
        me.callParent();

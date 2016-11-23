@@ -25,7 +25,7 @@ Ext.define('HreRem.view.publicacion.PublicacionMain', {
 
         var items = [];
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activospublicacionmain', reference: 'activosPublicacionMain'})}, ['TAB_PUBLICACION_ACTIVOS']);
-        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionpublicacionmain', reference: 'configuracionPublicacionMain', funPermEdition: ['EDITAR_TAB_CONFIGURACION_PUBLICACION']})}, ['TAB_CONFIGURACION_PUBLICACION']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionpublicacionmain', reference: 'configuracionPublicacionMain'})}, ['TAB_CONFIGURACION_PUBLICACION']);
 
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent(); 

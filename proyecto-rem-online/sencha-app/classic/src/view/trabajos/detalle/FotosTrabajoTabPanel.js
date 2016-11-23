@@ -20,8 +20,8 @@ Ext.define('HreRem.view.trabajos.detalle.FotosTrabajoTabPanel', {
     	var me = this;
 
         me.items = [];
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostrabajosolicitante', funPermEdition: ['EDITAR_TAB_FOTOS_SOLICITANTE_TRABAJO']})}, ['TAB_FOTOS_SOLICITANTE_TRABAJO']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostrabajoproveedor', funPermEdition: ['EDITAR_TAB_FOTOS_PROVEEDOR_TRABAJO']})}, ['TAB_FOTOS_PROVEEDOR_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostrabajosolicitante'})}, ['TAB_FOTOS_SOLICITANTE_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostrabajoproveedor'})}, ['TAB_FOTOS_PROVEEDOR_TRABAJO']);
 
         me.callParent(); 
     }

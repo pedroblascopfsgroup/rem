@@ -9,7 +9,7 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 	extend : 'Ext.app.Controller',
 	
 	requires: ['Ext.window.Toast'],
-
+	
 	errorCodes : {
 		
 		SC_UNAUTHORIZED : 401,

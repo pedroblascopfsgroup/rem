@@ -16,6 +16,7 @@ import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import net.sf.json.JSONObject;
 
 public interface RestApi {
@@ -47,7 +48,7 @@ public interface RestApi {
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
 	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";
 	public static final String REST_MSG_OVERFLOW = "OVERFLOW";
-	public static final String REST_UNIQUE_VIOLATED = "INVALID";//"UNIQUE_CONSTRAINT_VIOLATED";
+	public static final String REST_UNIQUE_VIOLATED = "INVALID";// "UNIQUE_CONSTRAINT_VIOLATED";
 	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
 	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";
 	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";
@@ -128,6 +129,14 @@ public interface RestApi {
 	 * @return PeticionRest
 	 */
 	public PeticionRest getLastPeticionByToken(String token);
+
+	/**
+	 * Obtiene una llamada rest por token
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public RestLlamada getLlamadaByToken(String token);
 
 	/**
 	 * Obtiene la ip del operador

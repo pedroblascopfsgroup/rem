@@ -39,7 +39,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	private static final String DTO_CLASS_NO_PUEDE_SER_NULL = "'dtoClass' no puede ser NULL";
 
 	private static interface DataAccessOperation {
-		public List<CambioBD> getDatabaseChanges();
+		public CambiosList getDatabaseChanges();
 	}
 
 	@Autowired
@@ -53,7 +53,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * @return
 	 */
 	protected abstract Integer getWeight();
-	
+
 	/**
 	 * Permite activar y desactivar el envio del servicio
 	 * 
@@ -98,33 +98,34 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * @return Este método devolverá NULL si el parámetro dtoClass no coincide
 	 *         con el DTO asociado al detector.
 	 */
-	public List<T> listPendientes(Class<?> dtoClass, RestLlamada registro) {
+	public CambiosList listPendientes(Class<?> dtoClass, RestLlamada registro, CambiosList listPendientes) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
 
-		final List<CambioBD> cambios = dao.listCambios(dtoClass, this, registro);
+		final CambiosList cambios = dao.listCambios(dtoClass, this, registro, listPendientes);
+		cambios.setPaginacion(listPendientes.getPaginacion());
 
 		return extractDtos(dtoClass, new DataAccessOperation() {
 			@Override
-			public List<CambioBD> getDatabaseChanges() {
+			public CambiosList getDatabaseChanges() {
 				return cambios;
 			}
 		});
 
 	}
 
-	public List<T> listDatosCompletos(Class<?> dtoClass, RestLlamada registro) {
+	public CambiosList listDatosCompletos(Class<?> dtoClass, RestLlamada registro) {
 
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
 
-		final List<CambioBD> cambios = dao.listDatosActuales(dtoClass, this, registro);
+		final CambiosList cambios = dao.listDatosActuales(dtoClass, this, registro);
 
 		return extractDtos(dtoClass, new DataAccessOperation() {
 			@Override
-			public List<CambioBD> getDatabaseChanges() {
+			public CambiosList getDatabaseChanges() {
 				return cambios;
 			}
 		});
@@ -144,7 +145,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 *            Objeto en el que se irá dejando trazas de tiempos de
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
-	public void marcaComoEnviados(Class<?> dtoClass, RestLlamada registro) {
+	public void marcaComoEnviados(Class<?> dtoClass, List<RestLlamada> registro) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -185,14 +186,15 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		dao.refreshMaterializedView(this);
 	}
 
-	private List<T> extractDtos(Class<?> dtoClass, DataAccessOperation dao) {
+	private CambiosList extractDtos(Class<?> dtoClass, DataAccessOperation dao) {
 		if (dao == null) {
 			throw new IllegalArgumentException("Data Access Operation is not defined");
 		}
 		if (dtoClass.equals(getDtoClass())) {
-			List<CambioBD> listCambios = dao.getDatabaseChanges();
+			CambiosList listCambios = dao.getDatabaseChanges();
 
-			List<T> listaCambios = new ArrayList<T>();
+			CambiosList listaCambios = new CambiosList(null);
+			listaCambios.setPaginacion(listCambios.getPaginacion());
 
 			if (listCambios != null) {
 
@@ -206,30 +208,35 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 				FusionCambios fusionCambios = necesitaFusionarCambios(dtoClass);
 
 				// main loop
-				for (CambioBD cambio : listCambios) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Obtenemos los cambios registros cambiados en BD");
-					}
-					Map<String, Object> camposActualizados = cambio.getCambios();
-					if (!camposActualizados.isEmpty()) {
-
-						// Obtenemos el contenido que debe tener el DTO
-						Map<String, Object> datos = cambio
-								.getValoresHistoricos(WebcomRequestUtils.camposObligatorios(dtoClass));
-						datos.putAll(camposActualizados);
-
-						if (fusionCambios == null) {
-							// Poblamos directamente el DTO y lo añadimos a la
-							// lista
-							T dto = creaYRellenaDto(dtoClass, datos);
-							listaCambios.add(dto);
-						} else {
-							// Dejamos el poblado del DTO al fusionador de
-							// cambios
-							fusionCambios.addDataMap(datos);
+				for (Object cambio : listCambios) {
+					try {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Obtenemos los cambios registros cambiados en BD");
 						}
-					} else if (logger.isDebugEnabled()) {
-						logger.debug("Map de cambios vacío, nada que notificar");
+						Map<String, Object> camposActualizados = ((CambioBD) cambio).getCambios();
+						if (!camposActualizados.isEmpty()) {
+
+							// Obtenemos el contenido que debe tener el DTO
+							Map<String, Object> datos = ((CambioBD) cambio)
+									.getValoresHistoricos(WebcomRequestUtils.camposObligatorios(dtoClass));
+							datos.putAll(camposActualizados);
+
+							if (fusionCambios == null) {
+								// Poblamos directamente el DTO y lo añadimos a
+								// la
+								// lista
+								T dto = creaYRellenaDto(dtoClass, datos);
+								listaCambios.add(dto);
+							} else {
+								// Dejamos el poblado del DTO al fusionador de
+								// cambios
+								fusionCambios.addDataMap(datos);
+							}
+						} else if (logger.isDebugEnabled()) {
+							logger.debug("Map de cambios vacío, nada que notificar");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				} // fin main loop
 

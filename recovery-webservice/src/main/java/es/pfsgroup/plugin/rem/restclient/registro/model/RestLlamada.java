@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Where;
 
@@ -23,7 +22,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 public class RestLlamada implements Serializable, Auditable {
 
 	private static final long serialVersionUID = 8551021750962302260L;
-	private static final int MAX_CHARS_JSON = 5000;
+	private static final int MAX_CHARS_JSON = 20000;
 
 	@Id
 	@Column(name = "RST_LLAMADA_ID")

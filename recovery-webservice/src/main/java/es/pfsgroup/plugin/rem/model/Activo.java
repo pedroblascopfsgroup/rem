@@ -222,10 +222,10 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoTitulo titulo;
     
-    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private ActivoPlanDinVentas pdv;
+    private List<ActivoPlanDinVentas> pdvs;  
     
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
@@ -626,12 +626,12 @@ public class Activo implements Serializable, Auditable {
 		this.titulo = titulo;
 	}
 
-	public ActivoPlanDinVentas getPdv() {
-		return pdv;
+	public List<ActivoPlanDinVentas> getPdvs() {
+		return pdvs;
 	}
 
-	public void setPdv(ActivoPlanDinVentas pdv) {
-		this.pdv = pdv;
+	public void setPdvs(List<ActivoPlanDinVentas> pdvs) {
+		this.pdvs = pdvs;
 	}
 
 	public ActivoAdjudicacionNoJudicial getAdjNoJudicial() {

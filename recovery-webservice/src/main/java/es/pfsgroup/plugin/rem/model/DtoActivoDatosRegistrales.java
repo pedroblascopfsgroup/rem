@@ -41,13 +41,13 @@ public class DtoActivoDatosRegistrales extends WebDto {
 	private Date fechaFirmaTitulo;
 	private String valorAdquisicion;
 	private String tramitadorTitulo;
-	private long acreedorId;
+	private Long acreedorId;
 	private String acreedorNombre;
 	private String acreedorNif;
 	private String acreedorDir;
 	private String importeDeuda;
 	private Integer rentaLibre;
-	private long acreedorNumExp;
+	private Long acreedorNumExp;
 	private String numReferencia;
 	private Integer vpo;
 	
@@ -363,10 +363,10 @@ public class DtoActivoDatosRegistrales extends WebDto {
 	public void setPropiedadActivoDireccion(String propiedadActivoDireccion) {
 		this.propiedadActivoDireccion = propiedadActivoDireccion;
 	}
-	public long getAcreedorId() {
+	public Long getAcreedorId() {
 		return acreedorId;
 	}
-	public void setAcreedorId(long acreedorId) {
+	public void setAcreedorId(Long acreedorId) {
 		this.acreedorId = acreedorId;
 	}
 	public String getAcreedorNif() {
@@ -393,10 +393,10 @@ public class DtoActivoDatosRegistrales extends WebDto {
 	public void setRentaLibre(Integer rentaLibre) {
 		this.rentaLibre = rentaLibre;
 	}
-	public long getAcreedorNumExp() {
+	public Long getAcreedorNumExp() {
 		return acreedorNumExp;
 	}
-	public void setAcreedorNumExp(long acreedorNumExp) {
+	public void setAcreedorNumExp(Long acreedorNumExp) {
 		this.acreedorNumExp = acreedorNumExp;
 	}
 	public Date getFechaEntregaGestoria() {

@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
@@ -1846,7 +1847,7 @@ public class ActivoAdapter {
 		
 		ActivoDistribucion activoDistribucion = new ActivoDistribucion();
 		Activo activo = activoApi.get(idActivo);
-		ActivoVivienda vivienda = (ActivoVivienda)activo.getInfoComercial();
+		ActivoInfoComercial infoComercial = activo.getInfoComercial();
 		
 		try {
 			
@@ -1857,7 +1858,7 @@ public class ActivoAdapter {
 	
 				activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
 			}
-			activoDistribucion.setVivienda(vivienda);
+			activoDistribucion.setInfoComercial(infoComercial);
 			ActivoDistribucion distribucionNueva = genericDao.save(ActivoDistribucion.class, activoDistribucion);
 			
 			ActivoVivienda viviendaTemp = (ActivoVivienda)activo.getInfoComercial();
@@ -3252,11 +3253,11 @@ public class ActivoAdapter {
 		if(!Checks.esNulo(activo.getTipoComercializacion())){
 			String comercializacion = activo.getTipoComercializacion().getCodigo();
 			
-			if(DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion) || !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
+			if(DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion) && !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
 				throw new Exception(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
 			}
 			
-			if(DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion) || !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta()) && (!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion) && !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
 				throw new Exception(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
 			}
 		}
@@ -3343,7 +3344,11 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(llave, "archivo2", dto.getArchivo2());
 				beanUtilNotNull.copyProperty(llave, "archivo3", dto.getArchivo3());
 				beanUtilNotNull.copyProperty(llave, "juegoCompleto", dto.getJuegoCompleto());
+				if(!Checks.esNulo(llave.getJuegoCompleto()) && llave.getJuegoCompleto()==1)
+					dto.setMotivoIncompleto("");
 				beanUtilNotNull.copyProperty(llave, "motivoIncompleto", dto.getMotivoIncompleto());
+				
+					
 
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();

@@ -92,7 +92,7 @@ public class ActivoVivienda extends ActivoInfoComercial implements Serializable 
 	@Column(name = "VIV_DISTRIBUCION_TXT")
 	private String distribucionTxt;
 
-    @OneToMany(mappedBy = "vivienda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ICO_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoDistribucion> distribucion;

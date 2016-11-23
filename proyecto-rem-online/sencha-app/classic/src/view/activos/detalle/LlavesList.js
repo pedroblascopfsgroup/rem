@@ -19,7 +19,9 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
      	
     	me.listeners = {	    	
  			rowclick: 'onLlavesListClick',
- 			deselect: 'onLlavesListDeselected'
+ 			deselect: 'onLlavesListDeselected',
+ 			rowdblclick: 'valdacionesEdicionLlavesList',
+ 			beforeedit: 'valdacionesEdicionLlavesList'
  	    };
 
 		me.columns = [
@@ -111,7 +113,7 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
 			            },
 			            reference: 'cbColCompleto',
 			            listeners: {
-							select: 'changeComboJuegoCompleto'
+							change: 'valdacionesEdicionLlavesList'
 						},
 		            	allowBlank: false
 			        }

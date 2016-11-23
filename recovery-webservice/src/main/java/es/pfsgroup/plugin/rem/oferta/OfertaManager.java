@@ -334,13 +334,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
 				errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
-			}else {
+			}
+			/*else {
 				//el proveedor tiene que ser custodio
 				if ((cust.getCustodio() != null && !cust.getCustodio().equals(new Integer(1)))
 						|| cust.getCustodio() == null) {
 					errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
-			}
+			}*/
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {
 			ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
@@ -355,7 +356,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (Checks.esNulo(fdv)) {
 				errorsList.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
 			}else {
-				//el proveedor tiene que ser custodio
 				if(fdv.getTipoProveedor()==null || !fdv.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)){
 					errorsList.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
 				}

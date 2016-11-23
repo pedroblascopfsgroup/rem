@@ -86,12 +86,12 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
     	var me = this;
 
     	var items = [];
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosgeneralesgasto'})}, ['TAB_DATOS_GENERALES_GASTOS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'detalleeconomicogasto'})}, ['TAB_DETALLE_ECONOMICO_GASTOS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosafectadosgasto', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_AFECTADOS_GASTOS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'contabilidadgasto'})}, ['TAB_CONTABILIDAD_GASTOS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestiongasto'})}, ['TAB_GESTION_GASTOS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'impugnaciongasto'})}, ['TAB_IMPUGNACION_GASTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosgeneralesgasto', funPermEdition: ['EDITAR_TAB_DATOS_GENERALES_GASTOS']})}, ['TAB_DATOS_GENERALES_GASTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'detalleeconomicogasto', funPermEdition: ['EDITAR_TAB_DETALLE_ECONOMICO_GASTOS']})}, ['TAB_DETALLE_ECONOMICO_GASTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosafectadosgasto', funPermEdition: ['']})}, ['TAB_ACTIVOS_AFECTADOS_GASTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'contabilidadgasto', funPermEdition: ['EDITAR_TAB_CONTABILIDAD_GASTOS']})}, ['TAB_CONTABILIDAD_GASTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestiongasto', funPermEdition: ['EDITAR_TAB_GESTION_GASTOS']})}, ['TAB_GESTION_GASTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'impugnaciongasto', funPermEdition: ['EDITAR_TAB_IMPUGNACION_GASTOS']})}, ['TAB_IMPUGNACION_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosgasto', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS']);
 
 		me.addPlugin({ptype: 'lazyitems', items: items});

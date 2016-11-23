@@ -17,6 +17,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -65,6 +67,20 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 						expedienteComercial.setFechaInicioAlquiler(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					e.printStackTrace();
+				}
+				for(ActivoOferta activoOferta : ofertaAceptada.getActivosOferta())
+				{
+					Activo activo = activoOferta.getPrimaryKey().getActivo();
+					
+					situacionPosesoria.setConTitulo(1);
+					situacionPosesoria.setOcupado(1);
+					try {
+						situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					activo.setSituacionPosesoria(situacionPosesoria);
 				}
 
 			}

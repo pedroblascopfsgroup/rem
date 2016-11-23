@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
 public interface UpdaterStateApi {
 	/**
@@ -30,11 +29,5 @@ public interface UpdaterStateApi {
 	 */
 	public void updaterStateDisponibilidadComercial(Activo activo);
 
-	/**
-	 * Actualiza el estado de un gasto
-	 * @param gasto
-	 * @param codigo
-	 */
-	void updaterStates(GastoProveedor gasto, String codigo);
 	
 }

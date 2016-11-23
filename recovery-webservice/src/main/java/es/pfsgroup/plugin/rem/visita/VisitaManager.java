@@ -240,7 +240,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if (Checks.esNulo(fdv)) {
 				hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
 			}else {
-				//el proveedor tiene que ser custodio
 				if(fdv.getTipoProveedor()==null || !fdv.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)){
 					hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
@@ -251,13 +250,14 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
 				hashErrores.put("idProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
-			}else {
+			}
+			/*else {
 				//el proveedor tiene que ser custodio
 				if ((cust.getCustodio() != null && !cust.getCustodio().equals(new Integer(1)))
 						|| cust.getCustodio() == null) {
 					hashErrores.put("idProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
-			}
+			}*/
 		}
 	
 

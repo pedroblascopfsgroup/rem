@@ -5,7 +5,8 @@ Ext.define('HreRem.view.configuracion.ConfiguracionMain', {
     reference	: 'configuracionMain',
     layout		: 'fit',
     requires	: ['HreRem.view.configuracion.ConfiguracionController','HreRem.view.configuracion.ConfiguracionModel',
-    				'HreRem.view.configuracion.administracion.ConfiguracionAdministracionMain'],
+    				'HreRem.view.configuracion.administracion.ConfiguracionAdministracionMain',
+    				'HreRem.view.configuracion.mediadores.EvaluacionMediadores'],
     controller	: 'configuracion',
     viewModel	: {
         type: 'configuracion'
@@ -14,12 +15,11 @@ Ext.define('HreRem.view.configuracion.ConfiguracionMain', {
     initComponent: function () {
         var me = this;
 
-        me.items = [
-		    {	
-				xtype: 'configuracionadministracionmain', reference: 'configuracionAdministracionMain'
-			}
-        ];
+        var items = [];
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionadministracionmain', reference: 'configuracionAdministracionMain'})}, ['TAB_ADMINISTRACION_CONFIGURACION']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'evaluacionmediadores', reference: 'evaluacionMediadores'})}, ['TAB_MEDIADORES']);
 
+        me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent();
     }
 });

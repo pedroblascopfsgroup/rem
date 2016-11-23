@@ -98,7 +98,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'cargasactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_CARGAS']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'situacionposesoriaactivo', funPermEdition: ['EDITAR_SITU_POSESORIA_ACTIVO']})}, ['TAB_ACTIVO_SITU_POSESORIA']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: true, funPermEdition: ['EDITAR_DATOS_COMUNIDAD_ACTIVO'], disabled: me.lookupController().getViewModel().get("activo.divHorizontal") == "0"})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: true, funPermEdition: ['EDITAR_DATOS_COMUNIDAD_ACTIVO']})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);
 
     	me.addPlugin({ptype: 'lazyitems', items: items});
      	me.callParent();

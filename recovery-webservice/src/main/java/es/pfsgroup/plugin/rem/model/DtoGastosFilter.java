@@ -21,6 +21,7 @@ public class DtoGastosFilter extends WebDto {
 	private String concepto;
 	private String idProveedor;
 	private String codigoProveedor;
+	private String codigoProveedorRem;
 	private String fechaEmision;
 	private Double importeTotal;
 	private String fechaTopePago;
@@ -122,6 +123,12 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setCodigoProveedor(String codigoProveedor) {
 		this.codigoProveedor = codigoProveedor;
+	}
+	public String getCodigoProveedorRem() {
+		return codigoProveedorRem;
+	}
+	public void setCodigoProveedorRem(String codigoProveedorRem) {
+		this.codigoProveedorRem = codigoProveedorRem;
 	}
 	public String getFechaEmision() {
 		return fechaEmision;

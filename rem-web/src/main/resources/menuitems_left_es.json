@@ -56,7 +56,7 @@
 		                "secFunPermToRender": "MENU_PRECIOS"
 		            },
 		           	{
-		                "text":   "Publicación",
+		                "text":   "Publicaci&oacute;n",
 		                "view":   "publicacion.PublicacionMain",
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-publicacion",
@@ -74,7 +74,7 @@
 		                "secFunPermToRender": "MENU_COMERCIAL"
 		            },
 		            {
-		                "text":   "Administración",
+		                "text":   "Administraci&oacute;n",
 		                "view":   "administracion.AdministracionMainMenu",
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-administracion",
@@ -92,7 +92,7 @@
 		                "secFunPermToRender": "MENU_MASIVO"
 		            },            
 		            {
-		                "text":   "Configuración",
+		                "text":   "Configuraci&oacute;n",
 		                "view":   "configuracion.ConfiguracionMain",
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-configuracion",

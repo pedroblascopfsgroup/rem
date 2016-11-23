@@ -59,6 +59,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();
 				    	}
+				    },
+				    failure: function(operation) {		    	
+				    	form.up("tabpanel").unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 				    }
 				});
 			} else {
@@ -2072,20 +2076,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	changeComboJuegoCompleto: function(combo,value,c){
-		var me= this;
-		
-		if(combo.getValue()=="1"){
-				me.lookupReference('motivoIncompletoRef').setValue();
-				me.lookupReference('motivoIncompletoRef').setDisabled(true);
-				me.lookupReference('motivoIncompletoRef').allowBlank = true;
-		}
-		else{
-			me.lookupReference('motivoIncompletoRef').setDisabled(false);
-			me.lookupReference('motivoIncompletoRef').allowBlank = false;
-		}
-	},
-	
 	onClickEditRowMovimientosLlaveList: function(editor, context, eOpts) {
 		var me = this;
 		
@@ -2120,6 +2110,48 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	chkbxpublicacionordinaria = me.lookupReference('chkbxpublicacionordinaria');
 
     	chkbxpublicacionordinaria.setHidden(ocultar);
-    }
+    },
+    
+    valdacionesEdicionLlavesList: function(editor, grid) {
+    	var me = this,
+    	textMotivo = me.lookupReference('motivoIncompletoRef'),
+    	comboCompleto = me.lookupReference('cbColCompleto');
+    	
+    	if(editor.isNew) {
+    		comboCompleto.setValue();
+    		textMotivo.setValue();
+    	}
+    	
+    	var activar = comboCompleto.getValue() == "0" && textMotivo.getValue()!=null;
+    	me.activarDesactivarCampo(textMotivo,activar);
+    	
+    	var mostrarObligatoriedad = comboCompleto.getValue() == "0" && (textMotivo.getValue()==null || textMotivo.getValue() == "");
+    	me.vaciarCampoMostrarRojoObligatoriedad(textMotivo,mostrarObligatoriedad, comboCompleto.getValue() == "1" )
 
+    },
+    
+    //Activa o desactiva el campo
+    activarDesactivarCampo: function(campo, activar) {
+    	
+    	if(activar) {
+    		campo.setDisabled(false);
+    		campo.allowBlank = false;
+    	}
+    	else {
+    		campo.setValue();
+    		campo.setDisabled(true);
+    		campo.allowBlank = true;
+    		
+    	}
+    },
+    
+    //Este método se usa para marcar en rojo el campo en primera instancia, o vaciar su contenido
+    vaciarCampoMostrarRojoObligatoriedad: function(campo, mostrarObligatoriedad, vaciarCampo) {
+    	if(mostrarObligatoriedad) {
+    		campo.setValue(' ');
+    		campo.setValue();
+    	}
+    	else if(vaciarCampo)
+    		campo.setValue();
+    }
 });

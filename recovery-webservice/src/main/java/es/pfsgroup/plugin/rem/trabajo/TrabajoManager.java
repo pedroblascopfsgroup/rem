@@ -2270,13 +2270,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							.createFilter(FilterType.EQUALS, "codigoProveedorRem", trabajoDto.getIdProveedorRem()));
 					if (Checks.esNulo(apiResp)) {
 						hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
-					} else {
+					} 
+					/*else {
 						//el proveedor tiene que ser custodio
 						if ((apiResp.getCustodio() != null && apiResp.getCustodio() != new Integer(1))
 								|| apiResp.getCustodio() == null) {
 							hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
 						}
-					}
+					}*/
 				}
 				// Validamos que no vengan los 2 campos a true
 				if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())

@@ -31,6 +31,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
    		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());   		
+   		
    		////////////////////////Por situación del gasto
    		
    		if(!Checks.esNulo(dtoGastosFilter.getEstadoAutorizacionHayaCodigo())){
@@ -150,11 +152,11 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
    		}
 
 	
-		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		
-		List<VGastosProveedor> ofertas = (List<VGastosProveedor>) pageVisitas.getResults();
+		List<VGastosProveedor> gastos = (List<VGastosProveedor>) pageGastos.getResults();
 		
-		return new DtoPage(ofertas, pageVisitas.getTotalCount());
+		return new DtoPage(gastos, pageGastos.getTotalCount());
 		
 	}
 

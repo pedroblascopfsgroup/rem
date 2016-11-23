@@ -570,8 +570,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Las fechas de inicio y fin pueden ser establecidas a null.
 				activoValoracion.setFechaInicio(dto.getFechaInicio());
 				activoValoracion.setFechaFin(dto.getFechaFin());
-
 				activoValoracion.setFechaCarga(new Date());
+				
+				// Si los nuevos datos no traen observaciones (null), 
+				// debe quitar las escritas para el precio o valoracion anterior
+				activoValoracion.setObservaciones(dto.getObservaciones());
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
 

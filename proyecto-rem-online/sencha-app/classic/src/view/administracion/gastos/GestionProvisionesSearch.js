@@ -1,6 +1,6 @@
-Ext.define('HreRem.view.administracion.gastos.ProvisionesSearch', {
+Ext.define('HreRem.view.administracion.gastos.GestionProvisionesSearch', {
     extend		: 'HreRem.view.common.FormBase',
-    xtype		: 'provisionessearch',
+    xtype		: 'gestionprovisionessearch',
 
   	layout: {
         type: 'table',

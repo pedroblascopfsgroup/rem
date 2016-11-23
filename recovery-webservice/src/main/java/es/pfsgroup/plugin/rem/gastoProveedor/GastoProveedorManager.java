@@ -162,7 +162,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
-	public Object getTabGasto(Long id, String tab) {
+	public Object getTabGasto(Long id, String tab) throws Exception {
 		
 		GastoProveedor gasto = findOne(id);
 		
@@ -188,6 +188,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			throw new Exception(e.getMessage());
 		}
 		
 		return dto;
@@ -441,14 +442,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(!Checks.esNulo(lista) && !lista.isEmpty()) {
 			for (int i = 0; !existeGasto && i<lista.size(); i++){
 				GastoProveedor g = lista.get(i);
-				if (!DDEstadoGasto.ANULADO.equals(g.getEstadoGasto().getCodigo()) &&
-						!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(g.getEstadoGasto().getCodigo())) {
+				if(!Checks.esNulo(gasto.getEstadoGasto())) {	
+					if (!DDEstadoGasto.ANULADO.equals(g.getEstadoGasto().getCodigo()) &&
+							!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(g.getEstadoGasto().getCodigo())) {
+						existeGasto = true;
+					}
+				} else {
 					existeGasto = true;
 				}
 				
 			}
-		}
-		
+		}		
 		
 		return existeGasto;
 	}
@@ -1157,6 +1161,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setMotivoRetencionPago(null);
 						gestionGasto.setFechaRetencionPago(null);
 						gestionGasto.setUsuarioRetencionPago(null);
+						gasto.setGastoGestion(gestionGasto);
 						updaterStateApi.updaterStates(gasto, null);
 					}
 					
@@ -1185,14 +1190,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
 			GastoImpugnacion gastoImpugnacion = genericDao.get(GastoImpugnacion.class, filtro);
 			
-			dtoImpugnacion.setFechaTope(gastoImpugnacion.getFechaTope());
-			dtoImpugnacion.setFechaPresentacion(gastoImpugnacion.getFechaPresentacion());
-			dtoImpugnacion.setFechaResolucion(gastoImpugnacion.getFechaResolucion());
-			
-			if(!Checks.esNulo(gastoImpugnacion.getResultadoImpugnacion())){
-				dtoImpugnacion.setResultadoCodigo(gastoImpugnacion.getResultadoImpugnacion().getCodigo());
+			if(!Checks.esNulo(gastoImpugnacion)) {
+				dtoImpugnacion.setFechaTope(gastoImpugnacion.getFechaTope());
+				dtoImpugnacion.setFechaPresentacion(gastoImpugnacion.getFechaPresentacion());
+				dtoImpugnacion.setFechaResolucion(gastoImpugnacion.getFechaResolucion());
+				
+				if(!Checks.esNulo(gastoImpugnacion.getResultadoImpugnacion())){
+					dtoImpugnacion.setResultadoCodigo(gastoImpugnacion.getResultadoImpugnacion().getCodigo());
+				}
+				dtoImpugnacion.setObservaciones(gastoImpugnacion.getObservaciones());
 			}
-			dtoImpugnacion.setObservaciones(gastoImpugnacion.getObservaciones());
 		}
 		
 		return dtoImpugnacion;
@@ -1206,26 +1213,28 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 			GastoImpugnacion gastoImpugnacion = genericDao.get(GastoImpugnacion.class, filtro);
 			
-			if(!Checks.esNulo(gastoImpugnacion)){
-				beanUtilNotNull.copyProperties(gastoImpugnacion, dto);
-				
-				if(!Checks.esNulo(dto.getResultadoCodigo())){
-					DDResultadoImpugnacionGasto resultado= (DDResultadoImpugnacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoImpugnacionGasto.class, dto.getResultadoCodigo());
-					gastoImpugnacion.setResultadoImpugnacion(resultado);
-				}
-				
-				genericDao.update(GastoImpugnacion.class, gastoImpugnacion);
-				return true;
-				
+			if(Checks.esNulo(gastoImpugnacion)){
+				gastoImpugnacion = new GastoImpugnacion();
+			}
+			
+			beanUtilNotNull.copyProperties(gastoImpugnacion, dto);
+			
+			if(!Checks.esNulo(dto.getResultadoCodigo())){
+				DDResultadoImpugnacionGasto resultado= (DDResultadoImpugnacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoImpugnacionGasto.class, dto.getResultadoCodigo());
+				gastoImpugnacion.setResultadoImpugnacion(resultado);
 			}
 			
 			
+			if(Checks.esNulo(gastoImpugnacion.getId())){
+				genericDao.save(GastoImpugnacion.class, gastoImpugnacion);
+			} else {
+				genericDao.update(GastoImpugnacion.class, gastoImpugnacion);
+			}
+			return true;
+
 		}catch(Exception e) {
-			logger.error(e.getMessage());
 			return false;
 		}
-		
-		return false;
 		
 	}
 	@Transactional(readOnly = false)
@@ -1538,25 +1547,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		// NO ES EDITABLE SI.... 
 		
-		// Si es proveedor y...
-		if(genericAdapter.isProveedor(usuario)) {
-			
-			//el estado no es pendiente o rechazado por gestor
-			if(!DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()) &&
+		if(!Checks.esNulo(gasto.getEstadoGasto())) {	
+		
+			// Si es proveedor y...
+			if(genericAdapter.isProveedor(usuario)) {				
+				//el estado no está incompleto o no es pendiente o no es rechazado por gestor
+				if(!DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && 
+					!DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()) &&
 					!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()))  {
-				return false;
-			}
-			
-		} else {
-			
-			if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo()) || 
-				DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
-				return false;
-			}
+					return false;
+				}
+				
+			} else {
+				
+				if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo()) || 
+					DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
+					return false;
+				}
+			}			
 		}
+		
 		return true;
-		
-		
 	}
 	
 	public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor){

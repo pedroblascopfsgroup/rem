@@ -1,8 +1,8 @@
 Ext.define('HreRem.view.administracion.gastos.GestionProvisiones', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'gestionprovisiones',    
-    requires: ['HreRem.view.administracion.gastos.ProvisionesSearch', 'HreRem.view.administracion.gastos.ProvisionesList',
-    			'HreRem.view.administracion.gastos.ProvisionGastosList'],
+    requires: ['HreRem.view.administracion.gastos.GestionProvisionesSearch', 'HreRem.view.administracion.gastos.GestionProvisionesList',
+    			'HreRem.view.administracion.gastos.GestionProvisionGastosList'],
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -22,12 +22,12 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisiones', {
         				},
         				items: [
 		        			{	
-		        				xtype: 'provisionessearch',
+		        				xtype: 'gestionprovisionessearch',
 		        				collapsible: true,
 		        				reference: 'provisionesSearch'
 		        			},
 		        			{	
-		        				xtype: 'provisioneslist',
+		        				xtype: 'gestionprovisioneslist',
 								reference: 'provisionesList',
 								flex: 1
 		        			}
@@ -39,7 +39,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisiones', {
 				        collapsible: true
 				    },
         			{	
-						xtype: 'provisiongastoslist',
+						xtype: 'gestionprovisiongastoslist',
 						reference: 'provisionesGastosList',
 						collapsed: true,
 						scrollable: 'y',

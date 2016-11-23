@@ -59,6 +59,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();
 				    	}
+				    },
+				    failure: function(operation) {		    	
+				    	form.up("tabpanel").unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 				    }
 				});
 			} else {

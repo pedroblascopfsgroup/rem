@@ -48,17 +48,23 @@ public class UpdaterServiceSancionOfertaAlquilerDefinicionOferta implements Upda
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
+		ExpedienteComercial expedienteComercial = null;
+		
 		if(ofertaApi.checkAtribuciones(tramite.getTrabajo())){
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if(!Checks.esNulo(ofertaAceptada)){
-				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+				expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 				expedienteComercial.setFechaSancion(new Date());
+				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+				expedienteComercial.setEstado(estado);
 			}
 		}
 		else {
 			List<Oferta> ofertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 			if(!Checks.estaVacio(ofertas)) {
-				ExpedienteComercial expedienteComercial = null;
+				
 				for(Oferta oferta : ofertas) {
 					expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 					if(!Checks.esNulo(expedienteComercial))

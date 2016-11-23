@@ -119,6 +119,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		try {
 			model.put("data", gastoProveedorApi.getTabGasto(id, tab));
+			model.put("succes", true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
@@ -164,6 +165,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			model.put("exception", e.getMessage());
 		}
 		
 		return createModelAndViewJson(model);

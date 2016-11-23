@@ -1,12 +1,8 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +103,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -270,15 +265,19 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			for(EntregaReserva entrega: expediente.getReserva().getEntregas()) {
 				DtoEntregaReserva entregaReserva = new DtoEntregaReserva();
-				
-				entregaReserva.setIdEntrega(entrega.getId());
-				entregaReserva.setFechaCobro(entrega.getFechaEntrega());
-				entregaReserva.setImporte(entrega.getImporte());
-				entregaReserva.setObservaciones(entrega.getObservaciones());
-				entregaReserva.setTitular(entrega.getTitular());	
+				try {
+					beanUtilNotNull.copyProperties(entregaReserva, entrega);
+					beanUtilNotNull.copyProperty(entregaReserva, "idEntrega", entrega.getId());
+					beanUtilNotNull.copyProperty(entregaReserva, "fechaCobro", entrega.getFechaEntrega());
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				lista.add(entregaReserva);
-
 			}
 		}
 		return lista;
@@ -1508,25 +1507,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	public Posicionamiento dtoToPosicionamiento(DtoPosicionamiento dto, Posicionamiento posicionamiento){
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
-		try {//Comprobacion necesaria para cuando actualizan un registro donde han quitado la fecha
-			if(!Checks.esNulo(dto.getHoraAviso()) && dto.getFechaAviso().after(sdf.parse("01/01/1970")))
-				dto.setFechaAviso(this.setHourAndMinutesToDate(dto.getFechaAviso(),dto.getHoraAviso()));
-			
-			if(!Checks.esNulo(dto.getHoraPosicionamiento()) && dto.getFechaPosicionamiento().after(sdf.parse("01/01/1970")))
-				dto.setFechaPosicionamiento(this.setHourAndMinutesToDate(dto.getFechaPosicionamiento(),dto.getHoraPosicionamiento()));
-			
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
 		try {
-			
 			beanUtilNotNull.copyProperty(posicionamiento, "motivoAplazamiento", dto.getMotivoAplazamiento());
-			beanUtilNotNull.copyProperty(posicionamiento, "fechaAviso", dto.getFechaAviso());
-			beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaPosicionamiento());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaAviso", dto.getFechaHoraAviso());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraPosicionamiento());
 
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());
@@ -1541,25 +1525,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			ActivoProveedor notario = genericDao.get(ActivoProveedor.class, filtro);
 			posicionamiento.setNotario(notario);
 		}
-		posicionamiento.setFechaPosicionamiento(dto.getFechaPosicionamiento());
 		posicionamiento.setMotivoAplazamiento(dto.getMotivoAplazamiento());
 		
 		return posicionamiento;
-		
 	}
-	
+	/*
 	private Date setHourAndMinutesToDate(Date fecha, Date horaMinutos) {
 		
 		Calendar calFecha = new GregorianCalendar();
 		Calendar calHora = new GregorianCalendar();
-		
 		calFecha.setTime(fecha);
 		calHora.setTime(horaMinutos);
+		
 		calFecha.set(Calendar.HOUR_OF_DAY,calHora.get(Calendar.HOUR_OF_DAY));
 		calFecha.set(Calendar.MINUTE,calHora.get(Calendar.MINUTE));
 		
 		return calFecha.getTime();
-	}
+	}*/
 	
 	public DtoPage getComparecientesExpediente(Long idExpediente){
 		
@@ -2114,11 +2096,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	//			entregaReserva.setImporte(entrega.getImporte());
 	//			entregaReserva.setObservaciones(entrega.getObservaciones());
 	//			entregaReserva.setTitular(entrega.getTitular());	
-				
-				entrega.setImporte(dto.getImporte());
-				entrega.setFechaEntrega(dto.getFechaCobro());
-				entrega.setTitular(dto.getTitular());
-				entrega.setObservaciones(dto.getObservaciones());
+				beanUtilNotNull.copyProperties(entrega, dto);
+				//entrega.setImporte(dto.getImporte());
+				//entrega.setFechaEntrega(dto.getFechaCobro());
+				beanUtilNotNull.copyProperty(entrega, "fechaEntrega", dto.getFechaCobro());
+				//entrega.setTitular(dto.getTitular());
+				//entrega.setObservaciones(dto.getObservaciones());
 				entrega.setReserva(expedienteComercial.getReserva());
 				
 				expedienteComercial.getReserva().getEntregas().add(entrega);

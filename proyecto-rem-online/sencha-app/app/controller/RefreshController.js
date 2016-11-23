@@ -2,7 +2,7 @@
  * Controlador global de aplicación que gestiona la funcionalidad del menú de favoritos
  */
 Ext.define('HreRem.controller.RefreshController', {
-    extend: 'Ext.app.Controller',
+    extend: 'HreRem.ux.controller.ControllerBase',
 
     listen: {
     	component : {
@@ -22,12 +22,12 @@ Ext.define('HreRem.controller.RefreshController', {
 		if(resultQuery.length==1) {			
 			cmp = resultQuery[0];
 			cmp.fireEvent("refrescar", cmp);
-		} else if(resultQuery.length==0) {	
-			Ext.rise("No se ha encontrado el componente a refrescar");
-		} else {
-			Ext.rise("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
 		}
-   		
+		else if(resultQuery.length==0) {	
+			me.log("No se ha encontrado el componente a refrescar");
+		} else {
+			me.log("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
+		}
    	},
    	
    	
@@ -36,15 +36,17 @@ Ext.define('HreRem.controller.RefreshController', {
    		cmp, resultQuery;
    		
 		resultQuery = Ext.ComponentQuery.query(query);
+		
 		if(resultQuery.length == 1) {
 			cmp = resultQuery[0];
 			cmp.refreshOnActivate= true;
-		} else if(resultQuery.length==0) {	
-			Ext.rise("No se ha encontrado el componente a refrescar");
-		} else {
-			Ext.rise("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
 		}
-   		
+		else if(resultQuery.length==0) {	
+			me.log("No se ha encontrado el componente a refrescar");
+		} else {
+			me.log("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
+		}
+  		
    	},
    	
    	refreshEntityOnActivate: function(entity, idEntity) {

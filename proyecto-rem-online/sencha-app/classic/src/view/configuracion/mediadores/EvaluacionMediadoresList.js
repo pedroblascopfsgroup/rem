@@ -29,9 +29,34 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
 		   	dock: 'top',
 		   	items: [separador, evaluarBtn]
 		};
-   
-     	var esTopRendererPropuesto =  function(value) {
+
+        var carteraRenderer =  function(value) {
+        	var imagen = '';
+        	if(!Ext.isEmpty(value) && Ext.isDefined(value)){
+	        	var src = CONST.IMAGENES_CARTERA[value.toUpperCase()],
+	        	alt = value;
+	        	
+	        	if(!Ext.isEmpty(src)) {
+	        		imagen = '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="50px"></div>';
+	        	}
+        	}
+       		return imagen;
+        };
+        
+        var esOkRenderer = function (value) {
+        	var src = '',
+        	alt = '';
         	
+        	if (value == 1) {
+        		src = 'icono_OK.svg';
+        		alt = 'OK';
+        	} 
+
+			if(src != '')
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="18px"></div>';
+        };
+        
+     	var esTopRendererPropuesto =  function(value) {
         	var src = '',
         	alt = '';
         	
@@ -50,7 +75,6 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
         }; 
 
      	var esTopRenderer =  function(value) {
-        	
         	var src = '',
         	alt = '';
         	
@@ -70,7 +94,6 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
         }; 
 
      	var medalRenderer =  function(value) {
-        	
         	var src = '';
 
 			if (value != undefined) {
@@ -98,8 +121,8 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
         	} else {
         		return null;
         	}
- 
         };
+
         
 		me.setTitle(HreRem.i18n("title.evaluacion.mediadores.list"));
 		me.columns = [
@@ -138,11 +161,13 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
 		        {
 		            dataIndex: 'esCustodio',
 		            text: HreRem.i18n('header.evaluacion.mediadores.custodio'),
+		            renderer: esOkRenderer,
 		            flex: 0.3
 		        },
 		        {
 		            dataIndex: 'esHomologado',
 		            text: HreRem.i18n('header.evaluacion.mediadores.homologado'),
+		            renderer: esOkRenderer,
 		            flex: 0.3
 		        },	
 		        {
@@ -154,6 +179,7 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresList', {
 		            dataIndex: 'desCartera',
 		            text: HreRem.i18n('header.evaluacion.mediadores.cartera'),
 		            flex: 1,
+		            renderer: carteraRenderer,
 		            hidden: true
 		        },
 		        {

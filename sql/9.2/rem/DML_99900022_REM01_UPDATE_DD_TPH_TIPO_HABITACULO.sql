@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161120
+--## AUTOR=JORGE ROS
+--## FECHA_CREACION=20161124
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-1204
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_EAP_ESTADOS_AUTORIZ_PROP los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_TPH_TIPO_HABITACULO los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -32,20 +32,17 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-
+	V_TIPO_ID NUMBER(16); --Vle para el id DD_TPH_TIPO_HABITACULO
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Pendiente de envio'	,'Pendiente de envio'),
-        T_TIPO_DATA('02'	,'Enviada'	,'Enviada'),
-        T_TIPO_DATA('03'	,'Rechazada subsanable'	,'Rechazada subsanable'),
-        T_TIPO_DATA('04'	,'Rechazada no subsanable'	,'Rechazada no subsanable'),
-        T_TIPO_DATA('05'	,'Autorizada'	,'Autorizada'),
-        T_TIPO_DATA('06'	,'Contabilizada'	,'Contabilizada'),
-        T_TIPO_DATA('07'	,'Pagada'	,'Pagada')
-    ); 
+    	--			codigo STR	Descripcion									Descripcion Larga							
+    	T_TIPO_DATA('17'		,'Sótano'					,'Sótano'					),
+    	T_TIPO_DATA('18'		,'Altillo'					,'Altillo'					),
+    	T_TIPO_DATA('19'		,'Planta calle'				,'Planta calle'				)
+	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN	
@@ -53,26 +50,27 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    -- LOOP para insertar los valores en DD_EAP_ESTADOS_AUTORIZ_PROP -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_EAP_ESTADOS_AUTORIZ_PROP] ');
+    -- LOOP para insertar los valores en DD_TPH_TIPO_HABITACULO -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TPH_TIPO_HABITACULO] ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TPH_TIPO_HABITACULO WHERE DD_TPH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
-          
-          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_EAP_ESTADOS_AUTORIZ_PROP '||
-                    'SET DD_EAP_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_EAP_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' ');
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO '||
+                    'SET DD_TPH_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''' '|| 
+					', DD_TPH_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''' '||
+					', USUARIOMODIFICAR = ''REM_F2'' , FECHAMODIFICAR = SYSDATE '||
+					'WHERE DD_TPH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' ';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
@@ -80,18 +78,19 @@ BEGIN
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_EAP_ESTADOS_AUTORIZ_PROP.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TPH_TIPO_HABITACULO.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_EAP_ESTADOS_AUTORIZ_PROP (' ||
-                      'DD_EAP_ID, DD_EAP_CODIGO, DD_EAP_DESCRIPCION, DD_EAP_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO (' ||
+                      ' DD_TPH_ID, DD_TPH_CODIGO, DD_TPH_DESCRIPCION, DD_TPH_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      ' SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', '||
+                      ' 0, ''REM_F2'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_EAP_ESTADOS_AUTORIZ_PROP ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TPH_TIPO_HABITACULO ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION

@@ -2558,6 +2558,16 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		notarioContacto.setNombreProveedor(nombreCompleto);
 		notarioContacto.setDireccion(notario.getDireccion());
 		
+		if(!Checks.esNulo(notario.getProvincia())){
+			notarioContacto.setProvincia(notario.getProvincia().getDescripcion());
+		}
+		
+		if(!Checks.esNulo(notario.getLocalidad())){
+			notarioContacto.setLocalidad(notario.getLocalidad().getDescripcion());
+		}
+		
+		notarioContacto.setCodigoPostal(String.valueOf(notario.getCodigoPostal()));
+		
 		return true;
 	}
 	
@@ -2574,10 +2584,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		notarioContactoDto.setFax(notarioContacto.getFax());
 		notarioContactoDto.setEmail(notarioContacto.getEmail());
 
-		if(!Checks.esNulo(notarioContacto.getProvincia())){
-			notarioContactoDto.setProvincia(notarioContacto.getProvincia().getDescripcion());
-		}
-		
 		return notarioContactoDto;
 	}
 	

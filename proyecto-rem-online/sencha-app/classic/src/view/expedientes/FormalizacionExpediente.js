@@ -216,14 +216,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					        	dataIndex: 'nombreProveedor',
 					        	flex: 1
 					       },
-						   {    text: HreRem.i18n('fieldlabel.personaContacto'),
-					        	dataIndex: 'personaContacto',
-					        	flex: 1
-					       },
-						   {    text: HreRem.i18n('fieldlabel.cargo'),
-					        	dataIndex: 'cargo',
-					        	flex: 1
-					       },
 						   {
 					            text: HreRem.i18n('header.direccion'),
 					            dataIndex: 'direccion',
@@ -232,8 +224,29 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						   {
 					            text: HreRem.i18n('header.provincia'),
 					            dataIndex: 'provincia',
+					            hidden: true,
 					            flex: 1
-						   },	
+						   },
+						   {
+					            text: HreRem.i18n('header.municipio'),
+					            dataIndex: 'localidad',
+					            hidden: true,
+					            flex: 1
+						   },
+						   {
+					            text: HreRem.i18n('fieldlabel.codigo.postal'),
+					            dataIndex: 'codigoPostal',
+					            hidden: true,
+					            flex: 1
+						   },
+						   {    text: HreRem.i18n('fieldlabel.personaContacto'),
+					        	dataIndex: 'personaContacto',
+					        	flex: 1
+					       },
+						   {    text: HreRem.i18n('fieldlabel.cargo'),
+					        	dataIndex: 'cargo',
+					        	flex: 1
+					       },
 						   {
 						   		text: HreRem.i18n('fieldlabel.telefono'),
 					            dataIndex: 'telefono1',

@@ -136,10 +136,10 @@ BEGIN
 		CAST(SOC.DZ AS VARCHAR2(5 CHAR))                                                		AS DZ,
 		CAST(SOC.DT AS VARCHAR2(5 CHAR))                                                		AS DT,
 		CAST(PVE.PVE_AUTORIZACION_WEB AS VARCHAR2(5 CHAR))                                      AS MODIFICAR_INFORMES,
-		CASE WHEN (PVE.BORRADO = ''1'') 
-		    THEN CAST(0 AS NUMBER(1,0))
-		    ELSE CAST(1 AS NUMBER(1,0))
-		END 																		           	ACTIVO,
+		CASE WHEN (PVE.PVE_FECHA_BAJA IS NULL OR PVE.PVE_FECHA_BAJA > TO_DATE(SYSDATE, ''DD/MM/YY''))  
+					THEN CAST(1 AS NUMBER(1,0))
+					ELSE CAST(0 AS NUMBER(1,0))
+		END 																		ACTIVO,
 		CAST(DEL.PRD_LOCAL_ABIERTO_PUBLICO AS NUMBER(1,0))                                     	AS ABIERTA,
 	    CAST(DEL.DD_TVI_CODIGO AS VARCHAR2(20 CHAR))                                 			AS DELEGACIONES_COD_TIPO_VIA,
 	    CAST(DEL.PRD_NOMBRE AS VARCHAR2(100 CHAR))                                      		AS DELEGACIONES_NOMBRE_CALLE,

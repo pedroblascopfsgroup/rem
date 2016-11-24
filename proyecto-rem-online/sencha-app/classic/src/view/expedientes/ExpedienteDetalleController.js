@@ -1191,6 +1191,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.changeHora(me.lookupReference('horaPosicionamientoRef'));
 	},
 	
+	onRowClickPosicionamiento:  function(gridView, record) {
+		var me = this;    		
+
+		me.getViewModel().set("posicionamSelected", record);
+		me.getViewModel().notify();
+		me.lookupReference('listadoNotarios').getStore().load();
+	},
+	
 	changeFecha: function(campoFecha) {
 		var me = this,
 		referencia = campoFecha.getReference().replace('fecha','hora'),

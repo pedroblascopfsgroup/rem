@@ -3,12 +3,12 @@
  */
 Ext.define('HreRem.model.Notario', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
+    idProperty: 'idContacto',
 
     fields: [    
   
     		{
-    			name:'idActivoProveedorContacto'
+    			name:'id'
     		},
     		{
     			name:'nombreProveedor'

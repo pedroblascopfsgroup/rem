@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
@@ -2509,51 +2510,75 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<DtoActivoProveedor> getNotariosExpediente(Long idExpediente){
-		ExpedienteComercial expediente= findOne(idExpediente);
-		List<DtoActivoProveedor> notarios= new ArrayList<DtoActivoProveedor>();
-		for(Posicionamiento posicionamiento : expediente.getPosicionamientos()) {
+	public List<DtoNotarioContacto> getContactosNotario(Long idProveedor){
+		
+		List<ActivoProveedorContacto> listaContactos= new ArrayList<ActivoProveedorContacto>();
+		List<DtoNotarioContacto> listaNotariosContactos = new ArrayList<DtoNotarioContacto>();
+		
+		Filter filtroProveedorId = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+		listaContactos = (List<ActivoProveedorContacto>) genericDao.getList(ActivoProveedorContacto.class, filtroProveedorId);
+
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", idProveedor);
+		ActivoProveedor notarioProveedor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtroId);
+		
+		// Toma los datos de ActivoProveedorContacto
+		DtoNotarioContacto notarioContactoDto = new DtoNotarioContacto();
+		for(ActivoProveedorContacto notarioContacto : listaContactos) {
 			
-			ActivoProveedor notario = posicionamiento.getNotario();
-			if(!Checks.esNulo(notario)) {
-				DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);		
-				notarios.add(dtoNotario);
-			}
+			// Toma los datos de ActivoProveedorContacto
+			notarioContactoDto = activoProveedorContactoToNotariosContactoDto(notarioContacto);
+			listaNotariosContactos.add(notarioContactoDto);
+			
 		}
 		
-		return notarios;
+		// A la lista obtenida, agrega los datos de ActivoProveedor
+		for(DtoNotarioContacto notarioContacto : listaNotariosContactos) {
+			
+			addActivoProveedorToNotariosContactoDto(notarioProveedor, notarioContacto);
+			
+		}
+
+		return listaNotariosContactos;
 		
 	}
 
-	private DtoActivoProveedor activoProveedorToDto(ActivoProveedor notario) {
+	private boolean addActivoProveedorToNotariosContactoDto(ActivoProveedor notario, DtoNotarioContacto notarioContacto) {
 		
-		DtoActivoProveedor proveedorDto= new DtoActivoProveedor();
-		String nombreCompleto= "";
+		notarioContacto.setId(notario.getId());
 		
-		proveedorDto.setId(notario.getId());
+		String nombreCompleto = new String();
 		if(!Checks.esNulo(notario.getNombre())){
 			nombreCompleto= notario.getNombre();
 		} else {
 			nombreCompleto = notario.getNombreComercial();
 		}
 		
-		proveedorDto.setNombreProveedor(nombreCompleto);
-		proveedorDto.setDireccion(notario.getDireccion());
+		notarioContacto.setNombreProveedor(nombreCompleto);
+		notarioContacto.setDireccion(notario.getDireccion());
+		
+		return true;
+	}
+	
+	private DtoNotarioContacto activoProveedorContactoToNotariosContactoDto(ActivoProveedorContacto notarioContacto) {
+		DtoNotarioContacto notarioContactoDto= new DtoNotarioContacto();
 
+		notarioContactoDto.setIdContacto(notarioContacto.getId());
+		
+		notarioContactoDto.setPersonaContacto(notarioContacto.getNombre());
+		notarioContactoDto.setCargo(notarioContacto.getCargo());
+		
+		notarioContactoDto.setTelefono1(notarioContacto.getTelefono1());
+		notarioContactoDto.setTelefono2(notarioContacto.getTelefono2());
+		notarioContactoDto.setFax(notarioContacto.getFax());
+		notarioContactoDto.setEmail(notarioContacto.getEmail());
 
-		if(!Checks.esNulo(notario.getTelefono1())){
-			proveedorDto.setTelefono(notario.getTelefono1());
-		}
-		else{
-			proveedorDto.setTelefono(notario.getTelefono2());
-		}
-		proveedorDto.setEmail(notario.getEmail());
-		if(!Checks.esNulo(notario.getProvincia())){
-			proveedorDto.setProvincia(notario.getProvincia().getDescripcion());
+		if(!Checks.esNulo(notarioContacto.getProvincia())){
+			notarioContactoDto.setProvincia(notarioContacto.getProvincia().getDescripcion());
 		}
 		
-		return proveedorDto;
+		return notarioContactoDto;
 	}
 	
 	public DatosClienteDto buscarNumeroUrsus(String numeroDocumento, String tipoDocumento) throws Exception{

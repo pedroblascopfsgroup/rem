@@ -392,8 +392,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	model: 'HreRem.model.Notario',
 	    	proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'expedientecomercial/getNotariosExpediente',
-		        extraParams: {idExpediente: '{expediente.id}'}
+		        remoteUrl: 'expedientecomercial/getContactosNotario',
+		        extraParams: {idProveedor: '{posicionamSelected.idProveedorNotario}'}
 	    	}
 		},
 		

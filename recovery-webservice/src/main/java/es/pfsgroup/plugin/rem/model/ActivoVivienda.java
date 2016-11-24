@@ -91,12 +91,12 @@ public class ActivoVivienda extends ActivoInfoComercial implements Serializable 
 	
 	@Column(name = "VIV_DISTRIBUCION_TXT")
 	private String distribucionTxt;
-
+/*
     @OneToMany(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ICO_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoDistribucion> distribucion;
-    
+    */
     
 
 	public DDTipoRenta getTipoRenta() {
@@ -226,13 +226,13 @@ public class ActivoVivienda extends ActivoInfoComercial implements Serializable 
 	public void setDistribucionTxt(String distribucionTxt) {
 		this.distribucionTxt = distribucionTxt;
 	}
-	
+	/*
 	public List<ActivoDistribucion> getDistribucion() {
 		return distribucion;
 	}
 
 	public void setDistribucion(List<ActivoDistribucion> distribucion) {
 		this.distribucion = distribucion;
-	}  
+	}  */
 
 }

@@ -39,6 +39,7 @@ Ext.define('HreRem.view.configuracion.mediadores.EvaluacionMediadoresController'
 			
 			var me = this;    		
 			me.getViewModel().set("mediadorSelected", record);
+			me.getViewModel().notify();
 			
 			me.lookupReference('carteraMediadorStats').expand();	
 			me.lookupReference('carteraMediadorStats').getStore().loadPage(1);

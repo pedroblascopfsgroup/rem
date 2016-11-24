@@ -50,11 +50,7 @@ public class OperacionVentaController {
 		public void operacionVenta(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {	
 			
 			PropuestaRequestDto jsonData = null;
-			OfertaSimpleDto operacionDto = null;
-			
-			Map<String, Object> params = null;
-			List<Object> dataSource = null;			
-			File fileSalidaTemporal = null;		
+			OfertaSimpleDto operacionDto = null;	
 			
 			//VALIDACIÓN DEL JSON ENTRADA
 			try {
@@ -80,10 +76,20 @@ public class OperacionVentaController {
 				e1.printStackTrace();
 			}
 			
+			operacionVentaPDFByOfertaHRE(operacionDto.getOfertaHRE(), request, response);
+		}
+		
+		public void operacionVentaPDFByOfertaHRE (Long ofertaHRE, RestRequestWrapper request,HttpServletResponse response) {
+			
+			ModelMap model = new ModelMap();
+			Map<String, Object> params = null;
+			List<Object> dataSource = null;			
+			File fileSalidaTemporal = null;	
+			
 			Oferta oferta = null;
 			//Primero comprabar que existe OFERTA
 			if (model.get("error")==null || model.get("error")=="") {
-				oferta = ofertaApi.getOfertaByNumOfertaRem(operacionDto.getOfertaHRE());
+				oferta = ofertaApi.getOfertaByNumOfertaRem(ofertaHRE);
 				if (oferta==null) {
 					model.put("error", RestApi.REST_NO_RELATED_OFFER);				
 				}

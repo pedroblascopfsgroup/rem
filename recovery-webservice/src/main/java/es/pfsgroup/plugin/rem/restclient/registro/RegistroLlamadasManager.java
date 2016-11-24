@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.restclient.registro;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,15 @@ public class RegistroLlamadasManager {
 		
 		llamadaDao.guardaRegistro(llamada);
 		
+		
+	}
+	@Transactional(readOnly = false, noRollbackFor=ErrorServicioWebcom.class,propagation=Propagation.NEVER)
+	public void guardaRegistroLlamada(List<RestLlamada> llamadas){
+		logger.debug("Guardando traza de la llamada en BD");
+		
+		for(RestLlamada llamada: llamadas){
+			llamadaDao.guardaRegistro(llamada);
+		}
 		
 	}
 

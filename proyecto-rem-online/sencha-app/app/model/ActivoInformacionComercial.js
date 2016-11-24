@@ -106,6 +106,7 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     		{
     			name:'numPlantasInter'
     		},
+    		//Local comercial
     		{
     			name:'mtsFachadaPpal'
     		},
@@ -130,6 +131,39 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     		{
     			name:'usuAnterior'
     		},
+    		{
+    			name:'existeSalidaHumos',
+				type: 'boolean'
+    		},
+    		{
+    			name:'existeSalidaEmergencias',
+				type: 'boolean'
+    		},
+    		{
+    			name:'existeAccesoMinusvalidos',
+				type: 'boolean'
+    		},
+    		{
+    			name:'existeOtrasCaracteristicas',
+				type: 'boolean',
+    			calculate: function(data) { 
+    				return !Ext.isEmpty(data.otrosOtrasCaracteristicas);
+    			},
+    			depends: 'otrosOtrasCaracteristicas'
+    		},
+    		{
+    			name:'otrosOtrasCaracteristicas'
+    		},
+    		{
+    			name:'electricidad'
+    		},
+    		{
+    			name:'agua'
+    		},
+    		{
+    			name:'gas'
+    		},
+    		// -----------
     		{
     			name:'destinoCoche'
     		},

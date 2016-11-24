@@ -3,6 +3,9 @@ package es.pfsgroup.plugin.rem.restclient.schedule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,10 +14,12 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDaoError;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 
 /**
@@ -37,6 +42,9 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	private boolean running = false;
 
 	private RegistroLlamadasManager registroLlamadas;
+
+	@Resource
+	private Properties appProperties;
 
 	/*
 	 * Esa lista se puebla una vez terminado de cargar el contexto de Spring.
@@ -144,6 +152,17 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			this.notifyAll();
 		}
 
+		Integer tamanyoBloque = null;
+		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
+				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : null;
+		try {
+			if (tamanyoBloqueProperties != null) {
+				tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
+			}
+		} catch (Exception e) {
+			tamanyoBloque = null;
+		}
+
 		long iteracion = System.currentTimeMillis();
 		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
 		try {
@@ -159,29 +178,35 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
 					if (handler.isActivo()) {
 						logger.debug("EJECUTANDO HANDLER: " + handler.getClass().getName());
-						RestLlamada registro = new RestLlamada();
-						registro.setIteracion(iteracion);
-						boolean somethingdone = false;
-						try {
-							long startTime = System.currentTimeMillis();
+						ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
+						long startTime = System.currentTimeMillis();
 
-							logger.debug(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
-							Class control = handler.getDtoClass();
-							List listPendientes = handler.listPendientes(control, registro);
-							somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
-
-							ejecutaTarea(handler, listPendientes, control, registro);
-
-							logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
-									+ "]: " + (System.currentTimeMillis() - startTime));
-						} catch (CambiosBDDaoError e) {
-							logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
-									+ "], no se han podido obtener los cambios", e);
-						} finally {
-							if (somethingdone && (registroLlamadas != null)) {
-								registroLlamadas.guardaRegistroLlamada(registro);
+						logger.debug(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
+						Class control = handler.getDtoClass();
+						CambiosList listPendientes = new CambiosList(tamanyoBloque);
+						handler.actualizarVistaMaterializada();
+						do {
+							boolean somethingdone = false;
+							RestLlamada registro = new RestLlamada();
+							registro.setIteracion(iteracion);
+							try {
+								listPendientes = handler.listPendientes(control, registro, listPendientes);
+								somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
+								ejecutaTarea(handler, listPendientes, control, registro);
+								logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
+										+ "]: " + (System.currentTimeMillis() - startTime));
+							} catch (CambiosBDDaoError e) {
+								logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
+										+ "], no se han podido obtener los cambios", e);
+							} finally {
+								if (somethingdone && (registroLlamadas != null)) {
+									registroLlamadas.guardaRegistroLlamada(registro);
+									llamadas.add(registro);
+								}
 							}
-						}
+						} while (listPendientes != null && listPendientes.getPaginacion().getHasMore());
+						logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+						handler.marcaComoEnviados(control, llamadas);
 					}
 				}
 			} else {
@@ -214,8 +239,9 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				}
 			}
 
-			logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
-			handler.marcaComoEnviados(control, registro);
+			// logger.debug(handler.getClass().getName() + ": marcando los
+			// registros de la BD como enviados");
+			// handler.marcaComoEnviados(control, registro);
 
 		} else {
 			logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");

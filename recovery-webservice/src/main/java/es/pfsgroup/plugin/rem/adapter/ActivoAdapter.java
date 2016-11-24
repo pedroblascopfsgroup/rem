@@ -1971,18 +1971,17 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(id);
 		List<DtoDistribucion> listaDtoDistribucion = new ArrayList<DtoDistribucion>();
 		
-		if (activo.getInfoComercial() instanceof ActivoVivienda)
-		{
-			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
+		//if (activo.getInfoComercial() instanceof ActivoVivienda) {
+			ActivoInfoComercial infoComercial = (ActivoInfoComercial) activo.getInfoComercial();
 			
-			if (vivienda.getDistribucion() != null)
+			if (infoComercial.getDistribucion() != null)
 			{
-				for (int i = 0; i < vivienda.getDistribucion().size(); i++)
+				for (int i = 0; i < infoComercial.getDistribucion().size(); i++)
 				{
 					DtoDistribucion distribucionDto = new DtoDistribucion();
 					try
 					{
-						ActivoDistribucion distribucion = vivienda.getDistribucion().get(i);
+						ActivoDistribucion distribucion = infoComercial.getDistribucion().get(i);
 						BeanUtils.copyProperties(distribucionDto, distribucion);
 						BeanUtils.copyProperty(distribucionDto, "idDistribucion", distribucion.getId());
 						if (distribucion.getTipoHabitaculo() != null)
@@ -1999,7 +1998,7 @@ public class ActivoAdapter {
 					listaDtoDistribucion.add(distribucionDto);
 				}
 			}
-		}
+		//}
 		
 		return listaDtoDistribucion;
 	}

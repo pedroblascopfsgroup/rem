@@ -236,17 +236,19 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			// Obtener el último estado o estado actual.
 			ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = list.get(0);
 			String tipoPublicacionInicial = null;
-			
+
 			// Obtener el tipo de publicación de la que viene, si la hubiera, y su motivo si viene de publicación forzada.
 			for(ActivoHistoricoEstadoPublicacion estado: list){
-				if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())) {
+
+				if(!Checks.esNulo(estado.getEstadoPublicacion()) && DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())) {
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO;
 					dto.setMotivoPublicacion(estado.getMotivo());
 					break;
-				} else if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
+				} else if(!Checks.esNulo(estado.getEstadoPublicacion()) && DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO;
 					break;
 				}
+				
 			}
 			
 			if(!Checks.esNulo(activoHistoricoEstadoPublicacion)){
@@ -302,5 +304,4 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		return dto;
 	}
-
 }

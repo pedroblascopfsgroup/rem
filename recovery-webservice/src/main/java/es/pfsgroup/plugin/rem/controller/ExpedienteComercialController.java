@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
+import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
@@ -564,10 +565,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getNotariosExpediente(ModelMap model, Long idExpediente) {
+	public ModelAndView getContactosNotario(ModelMap model, Long idProveedor) {
 		
 		try {
-			List<DtoActivoProveedor> lista = expedienteComercialApi.getNotariosExpediente(idExpediente);
+			List<DtoNotarioContacto> lista = expedienteComercialApi.getContactosNotario(idProveedor);
 			
 			model.put("data", lista);
 			model.put("success", true);

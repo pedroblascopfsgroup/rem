@@ -75,9 +75,11 @@ public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
 			mapaValores.put("Activo", activo.getNumActivoUvem().toString());
 			mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
 			
-			//Logo para el informe 1-Bankia / 2-Haya
-			//Para más info hablar con CARLOS PONS
-			mapaValores.put("Banco", "1");
+			if (activo.getCartera()!=null && activo.getCartera().getCodigo()!=null) {
+				mapaValores.put("Cartera", FileUtilsREM.stringify(activo.getCartera().getCodigo().toString()));
+			} else {
+				mapaValores.put("Cartera", FileUtilsREM.stringify(null));
+			}
 			
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
 			Long tipo = genericDao.get(EXTDDTipoGestor.class, filter).getId();		

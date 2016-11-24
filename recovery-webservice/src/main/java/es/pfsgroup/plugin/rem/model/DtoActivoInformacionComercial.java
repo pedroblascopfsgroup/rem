@@ -61,7 +61,10 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private String usuIdoneo;
 	private String usuAnterior;
 	private String observaciones;
-
+	private Boolean existeSalidaHumos; 
+	private Boolean existeSalidaEmergencias;
+	private Boolean existeAccesoMinusvalidos;
+	private String otrosOtrasCaracteristicas; 
 	
 	//Para la info de edificio
 	private Integer ascensor;
@@ -210,14 +213,17 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private Integer electricidadConContador;
 	private Integer electricidadBuenEstado;
 	private Integer electricidadDefectuosa;
+	private Integer electricidad;
 	private Integer aguaConContador;
 	private Integer aguaBuenEstado;
 	private Integer aguaDefectuosa;
     private Integer aguaCalienteCentral;
 	private Integer aguaCalienteGasNat;
+	private Integer agua;
 	private Integer gasConContador;
 	private Integer gasBuenEstado;
 	private Integer gasDefectuosa;
+	private Integer gas;
 	private Integer calefaccionCentral;
 	private Integer calefaccionGasNat;
 	private Integer calefaccionRadiadorAlu;
@@ -1599,6 +1605,48 @@ public class DtoActivoInformacionComercial extends WebDto {
 	}
 	public void setTipoActivoCodigo(String tipoActivoCodigo) {
 		this.tipoActivoCodigo = tipoActivoCodigo;
+	}
+	public Boolean getExisteSalidaHumos() {
+		return existeSalidaHumos;
+	}
+	public void setExisteSalidaHumos(Boolean existeSalidaHumos) {
+		this.existeSalidaHumos = existeSalidaHumos;
+	}
+	public Boolean getExisteSalidaEmergencias() {
+		return existeSalidaEmergencias;
+	}
+	public void setExisteSalidaEmergencias(Boolean existeSalidaEmergencias) {
+		this.existeSalidaEmergencias = existeSalidaEmergencias;
+	}
+	public Boolean getExisteAccesoMinusvalidos() {
+		return existeAccesoMinusvalidos;
+	}
+	public void setExisteAccesoMinusvalidos(Boolean existeAccesoMinusvalidos) {
+		this.existeAccesoMinusvalidos = existeAccesoMinusvalidos;
+	}
+	public String getOtrosOtrasCaracteristicas() {
+		return otrosOtrasCaracteristicas;
+	}
+	public void setOtrosOtrasCaracteristicas(String otrosOtrasCaracteristicas) {
+		this.otrosOtrasCaracteristicas = otrosOtrasCaracteristicas;
+	}
+	public Integer getElectricidad() {
+		return electricidad;
+	}
+	public void setElectricidad(Integer electricidad) {
+		this.electricidad = electricidad;
+	}
+	public Integer getAgua() {
+		return agua;
+	}
+	public void setAgua(Integer agua) {
+		this.agua = agua;
+	}
+	public Integer getGas() {
+		return gas;
+	}
+	public void setGas(Integer gas) {
+		this.gas = gas;
 	}
 
 	

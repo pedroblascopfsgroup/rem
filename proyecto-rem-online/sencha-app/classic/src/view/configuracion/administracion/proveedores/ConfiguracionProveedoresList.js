@@ -1,23 +1,21 @@
 Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedoresList', {
-    extend		: 'HreRem.view.common.GridBaseEditableRow',
-    xtype		: 'configuracionproveedoreslist',
-	topBar: true,
-	idPrincipal : 'proveedor.id',
-	editOnSelect: false,
+    extend			: 'HreRem.view.common.GridBaseEditableRow',
+    xtype			: 'configuracionproveedoreslist',
+	topBar			: true,
+	idPrincipal 	: 'proveedor.id',
+	editOnSelect	: false,
 	disabledDeleteBtn: true,
-	
-    bind: {
+    bind			: {
         store: '{configuracionproveedores}'
     },
-    
-    
+
     initComponent: function () {
      	var me = this;
-		
+
      	me.listeners = {
     			rowdblclick: 'abrirPestañaProveedor'
     	    };
-	    
+
 		me.columns = [
 		        {
 		            dataIndex: 'id',
@@ -95,6 +93,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		        }
 		
 		    ];
+
 		    me.dockedItems = [
 		        {
 		            xtype: 'pagingtoolbar',
@@ -107,15 +106,14 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		            }
 		        }
 		    ];
-		    
+
 		    // Abrira la ficha del proveedor al crear uno nuevo desde el listado
 		    me.saveSuccessFn = function() {
 		    	var nifProveedor = me.getStore().getAt(0).get('nifProveedor');
-		    	
+
 		    	me.lookupController().openProveedorByNif(nifProveedor);
 		    },
-		    
+
 		    me.callParent();
    }
-
 });

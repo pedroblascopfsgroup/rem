@@ -305,8 +305,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     disableRemoveButton: function(disabled) {
     	
     	var me = this;
-    	
-    	if (!Ext.isEmpty(me.down('#removeButton') && !me.disabledDeleteBtn)) {
+
+    	if (!Ext.isEmpty(me.down('#removeButton')) && !me.disabledDeleteBtn) {
     		me.down('#removeButton').setDisabled(disabled);    		
     	}
     },

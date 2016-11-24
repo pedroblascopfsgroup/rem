@@ -1043,7 +1043,17 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		return proveedor.getId();
 	}
-	
+
+	@Override
+	public Long getCodigoProveedorByNif(String nif) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nif);
+		Order orden = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		ActivoProveedor proveedor = genericDao.getListOrdered(ActivoProveedor.class, orden, filtro).get(0);
+		
+		return proveedor.getCodigoProveedorRem();
+	}
+
 	@Override
 	public Page getMediadoresEvaluar(DtoMediadorEvaluaFilter dtoMediadorEvaluaFilter) {
 		

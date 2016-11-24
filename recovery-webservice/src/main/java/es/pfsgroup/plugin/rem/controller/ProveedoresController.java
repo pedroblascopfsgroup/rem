@@ -453,6 +453,7 @@ public class ProveedoresController extends ParadiseJsonController {
 	public ModelAndView getIdProveedorByNif(HttpServletRequest request, ModelMap model) {
 		try {
 			model.put("id", proveedoresApi.getIdProveedorByNif(request.getParameter("nifProveedor")).toString());
+			model.put("codigo", proveedoresApi.getCodigoProveedorByNif(request.getParameter("nifProveedor")).toString());
 			model.put("success", true);
 		} catch (Exception e) {
 			e.printStackTrace();

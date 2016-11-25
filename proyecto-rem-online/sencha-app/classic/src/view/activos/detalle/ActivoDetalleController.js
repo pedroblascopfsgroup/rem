@@ -1187,7 +1187,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var id = chkbx.getReference();
     	var view = me.getView();
 
-    	if(!chkbx.getValue() && (id != "chkbxpublicacionforzada" || id != "chkbxpublicacionordinaria")){
+    	if(!chkbx.getValue() && id != "chkbxpublicacionforzada" && id != "chkbxpublicacionordinaria"){
     		// si el checkbox esta siendo desactivado y no es de la sección 'publicación', tan sólo resetear conenido textbox de la propia sección del checkbox.
     		switch (id){
         	case "chkbxpublicacionocultarprecio":
@@ -1212,7 +1212,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         	}
     		return;
     	}
-    	
+
     	switch (id){
     	case "chkbxpublicacionordinaria":
     		// checkbox.

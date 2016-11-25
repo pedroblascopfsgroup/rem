@@ -391,6 +391,16 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'tipoComercializacionCodigo'
+			},
+			{
+				name: 'isDestinoComercialAlquiler',
+    			calculate: function(data) { 
+    				return data.tipoComercializacionCodigo !=  CONST.TIPOS_COMERCIALIZACION['VENTA'];
+    			},
+    			depends: 'tipoComercializacionCodigo'
+			},
+			{
 				name: 'fechaAplicaComercializar',
     			type:'date',
     			dateFormat: 'c'

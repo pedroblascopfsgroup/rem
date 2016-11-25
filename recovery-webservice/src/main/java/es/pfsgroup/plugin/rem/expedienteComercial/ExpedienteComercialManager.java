@@ -2366,7 +2366,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 		
 		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
-			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
+			solicitaFinanciacion = BooleanUtils.toBoolean(expediente.getCondicionante().getSolicitaFinanciacion());
 		}
 
 		numActivoEspecial = Checks.esNulo(activo.getNumActivoUvem()) ? 0 : activo.getNumActivoUvem().intValue();
@@ -2456,7 +2456,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		//SolicitaFinaciacion
 		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
-			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
+			solicitaFinanciacion = BooleanUtils.toBoolean(expediente.getCondicionante().getSolicitaFinanciacion());
 		}
 		instancia.setFinanciacionCliente(solicitaFinanciacion);
 		//OfertaHRE

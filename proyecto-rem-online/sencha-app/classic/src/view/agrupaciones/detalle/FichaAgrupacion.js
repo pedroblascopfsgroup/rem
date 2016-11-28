@@ -158,11 +158,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						{ 
 		                	xtype: 'datefieldbase',
 		                	fieldLabel: HreRem.i18n('header.fecha.inicio.vigencia'),
-		                	maxValue: null,
 			            	bind: {
 			            		value: '{agrupacionficha.fechaInicioVigencia}',
 			            		readOnly: '{agrupacionficha.existeFechaBaja}',
-			            		hidden: '{!esAgrupacionAsistida}'
+			            		hidden: '{!esAgrupacionAsistida}',
+			            		maxValue: '{agrupacionficha.fechaFinVigencia}'
 			            	}		
 						},
 						{ 
@@ -172,7 +172,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	bind: {
 			            		value: '{agrupacionficha.fechaFinVigencia}',
 			            		readOnly: '{agrupacionficha.existeFechaBaja}',
-				        		hidden: '{!esAgrupacionAsistida}'
+				        		hidden: '{!esAgrupacionAsistida}',
+				        		minValue: '{agrupacionficha.fechaInicioVigencia}'
 			            	}		
 						}
 					]

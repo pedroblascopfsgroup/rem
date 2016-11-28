@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
@@ -84,6 +86,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	private HibernateExecutionFacade queryExecutor;
 
 	private Long restUserId;
+	
+	@Resource
+	private Properties appProperties;
 
 	/**
 	 * Devuelve los registros que han cambiado en la BD
@@ -103,7 +108,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 * @return
 	 */
-	public List<CambioBD> listCambios(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
+	public CambiosList listCambios(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro,
+			CambiosList cambios) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -113,10 +119,11 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 
 		Session session = this.sesionFactoryFacade.getSession(this);
-		ArrayList<CambioBD> cambios = new ArrayList<CambioBD>();
+		cambios.clear();
 
 		FieldInfo[] fields = getDtoFields(dtoClass);
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
+
 		try {
 			DbIdContextHolder.setDbId(1L);
 
@@ -126,10 +133,22 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String selectFromDatosHistoricos = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos();
 			String queryString = selectFromDatosActuales + MINUS + selectFromDatosHistoricos;
 
+			if (cambios.getPaginacion().getTamanyoBloque() != null) {
+				queryString = "SELECT " + columns + " FROM (SELECT ROWNUM AS CONTADOR,CONSULTA.* FROM(" + queryString
+						+ ") CONSULTA) WHERE CONTADOR >"
+						+ String.valueOf(
+								cambios.getPaginacion().getTamanyoBloque() * cambios.getPaginacion().getNumeroBloque())
+						+ " AND CONTADOR <" + String.valueOf(((cambios.getPaginacion().getNumeroBloque() + 1)
+								* cambios.getPaginacion().getTamanyoBloque()) + 1);
+			}
+
 			List<Object[]> resultado = null;
 
-			refreshMaterializedView(infoTablas, session);
-
+			// refreshMaterializedView(infoTablas, session);
+			// System.out.println("########################################");
+			// System.out.println("bloque:"+
+			// cambios.getPaginacion().getNumeroBloque());
+			// System.out.println(queryString);
 			try {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Ejecutando: " + queryString);
@@ -140,7 +159,17 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 						infoTablas, t);
 			}
 
-			if (resultado != null) {
+			if (resultado != null && resultado.size() > 0) {
+				// existen o pueden existir
+				if (cambios.getPaginacion().getTamanyoBloque() != null) {
+					if (resultado.size() == cambios.getPaginacion().getTamanyoBloque()) {
+						cambios.getPaginacion().setHasMore(true);
+						cambios.getPaginacion().setNumeroBloque(cambios.getPaginacion().getNumeroBloque() + 1);
+
+					} else {
+						cambios.getPaginacion().setHasMore(false);
+					}
+				}
 				String selectDatoHistorico = null;
 				int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
 				try {
@@ -163,6 +192,10 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					throw new CambiosBDDaoError("Ha ocurrido un error al obtener el registro en 'datos historicos'",
 							selectDatoHistorico, infoTablas, t);
 				}
+			} else {
+				if (cambios.getPaginacion().getTamanyoBloque() != null) {
+					cambios.getPaginacion().setHasMore(false);
+				}
 			}
 		} finally {
 			if (logger.isDebugEnabled()) {
@@ -182,7 +215,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	}
 
-	public List<CambioBD> listDatosActuales(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
+	public CambiosList listDatosActuales(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -192,7 +225,18 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 
 		Session session = this.sesionFactoryFacade.getSession(this);
-		ArrayList<CambioBD> cambios = new ArrayList<CambioBD>();
+		
+		Integer tamanyoBloque = null;
+		
+		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
+				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : "";
+		try{
+			tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
+		}catch(Exception e){
+			tamanyoBloque = null;
+		}
+		
+		CambiosList cambios = new CambiosList(tamanyoBloque);
 
 		FieldInfo[] fields = getDtoFields(dtoClass);
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
@@ -261,7 +305,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            Objeto en el que se irá dejando trazas de tiempos de
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
-	public void marcaComoEnviados(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
+	public void marcaComoEnviados(Class<?> dtoClass, InfoTablasBD infoTablas, List<RestLlamada> registro) {
 		long startTime = System.currentTimeMillis();
 
 		if (dtoClass == null) {
@@ -288,7 +332,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryDelete);
 				if (registro != null) {
-					registro.logTiempoBorrarHistorico();
+					for (RestLlamada llamada : registro) {
+						llamada.logTiempoBorrarHistorico();
+					}
 				}
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al borrar la tabla de 'datos históricos'",
@@ -303,7 +349,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryInsert);
 				if (registro != null) {
-					registro.logTiempoInsertarHistorico();
+					for (RestLlamada llamada : registro) {
+						llamada.logTiempoInsertarHistorico();
+					}
 				}
 			} catch (Throwable t) {
 				throw new CambiosBDDaoError("Ha ocurrido un error al insertar registros en 'datos históricos'",

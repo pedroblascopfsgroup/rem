@@ -26,6 +26,14 @@ Ext.define('HreRem.ux.util.Constants', {
         EXPEDIENTE: 5,
         GASTO: 6
     },
+
+    TIPOS_COMERCIALIZACION: {
+    	
+    	VENTA: '01',
+    	ALQUILER_VENTA: '02',
+    	SOLO_ALQUILER: '03',
+    	ALQUILER_OPCION_COMPRA: '04'
+    },
     
     TIPOS_AGRUPACION: {
     	

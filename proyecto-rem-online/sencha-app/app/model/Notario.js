@@ -3,12 +3,12 @@
  */
 Ext.define('HreRem.model.Notario', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
+    idProperty: 'idContacto',
 
     fields: [    
   
     		{
-    			name:'idActivoProveedorContacto'
+    			name:'id'
     		},
     		{
     			name:'nombreProveedor'
@@ -23,7 +23,10 @@ Ext.define('HreRem.model.Notario', {
     			name: 'cargo'
     		},
     		{
-    			name: 'telefono'
+    			name: 'telefono1'
+    		},
+    		{
+    			name: 'telefono2'
     		},
     		{
     			name: 'email'
@@ -33,6 +36,9 @@ Ext.define('HreRem.model.Notario', {
     		},
     		{
     			name: 'provincia'
+    		},
+    		{
+    			name: 'localidad'
     		},
     		{
     			name: 'tipoDocIdentificativo'
@@ -45,9 +51,6 @@ Ext.define('HreRem.model.Notario', {
     		},
     		{
     			name: 'fax'
-    		},
-    		{
-    			name: 'telefono2'
     		}
     ],
     

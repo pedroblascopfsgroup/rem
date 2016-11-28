@@ -242,5 +242,13 @@ public interface ProveedoresApi {
 	 * @return
 	 */
 	public boolean setVigentesConPropuestas();
+
+	/**
+	 * Método que devuelve el código del proveedor a través de su nif.
+	 * 
+	 * @param nif : documento identificativo del proveedor.
+	 * @return Devuelve el codigo de proveedor encontrado.
+	 */
+	public Long getCodigoProveedorByNif(String parameter);
 	
 }

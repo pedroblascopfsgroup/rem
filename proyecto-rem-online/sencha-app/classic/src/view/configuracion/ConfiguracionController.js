@@ -147,7 +147,8 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 			params: parameters,
 			success: function(response,opts){
 				var idProveedorNuevo = Ext.decode(response.responseText).id;
-				var record = Ext.create('Ext.data.Model',{'id':idProveedorNuevo});
+				var codigoProveedorNuevo = Ext.decode(response.responseText).codigo;
+				var record = Ext.create('Ext.data.Model',{'id':idProveedorNuevo, 'codigo':codigoProveedorNuevo});
 
 				me.getView().fireEvent('abrirDetalleProveedor', record);
 			}

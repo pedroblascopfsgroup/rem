@@ -112,6 +112,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								    reference: 'cbLocalizada',
 								    bind : {
 								      store : '{comboSiNoRem}',
+								      disabled: '{!proveedor.isEntidad}',
 								      value : '{proveedor.localizadaProveedorCodigo}'
 								    }
 								},
@@ -153,7 +154,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						        {
 			        				xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
-									bind: '{proveedor.fechaConstitucionProveedor}'
+									bind: {
+										disabled: '{!proveedor.isEntidad}',
+										value: '{proveedor.fechaConstitucionProveedor}'
+									}
 					            },
 					         // Fila 5
 					            {// Siempre oculto por el momento.

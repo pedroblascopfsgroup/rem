@@ -41,7 +41,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 			    		topBar: true,
 			    		listeners: { 
 		    				rowdblclick: 'comprobarCamposFechas',
-		    				beforeedit: 'comprobarCamposFechas'
+		    				beforeedit: 'comprobarCamposFechas',
+							rowclick: 'onRowClickPosicionamiento'
 			    		},
 						columns: [
 						
@@ -203,7 +204,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					{
 					    xtype		: 'gridBase',
 					    reference	: 'listadoNotarios',
-					    minHeight	: 50,
+					    minHeight	: 150,
 					    title: HreRem.i18n('title.notario'),
 						cls	: 'panel-base shadow-panel',
 						bind: {
@@ -223,11 +224,44 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						   {
 					            text: HreRem.i18n('header.provincia'),
 					            dataIndex: 'provincia',
+					            hidden: true,
 					            flex: 1
-						   },	
+						   },
+						   {
+					            text: HreRem.i18n('header.municipio'),
+					            dataIndex: 'localidad',
+					            hidden: true,
+					            flex: 1
+						   },
+						   {
+					            text: HreRem.i18n('fieldlabel.codigo.postal'),
+					            dataIndex: 'codigoPostal',
+					            hidden: true,
+					            flex: 1
+						   },
+						   {    text: HreRem.i18n('fieldlabel.personaContacto'),
+					        	dataIndex: 'personaContacto',
+					        	flex: 1
+					       },
+						   {    text: HreRem.i18n('fieldlabel.cargo'),
+					        	dataIndex: 'cargo',
+					        	flex: 1
+					       },
 						   {
 						   		text: HreRem.i18n('fieldlabel.telefono'),
-					            dataIndex: 'telefono',
+					            dataIndex: 'telefono1',
+					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('fieldlabel.telefono'),
+					            dataIndex: 'telefono2',
+					            hidden: true,
+					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('fieldlabel.fax'),
+					            dataIndex: 'fax',
+					            hidden: true,
 					            flex: 1						   
 						   },
 						   {

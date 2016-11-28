@@ -242,7 +242,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 						title: HreRem.i18n('title.publicaciones.estados'),
 						items :
 							[
-							 { // Publicación Forzada.
+							 { // Publicación.
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.publicacion'),
@@ -257,8 +257,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	reference: 'chkbxpublicacionforzada',
 								        	colspan: 3,
 								        	bind: {
-								        		value: '{activohistoricoestadopublicacion.publicacionForzada}',
-								        		disabled: '{activohistoricoestadopublicacion.publicacionOrdinaria}'
+								        		readOnly: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
+								        		value	: '{activohistoricoestadopublicacion.publicacionForzada}'
 								        		},
 								        	listeners:{
 								        		change: 'onchkbxEstadoPublicacionChange'
@@ -270,8 +270,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	reference: 'chkbxpublicacionordinaria',
 								        	colspan: 3,
 								        	bind: {
-								        		value	: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
-								        		readOnly: '{activohistoricoestadopublicacion.publicacionOrdinaria}'
+								        		readOnly: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
+								        		value	: '{activohistoricoestadopublicacion.publicacionOrdinaria}'
 								        	},
 								        	listeners:{
 								        		change: 	'onchkbxEstadoPublicacionChange',
@@ -284,8 +284,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	reference: 'textfieldpublicacionpublicar',
 								        	colspan: 3,
 								        	bind: {
-							            		value: '{activohistoricoestadopublicacion.motivoPublicacion}',
-							            		disabled: '{activohistoricoestadopublicacion.publicacionOrdinaria}'
+							            		disabled: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
+							            		value	: '{activohistoricoestadopublicacion.motivoPublicacion}'
 							            	},
 							            	maxLength: '100'
 								        }

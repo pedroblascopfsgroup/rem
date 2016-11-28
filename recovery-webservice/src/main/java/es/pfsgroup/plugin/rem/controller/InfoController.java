@@ -56,5 +56,28 @@ public class InfoController {
 		}
 		restApi.sendResponse(response, model, null);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void getLlamadaInfo(HttpServletRequest request, ModelMap model, HttpServletResponse response,
+			@RequestParam(required = true) String id) {
+
+		PeticionRest peticion = restApi.getLastPeticionByToken(id);
+		if (peticion != null) {
+			model.put("ip", peticion.getIp());
+			model.put("fecha", peticion.getAuditoria().getFechaCrear());
+			model.put("endpoint", peticion.getQuery());
+			model.put("metodo", peticion.getMetodo());
+			model.put("peticion", peticion.getData());
+			if (peticion.getResult().equals(RestApi.CODE_ERROR)) {
+				model.put("error", StringEscapeUtils.escapeJavaScript(peticion.getErrorDesc()));
+			}
+			model.put("respuesta", peticion.getResponse());
+			model.put("tiempo ejecución", peticion.getTiempoEjecucion());
+		} else {
+			model.put("error", "No existe la petición");
+		}
+		restApi.sendResponse(response, model, null);
+	}
 
 }

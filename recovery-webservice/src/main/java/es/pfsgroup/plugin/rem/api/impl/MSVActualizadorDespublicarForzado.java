@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class MSVActualizadorDespublicarForzado implements MSVLiberator {
 
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
+	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, SQLException {
 
 		// Desmarcar publicacion forzada: el activo pasa a estado publicacion "No publicado"
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());

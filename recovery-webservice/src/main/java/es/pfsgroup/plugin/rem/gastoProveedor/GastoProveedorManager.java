@@ -109,9 +109,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public final String PESTANA_IMPUGNACION = "impugnacion";
 	
 
-	
-	
-
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -264,6 +261,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			if(!Checks.esNulo(gasto.getGastoProveedorAbonado())){
 				dto.setNumGastoAbonado(gasto.getGastoProveedorAbonado().getNumGastoHaya());
+			}
+			
+			if(!Checks.esNulo(gasto.getGastoGestion()) && (!Checks.esNulo(gasto.getGastoGestion().getFechaEnvioGestoria()) || !Checks.esNulo(gasto.getGastoGestion().getFechaEnvioPropietario()))) {
+				dto.setEnviado(true);
+			} else {
+				dto.setEnviado(false);
 			}
 			
 			
@@ -1649,6 +1652,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
 		gasto.setGastoGestion(gastoGestion);
 		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO_ADMINISTRACION);
+		gasto.setProvision(null);
 		genericDao.update(GastoProveedor.class, gasto);
 		
 		return true;
@@ -1685,7 +1689,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setMotivoRechazoAutorizacionHaya(motivo);
 		
 		gasto.setGastoGestion(gastoGestion);
-		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_ADMINISTRACION);
+		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_ADMINISTRACION);		
+		gasto.setProvision(null);
+		
 		genericDao.update(GastoProveedor.class, gasto);
 		
 		return true;

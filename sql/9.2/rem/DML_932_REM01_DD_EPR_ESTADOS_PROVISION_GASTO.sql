@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160923
+--## FECHA_CREACION=20161121
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -41,9 +41,10 @@ DECLARE
         T_TIPO_DATA('01'	,'Pendiente de envio'	,'Pendiente de envio'),
         T_TIPO_DATA('02'	,'Enviada'	,'Enviada'),
         T_TIPO_DATA('03'	,'Rechazada subsanable'	,'Rechazada subsanable'),
-        T_TIPO_DATA('04'	,'Rechazada no subsanable', 'Rechazada no subsanable'),
-        T_TIPO_DATA('05'	,'Autorizada por propietario'	,'Autorizada por propietario')
-                  
+        T_TIPO_DATA('04'	,'Rechazada no subsanable'	,'Rechazada no subsanable'),
+        T_TIPO_DATA('05'	,'Autorizada'	,'Autorizada'),
+        T_TIPO_DATA('06'	,'Contabilizada'	,'Contabilizada'),
+        T_TIPO_DATA('07'	,'Pagada'	,'Pagada')    
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

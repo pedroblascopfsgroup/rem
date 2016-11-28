@@ -19,7 +19,7 @@ Ext.define('HreRem.view.activos.detalle.InstalacionesActivoInformacionComercial'
 				emptyDisplayText: '-',
 				bind: {
 					store: '{comboSiNoNSRem}',
-					value: '{infoComercial.electricidad}'		            		
+					value: '{informeComercial.electricidad}'		            		
 				}
 			},
 			{ 
@@ -30,7 +30,7 @@ Ext.define('HreRem.view.activos.detalle.InstalacionesActivoInformacionComercial'
 				emptyDisplayText: '-',
 				bind: {
 					store: '{comboSiNoNSRem}',
-					value: '{infoComercial.agua}'
+					value: '{informeComercial.agua}'
 				}
 			},
 			{ 
@@ -41,7 +41,7 @@ Ext.define('HreRem.view.activos.detalle.InstalacionesActivoInformacionComercial'
 				emptyDisplayText: '-',
 				bind: {
 					store: '{comboSiNoNSRem}',
-					value: '{infoComercial.gas}'
+					value: '{informeComercial.gas}'
 				}
 			},
 			{ 
@@ -52,7 +52,7 @@ Ext.define('HreRem.view.activos.detalle.InstalacionesActivoInformacionComercial'
 				emptyDisplayText: '-',
 				bind: {
 					store: '{comboSiNoNSRem}',
-					value: '{infoComercial.electricidadConContador}'
+					value: '{informeComercial.electricidadConContador}'
 				}
 			},
 			{ 
@@ -63,7 +63,7 @@ Ext.define('HreRem.view.activos.detalle.InstalacionesActivoInformacionComercial'
 				emptyDisplayText: '-',
 				bind: {
 					store: '{comboSiNoNSRem}',
-					value: '{infoComercial.aguaConContador}'
+					value: '{informeComercial.aguaConContador}'
 				}
 			}
      ];

@@ -81,6 +81,9 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private String entornoInfraestructuras;
 	private String ediDescripcion;
 	private String reformaOtroDescEdificio;
+	private Integer edificioDivisible;
+	private String edificioOtrasCaracteristicas;
+	private String edificioDescPlantas;
 	
 	//Para la info de suelo e industrial.
 	private String infoDescripcion;
@@ -1648,6 +1651,24 @@ public class DtoActivoInformacionComercial extends WebDto {
 	public void setGas(Integer gas) {
 		this.gas = gas;
 	}
-
+	public Integer getEdificioDivisible() {
+		return edificioDivisible;
+	}
+	public void setEdificioDivisible(Integer edificioDivisible) {
+		this.edificioDivisible = edificioDivisible;
+	}
+	public String getEdificioOtrasCaracteristicas() {
+		return edificioOtrasCaracteristicas;
+	}
+	public void setEdificioOtrasCaracteristicas(String edificioOtrasCaracteristicas) {
+		this.edificioOtrasCaracteristicas = edificioOtrasCaracteristicas;
+	}
+	public String getEdificioDescPlantas() {
+		return edificioDescPlantas;
+	}
+	public void setEdificioDescPlantas(String edificioDescPlantas) {
+		this.edificioDescPlantas = edificioDescPlantas;
+	}
+	
 	
 }

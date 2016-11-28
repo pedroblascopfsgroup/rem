@@ -18,8 +18,11 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
+import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
@@ -77,6 +80,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 				
 				if (!Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
 					beanUtilNotNull.copyProperty(informeComercial, "tipoActivoCodigo", activo.getInfoComercial().getTipoActivo().getCodigo());
+					
+					// Segun el tipo de activo, recuperaremos unos u otros datos
+					this.getDatosByTipoActivo(activo, informeComercial);
 				}
 				
 				if (!Checks.esNulo(activo.getInfoComercial().getSubtipoActivo())) {
@@ -165,6 +171,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(informeComercial, "ediDescripcion", activo.getInfoComercial().getEdificio().getEdiDescripcion());
 				beanUtilNotNull.copyProperty(informeComercial, "entornoInfraestructuras", activo.getInfoComercial().getEdificio().getEntornoInfraestructura());
 				beanUtilNotNull.copyProperty(informeComercial, "entornoComunicaciones", activo.getInfoComercial().getEdificio().getEntornoComunicacion());
+
 			}
 		
 		} catch (IllegalAccessException e) {
@@ -335,6 +342,44 @@ public class TabActivoInformeComercial implements TabActivoService {
 		
 		return activo;
 		
+	}
+	
+	private void getDatosByTipoActivo(Activo activo, DtoActivoInformeComercial activoInformeDto) {
+		
+		try {
+			switch(Integer.parseInt(activo.getTipoActivo().getCodigo())) {
+				case 1:
+					break;
+				case 2:
+					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
+					beanUtilNotNull.copyProperties(activoInformeDto,vivienda);
+					break;
+				case 3:
+					ActivoLocalComercial local = (ActivoLocalComercial) activo.getInfoComercial();
+					beanUtilNotNull.copyProperties(activoInformeDto,local);
+					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+					break;
+				case 4:
+					break;
+				case 5:
+					ActivoEdificio edificio = activo.getInfoComercial().getEdificio();
+					beanUtilNotNull.copyProperties(activoInformeDto,edificio);
+					break;
+				case 6:
+					break;
+				case 7:
+					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+					break;
+				default:
+					break;
+				
+			}
+		
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

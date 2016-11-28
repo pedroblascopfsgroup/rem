@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     requires: ['HreRem.model.Activo', 'HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformeComercial', 'HreRem.model.Distribuciones',
     'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
     'HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', 'HreRem.model.InformeComercial', 'HreRem.view.activos.detalle.HistoricoMediadorGrid',
-    'HreRem.view.activos.detalle.PropuestaActivosVinculadosList', 'HreRem.view.activos.detalle.InfoIndustrialYSuelo'],
+    'HreRem.view.activos.detalle.PropuestaActivosVinculadosList', 'HreRem.view.activos.detalle.InfoIndustrialYSuelo','HreRem.view.activos.detalle.InfoEdificioCompleto'],
     
     listeners: {
     	boxready: function() {
@@ -525,6 +525,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.informacion.general'),
 				defaultType: 'textfieldbase',
+				bind: { 
+					hidden: '{!informeComercial.isInformeGeneralVisible}'
+				},
 				items :
 					[
 						{ // Primer cuadro.
@@ -782,7 +785,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			},
 			{
 				xtype:'infolocalcomercial',
-				title: HreRem.i18n('title.local.comercial'),
 				bind: {
 					hidden: '{!informeComercial.isLocalComercialMediador}'
 				}
@@ -799,6 +801,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				title: HreRem.i18n('title.suelo'),
 				bind: {
 					hidden: '{!informeComercial.isSueloMediador}'
+				}
+			},
+			{
+				xtype: 'infoedificiocompleto',
+				bind: {
+					hidden: '{!informeComercial.isEdificioCompletoMediador}'
 				}
 			}
 		];

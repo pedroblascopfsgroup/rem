@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161121
+--## FECHA_CREACION=20161128
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -42,7 +42,9 @@ DECLARE
         T_TIPO_DATA('02'	,'Rechazado por motivo formal'	,'Rechazado por motivo formal'),
         T_TIPO_DATA('03'	,'Rechazado por control presupuestario'	,'Rechazado por control presupuestario'),
         T_TIPO_DATA('04'	,'Rechazado por contabilidad'	,'Rechazado por contabilidad'),
-        T_TIPO_DATA('05'	,'Autorizado'	,'Autorizado')
+        T_TIPO_DATA('05'	,'Autorizado por motivo formal'	,'Autorizado por motivo formal'),
+        T_TIPO_DATA('06'	,'Autorizado por control presupuestario'	,'Autorizado por control presupuestario'),
+        T_TIPO_DATA('07'	,'Autorizado por contabilidad'	,'Autorizado por contabilidad')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

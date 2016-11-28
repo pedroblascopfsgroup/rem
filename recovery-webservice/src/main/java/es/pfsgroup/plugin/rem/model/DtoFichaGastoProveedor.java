@@ -53,7 +53,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String numGastoDestinatario;
    	private Long numGastoAbonado;
    	private Long idGastoAbonado; 
-   	private Integer gastoSinActivos;
+   	private boolean gastoSinActivos;
    	private boolean enviado;
 	
 	public Long getIdGasto() {
@@ -251,10 +251,10 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setIdGastoAbonado(Long idGastoAbonado) {
 		this.idGastoAbonado = idGastoAbonado;
 	}
-	public Integer getGastoSinActivos() {
+	public boolean getGastoSinActivos() {
 		return gastoSinActivos;
 	}
-	public void setGastoSinActivos(Integer gastoSinActivos) {
+	public void setGastoSinActivos(boolean gastoSinActivos) {
 		this.gastoSinActivos = gastoSinActivos;
 	}
 	public boolean getEnviado() {

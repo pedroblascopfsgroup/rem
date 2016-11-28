@@ -269,6 +269,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setEnviado(false);
 			}
 			
+			if(!Checks.esNulo(gasto.getGastoSinActivos())) {
+				dto.setGastoSinActivos(BooleanUtils.toBoolean(gasto.getGastoSinActivos()));
+			}
+			
 			
 		}
 
@@ -419,6 +423,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					throw new JsonViewerException("El numero de gasto abonado no existe");
 				}
 				
+			}
+			
+			if(!Checks.esNulo(dto.getGastoSinActivos())){
+				gastoProveedor.setGastoSinActivos(BooleanUtils.toIntegerObject(dto.getGastoSinActivos()));
 			}
 
 			updaterStateApi.updaterStates(gastoProveedor, null);			

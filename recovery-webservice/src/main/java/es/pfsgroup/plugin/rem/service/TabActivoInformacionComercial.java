@@ -56,7 +56,9 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			BeanUtils.copyProperties(activoDto, activo.getInfoComercial());
 			
 			if (!Checks.esNulo(activo.getInfoComercial().getEdificio())) {
-				BeanUtils.copyProperties(activoDto, activo.getInfoComercial().getEdificio());
+				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getEdificio());
+				beanUtilNotNull.copyProperty(activoDto,"entornoInfraestructuras",activo.getInfoComercial().getEdificio().getEntornoInfraestructura());
+				beanUtilNotNull.copyProperty(activoDto,"entornoComunicaciones",activo.getInfoComercial().getEdificio().getEntornoComunicacion());
 			}
 			
 			if (!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {

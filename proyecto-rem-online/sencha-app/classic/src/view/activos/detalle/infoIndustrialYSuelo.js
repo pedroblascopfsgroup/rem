@@ -14,8 +14,7 @@ Ext.define('HreRem.view.activos.detalle.InfoIndustrialYSuelo', {
 			            	maxLength: 500,
 			            	margin: '0 0 20 0',
 			            	height: 100,
-			            	width: 680,
-							maxWidth: 680
+							maxWidth: 1600
 						},
 						{ 
 							xtype: 'textareafieldbase',
@@ -25,8 +24,7 @@ Ext.define('HreRem.view.activos.detalle.InfoIndustrialYSuelo', {
 			            	colspan: 3,
 			            	maxLength: 500,
 			            	height: 100,
-			            	width: 680,
-							maxWidth: 680
+							maxWidth: 1600
 		                }
 		];            
        

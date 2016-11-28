@@ -99,6 +99,16 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     			},
     			depends: 'tipoActivoCodigo'
     		},
+    		{
+    			name: 'isInformeGeneralVisible',
+    			calculate: function(data) {    				
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] || data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'] || data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+    			},
+    			depends: 'tipoActivoCodigo'
+    		},
      		{
     			name:'subtipoActivoCodigo'
     		},

@@ -97,14 +97,14 @@ public class ReservaController {
 				respuesta.put("oferta", ofertaUVEM);
 				respuesta.put("titulares", listaTitularUVEM);				
 				importeReserva = Double.valueOf(ofertaUVEM.getImporteReserva());
-				importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta()-importeReserva;
+				importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()-importeReserva : oferta.getImporteContraOferta()-importeReserva;
 
 				if (ReservaApi.COBRO_RESERVA.equals(reservaDto.getAccion())) {
 					
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(importeReserva);
-					Date fechaEntrega = new Date();
-					entregaReserva.setFechaEntrega(fechaEntrega);
+					Date fechaActual = new Date();
+					entregaReserva.setFechaEntrega(fechaActual);
 					entregaReserva.setReserva(expedienteComercial.getReserva());
 					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
 						throw new Exception("No se ha podido guardar la reserva entregada en base de datos");
@@ -123,6 +123,7 @@ public class ReservaController {
 						throw new Exception("No se ha podido obtener estado FIRMADA de la reserva de base de datos");
 					}
 					reserva.setEstadoReserva(estReserva);
+					reserva.setFechaFirma(fechaActual);
 					expedienteComercial.setReserva(reserva);
 					
 					

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jose Villel
---## FECHA_CREACION=20161114
+--## FECHA_CREACION=20161120
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -39,10 +39,22 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('2016','01','03','492052'),
-		T_TIPO_DATA('2016','02','03','492052'),
-		T_TIPO_DATA('2016','01','02','G011311'),
-		T_TIPO_DATA('2016','02','02','G011311')
+    	--			ANYO  SBTPO  CRA  SCR  PRO  PVE  PP
+    	-- BANKIA
+    	T_TIPO_DATA('2016','01','03','09',null,null,'492133'),
+		T_TIPO_DATA('2016','02','03','09',null,null,'492133'),
+        T_TIPO_DATA('2016','01','03','08',null,null,'492052'),
+		T_TIPO_DATA('2016','02','03','08',null,null,'492052'),
+		T_TIPO_DATA('2016','01','03','07',null,null,'492074'),
+		T_TIPO_DATA('2016','02','03','07',null,null,'492074'),
+		T_TIPO_DATA('2016','01','03','06',null,null,'491982'),
+		T_TIPO_DATA('2016','02','03','06',null,null,'491982'),
+		-- SAREB
+		T_TIPO_DATA('2016','01','02',null,null,null,'G011311'),
+		T_TIPO_DATA('2016','02','02',null,null,null,'G011311'),
+		-- CAJAMAR
+		T_TIPO_DATA('2016','01','01',null,'-1',null,'48000000200'),
+		T_TIPO_DATA('2016','02','01',null,'13',null,'63103000001')		
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -67,11 +79,12 @@ BEGIN
         V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_CPP_CONFIG_PTDAS_PREP.NEXTVAL FROM DUAL';
         EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
         V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.CPP_CONFIG_PTDAS_PREP (' ||
-                    'CPP_ID, EJE_ID, DD_STG_ID, DD_CRA_ID, CPP_PARTIDA_PRESUPUESTARIA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES' ||
+                    'CPP_ID, EJE_ID, DD_STG_ID, DD_CRA_ID, SUBENTIDAD_CODIGO, CPP_PARTIDA_PRESUPUESTARIA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES' ||
                       '('|| V_ID || ',
                       (SELECT EJE_ID FROM '||V_ESQUEMA ||'.ACT_EJE_EJERCICIO WHERE EJE_ANYO = '''||V_TMP_TIPO_DATA(1)||'''),
 					  (SELECT DD_STG_ID FROM '||V_ESQUEMA ||'.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''),
 					  (SELECT DD_CRA_ID FROM '||V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''),
+					  (SELECT DD_CRA_ID FROM '||V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''),		
                       '''||TRIM(V_TMP_TIPO_DATA(4))||''',
                        0, ''DML'',SYSDATE,0 )';
         EXECUTE IMMEDIATE V_MSQL;

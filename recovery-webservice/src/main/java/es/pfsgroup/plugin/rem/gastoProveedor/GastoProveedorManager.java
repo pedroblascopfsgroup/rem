@@ -754,12 +754,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gasto= genericDao.get(GastoProveedor.class, filtroGasto);
 					
 					if(!Checks.esNulo(gasto.getPropietario())) {
-						if(!Checks.estaVacio(activo.getPropietariosActivo())) {
-							ActivoPropietario propietario = activo.getPropietariosActivo().get(0).getPropietario();
-							if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
-								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
-							}
+
+						ActivoPropietario propietario = activo.getPropietarioPrincipal();
+						if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
 						}
+						
 						
 						
 					}
@@ -785,11 +785,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 		}
 		else if(!Checks.esNulo(idGasto) && !Checks.esNulo(numAgrupacion)){
-			
-			
-			
-			
-			
+
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", numAgrupacion);
 			ActivoAgrupacion agrupacion= genericDao.get(ActivoAgrupacion.class, filtro);
 			
@@ -804,16 +800,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!Checks.estaVacio(agrupacion.getActivos())) {					
 				
 					Activo activo = agrupacion.getActivos().get(0).getActivo();
-					
-					if(!Checks.esNulo(gasto.getPropietario())) {
-						if(!Checks.estaVacio(activo.getPropietariosActivo())) {
-							ActivoPropietario propietario = activo.getPropietariosActivo().get(0).getPropietario();
-							if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
-								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
-							}
+					ActivoPropietario propietario = activo.getPropietarioPrincipal();
+					if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(propietario) ) {						
+						if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
 						}
-						
-						
 					}
 				
 					for(ActivoAgrupacionActivo activoAgrupacion: agrupacion.getActivos()){
@@ -1709,12 +1700,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		if(!Checks.estaVacio(gasto.getGastoProveedorActivos())) {
 			
-			GastoProveedorActivo gastoActivo = gasto.getGastoProveedorActivos().get(0);
-			List<ActivoPropietarioActivo> listaPropietariosActivo = gastoActivo.getActivo().getPropietariosActivo();
+			GastoProveedorActivo gastoActivo = gasto.getGastoProveedorActivos().get(0);			
+			gasto.setPropietario( gastoActivo.getActivo().getPropietarioPrincipal());
 			
-			if(!Checks.estaVacio(listaPropietariosActivo)) {
-				gasto.setPropietario(listaPropietariosActivo.get(0).getPropietario());
-			}
 		} else {
 			gasto.setPropietario(null);
 		}
@@ -1779,7 +1767,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	public ConfigPdaPresupuestaria buscarPartidaPresupuestaria(GastoProveedor gasto) {
 		
-		ConfigPdaPresupuestaria configuracion = null;
+		List<ConfigPdaPresupuestaria> configuracion = null;
 		DDCartera cartera = null;
 		DDSubtipoGasto subtipoGasto = null;
 		Ejercicio ejercicio = null;
@@ -1797,13 +1785,70 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subtipoGasto.getId());
 			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
 			
-			configuracion = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicio, filtroSubtipo, filtroCartera );
+			configuracion = genericDao.getList(ConfigPdaPresupuestaria.class, filtroEjercicio, filtroSubtipo, filtroCartera );
+			
+			if(!Checks.estaVacio(configuracion) && configuracion.size() == 1) {
+				
+				return configuracion.get(0);
+				
+			} else {
+				return buscarPartidaPresupuestariaEspecial(gasto, configuracion);
+				
+			}
 		
 		} else {
 			logger.info("Datos insuficientes para determinar partida presupuestaria");
 		}
 		
-		return configuracion;
+		return null;
 		
+	}
+
+	public ConfigPdaPresupuestaria buscarPartidaPresupuestariaEspecial(GastoProveedor gasto, List<ConfigPdaPresupuestaria> configuracion) {
+		
+		ConfigPdaPresupuestaria configuracionEspecial = null;
+		ConfigPdaPresupuestaria configuracionPorDefecto = null;
+		List<GastoProveedorActivo>  listaActivos = gasto.getGastoProveedorActivos();
+		
+		if(!Checks.estaVacio(listaActivos)) {
+			
+			Activo activo = listaActivos.get(0).getActivo();
+		
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo())) {
+				
+				for(ConfigPdaPresupuestaria config : configuracion) {				
+					
+					if(!Checks.esNulo(config.getSubcartera()) && !Checks.esNulo(activo.getSubcartera())) {
+						if (config.getSubcartera().getCodigo().equals(activo.getSubcartera().getCodigo())) {
+							configuracionEspecial = config;
+						}
+					}
+					
+				}				
+	
+			} else if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(gasto.getCartera().getCodigo())) {
+				
+				for(ConfigPdaPresupuestaria config : configuracion) {				
+					
+					if(!Checks.esNulo(config.getPropietario())){
+						if (config.getPropietario().equals(activo.getPropietarioPrincipal())) {
+							configuracionEspecial = config;
+						}
+					} else {
+						configuracionPorDefecto = config;
+					}
+					
+					if(!Checks.esNulo(configuracionEspecial)) {
+						configuracionEspecial = configuracionPorDefecto;
+					}					
+				}
+		
+			} /*else if (DDCartera.CODIGO_CARTERA_SAREB.equals(gasto.getCartera().getCodigo())) {
+				
+			}*/
+		}
+		
+		
+		return configuracionEspecial;
 	}
 }

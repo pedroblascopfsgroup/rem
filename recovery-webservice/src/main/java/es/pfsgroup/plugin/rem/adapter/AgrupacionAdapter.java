@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -220,11 +221,10 @@ public class AgrupacionAdapter {
 				// TODO: Hacer cuando esté listo el activo principal dentro de la agrupación
 				
 				if(agrupacion.getActivoPrincipal() != null && !agrupacion.getActivoPrincipal().getPropietariosActivo().isEmpty()) {
-					if(agrupacion.getActivoPrincipal().getPropietariosActivo().size()>1) {
-						BeanUtils.copyProperty(dtoAgrupacion, "propietario", "varios");						
-					} else {
-						BeanUtils.copyProperty(dtoAgrupacion, "propietario", agrupacion.getActivoPrincipal().getPropietariosActivo().get(0).getPropietario().getFullName());
-					}					
+					ActivoPropietario propietario = agrupacion.getActivoPrincipal().getPropietarioPrincipal();
+					if(Checks.esNulo(propietario)) {
+						BeanUtils.copyProperty(dtoAgrupacion, "propietario", propietario.getFullName());	
+					}
 				}
 				
 				if (agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getCartera() != null) {
@@ -433,7 +433,7 @@ public class AgrupacionAdapter {
 			
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			
-			if (Checks.esNulo(activo.getPropietariosActivo())) throw new JsonViewerException(BusinessValidators.ERROR_PROPIETARIO_NULL);
+			if (Checks.estaVacio(activo.getPropietariosActivo())) throw new JsonViewerException(BusinessValidators.ERROR_PROPIETARIO_NULL);
 			
 		}
 	}

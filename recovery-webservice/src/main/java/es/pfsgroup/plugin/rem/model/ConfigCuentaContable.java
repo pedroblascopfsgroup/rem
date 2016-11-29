@@ -56,7 +56,11 @@ public class ConfigCuentaContable implements Serializable, Auditable {
 	@JoinColumn(name="DD_CRA_ID")
 	private DDCartera cartera;
     
-    @Column(name="CCC_CUENTA_ANYO_CURSO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRO_ID")
+    private ActivoPropietario propietario;    
+
+	@Column(name="CCC_CUENTA_ANYO_CURSO")
     private String cuentaContableAnyoCurso;
     
     @Column(name = "CCC_CUENTA_ANYOS_ANTERIORES")
@@ -112,6 +116,14 @@ public class ConfigCuentaContable implements Serializable, Auditable {
 	public void setCuentaContableAnyosAnteriores(
 			String cuentaContableAnyosAnteriores) {
 		this.cuentaContableAnyosAnteriores = cuentaContableAnyosAnteriores;
+	}
+	
+    public ActivoPropietario getPropietario() {
+		return propietario;
+	}
+
+	public void setPropietario(ActivoPropietario propietario) {
+		this.propietario = propietario;
 	}
 
 	public static long getSerialversionuid() {

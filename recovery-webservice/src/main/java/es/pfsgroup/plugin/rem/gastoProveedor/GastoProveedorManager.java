@@ -1741,7 +1741,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	public ConfigCuentaContable buscarCuentaContable(GastoProveedor gasto) {
 		
-		ConfigCuentaContable configuracion = null;
+		List<ConfigCuentaContable> configuracion = null;
 		DDCartera cartera = null;
 		DDSubtipoGasto subtipoGasto = null;
 		
@@ -1754,17 +1754,23 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subtipoGasto.getId());
 			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
 			
-			configuracion = genericDao.get(ConfigCuentaContable.class,filtroSubtipo, filtroCartera );
+			configuracion = genericDao.getList(ConfigCuentaContable.class,filtroSubtipo, filtroCartera );
+			
+			if(!Checks.estaVacio(configuracion) && configuracion.size() == 1) {
+				
+				return configuracion.get(0);
+			} else {
+				return buscarCuentaContableEspecial(gasto, configuracion);
+			}
 		
 		} else {
 			logger.info("Datos insuficientes para determinar cuenta contable");
 		}
 		
-		return configuracion;
+		return null;
 		
 	}
-	
-	
+
 	public ConfigPdaPresupuestaria buscarPartidaPresupuestaria(GastoProveedor gasto) {
 		
 		List<ConfigPdaPresupuestaria> configuracion = null;
@@ -1793,7 +1799,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 			} else {
 				return buscarPartidaPresupuestariaEspecial(gasto, configuracion);
-				
 			}
 		
 		} else {
@@ -1807,7 +1812,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public ConfigPdaPresupuestaria buscarPartidaPresupuestariaEspecial(GastoProveedor gasto, List<ConfigPdaPresupuestaria> configuracion) {
 		
 		ConfigPdaPresupuestaria configuracionEspecial = null;
-		ConfigPdaPresupuestaria configuracionPorDefecto = null;
 		List<GastoProveedorActivo>  listaActivos = gasto.getGastoProveedorActivos();
 		
 		if(!Checks.estaVacio(listaActivos)) {
@@ -1826,10 +1830,31 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					
 				}				
 	
-			} else if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(gasto.getCartera().getCodigo())) {
+			} /* else if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(gasto.getCartera().getCodigo())) {
+						
+			} else if (DDCartera.CODIGO_CARTERA_SAREB.equals(gasto.getCartera().getCodigo())) {
 				
-				for(ConfigPdaPresupuestaria config : configuracion) {				
-					
+			}*/
+		}
+		
+		
+		return configuracionEspecial;
+	}
+	
+	private ConfigCuentaContable buscarCuentaContableEspecial(GastoProveedor gasto, List<ConfigCuentaContable> configuracion) {
+		
+		ConfigCuentaContable configuracionEspecial = null;
+		ConfigCuentaContable configuracionPorDefecto = null;
+		List<GastoProveedorActivo>  listaActivos = gasto.getGastoProveedorActivos();
+		
+		if(!Checks.estaVacio(listaActivos)) {
+			
+			Activo activo = listaActivos.get(0).getActivo();
+		
+			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(gasto.getCartera().getCodigo())) {
+		
+				for(ConfigCuentaContable config : configuracion) {				
+						
 					if(!Checks.esNulo(config.getPropietario())){
 						if (config.getPropietario().equals(activo.getPropietarioPrincipal())) {
 							configuracionEspecial = config;
@@ -1838,16 +1863,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						configuracionPorDefecto = config;
 					}
 					
-					if(!Checks.esNulo(configuracionEspecial)) {
+					if(Checks.esNulo(configuracionEspecial)) {
 						configuracionEspecial = configuracionPorDefecto;
 					}					
 				}
-		
-			} /*else if (DDCartera.CODIGO_CARTERA_SAREB.equals(gasto.getCartera().getCodigo())) {
-				
-			}*/
+			}
 		}
-		
 		
 		return configuracionEspecial;
 	}

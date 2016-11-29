@@ -179,6 +179,13 @@ public class ReservaController {
 					}
 					expedienteComercial.setEstado(estadoReservado);*/
 					
+					//Actualiza estado reserva a ANULADA
+					DDEstadosReserva estReserva = reservaApi.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_ANULADA);
+					if (estReserva == null) {
+						throw new Exception("No se ha podido obtener estado ANULADA de la reserva de base de datos");
+					}
+					expedienteComercial.getReserva().setEstadoReserva(estReserva);
+					
 					//Actualiza estado devolucion a ANULADO
 					DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_DEVUELTA));

@@ -98,8 +98,8 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 								hashErrores.put("activo", "El expediente debe estar aprobado.");
 							
 							}else if(reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA) &&
-									!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_ANULADA)){
-								hashErrores.put("activo", "La reserva debe estar en el estado anulada.");
+									!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA)){
+								hashErrores.put("activo", "La reserva debe estar en el estado firmada.");
 							
 							}else if(reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA) &&
 									!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.ANULADO)){

@@ -171,14 +171,6 @@ public class ReservaController {
 						throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
 					}
 					
-		/*			//Actualiza estado expediente comercial a ANULADO
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
-							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.ANULADO);
-					if (estadoReservado == null) {
-						throw new Exception("No se ha podido obtener estado ANULADO de base de datos");
-					}
-					expedienteComercial.setEstado(estadoReservado);*/
-					
 					//Actualiza estado reserva a ANULADA
 					DDEstadosReserva estReserva = reservaApi.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_ANULADA);
 					if (estReserva == null) {
@@ -190,6 +182,8 @@ public class ReservaController {
 					DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_DEVUELTA));
 					expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
+					expedienteComercial.setFechaDevolucionEntregas(fechaEntrega);
+					expedienteComercial.setImporteDevolucionEntregas(importeReserva);
 					
 					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");

@@ -23,7 +23,8 @@ Ext.define('HreRem.model.CompradorExpediente', {
     			name:'numDocumentoRepresentante'
     		},
     		{
-    			name:'porcentajeCompra'
+    			name:'porcentajeCompra',
+    			type: 'float'
     		},
     		{
     			name:'telefono'

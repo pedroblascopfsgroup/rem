@@ -804,7 +804,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							]
 						}
 				]
-            },
+            }
 		];
         
     	me.setTitle(HreRem.i18n('title.informe.comercial.activo'));

@@ -10,8 +10,7 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
                'HreRem.view.activos.detalle.CocinaInformacionComercial',
                'HreRem.view.activos.detalle.BanyoInformacionComercial',
                'HreRem.view.activos.detalle.InstalacionesInformacionComercial',
-               'HreRem.view.activos.detalle.ZonasComunesInformacionComercial',
-               'HreRem.view.activos.detalle.DistribucionPlantasActivoList'
+               'HreRem.view.activos.detalle.ZonasComunesInformacionComercial'
     ],
 
     initComponent: function () {

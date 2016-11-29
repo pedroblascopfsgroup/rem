@@ -74,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
@@ -106,7 +107,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
@@ -2508,8 +2508,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return true;
 		
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public List<DtoNotarioContacto> getContactosNotario(Long idProveedor){
 		
@@ -2634,32 +2633,34 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return dtoDatosCliente;
 		
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto dto){
-		
-		List<ActivoProveedor> proveedores= new ArrayList<ActivoProveedor>();
-		
-		Filter filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoProveedor);
-		DDTipoProveedor tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
-		
-		
-		if(!Checks.esNulo(nombreBusqueda) && !Checks.esNulo(tipoProveedor)){
-			
-			Page page = expedienteComercialDao.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, dto);	
-			proveedores= (List<ActivoProveedor>) page.getResults();
-			
+	@Override
+	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto){
+
+		String codigoProvinciaActivo = null;
+		List<Long> proveedoresIDporCartera = new ArrayList<Long>();
+
+		if(!Checks.esNulo(idActivo)) {
+			Activo activo = activoAdapter.getActivoById(Long.parseLong(idActivo));
+			codigoProvinciaActivo = activo.getProvincia();
+
+			if(!Checks.esNulo(activo.getCartera())) {
+				Filter filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", activo.getCartera().getCodigo());
+				List<EntidadProveedor> epList = genericDao.getList(EntidadProveedor.class, filtroEntidad);
+				for(EntidadProveedor e : epList) {
+					proveedoresIDporCartera.add(e.getProveedor().getId());
+				}
+			}
 		}
-		else if(!Checks.esNulo(tipoProveedor)){
-			
-			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.id", tipoProveedor.getId());
-			proveedores = genericDao.getList(ActivoProveedor.class, filtroProveedor);
-		}
-		
+
+		Page page = expedienteComercialDao.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, codigoProvinciaActivo, proveedoresIDporCartera, dto);
+
+		List<ActivoProveedor> proveedores = (List<ActivoProveedor>) page.getResults();
+
 		return proveedores;
-		
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad){

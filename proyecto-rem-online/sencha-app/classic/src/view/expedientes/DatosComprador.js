@@ -112,7 +112,11 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		store: '{comboTipoPersona}',
 									            		value: '{comprador.codTipoPersona}'
-									            	}
+									            	},
+									            	allowBlank: false,
+						    						listeners: {
+														change: 'comprobarObligatoriedadCamposNexos'
+						    						}
 									            	
 										        },
 										        {
@@ -130,7 +134,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 						                			xtype:'numberfieldbase',
 										        	fieldLabel:  HreRem.i18n('fieldlabel.porcion.compra'),
 										        	reference: 'porcionCompra',
-										        	bind: '{comprador.porcentajeCompra}'
+										        	bind: '{comprador.porcentajeCompra}',
+										        	maxValue: 100,
+										        	minValue:0,
+									            	allowBlank: false
 										        },
 										        {
 						                			xtype: 'comboboxfieldbase',
@@ -138,8 +145,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													reference: 'titularContratacion',
 										        	bind: {
 									            		store: '{comboSiNoRem}',
-									            		value: '{comprador.titularContratacion}'
-									            	}
+									            		value: '{comprador.titularContratacion}',
+									            		hidden: '{!comprador.titularContratacion}'
+									            	},
+									            	disabled: true
 						                		}
 
 											]
@@ -165,7 +174,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		store: '{comboTipoDocumento}',
 									            		value: '{comprador.codTipoDocumento}'
-									            	}
+									            	},
+									            	allowBlank: false
 									            	
 										        },
 										        {
@@ -173,7 +183,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													reference: 'numeroDocumento',
 										        	bind: {
 									            		value: '{comprador.numDocumento}'
-									            	}
+									            	},
+									            	allowBlank: false
 
 						                		},
 												{ 
@@ -366,8 +377,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		store: '{comboEstadoCivil}',
 									            		value: '{comprador.codEstadoCivil}'
-									            	}
-									            	
+									            	},
+									            	allowBlank:true
 									            	
 										        },
 										        {
@@ -377,7 +388,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		store: '{comboRegimenesMatrimoniales}',
 									            		value: '{comprador.codigoRegimenMatrimonial}'
-									            	}
+									            	},
+									            	allowBlank:true
 									            	
 						                		},
 												{ 

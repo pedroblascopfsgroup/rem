@@ -1083,7 +1083,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.lookupReference('proveedorRef').setDisabled(false);
 			var ges= combo.up('gestioneconomicaexpediente');
 			me.lookupReference('proveedorRef').setValue();
-			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':value.getData().codigo, 'nombreBusqueda': ''});
+
+ 			var activoID = me.getViewModel().getData().expediente.getData().idActivo
+			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':value.getData().codigo, 'nombreBusqueda': '', 'idActivo':activoID});
 			ges.storeProveedores.load();
 		}
 
@@ -1248,6 +1250,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		else {
 			campoNumVisita.setValue();
 			campoNumVisita.setDisabled(true);
+		}
+	},
+	
+	comprobarObligatoriedadCamposNexos: function() {
+		var me = this,
+		campoEstadoCivil = me.lookupReference('estadoCivil');
+		campoRegEconomico = me.lookupReference('regimenMatrimonial');
+		// Si el tipo de persona es FISICA, entocnes los campos Estado civil y Reg. económico son oblogatios
+		if(me.lookupReference('tipoPersona').getValue() == "1" ) {
+			campoEstadoCivil.allowBlank = false;
+			campoRegEconomico.allowBlank = false;
+		}
+		else {
+			campoEstadoCivil.allowBlank = true;
+			campoRegEconomico.allowBlank = true;
 		}
 	}
 	

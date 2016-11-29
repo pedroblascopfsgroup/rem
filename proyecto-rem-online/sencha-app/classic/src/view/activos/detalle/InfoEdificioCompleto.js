@@ -1,11 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.InfoEdificioCompleto', {
     extend: 'Ext.container.Container',
     xtype: 'infoedificiocompleto',
-    
-    requires: [
-               'HreRem.view.activos.detalle.DistribucionPlantasActivoList'
-    ],
-    
+
     initComponent: function () {
 
         var me = this;     
@@ -57,7 +53,7 @@ Ext.define('HreRem.view.activos.detalle.InfoEdificioCompleto', {
 									emptyDisplayText: '-',
 									bind: {
 										store: '{comboSiNoNSRem}',
-										value: '{informeComercial.edificioDivisible}'		            		
+										value: '{infoComercial.edificioDivisible}'		            		
 									}
 					            }
 				 			]
@@ -78,12 +74,12 @@ Ext.define('HreRem.view.activos.detalle.InfoEdificioCompleto', {
 								 		fieldLabel: HreRem.i18n('title.otras.caracteristicas'),
 								 		flex:		2,
 								 		height: 	80,
-						            	bind:		'{informeComercial.edificioOtrasCaracteristicas}'
+						            	bind:		'{infoComercial.edificioOtrasCaracteristicas}'
 								   }
 								]
 						}
 			 		]
-				},		
+				},	
 				{
 	        	    xtype:		'fieldset',
 	        	    layout: 	'fit',
@@ -110,7 +106,7 @@ Ext.define('HreRem.view.activos.detalle.InfoEdificioCompleto', {
 						 		maxWidth:	1600,
 						 		flex:		2,
 						 		height: 	120,
-				            	bind:		'{informeComercial.ediDescripcion}'
+				            	bind:		'{infoComercial.ediDescripcion}'
 						   }
 						]
 				},
@@ -131,7 +127,7 @@ Ext.define('HreRem.view.activos.detalle.InfoEdificioCompleto', {
 							width: 		'33%',
 							maxWidth:	600,
 							margin: 	'0 10 10 0',
-			            	bind:		'{informeComercial.edificioDescPlantas}'
+			            	bind:		'{infoComercial.edificioDescPlantas}'
 						},
 						{
 							xtype: 		'textareafieldbase',
@@ -141,7 +137,7 @@ Ext.define('HreRem.view.activos.detalle.InfoEdificioCompleto', {
 							width: 		'33%',
 							maxWidth:	600,
 							margin: 	'0 10 10 0',
-			            	bind:		'{informeComercial.entornoComunicaciones}'
+			            	bind:		'{infoComercial.entornoComunicaciones}'
 						},
 						{
 							xtype: 		'textareafieldbase',
@@ -151,7 +147,7 @@ Ext.define('HreRem.view.activos.detalle.InfoEdificioCompleto', {
 							width: 		'33%',
 							maxWidth:	600,
 							margin: 	'0 10 10 0',
-			            	bind:		'{informeComercial.entornoInfraestructuras}'
+			            	bind:		'{infoComercial.entornoInfraestructuras}'
 						}
 					]
 				}

@@ -16,11 +16,13 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
+import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
@@ -43,7 +45,8 @@ public class TabActivoInformeComercial implements TabActivoService {
 	@Autowired
 	private ActivoManager activoManager;
 	
-	
+	@Autowired
+	private TabActivoFactoryApi tabActivoFactory;
 
 	@Override
 	public String[] getKeys() {
@@ -65,6 +68,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 		DtoActivoInformeComercial informeComercial = new DtoActivoInformeComercial();
 		
 		try {
+			//Rellenamos los datos desde el tab de InformacionComercial, que comparten datos
+			TabActivoInformacionComercial tabActivoInformacionComerial = (TabActivoInformacionComercial) tabActivoFactory.getService(TAB_INFORMACION_COMERCIAL);
+			beanUtilNotNull.copyProperties(informeComercial,tabActivoInformacionComerial.getTabData(activo));
 			
 			if (!Checks.esNulo(activo.getInfoComercial())){
 				// Copia al "informe comercial" todos los atributos de "informacion comercial".
@@ -368,6 +374,13 @@ public class TabActivoInformeComercial implements TabActivoService {
 				case 6:
 					break;
 				case 7:
+					ActivoPlazaAparcamiento otros = (ActivoPlazaAparcamiento) activo.getInfoComercial();
+					beanUtilNotNull.copyProperties(activoInformeDto,otros);
+					if(!Checks.esNulo(otros.getTipoCalidad()))
+						beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo", otros.getTipoCalidad().getCodigo());
+					if(!Checks.esNulo(otros.getSubtipoPlazagaraje()))
+						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo", otros.getSubtipoPlazagaraje().getCodigo());
+					//Instalaciones
 					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
 					break;
 				default:

@@ -3,7 +3,6 @@ Ext.define('HreRem.view.activos.detalle.InfoLocalComercial', {
     xtype: 'infolocalcomercial',
     
     requires: [
-               'HreRem.view.activos.detalle.DistribucionPlantasActivoList',
                'HreRem.view.activos.detalle.InstalacionesActivoInformacionComercial'
     ],
     
@@ -40,7 +39,7 @@ Ext.define('HreRem.view.activos.detalle.InfoLocalComercial', {
 					 		maxWidth:	600,
 					 		decimalPrecision: 2,
 					 		fieldLabel: HreRem.i18n('fieldlabel.longitud.fachada.calle.principal'),
-			            	bind:		'{informeComercial.mtsFachadaPpal}',
+			            	bind:		'{infoComercial.mtsFachadaPpal}',
 							readOnly: true
 						},
 						{ 
@@ -49,7 +48,7 @@ Ext.define('HreRem.view.activos.detalle.InfoLocalComercial', {
 					 		maxWidth:	600,
 					 		decimalPrecision: 2,
 							fieldLabel: HreRem.i18n('fieldlabel.longitud.fachada.calles.laterales'),
-		                	bind:		'{informeComercial.mtsFachadaLat}',
+		                	bind:		'{infoComercial.mtsFachadaLat}',
 							readOnly: true
 		                },
 		                { 
@@ -58,7 +57,7 @@ Ext.define('HreRem.view.activos.detalle.InfoLocalComercial', {
 					 		maxWidth:	600,
 					 		decimalPrecision: 2,
 					 		fieldLabel: HreRem.i18n('fieldlabel.altura.libre'),
-			            	bind:		'{informeComercial.mtsAlturaLibre}',
+			            	bind:		'{infoComercial.mtsAlturaLibre}',
 							readOnly: true
 						}
 	                ]
@@ -114,25 +113,25 @@ Ext.define('HreRem.view.activos.detalle.InfoLocalComercial', {
 													{
 														 xtype: 'checkboxfieldbase',
 														 fieldLabel: HreRem.i18n('fieldlabel.salida.humos'),
-														 bind: '{informeComercial.existeSalidaHumos}',
+														 bind: '{infoComercial.existeSalidaHumos}',
 														 readOnly: true
 													 },
 													 {
 														 xtype: 'checkboxfieldbase',
 														 fieldLabel: HreRem.i18n('fieldlabel.salida.emergencia'),
-														 bind: '{informeComercial.existeSalidaEmergencias}',
+														 bind: '{infoComercial.existeSalidaEmergencias}',
 														 readOnly: true
 													 },
 													 {
 														 xtype: 'checkboxfieldbase',
 														 fieldLabel: HreRem.i18n('fieldlabel.acceso.minusvalidos'),
-														 bind: '{informeComercial.existeAccesoMinusvalidos}',
+														 bind: '{infoComercial.existeAccesoMinusvalidos}',
 														 readOnly: true
 													 },
 													 {
 														 xtype: 'checkboxfieldbase',
 														 fieldLabel: HreRem.i18n('fieldlabel.otros'),
-														 bind: '{informeComercial.existeOtrasCaracteristicas}',
+														 bind: '{infoComercial.existeOtrasCaracteristicas}',
 														 readOnly: true
 													 }
 									 			 ]
@@ -142,7 +141,7 @@ Ext.define('HreRem.view.activos.detalle.InfoLocalComercial', {
 											 fieldLabel: HreRem.i18n('fieldlabel.otros.descripcion'),
 											 maxWidth:	500,
 									 		 minWidth:	300,
-											 bind:		'{informeComercial.otrosOtrasCaracteristicas}'
+											 bind:		'{infoComercial.otrosOtrasCaracteristicas}'
 										 }
 									]
 								}
@@ -168,14 +167,14 @@ Ext.define('HreRem.view.activos.detalle.InfoLocalComercial', {
 									 				xtype: 		'textfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.uso.idoneo'),
 													margin: '20 10 0 0',
-									            	bind:		'{informeComercial.usuIdoneo}',
+									            	bind:		'{infoComercial.usuIdoneo}',
 									            	flex:		1,
 													readOnly: 	true
 									 			},
 									 			{ 
 													xtype: 		'textfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.uso.anterior'),
-									            	bind:		'{informeComercial.usuAnterior}',
+									            	bind:		'{infoComercial.usuAnterior}',
 									            	flex:		1,
 													readOnly: 	true
 									            },
@@ -185,7 +184,7 @@ Ext.define('HreRem.view.activos.detalle.InfoLocalComercial', {
 											 		fieldLabel: HreRem.i18n('fieldlabel.info.distribucion.interior'),
 											 		flex:		2,
 											 		height: 	120,
-									            	bind:		'{informeComercial.infoDistribucionInterior}'
+									            	bind:		'{infoComercial.infoDistribucionInterior}'
 											   }
 												]
 									}

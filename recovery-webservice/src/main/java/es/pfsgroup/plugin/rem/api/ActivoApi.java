@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -339,6 +340,14 @@ public interface ActivoApi {
 	 * @return Devuelve el último histórico por ID para el ID del activo.
 	 */
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
+	
+	/**
+	 * Ejecuta el procedure de BBDD que publica activos de forma ordinaria (con validaciones de publicacion)
+	 * para un activo dado. Retorna TRUE si la ejecucion se ha producido sin errores
+	 * @param idActivo
+	 * @return
+	 */
+	boolean publicarActivo(Long idActivo) throws SQLException;
 
 	/**
 	 * Inserta o actualiza una visita aun activo
@@ -755,5 +764,6 @@ public interface ActivoApi {
 	 * @param popuesta
 	 */
 	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta);
+
 	
 }

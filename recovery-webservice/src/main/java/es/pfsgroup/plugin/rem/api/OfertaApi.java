@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
-import net.sf.json.JSONObject;
 
 public interface OfertaApi {
 
@@ -64,6 +65,15 @@ public interface OfertaApi {
 	 */
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
 
+
+	/**
+	 * Devuelve una lista de Ofertas aplicando el filtro que recibe.
+	 * 
+	 * @param dtoOfertasFilter con los parametros de filtro
+	 * @return List<Oferta>
+	 */
+	public List<VOfertasActivosAgrupacion> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter);
+	
 	/**
 	 * Devuelve una lista de Ofertas aplicando el filtro que recibe.
 	 * 

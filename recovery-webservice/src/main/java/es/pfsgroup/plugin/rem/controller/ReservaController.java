@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,13 +23,17 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -52,6 +57,9 @@ public class ReservaController {
 
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -83,6 +91,25 @@ public class ReservaController {
 				
 				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
 				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
+				
+				//HREOS-1243 Se añade lo siguiente debido a que el BPM funciona diferente a lo acordado. Debería gestionarse de otro modo.
+				if(Checks.esNulo(oferta) && reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)){
+					DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
+					dtoOfertasFilter.setNumActivo(activo.getNumActivo());
+					dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
+					
+					List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
+					if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
+						Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
+						if(!Checks.esNulo(idOferta)){
+							oferta = ofertaApi.getOfertaById(idOferta);
+						}
+					}					
+					if(Checks.esNulo(oferta)){
+						throw new Exception("El activo no tiene ofertas rechazadas.");	
+					}
+				}
+				
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 				if(Checks.esNulo(expedienteComercial)){
 					throw new Exception("No existe el expediente comercial.");
@@ -171,18 +198,19 @@ public class ReservaController {
 						throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
 					}
 					
-		/*			//Actualiza estado expediente comercial a ANULADO
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
-							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.ANULADO);
-					if (estadoReservado == null) {
-						throw new Exception("No se ha podido obtener estado ANULADO de base de datos");
+					//Actualiza estado reserva a ANULADA
+					DDEstadosReserva estReserva = reservaApi.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_ANULADA);
+					if (estReserva == null) {
+						throw new Exception("No se ha podido obtener estado ANULADA de la reserva de base de datos");
 					}
-					expedienteComercial.setEstado(estadoReservado);*/
+					expedienteComercial.getReserva().setEstadoReserva(estReserva);
 					
 					//Actualiza estado devolucion a ANULADO
 					DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_DEVUELTA));
 					expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
+					expedienteComercial.setFechaDevolucionEntregas(fechaEntrega);
+					expedienteComercial.setImporteDevolucionEntregas(importeReserva);
 					
 					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");

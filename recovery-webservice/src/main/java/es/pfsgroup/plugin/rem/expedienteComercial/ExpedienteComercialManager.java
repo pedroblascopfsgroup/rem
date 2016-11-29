@@ -56,7 +56,6 @@ import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -2736,7 +2735,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			ofertaUVEM.setCodOfertaHRE(oferta.getNumOferta().toString());
 		}
 		if (oferta.getPrescriptor() != null) {
-			ofertaUVEM.setCodPrescriptor(oferta.getPrescriptor().getCodProveedorUvem());
+			ofertaUVEM.setCodPrescriptor(oferta.getPrescriptor().getCodigoApiProveedor());
 		}
 		if (condExp != null) {
 			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva())) {
@@ -2751,44 +2750,53 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 			}
 		}
-		if (oferta.getImporteOferta() != null) {
-			ofertaUVEM.setImporteVenta(oferta.getImporteOferta().toString());
+		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta(): oferta.getImporteContraOferta();
+		if (importeTotal != null) {
+			ofertaUVEM.setImporteVenta(importeTotal.toString());
 		}
+		
+		if (condExp.getEntidadFinanciacion() != null) {
+			ofertaUVEM.setEntidad("00000");
+		}
+		
+		if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
+			ofertaUVEM.setImpuestos("S");
+		} else {
+			ofertaUVEM.setImpuestos("N");
+		}
+		
+		if (expedienteComercial.getReserva() != null) {
+			if (expedienteComercial.getReserva().getTipoArras() != null) {
+				if (DDTiposArras.CONFIRMATORIAS.equals(expedienteComercial.getReserva().getTipoArras().getCodigo())) {
+					ofertaUVEM.setArras("A");
+				} else {
+					ofertaUVEM.setArras("B");
+				}
+			} else {
+				ofertaUVEM.setArras("");
+			}
+		}
+		
 		return ofertaUVEM;
 	}
 
 	@Override
 	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) {
 		ArrayList<TitularUVEMDto> listaTitularUVEM = new ArrayList<TitularUVEMDto>();
-		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
 		for (int k = 0; k < expedienteComercial.getCompradores().size(); k++) {
 			CompradorExpediente compradorExpediente = expedienteComercial.getCompradores().get(k);
 			TitularUVEMDto titularUVEM = new TitularUVEMDto();
-			if (compradorExpediente.getComprador() != null) {
-				titularUVEM.setCliente(compradorExpediente.getComprador().toString());
-			}
-			if (compradorExpediente.getImporteProporcionalOferta() != null) {
+			
+			if (compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus() != null) {
+				titularUVEM.setCliente(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus().toString());
+			}			
+			if (compradorExpediente.getPorcionCompra() != null) {
 				titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
 			}
-			if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
-				titularUVEM.setImpuestos("S");
-			} else {
-				titularUVEM.setImpuestos("N");
+			if (compradorExpediente.getDocumentoConyuge() != null) {
+				titularUVEM.setPorcentaje(compradorExpediente.getDocumentoConyuge().toString());
 			}
-			if (condExp.getEntidadFinanciacion() != null) {
-				titularUVEM.setEntidad(condExp.getEntidadFinanciacion());
-			}
-			if (expedienteComercial.getReserva() != null) {
-				if (expedienteComercial.getReserva().getTipoArras() != null) {
-					if (DDTiposArras.CONFIRMATORIAS.equals(expedienteComercial.getReserva().getTipoArras().getCodigo())) {
-						titularUVEM.setArras("A");
-					} else {
-						titularUVEM.setArras("B");
-					}
-				} else {
-					titularUVEM.setArras("");
-				}
-			}
+
 			listaTitularUVEM.add(titularUVEM);
 		}
 		return listaTitularUVEM;

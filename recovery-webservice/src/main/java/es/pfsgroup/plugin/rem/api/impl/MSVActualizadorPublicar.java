@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,7 +48,7 @@ public class MSVActualizadorPublicar implements MSVLiberator {
 	}
 
 	@Override
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
+	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, SQLException {
 			
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);

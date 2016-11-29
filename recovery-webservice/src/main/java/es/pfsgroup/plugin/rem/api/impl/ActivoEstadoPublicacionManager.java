@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -82,7 +83,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     
     @Override
     @Transactional(readOnly = false)
-    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion){
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException{
     	ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
 		Filter filtro = null;
@@ -135,7 +136,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			// Obtener fecha 'fechaPublicable' del activo para contrastar si ya lo estaba y no repetir acción.
 			// Además, una vez publicado, aunque se despublique mantiene la fecha. Así que para permitirle pasar en ese caso se comprueba si su estado actual es despublicado.
 			if(Checks.esNulo(activo.getFechaPublicable())) { // Si no tiene fecha de publicación asignarle una y dejarlo en manos del automatismo nocturno.
+
 				activo.setFechaPublicable(new Date());
+				// Ademas, se publica el activo lanzando el procedure para este
+				activoApi.publicarActivo(activo.getId());
+				
 			} else if(!Checks.esNulo(activo.getFechaPublicable()) && // Si tiene fecha de publicación.
 					(!Checks.esNulo(estadoPublicacionActual) && estadoPublicacionActual.getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO))) { // Y tiene estado anterior.
 				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.

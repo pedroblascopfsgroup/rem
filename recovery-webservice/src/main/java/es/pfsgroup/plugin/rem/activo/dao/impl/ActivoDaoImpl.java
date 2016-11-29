@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -34,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 
 @Repository("ActivoDao")
@@ -462,6 +464,19 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
 		 
 		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
+	}
+	
+	@Override
+	public int publicarActivo(Long idActivo){
+		StringBuilder procedureHQL = new StringBuilder(
+							" BEGIN ");
+		procedureHQL.append("   ACTIVO_PUBLICACION_AUTO(:idActivoParam); ");
+		procedureHQL.append(" END; ");
+		
+		Query callProcedureSql = this.getSession().createSQLQuery(procedureHQL.toString());
+		callProcedureSql.setParameter("idActivoParam", idActivo);
+		
+		return callProcedureSql.executeUpdate();
 	}
 	
     public Long getNextNumOferta() {

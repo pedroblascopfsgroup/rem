@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class MSVActualizadorPublicarOrdinaria implements MSVLiberator {
 	}
 
 	@Override
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
+	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, SQLException {
 
 		// Publicacion ordinaria: Cambia el estado de publicacion
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());

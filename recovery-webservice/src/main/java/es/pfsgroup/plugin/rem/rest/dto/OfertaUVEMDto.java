@@ -7,6 +7,9 @@ public class OfertaUVEMDto {
 	private String codPrescriptor;
 	private String importeReserva;
 	private String importeVenta;
+	private String entidad; //00000
+	private String impuestos;
+	private String arras; 
 	
 	public String getCodOpcion() {
 		return codOpcion;
@@ -38,6 +41,23 @@ public class OfertaUVEMDto {
 	public void setImporteVenta(String importeVenta) {
 		this.importeVenta = importeVenta;
 	}
-	
+	public String getEntidad() {
+		return entidad;
+	}
+	public void setEntidad(String entidad) {
+		this.entidad = entidad;
+	}
+	public String getImpuestos() {
+		return impuestos;
+	}
+	public void setImpuestos(String impuestos) {
+		this.impuestos = impuestos;
+	}
+	public String getArras() {
+		return arras;
+	}
+	public void setArras(String arras) {
+		this.arras = arras;
+	}
 	
 }

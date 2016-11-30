@@ -510,7 +510,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 },
 				 groupField: 'numPlanta'
     		},
-    		
+
     		storeTasaciones: {
 				 model: 'HreRem.model.ActivoTasacion',
 				 sorters: [{ property: 'fechaValorTasacion', direction: 'DESC' }],
@@ -986,6 +986,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoRetencionPago'}
 			}			
+		},
+		
+		comboSubtipoActivoOtros : {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubtipoActivo',
+				extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
+			}
+		},
+		
+		comboManiobra: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'valoracionTrabajo'}
+			}
 		}
      }    
 });

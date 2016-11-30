@@ -422,9 +422,12 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Método que devuelve los proveedores filtrados por su tipo de proveedor
 	 * @param codigoTipoProveedor
+	 * @param nombreBusqueda
+	 * @param idActivo
+	 * @param dto
 	 * @return List<ActivoProveedor>
 	 */
-	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto dto);
+	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto);
 	
 	/**
 	 * Crea un registro de honorarios (gasto_expediente)

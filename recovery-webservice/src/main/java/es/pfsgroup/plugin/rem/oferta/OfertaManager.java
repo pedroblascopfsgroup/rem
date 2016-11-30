@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -52,13 +55,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import net.sf.json.JSONObject;
 
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
@@ -79,6 +82,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private OfertaDao ofertaDao;
+	
+	@Autowired
+	private VOfertaActivoDao vOfertaActivoDao;
 
 	@Autowired
 	private UpdaterStateApi updaterState;
@@ -215,6 +221,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return ofertaDao.getListOfertas(dtoOfertasFilter);
 	}
 
+	@Override
+	public List<VOfertasActivosAgrupacion> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter) {
+
+		return vOfertaActivoDao.getListOfertasFromView(dtoOfertasFilter);
+	}
+	
+	
 	@Override
 	public List<Oferta> getListaOfertas(OfertaDto ofertaDto) {
 		List<Oferta> lista = null;

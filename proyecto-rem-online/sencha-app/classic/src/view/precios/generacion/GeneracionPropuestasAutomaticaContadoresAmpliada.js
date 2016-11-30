@@ -1,13 +1,13 @@
-Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadores', {
+Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadoresAmpliada', {
     extend		: 'HreRem.view.common.GridBase',
-    xtype		: 'generacionpropuestasautomaticacontadores',
-    reference	: 'generacionPropuestasAutomaticaContadores',
+    xtype		: 'generacionpropuestasautomaticacontadoresampliada',
+    reference	: 'generacionPropuestasAutomaticaContadoresAmpliada',
     maxWidth: 600,
     bind: {
-        store: '{numActivosByTipoPrecio}'
+        store: '{numActivosByTipoPrecioAmpliada}'
     },
 	listeners: {
-		cellclick : 'cellClickContadorAutomatico'
+		cellclick : 'cellClickContadorAutomaticoAmpliada'
 	},
 	viewConfig : {
 		disableSelection: true
@@ -15,7 +15,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContado
     initComponent: function () {
         
         var me = this;
-        
+       
         var carteraRenderer =  function(value) {
         	var src = CONST.IMAGENES_CARTERA[value.toUpperCase()],
         	alt = value;
@@ -27,7 +27,20 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContado
         };
         
         me.columns= [
-                     
+                {
+                 	dataIndex: 'entidadPropietariaCodigo',
+     		        text: HreRem.i18n('header.precios.automatica.activos.cartera.codigo'),
+     		        flex: 1,
+     		        hidden: true
+                },        
+             	{
+     		        dataIndex: 'entidadPropietariaDescripcion',
+     		        //text: HreRem.i18n('header.entidad.propietaria'),
+     		        flex: 2,
+     		        cls: 'grid-no-seleccionable-primera-col',
+     				tdCls: 'grid-no-seleccionable-td',
+     		        hidden: true
+     		    },
                 {
                 	dataIndex: 'entidadPropietariaCodigo',
 		            text: HreRem.i18n('header.precios.automatica.activos.cartera.codigo'),
@@ -35,25 +48,12 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContado
 		            hidden: true
                 },        
         		{
-		            dataIndex: 'entidadPropietariaDescripcion',
+		            dataIndex: 'estadoFisicoDescripcion',
 		            //text: HreRem.i18n('header.entidad.propietaria'),
 		            flex: 2,
 		            cls: 'grid-no-seleccionable-primera-col',
 					tdCls: 'grid-no-seleccionable-td',
 		            renderer: carteraRenderer
-		        },
-                {
-                	dataIndex: 'subcarteraCodigo',
-		            flex: 1,
-		            hidden: true
-                },        
-        		{
-		            dataIndex: 'subcarteraDescripcion',
-		            flex: 1,
-		            cls: 'grid-no-seleccionable-primera-col',
-					tdCls: 'grid-no-seleccionable-td',
-					align: 'left'//,
-		            //renderer: carteraRenderer
 		        },
 		        {	        	
 		            dataIndex: 'numActivosPreciar',

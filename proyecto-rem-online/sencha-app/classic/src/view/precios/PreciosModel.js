@@ -79,6 +79,19 @@ Ext.define('HreRem.view.precios.PreciosModel', {
     	    	remoteSort: true,
     	    	remoteFilter: true
     		},
+    		
+    		numActivosByTipoPrecioAmpliada: {
+    			
+    			pageSize: $AC.getDefaultPageSize(),
+    	    	proxy: {
+    		        type: 'uxproxy',
+    		        remoteUrl: 'precios/getNumActivosByTipoPrecioAmpliada',
+    			    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+    	    	},
+    	    	session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true
+    		},
 
     		comboActivoPropietario: {
     			model: 'HreRem.model.ComboBase',

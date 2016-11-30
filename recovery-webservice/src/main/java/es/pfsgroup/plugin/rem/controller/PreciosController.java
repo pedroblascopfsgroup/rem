@@ -274,4 +274,25 @@ public class PreciosController extends ParadiseJsonController{
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getNumActivosByTipoPrecioAmpliada(ModelMap model)
+	{
+		
+		try {
+
+			List<VBusquedaNumActivosTipoPrecio> listaCountActivos = preciosApi.getNumActivosByTipoPrecioAndEstadoSareb();
+
+			model.put("data", listaCountActivos);
+			model.put("totalCount", listaCountActivos.size());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

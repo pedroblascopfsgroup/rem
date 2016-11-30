@@ -39,7 +39,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	    			
 	    		case 'generacionpropuestasautomatica':
 	    			//Se mete estos parametros, ya que se requieren para la propuesta automatica
-	    			store.getProxy().extraParams = {entidadPropietariaCodigo: me.entidadPropietariaCodigo, tipoPropuestaCodigo: me.tipoPropuestaCodigo, conBloqueo: '0'}
+	    			store.getProxy().extraParams = {entidadPropietariaCodigo: me.entidadPropietariaCodigo, subcarteraCodigo: me.subcarteraCodigo, tipoPropuestaCodigo: me.tipoPropuestaCodigo, conBloqueo: '0', estadoActivoCodigo: me.estadoFisicoCodigo}
 	    			break;
 	    	}	
 			return true;		
@@ -174,12 +174,36 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	cellClickContadorAutomatico: function(view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 		
 		var me = this;	
-		
-		if(cellIndex != 0 && cellIndex != 1) {
+		//debugger;
+		if(cellIndex != 0 && cellIndex != 1 && cellIndex != 3) {
 			
 			this.tipoPropuestaCodigo = me.tipoPropuestaByColumnaSeleccionadaAutomatica(cellIndex);
 			this.entidadPropietariaCodigo = record.data.entidadPropietariaCodigo;
 			this.numActivosToGenerar = record.get(view.panel.headerCt.getHeaderAtIndex(cellIndex).dataIndex);
+			this.subcarteraCodigo = record.data.subcarteraCodigo;
+			
+			//Agrega / elimina fondo de la celda seleccionada
+			me.marcarDesmarcarCeldaInclusionAutomatica(e);
+			
+			me.lookupReference('generacionPropuestasActivosList').expand();	
+			this.lookupReference('generacionPropuestasActivosList').getStore().loadPage(1);	
+		}else{
+			if(record.getData().entidadPropietariaDescripcion=="Sareb"){
+				me.lookupReference('generacionPropuestasAutomaticaContadoresAmpliada').setDisabled(false);
+			}else{
+				me.lookupReference('generacionPropuestasAutomaticaContadoresAmpliada').setDisabled(true);
+			}
+		}
+	},
+	
+	cellClickContadorAutomaticoAmpliada: function(view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+		var me = this;
+		if(cellIndex != 0 && cellIndex != 1 && cellIndex != 3) {
+			this.tipoPropuestaCodigo = me.tipoPropuestaByColumnaSeleccionadaAutomatica(cellIndex);
+			this.entidadPropietariaCodigo = record.data.entidadPropietariaCodigo;
+			this.numActivosToGenerar = record.get(view.panel.headerCt.getHeaderAtIndex(cellIndex).dataIndex);
+			this.estadoFisicoCodigo = record.data.estadoFisicoCodigo;
+			this.subcarteraCodigo = record.data.subcarteraCodigo;
 			
 			//Agrega / elimina fondo de la celda seleccionada
 			me.marcarDesmarcarCeldaInclusionAutomatica(e);
@@ -193,13 +217,13 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	tipoPropuestaByColumnaSeleccionadaAutomatica: function(col) {
 		
 		switch(col) {
-			case 2:
+			case 4:
 				return "01";//Preciar
 				break;
-			case 3:
+			case 5:
 				return "02";//Repreciar
 				break;
-			case 4:
+			case 6:
 				return "03";//De descuento (oculta)
 				break;
 		}
@@ -215,6 +239,8 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		
 			params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
 	    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
+	    	params.subcarteraCodigo = me.subcarteraCodigo;
+	    	params.estadoActivoCodigo = me.estadoFisicoCodigo;
 	    	params.conBloqueo = '0';
 	    	
 	    	me.realizarGeneracionPropuesta(params);
@@ -234,6 +260,8 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		if(me.numActivosToGenerar > 0) {
 			params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
 	    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
+	    	params.subcarteraCodigo = me.subcarteraCodigo;
+	    	params.estadoActivoCodigo = me.estadoFisicoCodigo;
 	    	params.conBloqueo = '0';
 			
 	    	me.realizarExportacionExcel(params,me);
@@ -331,7 +359,11 @@ Ext.define('HreRem.view.precios.PreciosController', {
    		gridContadores = me.lookupReference("generacionPropuestasAutomaticaContadores");
    		
    		gridContadores.getStore().load(); 
-   		me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(0);	
+   		
+   		gridContadoresAmpliada = me.lookupReference("generacionPropuestasAutomaticaContadoresAmpliada");
+   		
+   		gridContadoresAmpliada.getStore().load(); 
+   		me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(0);
    	
    },
    

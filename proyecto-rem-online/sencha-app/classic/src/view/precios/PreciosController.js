@@ -154,20 +154,26 @@ Ext.define('HreRem.view.precios.PreciosController', {
     onPropuestaPrecioListClick: function() {
     	
     	var me = this;
-		me.lookupReference('historicoPropuestaActivosList').expand();	
-		this.lookupReference('historicoPropuestaActivosList').getStore().loadPage(1);
+    	
+    	if(!Ext.isEmpty(me.getViewModel().get('historicoPropuestasList').selection)) {
+    		
+			me.lookupReference('historicoPropuestaActivosList').expand();	
+			this.lookupReference('historicoPropuestaActivosList').getStore().loadPage(1);
+    	}
     },
     
     beforeLoadActivosByPropuesta: function(store, operation, opts) {
 		
 		var me = this;		
-		var idPropuesta = me.getViewModel().get('historicoPropuestasList').selection.id;
-		
-		if(idPropuesta != null) {
-			store.getProxy().extraParams = {idPropuesta: idPropuesta};	
+
+		if(!Ext.isEmpty(me.getViewModel().get('historicoPropuestasList').selection)) {
+			var idPropuesta = me.getViewModel().get('historicoPropuestasList').selection.id;
 			
-			return true;
-		}
+			if(idPropuesta != null) {
+				store.getProxy().extraParams = {idPropuesta: idPropuesta};	
+				return true;
+			}
+	    }
 	},
 	
 	//HREOS-639 Identifica la celda seleccionada (col,fila) del grid de generacionPropuestasAutomatica
@@ -286,31 +292,35 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	realizarGeneracionPropuesta: function(params) {
 		
 		var me=this,
-		config = {};
-		
+		url = $AC.getRemoteUrl('precios/generarPropuestaManual');
+
 		var messageBox = Ext.Msg.prompt(HreRem.i18n('title.generar.propuesta'),"<span class='txt-guardar-propuesta'>" + HreRem.i18n('txt.aviso.guardar.propuesta') + "</span>", function(btn, text){
 		    if (btn == 'ok'){
 		    	
+		    	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
 		    	params.nombrePropuesta = text;
-		        
-		        config.params = params;
-				config.url= $AC.getRemoteUrl('precios/generarPropuestaManual');
-				
-				me.fireEvent("downloadFile", config);
-				
-				Ext.Msg.show({
-				    title:HreRem.i18n('msg.generar.propuesta.ok.title'),
-				    message: HreRem.i18n('msg.generar.propuesta.ok.mensaje'),
-				    buttons: Ext.Msg.OK,
-				    icon: Ext.Msg.INFO,
-				    fn: function(btn) {
-				    	//Refrescamos los resultados de los contadores de activos, y el listado donde se muestran los activos
+		    	
+		    	Ext.Ajax.request({
+		    		url: url,
+		    		params: params,
+		    		success: function(response, opts){
+		    			if(Ext.decode(response.responseText).success)
+		    				me.fireEvent("infoToast", HreRem.i18n('msg.generar.propuesta.ok.mensaje')); 
+		    			else
+		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    		},
+				 	failure: function(record, operation) {
+				 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				    },
+				    callback: function(record, operation) {
+		    			me.getView().unmask();
+		    			//Refrescamos los resultados de los contadores de activos, el listado donde se muestran los activos, y el listado de propuestas del historico
 			        	me.getViewModel().data.numActivosByTipoPrecio.load();
 			        	me.numActivosToGenerar = 0;
 			        	me.getViewModel().data.activos.load();
+			        	me.getViewModel().data.propuestas.load();
 				    }
-				});    
-				
+		    	});
 		    }
     	});
 
@@ -342,7 +352,11 @@ Ext.define('HreRem.view.precios.PreciosController', {
    onPropuestaPrecioListDobleClick : function(grid, record) {        
 		
 	   	var me = this;    	
-		me.abrirDetalleTrabajo(record);   	        	
+	   	
+	   	if(!Ext.isEmpty(record.get('idTrabajo')))
+	   		me.abrirDetalleTrabajo(record);
+	   	else
+	   		me.fireEvent("warnToast", HreRem.i18n("msg.historico.propuesta.sin.trabajo"));
    },
    
    //HREOS-641 Abre un trabajo al hacer doble click en una propuesta
@@ -387,6 +401,29 @@ Ext.define('HreRem.view.precios.PreciosController', {
     			break;
     	}	
    		  	
+   },
+   
+   downloadPropuestaAdjunto: function(grid, record) {
+	   
+	   var me = this,
+		config = {};
+	   
+		if(!Ext.isEmpty(record.get('idAdjunto'))) {
+			config.url=$AC.getWebPath()+"precios/bajarAdjuntoPropuesta."+$AC.getUrlPattern();
+			config.params = {};
+			config.params.id=record.get('idAdjunto');
+			config.params.idTrabajo=record.get("idTrabajo");
+			
+			me.fireEvent("downloadFile", config);
+	   }
+		else {
+			me.fireEvent("warnToast", HreRem.i18n("msg.historico.propuesta.sin.documento.en.trabajo"));   
+	   }
+		me.lookupReference('historicoPropuestaActivosList').collapse();	
+		me.lookupReference('historicoPropuestaActivosList').getStore().loadPage(0);
+		
+		//TODO: Hacer que se deseleccion la fila del grid
+		me.getViewModel().get('historicoPropuestasList').selection = null;
    }
 
 });

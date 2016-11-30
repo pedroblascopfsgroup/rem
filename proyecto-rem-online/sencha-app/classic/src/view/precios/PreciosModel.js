@@ -22,6 +22,7 @@ Ext.define('HreRem.view.precios.PreciosModel', {
     		    	
     		propuestas: {
 			    pageSize: $AC.getDefaultPageSize(),
+			    sorters: [{ property: 'fechaEmision', direction: 'DESC' }],
 		    	proxy: {
 			        type: 'uxproxy',
 			        remoteUrl: 'precios/getPropuestas',

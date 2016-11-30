@@ -300,7 +300,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndEstadoSareb(){
-		return this.getNumActivosByTipoPrecioAndEstado(DDCartera.CODIGO_CARTERA_02);
+		return this.getNumActivosByTipoPrecioAndEstado(DDCartera.CODIGO_CARTERA_SAREB);
 	}
 	
 	@Override

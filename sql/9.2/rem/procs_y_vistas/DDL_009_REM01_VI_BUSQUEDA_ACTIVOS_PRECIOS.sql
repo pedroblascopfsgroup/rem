@@ -1,8 +1,8 @@
  
 --/*
 --##########################################
---## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20161116
+--## AUTOR=DANIEL GUTIÉRREZ
+--## FECHA_CREACION=20161130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0

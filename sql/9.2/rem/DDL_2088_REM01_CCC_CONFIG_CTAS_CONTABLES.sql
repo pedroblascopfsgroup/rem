@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161122
+--## FECHA_CREACION=20161123
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -82,6 +82,7 @@ BEGIN
 		DD_CRA_ID						NUMBER(16,0)				NOT NULL,
 		PRO_ID							NUMBER(16,2),
 		CCC_CUENTA_ANYO_CURSO			VARCHAR2(50 CHAR)			NOT NULL,
+		CCC_CUENTA_ACTIVABLE			VARCHAR2(50 CHAR),
 		CCC_CUENTA_ANYOS_ANTERIORES		VARCHAR2(50 CHAR)			NOT NULL,		
 		VERSION 						NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE,
 		USUARIOCREAR 					VARCHAR2(50 CHAR)			NOT NULL ENABLE, 
@@ -146,6 +147,7 @@ BEGIN
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_STG_ID IS ''Subtipo de gasto al que pertenece la configuración.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CRA_ID IS ''Cartera a la que pertenece la configuración''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CUENTA_ANYO_CURSO IS ''Cuenta contable para el año en curso.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CUENTA_ACTIVABLE IS ''Cuenta contable activable para el año en curso en caso de agotarse la actual.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CUENTA_ANYOS_ANTERIORES IS ''Cuenta contable para años anteriores.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';

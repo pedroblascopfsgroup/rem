@@ -139,7 +139,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
     private Double importeRentaAlquiler;
     
     @Column(name="ECO_NUMERO_CONTRATO_ALQUILER")
-    private Integer numContratoAlquiler;
+    private String numContratoAlquiler;
     
     @Column(name="ECO_PLAZO_OPCION_COMPRA")
     private Date fechaPlazoOpcionCompraAlquiler;
@@ -418,11 +418,11 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		this.importeRentaAlquiler = importeRentaAlquiler;
 	}
 
-	public Integer getNumContratoAlquiler() {
+	public String getNumContratoAlquiler() {
 		return numContratoAlquiler;
 	}
 
-	public void setNumContratoAlquiler(Integer numContratoAlquiler) {
+	public void setNumContratoAlquiler(String numContratoAlquiler) {
 		this.numContratoAlquiler = numContratoAlquiler;
 	}
 

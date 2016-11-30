@@ -1251,6 +1251,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoNumVisita.setValue();
 			campoNumVisita.setDisabled(true);
 		}
+	},
+	
+	comprobarObligatoriedadCamposNexos: function() {
+		var me = this,
+		campoEstadoCivil = me.lookupReference('estadoCivil');
+		campoRegEconomico = me.lookupReference('regimenMatrimonial');
+		// Si el tipo de persona es FISICA, entocnes los campos Estado civil y Reg. económico son oblogatios
+		if(me.lookupReference('tipoPersona').getValue() == "1" ) {
+			campoEstadoCivil.allowBlank = false;
+			campoRegEconomico.allowBlank = false;
+		}
+		else {
+			campoEstadoCivil.allowBlank = true;
+			campoRegEconomico.allowBlank = true;
+		}
 	}
 	
 });

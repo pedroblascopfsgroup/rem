@@ -54,7 +54,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						var esInvisibleEcActivo = false;
 						var esInvisibleEcTrabajo = false;
 						var esInvisibleEcExpediente = true; 
-						
+
 						//Bucle que busca los enlaces en el array me.campos,
 						// para mantener funcionalidad "TareaGenerica", los enlaces deben retirarse de me.campos
 						var numEnlaces = 0;
@@ -1012,7 +1012,41 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 								me.deshabilitarCampo(me.down('[name=fechaFin]'));
 								me.deshabilitarCampo(me.down('[name=numContrato]'));
 							}
-						})	 
+						});
+						
+						me.down('[name=fechaFin]').addListener('change', function(){
+							var finicio = me.down('[name=fechaInicio]');
+							var ffin = me.down('[name=fechaFin]');
+							var dfinicio = new Date(finicio.value);
+							var dffin = new Date(ffin.value);
+
+							if(ffin.value == null){
+				    			 	ffin.blankText = HreRem.i18n('tarea.validacion.error.ffin.obligatoria');
+							} else {
+								if(dfinicio > dffin){
+				    			 	finicio.blankText = HreRem.i18n('tarea.validacion.error.ffin.mayor');
+				    			 	finicio.setValue('');
+								}
+							}
+							
+						});
+						
+						me.down('[name=fechaInicio]').addListener('change', function(){
+							var finicio = me.down('[name=fechaInicio]');
+							var ffin = me.down('[name=fechaFin]');
+							var dfinicio = new Date(finicio.value);
+							var dffin = new Date(ffin.value);
+
+							if(finicio.value == null){
+				    			 	ffin.blankText = HreRem.i18n('tarea.validacion.error.finicio.obligatoria');
+							} else {
+								if(dfinicio > dffin){
+				    			 	ffin.blankText = HreRem.i18n('tarea.validacion.error.finicio.menor');
+				    			 	ffin.setValue('');
+								}
+							}
+							
+						});
 					},
 					
 					T014_DefinicionOfertaValidacion: function() {

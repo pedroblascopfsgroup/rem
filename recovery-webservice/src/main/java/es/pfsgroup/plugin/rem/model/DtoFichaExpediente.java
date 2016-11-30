@@ -77,7 +77,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Date fechaInicioAlquiler;
 	private Date fechaFinAlquiler;
 	private Double importeRentaAlquiler;
-	private Integer numContratoAlquiler;
+	private String numContratoAlquiler;
 	private Date fechaPlazoOpcionCompraAlquiler;
 	private Double primaOpcionCompraAlquiler;
 	private Double precioOpcionCompraAlquiler;
@@ -350,11 +350,11 @@ public class DtoFichaExpediente extends WebDto {
 		this.importeRentaAlquiler = importeRentaAlquiler;
 	}
 
-	public Integer getNumContratoAlquiler() {
+	public String getNumContratoAlquiler() {
 		return numContratoAlquiler;
 	}
 
-	public void setNumContratoAlquiler(Integer numContratoAlquiler) {
+	public void setNumContratoAlquiler(String numContratoAlquiler) {
 		this.numContratoAlquiler = numContratoAlquiler;
 	}
 

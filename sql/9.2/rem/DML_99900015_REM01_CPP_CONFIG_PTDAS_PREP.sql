@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jose Villel
---## FECHA_CREACION=20161120
+--## FECHA_CREACION=20161125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -38,23 +38,23 @@ DECLARE
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
-    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	--			ANYO  SBTPO  CRA  SCR  PRO  PVE  PP
-    	-- BANKIA
-    	T_TIPO_DATA('2016','01','03','09',null,null,'492133'),
-		T_TIPO_DATA('2016','02','03','09',null,null,'492133'),
-        T_TIPO_DATA('2016','01','03','08',null,null,'492052'),
-		T_TIPO_DATA('2016','02','03','08',null,null,'492052'),
-		T_TIPO_DATA('2016','01','03','07',null,null,'492074'),
-		T_TIPO_DATA('2016','02','03','07',null,null,'492074'),
-		T_TIPO_DATA('2016','01','03','06',null,null,'491982'),
-		T_TIPO_DATA('2016','02','03','06',null,null,'491982'),
-		-- SAREB
-		T_TIPO_DATA('2016','01','02',null,null,null,'G011311'),
-		T_TIPO_DATA('2016','02','02',null,null,null,'G011311'),
-		-- CAJAMAR
-		T_TIPO_DATA('2016','01','01',null,null,null,'48000000200'),
-		T_TIPO_DATA('2016','02','01',null,'13',null,'63103000001')		
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(	
+		-- Bankia
+		T_TIPO_DATA('2016','01','03','09','','','492133'),
+		T_TIPO_DATA('2016','02','03','09','','','492133'),
+		T_TIPO_DATA('2016','01','03','08','','','492052'),
+		T_TIPO_DATA('2016','02','03','08','','','492052'),
+		T_TIPO_DATA('2016','01','03','07','','','492074'),
+		T_TIPO_DATA('2016','02','03','07','','','492074'),
+		T_TIPO_DATA('2016','01','03','06','','','491982'),
+		T_TIPO_DATA('2016','02','03','06','','','491982'),
+		-- Sareb
+		T_TIPO_DATA('2016','01','02','','','','G011311'),
+		T_TIPO_DATA('2016','02','02','','','','G011311'),
+		-- Cajamar
+		T_TIPO_DATA('2016','01','01','','','','06.01.001'),
+		T_TIPO_DATA('2016','02','01','','','','06.01.001')
+		
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

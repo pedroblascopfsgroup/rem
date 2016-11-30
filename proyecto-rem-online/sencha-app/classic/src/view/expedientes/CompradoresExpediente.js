@@ -32,7 +32,13 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					    	rowclick: 'onCompradoresListClick'*/
 					    	
 					    },
-					    
+					    features: [{
+				            id: 'summary',
+				            ftype: 'summary',
+				            hideGroupedHeader: true,
+				            enableGroupingMenu: false,
+				            dock: 'bottom'
+					    }],
 						columns: [
 							{
 						        xtype: 'actioncolumn',
@@ -82,7 +88,20 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						   {
 								text: HreRem.i18n('header.procentaje.compra'),
 								dataIndex: 'porcentajeCompra',
-								flex: 1
+								flex: 1,
+								renderer: function(value) {
+					            	return Ext.util.Format.number(value, '0.00%');
+					            },
+					            summaryType: 'sum',
+					            summaryRenderer: function(value, summaryData, dataIndex) {
+					            	var msg = HreRem.i18n("fieldlabel.porcentaje.compra.total") + " " + value + "%";
+					            	var style = "" 
+					            	if(value != 100) {
+					            		msg = HreRem.i18n("fieldlabel.porcentaje.compra.total.error")	
+					            		style = "style= 'color: red'" 
+					            	}			            	
+					            	return "<span "+style+ ">"+msg+"</span>"
+					            }
 						   },
 						   {
 						   		text: HreRem.i18n('header.telefono'),

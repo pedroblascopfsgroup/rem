@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20161129
+--## FECHA_CREACION=20161130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1252
@@ -50,12 +50,31 @@ BEGIN
 
 -- CAMBIO EN LOS TIPO DE CAMPO DE LAS TAREAS --------------------------------------------------
 
---T014_PosicionamientoFirma - Fecha Fin sin limite ----------------------------
+--T014_PosicionamientoFirma - Fecha inicio sin limite ----------------------------
 
   V_TFI_TAP_CODIGO := 'T014_PosicionamientoFirma';
   V_TFI_TFI_NOMBRE := 'fechaInicio';
   V_TFI_CAMPO := 'tfi_tipo';
   V_TFI_VALOR := 'date';
+
+  V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
+             SET '||V_TFI_CAMPO||'='''||V_TFI_VALOR||'''
+             ,FECHAMODIFICAR = sysdate
+             ,USUARIOMODIFICAR = ''DML_99900023''
+             WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TFI_TAP_CODIGO||''') 
+               AND TFI_NOMBRE = '''||V_TFI_TFI_NOMBRE||'''
+             ';
+
+  DBMS_OUTPUT.PUT_LINE('[SQL]: '||V_MSQL);
+  EXECUTE IMMEDIATE V_MSQL;
+
+
+--T014_PosicionamientoFirma - No. contrato alfanumérico ----------------------------
+
+  V_TFI_TAP_CODIGO := 'T014_PosicionamientoFirma';
+  V_TFI_TFI_NOMBRE := 'numContrato';
+  V_TFI_CAMPO := 'tfi_tipo';
+  V_TFI_VALOR := 'text';
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
              SET '||V_TFI_CAMPO||'='''||V_TFI_VALOR||'''

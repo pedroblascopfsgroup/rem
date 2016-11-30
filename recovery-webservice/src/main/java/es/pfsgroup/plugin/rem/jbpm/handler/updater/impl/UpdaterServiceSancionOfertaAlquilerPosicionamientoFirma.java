@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -23,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
@@ -43,6 +45,7 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 	private static final String NUM_CONTRATO = "numContrato";
 	private static final String COMBO_FIRMA = "comboFirma";
 	
+    private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T014_POSICIONAMIENTO_FIRMA = "T014_PosicionamientoFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -102,7 +105,7 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 			if(NUM_CONTRATO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 			{
 				if(!Checks.esNulo(expedienteComercial))
-					expedienteComercial.setNumContratoAlquiler(Integer.parseInt(valor.getValor()));
+					expedienteComercial.setNumContratoAlquiler(valor.getValor());
 			}
 			
 			//Combo Firmar contrato SI/NO
@@ -114,6 +117,15 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
+						
+						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+						
+						//Rechazamos el resto de ofertas
+						for(Oferta oferta : listaOfertas){
+							if(DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())){
+								ofertaApi.rechazarOferta(oferta);
+							}
+						}
 					}
 				} else {
 					// Actualizacion del estado de expediente comercial: ANULADO
@@ -122,6 +134,21 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
+						
+						//Finaliza el trámite
+						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+						genericDao.save(ActivoTramite.class, tramite);
+
+						//Rechaza la oferta y descongela el resto
+						ofertaApi.rechazarOferta(ofertaAceptada);
+						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+						for(Oferta oferta : listaOfertas){
+							if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
+								ofertaApi.descongelarOferta(oferta);
+							}
+						}
+						
 					}
 				}
 			}

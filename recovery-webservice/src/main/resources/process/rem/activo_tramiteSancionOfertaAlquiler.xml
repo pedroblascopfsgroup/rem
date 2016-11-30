@@ -100,8 +100,8 @@
 	</state>
 	
 	<decision name="T014_ResolucionComiteExternoDecision">
-		<transition to="T014_PosicionamientoFirma" name="KO"></transition>
-		<transition to="Fin" name="OK"></transition>
+		<transition to="T014_PosicionamientoFirma" name="OK"></transition>
+		<transition to="Fin" name="KO"></transition>
 	</decision>
 
 	<decision name="T014_PosicionamientoFirmaDecision">

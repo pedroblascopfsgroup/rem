@@ -18,43 +18,10 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     listeners: {
     	boxready: function() {//Anyadir seccion por tipo de activo
     		var me = this;
-    		model = me.lookupViewModel();
 
-    		if(model.get("activo.isViviendaMediador")) {
-		     	me.add({    
-					xtype:'infovivienda'
-	        	});
-    		}
-    		if(model.get("activo.isLocalComercialMediador")) {
-		     	me.add({                    
-					xtype:'infolocalcomercial'
-		        });
-    		}
-	    	if(model.get("activo.isEdificioCompletoMediador")) {
-			     me.add({    
-		        	xtype: 'infoedificiocompleto'
-		        });	 
-	    	}
-	    	if(model.get("activo.isIndustrialMediador")) {
-		     	me.add({    
-					xtype:'infoindustrialysuelo',
-					title: HreRem.i18n('title.industrial')
-	        	});
-    		}
-	    	if(model.get("activo.isSueloMediador")) {
-		     	me.add({    
-					xtype:'infoindustrialysuelo',
-					title: HreRem.i18n('title.industrial')
-	        	});
-    		}
-	    	if(model.get("activo.isOtrosMediador")) {
-		     	me.add({    
-					xtype:'infovarios'
-	        	});
-    		}
-	    	
+    		this.cargarDatosSegunTipoActivoDelMediador(me,me.lookupViewModel().get('activo.tipoActivoMediadorCodigo'));
+
 	    	me.lookupController().cargarTabData(me);
-    		
     	}
     },
     
@@ -814,10 +781,17 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
-    	me.lookupController().cargarTabData(me);
+		
+		//Necesario en caso de que cambien el tipo de activo en Mediador.
+		me.borrarContainerTipoActivoMediador(me);
+		
+		me.lookupController().cargarTabData(me);
+
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
 		});
+		
+		me.cargarDatosSegunTipoActivoDelMediador(me, me.lookupController().lookupReference('tipoActivoMediadorInforme').getValue());
     },
     
     actualizarCoordenadas: function(latitud, longitud) {
@@ -825,5 +799,59 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 
     	me.up('activosdetallemain').lookupReference('latitudmediador').setValue(latitud);
     	me.up('activosdetallemain').lookupReference('longitudmediador').setValue(longitud);
+    },
+    
+    cargarDatosSegunTipoActivoDelMediador: function(me, codigoTipoActivoMediador) {
+    	
+    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['SUELO']) {
+	     	me.add({    
+				xtype:'infoindustrialysuelo',
+				title: HreRem.i18n('title.suelo')
+        	});
+		}
+    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['VIVIENDA']) {
+	     	me.add({    
+				xtype:'infovivienda'
+        	});
+		}
+		if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']) {
+	     	me.add({                    
+				xtype:'infolocalcomercial'
+	        });
+		}
+		if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['INDUSTRIAL']) {
+	     	me.add({    
+				xtype:'infoindustrialysuelo',
+				title: HreRem.i18n('title.industrial')
+        	});
+		}
+    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']) {
+		     me.add({    
+	        	xtype: 'infoedificiocompleto'
+	        });	 
+    	}
+    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']) {
+	     	me.add({    
+				xtype:'infovarios'
+        	});
+		}
+    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['OTROS']) {
+	     	me.add({    
+				xtype:'infovarios'
+        	});
+		}
+    	
+    },
+    
+    borrarContainerTipoActivoMediador: function(me) {
+    	for(var i=0 ; i < me.items.items.length ; i++) {
+    		var xtipo = me.items.getAt(i).getXType();
+    		
+    		if(xtipo == 'infovivienda' || xtipo == 'infolocalcomercial' || xtipo == 'infoedificiocompleto'
+    			|| xtipo == 'infoindustrialysuelo' || xtipo == 'infovarios') 
+    		{
+    			me.remove(me.items.getAt(i));
+    		}
+    	}
     }
 });

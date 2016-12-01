@@ -389,7 +389,16 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					extraParams: {diccionario: 'DDSeguros'}
 				}
 				
-			}
+			},
+    		
+			comboSubtipoPlazaGaraje: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'subtipoPlazaGaraje'}
+				}
+    		}
 	    
     		
 			

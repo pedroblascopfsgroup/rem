@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -34,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 
 @Repository("ActivoDao")
@@ -314,6 +316,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosPrecios act");
 	
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
+   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subTipoTituloActivoCodigo", dto.getSubtipoTituloActivoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.inscrito", dto.getInscrito());
@@ -330,6 +333,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.municipio", dto.getMunicipio(), true);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPostal", dto.getCodPostal());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
+   		
+   		if (dto.getSubcarteraCodigo() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
+   		
+   		if (dto.getEstadoActivoCodigo() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
    		
    		if(!Checks.esNulo(dto.getConFsvVenta())) {
    			if(BooleanUtils.toBoolean(dto.getConFsvVenta())) {
@@ -357,7 +366,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		   			hb.appendWhere("act.fechaRepreciar is null");
 		   			} else if(dto.getTipoPropuestaCodigo().equals("02")) {
 		   				hb.appendWhere("act.fechaRepreciar is not null");
-		   				} else  if(dto.getTipoPropuestaCodigo().equals("03")){
+		   				} 
+		   			else  if(dto.getTipoPropuestaCodigo().equals("03")){
 		   					hb.appendWhere("act.fechaDescuento is not null");
 		   		}
 	   		}
@@ -462,6 +472,19 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
 		 
 		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
+	}
+	
+	@Override
+	public int publicarActivo(Long idActivo){
+		StringBuilder procedureHQL = new StringBuilder(
+							" BEGIN ");
+		procedureHQL.append("   ACTIVO_PUBLICACION_AUTO(:idActivoParam); ");
+		procedureHQL.append(" END; ");
+		
+		Query callProcedureSql = this.getSession().createSQLQuery(procedureHQL.toString());
+		callProcedureSql.setParameter("idActivoParam", idActivo);
+		
+		return callProcedureSql.executeUpdate();
 	}
 	
     public Long getNextNumOferta() {

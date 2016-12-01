@@ -23,7 +23,7 @@ public class PropuestaPreciosExcelEntidad02 implements PropuestaPreciosExcelServ
 
 	@Override
 	public String[] getCodigoCartera() {
-		return new String[]{DDCartera.CODIGO_CARTERA_02};
+		return new String[]{DDCartera.CODIGO_CARTERA_SAREB};
 	}
 
 	@Override

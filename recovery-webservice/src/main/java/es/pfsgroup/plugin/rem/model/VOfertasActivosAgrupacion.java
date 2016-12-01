@@ -78,7 +78,20 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	
 	@Column(name = "DD_CAP_CODIGO")
 	private String canalPrescripcionCodigo;
+	
+	@Column(name = "FECHAMODIFICAR")
+	private Date fechaModificar;
+	
+	
 
+
+	public Date getFechaModificar() {
+		return fechaModificar;
+	}
+
+	public void setFechaModificar(Date fechaModificar) {
+		this.fechaModificar = fechaModificar;
+	}
 
 	public String getIdOferta() {
 		return idOferta;

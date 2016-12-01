@@ -22,6 +22,7 @@ Ext.define('HreRem.view.precios.PreciosModel', {
     		    	
     		propuestas: {
 			    pageSize: $AC.getDefaultPageSize(),
+			    sorters: [{ property: 'fechaEmision', direction: 'DESC' }],
 		    	proxy: {
 			        type: 'uxproxy',
 			        remoteUrl: 'precios/getPropuestas',
@@ -73,6 +74,19 @@ Ext.define('HreRem.view.precios.PreciosModel', {
     	    	proxy: {
     		        type: 'uxproxy',
     		        remoteUrl: 'precios/getNumActivosByTipoPrecio',
+    			    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+    	    	},
+    	    	session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true
+    		},
+    		
+    		numActivosByTipoPrecioAmpliada: {
+    			
+    			pageSize: $AC.getDefaultPageSize(),
+    	    	proxy: {
+    		        type: 'uxproxy',
+    		        remoteUrl: 'precios/getNumActivosByTipoPrecioAmpliada',
     			    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
     	    	},
     	    	session: true,

@@ -76,6 +76,10 @@ public class VBusquedaPropuestasPrecio implements Serializable {
     @Column(name="TIPO_CODIGO")
     private String tipoPropuesta;
     
+    @Column(name="ADJ_ID")
+    private Long idAdjunto;
+    
+    
 	public String getId() {
 		return id;
 	}
@@ -227,6 +231,14 @@ public class VBusquedaPropuestasPrecio implements Serializable {
 
 	public void setTipoPropuesta(String tipoPropuesta) {
 		this.tipoPropuesta = tipoPropuesta;
+	}
+
+	public Long getIdAdjunto() {
+		return idAdjunto;
+	}
+
+	public void setIdAdjunto(Long idAdjunto) {
+		this.idAdjunto = idAdjunto;
 	}
     
 }

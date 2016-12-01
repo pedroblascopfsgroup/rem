@@ -1,25 +1,24 @@
 Ext.define('HreRem.view.administracion.gastos.GestionProvisionesList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'gestionprovisioneslist',
-
     bind: {
         store: '{provisiones}'
     },
-    plugins: 'pagingselectpersist',
     listeners : {
     	rowclick: 'onRowClickProvisionesList'
     },
     
-    loadAfterBind: false,
+    
     initComponent: function () {
         
-        var me = this;        
+        var me = this;
+        
         me.setTitle(HreRem.i18n("title.listado.provisiones"));
         me.columns= [
         
 		        {	        	
 		            dataIndex: 'numProvision',
-		            text: HreRem.i18n('header.numero.propuesta'),
+		            text: HreRem.i18n('header.numero.agrupacion.gasto'),
 		            flex: 1		        	
 		        },
 		        {	        	
@@ -64,10 +63,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionesList', {
 		            }
 		        }
 		];
-		    
-        me.callParent(); 
-        
+    	
+    	me.callParent();       
     }
+    
 
 
 });

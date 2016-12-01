@@ -31,6 +31,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.DDTipoBien;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
@@ -1268,18 +1269,11 @@ public class Activo implements Serializable, Auditable {
 
 	public String getFullNamePropietario() {
 		
-		if(this.getPropietariosActivo()!= null) {
-			if(this.getPropietariosActivo().size()>1) {
-				return "Varios";						
-			} else {
-				if(this.getPropietariosActivo().size()==1) 
-					return this.getPropietariosActivo().get(0).getPropietario().getFullName();
-				else
-					return "Desconocido";
-			}					
-		}
-		
-		return null;
+		ActivoPropietario propietario = this.getPropietarioPrincipal();
+		if(!Checks.esNulo(propietario)) {
+			return propietario.getFullName();			
+		}		
+		return "Desconocido";
 
 	}
 	
@@ -1449,6 +1443,23 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
 		this.tipoAlquiler = tipoAlquiler;
+	}
+	
+	/**
+	 * Devuelve el propietario principal del activo.
+	 * @return
+	 */
+	public ActivoPropietario getPropietarioPrincipal() {
+		ActivoPropietario propietario = null;
+		
+		if(!Checks.estaVacio(this.propietariosActivo)) {
+			// TODO Si existe la opción de seleccionar un propietario principal, deberemos devolver el que lo sea
+			// y no el primero
+			propietario = this.propietariosActivo.get(0).getPropietario();
+		}
+		
+		return propietario;
+		
 	}
 	
 	

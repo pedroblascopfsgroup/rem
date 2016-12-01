@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -117,6 +118,13 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 
 					// Marca activo como publicable
 					activo.setFechaPublicable(new Date());
+
+					// Lanza el procedimiento de publicar activo, para este activo solamente
+					try {
+						activoApi.publicarActivo(activo.getId());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 				
 			}

@@ -39,7 +39,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbstract {
 	// Textos de validaciones para agrupaciones
 	public static final class AGRUPACIONES_CON_BAJA { static int codigoError = 3; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.conBaja";};
-	
+
 	// Textos de validaciones para cada activo
 	public static final String ACTIVO_NO_EXISTE = "msg.error.masivo.agrupar.activos.asistida.activo.noExiste";
 	public static final String ACTIVO_EN_AGRUPACION = "msg.error.masivo.agrupar.activos.asistida.activo.enAgrupacion";
@@ -48,31 +48,31 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 	public static final String ACTIVO_INCLUIDO_PERIMETRO = "msg.error.masivo.agrupar.activos.asistida.activo.incluidoPerimetro";
 	public static final String ACTIVO_NO_ASISTIDO = "msg.error.masivo.agrupar.activos.asistida.activo.noAsistido";
 	public static final String ACTIVO_NO_FINANCIERO = "msg.error.masivo.agrupar.activos.asistida.activo.noFinanciero";
-	
+
 	// Textos de validaciones para grupos de activos, estas variables llevan aparejado un texto y un codigo. Necesario para metodo comun
 	public static final class ACTIVOS_NO_MISMA_LOCALIZACION { static int codigoError = 1; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.localizacion";};
 	public static final class ACTIVOS_NO_MISMO_PROPIETARIO { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.propietario";};
 
 	public static final String ACTIVO_NO_MISMO_TIPO_COMERCIAL = "msg.error.masivo.agrupar.activos.asistida.activo.agrupacion.diferente.tipoComercial";
 
-	
+
 	protected final Log logger = LogFactory.getLog(getClass());
-	
+
 	@Autowired
 	private MSVExcelParser excelParser;
-	
+
 	@Autowired
 	private MSVBusinessValidationFactory validationFactory;
-	
+
 	@Autowired
 	private MSVBusinessValidationRunner validationRunner;
-	
+
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
+
 	@Autowired
 	private ParticularValidatorApi particularValidator;
-	
+
 	@Resource
     MessageService messageServices;
 

@@ -12,13 +12,15 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 	
 	recordClass: "HreRem.model.ActivoInformacionComercial",
 	
-    requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformacionComercial', 'HreRem.model.Distribuciones',
-    'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda'
+    requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformacionComercial', 'HreRem.model.Distribuciones'/*,
+    'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
+    'HreRem.view.activos.detalle.InfoEdificioCompleto'*/
     ],
     
     listeners: {
     	
-    	boxready: function() {
+    	// Aparecen en Publicacion -> Informe comercial
+    	/*boxready: function() {
     		var me = this,
     		model = me.lookupController().getViewModel();
 		    
@@ -39,8 +41,9 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 		        	xtype: 'infovivienda'
 		        });	 
 	    	}
+	    	
 	    	me.lookupController().cargarTabData(me);
-    	}
+    	}*/
     },
     
 

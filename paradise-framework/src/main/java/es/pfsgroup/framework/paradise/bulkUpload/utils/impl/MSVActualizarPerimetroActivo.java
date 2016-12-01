@@ -8,12 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
@@ -39,14 +42,14 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	//Textos con errores de validacion
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
-	public static final String VALID_PERIMETRO_TIPO_COMERCIALIZACION = "Debe indicar un codigo valido para el tipo de comercializacion";
+	public static final String VALID_PERIMETRO_TIPO_COMERCIALIZACION = "msg.error.masivo.actualizar.perimetro.activo.tipo.comercializacion";
 	public static final String VALID_PERIMETRO_RESPUESTA_SN = "En columnas cuyo nombre acaba en SN, debe indicar como valor la letra 'S' (Si) o la letra 'N' (No).";
-	public static final String VALID_PERIMETRO_MOTIVO_CON_COMERCIAL = "Debe indicar un codigo valido para el motivo de inclusion comercial";
-	public static final String VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL = "Debe indicar un codigo valido para el motivo de exclusion comercial";
-	public static final String VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO = "Si indica 'N' en la columna 'En Perimetro Haya', el resto de columnas de tipo SN no pueden tener el valor 'S'.";
+	public static final String VALID_PERIMETRO_MOTIVO_CON_COMERCIAL = "msg.error.masivo.actualizar.perimetro.activo.motivo.con.comercial";
+	public static final String VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL = "msg.error.masivo.actualizar.perimetro.activo.motivo.sin.comercial";
+	public static final String VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO = "msg.error.masivo.actualizar.perimetro.activo.fuera.resto.checks.no";
 	public static final String VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL = "Si indica 'N' en la columna 'Comercializar' no puede marcar 'S' en la columna 'Formalizar'";
-	public static final String VALID_PERIMETRO_DESTINO_COMERCIAL = "Debe indicar un codigo valido para el destino comercial";
-	public static final String VALID_PERIMETRO_TIPO_ALQUILER = "Debe indicar un codigo valido para el tipo de alquiler";
+	public static final String VALID_PERIMETRO_DESTINO_COMERCIAL = "msg.error.masivo.actualizar.perimetro.activo.destino.comercial";
+	public static final String VALID_PERIMETRO_TIPO_ALQUILER = "msg.error.masivo.actualizar.perimetro.activo.tipo.alquiler";
 	public static final String VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE = "No puede indicar 'S' en la columna 'Formalizar' porque el activo no es comercializable";
 	
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
@@ -83,6 +86,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
+	@Resource
+    MessageService messageServices;
+	
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -103,26 +109,26 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 //			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				mapaErrores.put(VALID_PERIMETRO_TIPO_COMERCIALIZACION, getPerimetroTipoComerRows(exc));
-				mapaErrores.put(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL, getPerimetroConComerRows(exc));
-//				mapaErrores.put(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL, getPerimetroSinComerRows(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_TIPO_COMERCIALIZACION), getPerimetroTipoComerRows(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL), getPerimetroConComerRows(exc));
+//				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL), getPerimetroSinComerRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_RESPUESTA_SN, getPerimetroRespuestaSNRows(exc));
-				mapaErrores.put(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO, getFueraPerimetroIsRestoChecksNegativos(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO), getFueraPerimetroIsRestoChecksNegativos(exc));
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL, getFormalizarConComercial(exc));
-				mapaErrores.put(VALID_PERIMETRO_DESTINO_COMERCIAL, getPerimetroConDestinoComercial(exc));
-				mapaErrores.put(VALID_PERIMETRO_TIPO_ALQUILER, getPerimetroTipoAlquilerRows(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL), getPerimetroConDestinoComercial(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER), getPerimetroTipoAlquilerRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE, getFormalizarActivoNoComercializable(exc));
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() 								||
-							!mapaErrores.get(VALID_PERIMETRO_TIPO_COMERCIALIZACION).isEmpty() 		||
-							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL).isEmpty()  		||
-//							!mapaErrores.get(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL).isEmpty()  		||
+							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_COMERCIALIZACION)).isEmpty() 		||
+							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL)).isEmpty()  		||
+//							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL)).isEmpty()  		||
 							!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty() 		  		||
-							!mapaErrores.get(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO).isEmpty() 		||
+							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO)).isEmpty() 		||
 							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty() 	|| 
-							!mapaErrores.get(VALID_PERIMETRO_DESTINO_COMERCIAL).isEmpty()			||
-							!mapaErrores.get(VALID_PERIMETRO_TIPO_ALQUILER).isEmpty() 				||
+							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL)).isEmpty()			||
+							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER)).isEmpty() 				||
 							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE).isEmpty() ) {
 						
 						dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -353,7 +359,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				
 				valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
-				if("N".equals(valorEnPerimetro)) {
+				if("N".equals(valorEnPerimetro) || ("-".equals(valorEnPerimetro) && !particularValidator.esActivoIncluidoPerimetro(exc.dameCelda(i, 0)))) {
 					
 					String valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
 					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();

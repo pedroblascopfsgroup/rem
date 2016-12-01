@@ -43,13 +43,22 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private String reformaPresupuesto;
 	private String distribucionTxt;
 	
-	//Para la info de plazas de aparcamiento
+	//Para la info de plazas de aparcamiento - Varios (Otros)
 	private Boolean destinoCoche;
 	private Boolean destinoMoto;
 	private Boolean destinoDoble;
 	private String anchura;
 	private String profundidad;
 	private Boolean formaIrregular;
+	private String aparcamientoAltura;
+	private Integer aparcamientoLicencia;
+	private Integer aparcamientoSerbidumbre;
+	private Integer aparcamientoMontacarga;
+	private Integer aparcamientoColumnas;
+	private Integer aparcamientoSeguridad;
+	private String subtipoActivoCodigo;
+	private String subtipoPlazagarajeCodigo;
+	private String maniobrabilidadCodigo;
 	
 	//Para la info de locales comerciales
 	private String mtsFachadaPpal;
@@ -81,6 +90,9 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private String entornoInfraestructuras;
 	private String ediDescripcion;
 	private String reformaOtroDescEdificio;
+	private Integer edificioDivisible;
+	private String edificioOtrasCaracteristicas;
+	private String edificioDescPlantas;
 	
 	//Para la info de suelo e industrial.
 	private String infoDescripcion;
@@ -1648,6 +1660,78 @@ public class DtoActivoInformacionComercial extends WebDto {
 	public void setGas(Integer gas) {
 		this.gas = gas;
 	}
-
+	public Integer getEdificioDivisible() {
+		return edificioDivisible;
+	}
+	public void setEdificioDivisible(Integer edificioDivisible) {
+		this.edificioDivisible = edificioDivisible;
+	}
+	public String getEdificioOtrasCaracteristicas() {
+		return edificioOtrasCaracteristicas;
+	}
+	public void setEdificioOtrasCaracteristicas(String edificioOtrasCaracteristicas) {
+		this.edificioOtrasCaracteristicas = edificioOtrasCaracteristicas;
+	}
+	public String getEdificioDescPlantas() {
+		return edificioDescPlantas;
+	}
+	public void setEdificioDescPlantas(String edificioDescPlantas) {
+		this.edificioDescPlantas = edificioDescPlantas;
+	}
+	public String getAparcamientoAltura() {
+		return aparcamientoAltura;
+	}
+	public void setAparcamientoAltura(String aparcamientoAltura) {
+		this.aparcamientoAltura = aparcamientoAltura;
+	}
+	public Integer getAparcamientoLicencia() {
+		return aparcamientoLicencia;
+	}
+	public void setAparcamientoLicencia(Integer aparcamientoLicencia) {
+		this.aparcamientoLicencia = aparcamientoLicencia;
+	}
+	public Integer getAparcamientoSerbidumbre() {
+		return aparcamientoSerbidumbre;
+	}
+	public void setAparcamientoSerbidumbre(Integer aparcamientoSerbidumbre) {
+		this.aparcamientoSerbidumbre = aparcamientoSerbidumbre;
+	}
+	public Integer getAparcamientoMontacarga() {
+		return aparcamientoMontacarga;
+	}
+	public void setAparcamientoMontacarga(Integer aparcamientoMontacarga) {
+		this.aparcamientoMontacarga = aparcamientoMontacarga;
+	}
+	public Integer getAparcamientoColumnas() {
+		return aparcamientoColumnas;
+	}
+	public void setAparcamientoColumnas(Integer aparcamientoColumnas) {
+		this.aparcamientoColumnas = aparcamientoColumnas;
+	}
+	public Integer getAparcamientoSeguridad() {
+		return aparcamientoSeguridad;
+	}
+	public void setAparcamientoSeguridad(Integer aparcamientoSeguridad) {
+		this.aparcamientoSeguridad = aparcamientoSeguridad;
+	}
+	public String getSubtipoActivoCodigo() {
+		return subtipoActivoCodigo;
+	}
+	public void setSubtipoActivoCodigo(String subtipoActivoCodigo) {
+		this.subtipoActivoCodigo = subtipoActivoCodigo;
+	}
+	public String getSubtipoPlazagarajeCodigo() {
+		return subtipoPlazagarajeCodigo;
+	}
+	public void setSubtipoPlazagarajeCodigo(String subtipoPlazagarajeCodigo) {
+		this.subtipoPlazagarajeCodigo = subtipoPlazagarajeCodigo;
+	}
+	public String getManiobrabilidadCodigo() {
+		return maniobrabilidadCodigo;
+	}
+	public void setManiobrabilidadCodigo(String maniobrabilidadCodigo) {
+		this.maniobrabilidadCodigo = maniobrabilidadCodigo;
+	}
+	
 	
 }

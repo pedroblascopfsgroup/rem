@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1446,6 +1447,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {
 
 		return activoDao.getUltimoHistoricoEstadoPublicacion(activoID);
+	}
+	
+	@Override
+	public boolean publicarActivo(Long idActivo) throws SQLException{
+
+		int esError = activoDao.publicarActivo(idActivo);
+		if (esError != 1){
+			logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+			throw new SQLException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+		}
+		
+		logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+		return true;
+		
 	}
 
 	@Override

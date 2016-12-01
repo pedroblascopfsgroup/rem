@@ -1,25 +1,24 @@
 Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
-   	extend: 'HreRem.view.common.GridBaseEditableRow',
-    xtype: 'agrupacioneslist',
-    reference: 'agrupacioneslistgrid',
+   	extend		: 'HreRem.view.common.GridBaseEditableRow',
+    xtype		: 'agrupacioneslist',
+    reference	: 'agrupacioneslistgrid',
 	editOnSelect : false,
-    topBar: true,
-
-    bind: {
+    topBar		: true,
+    bind		: {
 		store: '{agrupaciones}'
 	},
 
 	secFunToEdit: 'EDITAR_LIST_AGRUPACIONES',
-	
+
 	secButtons: {
 		secFunPermToEnable : 'EDITAR_LIST_AGRUPACIONES'
 	},
-    
+
     initComponent: function () {
      	var me = this;
-     	
+
      	me.setTitle(HreRem.i18n('title.listado.agrupaciones'));
-     	
+
      	me.listeners = {
      			rowdblclick: 'onAgrupacionesListDobleClick',
      			beforeedit: function(editor, gridNfo) {
@@ -133,7 +132,12 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 					        formatter: 'date("d/m/Y")',
 					        width: 120,
 					        editor: {
-					        	xtype:'datefield'
+					        	xtype:'datefield',
+					        	validationEvent: 'change',
+	                            validator: function(value){
+	                            	me.endValidityDate=value;
+	                            	return this.up('agrupacionesmain').getController().validateFechas(this, value);
+	                            }
 			        		}
 					    },
 					    {   
@@ -142,7 +146,12 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 					        formatter: 'date("d/m/Y")',
 					        width: 120,
 					        editor: {
-					        	xtype:'datefield'
+					        	xtype:'datefield',
+					        	validationEvent: 'change',
+	                            validator: function(value){
+	                            	me.endValidityDate=value;
+	                            	return this.up('agrupacionesmain').getController().validateFechas(this, value);
+	                            }
 			        		}
 					    },
 			            {

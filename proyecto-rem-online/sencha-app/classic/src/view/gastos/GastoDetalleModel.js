@@ -147,8 +147,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaEnviado = get('gasto.enviado');
 	     	
-	     	return !esProveedor && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado;
+	     	return !estaEnviado && !esProveedor && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado;
 	     },
 	     
 	     esRechazable: function(get) {	     
@@ -157,8 +158,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaEnviado = get('gasto.enviado');
 	     	
-	     	return !esProveedor && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado;
+	     	return  !estaEnviado && !esProveedor && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado;
 
 	     }
 	     

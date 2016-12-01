@@ -9,24 +9,22 @@ Ext.define('HreRem.view.activos.detalle.InfoIndustrialYSuelo', {
 					 		xtype: 'textareafieldbase',
 					 		fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
 					 		labelAlign: 'top',
-			            	bind: '{informeComercial.infoDescripcion}',
+			            	bind: '{infoComercial.infoDescripcion}',
 			            	colspan: 3,
 			            	maxLength: 500,
 			            	margin: '0 0 20 0',
 			            	height: 100,
-			            	width: 680,
-							maxWidth: 680
+							maxWidth: 1600
 						},
 						{ 
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.info.distribucion.interior'),
 							labelAlign: 'top',
-		                	bind: '{informeComercial.infoDistribucionInterior}',
+		                	bind: '{infoComercial.infoDistribucionInterior}',
 			            	colspan: 3,
 			            	maxLength: 500,
 			            	height: 100,
-			            	width: 680,
-							maxWidth: 680
+							maxWidth: 1600
 		                }
 		];            
        

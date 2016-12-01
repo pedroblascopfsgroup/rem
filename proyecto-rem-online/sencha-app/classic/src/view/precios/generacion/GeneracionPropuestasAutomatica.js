@@ -4,7 +4,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomatica', {
     reference	: 'generacionPropuestasAutomatica',
     cls			: 'panel-contadores',
     layout: 'fit',
-    requires: ['HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadores'],
+    requires: ['HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadores', 'HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadoresAmpliada'],
 
     initComponent: function () {
         
@@ -38,6 +38,10 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomatica', {
 						items: [
 	    						{
 	    							xtype: 'generacionpropuestasautomaticacontadores'
+	    						},
+	    						{
+	    							xtype: 'generacionpropuestasautomaticacontadoresampliada' ,
+	    							disabled: true
 	    						}
 						]
 	        		}

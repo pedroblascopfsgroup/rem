@@ -225,6 +225,10 @@ Ext.define('HreRem.ux.util.Constants', {
     	AUTORIZADO: '03',
     	RECHAZADO: '02',
     	PENDIENTE: '01'    	
+    },
+    
+    ESTADOS_PROVISION: {
+    	RECHAZADA_SUBSANABLE: '03'	
     }
     
     

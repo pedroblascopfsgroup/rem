@@ -25,7 +25,7 @@ create or replace PROCEDURE ACTUALIZA_ACT_IND_PRECIOS (P_DD_CRA_ID IN REM01.ACT_
 
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'ESQUEMA_MASTER'; -- Configuracion Esquema Master
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_REGS NUMBER(16);
     V_NUM_REGS2 NUMBER(16);

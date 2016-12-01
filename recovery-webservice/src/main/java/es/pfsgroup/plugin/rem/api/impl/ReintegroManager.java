@@ -64,8 +64,8 @@ public class ReintegroManager extends BusinessOperationOverrider<ReintegroApi> i
 			if(Checks.esNulo(ofertaHRE)){
 				hashErrores.put("ofertaHRE", RestApi.REST_MSG_MISSING_REQUIRED);			
 			}else{
-				if (!ofertaHRE.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA)) {
-					hashErrores.put("ofertaHRE", "La oferta no esta aceptada.");	
+				if (!ofertaHRE.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_RECHAZADA)) {
+					hashErrores.put("ofertaHRE", "La oferta no esta rechazada.");	
 					
 				}else{
 					ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(ofertaHRE.getId());
@@ -76,8 +76,8 @@ public class ReintegroManager extends BusinessOperationOverrider<ReintegroApi> i
 							 Checks.esNulo( expedienteComercial.getReserva().getEstadoReserva()) ||
 							 (!Checks.esNulo(expedienteComercial.getReserva()) && 
 								!Checks.esNulo(expedienteComercial.getReserva().getEstadoReserva()) && 
-								!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_ANULADA)) ){
-						hashErrores.put("ofertaHRE", "La reserva de la oferta debe estar en el estado anulada");
+								!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA)) ){
+						hashErrores.put("ofertaHRE", "La reserva de la oferta debe estar en el estado firmada");
 						
 					}else if(Checks.esNulo(expedienteComercial.getEstado()) || 
 							(!Checks.esNulo(expedienteComercial.getEstado()) && !expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.ANULADO))){

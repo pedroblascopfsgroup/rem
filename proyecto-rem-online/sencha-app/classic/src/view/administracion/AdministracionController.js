@@ -72,6 +72,29 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     		},    		
     		
     		onClickAddGasto: 'onClickAddGasto'
+    	},
+    	
+    	'gestionprovisiongastoslist' : {
+    		
+    		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
+    			var me = this;
+    			var autorizarBtn = grid.down('button[itemId=autorizarBtn]');
+    			var rechazarBtn = grid.down('button[itemId=rechazarBtn]');
+    			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
+    			var disabled = Ext.isEmpty(persistedSelection);
+    			
+    			if (!Ext.isEmpty(autorizarBtn)) autorizarBtn.setDisabled(disabled);    		
+    			if (!Ext.isEmpty(rechazarBtn)) rechazarBtn.setDisabled(disabled);
+
+    			if(disabled) {
+    				displaySelection.setValue("No seleccionados");
+    			} else if (persistedSelection.length > 1) {
+    				displaySelection.setValue(persistedSelection.length +  " gastos seleccionados"); 
+    			} else {
+    				displaySelection.setValue("1 gasto seleccionado"); 
+    			}   			
+    		}
+    		
     	}
 
     },
@@ -182,6 +205,12 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		
 		me.lookupReference('provisionesGastosList').expand();	
 		this.lookupReference('provisionesGastosList').getStore().loadPage(1);
+		var estadoProvision = record.get("estadoProvisionCodigo");
+		if(CONST.ESTADOS_PROVISION['RECHAZADA_SUBSANABLE'] == estadoProvision) {
+			this.lookupReference('tbarprovisiongastoslist').setVisible(true);
+		} else {	
+			this.lookupReference('tbarprovisiongastoslist').setVisible(false);
+		}
     },
 
 	paramLoadingProvisiones: function(store, operation, opts) {
@@ -221,178 +250,218 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     },
     
     onClickAutorizar: function(btn) {
-    	var me = this,
-    	listaGastos = btn.up('gridBase');
     	
+    	var me = this;    	
     	Ext.Msg.show({
 		   title: HreRem.i18n('title.mensaje.confirmacion'),
 		   msg: HreRem.i18n('msg.desea.autorizar.gastos.seleccionados'),
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
 		        if (buttonId == 'yes') {
-					var gastos = listaGastos.getPersistedSelection(),
-					url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastos'),		
-					idsGasto = [], error=null;
-					
-					// Recuperamos todos los ids de los trabajos seleccionados
-					// y validamos que se pueden autorizar
-					Ext.Array.each(gastos, function(gasto, index) {
-					    error = me.validarSeleccionGasto("A", gasto);
-					    if(Ext.isEmpty(error)) {
-					    	idsGasto.push(gasto.get("id"));	
-					    } else {
-					    	// Salimos del foreach y mostramos el error
-					    	return false;	
-					    }
-					});
-	
-					if(Ext.isEmpty(error)){
-						me.getView().mask(HreRem.i18n("msg.mask.loading"));
-		
-						Ext.Ajax.request({
-					    			
-						     url: url,
-						     params: {idsGasto: idsGasto},
-						
-						     success: function(response, opts) {
-						     	me.getView().unmask();
-						        var data = {};
-					            try {
-					                data = Ext.decode(response.responseText);
-					            } catch (e){ };
-					            
-					            if(data.success === "false") {
-						            if (!Ext.isEmpty(data.msg)) {
-						              	me.fireEvent("errorToast", data.msg);
-						            } else {
-						            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						            }
-					            } else {							         
-							         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-							         listaGastos.deselectAll();
-							         listaGastos.getStore().loadPage(1);
-							         Ext.Array.each(gastos, function(gasto, index) {
-									    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
-									});
-					            }
-						     },
-						     failure: function(response) {
-						     	me.getView().unmask();
-					     		var data = {};
-				                try {
-				                	data = Ext.decode(response.responseText);
-				                }
-				                catch (e){ };
-				                if (!Ext.isEmpty(data.msg)) {
-				                	me.fireEvent("errorToast", data.msg);
-				                } else {
-				                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				                }
-						     }
-					    		    
-					    });
-					} else {
-						me.fireEvent("errorToast", error);
-					}
+					me.autorizarGasto(btn);
 		        }
 		   }
 		});
+    },
+    
+    onClickAutorizarGastosAgrupados: function(btn) {
     	
+    	var me = this;    	
+    	Ext.Msg.show({
+		   title: HreRem.i18n('title.mensaje.confirmacion'),
+		   msg: HreRem.i18n('msg.desea.autorizar.gastos.agrupados.seleccionados'),
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+		        if (buttonId == 'yes') {
+					me.autorizarGasto(btn);
+		        }
+		   }
+		});
+    },
+    
+    autorizarGasto: function(btn) {
     	
+    	var me = this,
+    	listaGastos = btn.up('gridBase'),
+    	gastos = listaGastos.getPersistedSelection(),
+		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastos'),		
+		idsGasto = [], error=null;
+					
+		// Recuperamos todos los ids de los trabajos seleccionados
+		// y validamos que se pueden autorizar
+		Ext.Array.each(gastos, function(gasto, index) {
+		    error = me.validarSeleccionGasto("A", gasto);
+		    if(Ext.isEmpty(error)) {
+		    	idsGasto.push(gasto.get("id"));	
+		    } else {
+		    	// Salimos del foreach y mostramos el error
+		    	return false;	
+		    }
+		});
+
+		if(Ext.isEmpty(error)){
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+			Ext.Ajax.request({
+		    			
+			     url: url,
+			     params: {idsGasto: idsGasto},
+			
+			     success: function(response, opts) {
+			     	me.getView().unmask();
+			        var data = {};
+		            try {
+		                data = Ext.decode(response.responseText);
+		            } catch (e){ };
+		            
+		            if(data.success === "false") {
+			            if (!Ext.isEmpty(data.msg)) {
+			              	me.fireEvent("errorToast", data.msg);
+			            } else {
+			            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            }
+		            } else {							         
+				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				         listaGastos.deselectAll();
+				         listaGastos.getStore().loadPage(1);
+				         Ext.Array.each(gastos, function(gasto, index) {
+						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+						});
+		            }
+			     },
+			     failure: function(response) {
+			     	me.getView().unmask();
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+		    		    
+		    });
+		} else {
+			me.fireEvent("errorToast", error);
+		}
     	
     },
     
-    onClickRechazar: function(btn) {
+     onClickRechazar: function(btn) {
     	
-    	var me = this,
-    	listaGastos = btn.up('gridBase');
-    	
+    	var me = this;    	
     	Ext.Msg.show({
 		   title: HreRem.i18n('title.mensaje.confirmacion'),
 		   msg: HreRem.i18n('msg.desea.rechazar.gastos.seleccionados'),
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
- 				if (buttonId == 'yes') {
- 					
- 					var combo = Ext.create("HreRem.view.common.ComboBoxFieldBase", {
- 						addUxReadOnlyEditFieldPlugin: false, store: {model: 'HreRem.model.ComboBase',proxy: {type: 'uxproxy',remoteUrl: 'generic/getDiccionario',extraParams: {diccionario: 'motivosRechazoHaya'}}}
- 					});
- 						
-					HreRem.Msg.promptCombo(HreRem.i18n('title.motivo.rechazo'),"", function(btn, text){    
-					    if (btn == 'ok'){
-					    	
-					    	var gastos = listaGastos.getPersistedSelection(),
-							url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastos'),		
-							idsGasto = [], error=null;
-					
-							// Recuperamos todos los ids de los trabajos seleccionados
-							// y validamos que se pueden rechazar
-							Ext.Array.each(gastos, function(gasto, index) {
-							    error = me.validarSeleccionGasto("R", gasto);
-							    if(Ext.isEmpty(error)) {
-							    	idsGasto.push(gasto.get("id"));	
-							    } else {
-							    	// Salimos del foreach y mostramos el error
-							    	return false;	
-							    }
-							});
-			
-							if(Ext.isEmpty(error)) {
-								me.getView().mask(HreRem.i18n("msg.mask.loading"));
-				
-								Ext.Ajax.request({
-							    			
-								     url: url,
-								     params: {idsGasto: idsGasto, motivoRechazo: text},
-								
-								     success: function(response, opts) {
-								     	
-								     	var data = {};
-								     	me.getView().unmask();	
-							            try {
-							                data = Ext.decode(response.responseText);
-							            } catch (e){ };
-							            
-							            if(data.success === "false") {
-								            if (!Ext.isEmpty(data.msg)) {
-								              	me.fireEvent("errorToast", data.msg);
-								            } else {
-								            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-								            }
-							            } else {							         
-									         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-									         listaGastos.deselectAll();
-									         listaGastos.getStore().loadPage(1);
-									         Ext.Array.each(gastos, function(gasto, index) {
-									    		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
-											 });
-							            }
-								     },
-								     failure: function(response) {
-								     	me.getView().unmask();
-							     		var data = {};
-						                try {
-						                	data = Ext.decode(response.responseText);
-						                }
-						                catch (e){ };
-						                if (!Ext.isEmpty(data.msg)) {
-						                	me.fireEvent("errorToast", data.msg);
-						                } else {
-						                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						                }
-								     }
-							    		    
-							    });
-							} else {
-								me.fireEvent("errorToast", error);								
-							}
-					    	 
-							
-					    }
-		    		}, null, null, null, combo);
-		        }
+ 				if (buttonId == 'yes') { 					
+ 					me.rechazarGasto(btn);
+ 				}
 		   }
 		});
+    	
+    },
+    
+    onClickRechazarGastosAgrupados: function(btn) {
+    	
+    	var me = this;    	
+    	Ext.Msg.show({
+		   title: HreRem.i18n('title.mensaje.confirmacion'),
+		   msg: HreRem.i18n('msg.desea.rechazar.gastos.agrupados.seleccionados'),
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+ 				if (buttonId == 'yes') { 					
+ 					me.rechazarGasto(btn);
+ 				}
+		   }
+		});
+    	
+    },
+    
+    rechazarGasto: function(btn) {
+    	
+    	var me = this;
+    	var listaGastos = btn.up('gridBase');
+    	var combo = Ext.create("HreRem.view.common.ComboBoxFieldBase", {
+ 			addUxReadOnlyEditFieldPlugin: false, store: {model: 'HreRem.model.ComboBase',proxy: {type: 'uxproxy',remoteUrl: 'generic/getDiccionario',extraParams: {diccionario: 'motivosRechazoHaya'}}}
+ 		});
+ 						
+		HreRem.Msg.promptCombo(HreRem.i18n('title.motivo.rechazo'),"", function(btn, text){    
+		    if (btn == 'ok'){
+		    	
+		    	var gastos = listaGastos.getPersistedSelection(),
+				url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastos'),		
+				idsGasto = [], error=null;
+		
+				// Recuperamos todos los ids de los trabajos seleccionados
+				// y validamos que se pueden rechazar
+				Ext.Array.each(gastos, function(gasto, index) {
+				    error = me.validarSeleccionGasto("R", gasto);
+				    if(Ext.isEmpty(error)) {
+				    	idsGasto.push(gasto.get("id"));	
+				    } else {
+				    	// Salimos del foreach y mostramos el error
+				    	return false;	
+				    }
+				});
+
+				if(Ext.isEmpty(error)) {
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	
+					Ext.Ajax.request({
+				    			
+					     url: url,
+					     params: {idsGasto: idsGasto, motivoRechazo: text},
+					
+					     success: function(response, opts) {
+					     	
+					     	var data = {};
+					     	me.getView().unmask();	
+				            try {
+				                data = Ext.decode(response.responseText);
+				            } catch (e){ };
+				            
+				            if(data.success === "false") {
+					            if (!Ext.isEmpty(data.msg)) {
+					              	me.fireEvent("errorToast", data.msg);
+					            } else {
+					            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					            }
+				            } else {							         
+						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						         listaGastos.deselectAll();
+						         listaGastos.getStore().loadPage(1);
+						         Ext.Array.each(gastos, function(gasto, index) {
+						    		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+								 });
+				            }
+					     },
+					     failure: function(response) {
+					     	me.getView().unmask();
+				     		var data = {};
+			                try {
+			                	data = Ext.decode(response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
+					     }
+				    		    
+				    });
+				} else {
+					me.fireEvent("errorToast", error);								
+				}
+		    	 
+				
+		    }
+		}, null, null, null, combo);
     	
     },
     

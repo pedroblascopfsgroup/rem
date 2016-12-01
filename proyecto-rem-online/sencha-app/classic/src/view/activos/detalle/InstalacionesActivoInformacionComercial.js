@@ -1,6 +1,5 @@
 Ext.define('HreRem.view.activos.detalle.InstalacionesActivoInformacionComercial', {
     xtype: 'instalacionesactivoinformacioncomercial',    
-    reference: 'instalacionesactivoref',
     extend: 'Ext.container.Container',       
     cls	: 'panel-base shadow-panel',
     scrollable: 'y',

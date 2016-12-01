@@ -99,12 +99,12 @@
 		<transition to="T014_ResolucionComiteExternoDecision" name="avanzaBPM"></transition>
 	</state>
 	
-	<decision name="T014_ResolucionComiteExternoDecision">
-		<transition to="T014_PosicionamientoFirma" name="KO"></transition>
-		<transition to="Fin" name="OK"></transition>
+	<decision name="T014_ResolucionComiteExternoDecision"  expression="#{T014_ResolucionComiteExternoDecision}">
+		<transition to="T014_PosicionamientoFirma" name="OK"></transition>
+		<transition to="Fin" name="KO"></transition>
 	</decision>
 
-	<decision name="T014_PosicionamientoFirmaDecision">
+	<decision name="T014_PosicionamientoFirmaDecision"  expression="#{T014_PosicionamientoFirmaDecision}">
 		<transition to="T014_DevolucionLlavesHRE" name="KO"></transition>
 		<transition to="Fin" name="OK"></transition>
 	</decision>

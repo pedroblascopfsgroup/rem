@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161120
+--## FECHA_CREACION=20161128
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -38,13 +38,13 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Pendiente de envio'	,'Pendiente de envio'),
-        T_TIPO_DATA('02'	,'Enviada'	,'Enviada'),
-        T_TIPO_DATA('03'	,'Rechazada subsanable'	,'Rechazada subsanable'),
-        T_TIPO_DATA('04'	,'Rechazada no subsanable'	,'Rechazada no subsanable'),
-        T_TIPO_DATA('05'	,'Autorizada'	,'Autorizada'),
-        T_TIPO_DATA('06'	,'Contabilizada'	,'Contabilizada'),
-        T_TIPO_DATA('07'	,'Pagada'	,'Pagada')
+        T_TIPO_DATA('01'	,'Pendiente'	,'Pendiente'),
+        T_TIPO_DATA('02'	,'Rechazado por motivo formal'	,'Rechazado por motivo formal'),
+        T_TIPO_DATA('03'	,'Rechazado por control presupuestario'	,'Rechazado por control presupuestario'),
+        T_TIPO_DATA('04'	,'Rechazado por contabilidad'	,'Rechazado por contabilidad'),
+        T_TIPO_DATA('05'	,'Autorizado por motivo formal'	,'Autorizado por motivo formal'),
+        T_TIPO_DATA('06'	,'Autorizado por control presupuestario'	,'Autorizado por control presupuestario'),
+        T_TIPO_DATA('07'	,'Autorizado por contabilidad'	,'Autorizado por contabilidad')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

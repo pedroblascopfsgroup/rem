@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161109
+--## FECHA_CREACION=20161121
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -75,6 +75,9 @@ BEGIN
 		EJE_ID							NUMBER(16,0)				NOT NULL,
 		DD_STG_ID						NUMBER(16,0)				NOT NULL,
 		DD_CRA_ID						NUMBER(16,0)				NOT NULL,
+		DD_SCR_ID						NUMBER(16,0),
+		PRO_ID							NUMBER(16,0),
+		PVE_ID							NUMBER(16,0),
 		CPP_PARTIDA_PRESUPUESTARIA		VARCHAR2(50 CHAR)			NOT NULL,
 		VERSION 						NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE,
 		USUARIOCREAR 					VARCHAR2(50 CHAR)			NOT NULL ENABLE, 
@@ -129,6 +132,21 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_CPP_CRA... Foreign key creada.');
 	
+		-- Creamos foreign key DD_SCR_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_CPP_SCR FOREIGN KEY (DD_SCR_ID) REFERENCES '||V_ESQUEMA||'.DD_SCR_SUBCARTERA (DD_SCR_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_CPP_SCR... Foreign key creada.');
+	
+		-- Creamos foreign key PRO_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_CPP_PRO FOREIGN KEY (PRO_ID) REFERENCES '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO (PRO_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_CPP_PRO... Foreign key creada.');
+	
+		-- Creamos foreign key PVE_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_CPP_PVE FOREIGN KEY (PVE_ID) REFERENCES '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR (PVE_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_CPP_PVE... Foreign key creada.');
+	
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
@@ -139,7 +157,10 @@ BEGIN
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CPP_ID IS ''Código identificador único.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.EJE_ID IS ''Código identificador único del ejercicio al que pertenece la configuración''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_STG_ID IS ''Subtipo de gasto al que pertenece la configuración.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CRA_ID IS ''Cartera a la que pertenece la configuración''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CRA_ID IS ''Entidad cartera a la que pertenece la configuración''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_SCR_ID IS ''Código identificador único de la subcartera (opcional para algunas configuraciones)''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PRO_ID IS ''Código identificador único del propietario (opcional para algunas configuraciones)''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_ID IS ''Código identificador único del proveedor (opcional para algunas configuraciones)''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CPP_PARTIDA_PRESUPUESTARIA IS ''Partida presupuestaria.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';

@@ -67,6 +67,17 @@
 		<filter-name>restSecurityFilterChain</filter-name>
 		<url-pattern>/rest/*</url-pattern>
 	</filter-mapping>
+	
+	<!-- - Enables WEBHOOK Security -->
+	<filter>
+		<filter-name>webHookSecurityFilterChain</filter-name>
+		<filter-class>es.pfsgroup.plugin.rem.rest.filter.WebHookSecurityFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>webHookSecurityFilterChain</filter-name>
+		<url-pattern>/webhook/*</url-pattern>
+	</filter-mapping>
 
 	<!-- - Hibernate Open Session In View -->
 	<filter>
@@ -200,6 +211,16 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>WEBHOOK Servlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/fwk/config/ac-dispatcher-servlet-config.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 
 	<!-- /WEB-INF/classes/ -->
 
@@ -221,6 +242,11 @@
 	<servlet-mapping>
 		<servlet-name>REST Servlet</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>WEBHOOK Servlet</servlet-name>
+		<url-pattern>/webhook/*</url-pattern>
 	</servlet-mapping>
 
 

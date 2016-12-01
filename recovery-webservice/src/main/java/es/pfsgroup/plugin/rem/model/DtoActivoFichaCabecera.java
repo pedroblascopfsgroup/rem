@@ -150,6 +150,9 @@ public class DtoActivoFichaCabecera extends WebDto {
 	
 	//Activo integrado en agrupación asistida
 	private Boolean integradoEnAgrupacionAsistida;
+	
+	//Tipo Activo del mediador
+	private String tipoActivoMediadorCodigo;
 
 	
 	private int page;
@@ -1172,6 +1175,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
 		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
+	}
+
+	public String getTipoActivoMediadorCodigo() {
+		return tipoActivoMediadorCodigo;
+	}
+
+	public void setTipoActivoMediadorCodigo(String tipoActivoMediadorCodigo) {
+		this.tipoActivoMediadorCodigo = tipoActivoMediadorCodigo;
 	}
 	
 

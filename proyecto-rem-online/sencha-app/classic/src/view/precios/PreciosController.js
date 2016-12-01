@@ -39,7 +39,10 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	    			
 	    		case 'generacionpropuestasautomatica':
 	    			//Se mete estos parametros, ya que se requieren para la propuesta automatica
-	    			store.getProxy().extraParams = {entidadPropietariaCodigo: me.entidadPropietariaCodigo, subcarteraCodigo: me.subcarteraCodigo, tipoPropuestaCodigo: me.tipoPropuestaCodigo, conBloqueo: '0', estadoActivoCodigo: me.estadoFisicoCodigo}
+	    			if(me.isAmpliada)
+	    				store.getProxy().extraParams = {entidadPropietariaCodigo: me.entidadPropietariaCodigo, subcarteraCodigo: me.subcarteraCodigo, tipoPropuestaCodigo: me.tipoPropuestaCodigo, conBloqueo: '0', estadoActivoCodigo: me.estadoFisicoCodigo}
+	    			else
+	    				store.getProxy().extraParams = {entidadPropietariaCodigo: me.entidadPropietariaCodigo, subcarteraCodigo: me.subcarteraCodigo, tipoPropuestaCodigo: me.tipoPropuestaCodigo, conBloqueo: '0'}
 	    			break;
 	    	}	
 			return true;		
@@ -187,6 +190,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 			this.entidadPropietariaCodigo = record.data.entidadPropietariaCodigo;
 			this.numActivosToGenerar = record.get(view.panel.headerCt.getHeaderAtIndex(cellIndex).dataIndex);
 			this.subcarteraCodigo = record.data.subcarteraCodigo;
+			this.isAmpliada = false;
 			
 			//Agrega / elimina fondo de la celda seleccionada
 			me.marcarDesmarcarCeldaInclusionAutomatica(e);
@@ -210,6 +214,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 			this.numActivosToGenerar = record.get(view.panel.headerCt.getHeaderAtIndex(cellIndex).dataIndex);
 			this.estadoFisicoCodigo = record.data.estadoFisicoCodigo;
 			this.subcarteraCodigo = record.data.subcarteraCodigo;
+			this.isAmpliada = true;
 			
 			//Agrega / elimina fondo de la celda seleccionada
 			me.marcarDesmarcarCeldaInclusionAutomatica(e);

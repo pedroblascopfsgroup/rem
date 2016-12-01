@@ -113,11 +113,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasList', {
 		            dataIndex: 'observaciones',
 		            text: HreRem.i18n('header.observaciones'),
 		            flex: 1		        	
-		        }/*,
-		        {
-			    	name: 'idAdjunto',
-			    	hidden: true
-			    }*/
+		        }
         ];
         
         

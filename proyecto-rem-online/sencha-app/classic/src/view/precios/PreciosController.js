@@ -419,11 +419,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		else {
 			me.fireEvent("warnToast", HreRem.i18n("msg.historico.propuesta.sin.documento.en.trabajo"));   
 	   }
-		me.lookupReference('historicoPropuestaActivosList').collapse();	
-		me.lookupReference('historicoPropuestaActivosList').getStore().loadPage(0);
-		
-		//TODO: Hacer que se deseleccion la fila del grid
-		me.getViewModel().get('historicoPropuestasList').selection = null;
+
    }
 
 });

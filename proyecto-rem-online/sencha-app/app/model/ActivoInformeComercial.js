@@ -26,7 +26,7 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     					return false;
     				}
     				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] || data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'] 
-    							|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS'] || data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'] );
+    							|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS'] );
     			},
     			depends: 'tipoActivoCodigo'
     		},

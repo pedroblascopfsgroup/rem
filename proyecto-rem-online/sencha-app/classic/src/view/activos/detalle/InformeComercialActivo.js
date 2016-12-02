@@ -832,7 +832,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     	}
     	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']) {
 	     	me.add({    
-				xtype:'infovarios'
+	     		xtype:'infoindustrialysuelo',
+				title: HreRem.i18n('title.suelo')
         	});
 		}
     	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['OTROS']) {

@@ -26,6 +26,11 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasActivosList', {
 		            text: HreRem.i18n('header.cartera'),
 		            flex: 1		        	
 		        },
+		        {
+		        	dataIndex: 'estadoFisicoCodigo',
+		        	text: HreRem.i18n('header.estado'),
+		        	hidden: true
+		        },
 		        {	        	
 		            dataIndex: 'tipoActivoDescripcion',
 		            text: HreRem.i18n('header.tipo'),

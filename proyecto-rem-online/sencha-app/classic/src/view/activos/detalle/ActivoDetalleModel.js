@@ -249,7 +249,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'activo/getComboInferiorMunicipio',
-					extraParams: {codigoMunicipio: '{informeComercial.municipioCodigo}'}
+					extraParams: {codigoMunicipio: '{infoComercial.municipioCodigo}'}
 					}
     		},
     		
@@ -285,7 +285,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboMunicipio',
-					extraParams: {codigoProvincia: '{informeComercial.provinciaCodigo}'}
+					extraParams: {codigoProvincia: '{infoComercial.provinciaCodigo}'}
 				}
     		},    		
     		
@@ -639,7 +639,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{informeComercial.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{infoComercial.tipoActivoCodigo}'}
 				}
     		},    		
     		    		

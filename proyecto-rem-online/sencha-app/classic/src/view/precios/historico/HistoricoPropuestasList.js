@@ -18,7 +18,21 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasList', {
         me.setTitle(HreRem.i18n("title.historico.propuestas.listado"));
         
         me.columns= [
-        
+                     
+				{
+				    xtype: 'actioncolumn',
+				    width: 30,	
+				    hideable: false,
+				    items: [{
+				       	iconCls: 'ico-download',
+				       	tooltip: HreRem.i18n("tooltip.download"),
+				        handler: function(grid, rowIndex, colIndex) {
+				            var record = grid.getStore().getAt(rowIndex);
+			
+				           this.lookupController().downloadPropuestaAdjunto(grid,record);
+						}
+				    }]
+				},
 		        {	        	
 		            dataIndex: 'numPropuesta',
 		            text: HreRem.i18n('header.numero.propuesta'),

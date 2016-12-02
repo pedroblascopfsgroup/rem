@@ -316,6 +316,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosPrecios act");
 	
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
+   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subTipoTituloActivoCodigo", dto.getSubtipoTituloActivoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.inscrito", dto.getInscrito());
@@ -332,6 +333,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.municipio", dto.getMunicipio(), true);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPostal", dto.getCodPostal());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
+   		
+   		if (dto.getSubcarteraCodigo() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
+   		
+   		if (dto.getEstadoActivoCodigo() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
    		
    		if(!Checks.esNulo(dto.getConFsvVenta())) {
    			if(BooleanUtils.toBoolean(dto.getConFsvVenta())) {
@@ -359,7 +366,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		   			hb.appendWhere("act.fechaRepreciar is null");
 		   			} else if(dto.getTipoPropuestaCodigo().equals("02")) {
 		   				hb.appendWhere("act.fechaRepreciar is not null");
-		   				} else  if(dto.getTipoPropuestaCodigo().equals("03")){
+		   				} 
+		   			else  if(dto.getTipoPropuestaCodigo().equals("03")){
 		   					hb.appendWhere("act.fechaDescuento is not null");
 		   		}
 	   		}

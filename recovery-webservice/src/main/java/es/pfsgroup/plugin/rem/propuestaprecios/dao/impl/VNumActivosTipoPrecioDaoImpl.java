@@ -17,6 +17,17 @@ public class VNumActivosTipoPrecioDaoImpl extends AbstractEntityDao<VBusquedaNum
 	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera() {
 		
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaNumActivosTipoPrecio vna");
+		hb.addFiltroIgualQue(hb, "nivel", 1L);
+		
+		return HibernateQueryUtils.list(this, hb);
+	}
+	
+	@Override
+	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndEstado(String entidadPropietariaCodigo) {
+		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaNumActivosTipoPrecio vna");
+		hb.addFiltroIgualQue(hb, "entidadPropietariaCodigo", entidadPropietariaCodigo);
+		hb.addFiltroIgualQue(hb, "nivel", 2L);
 		
 		return HibernateQueryUtils.list(this, hb);
 	}

@@ -1,10 +1,10 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,16 +18,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrecios;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivosPreciosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
@@ -49,6 +53,9 @@ public class PreciosController extends ParadiseJsonController{
 	
 	@Autowired
     private GenericAdapter adapter;
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
 	
 	protected static final Log logger = LogFactory.getLog(PreciosController.class);
 
@@ -118,11 +125,21 @@ public class PreciosController extends ParadiseJsonController{
 		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);		
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public void generarPropuestaManual(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView generarPropuestaManual(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		// Metodo para crear propuestas por peticion manual
 		
-		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);
+		try {
+			generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
 	}
 	
 	private void generarPropuesta(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -161,7 +178,8 @@ public class PreciosController extends ParadiseJsonController{
 		try {
 			excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
 		
-			excelReportGeneratorApi.sendReport(excel.getFile(), response);
+			// Quitamos que se descargue la propuesta al generarla
+			//excelReportGeneratorApi.sendReport(excel.getFile(), response);
 			
 			preciosApi.guardarFileEnTrabajo(excel.getFile(),propuesta.getTrabajo());
 			excel.vaciarLibros();
@@ -170,9 +188,9 @@ public class PreciosController extends ParadiseJsonController{
 			logger.error(ex.getMessage());
 		} catch (InvocationTargetException ex) {
 			logger.error(ex.getMessage());
-		} catch (IOException ex) {
+		}/* catch (IOException ex) {
 			logger.error(ex.getMessage());
-		}
+		}*/
 	}
 	
 	/****************************************************************************************************************/
@@ -273,5 +291,66 @@ public class PreciosController extends ParadiseJsonController{
 		}
 		
 		return createModelAndViewJson(model);
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getNumActivosByTipoPrecioAmpliada(ModelMap model)
+	{
+		
+		try {
+
+			List<VBusquedaNumActivosTipoPrecio> listaCountActivos = preciosApi.getNumActivosByTipoPrecioAndEstadoSareb();
+
+			model.put("data", listaCountActivos);
+			model.put("totalCount", listaCountActivos.size());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoPropuesta (HttpServletRequest request, HttpServletResponse response) {
+        
+		DtoAdjunto dtoAdjunto = new DtoAdjunto();
+		
+		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
+		dtoAdjunto.setIdTrabajo(Long.parseLong(request.getParameter("idTrabajo")));
+	
+		
+       	FileItem fileItem = trabajoApi.getFileItemAdjunto(dtoAdjunto);
+		
+       	try { 
+       		ServletOutputStream salida = response.getOutputStream(); 
+       			
+       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+       		response.setHeader("Cache-Control", "max-age=0");
+       		response.setHeader("Expires", "0");
+       		response.setHeader("Pragma", "public");
+       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+       		response.setContentType(fileItem.getContentType());
+       		
+       		// Write
+       		FileUtils.copy(fileItem.getInputStream(), salida);
+       		salida.flush();
+       		salida.close();
+       		
+       	} catch (Exception e) { 
+       		e.printStackTrace();
+       	}
+
+
 	}
 }

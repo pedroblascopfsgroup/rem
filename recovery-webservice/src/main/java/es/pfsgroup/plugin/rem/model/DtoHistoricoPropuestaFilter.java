@@ -23,6 +23,7 @@ public class DtoHistoricoPropuestaFilter extends WebDto {
 	private String fechaHasta;
 	private String estadoPropuesta;
 	private String gestorPrecios;
+	private Long idAdjunto;
 	
 	public String getNumPropuesta() {
 		return numPropuesta;
@@ -89,6 +90,12 @@ public class DtoHistoricoPropuestaFilter extends WebDto {
 	}
 	public void setGestorPrecios(String gestorPrecios) {
 		this.gestorPrecios = gestorPrecios;
+	}
+	public Long getIdAdjunto() {
+		return idAdjunto;
+	}
+	public void setIdAdjunto(Long idAdjunto) {
+		this.idAdjunto = idAdjunto;
 	}
 
 	

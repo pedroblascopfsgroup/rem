@@ -83,6 +83,10 @@ public interface PreciosApi {
 	 */
 	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera();
 	
+	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndEstado(String entidadPropietariaCodigo);
+	
+	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndEstadoSareb();
+	
 	/**
 	 * Devuelve el Dto para rellenar el Excel de la Propuesta Unidicada.
 	 * @param idPropuesta

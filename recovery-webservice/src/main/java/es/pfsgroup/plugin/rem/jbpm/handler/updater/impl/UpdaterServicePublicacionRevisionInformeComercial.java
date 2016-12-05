@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 
 @Component
@@ -77,28 +79,54 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		
 		fechaRevision = new Date();
 				
+		// Acepta / Rechaza el I.C.
 		if(checkAcepta){
-			if(!activoApi.checkTiposDistintos(activo)){
-				estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
-				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
-				activoEstadosInformeComercialHistorico.setFecha(new Date());
+			
+			// Si continua con proceso publicacion
+			if(checkContinuaProceso){
+				
+				// Consideracion de datos iguales entre activo e I.C.
+				if(!activoApi.checkTiposDistintos(activo)){
+					// Iguales :------------
+					// 1.) Se acepta I.C.
+					estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
+					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+					activoEstadosInformeComercialHistorico.setFecha(new Date());
+	
+					// 2.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
+					activo.setFechaPublicable(new Date());
 					
-				// Marca activo como publicable directamente 
-				//activo.setFechaPublicable(new Date());
+					// 3.) Se publica el activo
+					try {
+						activoApi.publicarActivo(activo.getId(), "Trámite publicación aceptado: Informe comercial no modifica datos");
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					
+				} else {
+					// Distintos :----------
+					// No se cambian datos, se lanza siguiente tarea de correccion I.C.
+				}
+				
+			} else {
+				// Si NO continua con proceso publicacion, no se cambian datos
 			}
+			
 		}else{
-				// Ha rechazado proceso
+				// Ha rechazado I.C.
 				estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
 				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 				activoEstadosInformeComercialHistorico.setFecha(new Date());
 				activoEstadosInformeComercialHistorico.setMotivo(motivoDenegacion);
 					
-				// Marca activo como NO publicable directamente
-				activo.setFechaPublicable(null);
+				// El tramite NO puede des-publicar activos, solo sirve para publicar
+				// activo.setFechaPublicable(null);
+				
+				// Se termina el tramite
 		}
 		
 		
-		//Si han habido cambios en el historico, lo persistimos.
+		//Si han habido cambios en el historico, los persistimos.
 		if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
 			if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
 				Auditoria auditoria = new Auditoria();

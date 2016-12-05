@@ -52,10 +52,20 @@ public class MSVDocumentoMasivoHibernateRawSQLDaoImpl extends AbstractEntityDao<
 		Object result = query.uniqueResult();
 
 		if(Checks.esNulo(result)) return null;
-		
+
 		return result.toString();
 	}
 
-	
+	@Override
+	public Object[] getExecuteSQLArray(String sqlValidacion) {
+		if (Checks.esNulo(sqlValidacion)) {
+			throw new IllegalArgumentException("'sqlValidacion' no puede ser NULL");
+		}
 
+		Query query = this.sesionFactoryFacade.getSession(this).createSQLQuery(sqlValidacion);
+
+		Object[] result = (Object[]) query.uniqueResult();
+
+		return result;
+	}
 }

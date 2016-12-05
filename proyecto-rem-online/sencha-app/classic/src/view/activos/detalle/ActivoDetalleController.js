@@ -1553,12 +1553,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
 	    	record.data.id= idProveedor;
-//	   		me.redirectTo('activos', true);
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }
 	    else if(!Ext.isEmpty(record.get('id'))){
-	    	var idProveedor = record.get("id");
-//	   		me.redirectTo('activos', true);
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }
    },
@@ -1758,7 +1757,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 			return true;
 			
-		case tipoDescuentoAprobado: // Aprobado venta web <= Descuento aprobado <= Descuento web
+		case tipoDescuentoAprobado: // Descuento aprobado <= Descuento web <= Aprobado venta web
 
 			var importeActualDescuentoAprobado = importeActualColumn.getEditor().value;
 
@@ -1794,7 +1793,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
 			}
 
-			return true;	
+			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDescuentoAprobado) && (importeActualAprobadoVentaWeb < importeDescuentoAprobado)) {
+				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+			}
+
+			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDecuentoPublicadoWeb) && (importeActualAprobadoVentaWeb < importeDecuentoPublicadoWeb)) {
+				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+			}
+
+			return true;
+
 		default:
 			return true;
 		}

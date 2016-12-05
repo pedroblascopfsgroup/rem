@@ -46,11 +46,33 @@ Ext.define('HreRem.model.FichaProveedorModel', {
 		    	name: 'localizadaProveedorCodigo'
 		    },
 		    {
+            	name: 'localizadaProveedorCodigoCalculated',
+            	calculate: function(data) {
+            		if(data.isEntidad) {
+            			return data.localizadaProveedorCodigo;
+            		} else {
+            			return null;
+            		}
+        		},
+        		depends: 'isEntidad'
+            },
+		    {
 		    	name: 'estadoProveedorCodigo'
 		    },
 		    {
 		    	name: 'tipoPersonaProveedorCodigo'
 		    },
+		    {
+            	name: 'tipoPersonaProveedorCodigoCalculated',
+            	calculate: function(data) {
+            		if(data.isProveedor) {
+            			return data.tipoPersonaProveedorCodigo;
+            		} else {
+            			return null;
+            		}
+        		},
+        		depends: 'isProveedor'
+            },
 		    {
 		    	name: 'observacionesProveedor'
 		    },
@@ -62,6 +84,17 @@ Ext.define('HreRem.model.FichaProveedorModel', {
     			type:'date',
     			dateFormat: 'c'
 		    },
+		    {
+            	name: 'fechaConstitucionProveedorCalculated',
+            	calculate: function(data) {
+            		if(data.isEntidad) {
+            			return data.fechaConstitucionProveedor;
+            		} else {
+            			return null;
+            		}
+        		},
+        		depends: 'isEntidad'
+            },
 		    {
 		    	name: 'territorialCodigo'
 		    },

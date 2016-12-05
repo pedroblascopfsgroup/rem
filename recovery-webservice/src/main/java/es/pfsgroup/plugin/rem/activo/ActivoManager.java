@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -84,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
@@ -209,6 +211,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private TareaActivoManager tareaActivoManager;
 
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Override
@@ -1448,19 +1453,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return activoDao.getUltimoHistoricoEstadoPublicacion(activoID);
 	}
-	
+
 	@Override
 	public boolean publicarActivo(Long idActivo) throws SQLException{
+		return publicarActivo(idActivo, null);
+	}
+	
+	@Override
+	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException{
 
-		int esError = activoDao.publicarActivo(idActivo);
-		if (esError != 1){
-			logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
-			throw new SQLException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
-		}
-		
-		logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
-		return true;
-		
+		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
+		dtoCambioEstadoPublicacion.setActivo(idActivo);
+		dtoCambioEstadoPublicacion.setMotivoPublicacion(motivo);		
+		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+
+		return activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 	}
 
 	@Override
@@ -2466,7 +2473,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		else
 			activo = ((TareaActivo) tareaExterna.getTareaPadre()).getActivo();
 
-		if (!Checks.esNulo(activo)) {
+		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo())) {
 			if (!Checks.esNulo(activo.getInfoComercial())) {
 				if (!Checks.esNulo(activo.getInfoComercial().getTipoActivo()))
 					return (!activo.getTipoActivo().getCodigo()
@@ -2478,7 +2485,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public Boolean checkTiposDistintos(Activo activo) {
-		if (!Checks.esNulo(activo)) {
+		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo())) {
 			if (!Checks.esNulo(activo.getInfoComercial())) {
 				if (!Checks.esNulo(activo.getInfoComercial().getTipoActivo()))
 					return (!activo.getTipoActivo().getCodigo()

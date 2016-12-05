@@ -230,9 +230,9 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 				layout: {type: 'hbox'},
 				collapsible: true,
 				title:HreRem.i18n('title.calidades'),
-				bind: {
+				/*bind: {
 					hidden: '{!infoComercial.isVivienda}'
-				},	
+				},	*/
 				items :
 					[
 						{

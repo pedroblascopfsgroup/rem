@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -22,8 +21,6 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -58,9 +55,6 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
-import es.pfsgroup.plugin.rem.model.VListMediadoresOfertas;
-import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
@@ -259,7 +253,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "fechaBaja", dto.getFechaBajaProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dto.getNifProveedor());
 			if(!Checks.esNulo(dto.getCustodioCodigo())) {
-				beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getCustodioCodigo());
+				beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getLocalizadaProveedorCodigo());
 			}
 			if(!Checks.esNulo(dto.getEstadoProveedorCodigo())) {
 				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, dto.getEstadoProveedorCodigo());

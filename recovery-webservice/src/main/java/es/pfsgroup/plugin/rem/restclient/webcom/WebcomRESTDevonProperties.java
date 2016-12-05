@@ -20,6 +20,11 @@ public class WebcomRESTDevonProperties {
 	public static final String SERVER_API_KEY = "rest.server.rem.api.key";
 	public static final String CLIENT_API_KEY = "rest.client.rem.api.key";
 	public static final String SERVER_PUBLIC_ADDRESS = "rest.client.rem.public.ip";
+	
+	//Gestor documental
+	public static final String BASE_URL_GESTOR_DOCUMENTAL = "rest.client.webcom.url.base.gestor.documental";
+	public static final String APP_ID_GESTOR_DOCUMENTAL = "rest.client.webcom.app.id.gestor.documental";
+	public static final String APP_SECRET_GESTOR_DOCUMENTAL = "rest.client.webcom.app.secret.gestor.documental";
 
 	// Esta property se usa en el fichero de configuración de Spring
 	// ac-rem-deteccion-cambios-bd.xml

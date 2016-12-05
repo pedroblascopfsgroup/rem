@@ -1758,7 +1758,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 			return true;
 			
-		case tipoDescuentoAprobado: // Aprobado venta web <= Descuento aprobado <= Descuento web
+		case tipoDescuentoAprobado: // Descuento aprobado <= Descuento web <= Aprobado venta web
 
 			var importeActualDescuentoAprobado = importeActualColumn.getEditor().value;
 
@@ -1794,7 +1794,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
 			}
 
-			return true;	
+			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDescuentoAprobado) && (importeActualAprobadoVentaWeb < importeDescuentoAprobado)) {
+				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+			}
+
+			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDecuentoPublicadoWeb) && (importeActualAprobadoVentaWeb < importeDecuentoPublicadoWeb)) {
+				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+			}
+
+			return true;
+
 		default:
 			return true;
 		}

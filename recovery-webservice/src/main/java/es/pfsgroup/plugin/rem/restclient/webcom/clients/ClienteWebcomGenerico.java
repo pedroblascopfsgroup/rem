@@ -115,7 +115,7 @@ public class ClienteWebcomGenerico {
 			
 			JSONObject response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
 					(endpoint.getTimeout() * 1000), endpoint.getCharset());
-			registroLlamada.setResponse(jsonString);
+			registroLlamada.setResponse(response.toString());
 
 			logger.debug("Respuesta recibida " + response);
 

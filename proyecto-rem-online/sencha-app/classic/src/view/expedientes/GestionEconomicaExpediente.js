@@ -50,6 +50,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            editor: {
 									xtype: 'combobox',	
 									reference: 'comboParticipacionRef',
+									allowBlank: false,
 									store: new Ext.data.Store({
 										model: 'HreRem.model.ComboBase',
 										proxy: {
@@ -83,6 +84,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 									editable: false,
 									chainedStore: me.storeProveedores,
 									chainedReference: 'proveedorRef',
+									allowBlank: false,
 									displayField: 'descripcion',
     								valueField: 'codigo',
     								listeners: {
@@ -105,11 +107,11 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 									enableKeyEvents: true,
 									displayField: 'nombre',
     								valueField: 'id',
-    								
-    								listeners: {
-										'keyup': 'changeComboProveedor',
-										'expand': 'expandeComboProveedor'
-									}
+    								allowBlank: false
+//    								listeners: {
+//										'keyup': 'changeComboProveedor',
+//										'expand': 'expandeComboProveedor'
+//									}
 								},
 								renderer: function(value, a, record, e) {								        		
 					        		var me = this;					        		
@@ -127,11 +129,6 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 								}
 								
 						   },
-//						   {
-//						   		text: HreRem.i18n('fieldlabel.id'),
-//					            dataIndex: 'codigoId',
-//					            flex: 1						   
-//						   },
 						   {
 						   		text: HreRem.i18n('header.tipo.calculo'),
 					            dataIndex: 'tipoCalculo',
@@ -150,6 +147,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 									}),
 									displayField: 'descripcion',
     								valueField: 'codigo',
+    								allowBlank: false,
     								listeners:{
 					            		change: 'onHaCambiadoImporteCalculo'
 					           		}
@@ -161,6 +159,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            flex: 1,
 					            editor: {
 					            	xtype:'numberfield',
+					            	allowBlank: false,
 					            	reference: 'importeCalculoHonorario',
 					            	listeners:{
 					            		change: 'onHaCambiadoImporteCalculo'

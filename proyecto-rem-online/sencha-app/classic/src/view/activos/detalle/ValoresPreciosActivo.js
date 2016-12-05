@@ -107,9 +107,9 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						                            validationEvent: 'change',
 						                            reference: 'dateFieldStartDate',
 						                            validator: function(value){
-						                                me.startValidityDate=value;
+						                                me.startValidityDate=this.getValue();
 						                                if(typeof me.endValidityDate !== 'undefined' && !Ext.isEmpty(me.endValidityDate)) {
-						                                    if(!Ext.isEmpty(me.startValidityDate) && me.startValidityDate <= me.endValidityDate) {
+						                                    if(!Ext.isEmpty(me.startValidityDate) && (me.startValidityDate <= me.endValidityDate)) {
 						                                    	return this.up('activosdetallemain').getController().validateFechas(this, value);
 						                                    } else {
 						                                        return HreRem.i18n('info.datefield.begin.date.msg.validacion');
@@ -133,7 +133,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						                            minText: HreRem.i18n('info.datefield.min.date.msg.validacion'),
 						                            validationEvent: 'change',
 						                            validator: function(value){
-						                            	me.endValidityDate=value;
+						                            	me.endValidityDate=this.getValue();
 						                            	return this.up('activosdetallemain').getController().validateFechas(this, value);
 						                            }
 						                          }

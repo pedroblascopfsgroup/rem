@@ -15,6 +15,7 @@
         <intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
         <intercept-url pattern="/services/**" access="ROLE_ANONYMOUS" />
         <intercept-url pattern="/rest/**" filters="none" />
+        <intercept-url pattern="/webhook/**" filters="none" />
         <intercept-url pattern="/**" access="ROLE_USER" />
         <logout/>
         <anonymous/>

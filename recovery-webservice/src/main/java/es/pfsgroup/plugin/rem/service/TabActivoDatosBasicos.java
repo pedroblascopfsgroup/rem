@@ -296,12 +296,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpIncorriente())) {
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
-			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteDescripcion", activoBancario.getEstadoExpIncorriente().getDescripcion());
+			
 		}
 		// ------------
 		
 		//Activo integrado en agrupación asisitida
 		BeanUtils.copyProperty(activoDto, "integradoEnAgrupacionAsistida",activoApi.isIntegradoAgrupacionAsistida(activo));
+		
+		//Tipo de activo segun el Mediador
+		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
+			BeanUtils.copyProperty(activoDto, "tipoActivoMediadorCodigo", activo.getInfoComercial().getTipoActivo().getCodigo());
+		}
 
 		
 		return activoDto;	
@@ -462,7 +467,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_MANUAL);
 				genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 			}
-			
 
 			// Perimetro -------
 			// Solo se guardan los datos si el usuario ha cambiado algun campo de perimetros

@@ -1187,7 +1187,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var id = chkbx.getReference();
     	var view = me.getView();
 
-    	if(!chkbx.getValue() && (id != "chkbxpublicacionforzada" || id != "chkbxpublicacionordinaria")){
+    	if(!chkbx.getValue() && id != "chkbxpublicacionforzada" && id != "chkbxpublicacionordinaria"){
     		// si el checkbox esta siendo desactivado y no es de la sección 'publicación', tan sólo resetear conenido textbox de la propia sección del checkbox.
     		switch (id){
         	case "chkbxpublicacionocultarprecio":
@@ -1212,7 +1212,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         	}
     		return;
     	}
-    	
+
     	switch (id){
     	case "chkbxpublicacionordinaria":
     		// checkbox.
@@ -1758,7 +1758,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 			return true;
 			
-		case tipoDescuentoAprobado: // Aprobado venta web <= Descuento aprobado <= Descuento web
+		case tipoDescuentoAprobado: // Descuento aprobado <= Descuento web <= Aprobado venta web
 
 			var importeActualDescuentoAprobado = importeActualColumn.getEditor().value;
 
@@ -1794,7 +1794,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
 			}
 
-			return true;	
+			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDescuentoAprobado) && (importeActualAprobadoVentaWeb < importeDescuentoAprobado)) {
+				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+			}
+
+			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDecuentoPublicadoWeb) && (importeActualAprobadoVentaWeb < importeDecuentoPublicadoWeb)) {
+				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+			}
+
+			return true;
+
 		default:
 			return true;
 		}

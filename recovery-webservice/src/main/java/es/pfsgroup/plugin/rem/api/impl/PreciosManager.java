@@ -109,7 +109,6 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	private static final Double porc090 = 0.90;
 	private static final Double porc075 = 0.75;
 	private static final Double porc060 = 0.60;
-
 		
 	@Override
 	public String managerName() {
@@ -297,6 +296,16 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera() {
 		
 		return vNumActivosTipoPrecioDao.getNumActivosByTipoPrecioAndCartera();
+	}
+	
+	@Override
+	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndEstadoSareb(){
+		return this.getNumActivosByTipoPrecioAndEstado(DDCartera.CODIGO_CARTERA_SAREB);
+	}
+	
+	@Override
+	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndEstado(String entidadPropietariaCodigo){
+		return vNumActivosTipoPrecioDao.getNumActivosByTipoPrecioAndEstado(entidadPropietariaCodigo);
 	}
 	
 	/**

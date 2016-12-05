@@ -35,7 +35,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 			    			{
 								xtype: 'comboboxfieldbase',
 								name: 'estadoGastoCodigo',
-				              	fieldLabel : 'Estado',
+				              	fieldLabel : 'Estado gasto',
 								bind: {
 									store: '{estadosGasto}'
 								}					
@@ -43,7 +43,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 			    			{ 
 								xtype: 'comboboxfieldbase',
 								name: 'estadoAutorizacionHayaCodigo',
-				              	fieldLabel : 'Estado Autorización Haya',
+				              	fieldLabel : 'Estado autorización Haya',
 								bind: {
 									store: '{comboEstadoAutorizacionHaya}'
 								}
@@ -51,7 +51,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 							{ 
 								xtype: 'comboboxfieldbase',
 								name: 'estadoAutorizacionPropietarioCodigo',
-				              	fieldLabel : 'Estado Autorización Propietario',
+				              	fieldLabel : 'Estado autorización propietario',
 								bind: {
 									store: '{comboEstadoAutorizacionPropietario}'
 								}

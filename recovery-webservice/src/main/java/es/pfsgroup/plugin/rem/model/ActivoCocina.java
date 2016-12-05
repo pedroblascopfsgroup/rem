@@ -145,11 +145,11 @@ public class ActivoCocina implements Serializable, Auditable {
 		this.estadoAmueblada = estadoAmueblada;
 	}
 
-	public Integer getEncimera() {
+	public Integer getEncimeraCocina() {
 		return encimera;
 	}
 
-	public void setEncimera(Integer encimera) {
+	public void setEncimeraCocina(Integer encimera) {
 		this.encimera = encimera;
 	}
 

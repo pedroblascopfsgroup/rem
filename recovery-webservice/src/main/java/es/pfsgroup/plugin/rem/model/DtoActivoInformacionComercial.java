@@ -43,13 +43,22 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private String reformaPresupuesto;
 	private String distribucionTxt;
 	
-	//Para la info de plazas de aparcamiento
+	//Para la info de plazas de aparcamiento - Varios (Otros)
 	private Boolean destinoCoche;
 	private Boolean destinoMoto;
 	private Boolean destinoDoble;
 	private String anchura;
 	private String profundidad;
 	private Boolean formaIrregular;
+	private String aparcamientoAltura;
+	private Integer aparcamientoLicencia;
+	private Integer aparcamientoSerbidumbre;
+	private Integer aparcamientoMontacarga;
+	private Integer aparcamientoColumnas;
+	private Integer aparcamientoSeguridad;
+	private String subtipoActivoCodigo;
+	private String subtipoPlazagarajeCodigo;
+	private String maniobrabilidadCodigo;
 	
 	//Para la info de locales comerciales
 	private String mtsFachadaPpal;
@@ -61,7 +70,10 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private String usuIdoneo;
 	private String usuAnterior;
 	private String observaciones;
-
+	private Boolean existeSalidaHumos; 
+	private Boolean existeSalidaEmergencias;
+	private Boolean existeAccesoMinusvalidos;
+	private String otrosOtrasCaracteristicas; 
 	
 	//Para la info de edificio
 	private Integer ascensor;
@@ -78,6 +90,9 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private String entornoInfraestructuras;
 	private String ediDescripcion;
 	private String reformaOtroDescEdificio;
+	private Integer edificioDivisible;
+	private String edificioOtrasCaracteristicas;
+	private String edificioDescPlantas;
 	
 	//Para la info de suelo e industrial.
 	private String infoDescripcion;
@@ -210,14 +225,17 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private Integer electricidadConContador;
 	private Integer electricidadBuenEstado;
 	private Integer electricidadDefectuosa;
+	private Integer electricidad;
 	private Integer aguaConContador;
 	private Integer aguaBuenEstado;
 	private Integer aguaDefectuosa;
     private Integer aguaCalienteCentral;
 	private Integer aguaCalienteGasNat;
+	private Integer agua;
 	private Integer gasConContador;
 	private Integer gasBuenEstado;
 	private Integer gasDefectuosa;
+	private Integer gas;
 	private Integer calefaccionCentral;
 	private Integer calefaccionGasNat;
 	private Integer calefaccionRadiadorAlu;
@@ -1600,6 +1618,120 @@ public class DtoActivoInformacionComercial extends WebDto {
 	public void setTipoActivoCodigo(String tipoActivoCodigo) {
 		this.tipoActivoCodigo = tipoActivoCodigo;
 	}
-
+	public Boolean getExisteSalidaHumos() {
+		return existeSalidaHumos;
+	}
+	public void setExisteSalidaHumos(Boolean existeSalidaHumos) {
+		this.existeSalidaHumos = existeSalidaHumos;
+	}
+	public Boolean getExisteSalidaEmergencias() {
+		return existeSalidaEmergencias;
+	}
+	public void setExisteSalidaEmergencias(Boolean existeSalidaEmergencias) {
+		this.existeSalidaEmergencias = existeSalidaEmergencias;
+	}
+	public Boolean getExisteAccesoMinusvalidos() {
+		return existeAccesoMinusvalidos;
+	}
+	public void setExisteAccesoMinusvalidos(Boolean existeAccesoMinusvalidos) {
+		this.existeAccesoMinusvalidos = existeAccesoMinusvalidos;
+	}
+	public String getOtrosOtrasCaracteristicas() {
+		return otrosOtrasCaracteristicas;
+	}
+	public void setOtrosOtrasCaracteristicas(String otrosOtrasCaracteristicas) {
+		this.otrosOtrasCaracteristicas = otrosOtrasCaracteristicas;
+	}
+	public Integer getElectricidad() {
+		return electricidad;
+	}
+	public void setElectricidad(Integer electricidad) {
+		this.electricidad = electricidad;
+	}
+	public Integer getAgua() {
+		return agua;
+	}
+	public void setAgua(Integer agua) {
+		this.agua = agua;
+	}
+	public Integer getGas() {
+		return gas;
+	}
+	public void setGas(Integer gas) {
+		this.gas = gas;
+	}
+	public Integer getEdificioDivisible() {
+		return edificioDivisible;
+	}
+	public void setEdificioDivisible(Integer edificioDivisible) {
+		this.edificioDivisible = edificioDivisible;
+	}
+	public String getEdificioOtrasCaracteristicas() {
+		return edificioOtrasCaracteristicas;
+	}
+	public void setEdificioOtrasCaracteristicas(String edificioOtrasCaracteristicas) {
+		this.edificioOtrasCaracteristicas = edificioOtrasCaracteristicas;
+	}
+	public String getEdificioDescPlantas() {
+		return edificioDescPlantas;
+	}
+	public void setEdificioDescPlantas(String edificioDescPlantas) {
+		this.edificioDescPlantas = edificioDescPlantas;
+	}
+	public String getAparcamientoAltura() {
+		return aparcamientoAltura;
+	}
+	public void setAparcamientoAltura(String aparcamientoAltura) {
+		this.aparcamientoAltura = aparcamientoAltura;
+	}
+	public Integer getAparcamientoLicencia() {
+		return aparcamientoLicencia;
+	}
+	public void setAparcamientoLicencia(Integer aparcamientoLicencia) {
+		this.aparcamientoLicencia = aparcamientoLicencia;
+	}
+	public Integer getAparcamientoSerbidumbre() {
+		return aparcamientoSerbidumbre;
+	}
+	public void setAparcamientoSerbidumbre(Integer aparcamientoSerbidumbre) {
+		this.aparcamientoSerbidumbre = aparcamientoSerbidumbre;
+	}
+	public Integer getAparcamientoMontacarga() {
+		return aparcamientoMontacarga;
+	}
+	public void setAparcamientoMontacarga(Integer aparcamientoMontacarga) {
+		this.aparcamientoMontacarga = aparcamientoMontacarga;
+	}
+	public Integer getAparcamientoColumnas() {
+		return aparcamientoColumnas;
+	}
+	public void setAparcamientoColumnas(Integer aparcamientoColumnas) {
+		this.aparcamientoColumnas = aparcamientoColumnas;
+	}
+	public Integer getAparcamientoSeguridad() {
+		return aparcamientoSeguridad;
+	}
+	public void setAparcamientoSeguridad(Integer aparcamientoSeguridad) {
+		this.aparcamientoSeguridad = aparcamientoSeguridad;
+	}
+	public String getSubtipoActivoCodigo() {
+		return subtipoActivoCodigo;
+	}
+	public void setSubtipoActivoCodigo(String subtipoActivoCodigo) {
+		this.subtipoActivoCodigo = subtipoActivoCodigo;
+	}
+	public String getSubtipoPlazagarajeCodigo() {
+		return subtipoPlazagarajeCodigo;
+	}
+	public void setSubtipoPlazagarajeCodigo(String subtipoPlazagarajeCodigo) {
+		this.subtipoPlazagarajeCodigo = subtipoPlazagarajeCodigo;
+	}
+	public String getManiobrabilidadCodigo() {
+		return maniobrabilidadCodigo;
+	}
+	public void setManiobrabilidadCodigo(String maniobrabilidadCodigo) {
+		this.maniobrabilidadCodigo = maniobrabilidadCodigo;
+	}
+	
 	
 }

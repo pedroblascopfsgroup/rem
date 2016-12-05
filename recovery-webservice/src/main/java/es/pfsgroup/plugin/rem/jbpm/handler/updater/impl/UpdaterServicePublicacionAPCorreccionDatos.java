@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,12 +27,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 
@@ -84,11 +87,12 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 					activoEstadosInformeComercialHistorico.setFecha(new Date());
 					
-					// Marca activo como NO publicable
-					activo.setFechaPublicable(null);
+					// El tramite NO puede des-publicar activos, solo sirve para publicar
+					// activo.setFechaPublicable(null);
 					
 				} else {
-					// En caso de que se acepte se prepara un historico estado rechazado con fecha rechazo y motivo y se cambia el tipo de activo
+					
+					// En caso de que se acepte se prepara un historico estado aceptado con fecha aceptado
 					estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 					activoEstadosInformeComercialHistorico.setFecha(new Date());
@@ -115,8 +119,15 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 //						if(!Checks.esNulo(activoInfoComercial.getProvincia())) activo.setProvincia(activoInfoComercial.getProvincia().getCodigo());
 					}
 
-					// Marca activo como publicable
+					// 2.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
 					activo.setFechaPublicable(new Date());
+					
+					// 3.) Se publica el activo
+					try {
+						activoApi.publicarActivo(activo.getId(), "Trámite publicación aceptado: Se aceptan datos de informe comercial");
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 				
 			}

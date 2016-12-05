@@ -1,5 +1,9 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
 public interface  ParticularValidatorApi {
 	
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion);
@@ -99,5 +103,21 @@ public interface  ParticularValidatorApi {
 	 * @return
 	 */
 	public Boolean isActivoNoComercializable(String numActivo);
+
+	/**
+	 * Este método obtiene una lista de importes actuales por el número de activo.
+	 * 
+	 * @param numActivo : número haya del activo.
+	 * @return Devuelve una lista de importes actuales del activo.
+	 */
+	public List<BigDecimal> getImportesActualesActivo(String numActivo);
+
+	/**
+	 * Este método obtiene una lista de fechas de importes actuales por el número de activo.
+	 * 
+	 * @param numActivo : número haya del activo.
+	 * @return Devuelve una lista de fechas de importes actuales del activo.
+	 */
+	public List<Date> getFechasImportesActualesActivo(String numActivo);
 	
 }

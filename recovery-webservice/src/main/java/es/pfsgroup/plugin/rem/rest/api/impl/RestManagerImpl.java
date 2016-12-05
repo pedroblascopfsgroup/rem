@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -520,5 +521,11 @@ public class RestManagerImpl implements RestApi {
 		// Realizamos login en la plataforma
 		this.doLogin(this.loadUserRest(entidad));
 
+	}
+
+	@Override
+	public RestLlamada getLlamadaByToken(String token) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

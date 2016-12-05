@@ -62,7 +62,8 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 		dto.setEstadoProvisionDescripcion(provision.getEstadoProvision().getDescripcion());
 		dto.setFechaAlta(provision.getFechaAlta());
 		dto.setFechaEnvio(provision.getFechaEnvio());
-		dto.setFechaRespuesta(provision.getFechaRespuesta());		
+		dto.setFechaRespuesta(provision.getFechaRespuesta());
+		dto.setGestoria(provision.getGestoria().getNombre());
 		
 		return dto;	
 	}

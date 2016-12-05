@@ -42,6 +42,19 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContado
 					tdCls: 'grid-no-seleccionable-td',
 		            renderer: carteraRenderer
 		        },
+                {
+                	dataIndex: 'subcarteraCodigo',
+		            flex: 1,
+		            hidden: true
+                },        
+        		{
+		            dataIndex: 'subcarteraDescripcion',
+		            flex: 1,
+		            cls: 'grid-no-seleccionable-primera-col',
+					tdCls: 'grid-no-seleccionable-td',
+					align: 'left'//,
+		            //renderer: carteraRenderer
+		        },
 		        {	        	
 		            dataIndex: 'numActivosPreciar',
 		            menuDisabled: true,

@@ -26,6 +26,14 @@ Ext.define('HreRem.ux.util.Constants', {
         EXPEDIENTE: 5,
         GASTO: 6
     },
+
+    TIPOS_COMERCIALIZACION: {
+    	
+    	VENTA: '01',
+    	ALQUILER_VENTA: '02',
+    	SOLO_ALQUILER: '03',
+    	ALQUILER_OPCION_COMPRA: '04'
+    },
     
     TIPOS_AGRUPACION: {
     	
@@ -217,6 +225,10 @@ Ext.define('HreRem.ux.util.Constants', {
     	AUTORIZADO: '03',
     	RECHAZADO: '02',
     	PENDIENTE: '01'    	
+    },
+    
+    ESTADOS_PROVISION: {
+    	RECHAZADA_SUBSANABLE: '03'	
     }
     
     

@@ -243,7 +243,7 @@ BEGIN
                 INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
                         ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
                 INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT 
-                        ON ACT.ACT_NUM_ACTIVO = MIG.GPT_ACT_NUMERO_ACTIVO
+                        ON ACT.ACT_NUM_ACTIVO_UVEM = MIG.GPT_ACT_NUMERO_ACTIVO
                 '
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;

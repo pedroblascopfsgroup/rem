@@ -37,6 +37,8 @@ public class DtoActivoFilter extends WebDto {
 	private String subtipoTituloActivoDescripcion;
     private String entidadPropietariaCodigo;
     private String entidadPropietariaDescripcion;
+    private String subcarteraCodigo;
+	private String subcarteraDescripcion;
 	private String tipoViaCodigo;
 	private String localidadRegistroDescripcion;
 	private String tipoActivoDescripcion;
@@ -287,6 +289,18 @@ public class DtoActivoFilter extends WebDto {
 	public void setEntidadPropietariaDescripcion(
 			String entidadPropietariaDescripcion) {
 		this.entidadPropietariaDescripcion = entidadPropietariaDescripcion;
+	}
+    public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
+	}
+	public String getSubcarteraDescripcion() {
+		return subcarteraDescripcion;
+	}
+	public void setSubcarteraDescripcion(String subcarteraDescripcion) {
+		this.subcarteraDescripcion = subcarteraDescripcion;
 	}
 	public String getTipoViaCodigo() {
 		return tipoViaCodigo;

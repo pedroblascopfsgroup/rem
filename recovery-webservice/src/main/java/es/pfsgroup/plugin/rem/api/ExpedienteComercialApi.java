@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
@@ -272,7 +273,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoActivoProveedor> getNotariosExpediente(Long idExpediente);
+	public List<DtoNotarioContacto> getContactosNotario(Long idProveedor);
 
 	/**
 	 * Modifica los datos de una reserva
@@ -421,9 +422,12 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Método que devuelve los proveedores filtrados por su tipo de proveedor
 	 * @param codigoTipoProveedor
+	 * @param nombreBusqueda
+	 * @param idActivo
+	 * @param dto
 	 * @return List<ActivoProveedor>
 	 */
-	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto dto);
+	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto);
 	
 	/**
 	 * Crea un registro de honorarios (gasto_expediente)

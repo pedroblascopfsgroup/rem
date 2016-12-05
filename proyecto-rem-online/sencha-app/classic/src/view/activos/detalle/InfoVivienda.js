@@ -190,41 +190,10 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 												title: HreRem.i18n('title.distribucion.plantas'),
 												items :
 												[
-												        {
-												        	xtype: 'gridBase',
-														    topBar: false,
-												        	editOnSelect: false,
-															features: [{
-														        ftype: 'grouping',
-														        groupHeaderTpl: 'Planta {[values.rows[0].data.numPlanta]} ({rows.length} estancia{[values.rows.length > 1 ? "s" : ""]})',
-														        hideGroupedHeader: true,
-														        startCollapsed: true,
-														        enableGroupingMenu: false,
-														        id: 'distribucionGrouping'
-														    }],												
-															bind: {
-																store: '{storeDistribuciones}'
-															},
-															columns: [
-																{   
-														        	width: 150
-														        },
-															    {   text: HreRem.i18n('header.estancia'),
-														        	dataIndex: 'tipoHabitaculoDescripcion',
-														        	flex:2
-														        },
-														        {   text: HreRem.i18n('header.cantidad'),
-														        	dataIndex: 'cantidad',
-														        	flex:1 
-														        },	
-														        {   text: HreRem.i18n('header.superficie'), 
-														        	renderer: Ext.util.Format.numberRenderer('0,000.00'),														        	
-														        	dataIndex: 'superficie',
-														        	flex:1
-														        }               	        
-														    ]
-														}
-										 			]
+													{
+														xtype: 'distribucionplantasactivolist'
+													} 
+									 			]
 											}
 											
 			        
@@ -261,9 +230,9 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 				layout: {type: 'hbox'},
 				collapsible: true,
 				title:HreRem.i18n('title.calidades'),
-				bind: {
+				/*bind: {
 					hidden: '{!infoComercial.isVivienda}'
-				},	
+				},	*/
 				items :
 					[
 						{

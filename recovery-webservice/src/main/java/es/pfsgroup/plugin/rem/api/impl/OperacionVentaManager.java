@@ -24,13 +24,17 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaOferta;
+import es.pfsgroup.plugin.rem.model.DtoComprador;
+import es.pfsgroup.plugin.rem.model.DtoDataSource;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
@@ -70,6 +74,12 @@ public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
 			}
 			mapaValores.put("Activo", activo.getNumActivoUvem().toString());
 			mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
+			
+			if (activo.getCartera()!=null && activo.getCartera().getCodigo()!=null) {
+				mapaValores.put("Cartera", FileUtilsREM.stringify(activo.getCartera().getCodigo().toString()));
+			} else {
+				mapaValores.put("Cartera", FileUtilsREM.stringify(null));
+			}
 			
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
 			Long tipo = genericDao.get(EXTDDTipoGestor.class, filter).getId();		
@@ -218,10 +228,111 @@ public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
 				mapaValores.put("Folio",FileUtilsREM.stringify(null));
 			}
 			
-			
-			
+			//TODO: Falta saber que se debe poner en Tipo Propiedad
 			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(null));
+
+			Double importeA = oferta.getImporteOfertaAprobado();
+			if (importeA==null) {
+				importeA = new Double(0);
+			}
+			Double impuestoB = new Double(0);
+			if (condExp.getTipoAplicable()!=null) {
+				impuestoB = condExp.getTipoAplicable()*importeA;
+			}
+			Double cobrada = new Double(0);
 			
+			mapaValores.put("importeA",FileUtilsREM.stringify(importeA));
+			if (condExp.getTipoAplicable()!=null) {
+				mapaValores.put("impuestoB",FileUtilsREM.stringify(impuestoB));
+				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable())));
+			} else {
+				mapaValores.put("impuestoB",FileUtilsREM.stringify(null));
+				mapaValores.put("importeAB",FileUtilsREM.stringify(null));
+			}
+			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva()) ) {
+				mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()*importeA));
+				cobrada = condExp.getPorcentajeReserva()*importeA;
+			} else {
+				Double importeReserva = condExp.getImporteReserva();
+				if (importeReserva!=null ) {
+					mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
+					cobrada = importeReserva;
+				} else {
+					mapaValores.put("cobrada", FileUtilsREM.stringify(null));					
+				}
+			}
+			mapaValores.put("importeCobr",FileUtilsREM.stringify(importeA+impuestoB-cobrada));
+			
+			//TODO: Falta que Tomás nos diga a que hace referencia
+			mapaValores.put("sujecion",FileUtilsREM.stringify(null));
+			
+			mapaValores.put("renuncia",FileUtilsREM.stringify(condExp.getRenunciaExencion()));
+			
+			//TODO: Falta que Tomás nos diga a que hace referencia
+			mapaValores.put("tasacion716",FileUtilsREM.stringify(null));
+			//TODO: Falta que Tomás nos diga a que hace referencia
+			mapaValores.put("financiacion",FileUtilsREM.stringify(null));
+			
+			if (condExp.getTipoImpuesto()!=null) {
+				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(condExp.getTipoImpuesto().getDescripcionLarga()));
+			} else {
+				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(null));
+			}
+			
+			mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getPorcentajeReserva()));
+			
+			
+			List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
+			if (listActivoTasacion!=null) {
+				mapaValores.put("fechaTasacion",FileUtilsREM.stringify(listActivoTasacion.get(0).getFechaRecepcionTasacion()));
+			} else {
+				mapaValores.put("fechaTasacion",FileUtilsREM.stringify(null));
+			}
+			
+			mapaValores.put("ImporteImpuestos", FileUtilsREM.stringify(condExp.getCargasImpuestos()));
+			mapaValores.put("ImporteComunidades", FileUtilsREM.stringify(condExp.getCargasComunidad()));
+			mapaValores.put("ImporteOtros", FileUtilsREM.stringify(condExp.getCargasOtros()));
+			
+			mapaValores.put("ImporteNotaria", FileUtilsREM.stringify(condExp.getGastosNotaria()));
+			mapaValores.put("ImportePlusvalia", FileUtilsREM.stringify(condExp.getGastosPlusvalia()));
+			mapaValores.put("ImporteCVOtros", FileUtilsREM.stringify(condExp.getGastosOtros()));
+			
+			DDTiposPorCuenta tipoImpuestos = condExp.getTipoPorCuentaImpuestos();
+			if (tipoImpuestos!=null) {
+				mapaValores.put("Impuestos", FileUtilsREM.stringify(tipoImpuestos.getDescripcionLarga()));
+			} else {
+				mapaValores.put("Impuestos", FileUtilsREM.stringify(null));
+			}
+			DDTiposPorCuenta tipoComunidades = condExp.getTipoPorCuentaComunidad();
+			if (tipoComunidades!=null) {
+				mapaValores.put("Comunidades", FileUtilsREM.stringify(tipoComunidades.getDescripcionLarga()));
+			} else {
+				mapaValores.put("Comunidades", FileUtilsREM.stringify(null));
+			}
+			DDTiposPorCuenta tipoOtros = condExp.getTipoPorCuentaGastosOtros();
+			if (tipoOtros!=null) {
+				mapaValores.put("Otros", FileUtilsREM.stringify(tipoOtros.getDescripcionLarga()));
+			} else {
+				mapaValores.put("Otros", FileUtilsREM.stringify(null));
+			}
+			DDTiposPorCuenta tipoPlusValia = condExp.getTipoPorCuentaPlusvalia();
+			if (tipoPlusValia!=null) {
+				mapaValores.put("Plusvalia", FileUtilsREM.stringify(tipoPlusValia.getDescripcionLarga()));
+			} else {
+				mapaValores.put("Plusvalia", FileUtilsREM.stringify(null));
+			}
+			DDTiposPorCuenta tipoNotaria = condExp.getTipoPorCuentaNotaria();
+			if (tipoNotaria!=null) {
+				mapaValores.put("Notaria", FileUtilsREM.stringify(tipoNotaria.getDescripcionLarga()));
+			} else {
+				mapaValores.put("Notaria", FileUtilsREM.stringify(null));
+			}
+			DDTiposPorCuenta tipoOtrosCV = condExp.getTipoPorCuentaGastosOtros();
+			if (tipoOtrosCV!=null) {
+				mapaValores.put("OtrosImporteOferta",  FileUtilsREM.stringify(tipoOtrosCV.getDescripcionLarga()));
+			} else {
+				mapaValores.put("OtrosImporteOferta", FileUtilsREM.stringify(null));
+			}
 
 
 			
@@ -235,8 +346,12 @@ public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
 
 	@Override
 	public List<Object> dataSourceHojaDatos(Oferta oferta, Activo activo, ModelMap model) {
+		
 		List<Object> array = new ArrayList<Object>();
 		
+		DtoDataSource dataSource = new DtoDataSource();
+		
+		List<Object> listaComprador = new ArrayList<Object>();
 		try {
 			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
 			if (ofertaAceptada==null) {
@@ -249,22 +364,38 @@ public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
 				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
 				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
 			} else {
-				List<CompradorExpediente> listaComprador = expediente.getCompradores();
-				for (int i = 0; i < listaComprador.size(); i++) {
-					//TODO: listaComprador.get(i).get
+				List<CompradorExpediente> listaCompradorExpediente = expediente.getCompradores();
+				DtoComprador dtoComprador = null;
+				for (int i = 0; i < listaCompradorExpediente.size(); i++) {
+					CompradorExpediente compradorExpediente = listaCompradorExpediente.get(i);
+					Comprador comprador = listaCompradorExpediente.get(i).getPrimaryKey().getComprador();
+					dtoComprador = new DtoComprador();
+					dtoComprador.setNombreComprador(FileUtilsREM.stringify(comprador.getFullName()));
+					dtoComprador.setDireccionComprador(FileUtilsREM.stringify(comprador.getDireccion()));
+					dtoComprador.setDniComprador(FileUtilsREM.stringify(comprador.getDocumento()));
+					if (comprador.getTelefono2()==null) {
+						dtoComprador.setTlfComprador(FileUtilsREM.stringify(comprador.getTelefono1()));
+					} else {
+						dtoComprador.setTlfComprador(FileUtilsREM.stringify(comprador.getTelefono1()+"/"+comprador.getTelefono2()));
+					}
+					dtoComprador.setrBienesComprador(FileUtilsREM.stringify(null));
+					if (compradorExpediente.getEstadoCivil()!=null) {
+						dtoComprador.seteCivilComprador(FileUtilsREM.stringify(compradorExpediente.getEstadoCivil().getDescripcionLarga()));
+					} else  {
+						dtoComprador.seteCivilComprador(FileUtilsREM.stringify(null));
+					}
+					dtoComprador.setPorcentajeComprador(FileUtilsREM.stringify(compradorExpediente.getPorcionCompra()));
+					listaComprador.add(dtoComprador);
 				}
+				
 				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		
-		//Datos vacios para que jasperReport no falle.
-		DtoPropuestaOferta propuestaOferta = new DtoPropuestaOferta();
-		List<Object> listaCliente = new ArrayList<Object>();
-		propuestaOferta.setListaCliente(listaCliente);
-		array.add(propuestaOferta);
+		dataSource.setListaComprador(listaComprador);
+		array.add(dataSource);
 		
 		return array;
 	}

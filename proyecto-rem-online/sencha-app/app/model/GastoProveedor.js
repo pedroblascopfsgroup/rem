@@ -139,7 +139,14 @@ Ext.define('HreRem.model.GastoProveedor', {
    		
    		{
    			name: 'gastoSinActivos'
-   		}
+   		},
+   		{
+			name: 'enviado',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}
+		}
     		
     ],
     

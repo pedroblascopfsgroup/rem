@@ -12,4 +12,6 @@ public interface VNumActivosTipoPrecioDao extends AbstractDao<VBusquedaNumActivo
 	 * @return
 	 */
 	List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera();
+	
+	List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndEstado(String entidadPropietariaCodigo);
 }

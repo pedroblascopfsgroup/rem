@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 
 
@@ -59,6 +60,18 @@ public class ConfigPdaPresupuestaria implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_CRA_ID")
 	private DDCartera cartera;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_SCR_ID")
+	private DDSubcartera subcartera ;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRO_ID")
+    private ActivoPropietario propietario;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID")
+    private ActivoProveedor proveedor;
     
     @Column(name = "CPP_PARTIDA_PRESUPUESTARIA")
 	private String partidaPresupuestaria;
@@ -104,6 +117,30 @@ public class ConfigPdaPresupuestaria implements Serializable, Auditable {
 
 	public void setCartera(DDCartera cartera) {
 		this.cartera = cartera;
+	}
+
+	public DDSubcartera getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(DDSubcartera subcartera) {
+		this.subcartera = subcartera;
+	}
+
+	public ActivoPropietario getPropietario() {
+		return propietario;
+	}
+
+	public void setPropietario(ActivoPropietario propietario) {
+		this.propietario = propietario;
+	}
+
+	public ActivoProveedor getProveedor() {
+		return proveedor;
+	}
+
+	public void setProveedor(ActivoProveedor proveedor) {
+		this.proveedor = proveedor;
 	}
 
 	public String getPartidaPresupuestaria() {

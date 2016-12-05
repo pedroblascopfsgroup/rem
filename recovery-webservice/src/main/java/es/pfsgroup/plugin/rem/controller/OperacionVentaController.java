@@ -26,8 +26,6 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-
-import es.pfsgroup.plugin.rem.excel.ExcelReportGenerator;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 
 @Controller
@@ -52,11 +50,7 @@ public class OperacionVentaController {
 		public void operacionVenta(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {	
 			
 			PropuestaRequestDto jsonData = null;
-			OfertaSimpleDto operacionDto = null;
-			
-			Map<String, Object> params = null;
-			List<Object> dataSource = null;			
-			File fileSalidaTemporal = null;		
+			OfertaSimpleDto operacionDto = null;	
 			
 			//VALIDACIÓN DEL JSON ENTRADA
 			try {
@@ -82,10 +76,20 @@ public class OperacionVentaController {
 				e1.printStackTrace();
 			}
 			
+			operacionVentaPDFByOfertaHRE(operacionDto.getOfertaHRE(), request, response);
+		}
+		
+		public void operacionVentaPDFByOfertaHRE (Long ofertaHRE, RestRequestWrapper request,HttpServletResponse response) {
+			
+			ModelMap model = new ModelMap();
+			Map<String, Object> params = null;
+			List<Object> dataSource = null;			
+			File fileSalidaTemporal = null;	
+			
 			Oferta oferta = null;
 			//Primero comprabar que existe OFERTA
 			if (model.get("error")==null || model.get("error")=="") {
-				oferta = ofertaApi.getOfertaByNumOfertaRem(operacionDto.getOfertaHRE());
+				oferta = ofertaApi.getOfertaByNumOfertaRem(ofertaHRE);
 				if (oferta==null) {
 					model.put("error", RestApi.REST_NO_RELATED_OFFER);				
 				}
@@ -118,12 +122,12 @@ public class OperacionVentaController {
 				try {
 					excelReportGeneratorApi.sendReport(fileSalidaTemporal, response);
 				} catch (IOException e) {
-					model.put("error",e.getMessage()); //<--- vore este error					
+					model.put("error", e.getLocalizedMessage());	
 				}
 			} 
 
 			//Si hay algún error se envía un JSON(model) con información.
-			if (model.get("error")!=null) {				
+			if (model.get("error")!=null && model.get("error")!="") {				
 				restApi.sendResponse(response, model,request);
 			}
 		}

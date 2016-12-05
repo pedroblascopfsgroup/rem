@@ -56,7 +56,6 @@ import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -68,12 +67,14 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
@@ -106,7 +107,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
@@ -2365,7 +2365,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 		
 		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
-			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
+			solicitaFinanciacion = BooleanUtils.toBoolean(expediente.getCondicionante().getSolicitaFinanciacion());
 		}
 
 		numActivoEspecial = Checks.esNulo(activo.getNumActivoUvem()) ? 0 : activo.getNumActivoUvem().intValue();
@@ -2455,7 +2455,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		//SolicitaFinaciacion
 		if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaFinanciacion())) {			
-			solicitaFinanciacion = BooleanUtils.toBoolean(solicitaFinanciacion);
+			solicitaFinanciacion = BooleanUtils.toBoolean(expediente.getCondicionante().getSolicitaFinanciacion());
 		}
 		instancia.setFinanciacionCliente(solicitaFinanciacion);
 		//OfertaHRE
@@ -2508,52 +2508,81 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return true;
 		
 	}
-	
+
 	@Override
-	public List<DtoActivoProveedor> getNotariosExpediente(Long idExpediente){
-		ExpedienteComercial expediente= findOne(idExpediente);
-		List<DtoActivoProveedor> notarios= new ArrayList<DtoActivoProveedor>();
-		for(Posicionamiento posicionamiento : expediente.getPosicionamientos()) {
+	public List<DtoNotarioContacto> getContactosNotario(Long idProveedor){
+		
+		List<ActivoProveedorContacto> listaContactos= new ArrayList<ActivoProveedorContacto>();
+		List<DtoNotarioContacto> listaNotariosContactos = new ArrayList<DtoNotarioContacto>();
+		
+		Filter filtroProveedorId = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+		listaContactos = (List<ActivoProveedorContacto>) genericDao.getList(ActivoProveedorContacto.class, filtroProveedorId);
+
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", idProveedor);
+		ActivoProveedor notarioProveedor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtroId);
+		
+		// Toma los datos de ActivoProveedorContacto
+		DtoNotarioContacto notarioContactoDto = new DtoNotarioContacto();
+		for(ActivoProveedorContacto notarioContacto : listaContactos) {
 			
-			ActivoProveedor notario = posicionamiento.getNotario();
-			if(!Checks.esNulo(notario)) {
-				DtoActivoProveedor dtoNotario = activoProveedorToDto(notario);		
-				notarios.add(dtoNotario);
-			}
+			// Toma los datos de ActivoProveedorContacto
+			notarioContactoDto = activoProveedorContactoToNotariosContactoDto(notarioContacto);
+			listaNotariosContactos.add(notarioContactoDto);
+			
 		}
 		
-		return notarios;
+		// A la lista obtenida, agrega los datos de ActivoProveedor
+		for(DtoNotarioContacto notarioContacto : listaNotariosContactos) {
+			
+			addActivoProveedorToNotariosContactoDto(notarioProveedor, notarioContacto);
+			
+		}
+
+		return listaNotariosContactos;
 		
 	}
 
-	private DtoActivoProveedor activoProveedorToDto(ActivoProveedor notario) {
+	private boolean addActivoProveedorToNotariosContactoDto(ActivoProveedor notario, DtoNotarioContacto notarioContacto) {
 		
-		DtoActivoProveedor proveedorDto= new DtoActivoProveedor();
-		String nombreCompleto= "";
+		notarioContacto.setId(notario.getId());
 		
-		proveedorDto.setId(notario.getId());
+		String nombreCompleto = new String();
 		if(!Checks.esNulo(notario.getNombre())){
 			nombreCompleto= notario.getNombre();
 		} else {
 			nombreCompleto = notario.getNombreComercial();
 		}
 		
-		proveedorDto.setNombreProveedor(nombreCompleto);
-		proveedorDto.setDireccion(notario.getDireccion());
-
-
-		if(!Checks.esNulo(notario.getTelefono1())){
-			proveedorDto.setTelefono(notario.getTelefono1());
-		}
-		else{
-			proveedorDto.setTelefono(notario.getTelefono2());
-		}
-		proveedorDto.setEmail(notario.getEmail());
+		notarioContacto.setNombreProveedor(nombreCompleto);
+		notarioContacto.setDireccion(notario.getDireccion());
+		
 		if(!Checks.esNulo(notario.getProvincia())){
-			proveedorDto.setProvincia(notario.getProvincia().getDescripcion());
+			notarioContacto.setProvincia(notario.getProvincia().getDescripcion());
 		}
 		
-		return proveedorDto;
+		if(!Checks.esNulo(notario.getLocalidad())){
+			notarioContacto.setLocalidad(notario.getLocalidad().getDescripcion());
+		}
+		
+		notarioContacto.setCodigoPostal(String.valueOf(notario.getCodigoPostal()));
+		
+		return true;
+	}
+	
+	private DtoNotarioContacto activoProveedorContactoToNotariosContactoDto(ActivoProveedorContacto notarioContacto) {
+		DtoNotarioContacto notarioContactoDto= new DtoNotarioContacto();
+
+		notarioContactoDto.setIdContacto(notarioContacto.getId());
+		
+		notarioContactoDto.setPersonaContacto(notarioContacto.getNombre());
+		notarioContactoDto.setCargo(notarioContacto.getCargo());
+		
+		notarioContactoDto.setTelefono1(notarioContacto.getTelefono1());
+		notarioContactoDto.setTelefono2(notarioContacto.getTelefono2());
+		notarioContactoDto.setFax(notarioContacto.getFax());
+		notarioContactoDto.setEmail(notarioContacto.getEmail());
+
+		return notarioContactoDto;
 	}
 	
 	public DatosClienteDto buscarNumeroUrsus(String numeroDocumento, String tipoDocumento) throws Exception{
@@ -2604,32 +2633,34 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return dtoDatosCliente;
 		
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, WebDto dto){
-		
-		List<ActivoProveedor> proveedores= new ArrayList<ActivoProveedor>();
-		
-		Filter filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoProveedor);
-		DDTipoProveedor tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
-		
-		
-		if(!Checks.esNulo(nombreBusqueda) && !Checks.esNulo(tipoProveedor)){
-			
-			Page page = expedienteComercialDao.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, dto);	
-			proveedores= (List<ActivoProveedor>) page.getResults();
-			
+	@Override
+	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto){
+
+		String codigoProvinciaActivo = null;
+		List<Long> proveedoresIDporCartera = new ArrayList<Long>();
+
+		if(!Checks.esNulo(idActivo)) {
+			Activo activo = activoAdapter.getActivoById(Long.parseLong(idActivo));
+			codigoProvinciaActivo = activo.getProvincia();
+
+			if(!Checks.esNulo(activo.getCartera())) {
+				Filter filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", activo.getCartera().getCodigo());
+				List<EntidadProveedor> epList = genericDao.getList(EntidadProveedor.class, filtroEntidad);
+				for(EntidadProveedor e : epList) {
+					proveedoresIDporCartera.add(e.getProveedor().getId());
+				}
+			}
 		}
-		else if(!Checks.esNulo(tipoProveedor)){
-			
-			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.id", tipoProveedor.getId());
-			proveedores = genericDao.getList(ActivoProveedor.class, filtroProveedor);
-		}
-		
+
+		Page page = expedienteComercialDao.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, codigoProvinciaActivo, proveedoresIDporCartera, dto);
+
+		List<ActivoProveedor> proveedores = (List<ActivoProveedor>) page.getResults();
+
 		return proveedores;
-		
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad){
@@ -2705,7 +2736,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			ofertaUVEM.setCodOfertaHRE(oferta.getNumOferta().toString());
 		}
 		if (oferta.getPrescriptor() != null) {
-			ofertaUVEM.setCodPrescriptor(oferta.getPrescriptor().getCodProveedorUvem());
+			ofertaUVEM.setCodPrescriptor(oferta.getPrescriptor().getCodigoApiProveedor());
 		}
 		if (condExp != null) {
 			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva())) {
@@ -2720,44 +2751,53 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 			}
 		}
-		if (oferta.getImporteOferta() != null) {
-			ofertaUVEM.setImporteVenta(oferta.getImporteOferta().toString());
+		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta(): oferta.getImporteContraOferta();
+		if (importeTotal != null) {
+			ofertaUVEM.setImporteVenta(importeTotal.toString());
 		}
+		
+		if (condExp.getEntidadFinanciacion() != null) {
+			ofertaUVEM.setEntidad("00000");
+		}
+		
+		if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
+			ofertaUVEM.setImpuestos("S");
+		} else {
+			ofertaUVEM.setImpuestos("N");
+		}
+		
+		if (expedienteComercial.getReserva() != null) {
+			if (expedienteComercial.getReserva().getTipoArras() != null) {
+				if (DDTiposArras.CONFIRMATORIAS.equals(expedienteComercial.getReserva().getTipoArras().getCodigo())) {
+					ofertaUVEM.setArras("A");
+				} else {
+					ofertaUVEM.setArras("B");
+				}
+			} else {
+				ofertaUVEM.setArras("");
+			}
+		}
+		
 		return ofertaUVEM;
 	}
 
 	@Override
 	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) {
 		ArrayList<TitularUVEMDto> listaTitularUVEM = new ArrayList<TitularUVEMDto>();
-		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
 		for (int k = 0; k < expedienteComercial.getCompradores().size(); k++) {
 			CompradorExpediente compradorExpediente = expedienteComercial.getCompradores().get(k);
 			TitularUVEMDto titularUVEM = new TitularUVEMDto();
-			if (compradorExpediente.getComprador() != null) {
-				titularUVEM.setCliente(compradorExpediente.getComprador().toString());
-			}
-			if (compradorExpediente.getImporteProporcionalOferta() != null) {
+			
+			if (compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus() != null) {
+				titularUVEM.setCliente(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus().toString());
+			}			
+			if (compradorExpediente.getPorcionCompra() != null) {
 				titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
 			}
-			if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
-				titularUVEM.setImpuestos("S");
-			} else {
-				titularUVEM.setImpuestos("N");
+			if (compradorExpediente.getDocumentoConyuge() != null) {
+				titularUVEM.setPorcentaje(compradorExpediente.getDocumentoConyuge().toString());
 			}
-			if (condExp.getEntidadFinanciacion() != null) {
-				titularUVEM.setEntidad(condExp.getEntidadFinanciacion());
-			}
-			if (expedienteComercial.getReserva() != null) {
-				if (expedienteComercial.getReserva().getTipoArras() != null) {
-					if (DDTiposArras.CONFIRMATORIAS.equals(expedienteComercial.getReserva().getTipoArras().getCodigo())) {
-						titularUVEM.setArras("A");
-					} else {
-						titularUVEM.setArras("B");
-					}
-				} else {
-					titularUVEM.setArras("");
-				}
-			}
+
 			listaTitularUVEM.add(titularUVEM);
 		}
 		return listaTitularUVEM;

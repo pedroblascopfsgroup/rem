@@ -1,22 +1,30 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -31,11 +39,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
 	
+	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
+
+	@Resource
+	MessageService messageServices;
+	
 	@Autowired
 	ActivoApi activoApi;
 	
 	@Autowired
 	GenericABMDao genericDao;
+	
+	@Autowired 
+	ActivoDao activoDao;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -82,7 +98,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     
     @Override
     @Transactional(readOnly = false)
-    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion){
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException{
     	ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
 		Filter filtro = null;
@@ -135,7 +151,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			// Obtener fecha 'fechaPublicable' del activo para contrastar si ya lo estaba y no repetir acción.
 			// Además, una vez publicado, aunque se despublique mantiene la fecha. Así que para permitirle pasar en ese caso se comprueba si su estado actual es despublicado.
 			if(Checks.esNulo(activo.getFechaPublicable())) { // Si no tiene fecha de publicación asignarle una y dejarlo en manos del automatismo nocturno.
+
 				activo.setFechaPublicable(new Date());
+				// Ademas, se publica el activo lanzando el procedure para este
+				publicarActivoProcedure(activo.getId());
+				
 			} else if(!Checks.esNulo(activo.getFechaPublicable()) && // Si tiene fecha de publicación.
 					(!Checks.esNulo(estadoPublicacionActual) && estadoPublicacionActual.getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO))) { // Y tiene estado anterior.
 				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
@@ -143,6 +163,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					(!Checks.esNulo(estadoPublicacionActual) && !estadoPublicacionActual.getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO))) { // Y viene de cualquier otro estado anterior.
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
 				motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
+				
+				// Ademas, se publica el activo lanzando el procedure para este
+				publicarActivoProcedure(activo.getId());
 			}
 			
 		} else { // Deseleccionada cualquier opción.
@@ -236,17 +259,19 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			// Obtener el último estado o estado actual.
 			ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = list.get(0);
 			String tipoPublicacionInicial = null;
-			
+
 			// Obtener el tipo de publicación de la que viene, si la hubiera, y su motivo si viene de publicación forzada.
 			for(ActivoHistoricoEstadoPublicacion estado: list){
-				if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())) {
+
+				if(!Checks.esNulo(estado.getEstadoPublicacion()) && DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())) {
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO;
 					dto.setMotivoPublicacion(estado.getMotivo());
 					break;
-				} else if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
+				} else if(!Checks.esNulo(estado.getEstadoPublicacion()) && DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO;
 					break;
 				}
+				
 			}
 			
 			if(!Checks.esNulo(activoHistoricoEstadoPublicacion)){
@@ -302,5 +327,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		return dto;
 	}
+	
+	private boolean publicarActivoProcedure(Long idActivo) throws SQLException{
 
+		int esError = activoDao.publicarActivo(idActivo);
+		if (esError != 1){
+			logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+			throw new SQLException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+		}
+		
+		logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+		return true;
+		
+	}
 }

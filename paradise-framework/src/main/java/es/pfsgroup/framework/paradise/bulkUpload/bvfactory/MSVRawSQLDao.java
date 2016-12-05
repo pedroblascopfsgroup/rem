@@ -31,5 +31,11 @@ public interface MSVRawSQLDao {
 	 */
 	String getExecuteSQL(String sqlValidacion);
 
-
+	/**
+	 * Ejecuta una SQL y devuelve el resultado como objeto[].
+	 * 
+	 * @param sqlValidacion
+	 * @return
+	 */
+	Object[] getExecuteSQLArray(String sqlValidacion);
 }

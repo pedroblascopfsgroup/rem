@@ -30,8 +30,8 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDCartera implements Auditable, Dictionary {
 
-	public static final String CODIGO_CARTERA_01 = "01";
-	public static final String CODIGO_CARTERA_02 = "02";
+	public static final String CODIGO_CARTERA_CAJAMAR = "01";
+	public static final String CODIGO_CARTERA_SAREB = "02";
 	public static final String CODIGO_CARTERA_BANKIA = "03";
 
 	/**

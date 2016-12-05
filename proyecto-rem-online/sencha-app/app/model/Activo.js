@@ -334,84 +334,87 @@ Ext.define('HreRem.model.Activo', {
     			
     		},
     		{
+    			name: 'tipoActivoMediadorCodigo'
+    		},
+    		{
     			name: 'isViviendaMediador',
     			calculate: function(data) {
-    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    				if(Ext.isEmpty(data.tipoActivoMediadorCodigo)){
     					return false;
     				}
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'];
+    				return data.tipoActivoMediadorCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'];
     			},
-    			depends: 'tipoActivoCodigo'
+    			depends: 'tipoActivoMediadorCodigo'
     		},
     		{
     			name: 'isPlazaAparcamientoMediador',
     			calculate: function(data) {
-    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    				if(Ext.isEmpty(data.tipoActivoMediadorCodigo)){
     					return false;
     				}
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['PLAZA_APARCAMIENTO'];
+    				return data.tipoActivoMediadorCodigo == CONST.TIPOS_ACTIVO['PLAZA_APARCAMIENTO'];
     			},
-    			depends: 'tipoActivoCodigo'
+    			depends: 'tipoActivoMediadorCodigo'
     		},
     		{
     			name: 'isLocalComercialMediador',
     			calculate: function(data) {
-    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    				if(Ext.isEmpty(data.tipoActivoMediadorCodigo)){
     					return false;
     				}
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'];
+    				return data.tipoActivoMediadorCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'];
     			},
-    			depends: 'tipoActivoCodigo'
+    			depends: 'tipoActivoMediadorCodigo'
     		},
     		{
     			name: 'isIndustrialMediador',
     			calculate: function(data) {
-    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    				if(Ext.isEmpty(data.tipoActivoMediadorCodigo)){
     					return false;
     				}
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL'];
+    				return data.tipoActivoMediadorCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL'];
     			},
-    			depends: 'tipoActivoCodigo'
+    			depends: 'tipoActivoMediadorCodigo'
     		},
     		{
     			name: 'isEdificioCompletoMediador',
     			calculate: function(data) {
-    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    				if(Ext.isEmpty(data.tipoActivoMediadorCodigo)){
     					return false;
     				}
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO'];
+    				return data.tipoActivoMediadorCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO'];
     			},
-    			depends: 'tipoActivoCodigo'
+    			depends: 'tipoActivoMediadorCodigo'
     		},
     		{
     			name: 'isSueloMediador',
     			calculate: function(data) {
-    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    				if(Ext.isEmpty(data.tipoActivoMediadorCodigo)){
     					return false;
     				}
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'];
+    				return data.tipoActivoMediadorCodigo == CONST.TIPOS_ACTIVO['SUELO'];
     			},
-    			depends: 'tipoActivoCodigo'
+    			depends: 'tipoActivoMediadorCodigo'
     		},
     		{
     			name: 'isEnConstruccionMediador',
     			calculate: function(data) {
-    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    				if(Ext.isEmpty(data.tipoActivoMediadorCodigo)){
     					return false;
     				}
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'];
+    				return data.tipoActivoMediadorCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'];
     			},
-    			depends: 'tipoActivoCodigo'
+    			depends: 'tipoActivoMediadorCodigo'
     		},
     		{
     			name: 'isOtrosMediador',
     			calculate: function(data) {
-    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    				if(Ext.isEmpty(data.tipoActivoMediadorCodigo)){
     					return false;
     				}
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS'];
+    				return data.tipoActivoMediadorCodigo == CONST.TIPOS_ACTIVO['OTROS'];
     			},
-    			depends: 'tipoActivoCodigo'
+    			depends: 'tipoActivoMediadorCodigo'
     		},
     		{
     			name: 'tipoComercializacionDescripcion'

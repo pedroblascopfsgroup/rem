@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161110
+--## FECHA_CREACION=20161123
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -43,8 +43,14 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
 	
-	
-	
+	-- Verificar si la tabla que no procede todavia existe para borrarla
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''CCP_CONFIG_CTAS_PDAS'' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.CCP_CONFIG_CTAS_PDAS CASCADE CONSTRAINTS';
+		
+	END IF;
 	
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
@@ -74,7 +80,9 @@ BEGIN
 		CCC_ID 							NUMBER(16,0)				NOT NULL,
 		DD_STG_ID						NUMBER(16,0)				NOT NULL,
 		DD_CRA_ID						NUMBER(16,0)				NOT NULL,
+		PRO_ID							NUMBER(16,2),
 		CCC_CUENTA_ANYO_CURSO			VARCHAR2(50 CHAR)			NOT NULL,
+		CCC_CUENTA_ACTIVABLE			VARCHAR2(50 CHAR),
 		CCC_CUENTA_ANYOS_ANTERIORES		VARCHAR2(50 CHAR)			NOT NULL,		
 		VERSION 						NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE,
 		USUARIOCREAR 					VARCHAR2(50 CHAR)			NOT NULL ENABLE, 
@@ -123,6 +131,11 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_CCC_CRA... Foreign key creada.');
 	
+	-- Creamos foreign key PRO_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_CCC_PRO FOREIGN KEY (PRO_ID) REFERENCES '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO (PRO_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_CCC_PRO... Foreign key creada.');
+	
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
@@ -134,6 +147,7 @@ BEGIN
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_STG_ID IS ''Subtipo de gasto al que pertenece la configuración.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CRA_ID IS ''Cartera a la que pertenece la configuración''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CUENTA_ANYO_CURSO IS ''Cuenta contable para el año en curso.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CUENTA_ACTIVABLE IS ''Cuenta contable activable para el año en curso en caso de agotarse la actual.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CUENTA_ANYOS_ANTERIORES IS ''Cuenta contable para años anteriores.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';

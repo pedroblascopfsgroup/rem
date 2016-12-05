@@ -68,9 +68,11 @@ public class TabActivoInformeComercial implements TabActivoService {
 		DtoActivoInformeComercial informeComercial = new DtoActivoInformeComercial();
 		
 		try {
-			//Rellenamos los datos desde el tab de InformacionComercial, que comparten datos
+			//Rellenamos los datos desde el tab de InformacionComercial, que comparten datos. Luego seteamos a null los que podrían sobreescribirse.
 			TabActivoInformacionComercial tabActivoInformacionComerial = (TabActivoInformacionComercial) tabActivoFactory.getService(TAB_INFORMACION_COMERCIAL);
 			beanUtilNotNull.copyProperties(informeComercial,tabActivoInformacionComerial.getTabData(activo));
+			informeComercial.setTipoActivoCodigo(null);
+			informeComercial.setSubtipoActivoCodigo(null);
 			
 			if (!Checks.esNulo(activo.getInfoComercial())){
 				// Copia al "informe comercial" todos los atributos de "informacion comercial".

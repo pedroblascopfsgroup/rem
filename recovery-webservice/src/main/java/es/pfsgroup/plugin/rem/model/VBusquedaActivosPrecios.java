@@ -44,6 +44,12 @@ public class VBusquedaActivosPrecios implements Serializable {
     @Column(name = "ENTIDAD_DESCRIPCION")
     private String entidadPropietariaDescripcion;
     
+    @Column(name = "SUBCARTERA_CODIGO")
+    private String subcarteraCodigo;
+    
+    @Column(name = "SUBCARTERA_DESCRIPCION")
+    private String subcarteraDescripcion;
+    
     @Column(name = "TIPO_TITULO_CODIGO")
     private String tipoTituloActivoCodigo;
     
@@ -136,6 +142,12 @@ public class VBusquedaActivosPrecios implements Serializable {
     @Column(name="PRO_ID")
     private String idPropietario;
     
+    @Column(name="ESTADO_FISICO_CODIGO")
+    private String estadoActivoCodigo;
+    
+    @Column(name="ESTADO_FISICO_DESCRIPCION")
+    private String estadoActivoDescripcion;
+
 
 	public String getId() {
 		return id;
@@ -425,6 +437,30 @@ public class VBusquedaActivosPrecios implements Serializable {
 
 	public void setIdPropietario(String idPropietario) {
 		this.idPropietario = idPropietario;
+	}
+	
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
+	}
+
+	public String getSubcarteraDescripcion() {
+		return subcarteraDescripcion;
+	}
+
+	public void setSubcarteraDescripcion(String subcarteraDescripcion) {
+		this.subcarteraDescripcion = subcarteraDescripcion;
+	}
+
+	public String getEstadoActivoDescripcion() {
+		return estadoActivoDescripcion;
+	}
+
+	public void setEstadoActivoDescripcion(String estadoActivoDescripcion) {
+		this.estadoActivoDescripcion = estadoActivoDescripcion;
 	}
 
 

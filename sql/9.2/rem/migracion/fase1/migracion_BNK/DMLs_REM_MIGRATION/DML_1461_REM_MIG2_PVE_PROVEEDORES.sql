@@ -290,6 +290,7 @@ BEGIN
             ,PVE.PVE_FECHA_RETENCION
             ,PVE.PVE_FECHA_PBC
             ,PVE.DD_RPB_ID
+            ,PVE_COD_REM
             ,PVE_COD_API_PROVEEDOR
             ,PVE.VERSION
             ,PVE.USUARIOCREAR
@@ -336,6 +337,7 @@ BEGIN
             SQLI.PVE_FECHA_RETENCION,
             SQLI.PVE_FECHA_PBC,
             SQLI.DD_RPB_ID,
+            '||V_ESQUEMA||'.S_PVE_COD_REM.NEXTVAL,
             SQLI.PVE_COD_API_PROVEEDOR,
             ''0'',
             ''MIG2'',

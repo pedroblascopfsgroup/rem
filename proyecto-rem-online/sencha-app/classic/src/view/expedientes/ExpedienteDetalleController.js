@@ -1266,6 +1266,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoEstadoCivil.allowBlank = true;
 			campoRegEconomico.allowBlank = true;
 		}
-	}
+	},
+	
+	onClickGenerarHojaExcel: function(btn) {
+		
+    	var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.numExpediente=me.getViewModel().get("expediente.id");
+		config.url= $AC.getRemoteUrl("operacionventa/operacionVentaPDFByOfertaHRE");
+		//config.params = {};
+		//config.params.idProcess = this.getView().down('grid').selection.data.id;
+		
+		me.fireEvent("downloadFile", config);		
+    	
+    	
+		}
 	
 });

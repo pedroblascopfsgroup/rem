@@ -5,19 +5,26 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -32,11 +39,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
 	
+	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
+
+	@Resource
+	MessageService messageServices;
+	
 	@Autowired
 	ActivoApi activoApi;
 	
 	@Autowired
 	GenericABMDao genericDao;
+	
+	@Autowired 
+	ActivoDao activoDao;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -139,7 +154,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 				activo.setFechaPublicable(new Date());
 				// Ademas, se publica el activo lanzando el procedure para este
-				activoApi.publicarActivo(activo.getId());
+				publicarActivoProcedure(activo.getId());
 				
 			} else if(!Checks.esNulo(activo.getFechaPublicable()) && // Si tiene fecha de publicación.
 					(!Checks.esNulo(estadoPublicacionActual) && estadoPublicacionActual.getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO))) { // Y tiene estado anterior.
@@ -148,6 +163,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					(!Checks.esNulo(estadoPublicacionActual) && !estadoPublicacionActual.getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO))) { // Y viene de cualquier otro estado anterior.
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
 				motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
+				
+				// Ademas, se publica el activo lanzando el procedure para este
+				publicarActivoProcedure(activo.getId());
 			}
 			
 		} else { // Deseleccionada cualquier opción.
@@ -308,5 +326,18 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 
 		return dto;
+	}
+	
+	private boolean publicarActivoProcedure(Long idActivo) throws SQLException{
+
+		int esError = activoDao.publicarActivo(idActivo);
+		if (esError != 1){
+			logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+			throw new SQLException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+		}
+		
+		logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+		return true;
+		
 	}
 }

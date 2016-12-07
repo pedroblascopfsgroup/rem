@@ -939,6 +939,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						})	 
 					},
 					
+					T011_AnalisisPeticionCorreccionValidacion: function(){
+						var me = this;
+						
+						me.deshabilitarCampo(me.down('[name=motivoRechazo]'));
+								
+						me.down('[name=comboAceptacion]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.deshabilitarCampo(me.down('[name=motivoRechazo]'));
+							}else{
+								me.habilitarCampo(me.down('[name=motivoRechazo]'));
+							}
+						})
+					},
+					
 					T012_AnalisisPeticionActualizacionEstadoValidacion: function() {
 						var me = this;
 						

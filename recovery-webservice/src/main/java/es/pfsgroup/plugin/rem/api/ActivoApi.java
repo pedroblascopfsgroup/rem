@@ -342,12 +342,27 @@ public interface ActivoApi {
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
 	
 	/**
-	 * Ejecuta el procedure de BBDD que publica activos de forma ordinaria (con validaciones de publicacion)
-	 * para un activo dado. Retorna TRUE si la ejecucion se ha producido sin errores
+	 * Ejecuta los pasos necesarios para publicar activos de forma ordinaria (con validaciones de publicacion)
+	 * para un activo dado. Retorna TRUE si la ejecucion se ha producido sin errores.
+	 * 1.) Rellena un dto con los parametros de publicacion ordinaria, [incluye motivo de publicacion]
+	 * 2.) Llama al metodo designado para el cambio de estados de publicacion
+	 *    2.1) El metodo de cambio de estados es el que invoca al procedure de publicar activo
+	 * Lanza excepciones SQL, si el procedure se ejecuta con errores.
+	 * Ademas, retorna TRUE/FALSE, si el activo se ha publicado o no.
 	 * @param idActivo
 	 * @return
+	 * @throws SQLException
 	 */
 	boolean publicarActivo(Long idActivo) throws SQLException;
+	
+	/**
+	 * Igual que publicarActivo pero con motivo de publicacion
+	 * @param idActivo
+	 * @param motivo
+	 * @return
+	 * @throws SQLException
+	 */
+	boolean publicarActivo(Long idActivo, String motivo) throws SQLException;
 
 	/**
 	 * Inserta o actualiza una visita aun activo

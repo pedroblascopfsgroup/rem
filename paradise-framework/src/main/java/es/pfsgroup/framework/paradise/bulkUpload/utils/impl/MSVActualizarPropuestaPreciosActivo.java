@@ -1,7 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,12 +20,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
-import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationRunner;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVValidationResult;
@@ -101,19 +96,10 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 	private MSVExcelParser excelParser;
 	
 	@Autowired
-	private MSVBusinessValidationFactory validationFactory;
-	
-	@Autowired
 	private MSVBusinessValidationRunner validationRunner;
 	
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-	
-	@Autowired
 	private ParticularValidatorApi particularValidator;
-	
-	@Autowired
-	private MSVProcesoApi msvProcesoApi;
 	
 	@Resource
     MessageService messageServices;
@@ -223,32 +209,6 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 		return resultado;
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	private boolean isActiveExists(MSVHojaExcel exc){
-		try {
-			for(int i=EXCEL_FILA_INICIAL; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, EXCEL_COL_NUMACTIVO)))
-					return false;
-			}
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return true;
-	}
-	
 	private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -258,48 +218,8 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 					listaFilas.add(i);
 			}
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	private List<Integer> getPreciosBloqueadoRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		// Validacion que evalua si el activo tiene activo el bloqueo de precios. No pueden actualizarse precios.
-		try{
-			for(int i=EXCEL_FILA_INICIAL; i<exc.getNumeroFilas();i++){
-				if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, EXCEL_COL_NUMACTIVO)))
-					listaFilas.add(i);
-			}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	private List<Integer> getOfertaAprobadaRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		// Validacion que evalua si el activo tiene ofertas activas. No pueden actualizarse precios.
-		try{
-			for(int i=EXCEL_FILA_INICIAL; i<exc.getNumeroFilas();i++){
-				if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, EXCEL_COL_NUMACTIVO)))
-					listaFilas.add(i);
-			}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		return listaFilas;
@@ -428,10 +348,8 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 				}
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

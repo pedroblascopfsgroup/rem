@@ -26,7 +26,15 @@ Ext.define('HreRem.model.Reserva', {
 			name: 'fechaVencimiento',
     		type : 'date',
 			dateFormat: 'c'
+    	},
+    	{
+			name: 'diasFirma',
+			calculate: function(data) { 
+				return Math.floor(Ext.Date.getElapsed(data.fechaFirma)/86400000);
+			},
+			depends: 'fechaFirma'
     	}
+    	
     ],
 
     proxy: {

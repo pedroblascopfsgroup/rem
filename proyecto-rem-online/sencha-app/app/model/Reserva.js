@@ -29,8 +29,11 @@ Ext.define('HreRem.model.Reserva', {
     	},
     	{
 			name: 'diasFirma',
-			calculate: function(data) { 
-				return Math.floor(Ext.Date.getElapsed(data.fechaFirma)/86400000);
+			calculate: function(data) {
+				if(Ext.isDefined(data) && data.fechaFirma != null)
+					return Math.floor(Ext.Date.getElapsed(data.fechaFirma)/86400000);
+				else
+					return null;
 			},
 			depends: 'fechaFirma'
     	}

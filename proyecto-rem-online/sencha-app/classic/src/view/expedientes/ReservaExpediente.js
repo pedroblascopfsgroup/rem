@@ -41,7 +41,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 			            	}
 				        },		                
 		                {
-		                	xtype:'datefieldbase',
+//		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.envio'),
 		                	bind:		'{reserva.fechaEnvio}'
 		                },
@@ -67,8 +67,15 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.vencimiento'),
-		                	bind:		'{reserva.fechaVencimiento}'		                		
-		                }		               
+		                	minValue: $AC.getCurrentDate(),
+							maxValue: null,
+		                	bind: 		'{reserva.fechaVencimiento}'
+		                },
+		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.dias.transcurridos'),
+							bind: 		'{reserva.diasFirma}'
+		                }
+		                		               
 		        ]
 			},
 			{

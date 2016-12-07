@@ -66,6 +66,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								{
 									 xtype : 'comboboxfieldbase',
 									 fieldLabel: HreRem.i18n('fieldlabel.tipo'),
+									 allowBlank: false,
 									 reference: 'cbTipoProveedor',
 									 chainedStore: 'comboSubtipoProveedor',
 									 chainedReference: 'cbSubtipoProveedor',
@@ -92,6 +93,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								{ 
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo'),
+						        	allowBlank: false,
 						        	reference: 'cbSubtipoProveedor',
 						        	valueField: 'codigo',
 						        	bind: {

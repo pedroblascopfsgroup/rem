@@ -1179,7 +1179,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    // Esta funcion es llamado cuando algún checkbox del apartado de 'Estados de publicación' es activado
+    // Esta funcion es llamada cuando algún checkbox del apartado de 'Estados de publicación' es activado
     // y se encarga de permitir tener sólo un checkbox de estado activado. Además, reinicia el estado de
     // los componentes de cada sección que no esté seleccionada.
     onchkbxEstadoPublicacionChange: function(chkbx) {
@@ -2114,7 +2114,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     ocultarChkPublicacionOrdinaria: function(record) {
     	var me = this,
-    	ocultar = me.getViewModel().get('activo').get('isPublicable'),
+    	ocultar = !me.getViewModel().get('activo').get('isPublicable'),
     	chkbxpublicacionordinaria = me.lookupReference('chkbxpublicacionordinaria');
 
     	chkbxpublicacionordinaria.setHidden(ocultar);

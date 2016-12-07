@@ -32,6 +32,11 @@ public class FileUtilsREM {
        		e.printStackTrace();
        	}
 	}
+	
+	public static String base64Encode(File file) throws IOException{
+		byte[] bytes = read(file);
+		return base64Encode(bytes);
+	}
 
     private static String base64Encode(byte[] in)       {
         StringBuilder out = new StringBuilder((in.length * 4) / 3);

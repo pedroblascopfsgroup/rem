@@ -1553,12 +1553,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
 	    	record.data.id= idProveedor;
-//	   		me.redirectTo('activos', true);
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }
 	    else if(!Ext.isEmpty(record.get('id'))){
-	    	var idProveedor = record.get("id");
-//	   		me.redirectTo('activos', true);
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }
    },

@@ -428,7 +428,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoCondicionante.setExpediente(nuevoExpediente);
 			nuevoExpediente.setCondicionante(nuevoCondicionante);
 
-			// genericDao.save(ExpedienteComercial.class, nuevoExpediente);
+			// Establecer la fecha de aceptación/alta a ahora.
+			nuevoExpediente.setFechaAlta(new Date());
 
 			crearCompradores(oferta, nuevoExpediente);
 
@@ -442,7 +443,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return true;
-
 	}
 
 	public boolean crearCompradores(Oferta oferta, ExpedienteComercial nuevoExpediente) {

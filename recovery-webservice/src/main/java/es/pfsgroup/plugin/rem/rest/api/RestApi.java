@@ -165,6 +165,14 @@ public interface RestApi {
 	 */
 	public void sendResponse(HttpServletResponse response, RestRequestWrapper request, JSONObject jsonResp,
 			String result);
+	/**
+	 * Escribe en la salida standard una respuesta JSON
+	 * 
+	 * @param response
+	 * @param request
+	 * @param jsonResp
+	 */
+	public void sendResponse(HttpServletResponse response, String jsonResp);
 
 	/**
 	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir

@@ -62,7 +62,7 @@ public class HttpClientFacade {
 			httpclient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
 
 			logger.debug("http.socket.timeout : " + responseTimeOut);
-			httpclient.getParams().setParameter("http.socket.timeout", responseTimeOut);
+			httpclient.getParams().setParameter("http.socket.timeout", 10000);
 
 			logger.debug("http.protocol.content-charset : " + charSet);
 			httpclient.getParams().setParameter("http.protocol.content-charset", charSet);

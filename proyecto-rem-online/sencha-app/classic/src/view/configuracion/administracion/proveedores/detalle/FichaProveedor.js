@@ -113,7 +113,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								    bind : {
 								      store : '{comboSiNoRem}',
 								      disabled: '{!proveedor.isEntidad}',
-								      value : '{proveedor.localizadaProveedorCodigo}'
+								      value : '{proveedor.localizadaProveedorCodigoCalculated}'
 								    }
 								},
 							// Fila 3
@@ -133,7 +133,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								    bind : {
 								      store : '{comboTipoPersona}',
 								      disabled: '{!proveedor.isProveedor}',
-								      value : '{proveedor.tipoPersonaProveedorCodigo}'
+								      value : '{proveedor.tipoPersonaProveedorCodigoCalculated}'
 								    }
 								},
 								{ 
@@ -156,7 +156,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
 									bind: {
 										disabled: '{!proveedor.isEntidad}',
-										value: '{proveedor.fechaConstitucionProveedor}'
+										value: '{proveedor.fechaConstitucionProveedorCalculated}'
 									}
 					            },
 					         // Fila 5
@@ -382,7 +382,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								{ 
 									xtype: 'datefieldbase',
 									fieldLabel:  HreRem.i18n('fieldlabel.proveedor.ejercicio.opcion.fecha'),						        	
-									bind: '{proveedor.fechaEjercicioOpcion}'
+									bind: {
+										disabled: '{!proveedor.criterioCajaIVA}',
+										value: '{proveedor.fechaEjercicioOpcion}'
+									}
 								}
 							]
 		            },

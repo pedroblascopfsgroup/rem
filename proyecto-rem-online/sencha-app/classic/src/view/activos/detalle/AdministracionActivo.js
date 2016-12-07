@@ -1,25 +1,17 @@
 Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'administracionactivo',   
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
-    reference: 'administracionactivoref',
-//	layout: 'fit',
+    extend		: 'HreRem.view.common.FormBase',
+    xtype		: 'administracionactivo',   
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
+    reference	: 'administracionactivoref',
 	scrollable	: 'y',
-	
-//	listeners: { 	
-//    	boxready: function (tabPanel) { 
-//    		tabPanel.evaluarEdicion();
-//    	}
-//    },
-    
+
     initComponent: function () {
 
         var me = this;
         me.setTitle(HreRem.i18n('title.administracion.activo'));	        
         var items= [
 
-        
          {
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.proveedores'),
@@ -29,7 +21,6 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				    xtype		: 'gridBase',
 				    idPrincipal : 'id',
 				    colspan: 3,
-	//			    topBar: true,
 				    reference: 'listadoproveedoresref',
 					cls	: 'panel-base shadow-panel',
 					bind: {
@@ -45,13 +36,13 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        	}
 				        } 
 				    }, 
-					
+
 					columns: [
 //						{    
 //				        	dataIndex: 'id',
 //				        	flex: 1
-//				       },
-					{	  
+//				        },
+						{	  
 				        	xtype: 'actioncolumn',
 				            dataIndex: 'codigoProveedorRem',
 				            text: HreRem.i18n('title.activo.administracion.numProveedor'),
@@ -59,7 +50,6 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            items: [{
 					            tooltip: HreRem.i18n('tooltip.ver.proveedor'),
 					            getClass: function(v, metadata, record ) {
-					            		//return 'ico-user'
 					            		return 'fa-user blue-medium-color'
 					            },
 					            handler: 'abrirPestañaProveedor'
@@ -69,14 +59,15 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					        },
 				            flex     : 1,            
 				            align: 'right',
-		//		            menuDisabled: true,
 				            hideable: false,
 				            sortable: true
-				        },
-//					   {    text: HreRem.i18n('title.activo.administracion.numProveedor'),
-//				        	dataIndex: 'codigoProveedor',
-//				        	flex: 1
-//				       },
+				       },
+					   {    text: HreRem.i18n('title.activo.administracion.numProveedor'),
+				        	dataIndex: 'codigoProveedor',
+				        	hidden: true,
+				        	hideable: false,
+				        	flex: 1
+				       },
 				       {    text: HreRem.i18n('title.activo.administracion.tipo'),
 				        	dataIndex: 'tipoProveedorDescripcion',
 				        	flex: 1
@@ -108,9 +99,6 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 //				        	flex: 1,
 //				        	hidden: true
 //				       }
-					  
-				       
-				       	        
 				    ],
 
 				    dockedItems : [
@@ -123,19 +111,15 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            }
 				        }
 				    ]
-				    
 				},
-					
-					
 				{
 					xtype: 'displayfieldbase',
 					value: HreRem.i18n('title.activo.administracion.mensaje.proveedor.excluido'),
-					//fieldStyle: 'color: #FF0000;',
 				    flex: 1
 				}
 			]
-			},
-			
+		},
+
 			{
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.listado.gastos'),
@@ -293,16 +277,13 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 			
 			]
 		}
-            
-            
         ];
-        
+
 		me.addPlugin({ptype: 'lazyitems', items: items });
-		
+
     	me.callParent();
-    	
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -310,9 +291,4 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
   			grid.getStore().load();
   		});
     }
-    
-    
-
-
-    
 });

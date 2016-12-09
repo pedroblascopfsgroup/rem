@@ -2803,7 +2803,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
 			}
 			if (compradorExpediente.getDocumentoConyuge() != null) {
-				titularUVEM.setPorcentaje(compradorExpediente.getDocumentoConyuge().toString());
+				titularUVEM.setConyuge(compradorExpediente.getDocumentoConyuge().toString());
 			}
 
 			listaTitularUVEM.add(titularUVEM);

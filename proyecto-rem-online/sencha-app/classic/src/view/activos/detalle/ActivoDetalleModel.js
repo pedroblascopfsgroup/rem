@@ -520,19 +520,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {id: '{activo.id}'}
 				 }
     		},
-    		
+
     		storeTramites: {
-    			
     			 model: 'HreRem.model.Tramite',
 	      	     proxy: {
 	      	        type: 'uxproxy',
 	      	        remoteUrl: 'activo/getTramites',
 	      	        extraParams: {idActivo: '{activo.id}'}
-	          	 },
-	          	 remoteSort: true
-
+	          	 }
     		},
-    		
+
     		storeAdmisionCheckDocumentos: {
     			 pageSize: $AC.getDefaultPageSize(),
     			 model: 'HreRem.model.AdmisionDocumento',

@@ -252,9 +252,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "nombreComercial", dto.getNombreComercialProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaBaja", dto.getFechaBajaProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dto.getNifProveedor());
-			if(!Checks.esNulo(dto.getCustodioCodigo())) {
-				beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getLocalizadaProveedorCodigo());
-			}
+			beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getLocalizadaProveedorCodigo());
 			if(!Checks.esNulo(dto.getEstadoProveedorCodigo())) {
 				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, dto.getEstadoProveedorCodigo());
 				beanUtilNotNull.copyProperty(proveedor, "estadoProveedor", estadoProveedor);

@@ -125,6 +125,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                             }
 							me.getView().unmask();
 							me.refrescarGasto(form.refreshAfterSave);
+							Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+								function (field, index){field.fireEvent('edit');}
+							);
 			            }
 					});
 				}
@@ -241,7 +244,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	refrescarGasto: function(refrescarPestañaActiva) {
 		var me = this,
-		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva;
+		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
+		tabPanel = me.getView().down("tabpanel");
 		
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
@@ -251,8 +255,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
   		});
   		
   		// Actualizamos la pestaña actual si tiene función de recargar 
+		var activeTab = tabPanel.getActiveTab();
 		if(refrescarPestañaActiva) {
-			var activeTab = me.getView().down("tabpanel").getActiveTab();
 			if(activeTab.funcionRecargar) {
   				activeTab.funcionRecargar();
 			}
@@ -266,7 +270,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    	me.getView().configCmp(gasto);
 		    }
 		});
-		
+		me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);
 		me.getView().fireEvent("refreshComponent", "panel[reference=gestiongastosref]");
 		
 	},
@@ -613,7 +617,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me =this;
 		var window= btn.up('window'),
 		form= window.down('formBase');
-	
+
 		var success = function(record, operation) {
 			me.getView().unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
@@ -1003,6 +1007,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					            }
 				            } else {
 						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						         debugger;
 						         me.refrescarGasto(true);						         
 				            }
 					     },

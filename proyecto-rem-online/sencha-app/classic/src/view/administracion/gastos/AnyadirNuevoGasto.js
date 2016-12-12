@@ -84,60 +84,6 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							        items: [
 							        
 												{
-				    					        	fieldLabel:  HreRem.i18n('fieldlabel.referencia.emisor'),
-				    					        	bind: {
-				    				            		value: '{gastoNuevo.referenciaEmisor}'
-				    				            	},
-				    				            	allowBlank: false
-				    				            	
-												},
-												/*{
-													xtype: 'comboboxfieldbase',
-				    					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
-				    					        	bind: {
-				    				            		store: '{comboTiposGasto}',
-				    				            		value: '{gastoNuevo.tipoGastoCodigo}'
-				    				            	},
-				    				            	allowBlank: false
-												},
-												{
-													xtype: 'comboboxfieldbase',
-				    					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
-				    					        	bind: {
-				    				            		store: '{comboSubtiposNuevoGasto}',
-				    				            		value: '{gastoNuevo.subtipoGastoCodigo}',
-				    				            		disabled: '{!gastoNuevo.tipoGastoCodigo}'
-				    				            	},
-				    				            	allowBlank: false
-												},*/
-												
-												{ 
-													xtype: 'comboboxfieldbase',
-									               	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
-									               	reference: 'tipoGasto',
-					        						chainedStore: 'comboSubtipoGasto',
-													chainedReference: 'subtipoGastoCombo',
-											      	bind: {
-										           		store: '{comboTiposGasto}',
-										           		value: '{gastoNuevo.tipoGastoCodigo}'
-										         	},
-										         	listeners: {
-									                	select: 'onChangeChainedCombo'
-									            	},
-										         	allowBlank: false
-										    	},
-											    { 
-													xtype: 'comboboxfieldbase',
-									               	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
-									               	reference: 'subtipoGastoCombo',
-											      	bind: {
-										           		store: '{comboSubtiposNuevoGasto}',
-										           		value: '{gastoNuevo.subtipoGastoCodigo}',
-										           		disabled: '{!gastogastoNuevo.tipoGastoCodigo}'
-										         	},
-										         	allowBlank: false
-											    },
-											    {
 													fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),
 													bind:		'{gastoNuevo.buscadorCodigoProveedorRem}',
 													name: 'buscadorCodigoProveedorRem',												
@@ -166,13 +112,48 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							            	    	name:	'nombreEmisor',
 							            	    	allowBlank: false,
 													readOnly: true
-							            	    },
+							            	    },			
+							        
+												{ 
+													xtype: 'comboboxfieldbase',
+									               	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+									               	reference: 'tipoGasto',
+					        						chainedStore: 'comboSubtipoGasto',
+													chainedReference: 'subtipoGastoCombo',
+											      	bind: {
+										           		store: '{comboTiposGasto}',
+										           		value: '{gastoNuevo.tipoGastoCodigo}'
+										         	},
+										         	listeners: {
+									                	select: 'onChangeChainedCombo'
+									            	},
+										         	allowBlank: false
+										    	},
+											    { 
+													xtype: 'comboboxfieldbase',
+									               	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+									               	reference: 'subtipoGastoCombo',
+											      	bind: {
+										           		store: '{comboSubtiposNuevoGasto}',
+										           		value: '{gastoNuevo.subtipoGastoCodigo}',
+										           		disabled: '{!gastogastoNuevo.tipoGastoCodigo}'
+										         	},
+										         	allowBlank: false
+											    },
 							            	    {
 							            	    	xtype: 'datefieldbase',
 							            	    	fieldLabel: HreRem.i18n('fieldlabel.fecha.emision'),
 													bind:		'{gastoNuevo.fechaEmision}',
 													allowBlank: false
 							            	    },
+							            	    {
+				    					        	fieldLabel:  HreRem.i18n('fieldlabel.referencia.emisor'),
+				    					        	bind: {
+				    				            		value: '{gastoNuevo.referenciaEmisor}'
+				    				            	},
+				    				            	allowBlank: false
+				    				            	
+												},							            	    
 							            	    {
 													xtype: 'comboboxfieldbase',
 				    					        	fieldLabel:  HreRem.i18n('fieldlabel.destinatario.gasto'),

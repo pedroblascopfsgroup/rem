@@ -54,6 +54,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 				if(!tabNext.ocultarBotonesEdicion) {
             		tabPanel.evaluarBotonesEdicion(tabNext);
 				}
+				
+				// Si ha habido cambios en las ofertas, comprobamos si se podran agragar/quitar activos en la agrupacion
+				if(tabNext.getReference() == 'activosagrupacion' && !Ext.isEmpty(this.down("[reference=listadoactivosagrupacion]"))) {
+
+					var desactivarBotones = !this.lookupController().getViewModel().get('agrupacionficha').getData().existenOfertasVivas;
+					this.down("[reference=listadoactivosagrupacion]").down('#removeButton').setVisible(desactivarBotones);
+					this.down("[reference=listadoactivosagrupacion]").down('#addButton').setVisible(desactivarBotones);
+				}
+				
             	return true;
         	}
         }

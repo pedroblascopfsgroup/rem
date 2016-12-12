@@ -116,9 +116,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	name: 'necesitaAutorizacionPropietario',
 					        	bind: {
 				            		store: '{comboSiNoRem}'
-				            	},
-				            	displayField: 'descripcion',
-								valueField: 'codigo'
+				            	}
     						},
 							{ 
 			                	xtype:'datefieldbase',
@@ -162,19 +160,23 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						 		name: 'fechaTopePagoHasta',
 						 		formatter: 'date("d/m/Y")'					 		
 							},
-							{
-						    	fieldLabel: HreRem.i18n('fieldlabel.nif.gestoria'),
-						        name: 'nifGestoria'						    	
-						    },
+							{ 
+					        	xtype: 'comboboxfieldbase',
+						    	fieldLabel: HreRem.i18n('fieldlabel.gestoria.responsable'),
+					        	name: 'gestoria',
+					        	bind: {
+				            		store: '{comboGestorias}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'id'
+    						},
 							{ 
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),
 					        	name: 'periodicidad',
 					        	bind: {
 				            		store: '{comboPeriodicidad}'
-				            	},
-				            	displayField: 'descripcion',
-								valueField: 'codigo'
+				            	}
     						},
     						{ 
 						    	fieldLabel: HreRem.i18n('fieldlabel.num.provision'),

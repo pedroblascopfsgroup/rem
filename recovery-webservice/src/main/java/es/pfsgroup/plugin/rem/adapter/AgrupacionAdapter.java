@@ -245,6 +245,10 @@ public class AgrupacionAdapter {
 				if(!Checks.esNulo(agrupacion.getFechaBaja())) {
 					dtoAgrupacion.setEsEditable(false);					
 				}
+				
+				//Si tiene alguna oferta != Estado.Rechazada ==> No se pueden anyadir activos
+				BeanUtils.copyProperty(dtoAgrupacion,"existenOfertasVivas",this.existenOfertasActivasEnAgrupacion(id));
+				
 			}
 			
 			
@@ -1173,6 +1177,16 @@ public class AgrupacionAdapter {
 		return tipoAgrupacion;
 	}
 	
-
+	//Devuelve verdadero si en la agrupación existe alguna Oferta activa (estado != RECHAZADA)
+	private Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion) {
+		List<VOfertasActivosAgrupacion> lista = this.getListOfertasAgrupacion(idAgrupacion);
+		
+		for(VOfertasActivosAgrupacion oferta : lista) {
+			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta()))
+				return true;
+		}
+		
+		return false;
+	}
 
 }

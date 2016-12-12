@@ -91,6 +91,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    	{
 		    		name: 'esEditable',
 		    		type: 'boolean'
+		    	},
+		    	{
+		    		name: 'existenOfertasVivas',
+		    		type: 'boolean'
 		    	}
     ],
     

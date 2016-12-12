@@ -280,9 +280,12 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	
 	saveSuccessFn: function () {
    		var me = this;
+
+   		me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
         me.unmask();
         me.getStore().load();
         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+       
 		return true;
 	},
 	

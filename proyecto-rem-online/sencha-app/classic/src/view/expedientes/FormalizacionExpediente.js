@@ -322,8 +322,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	                	handler: 'onClickGenerarHojaExcel',
 	                	margin: '10 10 10 10'
 	                }
-				]					
-								
+				]			
 			},
 			{   
 				xtype:'fieldset',
@@ -331,7 +330,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 				defaultType: 'displayfieldbase',				
 				title: HreRem.i18n('title.subsanaciones'),
 				items : [
-				
 					{
 					    xtype		: 'gridBase',
 					    reference: 'listadosubsanaciones',

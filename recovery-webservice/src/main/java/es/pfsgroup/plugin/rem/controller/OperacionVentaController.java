@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.impl.OperacionVentaManager;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -35,26 +34,20 @@ import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 public class OperacionVentaController {
 
 		final String templateOperacionVenta = "OperativaVenta001";
-	
-		@Autowired
-		private RestApi restApi;
-		
+
 		@Autowired
 		private OperacionVentaManager operacionVentaManager;
-		
-		@Autowired 
-		private OfertaApi ofertaApi;
-		
+
 		@Autowired
 		private ExpedienteComercialApi expedienteComercialApi;
-		
+
 		@Autowired
 		private ExcelReportGeneratorApi excelReportGeneratorApi;
-		
+
 		@SuppressWarnings("unchecked")
 		@RequestMapping(method = RequestMethod.POST, value = "/operacionventa")
 		public void operacionVenta(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {	
-			
+
 			PropuestaRequestDto jsonData = null;
 			OfertaSimpleDto operacionDto = null;	
 			
@@ -85,6 +78,7 @@ public class OperacionVentaController {
 			operacionVentaPDFByOfertaHRE(operacionDto.getOfertaHRE(), request, response);
 		}
 		
+		@SuppressWarnings("unchecked")
 		@RequestMapping(method = RequestMethod.GET)
 		public void operacionVentaPDFByOfertaHRE (Long numExpediente, HttpServletRequest request, HttpServletResponse response){	
 

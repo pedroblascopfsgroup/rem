@@ -163,7 +163,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 							{ 
 					        	xtype: 'comboboxfieldbase',
 						    	fieldLabel: HreRem.i18n('fieldlabel.gestoria.responsable'),
-					        	name: 'gestoria',
+					        	name: 'idGestoria',
 					        	bind: {
 				            		store: '{comboGestorias}'
 				            	},
@@ -251,7 +251,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	bind: {
 				            		store: '{comboEntidadPropietaria}'
 				            	},
-				            	publish: 'value'
+				            	publishes: 'value'
 			    						
 							},
 							
@@ -261,10 +261,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	name: 'subentidadPropietariaCodigo',
 					        	bind: {
 				            		store: '{comboSubentidadPropietaria}',
-				            		disabled: '{!filtroEntidadPropietaria.value}',
+				            		disabled: '{!filtroEntidadPropietaria.selection}',
 				                    filters: {
 				                        property: 'carteraCodigo',
-				                        value: '{filtroComboTipoGasto.value}'
+				                        value: '{filtroEntidadPropietaria.value}'
 				                    }
 				            	}
 			    						

@@ -157,8 +157,8 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="DD_SCR_DESCRIPCION")
 	private String subentidadPropietariaDescripcion;
 	
-	@Column(name="NIF_GESTORIA")
-	private String nifGestoria;
+	@Column(name="PVE_ID_GESTORIA")
+	private String idGestoria;
 	
 	@Column(name="TIENE_DOC_ADJUNTOS")
 	private Boolean tieneDocAdjuntos;
@@ -537,12 +537,12 @@ public class VGastosProveedor implements Serializable {
 		this.subentidadPropietariaDescripcion = subentidadPropietariaDescripcion;
 	}
 
-	public String getNifGestoria() {
-		return nifGestoria;
+	public String getIdGestoria() {
+		return idGestoria;
 	}
 
-	public void setNifGestoria(String nifGestoria) {
-		this.nifGestoria = nifGestoria;
+	public void setIdGestoria(String idGestoria) {
+		this.idGestoria = idGestoria;
 	}
 
 	public Boolean getTieneDocAdjuntos() {

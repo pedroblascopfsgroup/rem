@@ -2846,4 +2846,50 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		genericDao.update(PropuestaPrecio.class, propuesta);
 	}
+	
+	@Override
+	public ActivoTasacion getTasacionMasReciente(Activo activo) {
+		
+		ActivoTasacion tasacionMasReciente = null;
+		
+		if (!Checks.estaVacio(activo.getTasacion()))
+		{
+			tasacionMasReciente = activo.getTasacion().get(0);
+			Date fechaValorTasacionMasReciente = new Date();
+			if (tasacionMasReciente.getValoracionBien().getFechaValorTasacion() != null)
+			{
+				fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
+			}
+			for (int i = 0; i < activo.getTasacion().size(); i++)
+			{
+					ActivoTasacion tas = activo.getTasacion().get(i);
+					if (tas.getValoracionBien().getFechaValorTasacion() != null)
+					{
+						if (tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente))
+						{
+							fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
+							tasacionMasReciente = tas;
+						}
+					}
+			}	
+		}
+		
+		return tasacionMasReciente;
+	}
+	
+	@Override
+	public ActivoValoraciones getValoracionAprobadoVenta(Activo activo) {
+		
+		List<ActivoValoraciones> listActivoValoracion = activo.getValoracion();
+		if (!Checks.estaVacio(listActivoValoracion)) {
+			for (ActivoValoraciones valoracion : listActivoValoracion)
+			{
+				if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
+					return valoracion;
+				}
+			}			
+		}
+		
+		return null;
+	}
 }

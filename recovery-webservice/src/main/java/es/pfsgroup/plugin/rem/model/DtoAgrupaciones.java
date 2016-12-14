@@ -32,6 +32,7 @@ public class DtoAgrupaciones {
 	private Date fechaInicioVigencia;
 	private Date fechaFinVigencia;
 	private boolean esEditable;
+	private Boolean existenOfertasVivas;
 	
 	
 	public String getNombre() {
@@ -182,5 +183,11 @@ public class DtoAgrupaciones {
 	public void setEsEditable(boolean esEditable) {
 		this.esEditable = esEditable;
 	}
-	
+	public Boolean getExistenOfertasVivas() {
+		return existenOfertasVivas;
+	}
+	public void setExistenOfertasVivas(Boolean existenOfertasVivas) {
+		this.existenOfertasVivas = existenOfertasVivas;
+	}
+
 }

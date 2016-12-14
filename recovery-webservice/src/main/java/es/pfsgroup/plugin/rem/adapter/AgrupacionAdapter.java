@@ -5,7 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -53,6 +55,8 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -245,6 +249,10 @@ public class AgrupacionAdapter {
 				if(!Checks.esNulo(agrupacion.getFechaBaja())) {
 					dtoAgrupacion.setEsEditable(false);					
 				}
+				
+				//Si tiene alguna oferta != Estado.Rechazada ==> No se pueden anyadir activos
+				BeanUtils.copyProperty(dtoAgrupacion,"existenOfertasVivas",this.existenOfertasActivasEnAgrupacion(id));
+				
 			}
 			
 			
@@ -895,26 +903,31 @@ public class AgrupacionAdapter {
 			oferta.setFechaAlta(new Date());
 			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 
+			//Mapa con los valores Tasacion/Aprobado venta de cada activo
+			Map<String,Double> valoresTasacion = new HashMap<String,Double>();
+			valoresTasacion = this.asignarValoresTasacionAprobadoVenta(agrupacion.getActivos());
+			
 			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
 
-			//En cada activo de la agrupacion se añade una oferta en la tabla ACT_OFR
-			for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
-
-				ActivoOferta activoOferta= new ActivoOferta();
-				ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
-
-				activoOfertaPk.setActivo(activos.getActivo());
-				activoOfertaPk.setOferta(oferta);
-				activoOferta.setPrimaryKey(activoOfertaPk);
-
-				// TODO: Pendiente de definir como sacar el % de participación.
-				String participacion = String.valueOf(100 / agrupacion.getActivos().size());
-				activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
-				activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
-
-				listaActivosOfertas.add(activoOferta);
+			if(!Checks.estaVacio(valoresTasacion)) {
+				//En cada activo de la agrupacion se añade una oferta en la tabla ACT_OFR
+				for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
+	
+					ActivoOferta activoOferta= new ActivoOferta();
+					ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
+	
+					activoOfertaPk.setActivo(activos.getActivo());
+					activoOfertaPk.setOferta(oferta);
+					activoOferta.setPrimaryKey(activoOfertaPk);
+					
+					if(!Checks.estaVacio(valoresTasacion)) {
+						String participacion = String.valueOf(this.asignarPorcentajeParticipacionEntreActivos(activos, valoresTasacion, valoresTasacion.get("total")));
+						activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
+						activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
+					}
+					listaActivosOfertas.add(activoOferta);
+				}
 			}
-
 			oferta.setActivosOferta(listaActivosOfertas);
 			oferta.setCliente(clienteComercial);
 			genericDao.save(Oferta.class, oferta);
@@ -1173,6 +1186,67 @@ public class AgrupacionAdapter {
 		return tipoAgrupacion;
 	}
 	
+	//Devuelve verdadero si en la agrupación existe alguna Oferta activa (estado != RECHAZADA)
+	private Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion) {
+		List<VOfertasActivosAgrupacion> lista = this.getListOfertasAgrupacion(idAgrupacion);
+		
+		for(VOfertasActivosAgrupacion oferta : lista) {
+			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta()))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Asignacion de valores (tasacion y sino, Aprobado venta) por activo, y el total de todos ellos
+	 * @param activos
+	 * @return
+	 */
+	private Map<String,Double> asignarValoresTasacionAprobadoVenta(List<ActivoAgrupacionActivo> activos) {
+		
+		Map<String,Double> valores = new HashMap<String,Double>();
+		Double total = 0.0;
+		
+		for(ActivoAgrupacionActivo activo : activos) {
+			Double valor = null;
+			ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo.getActivo());
+			if(!Checks.esNulo(tasacion)) {
+				valor = Double.parseDouble(tasacion.getValoracionBien().getImporteValorTasacion().toString());
+			}
+			else {
+				ActivoValoraciones valoracion = activoApi.getValoracionAprobadoVenta(activo.getActivo());
+				if(!Checks.esNulo(valoracion)) {
+					valor = valoracion.getImporte();
+				}
+				else {
+					//Con que haya un activo sin valor tasacion o valor aprobado venta, no se haran las asignaciones de ninguno.
+					return null;
+				}
+			}
+			valores.put(activo.getActivo().getId().toString(), valor);
+			total = total + valor;
+		}
+		
+		valores.put("total", total);
+		return valores;
+	}
 
-
+	/**
+	 * Devuelve el porcentaje correspondiente según el valor por activo
+	 * @param activo
+	 * @param valores
+	 * @param total
+	 * @return
+	 */
+	private Float asignarPorcentajeParticipacionEntreActivos(ActivoAgrupacionActivo activo, Map<String,Double> valores, Double total) {
+		
+		if(total <= 0)
+			return (float) 0;
+		
+		Float porcentaje = (float) (valores.get(activo.getActivo().getId().toString()) * 100);
+		porcentaje = (float) (porcentaje / total);
+		
+		return porcentaje;
+	}
 }

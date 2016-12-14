@@ -6,7 +6,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
     scrollable	: 'y',
     
     requires: ['HreRem.view.common.GridBaseEditableRow', 'HreRem.model.ActivoAgrupacion', 'HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel'],
-
+    
     initComponent: function () {
      	
      	var me = this;    	
@@ -30,7 +30,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 				},
 				colspan: 2,
 				listeners: {
-					rowdblclick: 'onActivosAgrupacionListDobleClick'
+					rowdblclick: 'onActivosAgrupacionListDobleClick',
+					boxready: function() {
+						//Si la agrupacion tiene oferta vivas, no se puede agregar/quitar activos
+						var desactivarBotones = !this.lookupController().getViewModel().get('agrupacionficha').getData().existenOfertasVivas;
+						this.down('#removeButton').setVisible(desactivarBotones);
+						this.down('#addButton').setVisible(desactivarBotones);
+					}
 			    },
 			    
 				secFunToEdit: 'EDITAR_AGRUPACION',

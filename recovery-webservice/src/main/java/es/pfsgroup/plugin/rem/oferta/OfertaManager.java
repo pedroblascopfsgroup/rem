@@ -833,7 +833,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return listaRespuesta;
 	}
 	
-
+	@Override
+	public boolean checkComiteSancionador(TareaExterna tareaExterna) {
+		Oferta oferta = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(oferta)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			if(!Checks.esNulo(expediente)){
+				if(!Checks.esNulo(expediente.getComiteSancion())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);

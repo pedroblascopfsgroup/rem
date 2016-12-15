@@ -152,7 +152,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			// Además, una vez publicado, aunque se despublique mantiene la fecha. Así que para permitirle pasar en ese caso se comprueba si su estado actual es despublicado.
 			if(Checks.esNulo(activo.getFechaPublicable())) { // Si no tiene fecha de publicación asignarle una y dejarlo en manos del automatismo nocturno.
 
+				// Se marca el activo con el indicador de publicable porque va a publicarse
 				activo.setFechaPublicable(new Date());
+				activoApi.saveOrUpdate(activo);
+				
 				// Ademas, se publica el activo lanzando el procedure para este
 				publicarActivoProcedure(activo.getId());
 				

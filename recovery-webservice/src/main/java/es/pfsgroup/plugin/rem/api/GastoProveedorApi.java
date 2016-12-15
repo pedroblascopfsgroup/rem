@@ -234,6 +234,12 @@ public interface GastoProveedorApi {
 		 */
 		public boolean rechazarGasto(Long idGasto, String motivoRechazo);
 		
+		/**
+		 * Devuelve si ya existe un gasto comparando la información de varios campos concretos.
+		 * @param dto
+		 * @return
+		 */
+		public boolean existeGasto(DtoFichaGastoProveedor dto);
 		
 }
 

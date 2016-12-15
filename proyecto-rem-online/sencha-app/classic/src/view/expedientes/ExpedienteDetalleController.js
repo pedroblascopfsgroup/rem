@@ -1278,7 +1278,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoNumConyuge.setDisabled(true);
 		}
 
-		// Valdiar campos para que se muestre o desaparezca la visual roja.
+		// Validar campos para que se muestre o desaparezca la visual roja.
 		campoEstadoCivil.validate();
 		campoRegEconomico.validate();
 	},
@@ -1289,7 +1289,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config = {};
 
 		config.params = {};
-		config.params.numExpediente=me.getViewModel().get("expediente.id");
+		config.params.numExpediente=me.getViewModel().get("expediente.numExpediente");
 		config.url= $AC.getRemoteUrl("operacionventa/operacionVentaPDFByOfertaHRE");
 
 		me.fireEvent("downloadFile", config);		

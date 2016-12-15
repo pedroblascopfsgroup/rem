@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -43,7 +44,6 @@ import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -780,5 +780,17 @@ public interface ActivoApi {
 	 */
 	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta);
 
+	/**
+	 * Devuelve la última tasación del activo
+	 * @param activo
+	 * @return
+	 */
+	public ActivoTasacion getTasacionMasReciente(Activo activo);
 	
+	/**
+	 * Devuelve la valoracion Aprobado venta del activo
+	 * @param activo
+	 * @return
+	 */
+	public ActivoValoraciones getValoracionAprobadoVenta(Activo activo);
 }

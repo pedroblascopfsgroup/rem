@@ -4,12 +4,13 @@
 --## FECHA_CREACION=20161212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1263
+--## INCIDENCIA_LINK=HREOS-1297
 --## PRODUCTO=NO
 --## Finalidad: Crear una procedure para establecer el estado de publicación de los activos a publicado segun condiciones.
 --## REPETIDO: Este script está repetido por cuestiones de actualización del contenido del procedure 'ACTIVO_PUBLICACION_AUTO'.
 --## ANOTHER REPE: Script adaptado para ejecucion unitaria de activos por parametro activo id.
 --## ANOTHER REPE: Agregada excepcion por activo no encontrado en vistas
+--## ANOTHER REPE: La ejecucion simple (1 act), apunta a otras vistas sin requerir indicador de publicable
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -59,9 +60,9 @@ create or replace PROCEDURE '||V_ESQUEMA||'.ACTIVO_PUBLICACION_AUTO (ACT_ID_PARA
 
 	    IF(ACT_ID_PARAM IS NOT NULL) THEN
         OPEN V_PUBLICAR FOR
-          SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_PUBLI_AUTO WHERE ACT_ID = ACT_ID_PARAM
+          SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_PUBLI_MAN WHERE ACT_ID = ACT_ID_PARAM
           UNION 
-          SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_SIN_PRECIO_PUBLI_AUTO WHERE ACT_ID = ACT_ID_PARAM;
+          SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_SIN_PRECIO_PUBLI_MAN WHERE ACT_ID = ACT_ID_PARAM;
       ELSE
 	    	OPEN V_PUBLICAR FOR 
           SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_PUBLI_AUTO 

@@ -92,9 +92,10 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 					estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 					activoEstadosInformeComercialHistorico.setFecha(new Date());
-	
+					
 					// 2.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
 					activo.setFechaPublicable(new Date());
+					activoApi.saveOrUpdate(activo);
 					
 					// 3.) Se publica el activo
 					try {

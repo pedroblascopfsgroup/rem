@@ -1002,8 +1002,21 @@ public class AgrupacionAdapter {
 			ClienteComercial clienteComercial= new ClienteComercial();
 
 			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-			for (Oferta of: agrupacion.getOfertas()) {
+			// Comprobar si alguno de los activos de la agrupación restringida se encuentra, además, en una agrupación de tipo 'lote comercial'.
+			if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+				List<Long> activosID = new ArrayList<Long>();
+				for(ActivoAgrupacionActivo activosAgrupacion : agrupacion.getActivos()) {
+					activosID.add(activosAgrupacion.getActivo().getId());
+				}
 
+				if(!Checks.estaVacio(activosID) && activoAgrupacionActivoDao.algunActivoDeAgrRestringidaEnAgrLoteComercial(activosID)) {
+					codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+				}
+
+			}
+
+			// Comprobar si la grupación tiene ofertas aceptadas para establecer la nueva oferta en estado congelada.
+			for (Oferta of: agrupacion.getOfertas()) {
 				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
 					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
 				}

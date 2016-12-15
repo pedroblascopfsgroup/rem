@@ -34,7 +34,7 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 
 	/**
 	 * Este método obtiene una lista de ActivoAgrupacionActivo sobre la asociación entre una agrupación
-	 * por su ID y una lista de activos. Si existe la coincidiencia añade la asociación a la lista.
+	 * por su ID y una lista de activos. Si existe la coincidiencia añade el ID de la asociación a la lista.
 	 * 
 	 * @param idAgrupacion : ID de la agrupación contra la que contrastar los ID de activos.
 	 * @param activosID : una lista que contiene los ID de los activos .
@@ -42,4 +42,21 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	 *  de la agrupación e ID de los activos.
 	 */
 	public List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionIDAndActivos(Long idAgrupacion, List<Long> activosID);
+
+	/**
+	 * Este método devuelve True si el activo se encuentre en alguna agrupación de tipo 'lote comercial'.
+	 * 
+	 * @param idActivo : ID del activo a comprobar si se encuentra en una agrupación de tipo 'lote comercial'.
+	 * @return Devuelve True si el activo se encuentra en una agrupación de tipo 'lote comercial', False si no
+	 * lo está.
+	 */
+	public boolean activoEnAgrupacionLoteComercial(Long idActivo);
+
+	/**
+	 * Este método devuelve True si algún activo de la lista se encuentra en alguna agrupación de tipo 'lote comercial'.
+	 * 
+	 * @param activosID : lista de ID de activos.
+	 * @return Devuelve True si algún activo se encuentra en alguna agrupación de tipo 'lote comercial', False si no es así.
+	 */
+	public boolean algunActivoDeAgrRestringidaEnAgrLoteComercial(List<Long> activosID);
 }

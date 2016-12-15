@@ -31,4 +31,15 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	public boolean estaAgrupacionActivoConFechaBaja(Activo activo);
 	
 	public List<ActivoAgrupacionActivo> getListActivosAgrupacion(DtoAgrupacionFilter dtoAgrupActivo);
+
+	/**
+	 * Este método obtiene una lista de ActivoAgrupacionActivo sobre la asociación entre una agrupación
+	 * por su ID y una lista de activos. Si existe la coincidiencia añade la asociación a la lista.
+	 * 
+	 * @param idAgrupacion : ID de la agrupación contra la que contrastar los ID de activos.
+	 * @param activosID : una lista que contiene los ID de los activos .
+	 * @return Devuelve una lista de ActivoAgrupacionActivo para las coincidencias encontradas entre el ID
+	 *  de la agrupación e ID de los activos.
+	 */
+	public List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionIDAndActivos(Long idAgrupacion, List<Long> activosID);
 }

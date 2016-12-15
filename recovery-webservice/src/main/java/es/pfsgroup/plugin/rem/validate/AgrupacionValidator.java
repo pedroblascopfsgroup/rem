@@ -28,6 +28,9 @@ public interface AgrupacionValidator extends GenericService{
 	public static final String ERROR_IS_PERIMETRO = "El activo no debe estar incluido en perímetro.";
 	public static final String ERROR_NOT_FINANCIERO = "El activo no es financiero";
 	public static final String ERROR_FINANCIERO_NULL = "La clase del activo bancario no está definida";
+	public static final String ERROR_ACTIVO_VENDIDO = "El activo se encuentra en situación comercial vendido y no puede ser incluido";
+	public static final String ERROR_OFERTA_ACTIVO_ACEPTADA = "El activo tiene al menos una oferta aceptada y no puede ser incluido";
+	public static final String ERROR_OFERTA_AGRUPACION_ACTIVO_ACEPTADA = "La agrupación restringida a la que pertenece el activo tiene al menos una oferta aceptada y no puede ser incluido";
 
 
 	/**

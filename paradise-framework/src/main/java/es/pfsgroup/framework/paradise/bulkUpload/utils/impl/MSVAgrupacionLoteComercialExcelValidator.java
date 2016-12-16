@@ -93,6 +93,8 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+			
+/*
 			// Validaciones individuales activo por activo:
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
@@ -106,7 +108,8 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACIONES_CON_BAJA.codigoError));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMO_PROPIETARIO.codigoError));
-						
+*/
+			
 			try{
 				if(!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty() ||

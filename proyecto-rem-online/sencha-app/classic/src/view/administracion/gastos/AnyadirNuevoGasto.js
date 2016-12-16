@@ -50,6 +50,19 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 	initComponent: function() {
     	
     	var me = this;
+    	
+    	var storeEmisoresGasto = new Ext.data.Store({    		
+    		 model: 'HreRem.model.ComboBase',
+		     proxy: {
+		         type: 'ajax',
+		         url: $AC.getRemoteUrl('gastosproveedor/searchProveedoresByNif'),
+		         actionMethods: {read:'POST'},
+		         reader: {
+		             type: 'json'
+		         }
+		     }    	
+    	}); 													
+    	
     	me.setTitle(HreRem.i18n('title.nuevo.gasto'));
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Crear', handler: 'onClickBotonGuardarGasto'},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarGasto'}];
     	
@@ -57,14 +70,16 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
     	
 			    	{
 			    		xtype: 'formBase',
-			    		collapsed: false,
-						scrollable	: 'y',	  				
+			    		cls: 'anyadir-gasto-form',
+			    		layout: 'fit',			    		
+			    		collapsed: false,	  				
 						recordName: "gastoNuevo",						
 						recordClass: "HreRem.model.GastoProveedor",
 					    items : [
 								{
-									
 									xtype:'fieldset',
+									cls: 'x-fieldset-anyadir-gasto',
+									flex: 1,
 									layout: {
 									        type: 'table',
 									        // The total column count must be specified here
@@ -79,32 +94,32 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 									},
 									defaultType: 'textfieldbase',
 									collapsed: false,
-									scrollable	: 'y',
-									cls:'',	    				
+									scrollable	: 'y',   				
 							        items: [
 							        
 												{
-													fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),
-													bind:		'{gastoNuevo.buscadorCodigoProveedorRem}',
-													name: 'buscadorCodigoProveedorRem',												
-													triggers: {
-														
-														buscarEmisor: {
-												            cls: Ext.baseCSSPrefix + 'form-search-trigger',
-												             handler: function(field) {
-												            	field.lookupController().buscarProveedor(field);
-												            }
-												        }
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),													
+													name: 'buscadorCodigoProveedorRem',													
+													hideTrigger: true,
+													editable: true,
+													queryMode: 'remote',
+													autoLoadOnValue: false,
+													bind: {		
+														value: '{gastoNuevo.buscadorCodigoProveedorRem}'
 													},
-													cls: 'searchfield-input sf-con-borde',
+													store: storeEmisoresGasto,
 													emptyText: HreRem.i18n('txt.buscar.emisor'),
-													enableKeyEvents: true,
+													queryParam: 'nifProveedor',
 											        listeners: {
-											        	specialKey: function(field, e) {
-											        		if (e.getKey() === e.ENTER && !Ext.isEmpty(field.getValue())) {
-											        			field.lookupController().buscarProveedor(field);											        			
+											        	beforequery: function (op, e) {
+											        		if(!Ext.isEmpty(op.query) && op.query.length==9) {
+											        			return true;
+											        		} else {
+											        			return false;
 											        		}
-											        	}
+											        		
+											        	}											        	
 											        }
 							            	    },
 							            	    {

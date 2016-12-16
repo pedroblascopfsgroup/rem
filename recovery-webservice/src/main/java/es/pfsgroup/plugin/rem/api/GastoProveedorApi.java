@@ -14,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
@@ -240,6 +241,14 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		public boolean existeGasto(DtoFichaGastoProveedor dto);
+
+		
+		/**
+		 * Busca los proveedores que existan con el nif que recibe
+		 * @param DtoProveedorFilter dto
+		 * @return
+		 */
+		public List<DtoProveedorFilter> searchProveedoresByNif(DtoProveedorFilter dto);
 		
 }
 

@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
@@ -64,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
@@ -120,6 +122,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Autowired
 	private ReservaDao reservaDao;
 	
+	@Autowired
+	private ProveedoresApi proveedores;	
 	
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
@@ -1870,5 +1874,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		return configuracionEspecial;
+	}
+
+	@Override
+	public List<DtoProveedorFilter> searchProveedoresByNif(DtoProveedorFilter dto) {
+		
+		List<DtoProveedorFilter> lista = proveedores.getProveedores(dto);
+		return lista;
 	}
 }

@@ -1255,5 +1255,13 @@ body.x-masked > .x-mask {
 	color: #FFF;
 }
 
-.
+.x-fieldset.x-fieldset-anyadir-gasto, .x-fieldset-default.x-fieldset-anyadir-gasto {
+	background-color: transparent !impportant;
+	border: none !impportant;		
+}
+
+.anyadir-gasto-form .x-panel-body {
+	background: #f5f5f5 !important; 
+	border-width: 1px !important;
+}
 

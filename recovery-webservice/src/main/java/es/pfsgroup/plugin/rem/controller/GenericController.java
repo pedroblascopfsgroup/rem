@@ -238,4 +238,10 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboTipoDestinoComercialCreaFiltered() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoDestinoComercialCreaFiltered()));	
 	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboGestoriasGasto() {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboGestoriasGasto()));	
+	}
+
 }

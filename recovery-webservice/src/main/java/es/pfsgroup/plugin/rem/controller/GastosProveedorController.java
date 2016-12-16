@@ -170,6 +170,30 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView existeGasto(DtoFichaGastoProveedor dto, ModelMap model) {
+		try {	
+			
+			boolean existeGasto = gastoProveedorApi.existeGasto(dto);
+			
+			model.put("existeGasto", existeGasto);
+			model.put("success", true );
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}		
+		
+		return createModelAndViewJson(model);
+		
+	}	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

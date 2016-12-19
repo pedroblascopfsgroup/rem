@@ -130,6 +130,37 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		
 		return HibernateQueryUtils.list(this, hql);
 	}
-	
-    
+
+	@Override
+	public List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionIDAndActivos(Long idAgrupacion,
+			List<Long> activosID) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivoAgrupacionActivo aa");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.id", idAgrupacion);
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "aa.activo.id", activosID);
+		
+		return HibernateQueryUtils.list(this, hql);
+	}
+
+	@Override
+	public boolean activoEnAgrupacionLoteComercial(Long idActivo) {
+
+		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aa");
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.activo.id", idActivo);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
+   	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
+
+		return (list.size() > 0);
+	}
+
+	@Override
+	public boolean algunActivoDeAgrRestringidaEnAgrLoteComercial(List<Long> activosID) {
+
+		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aa");
+   	  	HQLBuilder.addFiltroWhereInSiNotNull(hb, "aa.activo.id", activosID);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
+   	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
+
+		return (list.size() > 0);
+	}
 }

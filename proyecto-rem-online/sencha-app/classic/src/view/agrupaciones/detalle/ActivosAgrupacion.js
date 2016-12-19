@@ -51,7 +51,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 				        xtype: 'actioncolumn',
 				        reference: 'activoPrincipal',
 				        bind: {
-				        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
+				        	hidden: '{!esAgrupacionRestringida}'
 				        },
 				        width: 30,
 				        text: HreRem.i18n('header.principal'),

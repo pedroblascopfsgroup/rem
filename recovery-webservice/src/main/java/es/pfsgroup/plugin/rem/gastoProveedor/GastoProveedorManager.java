@@ -1878,8 +1878,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	public List<DtoProveedorFilter> searchProveedoresByNif(DtoProveedorFilter dto) {
-		
-		List<DtoProveedorFilter> lista = proveedores.getProveedores(dto);
+		List<DtoProveedorFilter> lista = null;
+		if(!Checks.esNulo(dto.getNifProveedor())) {
+			lista = proveedores.getProveedores(dto);
+		}
 		return lista;
 	}
 }

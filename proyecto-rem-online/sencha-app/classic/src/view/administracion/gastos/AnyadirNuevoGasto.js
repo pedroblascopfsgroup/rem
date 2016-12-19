@@ -51,16 +51,13 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
     	
     	var me = this;
     	
-    	var storeEmisoresGasto = new Ext.data.Store({    		
-    		 model: 'HreRem.model.ComboBase',
-		     proxy: {
-		         type: 'ajax',
-		         url: $AC.getRemoteUrl('gastosproveedor/searchProveedoresByNif'),
-		         actionMethods: {read:'POST'},
-		         reader: {
-		             type: 'json'
-		         }
-		     }    	
+    	var storeEmisoresGasto = new Ext.data.Store({  
+    		model: 'HreRem.model.Proveedor',
+			proxy: {
+				type: 'uxproxy',
+				actionMethods: {read: 'POST'},
+				remoteUrl: 'gastosproveedor/searchProveedoresByNif'
+			}   	
     	}); 													
     	
     	me.setTitle(HreRem.i18n('title.nuevo.gasto'));
@@ -99,7 +96,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							        
 												{
 													xtype: 'comboboxfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),													
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),													
 													name: 'buscadorCodigoProveedorRem',													
 													hideTrigger: true,
 													editable: true,
@@ -111,15 +108,41 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													store: storeEmisoresGasto,
 													emptyText: HreRem.i18n('txt.buscar.emisor'),
 													queryParam: 'nifProveedor',
+													displayField	: 'nifProveedor',
+    												valueField		: 'codigo',
+    												tpl: Ext.create('Ext.XTemplate',
+									            		    '<tpl for=".">',
+									            		        '<div class="x-boundlist-item">{nombreProveedor} - {subtipoProveedorDescripcion}</div>',
+									            		    '</tpl>'
+									            	),
+									            	displayTpl:  Ext.create('Ext.XTemplate',
+									            		    '<tpl for=".">',
+									            		        '{nifProveedor}',
+									            		    '</tpl>'
+									            	),
 											        listeners: {
 											        	beforequery: function (op, e) {
+											        		// Sólamente búscamos a partir de 9 caracteres
 											        		if(!Ext.isEmpty(op.query) && op.query.length==9) {
 											        			return true;
 											        		} else {
 											        			return false;
 											        		}
 											        		
-											        	}											        	
+											        	},
+											        	change: function(combo, newValue) {
+											        		var nombre = "";
+											        		var codigo = "";
+											        		if(combo.getSelectedRecord()) {
+											        			nombre = combo.getSelectedRecord().get('nombreProveedor'); 
+											        			codigo = combo.getSelectedRecord().get('codigo');
+											        		} else {
+											        			combo.lastQuery = "";
+											        			combo.store.load();
+											        		}
+											        		combo.up('form').down('[name=nombreEmisor]').setValue(nombre);
+											        		combo.up('form').down('[name=codigoEmisor]').setValue(codigo);
+											        	}
 											        }
 							            	    },
 							            	    {
@@ -127,8 +150,13 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							            	    	name:	'nombreEmisor',
 							            	    	allowBlank: false,
 													readOnly: true
-							            	    },			
-							        
+							            	    },
+							            	    {							            	   
+							            	    	fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),
+							            	    	name:	'codigoEmisor',
+							            	    	allowBlank: false,
+													readOnly: true
+							            	    },						        
 												{ 
 													xtype: 'comboboxfieldbase',
 									               	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),

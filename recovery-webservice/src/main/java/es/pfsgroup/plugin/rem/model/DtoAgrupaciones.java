@@ -33,8 +33,12 @@ public class DtoAgrupaciones {
 	private Date fechaFinVigencia;
 	private boolean esEditable;
 	private Boolean existenOfertasVivas;
-	
-	
+	private Long codigoGestoriaFormalizacion;
+	private Long codigoGestorComercial;
+	private Long codigoGestorFormalizacion;
+	private Long codigoGestorComercialBackOffice;
+
+
 	public String getNombre() {
 		return nombre;
 	}
@@ -188,6 +192,30 @@ public class DtoAgrupaciones {
 	}
 	public void setExistenOfertasVivas(Boolean existenOfertasVivas) {
 		this.existenOfertasVivas = existenOfertasVivas;
+	}
+	public Long getCodigoGestoriaFormalizacion() {
+		return codigoGestoriaFormalizacion;
+	}
+	public void setCodigoGestoriaFormalizacion(Long codigoGestoriaFormalizacion) {
+		this.codigoGestoriaFormalizacion = codigoGestoriaFormalizacion;
+	}
+	public Long getCodigoGestorComercial() {
+		return codigoGestorComercial;
+	}
+	public void setCodigoGestorComercial(Long codigoGestorComercial) {
+		this.codigoGestorComercial = codigoGestorComercial;
+	}
+	public Long getCodigoGestorFormalizacion() {
+		return codigoGestorFormalizacion;
+	}
+	public void setCodigoGestorFormalizacion(Long codigoGestorFormalizacion) {
+		this.codigoGestorFormalizacion = codigoGestorFormalizacion;
+	}
+	public Long getCodigoGestorComercialBackOffice() {
+		return codigoGestorComercialBackOffice;
+	}
+	public void setCodigoGestorComercialBackOffice(Long codigoGestorComercialBackOffice) {
+		this.codigoGestorComercialBackOffice = codigoGestorComercialBackOffice;
 	}
 
 }

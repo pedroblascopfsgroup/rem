@@ -102,6 +102,18 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    	{
 		    		name: 'existenOfertasVivas',
 		    		type: 'boolean'
+		    	},
+		    	{
+		    		name: 'codigoGestoriaFormalizacion'
+		    	},
+		    	{
+		    		name: 'codigoGestorComercial'
+		    	},
+		    	{
+		    		name: 'codigoGestorFormalizacion'
+		    	},
+		    	{
+		    		name: 'codigoGestorComercialBackOffice'
 		    	}
     ],
     

@@ -102,9 +102,6 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													editable: true,
 													queryMode: 'remote',
 													autoLoadOnValue: false,
-													bind: {		
-														value: '{gastoNuevo.buscadorCodigoProveedorRem}'
-													},
 													store: storeEmisoresGasto,
 													emptyText: HreRem.i18n('txt.buscar.emisor'),
 													queryParam: 'nifProveedor',

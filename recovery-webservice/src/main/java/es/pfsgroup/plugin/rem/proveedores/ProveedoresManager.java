@@ -1011,19 +1011,19 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	}
 
 	@Override
-	public Long getCodProveedorByUsuarioLogado() {
+	public String getNifProveedorByUsuarioLogado() {
 		
 		Usuario usuario = genericAdapter.getUsuarioLogado();
-		Long codProveedor = null;
+		String nifProveedor= null;
 		
 		Filter idUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 		List<ActivoProveedorContacto> listaPersonasContacto = genericDao.getList(ActivoProveedorContacto.class, idUsuario);
 		
 		if(!Checks.estaVacio(listaPersonasContacto) && !Checks.esNulo(listaPersonasContacto.get(0).getProveedor())) {			
-			codProveedor = listaPersonasContacto.get(0).getProveedor().getCodigoProveedorRem();
+			nifProveedor = listaPersonasContacto.get(0).getProveedor().getDocIdentificativo();
 		}
 
-		return codProveedor;
+		return nifProveedor;
 	}
 	
 	@Override

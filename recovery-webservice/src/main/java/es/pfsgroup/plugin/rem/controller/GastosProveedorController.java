@@ -607,19 +607,19 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getCodProveedorByUsuario(ModelMap model){
+	public ModelAndView getNifProveedorByUsuario(ModelMap model){
 		
 		
 		
 		try {
-			Long codProveedor = proveedoresApi.getCodProveedorByUsuarioLogado();
+			String nifProveedor = proveedoresApi.getNifProveedorByUsuarioLogado();
 			
-			if(Checks.esNulo(codProveedor)) {
+			if(Checks.esNulo(nifProveedor)) {
 				model.put("msg", "No ha sido posible encontrar un proveedor asignado al usuario identificado.");
 				model.put("data", -1);
 				model.put("success", false);
 			} else {
-				model.put("data", codProveedor);
+				model.put("data", nifProveedor);
 				model.put("success", true);
 			}
 

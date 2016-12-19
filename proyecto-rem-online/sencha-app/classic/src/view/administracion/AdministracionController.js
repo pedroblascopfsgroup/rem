@@ -11,7 +11,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	me.codProveedorIdentificado= null;
     	
     	if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
-			var url =  $AC.getRemoteUrl('gastosproveedor/getCodProveedorByUsuario');
+			var url =  $AC.getRemoteUrl('gastosproveedor/getNifProveedorByUsuario');
 			Ext.Ajax.request({
 			     url: url,			
 			     success: function(response, opts) {

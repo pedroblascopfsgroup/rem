@@ -16,6 +16,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 	    
 	    var items = [
 	    	{
+            	xtype: 'button',
+            	reference: 'btnExportarActivosLoteComercial',
+            	text: HreRem.i18n('title.activo.administracion.exportar.excel'),
+            	handler: 'onClickExportarActivosLoteComercial',
+            	bind: {
+            		hidden: '{!esAgrupacionLoteComercial}'
+            	},
+            	margin: '0 0 15 0'
+            },
+	    	{
 				title: 'Listado de Activos',
 			    xtype: 'gridBaseEditableRow',
 			    idPrincipal: 'agrupacionficha.id',
@@ -214,18 +224,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			    ]
 			}
 	    ];
+
 		me.addPlugin({ptype: 'lazyitems', items: items });
 		me.callParent();
   },
-  
+
   funcionRecargar: function() {
 	var me = this; 
 	me.recargar = false;
 	var listadoActivosAgrupacion = me.down("[reference=listadoactivosagrupacion]");
-	
+
 	// FIXME ¿¿Deberiamos cargar la primera página??
 	listadoActivosAgrupacion.getStore().loadPage(1);
   }
-   
-   
 });

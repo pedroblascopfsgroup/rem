@@ -14,13 +14,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAsistida;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLoteComercial;
 
 
 /**
- * Modelo que gestiona la información de las agrupaciones de tipo asistidas de los activos.
+ * Modelo que gestiona la información de las agrupaciones de tipo lote comercial de los activos.
  */
 @Entity
 @Table(name = "ACT_LCO_LOTE_COMERCIAL", schema = "${entity.schema}")
@@ -50,6 +50,22 @@ public class ActivoLoteComercial extends ActivoAgrupacion implements Serializabl
 	
 	@Column(name = "LCO_ACREEDOR_PDV")
 	private String acreedorPDV;
+	
+	@ManyToOne
+    @JoinColumn(name = "LCO_GESTORIA_FORMALIZACION")
+    private Usuario usuarioGestoriaFormalizacion;
+	
+	@ManyToOne
+    @JoinColumn(name = "LCO_GESTOR_COMERCIAL")
+    private Usuario usuarioGestorComercial;
+	
+	@ManyToOne
+    @JoinColumn(name = "LCO_GESTOR_FORMALIZACION")
+    private Usuario usuarioGestorFormalizacion;
+	
+	@ManyToOne
+    @JoinColumn(name = "LCO_GESTOR_COMER_BACK_OFFICE")
+    private Usuario usuarioGestorComercialBackOffice;
 
 
 	public DDProvincia getProvincia() {
@@ -102,6 +118,38 @@ public class ActivoLoteComercial extends ActivoAgrupacion implements Serializabl
 	
 	public Integer getIncluidos() {
 		return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
+	}
+
+	public Usuario getUsuarioGestoriaFormalizacion() {
+		return usuarioGestoriaFormalizacion;
+	}
+
+	public void setUsuarioGestoriaFormalizacion(Usuario usuarioGestoriaFormalizacion) {
+		this.usuarioGestoriaFormalizacion = usuarioGestoriaFormalizacion;
+	}
+
+	public Usuario getUsuarioGestorComercial() {
+		return usuarioGestorComercial;
+	}
+
+	public void setUsuarioGestorComercial(Usuario usuarioGestorComercial) {
+		this.usuarioGestorComercial = usuarioGestorComercial;
+	}
+
+	public Usuario getUsuarioGestorFormalizacion() {
+		return usuarioGestorFormalizacion;
+	}
+
+	public void setUsuarioGestorFormalizacion(Usuario usuarioGestorFormalizacion) {
+		this.usuarioGestorFormalizacion = usuarioGestorFormalizacion;
+	}
+
+	public Usuario getUsuarioGestorComercialBackOffice() {
+		return usuarioGestorComercialBackOffice;
+	}
+
+	public void setUsuarioGestorComercialBackOffice(Usuario usuarioGestorComercialBackOffice) {
+		this.usuarioGestorComercialBackOffice = usuarioGestorComercialBackOffice;
 	}
 
 }

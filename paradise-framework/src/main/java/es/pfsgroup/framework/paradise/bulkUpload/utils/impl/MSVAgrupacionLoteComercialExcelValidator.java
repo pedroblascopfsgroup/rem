@@ -37,23 +37,27 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
 public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorAbstract {
-	// Textos de validaciones para agrupaciones
-	public static final class AGRUPACIONES_CON_BAJA { static int codigoError = 3; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.conBaja";};
 
 	// Textos de validaciones para cada activo
 	public static final String ACTIVO_NO_EXISTE = "msg.error.masivo.agrupar.activos.asistida.activo.noExiste";
-	public static final String ACTIVO_EN_AGRUPACION = "msg.error.masivo.agrupar.activos.asistida.activo.enAgrupacion";
 	public static final String ACTIVO_EN_OTRA_AGRUPACION = "msg.error.masivo.agrupar.activos.asistida.activo.enOtraAgrupacion";
 	public static final String ACTIVO_OFERTAS_ACEPTADAS = "msg.error.masivo.agrupar.activos.asistida.oferta.aceptada";
+	public static final String ACTIVO_VENDIDO = "msg.error.masivo.agrupar.activos.asistida.activo.vendido";
+	public static final String ACTIVO_SIN_PROPIETARIO = "msg.error.masivo.agrupar.activos.asistida.activo.sinPropietario";
+
+	// Validaciones de activo NO utilizadas porque no esta definido como validar en esos casos al incluir en lotes comerciales
+	/*
 	public static final String ACTIVO_INCLUIDO_PERIMETRO = "msg.error.masivo.agrupar.activos.asistida.activo.incluidoPerimetro";
 	public static final String ACTIVO_NO_ASISTIDO = "msg.error.masivo.agrupar.activos.asistida.activo.noAsistido";
 	public static final String ACTIVO_NO_FINANCIERO = "msg.error.masivo.agrupar.activos.asistida.activo.noFinanciero";
-
-	// Textos de validaciones para grupos de activos, estas variables llevan aparejado un texto y un codigo. Necesario para metodo comun
-	public static final class ACTIVOS_NO_MISMA_LOCALIZACION { static int codigoError = 1; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.localizacion";};
-	public static final class ACTIVOS_NO_MISMO_PROPIETARIO { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.propietario";};
-
 	public static final String ACTIVO_NO_MISMO_TIPO_COMERCIAL = "msg.error.masivo.agrupar.activos.asistida.activo.agrupacion.diferente.tipoComercial";
+	 */
+	
+	// Textos de validaciones para grupos de activos (de las agrupaciones), estas variables llevan aparejado un texto y un codigo. Necesario para metodo comun
+	public static final class AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS { static int codigoError = 1; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.ofertas.aceptadas";};
+	public static final class AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.propietario";};
+	public static final class AGRUPACIONES_CON_BAJA { static int codigoError = 3; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.conBaja";};
+
 
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -94,33 +98,35 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 			
-/*
+
 			// Validaciones individuales activo por activo:
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS), activosConVentaOfertaRows(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_ASISTIDO), activosAsistidosRows(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_FINANCIERO),activosFinancierosRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_VENDIDO), activosVendidosRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO), activosSinPropietariosRows(exc));
+			// mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
+			// mapaErrores.put(messageServices.getMessage(ACTIVO_NO_FINANCIERO),activosFinancierosRows(exc));
 			
 			// Validaciones de grupo, para todos los activos de una agrupacion en el excel:
 			mapaErrores.put(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACIONES_CON_BAJA.codigoError));
-			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
-			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMO_PROPIETARIO.codigoError));
-*/
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.codigoError));
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.codigoError));
+			
 			
 			try{
 				if(!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty() ||
+						// !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_ASISTIDO)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_FINANCIERO)).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO)).isEmpty() ||
+						// !mapaErrores.get(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO)).isEmpty() ||
+						// !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_ASISTIDO)).isEmpty() ||
+						// !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_FINANCIERO)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError)).isEmpty() ){
+						!mapaErrores.get(messageServices.getMessage(AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError)).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError)).isEmpty() ){
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -131,7 +137,10 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 				logger.error(e.getMessage());
 				e.printStackTrace();
 			}
+
 		}
+
+			
 		exc.cerrar();
 		
 		
@@ -282,7 +291,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 				numAgrupacion = Long.parseLong(exc.dameCelda(i, 0));
 				numActivo = Long.parseLong(exc.dameCelda(i, 1));
 				//Valida que el activo no este en una agrupacion de obra nueva(01) o que ya este en una asistida(13)
-				if(particularValidator.esActivoEnOtraAgrupacionNoCompatible(numActivo, numAgrupacion, "01,13"))
+				if(particularValidator.esActivoEnOtraAgrupacionNoCompatible(numActivo, numAgrupacion, "01,14"))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {
@@ -301,6 +310,42 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 		try {
 			for(i=1; i<exc.getNumeroFilas();i++){
 				if(particularValidator.esActivoConVentaOferta(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activosVendidosRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<exc.getNumeroFilas();i++){
+				if(particularValidator.esActivoVendido(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activosSinPropietariosRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<exc.getNumeroFilas();i++){
+				if(!particularValidator.esActivoConPropietario(exc.dameCelda(i, 1)))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {
@@ -430,14 +475,14 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 							particularValidator.esAgrupacionConBaja(String.valueOf(numAgrupacion)))
 						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
 					
-					// Validacion misma localizacion
-					if(codigoValidacionMultiple == ACTIVOS_NO_MISMA_LOCALIZACION.codigoError &&
-							!particularValidator.esActivosMismaLocalizacion(inSqlGrupoActivos))
-						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
-					
 					// Validacion mismo propietario
-					if(codigoValidacionMultiple == ACTIVOS_NO_MISMO_PROPIETARIO.codigoError &&
+					if(codigoValidacionMultiple == AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.codigoError &&
 							!particularValidator.esActivosMismoPropietario(inSqlGrupoActivos))
+						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
+
+					// Validacion agrupacion y activos sin ofertas aceptadas
+					if(codigoValidacionMultiple == AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.codigoError &&
+							particularValidator.esActivosOfertasAceptadas(inSqlGrupoActivos, String.valueOf(numAgrupacion)))
 						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
 
 				}

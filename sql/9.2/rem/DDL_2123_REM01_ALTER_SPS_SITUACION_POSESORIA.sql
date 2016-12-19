@@ -33,7 +33,7 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_SPS_SITUACION_POSESORIA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_SPS_SIT_POSESORIA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     
@@ -53,7 +53,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 							CAMPO FK 					TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_SPS_AGR'							'SPS_LOTE_COMERCIAL',		V_ESQUEMA||'.ACT_AGR_AGRUPACION',			'AGR_ID')
+    	T_FK(	'FK_SPS_AGR',							'SPS_LOTE_COMERCIAL',		V_ESQUEMA||'.ACT_AGR_AGRUPACION',			'AGR_ID')
     );
     V_T_FK T_FK;
 

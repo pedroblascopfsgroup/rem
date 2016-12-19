@@ -387,6 +387,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean esActivoVendido(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
+				+ "			  ACT_ACTIVO act "
+				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
+				+ "			  AND scm.dd_scm_codigo = '05' "
+				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.borrado       = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
 	public Boolean esActivoIncluidoPerimetro(String numActivo){
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "		FROM ACT_ACTIVO act "
@@ -451,6 +466,88 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			      ACT_ACTIVO act "
 				+ "			    WHERE act.act_id       = pac.act_id "
 				+ "			      AND act.ACT_NUM_ACTIVO IN ("+inSqlNumActivosRem+") "
+				+ "			      AND pac.BORRADO  = 0 "
+				+ "			      AND act.BORRADO  = 0 "
+				+ "			    GROUP BY pac.PRO_ID ");
+		if("1".equals(resultado))
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public Boolean esActivosOfertasAceptadas (String inSqlNumActivosRem, String numAgrupRem){
+		String sql =
+				"SELECT "
+				+ "  ( "
+				+ "    SELECT COUNT(aof1.act_id) "
+				+ "    FROM OFR_OFERTAS ofr1 "
+				+ "    INNER JOIN ACT_OFR aof1 on ofr1.ofr_id = aof1.ofr_id "
+				+ "    INNER JOIN ACT_ACTIVO act1 on aof1.act_id = act1.act_id "
+				+ "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id "
+				+ "    WHERE "
+				+ "      eof1.dd_eof_codigo = '01' " // --Oferta Aceptada (en activos)
+				+ "      AND act1.act_num_activo in ("+inSqlNumActivosRem+") "
+				+ "      AND ofr1.borrado = 0 "
+				+ "  )  + "
+				+ "  ( "
+				+ "    SELECT COUNT(aof1.act_id) "
+				+ "    FROM OFR_OFERTAS ofr1 "
+				+ "    INNER JOIN ACT_OFR aof1 on ofr1.ofr_id = aof1.ofr_id "
+				+ "    INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga1 on aof1.act_id = aga1.act_id "
+				+ "    INNER JOIN ACT_AGR_AGRUPACION agr1 on aga1.agr_id = agr1.agr_id "
+				+ "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id "
+				+ "    WHERE "
+				+ "      eof1.dd_eof_codigo = '01' " // --Oferta Aceptada (en activos de la agrupacion)
+				+ "      AND agr1.agr_num_agrup_rem = "+numAgrupRem+"  "
+				+ "      AND ofr1.borrado = 0 "
+				+ "      AND aga1.borrado = 0 "
+				+ "      AND agr1.borrado = 0 "
+				+ "  )  + "
+				+ "  ( "
+				+ "    SELECT COUNT(aga1.agr_id) "
+				+ "    FROM OFR_OFERTAS ofr1 "
+				+ "    INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga1 on ofr1.agr_id = aga1.agr_id "
+				+ "    INNER JOIN ACT_AGR_AGRUPACION agr1 on aga1.agr_id = agr1.agr_id "
+				+ "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id "
+				+ "    WHERE "
+				+ "      eof1.dd_eof_codigo = '01' " // --Oferta Aceptada (en agrupacion)
+				+ "      AND agr1.agr_num_agrup_rem = "+numAgrupRem+"  "
+				+ "      AND ofr1.borrado = 0 "
+				+ "      AND aga1.borrado = 0 "
+				+ "      AND agr1.borrado = 0 "
+				+ "  )  + "
+				+ "  ( "
+				+ "    SELECT COUNT(aga1.agr_id) "
+				+ "    FROM OFR_OFERTAS ofr1 "
+				+ "    INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga1 on ofr1.agr_id = aga1.agr_id "
+				+ "    INNER JOIN ACT_AGR_AGRUPACION agr1 on aga1.agr_id = agr1.agr_id "
+				+ "    INNER JOIN ACT_ACTIVO act1 on aga1.act_id = act1.act_id "
+				+ "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id "
+				+ "    WHERE "
+				+ "      eof1.dd_eof_codigo = '01' " // --Oferta Aceptada (en otras agrupaciones de los activos)
+				+ "      AND act1.act_num_activo in ("+inSqlNumActivosRem+") "
+				+ "      AND ofr1.borrado = 0 "
+				+ "      AND aga1.borrado = 0 "
+				+ "      AND agr1.borrado = 0 "
+				+ "  ) as num_ofertas_aceptadas "
+				+ "FROM DUAL ";
+		
+		String resultado = rawDao.getExecuteSQL(sql);
+		
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean esActivoConPropietario (String sqlNumActivoRem){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			    FROM ACT_PAC_PROPIETARIO_ACTIVO pac, "
+				+ "			      ACT_ACTIVO act "
+				+ "			    WHERE act.act_id       = pac.act_id "
+				+ "			      AND act.ACT_NUM_ACTIVO = "+sqlNumActivoRem+" "
 				+ "			      AND pac.BORRADO  = 0 "
 				+ "			      AND act.BORRADO  = 0 "
 				+ "			    GROUP BY pac.PRO_ID ");

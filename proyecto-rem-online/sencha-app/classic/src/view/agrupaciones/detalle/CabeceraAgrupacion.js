@@ -174,13 +174,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 														{ 
 															xtype: 'datefieldbase',
 															fieldLabel: HreRem.i18n('header.fecha.inicio.vigencia'),
-															bind:		'{agrupacionficha.fechaInicioVigencia}',
+															bind: {
+																hidden: '{!agrupacionficha.isAsistida}',
+																value: '{agrupacionficha.fechaInicioVigencia}'
+															},
 															readOnly: true
 														},
 														{ 
 															xtype: 'datefieldbase',
 															fieldLabel: HreRem.i18n('header.fecha.fin.vigencia'),
-															bind:		'{agrupacionficha.fechaFinVigencia}',
+															bind: {
+																hidden: '{!agrupacionficha.isAsistida}',
+																value: '{agrupacionficha.fechaFinVigencia}'
+															},
 															readOnly: true
 														}
 

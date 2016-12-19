@@ -50,6 +50,8 @@ public interface  ParticularValidatorApi {
 	
 	public Boolean esActivoConVentaOferta(String numActivo);
 	
+	public Boolean esActivoVendido(String numActivo);
+	
 	public Boolean esActivoIncluidoPerimetro(String numActivo);
 	
 	public Boolean esActivoAsistido (String numActivo);
@@ -74,6 +76,21 @@ public interface  ParticularValidatorApi {
 	 * @return
 	 */
 	public Boolean esActivosMismoPropietario (String inSqlNumActivosRem);
+	
+	/**
+	 * Validacion de ofertas aceptadas para un grupo de activos y agrupaciones de estos
+	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas
+	 * @param numAgrupRem Numero agrupacion
+	 * @return
+	 */
+	public Boolean esActivosOfertasAceptadas (String inSqlNumActivosRem, String numAgrupRem);
+	
+	/**
+	 * Validacion de un activo: Evalua si un activo tiene propietario
+	 * @param sqlNumActivosRem
+	 * @return
+	 */
+	public Boolean esActivoConPropietario(String sqlNumActivoRem);
 	
 	/**
 	 * Validacion de un activo si pertenece a alguna agrupacion no compatible 
@@ -119,5 +136,7 @@ public interface  ParticularValidatorApi {
 	 * @return Devuelve una lista de fechas de importes actuales del activo.
 	 */
 	public List<Date> getFechasImportesActualesActivo(String numActivo);
+
+
 	
 }

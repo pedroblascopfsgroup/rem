@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
-import net.sf.json.JSONArray;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -168,6 +167,12 @@ public interface GenericApi {
 
 	
 	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo);
+
+	/**
+	 * Devuelve una lista de todos aquellos proveedores que dan de alta gastos de forma masiva.
+	 * @return
+	 */
+	public List<DtoDiccionario> getComboGestoriasGasto();
 
 }
 

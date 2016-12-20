@@ -22,7 +22,6 @@ import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
@@ -338,8 +337,13 @@ public class AgrupacionController extends ParadiseJsonController{
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			model.put("success", false);		
+			if(e.getMessage().equals(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG)) {
+				model.put("msg", AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+				model.put("success", false);
+			} else {
+				e.printStackTrace();
+				model.put("success", false);
+			}		
 		}
 		
 		return createModelAndViewJson(model);
@@ -624,4 +628,24 @@ public class AgrupacionController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestoresLoteComercial(@RequestParam Long agrId, @RequestParam String codigoGestor, ModelMap model) {
+
+		try {
+			model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public void exportarActivosLoteComercial(@RequestParam Long agrID, DtoAgrupacionFilter dtoAgrupacionFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		//TODO:
+	}
 }

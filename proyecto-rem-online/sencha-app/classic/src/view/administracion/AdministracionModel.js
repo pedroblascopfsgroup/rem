@@ -160,6 +160,14 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'subentidadesPropietarias'}
 			}
+		},
+		
+		comboGestorias: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getGestoriasGasto'
+			}		
 		}
     }
 	    

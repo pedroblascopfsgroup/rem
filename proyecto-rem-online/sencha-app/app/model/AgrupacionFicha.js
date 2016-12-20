@@ -63,19 +63,26 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name : 'tipoAgrupacionCodigo'
 		    	},
 		    	{
+	            	name: 'isAsistida',
+	            	calculate: function(data) {
+	        			return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['ASISTIDA'];
+	        		},
+	        		depends: 'tipoAgrupacionCodigo'
+	            },
+		    	{
 		    		name : 'acreedorPDV'
 		    	},
 		    	{
 		    		name : 'codigoPostal'
 		    	},
 		    	{
-    			name: 'propietario',
-    			convert: function (value) {
-	    				if(!Ext.isEmpty(value) && value=='varios') {
-	    					return HreRem.i18n('txt.varios');
-	    				} else {
-	    					return value;
-	    				}
+	    			name: 'propietario',
+	    			convert: function (value) {
+		    				if(!Ext.isEmpty(value) && value=='varios') {
+		    					return HreRem.i18n('txt.varios');
+		    				} else {
+		    					return value;
+		    				}
 	    			}
 	    		},
 	    		{
@@ -95,6 +102,18 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    	{
 		    		name: 'existenOfertasVivas',
 		    		type: 'boolean'
+		    	},
+		    	{
+		    		name: 'codigoGestoriaFormalizacion'
+		    	},
+		    	{
+		    		name: 'codigoGestorComercial'
+		    	},
+		    	{
+		    		name: 'codigoGestorFormalizacion'
+		    	},
+		    	{
+		    		name: 'codigoGestorComercialBackOffice'
 		    	}
     ],
     

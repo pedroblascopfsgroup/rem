@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
@@ -50,7 +51,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
@@ -121,6 +122,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Autowired
 	private ReservaDao reservaDao;
 	
+	@Autowired
+	private ProveedoresApi proveedores;	
 	
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
@@ -279,6 +282,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return dto;
 	}
 	
+	
 	@Override
 	@Transactional(readOnly=false)
 	public GastoProveedor createGastoProveedor(DtoFichaGastoProveedor dto) {
@@ -286,8 +290,42 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoProveedor gastoProveedor = new GastoProveedor();
 		Usuario usuario = genericAdapter.getUsuarioLogado();
 		
+		gastoProveedor = dtoToGastoProveedor(dto, gastoProveedor);
+		
+		updaterStateApi.updaterStates(gastoProveedor, DDEstadoGasto.INCOMPLETO);
+		// Creamos el gasto y las entidades relacionadas
+		genericDao.save(GastoProveedor.class, gastoProveedor);
+		
+		GastoDetalleEconomico detalleEconomico = new GastoDetalleEconomico();						
+		detalleEconomico.setGastoProveedor(gastoProveedor);				
+		genericDao.save(GastoDetalleEconomico.class, detalleEconomico);
+		
+		GastoGestion gestion = new GastoGestion();
+		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
+		gestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+		gestion.setGastoProveedor(gastoProveedor);
+		gestion.setFechaAlta(new Date());
+		gestion.setUsuarioAlta(usuario);
+		genericDao.save(GastoGestion.class, gestion);
+		
+		GastoInfoContabilidad contabilidad = new GastoInfoContabilidad();			
+		Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", String.valueOf(new GregorianCalendar().get(GregorianCalendar.YEAR)));
+		Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);			
+		contabilidad.setEjercicio(ejercicio);
+		contabilidad.setGastoProveedor(gastoProveedor);			
+		genericDao.save(GastoInfoContabilidad.class, contabilidad);
+		
+		GastoImpugnacion impugnacion = new GastoImpugnacion();						
+		impugnacion.setGastoProveedor(gastoProveedor);				
+		genericDao.save(GastoImpugnacion.class, impugnacion);
+		
+		return gastoProveedor;
+		
+	}
+	
+	private GastoProveedor dtoToGastoProveedor(DtoFichaGastoProveedor dto, GastoProveedor gastoProveedor) {
 		gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
-			
+		
 //		if(!Checks.esNulo(dto.getNifEmisor())){				
 //			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
 //			gastoProveedor.setProveedor(proveedor);
@@ -314,46 +352,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoProveedor.setFechaEmision(dto.getFechaEmision());
 		gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
 		
-		// Primero comprobamos que el gasto no está dado de alta.
-		boolean existeGasto  = existeGasto(gastoProveedor);
-			
-		if(existeGasto) {
-			throw new JsonViewerException("Gasto ya dado de alta");			
-		} else {
-			
-			updaterStateApi.updaterStates(gastoProveedor, DDEstadoGasto.INCOMPLETO);
-			// Creamos el gasto y las entidades relacionadas
-			genericDao.save(GastoProveedor.class, gastoProveedor);
-			
-			GastoDetalleEconomico detalleEconomico = new GastoDetalleEconomico();						
-			detalleEconomico.setGastoProveedor(gastoProveedor);				
-			genericDao.save(GastoDetalleEconomico.class, detalleEconomico);
-			
-			GastoGestion gestion = new GastoGestion();
-			DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
-			gestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
-			gestion.setGastoProveedor(gastoProveedor);
-			gestion.setFechaAlta(new Date());
-			gestion.setUsuarioAlta(usuario);
-			genericDao.save(GastoGestion.class, gestion);
-			
-			GastoInfoContabilidad contabilidad = new GastoInfoContabilidad();			
-			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", String.valueOf(new GregorianCalendar().get(GregorianCalendar.YEAR)));
-			Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);			
-			contabilidad.setEjercicio(ejercicio);
-			contabilidad.setGastoProveedor(gastoProveedor);			
-			genericDao.save(GastoInfoContabilidad.class, contabilidad);
-			
-			GastoImpugnacion impugnacion = new GastoImpugnacion();						
-			impugnacion.setGastoProveedor(gastoProveedor);				
-			genericDao.save(GastoImpugnacion.class, impugnacion);
-			
-		}
-		
 		return gastoProveedor;
-		
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long id){
@@ -436,7 +437,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 	}
 	
-	public boolean existeGasto(GastoProveedor gasto) {
+	public boolean existeGasto(DtoFichaGastoProveedor dto) {
+		
+		GastoProveedor gasto = new GastoProveedor();
+		gasto = dtoToGastoProveedor(dto, gasto);
 		
 		boolean existeGasto = false;
 		
@@ -461,7 +465,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				} else {
 					existeGasto = true;
 				}
-				
 			}
 		}		
 		
@@ -1871,5 +1874,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		return configuracionEspecial;
+	}
+
+	@Override
+	public List<DtoProveedorFilter> searchProveedoresByNif(DtoProveedorFilter dto) {
+		List<DtoProveedorFilter> lista = null;
+		if(!Checks.esNulo(dto.getNifProveedor())) {
+			lista = proveedores.getProveedores(dto);
+		}
+		return lista;
 	}
 }

@@ -26,7 +26,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
         		return 'resources/images/'+src;	     
         	}
 	     },
-	     
+
+	     esAgrupacionRestringida: function(get) {
+	    	 
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+
 	     esAgrupacionAsistida: function(get) {
 	    	 
 	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
@@ -46,7 +56,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 	     },
-	     
+
+	     esAgrupacionLoteComercial: function(get) {
+	    	 
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+
 	     esAgrupacionObraNuevaOrAsistida: function(get) {
 	    	 
 	     	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida');
@@ -217,8 +237,42 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposDocumentos'}
 			}   	
+	    },
+
+	    comboGestoriaFormalizacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'gestoriaFormalizacion'}//TODO: crear este tipo de gestor.
+			}   	
+	    },
+
+	    comboGestorComercial: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GCOM'}
+			}   	
+	    },
+
+	    comboGestorFormalizacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GFORM'}
+			}   	
+	    },
+
+	    comboGestorComercialBackOffice: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'gestorComercialBackOffice'}//TODO: crear este tipo de gestor.
+			}   	
 	    }
-    	
-    	
-     }    
+     }
 });

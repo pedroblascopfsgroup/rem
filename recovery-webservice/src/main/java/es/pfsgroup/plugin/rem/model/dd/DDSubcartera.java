@@ -108,11 +108,11 @@ public class DDSubcartera implements Auditable, Dictionary {
 	}
 	
 	public String getCarteraCodigo() {
-		return !Checks.esNulo(carteraCodigo) ? this.carteraCodigo = cartera.getCodigo(): null;
+		return !Checks.esNulo(this.carteraCodigo) ? this.carteraCodigo : cartera.getCodigo();
 	}
 
 	public void setCarteraCodigo(String carteraCodigo) {
-		this.carteraCodigo = !Checks.esNulo(carteraCodigo) ? carteraCodigo : cartera.getCodigo();
+		this.carteraCodigo = !Checks.esNulo(this.carteraCodigo) ? this.carteraCodigo : cartera.getCodigo();
 	}
 
 

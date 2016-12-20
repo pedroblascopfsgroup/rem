@@ -1,6 +1,8 @@
 .login {
 
-  	background-image: url(images/fondologin-min.jpg);
+	/* Imagen navideña $fondo-navidad*/
+  	background-image: $fondo-navidad;
+  	background-size: 100%
   	
   	.logo-headerbar {
   		background-color: #fff !important;

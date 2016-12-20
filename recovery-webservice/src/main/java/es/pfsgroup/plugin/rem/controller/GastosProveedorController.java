@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
@@ -170,6 +171,30 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView existeGasto(DtoFichaGastoProveedor dto, ModelMap model) {
+		try {	
+			
+			boolean existeGasto = gastoProveedorApi.existeGasto(dto);
+			
+			model.put("existeGasto", existeGasto);
+			model.put("success", true );
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}		
+		
+		return createModelAndViewJson(model);
+		
+	}	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -231,6 +256,21 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchProveedoresByNif(DtoProveedorFilter dto, ModelMap model) {
+	
+		try {
+			model.put("data", gastoProveedorApi.searchProveedoresByNif(dto));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
 	
 	
 	@SuppressWarnings("unchecked")
@@ -247,7 +287,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 		
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
 		
 	}
 	

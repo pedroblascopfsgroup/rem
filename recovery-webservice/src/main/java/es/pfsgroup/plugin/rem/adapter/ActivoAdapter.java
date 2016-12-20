@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
@@ -147,6 +148,9 @@ public class ActivoAdapter {
 
     @Autowired 
     private ActivoApi activoApi;
+
+    @Autowired 
+    private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
     
     @Autowired 
     private ActivoCargasApi activoCargasApi;
@@ -3261,6 +3265,8 @@ public class ActivoAdapter {
 			}
 		}
 		
+		
+		
 		try{
 			Oferta oferta= new Oferta();
 			ActivoOferta activoOferta= new ActivoOferta();
@@ -3277,13 +3283,18 @@ public class ActivoAdapter {
 			}*/
 
 			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-			for (ActivoOferta acof: activo.getOfertas()) {
-				Oferta of = acof.getPrimaryKey().getOferta();
-				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
-					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
+			// Comprobar si el activo se encuentra en una agrupación de tipo 'lote comercial'.
+			if(activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())) {
+				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+			} else {
+				// Si no se encuentra en una agrupación de tipo 'lote comercial' examinar si el activo tuviese alguna oferta aceptada.
+				for (ActivoOferta acof: activo.getOfertas()) {
+					Oferta of = acof.getPrimaryKey().getOferta();
+					if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
+						codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
+					}
 				}
 			}
-
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumento());

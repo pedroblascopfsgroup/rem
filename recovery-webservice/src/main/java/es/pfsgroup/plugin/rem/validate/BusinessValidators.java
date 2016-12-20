@@ -22,7 +22,7 @@ public interface BusinessValidators {
 	public static final String ERROR_PROV_NOT_EQUAL = "La provincia del activo y la agrupación no coinciden.";	
 	public static final String ERROR_LOC_NULL = "La población esta vacia y no se puede comparar con la agrupación.";
 	public static final String ERROR_LOC_NOT_EQUAL = "La población del activo y la agrupación no coinciden.";	
-	public static final String ERROR_PROPIETARIO_NULL = "El propietario de este activo esta vacio y no se puede comparar con el de los activos de la agrupación.";
+	public static final String ERROR_PROPIETARIO_NULL = "El propietario de este activo está vacío y no se puede comparar con el de los activos de la agrupación.";
 	public static final String ERROR_PROPIETARIO_NOT_EQUAL = "El propietario del activo y el propietario de los otros activos de la agrupación no coinciden.";
 	public static final String ERROR_CARTERA_NULL = "La cartera esta vacia y no se puede comparar con la agrupación.";
 	public static final String ERROR_CARTERA_NOT_EQUAL = "La cartera del activo y la agrupación no coinciden.";	

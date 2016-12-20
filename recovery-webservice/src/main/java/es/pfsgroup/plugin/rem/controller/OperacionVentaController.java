@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,37 +19,35 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.impl.OperacionVentaManager;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 
 @Controller
 public class OperacionVentaController {
 
 		final String templateOperacionVenta = "OperativaVenta001";
-	
-		@Autowired
-		private RestApi restApi;
-		
+
 		@Autowired
 		private OperacionVentaManager operacionVentaManager;
-		
-		@Autowired 
-		private OfertaApi ofertaApi;
-		
+
+		@Autowired
+		private ExpedienteComercialApi expedienteComercialApi;
+
 		@Autowired
 		private ExcelReportGeneratorApi excelReportGeneratorApi;
-		
+
 		@SuppressWarnings("unchecked")
 		@RequestMapping(method = RequestMethod.POST, value = "/operacionventa")
 		public void operacionVenta(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {	
-			
+
 			PropuestaRequestDto jsonData = null;
 			OfertaSimpleDto operacionDto = null;	
 			
@@ -79,19 +78,25 @@ public class OperacionVentaController {
 			operacionVentaPDFByOfertaHRE(operacionDto.getOfertaHRE(), request, response);
 		}
 		
-		public void operacionVentaPDFByOfertaHRE (Long ofertaHRE, RestRequestWrapper request,HttpServletResponse response) {
-			
+		@SuppressWarnings("unchecked")
+		@RequestMapping(method = RequestMethod.GET)
+		public void operacionVentaPDFByOfertaHRE (Long numExpediente, HttpServletRequest request, HttpServletResponse response){	
+
 			ModelMap model = new ModelMap();
 			Map<String, Object> params = null;
 			List<Object> dataSource = null;			
-			File fileSalidaTemporal = null;	
+			File fileSalidaTemporal = null;
+			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
 			
 			Oferta oferta = null;
-			//Primero comprabar que existe OFERTA
+			//Primero comprobar que existe OFERTA
 			if (model.get("error")==null || model.get("error")=="") {
-				oferta = ofertaApi.getOfertaByNumOfertaRem(ofertaHRE);
-				if (oferta==null) {
-					model.put("error", RestApi.REST_NO_RELATED_OFFER);				
+				if(!Checks.esNulo(expediente)){
+					oferta = expediente.getOferta(); //ofertaApi.getOfertaByNumOfertaRem(ofertaHRE);
+					if (oferta==null) {
+					model.put("error", RestApi.REST_NO_RELATED_OFFER);
+					}
 				}
 			}
 			
@@ -127,9 +132,9 @@ public class OperacionVentaController {
 			} 
 
 			//Si hay algún error se envía un JSON(model) con información.
-			if (model.get("error")!=null && model.get("error")!="") {				
-				restApi.sendResponse(response, model,request);
-			}
+//			if (model.get("error")!=null && model.get("error")!="") {				
+//				restApi.sendResponse(response, model,request);
+//			}
 		}
 			
 }

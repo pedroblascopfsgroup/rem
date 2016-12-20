@@ -526,4 +526,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		return listaTiposPorCuenta;
 	}
+
+	@Override
+	public List<DtoDiccionario> getComboGestoriasGasto() {
+		
+		List<DtoDiccionario> lista = getComboProveedorBySubtipo(DDTipoProveedor.COD_GESTORIA);
+		lista.addAll(getComboProveedorBySubtipo(DDTipoProveedor.COD_CERTIFICADORA));		
+		
+		return lista;
+	}
 }

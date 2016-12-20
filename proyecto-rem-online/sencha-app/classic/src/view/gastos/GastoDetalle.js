@@ -12,8 +12,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 				}
 
 				var me= this;
-	        	var viewModel= me.lookupViewModel();
-				if(tab.ocultarBotonesEdicion || viewModel.get('gasto.esGastoEditable')==false) {
+				if(tab.ocultarBotonesEdicion) {
 					tabPanel.down("[itemId=botoneditar]").setVisible(false);
 				} else {		
 	            	tabPanel.evaluarBotonesEdicion(tab);
@@ -44,9 +43,8 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 	            		return false;
 	        		}
 	        		var me= this;
-	        		var viewModel= me.lookupViewModel();
 	        		// Si la pestaña necesita botones de edición
-	        		if(!tabNext.ocultarBotonesEdicion && viewModel.get('gasto.esGastoEditable')== true) {
+	        		if(!tabNext.ocultarBotonesEdicion) {
 	        			tabPanel.evaluarBotonesEdicion(tabNext);
 	        		}
 	        		return true;
@@ -63,7 +61,8 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 					xtype: 'buttontab',
 					itemId: 'botoneditar',
 				    handler	: 'onClickBotonEditar',
-				    iconCls: 'edit-button-color'
+				    iconCls: 'edit-button-color',
+				    hidden: false
 				},
 				{
 					xtype: 'buttontab',
@@ -98,18 +97,24 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		me.callParent();
     },
 
-	evaluarBotonesEdicion: function(tab) {    	
-		var me = this;
-		me.down("[itemId=botoneditar]").setVisible(false);
-		var editionEnabled = function() {
-			me.down("[itemId=botoneditar]").setVisible(true);
-		}
+		evaluarBotonesEdicion: function(tab) {
+			var me = this,
+			viewModel= me.lookupViewModel(),
+			esEditable = viewModel.get('gasto.esGastoEditable')== true;
+			
+			me.down("[itemId=botoneditar]").setVisible(false);
 
-		// Si la pestaña recibida no tiene asignados roles de edicion 
-		if(Ext.isEmpty(tab.funPermEdition)) {
-			editionEnabled();
-		} else {
-			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+			var editionEnabled = function() {
+				if(esEditable) {
+					me.down("[itemId=botoneditar]").setVisible(true);
+				}
+			}
+
+			// Si la pestaña recibida no tiene asignados roles de edicion 
+			if(Ext.isEmpty(tab.funPermEdition)) {
+				editionEnabled();
+			} else {
+				$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+			}
 		}
-	}
 });

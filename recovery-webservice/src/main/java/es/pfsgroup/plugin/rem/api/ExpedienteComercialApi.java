@@ -44,6 +44,13 @@ public interface ExpedienteComercialApi {
 	public ExpedienteComercial findOne(Long id);
 
 	/**
+	 * Recupera el ExpedienteComercial indicado.
+	 * @param numExpediente
+	 * @return ExpedienteComercial
+	 */
+	public ExpedienteComercial findOneByNumExpediente(Long numExpediente);
+	
+	/**
 	 * Método que recupera un conjunto de datos del expediente comercial según
 	 * su id
 	 * 
@@ -469,5 +476,6 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception;
+
 
 }

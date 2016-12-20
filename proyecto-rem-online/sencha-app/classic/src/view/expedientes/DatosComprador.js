@@ -41,21 +41,19 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 //			me.resetWindow();			
 		}
 	},
-	
+
     initComponent: function() {
-    	
     	var me = this;
 
     	me.setTitle(HreRem.i18n("title.windows.datos.comprador"));
-    	
-    	me.buttonAlign = 'right';   
-    	if(!Ext.isEmpty(me.idComprador) && CONST.ESTADOS_EXPEDIENTE['APROBADO'] == me.expediente.data.codigoEstado){
+
+    	me.buttonAlign = 'right';
+
+    	if(!Ext.isEmpty(me.idComprador)){
     		me.buttons = [ { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
-    	}
-    	else if(!Ext.isEmpty(me.idComprador)){
     		me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador'},{ itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
-    	}
-    	else{
+
+    	}else{
     		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear'), handler: 'onClickBotonCrearComprador'},{ itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
     	}
 
@@ -378,6 +376,9 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            		store: '{comboEstadoCivil}',
 									            		value: '{comprador.codEstadoCivil}'
 									            	},
+									            	listeners: {
+														change: 'comprobarObligatoriedadCamposNexos'
+						    						},
 									            	allowBlank:true
 									            	
 										        },

@@ -256,9 +256,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	reference: 'chkbxpublicacionforzada',
 								        	colspan: 3,
 								        	bind: {
-								        		readOnly: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
 								        		value	: '{activohistoricoestadopublicacion.publicacionForzada}'
-								        		},
+								        	},
 								        	listeners:{
 								        		change: 'onchkbxEstadoPublicacionChange'
 								        	}
@@ -269,7 +268,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	reference: 'chkbxpublicacionordinaria',
 								        	colspan: 3,
 								        	bind: {
-								        		readOnly: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
 								        		value	: '{activohistoricoestadopublicacion.publicacionOrdinaria}'
 								        	},
 								        	listeners:{

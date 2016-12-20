@@ -9,12 +9,9 @@ Ext.define('HreRem.view.comercial.ComercialMainMenu', {
     				'HreRem.view.comercial.configuracion.ConfiguracionComercialMain'],
     listeners: {
     	boxready: function (tabPanel) {
-			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
-				var tab = tabPanel.items.items[0];
-				tabPanel.setActiveTab(tab);
-			}
-    	}
-	},
+			tabPanel.getLayout().setActiveItem(tabPanel.items.indexOf(tabPanel.down('[xtype=ofertascomercialmain]')));
+		}
+    },
 
     initComponent: function () {
         var me = this;

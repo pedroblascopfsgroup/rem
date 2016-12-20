@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20161202
+--## FECHA_CREACION=20161212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1263
@@ -93,7 +93,7 @@ create or replace PROCEDURE '||V_ESQUEMA||'.ACTIVO_PUBLICACION_AUTO (ACT_ID_PARA
 	              WHERE act.ACT_ID = V_ACT_ID;
 
 	              -- Actualizar último registro, si lo hubiese.
-	              EXECUTE IMMEDIATE ''SELECT MAX(HEP_ID) FROM '''''||V_ESQUEMA||'''''.ACT_HEP_HIST_EST_PUBLICACION WHERE ACT_ID = ''||V_ACT_ID||'''' INTO LAST_ID_NUM;
+	              EXECUTE IMMEDIATE ''SELECT MAX(HEP_ID) FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION WHERE ACT_ID = ''||V_ACT_ID||'''' INTO LAST_ID_NUM;
 	              IF LAST_ID_NUM IS NOT NULL THEN
 	                  DBMS_OUTPUT.PUT_LINE(''[INFO] actualizar último histórico del activo ''||V_ACT_ID);
 	                  UPDATE '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HIST SET
@@ -122,7 +122,7 @@ create or replace PROCEDURE '||V_ESQUEMA||'.ACTIVO_PUBLICACION_AUTO (ACT_ID_PARA
 	              WHERE act.ACT_ID = V_ACT_ID;
 
 	              -- Actualizar último registro, si lo hubiese.
-	              EXECUTE IMMEDIATE ''SELECT MAX(HEP_ID) FROM '''''||V_ESQUEMA||'''''.ACT_HEP_HIST_EST_PUBLICACION WHERE ACT_ID = ''||V_ACT_ID||'''' INTO LAST_ID_NUM;
+	              EXECUTE IMMEDIATE ''SELECT MAX(HEP_ID) FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION WHERE ACT_ID = ''||V_ACT_ID||'''' INTO LAST_ID_NUM;
 	              IF LAST_ID_NUM IS NOT NULL THEN
 	                  DBMS_OUTPUT.PUT_LINE(''[INFO] actualizar último histórico del activo ''||V_ACT_ID);
 	                  UPDATE '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HIST SET

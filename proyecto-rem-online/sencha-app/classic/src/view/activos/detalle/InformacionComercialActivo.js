@@ -1,59 +1,29 @@
 Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'informacioncomercialactivo',    
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
+    extend			: 'HreRem.view.common.FormBase',
+    xtype			: 'informacioncomercialactivo',    
+    cls				: 'panel-base shadow-panel',
+    collapsed		: false,
     disableValidation: true,
-    reference: 'informacioncomercialactivoref',
-    //layout: 'fit',
-    scrollable: 'y',
+    reference		: 'informacioncomercialactivoref',
+    scrollable		: 'y',
+	recordName		: "infoComercial",
+	recordClass		: "HreRem.model.ActivoInformacionComercial",
+    requires		: ['HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformacionComercial', 'HreRem.model.Distribuciones'],
 
-	recordName: "infoComercial",
-	
-	recordClass: "HreRem.model.ActivoInformacionComercial",
-	
-    requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformacionComercial', 'HreRem.model.Distribuciones'/*,
-    'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
-    'HreRem.view.activos.detalle.InfoEdificioCompleto'*/
-    ],
-    
     listeners: {
-    	
-    	// Aparecen en Publicacion -> Informe comercial
-    	/*boxready: function() {
-    		var me = this,
-    		model = me.lookupController().getViewModel();
-		    
-    		if(model.get("activo.isLocalComercial")) {
-		     	me.add({                    
-					xtype:'infolocalcomercial',
-					title: HreRem.i18n('title.local.comercial')
-		        });
-    		}
-    		if(model.get("activo.isPlazaAparcamiento")) {
-		     	me.add({    
-					xtype:'infoplazaaparcamiento',
-					title: HreRem.i18n('title.plaza.aparcamiento')
-	        	});
-    		}
-	    	if(model.get("activo.isVivienda")) {
-			     me.add({    
-		        	xtype: 'infovivienda'
-		        });	 
-	    	}
-	    	
+    	boxready: function() {
+    		var me = this;
+
 	    	me.lookupController().cargarTabData(me);
-    	}*/
+    	}
     },
-    
 
     initComponent: function () {
-
         var me = this;
-        me.setTitle(HreRem.i18n('title.informacion.comercial'));
-        
-        var items= [
 
+        me.setTitle(HreRem.i18n('title.informacion.comercial'));
+
+        var items= [
 			{    
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.mediador'),
@@ -100,8 +70,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 						}
 					]
 			},
-			{    
-  
+			{
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.informacion.general'),
 				defaultType: 'textfieldbase',
@@ -195,13 +164,9 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 			            	displayField: 'descripcion',
     						valueField: 'codigo'
 				        }*/
-		                
 					 ]
-                
             },
-         
-            {    
-   
+            {
 				xtype:'fieldset',
 				collapsible: true,
 				width: '100%',
@@ -272,12 +237,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 									readOnly: true
 						        }
 	            			]
-		                
 						},
-		                
-				        
-				        
-				        
 		                { 
 			        	    xtype:'fieldset',
 			        	    margin: '0 15 10 5',	
@@ -333,18 +293,14 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
 							readOnly: true,
 					 		labelAlign: 'top'
 		                }
-
-					 ]
-                 
-           }                
-            
+				]
+           }
      	];
 
     	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
-    	
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;

@@ -257,6 +257,21 @@ public class RestManagerImpl implements RestApi {
 
 	}
 
+	@Override
+	public void sendResponse(HttpServletResponse response,String jsonResp) {
+		response.reset();
+		PrintWriter out;
+		response.setHeader("Content-Type", "application/json;charset=UTF-8");
+		try {
+			out = response.getWriter();
+			out.print(jsonResp);
+			out.flush();
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Object transformObject(Object value) {
 		if (value instanceof Integer || value instanceof Long || value instanceof Float) {

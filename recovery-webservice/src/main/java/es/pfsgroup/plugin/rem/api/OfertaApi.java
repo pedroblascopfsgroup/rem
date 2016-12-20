@@ -256,6 +256,13 @@ public interface OfertaApi {
 	public boolean checkConflictoIntereses(TareaExterna tareaExterna);	
 	
 	/**
+	 * Metodo que comprueba si la oferta tiene relleno el comite sancionador
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkComiteSancionador(TareaExterna tareaExterna);
+	
+	/**
 	 * Método que comprueba si el activo tiene atribuciones para sancionar el
 	 * expediente
 	 * 

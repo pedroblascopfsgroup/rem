@@ -1179,7 +1179,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    // Esta funcion es llamado cuando algún checkbox del apartado de 'Estados de publicación' es activado
+    // Esta funcion es llamada cuando algún checkbox del apartado de 'Estados de publicación' es activado
     // y se encarga de permitir tener sólo un checkbox de estado activado. Además, reinicia el estado de
     // los componentes de cada sección que no esté seleccionada.
     onchkbxEstadoPublicacionChange: function(chkbx) {
@@ -1187,9 +1187,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var id = chkbx.getReference();
     	var view = me.getView();
 
-    	if(!chkbx.getValue() && id != "chkbxpublicacionforzada" && id != "chkbxpublicacionordinaria"){
-    		// si el checkbox esta siendo desactivado y no es de la sección 'publicación', tan sólo resetear conenido textbox de la propia sección del checkbox.
+    	if(!chkbx.getValue()){
+    		// Si el checkbox esta siendo desactivado, tan sólo resetear conenido textbox de la propia sección del checkbox.
+    		// Si el checkbox es de la sección de publicación, no hacer nada.
     		switch (id){
+    		case "chkbxpublicacionordinaria":
+    		case "chkbxpublicacionforzada":
+    			return;
         	case "chkbxpublicacionocultarprecio":
         		// textfield.
         		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
@@ -1553,12 +1557,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
 	    	record.data.id= idProveedor;
-//	   		me.redirectTo('activos', true);
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }
 	    else if(!Ext.isEmpty(record.get('id'))){
-	    	var idProveedor = record.get("id");
-//	   		me.redirectTo('activos', true);
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }
    },
@@ -2115,7 +2118,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     ocultarChkPublicacionOrdinaria: function(record) {
     	var me = this,
-    	ocultar = me.getViewModel().get('activo').get('isPublicable'),
+    	ocultar = !me.getViewModel().get('activo').get('isPublicable'),
     	chkbxpublicacionordinaria = me.lookupReference('chkbxpublicacionordinaria');
 
     	chkbxpublicacionordinaria.setHidden(ocultar);

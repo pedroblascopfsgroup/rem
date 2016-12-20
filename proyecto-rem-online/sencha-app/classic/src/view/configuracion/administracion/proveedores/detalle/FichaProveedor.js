@@ -66,6 +66,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								{
 									 xtype : 'comboboxfieldbase',
 									 fieldLabel: HreRem.i18n('fieldlabel.tipo'),
+									 allowBlank: false,
 									 reference: 'cbTipoProveedor',
 									 chainedStore: 'comboSubtipoProveedor',
 									 chainedReference: 'cbSubtipoProveedor',
@@ -74,7 +75,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								       value : '{proveedor.tipoProveedorCodigo}'
 								     },
 								     listeners: {
-					                   select: 'onChangeChainedCombo'
+					                   select: 'onChangeChainedCombo',
+					                   change: 'onTipoProveedorChange'
 					            	 }
 								},
 						        { 
@@ -92,6 +94,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								{ 
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo'),
+						        	allowBlank: false,
 						        	reference: 'cbSubtipoProveedor',
 						        	valueField: 'codigo',
 						        	bind: {
@@ -154,6 +157,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						        {
 			        				xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
+									reference: 'dateConstitucionProveedor',
 									bind: {
 										disabled: '{!proveedor.isEntidad}',
 										value: '{proveedor.fechaConstitucionProveedor}'
@@ -382,7 +386,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								{ 
 									xtype: 'datefieldbase',
 									fieldLabel:  HreRem.i18n('fieldlabel.proveedor.ejercicio.opcion.fecha'),						        	
-									bind: '{proveedor.fechaEjercicioOpcion}'
+									bind: {
+										disabled: '{!proveedor.criterioCajaIVA}',
+										value: '{proveedor.fechaEjercicioOpcion}'
+									}
 								}
 							]
 		            },

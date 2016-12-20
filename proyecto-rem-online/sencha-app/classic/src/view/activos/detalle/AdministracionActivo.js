@@ -8,6 +8,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 
     initComponent: function () {
         var me = this;
+
         me.setTitle(HreRem.i18n('title.administracion.activo'));
 
         var items= [
@@ -36,7 +37,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        } 
 				    },
 					columns: [
-					{	  
+						{
 				        	xtype: 'actioncolumn',
 				            dataIndex: 'codigoProveedorRem',
 				            text: HreRem.i18n('title.activo.administracion.numProveedor'),
@@ -55,6 +56,12 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            align: 'right',
 				            hideable: false,
 				            sortable: true
+				       },
+					   {    text: HreRem.i18n('title.activo.administracion.numProveedor'),
+				        	dataIndex: 'codigoProveedor',
+				        	hidden: true,
+				        	hideable: false,
+				        	flex: 1
 				       },
 				       {    text: HreRem.i18n('title.activo.administracion.tipo'),
 				        	dataIndex: 'tipoProveedorDescripcion',
@@ -81,7 +88,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        	dataIndex: 'fechaExclusion',
 				        	formatter: 'date("d/m/Y")',
 				        	flex: 1
-				       }        
+				       }
 				    ],
 
 				    dockedItems : [
@@ -101,29 +108,26 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				    flex: 1
 				}
 			]
-			},
-
-			{
+		},
+		{
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.listado.gastos'),
 			collapsible: false,
 			items :	[
-			{
-			    xtype		: 'gridBase',
-			    idPrincipal : 'idGasto',
-			    colspan: 3,
-			    reference: 'listadogastosref',
-				cls	: 'panel-base shadow-panel',
-				bind: {
-					store: '{storeGastosProveedor}'
-				},
-
-				listeners: {
-					rowdblclick: 'onClickAbrirGastoProveedor'	
-				},
-
-				columns: [
-					{	  
+				{
+				    xtype		: 'gridBase',
+				    idPrincipal : 'idGasto',
+				    colspan: 3,
+				    reference: 'listadogastosref',
+					cls	: 'panel-base shadow-panel',
+					bind: {
+						store: '{storeGastosProveedor}'
+					},
+					listeners: {
+						rowdblclick: 'onClickAbrirGastoProveedor'	
+					},
+					columns: [
+						{	  
 				        	xtype: 'actioncolumn',
 				            dataIndex: 'numGasto',
 				            text: HreRem.i18n('title.activo.administracion.numGasto'),
@@ -142,74 +146,74 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            align: 'right',
 				            hideable: false,
 				            sortable: true
-				   },
-			       {    text: HreRem.i18n('title.activo.administracion.tipo'),
-			        	dataIndex: 'tipoGastoDescripcion',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.subtipo'),
-			        	dataIndex: 'subtipoGastoDescripcion',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.concepto'),
-			        	dataIndex: 'conceptoGasto',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.fecha.emision'),
-			        	formatter: 'date("d/m/Y")',
-			        	dataIndex: 'fechaEmisionGasto',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.periodicidad'),
-			        	dataIndex: 'periodicidadGastoDescripcion',
-			        	flex: 1
-			       },
-			        {    text: HreRem.i18n('title.activo.administracion.porcentajeParticipacion'),
-			        	dataIndex: 'participacion',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.importe'),
-			        	dataIndex: 'importeTotalGasto',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.estado'),
-			        	dataIndex: 'estadoGastoDescripcion',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.fecha.pago'),
-			        	formatter: 'date("d/m/Y")',
-			        	dataIndex: 'fechaPagoGasto',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.afecta.otros.activos'),
-			        	renderer: function(val, meta, record){
-						    if(!Ext.isEmpty(record.data.participacion) && record.data.participacion!="100.0"){
-						    	return "SI";
-						    }
-						    return "NO";
-						},
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.observaciones'),
-			        	dataIndex: 'observacionesGastos',
-			        	flex: 1
-			       }
-			    ],
-
-			    dockedItems: [
-			        {
-			            xtype: 'pagingtoolbar',
-			            dock: 'bottom',
-			            displayInfo: true,
-			            bind: {
-			                store: '{storeGastosProveedor}'
-			            }
-			        }
-			   ]
-			}
+					   },
+				       {    text: HreRem.i18n('title.activo.administracion.tipo'),
+				        	dataIndex: 'tipoGastoDescripcion',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.subtipo'),
+				        	dataIndex: 'subtipoGastoDescripcion',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.concepto'),
+				        	dataIndex: 'conceptoGasto',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.fecha.emision'),
+				        	formatter: 'date("d/m/Y")',
+				        	dataIndex: 'fechaEmisionGasto',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.periodicidad'),
+				        	dataIndex: 'periodicidadGastoDescripcion',
+				        	flex: 1
+				       },
+				        {    text: HreRem.i18n('title.activo.administracion.porcentajeParticipacion'),
+				        	dataIndex: 'participacion',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.importe'),
+				        	dataIndex: 'importeTotalGasto',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.estado'),
+				        	dataIndex: 'estadoGastoDescripcion',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.fecha.pago'),
+				        	formatter: 'date("d/m/Y")',
+				        	dataIndex: 'fechaPagoGasto',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.afecta.otros.activos'),
+				        	renderer: function(val, meta, record){
+							    if(!Ext.isEmpty(record.data.participacion) && record.data.participacion!="100.0"){
+							    	return "SI";
+							    }
+							    return "NO";
+							},
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.observaciones'),
+				        	dataIndex: 'observacionesGastos',
+				        	flex: 1
+				       }
+				    ],
+	
+				    dockedItems: [
+				        {
+				            xtype: 'pagingtoolbar',
+				            dock: 'bottom',
+				            displayInfo: true,
+				            bind: {
+				                store: '{storeGastosProveedor}'
+				            }
+				        }
+				   ]
+				}
 			]
-		}
-        ];
+	}
+    ];
 
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
@@ -221,5 +225,5 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
-    }  
+    }
 });

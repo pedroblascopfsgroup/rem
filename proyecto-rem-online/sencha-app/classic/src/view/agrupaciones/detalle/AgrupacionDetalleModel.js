@@ -112,7 +112,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     		 model: 'HreRem.model.Fotos',
 		     proxy: {
 		        type: 'uxproxy',
-		        //remoteUrl: 'activo/getFotosById',
 		        api: {
 		            read: 'agrupacion/getFotosAgrupacionById',
 		            create: 'agrupacion/getFotosAgrupacionById',
@@ -244,7 +243,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'agrupacion/getGestoresLoteComercial',
-				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'gestoriaFormalizacion'}//TODO: crear este tipo de gestor.
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GIAFORM'}
 			}   	
 	    },
 
@@ -271,7 +270,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'agrupacion/getGestoresLoteComercial',
-				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'gestorComercialBackOffice'}//TODO: crear este tipo de gestor.
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GCBO'}
 			}   	
 	    }
      }

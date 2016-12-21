@@ -301,10 +301,10 @@ public class AgrupacionAdapter {
 	}
 	
 	public Page getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id) {
-		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-//		DtoAgrupacionFilter filtro = new DtoAgrupacionFilter();
+
 		filtro.setAgrupacionId(String.valueOf(id));
+
 		try { 	
 			Page listaActivos = activoAgrupacionApi.getListActivosAgrupacionById(filtro, usuarioLogado);
 			return listaActivos;
@@ -312,8 +312,6 @@ public class AgrupacionAdapter {
 			e.printStackTrace();
 			return null;
 		}
-	
-				
 	}
 
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {

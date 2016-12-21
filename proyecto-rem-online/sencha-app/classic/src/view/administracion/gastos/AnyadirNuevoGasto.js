@@ -29,10 +29,10 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 			
 			form.setBindRecord(Ext.create('HreRem.model.GastoProveedor'));
 			if(!Ext.isEmpty(me.nifEmisor)) {
-		        var fieldEmisor = me.down('field[name=buscadorCodigoProveedorRem]');
-		        fieldEmisor.forceSelection=false;
+		        var fieldEmisor = me.down('field[reference=buscadorNifEmisorField]');
 	        	fieldEmisor.setValue(me.nifEmisor);
 	        	fieldEmisor.setReadOnly(true);
+	        	fieldEmisor.lookupController().buscarProveedor(fieldEmisor);		
 			}
 			        	
 			Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),

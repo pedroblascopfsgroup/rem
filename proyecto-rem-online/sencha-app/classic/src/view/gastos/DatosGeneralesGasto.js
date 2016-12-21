@@ -134,9 +134,11 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 													        			field.lookupController().buscarProveedor(field);											        			
 													        		}
 													        	},
-													        	change: function(field, newvalue) {												        		
-													        		if(Ext.isEmpty(newvalue)) {
+													        	change: function(field, newValue) {												        		
+													        		if(Ext.isEmpty(newValue)) {
 													        			field.up("form").down("[reference=comboProveedores]").reset()
+													        		} else {
+													        			field.lookupController().buscarProveedor(field);
 													        		}
 													        	
 													        	}

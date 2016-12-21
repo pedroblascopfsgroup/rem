@@ -106,37 +106,5 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesController', {
 		}
 
 		return true;
-    },
-
-    // Método que es llamado cuando se solicita exportar losa ctivos de la agrupación tipo 'lote comercial'.
-    onClickExportarActivosLoteComercial: function() {
-    	
-	  	var me = this;
-		var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
-		var url = $AC.getRemoteUrl('agrupacion/exportarActivosLoteComercial');
-
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
-
-		Ext.Ajax.request({
-			url: url,
-			params: {agrID : idAgrupacion},
-
-			success: function(response, opts){
-				var obj = Ext.decode(response.responseText);
-			    if (obj.success == 'true') {
-			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    } else {
-			    	me.fireEvent("errorToast", obj.msg); 
-			    }
-			},
-
-		 	failure: function(record, operation) {
-		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-		    },
-
-		    callback: function(record, operation) {
-				me.getView().unmask();
-		    }
-		});
     }
 });

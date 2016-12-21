@@ -25,6 +25,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
+import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -37,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 
 
@@ -643,9 +645,17 @@ public class AgrupacionController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void exportarActivosLoteComercial(@RequestParam Long agrID, DtoAgrupacionFilter dtoAgrupacionFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void exportarActivosLoteComercial(Long agrID, DtoAgrupacionFilter dtoAgrupacionFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		//TODO:
+		dtoAgrupacionFilter.setStart(excelReportGeneratorApi.getStart());
+		dtoAgrupacionFilter.setLimit(excelReportGeneratorApi.getLimit());
+
+		List<VActivosAgrupacion> listaActivosPorAgrupacion = (List<VActivosAgrupacion>) adapter.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID).getResults();
+
+		ExcelReport report = new AgrupacionListadoActivosExcelReport(listaActivosPorAgrupacion);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 }

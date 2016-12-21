@@ -22,7 +22,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
-import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 
 @Repository("ActivoAgrupacionDao")
 public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion, Long> implements ActivoAgrupacionDao{
@@ -161,7 +160,8 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
     }*/	
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<ActivoFoto> getFotosActivosAgrupacionById(Long id) {
     	
     	try {
@@ -210,6 +210,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		return HibernateQueryUtils.page(this, hb, subdivision);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoFoto> getFotosSubdivision(DtoSubdivisiones subdivision) {
 		
@@ -235,6 +236,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoFoto> getFotosAgrupacionById(Long id) {
 		

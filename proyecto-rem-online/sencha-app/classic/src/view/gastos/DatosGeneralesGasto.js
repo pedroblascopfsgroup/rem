@@ -113,6 +113,60 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											collapsible: false,
 											items: [
 											
+													{
+														xtype: 'textfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
+														reference: 'buscadorNifEmisorField',
+														readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
+														bind: '{gasto.buscadorNifEmisor}',
+														triggers: {														
+																buscarEmisor: {
+														            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+														            handler: 'buscarProveedor'
+														        }
+														        
+														},
+														cls: 'searchfield-input sf-con-borde',
+														enableKeyEvents: true,
+												        listeners: {
+													        	specialKey: function(field, e) {
+													        		if (e.getKey() === e.ENTER) {
+													        			field.lookupController().buscarProveedor(field);											        			
+													        		}
+													        	},
+													        	change: function(field, newvalue) {												        		
+													        		if(Ext.isEmpty(newvalue)) {
+													        			field.up("form").down("[reference=comboProveedores]").reset()
+													        		}
+													        	
+													        	}
+													    },
+													    publishes: 'value'
+									                },	
+													{
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.emisor'),													
+														reference: 'comboProveedores',
+														allowBlank: false,
+														editable: false,
+														store: storeEmisoresGasto,
+														emptyText: HreRem.i18n('txt.seleccionar.emisor'),
+	    												valueField		: 'codigo',
+	    												bind: {
+	    													value: '{gasto.codigoProveedorRem}'
+	    												},
+	    												tpl: Ext.create('Ext.XTemplate',
+										            		    '<tpl for=".">',
+										            		        '<div class="x-boundlist-item">{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion}</div>',
+										            		    '</tpl>'
+										            	),
+										            	displayTpl:  Ext.create('Ext.XTemplate',
+										            		    '<tpl for=".">',
+										            		        '{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion}',
+										            		    '</tpl>'
+										            	)
+								            	    },/*
+											
 												{
 													xtype: 'comboboxfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),													
@@ -183,7 +237,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 													bind: '{gasto.codigoProveedorRem}',
 													allowBlank: false,
 													readOnly: true
-												},
+												},*/
 												 { 
 													xtype: 'comboboxfieldbase',
 									               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.destinatario'),

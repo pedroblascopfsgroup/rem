@@ -19,9 +19,11 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.users.domain.Usuario;
+
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -68,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -100,6 +103,9 @@ public class AgrupacionAdapter {
     
     @Autowired
     private ActivoDao activoDao;
+    
+    @Autowired
+    private ActivoAdapter activoAdapter;
 
     @Autowired
     private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
@@ -141,14 +147,15 @@ public class AgrupacionAdapter {
 	private final Log logger = LogFactory.getLog(getClass());
 	
 	public static final String OFERTA_INCOMPATIBLE_AGR_MSG = "El tipo de oferta es incompatible con el destino comercial de algún activo";
+	public static final String OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG = "No se puede aceptar la oferta debido a que no se encuentran todos los gestores asignados";
     
 	public DtoAgrupaciones getAgrupacionById(Long id){
-		
+
 		DtoAgrupaciones dtoAgrupacion = new DtoAgrupaciones();
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);	
 
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		
+
 		DtoAgrupacionFilter dtoAgrupacionFilter = new DtoAgrupacionFilter();
 		dtoAgrupacionFilter.setAgrupacionId(agrupacion.getId().toString());
 		dtoAgrupacionFilter.setLimit(1);
@@ -157,16 +164,34 @@ public class AgrupacionAdapter {
 		VBusquedaAgrupaciones agrupacionVista = (VBusquedaAgrupaciones) activoAgrupacionApi.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado).getResults().get(0);
 
 		try {
-			
+
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVista.getPublicados());
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroActivos", agrupacionVista.getActivos());
-			
+
 			if (agrupacion.getTipoAgrupacion() != null) {
-				
+
 				BeanUtils.copyProperty(dtoAgrupacion, "tipoAgrupacionDescripcion", agrupacion.getTipoAgrupacion().getDescripcion());
 				BeanUtils.copyProperty(dtoAgrupacion, "tipoAgrupacionCodigo", agrupacion.getTipoAgrupacion().getCodigo());
-				
+
+				// Si es de tipo 'Lote Comercial'
+				if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
+
+					if(!Checks.esNulo(agrupacionTemp.getUsuarioGestoriaFormalizacion())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestoriaFormalizacion", agrupacionTemp.getUsuarioGestoriaFormalizacion().getId());
+					}
+					if(!Checks.esNulo(agrupacionTemp.getUsuarioGestorComercial())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercial", agrupacionTemp.getUsuarioGestorComercial().getId());
+					}
+					if(!Checks.esNulo(agrupacionTemp.getUsuarioGestorFormalizacion())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorFormalizacion", agrupacionTemp.getUsuarioGestorFormalizacion().getId());
+					}
+					if(!Checks.esNulo(agrupacionTemp.getUsuarioGestorComercialBackOffice())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercialBackOffice", agrupacionTemp.getUsuarioGestorComercialBackOffice().getId());
+					}
+				}
+
 				// Si es de tipo 'Asistida'.
 				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 					ActivoAsistida agrupacionTemp = (ActivoAsistida) agrupacion;
@@ -276,10 +301,10 @@ public class AgrupacionAdapter {
 	}
 	
 	public Page getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id) {
-		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-//		DtoAgrupacionFilter filtro = new DtoAgrupacionFilter();
+
 		filtro.setAgrupacionId(String.valueOf(id));
+
 		try { 	
 			Page listaActivos = activoAgrupacionApi.getListActivosAgrupacionById(filtro, usuarioLogado);
 			return listaActivos;
@@ -287,8 +312,6 @@ public class AgrupacionAdapter {
 			e.printStackTrace();
 			return null;
 		}
-	
-				
 	}
 
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {
@@ -924,28 +947,63 @@ public class AgrupacionAdapter {
 		return ofertasAgrupacion;
 		
 	}
-	
+
+	/**
+	 * Este método comprueba si los gestores de una agrupación de tipo 'lote comercial' se encuentran
+	 * asignados devolviendo True. Si los gestores no están asignados devuelve False.
+	 * 
+	 * @param agr : agrupación de tipo 'lote comercial'.
+	 * @return True si todos los gestores de la agrupación están asignados. False si no lo están.
+	 */
+	private boolean agrupacionLoteComercialGestoresAsignados(ActivoAgrupacion agr) {
+		ActivoLoteComercial loteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", agr.getId()));
+
+		if(Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) ||
+				Checks.esNulo(loteComercial.getUsuarioGestorFormalizacion()) || Checks.esNulo(loteComercial.getUsuarioGestoriaFormalizacion())) {
+			return false;
+		}
+
+		return true;
+	}
+
 	@Transactional(readOnly = false)
-	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto){
-		
+	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws Exception {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
+		Oferta oferta = genericDao.get(Oferta.class, filtro);
+
+		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+
+		// Si se pretende aceptar la oferta, comprobar primero si la agrupación de la oferta es de tipo 'Lote comercial'.
+		if(DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())){
+			if(!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+				// Comprobar si la agrupación tiene todos los gestores asignados.
+				if(!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+					throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+				}
+			}
+		}
+
 		try{
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
-			Oferta oferta = genericDao.get(Oferta.class, filtro);
-			
-			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
-			
 			oferta.setEstadoOferta(tipoOferta);
-			
+
 			//Si el estado de la oferta cambia a Aceptada cambiamos el resto de estados a Congelada excepto los que ya estuvieran en Rechazada
 			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())){
+				// Comprobar si la agrupación de la oferta es de tipo 'Lote comercial'.
+				if(!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+					// Comprobar si la agrupación tiene todos los gestores asignados.
+					if(!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+					}
+				}
 				List<VOfertasActivosAgrupacion> listaOfertas= getListOfertasAgrupacion(dto.getIdAgrupacion());
-				
+
 				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
-					
+
 					if(!vOferta.getIdOferta().equals(dto.getIdOferta().toString())){
 						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(vOferta.getIdOferta()));
 						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
-						
+
 						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
 						if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())){
 							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
@@ -953,29 +1011,27 @@ public class AgrupacionAdapter {
 						}
 					}
 				}
-				
+
 				List<Activo>listaActivos= new ArrayList<Activo>();
-				
+
 				for(ActivoOferta activoOferta: oferta.getActivosOferta()){
 					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
 				}
-				
+
 				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
 				Trabajo trabajo= trabajoApi.create(subtipoTrabajo, listaActivos, null);
-				
+
 				activoManager.crearExpediente(oferta,trabajo);
 			}
-			
+
 			genericDao.update(Oferta.class, oferta);
-			
+
 		}catch(Exception ex) {
 			logger.error(ex.getMessage());
 			return false;
 		}
-		
-		
+
 		return true;
-		
 	}
 	
 	@Transactional(readOnly = false)
@@ -1246,7 +1302,29 @@ public class AgrupacionAdapter {
 				return false;
 			}
 		}
-		
+
+		// Si es de tipo 'Lote Comercial'.
+		if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+			ActivoLoteComercial loteComercial = (ActivoLoteComercial) agrupacion;
+
+			if(!Checks.esNulo(dto.getCodigoGestoriaFormalizacion())) {
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestoriaFormalizacion());
+				loteComercial.setUsuarioGestoriaFormalizacion(usuario);
+			}
+			if(!Checks.esNulo(dto.getCodigoGestorComercial())) {
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercial());
+				loteComercial.setUsuarioGestorComercial(usuario);
+			}
+			if(!Checks.esNulo(dto.getCodigoGestorFormalizacion())) {
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorFormalizacion());
+				loteComercial.setUsuarioGestorFormalizacion(usuario);
+			}
+			if(!Checks.esNulo(dto.getCodigoGestorComercialBackOffice())) {
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercialBackOffice());
+				loteComercial.setUsuarioGestorComercialBackOffice(usuario);
+			}
+		}
+
 		// Si es de tipo 'Asistida'.
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
@@ -1392,5 +1470,17 @@ public class AgrupacionAdapter {
 		porcentaje = (float) (porcentaje / total);
 		
 		return porcentaje;
+	}
+
+	public List<DtoUsuario> getUsuariosPorCodTipoGestor(String codigoGestor) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+		EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+		
+		if(!Checks.esNulo(tipoGestor)) {
+			return activoAdapter.getComboUsuarios(tipoGestor.getId());
+		}
+		
+		return null;
 	}
 }

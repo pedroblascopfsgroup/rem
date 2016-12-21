@@ -290,6 +290,10 @@ white-space: normal !important;
   background: url(images/ico_gasto_des.png) center center no-repeat;
 }
 
+.ico-pestana-tramites {
+  background: url(images/ico_tareas_act.svg) center center no-repeat;
+}
+
 .ico-download {
     background: url(images/ico_download.png) center center no-repeat;  
     background-size: 15px;
@@ -490,6 +494,16 @@ x-panel x-tabpanel-child x-panel-default {
 .tabpanel-base .x-tab.x-tab-default:hover .x-tab-button > .ico-pestana-gasto{ 
   background: url(images/ico_gasto_act.png) center center no-repeat;
 }
+
+.tabpanel-base .x-tab.x-tab-active.x-tab-default .x-tab-button > .ico-pestana-tramites{ 
+  background: url(images/ico_tareas_active) center center no-repeat;
+}
+
+.tabpanel-base .x-tab.x-tab-default:hover .x-tab-button > .ico-pestana-tramites{ 
+  background: url(images/ico_gasto_act.png) center center no-repeat;
+}
+
+
 
 
 

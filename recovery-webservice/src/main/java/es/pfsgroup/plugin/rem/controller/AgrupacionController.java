@@ -25,6 +25,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
+import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -37,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 
 
@@ -337,8 +339,13 @@ public class AgrupacionController extends ParadiseJsonController{
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			model.put("success", false);		
+			if(e.getMessage().equals(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG)) {
+				model.put("msg", AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+				model.put("success", false);
+			} else {
+				e.printStackTrace();
+				model.put("success", false);
+			}		
 		}
 		
 		return createModelAndViewJson(model);
@@ -623,4 +630,32 @@ public class AgrupacionController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestoresLoteComercial(@RequestParam Long agrId, @RequestParam String codigoGestor, ModelMap model) {
+
+		try {
+			model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void exportarActivosLoteComercial(Long agrID, DtoAgrupacionFilter dtoAgrupacionFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		dtoAgrupacionFilter.setStart(excelReportGeneratorApi.getStart());
+		dtoAgrupacionFilter.setLimit(excelReportGeneratorApi.getLimit());
+
+		List<VActivosAgrupacion> listaActivosPorAgrupacion = (List<VActivosAgrupacion>) adapter.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID).getResults();
+
+		ExcelReport report = new AgrupacionListadoActivosExcelReport(listaActivosPorAgrupacion);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
 }

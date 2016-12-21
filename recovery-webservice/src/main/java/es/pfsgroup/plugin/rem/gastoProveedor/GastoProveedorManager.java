@@ -229,6 +229,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setIdEmisor(gasto.getProveedor().getId());
 				dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
 				dto.setBuscadorCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
+				dto.setCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
 			}
 			
 			if(!Checks.esNulo(gasto.getPropietario())){
@@ -325,13 +326,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	private GastoProveedor dtoToGastoProveedor(DtoFichaGastoProveedor dto, GastoProveedor gastoProveedor) {
 		gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
-		
-//		if(!Checks.esNulo(dto.getNifEmisor())){				
-//			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
-//			gastoProveedor.setProveedor(proveedor);
-//		}
-		if(!Checks.esNulo(dto.getBuscadorCodigoProveedorRem())){				
-			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
+
+		if(!Checks.esNulo(dto.getCodigoEmisor())){				
+			ActivoProveedor proveedor = searchProveedorCodigo(dto.getCodigoEmisor().toString());
 			gastoProveedor.setProveedor(proveedor);
 		}
 		
@@ -371,8 +368,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				logger.error(ex.getCause());
 			}
 			
-			if(!Checks.esNulo(dto.getBuscadorCodigoProveedorRem())){
-				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getBuscadorCodigoProveedorRem());
+			if(!Checks.esNulo(dto.getCodigoProveedorRem())){
+				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getCodigoProveedorRem());
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
 				gastoProveedor.setProveedor(proveedor);
 			}
@@ -1877,11 +1874,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
-	public List<DtoProveedorFilter> searchProveedoresByNif(DtoProveedorFilter dto) {
-		List<DtoProveedorFilter> lista = null;
-		if(!Checks.esNulo(dto.getNifProveedor())) {
-			lista = proveedores.getProveedores(dto);
-		}
+	public List<DtoActivoProveedor> searchProveedoresByNif(DtoProveedorFilter dto) {
+		List<DtoActivoProveedor> lista = null;
+		lista = proveedores.getProveedoresByNif(dto.getNifProveedor());
+		
 		return lista;
 	}
 }

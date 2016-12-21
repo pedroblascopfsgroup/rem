@@ -277,12 +277,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	buscarProveedor: function(field, e){
 		var me= this;
-		var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorCodigo');
-		var codigoUnicoProveedor= field.getValue();
+		var nifProveedor= field.getValue();
 		var data;
+		var comboProveedores = me.lookupReference("comboProveedores");
 		
-		if(!Ext.isEmpty(codigoUnicoProveedor)){
-			Ext.Ajax.request({
+		if(!Ext.isEmpty(nifProveedor)){
+			comboProveedores.getStore().getProxy().extraParams.nifProveedor = nifProveedor;	
+			comboProveedores.getStore().load();
+			comboProveedores.expand();
+		}
+			/*Ext.Ajax.request({
 			    			
 			    		     url: url,
 			    		     params: {codigoUnicoProveedor : codigoUnicoProveedor},
@@ -335,8 +339,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			    		     callback: function(options, success, response){
 			    		     }
 			    		     
-			});
-		}
+			});*/
+		
 		
 	},
 	

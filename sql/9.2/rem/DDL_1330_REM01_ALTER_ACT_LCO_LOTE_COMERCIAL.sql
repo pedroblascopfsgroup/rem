@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=Daniel Gutiérrez
---## FECHA_CREACION=20161219
+--## AUTOR=Kevin Fernández
+--## FECHA_CREACION=20161103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1315
+--## INCIDENCIA_LINK=HREOS-1099
 --## PRODUCTO=NO
---## Finalidad: Ampliación de la tabla de SPS_SITUACION_POSESORIA
+--## Finalidad: Ampliar la tabla de proveedores con dos nuevos campos.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,8 +33,8 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_SPS_SIT_POSESORIA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_LCO_LOTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     
     /* -- ARRAY CON NUEVAS COLUMNAS */
@@ -42,18 +42,22 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO							TIPO CAMPO						DESCRIPCION
-    	T_ALTER(  'SPS_NUMERO_CONTRATO_ALQUILER',		'NUMBER(16,0)',					'Número de contrato de alquiler'),
-    	T_ALTER(  'SPS_FECHA_RESOLUCION_CONTRATO',	 	'DATE',							'Fecha de resolución del contrato.'),
-		T_ALTER(  'SPS_LOTE_COMERCIAL',					'NUMBER(16,0)',					'Id del lote comercial asociado')
-    	);
+    	T_ALTER(  'LCO_GESTORIA_FORMALIZACION',		 	'NUMBER(16)',				'Indica el usuario asociado al lote comercial de tipo gestoría de formalización.'),
+    	T_ALTER(  'LCO_GESTOR_COMERCIAL',		 		'NUMBER(16)',				'Indica el usuario asociado al lote comercial de tipo gestor comercial.'),
+    	T_ALTER(  'LCO_GESTOR_FORMALIZACION',		 	'NUMBER(16)',				'Indica el usuario asociado al lote comercial de tipo gestor de formalización.'),
+    	T_ALTER(  'LCO_GESTOR_COMER_BACK_OFFICE',		'NUMBER(16)',				'Indica el usuario asociado al lote comercial de tipo gestor comercial back office.')
+		);
     V_T_ALTER T_ALTER;
     
-    /* ARRAY CON NUEVAS FOREIGN KEYS */
+          /* ARRAY CON NUEVAS FOREIGN KEYS */
     TYPE T_FK IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
-    			--NOMBRE FK 							CAMPO FK 					TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_SPS_AGR',							'SPS_LOTE_COMERCIAL',		V_ESQUEMA||'.ACT_AGR_AGRUPACION',			'AGR_ID')
+    			--NOMBRE FK 								CAMPO FK 								TABLA DESTINO FK 					CAMPO DESTINO FK
+		T_FK(	'FK_LCO_GESTORIA_FORMALIZACION',		'LCO_GESTORIA_FORMALIZACION',			''||V_ESQUEMA_M||'.USU_USUARIOS',			'USU_ID'),
+		T_FK(	'FK_LCO_GEST_COMERCIAL',				'LCO_GESTOR_COMERCIAL',					''||V_ESQUEMA_M||'.USU_USUARIOS',			'USU_ID'),
+		T_FK(	'FK_LCO_GEST_FORMALIZACION',			'LCO_GESTOR_FORMALIZACION',				''||V_ESQUEMA_M||'.USU_USUARIOS',			'USU_ID'),
+		T_FK(	'FK_LCO_GEST_COMER_BACK_OFFICE',		'LCO_GESTOR_COMER_BACK_OFFICE',			''||V_ESQUEMA_M||'.USU_USUARIOS',			'USU_ID')
     );
     V_T_FK T_FK;
 

@@ -20,4 +20,6 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
 	public Long getNextNumCodigoProveedor();
 
+	public List<ActivoProveedor> getProveedoresByNifList(String nif);
+
 }

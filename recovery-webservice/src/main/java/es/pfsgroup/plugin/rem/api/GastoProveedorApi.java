@@ -7,6 +7,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
@@ -248,7 +249,7 @@ public interface GastoProveedorApi {
 		 * @param DtoProveedorFilter dto
 		 * @return
 		 */
-		public List<DtoProveedorFilter> searchProveedoresByNif(DtoProveedorFilter dto);
+		public List<DtoActivoProveedor> searchProveedoresByNif(DtoProveedorFilter dto);
 		
 }
 

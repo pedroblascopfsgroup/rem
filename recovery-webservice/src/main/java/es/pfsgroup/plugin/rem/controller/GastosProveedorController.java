@@ -151,12 +151,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView getListGastos(DtoGastosFilter dtoGastosFilter, ModelMap model) {
 		try {
 
-//			if (dtoGastosFilter.getSort() == null){
-//				
-//				dtoGastosFilter.setSort("numFactura");
-//
-//			}
-			//Page page = ofertaApi.getListOfertas(dtoOfertasFilter);
 			DtoPage page = gastoProveedorApi.getListGastos(dtoGastosFilter);
 
 			model.put("data", page.getResults());

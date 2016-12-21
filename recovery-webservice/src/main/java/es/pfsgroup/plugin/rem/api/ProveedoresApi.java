@@ -26,6 +26,13 @@ public interface ProveedoresApi {
 	 * @return Devuelve un objeto Page de Proveedor.
 	 */
 	public List<DtoProveedorFilter> getProveedores(DtoProveedorFilter dtoProveedorFiltro);
+	
+	/**
+	 * Devuelve una lista de proveedores filtrando por nif
+	 * @param dtoProveedorFiltro
+	 * @return
+	 */
+	public List<DtoActivoProveedor> getProveedoresByNif(String nif);
 
 	/**
 	 * Este método devuelve un proveedor por el ID de proveedor.

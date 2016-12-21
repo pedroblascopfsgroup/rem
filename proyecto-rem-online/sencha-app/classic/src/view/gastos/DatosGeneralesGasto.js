@@ -125,6 +125,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 													queryParam: 'nifProveedor',
 													displayField	: 'nifProveedor',
     												valueField		: 'codigo',
+    												bind: '{gasto.buscadorNifEmisor}',
+    												forceSelection: false,
     												tpl: Ext.create('Ext.XTemplate',
 									            		    '<tpl for=".">',
 									            		        '<div class="x-boundlist-item">{nombreProveedor} - {subtipoProveedorDescripcion}</div>',
@@ -137,15 +139,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									            	),
 											        listeners: {
 											        	
-											        	boxready: function (combo) {
-											        		debugger;
-											        		combo.lastQuery = me.getBindRecord().get("nifEmisor");
-											        		combo.store.load();
-											        		
-											        	},
 											        	beforequery: function (op, e) {
 											        		// Sólamente búscamos a partir de 9 caracteres
-											        		debugger;
 											        		if(!Ext.isEmpty(op.query) && op.query.length==9) {
 											        			return true;
 											        		} else {
@@ -153,18 +148,23 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											        		}
 											        		
 											        	},
-											        	change: function(combo, newValue) {
+											        	select: function(combo, record) {
 											        		var nombre = "";
 											        		var codigo = "";
-											        		if(combo.getSelectedRecord()) {
-											        			nombre = combo.getSelectedRecord().get('nombreProveedor'); 
-											        			codigo = combo.getSelectedRecord().get('codigo');
-											        		} else {
-											        			combo.lastQuery = "";
-											        			combo.store.load();
+											        		if(record) {
+											        			nombre = record.get('nombreProveedor'); 
+											        			codigo = record.get('codigo');
 											        		}
 											        		combo.up('form').down('[name=nombreEmisor]').setValue(nombre);
 											        		combo.up('form').down('[name=codigoEmisor]').setValue(codigo);
+											        	},
+											        	
+											        	change: function(combo, newValue) {
+											        		if(Ext.isEmpty(newValue)) {
+											        			combo.up('form').down('[name=nombreEmisor]').setValue("");
+											        			combo.up('form').down('[name=codigoEmisor]').setValue("");
+											        		}
+											        		
 											        	}
 											        }
 							            	    },
@@ -180,7 +180,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 													xtype: 'textfieldbase',
 													name: 'codigoEmisor',
 													fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.emisor'),
-													bind:		'{gasto.codigoEmisor}',
+													bind: '{gasto.codigoProveedorRem}',
 													allowBlank: false,
 													readOnly: true
 												},

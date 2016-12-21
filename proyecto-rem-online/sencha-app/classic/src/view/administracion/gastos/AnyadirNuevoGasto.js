@@ -13,7 +13,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
      * En caso de recibir un nif de emisor, se deshabilita la búsqueda y se asigna el nif recibido.
      * @type 
      */
-    codEmisor: null,
+    nifEmisor: null,
     
     controller: 'gastodetalle',
     viewModel: {
@@ -28,11 +28,11 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 			form = me.down('formBase');
 			
 			form.setBindRecord(Ext.create('HreRem.model.GastoProveedor'));
-			if(!Ext.isEmpty(me.codEmisor)) {
-		        var fieldEmisor = me.down('field[name=buscadorCodigoProveedorRem]'); 
-	        	fieldEmisor.setValue(me.codEmisor);
+			if(!Ext.isEmpty(me.nifEmisor)) {
+		        var fieldEmisor = me.down('field[name=buscadorCodigoProveedorRem]');
+		        fieldEmisor.forceSelection=false;
+	        	fieldEmisor.setValue(me.nifEmisor);
 	        	fieldEmisor.setReadOnly(true);
-	        	fieldEmisor.lookupController().buscarProveedor(fieldEmisor);
 			}
 			        	
 			Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),
@@ -53,6 +53,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
     	
     	var storeEmisoresGasto = new Ext.data.Store({  
     		model: 'HreRem.model.Proveedor',
+    		pageSize: null,
 			proxy: {
 				type: 'uxproxy',
 				actionMethods: {read: 'POST'},
@@ -95,65 +96,59 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							        items: [
 							        
 												{
+													xtype: 'textfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
+													reference: 'buscadorNifEmisorField',
+													readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
+													triggers: {														
+															buscarEmisor: {
+													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+													            handler: 'buscarProveedor'
+													        }
+													        
+													},
+													cls: 'searchfield-input sf-con-borde',
+													enableKeyEvents: true,
+											        listeners: {
+												        	specialKey: function(field, e) {
+												        		if (e.getKey() === e.ENTER) {
+												        			field.lookupController().buscarProveedor(field);											        			
+												        		}
+												        	},
+												        	change: function(field, newvalue) {												        		
+												        		if(Ext.isEmpty(newvalue)) {
+												        			field.up("form").down("[reference=comboProveedores]").reset()
+												        		}
+												        	
+												        	}
+												    },
+												    publishes: 'value'
+								                },	
+												{
 													xtype: 'comboboxfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),													
-													name: 'buscadorCodigoProveedorRem',													
-													hideTrigger: true,
-													editable: true,
-													queryMode: 'remote',
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.emisor'),													
+													reference: 'comboProveedores',
+													allowBlank: false,
+													editable: false,
 													autoLoadOnValue: false,
 													store: storeEmisoresGasto,
-													emptyText: HreRem.i18n('txt.buscar.emisor'),
-													queryParam: 'nifProveedor',
-													displayField	: 'nifProveedor',
+													emptyText: HreRem.i18n('txt.seleccionar.emisor'),
     												valueField		: 'codigo',
+    												bind: {
+    													value: '{gastoNuevo.codigoEmisor}',
+    													readOnly: '{!buscadorNifEmisorField.value}'
+    												},
     												tpl: Ext.create('Ext.XTemplate',
 									            		    '<tpl for=".">',
-									            		        '<div class="x-boundlist-item">{nombreProveedor} - {subtipoProveedorDescripcion}</div>',
+									            		        '<div class="x-boundlist-item">{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion}</div>',
 									            		    '</tpl>'
 									            	),
 									            	displayTpl:  Ext.create('Ext.XTemplate',
 									            		    '<tpl for=".">',
-									            		        '{nifProveedor}',
+									            		        '{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion}',
 									            		    '</tpl>'
-									            	),
-											        listeners: {
-											        	beforequery: function (op, e) {
-											        		// Sólamente búscamos a partir de 9 caracteres
-											        		if(!Ext.isEmpty(op.query) && op.query.length==9) {
-											        			return true;
-											        		} else {
-											        			return false;
-											        		}
-											        		
-											        	},
-											        	change: function(combo, newValue) {
-											        		var nombre = "";
-											        		var codigo = "";
-											        		if(combo.getSelectedRecord()) {
-											        			nombre = combo.getSelectedRecord().get('nombreProveedor'); 
-											        			codigo = combo.getSelectedRecord().get('codigo');
-											        		} else {
-											        			combo.lastQuery = "";
-											        			combo.store.load();
-											        		}
-											        		combo.up('form').down('[name=nombreEmisor]').setValue(nombre);
-											        		combo.up('form').down('[name=codigoEmisor]').setValue(codigo);
-											        	}
-											        }
-							            	    },
-							            	    {
-							            	    	fieldLabel: HreRem.i18n('fieldlabel.nombre.emisor'),
-							            	    	name:	'nombreEmisor',
-							            	    	allowBlank: false,
-													readOnly: true
-							            	    },
-							            	    {							            	   
-							            	    	fieldLabel: HreRem.i18n('fieldlabel.gasto.codigo.rem.emisor'),
-							            	    	name:	'codigoEmisor',
-							            	    	allowBlank: false,
-													readOnly: true
-							            	    },						        
+									            	)
+							            	    },					        
 												{ 
 													xtype: 'comboboxfieldbase',
 									               	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
@@ -207,18 +202,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							            ]
 				
 			    			}	
-			    		],
-			    		getErrorsExtendedFormBase: function() {
-			    			var errores = [],   		
-			    			error, 	    			
-			    			nombreEmisor = me.down('[name=nombreEmisor]');
-			    			
-			    			if(Ext.isEmpty(nombreEmisor.getValue())) {
-			    				error = HreRem.i18n("txt.validacion.emisor.no.seleccionado");
-   								errores.push(error);
-   								me.down('[name=buscadorCodigoProveedorRem]').markInvalid(error); 
-			    			}
-			    		}
+			    		]
 			
 			    	}
 			  ];

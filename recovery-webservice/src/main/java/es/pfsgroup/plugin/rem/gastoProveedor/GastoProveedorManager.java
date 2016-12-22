@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
@@ -64,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
@@ -120,6 +122,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Autowired
 	private ReservaDao reservaDao;
 	
+	@Autowired
+	private ProveedoresApi proveedores;	
 	
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
@@ -225,6 +229,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setIdEmisor(gasto.getProveedor().getId());
 				dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
 				dto.setBuscadorCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
+				dto.setCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
 			}
 			
 			if(!Checks.esNulo(gasto.getPropietario())){
@@ -321,13 +326,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	private GastoProveedor dtoToGastoProveedor(DtoFichaGastoProveedor dto, GastoProveedor gastoProveedor) {
 		gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
-		
-//		if(!Checks.esNulo(dto.getNifEmisor())){				
-//			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
-//			gastoProveedor.setProveedor(proveedor);
-//		}
-		if(!Checks.esNulo(dto.getBuscadorCodigoProveedorRem())){				
-			ActivoProveedor proveedor = searchProveedorCodigo(dto.getBuscadorCodigoProveedorRem().toString());
+
+		if(!Checks.esNulo(dto.getCodigoEmisor())){				
+			ActivoProveedor proveedor = searchProveedorCodigo(dto.getCodigoEmisor().toString());
 			gastoProveedor.setProveedor(proveedor);
 		}
 		
@@ -367,8 +368,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				logger.error(ex.getCause());
 			}
 			
-			if(!Checks.esNulo(dto.getBuscadorCodigoProveedorRem())){
-				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getBuscadorCodigoProveedorRem());
+			if(!Checks.esNulo(dto.getCodigoProveedorRem())){
+				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getCodigoProveedorRem());
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
 				gastoProveedor.setProveedor(proveedor);
 			}
@@ -1870,5 +1871,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		return configuracionEspecial;
+	}
+
+	@Override
+	public List<DtoActivoProveedor> searchProveedoresByNif(DtoProveedorFilter dto) {
+		List<DtoActivoProveedor> lista = null;
+		lista = proveedores.getProveedoresByNif(dto.getNifProveedor());
+		
+		return lista;
 	}
 }

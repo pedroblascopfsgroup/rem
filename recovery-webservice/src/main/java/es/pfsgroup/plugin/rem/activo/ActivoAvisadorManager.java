@@ -78,6 +78,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		boolean restringida = false;
 		boolean obraNueva = false;
 		boolean asistida = false;
+		boolean lote = false;
 		
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
@@ -85,6 +86,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			restringida = activoApi.isIntegradoAgrupacionRestringida(id, usuarioLogado);
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
+			lote = activoApi.isIntegradoAgrupacionComercial(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -108,6 +110,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setDescripcion("Incluido en agrupación asistida");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);	
+		}
+		
+		if(lote) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Incluido en agrupación comercial");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
 		}
 		
 		//Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título

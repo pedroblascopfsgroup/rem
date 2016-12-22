@@ -39,7 +39,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	
     	OBRA_NUEVA: '01',
     	RESTRINGIDA: '02',
-    	ASISTIDA: '13'
+    	ASISTIDA: '13',
+    	LOTE_COMERCIAL: '14'
     },
     
     TIPOS_ACTIVO: {

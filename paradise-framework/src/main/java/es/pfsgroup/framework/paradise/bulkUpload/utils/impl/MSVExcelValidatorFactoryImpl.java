@@ -22,6 +22,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVAgrupacionAsistidaPDVExcelValidator agrupacionAsistidaExcelValidator;
 	
 	@Autowired
+	private MSVAgrupacionLoteComercialExcelValidator agrupacionLoteComercialExcelValidator;
+	
+	@Autowired
 	private MSVListadoActivosExcelValidator listadoActivosExcelValidator;
 	
 	@Autowired
@@ -54,6 +57,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return agrupacionObraNuevaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_ASISTIDA.equals(codTipoOperacion)) {
 				return agrupacionAsistidaExcelValidator;
+			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL.equals(codTipoOperacion)) {
+				return agrupacionLoteComercialExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(codTipoOperacion)) {
 				return listadoActivosExcelValidator;
 			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_PROPUESTA_PRECIOS_ACTIVO.equals(codTipoOperacion)) {

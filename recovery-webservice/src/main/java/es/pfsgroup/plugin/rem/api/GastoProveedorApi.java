@@ -7,6 +7,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
@@ -14,6 +15,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
@@ -240,6 +242,14 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		public boolean existeGasto(DtoFichaGastoProveedor dto);
+
+		
+		/**
+		 * Busca los proveedores que existan con el nif que recibe
+		 * @param DtoProveedorFilter dto
+		 * @return
+		 */
+		public List<DtoActivoProveedor> searchProveedoresByNif(DtoProveedorFilter dto);
 		
 }
 

@@ -2,120 +2,150 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.impl.PropuestaOfertaManager;
-import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.api.ParamReportsApi;
+import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 
 @Controller
 public class PropuestaresolucionController {
 
 		final String templatePropuestaSimple = "PropuestaResolucion001";
+		final String templatePropuestaLote = "PropuestaResolucionAgrupacion";
+		final String templatePropuestaActivoLote = "PropuestaResolucionActivoLote";
+		
 	
 		@Autowired
 		private RestApi restApi;
 		
 		@Autowired
-		private PropuestaOfertaManager propuestaOfertaManager;
+		private PropuestaOfertaApi propuestaOfertaApi;
+		
+		@Autowired
+		private ParamReportsApi paramReportsApi;
 		
 		@Autowired 
 		private OfertaApi ofertaApi;
 		
+		private final Log logger = LogFactory.getLog(getClass());
+		
 		@SuppressWarnings("unchecked")
 		@RequestMapping(method = RequestMethod.POST, value = "/propuestaresolucion")
-		public void propuestaResolucion(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {	
-			
+		public void propuestaResolucion(ModelMap model, RestRequestWrapper request,HttpServletResponse response) throws ParseException {				
 			PropuestaRequestDto jsonData = null;
-			OfertaSimpleDto propuestaDto = null;
-			
+			OfertaSimpleDto propuestaDto = null;			
 			Map<String, Object> params = null;
-			List<Object> dataSource = null;			
-			File fileSalidaTemporal = null;			
-			
-			//VALIDACIÓN DEL JSON ENTRADA
-			try {
-				jsonData = (PropuestaRequestDto) request.getRequestData(PropuestaRequestDto.class);
-				if (Checks.esNulo(jsonData)) {
-					model.put("error", RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				}
-				model.put("id", jsonData.getId());
-				propuestaDto = jsonData.getData();
-				if (propuestaDto==null || propuestaDto.getOfertaHRE()==null) {
-					model.put("error", RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				}
-			} catch (JsonParseException e1) {
-				model.put("error", RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				e1.printStackTrace();
-			} catch (JsonMappingException e1) {
-				model.put("error", RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				e1.printStackTrace();
-			} catch (Exception e1){
-				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
-				e1.printStackTrace();
-			}
-			
+			List<Object> dataSource = null;				
+			Map<String, Object> listaRespuesta = null;
+			HashMap<String, String> errorsList = null;
+			JSONObject jsonFields = null;
 			Oferta oferta = null;
-			//Primero comprabar que existe OFERTA
-			if (model.get("error")==null || model.get("error")=="") {
-				oferta = ofertaApi.getOfertaByNumOfertaRem(propuestaDto.getOfertaHRE());
-				if (oferta==null) {
-					model.put("error", RestApi.REST_NO_RELATED_OFFER);				
-				}
-			}
-			
-			//Despueś comprabar que existe un ACTIVO relacionado
-			Activo activo = null;
-			if (model.get("error")==null || model.get("error")=="") {
-				activo = oferta.getActivoPrincipal();
-				if (activo==null) {
-					model.put("error", RestApi.REST_NO_RELATED_ASSET);				
-				}
-			}
-			
-			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
-			if (model.get("error")==null || model.get("error")=="") {
-				params = propuestaOfertaManager.paramsHojaDatos(oferta, model);
-			}
-			if (model.get("error")==null || model.get("error")=="") {
-				dataSource = propuestaOfertaManager.dataSourceHojaDatos(oferta, activo, model);
-			}
-			
-			//GENERACION DEL DOCUMENTO EN PDF		
-			if (model.get("error")==null || model.get("error")=="") {
-				fileSalidaTemporal = propuestaOfertaManager.getPDFFile(params, dataSource, templatePropuestaSimple, model);
-			}
+			List<ActivoOferta> listaActivos = null;
+			ActivoOferta activoOferta = null;
+			File file = null;
+			List<File> files = new ArrayList<File>();	
+					
+			try {
+				
+				jsonFields = request.getJsonObject();
+				logger.debug("PETICIÓN: " + jsonFields);
+				
+				jsonData = (PropuestaRequestDto) request.getRequestData(PropuestaRequestDto.class);
+				propuestaDto = jsonData.getData();
+	
+				if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
+					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+	
+				} else {
+	
+					errorsList = propuestaOfertaApi.validatePropuestaOfertaRequestData(propuestaDto, jsonFields);
+					if(!Checks.esNulo(errorsList) && errorsList.isEmpty()){
+						
+						oferta = ofertaApi.getOfertaByNumOfertaRem(propuestaDto.getOfertaHRE());	
+						listaActivos = oferta.getActivosOferta();
+						
+						if(!Checks.esNulo(listaActivos) && listaActivos.size()==1){
+							//SIMPLE
+							//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO							
+							params = propuestaOfertaApi.paramsHojaDatos(listaActivos.get(0), model);
+							dataSource = propuestaOfertaApi.dataSourceHojaDatos(listaActivos.get(0), model);
+							
+							//GENERACION DEL DOCUMENTO EN PDF								
+							file = propuestaOfertaApi.getPDFFile(params, dataSource, templatePropuestaSimple, model);
+							files.add(file);
+							
+						}else if(!Checks.esNulo(listaActivos) && listaActivos.size()>1){
+							//LOTE 
+							//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
+							params = propuestaOfertaApi.paramsHojaDatos(listaActivos.get(0),  model);
+							dataSource = propuestaOfertaApi.dataSourceHojaDatos(listaActivos.get(0), model);	
+							
+							//GENERACION DEL DOCUMENTO EN PDF DEL LOTE		
+							file = propuestaOfertaApi.getPDFFile(params, dataSource, templatePropuestaLote, model);
+							files.add(file);
+													
+							//GENERAMOS EL DOCUMENTO PDF DE CADA ACTIVO
+							for(int i=0; i<listaActivos.size(); i++){							
+								activoOferta = listaActivos.get(i);
+								params = propuestaOfertaApi.paramsHojaDatos(activoOferta,  model);
+								dataSource = propuestaOfertaApi.dataSourceHojaDatos(activoOferta, model);								
+								file = propuestaOfertaApi.getPDFFile(params, dataSource, templatePropuestaActivoLote, model);
+								files.add(file);
+							}
+								
+						}
+						File salida = File.createTempFile("jasper", ".pdf");
+						FileUtilsREM.concatenatePdfs(files, salida);
+						
+						
+						//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
+						listaRespuesta = propuestaOfertaApi.sendFileBase64(response, salida, model);
 
-			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
-			if (model.get("error")==null || model.get("error")=="") {
-				propuestaOfertaManager.sendFileBase64(response, fileSalidaTemporal, model);
+						model.put("id", jsonFields.get("id"));
+						model.put("data", listaRespuesta);
+						model.put("error", "");
+						
+						
+					}else{
+						model.put("id", jsonFields.get("id"));
+						model.put("data", null);
+						model.put("error", errorsList);
+					}
+				}
+
+			} catch (Exception e) {
+				logger.error(e);
+				request.getPeticionRest().setErrorDesc(e.getMessage());
+				model.put("id", jsonFields.get("id"));
+				model.put("data", listaRespuesta);
+				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			} finally {
+				logger.debug("RESPUESTA: " + model);
 			}
-			
-			//Si no hay error se pone vacio, por coherencia con los otros métodos.
-			if (model.get("error")==null) {
-				model.put("error", "");
-			}
-			
 			restApi.sendResponse(response, model,request);
 
 		}

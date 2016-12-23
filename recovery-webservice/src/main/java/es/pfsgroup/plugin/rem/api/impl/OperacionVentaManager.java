@@ -1,15 +1,31 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -18,11 +34,11 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.HojaDatosApi;
-import es.pfsgroup.plugin.rem.api.HojaDatosPDF;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.Comprador;
@@ -40,7 +56,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 
 @Service("operacionVentaManager")
-public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
+public class OperacionVentaManager implements ParamReportsApi{
 	
 	@Autowired 
 	private OfertaApi ofertaApi;
@@ -61,17 +77,29 @@ public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
 	private ActivoDao activoDao;
 
 	@Override
-	public Map<String, Object> paramsHojaDatos(Oferta oferta, ModelMap model) {
-		
+	public Map<String, Object> paramsHojaDatos(ActivoOferta activoOferta, ModelMap model) {
+		Activo activo = null;
+		Oferta oferta = null;
 		Map<String, Object> mapaValores = new HashMap<String, Object>();
 
 		try {
-			// Obteniedo el activo relacionado con la OFERTA
-			Activo activo = oferta.getActivoPrincipal();
-			if (activo == null) {
+			
+
+			if(!Checks.esNulo(activoOferta)){
+				activo = activoOferta.getPrimaryKey().getActivo();
+				oferta = activoOferta.getPrimaryKey().getOferta();
+			}
+			
+			if(Checks.esNulo(activo)){
 				model.put("error", RestApi.REST_NO_RELATED_ASSET);
 				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
 			}
+			
+			if(Checks.esNulo(oferta)){
+				model.put("error", RestApi.REST_NO_RELATED_ASSET);
+				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
+			}
+			
 			mapaValores.put("Activo", activo.getNumActivoUvem().toString());
 			mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
 			
@@ -345,20 +373,32 @@ public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
 	}
 
 	@Override
-	public List<Object> dataSourceHojaDatos(Oferta oferta, Activo activo, ModelMap model) {
-		
+	public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model) {
+		Activo activo = null;
+		Oferta oferta = null;
 		List<Object> array = new ArrayList<Object>();
 		
 		DtoDataSource dataSource = new DtoDataSource();
 		
 		List<Object> listaComprador = new ArrayList<Object>();
 		try {
-			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
-			if (ofertaAceptada==null) {
-				model.put("error", RestApi.REST_NO_RELATED_OFFER_ACCEPTED);
-				throw new Exception(RestApi.REST_NO_RELATED_OFFER_ACCEPTED);					
+			
+			if(!Checks.esNulo(activoOferta)){
+				activo = activoOferta.getPrimaryKey().getActivo();
+				oferta = activoOferta.getPrimaryKey().getOferta();
 			}
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
+			
+			if(Checks.esNulo(activo)){
+				model.put("error", RestApi.REST_NO_RELATED_ASSET);
+				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
+			}
+			
+			if(Checks.esNulo(oferta)){
+				model.put("error", RestApi.REST_NO_RELATED_ASSET);
+				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
+			}
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 			ExpedienteComercial expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
 			if (expediente==null) {
 				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
@@ -399,5 +439,51 @@ public class OperacionVentaManager extends HojaDatosPDF implements HojaDatosApi{
 		
 		return array;
 	}
+
+	@Override
+	public File getPDFFile(Map<String, Object> params, List<Object> dataSource, String template, ModelMap model) {
+				
+		String ficheroPlantilla = "jasper/"+template+".jrxml";
+		
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(ficheroPlantilla);
+		File fileSalidaTemporal = null;
+		
+		//Comprobar si existe el fichero de la plantilla
+		if (is == null) {
+			model.put("error","No existe el fichero de plantilla " + ficheroPlantilla);
+		} else  {
+			try {
+				//Compilar la plantilla
+				JasperReport report = JasperCompileManager.compileReport(is);	
+				//JasperReport report = (JasperReport)JRLoader.loadObject(is);
+
+				//Rellenar los datos del informe
+				JasperPrint print = JasperFillManager.fillReport(report, params,  new JRBeanCollectionDataSource(dataSource));
+
+				//Exportar el informe a PDF
+				fileSalidaTemporal = File.createTempFile("jasper", ".pdf");
+				fileSalidaTemporal.deleteOnExit();
+				if (fileSalidaTemporal.exists()) {
+					JasperExportManager.exportReportToPdfStream(print, new FileOutputStream(fileSalidaTemporal));
+					FileItem fi = new FileItem();
+					fi.setFileName(ficheroPlantilla + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".pdf");
+					fi.setFile(fileSalidaTemporal);
+				} else {
+					throw new IllegalStateException("Error al generar el fichero de salida " + fileSalidaTemporal);
+				}
+				
+			} catch (JRException e) {
+				model.put("error","Error al compilar el informe en JasperReports " + e.getLocalizedMessage());
+			} catch (IOException e) {
+				model.put("error","No se puede escribir el fichero de salida");
+			} catch (Exception e) {
+				model.put("error","Error al generar el informe en JasperReports " + e.getLocalizedMessage());
+			};
+		}
+		
+		return fileSalidaTemporal;
+
+	}
+
 	
 }

@@ -99,12 +99,18 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 	
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("12"))
 							beanUtilNotNull.copyProperty(valoracionesDto, "valorEstimadoRenta", val.getImporte());
-						
+						/*
+						 * valorLegalVpo se informa desde la Info administrativa
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("09"))
-							beanUtilNotNull.copyProperty(valoracionesDto, "valorLegalVpo", val.getImporte());
+							beanUtilNotNull.copyProperty(valoracionesDto, "valorLegalVpo", val.getImporte());*/
 					}
 
 				}
+		}
+		
+		beanUtilNotNull.copyProperty(valoracionesDto, "vpo", !Checks.esNulo(activo.getVpo()) && activo.getVpo() == 1 ? true : false);
+		if(valoracionesDto.getVpo()) {
+			beanUtilNotNull.copyProperty(valoracionesDto, "valorLegalVpo", activo.getInfoAdministrativa().getMaxPrecioVenta());
 		}
 		
 		if (activo.getTotalValorCatastralConst() != null)
@@ -116,6 +122,7 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 		{
 			beanUtilNotNull.copyProperty(valoracionesDto, "valorCatastralSuelo", activo.getTotalValorCatastralSuelo());					
 		}
+		
 			
 		if (!Checks.estaVacio(activo.getTasacion()))
 		{
@@ -143,12 +150,8 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 				beanUtilNotNull.copyProperty(valoracionesDto, "tipoTasacionDescripcion", tasacionMasReciente.getTipoTasacion().getDescripcion());
 			}
 			
-			
 		}
 
-		beanUtilNotNull.copyProperty(valoracionesDto, "vpo", !Checks.esNulo(activo.getVpo()) && activo.getVpo() == 1 ? true : false);
-		
-		
 		return valoracionesDto;	
 	}
 

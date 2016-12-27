@@ -2,19 +2,16 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialMain', {
 	extend		: 'Ext.panel.Panel',
     xtype		: 'visitascomercialmain',
     requires	: ['HreRem.view.comercial.visitas.VisitasComercialSearch','HreRem.view.comercial.visitas.VisitasComercialList','HreRem.view.comercial.ComercialVisitasController'],
-    layout: {
+    layout		: {
         type: 'vbox',
         align: 'stretch'
     },
-    
-    controller: 'comercialvisitas',
-    viewModel: {
+    controller	: 'comercialvisitas',
+    viewModel	: {
         type: 'comercial'
     },
-    
-    refreshOnActivate : true,
-    	
-    listeners: {
+    refreshOnActivate: true,
+    listeners	: {
 		 activate: function(){this.refresh()}
 	},
 
@@ -34,23 +31,17 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialMain', {
 						reference: 'visitasComercialList',
 						flex: 1
 		        	}
-        
         ];
-        
-        me.callParent(); 
 
-        
+        me.callParent(); 
     },
-    
+
     refresh: function() {						
 		var me = this;
-		
+
 		if(me.refreshOnActivate)  {
 			me.down('visitascomerciallist').getStore().loadPage(1);
 			me.refreshOnActivate = false;
 		}
     }
-
-
 });
-

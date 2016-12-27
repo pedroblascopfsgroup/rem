@@ -7,11 +7,11 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 	scrollable	: 'y',
 
     initComponent: function () {
-
         var me = this;
-        me.setTitle(HreRem.i18n('title.administracion.activo'));	        
-        var items= [
 
+        me.setTitle(HreRem.i18n('title.administracion.activo'));
+
+        var items= [
          {
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.proveedores'),
@@ -35,14 +35,9 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        		return 'red-row-grid';
 				        	}
 				        } 
-				    }, 
-
+				    },
 					columns: [
-//						{    
-//				        	dataIndex: 'id',
-//				        	flex: 1
-//				        },
-						{	  
+						{
 				        	xtype: 'actioncolumn',
 				            dataIndex: 'codigoProveedorRem',
 				            text: HreRem.i18n('title.activo.administracion.numProveedor'),
@@ -94,11 +89,6 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        	formatter: 'date("d/m/Y")',
 				        	flex: 1
 				       }
-//				       {    text: HreRem.i18n('title.activo.administracion.porcentajeParticipacion'),
-//				        	dataIndex: 'porcentajeParticipacion',
-//				        	flex: 1,
-//				        	hidden: true
-//				       }
 				    ],
 
 				    dockedItems : [
@@ -119,32 +109,25 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				}
 			]
 		},
-
-			{
+		{
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.listado.gastos'),
 			collapsible: false,
-//			scrollable: true,
 			items :	[
-			
-			{
-			    xtype		: 'gridBase',
-			    idPrincipal : 'idGasto',
-//			    topBar: true,
-			    colspan: 3,
-			    reference: 'listadogastosref',
-				cls	: 'panel-base shadow-panel',
-				bind: {
-					store: '{storeGastosProveedor}'
-				},
-				
-				listeners: {
-					rowdblclick: 'onClickAbrirGastoProveedor'	
-				},
-				
-				columns: [
-				
-					{	  
+				{
+				    xtype		: 'gridBase',
+				    idPrincipal : 'idGasto',
+				    colspan: 3,
+				    reference: 'listadogastosref',
+					cls	: 'panel-base shadow-panel',
+					bind: {
+						store: '{storeGastosProveedor}'
+					},
+					listeners: {
+						rowdblclick: 'onClickAbrirGastoProveedor'	
+					},
+					columns: [
+						{	  
 				        	xtype: 'actioncolumn',
 				            dataIndex: 'numGasto',
 				            text: HreRem.i18n('title.activo.administracion.numGasto'),
@@ -161,126 +144,78 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					        },
 				            flex     : 1,            
 				            align: 'right',
-		//		            menuDisabled: true,
 				            hideable: false,
 				            sortable: true
-				    },
-				
-//				   {    text: HreRem.i18n('title.activo.administracion.numGasto'),
-//			        	dataIndex: 'numGasto',
-//			        	flex: 1
-//			       },
-			       {    text: HreRem.i18n('title.activo.administracion.tipo'),
-			        	dataIndex: 'tipoGastoDescripcion',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.subtipo'),
-			        	dataIndex: 'subtipoGastoDescripcion',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.concepto'),
-			        	dataIndex: 'conceptoGasto',
-			        	flex: 1
-			       },
-//			       {    text: HreRem.i18n('title.activo.administracion.emisor'),
-//			        	dataIndex: 'emisor',
-//			        	flex: 1
-//			       },
-			       {    text: HreRem.i18n('title.activo.administracion.fecha.emision'),
-			        	formatter: 'date("d/m/Y")',
-			        	dataIndex: 'fechaEmisionGasto',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.periodicidad'),
-			        	dataIndex: 'periodicidadGastoDescripcion',
-			        	flex: 1
-			       },
-			        {    text: HreRem.i18n('title.activo.administracion.porcentajeParticipacion'),
-			        	dataIndex: 'participacion',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.importe'),
-			        	dataIndex: 'importeTotalGasto',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.estado'),
-			        	dataIndex: 'estadoGastoDescripcion',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.fecha.pago'),
-			        	formatter: 'date("d/m/Y")',
-			        	dataIndex: 'fechaPagoGasto',
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.afecta.otros.activos'),
-//			        	dataIndex: 'afectaOtrosActivos',
-			        	renderer: function(val, meta, record){
-						    if(!Ext.isEmpty(record.data.participacion) && record.data.participacion!="100.0"){
-						    	return "SI";
-						    }
-						    return "NO";
-						},
-			        	flex: 1
-			       },
-			       {    text: HreRem.i18n('title.activo.administracion.observaciones'),
-			        	dataIndex: 'observacionesGastos',
-			        	flex: 1
-			       }
-				  				       
-			       	        
-			    ],
-//			    listeners : {
-//   	                beforeedit : function(editor, context, eOpts ) {
-//   	                    var idUsuario = context.record.get("idUsuario");
-//   	                	if (!Ext.isEmpty(idUsuario))
-//   	                	{
-//	   	                    var allowEdit = $AU.sameUserPermToEnable(idUsuario);
-//	   	                    this.editOnSelect = allowEdit;
-//	   	                    return allowEdit;
-//   	                	}
-//	                }
-//	            },
-	            
-//	            onGridBaseSelectionChange: function (grid, records) {
-//	            	if(!records.length)
-//            		{
-//            			
-//            			me.down('#removeButton').setDisabled(true);
-//            			if (!me.down("gridBaseEditableRow").getPlugin("rowEditingPlugin").editing)
-//            			{
-//            				me.down('#addButton').setDisabled(false);
-//            			}
-//            		}
-//            		else
-//            		{
-//            			var idUsuario = records[0].get("idUsuario");
-//            			var allowRemove = $AU.sameUserPermToEnable(idUsuario);
-//            			if (!me.down("gridBaseEditableRow").getPlugin("rowEditingPlugin").editing)
-//            			{
-//            				me.down('#removeButton').setDisabled(!allowRemove);
-//            			}
-//            		}
-//	            },
-//	           
-			    dockedItems : [
-			        {
-			            xtype: 'pagingtoolbar',
-			            dock: 'bottom',
-			            displayInfo: true,
-			            bind: {
-			                store: '{storeGastosProveedor}'
-			            }
-			        }
-			    ]
-			    
-			}
-			
+					   },
+				       {    text: HreRem.i18n('title.activo.administracion.tipo'),
+				        	dataIndex: 'tipoGastoDescripcion',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.subtipo'),
+				        	dataIndex: 'subtipoGastoDescripcion',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.concepto'),
+				        	dataIndex: 'conceptoGasto',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.fecha.emision'),
+				        	formatter: 'date("d/m/Y")',
+				        	dataIndex: 'fechaEmisionGasto',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.periodicidad'),
+				        	dataIndex: 'periodicidadGastoDescripcion',
+				        	flex: 1
+				       },
+				        {    text: HreRem.i18n('title.activo.administracion.porcentajeParticipacion'),
+				        	dataIndex: 'participacion',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.importe'),
+				        	dataIndex: 'importeTotalGasto',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.estado'),
+				        	dataIndex: 'estadoGastoDescripcion',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.fecha.pago'),
+				        	formatter: 'date("d/m/Y")',
+				        	dataIndex: 'fechaPagoGasto',
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.afecta.otros.activos'),
+				        	renderer: function(val, meta, record){
+							    if(!Ext.isEmpty(record.data.participacion) && record.data.participacion!="100.0"){
+							    	return "SI";
+							    }
+							    return "NO";
+							},
+				        	flex: 1
+				       },
+				       {    text: HreRem.i18n('title.activo.administracion.observaciones'),
+				        	dataIndex: 'observacionesGastos',
+				        	flex: 1
+				       }
+				    ],
+	
+				    dockedItems: [
+				        {
+				            xtype: 'pagingtoolbar',
+				            dock: 'bottom',
+				            displayInfo: true,
+				            bind: {
+				                store: '{storeGastosProveedor}'
+				            }
+				        }
+				   ]
+				}
 			]
-		}
-        ];
+	}
+    ];
 
 		me.addPlugin({ptype: 'lazyitems', items: items });
-
     	me.callParent();
     },
 

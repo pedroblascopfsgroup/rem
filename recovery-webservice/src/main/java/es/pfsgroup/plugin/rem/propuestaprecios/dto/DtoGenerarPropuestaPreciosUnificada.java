@@ -1,12 +1,12 @@
-package es.pfsgroup.framework.paradise.bulkUpload.dto;
+package es.pfsgroup.plugin.rem.propuestaprecios.dto;
 
 import java.util.Date;
 
 /**
- * Dto para los datos recogidos de una propuesta
+ * Dto para los datos recogidos de una propuesta UNIFICADA
  *
  */
-public class DtoExcelPropuestaUnificada {
+public class DtoGenerarPropuestaPreciosUnificada extends DtoGenerarPropuestaPrecios  {
 
 	private Long id;
 	private Long idPropuesta;

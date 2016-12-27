@@ -69,7 +69,7 @@ BEGIN
 			
 			-- Si la tabla DD_CPR_CALIFICACION_PROVEEDOR está vacia el max id será 0.
 			IF V_NUM_SEQ IS NULL THEN 
-				V_NUM_SEQ := 0; 
+				V_NUM_SEQ := 1; 
 			END IF;
 
 			-- Creamos sequence

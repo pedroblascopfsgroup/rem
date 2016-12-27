@@ -23,14 +23,13 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									    colspan: 3,
 									    topBar: true,
 									    removeButton: false,
-									    reference: 'listadoproveedoresref',
+									    reference: 'listadoEntidadesref',
 										cls	: 'panel-base shadow-panel',
 										bind: {
 											store: '{storeEntidades}'
 										},
 										listeners : {
-//										    	rowclick: 'onEntidadesListClick',
-										    	rowdblclick: 'onEntidadesListDobleClick'
+										    rowdblclick: 'onEntidadesListDobleClick'
 										},
 										viewConfig: { 
 									        getRowClass: function(record) { 

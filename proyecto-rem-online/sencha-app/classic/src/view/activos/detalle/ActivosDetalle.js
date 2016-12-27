@@ -2,15 +2,13 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     extend		: 'Ext.tab.Panel',
     xtype		: 'activosdetalle',
 	cls			: 'panel-base shadow-panel, tabPanel-segundo-nivel',
-    requires : ['HreRem.view.activos.detalle.DatosGeneralesActivo', 'HreRem.view.activos.detalle.AdmisionActivo', 'HreRem.view.activos.tramites.TramitesActivo', 
+    requires 	: ['HreRem.view.activos.detalle.DatosGeneralesActivo', 'HreRem.view.activos.detalle.AdmisionActivo', 'HreRem.view.activos.tramites.TramitesActivo', 
     			'HreRem.view.activos.detalle.ObservacionesActivo', 'HreRem.view.activos.detalle.AgrupacionesActivo', 'HreRem.view.activos.detalle.GestoresActivo', 
     			'HreRem.view.activos.detalle.FotosActivo','HreRem.view.activos.detalle.DocumentosActivo','HreRem.view.activos.detalle.GestionActivo',
     			'HreRem.view.activos.detalle.PreciosActivo','HreRem.view.activos.detalle.Publicacion','HreRem.view.activos.detalle.ComercialActivo',
     			'HreRem.view.activos.detalle.AdministracionActivo'],
-    
-		
+
 	listeners: {
-			    	
     	boxready: function (tabPanel) {    		
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 				var tab = tabPanel.items.items[0];
@@ -18,11 +16,11 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 			}
     	}
 	},
-	
+
     initComponent: function() {
-    	
     	var me = this;
 	    me.callParent(); 
+
 	    $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo'})}, 'TAB_ACTIVO_DATOS_GENERALES');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tramitesactivo'})}, 'TAB_ACTIVO_ACTUACIONES');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestoresactivo'})}, 'TAB_ACTIVO_GESTORES');
@@ -35,13 +33,9 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo'})}, 'TAB_ACTIVO_ADMISION');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo'})}, 'TAB_ACTIVO_GESTION');
     	}
-    	
-    	me.add({xtype: 'preciosactivo'});
-    	me.add({xtype: 'publicacionactivo'});
-    	me.add({xtype: 'comercialactivo'});
-    	me.add({xtype: 'administracionactivo'});
-
-
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo'})}, 'TAB_ACTIVO_PRECIOS');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo'})}, 'TAB_ACTIVO_PUBLICACION');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo'})}, 'TAB_ACTIVO_COMERCIAL');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo'})}, 'TAB_ACTIVO_ADMINISTRACION');
     }
-    
 });

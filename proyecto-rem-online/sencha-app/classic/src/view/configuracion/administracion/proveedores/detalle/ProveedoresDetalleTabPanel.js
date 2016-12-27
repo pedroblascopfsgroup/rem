@@ -4,56 +4,53 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
     requires 	: ['HreRem.view.configuracion.administracion.proveedores.detalle.ProveedorDetalleController', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedorDetalleModel',
                 'HreRem.view.configuracion.administracion.proveedores.detalle.FichaProveedor', 'HreRem.view.configuracion.administracion.proveedores.detalle.DocumentosProveedor'],
-                
    	listeners	: {
-   				boxready: function (tabPanel) {
+		boxready: function (tabPanel) {
+			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
+				var tab = tabPanel.items.items[0];
+				tabPanel.setActiveTab(tab);
+			}
 
-					if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
-						var tab = tabPanel.items.items[0];
-						tabPanel.setActiveTab(tab);
-					}
+			if(tab.ocultarBotonesEdicion) {
+				tabPanel.down("[itemId=botoneditar]").setVisible(false);
+			} else {		
+            	tabPanel.evaluarBotonesEdicion(tab);
+			} 					
+		},
 
-					if(tab.ocultarBotonesEdicion) {
-						tabPanel.down("[itemId=botoneditar]").setVisible(false);
-					} else {		
-		            	tabPanel.evaluarBotonesEdicion(tab);
-					} 					
-   				},
+        beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
+        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
+        	if (tabCurrent != null) {
+            	if (tabPanel.lookupController().getViewModel().get("editing")) {	
+            		Ext.Msg.show({
+            			   title: HreRem.i18n('title.descartar.cambios'),
+            			   msg: HreRem.i18n('msg.desea.descartar'),
+            			   buttons: Ext.MessageBox.YESNO,
+            			   fn: function(buttonId) {
+            			        if (buttonId == 'yes') {
+            			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
+            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+            			        	tabPanel.getLayout().setActiveItem(tabNext);		            			        	
+						            // Si la pestaña necesita botones de edición
+				   					if(!tabNext.ocultarBotonesEdicion) {
+					            		tabPanel.evaluarBotonesEdicion(tabNext);
+				   					}
+            			        }
+            			   }
+        			});
 
-	            beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+            		return false;
+            	}
 
-	            	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
-	            	// Comprobamos si estamos editando para confirmar el cambio de pestaña
-	            	if (tabCurrent != null) {
-		            	if (tabPanel.lookupController().getViewModel().get("editing")) {	
-		            		Ext.Msg.show({
-		            			   title: HreRem.i18n('title.descartar.cambios'),
-		            			   msg: HreRem.i18n('msg.desea.descartar'),
-		            			   buttons: Ext.MessageBox.YESNO,
-		            			   fn: function(buttonId) {
-		            			        if (buttonId == 'yes') {
-		            			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
-		            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
-		            			        	tabPanel.getLayout().setActiveItem(tabNext);		            			        	
-								            // Si la pestaña necesita botones de edición
-						   					if(!tabNext.ocultarBotonesEdicion) {
-							            		tabPanel.evaluarBotonesEdicion(tabNext);
-						   					}
-		            			        }
-		            			   }
-		        			});
+            	// Si la pestaña necesita botones de edición
+				if(!tabNext.ocultarBotonesEdicion) {
+            		tabPanel.evaluarBotonesEdicion(tabNext);
+				}
 
-		            		return false;
-		            	}
-
-		            	// Si la pestaña necesita botones de edición
-						if(!tabNext.ocultarBotonesEdicion) {
-		            		tabPanel.evaluarBotonesEdicion(tabNext);
-						}
-
-		            	return true;
-	            	}
-	            }
+            	return true;
+        	}
+        }
 	},
 
    	tabBar: {
@@ -86,16 +83,16 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
         		}]
     },
 
-    items: [
-    		{xtype: 'fichaproveedor'},
-    		{	
-    			xtype: 'documentosproveedor',
-    			ocultarBotonesEdicion: true,
-    			bind:{
-    				disabled: '{proveedor.isAdministracion}'
-    			}
-    		}
-    ],
+    initComponent: function () {
+        var me = this;
+
+        var items = [];
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaproveedor', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosproveedor', ocultarBotonesEdicion: true, bind:{disabled: '{proveedor.isAdministracion}'}})}, ['TAB_DOCUMENTOS_PROVEEDORES']);
+
+        me.addPlugin({ptype: 'lazyitems', items: items});
+        me.callParent();
+    },
 
     evaluarBotonesEdicion: function(tab) {
 		var me = this;

@@ -982,9 +982,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoRetencionPago'}
-			}			
+			}
 		},
-		
+
 		comboSubtipoActivoOtros : {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -993,13 +993,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
 			}
 		},
-		
+
 		comboManiobra: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'valoracionTrabajo'}
+			}
+		},
+
+		storeOfertantesOfertaDetalle:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.OfertantesOfertaDetalleModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'ofertas/getOfertantesByOfertaId'
+			}
+		},
+
+		storeHonorariosOfertaDetalle:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HonorariosOfertaDetalleModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'ofertas/getHonorariosByOfertaId'
 			}
 		}
      }    

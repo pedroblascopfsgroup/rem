@@ -175,4 +175,17 @@ public class VisitasController {
 		return new ModelAndView("jsonView", model);
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getVisitaDetalleById(DtoVisitasFilter dtoVisitasFilter, ModelMap model) {
+
+		try {
+			model.put("data", visitaApi.getVisitaDetalle(dtoVisitasFilter));
+			model.put("success", true);
+		} catch(Exception e) {
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

@@ -1,22 +1,22 @@
 Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'informecomercialactivo',
-    reference: 'informecomercialactivoref',
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
+    extend		: 'HreRem.view.common.FormBase',
+    xtype		: 'informecomercialactivo',
+    reference	: 'informecomercialactivoref',
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
     scrollable	: 'y',
     saveMultiple: true,
     refreshAfterSave: true,
-    records: ['infoComercial','activoInforme'], 
+    records		: ['infoComercial','activoInforme'], 
     recordsClass: ['HreRem.model.ActivoInformeComercial','HreRem.model.Activo'],    
-    requires: ['HreRem.model.Activo', 'HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformeComercial', 'HreRem.model.Distribuciones',
+    requires	: ['HreRem.model.Activo', 'HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformeComercial', 'HreRem.model.Distribuciones',
     'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
     'HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', 'HreRem.model.InformeComercial', 'HreRem.view.activos.detalle.HistoricoMediadorGrid',
     'HreRem.view.activos.detalle.PropuestaActivosVinculadosList', 'HreRem.view.activos.detalle.InfoIndustrialYSuelo','HreRem.view.activos.detalle.InfoEdificioCompleto',
     'HreRem.view.activos.detalle.InfoVarios','HreRem.view.activos.detalle.DistribucionPlantasActivoList'],
     
     listeners: {
-    	boxready: function() {//Anyadir seccion por tipo de activo
+    	boxready: function() { // Anyadir seccion por tipo de activo.
     		var me = this;
 
     		this.cargarDatosSegunTipoActivoDelMediador(me,me.lookupViewModel().get('activo.tipoActivoMediadorCodigo'));
@@ -24,12 +24,13 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 	    	me.lookupController().cargarTabData(me);
     	}
     },
-    
-    initComponent: function () {
 
+    initComponent: function () {
         var me = this;
-        
-        me.items = [	
+
+        me.setTitle(HreRem.i18n('title.informe.comercial.activo'));
+
+        me.items = [
 // Mediador
 			{
 				xtype:'fieldsettable',
@@ -130,7 +131,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						{xtype: "historicoestadosinformecomercial", reference: "historicoestadosinformecomercial"}
 					]
 			},
-			
+
 // Datos Básicos
 			{
 				xtype:'fieldsettable',
@@ -281,7 +282,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                	style: "float: right; important!",
 					                	handler: 'onClickCopiarDatosDelMediador'
 					                }
-
 							]               
 			          	},
 
@@ -525,7 +525,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			},
 // Información General
 			{
-
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.informacion.general'),
 				defaultType: 'textfieldbase',
@@ -773,11 +772,10 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				]
             }
 		];
-        
-    	me.setTitle(HreRem.i18n('title.informe.comercial.activo'));
+
    	 	me.callParent();
     }, 
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -793,7 +791,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		
 		me.cargarDatosSegunTipoActivoDelMediador(me, me.lookupController().lookupReference('tipoActivoMediadorInforme').getValue());
     },
-    
+
     actualizarCoordenadas: function(latitud, longitud) {
     	var me = this;
 

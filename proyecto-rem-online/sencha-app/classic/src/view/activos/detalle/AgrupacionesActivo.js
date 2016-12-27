@@ -1,19 +1,18 @@
 Ext.define('HreRem.view.activos.detalle.AgrupacionesActivo', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'agrupacionesactivo',    
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
-    reference: 'agrupacionesactivoref',
-    controller: 'agrupaciones',
-    layout: 'fit',
-	
-	requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.AgrupacionesActivo'],	
+    extend		: 'HreRem.view.common.FormBase',
+    xtype		: 'agrupacionesactivo',    
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
+    reference	: 'agrupacionesactivoref',
+    controller	: 'agrupaciones',
+    layout		: 'fit',
+	requires	: ['HreRem.view.common.FieldSetTable', 'HreRem.model.AgrupacionesActivo'],	
+
     initComponent: function () {
-
         var me = this;
-		me.setTitle(HreRem.i18n('title.agrupaciones'));	         
-        var items= [
+		me.setTitle(HreRem.i18n('title.agrupaciones'));
 
+        var items= [
 			{
 			    xtype		: 'gridBase',
 			    reference: 'listadoAgrupaciones',
@@ -25,11 +24,9 @@ Ext.define('HreRem.view.activos.detalle.AgrupacionesActivo', {
 			    	rowdblclick: function(grid,record) {
 						var me = this;
 						me.lookupController().onAgrupacionesListDobleClick(grid,record);
-
 					}
 			    },
 				columns: [
-			    
 		  				{
 			            	text	 : HreRem.i18n('header.numero.agrupacion'),
 			                flex	 : 1,
@@ -97,8 +94,8 @@ Ext.define('HreRem.view.activos.detalle.AgrupacionesActivo', {
 			                dataIndex: 'numActivosPublicados',
 			                flex	: 1
 					    }
-		
-			        ],
+			    ],
+
 			    dockedItems : [
 			        {
 			            xtype: 'pagingtoolbar',
@@ -109,16 +106,13 @@ Ext.define('HreRem.view.activos.detalle.AgrupacionesActivo', {
 			            }
 			        }
 			    ]
-			    
 			}
-            
-            
         ];
+
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
-    	
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -126,7 +120,4 @@ Ext.define('HreRem.view.activos.detalle.AgrupacionesActivo', {
   			grid.getStore().load();
   		});
     }
-
-
-    
 });

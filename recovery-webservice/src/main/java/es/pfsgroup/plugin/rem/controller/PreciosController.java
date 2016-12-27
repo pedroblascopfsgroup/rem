@@ -21,7 +21,6 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrecios;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -30,13 +29,14 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivosPreciosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
-
+import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 
 @Controller
 public class PreciosController extends ParadiseJsonController{
@@ -56,6 +56,9 @@ public class PreciosController extends ParadiseJsonController{
 	
 	@Autowired
 	private TrabajoApi trabajoApi;
+	
+	@Autowired
+	private GenerarPropuestaPreciosFactoryApi generarPropuestaApi;
 	
 	protected static final Log logger = LogFactory.getLog(PreciosController.class);
 
@@ -154,43 +157,33 @@ public class PreciosController extends ParadiseJsonController{
 		//Genera la propuesta en BBDD y asocia los activos
 		PropuestaPrecio propuesta =preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo());
 		
-		// FIXME Se genera una excel básica, pendiente de definir
-		/*ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);
-		excelReportGeneratorApi.generateAndSend(report, response);*/
-		
 		// Se genera excel unificada
-		this.generarExcelPropuestaUnificada(propuesta,request,response);
+		this.generarExcelPropuestaPrecios(propuesta,request,response);
 		
 	}
 	
 	/**
-	 * Carga la plantilla unificada de Propuesta de precios, y la rellena con los datos de la propuesta
+	 * Carga el Servicio correspondiente según la entidad, y generará la excel de propuesta de precios para guardarlo en el trabajo asociado
 	 * @param propuesta
 	 * @param request
 	 * @param response
 	 */
-	private void generarExcelPropuestaUnificada(PropuestaPrecio propuesta, HttpServletRequest request, HttpServletResponse response) {
-		
-		ExcelGenerarPropuestaPrecios excel = new ExcelGenerarPropuestaPrecios();
+	private void generarExcelPropuestaPrecios(PropuestaPrecio propuesta, HttpServletRequest request, HttpServletResponse response) {
+		GenerarPropuestaPreciosService servicio = generarPropuestaApi.getService(propuesta.getCartera().getCodigo());
 		
 		ServletContext sc = request.getSession().getServletContext();
-		excel.cargarPlantilla(sc.getRealPath("plantillas/plugin/LISTADO_ACTIVOS_PROPUESTA_PRECIOS.xls"));
+		servicio.cargarPlantilla(sc);
 		try {
-			excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
-		
-			// Quitamos que se descargue la propuesta al generarla
-			//excelReportGeneratorApi.sendReport(excel.getFile(), response);
-			
-			preciosApi.guardarFileEnTrabajo(excel.getFile(),propuesta.getTrabajo());
-			excel.vaciarLibros();
+			servicio.rellenarPlantilla(propuesta.getNumPropuesta().toString(), adapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaByEntidad(propuesta));
+
+			preciosApi.guardarFileEnTrabajo(servicio.getFile(),propuesta.getTrabajo());
+			servicio.vaciarLibros();
 			
 		} catch (IllegalAccessException ex) {
 			logger.error(ex.getMessage());
 		} catch (InvocationTargetException ex) {
 			logger.error(ex.getMessage());
-		}/* catch (IOException ex) {
-			logger.error(ex.getMessage());
-		}*/
+		}
 	}
 	
 	/****************************************************************************************************************/

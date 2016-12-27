@@ -1,4 +1,4 @@
-package es.pfsgroup.framework.paradise.bulkUpload.utils;
+package es.pfsgroup.plugin.rem.propuestaprecios.service.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,19 +22,23 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoExcelPropuestaUnificada;
+import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosUnificada;
+import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 
 
 @Component
-public class ExcelGenerarPropuestaPrecios {
+public class GenerarPropuestaPreciosServiceUnficada implements GenerarPropuestaPreciosService {
 	
 	private Workbook libroExcel; 
 	private WritableWorkbook libroEditable;
 	private File file;
 	
+	protected static final Log logger = LogFactory.getLog(GenerarPropuestaPreciosServiceUnficada.class);
+	
 	@Autowired
     private ServletContext servletContext;
 	
+	@Override
 	public File getFile() {
 		return file;
 	}
@@ -41,36 +47,48 @@ public class ExcelGenerarPropuestaPrecios {
 		this.file = file;
 	}
 	
+	@Override
+	public String[] getKeys() {
+		return this.getCodigoTab();
+	}
+
+	@Override
+	public String[] getCodigoTab() {
+		return new String[]{GenerarPropuestaPreciosService.DEFAULT_SERVICE_BEAN_KEY};
+	}
 	
-	public ExcelGenerarPropuestaPrecios() {
+	public GenerarPropuestaPreciosServiceUnficada() {
 		super();
 	}
 	
-	public void cargarPlantilla(String ruta) {
+	@Override
+	public void cargarPlantilla(ServletContext sc) {
+		String ruta = sc.getRealPath("plantillas/plugin/propuestaprecios/ACTIVOS_PROPUESTA_PRECIOS_UNIFICADA.xls");
+
 		try {
+		
 			file = new File(ruta);
 			WorkbookSettings workbookSettings = new WorkbookSettings();
 			workbookSettings.setEncoding( "Cp1252" );
+			workbookSettings.setSuppressWarnings(true);
+			workbookSettings.setCellValidationDisabled(true);
+			workbookSettings.setMergedCellChecking(false);
 			libroExcel = Workbook.getWorkbook( file, workbookSettings );
 			
 		} catch (BiffException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	
-	public void rellenarPlantilla(String numPropuesta, String gestor, List<DtoExcelPropuestaUnificada> listDto) {
+	@Override
+	public <DtoExcelPropuestaUnificada> void rellenarPlantilla(String numPropuesta, String gestor, List<DtoExcelPropuestaUnificada> listDto) {
 		
 		try {
-			
+			this.file = new File(file.getAbsolutePath().replace("_UNIFICADA",""));
 			libroEditable = Workbook.createWorkbook(this.file, libroExcel);
-			
-			for(int i=8 ; i< libroEditable.getSheet(0).getRows() + 3 ; i++)
-        		libroEditable.getSheet(0).removeRow(i);
-			
+
 			WritableSheet hoja = libroEditable.getSheet(0);
 			
 			//Relenamos las celdas sueltas de Id propuesta, y gestor
@@ -83,7 +101,7 @@ public class ExcelGenerarPropuestaPrecios {
 			int fila = 8;
 			for(DtoExcelPropuestaUnificada dto : listDto) {
 			
-				rellenarFilaExcelPropuestaPrecio(hoja,dto,fila);
+				rellenarFilaExcelPropuestaPrecio(hoja,(es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosUnificada) dto,fila);
 				fila++;
 			}
 			
@@ -92,18 +110,16 @@ public class ExcelGenerarPropuestaPrecios {
 			libroExcel.close();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (RowsExceededException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (WriteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	
-	private void rellenarFilaExcelPropuestaPrecio(WritableSheet hoja, DtoExcelPropuestaUnificada dto, Integer fila) {
+	// TODO: Hacer como en los servicios de las Entidades, donde se usa Formula, Number para las celdas, y el formato de celdas en la plantilla para dichos valores
+	private void rellenarFilaExcelPropuestaPrecio(WritableSheet hoja, DtoGenerarPropuestaPreciosUnificada dto, Integer fila) {
 		
 		try {
 			
@@ -211,15 +227,14 @@ public class ExcelGenerarPropuestaPrecios {
 			
 			
 		} catch (RowsExceededException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (WriteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 	}
 	
+	@Override
 	public void vaciarLibros() {
 		this.file = null;
 		this.libroEditable = null;

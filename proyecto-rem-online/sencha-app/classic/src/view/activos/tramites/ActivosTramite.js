@@ -1,15 +1,14 @@
 Ext.define('HreRem.view.tramites.ActivosTramite', {
-    extend: 'Ext.panel.Panel',
-    xtype: 'activostramite',    
-    cls	: 'panel-base shadow-panel',
-	layout: 'fit',
+    extend		: 'Ext.panel.Panel',
+    xtype		: 'activostramite',    
+    cls			: 'panel-base shadow-panel',
+	layout		: 'fit',
+
     initComponent: function () {
-    	
     	var me = this;
     	me.setTitle(HreRem.i18n('title.activos'));
-    	
-    	var items= [
-    	   	
+
+    	me.items= [
 			{
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal	: 'tramite.id',
@@ -19,14 +18,17 @@ Ext.define('HreRem.view.tramites.ActivosTramite', {
 					title: '{tituloActivosTrabajo}',
 					store: '{activosTramite}'
 				},
-				
-				features: [{
-				            id: 'summary',
-				            ftype: 'summary',
-				            hideGroupedHeader: true,
-				            enableGroupingMenu: false,
-				            dock: 'bottom'
-				}],
+
+				features: [
+					{
+			            id: 'summary',
+			            ftype: 'summary',
+			            hideGroupedHeader: true,
+			            enableGroupingMenu: false,
+			            dock: 'bottom'
+					}
+				],
+
 				columns: [
 
 					{
@@ -117,10 +119,9 @@ Ext.define('HreRem.view.tramites.ActivosTramite', {
 						text: HreRem.i18n('header.rating'),
 						flex:1,
 			        	hidden: true
-					}					
-
+					}
 			    ],
-			    
+
 			    dockedItems : [
 			        {
 			            xtype: 'pagingtoolbar',
@@ -132,23 +133,17 @@ Ext.define('HreRem.view.tramites.ActivosTramite', {
 			        }
 			    ]
 			}
-    	
-    	
     	]
-    	
-    	me.addPlugin({ptype: 'lazyitems', items: items });
+
     	me.callParent();
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		var listadoActivosTramite = me.down("[reference=listadoActivosTramite]");
-		
+
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoActivosTramite.getStore().load();
     }
-    
-    
-    
 });

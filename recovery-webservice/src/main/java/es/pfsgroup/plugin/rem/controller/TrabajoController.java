@@ -31,7 +31,6 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.ExcelGenerarPropuestaPrecios;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -43,6 +42,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoAvisadorApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
+import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
+import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
@@ -97,6 +98,9 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private PreciosApi preciosApi;
+	
+	@Autowired
+	private GenerarPropuestaPreciosFactoryApi generarPropuestaApi;
 		
 	
 	private final Log logger = LogFactory.getLog(getClass());
@@ -1086,33 +1090,34 @@ public class TrabajoController extends ParadiseJsonController {
 		PropuestaPrecio propuesta = preciosApi.createPropuestaPreciosFromTrabajo(Long.parseLong(dtoTrabajoFilter.getIdTrabajo()), nombrePropuesta);
 		// Se genera excel unificada si se ha creado la propuesta
 		if(!Checks.esNulo(propuesta))
-			this.generarExcelPropuestaUnificada(propuesta,request,response);
+			this.generarExcelPropuestaPrecios(propuesta,request,response);
 	}
 	
 	/**
-	 * Carga la plantilla unificada de Propuesta de precios, y la rellena con los datos de la propuesta
+	 * Carga el Servicio correspondiente según la entidad, y generará la excel de propuesta de precios para guardarlo en el trabajo asociado
 	 * @param propuesta
 	 * @param request
 	 * @param response
 	 */
-	private void generarExcelPropuestaUnificada(PropuestaPrecio propuesta, HttpServletRequest request, HttpServletResponse response) {
+	private void generarExcelPropuestaPrecios(PropuestaPrecio propuesta, HttpServletRequest request, HttpServletResponse response) {
 		
-		ExcelGenerarPropuestaPrecios excel = new ExcelGenerarPropuestaPrecios();
+		GenerarPropuestaPreciosService servicio = generarPropuestaApi.getService(propuesta.getCartera().getCodigo());
 		
 		ServletContext sc = request.getSession().getServletContext();
-		excel.cargarPlantilla(sc.getRealPath("plantillas/plugin/LISTADO_ACTIVOS_PROPUESTA_PRECIOS.xls"));
+		servicio.cargarPlantilla(sc);
 		try {
-			excel.rellenarPlantilla(propuesta.getNumPropuesta().toString(), genericAdapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaUnificada(propuesta.getId()));
-		
-			excelReportGeneratorApi.sendReport(excel.getFile(), response);
-			preciosApi.guardarFileEnTrabajo(excel.getFile(),propuesta.getTrabajo());
-			excel.vaciarLibros();
+
+			servicio.rellenarPlantilla(propuesta.getNumPropuesta().toString(), genericAdapter.getUsuarioLogado().getApellidoNombre(), preciosApi.getDatosPropuestaByEntidad(propuesta));
 			
+			excelReportGeneratorApi.sendReport(servicio.getFile(), response);
+			preciosApi.guardarFileEnTrabajo(servicio.getFile(),propuesta.getTrabajo());
+			servicio.vaciarLibros();
+			
+		} catch (IOException ex) {
+			logger.error(ex.getMessage());
 		} catch (IllegalAccessException ex) {
 			logger.error(ex.getMessage());
 		} catch (InvocationTargetException ex) {
-			logger.error(ex.getMessage());
-		} catch (IOException ex) {
 			logger.error(ex.getMessage());
 		}
 	}

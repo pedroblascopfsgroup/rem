@@ -3,19 +3,18 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
     xtype: 'observacionesactivo',    
     reference: 'observacionesactivoref',
 	layout: 'fit',
-	
+
 	listeners: { 	
     	boxready: function (tabPanel) { 
     		tabPanel.evaluarEdicion();
     	}
     },
-    
+
     initComponent: function () {
-
         var me = this;
-        me.setTitle(HreRem.i18n('title.observaciones'));	        
-        var items= [
+        me.setTitle(HreRem.i18n('title.observaciones'));
 
+        var items= [
 			{
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal : 'activo.id',
@@ -27,9 +26,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 				},
 				secButtons: {
 					secFunPermToEnable : 'ACTIVO_OBSERVACIONES_ADD'
-				},	
-				
-				
+				},
 				columns: [
 				   {    text: 'Usuario',
 			        	dataIndex: 'nombreCompleto',
@@ -50,8 +47,8 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			       			xtype:'textarea'
 			       		}
 			       }
-			       	        
 			    ],
+
 			    listeners : {
    	                beforeedit : function(editor, context, eOpts ) {
    	                    var idUsuario = context.record.get("idUsuario");
@@ -63,11 +60,10 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
    	                	}
 	                }
 	            },
-	            
+
 	            onGridBaseSelectionChange: function (grid, records) {
 	            	if(!records.length)
             		{
-            			
             			me.down('#removeButton').setDisabled(true);
             			if (!me.down("gridBaseEditableRow").getPlugin("rowEditingPlugin").editing)
             			{
@@ -84,7 +80,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
             			}
             		}
 	            },
-	           
+
 			    dockedItems : [
 			        {
 			            xtype: 'pagingtoolbar',
@@ -95,18 +91,13 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			            }
 			        }
 			    ]
-			    
 			}
-            
-            
         ];
-        
+
 		me.addPlugin({ptype: 'lazyitems', items: items });
-		
     	me.callParent();
-    	
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -114,16 +105,13 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
   			grid.getStore().load();
   		});
     },
-    
+
   //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar
     evaluarEdicion: function() {    	
 		var me = this;
-		
+
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
 			me.down('[xtype=gridBaseEditableRow]').setTopBar(false);
 		}
     }
-
-
-    
 });

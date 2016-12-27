@@ -1,27 +1,26 @@
 Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'datospublicacionactivo',   
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
+    extend		: 'HreRem.view.common.FormBase',
+    xtype		: 'datospublicacionactivo',   
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
     scrollable	: 'y',
     saveMultiple: true,
     refreshAfterSave: true,
     disableValidation: false,
-    records: ['activohistoricoestadopublicacion', 'activoCondicionantesDisponibilidad', 'datosPublicacion'], 
+    records		: ['activohistoricoestadopublicacion', 'activoCondicionantesDisponibilidad', 'datosPublicacion'], 
     recordsClass: ['HreRem.model.ActivoHistoricoEstadoPublicacion', 'HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacion'],
-    requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.ActivoHistoricoEstadoPublicacion' ,'HreRem.model.CondicionEspecifica', 
-               'HreRem.view.activos.detalle.HistoricoCondicionesList','HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosList',
-               'HreRem.model.DatosPublicacion'],
-    listeners: {
+    requires	: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.ActivoHistoricoEstadoPublicacion' ,'HreRem.model.CondicionEspecifica', 
+               		'HreRem.view.activos.detalle.HistoricoCondicionesList','HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosList',
+               		'HreRem.model.DatosPublicacion'],
+    listeners	: {
     	boxready:'cargarTabData'
     },
 
-    
     initComponent: function () {
-
         var me = this;
+        me.setTitle(HreRem.i18n('title.datos.publicacion.activo'));
 
-        var items = [
+        me.items = [
 // Resumen estado publicación.
         			{
 						xtype:'fieldsettable',
@@ -436,13 +435,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 							 ]
 					}
 		];
-		
-        me.addPlugin({ptype: 'lazyitems', items: items });
-    	me.setTitle(HreRem.i18n('title.datos.publicacion.activo'));
+
    	 	me.callParent();
-   		
    },
-   
+
    getIconClsCondicionantes: function(get,condicion) {
     	if(condicion) {
     		return 'app-tbfiedset-ico icono-ok'
@@ -450,7 +446,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     		return 'app-tbfiedset-ico icono-ko'
     	}
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -459,5 +455,4 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
   			grid.getStore().load();
   		});
     }
-    
 });

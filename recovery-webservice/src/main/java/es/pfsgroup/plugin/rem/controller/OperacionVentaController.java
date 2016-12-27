@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.impl.OperacionVentaManager;
+import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -36,7 +36,7 @@ public class OperacionVentaController {
 		final String templateOperacionVenta = "OperativaVenta001";
 
 		@Autowired
-		private OperacionVentaManager operacionVentaManager;
+		private ParamReportsApi paramReportsApi;
 
 		@Autowired
 		private ExpedienteComercialApi expedienteComercialApi;
@@ -111,15 +111,15 @@ public class OperacionVentaController {
 			
 			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
 			if (model.get("error")==null || model.get("error")=="") {
-				params = operacionVentaManager.paramsHojaDatos(oferta, model);
+				params = paramReportsApi.paramsHojaDatos(oferta.getActivosOferta().get(0), model);
 			}
 			if (model.get("error")==null || model.get("error")=="") {
-				dataSource = operacionVentaManager.dataSourceHojaDatos(oferta, activo, model);
+				dataSource = paramReportsApi.dataSourceHojaDatos(oferta.getActivosOferta().get(0), model);
 			}
 			
 			//GENERACION DEL DOCUMENTO EN PDF		
 			if (model.get("error")==null || model.get("error")=="") {
-				fileSalidaTemporal = operacionVentaManager.getPDFFile(params, dataSource, templateOperacionVenta, model);
+				fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model);
 			}
 
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE

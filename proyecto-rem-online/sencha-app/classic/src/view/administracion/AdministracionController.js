@@ -8,10 +8,10 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	// y todas las listas de selección de proveedores estarán deshabilitadas.
     	var me = this;
     	
-    	me.codProveedorIdentificado= null;
+    	me.nifProveedorIdentificado= null;
     	
     	if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
-			var url =  $AC.getRemoteUrl('gastosproveedor/getCodProveedorByUsuario');
+			var url =  $AC.getRemoteUrl('gastosproveedor/getNifProveedorByUsuario');
 			Ext.Ajax.request({
 			     url: url,			
 			     success: function(response, opts) {
@@ -20,7 +20,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	                	data = Ext.decode(response.responseText);
 	                }  catch (e){ };
 	                
-	                me.codProveedorIdentificado = data.data;
+	                me.nifProveedorIdentificado = data.data;
 	                
 	                if(data.success != "true") {	                	
 	                	me.fireEvent("errorToast", data.msg);
@@ -31,7 +31,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		     		var data = {};
 	                try {
 	                	data = Ext.decode(response.responseText);
-	                	me.codProveedorIdentificado = data.data;
+	                	me.nifProveedorIdentificado = data.data;
 	                }
 	                catch (e){ };
 	                if (!Ext.isEmpty(data.msg)) {
@@ -141,7 +141,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			});	
 		    
 			if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
-				criteria.codigoProveedorRem = me.codProveedorIdentificado;
+				criteria.nifProveedor = me.nifProveedorIdentificado;
 			}
 			store.getProxy().extraParams = criteria;
 			
@@ -245,7 +245,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     	var me =this,
     	parent= grid.up('gestiongastos');
-		Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent, codEmisor: me.codProveedorIdentificado}).show();
+		Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent, nifEmisor: me.nifProveedorIdentificado}).show();
 	                
     },
     

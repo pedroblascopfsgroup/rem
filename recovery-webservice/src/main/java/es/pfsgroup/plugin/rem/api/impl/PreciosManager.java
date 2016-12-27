@@ -29,7 +29,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoExcelPropuestaUnificada;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -51,6 +50,9 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
+import es.pfsgroup.plugin.rem.model.VDatosPropuestaEntidad01;
+import es.pfsgroup.plugin.rem.model.VDatosPropuestaEntidad02;
+import es.pfsgroup.plugin.rem.model.VDatosPropuestaEntidad03;
 import es.pfsgroup.plugin.rem.model.VDatosPropuestaUnificada;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
@@ -61,6 +63,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.VActivosPropuestaDao;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.VNumActivosTipoPrecioDao;
+import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosUnificada;
+import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPrecios;
+import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosEntidad01;
+import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosEntidad02;
+import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosEntidad03;
 import es.pfsgroup.plugin.rem.service.PropuestaPreciosExcelService;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 
@@ -335,17 +342,21 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		}
 	}
 	
+	/**
+	 * Al final se divide en tres excels, se conserva por posible aplicación futura
+	 */
 	@Override
-	public List<DtoExcelPropuestaUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException {
+	public List<DtoGenerarPropuestaPreciosUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idPropuesta", idPropuesta);
 		List<VDatosPropuestaUnificada> listDatosPropuesta = genericDao.getList(VDatosPropuestaUnificada.class,filtro);
-		List<DtoExcelPropuestaUnificada> listDto = new ArrayList<DtoExcelPropuestaUnificada>();
+		List<DtoGenerarPropuestaPreciosUnificada> listDto = new ArrayList<DtoGenerarPropuestaPreciosUnificada>();
+		
 		
 		for(VDatosPropuestaUnificada datos : listDatosPropuesta) {
-			DtoExcelPropuestaUnificada dto = new DtoExcelPropuestaUnificada();
+			DtoGenerarPropuestaPreciosUnificada dto = new DtoGenerarPropuestaPreciosUnificada();
 			BeanUtils.copyProperties(dto, datos);
-			BeanUtils.copyProperty(dto, "valorPropuesto", valorPropuestaPrecio(dto));
+			BeanUtils.copyProperty(dto, "valorPropuesto", valorPropuestaPrecio(dto, null));
 			
 			listDto.add(dto);
 		}
@@ -359,7 +370,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	 * @param dto
 	 * @return
 	 */
-	private Double valorPropuestaPrecio(DtoExcelPropuestaUnificada dto) {
+	private Double valorPropuestaPrecio(DtoGenerarPropuestaPrecios dto, Double valorAdquisitivo) {
 		
 		Integer cartera = Integer.parseInt(dto.getCodCartera());
 		Double resultado = null;
@@ -368,7 +379,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		switch(cartera) {
 		
 			case 1: // Cajamar
-				resultado = precioPropuestoCajamar(dto.getValorFsv(),dto.getValorTasacion(),dto.getValorVnc(),dto.getValorAdquisicion());
+				resultado = precioPropuestoCajamar(dto.getValorFsv(),dto.getValorTasacion(),dto.getValorVnc(),valorAdquisitivo);
 				break;
 			case 2: // Sareb
 				resultado = precioPropuestoSareb(dto.getValorFsv());
@@ -587,6 +598,98 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			// TODO Auto-generated catch block
 			logger.error(e.getMessage());
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<T> getDatosPropuestaByEntidad(PropuestaPrecio propuesta) throws IllegalAccessException, InvocationTargetException {
+		
+		if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(propuesta.getCartera().getCodigo())) {
+				return (List<T>) this.getDatosPropuestaEntidad01(propuesta.getId());
+			} 
+			else if(DDCartera.CODIGO_CARTERA_SAREB.equals(propuesta.getCartera().getCodigo())) {
+				return (List<T>) this.getDatosPropuestaEntidad02(propuesta.getId());
+			}
+			else if(DDCartera.CODIGO_CARTERA_BANKIA.equals(propuesta.getCartera().getCodigo())) {
+				return (List<T>) this.getDatosPropuestaEntidad03(propuesta.getId());
+			}
+			else {
+				return (List<T>) this.getDatosPropuestaUnificada(propuesta.getId());
+				
+			}
+
+	}
+	
+	/**
+	 * Devuelve el listado con los datos para la generación de propuesta de precios de la Entidad con códgio '03'
+	 * @param idPropuesta
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	private List<DtoGenerarPropuestaPreciosEntidad03> getDatosPropuestaEntidad03(Long idPropuesta) throws IllegalAccessException, InvocationTargetException {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idPropuesta", idPropuesta);
+		List<VDatosPropuestaEntidad03> listDatosPropuesta = genericDao.getList(VDatosPropuestaEntidad03.class,filtro);
+		List<DtoGenerarPropuestaPreciosEntidad03> listDto = new ArrayList<DtoGenerarPropuestaPreciosEntidad03>();
+		
+		for(VDatosPropuestaEntidad03 datos : listDatosPropuesta) {
+			DtoGenerarPropuestaPreciosEntidad03 dto = new DtoGenerarPropuestaPreciosEntidad03();
+			BeanUtils.copyProperties(dto, datos);
+			BeanUtils.copyProperty(dto, "valorPropuesto", valorPropuestaPrecio(dto, null));
+			
+			listDto.add(dto);
+		}
+		
+		return listDto;
+	}
+	
+	/**
+	 * Devuelve el listado con los datos para la generación de propuesta de precios de la Entidad con códgio '02'
+	 * @param idPropuesta
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	private List<DtoGenerarPropuestaPreciosEntidad02> getDatosPropuestaEntidad02(Long idPropuesta) throws IllegalAccessException, InvocationTargetException {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idPropuesta", idPropuesta);
+		List<VDatosPropuestaEntidad02> listDatosPropuesta = genericDao.getList(VDatosPropuestaEntidad02.class,filtro);
+		List<DtoGenerarPropuestaPreciosEntidad02> listDto = new ArrayList<DtoGenerarPropuestaPreciosEntidad02>();
+		
+		for(VDatosPropuestaEntidad02 datos : listDatosPropuesta) {
+			DtoGenerarPropuestaPreciosEntidad02 dto = new DtoGenerarPropuestaPreciosEntidad02();
+			BeanUtils.copyProperties(dto, datos);
+			BeanUtils.copyProperty(dto, "valorPropuesto", valorPropuestaPrecio(dto, null));
+			
+			listDto.add(dto);
+		}
+		
+		return listDto;
+	}
+	
+	/**
+	 * Devuelve el listado con los datos para la generación de propuesta de precios de la Entidad con códgio '01'
+	 * @param idPropuesta
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	private List<DtoGenerarPropuestaPreciosEntidad01> getDatosPropuestaEntidad01(Long idPropuesta) throws IllegalAccessException, InvocationTargetException {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idPropuesta", idPropuesta);
+		List<VDatosPropuestaEntidad01> listDatosPropuesta = genericDao.getList(VDatosPropuestaEntidad01.class,filtro);
+		List<DtoGenerarPropuestaPreciosEntidad01> listDto = new ArrayList<DtoGenerarPropuestaPreciosEntidad01>();
+		
+		for(VDatosPropuestaEntidad01 datos : listDatosPropuesta) {
+			DtoGenerarPropuestaPreciosEntidad01 dto = new DtoGenerarPropuestaPreciosEntidad01();
+			BeanUtils.copyProperties(dto, datos);
+			BeanUtils.copyProperty(dto, "valorPropuesto", valorPropuestaPrecio(dto, dto.getValorAdquisicion()));
+			
+			listDto.add(dto);
+		}
+		
+		return listDto;
 	}
 
 }

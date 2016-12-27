@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +44,6 @@ import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoAnejo;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -71,7 +69,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAnejo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -597,7 +594,6 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			ActivoVivienda vivienda = (ActivoVivienda) genericDao.get(ActivoVivienda.class, comercialFilter);
 			
 			Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", infoComercial.getId());
-			List<ActivoAnejo> listAnejo = genericDao.getList(ActivoAnejo.class, infoComercialFilter);
 			ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
 			
 			//Descripción fisica del EDIFICIO
@@ -790,55 +786,41 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			mapaValores.put("ActivoZona",FileUtilsREM.stringify(infoComercial.getZona()));
 			
 
-			//Todo lo relacionado con la tabla ANEJO
-			if (listAnejo!=null) {
-				Integer plazas = 0;
-				Integer trastero = null;
-				Integer garaje = null;
-				Float superficie = new Float(0);
-				String subtipo = null;
-				for (int j = 0; j < listAnejo.size(); j++) {
-					ActivoAnejo anejo = listAnejo.get(j);
-					if (anejo.getTipoAnejo().getCodigo().equals(DDTipoAnejo.TIPO_ANEJO_GARAJE)) {
-						if (garaje==null) {
-							garaje = 1;
-						} else {
-							garaje++;
-						}
-						if (anejo.getSuperficie()!=null) {
-							superficie+=anejo.getSuperficie();
-						}
-						if (plazas==null) {
-							plazas = 1;
-						} else {
-							plazas++;
-						}
-						if (anejo.getSubTipo()!=null) {
-							subtipo = FileUtilsREM.stringify(anejo.getSubTipo().getDescripcionLarga());
-						} else {
-							subtipo = FileUtilsREM.stringify(null);
-						}						
-					} else if (anejo.getTipoAnejo().getCodigo().equals(DDTipoAnejo.TIPO_ANEJO_TRASTERO)) {
-						if (trastero==null) {
-							trastero = 1;
-						} else {
-							trastero++;
-						}
-					} 				
+			//Todo lo relacionado con la tabla ANEJO			
+			ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
+					genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
+					genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_GARAJE),
+					genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
+			if (!Checks.esNulo(activoDistribucion)) {
+				if(activoDistribucion.getCantidad() > 0){
+					mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(true));
+				}else{
+					mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(false));
 				}
-				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(plazas));
-				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(trastero));
-				mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(garaje));
-				mapaValores.put("ActivoSubtipologia",FileUtilsREM.stringify(subtipo));
-				mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(superficie));
-			} else {
-				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(null));
-				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(activoDistribucion.getCantidad()));
+				mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(activoDistribucion.getSuperficie()));
+			}else{
 				mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(null));
-				mapaValores.put("ActivoSubtipologia",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(null));
 				mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoSubtipologia",FileUtilsREM.stringify(null));
 			}
 			
+			activoDistribucion = genericDao.get(ActivoDistribucion.class,
+					genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
+					genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO),
+					genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
+			if (!Checks.esNulo(activoDistribucion)) {						
+				if(activoDistribucion.getCantidad() > 0){
+					mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(true));
+				}else{
+					mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(false));
+				}
+			}else{
+				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(null));
+			}
+			
+		
 			
 			/****************************************LOTE**********************************************/
 			if(!Checks.esNulo(oferta.getAgrupacion())){

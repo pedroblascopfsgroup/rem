@@ -38,7 +38,11 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('00'	,'Retirar calificación'	,'Retirar calificación')
+        T_TIPO_DATA('00'	,'Retirar calificación'	,'Retirar calificación'),
+        T_TIPO_DATA('01'	,'Platino'	,'Platino'),
+        T_TIPO_DATA('02'	,'Oro'		,'Oro'),
+        T_TIPO_DATA('03'	,'Plata'	,'Plata'),
+        T_TIPO_DATA('04'	,'Bronce'	,'Bronce')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

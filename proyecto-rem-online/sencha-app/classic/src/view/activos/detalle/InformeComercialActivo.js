@@ -780,8 +780,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		var me = this; 
 		me.recargar = false;
 		
+		var codigoTipoActivoMediador = me.lookupController().lookupReference('tipoActivoMediadorInforme').getValue();
 		//Necesario en caso de que cambien el tipo de activo en Mediador.
-		me.borrarContainerTipoActivoMediador(me);
+		var nuevoContainer = me.borrarContainerTipoActivoMediador(me, codigoTipoActivoMediador);
 		
 		me.lookupController().cargarTabData(me);
 
@@ -789,7 +790,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
   			grid.getStore().load();
 		});
 		
-		me.cargarDatosSegunTipoActivoDelMediador(me, me.lookupController().lookupReference('tipoActivoMediadorInforme').getValue());
+		if(nuevoContainer)
+			me.cargarDatosSegunTipoActivoDelMediador(me, codigoTipoActivoMediador);
     },
 
     actualizarCoordenadas: function(latitud, longitud) {
@@ -842,15 +844,21 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     	
     },
     
-    borrarContainerTipoActivoMediador: function(me) {
+    borrarContainerTipoActivoMediador: function(me, codigoTipoActivoMediador) {
     	for(var i=0 ; i < me.items.items.length ; i++) {
     		var xtipo = me.items.getAt(i).getXType();
     		
-    		if(xtipo == 'infovivienda' || xtipo == 'infolocalcomercial' || xtipo == 'infoedificiocompleto'
-    			|| xtipo == 'infoindustrialysuelo' || xtipo == 'infovarios') 
+    		if((xtipo == 'infovivienda' && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['VIVIENDA'])
+    			|| (xtipo == 'infolocalcomercial'  && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'])
+    			|| (xtipo == 'infoedificiocompleto'  && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO'])
+    			|| (xtipo == 'infoindustrialysuelo'  && (codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['SUELO'] && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['INDUSTRIAL'] && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']) )
+    			|| (xtipo == 'infovarios' && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['OTROS']))
     		{
     			me.remove(me.items.getAt(i));
+    			return true;
     		}
     	}
+    	
+    	return false;
     }
 });

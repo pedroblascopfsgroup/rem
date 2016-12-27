@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
+import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 
@@ -18,6 +19,8 @@ public interface VisitaDao extends AbstractDao<Visita, Long>{
 	public List<Visita> getListaVisitas(VisitaDto visitaDto);
 	
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter);
+
+	public VBusquedaVisitasDetalle getVisitaDetalle(DtoVisitasFilter dtoVisitasFilter);
 
 
 }

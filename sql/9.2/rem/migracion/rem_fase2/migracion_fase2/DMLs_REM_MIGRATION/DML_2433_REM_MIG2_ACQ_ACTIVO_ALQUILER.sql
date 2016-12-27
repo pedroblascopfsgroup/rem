@@ -105,63 +105,65 @@ BEGIN
       
       V_SENTENCIA := '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-                        HAL_ID,
+            HAL_ID,
             ACT_ID,
-                        HAL_NUMERO_CONTRATO_ALQUILER,
-
-                        HAL_FECHA_INICIO_CONTRATO,
-                        HAL_FECHA_FIN_CONTRATO,
-                        HAL_FECHA_RESOLUCION_CONTRATO,
-                        HAL_IMPORTE_RENTA_CONTRATO,
-                        HAL_PLAZO_OPCION_COMPRA,
-                        HAL_PRIMA_OPCION_COMPRA,
-                        HAL_PRECIO_OPCION_COMPRA,
-                        HAL_CONDICIONES_OPCION_COMPRA,
-                        HAL_IND_CONFLICTO_INTERESES,
-                        HAL_IND_RIESGO_REPUTACIONAL,
-                        HAL_GASTOS_IBI,
-                        DD_TPC_ID_IBI,
-                        HAL_GASTOS_COMUNIDAD,
-                        DD_TPC_ID_COM,
-                        DD_TPC_ID_SUMINISTRO,
+            HAL_NUMERO_CONTRATO_ALQUILER,
+			DD_ESC_ID,
+            HAL_FECHA_INICIO_CONTRATO,
+            HAL_FECHA_FIN_CONTRATO,
+            HAL_FECHA_RESOLUCION_CONTRATO,
+            HAL_IMPORTE_RENTA_CONTRATO,
+            HAL_PLAZO_OPCION_COMPRA,
+            HAL_PRIMA_OPCION_COMPRA,
+            HAL_PRECIO_OPCION_COMPRA,
+            HAL_CONDICIONES_OPCION_COMPRA,
+            HAL_IND_CONFLICTO_INTERESES,
+            HAL_IND_RIESGO_REPUTACIONAL,
+            HAL_GASTOS_IBI,
+            DD_TPC_ID_IBI,
+            HAL_GASTOS_COMUNIDAD,
+            DD_TPC_ID_COM,
+            DD_TPC_ID_SUMINISTRO,
             VERSION,
             USUARIOCREAR,
             FECHACREAR,
             BORRADO
         )
         SELECT
-            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                             HAL_ID,
-            ACT.ACT_ID                                                                                                  ACT_ID,
-                        MIG.ACQ_NUMERO_CONTRATO_ALQUILER                                                        HAL_NUMERO_CONTRATO_ALQUILER,
-                        
-                        MIG.ACQ_FECHA_INICIO_CONTRATO                                                           HAL_FECHA_INICIO_CONTRATO,
-                        MIG.ACQ_FECHA_FIN_CONTRATO                                                                      HAL_FECHA_FIN_CONTRATO,
-                        MIG.ACQ_FECHA_RESOLUCION_CONTRATO                                                       HAL_FECHA_RESOLUCION_CONTRATO,
-                        MIG.ACQ_IMPORTE_RENTA_CONTRATO                                                          HAL_IMPORTE_RENTA_CONTRATO,
-                        MIG.ACQ_PLAZO_OPCION_COMPRA                                                                     HAL_PLAZO_OPCION_COMPRA,
-                        MIG.ACQ_PRIMA_OPCION_COMPRA                                                                     HAL_PRIMA_OPCION_COMPRA,
-                        MIG.ACQ_PRECIO_OPCION_COMPRA                                                            HAL_PRECIO_OPCION_COMPRA,
-                        MIG.ACQ_CONDICIONES_OPCION_COMPRA                                                       HAL_CONDICIONES_OPCION_COMPRA,
-                        MIG.ACQ_IND_CONFLICTO_INTERESES                                                         HAL_IND_CONFLICTO_INTERESES,
-                        MIG.ACQ_IND_RIESGO_REPUTACIONAL                                                         HAL_IND_RIESGO_REPUTACIONAL,
-                        MIG.ACQ_GASTOS_IBI                                                                                      HAL_GASTOS_IBI,
-                        TPC_IBI.DD_TPC_ID                                                                                       DD_TPC_ID_IBI,
-                        MIG.ACQ_GASTOS_COMUNIDAD                                                                        HAL_GASTOS_COMUNIDAD,
-                        TPC_COM.DD_TPC_ID                                                                                       DD_TPC_ID_COM,
-            TPC_SUMINISTRO.DD_TPC_ID                                                                    DD_TPC_ID_SUMINISTRO,
-            0                                                                                                                   VERSION,
-            ''MIG2''                                                            USUARIOCREAR,
-            SYSDATE                                                             FECHACREAR,
-            0                                                                   BORRADO
+            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                     HAL_ID,
+            ACT.ACT_ID                                                  ACT_ID,
+            MIG.ACQ_NUMERO_CONTRATO_ALQUILER                            HAL_NUMERO_CONTRATO_ALQUILER,
+            ESC.DD_ESC_ID												DD_ESC_ID,
+            MIG.ACQ_FECHA_INICIO_CONTRATO                               HAL_FECHA_INICIO_CONTRATO,
+            MIG.ACQ_FECHA_FIN_CONTRATO                                  HAL_FECHA_FIN_CONTRATO,
+            MIG.ACQ_FECHA_RESOLUCION_CONTRATO                           HAL_FECHA_RESOLUCION_CONTRATO,
+            MIG.ACQ_IMPORTE_RENTA_CONTRATO                              HAL_IMPORTE_RENTA_CONTRATO,
+            MIG.ACQ_PLAZO_OPCION_COMPRA                                 HAL_PLAZO_OPCION_COMPRA,
+            MIG.ACQ_PRIMA_OPCION_COMPRA                                 HAL_PRIMA_OPCION_COMPRA,
+            MIG.ACQ_PRECIO_OPCION_COMPRA                                HAL_PRECIO_OPCION_COMPRA,
+            MIG.ACQ_CONDICIONES_OPCION_COMPRA                           HAL_CONDICIONES_OPCION_COMPRA,
+            MIG.ACQ_IND_CONFLICTO_INTERESES                             HAL_IND_CONFLICTO_INTERESES,
+            MIG.ACQ_IND_RIESGO_REPUTACIONAL                             HAL_IND_RIESGO_REPUTACIONAL,
+            MIG.ACQ_GASTOS_IBI                                          HAL_GASTOS_IBI,
+            TPC_IBI.DD_TPC_ID                                           DD_TPC_ID_IBI,
+            MIG.ACQ_GASTOS_COMUNIDAD                                    HAL_GASTOS_COMUNIDAD,
+            TPC_COM.DD_TPC_ID                                           DD_TPC_ID_COM,
+            TPC_SUMINISTRO.DD_TPC_ID                                    DD_TPC_ID_SUMINISTRO,
+            0                                                           VERSION,
+            ''MIG2''                                                    USUARIOCREAR,
+            SYSDATE                                                     FECHACREAR,
+            0                                                           BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
-                        ON ACT.ACT_NUM_ACTIVO = MIG.ACQ_NUMERO_ACTIVO
+                     ON ACT.ACT_NUM_ACTIVO = MIG.ACQ_NUMERO_ACTIVO
                 LEFT JOIN '||V_ESQUEMA||'.DD_TPC_TIPOS_PORCUENTA TPC_IBI
-                        ON TPC_IBI.DD_TPC_CODIGO = MIG.ACQ_COD_TIPO_PORCTA_IBI
+                     ON TPC_IBI.DD_TPC_CODIGO = MIG.ACQ_COD_TIPO_PORCTA_IBI
                 LEFT JOIN '||V_ESQUEMA||'.DD_TPC_TIPOS_PORCUENTA TPC_COM
-                        ON TPC_COM.DD_TPC_CODIGO = MIG.ACQ_COD_TIPO_PORCTA_COMUNIDAD
+                     ON TPC_COM.DD_TPC_CODIGO = MIG.ACQ_COD_TIPO_PORCTA_COMUNIDAD
                 LEFT JOIN '||V_ESQUEMA||'.DD_TPC_TIPOS_PORCUENTA TPC_SUMINISTRO
-                        ON TPC_SUMINISTRO.DD_TPC_CODIGO = MIG.ACQ_COD_TIPO_PORCTA_SUMINIS
+                    ON TPC_SUMINISTRO.DD_TPC_CODIGO = MIG.ACQ_COD_TIPO_PORCTA_SUMINIS
+                LEFT JOIN '||V_ESQUEMA||'.DD_ESC_ESTADO_CNT_ALQUILER ESC
+					ON ESC.DD_ESC_CODIGO = MIG.ACQ_COD_ESTADO_CNT_ALQUILER
       '
       ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;

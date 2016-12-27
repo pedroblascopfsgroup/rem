@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIÉRREZ
---## FECHA_CREACION=20160825
+--## FECHA_CREACION=20161227
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -43,7 +43,8 @@ DECLARE
 	  T_FUNCION('AOPR', 'Ocultar precio publicación', 'Ocultar precio publicación', 'ACTUALIZAR_OCULTARPRECIO', 'nD*'),
 	  T_FUNCION('ADPR', 'Desocultar precio publicación', 'Desocultar precio publicación', 'ACTUALIZAR_DESOCULTARPRECIO', 'nD*'),
 	  T_FUNCION('ADPU', 'Despublicar', 'Despublicar', 'ACTUALIZAR_DESPUBLICAR', 'nD*'),
-	  T_FUNCION('AEME', 'Autorizar edición a mediador', 'Autorizar edición a mediador', 'ACTUALIZAR_AUTORIZAREDICION', 'nD*')
+	  T_FUNCION('AEME', 'Autorizar edición a mediador', 'Autorizar edición a mediador', 'ACTUALIZAR_AUTORIZAREDICION', 'nD*'),
+	  T_FUNCION('ADPF', 'Publicación: Despublicación forzada del activo', 'Publicación: Despublicación forzada del activo', 'MASIVO_DESPUBLICAR_FORZADO', 'nD*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

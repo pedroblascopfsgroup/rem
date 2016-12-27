@@ -4,18 +4,16 @@ Ext.define('HreRem.view.trabajos.HistoricoPeticionesActivo', {
 	bind: {
 		store: '{historicoTrabajos}'
 	},
-	
+
     initComponent: function () {
-     	
      	var me = this;
      	me.setTitle(HreRem.i18n('title.historico.peticiones'));
-	    me.listeners = {
 
+	    me.listeners = {
 			rowdblclick: 'onHistoricoPeticionesActivoDobleClick'
 	    };
-	     
+
 	    me.columns = [
-	    
   				{
 	            	text	 : HreRem.i18n('header.numero.trabajo'),
 	                flex	 : 1,
@@ -59,10 +57,8 @@ Ext.define('HreRem.view.trabajos.HistoricoPeticionesActivo', {
 		            dataIndex: 'numeroAfectados'
 	            
 		        }
-		        
-
 	        ];
-	        
+
 	    me.dockedItems = [
 	        {
 	            xtype: 'pagingtoolbar',
@@ -74,16 +70,13 @@ Ext.define('HreRem.view.trabajos.HistoricoPeticionesActivo', {
 	            }
 	        }
 	    ];
-	    
+
 	    me.callParent();
-	    
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		me.getStore().load();
-  		
     }
-    
 });

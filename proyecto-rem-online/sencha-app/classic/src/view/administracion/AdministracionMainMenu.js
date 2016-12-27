@@ -3,32 +3,24 @@ Ext.define('HreRem.view.administracion.AdministracionMainMenu', {
     cls			: 'tabpanel-base',
     xtype		: 'administracionmainmenu',
     reference	: 'administracionMainMenu',
-    layout: 'fit',
-    
-    requires	: ['HreRem.view.administracion.gastos.AdministracionGastosMain','HreRem.view.administracion.gastos.AdministracionPrevisionMain',
-    'HreRem.view.administracion.gastos.AdministracionConfiguracionMain'],
-    
+    layout		: 'fit',
+    requires	: ['HreRem.view.administracion.gastos.AdministracionGastosMain'],
+    listeners	: {
+    	boxready: function (tabPanel) {   		
+			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
+				var tab = tabPanel.items.items[0];
+				tabPanel.setActiveTab(tab);
+			}
+    	}
+    },
 
     initComponent: function () {
-        
         var me = this;
-        
-        me.items = [
-		    {	
-				xtype: 'administraciongastosmain', reference: 'administracionGastosMain'
-			}/*,
-			{	
-				xtype: 'administracionprevisionmain', reference: 'administracionPrevisionMain'
-			},
-			{	
-				xtype: 'administracionconfiguracionmain', reference: 'administracionConfiguracionMain', disabled: true
-			}*/
-        ];
-        
-        me.callParent(); 
 
-        
+        var items = [];
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'administraciongastosmain', reference: 'administracionGastosMain'})}, ['TAB_GASTOS_ADMINISTRACION']);
+
+	    me.addPlugin({ptype: 'lazyitems', items: items });
+        me.callParent();
     }
-
 });
-

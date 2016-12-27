@@ -1,10 +1,8 @@
 Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
     extend: 'HreRem.view.common.FormBase',
-    //extend: 'Ext.panel.Panel',
     xtype: 'fotoswebactivo',    
     frame: true,
     collapsible: true,
-    //isSearchForm: true,
     layout: 'column',
     scrollable	: 'y',
     title: 'Fotos Web',
@@ -18,9 +16,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
     	}
 
     },
-    
-    
-    
+
 	requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.Fotos', 'Ext.ux.DataView.DragSelector','Ext.ux.DataView.LabelEditor'],
 
     tpl: [
@@ -32,9 +28,8 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
     ],
 
     initComponent: function () {
-    	 	
         var me = this;
-        
+
         var imageTemplate = new Ext.XTemplate('<tpl for=".">',
         	'<div class="thumb-wrap" id="{nombre}">',
         	'<span>&nbsp;{tituloFoto}</span>',
@@ -52,10 +47,8 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 			},
         	
             multiSelect: true,
-            //height: 310,
             width: '67%',
             height: '100%',
-            //layout: 'fit',
             scrollable	: 'y',
             trackOver: true,
             overItemCls: 'x-item-over',
@@ -65,14 +58,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
                 Ext.create('Ext.ux.DataView.DragSelector', {}),
                 Ext.create('Ext.ux.DataView.LabelEditor', {dataIndex: 'nombre'})
             ],
-           /* prepareData: function(data) {
-                Ext.apply(data, {
-                    shortName: Ext.util.Format.ellipsis(data.name, 15),
-                    sizeString: Ext.util.Format.fileSize(data.size),
-                    dateString: Ext.util.Format.date(data.lastmod, "m/d/Y g:i a")
-                });
-                return data;
-            },*/
+
             listeners: {
                 selectionchange: function(dv, nodes ){
                     var l = nodes.length,
@@ -93,7 +79,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
         });
 
         me.items= [
-			
+
 			imageDataView,
 			{
 				xtype:'fieldset',
@@ -112,7 +98,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 				},
 				defaultType: 'textfieldbase',
 				width: '25%',
-				
+
 				title: HreRem.i18n('title.informacion.imagen'),
 				items :
 					[
@@ -172,7 +158,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 			                        }
 				               	}
 			                },
-		
+
 		                    items: [
 			                    {
 			                    	hidden: true,
@@ -197,10 +183,8 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 		                
 		            ]
 			}
-
-			
 		],
-		
+
 		me.dockedItems = [{
 		    xtype: 'toolbar',
 		    buttonAlign: 'left',
@@ -216,39 +200,23 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 		    ]
 		}
 		];
-		
 
     	me.callParent();
-    	
     },
-    
+
     dragDrop: function() {
-    	
     	var me = this;
-    	
+
     	var dragZone = new Ext.view.DragZone({
 			view: this.items.items[0],
 			ddGroup: 'Fotos',
 			dragText: 'Mover'
 		});
-		
-		var dropZone = new Ext.view.DropZone({
 
+		var dropZone = new Ext.view.DropZone({
 			view: this.items.items[0],
 			ddGroup: 'Fotos',
 			handleNodeDrop : function(data, record, position) {
-				/* 
-				 * record.data.orden
-				 * data.records[0].data.orden
-				 */
-				
-				
-				/*var ordenFijo = record.data.orden;
-				var ordenMovido = data.records[0].data.orden;
-				
-				data.records[0].data.orden = ordenFijo;
-				record.data.orden = ordenMovido;*/
-				
 				var view = this.view,
 					store = view.getStore(),
 					index, records, i, len;
@@ -262,7 +230,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 					data.view.store.remove(data.records, data.view === view);
 				}
 				index = store.indexOf(record);
-				
+
 				//Comentado por error a veces al arrastar una imagen a la primera posición
 				if (position !== 'before') {
 					index++;
@@ -270,30 +238,16 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 				store.insert(index, data.records);
 				view.getSelectionModel().select(data.records);
 				me.fireEvent('updateOrdenFotos', data, record, store);
-				
 			}
 		});
-
 	},
-    
+
     //HREOS-846 Si NO esta dentro del perimetro, ocultamos las opciones de agregar/eliminar imagenes
     evaluarEdicion: function() {    	
 		var me = this;
-		
+
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
 			me.down('[xtype=toolbar]').hide();
 		}
     }
-    
-    /*,
-	
-	funcionRecargar: function() {
-		var me = this; 
-		me.recargar = false;
-		me.lookupController().cargarTabFotos(me);
-		Ext.Array.each(me.query('grid'), function(grid) {
-  			grid.getStore().load();
-  		});
-    } */
-    
 });

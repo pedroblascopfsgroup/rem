@@ -6,18 +6,15 @@ Ext.define('HreRem.view.activos.ActivosMain', {
     layout		: 'fit',
    	requires	: ['HreRem.view.activos.ActivosSearch','HreRem.view.activos.ActivosList', 'HreRem.view.activos.detalle.ActivosDetalleMain', 'HreRem.view.expedientes.ExpedienteDetalleMain',
    					'HreRem.view.activos.ActivosController','HreRem.view.activos.ActivosModel','Ext.ux.TabReorderer', 'HreRem.ux.button.BotonTab'],
-    controller: 'activos',
-    viewModel: {
+    controller	: 'activos',
+    viewModel	: {
         type: 'activos'
     },
-
-    plugins: ['tabreorderer'],
+    plugins		: ['tabreorderer'],
 
     initComponent: function () {
         var me = this;        
         me.callParent();
-        
-        
 
         var addTabBuscadorActivos = function() {
 	        var tabBuscadorActivos = {
@@ -50,14 +47,10 @@ Ext.define('HreRem.view.activos.ActivosMain', {
 					}
 	        	
 	        	};
-	        	//me.add(tabBuscadorActivos);
+
 	        	me.setActiveTab(tabBuscadorActivos);
         };
-        
-       $AU.confirmFunToFunctionExecution(addTabBuscadorActivos,'TAB_BUSQUEDA_ACTIVOS');      
-        
+
+       $AU.confirmFunToFunctionExecution(addTabBuscadorActivos,'TAB_BUSQUEDA_ACTIVOS');
     }
-
-
 });
-

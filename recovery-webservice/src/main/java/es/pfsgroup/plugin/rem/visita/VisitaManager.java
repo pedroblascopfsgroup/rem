@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
+import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
@@ -639,4 +640,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		return listaRespuesta;
 	}
 
+	@Override
+	public VBusquedaVisitasDetalle getVisitaDetalle(DtoVisitasFilter dtoVisitasFilter) {
+
+		return visitaDao.getVisitaDetalle(dtoVisitasFilter);
+	}
 }

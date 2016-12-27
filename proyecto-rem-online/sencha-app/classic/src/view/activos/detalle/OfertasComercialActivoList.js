@@ -1,27 +1,26 @@
 Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'ofertascomercialactivolist',
-    bind: {
+    bind		: {
         store: '{storeOfertasActivo}'
     },
-    requires: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo'],
-    topBar: true,
+    requires	: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo'],
+    topBar		: true,
 	removeButton: false,
-    listeners: {
+    listeners	: {
     	boxready: function() {
     		me = this;
     		me.evaluarEdicion();
-    	}
+    	},
+    	rowclick: 'onOfertaListClick'
     },
-        
+
     initComponent: function () {
-        
-        var me = this; 
-        
-        
+
+        var me = this;
+
         me.columns= [
-        
-		         {
+		        {
 		        	dataIndex: 'numOferta',
 		            text: HreRem.i18n('header.oferta.numOferta'),
 		            flex: 1

@@ -4,28 +4,25 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
     xtype		: 'datosgeneralesactivotabpanel',
 	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     reference	: 'tabpanelDatosGeneralesActivo',
-    requires: ['Ext.plugin.LazyItems','HreRem.ux.panel.GMapPanel', 'HreRem.view.activos.detalle.DatosBasicosActivo', 'HreRem.view.activos.detalle.DatosComunidadActivo', 
+    requires	: ['Ext.plugin.LazyItems','HreRem.ux.panel.GMapPanel', 'HreRem.view.activos.detalle.DatosBasicosActivo', 'HreRem.view.activos.detalle.DatosComunidadActivo', 
     	'HreRem.view.activos.detalle.TituloInformacionRegistralActivo', 'HreRem.view.activos.detalle.InformacionAdministrativaActivo', 'HreRem.view.activos.detalle.CargasActivo',
     	'HreRem.view.activos.detalle.ValoracionesActivo','HreRem.view.activos.detalle.SituacionPosesoriaActivo','HreRem.view.activos.detalle.InformacionComercialActivo'],
-
+    layout: 'fit',
 	listeners: {
-			    	
     	boxready: function (tabPanel) {   		
-    		
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
-			
+
 			if(tab.ocultarBotonesEdicion) {
 				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
             	tabPanel.evaluarBotonesEdicion(tab);
 			}
 		},
-			    	
-        beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 
+        beforetabchange: function (tabPanel, tabNext, tabCurrent) {
         	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null)
@@ -48,7 +45,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
             			        }
             			   }
         			});
-            		
+
             		return false;
             	}
             	// Si la pestaña necesita botones de edición
@@ -59,7 +56,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
         	}
         }
     },
-	layout: 'fit',
+
 	tabBar: {
 		items: [
         		{
@@ -89,34 +86,31 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
         		    bind: {hidden: '{!editing}'}
         		}
         ]
-    }
-			     
-	,initComponent: function() {
-		
+    },
+
+    initComponent: function() {
 		var me = this;
-		
-		me.items = [{xtype: 'datosbasicosactivo', funPermEdition: ['EDITAR_DATOS_BASICOS_ACTIVO']}];
 
-		$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'tituloinformacionregistralactivo', funPermEdition: ['EDITAR_TITULO_INFO_REGISTRAL_ACTIVO']})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'informacionadministrativaactivo', funPermEdition: ['EDITAR_INFO_ADMINISTRATIVA_ACTIVO']})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'cargasactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_CARGAS']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'situacionposesoriaactivo', funPermEdition: ['EDITAR_SITU_POSESORIA_ACTIVO']})}, ['TAB_ACTIVO_SITU_POSESORIA']);
-    	// Pasa a ser Precios, pestaña de primer nivel 
-    	//$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'valoracionesactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_VALORACIONES']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: true, funPermEdition: ['EDITAR_DATOS_COMUNIDAD_ACTIVO']})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);
-		
-     	me.callParent(); 		
+		var items = [];
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', funPermEdition: ['EDITAR_DATOS_BASICOS_ACTIVO']})}, ['TAB_DATOS_BASICOS_ACTIVO']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', funPermEdition: ['EDITAR_TITULO_INFO_REGISTRAL_ACTIVO']})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', funPermEdition: ['EDITAR_INFO_ADMINISTRATIVA_ACTIVO']})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'cargasactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_CARGAS']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'situacionposesoriaactivo', funPermEdition: ['EDITAR_SITU_POSESORIA_ACTIVO']})}, ['TAB_ACTIVO_SITU_POSESORIA']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: true, funPermEdition: ['EDITAR_DATOS_COMUNIDAD_ACTIVO']})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);
 
+    	me.addPlugin({ptype: 'lazyitems', items: items});
+     	me.callParent();
      },
-     
+
      evaluarBotonesEdicion: function(tab) {    	
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
-		
+
 		//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true") {
 			// Si la pestaña recibida no tiene asignadas funciones de edicion 
@@ -127,5 +121,4 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 	    	} 
 		}
     }
-    
 });

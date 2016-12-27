@@ -3,17 +3,14 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomatica', {
     xtype		: 'generacionpropuestasautomatica',
     reference	: 'generacionPropuestasAutomatica',
     cls			: 'panel-contadores',
-    layout: 'fit',
-    requires: ['HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadores', 'HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadoresAmpliada'],
+    layout		: 'fit',
+    requires	: ['HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadores', 'HreRem.view.precios.generacion.GeneracionPropuestasAutomaticaContadoresAmpliada'],
 
     initComponent: function () {
-        
         var me = this;
-        
         me.setTitle(HreRem.i18n("title.inclusion.automatica")); 
-        
-        me.items = [
-        		        						
+
+        me.items = [					
 	        		{
 			    		xtype:'toolfieldset',			   		         						   		        
 			        	cls: 'fieldsetBase cabecera',
@@ -33,26 +30,19 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomatica', {
 									handler	: 'onClickBotonRefrescarContadores',
 									tooltip: HreRem.i18n('btn.refrescar')
 						    	}
-						    	
 						],
 						items: [
 	    						{
 	    							xtype: 'generacionpropuestasautomaticacontadores'
 	    						},
 	    						{
-	    							xtype: 'generacionpropuestasautomaticacontadoresampliada' ,
+	    							xtype: 'generacionpropuestasautomaticacontadoresampliada',
 	    							disabled: true
 	    						}
 						]
-	        		}
-	        			
+	        		}	
         ];
-       
+
         me.callParent(); 
-
-        
     }
-
-
 });
-

@@ -101,7 +101,6 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 			var me = this,
 			viewModel= me.lookupViewModel(),
 			esEditable = viewModel.get('gasto.esGastoEditable')== true;
-			
 			me.down("[itemId=botoneditar]").setVisible(false);
 
 			var editionEnabled = function() {

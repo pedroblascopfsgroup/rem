@@ -214,9 +214,9 @@ public class Activo implements Serializable, Auditable {
     /*@JoinColumn(name = "SDV_ID")
 	private BigDecimal subdivision;*/
     
-    /*@ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CPR_ID")
-	private ActivoComunidadPropietarios comunidadPropietarios;*/
+	private ActivoComunidadPropietarios comunidadPropietarios;
     
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
@@ -614,14 +614,14 @@ public class Activo implements Serializable, Auditable {
 		this.subdivision = subdivision;
 	}
 
-	/*public ActivoComunidadPropietarios getComunidadPropietarios() {
+	public ActivoComunidadPropietarios getComunidadPropietarios() {
 		return comunidadPropietarios;
 	}
 
 	public void setComunidadPropietarios(
 			ActivoComunidadPropietarios comunidadPropietarios) {
 		this.comunidadPropietarios = comunidadPropietarios;
-	}*/
+	}
 
 	public ActivoTitulo getTitulo() {
 		return titulo;

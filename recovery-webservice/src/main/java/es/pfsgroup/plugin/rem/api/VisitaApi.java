@@ -7,6 +7,7 @@ import java.util.Map;
 
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
+import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 import net.sf.json.JSONObject;
@@ -114,6 +115,12 @@ public interface VisitaApi {
 	 * @param dtoVisitasFilter 
 	 */
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter);
-	
 
+	/**
+	 * Este método obtiene los detalles de de una visita a través de la vista.
+	 * 
+	 * @param dtoVisitasFilter : dto para filtrar la visita.
+	 * @return Devuelve una visita.
+	 */
+	public VBusquedaVisitasDetalle getVisitaDetalle(DtoVisitasFilter dtoVisitasFilter);
 }

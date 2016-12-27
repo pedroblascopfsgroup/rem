@@ -2,36 +2,33 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialDetalle', {
     extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'visitascomercialdetalle',
     reference	: 'windowVisitaComercialDetalle',
-    layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() / 2,    
+    layout		: 'fit',
+    width		: Ext.Element.getViewportWidth() / 2,    
     //height	: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 50 ,
-    //closable: true,		
+    //closable	: true,		
     //closeAction: 'hide',
-    
-    idTrabajo: null,
-    
-    parent: null,
-    
+
+    idTrabajo	: null,
+
+    parent		: null,
+
     detallevisita: null,
-    		
-    modoEdicion: null,
-    
-    presupuesto: null,
-    
+
+    modoEdicion	: null,
+
+    presupuesto	: null,
+
     detallevisita: null,
-    
+
     controller: 'activodetalle',
     viewModel: {
         type: 'activodetalle'
     },
-    
-    
-	
-    
+
     listeners: {    
 		boxready: function(window) {
 			var me = this;
-			
+
 			Ext.Array.each(window.down('fieldset').query('field[isReadOnlyEdit]'),
 				function (field, index) 
 					{ 								
@@ -40,13 +37,13 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialDetalle', {
 					}
 			);
 		},
-				
+
 		show: function() {
 			var me = this;
 			me.resetWindow();			
 		}
 	},
-    
+
 	initComponent: function() {
     	var me = this;
     	me.buttons = [ { itemId: 'btnCerrar', text: 'Cerrar', handler: 'onClickBotonCerrarDetalleVisita'}];
@@ -55,7 +52,6 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialDetalle', {
 			{
 			    xtype: 'formBase',
 			    reference: 'formVisitasComercialDetalle',
-			    
 			    items: [
 			    	{
 
@@ -65,8 +61,7 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialDetalle', {
 						cls	: 'panel-base shadow-panel',
 						layout: 'column',
 						title: HreRem.i18n('header.visita.detalle.datos.solicitante'),
-					
-							items :
+						items :
 								[
 								 	{ 
 										fieldLabel: HreRem.i18n('header.visita.detalle.fecha.solicitud.visita'),
@@ -101,14 +96,12 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialDetalle', {
 								 ]
 			    		},
 			    		{
-
-		        		xtype:'fieldsettable',
-						collapsible: false,
-						defaultType: 'textfield',
-						cls	: 'panel-base shadow-panel',
-						layout: 'column',
-						title: HreRem.i18n('header.visita.detalle.datos.visita'),
-					
+			        		xtype:'fieldsettable',
+							collapsible: false,
+							defaultType: 'textfield',
+							cls	: 'panel-base shadow-panel',
+							layout: 'column',
+							title: HreRem.i18n('header.visita.detalle.datos.visita'),
 							items :
 								[
 									{
@@ -138,14 +131,14 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialDetalle', {
 										bind: '{detallevisita.fechaConcertacion}',
 							        	readOnly: true
 							        },
-//							        {
-//						        		xtype:'datefieldbase',
-//						        		fieldLabel: HreRem.i18n('header.visita.detalle.fecha.finalizacion'),
+//								    {
+//							        	xtype:'datefieldbase',
+//							        	fieldLabel: HreRem.i18n('header.visita.detalle.fecha.finalizacion'),
 //										formatter: 'date("d/m/Y")',
 //										bind: '{detallevisita.fechaFinalizacion}',
-//							        	readOnly: true
-//							        },
-//							        { 
+//								        readOnly: true
+//								    },
+//								    { 
 //										fieldLabel: HreRem.i18n('header.visita.detalle.motivo.finalizacion'),
 //										xtype: 'textfieldbase',
 //										bind: '{detallevisita.motivoFinalizacion}',
@@ -157,33 +150,20 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialDetalle', {
 										bind: '{detallevisita.observacionesVisita}',
 										readOnly: true
 									}
-							        
-							        
 								 ]
-			    		}
-			    		
-			    		
-			    		
-			    		
-			    		
-			    		
-			    		
-			    	]
-					
-    	}		
-				
+				    		}
+				    	]
+			}
     	];
-    	
+
     	var title= "Número del activo: "+detallevisita.numActivo+"<br/>" +" Número de la visita: "+detallevisita.numVisita;
-    	
+
     	me.callParent();
     	me.setTitle(title);
     },
-    
+
     resetWindow: function() {
 		var me = this;
-    	me.getViewModel().set('detallevisita', me.detallevisita);
-	
+    	me.getViewModel().set('detallevisita', me.detallevisita.data);
     }
-    
 });

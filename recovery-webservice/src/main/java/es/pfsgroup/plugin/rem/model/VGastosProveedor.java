@@ -113,7 +113,7 @@ public class VGastosProveedor implements Serializable {
 	private Long numProvision;
 	
 	@Column(name = "PVE_DOCIDENTIF")
-	private String documentoProveedor;
+	private String nifProveedor;
 	
 	@Column(name = "DD_TPR_CODIGO")
 	private String tipoProveedorCodigo;
@@ -194,6 +194,14 @@ public class VGastosProveedor implements Serializable {
 
 	public void setProveedor(String proveedor) {
 		this.proveedor = proveedor;
+	}
+
+	public String getNifProveedor() {
+		return nifProveedor;
+	}
+
+	public void setNifProveedor(String nifProveedor) {
+		this.nifProveedor = nifProveedor;
 	}
 
 	public Date getFechaEmision() {
@@ -413,14 +421,6 @@ public class VGastosProveedor implements Serializable {
 
 	public void setNumProvision(Long numProvision) {
 		this.numProvision = numProvision;
-	}
-
-	public String getDocumentoProveedor() {
-		return documentoProveedor;
-	}
-
-	public void setDocumentoProveedor(String documentoProveedor) {
-		this.documentoProveedor = documentoProveedor;
 	}
 
 	public String getTipoProveedorCodigo() {

@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.visita.dao.impl;
 
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,40 +20,34 @@ import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Repository("VisitaDao")
 public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements VisitaDao{
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getListVisitas(DtoVisitasFilter dtoVisitasFilter) {
-		// TODO Auto-generated method stub
-		
 		HQLBuilder hb = new HQLBuilder(" from Visita vis");
-		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.numVisitaRem", dtoVisitasFilter.getNumVisitaRem());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.activo.numActivo", dtoVisitasFilter.getNumActivo());
-		
+
 		if (dtoVisitasFilter.getSort() != null){
-			if (dtoVisitasFilter.getSort().equals("nombre")){
+			if(dtoVisitasFilter.getSort().equals("nombre")) {
 				dtoVisitasFilter.setSort("vis.cliente.nombre");
-			}
-			else if(dtoVisitasFilter.getSort().equals("numDocumento")){
+			} else if(dtoVisitasFilter.getSort().equals("numDocumento")) {
 				dtoVisitasFilter.setSort("vis.cliente.documento");
-			}
-			else if(dtoVisitasFilter.getSort().equals("numActivo")){
+			} else if(dtoVisitasFilter.getSort().equals("numActivo")) {
 				dtoVisitasFilter.setSort("vis.activo.numActivo");
 			}
 		}
-		
+
 		//hb.orderBy("vis.numVisitaRem", HQLBuilder.ORDER_ASC);
-		
+
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);
-		
+
 		List<Visita> visitas = (List<Visita>) pageVisitas.getResults();
 		List<DtoVisitasFilter> visitasFiltradas= new ArrayList<DtoVisitasFilter>();
-		
+
 		for(Visita v: visitas){
 			DtoVisitasFilter dtoFilter= new DtoVisitasFilter();
-			
+
 			dtoFilter.setId(v.getId());
 			dtoFilter.setNumActivo(v.getActivo().getNumActivo());
 			dtoFilter.setNumVisitaRem((v.getNumVisitaRem()));
@@ -66,59 +59,78 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 			if(!Checks.esNulo(v.getEstadoVisita())){
 				dtoFilter.setEstadoVisita(v.getEstadoVisita().getDescripcion());
 			}
-			
+
 			dtoFilter.setIdActivo(v.getActivo().getId());
-			
+
 			visitasFiltradas.add(dtoFilter);
-		
 		}
-		
+
 		return new DtoPage(visitasFiltradas, pageVisitas.getTotalCount());
 	}
 
-	
 	@Override
 	public Long getNextNumVisitaRem() {
 		String sql = "SELECT S_VIS_NUM_VISITA.NEXTVAL FROM DUAL";
+
 		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
-	
-	
+
 	@Override
 	public List<Visita> getListaVisitas(VisitaDto visitaDto) {
-		
 		HQLBuilder hql = new HQLBuilder("from Visita");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idVisitaWebcom", visitaDto.getIdVisitaWebcom());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numVisitaRem", visitaDto.getIdVisitaRem());
-		
-		
+
 		return HibernateQueryUtils.list(this, hql);
-
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter) {
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaVisitasDetalle vvisita");
-		
+
 		if(!Checks.esNulo(dtoVisitasFilter.getNumVisitaRem())){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numVisita", dtoVisitasFilter.getNumVisitaRem().toString());
 		}
+
 		if(!Checks.esNulo(dtoVisitasFilter.getNumActivo())){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numActivo", dtoVisitasFilter.getNumActivo().toString());
 		}
 
-
-	
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);
-		
-		List<VBusquedaVisitasDetalle> visitas = (List<VBusquedaVisitasDetalle>) pageVisitas.getResults();
-		
-		return new DtoPage(visitas, pageVisitas.getTotalCount());
-		
-		
-	}
-	
 
+		List<VBusquedaVisitasDetalle> visitas = (List<VBusquedaVisitasDetalle>) pageVisitas.getResults();
+
+		return new DtoPage(visitas, pageVisitas.getTotalCount());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public VBusquedaVisitasDetalle getVisitaDetalle(DtoVisitasFilter dtoVisitasFilter) {
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaVisitasDetalle vvisita");
+
+		// Filtrado por Num visita.
+		if(!Checks.esNulo(dtoVisitasFilter.getNumVisitaRem())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numVisita", dtoVisitasFilter.getNumVisitaRem().toString());
+		}
+
+		// Filtrado por ID visita.
+		if(!Checks.esNulo(dtoVisitasFilter.getId())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.id", dtoVisitasFilter.getId().toString());
+		}
+
+		// Establecer los params para el objeto page.
+		dtoVisitasFilter.setStart(0);
+		dtoVisitasFilter.setLimit(1);
+
+		Page pageVisitaDetalle = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);
+
+		List<VBusquedaVisitasDetalle> listaVisitasDetalle = (List<VBusquedaVisitasDetalle>) pageVisitaDetalle.getResults();
+		
+		if(!Checks.estaVacio(listaVisitasDetalle)) {
+			return listaVisitasDetalle.get(0);
+		}
+
+		return null;
+	}
 }

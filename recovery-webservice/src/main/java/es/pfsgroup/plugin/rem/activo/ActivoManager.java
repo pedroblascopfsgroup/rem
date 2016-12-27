@@ -2112,6 +2112,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return false;
 	}
+	
+	@Override
+	public boolean isIntegradoAgrupacionComercial(Activo activo) {
+
+		for (ActivoAgrupacionActivo agrupacionActivo : activo.getAgrupaciones()) {
+
+			Date fechaBaja = agrupacionActivo.getAgrupacion().getFechaBaja();
+			fechaBaja = !Checks.esNulo(fechaBaja) ? new Date(fechaBaja.getTime()) : null;
+
+			if (!Checks.esNulo(agrupacionActivo.getAgrupacion().getTipoAgrupacion())
+					&& agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
+							.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
+					&& (!Checks.esNulo(fechaBaja) ? fechaBaja.after(new Date()): true) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	@Override
 	public boolean isActivoAsistido(Activo activo) {

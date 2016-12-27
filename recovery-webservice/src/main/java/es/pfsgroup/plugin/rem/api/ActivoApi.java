@@ -108,6 +108,7 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionObraNueva")
 	public boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado);
 
+	public boolean isIntegradoAgrupacionComercial(Activo activo);
 	/**
 	 * Elimina un adjunto
 	 * 

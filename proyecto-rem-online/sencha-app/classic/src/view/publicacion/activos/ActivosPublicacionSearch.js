@@ -30,11 +30,11 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	name: 'admision',
 					        	inputValue: true					        	
 					        },
-				       		{ 
+					        { 
 					        	xtype: 'checkboxfield',
-					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publicacion'),
-					        	name: 'publicacion',
-					        	inputValue: true					        	
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.gestion'),
+					        	name: 'gestion',
+					        	inputValue: true					
 					        },
 					        { 
 					        	xtype: 'checkboxfield',
@@ -53,11 +53,11 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	name: 'precio',
 					        	inputValue: true					        	
 					        },
-					         { 
+				       		{ 
 					        	xtype: 'checkboxfield',
-					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.gestion'),
-					        	name: 'gestion',
-					        	inputValue: true					
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publicacion'),
+					        	name: 'publicacion',
+					        	inputValue: true					        	
 					        }
 						]
 			    	},

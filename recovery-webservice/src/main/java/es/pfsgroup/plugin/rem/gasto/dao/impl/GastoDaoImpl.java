@@ -30,7 +30,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		HQLBuilder hb = new HQLBuilder(" from VGastosProveedor vgasto");
 		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());   		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());   		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem()); 
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.nifProveedor", dtoGastosFilter.getNifProveedor());
    		
    		////////////////////////Por situación del gasto
    		
@@ -110,7 +111,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
    		}
    		//////////////////////// Por Proveedor
    		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.documentoProveedor",dtoGastosFilter.getNifProveedor());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.tipoProveedorCodigo",dtoGastosFilter.getCodigoSubtipoProveedor());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.tipoEntidadCodigo",dtoGastosFilter.getCodigoTipoProveedor());
    		HQLBuilder.addFiltroLikeSiNotNull(hb,"vgasto.nombreProveedor",dtoGastosFilter.getNombreProveedor(), true);

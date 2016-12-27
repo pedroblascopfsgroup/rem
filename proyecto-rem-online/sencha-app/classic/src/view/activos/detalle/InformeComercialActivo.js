@@ -529,9 +529,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.informacion.general'),
 				defaultType: 'textfieldbase',
-				bind: { 
+				/*bind: { 
 					hidden: '{!infoComercial.isInformeGeneralVisible}'
-				},
+				},*/
 				items :
 					[
 						{ // Primer cuadro.

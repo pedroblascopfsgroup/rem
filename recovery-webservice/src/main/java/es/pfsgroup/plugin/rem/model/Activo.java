@@ -214,9 +214,9 @@ public class Activo implements Serializable, Auditable {
     /*@JoinColumn(name = "SDV_ID")
 	private BigDecimal subdivision;*/
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    /*@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CPR_ID")
-	private ActivoComunidadPropietarios comunidadPropietarios;
+	private ActivoComunidadPropietarios comunidadPropietarios;*/
     
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
@@ -352,6 +352,10 @@ public class Activo implements Serializable, Auditable {
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private List<ActivoOferta> ofertas;
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private List<ActivoIntegrado> integraciones;
     
     
     // Indicadores de precios del activo y de activo publicable
@@ -610,14 +614,14 @@ public class Activo implements Serializable, Auditable {
 		this.subdivision = subdivision;
 	}
 
-	public ActivoComunidadPropietarios getComunidadPropietarios() {
+	/*public ActivoComunidadPropietarios getComunidadPropietarios() {
 		return comunidadPropietarios;
 	}
 
 	public void setComunidadPropietarios(
 			ActivoComunidadPropietarios comunidadPropietarios) {
 		this.comunidadPropietarios = comunidadPropietarios;
-	}
+	}*/
 
 	public ActivoTitulo getTitulo() {
 		return titulo;
@@ -1395,6 +1399,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setOfertas(List<ActivoOferta> ofertas) {
 		this.ofertas = ofertas;
+	}
+
+	public List<ActivoIntegrado> getIntegraciones() {
+		return integraciones;
+	}
+
+	public void setIntegraciones(List<ActivoIntegrado> integraciones) {
+		this.integraciones = integraciones;
 	}
 
 	public Date getFechaPreciar() {

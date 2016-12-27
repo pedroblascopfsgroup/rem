@@ -66,6 +66,11 @@ BEGIN
 			-- Recoge el max(id) de la tabla DD_CPR_CALIFICACION_PROPUESTA para definir el valor de la secuencia de DD_CPR_CALIFICACION_PROPUESTA_RETIRAR
 			V_SQL := 'SELECT MAX(DD_CPR_ID) FROM  '||V_TEXT_TABLA_REF||' ';
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_SEQ;
+			
+			-- Si la tabla DD_CPR_CALIFICACION_PROVEEDOR está vacia el max id será 0.
+			IF V_NUM_SEQ IS NULL THEN 
+				V_NUM_SEQ := 0; 
+			END IF;
 
 			-- Creamos sequence
 			-- Avanza la secuencia para que tenga el mismo valor que S_DD_CPR_CALIFICACION_PROVEEDOR (El otro diccionario)

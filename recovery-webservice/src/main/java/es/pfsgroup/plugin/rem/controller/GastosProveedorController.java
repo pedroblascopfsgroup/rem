@@ -25,7 +25,6 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
@@ -749,7 +748,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings({ "unchecked"})
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getAvisosExpedienteById(Long id, WebDto webDto, ModelMap model){
+	public ModelAndView getAvisosGastoById(Long id, WebDto webDto, ModelMap model){
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		GastoProveedor gasto = gastoProveedorApi.findOne(id);	

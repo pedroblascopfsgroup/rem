@@ -14,19 +14,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
@@ -54,6 +58,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@Autowired
 	private ProveedoresApi proveedoresApi;
+	
+	@Autowired
+	private List<GastoAvisadorApi> avisadores;
 	
 	
 	/**
@@ -737,5 +744,30 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 		
 		return createModelAndViewJson(model);
-	}	
+	}
+	
+	@SuppressWarnings({ "unchecked"})
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getAvisosGastoById(Long id, WebDto webDto, ModelMap model){
+
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		GastoProveedor gasto = gastoProveedorApi.findOne(id);	
+		
+		DtoAviso avisosFormateados = new DtoAviso();
+		avisosFormateados.setDescripcion("");
+		
+		for (GastoAvisadorApi avisador: avisadores) {
+			
+			DtoAviso aviso  = avisador.getAviso(gasto, usuarioLogado);
+			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + aviso.getDescripcion() + "</div>");
+			}
+			
+        }
+		
+		model.put("data", avisosFormateados);
+		
+		return createModelAndViewJson(model);
+		
+	}
 }

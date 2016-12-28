@@ -171,10 +171,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "tipoUsoDestinoDescripcion", activo.getTipoUsoDestino().getDescripcion());
 		}
 		
-		if (activo.getComunidadPropietarios() != null) {
+		/*if (activo.getComunidadPropietarios() != null) {
 			BeanUtils.copyProperties(activoDto, activo.getComunidadPropietarios());
 			BeanUtils.copyProperty(activoDto, "direccionComunidad", activo.getComunidadPropietarios().getDireccion());
-		}
+		}*/
 		
 		if (activo.getInfoComercial() != null && activo.getInfoComercial().getTipoInfoComercial() != null) {
 			BeanUtils.copyProperty(activoDto, "tipoInfoComercialCodigo", activo.getInfoComercial().getTipoInfoComercial().getCodigo());
@@ -336,14 +336,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			activo.setLocalizacion(genericDao.save(ActivoLocalizacion.class, activo.getLocalizacion()));
 
-			if (Checks.esNulo(activo.getComunidadPropietarios())) {	
+			/*if (Checks.esNulo(activo.getComunidadPropietarios())) {	
 				activo.setComunidadPropietarios(new ActivoComunidadPropietarios());
-			}
+			}*/
 			
-			beanUtilNotNull.copyProperties(activo.getComunidadPropietarios(), dto);
-			beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "direccion", dto.getDireccionComunidad());
+			/*beanUtilNotNull.copyProperties(activo.getComunidadPropietarios(), dto);
+			beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "direccion", dto.getDireccionComunidad());*/
 			
-			String cuentaUno = "";
+			/*String cuentaUno = "";
 			String cuentaDos = "";
 			String cuentaTres = "";
 			String cuentaCuatro = "";
@@ -388,9 +388,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				
 				beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "numCuenta", cuentaUno + cuentaDos + cuentaTres + cuentaCuatro + cuentaCinco);
 				
-			}
+			}*/
 
-			activo.setComunidadPropietarios(genericDao.save(ActivoComunidadPropietarios.class, activo.getComunidadPropietarios()));
+			/*activo.setComunidadPropietarios(genericDao.save(ActivoComunidadPropietarios.class, activo.getComunidadPropietarios()));*/
 
 			if (!Checks.esNulo(dto.getPaisCodigo())) {
 				DDCicCodigoIsoCirbeBKP pais = (DDCicCodigoIsoCirbeBKP) diccionarioApi.dameValorDiccionarioByCod(DDCicCodigoIsoCirbeBKP.class,  dto.getPaisCodigo());

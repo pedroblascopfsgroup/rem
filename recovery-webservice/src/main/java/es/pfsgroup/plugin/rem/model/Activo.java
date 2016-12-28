@@ -353,6 +353,10 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     private List<ActivoOferta> ofertas;
     
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private List<ActivoIntegrado> integraciones;
+    
     
     // Indicadores de precios del activo y de activo publicable
     @Column(name = "ACT_FECHA_IND_PRECIAR")
@@ -1395,6 +1399,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setOfertas(List<ActivoOferta> ofertas) {
 		this.ofertas = ofertas;
+	}
+
+	public List<ActivoIntegrado> getIntegraciones() {
+		return integraciones;
+	}
+
+	public void setIntegraciones(List<ActivoIntegrado> integraciones) {
+		this.integraciones = integraciones;
 	}
 
 	public Date getFechaPreciar() {

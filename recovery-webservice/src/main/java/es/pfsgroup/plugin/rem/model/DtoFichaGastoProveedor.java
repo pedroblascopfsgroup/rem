@@ -27,6 +27,8 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private String referenciaEmisor;
 	private String tipoGastoCodigo;
 	private String subtipoGastoCodigo;
+	private String tipoGastoDescripcion;
+	private String subtipoGastoDescripcion;
 	private String nifEmisor;
 	private String buscadorNifEmisor;
 	private String buscadorNifPropietario;
@@ -46,15 +48,19 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private boolean asignadoATrabajos;
 	private boolean asignadoAActivos;
 	private String estadoGastoCodigo;
+	private String estadoGastoDescripcion;
 	private Boolean esGastoEditable;
 	private Long buscadorCodigoProveedorRem;
 	private Long codigoProveedorRem;
    	private String tipoOperacionCodigo;
+   	private String tipoOperacionDescripcion;
    	private String numGastoDestinatario;
    	private Long numGastoAbonado;
    	private Long idGastoAbonado; 
    	private boolean gastoSinActivos;
    	private boolean enviado;
+   	private Double importeTotal;
+   	private String nombreGestoria;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -171,6 +177,18 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setSubtipoGastoCodigo(String subtipoGastoCodigo) {
 		this.subtipoGastoCodigo = subtipoGastoCodigo;
 	}
+	public String getTipoGastoDescripcion() {
+		return tipoGastoDescripcion;
+	}
+	public void setTipoGastoDescripcion(String tipoGastoDescripcion) {
+		this.tipoGastoDescripcion = tipoGastoDescripcion;
+	}
+	public String getSubtipoGastoDescripcion() {
+		return subtipoGastoDescripcion;
+	}
+	public void setSubtipoGastoDescripcion(String subtipoGastoDescripcion) {
+		this.subtipoGastoDescripcion = subtipoGastoDescripcion;
+	}
 	public String getDestinatarioGastoCodigo() {
 		return destinatarioGastoCodigo;
 	}
@@ -209,6 +227,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setEstadoGastoCodigo(String estadoGastoCodigo) {
 		this.estadoGastoCodigo = estadoGastoCodigo;
 	}
+	public String getEstadoGastoDescripcion() {
+		return estadoGastoDescripcion;
+	}
+	public void setEstadoGastoDescripcion(String estadoGastoDescripcion) {
+		this.estadoGastoDescripcion = estadoGastoDescripcion;
+	}
 	public Boolean getEsGastoEditable() {
 		return esGastoEditable;
 	}
@@ -232,6 +256,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setTipoOperacionCodigo(String tipoOperacionCodigo) {
 		this.tipoOperacionCodigo = tipoOperacionCodigo;
+	}
+	public String getTipoOperacionDescripcion() {
+		return tipoOperacionDescripcion;
+	}
+	public void setTipoOperacionDescripcion(String tipoOperacionDescripcion) {
+		this.tipoOperacionDescripcion = tipoOperacionDescripcion;
 	}
 	public String getNumGastoDestinatario() {
 		return numGastoDestinatario;
@@ -262,6 +292,18 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setEnviado(boolean enviado) {
 		this.enviado = enviado;
+	}
+	public Double getImporteTotal() {
+		return importeTotal;
+	}
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
+	}
+	public String getNombreGestoria() {
+		return nombreGestoria;
+	}
+	public void setNombreGestoria(String nombreGestoria) {
+		this.nombreGestoria = nombreGestoria;
 	}
 	
 	

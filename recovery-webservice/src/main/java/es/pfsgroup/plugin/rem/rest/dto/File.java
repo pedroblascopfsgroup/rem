@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class File implements Serializable {
 
 	private static final long serialVersionUID = 7350449895156845439L;
-	private String id;
+	private Long id;
 	private String url;
 	private String url_watermark;
 	private String url_optimized;
@@ -15,11 +15,11 @@ public class File implements Serializable {
 	private HashMap<String, String> metadata;
 	private String basename;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

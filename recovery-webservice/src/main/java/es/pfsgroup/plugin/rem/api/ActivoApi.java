@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
 public interface ActivoApi {
@@ -92,6 +93,14 @@ public interface ActivoApi {
 
 	@BusinessOperationDefinition("activoManager.uploadFoto")
 	public String uploadFoto(WebFileItem fileItem);
+
+	/**
+	 * Registra una foto del gestor documental
+	 * 
+	 * @param fileItem
+	 * @return
+	 */
+	public String uploadFoto(File fileItem);
 
 	/**
 	 * Recupera la lista completa de Activos
@@ -341,23 +350,26 @@ public interface ActivoApi {
 	 * @return Devuelve el último histórico por ID para el ID del activo.
 	 */
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
-	
+
 	/**
-	 * Ejecuta los pasos necesarios para publicar activos de forma ordinaria (con validaciones de publicacion)
-	 * para un activo dado. Retorna TRUE si la ejecucion se ha producido sin errores.
-	 * 1.) Rellena un dto con los parametros de publicacion ordinaria, [incluye motivo de publicacion]
-	 * 2.) Llama al metodo designado para el cambio de estados de publicacion
-	 *    2.1) El metodo de cambio de estados es el que invoca al procedure de publicar activo
-	 * Lanza excepciones SQL, si el procedure se ejecuta con errores.
+	 * Ejecuta los pasos necesarios para publicar activos de forma ordinaria
+	 * (con validaciones de publicacion) para un activo dado. Retorna TRUE si la
+	 * ejecucion se ha producido sin errores. 1.) Rellena un dto con los
+	 * parametros de publicacion ordinaria, [incluye motivo de publicacion] 2.)
+	 * Llama al metodo designado para el cambio de estados de publicacion 2.1)
+	 * El metodo de cambio de estados es el que invoca al procedure de publicar
+	 * activo Lanza excepciones SQL, si el procedure se ejecuta con errores.
 	 * Ademas, retorna TRUE/FALSE, si el activo se ha publicado o no.
+	 * 
 	 * @param idActivo
 	 * @return
 	 * @throws SQLException
 	 */
 	boolean publicarActivo(Long idActivo) throws SQLException;
-	
+
 	/**
 	 * Igual que publicarActivo pero con motivo de publicacion
+	 * 
 	 * @param idActivo
 	 * @param motivo
 	 * @return
@@ -687,28 +699,32 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Oferta tieneOfertaAceptada(Activo activo);
-	
+
 	/**
-	 * Comprueba que los tipos de activo del activo y del informe comercial sean distintos.
+	 * Comprueba que los tipos de activo del activo y del informe comercial sean
+	 * distintos.
+	 * 
 	 * @param tareaExterna
 	 * @return true si son distintos, false si son iguales
 	 */
 	public Boolean checkTiposDistintos(TareaExterna tareaExterna);
-	
+
 	/**
-	 * Comprueba que los datos de activo del activo y del informe comercial sean distintos.
+	 * Comprueba que los datos de activo del activo y del informe comercial sean
+	 * distintos.
+	 * 
 	 * @param activo
 	 * @return true si son distintos, false si son iguales
 	 */
 	public Boolean checkTiposDistintos(Activo activo);
-	
+
 	/**
 	 * 
 	 * @param dtoActivoIntegrado
 	 * @return
 	 */
 	public List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado);
-	
+
 	/**
 	 * Este método crea una integración de un activo en una entidad.
 	 * 
@@ -717,7 +733,7 @@ public interface ActivoApi {
 	 * @return Devuelve si la operación ha sido satisfactoria, o no.
 	 */
 	public boolean createActivoIntegrado(DtoActivoIntegrado dto);
-	
+
 	/**
 	 * Este método devuelve la información de la relación Activo-Integración
 	 * 
@@ -726,7 +742,7 @@ public interface ActivoApi {
 	 * @return Devuelve Dto con la información.
 	 */
 	public DtoActivoIntegrado getActivoIntegrado(String id);
-	
+
 	/**
 	 * Este método crea una integración de un activo en una entidad.
 	 * 
@@ -735,63 +751,64 @@ public interface ActivoApi {
 	 * @return Devuelve si la operación ha sido satisfactoria, o no.
 	 */
 	public boolean updateActivoIntegrado(DtoActivoIntegrado dto);
-	
+
 	/**
-	 * Cantidad de ofertas con estadoOferta 01 ó 04
-	 * para un determinado activo 
+	 * Cantidad de ofertas con estadoOferta 01 ó 04 para un determinado activo
+	 * 
 	 * @param activo
 	 * @return
 	 */
 	public int cantidadOfertas(Activo activo);
-	
-	
+
 	/**
-	 * Mayor oferta con estadoOferta 01 ó 04
-	 * para un determinado activo
+	 * Mayor oferta con estadoOferta 01 ó 04 para un determinado activo
+	 * 
 	 * @param activo
 	 * @return
 	 */
 	public Double mayorOfertaRecibida(Activo activo);
-	
-	
+
 	/**
 	 * Método que comprueba que si el activo es VPO
+	 * 
 	 * @param tareaExterna
 	 * @return devuelve true si es VPO, false en caso contrario
 	 */
 	public boolean checkVPO(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que devuelve la lista de llaves asociadas a un activo
+	 * 
 	 * @param idActivo
 	 * @return
 	 */
 	public DtoPage getListLlavesByActivo(DtoLlaves dto);
-	
+
 	/**
 	 * Método que devuelve una lista de movimientos de una llave
+	 * 
 	 * @param dto
 	 * @return
 	 */
 	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);
-	
+
 	/**
 	 * Guarda la propuesta
+	 * 
 	 * @param popuesta
 	 */
 	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta);
 
-	/**
-	 * Devuelve la última tasación del activo
-	 * @param activo
-	 * @return
-	 */
-	public ActivoTasacion getTasacionMasReciente(Activo activo);
-	
 	/**
 	 * Devuelve la valoracion Aprobado venta del activo
 	 * @param activo
 	 * @return
 	 */
 	public ActivoValoraciones getValoracionAprobadoVenta(Activo activo);
+	/**
+	 * Devuelve la última tasación del activo
+	 * @param activo
+	 * @return
+	 */
+	public ActivoTasacion getTasacionMasReciente(Activo activo);
 }

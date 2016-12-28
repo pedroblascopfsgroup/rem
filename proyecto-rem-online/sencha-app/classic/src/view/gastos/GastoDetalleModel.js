@@ -162,6 +162,36 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	
 	     	return  !estaEnviado && !esProveedor && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado;
 
+	     },
+	     
+	     getSrcCartera: function(get) {
+	     	
+	     	var cartera = get('gasto.entidadPropietariaDescripcion');
+	     	var src=null;
+	     	if(!Ext.isEmpty(cartera)) {
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
+	     	}
+        	if(Ext.isEmpty(src)) {
+        		return 	null;
+        	}else {
+        		return 'resources/images/'+src;	     
+        	} 
+	     },
+	     
+	     getTipoGasto: function(get) {
+	     
+	     	var tipoGastoDescripcion =  get('gasto.tipoGastoDescripcion');		
+	     	var subtipoGastoDescripcion =  get('gasto.subtipoGastoDescripcion');	
+	     	var tipoOperacion = get('gasto.tipoOperacionDescripcion');
+			return tipoGastoDescripcion + ' - ' + subtipoGastoDescripcion;
+	     
+	     },
+	     
+	     getTipoOperacion: function(get) {
+	     
+	     	var tipoOperacionDescripcion = get('gasto.tipoOperacionDescripcion');
+	     	return Ext.isEmpty(tipoOperacionDescripcion) ? "" : " - " + tipoOperacionDescripcion;
+	     	
 	     }
 	     
 		

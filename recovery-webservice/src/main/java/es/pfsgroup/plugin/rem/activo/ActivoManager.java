@@ -142,8 +142,15 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.File;
+import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
@@ -191,6 +198,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 
+	@Autowired
+	GestorDocumentalFotosApi gestorDocumentalFotos;
+
 	@Override
 	public String managerName() {
 		return "activoManager";
@@ -213,7 +223,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
-	
+
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Override
@@ -575,6 +585,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				activoValoracion.setFechaCarga(new Date());
 
+				// Si los nuevos datos no traen observaciones (null),
+
 				// Si los nuevos datos no traen observaciones (null), 
 				// debe quitar las escritas para el precio o valoracion anterior
 				activoValoracion.setObservaciones(dto.getObservaciones());
@@ -780,38 +792,55 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	@BusinessOperation(overrides = "activoManager.uploadFoto")
-	@Transactional(readOnly = false)
-	public String uploadFoto(WebFileItem fileItem) {
-
-		Activo activo = get(Long.parseLong(fileItem.getParameter("idEntidad")));
-
-		// ActivoAdjuntoActivo adjuntoActivo = new
-		// ActivoAdjuntoActivo(fileItem.getFileItem());
-
-		ActivoFoto activoFoto = new ActivoFoto(fileItem.getFileItem());
-
-		activoFoto.setActivo(activo);
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+	public String uploadFoto(File fileItem) {
+		Long numActivo = Long.valueOf(fileItem.getMetadata().get("id_activo_haya"));
+		Activo activo = this.getByNumActivo(numActivo);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getMetadata().get("tipo"));
 		DDTipoFoto tipoFoto = (DDTipoFoto) genericDao.get(DDTipoFoto.class, filtro);
+		Integer orden = null;
+		if (fileItem.getMetadata().containsKey("orden")) {
+			orden = Integer.valueOf(fileItem.getMetadata().get("orden"));
+		} else {
+			orden = activoDao.getMaxOrdenFotoById(activo.getId());
+		}
+
+		ActivoFoto activoFoto = activoAdapter.getFotoActivoById(fileItem.getId());
+		if (activoFoto == null) {
+			activoFoto = new ActivoFoto(fileItem);
+		}
+		activoFoto.setActivo(activo);
 
 		activoFoto.setTipoFoto(tipoFoto);
 
-		activoFoto.setTamanyo(fileItem.getFileItem().getLength());
+		activoFoto.setNombre(fileItem.getBasename());
+		if (fileItem.getMetadata().containsKey("descripcion")) {
+			activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+		}
+		if (fileItem.getMetadata().containsKey("principal") && fileItem.getMetadata().get("principal").equals("1")) {
+			activoFoto.setPrincipal(Boolean.TRUE);
+		} else {
+			activoFoto.setPrincipal(Boolean.FALSE);
+		}
+		Date fechaSubida = new Date();
+		if (fileItem.getMetadata().containsKey("fecha_subida")) {
+			try {
+				fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+						.parse(fileItem.getMetadata().get("fecha_subida"));
+			} catch (Exception e) {
+				logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+			}
+		}
 
-		activoFoto.setNombre(fileItem.getFileItem().getFileName());
+		activoFoto.setFechaDocumento(fechaSubida);
 
-		activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
+		if (fileItem.getMetadata().containsKey("interior_exterior")) {
+			if (fileItem.getMetadata().get("interior_exterior").equals("1")) {
+				activoFoto.setInteriorExterior(Boolean.TRUE);
+			} else {
+				activoFoto.setInteriorExterior(Boolean.FALSE);
+			}
+		}
 
-		activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
-
-		activoFoto.setFechaDocumento(new Date());
-
-		activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
-
-		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
-		orden++;
 		activoFoto.setOrden(orden);
 
 		Auditoria.save(activoFoto);
@@ -819,6 +848,80 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		activo.getFotos().add(activoFoto);
 
 		activoDao.save(activo);
+		return null;
+	}
+
+	@Override
+	@BusinessOperation(overrides = "activoManager.uploadFoto")
+	@Transactional(readOnly = false)
+	public String uploadFoto(WebFileItem fileItem) {
+
+		Activo activo = this.get(Long.parseLong(fileItem.getParameter("idEntidad")));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		DDTipoFoto tipoFoto = (DDTipoFoto) genericDao.get(DDTipoFoto.class, filtro);
+		// ActivoAdjuntoActivo adjuntoActivo = new
+		// ActivoAdjuntoActivo(fileItem.getFileItem());
+		TIPO tipo = null;
+		FileResponse fileReponse;
+		ActivoFoto activoFoto;
+		SITUACION situacion;
+		PRINCIPAL principal = null;
+		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
+		orden++;
+		try {
+			if (gestorDocumentalFotos.isActive()) {
+				if (tipoFoto.getCodigo().equals("01")) {
+					tipo = TIPO.WEB;
+				} else if (tipoFoto.getCodigo().equals("02")) {
+					tipo = TIPO.TECNICA;
+				} else if (tipoFoto.getCodigo().equals("03")) {
+					tipo = TIPO.TESTIGO;
+				}
+				if (Boolean.valueOf(fileItem.getParameter("principal"))) {
+					principal = PRINCIPAL.SI;
+				} else {
+					principal = PRINCIPAL.NO;
+				}
+				if (Boolean.valueOf(fileItem.getParameter("interiorExterior"))) {
+					situacion = SITUACION.INTERIOR;
+				} else {
+					situacion = SITUACION.EXTERIOR;
+				}
+				fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
+						fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
+						fileItem.getParameter("descripcion"), principal, situacion, orden);
+				activoFoto = new ActivoFoto(fileReponse.getData());
+
+			} else {
+				activoFoto = new ActivoFoto(fileItem.getFileItem());
+			}
+
+			activoFoto.setActivo(activo);
+
+			activoFoto.setTipoFoto(tipoFoto);
+
+			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
+
+			activoFoto.setNombre(fileItem.getFileItem().getFileName());
+
+			activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
+
+			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
+
+			activoFoto.setFechaDocumento(new Date());
+
+			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
+
+			activoFoto.setOrden(orden);
+
+			Auditoria.save(activoFoto);
+
+			activo.getFotos().add(activoFoto);
+
+			activoDao.save(activo);
+		} catch (Exception e) {
+			logger.error(e);
+		}
 
 		return null;
 
@@ -1452,16 +1555,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public boolean publicarActivo(Long idActivo) throws SQLException{
+	public boolean publicarActivo(Long idActivo) throws SQLException {
 		return publicarActivo(idActivo, null);
 	}
-	
+
 	@Override
-	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException{
+	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException {
 
 		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
 		dtoCambioEstadoPublicacion.setActivo(idActivo);
-		dtoCambioEstadoPublicacion.setMotivoPublicacion(motivo);		
+		dtoCambioEstadoPublicacion.setMotivoPublicacion(motivo);
 		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
 
 		return activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
@@ -1652,9 +1755,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			perimetroActivo.setAuditoria(auditoria);
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
 			Activo activo = genericDao.get(Activo.class, filterActivo);
-			if(!Checks.esNulo(activo))
+			if (!Checks.esNulo(activo))
 				perimetroActivo.setActivo(activo);
-			// Si no existia perimetro en BBDD, por defecto esta INCLUIDO en perimetro
+			// Si no existia perimetro en BBDD, por defecto esta INCLUIDO en
+			// perimetro
 			// y se deben tomar todas las condiciones como marcadas
 			perimetroActivo.setIncluidoEnPerimetro(1);
 			perimetroActivo.setAplicaTramiteAdmision(1);
@@ -2847,21 +2951,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return dtoMov;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idPropuesta);
 		PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, filtro);
-		
+
 		propuesta.setFechaCarga(new Date());
-		
+
 		DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_CARGADA);
 		propuesta.setEstado(estado);
-		
+
 		genericDao.update(PropuestaPrecio.class, propuesta);
 	}
+
 	
 	@Override
 	public ActivoTasacion getTasacionMasReciente(Activo activo) {

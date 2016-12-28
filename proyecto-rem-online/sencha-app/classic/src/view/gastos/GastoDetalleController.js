@@ -242,7 +242,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 	},
 	
-	refrescarGasto: function(refrescarPestañaActiva) {
+	refrescarGasto: function(refrescarPestañaActiva) {	
+		
 		var me = this,
 		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
 		tabPanel = me.getView().down("tabpanel");
@@ -261,17 +262,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
   				activeTab.funcionRecargar();
 			}
 		}
-		
-		var id = me.getView().getViewModel().get('gasto.id');
-		HreRem.model.GastoProveedor.load(id, {
-    		scope: this,
-		    success: function(gasto) {	
-		    	me.getView().getViewModel().set("gasto", gasto);
-		    	me.getView().configCmp(gasto);
-		    }
-		});
-		me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);
-		me.getView().fireEvent("refreshComponent", "panel[reference=gestiongastosref]");
+		var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
+		me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
 		
 	},
 	

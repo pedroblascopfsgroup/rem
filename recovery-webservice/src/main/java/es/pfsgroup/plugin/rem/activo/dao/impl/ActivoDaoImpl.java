@@ -31,12 +31,11 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
-import es.pfsgroup.plugin.rem.model.DtoLlaves;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{

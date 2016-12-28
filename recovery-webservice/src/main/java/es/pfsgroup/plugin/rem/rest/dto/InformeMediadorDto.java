@@ -18,7 +18,6 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoPlazaGaraje;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -392,12 +391,6 @@ public class InformeMediadorDto implements Serializable {
 
 	@EntityDefinition(propertyName = "mtsAlturaLibre")
 	private Float altura;
-
-	@EntityDefinition(propertyName = "cantidad")
-	private Long numeroPlazasGaraje;
-
-	@EntityDefinition(propertyName = "superficie")
-	private Float superficiePlazasGaraje;
 
 	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codSubtipoPlazasGaraje no existe", groups = {
 			Insert.class, Update.class })
@@ -914,6 +907,23 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "zonaComunOtros")
 	public String otrosZonasComunes;
 
+	@EntityDefinition(procesar = false)
+	private Boolean existeAnejoTrastero;
+	
+	@EntityDefinition(procesar = false)
+	private String anejoTrastero;
+	
+	@EntityDefinition(procesar = false)
+	private String anejoGarage;
+	
+	@EntityDefinition(procesar = false)
+	private Integer numeroPlazasGaraje;
+
+	@EntityDefinition(procesar = false)
+	private Float superficiePlazasGaraje;
+	
+	
+	
 	public Long getIdInformeMediadorWebcom() {
 		return idInformeMediadorWebcom;
 	}
@@ -1658,11 +1668,35 @@ public class InformeMediadorDto implements Serializable {
 		this.altura = altura;
 	}
 
-	public Long getNumeroPlazasGaraje() {
+	public Boolean getExisteAnejoTrastero() {
+		return existeAnejoTrastero;
+	}
+
+	public void setExisteAnejoTrastero(Boolean existeAnejoTrastero) {
+		this.existeAnejoTrastero = existeAnejoTrastero;
+	}
+
+	public String getAnejoTrastero() {
+		return anejoTrastero;
+	}
+
+	public void setAnejoTrastero(String anejoTrastero) {
+		this.anejoTrastero = anejoTrastero;
+	}
+
+	public String getAnejoGarage() {
+		return anejoGarage;
+	}
+
+	public void setAnejoGarage(String anejoGarage) {
+		this.anejoGarage = anejoGarage;
+	}
+
+	public Integer getNumeroPlazasGaraje() {
 		return numeroPlazasGaraje;
 	}
 
-	public void setNumeroPlazasGaraje(Long numeroPlazasGaraje) {
+	public void setNumeroPlazasGaraje(Integer numeroPlazasGaraje) {
 		this.numeroPlazasGaraje = numeroPlazasGaraje;
 	}
 

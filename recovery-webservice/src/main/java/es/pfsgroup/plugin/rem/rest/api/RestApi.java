@@ -66,6 +66,14 @@ public interface RestApi {
 			throws NoSuchAlgorithmException, UnsupportedEncodingException;
 
 	/**
+	 * Valida la firma del webhook
+	 * 
+	 * @param signature
+	 * @return
+	 */
+	public boolean validateWebhookSignature(ServletRequest req,String signature);
+
+	/**
 	 * Valida el id
 	 * 
 	 * @param id
@@ -165,6 +173,7 @@ public interface RestApi {
 	 */
 	public void sendResponse(HttpServletResponse response, RestRequestWrapper request, JSONObject jsonResp,
 			String result);
+
 	/**
 	 * Escribe en la salida standard una respuesta JSON
 	 * 

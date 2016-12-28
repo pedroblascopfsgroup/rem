@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
+import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -74,6 +75,8 @@ public class RestManagerImpl implements RestApi {
 	private Properties appProperties;
 
 	private final Log logger = LogFactory.getLog(getClass());
+
+	private String NOMBRE_SERVICIO_WEBHOOK = "fotos";
 
 	@Override
 	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
@@ -258,7 +261,7 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public void sendResponse(HttpServletResponse response,String jsonResp) {
+	public void sendResponse(HttpServletResponse response, String jsonResp) {
 		response.reset();
 		PrintWriter out;
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -269,7 +272,7 @@ public class RestManagerImpl implements RestApi {
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		
+
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -355,7 +358,7 @@ public class RestManagerImpl implements RestApi {
 		requestUri = requestUri.toLowerCase();
 		Boolean encontrado = false;
 		for (String token : requestUri.split("/")) {
-			if (token.equals("rest")) {
+			if (token.equals("rest") || token.equals("webhook")) {
 				encontrado = true;
 			} else {
 				if (encontrado) {
@@ -542,5 +545,37 @@ public class RestManagerImpl implements RestApi {
 	public RestLlamada getLlamadaByToken(String token) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean validateWebhookSignature(ServletRequest req, String signature) {
+		boolean resultado = true;
+		String nombreSevicio = this.obtenerNombreServicio(req);
+		if (nombreSevicio.equals(NOMBRE_SERVICIO_WEBHOOK)) {
+			String appId = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+					WebcomRESTDevonProperties.APP_ID_GESTOR_DOCUMENTAL, "3");
+			String secret = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+					WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL,
+					"z[99I(sZluG){yfCdd]xO_eb-(A9Wxof{C{sZ_Tr2h/MLT$D=VH9T)bRCl1IY7ANd&W{qPeIPf[y(NuqbgtvpS4r3PI[}z)?J-[36fw=&M]60");
+
+			String urlBase = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+					WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, "http://gdtest.gestycontrolhaya.es/rest");
+
+			String ip = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+					WebcomRESTDevonProperties.SERVER_PUBLIC_ADDRESS, "UNKNOWN_ADDRESS");
+			try {
+				String generatedSignature = WebcomSignatureUtils.computeSignatureWebhook(appId, secret, ip, urlBase);
+				if(!generatedSignature.equals(signature)){
+					resultado = false;
+				}
+			} catch (NoSuchAlgorithmException e) {
+				logger.error(e);
+				resultado = false;
+			} catch (UnsupportedEncodingException e) {
+				logger.error(e);
+				resultado = false;
+			}
+		}
+		return resultado;
 	}
 }

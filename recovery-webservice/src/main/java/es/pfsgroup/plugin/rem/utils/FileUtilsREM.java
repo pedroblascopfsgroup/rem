@@ -105,7 +105,7 @@ public class FileUtilsREM {
 				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 				cadena = dateFormat.format((Date) obj).toString();
 				
-			}else if (obj instanceof Double || obj instanceof BigDecimal) {
+			}else if (obj instanceof Float || obj instanceof Double || obj instanceof BigDecimal) {
 				cadena = new DecimalFormat("0.00").format(obj);
 				
 			}else if (obj instanceof Boolean) {

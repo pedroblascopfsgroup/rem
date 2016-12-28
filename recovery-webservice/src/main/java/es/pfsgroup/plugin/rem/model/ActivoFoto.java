@@ -28,8 +28,7 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
-
-
+import es.pfsgroup.plugin.rem.rest.dto.File;
 
 /**
  * Modelo que gestiona la información de las fotos.
@@ -42,87 +41,146 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoFoto implements Serializable, Auditable {
 
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
-     * Constructor
-     */
-	
-    public ActivoFoto() {}
+	 * Constructor
+	 */
+
+	public ActivoFoto() {
+	}
 
 	public ActivoFoto(FileItem fileItem) {
-        Adjunto adjunto = new Adjunto(fileItem);
-        this.setAdjunto(adjunto);
-        this.setNombre(fileItem.getFileName());
-        this.setTamanyo(fileItem.getLength());
-    }
+		Adjunto adjunto = new Adjunto(fileItem);
+		this.setAdjunto(adjunto);
+		this.setNombre(fileItem.getFileName());
+		this.setTamanyo(fileItem.getLength());
+	}
+
+	public ActivoFoto(File remoteFileItem) {
+		this.setRemoteId(remoteFileItem.getId());
+		this.setUrl(remoteFileItem.getUrl());
+		this.setUrlOptimized(remoteFileItem.getUrl_optimized());
+		this.setUrlThumbnail(remoteFileItem.getUrl_thumbnail());
+		this.setUrlWatermark(remoteFileItem.getUrl_watermark());
+
+	}
 
 	@Id
-    @Column(name = "FOT_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoFotoGenerator")
-    @SequenceGenerator(name = "ActivoFotoGenerator", sequenceName = "S_ACT_FOT_FOTO")
-    private Long id;
-	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACT_ID")
-    private Activo activo;
-    
+	@Column(name = "FOT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoFotoGenerator")
+	@SequenceGenerator(name = "ActivoFotoGenerator", sequenceName = "S_ACT_FOT_FOTO")
+	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ACT_ID")
+	private Activo activo;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "AGR_ID")
 	private ActivoAgrupacion agrupacion;
-	
-    @Column(name = "SDV_ID")
-    private BigDecimal subdivision;
-	
+
+	@Column(name = "SDV_ID")
+	private BigDecimal subdivision;
+
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ADJ_ID")
-    private Adjunto adjunto; 
-	
+	@JoinColumn(name = "ADJ_ID")
+	private Adjunto adjunto;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TFO_ID")
-    private DDTipoFoto tipoFoto;
-	
-    @Column(name = "FOT_NOMBRE")
-    private String nombre;
-    
+	@JoinColumn(name = "DD_TFO_ID")
+	private DDTipoFoto tipoFoto;
+
+	@Column(name = "FOT_NOMBRE")
+	private String nombre;
+
 	@Column(name = "FOT_LENGTH")
 	private Long tamanyo;
-	
+
 	@Column(name = "FOT_DESCRIPCION")
 	private String descripcion;
-	
+
 	@Column(name = "FOT_FECHA_DOCUMENTO")
 	private Date fechaDocumento;
-	
+
 	@Column(name = "FOT_PRINCIPAL")
 	private Boolean principal;
-	
+
 	@Column(name = "FOT_INT_EXT")
 	private Boolean interiorExterior;
-	
+
 	@Column(name = "FOT_VIDEO")
 	private Boolean video;
-	
+
 	@Column(name = "FOT_PLANO")
 	private Boolean plano;
-	
+
 	@Column(name = "FOT_ORDEN")
 	private Integer orden;
-	
-	
-	
-	@Version   
+
+	@Column(name = "FOT_GDF_ID")
+	private Long remoteId;
+
+	@Column(name = "FOT_GDF_URL")
+	private String url;
+
+	@Column(name = "FOT_GDF_WATERMARK")
+	private String urlWatermark;
+
+	@Column(name = "FOT_GDF_OPTIMIZED")
+	private String urlOptimized;
+
+	@Column(name = "FOT_GDF_THUMBNAIL")
+	private String urlThumbnail;
+
+	public Long getRemoteId() {
+		return remoteId;
+	}
+
+	public void setRemoteId(Long remoteId) {
+		this.remoteId = remoteId;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getUrlWatermark() {
+		return urlWatermark;
+	}
+
+	public void setUrlWatermark(String urlWatermark) {
+		this.urlWatermark = urlWatermark;
+	}
+
+	public String getUrlOptimized() {
+		return urlOptimized;
+	}
+
+	public void setUrlOptimized(String urlOptimized) {
+		this.urlOptimized = urlOptimized;
+	}
+
+	public String getUrlThumbnail() {
+		return urlThumbnail;
+	}
+
+	public void setUrlThumbnail(String urlThumbnail) {
+		this.urlThumbnail = urlThumbnail;
+	}
+
+	@Version
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-	
-	
-	
 
 	public Long getId() {
 		return id;
@@ -259,7 +317,5 @@ public class ActivoFoto implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
-	
-	
+
 }

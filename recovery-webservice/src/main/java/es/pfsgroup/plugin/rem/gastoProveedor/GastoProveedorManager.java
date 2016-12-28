@@ -214,12 +214,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			if(!Checks.esNulo(gasto.getTipoGasto())){
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
+				dto.setTipoGastoDescripcion(gasto.getTipoGasto().getDescripcion());
 			}
 			if(!Checks.esNulo(gasto.getSubtipoGasto())){
 				dto.setSubtipoGastoCodigo(gasto.getSubtipoGasto().getCodigo());
+				dto.setSubtipoGastoDescripcion(gasto.getSubtipoGasto().getDescripcion());
 			}
 			if(!Checks.esNulo(gasto.getEstadoGasto())){
 				dto.setEstadoGastoCodigo(gasto.getEstadoGasto().getCodigo());
+				dto.setEstadoGastoDescripcion(gasto.getEstadoGasto().getDescripcion());
 			}
 			
 			if(!Checks.esNulo(gasto.getProveedor())){
@@ -260,8 +263,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setEsGastoEditable(esGastoEditable(gasto));
 			
 			dto.setNumGastoDestinatario(gasto.getNumGastoDestinatario());
+			
 			if(!Checks.esNulo(gasto.getTipoOperacion())){
 				dto.setTipoOperacionCodigo(gasto.getTipoOperacion().getCodigo());
+				dto.setTipoOperacionDescripcion(gasto.getTipoOperacion().getDescripcion());
 			}
 			if(!Checks.esNulo(gasto.getGastoProveedorAbonado())){
 				dto.setNumGastoAbonado(gasto.getGastoProveedorAbonado().getNumGastoHaya());
@@ -277,6 +282,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setGastoSinActivos(BooleanUtils.toBoolean(gasto.getGastoSinActivos()));
 			}
 			
+			if(!Checks.esNulo(gasto.getGastoDetalleEconomico())) {
+				dto.setImporteTotal(gasto.getGastoDetalleEconomico().getImporteTotal());
+			}
+			
+			if(!Checks.esNulo(gasto.getGestoria())) {
+				dto.setNombreGestoria(gasto.getGestoria().getNombre());
+			}
 			
 		}
 

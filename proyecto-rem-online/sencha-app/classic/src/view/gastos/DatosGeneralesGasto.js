@@ -458,7 +458,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;		
-		me.lookupController().cargarTabData(me);
+		//me.lookupController().cargarTabData(me);
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});	

@@ -12,11 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 public class WebHookSecurityFilter implements Filter {
 
 	private final Log logger = LogFactory.getLog(getClass());
+	
+	@Autowired
+	private RestApi restApi;
+	
+	private String WORKINGCODE = "2038";
 
 	@Override
 	public void destroy() {
@@ -29,8 +37,15 @@ public class WebHookSecurityFilter implements Filter {
 		
 		RestRequestWrapper restRequest = null;
 		try {
-			restRequest = new RestRequestWrapper((HttpServletRequest) request);
-			chain.doFilter(restRequest, response);
+			restApi.doSessionConfig(response, WORKINGCODE);
+			String authHeader = ((HttpServletRequest) request).getHeader("AUTHORIZATION");
+			if(restApi.validateWebhookSignature(request,authHeader)){
+				restRequest = new RestRequestWrapper((HttpServletRequest) request);
+				chain.doFilter(restRequest, response);
+			}else{
+				logger.error("Petición webhook no autorizada");
+			}
+			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -45,6 +60,6 @@ public class WebHookSecurityFilter implements Filter {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 
-	}
+	}	
 
 }

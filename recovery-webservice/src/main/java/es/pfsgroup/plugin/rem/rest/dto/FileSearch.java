@@ -11,16 +11,16 @@ import es.pfsgroup.plugin.rem.rest.dto.deserializers.CustomJsonDateDeserializer;
 public class FileSearch implements Serializable {
 
 	private static final long serialVersionUID = 1080314832376365746L;
-	private String id;
+	private Long id;
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	private Date since;
 	private HashMap<String, String> metadata;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

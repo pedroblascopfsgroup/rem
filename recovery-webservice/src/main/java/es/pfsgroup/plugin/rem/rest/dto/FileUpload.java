@@ -6,16 +6,16 @@ import java.util.HashMap;
 public class FileUpload implements Serializable {
 
 	private static final long serialVersionUID = 8761637017935985517L;
-	private Integer id;
+	private Long id;
 	private String file_base64;
 	private String basename;
 	private HashMap<String, String> metadata;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

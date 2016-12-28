@@ -36,7 +36,7 @@ public class ClienteWebComGestorDocumental {
 
 		String serviceUrl = null;
 		String urlBase = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, "http://gdtest.gestycontrolhaya.es/rest");
+				WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, null);
 
 		if (urlBase == null) {
 			throw new RestConfigurationException("La url base del gestor documental no esta definida");

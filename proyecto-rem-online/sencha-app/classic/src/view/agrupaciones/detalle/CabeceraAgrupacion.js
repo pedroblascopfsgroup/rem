@@ -161,15 +161,24 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 										                },
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.provincia'),
-															bind:		'{agrupacionficha.provinciaDescripcion}'
+															bind: {
+																hidden: '{agrupacionficha.isComercial}',
+																value: '{agrupacionficha.provinciaDescripcion}'
+															}
 														},
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-															bind:		'{agrupacionficha.municipioDescripcion}'
+															bind: {
+																hidden: '{agrupacionficha.isComercial}',
+																value: '{agrupacionficha.municipioDescripcion}'
+															}
 														},
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.direccion'),
-															bind:		'{agrupacionficha.direccion}'
+															bind: {
+																hidden: '{agrupacionficha.isComercial}',
+																value: '{agrupacionficha.direccion}'
+															}
 														},
 														{ 
 															xtype: 'datefieldbase',

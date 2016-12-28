@@ -2247,5 +2247,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    	fieldset.unmask();
 		    }
 		});		
+	},
+	
+	// Este método abre el activo o agrupación asociado a la oferta en el grid de ofertas del activo.
+	onClickAbrirActivoAgrupacion: function(tableView, indiceFila, indiceColumna) {
+		var me = this;
+		var grid = tableView.up('grid');
+	    var record = grid.store.getAt(indiceFila);
+	    grid.setSelection(record);
+	    if(Ext.isEmpty(record.get('idAgrupacion'))){
+	    	var idActivo = record.get("idActivo");
+	   		me.redirectTo('activos', true);
+	    	me.getView().fireEvent('abrirDetalleActivoOfertas', record);
+	    }
+	    else{
+	    	var idAgrupacion = record.get("idAgrupacion");
+	    	me.getView().fireEvent('abrirDetalleActivoOfertas', record);
+	    }
+	
 	}
 });

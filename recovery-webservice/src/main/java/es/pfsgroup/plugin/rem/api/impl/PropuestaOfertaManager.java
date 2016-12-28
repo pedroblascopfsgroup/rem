@@ -1,7 +1,10 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +13,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -17,6 +28,7 @@ import org.springframework.ui.ModelMap;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -27,13 +39,11 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.HojaDatosApi;
-import es.pfsgroup.plugin.rem.api.HojaDatosPDF;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoAnejo;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -56,18 +66,21 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAnejo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 
 @Service("propuestaOfertaManager")
-public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi {
+public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 	private final String NOT_AVAILABLE_ROOM = "NO";
 
@@ -89,37 +102,111 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 	@Autowired
 	private ActivoDao activoDao;
 	
+	@Autowired
+	private RestApi restApi;
+	
+	
+	@Override
+	public HashMap<String, String> validatePropuestaOfertaRequestData(OfertaSimpleDto ofertaSimpleDto, Object jsonFields) throws Exception {
+		HashMap<String, String> errorsList = null;
+		Oferta oferta = null;
+		ExpedienteComercial expediente = null;
+		CondicionanteExpediente condExp = null;
+		List<ActivoOferta> listaActivos = null;
+		
+		errorsList = restApi.validateRequestObject(ofertaSimpleDto, TIPO_VALIDACION.INSERT);
+
+		oferta = ofertaApi.getOfertaByNumOfertaRem(ofertaSimpleDto.getOfertaHRE());	
+		if (Checks.esNulo(oferta)) {
+			errorsList.put("ofertaHRE", RestApi.REST_MSG_UNKNOWN_KEY);
+		}else{
+			listaActivos = oferta.getActivosOferta();
+			if(Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size()<1)){
+				errorsList.put("ofertaHRE", RestApi.REST_NO_RELATED_ASSET);
+			}			
+			if(Checks.esNulo(oferta.getEstadoOferta()) || 
+			(!Checks.esNulo(oferta.getEstadoOferta()) && !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA))){
+				errorsList.put("ofertaHRE", RestApi.REST_NO_RELATED_OFFER_ACCEPTED);
+			}
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+			expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
+			if(Checks.esNulo(expediente)){
+				errorsList.put("ofertaHRE", RestApi.REST_NO_RELATED_EXPEDIENT);			
+			}else{
+				condExp = expediente.getCondicionante();
+				if(Checks.esNulo(condExp)) {
+					errorsList.put("ofertaHRE", RestApi.REST_NO_RELATED_COND_EXPEDIENT);						
+				}
+			}
+			
+
+		}
+		return errorsList;
+	}
+	
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> paramsHojaDatos(Oferta oferta, ModelMap model) {
-		
+	public Map<String, Object> paramsHojaDatos(ActivoOferta activoOferta, ModelMap model) {
+		Activo activo = null;
+		Oferta oferta = null;
+		List<ActivoOferta> listaActivos = null;
+		int contEdi = 0;
+		int contViv = 0;
+		int contCom = 0;
+		int contInd = 0;
+		int contSue = 0;
+		int contVar = 0;
+		int contDispJur = 0;
 		Map<String, Object> mapaValores = new HashMap<String,Object>();
+		
 		try {
 
-			mapaValores.put("NumOfProp", oferta.getNumOferta()+"/1");
-			
-			//Obteniedo el activo relacionado con la OFERTA
-			Activo activo = oferta.getActivoPrincipal();
-			if (activo == null) {
+			if(!Checks.esNulo(activoOferta)){
+				activo = activoOferta.getPrimaryKey().getActivo();
+				oferta = activoOferta.getPrimaryKey().getOferta();
+			}		
+			if(Checks.esNulo(activo)){
 				model.put("error", RestApi.REST_NO_RELATED_ASSET);
 				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
+			}		
+			if(Checks.esNulo(oferta)){
+				model.put("error", RestApi.REST_NO_RELATED_ASSET);
+				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
+			}			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+			ExpedienteComercial expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);			
+			if (Checks.esNulo(expediente)) {
+				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
+				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
 			}
-			mapaValores.put("Activo", activo.getNumActivoUvem().toString());
 			
+			CondicionanteExpediente condExp = expediente.getCondicionante();
+			if (Checks.esNulo(condExp)) {
+				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
+				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
+			}
+			
+			
+			//HEADER
+			mapaValores.put("NumOfProp", oferta.getNumOferta()+"/1");
+			mapaValores.put("Activo", activo.getNumActivoUvem().toString());		
 			mapaValores.put("FRecepOf", FileUtilsREM.stringify(oferta.getFechaAlta()) );
 			mapaValores.put("FProp", FileUtilsREM.stringify(new Date()));
-
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
 			Long tipo = genericDao.get(EXTDDTipoGestor.class, filter).getId();		
 			if (gestorActivoApi.getGestorByActivoYTipo(activo, tipo)!=null) {
 				mapaValores.put("Gestor", gestorActivoApi.getGestorByActivoYTipo(activo, tipo).getApellidoNombre());
 			} else {
 				mapaValores.put("Gestor", FileUtilsREM.stringify(null));
-			}
-			
+			}			
 			mapaValores.put("FPublWeb", FileUtilsREM.stringify(activo.getFechaPublicable()));
-			mapaValores.put("NumVisitasWeb", FileUtilsREM.stringify(activo.getVisitas().size()));
+			mapaValores.put("NumVisitasWeb", FileUtilsREM.stringify(activo.getVisitas().size()));		
 			
+			
+			//CARACTERISTICAS INMUEBLE
 			mapaValores.put("Direccion",FileUtilsREM.stringify(activo.getDireccion()));
 			if (activo.getTipoActivo()!=null) {
 				mapaValores.put("Tipo",FileUtilsREM.stringify(activo.getTipoActivo().getDescripcionLarga()));
@@ -155,13 +242,20 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 			//mapaValores.put("SuperficieRegistro",FileUtilsREM.stringify(activo.getTotalSuperficieSuelo()));
 			mapaValores.put("Parcela",FileUtilsREM.stringify(activo.getTotalSuperficieParcela()));
 			List<ActivoPropietarioActivo> listaPropietarios = activo.getPropietariosActivo();
-			if (listaPropietarios!=null && listaPropietarios.get(0).getPropietario()!=null && listaPropietarios.get(0).getPropietario().getFullName()!=null){
+			if (!Checks.esNulo(listaPropietarios) && listaPropietarios.size()>0 && 
+				!Checks.esNulo(listaPropietarios.get(0).getPropietario()) && listaPropietarios.get(0).getPropietario().getFullName()!=null){
 				mapaValores.put("SociedadPatrimonial",listaPropietarios.get(0).getPropietario().getFullName()); 
 			} else {
 				mapaValores.put("SociedadPatrimonial",FileUtilsREM.stringify(null)); 
 			}
 			NMBBien bien =  activo.getBien();
 		
+			if(!Checks.esNulo(activo.getInfoAdministrativa()) && !Checks.esNulo(activo.getInfoAdministrativa().getTipoVpo())){				
+				mapaValores.put("regimenProteccion",FileUtilsREM.stringify(activo.getInfoAdministrativa().getTipoVpo().getDescripcion())); 
+			}else {
+				mapaValores.put("regimenProteccion",FileUtilsREM.stringify(null)); 
+			}
+			
 			if (bien!=null) {
 				if (bien.getDatosRegistrales()!=null) {
 					mapaValores.put("FincaRegistral",FileUtilsREM.stringify(bien.getDatosRegistrales()));
@@ -231,31 +325,28 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 			}
 			mapaValores.put("CantidadOfertas", FileUtilsREM.stringify(activoApi.cantidadOfertas(activo)));
 			Double mayorOfertaRecibida = activoApi.mayorOfertaRecibida(activo);
-			mapaValores.put("MayorOfertaRecibida", FileUtilsREM.stringify(mayorOfertaRecibida));
-			
-			mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(oferta.getImporteOfertaAprobado()));
-			mapaValores.put("ImporteInicial", FileUtilsREM.stringify(oferta.getImporteOferta()));
+			if(!Checks.esNulo(mayorOfertaRecibida)){
+				mapaValores.put("MayorOfertaRecibida", FileUtilsREM.stringify(mayorOfertaRecibida)+"€");
+			}else{
+				mapaValores.put("MayorOfertaRecibida", FileUtilsREM.stringify(null));
+			}
+			if(!Checks.esNulo(oferta.getImporteOfertaAprobado())){
+				mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(oferta.getImporteOfertaAprobado())+"€");
+			}else{
+				mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(null));
+			}
+			if(!Checks.esNulo(oferta.getImporteOferta())){
+				mapaValores.put("ImporteInicial", FileUtilsREM.stringify(oferta.getImporteOferta())+"€");
+			}else{
+				mapaValores.put("ImporteInicial", FileUtilsREM.stringify(null));
+			}
 			mapaValores.put("FechaContraoferta", FileUtilsREM.stringify(oferta.getFechaContraoferta()));
-			mapaValores.put("Contraoferta", FileUtilsREM.stringify(oferta.getImporteContraOferta())); 
-			
-			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
-			if (ofertaAceptada==null) {
-				model.put("error", RestApi.REST_NO_RELATED_OFFER_ACCEPTED);
-				throw new Exception(RestApi.REST_NO_RELATED_OFFER_ACCEPTED);					
-			}
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
-			ExpedienteComercial expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
-			if (expediente==null) {
-				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
-				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
-			}
-			CondicionanteExpediente condExp = expediente.getCondicionante();
-			if (condExp==null) {
-				model.put("error", RestApi.REST_NO_RELATED_COND_EXPEDIENT);
-				throw new Exception(RestApi.REST_NO_RELATED_COND_EXPEDIENT);					
+			if(!Checks.esNulo(oferta.getImporteContraOferta())){
+				mapaValores.put("Contraoferta", FileUtilsREM.stringify(oferta.getImporteContraOferta())+"€"); 
+			}else{
+				mapaValores.put("Contraoferta", FileUtilsREM.stringify(null)); 
 			}
 
-			mapaValores.put("Contraoferta", FileUtilsREM.stringify(oferta.getImporteContraOferta()));	
 			
 //			Si con posesión inicial "sí": El ofertante requiere que haya posesión inicial.
 //			Si con posesión inicial "no": El ofertante acepta que no haya posesión inicial.
@@ -285,9 +376,21 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 			}
 			mapaValores.put("Posesion", txtPosesion);
 			
-			mapaValores.put("Impuestos", FileUtilsREM.stringify(condExp.getCargasImpuestos()));
-			mapaValores.put("Comunidades", FileUtilsREM.stringify(condExp.getCargasComunidad()));
-			mapaValores.put("Otros", FileUtilsREM.stringify(condExp.getCargasOtros()));
+			if(!Checks.esNulo(condExp.getCargasImpuestos())){
+				mapaValores.put("Impuestos", FileUtilsREM.stringify(condExp.getCargasImpuestos())+"€");
+			}else{
+				mapaValores.put("Impuestos", FileUtilsREM.stringify(null));
+			}
+			if(!Checks.esNulo(condExp.getCargasComunidad())){
+				mapaValores.put("Comunidades", FileUtilsREM.stringify(condExp.getCargasComunidad())+"€");
+			}else{
+				mapaValores.put("Comunidades", FileUtilsREM.stringify(null));
+			}
+			if(!Checks.esNulo(condExp.getCargasComunidad())){
+				mapaValores.put("Otros", FileUtilsREM.stringify(condExp.getCargasOtros())+"€");
+			}else{
+				mapaValores.put("Otros", FileUtilsREM.stringify(null));
+			}
 //			Si hay contenido en impuestos y en el combo "por cuenta de" pone "comprador": El comprador asume el pago de los impuestos pendientes.
 //			Si hay contenido en comunidades y en el combo "por cuenta de" pone "vendedor": El comprador no asume el pago de los impuestos pendientes.
 //			Si hay contenido en otros y en el combo "por cuenta de" pone "según ley": El comprador requiere que los gastos sean asumidos por quien corresponda según ley.
@@ -328,13 +431,11 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 				mapaValores.put("OtrosImporteOferta", FileUtilsREM.stringify(null));
 			}
 			if (condExp!=null) {
-				if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva()) ) {
-					mapaValores.put("Reserva", FileUtilsREM.stringify(condExp.getPorcentajeReserva()*oferta.getImporteOferta()));
+				if (!Checks.esNulo(condExp.getPorcentajeReserva())) {
+					mapaValores.put("Reserva", FileUtilsREM.stringify(condExp.getPorcentajeReserva())+"%");
 				} else {
-					Double importeReserva = condExp.getImporteReserva();
-					Double importeOferta = oferta.getImporteOferta();
-					if (importeOferta!= null && importeReserva!=null ) {
-						mapaValores.put("Reserva", FileUtilsREM.stringify( 100*(importeReserva/importeOferta) ));
+					if (!Checks.esNulo(condExp.getImporteReserva())) {
+						mapaValores.put("Reserva", FileUtilsREM.stringify(condExp.getImporteReserva())+"€");
 					} else {
 						mapaValores.put("Reserva", FileUtilsREM.stringify(null));
 					}
@@ -369,12 +470,20 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 							tasacionMasReciente = tas;
 						}
 					}
-					mapaValores.put("ValorTasacion",  FileUtilsREM.stringify(tasacionMasReciente.getValoracionBien().getImporteValorTasacion()));
+					if(!Checks.esNulo(oferta.getImporteContraOferta())){
+						mapaValores.put("ValorTasacion",  FileUtilsREM.stringify(tasacionMasReciente.getValoracionBien().getImporteValorTasacion())+"€");
+					}else{
+						mapaValores.put("ValorTasacion",  FileUtilsREM.stringify(null));
+					}
 					mapaValores.put("ValorTasacionFecha", FileUtilsREM.stringify(tasacionMasReciente.getValoracionBien().getFechaValorTasacion()));
 					Double importeTasacion = tasacionMasReciente.getValoracionBien().getImporteValorTasacion().doubleValue();
-					if (tasacionMasReciente.getValoracionBien().getImporteValorTasacion()!=null && importeTasacion!=0) {						
-						Double valorTasacionDto = 100*( (importeTasacion - mayorOfertaRecibida) / importeTasacion );
-						mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(valorTasacionDto));
+					if (tasacionMasReciente.getValoracionBien().getImporteValorTasacion()!=null && importeTasacion!= null &&importeTasacion!=0) {						
+						Double valorTasacionDto = 100*( 1 -(oferta.getImporteOferta()/ importeTasacion));
+						if(!Checks.esNulo(valorTasacionDto)){
+							mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(valorTasacionDto)+"%");
+						}else{
+							mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(null));
+						}
 					} else {
 						mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(null));
 					}
@@ -389,12 +498,20 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 				Filter estimadoVentaTPCFilter = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA);
 				ActivoValoraciones activoValoracion = (ActivoValoraciones) genericDao.get(ActivoValoraciones.class, activoFilter, estimadoVentaTPCFilter);
 				if (activoValoracion!=null) {
-					mapaValores.put("ValorEstColabor", FileUtilsREM.stringify(activoValoracion.getImporte()));
+					if(!Checks.esNulo(activoValoracion.getImporte())){
+						mapaValores.put("ValorEstColabor", FileUtilsREM.stringify(activoValoracion.getImporte())+"€");
+					}else{
+						mapaValores.put("ValorEstColabor", FileUtilsREM.stringify(null));
+					}
 					mapaValores.put("ValorEstColaborFecha", FileUtilsREM.stringify(activoValoracion.getFechaInicio()));
 					Double importeTasacion = activoValoracion.getImporte();
-					if (importeTasacion!=0) {
-						Double valorTasacionDto = 100*( (importeTasacion - mayorOfertaRecibida) / importeTasacion );
-						mapaValores.put("ValorEstColaborDto", FileUtilsREM.stringify(valorTasacionDto));
+					if (!Checks.esNulo(importeTasacion) && importeTasacion!=0) {
+						Double valorTasacionDto = 100*( 1- (oferta.getImporteOferta()/importeTasacion ));
+						if(!Checks.esNulo(valorTasacionDto)){
+							mapaValores.put("ValorEstColaborDto", FileUtilsREM.stringify(valorTasacionDto)+"%");
+						}else{
+							mapaValores.put("ValorEstColaborDto", FileUtilsREM.stringify(null));
+						}
 					} else {
 						mapaValores.put("ValorEstColaborDto", FileUtilsREM.stringify(null));
 					}
@@ -443,12 +560,20 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 							}
 					}			
 					if (activoAprobVenta!=null) {
-						mapaValores.put("ValorAprobVenta", FileUtilsREM.stringify(activoAprobVenta.getImporte()));
+						if (Checks.esNulo(activoAprobVenta.getImporte())) {
+							mapaValores.put("ValorAprobVenta", FileUtilsREM.stringify(activoAprobVenta.getImporte())+"€");
+						}else{
+							mapaValores.put("ValorAprobVenta", FileUtilsREM.stringify(null));
+						}
 						mapaValores.put("ValorAprobVentaFecha", FileUtilsREM.stringify(activoAprobVenta.getFechaInicio()));
 						Double importeTasacion = activoAprobVenta.getImporte();
-						if (importeTasacion!=0) {
-							Double valorTasacionDto = 100*( (importeTasacion - mayorOfertaRecibida) / importeTasacion );
-							mapaValores.put("ValorAprobVentaDto", FileUtilsREM.stringify(valorTasacionDto));
+						if (!Checks.esNulo(importeTasacion) && importeTasacion!=0) {
+							Double valorTasacionDto = 100*( 1-(oferta.getImporteOferta()/importeTasacion));
+							if (!Checks.esNulo(valorTasacionDto)) {
+								mapaValores.put("ValorAprobVentaDto", FileUtilsREM.stringify(valorTasacionDto)+"%");
+							}else{
+								mapaValores.put("ValorAprobVentaDto", FileUtilsREM.stringify(null));
+							}
 						} else {
 							mapaValores.put("ValorAprobVentaDto", FileUtilsREM.stringify(null));
 						}
@@ -469,7 +594,6 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 			ActivoVivienda vivienda = (ActivoVivienda) genericDao.get(ActivoVivienda.class, comercialFilter);
 			
 			Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", infoComercial.getId());
-			List<ActivoAnejo> listAnejo = genericDao.getList(ActivoAnejo.class, infoComercialFilter);
 			ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
 			
 			//Descripción fisica del EDIFICIO
@@ -659,59 +783,116 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 			}
 			
 			//Todo lo relacionado con la tabla INFORMACION COMERCIAL
-			if (infoComercial!=null) {
-				mapaValores.put("ActivoZona",FileUtilsREM.stringify(infoComercial.getZona()));
-			} else {
-				mapaValores.put("ActivoZona",FileUtilsREM.stringify(null));
-			}
+			mapaValores.put("ActivoZona",FileUtilsREM.stringify(infoComercial.getZona()));
+			
 
-			//Todo lo relacionado con la tabla ANEJO
-			if (listAnejo!=null) {
-				Integer plazas = 0;
-				Integer trastero = null;
-				Integer garaje = null;
-				Float superficie = new Float(0);
-				String subtipo = null;
-				for (int j = 0; j < listAnejo.size(); j++) {
-					ActivoAnejo anejo = listAnejo.get(j);
-					if (anejo.getTipoAnejo().getCodigo().equals(DDTipoAnejo.TIPO_ANEJO_GARAJE)) {
-						if (garaje==null) {
-							garaje = 1;
-						} else {
-							garaje++;
-						}
-						if (anejo.getSuperficie()!=null) {
-							superficie+=anejo.getSuperficie();
-						}
-						if (plazas==null) {
-							plazas = 1;
-						} else {
-							plazas++;
-						}
-						if (anejo.getSubTipo()!=null) {
-							subtipo = FileUtilsREM.stringify(anejo.getSubTipo().getDescripcionLarga());
-						} else {
-							subtipo = FileUtilsREM.stringify(null);
-						}						
-					} else if (anejo.getTipoAnejo().getCodigo().equals(DDTipoAnejo.TIPO_ANEJO_TRASTERO)) {
-						if (trastero==null) {
-							trastero = 1;
-						} else {
-							trastero++;
-						}
-					} 				
+			//Todo lo relacionado con la tabla ANEJO			
+			ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
+					genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
+					genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_GARAJE),
+					genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
+			if (!Checks.esNulo(activoDistribucion)) {
+				if(activoDistribucion.getCantidad() > 0){
+					mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(true));
+				}else{
+					mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(false));
 				}
-				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(plazas));
-				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(trastero));
-				mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(garaje));
-				mapaValores.put("ActivoSubtipologia",FileUtilsREM.stringify(subtipo));
-				mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(superficie));
-			} else {
-				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(null));
-				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(activoDistribucion.getCantidad()));
+				mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(activoDistribucion.getSuperficie()));
+			}else{
 				mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(null));
-				mapaValores.put("ActivoSubtipologia",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(null));
 				mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoSubtipologia",FileUtilsREM.stringify(null));
+			}
+			
+			activoDistribucion = genericDao.get(ActivoDistribucion.class,
+					genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
+					genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO),
+					genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
+			if (!Checks.esNulo(activoDistribucion)) {						
+				if(activoDistribucion.getCantidad() > 0){
+					mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(true));
+				}else{
+					mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(false));
+				}
+			}else{
+				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(null));
+			}
+			
+		
+			
+			/****************************************LOTE**********************************************/
+			if(!Checks.esNulo(oferta.getAgrupacion())){
+				mapaValores.put("Lote", FileUtilsREM.stringify(oferta.getAgrupacion().getNumAgrupRem()));
+				mapaValores.put("nombreAgrupacion", FileUtilsREM.stringify(oferta.getAgrupacion().getNombre()));
+			
+				listaActivos = oferta.getActivosOferta();
+				if(!Checks.esNulo(listaActivos)){
+					mapaValores.put("numActivos", FileUtilsREM.stringify(listaActivos.size()));
+					for(int i=0; i<listaActivos.size();i++){
+						Activo act = listaActivos.get(0).getPrimaryKey().getActivo();
+						if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_EDIFICIO_COMPLETO)){
+							contEdi++;
+						}
+						if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_VIVIENDA)){
+							contViv++;
+						}
+						if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_COMERCIAL)){
+							contCom++;
+						}
+						if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_INDUSTRIAL)){
+							contInd++;
+						}
+						if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_SUELO)){
+							contSue++;
+						}
+						if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_OTROS)){
+							contVar++;
+						}
+					}
+					mapaValores.put("numActEdi", FileUtilsREM.stringify(contEdi));
+					mapaValores.put("numActViv", FileUtilsREM.stringify(contViv));
+					mapaValores.put("numActCom", FileUtilsREM.stringify(contCom));
+					mapaValores.put("numActInd", FileUtilsREM.stringify(contInd));
+					mapaValores.put("numActSue", FileUtilsREM.stringify(contSue));
+					mapaValores.put("numActVar", FileUtilsREM.stringify(contVar));
+					
+					
+					if(!Checks.esNulo(activo.getAdjJudicial()) && !Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())) {					
+						if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion())) {
+							contDispJur++;
+						} 
+					} 
+					if(contDispJur>0){
+						mapaValores.put("Disponibilidadjuridica","DISPONIBLE");
+						mapaValores.put("numDispJuridica", FileUtilsREM.stringify(contDispJur));
+					}else{
+						mapaValores.put("Disponibilidadjuridica","NO DISPONIBLE");
+						mapaValores.put("numDispJuridica", FileUtilsREM.stringify(contDispJur));
+					}
+					
+					
+					
+				}else{
+					mapaValores.put("numActivos", FileUtilsREM.stringify(Integer.valueOf(0)));
+					mapaValores.put("numActEdi", FileUtilsREM.stringify(Integer.valueOf(0)));
+					mapaValores.put("numActViv", FileUtilsREM.stringify(Integer.valueOf(0)));
+					mapaValores.put("numActCom", FileUtilsREM.stringify(Integer.valueOf(0)));
+					mapaValores.put("numActInd", FileUtilsREM.stringify(Integer.valueOf(0)));
+					mapaValores.put("numActSue", FileUtilsREM.stringify(Integer.valueOf(0)));
+					mapaValores.put("numActVar", FileUtilsREM.stringify(Integer.valueOf(0)));
+				}
+				
+				if (!Checks.esNulo(activo.getAdjJudicial()) && !Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())) {					
+					if (activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion()!=null) {
+						mapaValores.put("Disponibilidadjuridica","Disponible");
+					} else {
+						mapaValores.put("Disponibilidadjuridica","No disponible.");
+					}
+				} else {
+					mapaValores.put("Disponibilidadjuridica",FileUtilsREM.stringify(null));
+				}
 			}
 
 			
@@ -727,130 +908,221 @@ public class PropuestaOfertaManager extends HojaDatosPDF implements HojaDatosApi
 		
 		return mapaValores;
 	}
+	
+	
+	
+	
+	
 
 	@Override
-	public List<Object> dataSourceHojaDatos(Oferta oferta, Activo activo, ModelMap model) {
-
+	public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model) {
+		Activo activo = null;
+		Oferta oferta = null;
 		List<Object> array = new ArrayList<Object>();
-		
 		DtoDataSource propuestaOferta = new DtoDataSource();
-		
-		List<CompradorExpediente> clientes = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getCompradores();
-		List<Object> listaCliente = new ArrayList<Object>();
-		DtoCliente cliente = null;
-		for (int i = 0; i < clientes.size(); i++) {
-			VBusquedaDatosCompradorExpediente datosComprador = expedienteComercialApi.getDatosCompradorById(clientes.get(i).getComprador()); 
-			cliente = new DtoCliente();
-			cliente.setNombreCliente(FileUtilsREM.stringify(datosComprador.getNombreRazonSocial()));
-			String direccion = "";
-			if (datosComprador.getDireccion() != null) {
-				direccion += datosComprador.getDireccion();
-			}
-			if (datosComprador.getCodigoPostal() != null) {
-				direccion += " ";
-				direccion += datosComprador.getCodigoPostal();
-			}
-			if (datosComprador.getMunicipioDescripcion() != null) {
-				direccion = direccion + "(" +datosComprador.getMunicipioDescripcion()+ ")";
-			}
-			cliente.setDireccionCliente(direccion);
-			cliente.setDniCliente(FileUtilsREM.stringify(datosComprador.getNumDocumento()));
-			cliente.setTlfCliente(FileUtilsREM.stringify(datosComprador.getTelefono1()));
-			if (datosComprador.getAntiguoDeudor() != null) {
-				if (datosComprador.getAntiguoDeudor() == 1) {
-					cliente.setDeudor("SI");
-				} else {
-					cliente.setDeudor("NO");
-				}
-			} else {
-				cliente.setDeudor(FileUtilsREM.stringify(null));
-			}
-			if (datosComprador.getRelacionAntDeudor() != null) {
-				if (datosComprador.getRelacionAntDeudor() == 1) {
-					cliente.setrBienes("SI");
-				} else {
-					cliente.setrBienes("NO");
-				}
-			} else {
-				cliente.setrBienes(FileUtilsREM.stringify(null));
-			}
-			listaCliente.add(cliente);
-		}
-		propuestaOferta.setListaCliente(listaCliente);
-		
-		List<Object> listaHonorario = new ArrayList<Object>();
-		DtoHonorarios honorarios = null;
-		Long idExpediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getId();
-		List<GastosExpediente> listaGastosExpediente = genericDao.getList(GastosExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
-		for (int j = 0; j < listaGastosExpediente.size(); j++) {
-			honorarios = new DtoHonorarios();
-			if (listaGastosExpediente.get(j).getProveedor()!=null) {
-				honorarios.setNombreHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getProveedor().getNombre()));
-			} else {
-				honorarios.setNombreHonorarios(FileUtilsREM.stringify(null));
-			}			
-			honorarios.setConceptoHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getAccionGastos().getDescripcion()));
-			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(listaGastosExpediente.get(j).getTipoCalculo().getCodigo())) {
-				honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getImporteCalculo()+"%"));
-			} else {
-				honorarios.setPorcentajeHonorarios("0");
-			}
-			honorarios.setImporteHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getImporteFinal()));
-			listaHonorario.add(honorarios);
-		}
-		propuestaOferta.setListaHonorario(listaHonorario);
-		
-		//Ofertas asociadas a las 
-		List<ActivoOferta> listaOfertaPorActivo = activo.getOfertas();
-		List<Object> listaOferta = new ArrayList<Object>();
-		DtoOferta ofertaActivo =null;
-		for (int k = 0; k < listaOfertaPorActivo.size(); k++) {
-			Oferta tmpOferta = listaOfertaPorActivo.get(k).getPrimaryKey().getOferta();
-			ofertaActivo = new DtoOferta();
-			ofertaActivo.setNumOferta(FileUtilsREM.stringify(tmpOferta.getNumOferta()));
-			if (tmpOferta.getCliente()!=null) {
-				ofertaActivo.setTitularOferta(FileUtilsREM.stringify(tmpOferta.getCliente().getNombreCompleto()));
-			} else {
-				ofertaActivo.setTitularOferta(FileUtilsREM.stringify(null));
-			}
-			ofertaActivo.setImporteOferta(FileUtilsREM.stringify(tmpOferta.getImporteOferta()));
-			ofertaActivo.setFechaOferta(FileUtilsREM.stringify(tmpOferta.getFechaAlta()));
-			if (tmpOferta.getEstadoOferta()!=null) {
-				ofertaActivo.setSituacionOferta(FileUtilsREM.stringify(tmpOferta.getEstadoOferta().getDescripcionLarga()));
-			} else {
-				ofertaActivo.setSituacionOferta(FileUtilsREM.stringify(null));
-			}
-			listaOferta.add(ofertaActivo);
-		}
-		propuestaOferta.setListaOferta(listaOferta);
 
-		DtoTasacionInforme tasacion = null;
-		List<Object> listaTasacion = new ArrayList<Object>();
-		List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
-		if (listActivoTasacion!=null) {
-			for (int k = 0; k < listActivoTasacion.size(); k++) {
-				tasacion = new DtoTasacionInforme();
-				tasacion.setNumTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getIdExterno()));
-				tasacion.setTipoTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getTipoTasacion().getDescripcion()));
-				tasacion.setImporteTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getImporteTasacionFin()));
-				tasacion.setFechaTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getFechaRecepcionTasacion()));
-				tasacion.setFirmaTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getCodigoFirma()));
-				listaTasacion.add(tasacion);
+		try {
+
+			if(!Checks.esNulo(activoOferta)){
+				activo = activoOferta.getPrimaryKey().getActivo();
+				oferta = activoOferta.getPrimaryKey().getOferta();
 			}
-		}
-		propuestaOferta.setListaTasacion(listaTasacion);
-		
-		array.add(propuestaOferta);
-		
+			
+			if(Checks.esNulo(activo)){
+				model.put("error", RestApi.REST_NO_RELATED_ASSET);
+				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
+			}
+			
+			if(Checks.esNulo(oferta)){
+				model.put("error", RestApi.REST_NO_RELATED_ASSET);
+				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
+			}
+			
+			
+			List<CompradorExpediente> clientes = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getCompradores();
+			List<Object> listaCliente = new ArrayList<Object>();
+			DtoCliente cliente = null;
+			for (int i = 0; i < clientes.size(); i++) {
+				VBusquedaDatosCompradorExpediente datosComprador = expedienteComercialApi.getDatosCompradorById(clientes.get(i).getComprador()); 
+				cliente = new DtoCliente();
+				cliente.setNombreCliente(FileUtilsREM.stringify(datosComprador.getNombreRazonSocial()));
+				String direccion = "";
+				if (datosComprador.getDireccion() != null) {
+					direccion += datosComprador.getDireccion();
+				}
+				if (datosComprador.getCodigoPostal() != null) {
+					direccion += " ";
+					direccion += datosComprador.getCodigoPostal();
+				}
+				if (datosComprador.getMunicipioDescripcion() != null) {
+					direccion = direccion + "(" +datosComprador.getMunicipioDescripcion()+ ")";
+				}
+				cliente.setDireccionCliente(direccion);
+				cliente.setDniCliente(FileUtilsREM.stringify(datosComprador.getNumDocumento()));
+				cliente.setTlfCliente(FileUtilsREM.stringify(datosComprador.getTelefono1()));
+				if (datosComprador.getAntiguoDeudor() != null) {
+					if (datosComprador.getAntiguoDeudor() == 1) {
+						cliente.setDeudor("SI");
+					} else {
+						cliente.setDeudor("NO");
+					}
+				} else {
+					cliente.setDeudor(FileUtilsREM.stringify(null));
+				}
+				if (datosComprador.getRelacionAntDeudor() != null) {
+					if (datosComprador.getRelacionAntDeudor() == 1) {
+						cliente.setrBienes("SI");
+					} else {
+						cliente.setrBienes("NO");
+					}
+				} else {
+					cliente.setrBienes(FileUtilsREM.stringify(null));
+				}
+				listaCliente.add(cliente);
+			}
+			propuestaOferta.setListaCliente(listaCliente);
+			
+			List<Object> listaHonorario = new ArrayList<Object>();
+			DtoHonorarios honorarios = null;
+			Long idExpediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getId();
+			List<GastosExpediente> listaGastosExpediente = genericDao.getList(GastosExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
+			for (int j = 0; j < listaGastosExpediente.size(); j++) {
+				honorarios = new DtoHonorarios();
+				if (listaGastosExpediente.get(j).getProveedor()!=null) {
+					honorarios.setNombreHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getProveedor().getNombre()));
+				} else {
+					honorarios.setNombreHonorarios(FileUtilsREM.stringify(null));
+				}			
+				honorarios.setConceptoHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getAccionGastos().getDescripcion()));
+				if (!Checks.esNulo(listaGastosExpediente.get(j).getTipoCalculo()) && DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(listaGastosExpediente.get(j).getTipoCalculo().getCodigo())) {
+					if(!Checks.esNulo(listaGastosExpediente.get(j).getImporteCalculo())){
+						honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getImporteCalculo())+"%");
+					}else{
+						honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(null));
+					}
+				} else {
+					honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(null));
+				}
+				if(!Checks.esNulo(listaGastosExpediente.get(j).getImporteFinal())){
+					honorarios.setImporteHonorarios(FileUtilsREM.stringify(listaGastosExpediente.get(j).getImporteFinal())+"€");
+				}else{
+					honorarios.setImporteHonorarios(FileUtilsREM.stringify(null));
+				}
+				listaHonorario.add(honorarios);
+			}
+			propuestaOferta.setListaHonorario(listaHonorario);
+			
+			//Ofertas asociadas a las 
+			List<ActivoOferta> listaOfertaPorActivo = activo.getOfertas();
+			List<Object> listaOferta = new ArrayList<Object>();
+			DtoOferta ofertaActivo =null;
+			for (int k = 0; k < listaOfertaPorActivo.size(); k++) {
+				Oferta tmpOferta = listaOfertaPorActivo.get(k).getPrimaryKey().getOferta();
+				ofertaActivo = new DtoOferta();
+				ofertaActivo.setNumOferta(FileUtilsREM.stringify(tmpOferta.getNumOferta()));
+				if (tmpOferta.getCliente()!=null) {
+					ofertaActivo.setTitularOferta(FileUtilsREM.stringify(tmpOferta.getCliente().getNombreCompleto()));
+				} else {
+					ofertaActivo.setTitularOferta(FileUtilsREM.stringify(null));
+				}
+				if(!Checks.esNulo(tmpOferta.getImporteOferta())){
+					ofertaActivo.setImporteOferta(FileUtilsREM.stringify(tmpOferta.getImporteOferta())+"€");
+				}else{
+					ofertaActivo.setImporteOferta(FileUtilsREM.stringify(null));
+				}
+				ofertaActivo.setFechaOferta(FileUtilsREM.stringify(tmpOferta.getFechaAlta()));
+				if (tmpOferta.getEstadoOferta()!=null) {
+					ofertaActivo.setSituacionOferta(FileUtilsREM.stringify(tmpOferta.getEstadoOferta().getDescripcionLarga()));
+				} else {
+					ofertaActivo.setSituacionOferta(FileUtilsREM.stringify(null));
+				}
+				listaOferta.add(ofertaActivo);
+			}
+			propuestaOferta.setListaOferta(listaOferta);
+	
+			DtoTasacionInforme tasacion = null;
+			List<Object> listaTasacion = new ArrayList<Object>();
+			List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
+			if (listActivoTasacion!=null) {
+				for (int k = 0; k < listActivoTasacion.size(); k++) {
+					tasacion = new DtoTasacionInforme();
+					tasacion.setNumTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getIdExterno()));
+					tasacion.setTipoTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getTipoTasacion().getDescripcion()));
+					if(!Checks.esNulo(listActivoTasacion.get(k).getImporteTasacionFin())){
+						tasacion.setImporteTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getImporteTasacionFin())+"€");
+					}else{
+						tasacion.setImporteTasacion(FileUtilsREM.stringify(null));
+					}
+					tasacion.setFechaTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getFechaRecepcionTasacion()));
+					tasacion.setFirmaTasacion(FileUtilsREM.stringify(listActivoTasacion.get(k).getCodigoFirma()));
+					listaTasacion.add(tasacion);
+				}
+			}
+			propuestaOferta.setListaTasacion(listaTasacion);
+			
+			array.add(propuestaOferta);
+			
+			
+		} catch (Exception e1){
+			e1.printStackTrace();
+		} 
 		return array;
+		
 	}
 	
-	public void sendFileBase64(HttpServletResponse response, File file, ModelMap model){
-		
-		FileUtilsREM.sendFileBase64(response, file, model, "HojaPresentacionPropuesta.pdf");
-		
+	
+	@Override
+	public Map<String, Object> sendFileBase64(HttpServletResponse response, File file, ModelMap model){
+
+		Map<String, Object> dataResponse = new HashMap<String, Object>();
+		try {
+			dataResponse.put("contentType", "application/pdf");
+			dataResponse.put("fileName", "HojaPresentacionPropuesta.pdf");
+			dataResponse.put("hojaPropuesta",FileUtilsREM.base64Encode(file));
+
+       	} catch (Exception e) { 
+       		e.printStackTrace();
+       	}
+		return dataResponse;
 	}
 
 
+	
+	@Override
+	public File getPDFFile(Map<String, Object> params, List<Object> dataSource, String template, ModelMap model) throws JRException, IOException, Exception{
+				
+		String ficheroPlantilla = "jasper/"+template+".jrxml";
+		
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(ficheroPlantilla);
+		File fileSalidaTemporal = null;
+		
+		//Comprobar si existe el fichero de la plantilla
+		if (is == null) {
+			model.put("error","No existe el fichero de plantilla " + ficheroPlantilla);
+		} else  {
+			//Compilar la plantilla
+			JasperReport report = JasperCompileManager.compileReport(is);	
+			//JasperReport report = (JasperReport)JRLoader.loadObject(is);
+
+			//Rellenar los datos del informe
+			JasperPrint print = JasperFillManager.fillReport(report, params,  new JRBeanCollectionDataSource(dataSource));
+
+			//Exportar el informe a PDF
+			fileSalidaTemporal = File.createTempFile("jasper", ".pdf");
+			fileSalidaTemporal.deleteOnExit();
+			if (fileSalidaTemporal.exists()) {
+				JasperExportManager.exportReportToPdfStream(print, new FileOutputStream(fileSalidaTemporal));
+				FileItem fi = new FileItem();
+				fi.setFileName(ficheroPlantilla + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".pdf");
+				fi.setFile(fileSalidaTemporal);
+			} else {
+				throw new IllegalStateException("Error al generar el fichero de salida " + fileSalidaTemporal);
+			}		
+		}
+		
+		return fileSalidaTemporal;
+
+	}
+	
     
 }

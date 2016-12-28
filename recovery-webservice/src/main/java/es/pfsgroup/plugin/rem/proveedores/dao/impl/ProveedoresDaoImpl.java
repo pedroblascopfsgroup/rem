@@ -99,6 +99,18 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 		return dtoProveedorFilter;
 	}
+	
+	
+	@Override
+	public List<ActivoProveedor> getProveedoresByNifList(String nif) {		
+		
+		HQLBuilder hb = new HQLBuilder("from ActivoProveedor pve");
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.docIdentificativo", nif, true);
+		   		
+   		List<ActivoProveedor> lista = HibernateQueryUtils.list(this, hb);
+
+		return lista;
+	}
 
 	@Override
 	public ActivoProveedor getProveedorById(Long id) {

@@ -9,6 +9,9 @@ import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
+import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
+import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -256,6 +259,13 @@ public interface OfertaApi {
 	public boolean checkConflictoIntereses(TareaExterna tareaExterna);	
 	
 	/**
+	 * Metodo que comprueba si la oferta tiene relleno el comite sancionador
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkComiteSancionador(TareaExterna tareaExterna);
+	
+	/**
 	 * Método que comprueba si el activo tiene atribuciones para sancionar el
 	 * expediente
 	 * 
@@ -294,4 +304,29 @@ public interface OfertaApi {
 	 */
 	public boolean checkPosicionamiento(TareaExterna tareaExterna);
 
+	/**
+	 * Este método obtiene los detalles de una oferta por ID de oferta requeridos
+	 * en la pestaña ofertas de un activo.
+	 * 
+	 * @param dto : Dto con los datos.
+	 * @return Devuelve un objeto detalle oferta.
+	 */
+	public DtoDetalleOferta getDetalleOfertaById(DtoDetalleOferta dto);
+
+	/**
+	 * Este método obtiene una lista de ofertantes para el ID de oferta dado, esto incluye
+	 * el ofertante principal y los titulares adicionales.
+	 * 
+	 * @param dtoOfertantesOferta : dto con el ID de la oferta a filtrar.
+	 * @return Devuelve una lista de DtoOfertantesOferta por cada ofertante encontrado.
+	 */
+	public List<DtoOfertantesOferta> getOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
+
+	/**
+	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
+	 *
+	 * @param dtoHonorariosOferta : dto con el ID de la oferta a filtrar.
+	 * @return Devuelve una lista de DtoHonorariosOferta por cada honorario encontrado.
+	 */
+	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta);
 }

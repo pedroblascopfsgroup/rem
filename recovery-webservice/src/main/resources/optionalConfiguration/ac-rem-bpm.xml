@@ -340,6 +340,10 @@
      			def ofertaManager = ctx.getBean("ofertaManager");
      			return ofertaManager.checkDerechoTanteo(tareaExterna);
      		}
+            def checkComiteSancionador = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.checkComiteSancionador(tareaExterna);
+            }
             def checkAtribuciones = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkAtribuciones(tareaExterna);

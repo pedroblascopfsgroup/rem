@@ -1,24 +1,18 @@
 Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
-    extend: 'HreRem.view.common.FormBase',
-   // extend:'Ext.container.Container',
-    xtype: 'presupuestoasignadosactivo',
-    collapsed: false,
-    reference: 'presupuestoasignadosactivoref',
+    extend		: 'HreRem.view.common.FormBase',
+    xtype		: 'presupuestoasignadosactivo',
+    collapsed	: false,
+    reference	: 'presupuestoasignadosactivoref',
     scrollable	: 'y',
-	requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.Presupuesto', 'Ext.chart.CartesianChart', 'Ext.chart.axis.Numeric', 'Ext.chart.axis.Category',
-	'Ext.chart.series.Bar', 'Ext.chart.interactions.ItemHighlight', 'HreRem.model.PresupuestoGrafico'],
-	
-    listeners: {
+    recordName	: "recordPresupuesto",
+	recordClass	: "HreRem.model.PresupuestoGrafico",
+	requires	: ['HreRem.view.common.FieldSetTable', 'HreRem.model.Presupuesto', 'Ext.chart.CartesianChart', 'Ext.chart.axis.Numeric', 'Ext.chart.axis.Category',
+					'Ext.chart.series.Bar', 'Ext.chart.interactions.ItemHighlight', 'HreRem.model.PresupuestoGrafico'],
+    listeners	: {
     	beforerender:'cargarTabDataPresupuestoGrafico'
     },
-    
-	recordName: "recordPresupuesto",
-	
-	recordClass: "HreRem.model.PresupuestoGrafico",
-	
+
     initComponent: function () {
-		 
-		 
 		var me = this; 
 
 		var storeCreado =  Ext.create('Ext.data.Store', {
@@ -35,22 +29,11 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 	    	remoteFilter: true,	    	
 	    	autoLoad: false
 		});
-		//storeCreado.load();
-			/*var storeCreado =  Ext.create('Ext.data.Store', {
-		     model: 'HreRem.model.Presupuesto',
-		     data : [
-		          { presupuesto: 'Año 2016', gastadoPorcentaje: 20, dispuestoPorcentaje: 37, disponiblePorcentaje: 35, gastado: 2500, dispuesto: 1500, disponible: 5000}
-		     ]
-		});*/
-
 
         me.items= [
-        
         	{
         		xtype: 'fieldset',
-        		//title: 'Presupuesto del ejercicio en curso',
         		items: [
-        			
         			{ 	xtype: 'container',
         				layout: 'column',
         				items: [
@@ -61,7 +44,6 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 			                	fieldLabel:  'Presupuesto anual asignado',
 			                	bind:		'{recordPresupuesto.presupuesto}',
 			                	labelWidth: 200,
-			                	//value: '9.000 €',
 			                	width: 		280
 					        },
 					        {
@@ -69,7 +51,6 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 					        	reference: 'fieldAnyo',
 			                	fieldLabel:  'Año',
 			                	bind:		'{recordPresupuesto.ejercicio}',
-			                	//value: '2016',
 			                	width: 		280
 					        }
 					     ]
@@ -83,16 +64,12 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 				        legend: {
 				            docked: 'bottom'
 				        },
-				      /*  bind: {
-							store: '{storeLastPresupuesto}'
-						},*/
 				        store: storeCreado,
 				        insetPadding: 40,
 				        flipXY: true,
 				        sprites: [
 				        	{
 					            type: 'text',
-					            //text: 'Presupuesto del ejercicio en curso',
 					            fontSize: 22,
 					            width: 100,
 					            height: 30,
@@ -146,7 +123,7 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 			        }
 			    ]
 			},    
-				
+
 			{
 				xtype:'fieldset',
 				layout: {
@@ -161,16 +138,12 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 							}
 			        }
 				},
-				items: [	
-			
-			
-			
+				items: [
 					{
 					    xtype		: 'gridBase',
 					    title		: HreRem.i18n('title.historico.presupuestos.asignados'),
 					    reference: 'historicoPresupuestosActivo',
 						layout:'fit',
-						//width: '40%',
 						minHeight: 200,
 						colspan: 2,
 						flex:2,
@@ -179,15 +152,6 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 							store: '{storeHistoricoPresupuestos}'
 						},
 						columns: [
-						 /*{   
-								text: HreRem.i18n('header.id'),
-					        	dataIndex: 'id',
-					        	width: 200
-					       },
-					       {   text: HreRem.i18n('header.id'),
-					        	dataIndex: 'idActivo',
-					        	width: 200
-					       },*/
 						   { 	
 						   		text: HreRem.i18n('header.anyo'),
 					        	dataIndex: 'ejercicioAnyo',
@@ -246,7 +210,6 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 					    title		: HreRem.i18n('title.relacion.incrementos.presupuesto.extraordinarios'),
 					    reference: 'incrementosPresupuesto',
 						layout:'fit',
-						//width: '40%',
 						minHeight: 200,
 						maxHeight : 200,
 						flex: 1,
@@ -264,36 +227,27 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
 					        	renderer: function(value) {
 					        		return Ext.util.Format.currency(value);
 					        	}
-					        	//width: 200
 					       },
 					       {   
 					       		text: HreRem.i18n('header.fecha'),
 					        	dataIndex: 'fechaAprobacion',
 					        	formatter: 'date("d/m/Y")',
 					        	flex: 1
-					        	//width: 200
 					       },
 					       {
 					       		text: HreRem.i18n('header.numero.trabajo'),
 					        	dataIndex: 'codigoTrabajo',
 					        	flex: 1
-					        	//width: 300
 					       }
 					    ]
 					}
-					
-					
-					
-					
 				]
 			}
-			            
      ];
 
     	me.callParent();
-    	
    },
-   
+
    funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -302,7 +256,4 @@ Ext.define('HreRem.view.trabajos.PresupuestoAsignadoActivo', {
   			grid.getStore().load();
   		});
     }
-
-
-    
 });

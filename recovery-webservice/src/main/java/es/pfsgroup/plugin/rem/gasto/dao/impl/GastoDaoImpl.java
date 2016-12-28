@@ -28,35 +28,24 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
 		
 		HQLBuilder hb = new HQLBuilder(" from VGastosProveedor vgasto");
-
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
-   		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());   		
+		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());   		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem()); 
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.nifProveedor", dtoGastosFilter.getNifProveedor());
    		
    		////////////////////////Por situación del gasto
    		
-   		if(!Checks.esNulo(dtoGastosFilter.getEstadoAutorizacionHayaCodigo())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.estadoAutorizacionHayaCodigo",dtoGastosFilter.getEstadoAutorizacionHayaCodigo());
-   		}
-   		if(!Checks.esNulo(dtoGastosFilter.getEstadoAutorizacionPropietarioCodigo())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.estadoAutorizacionPropietarioCodigo",dtoGastosFilter.getEstadoAutorizacionPropietarioCodigo());
-   		}
-   		if(!Checks.esNulo(dtoGastosFilter.getEstadoGastoCodigo())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.estadoGastoCodigo",dtoGastosFilter.getEstadoGastoCodigo());
-   		}
-   		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.estadoAutorizacionHayaCodigo",dtoGastosFilter.getEstadoAutorizacionHayaCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.estadoAutorizacionPropietarioCodigo",dtoGastosFilter.getEstadoAutorizacionPropietarioCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.estadoGastoCodigo",dtoGastosFilter.getEstadoGastoCodigo());   		
    		
    		//////////////////////// Por gasto
    		
-   		if(!Checks.esNulo(dtoGastosFilter.getNumGastoHaya())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numGastoHaya",dtoGastosFilter.getNumGastoHaya());
-   		}
-   		if(!Checks.esNulo(dtoGastosFilter.getTipoGastoCodigo())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.tipoCodigo",dtoGastosFilter.getTipoGastoCodigo());
-   		}
-   		if(!Checks.esNulo(dtoGastosFilter.getSubtipoGastoCodigo())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.subtipoCodigo",dtoGastosFilter.getSubtipoGastoCodigo());
-   		}
+
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numGastoHaya",dtoGastosFilter.getNumGastoHaya());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.tipoCodigo",dtoGastosFilter.getTipoGastoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.subtipoCodigo",dtoGastosFilter.getSubtipoGastoCodigo());
+   	
    		if(!Checks.esNulo(dtoGastosFilter.getImporteDesde()) || !Checks.esNulo(dtoGastosFilter.getImporteHasta())){
    			Double importeHasta= null;
    			Double importeDesde= null;
@@ -77,12 +66,12 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
    		if(!Checks.esNulo(dtoGastosFilter.getNumGastoGestoria())){
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numGastoGestoria",Long.parseLong(dtoGastosFilter.getNumGastoGestoria()));
    		}
-   		if(!Checks.esNulo(dtoGastosFilter.getNifGestoria())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.nifGestoria", dtoGastosFilter.getNifGestoria());
-   		}   		
-   		if(!Checks.esNulo(dtoGastosFilter.getReferenciaEmisor())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numFactura",dtoGastosFilter.getReferenciaEmisor());
-   		}
+   		
+
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.idGestoria", dtoGastosFilter.getIdGestoria());
+  
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numFactura",dtoGastosFilter.getReferenciaEmisor());
+   		
    		if(!Checks.esNulo(dtoGastosFilter.getNecesitaAutorizacionPropietario())){
    			
    			if("1".equals(dtoGastosFilter.getNecesitaAutorizacionPropietario())){
@@ -114,26 +103,17 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
    			}
 //   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.cubreSeguro",dtoGastosFilter.getCubreSeguro());
    		}
-   		if(!Checks.esNulo(dtoGastosFilter.getPeriodicidad())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.periodicidadCodigo",dtoGastosFilter.getPeriodicidad());
-   		}
+
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.periodicidadCodigo",dtoGastosFilter.getPeriodicidad());
+   		
    		if(!Checks.esNulo(dtoGastosFilter.getNumProvision())){
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numProvision",Long.parseLong(dtoGastosFilter.getNumProvision()));
    		}
    		//////////////////////// Por Proveedor
    		
-   		if(!Checks.esNulo(dtoGastosFilter.getNifProveedor())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.documentoProveedor",dtoGastosFilter.getNifProveedor());
-   		}
-   		if(!Checks.esNulo(dtoGastosFilter.getCodigoSubtipoProveedor())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.tipoProveedorCodigo",dtoGastosFilter.getCodigoSubtipoProveedor());
-   		}
-   		if(!Checks.esNulo(dtoGastosFilter.getCodigoTipoProveedor())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.tipoEntidadCodigo",dtoGastosFilter.getCodigoTipoProveedor());
-   		}
-   		if(!Checks.esNulo(dtoGastosFilter.getNombreProveedor())){
-   			HQLBuilder.addFiltroLikeSiNotNull(hb,"vgasto.nombreProveedor",dtoGastosFilter.getNombreProveedor(), true);
-   		}
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.tipoProveedorCodigo",dtoGastosFilter.getCodigoSubtipoProveedor());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.tipoEntidadCodigo",dtoGastosFilter.getCodigoTipoProveedor());
+   		HQLBuilder.addFiltroLikeSiNotNull(hb,"vgasto.nombreProveedor",dtoGastosFilter.getNombreProveedor(), true);
    		
    		if(Checks.esNulo(dtoGastosFilter.getNumActivo())) {
    			HQLBuilder.addFiltroIgualQue(hb, "vgasto.rango", 1);
@@ -141,16 +121,9 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
    			HQLBuilder.addFiltroIgualQue(hb, "vgasto.numActivo", dtoGastosFilter.getNumActivo());
    		}
    		
-   		////////////////////// Por activo / agrupación
-   		
-   		if(!Checks.esNulo(dtoGastosFilter.getEntidadPropietariaCodigo())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.entidadPropietariaCodigo",dtoGastosFilter.getEntidadPropietariaCodigo());
-   		}
-   		
-   		if(!Checks.esNulo(dtoGastosFilter.getSubentidadPropietariaCodigo())){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.entidadPropietariaCodigo",dtoGastosFilter.getSubentidadPropietariaCodigo());
-   		}
-
+   		////////////////////// Por activo / agrupación   		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.entidadPropietariaCodigo",dtoGastosFilter.getEntidadPropietariaCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.subentidadPropietariaCodigo",dtoGastosFilter.getSubentidadPropietariaCodigo());
 	
 		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		

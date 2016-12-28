@@ -183,6 +183,9 @@ public class Oferta implements Serializable, Auditable {
 	@JoinColumn(name="DD_DRT_ID")
 	private DDResultadoTanteo resultadoTanteo;
 	
+	@Column(name="OFR_INTENCION_FINANCIAR")
+	private Integer intencionFinanciar;
+	
 	@Column(name="OFR_FECHA_MAX_FORMALIZACION")
 	private Date plazoMaxFormalizacion;	
 	//+-+-+-+-+-+ TR
@@ -522,6 +525,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setDesdeTanteo(Boolean desdeTanteo) {
 		this.desdeTanteo = desdeTanteo;
+	}
+
+	public Integer getIntencionFinanciar() {
+		return intencionFinanciar;
+	}
+
+	public void setIntencionFinanciar(Integer intencionFinanciar) {
+		this.intencionFinanciar = intencionFinanciar;
 	}
 
 }

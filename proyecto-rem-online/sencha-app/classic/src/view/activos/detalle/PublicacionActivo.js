@@ -4,41 +4,33 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     xtype		: 'publicacionactivo',
     reference	: 'publicacionactivoref',
     layout		: 'fit',
-    requires: ['HreRem.view.activos.detalle.InformeComercialActivo', 'HreRem.view.activos.detalle.DatosPublicacionActivo'],
-    
-    
+    requires	: ['HreRem.view.activos.detalle.InformeComercialActivo', 'HreRem.view.activos.detalle.DatosPublicacionActivo'],
+
 	listeners: {
-			    	
     	boxready: function (tabPanel) {
-    		
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
-			
+
 			if(tab.ocultarBotonesEdicion) {
 				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
             	tabPanel.evaluarBotonesEdicion(tab);
 			}
-			
 		},
-		
+
 		activate: function(tabPanel) {
 			var me = this;
-			
 			var muestraEdicion = me.up('activosdetallemain').getViewModel().getData().activo.getData().aplicaComercializar;
 			var pestañaInformeComercial = me.down('informecomercialactivo');
 			var pestañaDatosPublicacion = me.down('datospublicacionactivo');
-			
+
 			pestañaInformeComercial.ocultarBotonesEdicion = !muestraEdicion;
 			pestañaDatosPublicacion.ocultarBotonesEdicion = !muestraEdicion;
-			
-			//me.evaluarBotonesEdicion(me);
 		},
-			    	
-        beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 
+        beforetabchange: function (tabPanel, tabNext, tabCurrent) {
         	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null)
@@ -61,7 +53,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
             			        }
             			   }
         			});
-            		
+
             		return false;
             	}
             	// Si la pestaña necesita botones de edición
@@ -72,7 +64,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
         	}
         }
     },
-	layout: 'fit',
+
 	tabBar: {
 		items: [
         		{
@@ -103,7 +95,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
         		}
         ]
     },
-    
+
      evaluarBotonesEdicion: function(tab) {    	
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
@@ -121,34 +113,22 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 	    	} 
 		}
     },
-    
-    initComponent: function () {
-    	
-    	var me = this;
-    	
-    	me.items = [
-			
-			{
-				xtype: 'informecomercialactivo'
-			},
-			{
-				xtype: 'datospublicacionactivo'
-			}   	
-			
-    	];
-    	
-    	
 
+    initComponent: function () {
+    	var me = this;
     	me.setTitle(HreRem.i18n('title.publicacion.activo'));
-    	//me.addPlugin({ptype: 'lazyitems', items: items });
-    	me.callParent();
-    	
+
+    	var items = [];
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', funPermEdition: ['EDITAR_TAB_INFO_COMERCIAL_PUBLICACION']})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', funPermEdition: ['EDITAR_TAB_DATOS_PUBLICACION']})}, ['TAB_DATOS_PUBLICACION']);
+
+		me.addPlugin({ptype: 'lazyitems', items: items});
+		me.callParent();
     },
-    
+
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
 		me.getActiveTab().funcionRecargar();
-    } 
-    
+    }
 });

@@ -1,17 +1,14 @@
 Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
-	extend: 'HreRem.view.common.FormBase',
-    xtype: 'activospublicacionsearch',
+	extend		: 'HreRem.view.common.FormBase',
+    xtype		: 'activospublicacionsearch',
     isSearchForm: true,
-    cls: 'panel-base shadow-panel',
+    cls			: 'panel-base shadow-panel',
 
     initComponent: function () {
-        
         var me = this;
-        
         me.setTitle(HreRem.i18n('title.publicaciones.activos.search'));
-        
-        me.items = [
-                    
+
+        me.items = [  
 			{
 				xtype: 'panel',
 				minHeight: 100,
@@ -24,7 +21,6 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 			        defaultType: 'textfield'
 			    },
 			    items: [
-			    
 			    	{
 			    		style: 'width: 15%',
 						items: [
@@ -34,11 +30,11 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	name: 'admision',
 					        	inputValue: true					        	
 					        },
-				       		{ 
+					        { 
 					        	xtype: 'checkboxfield',
-					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publicacion'),
-					        	name: 'publicacion',
-					        	inputValue: true					        	
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.gestion'),
+					        	name: 'gestion',
+					        	inputValue: true					
 					        },
 					        { 
 					        	xtype: 'checkboxfield',
@@ -57,11 +53,11 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	name: 'precio',
 					        	inputValue: true					        	
 					        },
-					         { 
+				       		{ 
 					        	xtype: 'checkboxfield',
-					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.gestion'),
-					        	name: 'gestion',
-					        	inputValue: true					
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publicacion'),
+					        	name: 'publicacion',
+					        	inputValue: true					        	
 					        }
 						]
 			    	},
@@ -75,24 +71,22 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	width: 		230
 					        },
 					        { 
-					        	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
+					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.activos.cartera'),
 					        	name: 'cartera',
 					        	bind: {
 				            		store: '{comboEntidadPropietaria}'
-				            	},
-				            	displayField: 'descripcion',
-	    						valueField: 'codigo'
+				            	}
 					        },
 					        { 
-					        	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
+					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.estado'),
 					        	name: 'estadoPublicacionCodigo',
 					        	bind: {
 				            		store: '{comboEstadoPublicacion}'
-				            	},
-				            	displayField: 'descripcion',
-	    						valueField: 'codigo'
+				            	}
 					        }
 						]
 			    	},
@@ -100,36 +94,29 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 			    		style: 'width: 35%',
 			    		items: [
 					       	{ 
-				       			xtype: 'combo',
+					       		xtype: 'comboboxfieldbase',
+					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('fieldlabel.publicaciones.activos.search.tipoActivo'),
 					        	name: 'tipoActivo',
 					        	bind: {
 				            		store: '{comboTipoActivo}'
-				            	},
-				            	displayField: 'descripcion',
-	    						valueField: 'codigo'
+				            	}
 					        },
 					        {
-				            	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
+					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('fieldlabel.publicaciones.activos.search.subtipoActivo'),
 					        	name: 'subtipoActivo',
 					        	bind: {
 				            		store: '{comboSubtipoActivo}'
-				            	},
-				            	displayField: 'descripcion',
-	    						valueField: 'codigo'
+				            	}
 					        }
 						]
 			    	}
 			    ]
 			}
-                    
         ];
-        
-        me.callParent(); 
-        
+
+        me.callParent();
     }
-
-
 });
-

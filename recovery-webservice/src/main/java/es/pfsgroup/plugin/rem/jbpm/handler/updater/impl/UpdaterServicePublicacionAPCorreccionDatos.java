@@ -121,6 +121,7 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 
 					// 2.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
 					activo.setFechaPublicable(new Date());
+					activoApi.saveOrUpdate(activo);
 					
 					// 3.) Se publica el activo
 					try {

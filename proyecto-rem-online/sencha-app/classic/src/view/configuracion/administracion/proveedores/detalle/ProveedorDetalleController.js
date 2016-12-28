@@ -358,6 +358,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		config.params.id=record.get('id');
 		
 		me.fireEvent("downloadFile", config);
-	}
-    	
+	},
+
+    onTipoProveedorChange: function(combo) {
+    	if(combo.getValue() !== CONST.TIPOS_PROVEEDOR['ENTIDAD']) {
+    		combo.up('proveedoresdetallemain').lookupReference('dateConstitucionProveedor').reset();
+    		combo.up('proveedoresdetallemain').lookupReference('cbLocalizada').reset();
+    	}
+    }
 });

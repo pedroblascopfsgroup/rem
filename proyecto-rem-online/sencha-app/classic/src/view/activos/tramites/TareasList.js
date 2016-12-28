@@ -1,47 +1,42 @@
 Ext.define('HreRem.view.activos.tramites.TareasList', {
-	extend: 'Ext.panel.Panel',
+	extend		: 'Ext.panel.Panel',
     xtype		: 'tareaslist',
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
-    reference: 'tareaslistref',
-    layout: 'fit',
-    requires: ['HreRem.view.activos.tramites.SolicitarProrroga', 'HreRem.view.activos.tramites.solicitarProrrogaModel'],
-    
-    initComponent: function () {
-    	
-    	
-   		var me = this;
-   		
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
+    reference	: 'tareaslistref',
+    layout		: 'fit',
+    requires	: ['HreRem.view.activos.tramites.SolicitarProrroga', 'HreRem.view.activos.tramites.solicitarProrrogaModel'],
 
-   		me.buttons = [{ name: 'btnAutoprorroga',
-   		            	itemId: 'btnAutoprorroga', 
-   		            	text: 'Autoprórroga', 
-   		            	handler: 'solicitarAutoprorroga',
-   		            	bind: {
-   		            		disabled: '{!listadoTareasTramite.selection}'
-   		            	}
-   		            	//disabled: true
-//   		            	,
-//   		            	hidden: true
-   		              },{
-   			           	 name: 'btnSaltoCE',
-   			           	 itemId: 'btnSvanzarCE',
-   			           	 text: 'Avanzar a Cierre Económico',
-   			          	 handler: 'saltoCierreEconomico',
-   			          	 bind: {
-   			          		 hidden: '{tramite.ocultarBotonCierre}'
-   			          	 }
-   			//   		            		 ,
-   			//   		            	 bind: {
-   			//   		            		 disabled: '{!listadoTareasTramite.selection}'
-   			//   		            	 }
-   		             }
+    initComponent: function () {
+   		var me = this;
+
+   		me.buttons = [
+   			{ 
+   				name: 'btnAutoprorroga',
+            	itemId: 'btnAutoprorroga', 
+            	text: 'Autoprórroga', 
+            	handler: 'solicitarAutoprorroga',
+            	bind: {
+            		disabled: '{!listadoTareasTramite.selection}'
+            	}
+              },
+              {
+	           	 name: 'btnSaltoCE',
+	           	 itemId: 'btnSvanzarCE',
+	           	 text: 'Avanzar a Cierre Económico',
+	          	 handler: 'saltoCierreEconomico',
+	          	 bind: {
+	          		 hidden: '{tramite.ocultarBotonCierre}'
+	          	 }
+             }
    		];
+
    		me.buttonAlign = 'left';
    		me.setTitle(HreRem.i18n("title.tareas.activas"));
+
    		me.items= [
 			{
-			    xtype		: 'gridBase',
+			    xtype: 'gridBase',
 			    reference: 'listadoTareasTramite',
 				cls	: 'panel-base shadow-panel',
 				bind: {
@@ -50,11 +45,8 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 				listeners: {
 					rowdblclick: 'onTareasListDobleClick'
 				},
-				
 				minHeight: 200,
-				
 				columns: [
-
 				        {
 				            dataIndex: 'id',
 				            text: 'Id Tarea',
@@ -116,7 +108,7 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 				        	flex: 1
 				        }
 			    ],
-    
+
 			    dockedItems: [
 			        {
 			            xtype: 'pagingtoolbar',
@@ -129,10 +121,10 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 			    ]
 			}			
 		];
-		
+
 	    me.callParent();
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;

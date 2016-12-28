@@ -3,24 +3,17 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 	xtype		: 'masivomain',	
 	cls			: 'masico-main',
 	scrollable  : 'y',
-
-	requires: [
-        'HreRem.view.masivo.MasivoController',
-        'HreRem.view.masivo.MasivoModel'
-    ],
-
-	layout : {
+	requires	: ['HreRem.view.masivo.MasivoController','HreRem.view.masivo.MasivoModel'],
+	layout 		: {
 		type : 'vbox',
 		align : 'stretch'
 	},
-
-	controller: 'masivo',
-    viewModel: {
+	controller	: 'masivo',
+    viewModel	: {
         type: 'masivo'
     },
 
 	initComponent: function() {
-
 		var me = this;
 
 		me.items = [

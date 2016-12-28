@@ -5,7 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -17,9 +19,11 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.users.domain.Usuario;
+
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -36,6 +40,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
@@ -48,11 +53,14 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -62,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -95,6 +104,12 @@ public class AgrupacionAdapter {
     @Autowired
     private ActivoDao activoDao;
     
+    @Autowired
+    private ActivoAdapter activoAdapter;
+
+    @Autowired
+    private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+
     @Autowired
     private ActivoManager activoManager;
     @Autowired 
@@ -132,14 +147,15 @@ public class AgrupacionAdapter {
 	private final Log logger = LogFactory.getLog(getClass());
 	
 	public static final String OFERTA_INCOMPATIBLE_AGR_MSG = "El tipo de oferta es incompatible con el destino comercial de algún activo";
+	public static final String OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG = "No se puede aceptar la oferta debido a que no se encuentran todos los gestores asignados";
     
 	public DtoAgrupaciones getAgrupacionById(Long id){
-		
+
 		DtoAgrupaciones dtoAgrupacion = new DtoAgrupaciones();
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);	
 
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		
+
 		DtoAgrupacionFilter dtoAgrupacionFilter = new DtoAgrupacionFilter();
 		dtoAgrupacionFilter.setAgrupacionId(agrupacion.getId().toString());
 		dtoAgrupacionFilter.setLimit(1);
@@ -148,16 +164,34 @@ public class AgrupacionAdapter {
 		VBusquedaAgrupaciones agrupacionVista = (VBusquedaAgrupaciones) activoAgrupacionApi.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado).getResults().get(0);
 
 		try {
-			
+
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVista.getPublicados());
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroActivos", agrupacionVista.getActivos());
-			
+
 			if (agrupacion.getTipoAgrupacion() != null) {
-				
+
 				BeanUtils.copyProperty(dtoAgrupacion, "tipoAgrupacionDescripcion", agrupacion.getTipoAgrupacion().getDescripcion());
 				BeanUtils.copyProperty(dtoAgrupacion, "tipoAgrupacionCodigo", agrupacion.getTipoAgrupacion().getCodigo());
-				
+
+				// Si es de tipo 'Lote Comercial'
+				if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
+
+					if(!Checks.esNulo(agrupacionTemp.getUsuarioGestoriaFormalizacion())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestoriaFormalizacion", agrupacionTemp.getUsuarioGestoriaFormalizacion().getId());
+					}
+					if(!Checks.esNulo(agrupacionTemp.getUsuarioGestorComercial())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercial", agrupacionTemp.getUsuarioGestorComercial().getId());
+					}
+					if(!Checks.esNulo(agrupacionTemp.getUsuarioGestorFormalizacion())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorFormalizacion", agrupacionTemp.getUsuarioGestorFormalizacion().getId());
+					}
+					if(!Checks.esNulo(agrupacionTemp.getUsuarioGestorComercialBackOffice())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercialBackOffice", agrupacionTemp.getUsuarioGestorComercialBackOffice().getId());
+					}
+				}
+
 				// Si es de tipo 'Asistida'.
 				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 					ActivoAsistida agrupacionTemp = (ActivoAsistida) agrupacion;
@@ -245,6 +279,10 @@ public class AgrupacionAdapter {
 				if(!Checks.esNulo(agrupacion.getFechaBaja())) {
 					dtoAgrupacion.setEsEditable(false);					
 				}
+				
+				//Si tiene alguna oferta != Estado.Rechazada ==> No se pueden anyadir activos
+				BeanUtils.copyProperty(dtoAgrupacion,"existenOfertasVivas",this.existenOfertasActivasEnAgrupacion(id));
+				
 			}
 			
 			
@@ -263,10 +301,10 @@ public class AgrupacionAdapter {
 	}
 	
 	public Page getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id) {
-		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-//		DtoAgrupacionFilter filtro = new DtoAgrupacionFilter();
+
 		filtro.setAgrupacionId(String.valueOf(id));
+
 		try { 	
 			Page listaActivos = activoAgrupacionApi.getListActivosAgrupacionById(filtro, usuarioLogado);
 			return listaActivos;
@@ -274,8 +312,6 @@ public class AgrupacionAdapter {
 			e.printStackTrace();
 			return null;
 		}
-	
-				
 	}
 
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {
@@ -366,22 +402,24 @@ public class AgrupacionAdapter {
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos
 			if (num == 0) {
-				activoAgrupacionValidate(activo, agrupacion);			
-				agrupacion = updateAgrupacionPrimerActivo(activo, agrupacion);			
+				activoAgrupacionValidate(activo, agrupacion);
+				agrupacion = updateAgrupacionPrimerActivo(activo, agrupacion);
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
 
 			// Validaciones de agrupación
-			agrupacionValidate(activo, agrupacion);			
+			agrupacionValidate(activo, agrupacion);
 
-			ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
-			activoAgrupacionActivo.setActivo(activo);
-			activoAgrupacionActivo.setAgrupacion(agrupacion);
-			Date today = new Date();
-			activoAgrupacionActivo.setFechaInclusion(today);
-
-			activoAgrupacionActivoApi.save(activoAgrupacionActivo);
-
+			if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				saveAgrupacionLoteComercial(activo, agrupacion);
+			} else {
+				ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
+				activoAgrupacionActivo.setActivo(activo);
+				activoAgrupacionActivo.setAgrupacion(agrupacion);
+				Date today = new Date();
+				activoAgrupacionActivo.setFechaInclusion(today);
+				activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+			}
 			//En asistidas hay que hacer una serie de actualizaciones 'especiales'.
 			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				activoApi.updateActivoAsistida(activo);
@@ -392,26 +430,80 @@ public class AgrupacionAdapter {
 		} catch (Exception e) {
 		    logger.debug(e);
 		}
-		
 	}
-	
+
+	/**
+	 * Este método guarda la relación de la agrupación lote comercial con el activo a incluir.
+	 * Se examina si el activo a incluir pertenece a otra agrupación de tipo restringida y se obtiene
+	 * una lista de activos incluidos en la misma para vincularlos por igual a la nueva agrupación.
+	 * 
+	 * @param activo : activo a incluir en la agrupación lote comercial.
+	 * @param agrupacion : agrupación lote comercial en la que incluir el activo.
+	 */
+	private void saveAgrupacionLoteComercial(Activo activo, ActivoAgrupacion agrupacion) {
+		// Obtener agrupaciones del activo.
+		boolean incluidoAgrupacionRestringida = false;
+		List<Activo> activosList = new ArrayList<Activo>();
+		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
+		if(!Checks.estaVacio(agrupacionesActivo)) {
+
+			for(ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo) {
+				if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())) {
+
+					// Solo tratar con agrupaciones del tipo 'restringida'.
+					if(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+						incluidoAgrupacionRestringida = true;
+						List<ActivoAgrupacionActivo> activosAgrupacion = activoAgrupacionActivo.getAgrupacion().getActivos();
+						if(!Checks.estaVacio(activosAgrupacion)) {
+							// Obtener todos los activos de la agrupación restringida en la que se encuentra el activo a incluir en la agrupación lote comercial
+							// y almacenar una nueva relación de la agrupación lote comercial con cada activo.
+							for(ActivoAgrupacionActivo activoAgrupacion : activosAgrupacion) {
+								if(!activosList.contains(activoAgrupacion.getActivo())) {
+									// Este bucle se realiza para evitar posibles duplicados dado que un activo
+									// puede estar en más de una agrupación de tipo restringida.
+									activosList.add(activoAgrupacion.getActivo());
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if(!Checks.estaVacio(activosList)) {
+				for(Activo act : activosList) {
+					ActivoAgrupacionActivo nuevaRelacionAgrupacionActivo = new ActivoAgrupacionActivo();
+					nuevaRelacionAgrupacionActivo.setActivo(act);
+					nuevaRelacionAgrupacionActivo.setAgrupacion(agrupacion);
+					Date today = new Date();
+					nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
+					activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
+				}
+			}
+		}
+
+		if(!incluidoAgrupacionRestringida){
+			ActivoAgrupacionActivo nuevaRelacionAgrupacionActivo = new ActivoAgrupacionActivo();
+			nuevaRelacionAgrupacionActivo.setActivo(activo);
+			nuevaRelacionAgrupacionActivo.setAgrupacion(agrupacion);
+			Date today = new Date();
+			nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
+			activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
+		}
+	}
+
 	private void agrupacionValidate(Activo activo, ActivoAgrupacion agrupacion) throws JsonViewerException {
 
 		List<AgrupacionValidator> validators = agrupacionValidatorFactory.getServices(agrupacion.getTipoAgrupacion().getCodigo());
-		
+
 		for(AgrupacionValidator v: validators) {
-			
+
 			String errorResult = v.getValidationError(activo, agrupacion);
-			
+
 			if ( errorResult != null && !errorResult.equals("") ){
 				throw new JsonViewerException(errorResult);
 			}	
-			
 		}
-
-		
 	}
-
 
 	/**
 	 * Realiza las validaciones necesarias del activo para poderlo incluir en la agrupación
@@ -432,7 +524,8 @@ public class AgrupacionAdapter {
 
 			if ( Checks.esNulo(activo.getCartera()) ) throw new JsonViewerException(BusinessValidators.ERROR_CARTERA_NULL);					
 			
-		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
+				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 			
 			if (Checks.estaVacio(activo.getPropietariosActivo())) throw new JsonViewerException(BusinessValidators.ERROR_PROPIETARIO_NULL);
 			
@@ -440,38 +533,39 @@ public class AgrupacionAdapter {
 	}
 
 	private ActivoAgrupacion updateAgrupacionPrimerActivo(Activo activo, ActivoAgrupacion agrupacion) {
-		
+
 		NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
 
-		
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
-
 			ActivoObraNueva obraNueva = (ActivoObraNueva) agrupacion;
 			obraNueva.setLocalidad(pobl.getLocalidad()); 					
 			obraNueva.setProvincia(pobl.getProvincia());					
 			obraNueva.setCodigoPostal(pobl.getCodPostal());
 			return obraNueva;				
-			
+
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 			restringida.setLocalidad(pobl.getLocalidad()); 					
 			restringida.setProvincia(pobl.getProvincia());					
 			restringida.setCodigoPostal(pobl.getCodPostal());
 			restringida.setActivoPrincipal(activo);
-			
 			return restringida;
-			
+
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
 			asistida.setLocalidad(pobl.getLocalidad());
 			asistida.setProvincia(pobl.getProvincia());
 			asistida.setCodigoPostal(pobl.getCodPostal());
 			return asistida;
-		}
-		
+
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+			ActivoLoteComercial loteComercial = (ActivoLoteComercial) agrupacion;
+			// Sin copiar datos por el momento.
+			return loteComercial;
+		} 
+
 		return agrupacion;		
 	}
-
 
 	@Transactional(readOnly = false)
 	public boolean marcarPrincipal(Long idAgrupacion, Long idActivo) {
@@ -499,48 +593,114 @@ public class AgrupacionAdapter {
 		return true;
 		
 	}
-	
-	
 
 	@Transactional(readOnly = false)
 	public boolean deleteActivoAgrupacion(Long id) throws JsonViewerException{
-		
+
 		ActivoAgrupacionActivo activoAgrupacionActivo = activoAgrupacionActivoApi.get(id);
 		Activo activo =  activoAgrupacionActivo.getActivo();
 
-		
 		if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
-			
+
 			int numActivos = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(activoAgrupacionActivo.getAgrupacion().getId());
 			if (numActivos == 0) {
 				throw new JsonViewerException("No hay ningún activo asociado a esta agrupación.");
 			} else if (numActivos == 1) {
 				throw new JsonViewerException("El último activo de una agrupación no se puede eliminar. Intenta borrar toda la agrupación.");
 			}
-			
+
 			if (DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA.equals(activo.getSituacionComercial().getCodigo()) || DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA.equals(activo.getSituacionComercial().getCodigo())) {
 				throw new JsonViewerException("No se puede dar de baja un activo restringido si tiene ofertas VIVAS.");
 			}
-			
 		}
 
-		
-		try {	
-			
-			if (activoAgrupacionActivo.getActivo().equals(activoAgrupacionActivo.getAgrupacion().getActivoPrincipal())) {
-				activoAgrupacionActivo.getAgrupacion().setActivoPrincipal(null);
-				genericDao.update(ActivoAgrupacion.class, activoAgrupacionActivo.getAgrupacion());
-			}
-			activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+		// Para los activos pertenecientes a una agrupación de tipo lote comercial.
+		if(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+			// Obtener las agrupaciones donde se encuentra el activo a eliminar de la agrupación lote comercial.
+			boolean incluidoAgrupacionRestringida = false;
+			List<ActivoAgrupacionActivo> agrupacionesActivo = activoAgrupacionActivo.getActivo().getAgrupaciones();
+			if(!Checks.estaVacio(agrupacionesActivo)) {
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+				List<Long> activosID = new ArrayList<Long>();
+				for(ActivoAgrupacionActivo activoAgrupaciones : agrupacionesActivo) {
+					if(!Checks.esNulo(activoAgrupaciones.getAgrupacion()) && !Checks.esNulo(activoAgrupaciones.getAgrupacion().getTipoAgrupacion())) {
+
+						// Para las agrupaciones de tipo restringido donde se encuentre el activo.
+						if(activoAgrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+							incluidoAgrupacionRestringida = true;
+							// Obtener una lista de activos por la agrupación.
+							List<ActivoAgrupacionActivo> activosPorAgrupacionRestringida = activoAgrupaciones.getAgrupacion().getActivos();
+							if(!Checks.estaVacio(activosPorAgrupacionRestringida)) {
+								// Almacenar los ID de activos para contrastar si se encuentran en la actual agrupación.
+								for(ActivoAgrupacionActivo activosAgrupacion : activosPorAgrupacionRestringida) {
+									if(!activosID.contains(activosAgrupacion.getActivo().getId())) {
+										activosID.add(activosAgrupacion.getActivo().getId());
+									}
+								}
+							}
+							
+							
+							// Devolver estado de las ofertas de cada agrupación afectada al estado de 'pendientes'.
+							List<Oferta> ofertasAgrupacion = activoAgrupaciones.getAgrupacion().getOfertas();
+							if(!Checks.estaVacio(ofertasAgrupacion)) {
+								
+								for(Oferta oferta : ofertasAgrupacion) {
+									if(!Checks.esNulo(oferta.getEstadoOferta())){
+
+										if(oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_CONGELADA)) {
+											DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_PENDIENTE);
+											oferta.setEstadoOferta(estadoOferta);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// Obtener una lista de asociaciones entre la agrupación lote comercial y los activos obtenidos relacionados con el activo a borrar.
+				List<ActivoAgrupacionActivo> agrupacionesActivoABorrar = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionIDAndActivos(activoAgrupacionActivo.getAgrupacion().getId(), activosID);
+				if(!Checks.estaVacio(agrupacionesActivoABorrar)) {
+					for(ActivoAgrupacionActivo agrupaciones : agrupacionesActivoABorrar) {
+						activoAgrupacionActivoApi.delete(agrupaciones);
+					}
+				}
+			}
+			
+			if(!incluidoAgrupacionRestringida) {
+				List<ActivoOferta> ofertasActivo = activoAgrupacionActivo.getActivo().getOfertas();
+				if(!Checks.estaVacio(ofertasActivo)) {
+					// En cada oferta asignada al activo.
+					for(ActivoOferta ofertaActivo : ofertasActivo){
+						if(!Checks.esNulo(ofertaActivo.getPrimaryKey()) && !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta()) && !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())){
+							// Si su estado es 'congelada' asignar nuevo estado a 'pendiente'.
+							if(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_CONGELADA)) {
+								DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_PENDIENTE);
+								ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
+							}
+						}
+					}
+				}
+				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+			}
+		}
+
+		if(!activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+			try {
+				if (activoAgrupacionActivo.getActivo().equals(activoAgrupacionActivo.getAgrupacion().getActivoPrincipal())) {
+					activoAgrupacionActivo.getAgrupacion().setActivoPrincipal(null);
+					genericDao.update(ActivoAgrupacion.class, activoAgrupacionActivo.getAgrupacion());
+				}
+				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
 		
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		return true;
-		
 	}
-	
+
 	@Transactional(readOnly = false)
 	public boolean deleteActivosAgrupacion(Long[] id) {
 		
@@ -586,43 +746,36 @@ public class AgrupacionAdapter {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
-		
+		}
+
 		return true;
-		
 	}
 	
 
 	@Transactional(readOnly = false)
 	public boolean createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion) {
-		
-		// En fase 1, solo se podrán insertar agrupaciones RESTRINGIDAS, por lo que lo seteamos manualmente.
-		/*if (dtoAgrupacion.getTipoAgrupacion() == null || dtoAgrupacion.getTipoAgrupacion().equals("") || dtoAgrupacion.getTipoAgrupacion().equals("Restringida")) {
-			dtoAgrupacion.setTipoAgrupacion(AGRUPACION_RESTRINGIDA);
-		}*/
-		
-		
+
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoAgrupacion.getTipoAgrupacion());
 		DDTipoAgrupacion tipoAgrupacion = (DDTipoAgrupacion) genericDao.get(DDTipoAgrupacion.class, filtro);
-		
+
 		Long numAgrupacionRem = activoAgrupacionApi.getNextNumAgrupacionRemManual();
-		
+
 		// Si es OBRA NUEVA
 		if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
-			
+
 			ActivoObraNueva obraNueva = new ActivoObraNueva();
-			
+
 			obraNueva.setDescripcion(dtoAgrupacion.getDescripcion());
 			obraNueva.setNombre(dtoAgrupacion.getNombre());
 			obraNueva.setTipoAgrupacion(tipoAgrupacion);
 			obraNueva.setFechaAlta(new Date());
 			obraNueva.setNumAgrupRem(numAgrupacionRem);
-			
+
 			genericDao.save(ActivoObraNueva.class, obraNueva);
 
 		// Si es RESTRINGIDA	
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
-			
+
 			ActivoRestringida restringida = new ActivoRestringida();
 
 			restringida.setDescripcion(dtoAgrupacion.getDescripcion());
@@ -632,10 +785,10 @@ public class AgrupacionAdapter {
 			restringida.setNumAgrupRem(numAgrupacionRem);
 
 			genericDao.save(ActivoRestringida.class, restringida);
-			
+
 		// Si es ASISTIDA	
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
-				
+
 			ActivoAsistida asistida = new ActivoAsistida();
 
 			asistida.setDescripcion(dtoAgrupacion.getDescripcion());
@@ -647,51 +800,60 @@ public class AgrupacionAdapter {
 			asistida.setNumAgrupRem(numAgrupacionRem);
 
 			genericDao.save(ActivoAsistida.class, asistida);
-				
+
+		// Si es LOTE COMERCIAL
+		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+
+			ActivoLoteComercial loteComercial = new ActivoLoteComercial();
+
+			loteComercial.setDescripcion(dtoAgrupacion.getDescripcion());
+			loteComercial.setNombre(dtoAgrupacion.getNombre());
+			loteComercial.setTipoAgrupacion(tipoAgrupacion);
+			loteComercial.setFechaAlta(new Date());
+			loteComercial.setNumAgrupRem(numAgrupacionRem);
+
+			genericDao.save(ActivoLoteComercial.class, loteComercial);
 		}
 
 		return true;
-		
 	}
-	
 
 	@Transactional(readOnly = false)
 	public boolean deleteAgrupacionById(DtoAgrupacionesCreateDelete dtoAgrupacion) {
-		
+
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(Long.valueOf(dtoAgrupacion.getId()));
-		
+
 		try {
-			
-			// Si es OBRA NUEVA
+
 			if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
-				
+
 				genericDao.deleteById(ActivoObraNueva.class, Long.valueOf(dtoAgrupacion.getId()));
-				
-			}
-			// RESTRINGIDA
-			else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
-				
+
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+
 				genericDao.deleteById(ActivoRestringida.class, Long.valueOf(dtoAgrupacion.getId()));
 
-			} else {
-				
-				activoAgrupacionApi.deleteById(Long.valueOf(dtoAgrupacion.getId()));
-				
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+
+				genericDao.deleteById(ActivoAsistida.class, Long.valueOf(dtoAgrupacion.getId()));
+
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+
+				genericDao.deleteById(ActivoLoteComercial.class, Long.valueOf(dtoAgrupacion.getId()));
+
 			}
-			
+
 			//Después borra todos los ActivoAgrupacionActivo de esta Agrupación y los guarda en el histórico
 			List<ActivoAgrupacionActivo> list = agrupacion.getActivos();
 			for (int i = 0; i < list.size(); i++) {
 				activoAgrupacionActivoApi.delete(list.get(i));
 			}
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
-		
+
 		return true;
-		
 	}
 	
 	public List<DtoObservacion> getListObservacionesAgrupacionById(Long id) {
@@ -785,28 +947,63 @@ public class AgrupacionAdapter {
 		return ofertasAgrupacion;
 		
 	}
-	
+
+	/**
+	 * Este método comprueba si los gestores de una agrupación de tipo 'lote comercial' se encuentran
+	 * asignados devolviendo True. Si los gestores no están asignados devuelve False.
+	 * 
+	 * @param agr : agrupación de tipo 'lote comercial'.
+	 * @return True si todos los gestores de la agrupación están asignados. False si no lo están.
+	 */
+	private boolean agrupacionLoteComercialGestoresAsignados(ActivoAgrupacion agr) {
+		ActivoLoteComercial loteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", agr.getId()));
+
+		if(Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) ||
+				Checks.esNulo(loteComercial.getUsuarioGestorFormalizacion()) || Checks.esNulo(loteComercial.getUsuarioGestoriaFormalizacion())) {
+			return false;
+		}
+
+		return true;
+	}
+
 	@Transactional(readOnly = false)
-	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto){
-		
+	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws Exception {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
+		Oferta oferta = genericDao.get(Oferta.class, filtro);
+
+		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+
+		// Si se pretende aceptar la oferta, comprobar primero si la agrupación de la oferta es de tipo 'Lote comercial'.
+		if(DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())){
+			if(!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+				// Comprobar si la agrupación tiene todos los gestores asignados.
+				if(!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+					throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+				}
+			}
+		}
+
 		try{
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
-			Oferta oferta = genericDao.get(Oferta.class, filtro);
-			
-			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
-			
 			oferta.setEstadoOferta(tipoOferta);
-			
+
 			//Si el estado de la oferta cambia a Aceptada cambiamos el resto de estados a Congelada excepto los que ya estuvieran en Rechazada
 			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())){
+				// Comprobar si la agrupación de la oferta es de tipo 'Lote comercial'.
+				if(!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+					// Comprobar si la agrupación tiene todos los gestores asignados.
+					if(!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+					}
+				}
 				List<VOfertasActivosAgrupacion> listaOfertas= getListOfertasAgrupacion(dto.getIdAgrupacion());
-				
+
 				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
-					
+
 					if(!vOferta.getIdOferta().equals(dto.getIdOferta().toString())){
 						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(vOferta.getIdOferta()));
 						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
-						
+
 						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
 						if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())){
 							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
@@ -814,29 +1011,27 @@ public class AgrupacionAdapter {
 						}
 					}
 				}
-				
+
 				List<Activo>listaActivos= new ArrayList<Activo>();
-				
+
 				for(ActivoOferta activoOferta: oferta.getActivosOferta()){
 					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
 				}
-				
+
 				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
 				Trabajo trabajo= trabajoApi.create(subtipoTrabajo, listaActivos, null);
-				
+
 				activoManager.crearExpediente(oferta,trabajo);
 			}
-			
+
 			genericDao.update(Oferta.class, oferta);
-			
+
 		}catch(Exception ex) {
 			logger.error(ex.getMessage());
 			return false;
 		}
-		
-		
+
 		return true;
-		
 	}
 	
 	@Transactional(readOnly = false)
@@ -863,8 +1058,21 @@ public class AgrupacionAdapter {
 			ClienteComercial clienteComercial= new ClienteComercial();
 
 			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-			for (Oferta of: agrupacion.getOfertas()) {
+			// Comprobar si alguno de los activos de la agrupación restringida se encuentra, además, en una agrupación de tipo 'lote comercial'.
+			if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+				List<Long> activosID = new ArrayList<Long>();
+				for(ActivoAgrupacionActivo activosAgrupacion : agrupacion.getActivos()) {
+					activosID.add(activosAgrupacion.getActivo().getId());
+				}
 
+				if(!Checks.estaVacio(activosID) && activoAgrupacionActivoDao.algunActivoDeAgrRestringidaEnAgrLoteComercial(activosID)) {
+					codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+				}
+
+			}
+
+			// Comprobar si la grupación tiene ofertas aceptadas para establecer la nueva oferta en estado congelada.
+			for (Oferta of: agrupacion.getOfertas()) {
 				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
 					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
 				}
@@ -895,26 +1103,31 @@ public class AgrupacionAdapter {
 			oferta.setFechaAlta(new Date());
 			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 
+			//Mapa con los valores Tasacion/Aprobado venta de cada activo
+			Map<String,Double> valoresTasacion = new HashMap<String,Double>();
+			valoresTasacion = this.asignarValoresTasacionAprobadoVenta(agrupacion.getActivos());
+			
 			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
 
-			//En cada activo de la agrupacion se añade una oferta en la tabla ACT_OFR
-			for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
-
-				ActivoOferta activoOferta= new ActivoOferta();
-				ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
-
-				activoOfertaPk.setActivo(activos.getActivo());
-				activoOfertaPk.setOferta(oferta);
-				activoOferta.setPrimaryKey(activoOfertaPk);
-
-				// TODO: Pendiente de definir como sacar el % de participación.
-				String participacion = String.valueOf(100 / agrupacion.getActivos().size());
-				activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
-				activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
-
-				listaActivosOfertas.add(activoOferta);
+			if(!Checks.estaVacio(valoresTasacion)) {
+				//En cada activo de la agrupacion se añade una oferta en la tabla ACT_OFR
+				for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
+	
+					ActivoOferta activoOferta= new ActivoOferta();
+					ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
+	
+					activoOfertaPk.setActivo(activos.getActivo());
+					activoOfertaPk.setOferta(oferta);
+					activoOferta.setPrimaryKey(activoOfertaPk);
+					
+					if(!Checks.estaVacio(valoresTasacion)) {
+						String participacion = String.valueOf(this.asignarPorcentajeParticipacionEntreActivos(activos, valoresTasacion, valoresTasacion.get("total")));
+						activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
+						activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
+					}
+					listaActivosOfertas.add(activoOferta);
+				}
 			}
-
 			oferta.setActivosOferta(listaActivosOfertas);
 			oferta.setCliente(clienteComercial);
 			genericDao.save(Oferta.class, oferta);
@@ -1089,7 +1302,29 @@ public class AgrupacionAdapter {
 				return false;
 			}
 		}
-		
+
+		// Si es de tipo 'Lote Comercial'.
+		if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+			ActivoLoteComercial loteComercial = (ActivoLoteComercial) agrupacion;
+
+			if(!Checks.esNulo(dto.getCodigoGestoriaFormalizacion())) {
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestoriaFormalizacion());
+				loteComercial.setUsuarioGestoriaFormalizacion(usuario);
+			}
+			if(!Checks.esNulo(dto.getCodigoGestorComercial())) {
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercial());
+				loteComercial.setUsuarioGestorComercial(usuario);
+			}
+			if(!Checks.esNulo(dto.getCodigoGestorFormalizacion())) {
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorFormalizacion());
+				loteComercial.setUsuarioGestorFormalizacion(usuario);
+			}
+			if(!Checks.esNulo(dto.getCodigoGestorComercialBackOffice())) {
+				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercialBackOffice());
+				loteComercial.setUsuarioGestorComercialBackOffice(usuario);
+			}
+		}
+
 		// Si es de tipo 'Asistida'.
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
@@ -1173,6 +1408,79 @@ public class AgrupacionAdapter {
 		return tipoAgrupacion;
 	}
 	
+	//Devuelve verdadero si en la agrupación existe alguna Oferta activa (estado != RECHAZADA)
+	private Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion) {
+		List<VOfertasActivosAgrupacion> lista = this.getListOfertasAgrupacion(idAgrupacion);
+		
+		for(VOfertasActivosAgrupacion oferta : lista) {
+			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta()))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Asignacion de valores (tasacion y sino, Aprobado venta) por activo, y el total de todos ellos
+	 * @param activos
+	 * @return
+	 */
+	private Map<String,Double> asignarValoresTasacionAprobadoVenta(List<ActivoAgrupacionActivo> activos) {
+		
+		Map<String,Double> valores = new HashMap<String,Double>();
+		Double total = 0.0;
+		
+		for(ActivoAgrupacionActivo activo : activos) {
+			Double valor = null;
+			ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo.getActivo());
+			if(!Checks.esNulo(tasacion)) {
+				valor = Double.parseDouble(tasacion.getValoracionBien().getImporteValorTasacion().toString());
+			}
+			else {
+				ActivoValoraciones valoracion = activoApi.getValoracionAprobadoVenta(activo.getActivo());
+				if(!Checks.esNulo(valoracion)) {
+					valor = valoracion.getImporte();
+				}
+				else {
+					//Con que haya un activo sin valor tasacion o valor aprobado venta, no se haran las asignaciones de ninguno.
+					return null;
+				}
+			}
+			valores.put(activo.getActivo().getId().toString(), valor);
+			total = total + valor;
+		}
+		
+		valores.put("total", total);
+		return valores;
+	}
 
+	/**
+	 * Devuelve el porcentaje correspondiente según el valor por activo
+	 * @param activo
+	 * @param valores
+	 * @param total
+	 * @return
+	 */
+	private Float asignarPorcentajeParticipacionEntreActivos(ActivoAgrupacionActivo activo, Map<String,Double> valores, Double total) {
+		
+		if(total <= 0)
+			return (float) 0;
+		
+		Float porcentaje = (float) (valores.get(activo.getActivo().getId().toString()) * 100);
+		porcentaje = (float) (porcentaje / total);
+		
+		return porcentaje;
+	}
 
+	public List<DtoUsuario> getUsuariosPorCodTipoGestor(String codigoGestor) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+		EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+		
+		if(!Checks.esNulo(tipoGestor)) {
+			return activoAdapter.getComboUsuarios(tipoGestor.getId());
+		}
+		
+		return null;
+	}
 }

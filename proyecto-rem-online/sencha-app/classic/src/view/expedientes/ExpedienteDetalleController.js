@@ -912,7 +912,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
 	},
-	
+
 	abrirFormularioCrearComprador: function(grid) {
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id"),
@@ -927,17 +927,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
 		}
 	},
-	
+
 	onChangeChainedCombo: function(combo) {
     	var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);   
-    	
+
     	me.getViewModel().notify();
-    	
+
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
-		
+
 		chainedCombo.getStore().load({ 			
 			callback: function(records, operation, success) {
    				if(!Ext.isEmpty(records) && records.length > 0) {
@@ -950,7 +950,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
    				}
 			}
 		});
-		
+
 		if (me.lookupReference(chainedCombo.chainedReference) != null) {
 			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
 			if(!chainedDos.isDisabled()) {
@@ -959,16 +959,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				chainedDos.setDisabled(true);
 			}
 		}
-
     },
 
 	consultarComiteSancionador: function(btn) {
-		
+
 		var me = this,
 		comboComitePropuesto = me.lookupReference('comboComitePropuesto');
-		
+
 		var url =  $AC.getRemoteUrl('expedientecomercial/consultarComiteSancionador');
-		
+
 			me.getView().mask(HreRem.i18n("msg.mask.espere"));
 			Ext.Ajax.request({
 			     url: url,
@@ -985,7 +984,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	                	me.fireEvent("errorToast", data.msg);
 	                }
 			     },
-			     
+
 			     failure: function(response) {
 		     		var data = {};
 	                try {
@@ -998,17 +997,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                }
 			     },
-			     
+
 			     callback: function() {
 			     	me.getView().unmask();
 			     }
-	    		     
-	    	});		
-		
-		
-	
+	    	});
 	},
-	
+
 	buscarNumeroUrsus: function(field, e){
 		var me= this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/buscarNumeroUrsus');
@@ -1016,11 +1011,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
 		var numeroDocumento= field.up('formBase').down('[reference=numeroDocumento]').getValue();
 		var data;
-		
+
 		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento)){
-		
+
 			Ext.Ajax.request({
-			    			
 			    		     url: url,
 			    		     params: {numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento},
 			    			method: 'GET',
@@ -1050,15 +1044,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			    		     },
 			    		     callback: function(options, success, response){
 			    		     }
-			    		     
 			});
 		}
 		else{
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));	
 		}
-			
 	},
-	
+
 	abrirDatosClienteUrsus: function(datosClienteUrsus, parent) {
 		var me = this;
 		parent.setX(Ext.Element.getViewportWidth() / 40);
@@ -1066,13 +1058,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		parent.add(window);
 		window.show();
 	},
-	
+
 	onClickBotonCerrarClienteUrsus: function(btn){
 		var me = this;
 		var window = btn.up("window");
 		window.destroy();
 	},
-	
+
 	changeComboTipoProveedor: function(combo,value,c){
 		var me= this;
 		if(combo.getValue()==CONST.TIPOS_PROVEEDOR_ESPEDIENTE['CAT'] || combo.getValue()==CONST.TIPOS_PROVEEDOR_ESPEDIENTE['MEDIADOR_OFICINA']){
@@ -1088,9 +1080,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':value.getData().codigo, 'nombreBusqueda': '', 'idActivo':activoID});
 			ges.storeProveedores.load();
 		}
-
 	},
-	
+
 	changeComboProveedor: function(combo){
 		var me= this;
 		var ges= combo.up('gestioneconomicaexpediente');
@@ -1105,7 +1096,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			ges.storeProveedores.load();
 		}
 	},
-	
+
 	expandeComboProveedor: function (field, o){
 		var me= this;
 		var ges= field.up('gestioneconomicaexpediente');
@@ -1113,9 +1104,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var nombreBusqueda= me.lookupReference('proveedorVistaRef').value;
 		ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': nombreBusqueda});
 		ges.storeProveedores.load();
-		
 	},
-	
+
 	borrarComprador: function(grid, record) {
 		var me = this;
 		idExpediente = me.getViewModel().get("expediente.id"),
@@ -1157,7 +1147,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		var peticionario = dateField.up('expedientedetallemain').lookupReference('textFieldPeticionario');
 		var motivoAnulacion = dateField.up('expedientedetallemain').lookupReference('textFieldMotivoAnulacion');
-		
+
 		if(Ext.isEmpty(dateField.getValue())) {
 			peticionario.allowBlank = true;
 			motivoAnulacion.allowBlank = true;
@@ -1169,18 +1159,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		peticionario.validate();
 		motivoAnulacion.validate();
 	},
-	
+
 	cargaValorVpo: function() {
 		var me = this,
     	disabled = me.lookupReference('comboVpo').getValue() == 0,
     	procedeDescalificacion = me.lookupReference('procedeDescalificacionRef');
-    	
+
 		procedeDescalificacion.setDisabled(disabled);
 	},
-	
+
 	comprobarCamposFechas: function(editor, gridNfo) {
 		var me = this;
-		
+
 		if(editor.isNew) {
 			me.lookupReference('fechaAvisoRef').setValue();
 			me.lookupReference('fechaPosicionamientoRef').setValue();
@@ -1192,7 +1182,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.changeHora(me.lookupReference('horaAvisoRef'));
 		me.changeHora(me.lookupReference('horaPosicionamientoRef'));
 	},
-	
+
 	onRowClickPosicionamiento:  function(gridView, record) {
 		var me = this;    		
 
@@ -1200,12 +1190,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.getViewModel().notify();
 		me.lookupReference('listadoNotarios').getStore().load();
 	},
-	
+
 	changeFecha: function(campoFecha) {
 		var me = this,
 		referencia = campoFecha.getReference().replace('fecha','hora'),
 		campoHora = me.lookupReference(referencia);
-		
+
 		if(campoFecha.getValue() != null) {
 			campoHora.setDisabled(false);
 			campoHora.allowBlank = false;
@@ -1219,12 +1209,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoHora.setDisabled(true);
 			campoHora.allowBlank = true;
 		}
-		
 	},
 	
 	changeHora: function(campoHora) {
 		var me = this;
-		
+
 		if(campoHora.getValue() != null) {
 			campoHora.wasValid = false;
 			
@@ -1240,7 +1229,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		else
 			campoHora.wasValid = true;
 	},
-	
+
 	numVisitaIsEditable: function() {
 		var me = this,
 		campoNumVisita = me.lookupReference('numVistaFromOfertaRef');
@@ -1252,20 +1241,57 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoNumVisita.setDisabled(true);
 		}
 	},
-	
+
 	comprobarObligatoriedadCamposNexos: function() {
 		var me = this,
 		campoEstadoCivil = me.lookupReference('estadoCivil');
 		campoRegEconomico = me.lookupReference('regimenMatrimonial');
-		// Si el tipo de persona es FISICA, entocnes los campos Estado civil y Reg. económico son oblogatios
-		if(me.lookupReference('tipoPersona').getValue() == "1" ) {
+		campoNumConyuge = me.lookupReference('numRegConyuge');
+		// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
+		if(me.lookupReference('tipoPersona').getValue() === "1" ) {
+			campoEstadoCivil.setDisabled(false);
+			campoRegEconomico.setDisabled(false);
+			campoNumConyuge.setDisabled(false);
 			campoEstadoCivil.allowBlank = false;
-			campoRegEconomico.allowBlank = false;
-		}
-		else {
+			campoEstadoCivil.validate();
+			if(campoEstadoCivil.getValue() === "02") {
+				// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
+				campoRegEconomico.allowBlank = false;
+				campoRegEconomico.setDisabled(false);
+				campoNumConyuge.setDisabled(false);
+			} else {
+				campoRegEconomico.allowBlank = true;
+				campoRegEconomico.reset();
+				campoNumConyuge.reset();
+				campoRegEconomico.setDisabled(true);
+				campoNumConyuge.setDisabled(true);
+			}
+		} else {
+			//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
 			campoEstadoCivil.allowBlank = true;
 			campoRegEconomico.allowBlank = true;
+			campoEstadoCivil.reset();
+			campoRegEconomico.reset();
+			campoNumConyuge.reset();
+			campoEstadoCivil.setDisabled(true);
+			campoRegEconomico.setDisabled(true);
+			campoNumConyuge.setDisabled(true);
 		}
-	}
-	
+
+		// Validar campos para que se muestre o desaparezca la visual roja.
+		campoEstadoCivil.validate();
+		campoRegEconomico.validate();
+	},
+
+	onClickGenerarHojaExcel: function(btn) {
+
+    	var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.numExpediente=me.getViewModel().get("expediente.numExpediente");
+		config.url= $AC.getRemoteUrl("operacionventa/operacionVentaPDFByOfertaHRE");
+
+		me.fireEvent("downloadFile", config);		
+		}
 });

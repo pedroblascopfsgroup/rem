@@ -27,6 +27,22 @@ public interface UvemManagerApi {
 	 * Solicitar tasación de un bien
 	 * 
 	 * @param numActivoUvem
+	 * @param userName
+	 * @param email
+	 * @param telefono
+	 * @return
+	 * @throws WIMetaServiceException
+	 * @throws WIException
+	 * @throws TipoDeDatoException
+	 */
+	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName,String email,String telefono)
+			throws WIMetaServiceException, WIException, TipoDeDatoException;
+
+	
+	/**
+	 * Solicitar tasación de un bien
+	 * 
+	 * @param numActivoUvem
 	 * @param nombreGestor
 	 * @param gestion
 	 * @return
@@ -36,7 +52,6 @@ public interface UvemManagerApi {
 	 */
 	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor)
 			throws WIMetaServiceException, WIException, TipoDeDatoException;
-
 	
 	
 	

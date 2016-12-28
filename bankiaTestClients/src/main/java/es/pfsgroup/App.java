@@ -28,7 +28,7 @@ public class App {
 				System.out.println("Ejecutando servicio tasaciones");
 				if (args.length == 2) {
 					Long idBien = Long.valueOf(args[1]);
-					Integer respValue = uvemManager.ejecutarSolicitarTasacion(idBien, "SUPER", "noexisto@pfs.es", "99999999");
+					Integer respValue = uvemManager.ejecutarSolicitarTasacionTest(idBien, "SUPER", "noexisto@pfs.es", "99999999");
 					System.out.println("Resultado llamada tasaciones: " + respValue);
 					
 				} else {

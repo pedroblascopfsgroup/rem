@@ -66,6 +66,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								{
 									 xtype : 'comboboxfieldbase',
 									 fieldLabel: HreRem.i18n('fieldlabel.tipo'),
+									 allowBlank: false,
 									 reference: 'cbTipoProveedor',
 									 chainedStore: 'comboSubtipoProveedor',
 									 chainedReference: 'cbSubtipoProveedor',
@@ -74,7 +75,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								       value : '{proveedor.tipoProveedorCodigo}'
 								     },
 								     listeners: {
-					                   select: 'onChangeChainedCombo'
+					                   select: 'onChangeChainedCombo',
+					                   change: 'onTipoProveedorChange'
 					            	 }
 								},
 						        { 
@@ -92,6 +94,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								{ 
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo'),
+						        	allowBlank: false,
 						        	reference: 'cbSubtipoProveedor',
 						        	valueField: 'codigo',
 						        	bind: {
@@ -113,7 +116,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								    bind : {
 								      store : '{comboSiNoRem}',
 								      disabled: '{!proveedor.isEntidad}',
-								      value : '{proveedor.localizadaProveedorCodigoCalculated}'
+								      value : '{proveedor.localizadaProveedorCodigo}'
 								    }
 								},
 							// Fila 3
@@ -133,7 +136,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								    bind : {
 								      store : '{comboTipoPersona}',
 								      disabled: '{!proveedor.isProveedor}',
-								      value : '{proveedor.tipoPersonaProveedorCodigoCalculated}'
+								      value : '{proveedor.tipoPersonaProveedorCodigo}'
 								    }
 								},
 								{ 
@@ -154,9 +157,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						        {
 			        				xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
+									reference: 'dateConstitucionProveedor',
 									bind: {
 										disabled: '{!proveedor.isEntidad}',
-										value: '{proveedor.fechaConstitucionProveedorCalculated}'
+										value: '{proveedor.fechaConstitucionProveedor}'
 									}
 					            },
 					         // Fila 5

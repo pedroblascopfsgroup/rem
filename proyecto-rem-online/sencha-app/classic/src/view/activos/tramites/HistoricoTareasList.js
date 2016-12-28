@@ -1,26 +1,23 @@
 Ext.define('HreRem.view.activos.tramites.HistoricoTareasList', {
-	extend: 'Ext.panel.Panel',
+	extend		: 'Ext.panel.Panel',
     xtype		: 'historicotareaslist', 
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
-    reference: 'historicotareaslistref',
-    layout: 'fit',
-    requires: ['HreRem.view.agenda.TareaProrroga'],
-    
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
+    reference	: 'historicotareaslistref',
+    layout		: 'fit',
+    requires	: ['HreRem.view.agenda.TareaProrroga'],
+
     initComponent: function() {
-    	
     	var me = this;
-    	
+
     	me.setTitle(HreRem.i18n("title.historico.tareas"));
-    	
-    	
+
     	me.items= [
     		{
     			xtype		: 'label',
     			reference	: 'historicoTareasAclaracion',
     			html		: HreRem.i18n("aclaracion.historico.tareas")
     		},
-    	
 			{
 			    xtype		: 'gridBase',
 			    reference: 'historicoTareasTramite',
@@ -89,7 +86,7 @@ Ext.define('HreRem.view.activos.tramites.HistoricoTareasList', {
 				        	flex: 1
 				        }
 	    		],
-	    
+
 	    		dockedItems: [
 				      {
 				          xtype: 'pagingtoolbar',
@@ -102,23 +99,16 @@ Ext.define('HreRem.view.activos.tramites.HistoricoTareasList', {
 		  		]
     		}
     	];
-    	
-    	
+
     	me.callParent();
-    
-    
     },
-        
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		var historicoTareasTramite= me.down("[reference=historicoTareasTramite]");
-		
+
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		historicoTareasTramite.getStore().load();
     }
-
-    
-    
-   
 });

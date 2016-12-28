@@ -14,25 +14,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
@@ -53,6 +58,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@Autowired
 	private ProveedoresApi proveedoresApi;
+	
+	@Autowired
+	private List<GastoAvisadorApi> avisadores;
 	
 	
 	/**
@@ -150,12 +158,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView getListGastos(DtoGastosFilter dtoGastosFilter, ModelMap model) {
 		try {
 
-//			if (dtoGastosFilter.getSort() == null){
-//				
-//				dtoGastosFilter.setSort("numFactura");
-//
-//			}
-			//Page page = ofertaApi.getListOfertas(dtoOfertasFilter);
 			DtoPage page = gastoProveedorApi.getListGastos(dtoGastosFilter);
 
 			model.put("data", page.getResults());
@@ -170,6 +172,30 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView existeGasto(DtoFichaGastoProveedor dto, ModelMap model) {
+		try {	
+			
+			boolean existeGasto = gastoProveedorApi.existeGasto(dto);
+			
+			model.put("existeGasto", existeGasto);
+			model.put("success", true );
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}		
+		
+		return createModelAndViewJson(model);
+		
+	}	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -231,6 +257,21 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchProveedoresByNif(DtoProveedorFilter dto, ModelMap model) {
+	
+		try {
+			model.put("data", gastoProveedorApi.searchProveedoresByNif(dto));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
 	
 	
 	@SuppressWarnings("unchecked")
@@ -247,7 +288,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 		
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
 		
 	}
 	
@@ -568,19 +608,19 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getCodProveedorByUsuario(ModelMap model){
+	public ModelAndView getNifProveedorByUsuario(ModelMap model){
 		
 		
 		
 		try {
-			Long codProveedor = proveedoresApi.getCodProveedorByUsuarioLogado();
+			String nifProveedor = proveedoresApi.getNifProveedorByUsuarioLogado();
 			
-			if(Checks.esNulo(codProveedor)) {
+			if(Checks.esNulo(nifProveedor)) {
 				model.put("msg", "No ha sido posible encontrar un proveedor asignado al usuario identificado.");
 				model.put("data", -1);
 				model.put("success", false);
 			} else {
-				model.put("data", codProveedor);
+				model.put("data", nifProveedor);
 				model.put("success", true);
 			}
 
@@ -704,5 +744,30 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 		
 		return createModelAndViewJson(model);
-	}	
+	}
+	
+	@SuppressWarnings({ "unchecked"})
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getAvisosGastoById(Long id, WebDto webDto, ModelMap model){
+
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		GastoProveedor gasto = gastoProveedorApi.findOne(id);	
+		
+		DtoAviso avisosFormateados = new DtoAviso();
+		avisosFormateados.setDescripcion("");
+		
+		for (GastoAvisadorApi avisador: avisadores) {
+			
+			DtoAviso aviso  = avisador.getAviso(gasto, usuarioLogado);
+			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + aviso.getDescripcion() + "</div>");
+			}
+			
+        }
+		
+		model.put("data", avisosFormateados);
+		
+		return createModelAndViewJson(model);
+		
+	}
 }

@@ -113,7 +113,7 @@ public class VGastosProveedor implements Serializable {
 	private Long numProvision;
 	
 	@Column(name = "PVE_DOCIDENTIF")
-	private String documentoProveedor;
+	private String nifProveedor;
 	
 	@Column(name = "DD_TPR_CODIGO")
 	private String tipoProveedorCodigo;
@@ -157,8 +157,8 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="DD_SCR_DESCRIPCION")
 	private String subentidadPropietariaDescripcion;
 	
-	@Column(name="NIF_GESTORIA")
-	private String nifGestoria;
+	@Column(name="PVE_ID_GESTORIA")
+	private String idGestoria;
 	
 	@Column(name="TIENE_DOC_ADJUNTOS")
 	private Boolean tieneDocAdjuntos;
@@ -194,6 +194,14 @@ public class VGastosProveedor implements Serializable {
 
 	public void setProveedor(String proveedor) {
 		this.proveedor = proveedor;
+	}
+
+	public String getNifProveedor() {
+		return nifProveedor;
+	}
+
+	public void setNifProveedor(String nifProveedor) {
+		this.nifProveedor = nifProveedor;
 	}
 
 	public Date getFechaEmision() {
@@ -415,14 +423,6 @@ public class VGastosProveedor implements Serializable {
 		this.numProvision = numProvision;
 	}
 
-	public String getDocumentoProveedor() {
-		return documentoProveedor;
-	}
-
-	public void setDocumentoProveedor(String documentoProveedor) {
-		this.documentoProveedor = documentoProveedor;
-	}
-
 	public String getTipoProveedorCodigo() {
 		return tipoProveedorCodigo;
 	}
@@ -537,12 +537,12 @@ public class VGastosProveedor implements Serializable {
 		this.subentidadPropietariaDescripcion = subentidadPropietariaDescripcion;
 	}
 
-	public String getNifGestoria() {
-		return nifGestoria;
+	public String getIdGestoria() {
+		return idGestoria;
 	}
 
-	public void setNifGestoria(String nifGestoria) {
-		this.nifGestoria = nifGestoria;
+	public void setIdGestoria(String idGestoria) {
+		this.idGestoria = idGestoria;
 	}
 
 	public Boolean getTieneDocAdjuntos() {

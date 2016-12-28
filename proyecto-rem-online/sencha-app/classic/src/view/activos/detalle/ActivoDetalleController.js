@@ -1179,7 +1179,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    // Esta funcion es llamado cuando algún checkbox del apartado de 'Estados de publicación' es activado
+    // Esta funcion es llamada cuando algún checkbox del apartado de 'Estados de publicación' es activado
     // y se encarga de permitir tener sólo un checkbox de estado activado. Además, reinicia el estado de
     // los componentes de cada sección que no esté seleccionada.
     onchkbxEstadoPublicacionChange: function(chkbx) {
@@ -1187,9 +1187,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var id = chkbx.getReference();
     	var view = me.getView();
 
-    	if(!chkbx.getValue() && id != "chkbxpublicacionforzada" && id != "chkbxpublicacionordinaria"){
-    		// si el checkbox esta siendo desactivado y no es de la sección 'publicación', tan sólo resetear conenido textbox de la propia sección del checkbox.
+    	if(!chkbx.getValue()){
+    		// Si el checkbox esta siendo desactivado, tan sólo resetear conenido textbox de la propia sección del checkbox.
+    		// Si el checkbox es de la sección de publicación, no hacer nada.
     		switch (id){
+    		case "chkbxpublicacionordinaria":
+    		case "chkbxpublicacionforzada":
+    			return;
         	case "chkbxpublicacionocultarprecio":
         		// textfield.
         		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
@@ -2114,7 +2118,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     ocultarChkPublicacionOrdinaria: function(record) {
     	var me = this,
-    	ocultar = me.getViewModel().get('activo').get('isPublicable'),
+    	ocultar = !me.getViewModel().get('activo').get('isPublicable'),
     	chkbxpublicacionordinaria = me.lookupReference('chkbxpublicacionordinaria');
 
     	chkbxpublicacionordinaria.setHidden(ocultar);
@@ -2161,5 +2165,87 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     	else if(vaciarCampo)
     		campo.setValue();
-    }
+    },
+
+    // Este método es llamado cuando se pulsa el botón 'ver' del ID de visita en el detalle de una oferta
+    // y abre un pop-up con información sobre la visita.
+    onClickMostrarVisita: function(btn) {
+    	var me = this;
+    	var model = me.getViewModel().get('detalleOfertaModel');
+
+    	if(Ext.isEmpty(model)) {
+    		return;
+    	}
+
+    	var numVisita = model.get('numVisitaRem');
+
+    	if(Ext.isEmpty(numVisita)) {
+    		return;
+    	}
+
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+		Ext.Ajax.request({
+    		url: $AC.getRemoteUrl('visitas/getVisitaById'),
+    		params: {numVisitaRem: numVisita},
+    		
+    		success: function(response, opts){
+    			var record = JSON.parse(response.responseText);
+    			if(record.success === 'true') {
+    				Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
+    			} else {
+    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    			}
+    		},
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    },
+		    callback: function(record, operation) {
+    			me.getView().unmask();
+		    }
+    	});
+    },
+
+    // Este método es llamado cuando se selecciona una oferta del listado de ofertas del activo.
+    // Obtiene el ID de la oferta y carga sus detalles en la sección 'Detalle ofertas'.
+    onOfertaListClick: function (grid, record) {
+		var me = this,
+		form = grid.up("form"),
+		model = Ext.create('HreRem.model.DetalleOfertaModel'),
+		idOferta = null;
+
+		if(!Ext.isEmpty(grid.selection)){
+			idOferta = record.get("idOferta");
+    	}
+
+		var fieldset =  me.lookupReference('detalleOfertaFieldsetref');
+		fieldset.mask(HreRem.i18n("msg.mask.loading"));
+
+		// Cargar grid 'ofertantes'.
+		var storeOfertantes = me.getViewModel().getData().storeOfertantesOfertaDetalle;
+		storeOfertantes.getProxy().getExtraParams().ofertaID = idOferta;
+		storeOfertantes.load({
+			success: function(record) {	
+				me.lookupReference('ofertanteslistdetalleofertaref').refresh();
+		    }
+		});
+
+		// Cargar grid 'honorarios'.
+		var storeHonorarios = me.getViewModel().getData().storeHonorariosOfertaDetalle;
+		storeHonorarios.getProxy().getExtraParams().ofertaID = idOferta;
+		storeHonorarios.load({
+			success: function(record) {	
+				me.lookupReference('honorarioslistdetalleofertaref').refresh();
+		    }
+		});
+
+		// Cargar el modelo de los detalles de oferta.
+		model.setId(idOferta);
+		model.load({			
+		    success: function(record) {	
+		    	me.getViewModel().set("detalleOfertaModel", record);
+		    	fieldset.unmask();
+		    }
+		});		
+	}
 });

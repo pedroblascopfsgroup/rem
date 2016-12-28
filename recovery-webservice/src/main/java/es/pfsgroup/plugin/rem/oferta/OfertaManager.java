@@ -42,8 +42,12 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
+import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
+import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -833,7 +837,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return listaRespuesta;
 	}
 	
-
+	@Override
+	public boolean checkComiteSancionador(TareaExterna tareaExterna) {
+		Oferta oferta = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(oferta)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			if(!Checks.esNulo(expediente)){
+				if(!Checks.esNulo(expediente.getComiteSancion())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
@@ -902,7 +919,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			else
 				return true;
 	}
-	
+
 	@Override
 	public boolean checkPosicionamiento(TareaExterna tareaExterna){
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
@@ -911,5 +928,117 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return true;
 		else
 			return false;
+	}
+
+	@Override
+	public DtoDetalleOferta getDetalleOfertaById(DtoDetalleOferta dto) {
+		if(Checks.esNulo(dto.getId())) {
+			return dto;
+		}
+
+		Oferta oferta = this.getOfertaById(Long.parseLong(dto.getId()));
+
+		if(!Checks.esNulo(oferta)) {
+			dto.setNumOferta(oferta.getNumOferta().toString());
+			if(!Checks.esNulo(oferta.getVisita())) {
+				dto.setNumVisitaRem(oferta.getVisita().getNumVisitaRem().toString());
+			}
+			if(!Checks.esNulo(oferta.getIntencionFinanciar())) {
+				dto.setIntencionFinanciar(oferta.getIntencionFinanciar().equals(1) ? "Si" : "No");
+			}
+			if(!Checks.esNulo(oferta.getVisita())) {
+				dto.setProcedenciaVisita(oferta.getVisita().getProcendencia());
+			}
+		}
+
+		return dto;
+	}
+
+	@Override
+	public List<DtoOfertantesOferta> getOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta) {
+		List<DtoOfertantesOferta> listaOfertantes = new ArrayList<DtoOfertantesOferta>();
+
+		if(Checks.esNulo(dtoOfertantesOferta.getOfertaID())) {
+			return listaOfertantes;
+		}
+
+		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoOfertantesOferta.getOfertaID()));
+		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
+		if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente())) {
+			DtoOfertantesOferta dto = new DtoOfertantesOferta();
+			if(!Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
+				dto.setTipoDocumento(oferta.getCliente().getTipoDocumento().getDescripcion());
+			}
+			dto.setNumDocumento(oferta.getCliente().getDocumento());
+			dto.setNombre(oferta.getCliente().getNombreCompleto());
+			listaOfertantes.add(dto);
+		}
+
+		Filter filterTitularOfertaID = genericDao.createFilter(FilterType.EQUALS, "oferta.id", Long.parseLong(dtoOfertantesOferta.getOfertaID()));
+		List<TitularesAdicionalesOferta> titularesAdicionales = genericDao.getList(TitularesAdicionalesOferta.class, filterTitularOfertaID);
+		if(!Checks.estaVacio(titularesAdicionales)) {
+			for(TitularesAdicionalesOferta titularAdicional : titularesAdicionales) {
+				DtoOfertantesOferta dto = new DtoOfertantesOferta();
+				if(!Checks.esNulo(titularAdicional.getTipoDocumento())) {
+					dto.setTipoDocumento(titularAdicional.getTipoDocumento().getDescripcion());
+				}
+				dto.setNumDocumento(titularAdicional.getDocumento());
+				dto.setNombre(titularAdicional.getNombre());
+				listaOfertantes.add(dto);
+			}
+		}
+
+		return listaOfertantes;
+	}
+
+	@Override
+	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta) {
+
+		List<DtoHonorariosOferta> listaHonorarios = new ArrayList<DtoHonorariosOferta>();
+
+		if(Checks.esNulo(dtoHonorariosOferta.getOfertaID())) {
+			return listaHonorarios;
+		}
+
+		// Obtener la oferta y comprobar su estado, si el estado de la oferta es aceptado obtener un listado de gastos expediente. Si no existen expediente asociado a la oferta calcular los gastos.
+		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoHonorariosOferta.getOfertaID()));
+		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
+		if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta()) && oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
+
+			List<GastosExpediente> gastosExp = genericDao.getList(GastosExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente.oferta.id", oferta.getId()));
+			if(!Checks.estaVacio(gastosExp)) {
+
+				for(GastosExpediente gastoExp : gastosExp) {
+					DtoHonorariosOferta dto = new DtoHonorariosOferta();
+					dto.setId(gastoExp.getId().toString());
+					if(!Checks.esNulo(gastoExp.getAccionGastos())) {
+						dto.setTipoComision(gastoExp.getAccionGastos().getDescripcion());
+					}
+					if(!Checks.esNulo(gastoExp.getTipoProveedor())) {
+						dto.setTipoProveedor(gastoExp.getTipoProveedor().getDescripcion());
+					}
+					if(!Checks.esNulo(gastoExp.getProveedor())) {
+						dto.setNombre(gastoExp.getProveedor().getNombreComercial());
+						dto.setIdProveedor(gastoExp.getProveedor().getCodigoProveedorRem().toString());
+					}
+					if(!Checks.esNulo(gastoExp.getTipoCalculo())) {
+						dto.setTipoCalculo(gastoExp.getTipoCalculo().getDescripcion());
+					}
+					if(!Checks.esNulo(gastoExp.getImporteCalculo())) {
+						dto.setImporteCalculo(gastoExp.getImporteCalculo().toString());
+					}
+					if(!Checks.esNulo(gastoExp.getImporteFinal())) {
+						dto.setHonorarios(gastoExp.getImporteFinal().toString());
+					}
+
+					listaHonorarios.add(dto);
+				}
+			}
+		} else {
+			// TODO: obtener los datos de la vista especial y calcular el importe final en base al porcentaje especificado en la columna.
+			// El importe se obtiene de coger la ultima tasacion del activo (ACT_TAS_TASACION > TAS_IMPORTE_TAS_FIN) y multiplicarlo por el porcentaje.
+		}
+
+		return listaHonorarios;
 	}
 }

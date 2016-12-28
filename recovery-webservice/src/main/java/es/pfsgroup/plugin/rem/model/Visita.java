@@ -25,7 +25,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
 
@@ -115,7 +114,8 @@ public class Visita implements Serializable, Auditable {
     @Column(name="VIS_FECHA_CONTACTO")
     private Date fechaContacto; 
     
-    
+    @Column(name="VIS_PROCEDENCIA")
+    private String procendencia; 
     
     
 /*    @Column(name="VIS_VISITA_PRESCRIPTOR")
@@ -318,6 +318,14 @@ public class Visita implements Serializable, Auditable {
 
 	public void setFechaContacto(Date fechaContacto) {
 		this.fechaContacto = fechaContacto;
+	}
+
+	public String getProcendencia() {
+		return procendencia;
+	}
+
+	public void setProcendencia(String procendencia) {
+		this.procendencia = procendencia;
 	}
     
     

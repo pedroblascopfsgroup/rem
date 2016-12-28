@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
-import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -17,10 +16,6 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
-import es.pfsgroup.plugin.rem.model.VListMediadoresOfertas;
-import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
-import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 
 public interface ProveedoresApi {
 	
@@ -31,6 +26,13 @@ public interface ProveedoresApi {
 	 * @return Devuelve un objeto Page de Proveedor.
 	 */
 	public List<DtoProveedorFilter> getProveedores(DtoProveedorFilter dtoProveedorFiltro);
+	
+	/**
+	 * Devuelve una lista de proveedores filtrando por nif
+	 * @param dtoProveedorFiltro
+	 * @return
+	 */
+	public List<DtoActivoProveedor> getProveedoresByNif(String nif);
 
 	/**
 	 * Este método devuelve un proveedor por el ID de proveedor.
@@ -199,7 +201,7 @@ public interface ProveedoresApi {
 	 * Método que devuelve el nif del proveedor que tenga como contacto, el usuario logado.
 	 * @return
 	 */
-	public Long getCodProveedorByUsuarioLogado();
+	public String getNifProveedorByUsuarioLogado();
 	
 	/**
 	 * Método que devuelve el id del proveedor a través de su nif

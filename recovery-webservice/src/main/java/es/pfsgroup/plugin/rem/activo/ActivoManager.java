@@ -438,7 +438,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoCondicionante.setExpediente(nuevoExpediente);
 			nuevoExpediente.setCondicionante(nuevoCondicionante);
 
-			// genericDao.save(ExpedienteComercial.class, nuevoExpediente);
+			// Establecer la fecha de aceptación/alta a ahora.
+			nuevoExpediente.setFechaAlta(new Date());
 
 			crearCompradores(oferta, nuevoExpediente);
 
@@ -452,7 +453,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return true;
-
 	}
 
 	public boolean crearCompradores(Oferta oferta, ExpedienteComercial nuevoExpediente) {
@@ -583,12 +583,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				beanUtilNotNull.copyProperties(activoValoracion, dto);
 
-				// Las fechas de inicio y fin pueden ser establecidas a null.
-				activoValoracion.setFechaInicio(dto.getFechaInicio());
-				activoValoracion.setFechaFin(dto.getFechaFin());
 				activoValoracion.setFechaCarga(new Date());
 
 				// Si los nuevos datos no traen observaciones (null),
+
+				// Si los nuevos datos no traen observaciones (null), 
 				// debe quitar las escritas para el precio o valoracion anterior
 				activoValoracion.setObservaciones(dto.getObservaciones());
 
@@ -2217,6 +2216,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return false;
 	}
+	
+	@Override
+	public boolean isIntegradoAgrupacionComercial(Activo activo) {
+
+		for (ActivoAgrupacionActivo agrupacionActivo : activo.getAgrupaciones()) {
+
+			Date fechaBaja = agrupacionActivo.getAgrupacion().getFechaBaja();
+			fechaBaja = !Checks.esNulo(fechaBaja) ? new Date(fechaBaja.getTime()) : null;
+
+			if (!Checks.esNulo(agrupacionActivo.getAgrupacion().getTipoAgrupacion())
+					&& agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
+							.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
+					&& (!Checks.esNulo(fechaBaja) ? fechaBaja.after(new Date()): true) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	@Override
 	public boolean isActivoAsistido(Activo activo) {
@@ -2949,4 +2967,50 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		genericDao.update(PropuestaPrecio.class, propuesta);
 	}
 
+	
+	@Override
+	public ActivoTasacion getTasacionMasReciente(Activo activo) {
+		
+		ActivoTasacion tasacionMasReciente = null;
+		
+		if (!Checks.estaVacio(activo.getTasacion()))
+		{
+			tasacionMasReciente = activo.getTasacion().get(0);
+			Date fechaValorTasacionMasReciente = new Date();
+			if (tasacionMasReciente.getValoracionBien().getFechaValorTasacion() != null)
+			{
+				fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
+			}
+			for (int i = 0; i < activo.getTasacion().size(); i++)
+			{
+					ActivoTasacion tas = activo.getTasacion().get(i);
+					if (tas.getValoracionBien().getFechaValorTasacion() != null)
+					{
+						if (tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente))
+						{
+							fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
+							tasacionMasReciente = tas;
+						}
+					}
+			}	
+		}
+		
+		return tasacionMasReciente;
+	}
+	
+	@Override
+	public ActivoValoraciones getValoracionAprobadoVenta(Activo activo) {
+		
+		List<ActivoValoraciones> listActivoValoracion = activo.getValoracion();
+		if (!Checks.estaVacio(listActivoValoracion)) {
+			for (ActivoValoraciones valoracion : listActivoValoracion)
+			{
+				if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
+					return valoracion;
+				}
+			}			
+		}
+		
+		return null;
+	}
 }

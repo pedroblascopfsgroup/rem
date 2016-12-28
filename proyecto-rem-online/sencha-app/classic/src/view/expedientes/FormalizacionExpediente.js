@@ -270,7 +270,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					            flex: 1						   
 						   }
 					    ]
-					}
+					},
 //	GRID COMPARECIENTES EN NOMBRE DEL VENDEDOR					
 //					{
 //					    xtype		: 'gridBaseEditableRow',
@@ -315,17 +315,14 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 //							
 //						}
 //					},
-					/*{
-						xtype: 'button',
-						text: HreRem.i18n('fieldlabel.generar.hoja.datos'),
-					    margin: '10 10 10 10',
-//					    handler: 'onClickBotonFavoritos'
-					    disabled: true // TODO Comités sin definir
-					}*/
-					
-	
-				]					
-								
+				    {
+	                	xtype: 'button',
+	                	reference: 'btnGenerarHojaDatos',
+	                	text: HreRem.i18n('btn.generar.hoja.datos'),
+	                	handler: 'onClickGenerarHojaExcel',
+	                	margin: '10 10 10 10'
+	                }
+				]			
 			},
 			{   
 				xtype:'fieldset',
@@ -333,7 +330,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 				defaultType: 'displayfieldbase',				
 				title: HreRem.i18n('title.subsanaciones'),
 				items : [
-				
 					{
 					    xtype		: 'gridBase',
 					    reference: 'listadosubsanaciones',

@@ -168,15 +168,17 @@ BEGIN
             ,OFR_ID
             ,DD_EEC_ID
             ,ECO_FECHA_ALTA
-            ,ECO_FECHA_SANCION  
+            ,ECO_FECHA_SANCION 
+            ,ECO_FECHA_ANULACION
+            ,ECO_MOTIVO_ANULACION 
             , VERSION
             , USUARIOCREAR
             , FECHACREAR
         )
         SELECT
-          '||V_ESQUEMA||'.S_ECO_EXPEDIENTE_COMERCIAL.NEXTVAL                                                              AS ECO_ID,
-          '||V_ESQUEMA||'.S_ECO_NUM_EXPEDIENTE.NEXTVAL                                                                        AS ECO_NUM_EXPEDIENTE,
-          OFR.OFR_ID                                                                                                                                  AS OFR_ID,
+          '||V_ESQUEMA||'.S_ECO_EXPEDIENTE_COMERCIAL.NEXTVAL                                                                AS ECO_ID,
+          '||V_ESQUEMA||'.S_ECO_NUM_EXPEDIENTE.NEXTVAL                                                                      AS ECO_NUM_EXPEDIENTE,
+          OFR.OFR_ID                                                                                                        AS OFR_ID,
           (SELECT DD.DD_EEC_ID
             FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL DD
             WHERE DD.DD_EEC_CODIGO =  DECODE(MIG2.OFR_COD_ESTADO_OFERTA, ''01-01'',''10'', 
@@ -188,8 +190,8 @@ BEGIN
                                                                 ''01-07'',''03'', 
                                                                 ''01-08'',''02'', 
                                                                 ''01-09'',''08'')
-                                                                )                                                                                 AS DD_EEC_ID,
-          OFR.OFR_FECHA_ALTA                                                                                                       AS ECO_FECHA_ALTA,
+                                                                )                                                           AS DD_EEC_ID,
+          OFR.OFR_FECHA_ALTA                                                                                                AS ECO_FECHA_ALTA,
           DECODE(MIG2.OFR_COD_ESTADO_OFERTA, 
                                                                 ''01-02'',OFR.OFR_FECHA_ALTA, 
                                                                 ''01-03'',OFR.OFR_FECHA_ALTA, 
@@ -198,10 +200,20 @@ BEGIN
                                                                 ''01-06'',OFR.OFR_FECHA_ALTA, 
                                                                 ''01-07'',OFR.OFR_FECHA_ALTA, 
                                                                 ''01-09'',OFR.OFR_FECHA_ALTA,
-                                                                NULL)                                                                        AS ECO_FECHA_SANCION,
-          0                                                                                                                                      AS VERSION,
-          ''MIG2''                                                                                                                               AS USUARIOCREAR,
-          SYSDATE                                                                                                                          AS FECHACREAR
+                                                                NULL)                                                       AS ECO_FECHA_SANCION,
+		CASE
+			WHEN MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
+			THEN MIG2.OFR_ESTADO_FECHA
+            ELSE NULL
+        END                                                                                                                 AS ECO_FECHA_ANULACION,
+        CASE
+            WHEN MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
+            THEN MIG2.OFR_COD_MOTIVO_ANULACION
+            ELSE NULL
+        END  																												AS ECO_MOTIVO_ANULACION,
+          0                                                                                                                 AS VERSION,
+          ''MIG2''                                                                                                          AS USUARIOCREAR,
+          SYSDATE                                                                                                           AS FECHACREAR
         FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
         INNER JOIN MIG2_OFR_OFERTAS MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA
         WHERE SUBSTR(MIG2.OFR_COD_ESTADO_OFERTA,0,2) = ''01''

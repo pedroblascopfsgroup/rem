@@ -125,6 +125,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                             }
 							me.getView().unmask();
 							me.refrescarGasto(form.refreshAfterSave);
+							Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+								function (field, index){field.fireEvent('edit');}
+							);
 			            }
 					});
 				}
@@ -239,9 +242,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 	},
 	
-	refrescarGasto: function(refrescarPestañaActiva) {
+	refrescarGasto: function(refrescarPestañaActiva) {	
+		
 		var me = this,
-		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva;
+		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
+		tabPanel = me.getView().down("tabpanel");
 		
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
@@ -251,34 +256,29 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
   		});
   		
   		// Actualizamos la pestaña actual si tiene función de recargar 
+		var activeTab = tabPanel.getActiveTab();
 		if(refrescarPestañaActiva) {
-			var activeTab = me.getView().down("tabpanel").getActiveTab();
 			if(activeTab.funcionRecargar) {
   				activeTab.funcionRecargar();
 			}
 		}
-		
-		var id = me.getView().getViewModel().get('gasto.id');
-		HreRem.model.GastoProveedor.load(id, {
-    		scope: this,
-		    success: function(gasto) {	
-		    	me.getView().getViewModel().set("gasto", gasto);
-		    	me.getView().configCmp(gasto);
-		    }
-		});
-		
-		me.getView().fireEvent("refreshComponent", "panel[reference=gestiongastosref]");
+		var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
+		me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
 		
 	},
 	
 	buscarProveedor: function(field, e){
 		var me= this;
-		var url =  $AC.getRemoteUrl('gastosproveedor/searchProveedorCodigo');
-		var codigoUnicoProveedor= field.getValue();
+		var nifProveedor= field.getValue();
 		var data;
+		var comboProveedores = me.lookupReference("comboProveedores");
 		
-		if(!Ext.isEmpty(codigoUnicoProveedor)){
-			Ext.Ajax.request({
+		if(!Ext.isEmpty(nifProveedor)){
+			comboProveedores.getStore().getProxy().extraParams.nifProveedor = nifProveedor;	
+			comboProveedores.getStore().load();
+			comboProveedores.expand();
+		}
+			/*Ext.Ajax.request({
 			    			
 			    		     url: url,
 			    		     params: {codigoUnicoProveedor : codigoUnicoProveedor},
@@ -331,8 +331,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			    		     callback: function(options, success, response){
 			    		     }
 			    		     
-			});
-		}
+			});*/
+		
 		
 	},
 	
@@ -612,26 +612,89 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickBotonGuardarGasto: function(btn){
 		var me =this;
 		var window= btn.up('window'),
-		form= window.down('formBase');
-	
-		var success = function(record, operation) {
-			me.getView().unmask();
-	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    	window.parent.funcionRecargar();
-	    	var data = {};
-            try {
-            	data = Ext.decode(operation._response.responseText);
-            }
-            catch (e){ };
-            
-            record.set("id", data.id);
-            
-	    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
-	    	
-	    	window.destroy();  		
-		};
+		form= window.down('formBase'),
+		url =  $AC.getRemoteUrl('gastosproveedor/existeGasto');
 		
-		me.onSaveFormularioCompleto(null, form, success);		
+		if(form.isFormValid() && !form.disableValidation || form.disableValidation) {
+		
+			Ext.Ajax.request({		    			
+			 		url: url,
+			   		params: form.getBindRecord().getData(),		    		
+			    	success: function(response, opts) {
+			    		var data = {};
+			            try {
+			            	data = Ext.decode(response.responseText);
+			            }
+			            catch (e){ };
+			            
+			            if(!Ext.isEmpty(data) && data.success == "true") {
+			            	
+			            	if(data.existeGasto == "true") {
+			            		
+			            		Ext.Msg.show({
+								   title: HreRem.i18n('title.mensaje.confirmacion'),
+								   msg: HreRem.i18n('msg.desea.crear.gasto.duplicado'),
+								   buttons: Ext.MessageBox.YESNO,
+								   fn: function(buttonId) {
+								        if (buttonId == 'yes') {
+								        	
+								        	var success = function(record, operation) {
+												me.getView().unmask();
+										    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+										    	window.parent.funcionRecargar();
+										    	var data = {};
+									            try {
+									            	data = Ext.decode(operation._response.responseText);
+									            }
+									            catch (e){ };
+									            
+									            record.set("id", data.id);
+									            
+										    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
+										    	
+										    	window.destroy();  	
+					            			};
+							    			me.onSaveFormularioCompleto(null, form, success);
+								        	
+								        }
+								   }
+			            		});
+			            	} else if (data.existeGasto == "false") {
+			            		
+			            		var success = function(record, operation) {
+									me.getView().unmask();
+							    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							    	window.parent.funcionRecargar();
+							    	var data = {};
+						            try {
+						            	data = Ext.decode(operation._response.responseText);
+						            }
+						            catch (e){ };
+						            
+						            record.set("id", data.id);
+						            
+							    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
+							    	
+							    	window.destroy();  	
+			            		};
+					    		me.onSaveFormularioCompleto(null, form, success);
+			            		
+			            	}
+			            	
+			            
+			            	
+			            } else if (!Ext.isEmpty(data) && data.success == "false"){		            		
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            }	
+			    	}
+			});
+			
+		} else {
+		
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+	
+				
 	},
 	
 	onClickBotonAsignarTrabajosGasto: function(btn) {

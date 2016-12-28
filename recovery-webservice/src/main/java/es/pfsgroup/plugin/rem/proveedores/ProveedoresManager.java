@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,10 +121,25 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		return "proveedoresManager";
 	}
 	
+	protected static final Log logger = LogFactory.getLog(ProveedoresManager.class);
+	
 	@Override
 	public List<DtoProveedorFilter> getProveedores(DtoProveedorFilter dtoProveedorFiltro) {		
 		
 		return proveedoresDao.getProveedoresList(dtoProveedorFiltro);
+	}
+	
+	@Override
+	public List<DtoActivoProveedor> getProveedoresByNif(String nif) {	
+		
+		List<ActivoProveedor> lista = proveedoresDao.getProveedoresByNifList(nif);
+   		List<DtoActivoProveedor> listaProveedores = new ArrayList<DtoActivoProveedor>();
+   		
+		for(ActivoProveedor proveedor: lista) {
+			listaProveedores.add(proveedorToDto(proveedor));			
+		}		
+		return listaProveedores;
+		
 	}
 
 	@Override
@@ -252,9 +269,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "nombreComercial", dto.getNombreComercialProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaBaja", dto.getFechaBajaProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dto.getNifProveedor());
-			if(!Checks.esNulo(dto.getCustodioCodigo())) {
-				beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getLocalizadaProveedorCodigo());
-			}
+			beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getLocalizadaProveedorCodigo());
 			if(!Checks.esNulo(dto.getEstadoProveedorCodigo())) {
 				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, dto.getEstadoProveedorCodigo());
 				beanUtilNotNull.copyProperty(proveedor, "estadoProveedor", estadoProveedor);
@@ -1013,19 +1028,19 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	}
 
 	@Override
-	public Long getCodProveedorByUsuarioLogado() {
+	public String getNifProveedorByUsuarioLogado() {
 		
 		Usuario usuario = genericAdapter.getUsuarioLogado();
-		Long codProveedor = null;
+		String nifProveedor= null;
 		
 		Filter idUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 		List<ActivoProveedorContacto> listaPersonasContacto = genericDao.getList(ActivoProveedorContacto.class, idUsuario);
 		
 		if(!Checks.estaVacio(listaPersonasContacto) && !Checks.esNulo(listaPersonasContacto.get(0).getProveedor())) {			
-			codProveedor = listaPersonasContacto.get(0).getProveedor().getCodigoProveedorRem();
+			nifProveedor = listaPersonasContacto.get(0).getProveedor().getDocIdentificativo();
 		}
 
-		return codProveedor;
+		return nifProveedor;
 	}
 	
 	@Override
@@ -1106,6 +1121,29 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		mediadoresEvaluarDao.evaluarMediadoresConPropuestas();
 		
 		return true;
+		
+	}
+	
+	private DtoActivoProveedor proveedorToDto (ActivoProveedor proveedor) {
+		
+		DtoActivoProveedor dtoProveedor = new DtoActivoProveedor();
+		
+		try {
+			
+			beanUtilNotNull.copyProperty(dtoProveedor, "id", proveedor.getId());
+			beanUtilNotNull.copyProperty(dtoProveedor, "codigo", proveedor.getCodigoProveedorRem());
+			beanUtilNotNull.copyProperty(dtoProveedor, "nombreProveedor", proveedor.getNombre());
+			if(!Checks.esNulo(proveedor.getTipoProveedor())) {
+				beanUtilNotNull.copyProperty(dtoProveedor, "subtipoProveedorDescripcion", proveedor.getTipoProveedor().getDescripcion());
+			}
+			
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+		}
+		
+		return dtoProveedor;
 		
 	}
 	

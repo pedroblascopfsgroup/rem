@@ -7,11 +7,10 @@ Ext.define('HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', {
 	layout: 'fit',
 
     initComponent: function () {
+        var me = this;  
+        me.setTitle(HreRem.i18n('title.diario.gestiones'));	
 
-        var me = this;        
-        me.setTitle(HreRem.i18n('title.diario.gestiones'));		         
-        var items= [
-
+        me.items= [
 			{
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal : 'trabajo.id',
@@ -23,8 +22,8 @@ Ext.define('HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', {
 				},
 				secButtons: {
 					secFunPermToEnable : 'TRABAJO_DIARIO_ADD'
-				},	
-				
+				},
+
 				columns: [
 				   {    text: HreRem.i18n("header.gestor"),
 			        	dataIndex: 'nombreCompleto',
@@ -50,7 +49,6 @@ Ext.define('HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', {
 			       		flex:6,
 			       		editor: {xtype:'textarea'}
 			       }
-			       	        
 			    ],
 			    listeners : {
    	                beforeedit : function(editor, context, eOpts ) {
@@ -63,7 +61,7 @@ Ext.define('HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', {
    	                	}
 	                }
 	            },
-	            
+
 	            onGridBaseSelectionChange: function (grid, records) {
 	            	if(!records.length)
             		{
@@ -81,6 +79,7 @@ Ext.define('HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', {
             			}
             		}
 	            },
+
 			    dockedItems : [
 			        {
 			            xtype: 'pagingtoolbar',
@@ -91,25 +90,18 @@ Ext.define('HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', {
 			            }
 			        }
 			    ]
-			    
 			}
-            
-            
         ];
-        
-		me.addPlugin({ptype: 'lazyitems', items: items });
+
     	me.callParent();
-    	
-    	
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		var listadoObservaciones = me.down("[reference=listadoObservaciones]");
-		
+
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoObservaciones.getStore().load();
     }
-    
 });

@@ -6,7 +6,6 @@ import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoExcelPropuestaUnificada;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
@@ -15,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
+import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosUnificada;
 
 public interface PreciosApi {
 	
@@ -93,9 +93,9 @@ public interface PreciosApi {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 */
-	public List<DtoExcelPropuestaUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException;
-
+	 */	
+	public List<DtoGenerarPropuestaPreciosUnificada> getDatosPropuestaUnificada(Long idPropuesta) throws IllegalAccessException, InvocationTargetException;
+	 
 	/**
 	 * Comprueba si no existe ya una propuesta asociada al trabajo, y si el trabajo es del tipo y subtipo de propuesta de preciar, descuento
 	 * @param idTrabajo
@@ -116,4 +116,13 @@ public interface PreciosApi {
 	 * @param trabajo
 	 */
 	public void guardarFileEnTrabajo(File file, Trabajo trabajo);
+	
+	/**
+	 * Devuelve los datos para generar la excel de una propuesta según la entidad filtrada
+	 * @param propuesta
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	public <T> List<T> getDatosPropuestaByEntidad(PropuestaPrecio propuesta) throws IllegalAccessException, InvocationTargetException;
 }

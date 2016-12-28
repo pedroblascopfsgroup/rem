@@ -290,6 +290,10 @@ white-space: normal !important;
   background: url(images/ico_gasto_des.png) center center no-repeat;
 }
 
+.ico-pestana-tramites {
+  background: url(images/ico_tareas_act.svg) center center no-repeat;
+}
+
 .ico-download {
     background: url(images/ico_download.png) center center no-repeat;  
     background-size: 15px;
@@ -490,6 +494,16 @@ x-panel x-tabpanel-child x-panel-default {
 .tabpanel-base .x-tab.x-tab-default:hover .x-tab-button > .ico-pestana-gasto{ 
   background: url(images/ico_gasto_act.png) center center no-repeat;
 }
+
+.tabpanel-base .x-tab.x-tab-active.x-tab-default .x-tab-button > .ico-pestana-tramites{ 
+  background: url(images/ico_tareas_active) center center no-repeat;
+}
+
+.tabpanel-base .x-tab.x-tab-default:hover .x-tab-button > .ico-pestana-tramites{ 
+  background: url(images/ico_gasto_act.png) center center no-repeat;
+}
+
+
 
 
 
@@ -1073,7 +1087,6 @@ body.x-masked > .x-mask {
     color: #900; 
 }
 
-.gasto-detalle .fieldsetBase.cabecera .x-fieldset-header-text,
 .panel-contadores .fieldsetBase.cabecera .x-fieldset-header-text {
 	color: #fff;
 }
@@ -1255,5 +1268,13 @@ body.x-masked > .x-mask {
 	color: #FFF;
 }
 
-.
+.x-fieldset.x-fieldset-anyadir-gasto, .x-fieldset-default.x-fieldset-anyadir-gasto {
+	background-color: transparent !impportant;
+	border: none !impportant;		
+}
+
+.anyadir-gasto-form .x-panel-body {
+	background: #f5f5f5 !important; 
+	border-width: 1px !important;
+}
 

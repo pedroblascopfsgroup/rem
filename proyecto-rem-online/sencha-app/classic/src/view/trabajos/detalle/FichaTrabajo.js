@@ -1,28 +1,22 @@
 Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'fichatrabajo',    
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
+    extend		: 'HreRem.view.common.FormBase',
+    xtype		: 'fichatrabajo',    
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
     scrollable	: 'y',
-    
-    recordName: "trabajo",
-	
-	recordClass: "HreRem.model.FichaTrabajo",
-    
-    requires: ['HreRem.model.FichaTrabajo'],
-    
-    initComponent: function () {
+    recordName	: "trabajo",
+	recordClass	: "HreRem.model.FichaTrabajo",
+    requires	: ['HreRem.model.FichaTrabajo'],
 
+    initComponent: function () {
         var me = this;
-        
         me.setTitle(HreRem.i18n('title.ficha'));
-        
+
         //Si el tipo es de Precios/Publicacion/Sancion no mostrar el bloque -Cuando hay que hacerlo...-
         me.codigoTipoTrabajo = me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo');
-        
+
         me.items= [
-        			{    
-                
+        			{
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',						
 						title: HreRem.i18n('title.objeto'),
@@ -101,28 +95,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            		value: '{trabajo.ciaAseguradora}'
 					            	},
 					            	valueField: 'id',
-						        	reference: 'comboCiaAseguradora'/*,
-						        	listeners: {
-						        		change: function(combo) {
-						        			
-						        			var checkCiaAseguradora = textfield.up("form").down('[reference=checkCiaAseguradora]'),
-						        			value = textfield.getValue();
-						        			if(Ext.isEmpty(value)) {
-						        				checkCiaAseguradora.setValue(false);
-						        			} else {	
-						        				checkCiaAseguradora.setValue(true);
-						        			}
-						        		}
-						        	}*/
-						        	
+						        	reference: 'comboCiaAseguradora'
 						        }
-						        						   
-						        
 							]
 		           },
-           
-		           {    
-		                
+		           {
 						xtype:'fieldset',
 						layout: {
 					        type: 'hbox',
@@ -141,8 +118,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								{	
 									defaultType: 'textfieldbase',
 									items: [
-									
-											
 											{
 												xtype: 'checkboxfieldbase',
 												boxLabel: HreRem.i18n('title.fecha.concreta'),
@@ -191,8 +166,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								},
 								{
 									defaultType: 'textfieldbase',
-									items: [									
-											
+									items: [
 											{
 												xtype: 'checkboxfieldbase',
 												boxLabel:  HreRem.i18n('title.fecha.tope'),												
@@ -219,7 +193,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 													}
 													
 												}
-												
 											},	
 											{
 												xtype: 'datefieldbase',
@@ -274,15 +247,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 													}
 												}
 											}
-											
-									
 									]	
 								},
 								{
 									defaultType: 'textfieldbase',
 									disabled: true,
-									items: [									
-											
+									items: [
 											{
 												xtype: 'checkboxfieldbase',
 												boxLabel:  HreRem.i18n('title.trabajo.continuado'),
@@ -302,8 +272,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 															Ext.Array.each(check.up("fieldset").query("field"), function(field, index) {
 																field.allowBlank=true;
 																field.validate();
-																field.setValue("");
-																															
+																field.setValue("");														
 															});
 														}
 													}
@@ -336,22 +305,16 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 							                	width: '100%', 
 							                	maxLength: 256
 					                		}
-									
 									]
 								}
-
-							]               
-		
+							]
 		           },
-           
 		           {     
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
 						//title: HreRem.i18n('title.estado'),				
 						items :
-						
-							[						
-							
+							[
 								// Fila 1
 								{ 
 						        	xtype: 'comboboxfieldbase',
@@ -438,15 +401,13 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									bind: '{trabajo.fechaEmisionFactura}',
 									readOnly: true
 								}
-
 							]
 		           },
 		           {     
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.trabajo.requerido.tercero'),				
-						items : [								
-									
+						items : [
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 									bind:'{trabajo.terceroNombre}',
@@ -485,23 +446,17 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		                		}						
 						]
 		           }
-						
-
         ];
-        
 
-    	me.callParent();    	
-    	
+    	me.callParent();
     },
-    
+
     funcionRecargar: function() {
     	var me = this; 
-		me.recargar = false;		
-		//me.lookupController().cargarTabData(me);
+		me.recargar = false;
     },
-    
+
     getErrorsExtendedFormBase: function() {
-    	
     	var me = this,
     	checkFechaConcreta= me.down("[reference=checkFechaConcreta]"),
     	checkFechaTope = me.down("[reference=checkFechaTope]"),
@@ -515,8 +470,5 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     		if(checkFechaTope.checked) checkFechaTope.markInvalid(HreRem.i18n("error.validacion.marcado.mas.de.una.opcion"));
     		if(checkFechaContinuado.checked) checkFechaContinuado.markInvalid(HreRem.i18n("error.validacion.marcado.mas.de.una.opcion"));
     	}
-    	
-    	
-    	
     }
 });

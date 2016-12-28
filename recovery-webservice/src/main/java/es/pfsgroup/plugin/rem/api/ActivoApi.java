@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -116,6 +117,7 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionObraNueva")
 	public boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado);
 
+	public boolean isIntegradoAgrupacionComercial(Activo activo);
 	/**
 	 * Elimina un adjunto
 	 * 
@@ -797,4 +799,16 @@ public interface ActivoApi {
 	 */
 	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta);
 
+	/**
+	 * Devuelve la valoracion Aprobado venta del activo
+	 * @param activo
+	 * @return
+	 */
+	public ActivoValoraciones getValoracionAprobadoVenta(Activo activo);
+	/**
+	 * Devuelve la última tasación del activo
+	 * @param activo
+	 * @return
+	 */
+	public ActivoTasacion getTasacionMasReciente(Activo activo);
 }

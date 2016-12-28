@@ -376,6 +376,9 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            		store: '{comboEstadoCivil}',
 									            		value: '{comprador.codEstadoCivil}'
 									            	},
+									            	listeners: {
+														change: 'comprobarObligatoriedadCamposNexos'
+						    						},
 									            	allowBlank:true
 									            	
 										        },

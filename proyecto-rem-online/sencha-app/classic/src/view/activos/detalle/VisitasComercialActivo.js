@@ -3,29 +3,25 @@ Ext.define('HreRem.view.activos.detalle.VisitasComercialActivo', {
     xtype		: 'visitascomercialactivo',
     requires	: ['HreRem.view.activos.detalle.VisitasComercialActivoList'],
     scrollable	: 'y',
-    layout: {
+    layout		: {
         type: 'vbox',
         align: 'stretch'
     },
+
     initComponent: function () {        
         var me = this;
-        
         me.setTitle(HreRem.i18n("title.activos.listado.visitas"));
-        
-        var items = [      			
-        			{	
-        				xtype: 'visitascomercialactivolist',
-        				reference: 'visitascomercialactivolistref'        				
-        			}
-        
+
+        me.items = [      			
+    			{	
+    				xtype: 'visitascomercialactivolist',
+    				reference: 'visitascomercialactivolistref'        				
+    			}
         ];
-        
-        me.addPlugin({ptype: 'lazyitems', items: items });
-        
-        me.callParent(); 
-        
+
+        me.callParent();
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -33,6 +29,4 @@ Ext.define('HreRem.view.activos.detalle.VisitasComercialActivo', {
   			grid.getStore().loadPage(1);
   		});
     } 
-
-
 });

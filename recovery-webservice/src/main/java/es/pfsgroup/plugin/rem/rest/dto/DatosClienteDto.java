@@ -40,6 +40,7 @@ public class DatosClienteDto {
 	 private String NombreDePaisResidencia;
 	 private String SubsectorDeActividadEconomica;
 	 private String numeroClienteUrsus;
+	 private String numeroClienteUrsusConyuge;
 	 
 	public String getClaseDeDocumentoIdentificador() {
 		return ClaseDeDocumentoIdentificador;
@@ -310,6 +311,12 @@ public class DatosClienteDto {
 		setNombreDePaisResidencia("Pais residencia");
 		setSubsectorDeActividadEconomica("Subsector actividad");
 		setNumeroClienteUrsus("20401");
+	}
+	public String getNumeroClienteUrsusConyuge() {
+		return numeroClienteUrsusConyuge;
+	}
+	public void setNumeroClienteUrsusConyuge(String numeroClienteUrsusConyuge) {
+		this.numeroClienteUrsusConyuge = numeroClienteUrsusConyuge;
 	}
 
 }

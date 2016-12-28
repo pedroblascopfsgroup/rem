@@ -116,9 +116,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	name: 'necesitaAutorizacionPropietario',
 					        	bind: {
 				            		store: '{comboSiNoRem}'
-				            	},
-				            	displayField: 'descripcion',
-								valueField: 'codigo'
+				            	}
     						},
 							{ 
 			                	xtype:'datefieldbase',
@@ -162,19 +160,23 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						 		name: 'fechaTopePagoHasta',
 						 		formatter: 'date("d/m/Y")'					 		
 							},
-							{
-						    	fieldLabel: HreRem.i18n('fieldlabel.nif.gestoria'),
-						        name: 'nifGestoria'						    	
-						    },
+							{ 
+					        	xtype: 'comboboxfieldbase',
+						    	fieldLabel: HreRem.i18n('fieldlabel.gestoria.responsable'),
+					        	name: 'idGestoria',
+					        	bind: {
+				            		store: '{comboGestorias}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'id'
+    						},
 							{ 
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),
 					        	name: 'periodicidad',
 					        	bind: {
 				            		store: '{comboPeriodicidad}'
-				            	},
-				            	displayField: 'descripcion',
-								valueField: 'codigo'
+				            	}
     						},
     						{ 
 						    	fieldLabel: HreRem.i18n('fieldlabel.num.provision'),
@@ -249,7 +251,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	bind: {
 				            		store: '{comboEntidadPropietaria}'
 				            	},
-				            	publish: 'value'
+				            	publishes: 'value'
 			    						
 							},
 							
@@ -259,10 +261,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	name: 'subentidadPropietariaCodigo',
 					        	bind: {
 				            		store: '{comboSubentidadPropietaria}',
-				            		disabled: '{!filtroEntidadPropietaria.value}',
+				            		disabled: '{!filtroEntidadPropietaria.selection}',
 				                    filters: {
 				                        property: 'carteraCodigo',
-				                        value: '{filtroComboTipoGasto.value}'
+				                        value: '{filtroEntidadPropietaria.value}'
 				                    }
 				            	}
 			    						

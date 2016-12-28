@@ -471,18 +471,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		me.onSaveFormularioCompleto(form, success);	
 		
 	},
-	
+
 	onSaveFormularioCompleto: function(form, success) {
 		var me = this;
 		record = form.getBindRecord();
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
-		
+
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));
-			
+
 			record.save({
-				
 			    success: success,
 			 	failure: function(record, operation) {
 			 		var response = Ext.decode(operation.getResponse().responseText);
@@ -494,29 +493,35 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 				 		form.unmask();
 					}
 			    }
-			    		    
 			});
 		} else {
-		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
 	
 	},
-	
+
 	onVisitasListDobleClick: function(grid,record,tr,rowIndex) {        	       
     	var me = this,
     	record = grid.getStore().getAt(rowIndex);
-    	
+
     	Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
-    	
-        	
     },
-    
+
     onClickBotonCerrarDetalleVisita: function(btn) {
 		var me = this,
 		window = btn.up('window');
     	window.close();
-	}
+	},
 
-	
+	// Método que es llamado cuando se solicita exportar losa ctivos de la agrupación tipo 'lote comercial'.
+    onClickExportarActivosLoteComercial: function() {
+	  	var me = this;
+	  	var config = {};
+		var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+
+		config.params = {agrID : idAgrupacion};
+		config.url= $AC.getRemoteUrl("agrupacion/exportarActivosLoteComercial");
+
+		me.fireEvent("downloadFile", config);
+    }
 });

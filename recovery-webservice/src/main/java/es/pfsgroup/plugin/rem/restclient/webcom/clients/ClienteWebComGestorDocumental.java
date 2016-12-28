@@ -9,6 +9,8 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import net.sf.json.JSONObject;
@@ -24,7 +26,8 @@ public class ClienteWebComGestorDocumental {
 	@Resource
 	private Properties appProperties;
 
-	public JSONObject send(String authtoken, String endpoint, String jsonString) throws Exception {
+	public JSONObject send(String authtoken, String endpoint, String jsonString)
+			throws NumberFormatException, HttpClientException, RestConfigurationException {
 
 		Map<String, String> headers = new HashMap<String, String>();
 		if (authtoken != null) {
@@ -36,7 +39,7 @@ public class ClienteWebComGestorDocumental {
 				WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, "http://gdtest.gestycontrolhaya.es/rest");
 
 		if (urlBase == null) {
-			throw new Exception("La url base del gestor documental no esta definida");
+			throw new RestConfigurationException("La url base del gestor documental no esta definida");
 		} else {
 			serviceUrl = urlBase.concat("/").concat(endpoint);
 		}

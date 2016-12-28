@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.rest.dto.File;
 
 public interface ActivoAgrupacionApi {
 	
@@ -50,11 +51,15 @@ public interface ActivoAgrupacionApi {
     @BusinessOperationDefinition("activoAgrupacionManager.uploadFoto")
     public String uploadFoto(WebFileItem fileItem);
     
+    public String uploadFoto(File fileItem);
+    
     @BusinessOperationDefinition("activoAgrupacionManager.getFotosActivosAgrupacionById")
     public List<ActivoFoto> getFotosActivosAgrupacionById(Long id);
 
     @BusinessOperationDefinition("activoAgrupacionManager.uploadFotoSubdivision")
 	String uploadFotoSubdivision(WebFileItem fileItem);
+    
+    public String uploadFotoSubdivision(File fileItem);
 
 	public boolean createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion);
 

@@ -32,8 +32,8 @@ public class DtoFoto extends WebDto {
 	private Integer orden;
 	private String path;
 	private String tituloFoto;
-	private boolean principal;
-	private boolean interiorExterior;
+	private Boolean principal;
+	private Boolean interiorExterior;
 	private String numeroActivo;
 	
 	
@@ -132,29 +132,29 @@ public class DtoFoto extends WebDto {
 	}
 
 
-	public boolean isPrincipal() {
+	public Boolean isPrincipal() {
 		return principal;
 	}
 
-	public boolean isInteriorExterior() {
+	public Boolean isInteriorExterior() {
 		return interiorExterior;
 	}
 	
-	public boolean getPrincipal() {
+	public Boolean getPrincipal() {
 		return principal;
 	}
 
-	public boolean getInteriorExterior() {
+	public Boolean getInteriorExterior() {
 		return interiorExterior;
 	}
 
 
-	public void setInteriorExterior(boolean interiorExterior) {
+	public void setInteriorExterior(Boolean interiorExterior) {
 		this.interiorExterior = interiorExterior;
 	}
 
 
-	public void setPrincipal(boolean principal) {
+	public void setPrincipal(Boolean principal) {
 		this.principal = principal;
 	}
 

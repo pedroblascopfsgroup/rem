@@ -97,12 +97,12 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		me.callParent();
     },
 
-		evaluarBotonesEdicion: function(tab) {
+	evaluarBotonesEdicion: function(tab) {
 			var me = this,
 			viewModel= me.lookupViewModel(),
 			esEditable = viewModel.get('gasto.esGastoEditable')== true;
 			me.down("[itemId=botoneditar]").setVisible(false);
-
+			
 			var editionEnabled = function() {
 				if(esEditable) {
 					me.down("[itemId=botoneditar]").setVisible(true);

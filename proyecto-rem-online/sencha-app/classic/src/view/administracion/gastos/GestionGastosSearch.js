@@ -181,7 +181,18 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
     						{ 
 						    	fieldLabel: HreRem.i18n('fieldlabel.num.provision'),
 						        name: 'numProvision'								            	
+    						},
+    						{
+    							fieldLabel: HreRem.i18n('fieldlabel.nombre.propietario'),
+						        name: 'nombrePropietario'    							
+    						},
+    						{
+    							fieldLabel: HreRem.i18n('fieldlabel.docidentif.propietario'),
+						        name: 'docIdentifPropietario'    							
     						}
+    						
+    						
+    						
 			    		]
 				    },
 				    {

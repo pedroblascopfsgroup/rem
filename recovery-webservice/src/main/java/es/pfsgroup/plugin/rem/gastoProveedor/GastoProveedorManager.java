@@ -1574,8 +1574,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 			} else {
 				
-				if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo()) || 
-					DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
+				if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo())){
 					return false;
 				}
 			}			

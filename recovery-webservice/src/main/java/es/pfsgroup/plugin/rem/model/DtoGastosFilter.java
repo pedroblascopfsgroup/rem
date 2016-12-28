@@ -62,6 +62,8 @@ public class DtoGastosFilter extends WebDto {
 	private String codigoSubtipoProveedor;
 	private String nombreProveedor;
 	private String idGestoria;
+	private String nombrePropietario;
+	private String docIdentifPropietario;
 	
 	
 	public Long getId() {
@@ -331,6 +333,18 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setIdGestoria(String idGestoria) {
 		this.idGestoria = idGestoria;
+	}
+	public String getNombrePropietario() {
+		return nombrePropietario;
+	}
+	public void setNombrePropietario(String nombrePropietario) {
+		this.nombrePropietario = nombrePropietario;
+	}
+	public String getDocIdentifPropietario() {
+		return docIdentifPropietario;
+	}
+	public void setDocIdentifPropietario(String docIdentifPropietario) {
+		this.docIdentifPropietario = docIdentifPropietario;
 	}
 	
 }

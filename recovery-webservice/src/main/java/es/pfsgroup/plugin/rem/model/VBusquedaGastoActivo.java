@@ -77,7 +77,7 @@ public class VBusquedaGastoActivo implements Serializable {
 	@Column(name="GPV_FECHA_EMISION")
 	private String fechaEmisionGasto;
 	
-	@Column(name="GPV_OBSERVACIONES")
+	@Column(name="GGE_OBSERVACIONES")
 	private String observacionesGastos;
 	
 	@Column(name="GPV_NUM_GASTO_HAYA")

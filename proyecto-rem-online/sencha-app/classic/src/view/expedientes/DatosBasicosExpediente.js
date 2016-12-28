@@ -264,7 +264,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
            {
 				xtype:'fieldsettable',
 				defaultType: 'displayfieldbase',				
-				title: HreRem.i18n('title.politica.corporativa'),
+				title: HreRem.i18n('title.responsabilidad.corporativa'),
 				items :
 					[
 						{

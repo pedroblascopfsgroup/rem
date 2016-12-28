@@ -23,31 +23,30 @@ public class AgrupacionAvisoAsistidaPDVVigente implements AgrupacionAvisadorApi 
 	public DtoAviso getAviso(ActivoAgrupacion agrupacion, Usuario usuarioLogado) {
 
 		DtoAviso dtoAviso = new DtoAviso();
-		
-		if (!Checks.esNulo(agrupacion.getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && 
-				this.isAgrupacionEnFechaVigente(agrupacion.getFechaInicioVigencia(), agrupacion.getFechaFinVigencia()) ) 
-		{
-			dtoAviso.setDescripcion("Asistida/PDV vigente");
-			dtoAviso.setId(String.valueOf(agrupacion.getId()));
-			
+		if (!Checks.esNulo(agrupacion.getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+
+			if(Checks.esNulo(agrupacion.getFechaInicioVigencia()) || Checks.esNulo(agrupacion.getFechaFinVigencia())) {
+				dtoAviso.setDescripcion("Agrupación asistida sin vigencia definida");
+				dtoAviso.setId(String.valueOf(agrupacion.getId()));
+
+			} else if(this.isAgrupacionEnFechaVigente(agrupacion.getFechaInicioVigencia(), agrupacion.getFechaFinVigencia())) {
+				dtoAviso.setDescripcion("Asistida/PDV vigente");
+				dtoAviso.setId(String.valueOf(agrupacion.getId()));
+			}
 		}
 
 		return dtoAviso;
-		
 	}
 	
 	private Boolean isAgrupacionEnFechaVigente(Date fechaInicio, Date fechaFin) {
-		
+
 		Date fechaHoy = new Date();
-		
+
 		if(!Checks.esNulo(fechaInicio) && (fechaInicio.before(fechaHoy) || DateUtils.isSameDay(fechaInicio,fechaHoy)) &&
-			!Checks.esNulo(fechaFin) && (fechaFin.after(fechaHoy) || DateUtils.isSameDay(fechaFin,fechaHoy))) 
-		{
+			!Checks.esNulo(fechaFin) && (fechaFin.after(fechaHoy) || DateUtils.isSameDay(fechaFin,fechaHoy))) {
 			return true;
 		}
-		
+
 		return false;
 	}
-
-
 }

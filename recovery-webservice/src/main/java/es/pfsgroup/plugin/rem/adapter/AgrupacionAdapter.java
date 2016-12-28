@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -949,20 +950,31 @@ public class AgrupacionAdapter {
 	}
 
 	/**
-	 * Este método comprueba si los gestores de una agrupación de tipo 'lote comercial' se encuentran
-	 * asignados devolviendo True. Si los gestores no están asignados devuelve False.
+	 * Este método comprueba la entidad de la oferta para evaluar que gestores deben estar asignados.
+	 * Si la entidad es Cajamar deben estar asignados todos los gestores, cualquier otra pueden obviar
+	 * el gestore de tipo 'Backoffice'. Dependiendo de los requerimientos por entidad devuelve True si
+	 * se encuentran los gestores necesarios asignados o False si no lo están.
 	 * 
 	 * @param agr : agrupación de tipo 'lote comercial'.
-	 * @return True si todos los gestores de la agrupación están asignados. False si no lo están.
+	 * @return True si todos los gestores de la agrupación están asignados según requerimientos. False si no lo están.
 	 */
 	private boolean agrupacionLoteComercialGestoresAsignados(ActivoAgrupacion agr) {
 		ActivoLoteComercial loteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", agr.getId()));
 
-		if(Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) ||
-				Checks.esNulo(loteComercial.getUsuarioGestorFormalizacion()) || Checks.esNulo(loteComercial.getUsuarioGestoriaFormalizacion())) {
-			return false;
+		// Comprobar entidad de la oferta.
+		if( !Checks.estaVacio(agr.getActivos()) && !Checks.esNulo(agr.getActivos().get(0)) && !Checks.esNulo(agr.getActivos().get(0).getActivo())
+				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera()) && !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+				&& agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+			if(Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) ||
+					Checks.esNulo(loteComercial.getUsuarioGestorFormalizacion()) || Checks.esNulo(loteComercial.getUsuarioGestoriaFormalizacion())) {
+				return false;
+			}
+		} else {
+			if(Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorFormalizacion())
+					 || Checks.esNulo(loteComercial.getUsuarioGestoriaFormalizacion())) {
+				return false;
+			}
 		}
-
 		return true;
 	}
 

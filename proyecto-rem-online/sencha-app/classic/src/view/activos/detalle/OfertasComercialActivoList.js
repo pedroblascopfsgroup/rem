@@ -25,6 +25,31 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            text: HreRem.i18n('header.oferta.numOferta'),
 		            flex: 1
 		        },
+		        {	  
+		        	xtype: 'actioncolumn',
+		            dataIndex: 'numActivoAgrupacion',
+		            text: HreRem.i18n('header.numero.activo.agrupacion'),
+		            flex: 1,
+		            items: [{
+			            tooltip: HreRem.i18n('tooltip.ver.expediente'),
+			            getClass: function(v, metadata, record ) {
+			            	if (Ext.isEmpty(record.get("idAgrupacion"))) {
+			            		return 'app-list-ico ico-ver-activov2';
+			            	}
+			            	else{
+			            		return 'app-list-ico ico-ver-agrupacion'
+			            	}
+			            },
+			            handler: 'onClickAbrirActivoAgrupacion'
+			        }],
+			        renderer: function(value, metadata, record) {
+			        	return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';
+			        },
+		            flex     : 1,            
+		            align: 'right',
+		            hideable: false,
+		            sortable: true
+		        },
 		        {
 		            dataIndex: 'fechaCreacion',
 		            text: HreRem.i18n('header.oferta.fechaAlta'),
@@ -36,11 +61,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            text: HreRem.i18n('header.oferta.tipoOferta'),
 		            flex: 1
 		        },
-		        /*{
-		            dataIndex: 'numAgrupacionRem',
-		            text: HreRem.i18n('header.oferta.numAgrupacion'),
-		            flex: 1
-		        },*/
 		        {
 		            dataIndex: 'ofertante',
 		            text: HreRem.i18n('header.oferta.ofertante'),

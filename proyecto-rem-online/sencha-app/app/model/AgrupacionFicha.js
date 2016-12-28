@@ -69,6 +69,13 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	        		},
 	        		depends: 'tipoAgrupacionCodigo'
 	            },
+	            {
+	            	name: 'isComercial',
+	            	calculate: function(data) {
+	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'];
+	            	},
+	            	depends: 'tipoAgrupacionCodigo'
+	            },
 		    	{
 		    		name : 'acreedorPDV'
 		    	},

@@ -16,6 +16,7 @@ import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import net.sf.json.JSONObject;
 
@@ -71,7 +72,7 @@ public interface RestApi {
 	 * @param signature
 	 * @return
 	 */
-	public boolean validateWebhookSignature(ServletRequest req,String signature);
+	public boolean validateWebhookSignature(ServletRequest req, String signature) throws RestConfigurationException;
 
 	/**
 	 * Valida el id

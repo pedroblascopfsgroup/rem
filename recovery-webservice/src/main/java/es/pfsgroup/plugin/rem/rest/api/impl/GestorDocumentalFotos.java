@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.restclient.exception.FileErrorException;
 import es.pfsgroup.plugin.rem.restclient.exception.InvalidJsonException;
 import es.pfsgroup.plugin.rem.restclient.exception.MissingRequiredFieldsException;
 import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
@@ -65,7 +66,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	public boolean isActive() {
 		boolean resultado = false;
 		String urlBase = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, "http://gdtest.gestycontrolhaya.es/rest");
+				WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, null);
 		if (urlBase != null && !urlBase.isEmpty()) {
 			resultado = true;
 		}
@@ -109,11 +110,17 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 
 	private AuthtokenResponse getAuthtoken() throws IOException, RestClientException, HttpClientException {
 		AuthtokenRequest request = new AuthtokenRequest();
-		request.setApp_id(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.APP_ID_GESTOR_DOCUMENTAL, "3"));
-		request.setApp_secret(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL,
-				"z[99I(sZluG){yfCdd]xO_eb-(A9Wxof{C{sZ_Tr2h/MLT$D=VH9T)bRCl1IY7ANd&W{qPeIPf[y(NuqbgtvpS4r3PI[}z)?J-[36fw=&M]60"));
+		String appId = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.APP_ID_GESTOR_DOCUMENTAL, null);
+		String secret = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL, null);
+
+		if(appId==null || appId.isEmpty() || secret==null || secret.isEmpty()){
+			throw new RestConfigurationException("configure al app_id y el app_secret");
+		}
+		
+		request.setApp_id(appId);
+		request.setApp_secret(secret);
 		String jsonResponse = null;
 		AuthtokenResponse response = null;
 		if (servletContext.getAttribute(ID_AUTH_TOKEN) != null) {

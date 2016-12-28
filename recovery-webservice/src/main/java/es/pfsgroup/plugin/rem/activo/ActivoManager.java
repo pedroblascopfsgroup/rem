@@ -804,7 +804,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			orden = activoDao.getMaxOrdenFotoById(activo.getId());
 		}
 
-		ActivoFoto activoFoto = activoAdapter.getFotoActivoById(fileItem.getId());
+		ActivoFoto activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 		if (activoFoto == null) {
 			activoFoto = new ActivoFoto(fileItem);
 		}

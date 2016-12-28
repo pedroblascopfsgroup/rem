@@ -11,6 +11,8 @@ import java.util.Properties;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,15 +59,23 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	@Resource
 	private Properties appProperties;
 
+	private final Log logger = LogFactory.getLog(getClass());
+
 	@Override
 	public boolean isActive() {
-		return true;
+		boolean resultado = false;
+		String urlBase = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, "http://gdtest.gestycontrolhaya.es/rest");
+		if (urlBase != null && !urlBase.isEmpty()) {
+			resultado = true;
+		}
+		return resultado;
 	}
 
 	private String send(String endpoint, String jsonString)
 			throws RestClientException, HttpClientException, IOException {
 		AuthtokenResponse authToken = this.getAuthtoken();
-		System.out.println("enviando: " + jsonString);
+		logger.debug("enviando: " + jsonString);
 		JSONObject resultado = cliente.send(authToken.getData().getAuthtoken(), endpoint, jsonString);
 		if (resultado.containsKey("error") && resultado.getString("error") != null) {
 			if (resultado.getString("error").equals(ResponseGestorDocumentalFotos.ACCESS_DENIED)) {
@@ -79,7 +89,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 				throwException(resultado.getString("error"));
 			}
 		}
-		System.out.println("reci: " + resultado.toString());
+		logger.debug("reci: " + resultado.toString());
 		return resultado.toString();
 	}
 
@@ -287,18 +297,24 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	@Override
 	public FileListResponse get(PROPIEDAD propiedad, Long idRegistro)
 			throws IOException, RestClientException, HttpClientException {
+		return this.get(propiedad, String.valueOf(idRegistro));
+	}
+
+	@Override
+	public FileListResponse get(PROPIEDAD propiedad, String idRegistro)
+			throws IOException, RestClientException, HttpClientException {
 		FileSearch fileSearch = new FileSearch();
 		HashMap<String, String> metadata = new HashMap<String, String>();
 
 		if (propiedad.equals(PROPIEDAD.ACTIVO)) {
 			metadata.put("propiedad", "activo");
-			metadata.put("id_activo_haya", String.valueOf(idRegistro));
+			metadata.put("id_activo_haya", idRegistro);
 		} else if (propiedad.equals(PROPIEDAD.AGRUPACION)) {
 			metadata.put("propiedad", "agrupacion");
-			metadata.put("id_agrupacion_haya", String.valueOf(idRegistro));
+			metadata.put("id_agrupacion_haya", idRegistro);
 		} else if (propiedad.equals(PROPIEDAD.SUBDIVISION)) {
 			metadata.put("propiedad", "subdivision");
-			metadata.put("id_subdivision_haya", String.valueOf(idRegistro));
+			metadata.put("id_subdivision_haya", idRegistro);
 		}
 
 		fileSearch.setMetadata(metadata);

@@ -136,8 +136,7 @@ public interface GestorDocumentalFotosApi {
 	 * @param fileId
 	 * @return
 	 */
-	public OperationResultResponse delete(Long fileId)
-			throws IOException, RestClientException, HttpClientException;
+	public OperationResultResponse delete(Long fileId) throws IOException, RestClientException, HttpClientException;
 
 	/**
 	 * Busca los ficheros que cumplan los criterios de busqueda
@@ -159,6 +158,19 @@ public interface GestorDocumentalFotosApi {
 	 * @throws Exception
 	 */
 	public FileListResponse get(PROPIEDAD propiedad, Long idRegistro)
+			throws IOException, RestClientException, HttpClientException;
+
+	/**
+	 * Busca los ficheros que cumplan los criterios de busqueda
+	 * 
+	 * @param propiedad
+	 * @param idRegistro
+	 * @return
+	 * @throws IOException
+	 * @throws RestClientException
+	 * @throws HttpClientException
+	 */
+	public FileListResponse get(PROPIEDAD propiedad, String idRegistro)
 			throws IOException, RestClientException, HttpClientException;
 
 	/**

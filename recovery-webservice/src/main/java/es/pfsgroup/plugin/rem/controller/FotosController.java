@@ -125,7 +125,7 @@ public class FotosController {
 				"############################################### GESTOR DOCUMENTAL TEST ##############################################");
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			FileListResponse resultado = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, new Long(62926));
+			FileListResponse resultado = gestorDocumentalFotos.get(PROPIEDAD.SUBDIVISION, "2692591153");
 			// FileListResponse resultado = gestorDocumentalFotos.get(new
 			// Long(24));
 			/*

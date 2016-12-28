@@ -128,24 +128,10 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					},
 					columns: [
 						{	  
-				        	xtype: 'actioncolumn',
+				            text: HreRem.i18n('title.activo.administracion.numGasto'),				            
 				            dataIndex: 'numGasto',
-				            text: HreRem.i18n('title.activo.administracion.numGasto'),
-				            flex: 1,
-				            items: [{
-					            tooltip: HreRem.i18n('tooltip.ver.gasto'),
-					            getClass: function(v, metadata, record ) {
-					            		return 'ico-pestana-gasto'
-					            },
-					            handler: 'onClickAbrirGastoProveedorIcono'
-					        }],
-					        renderer: function(value, metadata, record) {
-					        	return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';
-					        },
-				            flex     : 1,            
-				            align: 'right',
-				            hideable: false,
-				            sortable: true
+				            flex: 1,				            
+				            hideable: false
 					   },
 				       {    text: HreRem.i18n('title.activo.administracion.tipo'),
 				        	dataIndex: 'tipoGastoDescripcion',
@@ -172,8 +158,9 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        	dataIndex: 'participacion',
 				        	flex: 1
 				       },
-				       {    text: HreRem.i18n('title.activo.administracion.importe'),
+				       {    text: HreRem.i18n('title.activo.administracion.importe.total'),
 				        	dataIndex: 'importeTotalGasto',
+				        	renderer: Utils.rendererCurrency,
 				        	flex: 1
 				       },
 				       {    text: HreRem.i18n('title.activo.administracion.estado'),

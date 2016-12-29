@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,16 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReintegroApi;
-import es.pfsgroup.plugin.rem.model.EntregaReserva;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReintegroDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReintegroRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -74,28 +67,7 @@ public class ReintegroController {
 			}
 				
 			errorsList = reintegroApi.validateReintegroPostRequestData(reintegroDto, jsonFields);			
-			if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {
-				
-				// Obtenemos la oferta
-				Oferta ofertaHRE = ofertaApi.getOfertaByNumOfertaRem(jsonData.getData().getOfertaHRE());				
-				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(ofertaHRE.getId());
-				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(ofertaHRE, expedienteComercial);
-				
-				Double importeReserva = Double.valueOf(ofertaUVEM.getImporteReserva());
-				EntregaReserva entregaReserva = new EntregaReserva();
-				entregaReserva.setImporte(-importeReserva);
-				Date fechaEntrega = new Date();
-				entregaReserva.setFechaEntrega(fechaEntrega);
-				entregaReserva.setReserva(expedienteComercial.getReserva());
-
-				if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
-					throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
-				}
-				DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_BLOQUEADA));
-				expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
-				expedienteComercialApi.update(expedienteComercial);	
-
+			if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {				
 				model.put("id", jsonFields.get("id"));
 				model.put("ofertaHRE", jsonData.getData().getOfertaHRE());
 				model.put("error", "");

@@ -135,7 +135,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacion', {
 		
 		if(!Ext.isEmpty(selectedRecords)) {
 			listadoSubdivisionesAgrupacion.getSelectionModel().select(selectedRecords[0]);
-			me.lookupController().onSubdivisionesAgrupacionListDobleClick(listadoSubdivisionesAgrupacion,selectedRecords[0]);
+			me.lookupController().onSubdivisionesAgrupacionListClick(listadoSubdivisionesAgrupacion,selectedRecords[0]);
 		}
     }
     

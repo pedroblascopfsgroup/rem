@@ -71,8 +71,8 @@ BEGIN
             SELECT
             S_ACT_EJE_EJERCICIO.NEXTVAL									EJE_ID
             ,'||V_OBJ||'												EJE_ANYO
-            ,''01/01/'||V_OBJ||'''										EJE_FECHAINI
-            ,''31/12/'||V_OBJ||'''										EJE_FECHAFIN
+            ,to_date(''01/01/'||V_OBJ||''',''dd/MM/yyyy'')				EJE_FECHAINI
+            ,to_date(''31/12/'||V_OBJ||''',''dd/MM/yyyy'')				EJE_FECHAFIN
             ,''Ejercicio correspondiente al año '||V_OBJ||'''			EJE_DESCRIPCION
             ,0															VERSION
             ,''MIG2''													USUARIOCREAR

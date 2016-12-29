@@ -163,6 +163,12 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="TIENE_DOC_ADJUNTOS")
 	private Boolean tieneDocAdjuntos;
 	
+	@Column(name="PRO_NOMBRE")
+	private String nombrePropietario;
+	
+	@Column(name="PRO_DOCIDENTIF")
+	private String docIdentifPropietario;
+	
 
 	public String getId() {
 		return id;

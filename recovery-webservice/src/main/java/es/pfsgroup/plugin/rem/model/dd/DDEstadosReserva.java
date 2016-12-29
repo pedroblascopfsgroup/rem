@@ -35,6 +35,10 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 	public static final String CODIGO_FIRMADA = "02";
 	public static final String CODIGO_RESUELTA = "03";
 	public static final String CODIGO_ANULADA = "04";
+	public static final String CODIGO_PENDIENTE_DEVOLUCION = "05";
+	public static final String CODIGO_RESUELTA_DEVUELTA = "06";
+	public static final String CODIGO_RESUELTA_POSIBLE_REINTEGRO = "07";
+	public static final String CODIGO_RESUELTA_REINTEGRADA = "08";
 	/**
 	 * 
 	 */

@@ -345,7 +345,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
     	
 	    	for(CompradorExpediente compradorExp: this.compradores) {
 	    		
-	    		if(BooleanUtils.toBoolean(compradorExp.getTitularContratacion())) {
+	    		if(!Checks.esNulo(compradorExp.getTitularContratacion()) && BooleanUtils.toBoolean(compradorExp.getTitularContratacion())) {
 	    			comprador = compradorExp.getPrimaryKey().getComprador();
 	    		}	    		
 	    	}

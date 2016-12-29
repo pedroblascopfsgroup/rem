@@ -95,11 +95,13 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						    },
 							items :
 								[
-									{
-										xtype: 'textfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.gasto.gestion.observaciones'),
-										bind:		'{gestion.observaciones}'
-									}
+									{ 
+					                	xtype: 'textareafieldbase',
+					                	labelAlign: 'top',
+					                	height: 110,
+					                	fieldLabel: HreRem.i18n('fieldlabel.gasto.gestion.observaciones'),
+					                	bind:		'{gestion.observaciones}'
+					                }
 								]
 						}
 					]

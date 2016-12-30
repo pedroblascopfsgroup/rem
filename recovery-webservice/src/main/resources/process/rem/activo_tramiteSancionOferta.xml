@@ -34,8 +34,8 @@
 <!-- 		<transition to="T013_PosicionamientoYFirma" name="ConFormalizacionDeTanteo"></transition> -->
 		<transition to="T013_ResolucionComite" name="ConFormalizacionSinTanteoSinAtribucion"></transition>
 		<transition to="forkReserva" name="ConFormalizacionSinTanteoConAtribucionConReserva"></transition>
-		<transition to="forkSinReservaSinTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaConTanteo"></transition>
-		<transition to="forkSinReservaConTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo"></transition>
+		<transition to="forkSinReservaConTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaConTanteo"></transition>
+		<transition to="forkSinReservaSinTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo"></transition>
 	</decision>
 	
 
@@ -58,7 +58,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T013_CierreEconomico" name="avanzaBPM"></transition>
+		<transition to="T013_FirmaPropietarioDecision" name="avanzaBPM"></transition>
 	</state>
 	
 	<decision name ="T013_FirmaPropietarioDecision" expression="#{T013_FirmaPropietarioDecision}">

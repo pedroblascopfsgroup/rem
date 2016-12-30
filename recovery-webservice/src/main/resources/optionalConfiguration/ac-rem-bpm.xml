@@ -416,6 +416,10 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkPosicionamiento(tareaExterna);
 			}
+			def	checkEjerce = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkEjerce(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

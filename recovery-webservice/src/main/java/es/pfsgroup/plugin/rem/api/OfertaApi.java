@@ -204,7 +204,7 @@ public interface OfertaApi {
 	 * @return true si tiene reserva, false si no la tiene.
 	 */
 	public boolean checkReserva(TareaExterna tareaExterna);
-
+	
 	/**
 	 * Método que comprueba si el activo tiene derecho de tanteo por la Generalitat
 	 * @param trabajo
@@ -305,6 +305,7 @@ public interface OfertaApi {
 	public boolean checkPosicionamiento(TareaExterna tareaExterna);
 
 	/**
+<<<<<<< HEAD
 	 * Este método obtiene los detalles de una oferta por ID de oferta requeridos
 	 * en la pestaña ofertas de un activo.
 	 * 
@@ -329,4 +330,11 @@ public interface OfertaApi {
 	 * @return Devuelve una lista de DtoHonorariosOferta por cada honorario encontrado.
 	 */
 	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta);
+
+	/**
+	 * Método que comprueba si se ejerce el tanteo
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkEjerce(TareaExterna tareaExterna);
 }

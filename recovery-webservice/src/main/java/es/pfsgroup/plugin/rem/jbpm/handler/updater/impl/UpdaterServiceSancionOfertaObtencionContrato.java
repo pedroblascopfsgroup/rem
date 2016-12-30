@@ -1,16 +1,19 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -18,6 +21,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
@@ -31,11 +35,12 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
     
     @Autowired
     private TrabajoApi trabajoApi;
-    
+        
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
     private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
+    private static final String FECHA_FIRMA = "fechaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -52,7 +57,25 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
+
 			genericDao.save(ExpedienteComercial.class, expediente);
+		
+			for(TareaExternaValor valor :  valores){
+				
+				if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
+				{
+					Reserva reserva = expediente.getReserva();
+					if(!Checks.esNulo(reserva)){
+						try {
+							reserva.setFechaFirma(ft.parse(valor.getValor()));
+							genericDao.save(Reserva.class, reserva);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				genericDao.save(ExpedienteComercial.class, expediente);
+			}
 		}
 
 	}

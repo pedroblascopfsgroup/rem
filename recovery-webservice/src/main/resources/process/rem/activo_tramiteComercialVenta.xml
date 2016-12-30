@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteSancionOferta">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteComercialVenta">
 
 	<start-state name="inicio">
 		<transition to="T013_DefinicionOferta"></transition>
@@ -34,8 +34,8 @@
 <!-- 		<transition to="T013_PosicionamientoYFirma" name="ConFormalizacionDeTanteo"></transition> -->
 		<transition to="T013_ResolucionComite" name="ConFormalizacionSinTanteoSinAtribucion"></transition>
 		<transition to="forkReserva" name="ConFormalizacionSinTanteoConAtribucionConReserva"></transition>
-		<transition to="forkSinReservaConTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaConTanteo"></transition>
-		<transition to="forkSinReservaSinTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo"></transition>
+		<transition to="forkSinReservaSinTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaConTanteo"></transition>
+		<transition to="forkSinReservaConTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo"></transition>
 	</decision>
 	
 
@@ -58,7 +58,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T013_FirmaPropietarioDecision" name="avanzaBPM"></transition>
+		<transition to="T013_CierreEconomico" name="avanzaBPM"></transition>
 	</state>
 	
 	<decision name ="T013_FirmaPropietarioDecision" expression="#{T013_FirmaPropietarioDecision}">
@@ -186,7 +186,7 @@
 		<transition to="T013_InstruccionesReservaDecision" name="avanzaBPM"></transition>
 	</state>
 	
-	<decision name="T013_InstruccionesReservaDecision" expression="#{T013_InstruccionesReservaDecision}">
+	<decision name="T013_InstrucionesReservaDecision" expression="#{T013_InstruccionesReservaDecision}">
 		<transition to="forkConTanteo" name="Si"></transition>
 		<transition to="forkSinTanteo" name="No"></transition>
 	</decision>
@@ -252,6 +252,42 @@
 		<transition to="Fin" name="NoAprobadoSinReserva"></transition>
 	</decision>
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<state name="T013_ObtencionContratoReserva">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T013_ObtencionContratoReservaDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name ="T013_ObtencionContratoReservaDecision" expression="#{T013_ObtencionContratoReservaDecision}">
+		<transition to="T013_ResolucionTanteo" name="ConTanteo"></transition>
+		<transition to="T013_ResultadoPBC" name="SinTanteo"></transition>
+	</decision>
+	
 	<state name="T013_ResolucionTanteo">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -275,32 +311,14 @@
 	</state>
 	
 	<decision name ="T013_ResolucionTanteoDecision" expression="#{T013_ResolucionTanteoDecision}">
-		<transition to="T013_ResolucionExpediente" name="EjerceConReserva"></transition>
-		<transition to="Fin" name="EjerceSinReserva"></transition>
-		<transition to="Fin" name="NoEjerce"></transition>
+		<transition to="Fin" name="Ejerce"></transition>
+		<transition to="T013_ResultadoPBC" name="NoEjerce"></transition>
 	</decision>
 	
-		<state name="T013_ObtencionContratoReserva">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="Fin" name="avanzaBPM"></transition>
-	</state>
+	<decision name ="T013_ResultadoPBCDecision" expression="#{T013_ResultadoPBCDecision}">
+		<transition to="Fin" name="NoAprobado"></transition>
+		<transition to="T013_PosicionamientoYFirma" name="Aprobado"></transition>
+	</decision>
 	
 	<state name="T013_PosicionamientoYFirma">
 		<event type="node-enter">
@@ -326,30 +344,8 @@
 	
 	<decision name ="T013_PosicionamientoYFirmaDecision" expression="#{T013_PosicionamientoYFirmaDecision}">
 		<transition to="T013_DevolucionLlaves" name="SinFirma"></transition>
-		<transition to="forkPostFirma" name="ConFirma"></transition>
+		<transition to="fork1" name="ConFirma"></transition>
 	</decision>
-	
-	<state name="T013_ResolucionExpediente">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="Fin" name="avanzaBPM"></transition>
-	</state>
 	
 	<state name="T013_DevolucionLlaves">
 		<event type="node-enter">
@@ -373,12 +369,7 @@
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 	
-	<decision name ="T013_DevolucionLlavesDecision" expression="#{T013_DevolucionLlavesDecision}">
-		<transition to="T013_ResolucionExpediente" name="ConReserva"></transition>
-		<transition to="Fin" name="SinReserva"></transition>
-	</decision>
-	
-	<fork name="forkPostFirma">
+	<fork name="fork1">
 		<transition to="T013_DocumentosPostVenta" name="documentos"></transition>
 		<transition to="T013_CierreEconomico" name="cierre"></transition>
 	</fork>

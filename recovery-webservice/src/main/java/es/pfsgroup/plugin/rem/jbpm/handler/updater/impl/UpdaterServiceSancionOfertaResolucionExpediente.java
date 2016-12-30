@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +21,13 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 
 @Component
-public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
+public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;
@@ -40,9 +41,10 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
-    private static final String COMBO_RESULTADO = "comboResultado";
+    private static final String COMBO_PROCEDE = "comboProcede";
+    private static final String MOTIVO_ANULACION = "motivoAnulacion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
-    private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+    private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -54,17 +56,17 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 			
 			for(TareaExternaValor valor :  valores){
 				
-				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
+				if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 				{
-					//TODO: Rellenar campo PBC del expediente cuando esté creado.
-					if(DDSiNo.NO.equals(valor.getValor()))
-					{
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						expediente.setEstadoPbc(0);
+					Filter filtro;
+				
+					
+					if(DDSiNo.NO.equals(valor.getValor())){
+
+						//Anula el expediente
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+						
 						expediente.setFechaAnulacion(new Date());
-						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						//Finaliza el trámite
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
@@ -79,17 +81,43 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								ofertaApi.descongelarOferta(oferta);
 							}
 						}
+						Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
+						ofertaAceptada.setResultadoTanteo(genericDao.get(DDResultadoTanteo.class, filtroTanteo));
+						
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
+						
+						Reserva reserva = expediente.getReserva();
+						if(!Checks.esNulo(reserva)){
+							reserva.setIndicadorDevolucionReserva(0);
+						}
 					}else{
-						expediente.setEstadoPbc(1);
-						genericDao.save(ExpedienteComercial.class, expediente);
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "05"); //Cambiar por constante cuando se haga PULL.
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
+						
+						Reserva reserva = expediente.getReserva();
+						if(!Checks.esNulo(reserva)){
+							reserva.setIndicadorDevolucionReserva(1);
+						}
+					}
+
+				}
+				
+				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
+				{
+					Reserva reserva = expediente.getReserva();
+					if(!Checks.esNulo(reserva)){
+						reserva.setMotivoAnulacion(valor.getValor());
 					}
 				}
 			}
 		}
+
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_RESULTADO_PBC};
+		return new String[]{CODIGO_T013_RESOLUCION_EXPEDIENTE};
 	}
 
 	public String[] getKeys() {

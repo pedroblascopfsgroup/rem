@@ -41,6 +41,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
     private static final String COMBO_RESPUESTA = "comboRespuesta";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
    	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
+   	private static final String MOTIVO_ANULACION = "El comprador no acepta la contraoferta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -64,7 +65,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 					}
 					else{
 						//Resuelve el expediente
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESUELTO);
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 						
 						//Finaliza el trámite
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
@@ -79,6 +80,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								ofertaApi.descongelarOferta(oferta);
 							}
 						}
+						
+						expediente.setMotivoAnulacion(MOTIVO_ANULACION);
 
 
 					}

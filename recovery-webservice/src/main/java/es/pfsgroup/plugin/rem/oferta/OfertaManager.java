@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -1040,5 +1041,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return listaHonorarios;
+	}
+
+	@Override
+	public boolean checkEjerce(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		
+		//Que esté relleno el resultado del tanteo y la oferta no venga desde una aceptación de tanteo.
+		if(!Checks.esNulo(ofertaAceptada.getDesdeTanteo())){
+			 if(ofertaAceptada.getDesdeTanteo() || !checkDerechoTanteo(tareaExterna)){
+				return true;
+			 }else{
+				 if(!Checks.esNulo(ofertaAceptada.getResultadoTanteo()))
+					 return true;
+				 else
+					 return false;
+			 }
+		}else{
+			if(!checkDerechoTanteo(tareaExterna)){
+				return true;
+			}else{
+				if(!Checks.esNulo(ofertaAceptada.getResultadoTanteo()))
+					return true;
+				else
+					return false;
+			}
+		}
 	}
 }

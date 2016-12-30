@@ -336,6 +336,11 @@ white-space: normal !important;
   background: url(images/icono_OK.svg) center center no-repeat;
 }
 
+.ico-ver-visita {
+  background: url(images/ico_visita_activo.svg) center center no-repeat;
+  background-size: 30px;
+}
+
 //------------------ PANEL BASE----------------------------
 
 .panel-base {  
@@ -970,8 +975,13 @@ body.x-masked > .x-mask {
 .boton-cabecera .x-fa {
 	color: #fff !important;
 }
-.boton-cabecera, .ux-favorito {
+.boton-cabecera, .ux-favorito, .boton-ver {
 	background-color: $color-blue !important;
+}
+
+.boton-ver .x-btn-icon-el-default-small {
+	height: 30px !important;
+	width: 30px !important;	
 }
 
 .texto-info .x-panel-body-default {

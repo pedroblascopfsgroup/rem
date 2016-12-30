@@ -136,6 +136,10 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 													.equals(DDEstadosExpedienteComercial.APROBADO)) {
 										hashErrores.put("activo", "El expediente debe estar vendido.");
 
+									} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)
+											&& expedienteComercial.getFechaContabilizacionPropietario()!=null) {
+										hashErrores.put("activo", "El cobro ya se ha realizado");
+
 									}
 								}
 							}
@@ -147,8 +151,6 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 		return hashErrores;
 	}
 
-	
-	
 	@Transactional(readOnly = true)
 	public DDEstadosReserva getDDEstadosReservaByCodigo(String codigo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);

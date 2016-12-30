@@ -59,7 +59,7 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
-			//Deniega el expediente
+			//Expediente se marca a vendido
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);

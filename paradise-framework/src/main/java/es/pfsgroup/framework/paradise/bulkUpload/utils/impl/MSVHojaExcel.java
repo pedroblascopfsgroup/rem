@@ -75,12 +75,25 @@ public class MSVHojaExcel {
 	 * @throws IOException
 	 */
 	public Integer getNumeroFilas() throws IllegalArgumentException, IOException {
+
+		return this.getNumeroFilasByHoja(0);
+	}
+	
+	/**
+	 * devuelve el número de filas reales de la hoja excel indicada por parametro
+	 * Se considera que una fila es real si alguna de sus celda no está vacía.
+	 * @param numHoja
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	public Integer getNumeroFilasByHoja(int numHoja) throws IllegalArgumentException, IOException {
 		if (!isOpen) {
 			abrir();
 		}
 		
 		if (this.filasReales < 0){
-			Sheet hoja = libroExcel.getSheet(0);
+			Sheet hoja = libroExcel.getSheet(numHoja);
 			this.filasReales = 0;
 			for (int i= hoja.getRows() - 1; i>0; i--) {
 				Cell[] fila = hoja.getRow(i);
@@ -103,14 +116,19 @@ public class MSVHojaExcel {
 	 * @throws IOException
 	 */
 	public Integer getNumeroColumnas() throws IllegalArgumentException, IOException {
+		
+		return this.getNumeroColumnasByHojaAndFila(0, 0);
+	}
+	
+	public Integer getNumeroColumnasByHojaAndFila(int numHoja, int numFila) throws IllegalArgumentException, IOException {
 		if (!isOpen) {
 			abrir();
 		}
 		
 		if (this.columnasReales < 0){
 			this.columnasReales = 0;
-			Sheet hoja = libroExcel.getSheet(0);
-			Cell[] cabeceras = hoja.getRow(0);
+			Sheet hoja = libroExcel.getSheet(numHoja);
+			/*Cell[] cabeceras = hoja.getRow(numFila);
 			
 			//Masivo propuesta precios: Si no se detecta la cabecera en fila0, prueba con fila7
 			if(cabeceras.length == 0)
@@ -123,10 +141,11 @@ public class MSVHojaExcel {
 					this.columnasReales = i + 1;
 					break;
 				}
-			}
+			}*/
+			
+			this.columnasReales = hoja.getRow(numFila).length;
 		}		
 		return this.columnasReales;
-		
 	}
 
 	/**
@@ -193,6 +212,11 @@ public class MSVHojaExcel {
 	}
 	
 	public String crearExcelErroresMejorado(Map<String,List<Integer>> mapaErrores) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+		
+		return this.crearExcelErroresMejoradoByHojaAndFilaCabecera(mapaErrores, 0, 0);
+	}
+	
+	public String crearExcelErroresMejoradoByHojaAndFilaCabecera(Map<String,List<Integer>> mapaErrores, int numHoja, int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
 		if(!isOpen){
 			abrir();
 		}
@@ -201,8 +225,10 @@ public class MSVHojaExcel {
 		
 		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroErrores), libroExcel);
 		
-		WritableSheet hoja = copy.getSheet(0);
-		int numColumnas = this.getNumeroColumnas();
+		
+		
+		WritableSheet hoja = copy.getSheet(numHoja);
+		int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja,numFilaCabeceras);
 		int numErrores = mapaErrores.size();
 		
 		Iterator<String> it = mapaErrores.keySet().iterator();
@@ -224,11 +250,26 @@ public class MSVHojaExcel {
 
 	public String dameCelda(int fila, int columna) 
 			throws IllegalArgumentException, IOException {
+		
+		return dameCeldaByHoja(fila,columna,0);
+	}
+	
+	/**
+	 * Devuelve la celda de la hoja y poisiciones indicadas por parametro
+	 * @param fila
+	 * @param columna
+	 * @param numHoja
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	public String dameCeldaByHoja(int fila, int columna, int numHoja) 
+			throws IllegalArgumentException, IOException {
 		if (!isOpen) {
 			abrir();
 		}
 		String cellContent = null;
-		Sheet hoja = libroExcel.getSheet(0);
+		Sheet hoja = libroExcel.getSheet(numHoja);
 		Cell cell = hoja.getCell(columna, fila);
 
 		if (cell.getType() == CellType.DATE) 
@@ -267,6 +308,7 @@ public class MSVHojaExcel {
 		try{
 			WorkbookSettings workbookSettings = new WorkbookSettings();
 			workbookSettings.setEncoding( "Cp1252" );
+			workbookSettings.setSuppressWarnings(true);
 			libroExcel = Workbook.getWorkbook(file,workbookSettings);
 			isOpen = true;
 		} catch (BiffException e) {
@@ -408,6 +450,7 @@ public class MSVHojaExcel {
 				if (append) {
 					WorkbookSettings workbookSettings = new WorkbookSettings();
 					workbookSettings.setEncoding( "Cp1252" );
+					workbookSettings.setSuppressWarnings(true);
 					Workbook target_workbook = Workbook.getWorkbook(fileFinal,workbookSettings);
 					workbook = Workbook.createWorkbook(fileTMP, target_workbook);
 					

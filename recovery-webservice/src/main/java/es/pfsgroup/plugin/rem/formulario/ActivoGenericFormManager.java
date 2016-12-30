@@ -37,11 +37,14 @@ import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
@@ -252,6 +255,20 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             						item.setValue(expediente.getComiteSancion().getDescripcion());
             			}
             		}
+            		if(item.getNombre().equals("cartera")){
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(ofertaAceptada)){
+            				if(!Checks.estaVacio(ofertaAceptada.getActivosOferta())){
+            					ActivoOferta activoOferta = ofertaAceptada.getActivosOferta().get(0);
+								if(!Checks.esNulo(activoOferta)){
+	            					Activo activo = activoOferta.getPrimaryKey().getActivo();
+	            					item.setValue(activo.getCartera().getDescripcion());
+								}
+            				}
+            			}
+            			ofertaAceptada.getActivosOferta().get(0);
+            		}
+            		
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA))
             	{

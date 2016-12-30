@@ -157,7 +157,7 @@ public class MSVActualizarPropuestaPreciosActivo extends MSVExcelValidatorAbstra
 							!mapaErrores.get(ACTIVE_FSV_DATE_INIT_FORMAT).isEmpty() ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+						String nomFicheroErrores = exc.crearExcelErroresMejoradoByHojaAndFilaCabecera(mapaErrores,0,7);
 						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
 						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 					}

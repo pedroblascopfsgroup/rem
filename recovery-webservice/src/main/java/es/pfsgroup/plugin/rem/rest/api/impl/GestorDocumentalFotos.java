@@ -11,6 +11,8 @@ import java.util.Properties;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,6 +32,7 @@ import es.pfsgroup.plugin.rem.restclient.exception.FileErrorException;
 import es.pfsgroup.plugin.rem.restclient.exception.InvalidJsonException;
 import es.pfsgroup.plugin.rem.restclient.exception.MissingRequiredFieldsException;
 import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
@@ -57,15 +60,23 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	@Resource
 	private Properties appProperties;
 
+	private final Log logger = LogFactory.getLog(getClass());
+
 	@Override
 	public boolean isActive() {
-		return true;
+		boolean resultado = false;
+		String urlBase = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, null);
+		if (urlBase != null && !urlBase.isEmpty()) {
+			resultado = true;
+		}
+		return resultado;
 	}
 
 	private String send(String endpoint, String jsonString)
 			throws RestClientException, HttpClientException, IOException {
 		AuthtokenResponse authToken = this.getAuthtoken();
-		System.out.println("enviando: " + jsonString);
+		logger.debug("enviando: " + jsonString);
 		JSONObject resultado = cliente.send(authToken.getData().getAuthtoken(), endpoint, jsonString);
 		if (resultado.containsKey("error") && resultado.getString("error") != null) {
 			if (resultado.getString("error").equals(ResponseGestorDocumentalFotos.ACCESS_DENIED)) {
@@ -79,7 +90,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 				throwException(resultado.getString("error"));
 			}
 		}
-		System.out.println("reci: " + resultado.toString());
+		logger.debug("reci: " + resultado.toString());
 		return resultado.toString();
 	}
 
@@ -99,11 +110,17 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 
 	private AuthtokenResponse getAuthtoken() throws IOException, RestClientException, HttpClientException {
 		AuthtokenRequest request = new AuthtokenRequest();
-		request.setApp_id(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.APP_ID_GESTOR_DOCUMENTAL, "3"));
-		request.setApp_secret(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL,
-				"z[99I(sZluG){yfCdd]xO_eb-(A9Wxof{C{sZ_Tr2h/MLT$D=VH9T)bRCl1IY7ANd&W{qPeIPf[y(NuqbgtvpS4r3PI[}z)?J-[36fw=&M]60"));
+		String appId = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.APP_ID_GESTOR_DOCUMENTAL, null);
+		String secret = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL, null);
+
+		if(appId==null || appId.isEmpty() || secret==null || secret.isEmpty()){
+			throw new RestConfigurationException("configure al app_id y el app_secret");
+		}
+		
+		request.setApp_id(appId);
+		request.setApp_secret(secret);
 		String jsonResponse = null;
 		AuthtokenResponse response = null;
 		if (servletContext.getAttribute(ID_AUTH_TOKEN) != null) {
@@ -287,18 +304,24 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	@Override
 	public FileListResponse get(PROPIEDAD propiedad, Long idRegistro)
 			throws IOException, RestClientException, HttpClientException {
+		return this.get(propiedad, String.valueOf(idRegistro));
+	}
+
+	@Override
+	public FileListResponse get(PROPIEDAD propiedad, String idRegistro)
+			throws IOException, RestClientException, HttpClientException {
 		FileSearch fileSearch = new FileSearch();
 		HashMap<String, String> metadata = new HashMap<String, String>();
 
 		if (propiedad.equals(PROPIEDAD.ACTIVO)) {
 			metadata.put("propiedad", "activo");
-			metadata.put("id_activo_haya", String.valueOf(idRegistro));
+			metadata.put("id_activo_haya", idRegistro);
 		} else if (propiedad.equals(PROPIEDAD.AGRUPACION)) {
 			metadata.put("propiedad", "agrupacion");
-			metadata.put("id_agrupacion_haya", String.valueOf(idRegistro));
+			metadata.put("id_agrupacion_haya", idRegistro);
 		} else if (propiedad.equals(PROPIEDAD.SUBDIVISION)) {
 			metadata.put("propiedad", "subdivision");
-			metadata.put("id_subdivision_haya", String.valueOf(idRegistro));
+			metadata.put("id_subdivision_haya", idRegistro);
 		}
 
 		fileSearch.setMetadata(metadata);

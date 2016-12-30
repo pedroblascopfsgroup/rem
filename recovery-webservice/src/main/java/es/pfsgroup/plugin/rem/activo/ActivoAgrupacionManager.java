@@ -187,7 +187,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
-		ActivoFoto activoFoto = activoAdapter.getFotoActivoById(fileItem.getId());
+		ActivoFoto activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 		if (activoFoto == null) {
 			activoFoto = new ActivoFoto(fileItem);
 		}
@@ -288,7 +288,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
 		orden++;
 		try {
-			activoFoto = activoAdapter.getFotoActivoById(fileItem.getId());
+			activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 			if (activoFoto == null) {
 				activoFoto = new ActivoFoto(fileItem);
 			}

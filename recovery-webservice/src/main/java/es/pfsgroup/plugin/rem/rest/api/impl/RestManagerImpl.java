@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
@@ -548,24 +549,29 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public boolean validateWebhookSignature(ServletRequest req, String signature) {
+	public boolean validateWebhookSignature(ServletRequest req, String signature) throws RestConfigurationException {
 		boolean resultado = true;
 		String nombreSevicio = this.obtenerNombreServicio(req);
 		if (nombreSevicio.equals(NOMBRE_SERVICIO_WEBHOOK)) {
 			String appId = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-					WebcomRESTDevonProperties.APP_ID_GESTOR_DOCUMENTAL, "3");
+					WebcomRESTDevonProperties.APP_ID_GESTOR_DOCUMENTAL, null);
 			String secret = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-					WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL,
-					"z[99I(sZluG){yfCdd]xO_eb-(A9Wxof{C{sZ_Tr2h/MLT$D=VH9T)bRCl1IY7ANd&W{qPeIPf[y(NuqbgtvpS4r3PI[}z)?J-[36fw=&M]60");
+					WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL, null);
 
 			String urlBase = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-					WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, "http://gdtest.gestycontrolhaya.es/rest");
+					WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, null);
 
 			String ip = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-					WebcomRESTDevonProperties.SERVER_PUBLIC_ADDRESS, "UNKNOWN_ADDRESS");
+					WebcomRESTDevonProperties.SERVER_PUBLIC_ADDRESS, null);
+
+			if (appId == null || appId.isEmpty() || secret == null || secret.isEmpty() || urlBase == null
+					|| urlBase.isEmpty() || ip == null || ip.isEmpty()) {
+				throw new RestConfigurationException(
+						"configure al app_id, el app_secret, url base y la ip del servidor");
+			}
 			try {
 				String generatedSignature = WebcomSignatureUtils.computeSignatureWebhook(appId, secret, ip, urlBase);
-				if(!generatedSignature.equals(signature)){
+				if (!generatedSignature.equals(signature)) {
 					resultado = false;
 				}
 			} catch (NoSuchAlgorithmException e) {

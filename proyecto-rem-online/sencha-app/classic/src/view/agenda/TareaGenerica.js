@@ -967,6 +967,32 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						})
 					},
 					
+					T013_FirmaPropietarioValidacion: function() {
+						var me = this;
+						
+						me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+						me.deshabilitarCampo(me.down('[name=notario]'));
+						me.deshabilitarCampo(me.down('[name=numProtocolo]'));
+						me.deshabilitarCampo(me.down('[name=precioEscrituracion]'));
+						me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+						
+						me.down('[name=comboFirma]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.habilitarCampo(me.down('[name=fechaFirma]'));
+								me.habilitarCampo(me.down('[name=notario]'));
+								me.habilitarCampo(me.down('[name=numProtocolo]'));
+								me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+								me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+							}else{
+								me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+								me.deshabilitarCampo(me.down('[name=notario]'));
+								me.deshabilitarCampo(me.down('[name=numProtocolo]'));
+								me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+								me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+							}
+						})
+					},
+					
 					T013_ResolucionComiteValidacion: function() {
 						var me = this;
 						
@@ -995,16 +1021,36 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 				    	})
 				    },
 				    
+					T013_ResolucionTanteoValidacion: function() {
+						var me = this;
+						
+						me.deshabilitarCampo(me.down('[name=administracion]'));
+						me.deshabilitarCampo(me.down('[name=nif]'));
+						
+						me.down('[name=comboEjerce]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.habilitarCampo(me.down('[name=administracion]'));
+								me.habilitarCampo(me.down('[name=nif]'));
+							}else{
+								me.deshabilitarCampo(me.down('[name=administracion]'));
+								me.deshabilitarCampo(me.down('[name=nif]'));
+							}
+						})
+					},
+					
 				    T013_PosicionamientoYFirmaValidacion: function() {
 				    	var me = this;
 				    	
 				    	me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+				    	me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
 				    	
 				    	me.down('[name=comboFirma]').addListener('change', function(combo){
 				    		if(combo.value == '01'){
 				    			me.habilitarCampo(me.down('[name=fechaFirma]'));
+				    			me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
 				    		}else{
 				    			me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+				    			me.habilitarCampo(me.down('[name=motivoNoFirma]'));
 				    		}
 				    	})
 				    },

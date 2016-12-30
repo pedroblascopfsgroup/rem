@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
@@ -65,10 +66,59 @@ public class ReservaController {
 	private GenericABMDao genericDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
-
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/reserva")
 	public void reservaInmueble(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		ReservaRequestDto jsonData = null;
+		ReservaDto reservaDto = null;
+		JSONObject jsonFields = null;
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		HashMap<String, String> errorList = null;
+		try{
+			jsonFields = request.getJsonObject();
+			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
+			reservaDto = jsonData.getData();
+			errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields) ;
+			if (errorList != null && errorList.isEmpty()) {
+				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
+				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
+				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				
+				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);
+				if(!oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_OFICINA_BANKIA)|| oferta.getPrescriptor()==null){
+					ofertaUVEM.setCodPrescriptor("C000");
+				}
+				
+				ArrayList<TitularUVEMDto> listaTitularUVEM = expedienteComercialApi.obtenerListaTitularesUVEM(expedienteComercial);
+				
+				respuesta.put("oferta", ofertaUVEM);
+				respuesta.put("titulares", listaTitularUVEM);
+				
+				model.put("id", jsonFields.get("id"));
+				model.put("data", respuesta);
+				model.put("error", "");
+				
+			}else{
+				model.put("id", jsonFields.get("id"));
+				model.put("data", null);
+				model.put("error", errorList);
+			}
+		}catch(Exception e){
+			logger.error(e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", jsonFields.get("id"));
+			model.put("data", respuesta);
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+		}
+		
+		restApi.sendResponse(response, model,request);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "/reservaOld")
+	public void reservaInmuebleOld(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		Double importeReserva = null;
 		Double importeTotal = null;
 		ReservaRequestDto jsonData = null;

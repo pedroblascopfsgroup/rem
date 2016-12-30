@@ -80,15 +80,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 					    				reference: 'idvisitadetalleofertaref',
 					    				readOnly: true,
 					    				width: 410,
-					    				colspan: 2
+					    				colspan: 2,
+					    				publishes: 'value'
 					    			},
 									{
 					                	xtype: 'button',
+					                	width: 30,
+					                	height: 30,
+					                	cls: 'boton-ver',
+					                	iconCls: 'ico-ver-visita',
 					                	reference: 'botonMostrarVisita',
-					                	disabled: false,
-					                	text: 'Ver',
 					                	handler: 'onClickMostrarVisita',
-					                	margin: '0 0 6 -12'
+					                	margin: '0 0 6 -80',
+					                	bind: {disabled: '{!idvisitadetalleofertaref.value}'}
 					                }
 								]
 						},

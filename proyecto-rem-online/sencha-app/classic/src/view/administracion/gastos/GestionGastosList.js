@@ -82,6 +82,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.importe.gasto'),
 	    	                    	 flex: 0.4,
+	    	                    	 renderer: Utils.rendererCurrency,
 	    	                    	 dataIndex: 'importeTotal'
 	    	                     },
 	    	                     {

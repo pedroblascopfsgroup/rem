@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -52,6 +53,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     
     private static final String COMBO_FIRMA = "comboFirma";
     private static final String FECHA_FIRMA = "fechaFirma";
+    private static final String MOTIVO_NO_FIRMA = "motivoNoFirma";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_POSICIONAMIENTOYFIRMA = "T013_PosicionamientoYFirma";
 
@@ -96,12 +98,15 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							}
 						}
 						
-						
-					}
-					else{
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
+					}/*
+					else{ Se pasa a la tarea de Devolución de llaves/Resolucion expediente la labora de anular.
+							
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						expediente.setFechaAnulacion(new Date());
 						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						//Finaliza el trámite
@@ -117,10 +122,11 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 								ofertaApi.descongelarOferta(oferta);
 							}
 						}
+						
 					}
+					*/
 
-					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-					expediente.setEstado(estado);
+
 					
 				}
 				//La fecha de firma la guardamos como la fecha de toma de posesión
@@ -139,6 +145,19 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							e.printStackTrace();
 						}
 						activo.setSituacionPosesoria(situacionPosesoria);
+					}
+					try {
+						expediente.setFechaVenta(ft.parse(valor.getValor()));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				if(MOTIVO_NO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					Reserva reserva = expediente.getReserva();
+					if(!Checks.esNulo(reserva)){
+						reserva.setMotivoAnulacion(valor.getValor());
 					}
 				}
 			}

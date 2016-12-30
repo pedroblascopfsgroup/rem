@@ -111,7 +111,7 @@ DECLARE
     V_TFI_DEL T_ARRAY_TFI_DEL := T_ARRAY_TFI_DEL(
     --		   TAP_CODIGO								TFI_ORDEN	TFI_TIPO		TFI_NOMBRE				TFI_LABEL															TFI_ERROR_VALIDACION							TFI_VALIDACION									TFI_BUSINESS_OPERATION
     	T_TFI_DEL('T013_DefinicionOferta'					,'3'		,'text'		,'numExpediente'		,'Nº Expediente origen'													,''												,''												,''					),
-	    T_TFI_DEL('T013_InformeJuridico'					,'3'		,'combo'	,'tipoIncidencia'		,'Tipo de incidencia'													,''												,''												,'DDTipoIncidencia'	),
+	    T_TFI_DEL('T013_InformeJuridico'					,'3'		,'combo'	,'tipoIncidencia'		,'Tipo de incidencia'													,''												,''												,'DDTipoIncidencia'	)
     	);
     V_TMP_T_TFI_DEL T_TFI_DEL;
     

@@ -117,26 +117,12 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 
 									} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)
 											&& expedienteComercial.getReserva().getEstadoReserva().getCodigo()
-													.equals("06")) {// toDo:modificar
-																	// por
-																	// DDEstadosReserva...Resuelta.
-																	// Importe
-																	// devuelto
+													.equals(DDEstadosReserva.CODIGO_RESUELTA)) {
 										hashErrores.put("activo", "Ya se ha realizado la devolución de la reserva.");
 
 									} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)
 											&& !expedienteComercial.getReserva().getEstadoReserva().getCodigo()
-													.equals("05")) {// toDo:modificar
-																	// por
-																	// DDEstadosReserva...{//Dani
-																	// pone en
-																	// el último
-																	// estado
-																	// del bpm
-																	// el
-																	// estadoReserva
-																	// "Pendiente
-																	// devolución"
+													.equals(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION)) {
 										hashErrores.put("activo",
 												"La reserva debe estar en el estado Pendiente de devolucion.");
 
@@ -147,9 +133,8 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 
 									} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)
 											&& !expedienteComercial.getEstado().getCodigo()
-													.equals(DDEstadosExpedienteComercial.VENDIDO)) {
-										// hashErrores.put("activo", "El
-										// expediente debe estar vendido.");
+													.equals(DDEstadosExpedienteComercial.APROBADO)) {
+										hashErrores.put("activo", "El expediente debe estar vendido.");
 
 									}
 								}

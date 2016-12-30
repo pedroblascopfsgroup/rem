@@ -433,9 +433,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 							defaultType: 'textfieldbase',						
 							title: HreRem.i18n('title.activos.integrados'),
 							collapsible: true,
-							bind: {
+							/*bind: {
 								disabled: '{!proveedor.isEntidadOrAdministracionOrMediador}'
-							},
+							},*/
 							colspan: 3,
 							items :
 								[

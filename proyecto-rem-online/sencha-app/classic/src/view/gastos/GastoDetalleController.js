@@ -306,22 +306,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			    	if(!Utils.isEmptyJSON(data.data)){
 						var id= data.data.id;
 		    		    var nombrePropietario= data.data.nombre;
-		    		    /*if(!Ext.isEmpty(propietarioGastoField)) {
-		    		    	propietarioGastoField.setValue(nifPropietario);
-		    		    }*/
+
 		    		    if(!Ext.isEmpty(buscadorNifPropietario)) {
 		    		    	buscadorNifPropietario.setValue(nifPropietario);
 		    		    }
 		    		    if(!Ext.isEmpty(nombrePropietarioGasto)) {
 		    		    	nombrePropietarioGasto.setValue(nombrePropietario);
-		    		    }
-		    		    
-			    	}
-			    	else{
+
+			    		}
+			    	} else {
 			    		if(!Ext.isEmpty(nombrePropietarioGasto)) {
 		    		    	nombrePropietarioGasto.setValue('');
 		    		    }
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.propietario"));
+		    		    buscadorNifPropietario.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.propietario"));	
+		    		    
 			    	}
 		    		    	 
 		    	},
@@ -334,22 +333,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		  });
 		
 	},
-	
-	onHaCambiadoComboDestinatario: function(combo, value){
-		var me= this;
-		/*if(CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] == value){
-			me.getView().down('[name=nifPropietario]').setVisible(false);
-			me.getView().down('[name=nombrePropietario]').setVisible(false);
-			me.getView().down('[name=buscadorNifPropietarioField]').setVisible(false);
-			me.getView().down('[name=nifPropietario]').allowBlank= false;
-		}
-		else{
-			me.getView().down('[name=nifPropietario]').setDisabled(true);
-			me.getView().down('[name=nombrePropietario]').setDisabled(true);
-		}*/
 		
-	},
-	
 	onCambiaImportePrincipalSujeto: function(field, e){
 		var me= this;
 		if(!Ext.isEmpty(field.getValue())){

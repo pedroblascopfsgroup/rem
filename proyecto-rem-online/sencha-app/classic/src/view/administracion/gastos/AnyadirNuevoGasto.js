@@ -196,7 +196,60 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				    				            		store: '{comboDestinatarios}',
 				    				            		value: '{gastoNuevo.destinatarioGastoCodigo}'
 				    				            	},
+				    				            	listeners: {
+				    				            		change: function(combo, newValue) {
+				    				            			var disabled = CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] != newValue;
+			    				            				combo.up('form').down('[name=buscadorNifPropietarioField]').setDisabled(disabled);
+			    				            				combo.up('form').down('[name=nombrePropietario]').setDisabled(disabled);
+			    				            				if(disabled) {
+			    				            					combo.up('form').down('[name=buscadorNifPropietarioField]').reset();
+			    				            					combo.up('form').down('[name=nombrePropietario]').reset();
+			    				            				}
+				    				            			
+				    				            		}
+				    				            	},
 				    				            	allowBlank: false
+												},
+												{
+													xtype: 'textfieldbase',
+													fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),
+													name: 'buscadorNifPropietarioField',
+													disabled: true,
+													bind: {
+														value: '{gastoNuevo.nifPropietario}'
+													},
+													allowBlank: false,
+													triggers: {
+														
+															buscarEmisor: {
+													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+													             handler: 'buscarPropietario'
+													        }
+													},
+													cls: 'searchfield-input sf-con-borde',
+													emptyText:  HreRem.i18n('txt.buscar.propietario'),
+													enableKeyEvents: true,
+											        listeners: {
+											        	specialKey: function(field, e) {
+											        		if (e.getKey() === e.ENTER) {
+											        			field.lookupController().buscarPropietario(field);											        			
+											        		}
+											        	},
+											        	
+											        	blur: function(field, e) {
+											        		field.lookupController().buscarPropietario(field);
+											        	}
+											        	
+											        	
+											        }
+							                	},
+							                	{
+													xtype: 'textfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.propietario'),
+													name: 'nombrePropietario',
+													disabled: true,
+													readOnly: true,
+													allowBlank: false
 												}
 							            	  
 							            ]

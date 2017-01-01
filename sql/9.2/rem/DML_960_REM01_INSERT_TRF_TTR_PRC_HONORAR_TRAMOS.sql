@@ -35,10 +35,10 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	--			TTR_IMPORTE_TRAMO	 	TPT_PRC_COLAB		 TPT_PRC_PRESC
-        T_TIPO_DATA(	 600000,					'0,75',				'2,25'),
-        T_TIPO_DATA(	1000000,					'0,50',				'1,75'),
-        T_TIPO_DATA(	1500000,					'0,50',				'1,50'),
-        T_TIPO_DATA(	999999999999,				'0,50',				'1,00')
+        T_TIPO_DATA(	 600000,					'0.75',				'2.25'),
+        T_TIPO_DATA(	1000000,					'0.50',				'1.75'),
+        T_TIPO_DATA(	1500000,					'0.50',				'1.50'),
+        T_TIPO_DATA(	999999999999,				'0.50',				'1.00')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

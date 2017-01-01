@@ -36,11 +36,11 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	--			DD_CLA_CODIGO		DD_SCA_CODIGO		TRF_LLAVES_HRE		DD_TPR_CODIGO		TRF_PRC_COLAB		TRF_PRC_PRESC
 -- Financiero.
-        T_TIPO_DATA(	'01',				NULL,				'0',				'04',				'0,50',				'1,75'),
-        T_TIPO_DATA(	'01',				NULL,				'0',				'28',				'0,50',				'1,75'),
-        T_TIPO_DATA(	'01',				NULL,				'0',				'29',				'0,50',				'1,75'),
-        T_TIPO_DATA(	'01',				NULL,				'0',				'30',				'0,50',				 NULL),
-        T_TIPO_DATA(	'01',				NULL,				'0',				'31',				'0,50',				 NULL),
+        T_TIPO_DATA(	'01',				NULL,				'0',				'04',				'0.50',				'1.75'),
+        T_TIPO_DATA(	'01',				NULL,				'0',				'28',				'0.50',				'1.75'),
+        T_TIPO_DATA(	'01',				NULL,				'0',				'29',				'0.50',				'1.75'),
+        T_TIPO_DATA(	'01',				NULL,				'0',				'30',				'0.50',				 NULL),
+        T_TIPO_DATA(	'01',				NULL,				'0',				'31',				'0.50',				 NULL),
 -- Inmobiliario, propio.
         T_TIPO_DATA(	'02',				'01',				'0',				'04',				'00000',			'00000'),
         T_TIPO_DATA(	'02',				'01',				'0',				'28',				'00000',		 	  '6'),

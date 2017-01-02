@@ -124,6 +124,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                             }
 							me.getView().unmask();
+							if(form)
 							me.refrescarGasto(form.refreshAfterSave);
 							Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 								function (field, index){field.fireEvent('edit');}
@@ -255,16 +256,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
   			}
   		});
   		
-  		// Actualizamos la pestaña actual si tiene función de recargar 
-		var activeTab = tabPanel.getActiveTab();
-		if(refrescarPestañaActiva) {
-			if(activeTab.funcionRecargar) {
-  				activeTab.funcionRecargar();
+  		// Actualizamos la pestaña actual si tiene función de recargar y el gasto si estamos guardando uno.
+  		if(!Ext.isEmpty(tabPanel)) {	  		
+			var activeTab = tabPanel.getActiveTab();
+			if(refrescarPestañaActiva) {
+				if(activeTab.funcionRecargar) {
+	  				activeTab.funcionRecargar();
+				}
 			}
-		}
-		var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
-		me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
-		
+			var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
+			me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
+  		}
+
 	},
 	
 	buscarProveedor: function(field, e){

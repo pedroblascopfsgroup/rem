@@ -53,7 +53,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 	        binding.syncing = (binding.syncing + 1) || 1;
 	        this[binding._config.names.set](value);
 	        --binding.syncing;
-	        this.fireEvent("afterbind", this);
+	        this.fireEvent("afterbind", this, value);
 		
 		},
 		

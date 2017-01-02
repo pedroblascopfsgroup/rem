@@ -210,7 +210,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				    				            		afterbind: function(combo, value) {
 				    				            			// Para poner por defecto una opción.
 				    				            			if(Ext.isEmpty(value)) {
-				    				            				combo.setValue(CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO']);
+				    				            				combo.up('form').getBindRecord().set('destinatarioGastoCodigo', CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO']);				    				            				
 				    				            			}
 				    				            		},
 				    				            		change: function(combo, newValue) {

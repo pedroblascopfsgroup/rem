@@ -254,6 +254,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			}   
     	},
     	
+    	comboDestinatarios: {
+    		
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'destinatariosGasto'}
+			}
+    	},
+    		
+    	
     	comboPagadoPor: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {

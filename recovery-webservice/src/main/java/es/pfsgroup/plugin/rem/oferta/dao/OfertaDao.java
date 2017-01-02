@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.oferta.dao;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
@@ -30,5 +31,16 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public Long getNextNumOfertaRem();
 	
 	public List<Oferta> getListaOfertas(OfertaDto ofertaDto);
+
+	/**
+	 * Este método obtiene automaticamente el importe cálculo para los honorarios según la
+	 * oferta y el tipo comisión.
+	 * 
+	 * @param id : ID de la oferta.
+	 * @param tipoComision: Especifica la letra para el tipo de cálculo. 'C' para colaboración
+	 * y 'P' para tipo prescripción.
+	 * @return Devuelve el porcentaje si está asignado o null si no se aplican honorarios.
+	 */
+	public BigDecimal getImporteCalculo(Long idOferta, String tipoComision);
 
 }

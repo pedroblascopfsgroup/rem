@@ -33,9 +33,10 @@ Ext.define('HreRem.view.common.DDViewModel', {
 
 			comboTiposComercializacion: {
 				data : [
-			        {"codigo":"01", "descripcion": "Alquiler"},
-			        {"codigo":"02", "descripcion": "Venta"},
-			        {"codigo":"03", "descripcion": "Ambos"}
+			        {"codigo":"04", "descripcion": "Alquiler"},
+			        {"codigo":"02", "descripcion": "Alquiler y venta"},
+			        {"codigo":"01", "descripcion": "Venta"}
+			       
 			    ]
     		},
 

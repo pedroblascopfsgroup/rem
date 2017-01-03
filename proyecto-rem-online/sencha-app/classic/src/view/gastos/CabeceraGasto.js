@@ -51,6 +51,7 @@ Ext.define('HreRem.view.gastos.CabeceraGasto', {
 										text: HreRem.i18n("btn.autorizar"),
 										cls: 'boton-cabecera',
 										handler: 'onClickAutorizar',
+										secFunPermToRender: 'OPERAR_GASTO',
 										hidden: true,
 										bind: {
 											hidden: '{!esAutorizable}'

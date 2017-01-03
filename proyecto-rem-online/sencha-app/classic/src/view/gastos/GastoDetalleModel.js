@@ -142,25 +142,24 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     esAutorizable: function(get) {
-	     	var esProveedor = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+
 	     	var estaAutorizado = get('gasto.autorizado');
 	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
 	     	
-	     	return !estaEnviado && !esProveedor && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado;
+	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado;
 	     },
 	     
 	     esRechazable: function(get) {	     
-	     	var esProveedor = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
 	     	var estaRechazado = get('gasto.rechazado');
 	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
 	     	
-	     	return  !estaEnviado && !esProveedor && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado;
+	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado;
 
 	     },
 	     

@@ -629,6 +629,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			dto.setOficina(detalleGasto.getOficinaBankia());
 			dto.setNumeroConexion(detalleGasto.getNumeroConexionBankia());
+			dto.setFechaConexion(detalleGasto.getFechaConexion());
 			
 			if(!Checks.esNulo(gasto.getProveedor().getCriterioCajaIVA())) {
 				dto.setOptaCriterioCaja(BooleanUtils.toBooleanObject(gasto.getProveedor().getCriterioCajaIVA()));

@@ -105,6 +105,11 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 			dateFormat: 'c'
 		},
 		{
+			name : 'fechaConexion',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
 			name: 'tipoPagadorCodigo'
 		},
 		{

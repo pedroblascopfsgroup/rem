@@ -614,7 +614,15 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																        	disabled: '{!seleccionadoPagadoBankia}'
 													            		},
 													            		reference: 'numeroConexionRef'
-											                		}
+											                		},
+											                		
+											                		{
+															        	xtype:'datefieldbase',
+																		formatter: 'date("d/m/Y")',
+																       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.conexion'),
+																       	bind: '{detalleeconomico.fechaConexion}',
+																       	maxValue: null
+																    }
 											                	]
 														}
 								                		

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteSancionOferta" width="1420" height="1203">
+<root-container name="activo_tramiteSancionOferta" width="1420" height="1178">
   <node name="inicio" x="313" y="23" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -27,10 +27,24 @@
     <edge>
       <label x="-138" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T013_FirmaPropietario" x="662" y="168" width="220" height="36">
     <edge>
       <label x="-38" y="-16"/>
+    </edge>
+  </node>
+  <node name="T013_FirmaPropietarioDecision" x="73" y="268" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="T013_CierreEconomico" x="1181" y="169" width="238" height="36">
@@ -57,6 +71,9 @@
     <edge>
       <label x="-11" y="-7"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T013_RespuestaOfertante" x="670" y="464" width="217" height="36">
     <edge>
@@ -70,8 +87,68 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
-  <node name="T013_DobleFirma" x="980" y="436" width="144" height="36">
+  <node name="forkReserva" x="99" y="148" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkSinReservaConTanteo" x="149" y="209" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkSinReservaSinTanteo" x="498" y="126" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T013_InstruccionesReserva" x="71" y="498" width="223" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T013_InstruccionesReservaDecision" x="7" y="61" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkConTanteo" x="472" y="54" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkSinTanteo" x="818" y="22" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -81,38 +158,20 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T013_InformeJuridicoDecision" x="263" y="464" width="232" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-41" y="-22"/>
-    </edge>
-    <edge>
-      <label x="-28" y="-363"/>
-      <bendpoint w1="-236" h1="-1" w2="-233" h2="-460"/>
-      <bendpoint w1="-236" h1="347" w2="-234" h2="-570"/>
-      <bendpoint w1="-237" h1="393" w2="-227" h2="-2"/>
-    </edge>
-  </node>
-  <node name="T013_InstruccionesReserva" x="269" y="538" width="223" height="36">
+  <node name="T013_ResultadoPBC" x="267" y="859" width="205" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T013_ObtencionContratoReserva" x="257" y="603" width="243" height="36">
+  <node name="T013_ResultadoPBCDecision" x="543" y="845" width="208" height="36">
+    <edge>
+      <label x="-86" y="-18"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="T013_ObtencionContratoReservaDecision" x="233" y="698" width="290" height="36">
     <edge>
-      <label x="-47" y="-16"/>
-    </edge>
-    <edge>
-      <label x="-25" y="-42"/>
-      <bendpoint w1="-177" h1="-1" w2="-175" h2="-226"/>
-      <bendpoint w1="-173" h1="137" w2="-164" h2="-24"/>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="T013_ResolucionTanteo" x="636" y="636" width="217" height="36">
@@ -128,17 +187,11 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="T013_ResultadoPBC" x="267" y="859" width="205" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T013_ResultadoPBCDecision" x="265" y="929" width="208" height="36">
-    <edge>
-      <label x="-86" y="-18"/>
-      <bendpoint w1="405" h1="2" w2="-412" h2="393"/>
-    </edge>
+  <node name="T013_ObtencionContratoReserva" x="257" y="603" width="243" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -156,20 +209,30 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="T013_ResolucionExpediente" x="150" y="45" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
   <node name="T013_DevolucionLlaves" x="642" y="1076" width="175" height="36">
     <edge>
       <label x="-25" y="-10"/>
     </edge>
   </node>
-  <node name="fork1" x="251" y="1146" width="252" height="24">
+  <node name="T013_DevolucionLlavesDecision" x="95" y="85" width="132" height="36">
     <edge>
-      <label x="-171" y="-22"/>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="-887" y="-20"/>
-      <bendpoint w1="-1" h1="44" w2="-924" h2="1015"/>
-      <bendpoint w1="916" h1="43" w2="-7" h2="1014"/>
-      <bendpoint w1="914" h1="-520" w2="-10" h2="710"/>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkPostFirma" x="571" y="69" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="T013_DocumentosPostVenta" x="870" y="1141" width="222" height="36">

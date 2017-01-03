@@ -15,18 +15,26 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 
 @Component
-public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
+public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;
@@ -38,11 +46,13 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     private TrabajoApi trabajoApi;
     
     @Autowired
-    private ExpedienteComercialApi expedienteComercialApi;
+    private ActivoApi activoApi;
     
-    private static final String COMBO_RESULTADO = "comboResultado";
+    @Autowired
+    private ExpedienteComercialApi expedienteComercialApi;
+
+    private static final String CODIGO_T013_DEVOLUCIONLLAVES = "T013_DevolucionLlaves";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
-    private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -52,36 +62,27 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			
-			for(TareaExternaValor valor :  valores){
+			if (!Checks.esNulo(expediente.getCondicionante())){
+				if(!Integer.valueOf(1).equals(expediente.getCondicionante().getSolicitaReserva())){
 				
-				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-				{
-					//TODO: Rellenar campo PBC del expediente cuando esté creado.
-					if(DDSiNo.NO.equals(valor.getValor()))
-					{
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						expediente.setEstadoPbc(0);
-						expediente.setFechaAnulacion(new Date());
-						genericDao.save(ExpedienteComercial.class, expediente);
-						
-						//Finaliza el trámite
-						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-						genericDao.save(ActivoTramite.class, tramite);
-
-						//Rechaza la oferta y descongela el resto
-						ofertaApi.rechazarOferta(ofertaAceptada);
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						for(Oferta oferta : listaOfertas){
-							if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
-								ofertaApi.descongelarOferta(oferta);
-							}
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+					expediente.setFechaAnulacion(new Date());
+					genericDao.save(ExpedienteComercial.class, expediente);
+					
+					//Finaliza el trámite
+					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+					genericDao.save(ActivoTramite.class, tramite);
+		
+					//Rechaza la oferta y descongela el resto
+					ofertaApi.rechazarOferta(ofertaAceptada);
+					List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+					for(Oferta oferta : listaOfertas){
+						if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
+							ofertaApi.descongelarOferta(oferta);
 						}
-					}else{
-						expediente.setEstadoPbc(1);
-						genericDao.save(ExpedienteComercial.class, expediente);
 					}
 				}
 			}
@@ -89,7 +90,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_RESULTADO_PBC};
+		return new String[]{CODIGO_T013_DEVOLUCIONLLAVES};
 	}
 
 	public String[] getKeys() {

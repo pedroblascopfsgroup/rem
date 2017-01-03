@@ -59,7 +59,17 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				actionMethods: {read: 'POST'},
 				remoteUrl: 'gastosproveedor/searchProveedoresByNif'
 			}   	
-    	}); 													
+    	}); 
+    	
+    	var storeDestinatarios = new Ext.data.Store({
+    		model: 'HreRem.model.ComboBase',
+    		autoLoadOnValue: true,
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'destinatariosGasto'}
+			}    		
+    	});    	
     	
     	me.setTitle(HreRem.i18n('title.nuevo.gasto'));
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Crear', handler: 'onClickBotonGuardarGasto'},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarGasto'}];
@@ -192,11 +202,70 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							            	    {
 													xtype: 'comboboxfieldbase',
 				    					        	fieldLabel:  HreRem.i18n('fieldlabel.destinatario.gasto'),
+				    					        	store: storeDestinatarios,
 				    					        	bind: {
-				    				            		store: '{comboDestinatarios}',
 				    				            		value: '{gastoNuevo.destinatarioGastoCodigo}'
 				    				            	},
+				    				            	listeners: {
+				    				            		afterbind: function(combo, value) {
+				    				            			// Para poner por defecto una opción.
+				    				            			if(Ext.isEmpty(value)) {
+				    				            				combo.up('form').getBindRecord().set('destinatarioGastoCodigo', CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO']);				    				            				
+				    				            			}
+				    				            		},
+				    				            		change: function(combo, newValue) {
+				    				            			var disabled = CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] != newValue;
+			    				            				combo.up('form').down('[name=buscadorNifPropietarioField]').setDisabled(disabled);
+			    				            				combo.up('form').down('[name=nombrePropietario]').setDisabled(disabled);
+			    				            				if(disabled) {
+			    				            					combo.up('form').down('[name=buscadorNifPropietarioField]').reset();
+			    				            					combo.up('form').down('[name=nombrePropietario]').reset();
+			    				            				}
+				    				            			
+				    				            		}
+				    				            	},
 				    				            	allowBlank: false
+												},
+												{
+													xtype: 'textfieldbase',
+													fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),
+													name: 'buscadorNifPropietarioField',
+													disabled: true,
+													bind: {
+														value: '{gastoNuevo.nifPropietario}'
+													},
+													allowBlank: false,
+													triggers: {
+														
+															buscarEmisor: {
+													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+													             handler: 'buscarPropietario'
+													        }
+													},
+													cls: 'searchfield-input sf-con-borde',
+													emptyText:  HreRem.i18n('txt.buscar.propietario'),
+													enableKeyEvents: true,
+											        listeners: {
+											        	specialKey: function(field, e) {
+											        		if (e.getKey() === e.ENTER) {
+											        			field.lookupController().buscarPropietario(field);											        			
+											        		}
+											        	},
+											        	
+											        	blur: function(field, e) {
+											        		field.lookupController().buscarPropietario(field);
+											        	}
+											        	
+											        	
+											        }
+							                	},
+							                	{
+													xtype: 'textfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.propietario'),
+													name: 'nombrePropietario',
+													disabled: true,
+													readOnly: true,
+													allowBlank: false
 												}
 							            	  
 							            ]

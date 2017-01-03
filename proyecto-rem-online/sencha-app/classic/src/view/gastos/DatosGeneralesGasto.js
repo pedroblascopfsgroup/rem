@@ -170,11 +170,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 						               	name: 'destinatarioField',
 								      	bind: {
 							           		store: '{comboDestinatarios}',
-							           		value: '{gasto.destinatario}',
-							           		hidden: '{conPropietario}'
-							         	},
-							         	listeners:{
-							         		change: 'onHaCambiadoComboDestinatario'
+							           		value: '{gasto.destinatario}'
 							         	},
 							         	allowBlank: false
 							    	},								    
@@ -201,7 +197,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								        		if (e.getKey() === e.ENTER) {
 								        			field.lookupController().buscarPropietario(field);											        			
 								        		}
-								        	}
+								        	},
+								        	blur: function(field, e) {
+												field.lookupController().buscarPropietario(field);
+											}
 								        }
 				                	},
 				                	{

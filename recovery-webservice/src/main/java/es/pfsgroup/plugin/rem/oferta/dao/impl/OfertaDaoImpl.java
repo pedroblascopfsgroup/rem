@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -93,4 +94,14 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		return HibernateQueryUtils.list(this, hql);
 	}
 
+	@Override
+	public BigDecimal getImporteCalculo(Long idOferta, String tipoComision) {
+		StringBuilder functionHQL = new StringBuilder("SELECT CALCULAR_HONORARIO(:OFR_ID, :TIPO_COMISION) FROM DUAL");
+
+		Query callFunctionSql = this.getSession().createSQLQuery(functionHQL.toString());
+		callFunctionSql.setParameter("OFR_ID", idOferta);
+		callFunctionSql.setParameter("TIPO_COMISION", tipoComision);
+
+		return (BigDecimal) callFunctionSql.uniqueResult();
+	}
 }

@@ -714,4 +714,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return listaFechasImportes;
 	}
+	
+	@Override
+	public Boolean existeActivoEnPropuesta(String numActivo, String numPropuesta) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ " 	JOIN ACT_PRP APR ON ACT.ACT_ID = APR.ACT_ID "
+				+ " 	JOIN PRP_PROPUESTAS_PRECIOS PRP ON APR.PRP_ID=PRP.PRP_ID "
+				+ "		WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ " 	AND PRP.PRP_NUM_PROPUESTA ="+numPropuesta);
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 }

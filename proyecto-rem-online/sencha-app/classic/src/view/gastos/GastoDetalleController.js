@@ -374,18 +374,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 	
 	onHaCambiadoFechaPago: function(field, value){
-		/*var me= this;
-		var fechaTopePago= me.lookupReference('fechaTopePago').getValue();
-		if(!Ext.isEmpty(me.lookupReference('destinatariosPago'))){
-			if(fechaTopePago<value){
-				me.lookupReference('destinatariosPago').setDisabled(false);
-				me.lookupReference('destinatariosPago').allowBlank= false;
-			}
-			else{
-				me.lookupReference('destinatariosPago').setDisabled(true);
-				me.lookupReference('destinatariosPago').allowBlank= true;
-			}
-		}*/
+		
+		var me= this,
+		fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado'),
+		fieldImportePagadoEmpty = me.lookupReference('detalleEconomicoImportePagadoEmpty');
+		
+		fieldImportePagado.setVisible(!Ext.isEmpty(value));
+		fieldImportePagadoEmpty.setVisible(Ext.isEmpty(value));
+		
 	},
 	
 	onChangeChainedCombo: function(combo) {

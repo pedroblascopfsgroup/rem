@@ -122,21 +122,27 @@ public interface  ParticularValidatorApi {
 	public Boolean isActivoNoComercializable(String numActivo);
 
 	/**
-	 * Este método obtiene una lista de importes actuales por el número de activo.
+	 * Este mÃ©todo obtiene una lista de importes actuales por el nÃºmero de activo.
 	 * 
-	 * @param numActivo : número haya del activo.
+	 * @param numActivo : nÃºmero haya del activo.
 	 * @return Devuelve una lista de importes actuales del activo.
 	 */
 	public List<BigDecimal> getImportesActualesActivo(String numActivo);
 
 	/**
-	 * Este método obtiene una lista de fechas de importes actuales por el número de activo.
+	 * Este mÃ©todo obtiene una lista de fechas de importes actuales por el nÃºmero de activo.
 	 * 
-	 * @param numActivo : número haya del activo.
+	 * @param numActivo : nÃºmero haya del activo.
 	 * @return Devuelve una lista de fechas de importes actuales del activo.
 	 */
 	public List<Date> getFechasImportesActualesActivo(String numActivo);
 
-
+	/**
+	 * Comprueba si el activo esta incluido en la propuesta
+	 * @param numActivo
+	 * @param numPropuesta
+	 * @return
+	 */
+	public Boolean existeActivoEnPropuesta(String numActivo, String numPropuesta);
 	
 }

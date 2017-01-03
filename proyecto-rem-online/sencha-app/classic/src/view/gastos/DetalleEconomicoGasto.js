@@ -290,6 +290,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 									        
 													        { 
 																xtype: 'numberfieldbase',
+																reference: 'detalleEconomicoImportePagado',
 																symbol: HreRem.i18n("symbol.euro"),
 																margin: '10 0 10 0',
 																cls: 'txt-importe-total',
@@ -297,7 +298,23 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															    fieldStyle:'text-align:right;',
 															    labelStyle: 'text-align:left;',
 																fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.pagado'),
-															    bind: '{detalleeconomico.importePagado}'
+																readOnly: true,
+																hidden: true,
+															    bind: '{detalleeconomico.importeTotal}'
+															},
+													        { 
+																xtype: 'numberfieldbase',
+																symbol: HreRem.i18n("symbol.euro"),
+																reference: 'detalleEconomicoImportePagadoEmpty',
+																margin: '10 0 10 0',
+																cls: 'txt-importe-total',
+																style: 'text-align: right',
+															    fieldStyle:'text-align:right;',
+															    labelStyle: 'text-align:left;',
+																fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.pagado'),
+																readOnly: true,
+																hidden: true,
+																value: 0
 															}
 												]
 									        },
@@ -325,7 +342,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.pago'),
 														       	bind: '{detalleeconomico.fechaPago}',
 														       	listeners: {
-														       		change: 'onHaCambiadoFechaPago'
+														       		afterbind: 'onHaCambiadoFechaPago'
 														       	},
 														       	maxValue: null
 														    }
@@ -597,7 +614,15 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																        	disabled: '{!seleccionadoPagadoBankia}'
 													            		},
 													            		reference: 'numeroConexionRef'
-											                		}
+											                		},
+											                		
+											                		{
+															        	xtype:'datefieldbase',
+																		formatter: 'date("d/m/Y")',
+																       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.conexion'),
+																       	bind: '{detalleeconomico.fechaConexion}',
+																       	maxValue: null
+																    }
 											                	]
 														}
 								                		

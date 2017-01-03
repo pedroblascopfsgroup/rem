@@ -63,6 +63,7 @@ public class MSVActualizarPropuestaPreciosActivoEntidad03 extends MSVExcelValida
 	public static final int COL_FECHA_FSV = 12;
 	
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
+	public static final String ACTIVE_NOT_INCLUDED_IN_PROPUESTA = "El activo no pertece a la propuesta cargada";
 	public static final String ACTIVE_PRIZE_NAN = "msg.error.masivo.actualizar.propuesta.precios.activo.activoPrecioNaN";
 	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED = "msg.error.masivo.actualizar.propuesta.precios.activo.entidad03.activoPrecioVentaMinimoLimiteExcedido";
 	public static final String ACTIVE_PAV_DATE_INIT_EXCEEDED = "La fecha de inicio del precio propuesto no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
@@ -113,6 +114,7 @@ public class MSVActualizarPropuestaPreciosActivoEntidad03 extends MSVExcelValida
 				//Si la propuesta ya ha sido cargada, no se realizan el resto de comprobaciones
 				if(mapaErrores.get(PROPUESTA_YA_CARGADA).isEmpty()) {
 					mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
+					mapaErrores.put(ACTIVE_NOT_INCLUDED_IN_PROPUESTA, isActiveNotIncludesInPropuestaRows(exc));
 					mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZE_NAN), getNANPrecioIncorrectoRows(exc));
 					mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED), getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
 					mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
@@ -126,6 +128,7 @@ public class MSVActualizarPropuestaPreciosActivoEntidad03 extends MSVExcelValida
 				try{
 					if(!mapaErrores.get(PROPUESTA_YA_CARGADA).isEmpty() ||
 							!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
+							!mapaErrores.get(ACTIVE_NOT_INCLUDED_IN_PROPUESTA).isEmpty() ||
 							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty() ||
 							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED)).isEmpty() ||
 							!mapaErrores.get(ACTIVE_PAV_DATE_INIT_EXCEEDED).isEmpty() ||
@@ -523,5 +526,22 @@ public class MSVActualizarPropuestaPreciosActivoEntidad03 extends MSVExcelValida
 		
 		return ultimaFila;
 	}
+	
+	private List<Integer> isActiveNotIncludesInPropuestaRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=EXCEL_FILA_INICIAL; i<exc.getNumeroFilasByHoja(1);i++){
+				if(!particularValidator.existeActivoEnPropuesta(exc.dameCeldaByHoja(i, EXCEL_COL_NUMACTIVO, 1),exc.dameCeldaByHoja(1, 2, 1)))
+					listaFilas.add(i);
+			}
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+
 
 }

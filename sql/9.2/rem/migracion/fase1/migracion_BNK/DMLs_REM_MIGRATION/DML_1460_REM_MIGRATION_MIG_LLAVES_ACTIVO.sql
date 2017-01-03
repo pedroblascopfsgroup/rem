@@ -158,24 +158,26 @@ BEGIN
 	VERSION,
 	USUARIOCREAR,
 	FECHACREAR,
-	BORRADO
+	BORRADO,
+	LLV_NUM_LLAVE
 	)
 	SELECT
-	MIG.LLV_ID                              					LLV_ID,
+	MIG.LLV_ID                              							LLV_ID,
 	(SELECT ACT_ID
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT 
-	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)     	ACT_ID,
-	MIG.LLV_COD_CENTRO										LLV_COD_CENTRO,
-	MIG.LLV_NOMBRE_CENTRO									LLV_NOMBRE_CENTRO,
-	MIG.LLV_ARCHIVO1										LLV_ARCHIVO1,
-	MIG.LLV_ARCHIVO2										LLV_ARCHIVO2,
-	MIG.LLV_ARCHIVO3										LLV_ARCHIVO3,
-	MIG.LLV_COMPLETO										LLV_COMPLETO,
-	MIG.LLV_MOTIVO_INCOMPLETO								LLV_MOTIVO_INCOMPLETO,
-	''0''                                                 	VERSION,
+	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)     				ACT_ID,
+	MIG.LLV_COD_CENTRO													LLV_COD_CENTRO,
+	MIG.LLV_NOMBRE_CENTRO												LLV_NOMBRE_CENTRO,
+	MIG.LLV_ARCHIVO1													LLV_ARCHIVO1,
+	MIG.LLV_ARCHIVO2													LLV_ARCHIVO2,
+	MIG.LLV_ARCHIVO3													LLV_ARCHIVO3,
+	MIG.LLV_COMPLETO													LLV_COMPLETO,
+	MIG.LLV_MOTIVO_INCOMPLETO											LLV_MOTIVO_INCOMPLETO,
+	''0''                                                 				VERSION,
 	''MIGRAREM01BNK''                                               	USUARIOCREAR,
-	SYSDATE                                               	FECHACREAR,
-	0                                                     	BORRADO
+	SYSDATE                                               				FECHACREAR,
+	0                                                     				BORRADO,
+	MIG.LLV_CODIGO_UVEM													LLV_NUM_LLAVE
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
 	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
     ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO

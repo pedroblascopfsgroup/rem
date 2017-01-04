@@ -20,6 +20,8 @@ public interface VisitaDao extends AbstractDao<Visita, Long>{
 	
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter);
 
+	public List<Visita> getListaVisitasOrdenada(DtoVisitasFilter dtoVisitasFilter);
+		
 	public VBusquedaVisitasDetalle getVisitaDetalle(DtoVisitasFilter dtoVisitasFilter);
 
 

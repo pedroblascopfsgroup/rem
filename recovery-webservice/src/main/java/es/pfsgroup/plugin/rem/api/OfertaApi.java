@@ -329,4 +329,13 @@ public interface OfertaApi {
 	 * @return Devuelve una lista de DtoHonorariosOferta por cada honorario encontrado.
 	 */
 	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta);
+	
+	/**
+	 * Devuelve una lista de todas las ofertas pertenecientes a todos los titulares de una oferta
+	 *
+	 * @param oferta
+	 * @return List<Oferta> Devuelve una lista de todas las ofertas pertenecientes a todos los titulares de un activo
+	 */
+	public List<Oferta> getOtrasOfertasTitularesOferta(Oferta oferta);
+	
 }

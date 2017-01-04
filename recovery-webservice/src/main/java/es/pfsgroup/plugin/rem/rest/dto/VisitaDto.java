@@ -56,7 +56,7 @@ public class VisitaDto implements Serializable {
 	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
 		Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
-	
+	private Date fecha;
 	
 	
 	public Long getIdVisitaWebcom() {
@@ -142,7 +142,14 @@ public class VisitaDto implements Serializable {
 	}
 	public void setIdUsuarioRemAccion(Long idUsuarioRemAccion) {
 		this.idUsuarioRemAccion = idUsuarioRemAccion;
+	}
+	public Date getFecha() {
+		return fecha;
+	}
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
 	}	
+	
 	/*public Boolean getVisitaPrescriptor() {
 		return visitaPrescriptor;
 	}

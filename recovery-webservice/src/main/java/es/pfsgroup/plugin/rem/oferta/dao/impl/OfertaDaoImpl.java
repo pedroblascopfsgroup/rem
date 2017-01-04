@@ -53,7 +53,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoEstadoOferta", dtoOfertasFilter.getEstadoOferta());
-
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
+		
 		// hb.orderBy("voferta.numOferta", HQLBuilder.ORDER_ASC);
 		// Faltan los dos combos
 
@@ -90,6 +91,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if (ofertaDto.getIdOfertaRem() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numOferta", ofertaDto.getIdOfertaRem());
 
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "cliente.id", ofertaDto.getIdClienteComercial());
+		
 		return HibernateQueryUtils.list(this, hql);
 	}
 

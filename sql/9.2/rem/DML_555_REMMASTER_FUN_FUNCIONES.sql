@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20161611
+--## FECHA_CREACION=20170103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1190
@@ -147,7 +147,8 @@ DECLARE
 	  T_FUNCION('Puede ver la opción de menú publicación',																		'MENU_PUBLICACION'),
 	  T_FUNCION('Puede ver la opción de menú comercial',																		'MENU_COMERCIAL'),
 	  T_FUNCION('Puede ver la opción de menú administración',																	'MENU_ADMINISTRACION'),
-	  T_FUNCION('Puede ver la opción de menú configuraicón',																	'MENU_CONFIGURACION')
+	  T_FUNCION('Puede ver la opción de menú configuraicón',																	'MENU_CONFIGURACION'),
+	  T_FUNCION('Puede autorizar/rechazar el gasto',																			'OPERAR_GASTO')
     ); 
     V_TMP_FUNCION T_FUNCION;
 

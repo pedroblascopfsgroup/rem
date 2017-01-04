@@ -55,7 +55,8 @@ public class DtoActivoFilter extends WebDto {
 	private Integer inscrito;
 	private Integer conPosesion;
 	private Integer conCargas;
-	private String tipoComercializacion;
+	private String destinoComercialCodigo;
+	private String destinoComercialDescripcion;
 	private Integer conOfertaAprobada;
 	private Integer conReserva;
 	private Integer tieneMediador;
@@ -338,11 +339,17 @@ public class DtoActivoFilter extends WebDto {
 	public void setConCargas(Integer conCargas) {
 		this.conCargas = conCargas;
 	}
-	public String getTipoComercializacion() {
-		return tipoComercializacion;
+	public String getDestinoComercialCodigo() {
+		return destinoComercialCodigo;
 	}
-	public void setTipoComercializacion(String tipoComercializacion) {
-		this.tipoComercializacion = tipoComercializacion;
+	public void setDestinoComercialCodigo(String destinoComercialCodigo) {
+		this.destinoComercialCodigo = destinoComercialCodigo;
+	}
+	public String getDestinoComercialDescripcion() {
+		return destinoComercialDescripcion;
+	}
+	public void setDestinoComercialDescripcion(String destinoComercialDescripcion) {
+		this.destinoComercialDescripcion = destinoComercialDescripcion;
 	}
 	public Integer getConOfertaAprobada() {
 		return conOfertaAprobada;

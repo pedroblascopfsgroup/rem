@@ -208,14 +208,15 @@ BEGIN
         END                                                                                                                 AS ECO_FECHA_ANULACION,
         CASE
             WHEN MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
-            THEN MIG2.OFR_COD_MOTIVO_ANULACION
+            THEN MAN.DD_MAN_DESCRIPCION_LARGA
             ELSE NULL
         END  																												AS ECO_MOTIVO_ANULACION,
           0                                                                                                                 AS VERSION,
           ''MIG2''                                                                                                          AS USUARIOCREAR,
           SYSDATE                                                                                                           AS FECHACREAR
         FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
-        INNER JOIN MIG2_OFR_OFERTAS MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA
+        INNER JOIN '||V_ESQUEMA||'.MIG2_OFR_OFERTAS MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA
+        LEFT JOIN '||V_ESQUEMA||'.DD_MAN_MOTIVO_ANULACION MAN ON MIG2.OFR_COD_MOTIVO_ANULACION = MAN.DD_MAN_CODIGO
         WHERE SUBSTR(MIG2.OFR_COD_ESTADO_OFERTA,0,2) = ''01''
         AND NOT EXISTS (
             SELECT 1

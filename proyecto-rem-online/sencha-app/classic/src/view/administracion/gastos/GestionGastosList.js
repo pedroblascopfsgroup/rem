@@ -14,10 +14,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     	
     	var me = this;
     	      	
-      	var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this};
+      	var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, secFunPermToRender: 'OPERAR_GASTO'};
       	var labelSeleccionados = {xtype: 'displayfieldbase', itemId: 'displaySelection'/*, cls: 'logo-headerbar'*/};
-		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizar', hidden: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),  disabled: true};
-		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazar', hidden: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']), disabled: true};
+		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizar', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
+		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazar', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
 		var separador = {xtype: 'tbfill'};
 		var espacio = {xtype: 'tbspacer'};
 			

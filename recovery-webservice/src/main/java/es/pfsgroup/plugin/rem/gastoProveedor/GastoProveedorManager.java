@@ -344,6 +344,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gastoProveedor.setProveedor(proveedor);
 		}
 		
+		if(!Checks.esNulo(dto.getNifPropietario())) {
+			ActivoPropietario propietario = searchPropietarioNif(dto.getNifPropietario());
+			gastoProveedor.setPropietario(propietario);			
+		}
+		
 		if(!Checks.esNulo(dto.getDestinatarioGastoCodigo())){
 			DDDestinatarioGasto destinatarioGasto  = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, dto.getDestinatarioGastoCodigo());
 			gastoProveedor.setDestinatarioGasto(destinatarioGasto);
@@ -624,6 +629,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			dto.setOficina(detalleGasto.getOficinaBankia());
 			dto.setNumeroConexion(detalleGasto.getNumeroConexionBankia());
+			dto.setFechaConexion(detalleGasto.getFechaConexion());
 			
 			if(!Checks.esNulo(gasto.getProveedor().getCriterioCajaIVA())) {
 				dto.setOptaCriterioCaja(BooleanUtils.toBooleanObject(gasto.getProveedor().getCriterioCajaIVA()));

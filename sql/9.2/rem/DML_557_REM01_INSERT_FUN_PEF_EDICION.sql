@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20161618
+--## FECHA_CREACION=20170103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1190
@@ -65,7 +65,8 @@ DECLARE
       T_FUNCION('EDITAR_TAB_DOCUMENTOS'),
       T_FUNCION('EDITAR_TAB_DATOS_PROVEEDORES'),
       T_FUNCION('EDITAR_TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES'),
-      T_FUNCION('EDITAR_TAB_DOCUMENTOS_PROVEEDORES')
+      T_FUNCION('EDITAR_TAB_DOCUMENTOS_PROVEEDORES'),
+      T_FUNCION('OPERAR_GASTO')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_TMP_PERFIL T_PERFIL;
@@ -101,8 +102,8 @@ BEGIN
 							' WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(1))||''' AND PEF_CODIGO LIKE ('''||TRIM(V_TMP_PERFIL(1))||''') ';
 		    	
 						EXECUTE IMMEDIATE V_MSQL_1;
-					END IF;
-					DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.FUN_PEF insertados correctamente.');		
+						DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.FUN_PEF insertados correctamente.');	
+					END IF;	
 				END LOOP;
     	END LOOP; 			
       		

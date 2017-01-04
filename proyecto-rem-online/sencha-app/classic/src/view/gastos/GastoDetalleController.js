@@ -124,6 +124,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                             }
 							me.getView().unmask();
+							if(form)
 							me.refrescarGasto(form.refreshAfterSave);
 							Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 								function (field, index){field.fireEvent('edit');}
@@ -255,16 +256,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
   			}
   		});
   		
-  		// Actualizamos la pestaña actual si tiene función de recargar 
-		var activeTab = tabPanel.getActiveTab();
-		if(refrescarPestañaActiva) {
-			if(activeTab.funcionRecargar) {
-  				activeTab.funcionRecargar();
+  		// Actualizamos la pestaña actual si tiene función de recargar y el gasto si estamos guardando uno.
+  		if(!Ext.isEmpty(tabPanel)) {	  		
+			var activeTab = tabPanel.getActiveTab();
+			if(refrescarPestañaActiva) {
+				if(activeTab.funcionRecargar) {
+	  				activeTab.funcionRecargar();
+				}
 			}
-		}
-		var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
-		me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
-		
+			var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
+			me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
+  		}
+
 	},
 	
 	buscarProveedor: function(field, e){
@@ -306,22 +309,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			    	if(!Utils.isEmptyJSON(data.data)){
 						var id= data.data.id;
 		    		    var nombrePropietario= data.data.nombre;
-		    		    /*if(!Ext.isEmpty(propietarioGastoField)) {
-		    		    	propietarioGastoField.setValue(nifPropietario);
-		    		    }*/
+
 		    		    if(!Ext.isEmpty(buscadorNifPropietario)) {
 		    		    	buscadorNifPropietario.setValue(nifPropietario);
 		    		    }
 		    		    if(!Ext.isEmpty(nombrePropietarioGasto)) {
 		    		    	nombrePropietarioGasto.setValue(nombrePropietario);
-		    		    }
-		    		    
-			    	}
-			    	else{
+
+			    		}
+			    	} else {
 			    		if(!Ext.isEmpty(nombrePropietarioGasto)) {
 		    		    	nombrePropietarioGasto.setValue('');
 		    		    }
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.propietario"));
+		    		    buscadorNifPropietario.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.propietario"));	
+		    		    
 			    	}
 		    		    	 
 		    	},
@@ -334,23 +336,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		  });
 		
 	},
-	
-	onHaCambiadoComboDestinatario: function(combo, value){
-		var me= this;
-		/*if(CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] == value){
-			me.getView().down('[name=nifPropietario]').setVisible(false);
-			me.getView().down('[name=nombrePropietario]').setVisible(false);
-			me.getView().down('[name=buscadorNifPropietarioField]').setVisible(false);
-			me.getView().down('[name=nifPropietario]').allowBlank= false;
-		}
-		else{
-			me.getView().down('[name=nifPropietario]').setDisabled(true);
-			me.getView().down('[name=nombrePropietario]').setDisabled(true);
-		}*/
 		
-	},
-	
-	onCambiaImportePrincipalSujeto: function(field, e){
+	onChangeImportePrincipalSujeto: function(field, e){
 		var me= this;
 		if(!Ext.isEmpty(field.getValue())){
 			me.lookupReference('importePrincipalNoSujeto').allowBlank= true;
@@ -361,7 +348,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	},
 	
-	onCambiaImportePrincipalNoSujeto: function(field, e){
+	onChangeImportePrincipalNoSujeto: function(field, e){
 		var me= this;
 		if(!Ext.isEmpty(field.getValue())){
 			me.lookupReference('importePrincipalSujeto').allowBlank= true;
@@ -372,7 +359,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	},
 	
-	onHaCambiadoFechaTopePago: function(field, value){
+	onChangeFechaTopePago: function(field, value){
 		/*var me= this;
 		var fechaPago= me.lookupReference('fechaPago').getValue();
 		if(!Ext.isEmpty(me.lookupReference('destinatariosPago'))){
@@ -386,19 +373,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}*/
 	},
 	
-	onHaCambiadoFechaPago: function(field, value){
-		/*var me= this;
-		var fechaTopePago= me.lookupReference('fechaTopePago').getValue();
-		if(!Ext.isEmpty(me.lookupReference('destinatariosPago'))){
-			if(fechaTopePago<value){
-				me.lookupReference('destinatariosPago').setDisabled(false);
-				me.lookupReference('destinatariosPago').allowBlank= false;
-			}
-			else{
-				me.lookupReference('destinatariosPago').setDisabled(true);
-				me.lookupReference('destinatariosPago').allowBlank= true;
-			}
-		}*/
+	onChangeFechaPago: function(field, value){
+		
+		var me= this,
+		fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado'),
+		importePagado = Ext.isEmpty(value) ? 0 : me.getViewModel().get("calcularImporteTotalGasto");
+		fieldImportePagado.setValue(importePagado);
+	},
+	
+	onChangeImporteTotal: function(field, value) {
+		
+		var me = this,
+		fieldFechaPago = me.lookupReference('fechaPago'),
+		fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado'),
+		fieldImporteTotal = me.lookupReference('detalleEconomicoImporteTotal'),
+		importePagado = Ext.isEmpty(fieldFechaPago.getValue()) ? 0 : value;
+
+		fieldImportePagado.setValue(importePagado);
+		fieldImporteTotal.setValue(value);	
+		
 	},
 	
 	onChangeChainedCombo: function(combo) {
@@ -799,7 +792,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		me.getView().fireEvent('abrirDetalleTrabajo', record);
 	},
     
-	haCambiadoIban: function(field, value){
+	onChangeIban: function(field, value){
 		var me= this;
 		
 		var ibanfield= me.lookupReference('iban');
@@ -814,7 +807,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
-	haCambiadoAbonoCuenta: function(field, value){
+	onChangeAbonoCuenta: function(field, value){
 		var me= this;
 		if(value){
 			me.lookupReference('ibanRef').setDisabled(false);
@@ -837,7 +830,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
-	haCambiadoPagadoBankia: function(field, value){
+	onChangePagadoBankia: function(field, value){
 		var me= this;
 		if(value){
 			me.lookupReference('oficinaRef').setDisabled(false);
@@ -858,7 +851,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	},
 	
-	haCambiadoPagadoProvision: function(field, value){
+	onChangePagadoProvision: function(field, value){
 		var me= this;
 		if(value){
 			me.lookupReference('abonoCuentaRef').setValue(false);
@@ -875,7 +868,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	},
 	
-	haCambiadoReembolsarPagoTercero: function(field, value){
+	onChangeReembolsarPagoTercero: function(field, value){
 		var me= this;
 		if(value){
 			me.lookupReference('fieldSetSuplido').setDisabled(false);

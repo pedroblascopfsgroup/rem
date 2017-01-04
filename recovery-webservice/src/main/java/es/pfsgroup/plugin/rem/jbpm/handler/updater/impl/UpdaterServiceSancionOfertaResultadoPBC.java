@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,10 +59,11 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 					//TODO: Rellenar campo PBC del expediente cuando esté creado.
 					if(DDSiNo.NO.equals(valor.getValor()))
 					{
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
 						expediente.setEstadoPbc(0);
+						expediente.setFechaAnulacion(new Date());
 						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						//Finaliza el trámite

@@ -83,7 +83,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	 var esAgrupacionObraNueva = tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'];
 	    	 var esAgrupacionAsistida = tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'];
 	    	 //Si NO es agrupación obra nueva OR sí hay fecha baja se debe ocultar
-	    	 return (existeFechaBaja || !esAgrupacionObraNueva || !esAgrupacionAsistida);
+	    	 return (existeFechaBaja || !(esAgrupacionObraNueva || esAgrupacionAsistida));
 	    	 
 	     }
     },

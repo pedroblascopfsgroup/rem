@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20161003
+--## FECHA_CREACION=20170103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -52,7 +52,8 @@ DECLARE
     	T_ALTER(  'GDE_NIF_TITULAR_CUENTA',		 			'VARCHAR(50 CHAR)',						'NIF del titular de la cuenta.'	),
     	T_ALTER(  'GDE_PAGADO_CONEXION_BANKIA',		 			'NUMBER(1,0)',						'Pagado por conexión Bankia.'	),
     	T_ALTER(  'GDE_NUMERO_CONEXION',		 			'VARCHAR(50 CHAR)',						'Número de conexión.'	),
-    	T_ALTER(  'GDE_OFICINA_BANKIA',		 			'VARCHAR(50 CHAR)',						'Oficina Bankia.'	)
+    	T_ALTER(  'GDE_OFICINA_BANKIA',		 			'VARCHAR(50 CHAR)',						'Oficina Bankia.'	),
+    	T_ALTER(  'GDE_FECHA_CONEXION',		 			'DATE',						'Fecha conexión.'	)
 		);
     V_T_ALTER T_ALTER;
 

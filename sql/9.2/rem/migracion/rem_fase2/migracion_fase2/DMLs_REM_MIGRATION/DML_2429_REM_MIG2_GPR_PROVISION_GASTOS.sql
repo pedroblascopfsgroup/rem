@@ -26,6 +26,9 @@ DECLARE
 
 TABLE_COUNT    NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
+TABLE_COUNT_3 NUMBER(10,0) := 0;
+MAX_NUM_PROVISION NUMBER(10,0) := 0;
+V_NUM_TABLAS NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_TABLA VARCHAR2(40 CHAR) := 'PRG_PROVISION_GASTOS';
@@ -181,23 +184,38 @@ BEGIN
                 FECHACREAR,
                 BORRADO
                 )
+                WITH INSERTAR AS (
+			    SELECT
+				  	  MIGW.GPR_NUMERO_PROVISION_FONDOS                                        
+					  ,EPR.DD_EPR_ID                                                                             
+					  ,MIGW.GPR_FECHA_ALTA                                                                           
+					  ,PVE.PVE_ID                                                                                    
+					  ,MIGW.GPR_FECHA_ENVIO                                                                                   
+					  ,MIGW.GPR_FECHA_RESPUESTA                                                                                 
+					  ,MIGW.GPR_FECHA_ANULACION
+					  ,ROW_NUMBER() OVER (PARTITION BY MIGW.GPR_NUMERO_PROVISION_FONDOS ORDER BY MIGW.GPR_FECHA_RESPUESTA DESC) ORDEN
+			    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIGW
+			    INNER JOIN '||V_ESQUEMA||'.DD_EPR_ESTADOS_PROVISION_GASTO EPR ON EPR.DD_EPR_CODIGO = MIGW.GPR_COD_ESTADO_PROVISION
+			    INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM =  MIGW.GPR_COD_GESTORIA
+					   AND PVE.DD_TPR_ID = (SELECT DD_TPR_ID FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = ''01'')
+			 
+				)
                 SELECT
-                '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                         PRG_ID, 
-                MIG.GPR_NUMERO_PROVISION_FONDOS                                                                 PRG_NUM_PROVISION,
-                EPR.DD_EPR_ID                                                                                                   DD_EPR_ID,
-                MIG.GPR_FECHA_ALTA                                                                                              PRG_FECHA_ALTA,
-                PVE.PVE_ID                                                                                                              PVE_ID_GESTORIA,
-                MIG.GPR_FECHA_ENVIO                                                                                             PRG_FECHA_ENVIO,
-                MIG.GPR_FECHA_RESPUESTA                                                                                 PRG_FECHA_RESPUESTA,
-                MIG.GPR_FECHA_ANULACION                                                                                 PRG_FECHA_ANULACION,
-                ''0''                                                                                                                   VERSION,                                                                                
-                ''MIG2''                                                                                                                USUARIOCREAR,
-        SYSDATE                                                                                                                 FECHACREAR,     
-        0                                                                                                                               BORRADO
-                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-                INNER JOIN '||V_ESQUEMA||'.DD_EPR_ESTADOS_PROVISION_GASTO EPR ON EPR.DD_EPR_CODIGO = MIG.GPR_COD_ESTADO_PROVISION
-                INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM =  MIG.GPR_COD_GESTORIA
-                        AND PVE.DD_TPR_ID = (SELECT DD_TPR_ID FROM '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = ''01'')
+                '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                 PRG_ID, 
+                MIG.GPR_NUMERO_PROVISION_FONDOS                         PRG_NUM_PROVISION,
+                MIG.DD_EPR_ID                                           DD_EPR_ID,
+                MIG.GPR_FECHA_ALTA                                      PRG_FECHA_ALTA,
+                MIG.PVE_ID                                              PVE_ID_GESTORIA,
+                MIG.GPR_FECHA_ENVIO                                     PRG_FECHA_ENVIO,
+                MIG.GPR_FECHA_RESPUESTA                                 PRG_FECHA_RESPUESTA,
+                MIG.GPR_FECHA_ANULACION                                 PRG_FECHA_ANULACION,
+                ''0''                                                   VERSION,                                                                                
+                ''MIG2''                                                USUARIOCREAR,
+				SYSDATE                                                 FECHACREAR,     
+				0                                                       BORRADO
+                FROM INSERTAR MIG
+                WHERE ORDEN = 1
+
                 '
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;
@@ -212,7 +230,40 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
       
+      
+      -- Inicializamos la secuencia S_NUM_PROVISION_GASTO    
+      DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE INICIALIZACION DE LA SECUENCIA S_NUM_PROVISION_GASTO DE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+    
+      -- Obtenemos el valor maximo de la columna PRG_NUM_PROVISION y lo incrementamos en 1
+      V_SENTENCIA := 'SELECT NVL(MAX(PRG_NUM_PROVISION),0) FROM '||V_ESQUEMA||'.'||V_TABLA||'';
+      EXECUTE IMMEDIATE V_SENTENCIA INTO MAX_NUM_PROVISION;
+    
+      MAX_NUM_PROVISION := MAX_NUM_PROVISION +1;
+    
+      EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_NUM_PROVISION_GASTO'' 
+          AND SEQUENCE_OWNER = '''||V_ESQUEMA||'''' INTO V_NUM_TABLAS; 
+    
+      -- Si existe secuencia la borramos
+      IF V_NUM_TABLAS = 1 THEN
+          EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_NUM_PROVISION_GASTO';
+          DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_NUM_PROVISION_GASTO... Secuencia eliminada');    
+      END IF;
+    
+      EXECUTE IMMEDIATE 'CREATE SEQUENCE ' ||V_ESQUEMA|| '.S_NUM_PROVISION_GASTO  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH '||MAX_NUM_PROVISION||' NOCACHE NOORDER NOCYCLE';
+    
+      DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.S_NUM_PROVISION_GASTO... Secuencia creada e inicializada correctamente.');
+      
+      
       -- INFORMAMOS A LA TABLA INFO
+      
+      --RECHAZOS POR PRG_NUM_PROVISION DUPLICADO
+          V_SENTENCIA := '
+			SELECT SUM(COUNT(1))-COUNT(1) FROM MIG2_GPR_PROVISION_GASTOS
+			GROUP BY GPR_NUMERO_PROVISION_FONDOS
+			HAVING COUNT(1)>1
+			'
+			;
+			EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT_3;
       
       -- Registros MIG
       V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
@@ -231,6 +282,10 @@ BEGIN
         
         IF TABLE_COUNT_2 != 0 THEN              
           V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT_2||' PROVEEDOR (TIPO GESTOR) inexistentes.';               
+        END IF;
+        
+        IF TABLE_COUNT_3 != 0 THEN              
+          V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT_3||' PRG_NUM_PROVISION duplicados, entran solo los de fecha mas actual';               
         END IF;
       END IF;
         

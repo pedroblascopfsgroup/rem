@@ -196,6 +196,8 @@ BEGIN
             ,GPV_NUMERO_FACTURA_UVEM
             ,GPV_NUMERO_PROVISION_FONDOS
             ,GPV_NUMERO_PRESUPUESTO
+            ,DD_TOG_ID
+            ,PVE_ID_GESTORIA
             ,VERSION
             ,USUARIOCREAR
             ,FECHACREAR
@@ -236,6 +238,8 @@ BEGIN
             ,MIG2.GPV_NUMERO_FACTURA_UVEM                               GPV_NUMERO_FACTURA_UVEM
             ,MIG2.GPV_NUMERO_PROVISION_FONDOS                           GPV_NUMERO_PROVISION_FONDOS
             ,MIG2.GPV_NUMERO_PRESUPUESTO                                GPV_NUMERO_PRESUPUESTO
+            ,TOG.DD_TOG_ID												DD_TOG_ID
+            ,PRG.PVE_ID_GESTORIA										PVE_ID_GESTORIA
             ,0                                                          VERSION
             ,''MIG2''                                                   USUARIOCREAR
             ,SYSDATE                                                    FECHACREAR
@@ -244,15 +248,17 @@ BEGIN
             ,NULL                                                       USUARIOBORRAR
             ,NULL                                                       FECHABORRAR
             ,0                                                          BORRADO
-            ,NULL                                                       PRG_ID
+            ,PRG.PRG_ID                                                 PRG_ID
       FROM INSERTAR INS
             INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_ID = MIG2.GPV_ID
             INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = MIG2.GPV_COD_SUBTIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = TO_CHAR(MIG2.GPV_COD_PVE_UVEM_EMISOR)
-            INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID 
-            LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
+            INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID
+            LEFT JOIN  '||V_ESQUEMA||'.PRG_PROVISION_GASTOS PRG ON PRG.PRG_NUM_PROVISION = MIG2.GPV_NUMERO_PROVISION_FONDOS
+            LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO
+            LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
       WHERE  ((TGA.DD_TGA_CODIGO = ''01'' AND TPR.DD_TPR_CODIGO IN (''13'', ''15''))
             OR (TGA.DD_TGA_CODIGO = ''02'' AND TPR.DD_TPR_CODIGO IN (''13'', ''16''))
             OR (TGA.DD_TGA_CODIGO = ''03'' AND TPR.DD_TPR_CODIGO IN (''13'', ''17''))
@@ -297,6 +303,8 @@ BEGIN
             ,GPV_NUMERO_FACTURA_UVEM
             ,GPV_NUMERO_PROVISION_FONDOS
             ,GPV_NUMERO_PRESUPUESTO
+            ,DD_TOG_ID
+            ,PVE_ID_GESTORIA
             ,VERSION
             ,USUARIOCREAR
             ,FECHACREAR
@@ -337,6 +345,8 @@ BEGIN
             ,MIG2.GPV_NUMERO_FACTURA_UVEM                               GPV_NUMERO_FACTURA_UVEM
             ,MIG2.GPV_NUMERO_PROVISION_FONDOS                           GPV_NUMERO_PROVISION_FONDOS
             ,MIG2.GPV_NUMERO_PRESUPUESTO                                GPV_NUMERO_PRESUPUESTO
+            ,TOG.DD_TOG_ID												DD_TOG_ID
+            ,PRG.PVE_ID_GESTORIA										PVE_ID_GESTORIA
             ,0                                                          VERSION
             ,''MIG2''                                                   USUARIOCREAR
             ,SYSDATE                                                    FECHACREAR
@@ -345,15 +355,17 @@ BEGIN
             ,NULL                                                       USUARIOBORRAR
             ,NULL                                                       FECHABORRAR
             ,0                                                          BORRADO
-            ,NULL                                                       PRG_ID
+            ,PRG.PRG_ID                                                 PRG_ID
       FROM INSERTAR INS
             INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_ID = MIG2.GPV_ID
             INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = MIG2.GPV_COD_SUBTIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = TO_CHAR(MIG2.GPV_COD_PVE_UVEM_EMISOR)
             INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID 
+            LEFT JOIN  '||V_ESQUEMA||'.PRG_PROVISION_GASTOS PRG ON PRG.PRG_NUM_PROVISION = MIG2.GPV_NUMERO_PROVISION_FONDOS
             LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO
+            LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
       WHERE  ((TGA.DD_TGA_CODIGO = ''05'' AND TPR.DD_TPR_CODIGO IN (''07''))
             OR (TGA.DD_TGA_CODIGO = ''06'' AND TPR.DD_TPR_CODIGO IN (''08''))
             OR (TGA.DD_TGA_CODIGO = ''07'' AND TPR.DD_TPR_CODIGO IN (''10''))
@@ -398,6 +410,8 @@ BEGIN
             ,GPV_NUMERO_FACTURA_UVEM
             ,GPV_NUMERO_PROVISION_FONDOS
             ,GPV_NUMERO_PRESUPUESTO
+            ,DD_TOG_ID
+            ,PVE_ID_GESTORIA
             ,VERSION
             ,USUARIOCREAR
             ,FECHACREAR
@@ -438,6 +452,8 @@ BEGIN
             ,MIG2.GPV_NUMERO_FACTURA_UVEM                               GPV_NUMERO_FACTURA_UVEM
             ,MIG2.GPV_NUMERO_PROVISION_FONDOS                           GPV_NUMERO_PROVISION_FONDOS
             ,MIG2.GPV_NUMERO_PRESUPUESTO                                GPV_NUMERO_PRESUPUESTO
+            ,TOG.DD_TOG_ID												DD_TOG_ID
+            ,PRG.PVE_ID_GESTORIA										PVE_ID_GESTORIA
             ,0                                                          VERSION
             ,''MIG2''                                                   USUARIOCREAR
             ,SYSDATE                                                    FECHACREAR
@@ -446,15 +462,17 @@ BEGIN
             ,NULL                                                       USUARIOBORRAR
             ,NULL                                                       FECHABORRAR
             ,0                                                          BORRADO
-            ,NULL                                                       PRG_ID
+            ,PRG.PRG_ID                                                 PRG_ID
       FROM INSERTAR INS
             INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_ID = MIG2.GPV_ID
             INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = MIG2.GPV_COD_SUBTIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = TO_CHAR(MIG2.GPV_COD_PVE_UVEM_EMISOR)
-            INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID 
-            LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
+            INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID
+            LEFT JOIN '||V_ESQUEMA||'.PRG_PROVISION_GASTOS PRG ON PRG.PRG_NUM_PROVISION = MIG2.GPV_NUMERO_PROVISION_FONDOS 
+            LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO
+            LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
       WHERE ((TGA.DD_TGA_CODIGO = ''09'' AND TPR.DD_TPR_CODIGO IN (''25''))
             OR (TGA.DD_TGA_CODIGO = ''10'' AND TPR.DD_TPR_CODIGO IN (''03''))
             OR (TGA.DD_TGA_CODIGO = ''11'' AND TPR.DD_TPR_CODIGO IN (''02'',''05'',''19'',''21'',''24''))
@@ -507,6 +525,8 @@ BEGIN
             ,GPV_NUMERO_FACTURA_UVEM
             ,GPV_NUMERO_PROVISION_FONDOS
             ,GPV_NUMERO_PRESUPUESTO
+            ,DD_TOG_ID
+            ,PVE_ID_GESTORIA
             ,VERSION
             ,USUARIOCREAR
             ,FECHACREAR
@@ -547,6 +567,8 @@ BEGIN
             ,MIG2.GPV_NUMERO_FACTURA_UVEM                               GPV_NUMERO_FACTURA_UVEM
             ,MIG2.GPV_NUMERO_PROVISION_FONDOS                           GPV_NUMERO_PROVISION_FONDOS
             ,MIG2.GPV_NUMERO_PRESUPUESTO                                GPV_NUMERO_PRESUPUESTO
+            ,TOG.DD_TOG_ID												DD_TOG_ID
+            ,PRG.PVE_ID_GESTORIA										PVE_ID_GESTORIA
             ,0                                                          VERSION
             ,''MIG2''                                                   USUARIOCREAR
             ,SYSDATE                                                    FECHACREAR
@@ -555,15 +577,17 @@ BEGIN
             ,NULL                                                       USUARIOBORRAR
             ,NULL                                                       FECHABORRAR
             ,0                                                          BORRADO
-            ,NULL                                                       PRG_ID
+            ,PRG.PRG_ID                                                 PRG_ID
       FROM INSERTAR INS
             INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_ID = MIG2.GPV_ID
             INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = MIG2.GPV_COD_SUBTIPO_GASTO
             INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = TO_CHAR(MIG2.GPV_COD_PVE_UVEM_EMISOR)
-            INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID 
+            INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID
+            LEFT JOIN  '||V_ESQUEMA||'.PRG_PROVISION_GASTOS PRG ON PRG.PRG_NUM_PROVISION = MIG2.GPV_NUMERO_PROVISION_FONDOS
             LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO
+            LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
 	  WHERE TPR.DD_TPR_CODIGO = ''01''
       '
       ;
@@ -605,6 +629,8 @@ BEGIN
             ,GPV_NUMERO_FACTURA_UVEM
             ,GPV_NUMERO_PROVISION_FONDOS
             ,GPV_NUMERO_PRESUPUESTO
+            ,DD_TOG_ID
+            ,PVE_ID_GESTORIA
             ,VERSION
             ,USUARIOCREAR
             ,FECHACREAR
@@ -644,7 +670,9 @@ BEGIN
       ,GPV_COD_TIPO_OPERACION                                       
       ,GPV_NUMERO_FACTURA_UVEM                                    
       ,GPV_NUMERO_PROVISION_FONDOS                                    
-      ,GPV_NUMERO_PRESUPUESTO                                    
+      ,GPV_NUMERO_PRESUPUESTO
+      ,DD_TOG_ID
+      ,PVE_ID_GESTORIA                                    
       ,VERSION                                    
       ,USUARIOCREAR                                    
       ,FECHACREAR                                    
@@ -675,7 +703,9 @@ BEGIN
 				,MIG2.GPV_COD_TIPO_OPERACION                            GPV_COD_TIPO_OPERACION       
 				,MIG2.GPV_NUMERO_FACTURA_UVEM                           GPV_NUMERO_FACTURA_UVEM    
 				,MIG2.GPV_NUMERO_PROVISION_FONDOS                       GPV_NUMERO_PROVISION_FONDOS    
-				,MIG2.GPV_NUMERO_PRESUPUESTO                            GPV_NUMERO_PRESUPUESTO    
+				,MIG2.GPV_NUMERO_PRESUPUESTO                            GPV_NUMERO_PRESUPUESTO
+				,TOG.DD_TOG_ID											DD_TOG_ID
+				,PRG.PVE_ID_GESTORIA									PVE_ID_GESTORIA     
 				,0                                                      VERSION    
 				,''MIG2''                                               USUARIOCREAR    
 				,SYSDATE                                                FECHACREAR    
@@ -684,15 +714,17 @@ BEGIN
 				,NULL                                                   USUARIOBORRAR    
 				,NULL                                                   FECHABORRAR    
 				,0                                                      BORRADO    
-				,NULL                                                   PRG_ID    
+				,PRG.PRG_ID                                             PRG_ID    
 			FROM INSERTAR INS
 				INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON INS.GPV_ID = MIG2.GPV_ID
 				INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = MIG2.GPV_COD_TIPO_GASTO
 				INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = MIG2.GPV_COD_SUBTIPO_GASTO
 				INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = TO_CHAR(MIG2.GPV_COD_PVE_UVEM_EMISOR)
-				INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID 
-				LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
-				LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO)
+				INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID  = TPR.DD_TPR_ID
+				LEFT JOIN '||V_ESQUEMA||'.PRG_PROVISION_GASTOS PRG ON PRG.PRG_NUM_PROVISION = MIG2.GPV_NUMERO_PROVISION_FONDOS
+				LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
+				LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = MIG2.GPV_COD_DESTINATARIO
+				LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION)
 				WHERE PARTICION = 1
       '
       ;      

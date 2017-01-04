@@ -19,6 +19,17 @@ Ext.define('HreRem.view.common.DateFieldBase', {
 	 * sobreescribir en el componente que extienda con otra fecha o null.
 	 */
 	maxValue: $AC.getCurrentDate(),
+	
+	privates: {
+		
+		onBindNotify: function(value, oldValue, binding) {
+            binding.syncing = (binding.syncing + 1) || 1;
+            this[binding._config.names.set](value);
+            --binding.syncing;
+            this.fireEvent("afterbind", this, value);
+        }
+		
+	},
     
 	initComponent: function() {    	
     	var me = this;    	

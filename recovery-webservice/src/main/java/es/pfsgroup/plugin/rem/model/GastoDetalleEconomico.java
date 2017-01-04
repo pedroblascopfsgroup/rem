@@ -155,6 +155,9 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     
     @Column(name="GDE_OFICINA_BANKIA")
     private String oficinaBankia;
+    
+    @Column(name="GDE_FECHA_CONEXION")
+    private Date fechaConexion;
 
     
 	@Version   
@@ -444,6 +447,14 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 
 	public void setOficinaBankia(String oficinaBankia) {
 		this.oficinaBankia = oficinaBankia;
+	}
+
+	public Date getFechaConexion() {
+		return fechaConexion;
+	}
+
+	public void setFechaConexion(Date fechaConexion) {
+		this.fechaConexion = fechaConexion;
 	}
 
 

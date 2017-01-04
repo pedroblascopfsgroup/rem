@@ -60,6 +60,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private String oficina;
 	private String numeroConexion;
 	private Boolean optaCriterioCaja;
+	private Date fechaConexion;
 	
 
 	public Long getGastoProveedor() {
@@ -297,6 +298,12 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	}
 	public void setOptaCriterioCaja(Boolean optaCriterioCaja) {
 		this.optaCriterioCaja = optaCriterioCaja;
+	}
+	public Date getFechaConexion() {
+		return fechaConexion;
+	}
+	public void setFechaConexion(Date fechaConexion) {
+		this.fechaConexion = fechaConexion;
 	}
 
    	

@@ -163,7 +163,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
         			{ 
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
-						name:	'tipoComercializacion',
+						name:	'destinoComercialCodigo',
 						bind: {
 							store: '{comboTiposComercializacion}'
 						}

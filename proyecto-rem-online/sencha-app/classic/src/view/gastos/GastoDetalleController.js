@@ -337,7 +337,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 		
-	onCambiaImportePrincipalSujeto: function(field, e){
+	onChangeImportePrincipalSujeto: function(field, e){
 		var me= this;
 		if(!Ext.isEmpty(field.getValue())){
 			me.lookupReference('importePrincipalNoSujeto').allowBlank= true;
@@ -348,7 +348,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	},
 	
-	onCambiaImportePrincipalNoSujeto: function(field, e){
+	onChangeImportePrincipalNoSujeto: function(field, e){
 		var me= this;
 		if(!Ext.isEmpty(field.getValue())){
 			me.lookupReference('importePrincipalSujeto').allowBlank= true;
@@ -359,7 +359,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	},
 	
-	onHaCambiadoFechaTopePago: function(field, value){
+	onChangeFechaTopePago: function(field, value){
 		/*var me= this;
 		var fechaPago= me.lookupReference('fechaPago').getValue();
 		if(!Ext.isEmpty(me.lookupReference('destinatariosPago'))){
@@ -373,14 +373,24 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}*/
 	},
 	
-	onHaCambiadoFechaPago: function(field, value){
+	onChangeFechaPago: function(field, value){
 		
 		var me= this,
 		fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado'),
-		fieldImportePagadoEmpty = me.lookupReference('detalleEconomicoImportePagadoEmpty');
+		importePagado = Ext.isEmpty(value) ? 0 : me.getViewModel().get("calcularImporteTotalGasto");
+		fieldImportePagado.setValue(importePagado);
+	},
+	
+	onChangeImporteTotal: function(field, value) {
 		
-		fieldImportePagado.setVisible(!Ext.isEmpty(value));
-		fieldImportePagadoEmpty.setVisible(Ext.isEmpty(value));
+		var me = this,
+		fieldFechaPago = me.lookupReference('fechaPago'),
+		fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado'),
+		fieldImporteTotal = me.lookupReference('detalleEconomicoImporteTotal'),
+		importePagado = Ext.isEmpty(fieldFechaPago.getValue()) ? 0 : value;
+
+		fieldImportePagado.setValue(importePagado);
+		fieldImporteTotal.setValue(value);	
 		
 	},
 	
@@ -782,7 +792,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		me.getView().fireEvent('abrirDetalleTrabajo', record);
 	},
     
-	haCambiadoIban: function(field, value){
+	onChangeIban: function(field, value){
 		var me= this;
 		
 		var ibanfield= me.lookupReference('iban');
@@ -797,7 +807,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
-	haCambiadoAbonoCuenta: function(field, value){
+	onChangeAbonoCuenta: function(field, value){
 		var me= this;
 		if(value){
 			me.lookupReference('ibanRef').setDisabled(false);
@@ -820,7 +830,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
-	haCambiadoPagadoBankia: function(field, value){
+	onChangePagadoBankia: function(field, value){
 		var me= this;
 		if(value){
 			me.lookupReference('oficinaRef').setDisabled(false);
@@ -841,7 +851,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	},
 	
-	haCambiadoPagadoProvision: function(field, value){
+	onChangePagadoProvision: function(field, value){
 		var me= this;
 		if(value){
 			me.lookupReference('abonoCuentaRef').setValue(false);
@@ -858,7 +868,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	},
 	
-	haCambiadoReembolsarPagoTercero: function(field, value){
+	onChangeReembolsarPagoTercero: function(field, value){
 		var me= this;
 		if(value){
 			me.lookupReference('fieldSetSuplido').setDisabled(false);

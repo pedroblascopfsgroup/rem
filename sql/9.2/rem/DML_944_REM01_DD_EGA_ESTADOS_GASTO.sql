@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20161117
+--## FECHA_CREACION=20170103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -47,8 +47,8 @@ DECLARE
         T_TIPO_DATA('07'	,'Retenido'										,'Retenido'),
         T_TIPO_DATA('08'	,'Rechazado propietario'						,'Rechazado propietario'),
         T_TIPO_DATA('09'	,'Autorizado propietario'						,'Autorizado propietario'),
-        T_TIPO_DATA('10'	,'Subsanado emisor'								,'Subsanado emisor'),
-        T_TIPO_DATA('11'	,'Subsanado gestor'								,'Subsanado gestor'),
+        T_TIPO_DATA('10'	,'Subsanado'									,'Subsanado'),
+        T_TIPO_DATA('11'	,'Subsanado gestor'								,'Subsanado gestor'),        
        	T_TIPO_DATA('12'	,'Incompleto'									,'Incompleto')
         
     ); 
@@ -96,9 +96,26 @@ BEGIN
         
        END IF;
       END LOOP;
+      
+      
+   	  --Comprobamos si existe el estado con codigo 11 para eliminarlo porque ya no procede
+    V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''11''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    
+    --Si existe lo modificamos
+    IF V_NUM_TABLAS > 0 THEN				
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO]: ELIMINAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+   	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_EGA_ESTADOS_GASTO '||
+                'SET BORRADO = 1, USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE WHERE DD_EGA_CODIGO = ''11''';
+      EXECUTE IMMEDIATE V_MSQL;
+      DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO ELIMINADO CORRECTAMENTE');
+    
+    END IF;
+      
+      
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_EGA_ESTADOS_GASTO ACTUALIZADO CORRECTAMENTE ');
-   
 
 EXCEPTION
      WHEN OTHERS THEN

@@ -50,7 +50,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                reference: 'importePrincipalSujeto',
 											                allowBlank: false,
 											                listeners: {
-											                	change: 'onCambiaImportePrincipalSujeto'
+											                	change: 'onChangeImportePrincipalSujeto'
 											                }
 														},
 														{ 
@@ -59,7 +59,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                bind: '{detalleeconomico.importePrincipalNoSujeto}',
 											                allowBlank: false,
 											                listeners: {
-											                	change: 'onCambiaImportePrincipalNoSujeto'
+											                	change: 'onChangeImportePrincipalNoSujeto'
 											                }
 														},
 														{ 
@@ -238,13 +238,13 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
 														    bind: '{calcularImporteTotalGasto}',
 														    listeners: {
-														    	change: function(field, value) {
-														    		field.next().setValue(value);
-														    	}
+														    	change: 'onChangeImporteTotal'													    		
+														    	
 														    }
 														},
 														{
-															cls: 'txt-importe-total',
+															reference: 'detalleEconomicoImporteTotal',
+															cls: 'txt-importe-total',															
 															hidden: true,
 															readOnly: true,
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
@@ -269,7 +269,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										       	bind: '{detalleeconomico.fechaTopePago}',
 										       	maxValue: null,
 										       	listeners: {
-										       		change: 'onHaCambiadoFechaTopePago'
+										       		change: 'onChangeFechaTopePago'
 										       	},
 										       	allowBlank: false
 										    },
@@ -286,35 +286,22 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												xtype:'fieldset',
 												border: false,
 				        						margin: '0 10 10 0',
+				        						defaultType: 'numberfieldbase',
+				        						defaults: {
+				        							style: 'text-align: right',
+											        fieldStyle:'text-align:right;',
+											        labelStyle: 'text-align:left;',
+											        symbol: HreRem.i18n("symbol.euro")
+				        						},
 												items: [
 									        
 													        { 
 																xtype: 'numberfieldbase',
-																reference: 'detalleEconomicoImportePagado',
-																symbol: HreRem.i18n("symbol.euro"),
-																margin: '10 0 10 0',
-																cls: 'txt-importe-total',
-																style: 'text-align: right',
-															    fieldStyle:'text-align:right;',
-															    labelStyle: 'text-align:left;',
+																reference: 'detalleEconomicoImportePagado',													
+																cls: 'txt-importe-total',															
 																fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.pagado'),
 																readOnly: true,
-																hidden: true,
-															    bind: '{detalleeconomico.importeTotal}'
-															},
-													        { 
-																xtype: 'numberfieldbase',
-																symbol: HreRem.i18n("symbol.euro"),
-																reference: 'detalleEconomicoImportePagadoEmpty',
-																margin: '10 0 10 0',
-																cls: 'txt-importe-total',
-																style: 'text-align: right',
-															    fieldStyle:'text-align:right;',
-															    labelStyle: 'text-align:left;',
-																fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.pagado'),
-																readOnly: true,
-																hidden: true,
-																value: 0
+															    bind: '{detalleeconomico.importePagado}'
 															}
 												]
 									        },
@@ -342,7 +329,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.pago'),
 														       	bind: '{detalleeconomico.fechaPago}',
 														       	listeners: {
-														       		afterbind: 'onHaCambiadoFechaPago'
+														       		afterbind: 'onChangeFechaPago'
 														       	},
 														       	maxValue: null
 														    }
@@ -375,7 +362,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										        	value: '{detalleeconomico.reembolsoTercero}'
 							            		},
 							            		listeners: {
-							            			change: 'haCambiadoReembolsarPagoTercero'
+							            			change: 'onChangeReembolsarPagoTercero'
 							            		},
 							            		reference: 'reembolsarPagoRef',
 							            		colspan: 3
@@ -407,7 +394,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																        	value: '{detalleeconomico.incluirPagoProvision}'
 													            		},
 													            		listeners: {
-													            			change: 'haCambiadoPagadoProvision'
+													            			change: 'onChangePagadoProvision'
 													            		},
 													            		reference: 'incluirPagoProvisionRef'
 											                		}
@@ -432,7 +419,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																        	value: '{detalleeconomico.abonoCuenta}'
 													            		},
 													            		listeners: {
-													            			change: 'haCambiadoAbonoCuenta'
+													            			change: 'onChangeAbonoCuenta'
 													            		},
 													            		reference: 'abonoCuentaRef',
 													            		colspan: 3
@@ -471,7 +458,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																		        	value: '{detalleeconomico.iban1}'
 															            		},
 															            		listeners: {
-															            			change: 'haCambiadoIban'
+															            			change: 'onChangeIban'
 															            		}
 																			},
 																			{
@@ -486,7 +473,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																		        	value: '{detalleeconomico.iban2}'
 															            		},
 															            		listeners: {
-															            			change: 'haCambiadoIban'
+															            			change: 'onChangeIban'
 															            		}
 																			},
 																			{
@@ -501,7 +488,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																		        	value: '{detalleeconomico.iban3}'
 															            		},
 															            		listeners: {
-															            			change: 'haCambiadoIban'
+															            			change: 'onChangeIban'
 															            		}
 															           
 																			},
@@ -529,7 +516,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																		        	value: '{detalleeconomico.iban5}'
 															            		},
 															            		listeners: {
-															            			change: 'haCambiadoIban'
+															            			change: 'onChangeIban'
 															            		}
 																			},
 																			{
@@ -544,7 +531,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																		        	value: '{detalleeconomico.iban6}'
 															            		},
 															            		listeners: {
-															            			change: 'haCambiadoIban'
+															            			change: 'onChangeIban'
 															            		}
 																			}
 																		]
@@ -590,7 +577,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																        	value: '{detalleeconomico.pagadoConexionBankia}'
 													            		},
 													            		listeners: {
-													            			change: 'haCambiadoPagadoBankia'
+													            			change: 'onChangePagadoBankia'
 													            			
 													            		},
 													            		reference: 'pagadoConexionBankiaRef',

@@ -71,11 +71,17 @@ public class VBusquedaActivosPrecios implements Serializable {
     @Column(name = "CON_FECHA_REVISION_CARGAS")
     private Integer conCargas;
     
-    //@Column(name = "TIPO_COMERCIALIZACION")
+    @Column(name = "DESTINO_COMERCIAL_CODIGO")
+    private String destinoComercialCodigo;
     
-    //@Column(name = "CON_OFERTA_APROBADA")
+    @Column(name = "DESTINO_COMERCIAL_DESCRIPCION")
+    private String destinoComercialDescripcion;
     
-    //@Column(name = "CON_RESERVA")
+    @Column(name = "CON_OFERTA_APROBADA")
+    private Integer conOfertaAprobada;
+    
+    @Column(name = "CON_RESERVA")
+    private Integer conReserva;
     
     @Column(name = "TIENE_MEDIADOR")
     private Integer tieneMediador;
@@ -463,5 +469,37 @@ public class VBusquedaActivosPrecios implements Serializable {
 		this.estadoActivoDescripcion = estadoActivoDescripcion;
 	}
 
+	public String getDestinoComercialCodigo() {
+		return destinoComercialCodigo;
+	}
+
+	public void setDestinoComercialCodigo(String destinoComercialCodigo) {
+		this.destinoComercialCodigo = destinoComercialCodigo;
+	}
+
+	public String getDestinoComercialDescripcion() {
+		return destinoComercialDescripcion;
+	}
+
+	public void setDestinoComercialDescripcion(String destinoComercialDescripcion) {
+		this.destinoComercialDescripcion = destinoComercialDescripcion;
+	}
+	
+	public Integer getConOfertaAprobada() {
+		return conOfertaAprobada;
+	}
+
+	public void setConOfertaAprobada(Integer conOfertaAprobada) {
+		this.conOfertaAprobada = conOfertaAprobada;
+	}
+
+	public Integer getConReserva() {
+		return conReserva;
+	}
+
+	public void setConReserva(Integer conReserva) {
+		this.conReserva = conReserva;
+	}
+	
 
 }

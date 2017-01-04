@@ -24,6 +24,7 @@
 --##		0.8 [Hito: ] [HREOS-600] Se añade en ACT_AJD_ADJJUDICIAL el ASU_ID_EXTERNO (AJD_ID_ASUNTO) y el LETRADO (AJD_LETRADO)         									   ##--
 --##		0.8 [Hito: ] [HREOS-600] Se añade en ACT_AJD_ADJJUDICIAL el ASU_ID_EXTERNO y el LETRADO            																   ##--
 --##		0.9 [Hito: ] [HREOS-1106] Se añade FECHA_AUTO_ADJUD_FIRME en BIE_ADJ_ADJUDICACION y se cambia valor de AJD_FECHA_ADJUDICACION y el merge de DD_EJD_ID.			   ##--
+--##        0.10 [Hito: ] [HREOS-1106] Se actualiza ACT_TIT_TITULO con la información de DE BIE_ADJ_ADJUDICACION.                                                        	   ##--																									   ##--
 --##                                                                																										   ##--
 --###############################################################################################################################################################################--
 --*/
@@ -40,7 +41,7 @@ create or replace PROCEDURE SP_UPA_UPDATE_ACTIVES_SAREB (
 	PL_OUTPUT       OUT VARCHAR2
 )
 AS
---V0.9
+--V0.10
 
 V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -1022,6 +1023,311 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('');
 
 
+	
+	/*---------------------------------------------------------------------------------*/
+	/*----- ACTUALIZAMOS ACT_TIT_TITULO CON LA INFORMACION DE BIE_ADJ_ADJUDICACION-----*/
+	/*---------------------------------------------------------------------------------*/
+	
+	V_NOT_UPDATE := '';
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZAMOS ACT_TIT_TITULO CON LA INFORMACION DE BIE_ADJ_ADJUDICACION...');
+	DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------');
+	
+	V_SQL := '
+	MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+        USING ( 
+                SELECT act_id, DD_ETI_CODIGO FROM (
+                select act.act_id
+                , adj.bie_id
+                , case when ADJ.BIE_ADJ_F_INSCRIP_TITULO is not null then ''02'' else ''04'' end as DD_ETI_CODIGO
+                , ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+                from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+                inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+                inner join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+                where tit.DD_ETI_ID is null)
+                WHERE ORDEN = 1
+              ) AUX
+                ON (AUX.ACT_ID = TIT.ACT_ID)
+                WHEN MATCHED THEN UPDATE SET
+                  TIT.DD_ETI_ID = (SELECT DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI WHERE ETI.DD_ETI_CODIGO = AUX.DD_ETI_CODIGO),
+                  TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+				  TIT.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO.DD_ETI_ID');
+                  
+                  
+    V_SQL := '              
+	MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+			USING ( 
+					SELECT act_id, BIE_ADJ_F_ENTREGA_GESTOR FROM (
+					select act.act_id
+					, adj.bie_id
+					,adj.BIE_ADJ_F_ENTREGA_GESTOR
+					, ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+					from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+					inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+					inner join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+					where TIT.TIT_FECHA_ENTREGA_GESTORIA is null
+					AND ADJ.BIE_ADJ_F_ENTREGA_GESTOR is not null)
+					WHERE ORDEN = 1
+				  ) AUX
+					ON (AUX.ACT_ID = TIT.ACT_ID)
+					WHEN MATCHED THEN UPDATE SET
+					  TIT.TIT_FECHA_ENTREGA_GESTORIA = AUX.BIE_ADJ_F_ENTREGA_GESTOR,
+					  TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+					  TIT.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO.TIT_FECHA_ENTREGA_GESTORIA');
+					  
+					  
+	V_SQL := '
+	MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+			USING ( 
+					SELECT act_id, BIE_ADJ_F_PRESEN_HACIENDA FROM (
+					select act.act_id
+					, adj.bie_id
+					,adj.BIE_ADJ_F_PRESEN_HACIENDA
+					, ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+					from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+					inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+					inner join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+					where tit.TIT_FECHA_PRESENT_HACIENDA is null
+					AND ADJ.BIE_ADJ_F_PRESEN_HACIENDA is not null)
+					WHERE ORDEN = 1
+				  ) AUX
+					ON (AUX.ACT_ID = TIT.ACT_ID)
+					WHEN MATCHED THEN UPDATE SET
+					  TIT.TIT_FECHA_PRESENT_HACIENDA = AUX.BIE_ADJ_F_PRESEN_HACIENDA,
+					  TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+					  TIT.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO.TIT_FECHA_PRESENT_HACIENDA');
+	
+					  
+	V_SQL := '
+	MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+			USING ( 
+					SELECT act_id, BIE_ADJ_F_ENVIO_ADICION FROM (
+					select act.act_id
+					, adj.bie_id
+					,adj.BIE_ADJ_F_ENVIO_ADICION
+					, ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+					from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+					inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+					inner join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+					where tit.TIT_FECHA_ENVIO_AUTO is null
+					AND ADJ.BIE_ADJ_F_ENVIO_ADICION is not null)
+					WHERE ORDEN = 1
+				  ) AUX
+					ON (AUX.ACT_ID = TIT.ACT_ID)
+					WHEN MATCHED THEN UPDATE SET
+					  TIT.TIT_FECHA_ENVIO_AUTO = AUX.BIE_ADJ_F_ENVIO_ADICION,
+						TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+						TIT.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO.TIT_FECHA_ENVIO_AUTO');
+					  
+					  
+	V_SQL := '
+	MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+			USING ( 
+					SELECT act_id, BIE_ADJ_F_PRESENT_REGISTRO FROM (
+					select act.act_id
+					, adj.bie_id
+					,adj.BIE_ADJ_F_PRESENT_REGISTRO
+					, ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+					from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+					inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+					inner join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+					where tit.TIT_FECHA_PRESENT1_REG is null
+					AND ADJ.BIE_ADJ_F_PRESENT_REGISTRO is not null)
+					WHERE ORDEN = 1
+				  ) AUX
+					ON (AUX.ACT_ID = TIT.ACT_ID)
+					WHEN MATCHED THEN UPDATE SET
+					  TIT.TIT_FECHA_PRESENT1_REG = AUX.BIE_ADJ_F_PRESENT_REGISTRO,
+					  TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+					  TIT.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO.TIT_FECHA_PRESENT1_REG');				  
+					  
+					  
+	V_SQL := '				
+	MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+			USING ( 
+					SELECT act_id, BIE_ADJ_F_SEGUNDA_PRESEN FROM (
+					select act.act_id
+					, adj.bie_id
+					,adj.BIE_ADJ_F_SEGUNDA_PRESEN
+					, ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+					from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+					inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+					inner join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+					where tit.TIT_FECHA_PRESENT2_REG is null
+					AND ADJ.BIE_ADJ_F_SEGUNDA_PRESEN is not null)
+					WHERE ORDEN = 1
+				  ) AUX
+					ON (AUX.ACT_ID = TIT.ACT_ID)
+					WHEN MATCHED THEN UPDATE SET
+					  TIT.TIT_FECHA_PRESENT2_REG = AUX.BIE_ADJ_F_SEGUNDA_PRESEN,
+					  TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+					  TIT.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO.TIT_FECHA_PRESENT2_REG');		
+	
+	
+	V_SQL := '				  
+	MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+			USING ( 
+					SELECT act_id, BIE_ADJ_F_INSCRIP_TITULO FROM (
+					select act.act_id
+					, adj.bie_id
+					,adj.BIE_ADJ_F_INSCRIP_TITULO
+					, ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+					from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+					inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+					inner join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+					where tit.TIT_FECHA_INSC_REG is null
+					AND ADJ.BIE_ADJ_F_INSCRIP_TITULO is not null)
+					WHERE ORDEN = 1
+				  ) AUX
+					ON (AUX.ACT_ID = TIT.ACT_ID)
+					WHEN MATCHED THEN UPDATE SET
+					  TIT.TIT_FECHA_INSC_REG = AUX.BIE_ADJ_F_INSCRIP_TITULO,
+					  TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+					  TIT.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO.TIT_FECHA_INSC_REG');
+	
+					  
+	V_SQL := '				  
+	MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+			USING ( 
+					SELECT act_id, BIE_ADJ_F_CAN_REG FROM (
+					select act.act_id
+					, adj.bie_id
+					,adj.BIE_ADJ_F_CAN_REG
+					, ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+					from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+					inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+					inner join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+					where tit.TIT_FECHA_RETIRADA_REG is null
+					AND ADJ.BIE_ADJ_F_CAN_REG is not null)
+					WHERE ORDEN = 1
+				  ) AUX
+					ON (AUX.ACT_ID = TIT.ACT_ID)
+					WHEN MATCHED THEN UPDATE SET
+					  TIT.TIT_FECHA_RETIRADA_REG = AUX.BIE_ADJ_F_CAN_REG,
+					  TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+					  TIT.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO.TIT_FECHA_RETIRADA_REG');
+		
+	
+	V_SQL := '				  
+	INSERT INTO '||V_ESQUEMA||'.ACT_TIT_TITULO (
+            TIT_ID
+            ,ACT_ID
+            ,DD_ETI_ID
+            ,TIT_FECHA_ENTREGA_GESTORIA
+            ,TIT_FECHA_PRESENT_HACIENDA
+            ,TIT_FECHA_ENVIO_AUTO
+            ,TIT_FECHA_PRESENT1_REG
+            ,TIT_FECHA_PRESENT2_REG
+            ,TIT_FECHA_INSC_REG
+            ,TIT_FECHA_RETIRADA_REG
+            ,VERSION
+            ,USUARIOCREAR
+            ,FECHACREAR
+            ,BORRADO
+        )
+        WITH NUEVOS AS (
+          select act.act_id
+          , case when tit.TIT_FECHA_INSC_REG is not null then ''02'' else ''04'' end as DD_ETI_CODIGO
+          , adj.BIE_ADJ_F_ENTREGA_GESTOR
+          , adj.BIE_ADJ_F_PRESEN_HACIENDA
+          , adj.BIE_ADJ_F_ENVIO_ADICION
+          , adj.BIE_ADJ_F_PRESENT_REGISTRO
+          , adj.BIE_ADJ_F_SEGUNDA_PRESEN
+          , adj.BIE_ADJ_F_INSCRIP_TITULO
+          , adj.BIE_ADJ_F_CAN_REG
+          , ROW_NUMBER() OVER (PARTITION BY adj.bie_id ORDER BY adj.FECHACREAR DESC) ORDEN
+          from '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ 
+          inner join '||V_ESQUEMA||'.ACT_ACTIVO act on adj.BIE_ID = act.bie_id
+          left join '||V_ESQUEMA||'.act_tit_titulo tit on act.act_id = tit.act_id
+           where tit.act_id is null
+          )
+        SELECT 
+           '||V_ESQUEMA||'.S_ACT_TIT_TITULO.NEXTVAL                                     TIT_ID, 
+           NVS.act_id                                                   ACT_ID,
+           ETI.DD_ETI_ID                                                DD_ETI_ID,
+           NVS.BIE_ADJ_F_ENTREGA_GESTOR                                 TIT_FECHA_ENTREGA_GESTORIA,
+           NVS.BIE_ADJ_F_PRESEN_HACIENDA                                TIT_FECHA_PRESENT_HACIENDA,
+           NVS.BIE_ADJ_F_ENVIO_ADICION                                  TIT_FECHA_ENVIO_AUTO,
+           NVS.BIE_ADJ_F_PRESENT_REGISTRO                               TIT_FECHA_PRESENT1_REG,
+           NVS.BIE_ADJ_F_SEGUNDA_PRESEN                                 TIT_FECHA_PRESENT2_REG,
+           NVS.BIE_ADJ_F_INSCRIP_TITULO                                 TIT_FECHA_INSC_REG,
+           NVS.BIE_ADJ_F_CAN_REG                                        TIT_FECHA_RETIRADA_REG,
+           0                                                           	VERSION,
+           '''||V_USUARIO||'''                                          USUARIOCREAR,
+           SYSDATE                                                     	FECHACREAR,
+           0                                                           	BORRADO
+        FROM NUEVOS NVS
+        LEFT JOIN '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI ON ETI.DD_ETI_CODIGO = NVS.DD_ETI_CODIGO
+        WHERE NVS.ORDEN = 1
+	'
+	;
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INSERTADO ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_TIT_TITULO');
+                  
+                  
+    COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('******************************************************');
+	DBMS_OUTPUT.PUT_LINE('');              
 
 
 
@@ -2551,4 +2857,3 @@ EXCEPTION
 
 END SP_UPA_UPDATE_ACTIVES_SAREB;
 /
-

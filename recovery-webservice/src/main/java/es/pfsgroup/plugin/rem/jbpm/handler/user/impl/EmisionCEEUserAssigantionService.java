@@ -54,7 +54,7 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 			
 			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
 			
-			// Si la cartera es BANKIA o SAREB, el gestor de la tarea es TINSA CERTIFY
+			// Si la cartera es BANKIA o SAREB, el gestor de las tareas es TINSA CERTIFY
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())){
 				//Proveedor Tinsa
 				Filter filtroProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "nombre", NOMBRE_PROVEEDOR_BANKIA_SAREB);
@@ -67,14 +67,20 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 					return proveedorContactoBankiaSareb.getUsuario();
 
 			} else {
-			//Otras carteras, el gestor de la tarea es el proveedor del trabajo
+			//Otras carteras, el gestor de las tareas es el proveedor del trabajo
 				ActivoProveedorContacto proveedor = tareaActivo.getTramite().getTrabajo().getProveedorContacto();
 				if(!Checks.esNulo(proveedor))
 					return proveedor.getUsuario();
 			}
 		}
 
-		return null;
+		//Si no se ha podido determinar el gestor destinatario de las tareas en este punto, pondremos como gestor
+		//el gestor del activo
+		//TODO: ¡Hay que cambiar el método para que no pida ID sino código!
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
 	}
 
 	@Override

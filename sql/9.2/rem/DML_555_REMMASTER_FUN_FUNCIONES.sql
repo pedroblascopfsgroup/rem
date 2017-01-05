@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20170103
+--## FECHA_CREACION=20170105
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1190
@@ -148,7 +148,10 @@ DECLARE
 	  T_FUNCION('Puede ver la opción de menú comercial',																		'MENU_COMERCIAL'),
 	  T_FUNCION('Puede ver la opción de menú administración',																	'MENU_ADMINISTRACION'),
 	  T_FUNCION('Puede ver la opción de menú configuraicón',																	'MENU_CONFIGURACION'),
-	  T_FUNCION('Puede autorizar/rechazar el gasto',																			'OPERAR_GASTO')
+	  T_FUNCION('Puede autorizar/rechazar el gasto',																			'OPERAR_GASTO'),
+	  T_FUNCION('Puede crear un gasto',																							'CREAR_GASTO'),
+	  T_FUNCION('Permite editar la tab de activos asociados a un gasto',														'EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS')
+	  
     ); 
     V_TMP_FUNCION T_FUNCION;
 

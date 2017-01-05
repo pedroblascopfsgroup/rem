@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import es.capgemini.devon.dto.WebDto;
+
 
 
 
@@ -8,9 +10,12 @@ package es.pfsgroup.plugin.rem.model;
  * @author Anahuac de Vicente
  *
  */
-public class DtoValoracion {
+public class DtoValoracion extends WebDto {
 
-	private static final long serialVersionUID = 0L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	
 	private Long id;

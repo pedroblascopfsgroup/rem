@@ -7,8 +7,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
     reference: 'detalleeconomicogastoref',
     scrollable	: 'y',
 	recordName: "detalleeconomico",
-	
 	recordClass: "HreRem.model.DetalleEconomicoGasto",
+    refreshAfterSave: true,
     
     requires: ['HreRem.model.DetalleEconomicoGasto'],
     
@@ -255,7 +255,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										]
 					           },
            
-					           {   
+					           	{   
 									xtype:'fieldsettable',
 									defaultType: 'textfieldbase',				
 									title: HreRem.i18n('title.gasto.detalle.economico.pago'),
@@ -354,275 +354,272 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															}
 												]
 											},
-											{		                
-											    xtype: 'checkboxfieldbase',
-											    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.reembolsar.pago'),
-											    labelWidth: 200,
-											    bind: {
-										        	value: '{detalleeconomico.reembolsoTercero}'
-							            		},
-							            		listeners: {
-							            			change: 'onChangeReembolsarPagoTercero'
-							            		},
-							            		reference: 'reembolsarPagoRef',
-							            		colspan: 3
-					                		},
 											
-											{   
-												xtype:'fieldsettable',
-												reference: 'fieldSetSuplido',
+											{
+					                			xtype: 'fieldsettable',					                			
+					                			collapsible: false,
 												colspan: 3,
-												defaultType: 'textfieldbase',				
-												title: HreRem.i18n('title.gasto.detalle.economico.suplido'),
-												items :
-													[
-														{   
-															xtype:'fieldset',
-															defaultType: 'textfieldbase',
-															bind: {
-																disabled: '{!esReembolsoPago}'
-															},
-															reference: 'fieldGestoria',
-															margin: '10 0 0 0',
-															height: 175,
-															items :
-																[
-																	{		                
-																	    xtype: 'checkboxfieldbase',
-																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.incluir.pago.provision'),
-																	    bind: {
-																        	value: '{detalleeconomico.incluirPagoProvision}'
-													            		},
-													            		listeners: {
-													            			change: 'onChangePagadoProvision'
-													            		},
-													            		reference: 'incluirPagoProvisionRef'
-											                		}
-											                	]
-														},
-														{   
-															xtype:'fieldset',
-															defaultType: 'textfieldbase',
-															reference: 'fieldAbonar',
-															bind: {
-																disabled: '{!esReembolsoPago}'
-															},
-															margin: '10 0 0 0',
-															height: 175,
-															width: 450,
-															items :
-																[
-																	{		                
-																	    xtype: 'checkboxfieldbase',
-																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.abonar.cuenta'),
-																	    bind: {
-																        	value: '{detalleeconomico.abonoCuenta}'
-													            		},
-													            		listeners: {
-													            			change: 'onChangeAbonoCuenta'
-													            		},
-													            		reference: 'abonoCuentaRef',
-													            		colspan: 3
-											                		},
-											                		{				                	
-																		xtype      : 'fieldcontainer',
-																		fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.iban'),
-																		name : 	'iban',
-																		reference: 'ibanRef',
-																		bind: {disabled: '{!seleccionadoAbonar}'},
-																		defaults: {
-																			flex: 1
-																		},
-																		colspan: 3,
-																		layout: 'hbox',
-																		items: [
+												items: [
+												
+															{		                
+															    xtype: 'checkboxfieldbase',
+															    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.reembolsar.pago'),
+															    labelWidth: 200,
+															    bind: {
+														        	value: '{detalleeconomico.reembolsoTercero}'
+											            		},
+											            		listeners: {
+											            			
+											            			//afterbind: 'onChangeReembolsarPagoTercero'
+											            		},
+											            		reference: 'reembolsarPagoRef',
+											            		colspan: 3
+									                		},
+															{   
+																xtype:'fieldset',
+																defaultType: 'textfieldbase',
+																reference: 'fieldGestoria',
+																//disabled: true,
+																/*bind: {
+																	disabled: '{!esReembolsoPago}'
+																},*/
+																margin: '0 10 10 0',																
+																height: 175,
+																items : [
 																			{		                
-																			    xtype: 'textfieldbase',
-																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.iban'),
-																			    reference: 'iban',
+																			    xtype: 'checkboxfieldbase',
+																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.incluir.pago.provision'),
 																			    bind: {
-																		        	value: '{detalleeconomico.iban}'
-															            		},
-															            		hidden: true
-													                		},
-																			{
-																				xtype: 'textfieldbase',
-																				reference: 'iban1',
-																				style: {
-																					backgroundColor: '#E5F6FE'
-																				},
-																				width: 55,
-																				maxLength: 4,
-																				minLengthText: 'Debe tener 4 digitos',
-																				bind: {
-																		        	value: '{detalleeconomico.iban1}'
-															            		},
-															            		listeners: {
-															            			change: 'onChangeIban'
-															            		}
-																			},
-																			{
-																				xtype: 'textfieldbase',
-																				reference: 'iban2',
-																				style: {
-																					backgroundColor: '#E5F6FE'
-																				},
-																				width: 55,
-																				maxLength: 4,
-																				bind: {
-																		        	value: '{detalleeconomico.iban2}'
-															            		},
-															            		listeners: {
-															            			change: 'onChangeIban'
-															            		}
-																			},
-																			{
-																				xtype: 'textfieldbase',
-																				reference: 'iban3',
-																				style: {
-																					backgroundColor: '#E5F6FE'
-																				},
-																				width: 55,
-																				maxLength: 4,
-																				bind: {
-																		        	value: '{detalleeconomico.iban3}'
-															            		},
-															            		listeners: {
-															            			change: 'onChangeIban'
-															            		}
-															           
-																			},
-																			{
-																				xtype: 'textfieldbase',
-																				reference: 'iban4',
-																				style: {
-																					backgroundColor: '#E5F6FE'
-																				},
-																				width: 55,
-																				maxLength: 4,
-																				bind: {
-																		        	value: '{detalleeconomico.iban4}'
-															            		}
-																			},
-																			{
-																				xtype: 'textfieldbase',
-																				reference: 'iban5',
-																				style: {
-																					backgroundColor: '#E5F6FE'
-																				},
-																				width: 55,
-																				maxLength: 4,
-																				bind: {
-																		        	value: '{detalleeconomico.iban5}'
-															            		},
-															            		listeners: {
-															            			change: 'onChangeIban'
-															            		}
-																			},
-																			{
-																				xtype: 'textfieldbase',
-																				reference: 'iban6',
-																				style: {
-																					backgroundColor: '#E5F6FE'
-																				},
-																				width: 55,
-																				maxLength: 4,
-																				bind: {
-																		        	value: '{detalleeconomico.iban6}'
-															            		},
-															            		listeners: {
-															            			change: 'onChangeIban'
-															            		}
-																			}
-																		]
-																	},
-											                		{		                
-																	    xtype: 'textfieldbase',
-																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.titular.cuenta'),
-																	    bind: {
-																        	value: '{detalleeconomico.titularCuenta}',
-																        	disabled: '{!seleccionadoAbonar}'
-													            		},
-													            		reference: 'titularCuentaRef',
-													            		colspan: 3
-											                		},
-											                		{		                
-																	    xtype: 'textfieldbase',
-																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.nif.titular.cuenta'),
-																	    bind: {
-																        	value: '{detalleeconomico.nifTitularCuenta}',
-																        	disabled: '{!seleccionadoAbonar}'
-													            		},
-													            		reference: 'nifTitularCuentaRef',
-													            		colspan: 3
-											                		}
-											                	]
-														},
-														{   
-															xtype:'fieldset',
-															defaultType: 'textfieldbase',
-															reference: 'fieldBankia',
-															bind: {
-																disabled: '{!esReembolsoPago}'
+																		        	value: '{detalleeconomico.incluirPagoProvision}'
+																	       		},
+																	       		listeners: {
+																	       			change: 'onChangePagadoProvision'
+																	       		},
+																	       		reference: 'incluirPagoProvisionRef'
+															           		}
+															    ]
 															},
-															margin: '10 0 0 0',
-															height: 175,
-															
-															items :
-																[
-																	{		                
-																	    xtype: 'checkboxfieldbase',
-																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.pagado.bankia'),
-																	    bind: {
-																        	value: '{detalleeconomico.pagadoConexionBankia}'
-													            		},
-													            		listeners: {
-													            			change: 'onChangePagadoBankia'
-													            			
-													            		},
-													            		reference: 'pagadoConexionBankiaRef',
-													            		colspan: 3
-											                		},
-											                		{ 
-																		xtype: 'textfieldbase',
-																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.oficina'),
-																		bind: {
-																		    value: '{detalleeconomico.oficina}',
-																		    disabled: '{!seleccionadoPagadoBankia}'
-																		},
-																		reference: 'oficinaRef'
-																		
-																	},
-											                		{		                
-																	    xtype: 'textfieldbase',
-																	    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.numero.conexion'),
-																	    bind: {
-																        	value: '{detalleeconomico.numeroConexion}',
-																        	disabled: '{!seleccionadoPagadoBankia}'
-													            		},
-													            		reference: 'numeroConexionRef'
-											                		},
-											                		
-											                		{
-															        	xtype:'datefieldbase',
-																		formatter: 'date("d/m/Y")',
-																       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.conexion'),
-																       	bind: '{detalleeconomico.fechaConexion}',
-																       	maxValue: null
-																    }
-											                	]
-														}
-								                		
-								                		
-													
-													]
-											}
-										]
-								}
-						
-			
+															{   
+																xtype:'fieldset',
+																defaultType: 'textfieldbase',
+																reference: 'fieldAbonar',
+																//disabled: true,
+																/*bind: {
+																	disabled: '{!esReembolsoPago}'
+																},*/
+																margin: '0 10 10 0',
+																height: 175,																
+																items :	[
+																			{		                
+																			    xtype: 'checkboxfieldbase',
+																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.abonar.cuenta'),
+																			    bind: {
+																		        	value: '{detalleeconomico.abonoCuenta}'
+															            		},
+															            		listeners: {
+															            			change: 'onChangeAbonoCuenta'
+															            		},
+															            		reference: 'abonoCuentaRef',
+															            		colspan: 3
+													                		},
+															                {				                	
+																				xtype      : 'fieldcontainer',
+																				fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.iban'),
+																				name : 	'iban',
+																				reference: 'ibanRef',
+																				bind: {disabled: '{!seleccionadoAbonar}'},
+																				defaults: {
+																					flex: 1
+																				},
+																				colspan: 3,
+																				layout: 'hbox',
+																				items: [
+																							{		                
+																							    xtype: 'textfieldbase',
+																							    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.iban'),
+																							    reference: 'iban',
+																							    bind: {
+																						        	value: '{detalleeconomico.iban}'
+																			            		},
+																			            		hidden: true
+																	                		},
+																							{
+																								xtype: 'textfieldbase',
+																								reference: 'iban1',
+																								style: {
+																									backgroundColor: '#E5F6FE'
+																								},
+																								width: 55,
+																								maxLength: 4,
+																								minLengthText: 'Debe tener 4 digitos',
+																								bind: {
+																						        	value: '{detalleeconomico.iban1}'
+																			            		},
+																			            		listeners: {
+																			            			change: 'onChangeIban'
+																			            		}
+																							},
+																							{
+																								xtype: 'textfieldbase',
+																								reference: 'iban2',
+																								style: {
+																									backgroundColor: '#E5F6FE'
+																								},
+																								width: 55,
+																								maxLength: 4,
+																								bind: {
+																						        	value: '{detalleeconomico.iban2}'
+																			            		},
+																			            		listeners: {
+																			            			change: 'onChangeIban'
+																			            		}
+																							},
+																							{
+																								xtype: 'textfieldbase',
+																								reference: 'iban3',
+																								style: {
+																									backgroundColor: '#E5F6FE'
+																								},
+																								width: 55,
+																								maxLength: 4,
+																								bind: {
+																						        	value: '{detalleeconomico.iban3}'
+																			            		},
+																			            		listeners: {
+																			            			change: 'onChangeIban'
+																			            		}
+																			           
+																							},
+																							{
+																								xtype: 'textfieldbase',
+																								reference: 'iban4',
+																								style: {
+																									backgroundColor: '#E5F6FE'
+																								},
+																								width: 55,
+																								maxLength: 4,
+																								bind: {
+																						        	value: '{detalleeconomico.iban4}'
+																			            		}
+																							},
+																							{
+																								xtype: 'textfieldbase',
+																								reference: 'iban5',
+																								style: {
+																									backgroundColor: '#E5F6FE'
+																								},
+																								width: 55,
+																								maxLength: 4,
+																								bind: {
+																						        	value: '{detalleeconomico.iban5}'
+																			            		},
+																			            		listeners: {
+																			            			change: 'onChangeIban'
+																			            		}
+																							},
+																							{
+																								xtype: 'textfieldbase',
+																								reference: 'iban6',
+																								style: {
+																									backgroundColor: '#E5F6FE'
+																								},
+																								width: 55,
+																								maxLength: 4,
+																								bind: {
+																						        	value: '{detalleeconomico.iban6}'
+																			            		},
+																			            		listeners: {
+																			            			change: 'onChangeIban'
+																			            		}
+																							}
+																					]
+																			},
+																			{		        
+																				xtype: 'textfieldbase',
+																				fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.titular.cuenta'),
+																				bind: {
+																				  	value: '{detalleeconomico.titularCuenta}',
+																				  	disabled: '{!seleccionadoAbonar}'
+																	            },
+																	            reference: 'titularCuentaRef',
+																	            colspan: 3
+															                },
+															                {		                
+																			    xtype: 'textfieldbase',
+																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.nif.titular.cuenta'),
+																			    bind: {
+																			       	value: '{detalleeconomico.nifTitularCuenta}',
+																			       	disabled: '{!seleccionadoAbonar}'
+																	        	},
+																	        	reference: 'nifTitularCuentaRef',
+																	        	colspan: 3
+															                }
+																]
+															},
+															{   
+																xtype:'fieldset',
+																defaultType: 'textfieldbase',
+																reference: 'fieldBankia',
+																//disabled: true,
+																/*bind: {
+																	disabled: '{!esReembolsoPago}'
+																},*/
+																margin: '0 0 10 0',
+																height: 175,															
+																items :
+																		[
+																			{		                
+																					    xtype: 'checkboxfieldbase',
+																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.pagado.bankia'),
+																					    bind: {
+																				        	value: '{detalleeconomico.pagadoConexionBankia}'
+																	            		},
+																	            		listeners: {
+																	            			change: 'onChangePagadoBankia'
+																	            			
+																	            		},
+																	            		reference: 'pagadoConexionBankiaRef',
+																	            		colspan: 3
+															           		},
+															           		{ 
+																						xtype: 'textfieldbase',
+																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.oficina'),
+																						bind: {
+																						    value: '{detalleeconomico.oficina}',
+																						    disabled: '{!seleccionadoPagadoBankia}'
+																						},
+																						reference: 'oficinaRef'
+																						
+																			},
+															           		{		                
+																					    xtype: 'textfieldbase',
+																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.numero.conexion'),
+																					    bind: {
+																				        	value: '{detalleeconomico.numeroConexion}',
+																				        	disabled: '{!seleccionadoPagadoBankia}'
+																	            		},
+																	            		reference: 'numeroConexionRef'
+															          		},
+															          		{
+																			        	xtype:'datefieldbase',
+																						formatter: 'date("d/m/Y")',
+																				       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.conexion'),
+																				       	bind: {
+																				       		value: '{detalleeconomico.fechaConexion}',
+																				       		disabled: '{!seleccionadoPagadoBankia}'
+																				       	},
+																				       	reference: 'fechaConexionRef',
+																				       	maxValue: null
+																			}
+															    ]
+															}
+																
+												] 
+											}					
 
-			
+									]
+								}
+
            
     	];
     

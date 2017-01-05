@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -60,7 +61,6 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -1140,6 +1140,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return listaHonorarios;
 	}
 
+
+	
 	@Override
 	public boolean checkEjerce(TareaExterna tareaExterna){
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
@@ -1166,4 +1168,50 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 	}
+	
+	
+	
+	
+	@Override
+	public List<Oferta> getOtrasOfertasTitularesOferta(Oferta oferta){
+		List<Oferta> listaOfertasTotales = null;
+		List<Oferta> listaOfertas = null;
+		Oferta ofr = null;
+		ExpedienteComercial eco = null;
+		OfertaDto ofertaDto = null;
+		
+		try {
+			listaOfertasTotales = new ArrayList<Oferta>();
+			
+			eco = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			List<CompradorExpediente> listaComp = eco.getCompradores();
+			for(int i=0; i<listaComp.size();i++){
+				ClienteComercial cc = listaComp.get(i).getPrimaryKey().getComprador().getClienteComercial();
+				ofertaDto = new OfertaDto();
+				ofertaDto.setIdClienteComercial(cc.getId());
+				listaOfertas = getListaOfertas(ofertaDto);
+				
+				listaOfertasTotales.addAll(listaOfertas);
+			}
+			
+			for(int i=0; i<listaOfertasTotales.size();i++){
+				ofr = listaOfertasTotales.get(i);
+				if(ofr.equals(oferta)){
+					listaOfertasTotales.remove(ofr);
+				}
+			
+			}
+			
+			return listaOfertasTotales;
+			
+		} catch (Exception e) {
+			logger.error(e);
+			return listaOfertasTotales;
+		}
+	}
+	
+	
+	
+	
 }
+

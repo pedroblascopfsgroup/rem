@@ -49,6 +49,9 @@ public class ConfirmacionoperacionController {
 
 	@Autowired
 	private ReservaApi reservaApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -100,11 +103,12 @@ public class ConfirmacionoperacionController {
 				importeTotal = Checks.esNulo(oferta.getImporteContraOferta())
 						? oferta.getImporteOferta() - importeReserva : oferta.getImporteContraOferta() - importeReserva;
 
+				Date fechaActual = new Date();
 				if (ReservaApi.COBRO_RESERVA.equals(reservaDto.getAccion())) {
 
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(importeReserva);
-					Date fechaActual = new Date();
+
 					entregaReserva.setFechaEntrega(fechaActual);
 					entregaReserva.setReserva(expedienteComercial.getReserva());
 					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
@@ -127,6 +131,7 @@ public class ConfirmacionoperacionController {
 					}
 					reserva.setEstadoReserva(estReserva);
 					reserva.setFechaFirma(fechaActual);
+					reserva.setFechaEnvio(fechaActual);
 					expedienteComercial.setReserva(reserva);
 
 					if (!expedienteComercialApi.update(expedienteComercial)) {
@@ -136,6 +141,7 @@ public class ConfirmacionoperacionController {
 
 				if (ReservaApi.COBRO_VENTA.equals(reservaDto.getAccion())) {
 
+					//-Realizar cuando expediente "Posicionado". (Cuando se lance la tarea de posicionamiento y firma).
 					EntregaReserva entregaReserva = new EntregaReserva();
 					entregaReserva.setImporte(importeTotal);
 					Date fechaEntrega = new Date();
@@ -144,14 +150,8 @@ public class ConfirmacionoperacionController {
 					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
 						throw new Exception("No se ha podido guardar la reserva entregada en base de datos");
 					}
-
-					// Actualiza estado expediente comercial a VENDIDO
-					DDEstadosExpedienteComercial estadoReservado = expedienteComercialApi
-							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
-					if (estadoReservado == null) {
-						throw new Exception("No se ha podido obtener estado VENDIDO de base de datos");
-					}
-					expedienteComercial.setEstado(estadoReservado);
+					expedienteComercial.setFechaContabilizacionPropietario(fechaActual);
+					expedienteComercial.setFechaVenta(fechaActual);
 
 					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
@@ -172,16 +172,30 @@ public class ConfirmacionoperacionController {
 
 					// Actualiza estado reserva a ANULADA
 					DDEstadosReserva estReserva = reservaApi
-							.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_ANULADA);
+							.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA);
 					if (estReserva == null) {
-						throw new Exception("No se ha podido obtener estado ANULADA de la reserva de base de datos");
+						throw new Exception("No se ha podido obtener estado CODIGO_RESUELTA_DEVUELTA de la reserva de base de datos");
 					}
 					expedienteComercial.getReserva().setEstadoReserva(estReserva);
+					
+					DDEstadoOferta estOferta = ofertaApi.getDDEstadosOfertaByCodigo(DDEstadoOferta.CODIGO_RECHAZADA);
+					if (estOferta == null) {
+						throw new Exception("No se ha podido obtener estado Rechazada de la oferta de base de datos");
+					}
+					expedienteComercial.getOferta().setEstadoOferta(estOferta);
+					
+					DDEstadosExpedienteComercial estadoAnulado = expedienteComercialApi
+							.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.ANULADO);
+					if (estadoAnulado == null) {
+						throw new Exception("No se ha podido obtener estado RESERVADO de base de datos");
+					}
+					expedienteComercial.setEstado(estadoAnulado);
 
 					// Actualiza estado devolucion a ANULADO
 					DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) genericDao.get(DDEstadoDevolucion.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_DEVUELTA));
 					expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
+					
 					expedienteComercial.setFechaDevolucionEntregas(fechaEntrega);
 					expedienteComercial.setImporteDevolucionEntregas(importeReserva);
 

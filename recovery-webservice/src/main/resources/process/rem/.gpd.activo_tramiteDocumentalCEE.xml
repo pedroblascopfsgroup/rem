@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteDocumentalCEE" width="1219" height="774">
-  <node name="inicio" x="58" y="9" width="132" height="36">
+<root-container name="activo_tramiteDocumentalCEE" width="1218" height="963">
+  <node name="inicio" x="82" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_AnalisisPeticion" x="347" y="90" width="169" height="36">
+  <node name="T003_AnalisisPeticion" x="346" y="251" width="169" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_AnalisisPeticionDecision" x="325" y="154" width="218" height="36">
+  <node name="T003_AnalisisPeticionDecision" x="324" y="370" width="218" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="701" h1="-3" w2="-1" h2="-187"/>
     </edge>
     <edge>
-      <label x="-22" y="-25"/>
-      <bendpoint w1="119" h1="43" w2="-231" h2="-1"/>
+      <label x="-1" y="-19"/>
+      <bendpoint w1="116" h1="50" w2="-234" h2="-1"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_SolicitudExtraordinaria" x="678" y="198" width="212" height="36">
+  <node name="T003_SolicitudExtraordinaria" x="677" y="421" width="212" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_AutorizacionPropietario" x="679" y="262" width="213" height="36">
+  <node name="T003_AutorizacionPropietario" x="678" y="485" width="213" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_AutorizacionPropietarioDecision" x="661" y="332" width="252" height="36">
+  <node name="T003_AutorizacionPropietarioDecision" x="660" y="555" width="252" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-16" y="-16"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="14" y="-9"/>
       <bendpoint w1="-120" h1="63" w2="233" h2="-5"/>
     </edge>
   </node>
-  <node name="T003_EmisionCertificado" x="327" y="400" width="215" height="36">
+  <node name="T003_EmisionCertificado" x="326" y="616" width="215" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_EmisionCertificadoDecision" x="325" y="476" width="224" height="36">
+  <node name="T003_EmisionCertificadoDecision" x="324" y="692" width="224" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-80" y="-11"/>
       <bendpoint w1="-138" h1="0" w2="-138" h2="-239"/>
       <bendpoint w1="-137" h1="237" w2="-137" h2="-2"/>
     </edge>
@@ -58,30 +58,31 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_SolicitudEtiqueta" x="345" y="553" width="177" height="36">
+  <node name="T003_SolicitudEtiqueta" x="344" y="769" width="177" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_ObtencionEtiqueta" x="343" y="638" width="186" height="36">
+  <node name="T003_ObtencionEtiqueta" x="342" y="854" width="186" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T003_CierreEconomico" x="338" y="710" width="198" height="36">
+  <node name="T003_CierreEconomico" x="337" y="926" width="198" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="700" h1="1" w2="1" h2="373"/>
     </edge>
   </node>
-  <node name="T003_ComprobarTipoGestor" x="14" y="90" width="221" height="36">
+  <node name="T003_ComprobarCarteraYTipoGestor" x="11" y="130" width="274" height="36">
     <edge>
-      <label x="-50" y="-19"/>
+      <label x="-133" y="-23"/>
+      <bendpoint w1="281" h1="0" w2="-1" h2="-121"/>
     </edge>
     <edge>
-      <label x="5" y="-146"/>
-      <bendpoint w1="0" h1="172" w2="-310" h2="-138"/>
+      <label x="-113" y="-118"/>
+      <bendpoint w1="-1" h1="249" w2="-286" h2="-237"/>
     </edge>
   </node>
-  <node name="Fin" x="1070" y="338" width="132" height="36"/>
+  <node name="Fin" x="1069" y="554" width="132" height="36"/>
 </root-container>

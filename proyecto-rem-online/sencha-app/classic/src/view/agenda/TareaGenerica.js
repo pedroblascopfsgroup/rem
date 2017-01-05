@@ -589,6 +589,29 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						})
 					},
 					
+					T003_EmisionCertificadoValidacion: function() {
+						var me = this;
+
+						me.deshabilitarCampo(me.down('[name=motivoNoEmision]'));
+						me.deshabilitarCampo(me.down('[name=fechaEmision]'));
+						me.deshabilitarCampo(me.down('[name=comboCalificacion]'));
+						me.deshabilitarCampo(me.down('[name=comboProcede]'));
+						
+						me.down('[name=comboEmision]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.deshabilitarCampo(me.down('[name=motivoNoEmision]'));
+								me.habilitarCampo(me.down('[name=fechaEmision]'));
+								me.habilitarCampo(me.down('[name=comboCalificacion]'));
+								me.habilitarCampo(me.down('[name=comboProcede]'));
+							}else{
+								me.habilitarCampo(me.down('[name=motivoNoEmision]'));
+								me.deshabilitarCampo(me.down('[name=fechaEmision]'));
+								me.deshabilitarCampo(me.down('[name=comboCalificacion]'));
+								me.deshabilitarCampo(me.down('[name=comboProcede]'));
+							}
+						})
+					},
+					
 					T003_AutorizacionPropietarioValidacion: function() {
 						var me = this;
 						

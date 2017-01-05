@@ -60,14 +60,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 	     esReembolsoPago: function(get){
 	     	var me= this;
+
 	     	if(get('detalleeconomico.reembolsoTercero')=="true" || get('detalleeconomico.reembolsoTercero')==true){
 	     		return true;
 	     	}
 	     	else{
 	     		return false;
 	     	}
-//	     	var esReembolsoPago= Ext.isEmpty(get('detalleeconomico.reembolsoTercero')) || get('detalleeconomico.reembolsoTercero')==0 ? false : true 
-//	     	return esReembolsoPago;
 	     },
 	     
 	     seleccionadoAbonar: function(get){

@@ -119,7 +119,8 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 			name: 'destinatariosPago'
 		},
 		{
-			name: 'reembolsoTercero'
+			name: 'reembolsoTercero',
+			critical: true
 		},
 		{
 			name: 'incluirPagoProvision'

@@ -103,6 +103,29 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 
 		return new DtoPage(visitas, pageVisitas.getTotalCount());
 	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Visita> getListaVisitasOrdenada(DtoVisitasFilter dtoVisitasFilter) {
+		HQLBuilder hb = new HQLBuilder(" from Visita v");
+
+		if(!Checks.esNulo(dtoVisitasFilter.getNumVisitaRem())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "v.numVisitaRem", dtoVisitasFilter.getNumVisitaRem());
+		}
+
+		if(!Checks.esNulo(dtoVisitasFilter.getNumActivo())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "v.activo.numActivo", dtoVisitasFilter.getNumActivo());
+		}
+
+		hb.orderBy("v.fechaSolicitud", HQLBuilder.ORDER_DESC);
+
+	
+		return HibernateQueryUtils.list(this, hb);
+	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

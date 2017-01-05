@@ -351,18 +351,21 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					visita.setProveedorVisita(pveVisita);
 				}
 			}
+			if (!Checks.esNulo(visitaDto.getFechaAccion())) {
+				visita.setFechaSolicitud(visitaDto.getFechaAccion());
+			}
 
-			if (!Checks.esNulo(visitaDto.getCodEstadoVisita()) && !Checks.esNulo(visitaDto.getFechaAccion())) {
+			if (!Checks.esNulo(visitaDto.getCodEstadoVisita()) && !Checks.esNulo(visitaDto.getFecha())) {
 				if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_ALTA)) {
-					visita.setFechaSolicitud(visitaDto.getFechaAccion());
+					visita.setFechaVisita(visitaDto.getFecha());
 				} else if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_CONCERTADA)) {
-					visita.setFechaConcertacion(visitaDto.getFechaAccion());
+					visita.setFechaConcertacion(visitaDto.getFecha());
 				} else if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_CONTACTO)) {
-					visita.setFechaContacto(visitaDto.getFechaAccion());
+					visita.setFechaContacto(visitaDto.getFecha());
 				} else if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_REALIZADA)) {
-					visita.setFechaVisita(visitaDto.getFechaAccion());
+					visita.setFechaVisita(visitaDto.getFecha());
 				} else if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_NO_REALIZADA)) {
-					visita.setFechaVisita(visitaDto.getFechaAccion());
+					visita.setFechaVisita(visitaDto.getFecha());
 				}
 			}
 
@@ -503,20 +506,20 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 			if (((JSONObject) jsonFields).containsKey("observaciones")) {
 				visita.setObservaciones(visitaDto.getObservaciones());
-			}
+			}		
 
-			if (((JSONObject) jsonFields).containsKey("fechaAccion")) {
-				if (!Checks.esNulo(visitaDto.getCodEstadoVisita()) && !Checks.esNulo(visitaDto.getFechaAccion())) {
+			if (((JSONObject) jsonFields).containsKey("fecha")) {
+				if (!Checks.esNulo(visitaDto.getCodEstadoVisita()) && !Checks.esNulo(visitaDto.getFecha())) {
 					if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_ALTA)) {
-						visita.setFechaSolicitud(visitaDto.getFechaAccion());
+						visita.setFechaVisita(visitaDto.getFecha());
 					} else if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_CONCERTADA)) {
-						visita.setFechaConcertacion(visitaDto.getFechaAccion());
+						visita.setFechaConcertacion(visitaDto.getFecha());
 					} else if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_CONTACTO)) {
-						visita.setFechaContacto(visitaDto.getFechaAccion());
+						visita.setFechaContacto(visitaDto.getFecha());
 					} else if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_REALIZADA)) {
-						visita.setFechaVisita(visitaDto.getFechaAccion());
+						visita.setFechaVisita(visitaDto.getFecha());
 					} else if (visitaDto.getCodEstadoVisita().equals(DDEstadosVisita.CODIGO_NO_REALIZADA)) {
-						visita.setFechaVisita(visitaDto.getFechaAccion());
+						visita.setFechaVisita(visitaDto.getFecha());
 					}
 				}
 			}
@@ -596,6 +599,15 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 		return visitaDao.getListVisitasDetalle(dtoVisitasFilter);
 
+	}
+	
+	@Override
+	public List<Visita> getListaVisitasOrdenada(DtoVisitasFilter dtoVisitasFilter) {
+		 List<Visita> lvisita = null;
+		
+		 lvisita = visitaDao.getListaVisitasOrdenada(dtoVisitasFilter);
+
+		 return lvisita;
 	}
 
 	@Override

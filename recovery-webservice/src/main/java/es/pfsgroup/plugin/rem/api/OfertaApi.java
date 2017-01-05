@@ -337,4 +337,15 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public boolean checkEjerce(TareaExterna tareaExterna);
+	
+	
+	
+	/**
+	 * Devuelve una lista de todas las ofertas pertenecientes a todos los titulares de una oferta
+	 *
+	 * @param oferta
+	 * @return List<Oferta> Devuelve una lista de todas las ofertas pertenecientes a todos los titulares de un activo
+	 */
+	public List<Oferta> getOtrasOfertasTitularesOferta(Oferta oferta);
 }
+

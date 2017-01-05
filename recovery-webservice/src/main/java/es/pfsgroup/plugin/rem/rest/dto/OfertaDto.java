@@ -50,7 +50,7 @@ public class OfertaDto implements Serializable {
 	@Diccionary(clase = Usuario.class, message = "El usuario no existe", groups = { Insert.class,
 		Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
-	
+	private Long idClienteComercial;
 	
 	
 	public Long getIdOfertaWebcom() {
@@ -149,6 +149,12 @@ public class OfertaDto implements Serializable {
 	public void setTitularesAdicionales(
 			List<OfertaTitularAdicionalDto> titularesAdicionales) {
 		this.titularesAdicionales = titularesAdicionales;
+	}
+	public Long getIdClienteComercial() {
+		return idClienteComercial;
+	}
+	public void setIdClienteComercial(Long idClienteComercial) {
+		this.idClienteComercial = idClienteComercial;
 	}
 	
 	

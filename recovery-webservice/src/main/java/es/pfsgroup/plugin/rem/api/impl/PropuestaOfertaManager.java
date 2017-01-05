@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
+import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
@@ -59,12 +60,15 @@ import es.pfsgroup.plugin.rem.model.DtoDataSource;
 import es.pfsgroup.plugin.rem.model.DtoHonorarios;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTasacionInforme;
+import es.pfsgroup.plugin.rem.model.DtoVisita;
+import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -104,6 +108,9 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private VisitaApi visitaApi;
 	
 	
 	@Override
@@ -939,6 +946,9 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			}
 			
 			
+			
+			
+			//*********************************listaCliente**************************************************/
 			List<CompradorExpediente> clientes = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getCompradores();
 			List<Object> listaCliente = new ArrayList<Object>();
 			DtoCliente cliente = null;
@@ -982,6 +992,10 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			}
 			propuestaOferta.setListaCliente(listaCliente);
 			
+			
+			
+			
+			//*********************************listaHonorario**************************************************/
 			List<Object> listaHonorario = new ArrayList<Object>();
 			DtoHonorarios honorarios = null;
 			Long idExpediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getId();
@@ -1012,7 +1026,11 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			}
 			propuestaOferta.setListaHonorario(listaHonorario);
 			
-			//Ofertas asociadas a las 
+			
+			
+			
+			
+			//*********************************listaOfertasPorActivo*************************************************/
 			List<ActivoOferta> listaOfertaPorActivo = activo.getOfertas();
 			List<Object> listaOferta = new ArrayList<Object>();
 			DtoOferta ofertaActivo =null;
@@ -1039,7 +1057,83 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				listaOferta.add(ofertaActivo);
 			}
 			propuestaOferta.setListaOferta(listaOferta);
-	
+			
+			
+			
+			
+			//*********************************listaOtrasOfertasPorTitulares*************************************************/
+			List<Oferta> listaOtrasOfertasPorTitulares = ofertaApi.getOtrasOfertasTitularesOferta(oferta);
+			List<Object> listaOtrasOferta = new ArrayList<Object>();
+			DtoOferta ofertaOtroActivo =null;
+			for (int k = 0; k < listaOtrasOfertasPorTitulares.size(); k++) {
+				Oferta tmpOferta = listaOtrasOfertasPorTitulares.get(k);
+				ofertaOtroActivo = new DtoOferta();
+				
+				
+				ofertaOtroActivo.setNumOferta(FileUtilsREM.stringify(tmpOferta.getNumOferta()));
+				if (tmpOferta.getAgrupacion()!=null) {
+					ofertaOtroActivo.setNumAgrup(FileUtilsREM.stringify(tmpOferta.getAgrupacion().getNumAgrupRem()));
+				}else {
+					ofertaOtroActivo.setNumAgrup(FileUtilsREM.stringify(null));
+				}
+				
+				if (tmpOferta.getActivoPrincipal()!=null) {
+					ofertaOtroActivo.setNumActivo(FileUtilsREM.stringify(tmpOferta.getActivoPrincipal().getNumActivo()));
+				}else {
+					ofertaOtroActivo.setNumActivo(FileUtilsREM.stringify(null));
+				}
+				
+				if (tmpOferta.getCliente()!=null) {
+					ofertaOtroActivo.setTitularOferta(FileUtilsREM.stringify(tmpOferta.getCliente().getNombreCompleto()));
+				} else {
+					ofertaOtroActivo.setTitularOferta(FileUtilsREM.stringify(null));
+				}
+				
+				if(!Checks.esNulo(tmpOferta.getImporteOferta())){
+					ofertaOtroActivo.setImporteOferta(FileUtilsREM.stringify(tmpOferta.getImporteOferta())+"€");
+				}else{
+					ofertaOtroActivo.setImporteOferta(FileUtilsREM.stringify(null));
+				}
+				
+				ofertaOtroActivo.setFechaOferta(FileUtilsREM.stringify(tmpOferta.getFechaAlta()));
+				if (tmpOferta.getEstadoOferta()!=null) {
+					ofertaOtroActivo.setSituacionOferta(FileUtilsREM.stringify(tmpOferta.getEstadoOferta().getDescripcionLarga()));
+				} else {
+					ofertaOtroActivo.setSituacionOferta(FileUtilsREM.stringify(null));
+				}
+				listaOtrasOferta.add(ofertaOtroActivo);
+			}
+			propuestaOferta.setListaOtrasOfertas(listaOtrasOferta);
+			
+
+			
+			
+			//*********************************listaVisitas*************************************************/		
+			DtoVisitasFilter dtoVisitasFilter = new DtoVisitasFilter();
+			dtoVisitasFilter.setNumActivo(activo.getNumActivo());
+			List<Visita> listaVisitas = visitaApi.getListaVisitasOrdenada(dtoVisitasFilter);			
+			
+			List<Object> lista = new ArrayList<Object>();
+			DtoVisita visitaActivo =null;
+			for (int k = 0; k < listaVisitas.size() && k<10; k++) {
+				Visita visita = listaVisitas.get(k);
+				visitaActivo = new DtoVisita();
+				
+				visitaActivo.setFechaSolicitud(FileUtilsREM.stringify(visita.getFechaSolicitud()));
+				visitaActivo.setSolicitante(FileUtilsREM.stringify(visita.getCliente().getNombreCompleto()));
+				visitaActivo.setNifSolicitante(FileUtilsREM.stringify(visita.getCliente().getDocumento()));
+				visitaActivo.setSituacionVisita(FileUtilsREM.stringify(visita.getEstadoVisita().getDescripcion()));
+				visitaActivo.setFechaVisita(FileUtilsREM.stringify(visita.getFechaVisita()));
+				
+				lista.add(visitaActivo);
+			}
+			propuestaOferta.setListaVisitas(lista);
+			
+			
+			
+			
+			
+			//*********************************listaTasacion**************************************************/
 			DtoTasacionInforme tasacion = null;
 			List<Object> listaTasacion = new ArrayList<Object>();
 			List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());

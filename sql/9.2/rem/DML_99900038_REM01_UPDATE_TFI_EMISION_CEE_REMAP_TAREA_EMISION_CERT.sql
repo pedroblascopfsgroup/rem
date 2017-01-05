@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170104
+--## FECHA_CREACION=20170105
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1337

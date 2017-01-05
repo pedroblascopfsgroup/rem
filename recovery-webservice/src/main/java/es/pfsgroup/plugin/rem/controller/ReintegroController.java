@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +20,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReintegroApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.EntregaReserva;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReintegroDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReintegroRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -41,7 +49,7 @@ public class ReintegroController {
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
-	private GenericABMDao genericDao;
+	private ReservaApi reservaApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -67,7 +75,28 @@ public class ReintegroController {
 			}
 				
 			errorsList = reintegroApi.validateReintegroPostRequestData(reintegroDto, jsonFields);			
-			if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {				
+			if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {
+				ofertaApi.getOfertaByIdOfertaWebcom(reintegroDto.getOfertaHRE());
+				Oferta oferta = ofertaApi.getOfertaByIdOfertaWebcom(reintegroDto.getOfertaHRE());
+				ExpedienteComercial expedienteComercial = expedienteComercialApi
+						.expedienteComercialPorOferta(oferta.getId());
+				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);
+				Double importeReserva = Double.valueOf(ofertaUVEM.getImporteReserva());
+				EntregaReserva entregaReserva = new EntregaReserva();
+				entregaReserva.setImporte(-importeReserva);
+				Date fechaEntrega = new Date();
+				entregaReserva.setFechaEntrega(fechaEntrega);
+				entregaReserva.setReserva(expedienteComercial.getReserva());
+
+				if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
+					throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
+				}
+				DDEstadosReserva estReserva = reservaApi
+						.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_RESUELTA_REINTEGRADA);
+				expedienteComercial.getReserva().setEstadoReserva(estReserva);
+				if (!expedienteComercialApi.update(expedienteComercial)) {
+					throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
+				}
 				model.put("id", jsonFields.get("id"));
 				model.put("ofertaHRE", jsonData.getData().getOfertaHRE());
 				model.put("error", "");

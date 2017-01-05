@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
-import net.sf.json.JSONObject;
 
 public interface VisitaApi {
 	
@@ -116,6 +116,14 @@ public interface VisitaApi {
 	 */
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter);
 
+	
+	/**
+	 * Obtiene lista de visitas ordenada por fecha de solicitud.
+	 * @param dtoVisitasFilter 
+	 */
+	public List<Visita> getListaVisitasOrdenada(DtoVisitasFilter dtoVisitasFilter);
+		
+		
 	/**
 	 * Este método obtiene los detalles de de una visita a través de la vista.
 	 * 

@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.model;
 public class DtoOferta {
 
 	private String numOferta;
+	private String numAgrup;
+	private String numActivo;
 	private String titularOferta;
 	private String importeOferta;
 	private String fechaOferta;
@@ -13,6 +15,19 @@ public class DtoOferta {
 	}
 	public void setNumOferta(String numOferta) {
 		this.numOferta = numOferta;
+	}
+	
+	public String getNumAgrup() {
+		return numAgrup;
+	}
+	public void setNumAgrup(String numAgrup) {
+		this.numAgrup = numAgrup;
+	}
+	public String getNumActivo() {
+		return numActivo;
+	}
+	public void setNumActivo(String numActivo) {
+		this.numActivo = numActivo;
 	}
 	public String getTitularOferta() {
 		return titularOferta;

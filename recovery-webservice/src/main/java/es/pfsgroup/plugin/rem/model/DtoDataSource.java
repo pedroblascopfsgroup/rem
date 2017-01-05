@@ -9,7 +9,9 @@ public class DtoDataSource {
 	private List<Object> listaTasacion;
 	private List<Object> listaHonorario;
 	private List<Object> listaComprador;
-
+	private List<Object> listaOtrasOfertas;
+	private List<Object> listaVisitas;
+	
 	public List<Object> getListaCliente() {
 		return listaCliente;
 	}
@@ -49,4 +51,22 @@ public class DtoDataSource {
 	public void setListaComprador(List<Object> listaComprador) {
 		this.listaComprador = listaComprador;
 	}
+
+	public List<Object> getListaOtrasOfertas() {
+		return listaOtrasOfertas;
+	}
+
+	public void setListaOtrasOfertas(List<Object> listaOtrasOfertas) {
+		this.listaOtrasOfertas = listaOtrasOfertas;
+	}
+
+	public List<Object> getListaVisitas() {
+		return listaVisitas;
+	}
+
+	public void setListaVisitas(List<Object> listaVisitas) {
+		this.listaVisitas = listaVisitas;
+	}
+	
+	
 }

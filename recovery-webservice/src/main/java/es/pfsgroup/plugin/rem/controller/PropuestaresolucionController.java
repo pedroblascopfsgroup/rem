@@ -34,7 +34,7 @@ import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 @Controller
 public class PropuestaresolucionController {
 
-		final String templatePropuestaSimple = "PropuestaResolucion001";
+		final String templatePropuestaSimple = "PropuestaResolucionActivoSimple";
 		final String templatePropuestaLote = "PropuestaResolucionAgrupacion";
 		final String templatePropuestaActivoLote = "PropuestaResolucionActivoLote";
 		

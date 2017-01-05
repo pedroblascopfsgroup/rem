@@ -19,7 +19,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
     	me.removeCls('shadow-panel');
   		
     	me.buttonAlign = 'left';
-    	me.buttons = [{ text: 'Buscar', handler: 'onClickGastosSearch' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];
+    	me.buttons = [{ text: 'Buscar', handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];
     	
 	    me.items= [
 	    
@@ -112,10 +112,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						    },
 						    { 
 					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.necesita.autorizacion.propietario'),
-					        	name: 'necesitaAutorizacionPropietario',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),
+					        	name: 'periodicidad',
 					        	bind: {
-				            		store: '{comboSiNoRem}'
+				            		store: '{comboPeriodicidad}'
 				            	}
     						},
 							{ 
@@ -170,18 +170,17 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            	displayField: 'descripcion',
 								valueField: 'id'
     						},
-							{ 
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),
-					        	name: 'periodicidad',
-					        	bind: {
-				            		store: '{comboPeriodicidad}'
-				            	}
-    						},
     						{ 
 						    	fieldLabel: HreRem.i18n('fieldlabel.num.provision'),
 						        name: 'numProvision'								            	
     						},
+							{ 
+			                	xtype:'datefieldbase',
+						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.desde'),
+						 		name: 'fechaEmisionDesde',
+						 		formatter: 'date("d/m/Y")'					 		
+							},
+    						
     						{
     							fieldLabel: HreRem.i18n('fieldlabel.nombre.propietario'),
 						        name: 'nombrePropietario'    							
@@ -189,7 +188,13 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
     						{
     							fieldLabel: HreRem.i18n('fieldlabel.docidentif.propietario'),
 						        name: 'docIdentifPropietario'    							
-    						}
+    						},
+    						{ 
+			                	xtype:'datefieldbase',
+						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.hasta'),
+						 		name: 'fechaEmisionHasta',
+						 		formatter: 'date("d/m/Y")'					 		
+							}
     						
     						
     						

@@ -13,7 +13,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 		        localUrl: '/gasto.json',
 		        remoteUrl: 'gastosproveedor/getListGastos'
 	    	},
-	    	autoLoad: true,
+	    	//autoLoad: true,
 	    	session: true,
 	    	remoteSort: true,
 	    	remoteFilter: true,

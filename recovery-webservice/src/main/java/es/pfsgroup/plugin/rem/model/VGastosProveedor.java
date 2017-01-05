@@ -7,6 +7,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import es.pfsgroup.commons.utils.Checks;
 
 
 @Entity
@@ -168,6 +171,9 @@ public class VGastosProveedor implements Serializable {
 	
 	@Column(name="PRO_DOCIDENTIF")
 	private String docIdentifPropietario;
+	
+	@Transient
+	private boolean esGastoAgrupado; 
 	
 
 	public String getId() {
@@ -557,6 +563,30 @@ public class VGastosProveedor implements Serializable {
 
 	public void setTieneDocAdjuntos(Boolean tieneDocAdjuntos) {
 		this.tieneDocAdjuntos = tieneDocAdjuntos;
+	}
+
+	public String getNombrePropietario() {
+		return nombrePropietario;
+	}
+
+	public void setNombrePropietario(String nombrePropietario) {
+		this.nombrePropietario = nombrePropietario;
+	}
+
+	public String getDocIdentifPropietario() {
+		return docIdentifPropietario;
+	}
+
+	public void setDocIdentifPropietario(String docIdentifPropietario) {
+		this.docIdentifPropietario = docIdentifPropietario;
+	}
+
+	public boolean getEsGastoAgrupado() {
+		return !Checks.esNulo(this.idProvision);
+	}
+
+	public void setEsGastoAgrupado(boolean esGastoAgrupado) {
+		this.esGastoAgrupado = esGastoAgrupado;
 	}	
 	 
 }

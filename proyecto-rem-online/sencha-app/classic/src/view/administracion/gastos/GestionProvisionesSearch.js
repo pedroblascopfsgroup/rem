@@ -55,7 +55,16 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionesSearch', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.num.provision'),
 									    name: 'numProvision'        	
+									},
+					    			{
+										xtype: 'comboboxfieldbase',
+										name: 'estadoProvisionCodigo',
+						              	fieldLabel : 'Estado agrupaci&oacute;n',
+										bind: {
+											store: '{comboEstadosProvision}'
+										}					
 									}
+									
 									
 								]
 				            }

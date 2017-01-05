@@ -87,7 +87,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
     	var items = [];
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosgeneralesgasto', funPermEdition: ['EDITAR_TAB_DATOS_GENERALES_GASTOS']})}, ['TAB_DATOS_GENERALES_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'detalleeconomicogasto', funPermEdition: ['EDITAR_TAB_DETALLE_ECONOMICO_GASTOS']})}, ['TAB_DETALLE_ECONOMICO_GASTOS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosafectadosgasto', funPermEdition: ['']})}, ['TAB_ACTIVOS_AFECTADOS_GASTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosafectadosgasto', funPermEdition: ['EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS']})}, ['TAB_ACTIVOS_AFECTADOS_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'contabilidadgasto', funPermEdition: ['EDITAR_TAB_CONTABILIDAD_GASTOS']})}, ['TAB_CONTABILIDAD_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestiongasto', funPermEdition: ['EDITAR_TAB_GESTION_GASTOS']})}, ['TAB_GESTION_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'impugnaciongasto', funPermEdition: ['EDITAR_TAB_IMPUGNACION_GASTOS']})}, ['TAB_IMPUGNACION_GASTOS']);

@@ -124,6 +124,10 @@ Ext.define('HreRem.model.GastoProveedor', {
 			type: 'boolean'
 		},
 		{
+			name: 'esGastoAgrupado',
+			type: 'boolean'
+		},
+		{
    			name: 'buscadorCodigoRemEmisor'
    		},
    		{

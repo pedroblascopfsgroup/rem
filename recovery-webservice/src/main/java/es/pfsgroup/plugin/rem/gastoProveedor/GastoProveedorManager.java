@@ -261,6 +261,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setAsignadoAActivos(!Checks.estaVacio(gasto.getGastoProveedorTrabajos()) ||  (Checks.estaVacio(gasto.getGastoProveedorTrabajos()) && !Checks.estaVacio(gasto.getGastoProveedorActivos())));
 			
 			dto.setEsGastoEditable(esGastoEditable(gasto));
+			dto.setEsGastoAgrupado(!Checks.esNulo(gasto.getProvision()));
 			
 			dto.setNumGastoDestinatario(gasto.getNumGastoDestinatario());
 			

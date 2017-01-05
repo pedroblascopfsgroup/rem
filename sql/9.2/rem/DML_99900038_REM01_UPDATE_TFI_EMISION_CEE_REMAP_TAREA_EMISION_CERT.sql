@@ -66,11 +66,11 @@ textfield
 
 BEGIN
 
-    DBMS_OUTPUT.PUT_LINE('[INICIO] Insertando datos de TFI_TAREAS_FORM_ITEMS - remapeo de tarea T009_GenerarPropuestaPrecios en T. propuesta de precios');
+    DBMS_OUTPUT.PUT_LINE('[INICIO] Insertando datos de TFI_TAREAS_FORM_ITEMS - remapeo de tarea T003_EmisionCertificado en T. EMISION CEE');
 
 	V_SQL := '
 		SELECT COUNT(1) FROM '||V_ESQUEMA||'.tfi_tareas_form_items WHERE tfi_nombre <> ''titulo''  
-			AND tap_id = (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo = ''T009_GenerarPropuestaPrecios'' )
+			AND tap_id = (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo = ''T003_EmisionCertificado'' )
 	';
 	--DBMS_OUTPUT.PUT_LINE(V_SQL);
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_ENLACES;
@@ -78,9 +78,9 @@ BEGIN
 
 	IF (V_NUM_ENLACES > 0) THEN
 		V_MSQL := 'DELETE '||V_ESQUEMA||'.tfi_tareas_form_items WHERE tfi_nombre <> ''titulo''  
-			AND tap_id = (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo = ''T009_GenerarPropuestaPrecios'' )
+			AND tap_id = (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo = ''T003_EmisionCertificado'' )
 	';
-		DBMS_OUTPUT.PUT_LINE('[DELETE] Se han encontrado '||V_NUM_ENLACES||' campos antiguos en TFI que necesitan borrarse para T009_GenerarPropuestaPrecios. Se eliminan todos antes de insertar los nuevos.'); 
+		DBMS_OUTPUT.PUT_LINE('[DELETE] Se han encontrado '||V_NUM_ENLACES||' campos antiguos en TFI que necesitan borrarse para T003_EmisionCertificado. Se eliminan todos antes de insertar los nuevos.'); 
 		--DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 	END IF;

@@ -25,8 +25,10 @@ Ext.define('HreRem.view.common.CheckBoxFieldBase', {
 	        this.lastValue = value;
 	        this[binding._config.names.set](value);
 	        --binding.syncing;
+	        this.fireEvent("afterbind", this, value);
 		
 		}
+
     
     },
 	

@@ -835,7 +835,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(value){
 			me.lookupReference('oficinaRef').setDisabled(false);
 			me.lookupReference('numeroConexionRef').setDisabled(false);
-//			
+			me.lookupReference('fechaConexionRef').setDisabled(false);
+			
+		
 			me.lookupReference('abonoCuentaRef').setValue(false);
 			me.lookupReference('incluirPagoProvisionRef').setValue(false);
 			me.lookupReference('titularCuentaRef').setDisabled(true);
@@ -847,7 +849,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		else{
 			me.lookupReference('oficinaRef').setDisabled(true);
 			me.lookupReference('numeroConexionRef').setDisabled(true);
-
+			me.lookupReference('fechaConexionRef').setDisabled(true);
 		}
 	},
 	
@@ -870,20 +872,23 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	onChangeReembolsarPagoTercero: function(field, value){
 		var me= this;
-		if(value){
-			me.lookupReference('fieldSetSuplido').setDisabled(false);
+
+		if((Ext.isString(value) && value == "true") || (Ext.isBoolean(value) && value)) {
 			me.lookupReference('incluirPagoProvisionRef').setDisabled(false);
 			me.lookupReference('abonoCuentaRef').setDisabled(false);
-//			me.lookupReference('ibanRef').setDisabled(false);
 			me.lookupReference('pagadoConexionBankiaRef').setDisabled(false);
+			me.lookupReference('fieldBankia').setDisabled(false);
+			me.lookupReference('fieldAbonar').setDisabled(false);
+			me.lookupReference('fieldGestoria').setDisabled(false);
 			
 		}
 		else{
-			me.lookupReference('fieldSetSuplido').setDisabled(true);
-//			me.lookupReference('ibanRef').setDisabled(true);
 			me.lookupReference('abonoCuentaRef').setValue(false);
 			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
 			me.lookupReference('incluirPagoProvisionRef').setValue(false);
+			me.lookupReference('fieldBankia').setDisabled(true);
+			me.lookupReference('fieldAbonar').setDisabled(true);
+			me.lookupReference('fieldGestoria').setDisabled(true);
 		}
 	},
 	

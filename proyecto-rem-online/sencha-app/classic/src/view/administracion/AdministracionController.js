@@ -25,6 +25,8 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	                if(data.success != "true") {	                	
 	                	me.fireEvent("errorToast", data.msg);
 	                }
+	                
+	                me.onClickGastosSearch(me.lookupReference('btnSearchGastos'));
 			     },
 			     
 			     failure: function(response) {
@@ -139,7 +141,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 					delete criteria[key];
 				}
 			});	
-		    
 			if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
 				criteria.nifProveedor = me.nifProveedorIdentificado;
 			}
@@ -258,7 +259,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
 		        if (buttonId == 'yes') {
-					me.autorizarGasto(btn);
+					me.autorizarGasto(btn, "SG");
 		        }
 		   }
 		});
@@ -273,13 +274,13 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
 		        if (buttonId == 'yes') {
-					me.autorizarGasto(btn);
+					me.autorizarGasto(btn, "SA");
 		        }
 		   }
 		});
     },
     
-    autorizarGasto: function(btn) {
+    autorizarGasto: function(btn, origen) {
     	
     	var me = this,
     	listaGastos = btn.up('gridBase'),
@@ -290,7 +291,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		// Recuperamos todos los ids de los trabajos seleccionados
 		// y validamos que se pueden autorizar
 		Ext.Array.each(gastos, function(gasto, index) {
-		    error = me.validarSeleccionGasto("A", gasto);
+		    error = me.validarSeleccionGasto("A", gasto, origen);
 		    if(Ext.isEmpty(error)) {
 		    	idsGasto.push(gasto.get("id"));	
 		    } else {
@@ -359,7 +360,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
  				if (buttonId == 'yes') { 					
- 					me.rechazarGasto(btn);
+ 					me.rechazarGasto(btn, "SG");
  				}
 		   }
 		});
@@ -375,14 +376,14 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
  				if (buttonId == 'yes') { 					
- 					me.rechazarGasto(btn);
+ 					me.rechazarGasto(btn, "SA");
  				}
 		   }
 		});
     	
     },
     
-    rechazarGasto: function(btn) {
+    rechazarGasto: function(btn, origen) {
     	
     	var me = this;
     	var listaGastos = btn.up('gridBase');
@@ -400,7 +401,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 				// Recuperamos todos los ids de los trabajos seleccionados
 				// y validamos que se pueden rechazar
 				Ext.Array.each(gastos, function(gasto, index) {
-				    error = me.validarSeleccionGasto("R", gasto);
+				    error = me.validarSeleccionGasto("R", gasto, origen);
 				    if(Ext.isEmpty(error)) {
 				    	idsGasto.push(gasto.get("id"));	
 				    } else {
@@ -465,18 +466,23 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     },
     
-    validarSeleccionGasto: function(operacion, gasto) {
+    validarSeleccionGasto: function(operacion, gasto, origen) {
     	
     	var me = this, error = null;
     	
     	var OPERACION_AUTORIZAR = "A";
     	var OPERACION_RECHAZAR = "R";
+    	
+    	var SELECCION_GASTOS = "SG";
+    	var SELECCION_AGRUPACION = "SA";
 
     	if(CONST.ESTADOS_GASTO['ANULADO'] == gasto.get("estadoGastoCodigo") ||
 			CONST.ESTADOS_GASTO['PAGADO'] == gasto.get("estadoGastoCodigo") ||
-			CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
-					    		
+			CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {	    		
 			error = ("<span>Se han seleccionado gastos anulados, contabilizados o pagados</span></br>")
+		} else if (SELECCION_GASTOS == origen && gasto.get("esGastoAgrupado")) {
+			error = ("<span>Se han seleccionado gastos agrupados. Estos gastos deben gestionarse desde la pestaña de agrupación de gastos.</span></br>")
+		
 		} else if(OPERACION_AUTORIZAR == operacion && CONST.ESTADOS_AUTORIZACION_HAYA['AUTORIZADO'] == gasto.get("estadoAutorizacionHayaCodigo")) {
 			error = ("<span>Se han seleccionado gastos ya autorizados</span></br>")
 		} else if(OPERACION_RECHAZAR == operacion && CONST.ESTADOS_AUTORIZACION_HAYA['RECHAZADO'] == gasto.get("estadoAutorizacionHayaCodigo")) {

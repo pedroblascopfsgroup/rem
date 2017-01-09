@@ -43,6 +43,7 @@ public class DDEstadoGasto implements Auditable, Dictionary {
 	public static final String AUTORIZADO_ADMINISTRACION = "03";
 	public static final String RECHAZADO_PROPIETARIO = "08";
 	public static final String AUTORIZADO_PROPIETARIO = "09";
+	public static final String SUBSANADO = "10";
 	
 
 	@Id

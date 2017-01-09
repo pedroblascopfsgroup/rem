@@ -85,7 +85,8 @@ BEGIN
   	EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
 	AS
 		SELECT 
-		CAST(USU.USU_ID AS NUMBER(16,0))                                          	AS ID_USUARIO_REM,
+		CAST(  NVL(LPAD(PVE.PVE_COD_REM,10,0) , ''0000000000'')   
+			|| NVL(LPAD(USU.USU_ID,10,0) , ''0000000000'')AS NUMBER(32,0))               AS ID_USUARIO_REM,
 		CAST(PVE.PVE_COD_REM AS NUMBER(16,0))                                          	AS ID_PROVEEDOR_REM,
 		CAST(USU.USU_USERNAME AS VARCHAR2(60 CHAR))                               	AS USUARIO_LDAP,
 		CAST(PVC.PVC_NOMBRE AS VARCHAR2(60 CHAR))                                 	AS NOMBRE,

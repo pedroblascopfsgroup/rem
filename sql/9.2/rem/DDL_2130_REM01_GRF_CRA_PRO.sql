@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin_Arnal
---## FECHA_CREACION=20170101
+--## FECHA_CREACION=20170104
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1089
+--## INCIDENCIA_LINK=HREOS-1289
 --## PRODUCTO=NO
---## Finalidad: Creación de tabla DD para las gestorias que envian ficheros a REM
+--## Finalidad: Creación de tabla que indica la cartera/provincia a la que pertenece el stock de una gestoria
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -34,17 +34,15 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_GRF_GESTORIA_RECEP_FICH'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla diccionario para las posibles gestorias que envian ficheros a REM.'; -- Vble. para los comentarios de las tablas
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'GRF_CRA_PRO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que relaciona el stock por provincias/cartera y las asigna a una gestoria.'; -- Vble. para los comentarios de las tablas
     
-    V_COLUMN_TABLE_UNIQUE VARCHAR2(500 CHAR):= 'DD_GRF_CODIGO'; -- Vble. para un campo que debe ser unico en la tabla
+    V_COLUMN_TABLE_UNIQUE VARCHAR2(500 CHAR):= 'DD_GRF_CODIGO, DD_CRA_CODIGO, DD_PRV_CODIGO'; -- Vble. para un campo que debe ser unico en la tabla
 
 BEGIN
 
-
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
-	
 	
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
@@ -55,37 +53,21 @@ BEGIN
 		
 	END IF;
 
-	-- Comprobamos si existe la secuencia
-	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe. Se borrará.');  
-		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';
-		
-	END IF; 
-	
-	
 	-- Creamos la tabla
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
-	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-	(
-		DD_GRF_ID           			NUMBER (16,0)       	NOT NULL,
-		DD_GRF_CODIGO        			VARCHAR2 (20 CHAR)	NOT NULL,
-		DD_GRF_CARPETA        			VARCHAR2 (20 CHAR)	NOT NULL,
-		DD_GRF_DESCRIPCION			VARCHAR2 (100 CHAR),
-		DD_GRF_DESCRIPCION_LARGA		VARCHAR2 (250 CHAR),
-		DD_GRF_NOM_GES_FICH			VARCHAR2 (50 CHAR),
-		PVE_COD_UVEM 				VARCHAR2 (50 CHAR),
-		NUCLII					NUMBER (16,0),
-		POS_5_A_6_PROV				NUMBER (2,0),
-		VERSION 				NUMBER (38,0) 		DEFAULT 0 NOT NULL ENABLE, 
-		USUARIOCREAR 				VARCHAR2 (50 CHAR) 	NOT NULL ENABLE, 
-		FECHACREAR 					TIMESTAMP (6) 		NOT NULL ENABLE, 
-		USUARIOMODIFICAR 			VARCHAR2 (50 CHAR), 
-		FECHAMODIFICAR 				TIMESTAMP (6), 
-		USUARIOBORRAR 				VARCHAR2 (50 CHAR), 
-		FECHABORRAR 				TIMESTAMP (6), 
-		BORRADO 					NUMBER (1,0) 		DEFAULT 0 NOT NULL ENABLE
+	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+		DD_GRF_CODIGO            	VARCHAR2(20 CHAR)   	NOT NULL,
+		DD_CRA_CODIGO			VARCHAR2(20 CHAR)	NOT NULL,
+		DD_CMA_CODIGO			VARCHAR2(20 CHAR)	,
+		DD_PRV_CODIGO			VARCHAR2(20 CHAR)	NOT NULL,
+		VERSION 			NUMBER (38,0) 		DEFAULT 0 NOT NULL ENABLE, 
+		USUARIOCREAR 			VARCHAR2 (50 CHAR) 	NOT NULL ENABLE, 
+		FECHACREAR 			TIMESTAMP (6) 		NOT NULL ENABLE, 
+		USUARIOMODIFICAR 		VARCHAR2 (50 CHAR), 
+		FECHAMODIFICAR 			TIMESTAMP (6), 
+		USUARIOBORRAR 			VARCHAR2 (50 CHAR), 
+		FECHABORRAR 			TIMESTAMP (6), 
+		BORRADO 			NUMBER (1,0) 		DEFAULT 0 NOT NULL ENABLE
 	)
 	LOGGING 
 	NOCOMPRESS 
@@ -94,33 +76,20 @@ BEGIN
 	NOMONITORING
 	';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
-	
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_GRF_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'('||V_COLUMN_TABLE_UNIQUE||') TABLESPACE '||V_TABLESPACE_IDX;		
+	DBMS_OUTPUT.PUT_LINE('['||V_MSQL||'].');	
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado ('||V_COLUMN_TABLE_UNIQUE||').');
 	
-	
-	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_GRF_ID) USING INDEX)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
-
-
 	-- Creamos constraint unique 
 	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_UN UNIQUE ('||V_COLUMN_TABLE_UNIQUE||') USING INDEX)';
+	DBMS_OUTPUT.PUT_LINE('['||V_MSQL||'].');
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_UN... Restriccion ('||V_TEXT_TABLA||'_UN) creada sobre campo '||V_COLUMN_TABLE_UNIQUE||'.');
-	
-	
-	-- Creamos sequence
-	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
-	EXECUTE IMMEDIATE V_MSQL;		
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_UN... Restriccion ('||V_TEXT_TABLA||'_UN) creada sobre campos '||V_COLUMN_TABLE_UNIQUE||'.');
 
-	
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
@@ -128,9 +97,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 
-
 	COMMIT;
-
 
 EXCEPTION
      WHEN OTHERS THEN 

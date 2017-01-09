@@ -19,6 +19,7 @@ public class ProvisionGastosDaoImpl extends AbstractEntityDao<ProvisionGastos, L
 		HQLBuilder hb = new HQLBuilder(" from ProvisionGastos prg");
 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "prg.numProvision", dto.getNumProvision());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "prg.estadoProvision.codigo", dto.getEstadoProvisionCodigo());
 		
    		return HibernateQueryUtils.page(this, hb, dto);
 

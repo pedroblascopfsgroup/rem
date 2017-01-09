@@ -65,6 +65,9 @@ public class DtoGastosFilter extends WebDto {
 	private String nombrePropietario;
 	private String docIdentifPropietario;
 	
+	private String fechaEmisionDesde;
+	private String fechaEmisionHasta;
+	
 	
 	public Long getId() {
 		return id;
@@ -345,6 +348,18 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setDocIdentifPropietario(String docIdentifPropietario) {
 		this.docIdentifPropietario = docIdentifPropietario;
+	}
+	public String getFechaEmisionDesde() {
+		return fechaEmisionDesde;
+	}
+	public void setFechaEmisionDesde(String fechaEmisionDesde) {
+		this.fechaEmisionDesde = fechaEmisionDesde;
+	}
+	public String getFechaEmisionHasta() {
+		return fechaEmisionHasta;
+	}
+	public void setFechaEmisionHasta(String fechaEmisionHasta) {
+		this.fechaEmisionHasta = fechaEmisionHasta;
 	}
 	
 }

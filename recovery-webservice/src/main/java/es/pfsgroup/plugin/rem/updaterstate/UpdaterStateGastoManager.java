@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 
 @Service("updaterStateGastoManager")
@@ -20,6 +23,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 	
 	@Resource
     MessageService messageServices;
@@ -106,6 +112,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	 */
 	private boolean updaterStateGastoProveedor(GastoProveedor gasto, String codigo) {
 		
+		Usuario usuario = genericAdapter.getUsuarioLogado();	
+		
 		// Si no recibimos un estado
 		if(Checks.esNulo(codigo)) {
 			
@@ -121,12 +129,17 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 						if(Checks.esNulo(error)) {
 							codigo = DDEstadoGasto.PENDIENTE;
 						}				
+					} else if((DDEstadoAutorizacionHaya.CODIGO_PENDIENTE.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
+							|| DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) 
+							&& genericAdapter.isProveedor(usuario)) {
+							codigo = DDEstadoGasto.SUBSANADO;
+						
 					}
 				}
 			}				
 		}
 		
-		// Si tenemos definido un gasto, lo búscamos y modificamos en el gasto
+		// Si tenemos definido un estado, lo búscamos y modificamos en el gasto
 		if(!Checks.esNulo(codigo)) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			DDEstadoGasto estadoGasto = (DDEstadoGasto) genericDao.get(DDEstadoGasto.class, filtro);

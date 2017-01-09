@@ -70,23 +70,16 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.idGestoria", dtoGastosFilter.getIdGestoria());
   
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numFactura",dtoGastosFilter.getReferenciaEmisor());
-   		
-   		if(!Checks.esNulo(dtoGastosFilter.getNecesitaAutorizacionPropietario())){
-   			
-   			if("1".equals(dtoGastosFilter.getNecesitaAutorizacionPropietario())){
-   				HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.autorizacionPropietario",true);
-   			}
-   			else if("0".equals(dtoGastosFilter.getNecesitaAutorizacionPropietario())){
-   				HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.autorizacionPropietario",false);
-   			}
-//   			HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.autorizacionPropietario",dtoGastosFilter.getNecesitaAutorizacionPropietario());
-   		}
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.numFactura",dtoGastosFilter.getReferenciaEmisor());   		
    		
    		try {
 			Date fechaTopePagoDesde = DateFormat.toDate(dtoGastosFilter.getFechaTopePagoDesde());
 			Date fechaTopePagoHasta = DateFormat.toDate(dtoGastosFilter.getFechaTopePagoHasta());
 			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaTopePago", fechaTopePagoDesde, fechaTopePagoHasta);
+			
+			Date fechaEmisionDesde = DateFormat.toDate(dtoGastosFilter.getFechaEmisionDesde());
+			Date fechaEmisionHasta = DateFormat.toDate(dtoGastosFilter.getFechaEmisionHasta());
+			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaEmision", fechaEmisionDesde, fechaEmisionHasta);
 			
 		} catch (ParseException e) {
 			e.printStackTrace();

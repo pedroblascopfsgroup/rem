@@ -148,7 +148,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
 	     	
-	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado;
+	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado
 	     },
 	     
 	     esRechazable: function(get) {	     

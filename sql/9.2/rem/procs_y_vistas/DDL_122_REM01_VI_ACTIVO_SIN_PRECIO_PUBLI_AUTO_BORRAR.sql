@@ -46,23 +46,6 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Vista borrada OK');
   END IF;
   
-  DBMS_OUTPUT.PUT_LINE('Crear nueva vista: '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'..');
-  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
-  AS
-    SELECT
-      VISTA.ACT_ID,
-      VISTA.ESTADO_PUBLICACION_CODIGO,
-      VISTA.CONDICIONADO
-      
-    FROM
-      ' || V_ESQUEMA || '.V_ACTIVO_SIN_PRECIO_PUBLI_MAN VISTA
-
-    WHERE
-       VISTA.ACT_FECHA_IND_PUBLICABLE IS NOT NULL -- Que el activo tenga el check de publicable (fecha publicable).
-    ';
-
-  DBMS_OUTPUT.PUT_LINE('Vista creada OK');
-  
 END;
 /
 

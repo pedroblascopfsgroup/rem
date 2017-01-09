@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin_Arnal
---## FECHA_CREACION=20161027
+--## FECHA_CREACION=20170101
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1089
@@ -39,17 +39,17 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('7','tecnotramit' ,'Tecnotramit' ,'Tecnotramit' ),
-        T_TIPO_DATA('6','ogf' ,'OGF' ,'OGF' ),
-        T_TIPO_DATA('1','gutierrez_labrador' ,'Gutiérrez Labrador' ,'Gutiérrez Labrador' ),
-        T_TIPO_DATA('2','montalvo' ,'Montalvo' ,'Montalvo' ),
-        T_TIPO_DATA('3','uniges' ,'Unigés' ,'Unigés' ),
-        T_TIPO_DATA('4','pinos' ,'Pinos XXI' ,'Pinos XXI' ),
-        T_TIPO_DATA('5','garsa' ,'Garsa' ,'Garsa' ),
-        T_TIPO_DATA('8','diagonal_company' ,'Diagonal Gest' ,'Diagonal Gest' ),
-        T_TIPO_DATA('9','grupoBC' ,'Grupo BC' ,'Grupo BC' ),
-        T_TIPO_DATA('10','tinsa_certify' ,'Tinsa Certify' ,'Tinsa Certify' )
-		); 
+	T_TIPO_DATA('4','pinos' ,'Pinos XXI' ,'Pinos XXI', 'PINOS','4366','9990000000100','21'),  
+	T_TIPO_DATA('3','uniges' ,'Unigés' ,'Unigés', 'UNIGES','3199','9990000000200','22'),    
+	T_TIPO_DATA('2','montalvo' ,'Montalvo' ,'Montalvo', 'MONTALVO','45139','9990000000300','23'),
+	T_TIPO_DATA('1','gutierrez_labrador' ,'Gutiérrez Labrador' ,'Gutiérrez Labrador', 'GUTIERREZL','2084','9990000000400','24'),
+	T_TIPO_DATA('5','garsa' ,'Garsa' ,'Garsa', 'GARSA','45321','9990000000500','25'),
+	T_TIPO_DATA('6','ogf' ,'OGF' ,'OGF', 'OGF','59','9990000000600','26'),
+	T_TIPO_DATA('8','diagonal_company' ,'Diagonal Gest' ,'Diagonal Gest', 'DIAGONAL','2082','9990000000700','27'),
+        T_TIPO_DATA('9','grupoBC' ,'Grupo BC' ,'Grupo BC', 'GRUPOBC','1056','9990000000800','28'),
+        T_TIPO_DATA('10','tinsa_certify' ,'Tinsa Certify' ,'Tinsa Certify', 'TINSACERTIFY','50148','9990000000900','30'),
+	T_TIPO_DATA('7','tecnotramit' ,'Tecnotramit' ,'Tecnotramit', 'TECNOTRAMIT','58','null','null')
+    ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN	
@@ -74,6 +74,10 @@ BEGIN
 		        		'SET DD_'||V_TRES_LETRAS_TABLA||'_CARPETA = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					', 	DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
 					', DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
+					', DD_GRF_NOM_GES_FICH = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
+					', PVE_COD_UVEM = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
+					', NUCLII = '|| V_TMP_TIPO_DATA(7)||''||
+					', POS_5_A_6_PROV = '|| V_TMP_TIPO_DATA(8)||''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
 		  	EXECUTE IMMEDIATE V_MSQL;
@@ -85,8 +89,8 @@ BEGIN
           		EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
           		V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (' ||
                       		'DD_'||V_TRES_LETRAS_TABLA||'_ID, DD_'||V_TRES_LETRAS_TABLA||'_CODIGO, DD_'||V_TRES_LETRAS_TABLA||'_CARPETA , DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION, DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA,' ||
-				' VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      		'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','||
+				' DD_GRF_NOM_GES_FICH, PVE_COD_UVEM, NUCLII, POS_5_A_6_PROV, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      		'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''','||V_TMP_TIPO_DATA(7)||','||V_TMP_TIPO_DATA(8)||','||
                       		'0, ''DML'',SYSDATE,0 FROM DUAL';
 			DBMS_OUTPUT.PUT_LINE(V_MSQL);
           		EXECUTE IMMEDIATE V_MSQL;

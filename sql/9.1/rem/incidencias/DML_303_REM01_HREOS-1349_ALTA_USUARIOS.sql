@@ -1,10 +1,10 @@
 --/*
 --###########################################
---## AUTOR=Teresa Alonso
---## FECHA_CREACION=20161125
+--## AUTOR=Jose Villel
+--## FECHA_CREACION=20170109
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-1201
+--## INCIDENCIA_LINK=HREOS-1349
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creacion de Usuarios REM
@@ -38,10 +38,9 @@ DECLARE
   TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
   TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
   V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-		--	ENTIDAD	  USER_NAME	 PASS   NOMBRE_USU	APELL1	APELL2			EMAIL      			GRP	 PEF_COD	DESPACHO_EXTERNO
-	T_TIPO_DATA('1', 'pmunoz', 'k7bb8k', 'PATRICIA', 'MUÑOZ', 'FERNANDEZ', 'pmunoz@externos.haya.es' , '0', 'HAYAGESTADM', 'REMADM'),
-	T_TIPO_DATA('1', 'manudujar', 'cj2l33', 'MARIA', 'ANDUJAR', 'GONZALEZ', 'mandujar@externos.haya.es' , '0', 'HAYAGESTADM', 'REMADM'),
-	T_TIPO_DATA('1', 'mmenendez', 'd2a3j8', 'MACARENA', 'MENENDEZ', 'RIOJA', 'mmenendez@externos.haya.es' , '0', 'HAYAGESTADM', 'REMADM')
+	--	ENTIDAD	  USER_NAME	 PASS   NOMBRE_USU	APELL1	APELL2			EMAIL      			GRP	 PEF_COD	DESPACHO_EXTERNO	
+	T_TIPO_DATA('1', 'alois', 'k7fb8t', 'ANA', 'BELEN', 'LOIS', 'alois@externos.haya.es' , '0', 'HAYAGESTADM', 'REMADM'),
+	T_TIPO_DATA('1', 'smontes', 'cm2l36', 'SANDRA', 'MONTES', 'HERRAIZ', 'smontes@externos.haya.es' , '0', 'HAYAGESTADM', 'REMADM')
   ); 
   V_TMP_TIPO_DATA T_TIPO_DATA;
   
@@ -102,7 +101,7 @@ BEGIN
                       '''|| TRIM(V_TMP_TIPO_DATA(7)) ||''',
                       '|| TRIM(V_TMP_TIPO_DATA(8)) ||',
                       SYSDATE+730,
-                      ''HREOS-1201'',
+                      ''HREOS-1349'',
                       SYSDATE,
                       0 
                       FROM DUAL';
@@ -138,7 +137,7 @@ BEGIN
 					' (SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_DESCRIPCION = ''REM''),' ||
 					' (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(9))||'''),' ||
 					' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||'''),' ||
-					' ''HREOS-1201'',
+					' ''HREOS-1349'',
 					SYSDATE,
 					0 
 					FROM DUAL';
@@ -177,7 +176,7 @@ BEGIN
 					' SELECT '||V_ESQUEMA||'.S_USD_USUARIOS_DESPACHOS.NEXTVAL,' ||
 					' (SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO WHERE DES_DESPACHO = '''||TRIM(V_TMP_TIPO_DATA(10))||'''),' ||							
 					' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||'''),' ||
-					' 1,1,''HREOS-1201'',SYSDATE,0 FROM DUAL';
+					' 1,1,''HREOS-1349'',SYSDATE,0 FROM DUAL';
 		  	
 		EXECUTE IMMEDIATE V_MSQL;
 		
@@ -218,7 +217,7 @@ BEGIN
 				SELECT '||V_ESQUEMA_M||'.S_GRU_GRUPOS_USUARIOS.NEXTVAL,
 				(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = ''GESTADM''),
 				(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||'''),
-				''HREOS-1201'',
+				''HREOS-1349'',
 				SYSDATE,
 				0 
 				FROM DUAL

@@ -22,6 +22,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ReintegroApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -61,6 +62,9 @@ public class ConfirmacionoperacionController {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ReintegroApi reintegroApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -202,6 +206,24 @@ public class ConfirmacionoperacionController {
 					if (!expedienteComercialApi.update(expedienteComercial)) {
 						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
 					}
+				}
+				if (ReintegroApi.REINTEGRO_RESERVA.equals(reservaDto.getAccion())) {
+					EntregaReserva entregaReserva = new EntregaReserva();
+					entregaReserva.setImporte(-importeReserva);
+					Date fechaEntrega = new Date();
+					entregaReserva.setFechaEntrega(fechaEntrega);
+					entregaReserva.setReserva(expedienteComercial.getReserva());
+
+					if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
+						throw new Exception("No se ha podido eliminar la reserva entregada en base de datos");
+					}
+					DDEstadosReserva estReserva = reservaApi
+							.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_RESUELTA_REINTEGRADA);
+					expedienteComercial.getReserva().setEstadoReserva(estReserva);
+					if (!expedienteComercialApi.update(expedienteComercial)) {
+						throw new Exception("No se ha podido actualizar estado expediente comercial en base de datos");
+					}
+					
 				}
 
 				model.put("id", jsonFields.get("id"));

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import es.pfsgroup.plugin.rem.rest.dto.ReintegroDto;
 
 public interface ReintegroApi {
+	
+	public static final String REINTEGRO_RESERVA = "7";
 
 	
 

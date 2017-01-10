@@ -56,10 +56,10 @@ BEGIN
   V_SDE_CAMPO := 'TAP_SCRIPT_VALIDACION';
 
   V_SDE_CODIGOS := ' ''T003_EmisionCertificado'' ';
-  V_SDE_VALOR := '';
+  V_SDE_VALOR := 'null';
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_SDE_TABLA||'
-             SET '||V_SDE_CAMPO||'=('||V_SDE_VALOR||')
+             SET '||V_SDE_CAMPO||'='||V_SDE_VALOR||'
              ,FECHAMODIFICAR = sysdate
              ,USUARIOMODIFICAR = ''DML_99900042''
              WHERE '||V_SDE_CODIGO_CAMPO||' IN ('||V_SDE_CODIGOS||')
@@ -71,10 +71,10 @@ BEGIN
 
   V_SDE_CAMPO := 'TAP_SCRIPT_VALIDACION_JBPM';
   V_SDE_CODIGOS := ' ''T003_EmisionCertificado'' ';
-  V_SDE_VALOR := 'valores[''''T003_EmisionCertificado''''][''''comboEmision''''] == DDSiNo.SI ? (esFechaMenor(valores[''''T003_EmisionCertificado''''][''''fechaEmision''''], fechaAprobacionTrabajo()) ? ''''Fecha emisi&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : existeAdjuntoUGValidacion("11,T;24,T")) : null ';
+  V_SDE_VALOR := 'valores[''''T003_EmisionCertificado''''][''''comboEmision''''] == DDSiNo.SI ? (esFechaMenor(valores[''''T003_EmisionCertificado''''][''''fechaEmision''''], fechaAprobacionTrabajo()) ? ''''Fecha emisi&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : existeAdjuntoUGValidacion("11,T;24,T") : null ';
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_SDE_TABLA||'
-             SET '||V_SDE_CAMPO||'=('||V_SDE_VALOR||')
+             SET '||V_SDE_CAMPO||'='''||V_SDE_VALOR||'''
              ,FECHAMODIFICAR = sysdate
              ,USUARIOMODIFICAR = ''DML_99900042''
              WHERE '||V_SDE_CODIGO_CAMPO||' IN ('||V_SDE_CODIGOS||')
@@ -92,10 +92,10 @@ BEGIN
   V_SDE_CAMPO := 'TAP_SCRIPT_VALIDACION';
 
   V_SDE_CODIGOS := ' ''T003_ObtencionEtiqueta'' ';
-  V_SDE_VALOR := '';
+  V_SDE_VALOR := 'null';
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_SDE_TABLA||'
-             SET '||V_SDE_CAMPO||'=('||V_SDE_VALOR||')
+             SET '||V_SDE_CAMPO||'='||V_SDE_VALOR||'
              ,FECHAMODIFICAR = sysdate
              ,USUARIOMODIFICAR = ''DML_99900042''
              WHERE '||V_SDE_CODIGO_CAMPO||' IN ('||V_SDE_CODIGOS||')
@@ -110,7 +110,7 @@ BEGIN
   V_SDE_VALOR := 'esFechaMenor(valores[''''T003_ObtencionEtiqueta''''][''''fechaInscripcion''''], fechaAprobacionTrabajo()) ? ''''Fecha inscripci&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : existeAdjuntoUGValidacion("25","T") ';
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_SDE_TABLA||'
-             SET '||V_SDE_CAMPO||'=('||V_SDE_VALOR||')
+             SET '||V_SDE_CAMPO||'='''||V_SDE_VALOR||'''
              ,FECHAMODIFICAR = sysdate
              ,USUARIOMODIFICAR = ''DML_99900042''
              WHERE '||V_SDE_CODIGO_CAMPO||' IN ('||V_SDE_CODIGOS||')
@@ -128,10 +128,10 @@ BEGIN
   V_SDE_CAMPO := 'TAP_SCRIPT_VALIDACION';
 
   V_SDE_CODIGOS := ' ''T003_AutorizacionPropietario'' ';
-  V_SDE_VALOR := '';
+  V_SDE_VALOR := 'null';
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_SDE_TABLA||'
-             SET '||V_SDE_CAMPO||'=('||V_SDE_VALOR||')
+             SET '||V_SDE_CAMPO||'='||V_SDE_VALOR||'
              ,FECHAMODIFICAR = sysdate
              ,USUARIOMODIFICAR = ''DML_99900042''
              WHERE '||V_SDE_CODIGO_CAMPO||' IN ('||V_SDE_CODIGOS||')
@@ -143,10 +143,10 @@ BEGIN
 
   V_SDE_CAMPO := 'TAP_SCRIPT_VALIDACION_JBPM';
   V_SDE_CODIGOS := ' ''T003_AutorizacionPropietario'' ';
-  V_SDE_VALOR := 'esFechaMenor(valores[''''T003_AutorizacionPropietario''''][''''fecha''''], fechaAprobacionTrabajo()) ? ''''Fecha autorizaci&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : (valores[''''T003_AutorizacionPropietario''''][''''comboAmpliacion''''] == DDSiNo.SI ? (existeAdjuntoUGValidacion("26","T")) : null) ';
+  V_SDE_VALOR := 'esFechaMenor(valores[''''T003_AutorizacionPropietario''''][''''fecha''''], fechaAprobacionTrabajo()) ? ''''Fecha autorizaci&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : (valores[''''T003_AutorizacionPropietario''''][''''comboAmpliacion''''] == DDSiNo.SI ? existeAdjuntoUGValidacion("26","T") : null) ';
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_SDE_TABLA||'
-             SET '||V_SDE_CAMPO||'=('||V_SDE_VALOR||')
+             SET '||V_SDE_CAMPO||'='''||V_SDE_VALOR||'''
              ,FECHAMODIFICAR = sysdate
              ,USUARIOMODIFICAR = ''DML_99900042''
              WHERE '||V_SDE_CODIGO_CAMPO||' IN ('||V_SDE_CODIGOS||')

@@ -29,7 +29,7 @@ public class DetectorWebcomUsuarios  extends DetectorCambiosBD<UsuarioDto> {
 
 	@Override
 	public String clavePrimaria() {
-		return "ID_USUARIO_REM";
+		return "ID_USUARIO_CONTACTO";
 	}
 
 	@Override

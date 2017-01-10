@@ -18,7 +18,7 @@ public interface ReservaApi {
 	 * @param jsonFields estructura de parámetros para validar campos en caso de venir informados
 	 * @return HashMap<String, String>  
 	 */
-	public HashMap<String, String> validateConfirmacionOperacionPostRequestData(ReservaDto reservaDto, Object jsonFields) throws Exception;
+	public HashMap<String, String> validateReservaPostRequestData(ReservaDto reservaDto, Object jsonFields) throws Exception;
 	
 	
 	/**

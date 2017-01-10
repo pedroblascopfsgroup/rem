@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -534,5 +535,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		lista.addAll(getComboProveedorBySubtipo(DDTipoProveedor.COD_CERTIFICADORA));		
 		
 		return lista;
+	}
+
+	@Override
+	public List<DDTipoBloqueo> getDiccionarioTipoBloqueo(String areaCodigo) {
+
+		List<DDTipoBloqueo> listaTiposBloqueo = new ArrayList<DDTipoBloqueo>();
+
+		if(!Checks.esNulo(areaCodigo)) {
+			if(areaCodigo.equals("mostrarTodos")) {
+				listaTiposBloqueo = genericDao.getList(DDTipoBloqueo.class);
+			} else {
+				listaTiposBloqueo = genericDao.getList(DDTipoBloqueo.class, genericDao.createFilter(FilterType.EQUALS, "area.codigo", areaCodigo));
+			}
+		}
+
+		return listaTiposBloqueo;
 	}
 }

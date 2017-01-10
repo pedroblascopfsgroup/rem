@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
@@ -963,7 +964,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 		
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateListadoActivos(DtoActivosExpediente dto, @RequestParam Long idEntidad, ModelMap model) {
@@ -979,13 +980,45 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 		
 	}
-	
-	/*private ModelAndView createModelAndViewJson(ModelMap model) {
 
-		return new ModelAndView("jsonView", model);
-	}*/
-	
-	
 
-	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getBloqueosFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
+		try {
+			model.put("data", expedienteComercialApi.getBloqueosFormalizacion(dto));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
+		try {
+			model.put("success", expedienteComercialApi.createBloqueoFormalizacion(dto));
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
+		try {
+			model.put("success", expedienteComercialApi.deleteBloqueoFormalizacion(dto));
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+
+		return createModelAndViewJson(model);
+	}
 }

@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -173,6 +174,14 @@ public interface GenericApi {
 	 * @return
 	 */
 	public List<DtoDiccionario> getComboGestoriasGasto();
+
+	/**
+	 * Este método obtiene una lista con los datos filtrados por el código del área de bloqueo.
+	 * 
+	 * @param areaCodigo : código a filtrar.
+	 * @return Devuelve una lista con los resultados filtrados.
+	 */
+	public List<DDTipoBloqueo> getDiccionarioTipoBloqueo(String areaCodigo);
 
 }
 

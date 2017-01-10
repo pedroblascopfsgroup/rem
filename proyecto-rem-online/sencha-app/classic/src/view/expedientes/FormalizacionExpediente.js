@@ -1,28 +1,36 @@
 Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'formalizacionexpediente',    
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
-    disableValidation: true,
-    reference: 'formalizacionExpediente',
-    scrollable	: 'y',
-
-	recordName: "resolucion",
-	
-	recordClass: "HreRem.model.ExpedienteFormalizacionResolucion",
-    
-    requires: ['HreRem.model.ExpedienteFormalizacionResolucion'],
-    
-    listeners: {
-			boxready:'cargarTabData'
+    extend				: 'HreRem.view.common.FormBase',
+    xtype				: 'formalizacionexpediente',    
+    cls					: 'panel-base shadow-panel',
+    collapsed			: false,
+    disableValidation	: true,
+    reference			: 'formalizacionExpediente',
+    scrollable			: 'y',
+	recordName			: "resolucion",
+	recordClass			: "HreRem.model.ExpedienteFormalizacionResolucion",
+    requires			: ['HreRem.model.ExpedienteFormalizacionResolucion', 'HreRem.view.expedientes.BloqueosFormalizacionList', 'HreRem.model.BloqueosFormalizacionModel'],
+    listeners			: {
+		boxready :'cargarTabData'
 	},
-    
-    initComponent: function () {
 
+    initComponent: function () {
         var me = this;
 		me.setTitle(HreRem.i18n('title.formalizacion'));
-        var items= [
 
+        var items= [
+        	{
+        		xtype:'fieldset',
+				collapsible: true,
+				defaultType: 'displayfieldbase',
+				cls	: 'panel-base shadow-panel',
+				title: HreRem.i18n('title.bloqueos'),
+				items : [
+					{
+						xtype: 'bloqueosformalizacionlist',
+						reference: 'bloqueosformalizacionlistref'
+					}
+				]
+        	},
 			{   
 				xtype:'fieldset',
 				collapsible: true,
@@ -45,7 +53,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							rowclick: 'onRowClickPosicionamiento'
 			    		},
 						columns: [
-						
 							{   
 								text: HreRem.i18n('fieldlabel.fecha.aviso'),
 						  		dataIndex: 'fechaAviso',
@@ -189,13 +196,12 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					            }
 					        }
 			    		],
-			    		
+
 			    		saveSuccessFn: function() {			    			
 			    			var me = this;
 			    			me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();
-			    			
 			    		},
-			    		
+
 			    		deleteSuccessFn: function() {
 			    			var me = this;
 			    			me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();			    			
@@ -210,7 +216,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						bind: {
 							store: '{storeNotarios}'
 						},									
-						
+
 						columns: [
 						   {    text: HreRem.i18n('fieldlabel.nombre'),
 					        	dataIndex: 'nombreProveedor',
@@ -376,6 +382,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					            flex: 1						   
 						   }
 					    ],
+
 					    dockedItems : [
 					        {
 					            xtype: 'pagingtoolbar',
@@ -387,8 +394,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					        }
 			    		]
 					}
-
-				
 		        ]
 			},
 			{   
@@ -425,7 +430,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								}
 								
 	            			]
-		                
 						},
 						{
 							xtype: 'container',
@@ -450,9 +454,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.resolucion'),
 									bind: '{resolucion.fechaResolucion}'				        						        	
 								}
-				                
 	            			]
-		                
 						},
 						{
 							xtype: 'container',
@@ -475,16 +477,14 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	            			]
 		                
 						}
-				
 		        ]
 			}
     	];
-    
+
 	    me.addPlugin({ptype: 'lazyitems', items: items });
-	    
 	    me.callParent(); 
     },
-    
+
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;		

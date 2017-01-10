@@ -167,6 +167,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoTenedor", DDTipoTenedor.class);
 		mapa.put("tipoOperacionGasto", DDTipoOperacionGasto.class);
 		mapa.put("subtipoPlazaGaraje", DDSubtipoPlazaGaraje.class);
+		mapa.put("areaBloqueo", DDAreaBloqueo.class);
+		mapa.put("tipoBloqueo", DDTipoBloqueo.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

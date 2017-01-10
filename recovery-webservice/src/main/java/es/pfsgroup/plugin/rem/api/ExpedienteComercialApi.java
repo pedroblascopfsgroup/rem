@@ -11,6 +11,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
@@ -476,5 +477,28 @@ public interface ExpedienteComercialApi {
 	 */
 	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception;
 
+	/**
+	 * Este método obtiene una lista de bloqueos formalización por el ID del expediente recibido.
+	 * 
+	 * @param dto : dto con el ID de expediente a filtrar la lista de bloqueos.
+	 * @return Devuelve una lista de 'DtoBloqueosFinalizacion' con los datos encontrados.
+	 */
+	public List<DtoBloqueosFinalizacion> getBloqueosFormalizacion(DtoBloqueosFinalizacion dto);
 
+	/**
+	 * Este método genera un nuevo bloqueo formalización con los datos obtenidos.
+	 * 
+	 * @param dto : dto con los datos del nuevo bloqueo.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 */
+	public boolean createBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+
+	/**
+	 * Este método establece un bloqueo por el ID de bloqueo obtenido a borrado, así como el nombre de usuario
+	 * que realiza la operación y la fecha.
+	 * 
+	 * @param dto : dto con los datos del nuevo bloqueo.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 */
+	public boolean deleteBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
 }

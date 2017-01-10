@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.tramites.TramitesDetalle', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'tramitesdetalle',
-	iconCls		: 'ico-diary',
+	iconCls		: 'ico-pestana-tramites',
 	iconAlign	: 'left',
 	width		: '100%',
     height		: '100%',

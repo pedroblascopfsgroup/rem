@@ -11,6 +11,7 @@ public interface ReservaApi {
 	public static final String COBRO_VENTA = "3";
 	public static final String DEVOLUCION_RESERVA = "5";
 	
+	
 	/**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de las peticiones POST.
 	 * @param ReservaDto con los parametros de entrada

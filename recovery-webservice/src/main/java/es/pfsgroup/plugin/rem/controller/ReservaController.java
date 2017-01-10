@@ -79,16 +79,27 @@ public class ReservaController {
 			jsonFields = request.getJsonObject();
 			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
 			reservaDto = jsonData.getData();
+			
 			errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields) ;
 			if (errorList != null && errorList.isEmpty()) {
+				
 				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
 				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 				
-				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);
-				if(!oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_OFICINA_BANKIA)|| oferta.getPrescriptor()==null){
-					ofertaUVEM.setCodPrescriptor("C000");
-				}
+				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);				
+				if(!reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)){
+					//El prescriptor solo se debe alimentar en la consulta del cobro de la venta.
+					//No se debe de enviar ni en el cobro de la reserva ni en la devolución.
+					ofertaUVEM.setCodPrescriptor("");
+				}else{
+					if(Checks.esNulo(oferta.getPrescriptor()) || 
+					  (!Checks.esNulo(oferta.getPrescriptor()) && Checks.esNulo(oferta.getPrescriptor().getCodigoApiProveedor())) ||
+					  (!Checks.esNulo(oferta.getPrescriptor()) && !Checks.esNulo(oferta.getPrescriptor().getCodigoApiProveedor()) && !oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_OFICINA_BANKIA))){
+						//Si la prescripción es de una oficina Bankia mandáis la oficina y en cualquier otro caso enviáis C000 que es sin prescriptor
+						ofertaUVEM.setCodPrescriptor("C000");
+					}
+				}			
 				
 				ArrayList<TitularUVEMDto> listaTitularUVEM = expedienteComercialApi.obtenerListaTitularesUVEM(expedienteComercial);
 				

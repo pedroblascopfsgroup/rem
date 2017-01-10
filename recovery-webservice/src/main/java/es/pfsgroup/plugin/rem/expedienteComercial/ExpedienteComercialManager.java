@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -59,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -88,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
@@ -103,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -278,10 +282,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					beanUtilNotNull.copyProperty(entregaReserva, "idEntrega", entrega.getId());
 					beanUtilNotNull.copyProperty(entregaReserva, "fechaCobro", entrega.getFechaEntrega());
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -2886,4 +2888,92 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 	}
 
+	@Override
+	public List<DtoBloqueosFinalizacion> getBloqueosFormalizacion(DtoBloqueosFinalizacion dto) {
+		List<DtoBloqueosFinalizacion> bloqueosdto = new ArrayList<DtoBloqueosFinalizacion>();
+
+		if(!Checks.esNulo(dto.getIdExpediente())) {
+			List<BloqueoActivoFormalizacion> bloqueos = genericDao.getList(BloqueoActivoFormalizacion.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", Long.parseLong(dto.getIdExpediente())));
+
+			for(BloqueoActivoFormalizacion bloqueo : bloqueos) {
+				DtoBloqueosFinalizacion bloqueoDto = new DtoBloqueosFinalizacion();
+				try {
+					beanUtilNotNull.copyProperty(bloqueoDto, "id", bloqueo.getId().toString());
+					if(!Checks.esNulo(bloqueo.getArea())) {
+						beanUtilNotNull.copyProperty(bloqueoDto, "areaBloqueoCodigo", bloqueo.getArea().getCodigo());
+					}
+					if(!Checks.esNulo(bloqueo.getTipo())) {
+						beanUtilNotNull.copyProperty(bloqueoDto, "tipoBloqueoCodigo", bloqueo.getTipo().getCodigo());
+					}
+					if(!Checks.esNulo(bloqueo.getAuditoria())) {
+						beanUtilNotNull.copyProperty(bloqueoDto, "fechaAlta", bloqueo.getAuditoria().getFechaCrear());
+						beanUtilNotNull.copyProperty(bloqueoDto, "usuarioAlta", bloqueo.getAuditoria().getUsuarioCrear());
+						beanUtilNotNull.copyProperty(bloqueoDto, "fechaBaja", bloqueo.getAuditoria().getFechaBorrar());
+						beanUtilNotNull.copyProperty(bloqueoDto, "usuarioBaja", bloqueo.getAuditoria().getUsuarioBorrar());
+					}
+					bloqueosdto.add(bloqueoDto);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return bloqueosdto;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createBloqueoFormalizacion(DtoBloqueosFinalizacion dto) {
+		try {
+			BloqueoActivoFormalizacion bloqueo = new BloqueoActivoFormalizacion();
+	
+			if(!Checks.esNulo(dto.getAreaBloqueoCodigo())) {
+				DDAreaBloqueo area = (DDAreaBloqueo) utilDiccionarioApi.dameValorDiccionarioByCod(DDAreaBloqueo.class, dto.getAreaBloqueoCodigo());
+				if(!Checks.esNulo(area)) {
+					bloqueo.setArea(area);
+				}
+			}
+	
+			if(!Checks.esNulo(dto.getTipoBloqueoCodigo())) {
+				DDTipoBloqueo tipo = (DDTipoBloqueo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoBloqueo.class, dto.getTipoBloqueoCodigo());
+				if(!Checks.esNulo(tipo)) {
+					bloqueo.setTipo(tipo);
+				}
+			}
+
+			if(!Checks.esNulo(dto.getIdExpediente())) {
+				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdExpediente())));
+				if(!Checks.esNulo(expediente)) {
+					bloqueo.setExpediente(expediente);
+				}
+			}
+
+			genericDao.save(BloqueoActivoFormalizacion.class, bloqueo);
+		} catch(Exception e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteBloqueoFormalizacion(DtoBloqueosFinalizacion dto) {
+		if(!Checks.esNulo(dto.getId())) {
+			BloqueoActivoFormalizacion bloqueo = genericDao.get(BloqueoActivoFormalizacion.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId())));
+			if(!Checks.esNulo(bloqueo)) {
+				if(!Checks.esNulo(bloqueo.getAuditoria())) {
+					Usuario usuario = genericAdapter.getUsuarioLogado();
+					if(!Checks.esNulo(usuario)) {
+						bloqueo.getAuditoria().setUsuarioBorrar(usuario.getUsername());
+					}
+					bloqueo.getAuditoria().setFechaBorrar(new Date());
+					bloqueo.getAuditoria().setBorrado(true);
+				}
+			}
+		}
+		return true;
+	}
 }

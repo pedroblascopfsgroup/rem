@@ -533,8 +533,44 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'generic/getDiccionario',
 		        extraParams: {diccionario: 'resultadoTanteo'}
 	    	}	    	
-	    }
-	    	
+	    },
+
+	    comboAreaBloqueo: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'areaBloqueo'}
+	    	},
+	    	autoLoad: true
+	    },
+
+	    comboTipoBloqueo: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionarioTipoBloqueo'
+	    	}
+	    },
+
+	    comboTipoBloqueoGrid: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionarioTipoBloqueo',
+		        extraParams: {areaCodigo: 'mostrarTodos'}
+	    	},
+	    	autoLoad: true
+	    },
+	    
+	    storeBloqueosFormalizacion: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.BloqueosFormalizacionModel',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getBloqueosFormalizacion',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		} 
     }
-  
 });

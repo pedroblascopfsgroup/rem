@@ -811,4 +811,12 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public ActivoTasacion getTasacionMasReciente(Activo activo);
+
+	
+	/**
+	 * Comprueba si el activo tiene el check de precio a true
+	 * @param activo
+	 * @return
+	 */
+	public Boolean getDptoPrecio(Activo activo);
 }

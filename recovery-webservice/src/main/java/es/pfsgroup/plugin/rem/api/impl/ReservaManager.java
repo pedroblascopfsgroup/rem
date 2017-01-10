@@ -49,7 +49,7 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 	}
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-
+	
 	@Override
 	public HashMap<String, String> validateReservaPostRequestData(ReservaDto reservaDto, Object jsonFields)
 			throws Exception {
@@ -95,20 +95,8 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 
 									} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA)
 											&& !expedienteComercial.getReserva().getEstadoReserva().getCodigo()
-													.equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)) {// Dani
-																										// tiene
-																										// pendiente
-																										// modificar
-																										// el
-																										// bpm
-																										// para
-																										// poner
-																										// este
-																										// esado
-																										// de
-																										// reserva
-										hashErrores.put("activo",
-												"La reserva debe estar en el estado Pendiente de firma.");
+													.equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)) {
+										hashErrores.put("activo", "La reserva debe estar en el estado Pendiente de firma.");
 
 									} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA)
 											&& !expedienteComercial.getEstado().getCodigo()
@@ -150,6 +138,7 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 		}
 		return hashErrores;
 	}
+	
 
 	@Transactional(readOnly = true)
 	public DDEstadosReserva getDDEstadosReservaByCodigo(String codigo) {

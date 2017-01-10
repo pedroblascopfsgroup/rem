@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -462,6 +463,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
+	@Override
+	public Boolean getDptoPrecio(Activo activo) {
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaPublicacionActivo activopubli");
+		hb.appendWhere("activopubli.numActivo = " + activo.getNumActivo());
+		
+		VBusquedaPublicacionActivo busquedaActivo = (VBusquedaPublicacionActivo) getSession().createQuery(hb.toString()).uniqueResult();
+		return busquedaActivo.getPrecio();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {

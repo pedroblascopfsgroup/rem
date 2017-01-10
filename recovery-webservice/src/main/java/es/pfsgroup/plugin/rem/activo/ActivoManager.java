@@ -3013,4 +3013,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return null;
 	}
+	
+	@Override
+	public Boolean getDptoPrecio(Activo activo){
+		return activoDao.getDptoPrecio(activo);
+	}
 }

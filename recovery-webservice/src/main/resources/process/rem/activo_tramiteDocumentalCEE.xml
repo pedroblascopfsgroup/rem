@@ -106,7 +106,7 @@
 	</state>
 	
 	<decision name="T003_EmisionCertificadoDecision" expression="#{T003_EmisionCertificadoDecision}">
-		<transition to="T003_CierreEconomico" name="SinEtiqueta"></transition>
+		<transition to="T003_CierreEconomico" name="SinEtiquetaOFallido"></transition>
 		<transition to="T003_SolicitudEtiqueta" name="ConEtiqueta"></transition>
 	</decision>
 

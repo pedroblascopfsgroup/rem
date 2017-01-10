@@ -79,7 +79,7 @@ public class ReservaController {
 			jsonFields = request.getJsonObject();
 			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
 			reservaDto = jsonData.getData();
-			errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields) ;
+			errorList = reservaApi.validateConfirmacionOperacionPostRequestData(reservaDto, jsonFields) ;
 			if (errorList != null && errorList.isEmpty()) {
 				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
 				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
@@ -135,7 +135,7 @@ public class ReservaController {
 			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
 			reservaDto = jsonData.getData();
 
-			errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields) ;
+			errorList = reservaApi.validateConfirmacionOperacionPostRequestData(reservaDto, jsonFields) ;
 
 			if (errorList != null && errorList.isEmpty()) {
 				

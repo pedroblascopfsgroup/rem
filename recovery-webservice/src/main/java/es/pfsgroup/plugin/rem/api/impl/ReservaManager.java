@@ -49,9 +49,9 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 	}
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-
+	
 	@Override
-	public HashMap<String, String> validateReservaPostRequestData(ReservaDto reservaDto, Object jsonFields)
+	public HashMap<String, String> validateConfirmacionOperacionPostRequestData(ReservaDto reservaDto, Object jsonFields)
 			throws Exception {
 		HashMap<String, String> hashErrores = null;
 		Oferta oferta = null;
@@ -149,6 +149,12 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 			}
 		}
 		return hashErrores;
+	}
+	
+	private void validateCobroReserva(HashMap<String, String> hashErrores,ExpedienteComercial expedienteComercial){
+		if(Checks.esNulo(expedienteComercial.getReserva())) {
+			hashErrores.put("activo", "El activo no tiene reserva");
+		}
 	}
 
 	@Transactional(readOnly = true)

@@ -209,7 +209,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id");
 
-    	if (btn.up('form').down('dataview').getStore().totalCount == 0) {
+		//HREOS-1381, Permitimos más de una foto por agrupación
+    	/*if (btn.up('form').down('dataview').getStore().totalCount == 0) {
 			
 			Ext.create("HreRem.view.common.adjuntos.AdjuntarFotoAgrupacion", {idEntidad: idAgrupacion, parent: btn}).show();
 			
@@ -217,7 +218,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			
 			me.fireEvent("errorToast", "Solo puede insertarse una foto por agrupación");
 			
-		}
+		}*/
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarFotoAgrupacion", {idEntidad: idAgrupacion, parent: btn}).show();
 		
 	},
 	

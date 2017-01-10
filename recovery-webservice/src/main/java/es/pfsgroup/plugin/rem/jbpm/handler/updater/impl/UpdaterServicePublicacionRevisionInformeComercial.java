@@ -82,35 +82,39 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		// Acepta / Rechaza el I.C.
 		if(checkAcepta){
 			
-			// Si continua con proceso publicacion
-			if(checkContinuaProceso){
+			//Si acepta el informe comercial, hay que cambiar el informe comercial, aunque no se continue con el proceso de publicación.
+			// Consideracion de datos iguales entre activo e I.C.
+			if(!activoApi.checkTiposDistintos(activo)){
+				// Iguales :------------
+				// 1.) Se acepta I.C.
+				estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
+				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+				activoEstadosInformeComercialHistorico.setFecha(new Date());
 				
-				// Consideracion de datos iguales entre activo e I.C.
-				if(!activoApi.checkTiposDistintos(activo)){
-					// Iguales :------------
-					// 1.) Se acepta I.C.
-					estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
-					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
-					activoEstadosInformeComercialHistorico.setFecha(new Date());
-					
+				// Si continua con proceso publicacion
+				if(checkContinuaProceso){
 					// 2.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
 					activo.setFechaPublicable(new Date());
 					activoApi.saveOrUpdate(activo);
 					
-					// 3.) Se publica el activo
-					try {
-						activoApi.publicarActivo(activo.getId(), "Trámite publicación aceptado: Informe comercial no modifica datos");
-					} catch (SQLException e) {
-						e.printStackTrace();
+					
+					//Comprobamos que tenga precio para publicar
+					if(activoApi.getDptoPrecio(activo)){
+						// 3.) Se publica el activo
+						try {
+							activoApi.publicarActivo(activo.getId(), "Trámite publicación aceptado: Informe comercial no modifica datos");
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
 					}
 					
 				} else {
-					// Distintos :----------
-					// No se cambian datos, se lanza siguiente tarea de correccion I.C.
+					// Si NO continua con proceso publicacion, no se cambian datos
 				}
 				
 			} else {
-				// Si NO continua con proceso publicacion, no se cambian datos
+				// Distintos :----------
+				// No se cambian datos, se lanza siguiente tarea de correccion I.C.
 			}
 			
 		}else{

@@ -81,4 +81,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);
 
+	public Boolean getDptoPrecio(Activo activo);
+
 }

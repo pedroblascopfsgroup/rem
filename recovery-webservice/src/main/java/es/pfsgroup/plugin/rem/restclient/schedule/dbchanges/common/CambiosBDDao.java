@@ -86,7 +86,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	private HibernateExecutionFacade queryExecutor;
 
 	private Long restUserId;
-	
+
 	@Resource
 	private Properties appProperties;
 
@@ -225,17 +225,17 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 
 		Session session = this.sesionFactoryFacade.getSession(this);
-		
+
 		Integer tamanyoBloque = null;
-		
+
 		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
 				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : "";
-		try{
+		try {
 			tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
-		}catch(Exception e){
+		} catch (Exception e) {
 			tamanyoBloque = null;
 		}
-		
+
 		CambiosList cambios = new CambiosList(tamanyoBloque);
 
 		FieldInfo[] fields = getDtoFields(dtoClass);
@@ -517,7 +517,21 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @param infoTablas
 	 */
 	public void refreshMaterializedView(InfoTablasBD infoTablas) {
-		refreshMaterializedView(infoTablas, this.sesionFactoryFacade.getSession(this));
+		Session session = this.sesionFactoryFacade.getSession(this);
+		try {
+			refreshMaterializedView(infoTablas, session);
+		} catch (Throwable t) {
+			throw new CambiosBDDaoError("No se ha podido actualizar la vista materializada "+infoTablas.nombreVistaDatosActuales());
+		} finally {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cerrando sesión");
+			}
+			if (session != null) {
+				if (session.isOpen()) {
+					session.close();
+				}
+			}
+		}
 	}
 
 	private void refreshMaterializedView(InfoTablasBD infoTablas, Session session) {

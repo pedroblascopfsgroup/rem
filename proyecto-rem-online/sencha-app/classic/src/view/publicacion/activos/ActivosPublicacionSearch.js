@@ -28,12 +28,14 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.admision'),
 					        	name: 'admision',
+					        	value: true, // Establecido por defecto.
 					        	inputValue: true					        	
 					        },
 					        { 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.gestion'),
 					        	name: 'gestion',
+					        	value: true, // Establecido por defecto.
 					        	inputValue: true					
 					        },
 					        { 
@@ -84,6 +86,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.estado'),
 					        	name: 'estadoPublicacionCodigo',
+					        	value: CONST.ESTADOS_PUBLICACION['NO_PUBLICADO'], // Establecido por defecto.
 					        	bind: {
 				            		store: '{comboEstadoPublicacion}'
 				            	}

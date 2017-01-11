@@ -40,6 +40,9 @@ Ext.define('HreRem.model.FichaProveedorModel', {
 		    	name: 'subtipoProveedorCodigo'
 		    },
 		    {
+		    	name: 'tipoDocumentoCodigo'
+		    },
+		    {
 		    	name: 'nifProveedor'
 		    },
 		    {

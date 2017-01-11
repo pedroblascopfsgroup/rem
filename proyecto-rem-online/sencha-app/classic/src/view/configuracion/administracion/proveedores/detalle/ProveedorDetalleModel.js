@@ -158,6 +158,14 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'operativa'}
 			}
+		},
+		comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposDocumentos'}
+			}
 		}
     }
     

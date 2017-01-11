@@ -143,13 +143,15 @@ Ext.define('HreRem.controller.RootController', {
     	// Si ya hemos creado el viewport y hay un fallo de conexión o por inactividad volveremos al login, por eso
     	// hacemos un destroy de cualquier window que pueda existir a excepción de la ventana de login. 
     	if(!Ext.isEmpty(me.viewport)) {
-	  		me.viewport.destroy();
+	  		//me.viewport.destroy();
+    		
+	  		window.location.reload();
 	  		
-	  		Ext.Array.each(Ext.ComponentQuery.query('window'), function(window, index) {
+	  		/*Ext.Array.each(Ext.ComponentQuery.query('window'), function(window, index) {
 	  			if(window != me.winLogin) {
 	  				window.destroy();
 	  			}
-	  		});
+	  		});*/
 	  	};
     	
     	if(Ext.isEmpty(me.winLogin)){
@@ -181,14 +183,16 @@ Ext.define('HreRem.controller.RootController', {
     	Ext.Ajax.setTimeout($AC.getDefaultTimeout());
     	
 		Ext.Ajax.on('requestexception', function(con, response, op, e) {
-			
 			switch (response.status) {
 				
 				case me.errorCodes['SC_UNAUTHORIZED']:
 					me.showLogin();
+					me.log(HreRem.i18n('msg.error.usuario.no.identificado'));
 					break;
 				case me.errorCodes['COMMUNICATION_FAILURE']:
+					me.showLogin();
 				    me.log(HreRem.i18n('msg.error.perdida.comunicacion'));
+				    break;
 			}
 		  
 		});		

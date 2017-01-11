@@ -2559,9 +2559,11 @@ public class ActivoAdapter {
 					if (!Checks.esNulo(propietario.getPropietario().getProvinciaContacto()))
 						BeanUtils.copyProperty(propietarioDto, "provinciaContactoDescripcion",
 								propietario.getPropietario().getProvinciaContacto().getDescripcion());
-
-					BeanUtils.copyProperty(propietarioDto, "tipoDocIdentificativoDesc",
-							propietario.getPropietario().getTipoDocIdentificativo().getDescripcion());
+					
+					if (!Checks.esNulo(propietario.getPropietario().getTipoDocIdentificativo())) {
+						BeanUtils.copyProperty(propietarioDto, "tipoDocIdentificativoDesc",
+								propietario.getPropietario().getTipoDocIdentificativo().getDescripcion());
+					}
 
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();

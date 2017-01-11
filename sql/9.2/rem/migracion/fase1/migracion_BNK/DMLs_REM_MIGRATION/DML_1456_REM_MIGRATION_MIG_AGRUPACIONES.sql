@@ -30,6 +30,7 @@ V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_AGR_AGRUPACION';
 V_TABLA_2 VARCHAR2(40 CHAR) := 'ACT_ONV_OBRA_NUEVA';
 V_TABLA_3 VARCHAR2(40 CHAR) := 'ACT_RES_RESTRINGIDA';
+V_TABLA_4 VARCHAR2(40 CHAR) := 'ACT_LCO_LOTE_COMERCIAL';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_AAG_AGRUPACIONES_BNK';
 V_SENTENCIA VARCHAR2(2000 CHAR);
 V_REG_MIG NUMBER(10,0) := 0;
@@ -75,30 +76,30 @@ BEGIN
 			)
 	)
 	SELECT
-	'||V_ESQUEMA||'.S_ACT_AGR_AGRUPACION.NEXTVAL			AGR_ID,
+	'||V_ESQUEMA||'.S_ACT_AGR_AGRUPACION.NEXTVAL						AGR_ID,
 	(SELECT DD_TAG_ID
 	FROM '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION 
-	WHERE DD_TAG_CODIGO = MIG.TIPO_AGRUPACION)	     		DD_TAG_ID,
-	MIG.AGR_NOMBRE											AGR_NOMBRE,
-	MIG.AGR_DESCRIPCION										AGR_DESCRIPCION,
-	'||V_ESQUEMA||'.S_ACT_AGR_AGRUPACION.NEXTVAL			AGR_NUM_AGRUP_REM,
-	MIG.AGR_UVEM											AGR_NUM_AGRUP_UVEM,
-	MIG.AGR_FECHA_ALTA										AGR_FECHA_ALTA,
-	MIG.AGR_ELIMINADO										AGR_ELIMINADO,
-	MIG.AGR_FECHA_BAJA										AGR_FECHA_BAJA,
-	NULL													AGR_URL,
-	MIG.AGR_PUBLICADO                                       AGR_PUBLICADO,
-	NULL                                                    AGR_SEG_VISITAS,
-	MIG.AGR_TEXTO_WEB                                       AGR_TEXTO_WEB,
+	WHERE DD_TAG_CODIGO = MIG.TIPO_AGRUPACION)	     					DD_TAG_ID,
+	MIG.AGR_NOMBRE														AGR_NOMBRE,
+	MIG.AGR_DESCRIPCION													AGR_DESCRIPCION,
+	'||V_ESQUEMA||'.S_ACT_AGR_AGRUPACION.NEXTVAL						AGR_NUM_AGRUP_REM,
+	MIG.AGR_UVEM														AGR_NUM_AGRUP_UVEM,
+	MIG.AGR_FECHA_ALTA													AGR_FECHA_ALTA,
+	MIG.AGR_ELIMINADO													AGR_ELIMINADO,
+	MIG.AGR_FECHA_BAJA													AGR_FECHA_BAJA,
+	NULL																AGR_URL,
+	MIG.AGR_PUBLICADO                                       			AGR_PUBLICADO,
+	NULL                                                    			AGR_SEG_VISITAS,
+	MIG.AGR_TEXTO_WEB                                       			AGR_TEXTO_WEB,
 	(SELECT ACT_ID
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO
-	WHERE ACT_NUM_ACTIVO = MIG.AGR_ACT_PRINCIPAL)           AGR_ACT_PRINCIPAL,
-	NULL		                                            AGR_GESTOR_ID,
-	NULL			                                        AGR_MEDIADOR_ID,
-	''0''                                                 	VERSION,
+	WHERE ACT_NUM_ACTIVO = MIG.AGR_ACT_PRINCIPAL)           			AGR_ACT_PRINCIPAL,
+	NULL		                                            			AGR_GESTOR_ID,
+	NULL										                        AGR_MEDIADOR_ID,
+	''0''                                                 				VERSION,
 	''MIGRAREM01BNK''                                               	USUARIOCREAR,
-	SYSDATE                                               	FECHACREAR,
-	0                                                     	BORRADO
+	SYSDATE                                               				FECHACREAR,
+	0                                                     				BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
 	INNER JOIN AGR_UVEM AGR
 	ON AGR.AGR_UVEM = MIG.AGR_UVEM
@@ -211,6 +212,44 @@ BEGIN
   
   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
   
+  
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_4||'.');
+  
+	EXECUTE IMMEDIATE ('
+	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_4||' (
+	AGR_ID
+	)
+	WITH AGR_UVEM AS (
+		SELECT AGR_ID , AGR_UVEM
+		FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
+		INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+		ON MIG.AGR_UVEM = AGR.AGR_NUM_AGRUP_UVEM
+		WHERE AGR_ID NOT IN (
+		  SELECT AGR_ID 
+		  FROM '||V_ESQUEMA||'.'||V_TABLA_4||'
+			)
+		AND DD_TAG_ID = (SELECT DD_TAG_ID FROM '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = ''14'')
+	)
+	SELECT
+	(SELECT AGR_ID
+	FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
+	WHERE AGR.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM)    			AGR_ID
+	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+	INNER JOIN AGR_UVEM AGR
+	ON AGR.AGR_UVEM = MIG.AGR_UVEM
+	')
+	;
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_4||' cargada. '||SQL%ROWCOUNT||' Filas.');
+  
+  COMMIT;
+  
+	EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_4||' COMPUTE STATISTICS');
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_4||' ANALIZADA.');
+  
+  
   -- INFORMAMOS A LA TABLA INFO
   
   --TABLA_AGRUPACIONES
@@ -245,9 +284,22 @@ BEGIN
   
   EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;
   
+    /*-- Validacion de PROVEEDORES inexistentes
+      V_SENTENCIA := 'SELECT COUNT(1) FROM MIG_AAG_AGRUPACIONES_BNK 
+						WHERE AGR_MEDIADOR NOT IN(
+						SELECT MIG.AGR_MEDIADOR FROM MIG_AAG_AGRUPACIONES_BNK MIG
+						INNER JOIN ACT_PVE_PROVEEDOR PVE
+						  ON PVE.PVE_COD_UVEM = MIG.AGR_MEDIADOR)
+					 ';  
+      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;*/
+  
   -- Observaciones
   IF V_REJECTS != 0 THEN
    V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' AGRUPACIONES, comprobar integridad de los campos.';
+   
+   /*IF TABLE_COUNT != 0 THEN            
+                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' registros con el campo AGR_MEDIADOR informado pero cuyo codigo no existe en ACT_PVE_PROVEEDOR. ';             
+   END IF;*/
   END IF;
   
   EXECUTE IMMEDIATE ('
@@ -400,6 +452,75 @@ BEGIN
 	SELECT
 	'''||V_TABLA_MIG||''',
 	'''||V_TABLA_3||''',
+	'||V_REG_MIG||',
+	'||V_REG_INSERTADOS||',
+	'||V_REJECTS||',
+	'||V_COD||',
+	SYSDATE,
+	'''||V_OBSERVACIONES||'''
+	FROM DUAL
+  ')
+  ;
+  
+  -- TABLA_LOTE_COMERCIAL
+  
+  -- Registros con DD_TAG_ID = 14, LOTE_COMERCIAL
+  V_SENTENCIA := '
+	SELECT COUNT(1)
+	FROM '||V_ESQUEMA||'.'||V_TABLA||' AGR
+	WHERE AGR.DD_TAG_ID = 14
+	AND AGR.USUARIOCREAR = ''MIGRAREM01BNK''
+  '
+  ;
+  
+  EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
+  
+  -- Registros insertados en REM
+  V_SENTENCIA := '
+	SELECT COUNT(ONV.AGR_ID) FROM '||V_ESQUEMA||'.'||V_TABLA_4||' LCO, '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
+	 WHERE LCO.AGR_ID = AGR.AGR_ID
+	   AND AGR.USUARIOCREAR = ''MIGRAREM01BNK''
+  '
+  ;
+  
+  EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_INSERTADOS;
+   
+  -- Total registros rechazados
+  V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;	
+  
+  -- Diccionarios rechazados
+  COMMIT;
+  
+  /*V_SENTENCIA := '
+  SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_COD_NOT_EXISTS 
+	WHERE DICCIONARIO IN (''DD_PRV_PROVINCIA'',''DD_LOC_LOCALIDAD'')
+	AND FICHERO_ORIGEN = ''AGRUPACIONES.dat''
+	AND CAMPO_ORIGEN IN (''PRO_AGRUP_LOTE_RESTRINGIDO'',''LOC_AGRUP_LOTE_RESTRINGIDO'')
+  '
+  ;
+  
+  EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;*/
+  V_COD := 0;
+
+  -- Observaciones
+  IF V_REJECTS != 0 THEN
+   V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros, comprobar integridad de los campos.';
+  END IF;
+  
+  EXECUTE IMMEDIATE ('
+	INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
+	TABLA_MIG,
+	TABLA_REM,
+	REGISTROS_TABLA_MIG,
+	REGISTROS_INSERTADOS,
+	REGISTROS_RECHAZADOS,
+	DD_COD_INEXISTENTES,
+	FECHA,
+	OBSERVACIONES
+	)
+	SELECT
+	'''||V_TABLA_MIG||''',
+	'''||V_TABLA_4||''',
 	'||V_REG_MIG||',
 	'||V_REG_INSERTADOS||',
 	'||V_REJECTS||',

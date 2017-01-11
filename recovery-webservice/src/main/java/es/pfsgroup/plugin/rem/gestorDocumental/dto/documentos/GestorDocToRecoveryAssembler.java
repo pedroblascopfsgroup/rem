@@ -5,7 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -39,8 +43,13 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setDescripcionTipo("");
 				dtoAdj.setContentType(null);
 				dtoAdj.setTamanyo(null);
-				dtoAdj.setDescripcion(null);
-				dtoAdj.setFechaDocumento(null);
+				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
+						        
+				Date fechaDocumento = null;
+				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
+					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
+				    }
+				dtoAdj.setFechaDocumento(fechaDocumento);
 				
 				list.add(dtoAdj);
 			}
@@ -75,6 +84,21 @@ public class GestorDocToRecoveryAssembler {
 
 		outputStream.close();
 		return resultado;		
+	}
+	
+	private static Date stringToDate(String strDate){
+		List<String> patrones = new ArrayList<String>();
+		patrones.add("yyyy-MM-dd'T'HH:mm:ss");
+		patrones.add("dd/MM/yyyy");
+	   
+		    for(String patron: patrones){
+		    	SimpleDateFormat sdf = new SimpleDateFormat(patron);
+		    	try{
+		    		return sdf.parse(strDate);
+		    	} catch (ParseException e) {
+		    }
+		}
+		throw new IllegalArgumentException("Invalid input for date. Given '"+strDate+"', expecting format yyyy-MM-dd'T'HH:mm:ss or dd/MM/yyyy.");
 	}
 
 }

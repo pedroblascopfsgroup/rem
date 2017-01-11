@@ -41,6 +41,16 @@ public class IdentificacionDocumento {
 	 * Nombre del nodo
 	 */
 	private String nombreNodo;
+	
+	/**
+	 * Fecha del documento (si el campo fecha documento de la categoría está relleno se utiliza ese, sino la fecha de creación del documento).
+	 */
+	private String fechaDocumento;
+	
+	/**
+	 * Descripción del documento
+	 */
+	private String descripcionDocumento;
 
 	public String getTipoExpediente() {
 		return tipoExpediente;
@@ -104,6 +114,22 @@ public class IdentificacionDocumento {
 
 	public void setNombreNodo(String nombreNodo) {
 		this.nombreNodo = nombreNodo;
+	}
+	
+	public String getFechaDocumento() {
+		return fechaDocumento;
+	}
+	
+	public void setFechaDocumento(String fechaDocumento) {
+		this.fechaDocumento = fechaDocumento;
+	}
+		
+	public String getDescripcionDocumento() {
+		return descripcionDocumento;
+	}
+	
+	public void setDescripcionDocumento(String descripcionDocumento) {
+		this.descripcionDocumento = descripcionDocumento;
 	}
 
 }

@@ -55,6 +55,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String USUARIO = "usuario";
 	private static final String PASSWORD = "password";
 	private static final String USUARIO_OPERACIONAL = "usuarioOperacional";
+	private static final String NOMBRE_DOCUMENTO = "nombreDocumento";
 	private static final String DESCRIPCION_DOCUMENTO = "descripcionDocumento";
 	private static final String GENERAL_DOCUMENTO = "generalDocumento";
 	private static final String ARCHIVO_FISICO = "archivoFisico";	
@@ -126,6 +127,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 				.field(USUARIO_OPERACIONAL, crearDoc.getUsuarioOperacional())
 				.field(GENERAL_DOCUMENTO, crearDoc.getGeneralDocumento())
 				.field(ARCHIVO_FISICO, crearDoc.getArchivoFisico())
+				.field(NOMBRE_DOCUMENTO, crearDoc.getNombreDocumento())
 				.field(DESCRIPCION_DOCUMENTO, crearDoc.getDescripcionDocumento())
 				.bodyPart(filePart);
 		return multipart;

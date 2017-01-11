@@ -230,9 +230,15 @@ Ext.define('HreRem.ux.util.Constants', {
     
     ESTADOS_PROVISION: {
     	RECHAZADA_SUBSANABLE: '03'	
-    }
-    
-    
-    
+    },
 
+    ESTADOS_PUBLICACION: {
+    	PUBLICADO: '01',
+    	PUBLICADO_FORZADO: '02',
+    	PUBLICADO_OCULTO: '03',
+    	PUBLICADO_PRECIO_OCULTO: '04',
+    	DESPUBLICADO: '05',
+    	NO_PUBLICADO: '06',
+    	PUBLICADO_FORZADO_PRECIO_OCULTO: '07'
+    }
 });

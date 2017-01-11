@@ -9,7 +9,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionMain', {
 
     initComponent: function () {
         var me = this;
-        me.setTitle(HreRem.i18n('title.publicaciones.activos'));
+        me.setTitle(HreRem.i18n('title.publicacion.tab'));
 
         me.items = [
             {	

@@ -18,6 +18,27 @@ public class RespuestaDescargarDocumento {
 	private String nombreDocumento;
 
 	/**
+	 * Descripción del documento
+	 */
+	private String descripcionDocumento;
+	
+	/**
+	 * Valor con el tipo de almacenamiento en el gestor documental (archivado u online)
+	 */
+	private String tipoAlmacenamiento;
+	
+	/**
+	 * Valor con el tamaño del fichero
+	 */
+	private String fileSize;
+	
+	/**
+	 * Número de versión
+	 */
+	private String numVersion;
+	
+	
+	/**
 	 * Contenido binario del documento
 	 */
 	private Byte[] contenido;
@@ -44,6 +65,38 @@ public class RespuestaDescargarDocumento {
 
 	public void setNombreDocumento(String nombreDocumento) {
 		this.nombreDocumento = nombreDocumento;
+	}
+	
+	public String getDescripcionDocumento() {
+		return descripcionDocumento;
+	}
+	
+	public void setDescripcionDocumento(String descripcionDocumento) {
+		this.descripcionDocumento = descripcionDocumento;
+	}
+	
+	public String getTipoAlmacenamiento() {
+		return tipoAlmacenamiento;
+	}
+	
+	public void setTipoAlmacenamiento(String tipoAlmacenamiento) {
+		this.tipoAlmacenamiento = tipoAlmacenamiento;
+	}
+	
+	public String getFileSize() {
+		return fileSize;
+	}
+	
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
+	
+	public String getNumVersion() {
+		return numVersion;
+	}
+	
+	public void setNumVersion(String numVersion) {
+		this.numVersion = numVersion;
 	}
 
 	public Byte[] getContenido() {

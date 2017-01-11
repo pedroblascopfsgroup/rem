@@ -930,6 +930,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		me.fireEvent("downloadFile", config);
 	},
 	
+    onClickBotonCerrarPestanya: function(btn) {
+    	var me = this;
+    	me.getView().destroy();
+    },
+    
+    onClickBotonCerrarTodas: function(btn) {
+    	var me = this;
+    	me.getView().up("tabpanel").fireEvent("cerrarTodas", me.getView().up("tabpanel"));    	
+
+    },
+   
 	buscarGasto: function(field, e){
 		var me= this;
 		var url =  $AC.getRemoteUrl('gastosproveedor/searchGastoNumHaya');

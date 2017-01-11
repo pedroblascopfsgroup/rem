@@ -156,9 +156,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				activo.setFechaPublicable(new Date());
 				activoApi.saveOrUpdate(activo);
 				
-				// Ademas, se publica el activo lanzando el procedure para este
-				publicarActivoProcedure(activo.getId());
-				
+				// Si tiene el OK del Dpto de precios se publica el activo
+				if(activoApi.getDptoPrecio(activo)){
+					// Ademas, se publica el activo lanzando el procedure para este
+					publicarActivoProcedure(activo.getId());
+				}
 			} else if(!Checks.esNulo(activo.getFechaPublicable()) && // Si tiene fecha de publicación.
 					(!Checks.esNulo(estadoPublicacionActual) && estadoPublicacionActual.getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO))) { // Y tiene estado anterior.
 				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
@@ -167,8 +169,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
 				motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
 				
-				// Ademas, se publica el activo lanzando el procedure para este
-				publicarActivoProcedure(activo.getId());
+				// Si tiene el OK del Dpto de precios se publica el activo
+				if(activoApi.getDptoPrecio(activo)){
+					// Ademas, se publica el activo lanzando el procedure para este
+					publicarActivoProcedure(activo.getId());
+				}
 			}
 			
 		} else { // Deseleccionada cualquier opción.

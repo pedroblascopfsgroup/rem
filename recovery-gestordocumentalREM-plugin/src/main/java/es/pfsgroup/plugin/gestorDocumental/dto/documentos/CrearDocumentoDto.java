@@ -25,6 +25,11 @@ public class CrearDocumentoDto {
 	private File documento;
 
 	/**
+	 *  Nombre del documento
+	 */
+	private String nombreDocumento;
+	
+	/**
 	 * Descripción del documento para llevar a la propiedad del gestor
 	 * documental
 	 */
@@ -82,6 +87,14 @@ public class CrearDocumentoDto {
 		this.descripcionDocumento = descripcionDocumento;
 	}
 
+	public String getNombreDocumento() {
+		return nombreDocumento;
+	}
+	
+	public void setNombreDocumento(String nombreDocumento) {
+		this.nombreDocumento = nombreDocumento;
+	}
+	
 	public String getGeneralDocumento() {
 		return generalDocumento;
 	}

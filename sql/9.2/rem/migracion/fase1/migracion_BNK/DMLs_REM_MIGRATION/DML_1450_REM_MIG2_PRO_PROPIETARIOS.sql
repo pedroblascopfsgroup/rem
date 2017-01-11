@@ -62,6 +62,9 @@ BEGIN
                                 MIG.PRO_COD_CARTERA,
                                 MIG.PRO_COD_SUBCARTERA
                                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                                INNER JOIN ACT_PRO_PROPIETARIOS PRO
+									ON PRO.PRO_CODIGO_UVEM = MIG.PRO_PROPIETARIO_CODIGO_UVEM
+								WHERE PRO.USUARIOCREAR = ''MIG''
                           ) AUX
                 ON (PRO.PRO_CODIGO_UVEM = AUX.PRO_PROPIETARIO_CODIGO_UVEM)
                 WHEN MATCHED THEN UPDATE SET

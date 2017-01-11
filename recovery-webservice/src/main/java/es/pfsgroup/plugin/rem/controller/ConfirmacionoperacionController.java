@@ -87,7 +87,7 @@ public class ConfirmacionoperacionController {
 			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
 			reservaDto = jsonData.getData();
 
-			errorList = reservaApi.validateConfirmacionOperacionPostRequestData(reservaDto, jsonFields);
+			errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields);
 
 			if (errorList != null && errorList.isEmpty()) {
 

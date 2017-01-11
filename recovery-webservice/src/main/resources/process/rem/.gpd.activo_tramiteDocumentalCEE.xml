@@ -50,7 +50,7 @@
   </node>
   <node name="T003_EmisionCertificadoDecision" x="324" y="692" width="224" height="36">
     <edge>
-      <label x="-80" y="-11"/>
+      <label x="-135" y="-10"/>
       <bendpoint w1="-138" h1="0" w2="-138" h2="-239"/>
       <bendpoint w1="-137" h1="237" w2="-137" h2="-2"/>
     </edge>

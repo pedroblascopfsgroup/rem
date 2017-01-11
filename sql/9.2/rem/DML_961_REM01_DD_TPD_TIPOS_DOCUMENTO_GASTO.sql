@@ -37,7 +37,31 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('01',' Catastro: factura',' Catastro: factura', 'AI-15-FACT-02'),
+    	T_TIPO_DATA('01','Catastro: factura','Catastro: factura', 'AI-15-FACT-02'),
+    	T_TIPO_DATA('02','Acta Junta Extraordinaria','Acta Junta Extraordinaria', 'AI-15-ACTR-07'),
+    	T_TIPO_DATA('03','Notario: factura','Notario: factura', 'AI-15-FACT-09'),
+    	T_TIPO_DATA('04','Otro gasto','Otro gasto', 'AI-15-FACT-10'),
+    	T_TIPO_DATA('05','Impuesto sobre bienes inmuebles (IBI): justificante abono','Impuesto sobre bienes inmuebles (IBI): justificante abono', 'AI-15-CERA-12'),
+    	T_TIPO_DATA('06','Registro Propiedad: factura','Registro Propiedad: factura', 'AI-15-FACT-13'),
+    	T_TIPO_DATA('07','Impuesto sobre bienes inmuebles (IBI): recibo','Impuesto sobre bienes inmuebles (IBI): recibo', 'AI-15-CERA-16'),
+    	T_TIPO_DATA('08','Impuesto sobre construcciones, instalaciones y obras (ICIO)','Impuesto sobre construcciones, instalaciones y obras (ICIO)', 'AI-15-CERA-17'),
+    	T_TIPO_DATA('09','Otro impuesto / tasa / contribución','Otro impuesto / tasa / contribución', 'AI-15-CERA-22'),
+    	T_TIPO_DATA('10','Suministro de agua','Suministro de agua', 'AI-15-CERT-23'),
+    	T_TIPO_DATA('11','Suministro de luz','Suministro de luz', 'AI-15-CERT-24'),
+    	T_TIPO_DATA('12','Impuesto sobre bienes inmuebles (IBI): certificado','Impuesto sobre bienes inmuebles (IBI): certificado', 'AI-15-CERJ-25'),
+    	T_TIPO_DATA('13','Impuesto sobre bienes inmuebles (IBI): comunicaciones','Impuesto sobre bienes inmuebles (IBI): comunicaciones', 'AI-15-COMU-45'),
+    	T_TIPO_DATA('14','Impuesto sobre bienes inmuebles (basura): recibo','Impuesto sobre bienes inmuebles (basura): recibo', 'AI-15-CERA-51'),
+    	T_TIPO_DATA('15','Impuesto sobre bienes inmuebles (basura): justificante abono','Impuesto sobre bienes inmuebles (basura): justificante abono', 'AI-15-CERA-52'),
+    	T_TIPO_DATA('16','Impuesto sobre bienes inmuebles (VADO): recibo','Impuesto sobre bienes inmuebles (VADO): recibo', 'AI-15-CERA-53'),
+    	T_TIPO_DATA('17','Impuesto sobre bienes inmuebles (VADO): justificante abono','Impuesto sobre bienes inmuebles (VADO): justificante abono', 'AI-15-CERA-54'),
+    	T_TIPO_DATA('18','Impuesto sobre bienes inmuebles (OTRAS TASAS): recibo','Impuesto sobre bienes inmuebles (OTRAS TASAS): recibo', 'AI-15-CERA-55'),
+    	T_TIPO_DATA('19','Impuesto sobre bienes inmuebles (OTRAS TASAS): justificante abono','Impuesto sobre bienes inmuebles (OTRAS TASAS): justificante abono', 'AI-15-CERA-56'),
+    	T_TIPO_DATA('20','Impuesto sobre bienes inmuebles (alcantarillado): recibo','Impuesto sobre bienes inmuebles (alcantarillado): recibo', 'AI-15-CERA-65'),
+    	T_TIPO_DATA('21','Impuesto sobre bienes inmuebles (alcantarillado): justificante abono','Impuesto sobre bienes inmuebles (alcantarillado): justificante abono', 'AI-15-CERA-66'),
+    	T_TIPO_DATA('22','Impuesto sobre Actividades Económicas (IAE): justificante abono','Impuesto sobre Actividades Económicas (IAE): justificante abono', 'AI-15-CERA-67'),
+    	T_TIPO_DATA('23','Tasa de suministro agua potable : recibo','Tasa de suministro agua potable : recibo', 'AI-15-CERA-68'),
+    	T_TIPO_DATA('24','Multa Coercitiva','Multa Coercitiva', 'AI-15-CERA-70'),
+    	T_TIPO_DATA('25','Contribución especial','Contribución especial', 'AI-15-CERA-07')    	
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

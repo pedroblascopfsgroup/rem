@@ -28,7 +28,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EEC_ESTADO_EXPEDIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EEC_EST_EXP_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'EEC'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
 	 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar

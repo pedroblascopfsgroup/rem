@@ -26,7 +26,6 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 		boxready: function(window) {
 			var me = this,
 			form = me.down('formBase');
-			
 			form.setBindRecord(Ext.create('HreRem.model.GastoProveedor'));
 			if(!Ext.isEmpty(me.nifEmisor)) {
 		        var fieldEmisor = me.down('field[reference=buscadorNifEmisorField]');
@@ -53,6 +52,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
     	
     	var storeEmisoresGasto = new Ext.data.Store({  
     		model: 'HreRem.model.Proveedor',
+    		autoLoad: false,
     		pageSize: null,
 			proxy: {
 				type: 'uxproxy',
@@ -60,7 +60,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				remoteUrl: 'gastosproveedor/searchProveedoresByNif'
 			}   	
     	}); 
-    	
+
     	var storeDestinatarios = new Ext.data.Store({
     		model: 'HreRem.model.ComboBase',
     		autoLoadOnValue: true,
@@ -125,7 +125,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												        			field.lookupController().buscarProveedor(field);											        			
 												        		}
 												        	},
-												        	change: function(field, newvalue) {												        		
+												        	change: function(field, newvalue) {										        		
 												        		if(Ext.isEmpty(newvalue)) {
 												        			field.up("form").down("[reference=comboProveedores]").reset()
 												        		}
@@ -141,12 +141,14 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													allowBlank: false,
 													editable: false,
 													autoLoadOnValue: false,
+													queryMode: 'local',
 													store: storeEmisoresGasto,
+													loadOnBind: false,
 													emptyText: HreRem.i18n('txt.seleccionar.emisor'),
     												valueField		: 'codigo',
     												bind: {
     													value: '{gastoNuevo.codigoEmisor}',
-    													readOnly: '{!buscadorNifEmisorField.value}'
+    													disabled: '{!buscadorNifEmisorField.value}'
     												},
     												tpl: Ext.create('Ext.XTemplate',
 									            		    '<tpl for=".">',
@@ -239,7 +241,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 														
 															buscarEmisor: {
 													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
-													             handler: 'buscarPropietario'
+													            handler: 'buscarPropietario'
 													        }
 													},
 													cls: 'searchfield-input sf-con-borde',
@@ -252,8 +254,10 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 											        		}
 											        	},
 											        	
-											        	blur: function(field, e) {
-											        		field.lookupController().buscarPropietario(field);
+											        	blur: function(field, e) {											        		
+											        		if(!Ext.isEmpty(field.getValue())) {
+											        			field.lookupController().buscarPropietario(field);
+											        		}
 											        	}
 											        	
 											        	

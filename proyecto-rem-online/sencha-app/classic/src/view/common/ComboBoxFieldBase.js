@@ -22,6 +22,8 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
     editable		: false,
     
     forceSelection	: true,
+    
+    loadOnBind	: true,
 	
 	//Override del onTriggerClick con el nuevo atributo que indicar� si se carga de nuevo
 	//el diccionario al hacer trigger o no (por defecto no se har�)
@@ -39,7 +41,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 			
 			var me = this;
 			if (me.value == null || (me.value != binding.lastValue)) {
-				if (me.getStore() != null && me.getStore().type!="chained") {
+				if (me.loadOnBind && me.getStore() != null && me.getStore().type!="chained") {
 					me.loadPage();
 				}
 				/*me.getStore().load({

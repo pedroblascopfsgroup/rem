@@ -275,7 +275,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var nifProveedor= field.getValue();
 		var data;
 		var comboProveedores = me.lookupReference("comboProveedores");
-		
+
 		if(!Ext.isEmpty(nifProveedor)){
 			comboProveedores.getStore().getProxy().extraParams.nifProveedor = nifProveedor;	
 			comboProveedores.getStore().load();
@@ -283,9 +283,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				comboProveedores.expand();
 			}
 		}
-			
-		
-		
+
 	},
 	
 	buscarPropietario: function(field, e){

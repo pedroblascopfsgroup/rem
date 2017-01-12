@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
 import java.util.Properties;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,10 +20,10 @@ public class RecoveryToGestorDocAssembler {
 		PASSWORD = appProperties.getProperty("rest.client.gestor.documental.pass");
 	}
 	
-	public CabeceraPeticionRestClientDto getCabeceraPeticionRestClient(String numActivo, String tipoExp, String claseExp) {
+	public CabeceraPeticionRestClientDto getCabeceraPeticionRestClient(String idExp, String tipoExp, String claseExp) {
 
 		CabeceraPeticionRestClientDto cabecera = new CabeceraPeticionRestClientDto();
-		cabecera.setIdExpedienteHaya(numActivo);
+		cabecera.setIdExpedienteHaya(idExp);
 		cabecera.setCodTipo(tipoExp); 
 		cabecera.setCodClase(claseExp);
 		return cabecera;

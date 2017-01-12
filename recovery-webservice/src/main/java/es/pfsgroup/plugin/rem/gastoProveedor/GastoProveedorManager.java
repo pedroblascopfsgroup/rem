@@ -41,12 +41,13 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
@@ -146,6 +147,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Autowired
 	private UpdaterStateGastoApi updaterStateApi;
 	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+		
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 	@Resource
@@ -1382,16 +1386,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Transactional(readOnly = false)
 	public String upload(WebFileItem fileItem) throws Exception {
 
-		GastoProveedor gasto= findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
-		
+		GastoProveedor gasto= findOne(Long.parseLong(fileItem.getParameter("idEntidad")));		
 
 		AdjuntoGasto adjuntoGasto = createAdjuntoGasto(fileItem, gasto);		
 		Auditoria.save(adjuntoGasto);
 		genericDao.save(AdjuntoGasto.class, adjuntoGasto);
 		
-		Long idDocRestClient = null;
-		adjuntoGasto.setIdDocRestClient(idDocRestClient);
-		genericDao.update(AdjuntoGasto.class, adjuntoGasto);
+		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Long idDocRestClient = null;
+			adjuntoGasto.setIdDocRestClient(idDocRestClient);
+			genericDao.update(AdjuntoGasto.class, adjuntoGasto);
+		}
 
 		// Comprobamos si tenemos que cambiar el estado del gasto.
 		boolean estadoCambiado = updaterStateApi.updaterStates(gasto, null);	  

@@ -1,14 +1,14 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
 import java.io.IOException;
-import java.util.List;
+
+import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
+import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
@@ -31,10 +33,6 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDoc
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
-import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
-import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 @Component
 public class GestorDocumentalManager implements GestorDocumentalApi {
@@ -381,6 +379,13 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		logger.debug("--------------------------");
 		
 		return resp;
+	}
+	
+	@Override
+	public boolean modoRestClientActivado() {
+		
+		return restClientApi.modoRestClientActivado();
+		
 	}
 
 }

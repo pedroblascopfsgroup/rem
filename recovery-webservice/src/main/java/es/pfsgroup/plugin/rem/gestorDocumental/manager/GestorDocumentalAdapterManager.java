@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
 @Service("gestorDocumentalAdapterManager")
 public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterApi, Downloader {
@@ -91,6 +92,23 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		return respuesta;
 	}
+	
+	@Override
+	public Long uploadDocumentoGasto(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws Exception {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
+		//String codigoEstado = Checks.esNulo(activo.getEstadoActivo()) ? null : activo.getEstadoActivo().getCodigo();
+		Long respuesta = null;
+		// FIXME Sin estado no podemos subir documentos. 
+		/*if(!Checks.esNulo(codigoEstado)) {
+			CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, activo.getEstadoActivo().getCodigo());
+			CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+			RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+			respuesta =  new Long(respuestaCrearDocumento.getIdDocumento());
+		}*/
+		return respuesta;
+	}
+	
+	
 
 	@Override
 	public FileItem getFileItem(Long idDocumento) {
@@ -128,6 +146,13 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	@Override
 	public String[] getKeys() {
 		return new String[]{GESTOR_DOCUMENTAL};
+	}
+	
+	@Override
+	public boolean modoRestClientActivado() {
+		
+		return gestorDocumentalApi.modoRestClientActivado();
+		
 	}
 
 }

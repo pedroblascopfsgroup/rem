@@ -1,35 +1,81 @@
 Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
-    extend		: 'Ext.tab.Panel',
-	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
+    extend		: 'HreRem.view.common.FormBase',
+    cls			: 'panel-base shadow-panel',
     xtype		: 'comercialactivo',
     reference	: 'comercialactivoref',
-    layout		: 'fit',
-    requires	: ['HreRem.view.activos.detalle.VisitasComercialActivo','HreRem.view.activos.detalle.OfertasComercialActivo'],    
+    scrollable	: 'y',
+    recordName	: "comercial",
+	recordClass	: "HreRem.model.ComercialActivoModel",
+    requires	: ['HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.ComercialActivoTabPanel'],
 
-	listeners: {
-    	boxready: function (tabPanel) {   		
-			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
-				var tab = tabPanel.items.items[0];
-				tabPanel.setActiveTab(tab);
-			}			
-		}
+    listeners: {
+		boxready:'cargarTabData'
     },
 
     initComponent: function () {
     	var me = this;
     	me.setTitle(HreRem.i18n('title.comercial'));
 
-		var items = [];
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertascomercialactivo'})}, ['TAB_COMERCIAL_OFERTAS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'visitascomercialactivo'})}, ['TAB_COMERCIAL_VISITAS']);
+    	me.items = [
+    		{
+    			xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				collapsible: true,
+				reference: 'activoComercialBloqueRef',
+				items :
+					[
+					// Fila 0
+						{
+				        	xtype : 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('header.situacion.comercial'),
+				        	reference: 'cbSituacionComercial',
+				        	readOnly: true,
+				        	bind : {
+							      store : '{comboSituacionComercial}',
+							      value : '{comercial.situacionComercialCodigo}'
+							}
+				        },
+				        {
+				        	xtype: 'datefieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
+				        	reference: 'dtFechaVenta',
+				        	bind : {
+				        		readOnly: '{comercial.expedienteComercialVivo}',
+				        		value: '{comercial.fechaVenta}'
+				        	}
+						},
+						{ 
+							xtype: 'textareafieldbase',
+				        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),
+				        	bind: '{comercial.observaciones}',
+				        	reference: 'taObservaciones',
+							maxLength: 250,
+							rowspan: 2,
+				        	height: 80
+				        },
+					// Fila 1
+						{
+							   xtype: 'currencyfieldbase',
+							   fieldLabel: HreRem.i18n('fieldlabel.importe.venta'),
+							   reference: 'cncyImporteVenta',
+							   bind : {
+					        		readOnly: '{comercial.expedienteComercialVivo}',
+					        		value: '{comercial.importeVenta}'
+							   }
+						}
+				]
+			},
+			{
+				xtype: 'comercialactivotabpanel' 
+			}
+    	];
 
-    	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     },
 
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
-		me.getActiveTab().funcionRecargar();
+		me.lookupController().cargarTabData(me);
     }
 });

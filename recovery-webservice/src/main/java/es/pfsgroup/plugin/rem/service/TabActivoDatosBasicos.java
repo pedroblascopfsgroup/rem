@@ -26,7 +26,6 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -226,7 +225,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
 			BeanUtils.copyProperty(activoDto, "situacionComercialDescripcion", activo.getSituacionComercial().getDescripcion());
 		}
-		
+
 		// Perimetros ------------------		
 		// Datos de perimetro del activo al Dto de datos basicos
 		// - Puede no existir registro de perimetros en la tabla. Esto no producira errores de carga/guardado

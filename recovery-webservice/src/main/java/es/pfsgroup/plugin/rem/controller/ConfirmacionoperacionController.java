@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,6 +44,7 @@ public class ConfirmacionoperacionController {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = false)
 	@RequestMapping(method = RequestMethod.POST, value = "/confirmacionoperacion")
 	public void reservaInmuebleOld(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		ConfirmacionOpRequestDto jsonData = null;

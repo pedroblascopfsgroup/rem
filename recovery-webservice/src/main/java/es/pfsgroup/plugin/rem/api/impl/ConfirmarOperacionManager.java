@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ConfirmarOperacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -54,6 +58,9 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Override
 	public String managerName() {
@@ -256,7 +263,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 	/**
 	 * Registra la devolución de la reserva. Insertar en entregas a cuentas en negativo,
 	 * Actualiza estado reserva a CODIGO_RESUELTA_DEVUELTA, el estado de la oferta CODIGO_RECHAZADA, el estado del expediente ANULADO,
-	 * Poner estadoReserva CODIGO_RESUELTA_DEVUELTA.
+	 * Poner fecha de devolución e importe devolución
 	 * Actualiza fecha de devolución e importe devuelto
 	 * @param ConfirmacionOpDto con los datos necesarios para registrar la devolución de la reserva
 	 * @return void
@@ -292,6 +299,9 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		}
 		
 		
+		
+		
+		
 		//Insertar en entregas a cuentas en negativo
 		EntregaReserva entregaReserva = new EntregaReserva();
 		entregaReserva.setImporte(-importeReserva);
@@ -316,16 +326,29 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("Error al actualizar el estado de la oferta.");
 		}
 		expedienteComercial.getOferta().setEstadoOferta(estOferta);
-		
-		
+
+
 		//Actualiza estado del expediente comercial ANULADO
 		DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.ANULADO);
 		if (Checks.esNulo(estadoExpCom)) {
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
 		expedienteComercial.setEstado(estadoExpCom);
-
 		
+		
+		//Descongela el resto de ofertas del activo
+		List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(expedienteComercial.getTrabajo());
+		if(!Checks.esNulo(listaOfertas)){
+			for(Oferta ofr : listaOfertas){
+				if((DDEstadoOferta.CODIGO_CONGELADA.equals(ofr.getEstadoOferta().getCodigo()))){						
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE);
+					DDEstadoOferta estadoOfr =  genericDao.get(DDEstadoOferta.class, filtro);
+					ofr.setEstadoOferta(estadoOfr);
+					genericDao.save(Oferta.class, ofr);			
+				}
+			}
+		}
+
 		//Actualiza fecha de devolución e importe devuelto
 		expedienteComercial.setFechaDevolucionEntregas(fechaActual);
 		expedienteComercial.setImporteDevolucionEntregas(importeReserva);

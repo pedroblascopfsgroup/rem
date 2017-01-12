@@ -156,14 +156,16 @@ public interface OfertaApi {
 	/**
 	 * Método que rechaza una oferta
 	 * @param oferta
+	 * @return Boolean true si ha podido rechazar la oferta false en caso contrario
 	 */
-	public void rechazarOferta(Oferta oferta);
+	public Boolean rechazarOferta(Oferta oferta);
 	
 	/**
 	 * Método que descongela una oferta
 	 * @param oferta
+	 * @return Boolean true si ha podido rechazar la oferta false en caso contrario
 	 */
-	public void descongelarOferta(Oferta oferta);
+	public Boolean descongelarOferta(Oferta oferta);
 	
 	/**
 	 * Método que saca la oferta a partir de una tarea externa

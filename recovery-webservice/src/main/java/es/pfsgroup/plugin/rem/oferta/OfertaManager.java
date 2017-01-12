@@ -679,19 +679,34 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public void rechazarOferta(Oferta oferta){
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
-		DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
-		oferta.setEstadoOferta(estado);
-		genericDao.save(Oferta.class, oferta);
+	public Boolean rechazarOferta(Oferta oferta){
+		try {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+			DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			genericDao.save(Oferta.class, oferta);
+			
+		} catch(Exception e) {
+			logger.error(e);
+			return false;
+		}
+		return true;
+		
 	}
 	
 	@Override
-	public void descongelarOferta(Oferta oferta){
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE);
-		DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
-		oferta.setEstadoOferta(estado);
-		genericDao.save(Oferta.class, oferta);
+	public Boolean descongelarOferta(Oferta oferta){
+		try {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE);
+			DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			genericDao.save(Oferta.class, oferta);
+			
+		} catch(Exception e) {
+			logger.error(e);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -1145,7 +1160,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean checkEjerce(TareaExterna tareaExterna){
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
 		//Que esté relleno el resultado del tanteo y la oferta no venga desde una aceptación de tanteo.
 		if(!Checks.esNulo(ofertaAceptada.getDesdeTanteo())){

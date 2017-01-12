@@ -7,6 +7,8 @@
 Ext.define('HreRem.view.common.CheckBoxModelBase', {
     alias: 'checkboxmodelbase',
     extend: 'Ext.selection.CheckboxModel',
+    
+    showHeaderCheckbox: true,
   
       /**
      * Toggle between selecting all and deselecting all when clicking on
@@ -30,6 +32,4 @@ Ext.define('HreRem.view.common.CheckBoxModelBase', {
             }
         }
     }
-    
-
 });

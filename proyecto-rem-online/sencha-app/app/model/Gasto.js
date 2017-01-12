@@ -58,6 +58,13 @@ Ext.define('HreRem.model.Gasto', {
 			convert: function(v) {
 				return v === "true";		
 			}	
+		},
+		{
+			name: 'esGastoAgrupado',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";		
+			}	
 		}
     		
     ],

@@ -501,4 +501,6 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	public boolean deleteBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+	
+	
 }

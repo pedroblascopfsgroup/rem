@@ -1382,8 +1382,29 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Transactional(readOnly = false)
 	public String upload(WebFileItem fileItem) throws Exception {
 
-		ActivoAdjuntoActivo adjuntoActivo= null;
 		GastoProveedor gasto= findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
+		
+
+		AdjuntoGasto adjuntoGasto = createAdjuntoGasto(fileItem, gasto);		
+		Auditoria.save(adjuntoGasto);
+		genericDao.save(AdjuntoGasto.class, adjuntoGasto);
+		
+		Long idDocRestClient = null;
+		adjuntoGasto.setIdDocRestClient(idDocRestClient);
+		genericDao.update(AdjuntoGasto.class, adjuntoGasto);
+
+		// Comprobamos si tenemos que cambiar el estado del gasto.
+		boolean estadoCambiado = updaterStateApi.updaterStates(gasto, null);	  
+		if(estadoCambiado) {
+			gasto.getAdjuntos().add(adjuntoGasto);		
+			genericDao.save(GastoProveedor.class, gasto);
+		}
+		
+		return null;
+
+	}
+
+	public AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto) throws Exception {
 		
 		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
 		
@@ -1405,36 +1426,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		adjuntoGasto.setDescripcion(fileItem.getParameter("descripcion"));			
 		
 		adjuntoGasto.setFechaDocumento(new Date());
-
-		Auditoria.save(adjuntoGasto);
-        
-		genericDao.save(AdjuntoGasto.class, adjuntoGasto);
 		
-		gasto.getAdjuntos().add(adjuntoGasto);
-		
-		for(GastoProveedorActivo g: gasto.getGastoProveedorActivos()){
-			
-			if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto()) 
-					&& !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto().getMatricula())){
-				activoAdapter.uploadDocumento(fileItem, g.getActivo(), adjuntoGasto.getTipoDocumentoGasto().getMatricula());
-				adjuntoActivo= g.getActivo().getAdjuntos().get(g.getActivo().getAdjuntos().size()-1);
-			}
-			
-		}
-		
-		if(!Checks.esNulo(adjuntoActivo)){
-			adjuntoGasto.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
-			genericDao.update(AdjuntoGasto.class, adjuntoGasto);
-		}
-		
-		// Comprobamos si tenemos que cambiar el estado del gasto.
-		boolean estadoCambiado = updaterStateApi.updaterStates(gasto, null);	  
-		if(estadoCambiado) {
-			genericDao.save(GastoProveedor.class, gasto);
-		}
-		
-		return null;
-
+		return adjuntoGasto;
 	}
 	
 	@Override

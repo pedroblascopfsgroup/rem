@@ -20,7 +20,6 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ReintegroDto;
@@ -79,22 +78,27 @@ public class ReintegroManager extends BusinessOperationOverrider<ReintegroApi> i
 							!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.ANULADO))){
 						hashErrores.put("ofertaHRE", "El expediente comercial asociado a la oferta no esta Anulado.");
 						
-					}else{
-						CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
-						if(Checks.esNulo(condExp) || (!Checks.esNulo(condExp) && Checks.esNulo(condExp.getImporteReserva()))){
-							hashErrores.put("ofertaHRE", "No se ha podido obtener el importe de la reserva del expediente comercial.");
+					}else if( Checks.esNulo(expedienteComercial.getReserva())) {
+						hashErrores.put("ofertaHRE", "La oferta no tiene reserva");
+					
+					}else if(Checks.esNulo( expedienteComercial.getReserva().getEstadoReserva())){
+						hashErrores.put("ofertaHRE", "Estado de la reserva desconocido.");
 						
-						}else if(Checks.esNulo(expedienteComercial.getReserva())){
-							hashErrores.put("ofertaHRE", "La oferta no tiene reserva, por tanto, no se puede hacer el reintegro de la reserva.");
-							
-						}else if(Checks.esNulo( expedienteComercial.getReserva().getEstadoReserva())){
-							hashErrores.put("ofertaHRE", "Estado de la reserva desconocido.");
-							
-						}else if(expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_RESUELTA_REINTEGRADA)){
+					}else{
+
+						CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+						if(Checks.esNulo(condExp)){
+							hashErrores.put("ofertaHRE", "No se han podido obtener los datos de la reserva para la oferta.");
+
+						}else if(Checks.esNulo(condExp.getImporteReserva())){
+							hashErrores.put("ofertaHRE", "No se ha podido obtener el importe de la reserva.");
+						
+						}else if(expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_RESUELTA_REINTEGRADA) ||
+								 expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_RESUELTA)){
 							hashErrores.put("ofertaHRE", "Ya se ha realizado el reintegro de la oferta.");
 						
-						}else if(!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION)){
-							hashErrores.put("ofertaHRE", "La oferta no esta Pendiente de devolución.");
+						}else if(!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO)){
+							hashErrores.put("ofertaHRE", "La reserva no esta Pendiente de reintegro.");
 							
 						}
 					}

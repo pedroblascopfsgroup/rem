@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin_Arnal
---## FECHA_CREACION=20170101
+--## FECHA_CREACION=20170110
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1089
@@ -75,7 +75,7 @@ BEGIN
 					', 	DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
 					', DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
 					', DD_GRF_NOM_GES_FICH = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
-					', PVE_COD_UVEM = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
+					', PVE_COD_REM = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
 					', NUCLII = '|| V_TMP_TIPO_DATA(7)||''||
 					', POS_5_A_6_PROV = '|| V_TMP_TIPO_DATA(8)||''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
@@ -89,7 +89,7 @@ BEGIN
           		EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
           		V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (' ||
                       		'DD_'||V_TRES_LETRAS_TABLA||'_ID, DD_'||V_TRES_LETRAS_TABLA||'_CODIGO, DD_'||V_TRES_LETRAS_TABLA||'_CARPETA , DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION, DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA,' ||
-				' DD_GRF_NOM_GES_FICH, PVE_COD_UVEM, NUCLII, POS_5_A_6_PROV, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+				' DD_GRF_NOM_GES_FICH, PVE_COD_REM, NUCLII, POS_5_A_6_PROV, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       		'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''','||V_TMP_TIPO_DATA(7)||','||V_TMP_TIPO_DATA(8)||','||
                       		'0, ''DML'',SYSDATE,0 FROM DUAL';
 			DBMS_OUTPUT.PUT_LINE(V_MSQL);

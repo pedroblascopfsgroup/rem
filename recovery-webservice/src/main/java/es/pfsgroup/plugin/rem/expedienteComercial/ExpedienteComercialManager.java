@@ -2749,16 +2749,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			ofertaUVEM.setCodPrescriptor(oferta.getPrescriptor().getCodigoApiProveedor());
 		}
 		if (condExp != null) {
-			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva())) {
-				importeReserva = condExp.getPorcentajeReserva() * oferta.getImporteOferta();
-				if (importeReserva != null) {
-					ofertaUVEM.setImporteReserva(importeReserva.toString());
-				}
-			} else {
-				importeReserva = condExp.getImporteReserva();
-				if (importeReserva != null) {
-					ofertaUVEM.setImporteReserva(importeReserva.toString());
-				}
+			importeReserva = condExp.getImporteReserva();
+			if (importeReserva != null) {
+				ofertaUVEM.setImporteReserva(importeReserva.toString());
 			}
 		}
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta(): oferta.getImporteContraOferta();

@@ -201,9 +201,15 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
     },
 
     deselectAll: function(suppressEvent) {
-        this.selModel.deselectAll();
-        this.clearSelection();
-        this.selModel.fireEvent("selectionchange",this.selModel);
+    	
+    	if (me.selectAllPages){
+	        this.selModel.deselectAll();
+	        this.clearSelection();
+    	} else {
+    		this.selModel.deselect(this.grid.getStore().getData().items)
+    	}
+    	
+    	this.selModel.fireEvent("selectionchange",this.selModel);
     },
 
     getCount: function() {

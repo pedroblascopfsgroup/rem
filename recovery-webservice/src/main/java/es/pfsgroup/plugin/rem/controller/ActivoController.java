@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
@@ -2243,6 +2244,35 @@ public class ActivoController extends ParadiseJsonController {
 
 		} catch (Exception e) {
 			logger.error(e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComercialActivo(DtoComercialActivo dto, ModelMap model) {
+
+		try {
+			model.put("data", activoApi.getComercialActivo(dto));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveComercialActivo(DtoComercialActivo dto, ModelMap model) {
+
+		try {
+			model.put("success", activoApi.saveComercialActivo(dto));
+		} catch (Exception e) {
+			e.printStackTrace();
 			model.put("success", false);
 		}
 

@@ -105,7 +105,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	public List<ActivoProveedor> getProveedoresByNifList(String nif) {		
 		
 		HQLBuilder hb = new HQLBuilder("from ActivoProveedor pve");
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.docIdentificativo", nif, true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.docIdentificativo", nif);
 		   		
    		List<ActivoProveedor> lista = HibernateQueryUtils.list(this, hb);
 

@@ -15,6 +15,13 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
     alias: 'plugin.pagingselectpersist',
     extend: 'Ext.plugin.Abstract',
     pluginId: 'pagingselectpersist',
+    
+    /**
+     * Cambiar a true supone que para seleccionar todas las páginas el plugin tendrá que recuperar todos los registros 
+     * de todas las páginas lo que puede generar problemas de rendimiento con muchos registros.
+     * @type Boolean
+     */
+    selectAllPages: false,
 
     init: function(grid) {
         var me = this;
@@ -194,9 +201,15 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
     },
 
     deselectAll: function(suppressEvent) {
-        this.selModel.deselectAll();
-        this.clearSelection();
-        this.selModel.fireEvent("selectionchange",this.selModel);
+
+    	if (this.selectAllPages){
+	        this.selModel.deselectAll();
+	        this.clearSelection();
+    	} else {
+    		this.selModel.deselect(this.grid.getStore().getData().items)
+    	}
+    	
+    	this.selModel.fireEvent("selectionchange",this.selModel);
     },
 
     getCount: function() {
@@ -238,25 +251,33 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
 		});
         storeB.suspendEvents();
         //alert(storeB.getTotalCount());
-        storeB.load({
-            params: {
-                start: 0,
-                limit: storeB.getTotalCount()
-            },
-            callback: function(records, operation, success) {
-                if (!Ext.isEmpty(records) && records.length > 0) { 
-                    me.selectRecords(records);
-                    storeB.setData(originalData);
-                    storeB.resumeEvents();
-                    me.onViewRefresh();
-                    me.selModel.fireEvent("selectionchange",me.selModel);
-                }
-                else {
-                    console.warn('No records');
-                }
-            },
-            scope: this
-        });
+        
+        if (me.selectAllPages) {
+	        storeB.load({
+	            params: {
+	                start: 0,
+	                limit: storeB.getTotalCount()
+	            },
+	            callback: function(records, operation, success) {
+	                if (!Ext.isEmpty(records) && records.length > 0) { 
+	                    me.selectRecords(records);
+	                    storeB.setData(originalData);
+	                    storeB.resumeEvents();
+	                    me.onViewRefresh();
+	                    me.selModel.fireEvent("selectionchange",me.selModel);
+	                }
+	                else {
+	                    console.warn('No records');
+	                }
+	            },
+	            scope: this
+	        });
+        } else {
+        	me.selectRecords(storeB.getData().items);
+	        storeB.resumeEvents();
+	        me.onViewRefresh();
+	        me.selModel.fireEvent("selectionchange",me.selModel);
+        }
 
         // this.selectRecord(rec);
     },

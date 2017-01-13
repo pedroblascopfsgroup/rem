@@ -103,12 +103,22 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 					            		disabled: '{!proveedor.tipoProveedorCodigo}'
 					            	}
 						        },
+						        {
+						        	xtype : 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
+						        	reference: 'cbTipoDocumento',
+						        	bind : {
+									      store : '{comboTipoDocumento}',
+									      value : '{proveedor.tipoDocumentoCodigo}'
+									}
+						        },
 						        { 
 				                	xtype: 'textfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.proveedores.nif'),
 									bind: '{proveedor.nifProveedor}',
 									maxLength: 20
 				                },
+				             // Fila 3
 				                {
 									xtype : 'comboboxfieldbase',
 								    fieldLabel : HreRem.i18n('fieldlabel.proveedor.localizada'),
@@ -119,7 +129,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								      value : '{proveedor.localizadaProveedorCodigo}'
 								    }
 								},
-							// Fila 3
 								{ 
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
@@ -129,6 +138,15 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									      value: '{proveedor.estadoProveedorCodigo}'
 						        	}
 						        },
+								{ 
+									xtype: 'textareafieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),						        	
+						        	bind: '{proveedor.observacionesProveedor}',
+									maxLength: 200,
+						        	rowspan: 2,
+						        	height: 80
+						        },
+						     // Fila 4
 						        {
 									xtype : 'comboboxfieldbase',
 								    fieldLabel : HreRem.i18n('fieldlabel.proveedores.tipopersona'),
@@ -139,30 +157,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								      value : '{proveedor.tipoPersonaProveedorCodigo}'
 								    }
 								},
-								{ 
-									xtype: 'textareafieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),						        	
-						        	bind: '{proveedor.observacionesProveedor}',
-									maxLength: 200,
-						        	rowspan: 2,
-						        	height: 80
-						        },
-						     // Fila 4
-						        { 
+						        {
 									xtype: 'textfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.url.web'),						        	
 						        	bind: '{proveedor.webUrlProveedor}',
 									maxLength: 50
 						        },
-						        {
-			        				xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
-									reference: 'dateConstitucionProveedor',
-									bind: {
-										disabled: '{!proveedor.isEntidad}',
-										value: '{proveedor.fechaConstitucionProveedor}'
-									}
-					            },
 					         // Fila 5
 					            {// Siempre oculto por el momento.
 					            	xtype: 'comboboxfieldbase',
@@ -172,8 +172,17 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									      store: '{comboOperativa}',
 									      value: '{proveedor.operativaCodigo}'
 						        	},
-						        	colspan: 3,
 						        	hidden: true
+					            },
+					            {
+			        				xtype: 'datefieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
+									reference: 'dateConstitucionProveedor',
+									colspan: 3,
+									bind: {
+										disabled: '{!proveedor.isEntidad}',
+										value: '{proveedor.fechaConstitucionProveedor}'
+									}
 					            },
 					         // Fila 6 (Ámbito)
 					            {

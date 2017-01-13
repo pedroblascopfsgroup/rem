@@ -275,7 +275,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var nifProveedor= field.getValue();
 		var data;
 		var comboProveedores = me.lookupReference("comboProveedores");
-		
+
 		if(!Ext.isEmpty(nifProveedor)){
 			comboProveedores.getStore().getProxy().extraParams.nifProveedor = nifProveedor;	
 			comboProveedores.getStore().load();
@@ -283,9 +283,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				comboProveedores.expand();
 			}
 		}
-			
-		
-		
+
 	},
 	
 	buscarPropietario: function(field, e){
@@ -930,6 +928,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		me.fireEvent("downloadFile", config);
 	},
 	
+    onClickBotonCerrarPestanya: function(btn) {
+    	var me = this;
+    	me.getView().destroy();
+    },
+    
+    onClickBotonCerrarTodas: function(btn) {
+    	var me = this;
+    	me.getView().up("tabpanel").fireEvent("cerrarTodas", me.getView().up("tabpanel"));    	
+
+    },
+   
 	buscarGasto: function(field, e){
 		var me= this;
 		var url =  $AC.getRemoteUrl('gastosproveedor/searchGastoNumHaya');

@@ -21,6 +21,7 @@ public class DtoActivoProveedor extends WebDto {
 	private Date fechaBajaProveedor;
 	private String subtipoProveedorCodigo;
 	private String nifProveedor;
+	private String tipoDocumentoCodigo;
 	private String localizadaProveedorCodigo;
 	private String estadoProveedorCodigo;
 	private String tipoPersonaProveedorCodigo;
@@ -303,5 +304,10 @@ public class DtoActivoProveedor extends WebDto {
 	public void setSubtipoProveedorDescripcion(String subtipoProveedorDescripcion) {
 		this.subtipoProveedorDescripcion = subtipoProveedorDescripcion;
 	}
-	
+	public String getTipoDocumentoCodigo() {
+		return tipoDocumentoCodigo;
+	}
+	public void setTipoDocumentoCodigo(String tipoDocumentoCodigo) {
+		this.tipoDocumentoCodigo = tipoDocumentoCodigo;
+	}
 }

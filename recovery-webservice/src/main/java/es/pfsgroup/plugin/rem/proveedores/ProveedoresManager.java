@@ -164,6 +164,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(dto, "nombreComercialProveedor", proveedor.getNombreComercial());
 				beanUtilNotNull.copyProperty(dto, "fechaBajaProveedor", proveedor.getFechaBaja());
 				beanUtilNotNull.copyProperty(dto, "nifProveedor", proveedor.getDocIdentificativo());
+				if(!Checks.esNulo(proveedor.getTipoDocIdentificativo())) {
+					beanUtilNotNull.copyProperty(dto, "tipoDocumentoCodigo", proveedor.getTipoDocIdentificativo().getCodigo());
+				}
 				beanUtilNotNull.copyProperty(dto, "localizadaProveedorCodigo", proveedor.getLocalizada());
 				if(!Checks.esNulo(proveedor.getEstadoProveedor())) {
 					beanUtilNotNull.copyProperty(dto, "estadoProveedorCodigo", proveedor.getEstadoProveedor().getCodigo());
@@ -269,6 +272,12 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "nombreComercial", dto.getNombreComercialProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaBaja", dto.getFechaBajaProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dto.getNifProveedor());
+			if(!Checks.esNulo(dto.getTipoDocumentoCodigo())) {
+				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumentoCodigo());
+				if(!Checks.esNulo(tipoDocumento)) {
+					beanUtilNotNull.copyProperty(proveedor, "tipoDocIdentificativo", tipoDocumento);
+				}
+			}
 			beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getLocalizadaProveedorCodigo());
 			if(!Checks.esNulo(dto.getEstadoProveedorCodigo())) {
 				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, dto.getEstadoProveedorCodigo());
@@ -963,11 +972,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		try {
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dtoProveedorFilter.getNifProveedor());
-			
-			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, "15"); // Tipo NIF.
-			if(!Checks.esNulo(tipoDocumento)) {
-				beanUtilNotNull.copyProperty(proveedor, "tipoDocIdentificativo", tipoDocumento);
-			}
 
 			if(!Checks.esNulo(dtoProveedorFilter.getSubtipoProveedorDescripcion())) {
 				// El Subtipo de proveedor (FASE 2) es el tipo de proveedor (FASE 1).

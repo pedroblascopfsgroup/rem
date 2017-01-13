@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
@@ -3017,5 +3018,103 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public Boolean getDptoPrecio(Activo activo){
 		return activoDao.getDptoPrecio(activo);
+	}
+
+	@Override
+	public DtoComercialActivo getComercialActivo(DtoComercialActivo dto) {
+
+		if(Checks.esNulo(dto.getId())) {
+			return dto;
+		}
+
+		Activo activo = activoDao.get(Long.parseLong(dto.getId()));
+		dto.setExpedienteComercialVivo(false);
+
+		try {
+			if(!Checks.esNulo(activo.getSituacionComercial())) {
+				beanUtilNotNull.copyProperty(dto, "situacionComercialCodigo", activo.getSituacionComercial().getCodigo());
+			}
+
+			// Obtener oferta aceptada. Si tiene, establecer expediente comercial vivo a true.
+			Oferta oferta = this.tieneOfertaAceptada(activo);
+			if(!Checks.esNulo(oferta)) {
+				dto.setExpedienteComercialVivo(true);
+				// Obtener expediente comercial de la oferta aprobado.
+				ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+				// Obtener datos de venta en REM.
+				if(!Checks.esNulo(exp)) {
+					beanUtilNotNull.copyProperty(dto, "fechaVenta", exp.getFechaVenta());
+					if(!Checks.esNulo(oferta.getImporteContraOferta())) {
+						beanUtilNotNull.copyProperty(dto, "importeVenta", oferta.getImporteContraOferta());
+					} else {
+						beanUtilNotNull.copyProperty(dto, "importeVenta", oferta.getImporteOferta());
+					}
+				}
+			}
+
+			// Si no existe oferta aceptada con expediente obtener datos de posible venta externa a REM.
+			if(!dto.getExpedienteComercialVivo()) {
+				beanUtilNotNull.copyProperty(dto, "expedienteComercialVivo", false);
+				if(!Checks.esNulo(activo.getFechaVentaExterna())) {
+					beanUtilNotNull.copyProperty(dto, "fechaVenta", activo.getFechaVentaExterna());
+				}
+				if(!Checks.esNulo(activo.getImporteVentaExterna())) {
+					beanUtilNotNull.copyProperty(dto, "importeVenta", activo.getImporteVentaExterna());
+				}
+			}
+
+			if(!Checks.esNulo(activo.getObservacionesVentaExterna())) {
+				beanUtilNotNull.copyProperty(dto, "observaciones", activo.getObservacionesVentaExterna());
+			}
+
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveComercialActivo(DtoComercialActivo dto) {
+
+		if(Checks.esNulo(dto.getId())) {
+			return false;
+		}
+
+		Activo activo = activoDao.get(Long.parseLong(dto.getId()));
+
+
+		try {
+			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
+			if(!Checks.esNulo(activo.getFechaVentaExterna())) {
+				DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_VENDIDO);
+				if(!Checks.esNulo(situacionComercial)) {
+					activo.setSituacionComercial(situacionComercial);
+				}
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+		if(!Checks.esNulo(dto.getImporteVenta())) {
+			activo.setImporteVentaExterna(dto.getImporteVenta());
+			DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_VENDIDO);
+			if(!Checks.esNulo(situacionComercial)) {
+				activo.setSituacionComercial(situacionComercial);
+			}
+		} else {
+			activo.setImporteVentaExterna(null);
+		}
+		activo.setObservacionesVentaExterna(dto.getObservaciones());
+
+		activoDao.save(activo);
+
+		return true;
 	}
 }

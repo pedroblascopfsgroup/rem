@@ -59,7 +59,8 @@ public class RecoveryToGestorDocAssembler {
 		doc.setPassword(PASSWORD);
 		doc.setUsuarioOperacional(userLogin);
 		doc.setDocumento(webFileItem.getFileItem().getFile());
-		doc.setDescripcionDocumento(webFileItem.getFileItem().getFileName());
+		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
+		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
 		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
 		doc.setArchivoFisico("{}");
 		

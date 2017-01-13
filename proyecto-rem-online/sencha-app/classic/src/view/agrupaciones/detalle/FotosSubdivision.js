@@ -103,7 +103,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 						{
 							name: 'id',
 							xtype: 'textfieldbase',
-							bind: {value: '{id}',hidden:true},
+							bind: {value: '{id}',hidden:true}
 						},
 		                { 
 							name: 'nombre',

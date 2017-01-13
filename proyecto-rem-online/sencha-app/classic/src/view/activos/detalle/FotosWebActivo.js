@@ -16,8 +16,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
     	}
 
     },
-
-	requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.Fotos', 'Ext.ux.DataView.DragSelector','Ext.ux.DataView.LabelEditor'],
+   	requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.Fotos', 'Ext.ux.DataView.DragSelector','Ext.ux.DataView.LabelEditor'],
 
     tpl: [
         '<ul>',
@@ -102,7 +101,15 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 				title: HreRem.i18n('title.informacion.imagen'),
 				items :
 					[
+					 	{
+					 		name: 'id',
+					 		xtype: 'textfieldbase',
+					 		bind: {value: '{id}',hidden:true},
+							fieldLabel:  "id"
+						},
 		                { 
+		                	name: 'nombre',
+		                	xtype: 'textfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.nombre'),
 		                	bind: {
 								value: '{nombre}'
@@ -110,6 +117,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 		                },
 		                { 
 		                	xtype: 'textareafieldbase',
+		                	name: 'descripcion',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
 		                	bind: {
 								value: '{descripcion}'
@@ -117,20 +125,37 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 		                },
 		                { 
 		                	xtype: 'datefieldbase',
+		                	name: 'fechaDocumento',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
 		                	bind:		'{fechaDocumento}'
 		                },
 		                { 
+		                	name: 'orden',
+		                	xtype: 'displayfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.orden.publicacion.web'),
 		                	bind:		'{orden}'
+		                		
 		                },
 		                { 
+		                	name: 'principal',
 		                	xtype : 'checkboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.principal'),
-		                	bind:		'{principal}'
+		                	bind:		'{principal}',
+		                	listeners:{
+		                		change: function(checkbox, newValue, oldValue, eOpts) {
+		                			if(newValue){
+		                				this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].show();
+		                				this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].show();
+		                			}else{
+		                				this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
+		                				this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
+		                			}
+		                		}
+		                	}
 		                },
 		                {
-		                    xtype: 'radiogroup',
+		                	name: 'interiorExterior',
+		                	xtype: 'radiogroup',
 		                    reference: 'radiogroupinterior',
 		                    bind: {
 		                    	value: '{radioValue}'

@@ -100,13 +100,20 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 				title: HreRem.i18n('title.informacion.imagen'),
 				items :
 					[
+						{
+							name: 'id',
+							xtype: 'textfieldbase',
+							bind: {value: '{id}',hidden:true},
+						},
 		                { 
+							name: 'nombre',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.nombre'),
 		                	bind: {
 								value: '{nombre}'
 							}
 		                },
 		                { 
+		                	name: 'descripcion',
 		                	xtype: 'textareafieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
 		                	bind: {
@@ -114,13 +121,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 							}
 		                },
 		                { 
+		                	name: 'fechaDocumento',
 		                	xtype: 'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
 		                	bind:		'{fechaDocumento}'
 		                },
 		                { 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.orden.publicacion.web'),
-		                	bind:		'{orden}'
+		                	bind:		'{orden}',
+		                	xtype: 'displayfieldbase'
 		                }
 		               
 		                

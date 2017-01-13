@@ -251,6 +251,13 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saltoResolucionExpediente(Long idTareaExterna, ModelMap model){
+		model.put("success", adapter.saltoResolucionExpediente(idTareaExterna));
+		
+		return createModelAndViewJson(model);
+	}
+	
 	
 	
 }

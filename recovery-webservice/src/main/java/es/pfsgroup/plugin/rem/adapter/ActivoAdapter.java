@@ -2686,7 +2686,9 @@ public class ActivoAdapter {
 			if (!Checks.esNulo(tramite.getTrabajo()))
 				if (!DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre", true);
-
+			if (!Checks.esNulo(tramite.getTrabajo()))
+				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
 			beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
 			if (!Checks.esNulo(tramite.getTrabajo())) {
 				// Trabajos asociados con expediente comercial

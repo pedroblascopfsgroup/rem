@@ -509,4 +509,13 @@ public class AgendaAdapter {
 		}
 		return true;
 	}
+	
+	public Boolean saltoResolucionExpediente(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoResolucionExpediente(idTareaExterna);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
 }

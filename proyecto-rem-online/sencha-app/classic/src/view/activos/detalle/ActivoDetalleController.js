@@ -202,7 +202,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
 				btn.up('tabbar').down('button[itemId=botoneditar]').show();
 				
-				me.getViewModel().set("editing", false);
+				if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+		 			me.getViewModel().set("editingFirstLevel", false);
+		 		} else {
+		 			me.getViewModel().set("editing", false);
+		 		}
 			}
 		
 			if (!form.saveMultiple) {
@@ -618,8 +622,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 								field.fireEvent('edit');});
 								
 		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
-		me.getViewModel().set("editing", true);
-		
+		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+ 			me.getViewModel().set("editingFirstLevel", true);
+ 		} else {
+ 			me.getViewModel().set("editing", true);
+ 		}
 	},
     
 	onClickBotonGuardar: function(btn) {
@@ -656,7 +663,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							{ 
 								field.fireEvent('save');
 								field.fireEvent('update');});
-		me.getViewModel().set("editing", false);
+
+		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+ 			me.getViewModel().set("editingFirstLevel", false);
+ 		} else {
+ 			me.getViewModel().set("editing", false);
+ 		}
 	},
 
 	onClickBotonCancelarPropietario: function(btn) {		
@@ -1935,7 +1947,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
 				btn.up('tabbar').down('button[itemId=botoneditar]').show();
 				
-				me.getViewModel().set("editing", false);
+				if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+		 			me.getViewModel().set("editingFirstLevel", false);
+		 		} else {
+		 			me.getViewModel().set("editing", false);
+		 		}
 			}
 		
 			if (!form.saveMultiple) {
@@ -2321,7 +2337,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 								{ 
 									field.fireEvent('save');
 									field.fireEvent('update');});
-			 		me.getViewModel().set("editing", false);
+			 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+			 			me.getViewModel().set("editingFirstLevel", false);
+			 		} else {
+			 			me.getViewModel().set("editing", false);
+			 		}
 	            },
 	            failure: function (a, operation, context) {
 	            	  Ext.toast({

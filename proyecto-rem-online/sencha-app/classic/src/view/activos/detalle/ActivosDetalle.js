@@ -26,7 +26,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
         	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null) {
-            	if (tabPanel.lookupController().getViewModel().get("editing")) {	
+            	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel")) {
             		Ext.Msg.show({
             			   title: HreRem.i18n('title.descartar.cambios'),
             			   msg: HreRem.i18n('msg.desea.descartar'),
@@ -37,8 +37,11 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
             			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
             			        	tabPanel.getLayout().setActiveItem(tabNext);		            			        	
 						            // Si la pestaña necesita botones de edición
+
 				   					if(!tabNext.ocultarBotonesEdicion) {
 					            		tabPanel.evaluarBotonesEdicion(tabNext);
+				   					} else {
+				   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
 				   					}
             			        }
             			   }
@@ -50,7 +53,9 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
             	// Si la pestaña necesita botones de edición
 				if(!tabNext.ocultarBotonesEdicion) {
             		tabPanel.evaluarBotonesEdicion(tabNext);
-				}
+				} else {
+						tabPanel.down("[itemId=botoneditar]").setVisible(false);
+					}
 
             	return true;
         	}
@@ -65,25 +70,27 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 				{
 					xtype: 'buttontab',
         			itemId: 'botoneditar',
+        			name: 'firstLevel',
         		    handler	: 'onClickBotonEditar',
-        		    iconCls: 'edit-button-color',
-        		    bind: {hidden: '{editing}'}
+        		    iconCls: 'edit-button-color'
         		},
         		{
         			xtype: 'buttontab',
         			itemId: 'botonguardar',
+        			name: 'firstLevel',
         		    handler	: 'onClickBotonGuardar', 
         		    iconCls: 'save-button-color',
 			        hidden: true,
-        		    bind: {hidden: '{!editing}'}
+        		    bind: {hidden: '{!editingFirstLevel}'}
         		},
         		{
         			xtype: 'buttontab',
         			itemId: 'botoncancelar',
+        			name: 'firstLevel',
         		    handler	: 'onClickBotonCancelar', 
         		    iconCls: 'cancel-button-color',
         		   	hidden: true,
-        		    bind: {hidden: '{!editing}'}
+        		    bind: {hidden: '{!editingFirstLevel}'}
         		}]
     },
 
@@ -105,7 +112,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	}
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', funPermEdition: ['TAB_ACTIVO_COMERCIAL']})}, 'TAB_ACTIVO_COMERCIAL');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']})}, 'TAB_ACTIVO_COMERCIAL');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ADMINISTRACION');
     },
 

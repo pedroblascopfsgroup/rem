@@ -344,7 +344,12 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				}
 		
 				//Si la unidad de gestiÃ³n no es ninguna de las definidas, retorna un mensaje fijo de advertencia.
-				if (!uGestion.isEmpty() && !"A".equals(uGestion) && !"P".equals(uGestion) && !"E".equals(uGestion) && !"G".equals(uGestion)){
+				if (!uGestion.isEmpty() && 
+						!"A".equals(uGestion) &&
+						!"T".equals(uGestion) &&
+						!"P".equals(uGestion) &&
+						!"E".equals(uGestion) &&
+						!"G".equals(uGestion)){
 					mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.unidadGestionInvalida").concat(" ").concat(uGestion);
 				}
 				

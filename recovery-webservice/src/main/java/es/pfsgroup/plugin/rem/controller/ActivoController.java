@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,6 +99,8 @@ import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
 @Controller
 public class ActivoController extends ParadiseJsonController {
+	
+	protected static final Log logger = LogFactory.getLog(ActivoController.class);
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -217,7 +221,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			model.put("data", adapter.getTabActivo(id, tab));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 			model.put("error", e.getMessage());
 		}
@@ -245,7 +249,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -268,7 +272,7 @@ public class ActivoController extends ParadiseJsonController {
 	 * boolean success = adapter.saveActivo(activoDto, id); model.put("success",
 	 * success);
 	 * 
-	 * } catch (Exception e) { e.printStackTrace(); model.put("success", false);
+	 * } catch (Exception e) { logger.error(e); model.put("success", false);
 	 * } return createModelAndViewJson(model);
 	 * 
 	 * }
@@ -292,7 +296,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
@@ -310,7 +314,7 @@ public class ActivoController extends ParadiseJsonController {
 			// model.put("totalCount", page.getTotalCount());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -328,7 +332,7 @@ public class ActivoController extends ParadiseJsonController {
 			// model.put("totalCount", page.getTotalCount());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -346,7 +350,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -364,7 +368,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -382,7 +386,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -400,7 +404,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
@@ -417,7 +421,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -472,9 +476,9 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			model.put("data", adapter.getListVisitasActivoById(id));
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return createModelAndViewJson(model);
@@ -503,7 +507,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -520,7 +524,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -536,7 +540,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -552,7 +556,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -588,7 +592,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -605,7 +609,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -623,7 +627,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -640,7 +644,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -657,7 +661,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -675,7 +679,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -693,7 +697,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -710,7 +714,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -728,7 +732,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -746,7 +750,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -764,7 +768,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -781,7 +785,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -799,7 +803,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -816,7 +820,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -833,7 +837,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -850,7 +854,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -868,7 +872,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -964,7 +968,7 @@ public class ActivoController extends ParadiseJsonController {
 				salida.close();
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e);
 			}
 			return null;
 		}
@@ -1035,9 +1039,9 @@ public class ActivoController extends ParadiseJsonController {
 							}
 
 						} catch (IllegalAccessException e) {
-							e.printStackTrace();
+							logger.error(e);
 						} catch (InvocationTargetException e) {
-							e.printStackTrace();
+							logger.error(e);
 						}
 
 						listaFotos.add(fotoDto);
@@ -1050,7 +1054,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", listaFotos);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			return null;
 		}
 
@@ -1066,7 +1070,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1126,13 +1130,13 @@ public class ActivoController extends ParadiseJsonController {
 						salida.close();
 
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error(e);
 					}
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error(e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 				listaFotos.add(fotoDto);
 
@@ -1161,7 +1165,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		return new ModelAndView("jsonView", model);
@@ -1338,7 +1342,7 @@ public class ActivoController extends ParadiseJsonController {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1361,7 +1365,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", adapter.crearTramitePublicacion(idActivo));
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1400,7 +1404,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1426,11 +1430,11 @@ public class ActivoController extends ParadiseJsonController {
 			adapter.upload(webFileItem);
 			model.put("success", true);
 		} catch (GestorDocumentalException e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero.");
 		}
@@ -1463,7 +1467,7 @@ public class ActivoController extends ParadiseJsonController {
 			salida.flush();
 			salida.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 	}
@@ -1483,7 +1487,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			model.put("success", adapter.deleteAdjunto(dtoAdjunto));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 			model.put("errorMessage", e.getMessage());
 		}
@@ -1499,7 +1503,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			model.put("data", adapter.getAdjuntosActivo(id));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 			model.put("errorMessage", e.getMessage());
 		}
@@ -1542,7 +1546,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", errores == null);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 			model.put("errores", e.getCause());
 		}
@@ -1560,7 +1564,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1580,7 +1584,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		// model.put("data", adapter.findAllHistoricoPresupuestos(dto));
@@ -1614,7 +1618,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", listaIncrementos);
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1635,7 +1639,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", presupuesto);
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		// model.put("data", adapter.findAllHistoricoPresupuestos(dto));
@@ -1686,7 +1690,7 @@ public class ActivoController extends ParadiseJsonController {
 				salida.close();
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e);
 			}
 
 		} else {
@@ -1712,7 +1716,7 @@ public class ActivoController extends ParadiseJsonController {
 				salida.flush();
 				salida.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e);
 			}
 		}
 
@@ -1756,7 +1760,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1774,7 +1778,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1794,7 +1798,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1879,7 +1883,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1911,7 +1915,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion));
 		} catch (SQLException e) {
 			model.put("success", false);
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return createModelAndViewJson(model);
@@ -1939,7 +1943,7 @@ public class ActivoController extends ParadiseJsonController {
 				model.put("msg", ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
 				model.put("success", false);
 			} else {
-				e.printStackTrace();
+				logger.error(e);
 				model.put("success", false);
 			}
 		}
@@ -1963,7 +1967,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -1977,7 +1981,7 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = activoApi.createPropuestaActivosVinculadosByActivo(dto);
 			model.put("success", success);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
@@ -1990,7 +1994,7 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = activoApi.deletePropuestaActivosVinculadosByActivo(dto);
 			model.put("success", success);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
@@ -2002,7 +2006,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			model.put("success", activoApi.solicitarTasacion(idActivo));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("msg", e.getMessage());
 			model.put("success", false);
 		}
@@ -2032,7 +2036,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2051,7 +2055,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2075,7 +2079,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2090,7 +2094,7 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = activoApi.createReglaPublicacionAutomatica(dto);
 			model.put("success", success);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
@@ -2103,7 +2107,7 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = activoApi.deleteReglaPublicacionAutomatica(dto);
 			model.put("success", success);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
@@ -2123,7 +2127,7 @@ public class ActivoController extends ParadiseJsonController {
 			}
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2138,7 +2142,7 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = activoApi.createActivoIntegrado(dto);
 			model.put("success", success);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
@@ -2153,7 +2157,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", activoApi.getActivoIntegrado(id));
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2170,7 +2174,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", activoApi.updateActivoIntegrado(dto));
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2191,7 +2195,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2207,7 +2211,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2223,7 +2227,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -2239,7 +2243,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 

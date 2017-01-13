@@ -1379,6 +1379,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							estado.getEstadoPublicacion().getDescripcion());
 				}
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "motivo", estado.getMotivo());
+				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "usuario", estado.getAuditoria().getUsuarioCrear());
 				// Calcular los días que ha estado en un estado eliminando el
 				// tiempo de las fechas.
 				int dias = 0;

@@ -246,7 +246,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     	var me =this,
     	parent= grid.up('gestiongastos');
-		Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent, nifEmisor: me.nifProveedorIdentificado}).show();
+    	var anyadirGastoWindow = Ext.create('HreRem.view.administracion.gastos.AnyadirNuevoGasto',{parent: parent, nifEmisor: me.nifProveedorIdentificado});
+    	me.getView().up('tabpanel').add(anyadirGastoWindow);
+    	anyadirGastoWindow.show();
 	                
     },
     

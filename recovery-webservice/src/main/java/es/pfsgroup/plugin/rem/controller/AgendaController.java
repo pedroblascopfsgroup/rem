@@ -7,7 +7,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +19,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -146,6 +150,11 @@ public class AgendaController extends TareaController {
             boolean success = false;
 			try {
 				success = adapter.save(request.getParameterMap());
+				
+			} catch (InvalidDataAccessResourceUsageException e) {
+				// Mensajes concretos para este tipo de excepcion
+				model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				model.put("errorValidacionGuardado", e.getMessage());
@@ -258,6 +267,27 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 	
+	private String getMensajeInvalidDataAccessExcepcion(InvalidDataAccessResourceUsageException e){
+		
+		// En este tipo de excepción se pueden esconder errores del procedure de BBDD de publicacion ACTIVO_PUBLICACION_AUTO
+		// Hay que mostrar un mensaje de error concreto para uno de los errores (no cumplir condiciones para publicar)
+		Throwable causa = e.getCause();
+		String mensajeError = null;
+		int contador = 0;
+		while (!Checks.esNulo(causa) && Checks.esNulo(mensajeError) && contador < 100){
+			if(causa.getMessage().contains("ACTIVO_PUBLICACION_AUTO") && causa.getMessage().contains("ORA-06510")){
+				mensajeError = "El activo no cumple todas las condiciones para ser publicado. Revise OK de precios o las reglas de publicación."; 
+			}
+			causa = causa.getCause();
+			contador++;
+		}
+
+		// Para el resto de errores, se muestra un mensaje generico
+		if(Checks.esNulo(mensajeError))
+			mensajeError = "Se ha producido un error con la base de datos al avanzar la tarea. Inténtelo más tarde.";
+
+		return mensajeError;
+	}
 	
 	
 }

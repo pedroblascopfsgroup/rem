@@ -42,16 +42,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
 
 	@Resource
-	MessageService messageServices;
+	private MessageService messageServices;
 	
 	@Autowired
-	ActivoApi activoApi;
-	
+	private ActivoApi activoApi;
+
 	@Autowired
-	GenericABMDao genericDao;
+	private GenericABMDao genericDao;
 	
 	@Autowired 
-	ActivoDao activoDao;
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -159,7 +159,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				// Si tiene el OK del Dpto de precios se publica el activo
 				if(activoApi.getDptoPrecio(activo)){
 					// Ademas, se publica el activo lanzando el procedure para este
-					publicarActivoProcedure(activo.getId());
+					publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
 				}
 			} else if(!Checks.esNulo(activo.getFechaPublicable()) && // Si tiene fecha de publicación.
 					(!Checks.esNulo(estadoPublicacionActual) && estadoPublicacionActual.getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO))) { // Y tiene estado anterior.
@@ -172,7 +172,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				// Si tiene el OK del Dpto de precios se publica el activo
 				if(activoApi.getDptoPrecio(activo)){
 					// Ademas, se publica el activo lanzando el procedure para este
-					publicarActivoProcedure(activo.getId());
+					publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
 				}
 			}
 			
@@ -336,9 +336,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return dto;
 	}
 	
-	private boolean publicarActivoProcedure(Long idActivo) throws SQLException{
+	private boolean publicarActivoProcedure(Long idActivo, String username) throws SQLException{
 
-		int esError = activoDao.publicarActivo(idActivo);
+		int esError = activoDao.publicarActivo(idActivo, username);
 		if (esError != 1){
 			logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 			throw new SQLException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));

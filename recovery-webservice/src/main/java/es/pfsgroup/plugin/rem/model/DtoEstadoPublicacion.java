@@ -14,6 +14,7 @@ public class DtoEstadoPublicacion {
 	private String portal;
 	private String tipoPublicacion;
 	private String estadoPublicacion;
+	private String usuario;
 	private String motivo;
 	private Long diasPeriodo;
 
@@ -65,6 +66,12 @@ public class DtoEstadoPublicacion {
 	}
 	public void setDiasPeriodo(Long diasPeriodo) {
 		this.diasPeriodo = diasPeriodo;
+	}
+	public String getUsuario() {
+		return usuario;
+	}
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
 	}
 
 }

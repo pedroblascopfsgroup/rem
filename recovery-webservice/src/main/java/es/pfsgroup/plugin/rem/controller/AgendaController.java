@@ -24,6 +24,7 @@ import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
@@ -36,6 +37,9 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private AgendaAdapter adapter;
+	
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 	
 	@Resource
 	Properties appProperties;

@@ -236,7 +236,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 							logger.debug("Map de cambios vacío, nada que notificar");
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error(e);
 					}
 				} // fin main loop
 

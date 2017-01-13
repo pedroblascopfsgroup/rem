@@ -109,13 +109,21 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
 				title: HreRem.i18n('title.informacion.imagen'),
 				items :
 					[
+						{
+								name: 'id',
+								xtype: 'textfieldbase',
+								bind: {value: '{fotoWeb.id}',hidden:true},
+								fieldLabel:  "id"
+						},
 		                { 
+							name: 'nombre',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.nombre'),
 		                	bind: {
 								value: '{fotoWeb.nombre}'
 							}
 		                },
 		                { 
+		                	name: 'descripcion',
 		                	xtype: 'textareafieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
 		                	bind: {
@@ -123,11 +131,14 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
 							}
 		                },
 		                { 
+		                	name: 'fechaDocumento',
 		                	xtype: 'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
 		                	bind:		'{fotoWeb.fechaDocumento}'
 		                },
 		                { 
+		                	name: 'orden',
+		                	xtype: 'displayfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.orden.publicacion.web'),
 		                	bind:		'{fotoWeb.orden}'
 		                }

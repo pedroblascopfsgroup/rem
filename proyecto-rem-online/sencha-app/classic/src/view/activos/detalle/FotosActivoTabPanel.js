@@ -14,6 +14,36 @@ Ext.define('HreRem.view.activos.detalle.FotosActivoTabPanel', {
 			}
     	}
     },
+    tabBar: {
+		items: [
+        		{
+        			xtype: 'tbfill'
+        		},
+        		{
+					xtype: 'buttontab',
+        			itemId: 'botoneditar',
+        		    handler	: 'onClickBotonEditar',
+        		    iconCls: 'edit-button-color',
+        		    bind: {hidden: '{editing}'}
+        		},
+        		{
+        			xtype: 'buttontab',
+        			itemId: 'botonguardar',
+        		    handler	: 'onClickBotonGuardarInfoFoto', 
+        		    iconCls: 'save-button-color',
+        		    hidden: true,
+        		    bind: {hidden: '{!editing}'}
+        		},
+        		{
+        			xtype: 'buttontab',
+        			itemId: 'botoncancelar',
+        		    handler	: 'onClickBotonCancelar', 
+        		    iconCls: 'cancel-button-color',
+        		    hidden: true,
+        		    bind: {hidden: '{!editing}'}
+        		}
+        ]
+    },
 
     initComponent: function () {
         var me = this;

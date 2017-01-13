@@ -1,16 +1,11 @@
 Ext.define('HreRem.view.agrupaciones.detalle.FotosAgrupacion', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.tab.Panel',
     xtype: 'fotosagrupacion',  
-    cls	: 'panel-base shadow-panel',
+    flex 		: 3,
+	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     collapsed: false,
     scrollable	: 'y',
-    flex: 1,
-    layout: 
-    	{
-			type : 'vbox',
-			align : 'stretch'
-		},
-		
+    layout		: 'fit',		
     reference: 'fotosagrupacion',
     requires: ['HreRem.view.agrupaciones.detalle.FotosWebAgrupacion'],
     
@@ -19,13 +14,43 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosAgrupacion', {
         sytle: 'padding-left: 15px !important',
         defaultType: 'displayfield'
     },
+    tabBar: {
+		items: [
+        		{
+        			xtype: 'tbfill'
+        		},
+        		{
+					xtype: 'buttontab',
+        			itemId: 'botoneditarfoto',
+        		    handler	: 'onClickBotonEditarFoto',
+        		    iconCls: 'edit-button-color',
+        		    bind: {hidden: '{editingfotos}'}
+        		},
+        		{
+        			xtype: 'buttontab',
+        			itemId: 'botonguardarfoto',
+        		    handler	: 'onClickBotonGuardarInfoFoto', 
+        		    iconCls: 'save-button-color',
+        		    hidden: true,
+        		    bind: {hidden: '{!editingfotos}'}
+        		},
+        		{
+        			xtype: 'buttontab',
+        			itemId: 'botoncancelarfoto',
+        		    handler	: 'onClickBotonCancelarFoto', 
+        		    iconCls: 'cancel-button-color',
+        		    hidden: true,
+        		    bind: {hidden: '{!editingfotos}'}
+        		}
+        ]
+    },
 
     initComponent: function () {
 
         var me = this;
         me.setTitle(HreRem.i18n('title.fotos'));      
         
-        var items= [
+       /* var items= [
 
 			{				
 			    xtype		: 'tabpanel',
@@ -47,6 +72,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosAgrupacion', {
 		me.addPlugin({ptype: 'lazyitems', items: items });
 
     	me.callParent();
+    	
+    	var me = this;
+*/
+        me.items = [];
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebagrupacion'})}, ['TAB_FOTOS_AGRUPACION']);
+       
+        me.callParent();
     	
     },
     

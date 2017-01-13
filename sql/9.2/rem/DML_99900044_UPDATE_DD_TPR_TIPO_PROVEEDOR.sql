@@ -41,10 +41,10 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	--			DD_TPR_CODIGO		DD_TPR_DESCRIPCION										
-    	T_TIPO_DATA('32'				,'Haya IT'		),
-    	T_TIPO_DATA('33'				,'Salesforce'		),
-    	T_TIPO_DATA('34'				,'Sistema'		),
-    	T_TIPO_DATA('35'				,'Haya'		)
+    	T_TIPO_DATA('32'				,'Haya IT'		,'03'	),
+    	T_TIPO_DATA('33'				,'Salesforce'	,'03'	),
+    	T_TIPO_DATA('34'				,'Sistema'		,'03'	),
+    	T_TIPO_DATA('35'				,'Haya'			,'03'	)
 	); 
 	
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -71,6 +71,7 @@ BEGIN
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
                     'SET DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+					', DD_TEP_ID =  (SELECT DD_TEP_ID FROM '||V_ESQUEMA ||'.DD_TEP_TIPO_ENTIDAD_PROVEEDOR WHERE DD_TEP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')'||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
@@ -83,8 +84,10 @@ BEGIN
           V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
-                      'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
+                      'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, DD_TEP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','||
+                      ' (SELECT DD_TEP_ID FROM '||V_ESQUEMA ||'.DD_TEP_TIPO_ENTIDAD_PROVEEDOR WHERE DD_TEP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')'||
+                      ', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
           

@@ -5,9 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -17,6 +20,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
@@ -35,6 +39,13 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
     
     @Autowired
     private ActivoApi activoApi;
+    
+    @Autowired
+    private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+    
+    @Resource
+    private MessageService messageService;
+    
     
     private static final String COMBO_ACEPTACION = "comboAceptacion";
     private static final String COMBO_DATOS_IGUALES = "comboDatosIguales";
@@ -93,18 +104,31 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 				
 				// Si continua con proceso publicacion
 				if(checkContinuaProceso){
-					// 2.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
-					activo.setFechaPublicable(new Date());
-					activoApi.saveOrUpdate(activo);
 					
+					// 2.) Se realiza una comprobacion que verifique si el activo YA esta publicado.
+					//     Si esta publicado, NO se vuelven a realizar las operaciones de publicacion.
+					//     Se deja todo como esta y se avanza la tarea normalmente. 
+					//     Esto evita provocar la excepcion al llamar al procedure y por tanto bloquear la tarea por estar publicado.
+					DtoCambioEstadoPublicacion estadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
 					
-					//Comprobamos que tenga precio para publicar
-					if(activoApi.getDptoPrecio(activo)){
-						// 3.) Se publica el activo
-						try {
-							activoApi.publicarActivo(activo.getId(), "Trámite publicación aceptado: Informe comercial no modifica datos");
-						} catch (SQLException e) {
-							e.printStackTrace();
+					if(!estadoPublicacion.getPublicacionOrdinaria()){
+						// Activo NO publicado ordinario
+
+						// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
+						activo.setFechaPublicable(new Date());
+						activoApi.saveOrUpdate(activo);
+						
+						
+						//Comprobamos que tenga precio para publicar
+						if(activoApi.getDptoPrecio(activo)){
+							// 3.) Se publica el activo
+							try {
+								activoApi.publicarActivo(activo.getId(), messageService.getMessage("tramite.publicacion.publicar.sin.correccion.datos.IC"));
+							} catch (SQLException e) {
+								e.printStackTrace();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					

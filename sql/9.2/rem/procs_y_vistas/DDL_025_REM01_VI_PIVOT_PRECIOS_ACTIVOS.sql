@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=JORGE ROS
---## FECHA_CREACION=20161005
+--## AUTOR=JOSEVI JIMENEZ
+--## FECHA_CREACION=20170113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-897
+--## INCIDENCIA_LINK=HREOS-1378
 --## PRODUCTO=NO
---## Finalidad: DDL
+--## Finalidad: DDL con vista de ultimo precio por activo. Correccion para quitar los borrados logicos de valoraciones
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -55,7 +55,8 @@ BEGIN
 			select * from (
 				SELECT act_id,dd_tpc_codigo, val_fecha_inicio, val_fecha_fin, val_importe
 				FROM ' || V_ESQUEMA || '.ACT_VAL_VALORACIONES VAL 
-          join ' || V_ESQUEMA || '.DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID))
+        JOIN ' || V_ESQUEMA || '.DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID
+        WHERE VAL.BORRADO = 0))
 				select * from pivot_data
 				pivot (max(val_fecha_inicio) as F_INI,
 				max(val_fecha_fin) as F_FIN,

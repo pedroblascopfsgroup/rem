@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -347,5 +348,28 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 		return true;
 		
+	}
+	
+	@Override
+	public String getMensajeExceptionProcedure(InvalidDataAccessResourceUsageException e){
+		
+		// En este tipo de excepción se pueden esconder errores del procedure de BBDD de publicacion ACTIVO_PUBLICACION_AUTO
+		// Hay que mostrar un mensaje de error concreto para uno de los errores (no cumplir condiciones para publicar)
+		Throwable causa = e.getCause();
+		String mensajeError = null;
+		int contador = 0;
+		while (!Checks.esNulo(causa) && Checks.esNulo(mensajeError) && contador < 100){
+			if(causa.getMessage().contains("ACTIVO_PUBLICACION_AUTO") && causa.getMessage().contains("ORA-06510")){
+				mensajeError = messageServices.getMessage("activo.publicacion.KO.condiciones.publicar.ordinario.server"); 
+			}
+			causa = causa.getCause();
+			contador++;
+		}
+
+		// Para el resto de errores, se muestra un mensaje generico
+		if(Checks.esNulo(mensajeError))
+			mensajeError = messageServices.getMessage("activo.publicacion.error.publicar.ordinario");
+
+		return mensajeError;
 	}
 }

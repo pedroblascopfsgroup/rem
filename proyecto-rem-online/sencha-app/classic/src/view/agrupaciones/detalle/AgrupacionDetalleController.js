@@ -150,6 +150,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		me.getViewModel().set("editing", true);
 		
 	},
+	
+	onClickBotonEditarFoto: function(btn) {
+		
+		var me = this;
+		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
+						function (field, index) 
+							{ 
+								field.fireEvent('edit');});
+								
+		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
+		me.getViewModel().set("editingfotos", true);
+		
+	},
     
 	onClickBotonGuardar: function(btn) {
 		var me = this;	
@@ -181,6 +194,34 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 								field.fireEvent('save');
 								field.fireEvent('update');});
 		me.getViewModel().set("editing", false);
+	},
+	
+	onClickBotonCancelarFoto: function(btn) {
+		var me = this,
+		activeTab = btn.up('tabpanel').getActiveTab();
+
+		if (!activeTab.saveMultiple) {
+			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
+				me.onClickBotonRefrescar();
+				
+			}
+		} else {
+			
+			var records = activeTab.getBindRecords();
+			
+			for (i=0; i<records.length; i++) {
+				me.onClickBotonRefrescar();
+			}
+
+		}	
+
+		btn.hide();
+		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
+						function (field, index) 
+							{ 
+								field.fireEvent('save');
+								field.fireEvent('update');});
+		me.getViewModel().set("editingfotos", false);
 	},
 
     onChangeTipoAgrupacion: function(btn,value) {
@@ -473,6 +514,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		me.onSaveFormularioCompleto(form, success);	
 		
 	},
+	
+	
 
 	onSaveFormularioCompleto: function(form, success) {
 		var me = this;
@@ -525,5 +568,76 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		config.url= $AC.getRemoteUrl("agrupacion/exportarActivosLoteComercial");
 
 		me.fireEvent("downloadFile", config);
-    }
+    },
+    
+	onClickBotonGuardarInfoFoto: function(btn){
+		var me = this;
+		btn.up('tabpanel').mask();
+		form= btn.up('tabpanel').getActiveTab().getForm();
+		var url =  $AC.getRemoteUrl('activo/updateFotosById');
+		var tienePrincipal = false;
+		var params={"id":form.findField("id").getValue()};
+		if(form.findField("nombre")!=null){
+			params['nombre']= form.findField("nombre").getValue();
+		}
+		if(form.findField("principal")!=null){
+			params['principal']= form.findField("principal").getValue();
+		}
+		if(form.findField("interiorExterior")!=null){
+			params['interiorExterior']= form.findField("interiorExterior").getValue();
+		}
+		if(form.findField("orden")!=null){
+			params['orden']= form.findField("orden").getValue();
+		}
+		if(form.findField("descripcion")!=null){
+			params['descripcion']= form.findField("descripcion").getValue();
+		}
+		if(form.findField("fechaDocumento")!=null){
+			params['fechaDocumento']= form.findField("fechaDocumento").getValue();
+		}
+
+       Ext.Ajax.request({
+		     url: url,
+		     params:params,
+		     success: function (a, operation, context) {
+		    	btn.up('tabpanel').unmask();
+		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    	me.onClickBotonRefrescar();
+		    	activeTab = btn.up('tabpanel').getActiveTab();
+
+				if (!activeTab.saveMultiple) {
+					if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
+						me.onClickBotonRefrescar();
+						
+					}
+				} else {
+					
+					var records = activeTab.getBindRecords();
+					
+					for (i=0; i<records.length; i++) {
+						me.onClickBotonRefrescar();
+					}
+
+				}	
+
+				btn.hide();
+				Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
+								function (field, index) 
+									{ 
+										field.fireEvent('save');
+										field.fireEvent('update');});
+				me.getViewModel().set("editingfotos", false);
+            },
+            failure: function (a, operation, context) {
+            	  Ext.toast({
+				     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+				     width: 360,
+				     height: 100,
+				     align: 't'									     
+				 });
+            	  btn.up('tabpanel').unmask();
+            }
+	    });
+	}
+		
 });

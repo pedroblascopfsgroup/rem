@@ -16,8 +16,37 @@ Ext.define('HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacionMain', {
 				cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
 			    reference	: 'tabpanelAdmision',
 			    layout: 'fit',
-			    
-			    items: [
+			    tabBar: {
+					items: [
+			        		{
+			        			xtype: 'tbfill'
+			        		},
+			        		{
+								xtype: 'buttontab',
+			        			itemId: 'botoneditarfoto',
+			        		    handler	: 'onClickBotonEditarFoto',
+			        		    iconCls: 'edit-button-color',
+			        		    bind: {hidden: '{editingfotos}'}
+			        		},
+			        		{
+			        			xtype: 'buttontab',
+			        			itemId: 'botonguardarfoto',
+			        		    handler	: 'onClickBotonGuardarInfoFoto', 
+			        		    iconCls: 'save-button-color',
+			        		    hidden: true,
+			        		    bind: {hidden: '{!editingfotos}'}
+			        		},
+			        		{
+			        			xtype: 'buttontab',
+			        			itemId: 'botoncancelarfoto',
+			        		    handler	: 'onClickBotonCancelarFoto', 
+			        		    iconCls: 'cancel-button-color',
+			        		    hidden: true,
+			        		    bind: {hidden: '{!editingfotos}'}
+			        		}
+			        ]
+			    }			    
+			    ,items: [
 			    		
 			    		{
 			    			xtype: 'subdivisionesagrupacion'    			

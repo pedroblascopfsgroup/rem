@@ -1,5 +1,5 @@
 /**
- * This view is used to present the details of a single AgendaItem.
+ * This view is used to present the details of estados de publicacion.
  */
 Ext.define('HreRem.model.EstadoPublicacion', {
     extend: 'HreRem.model.Base',
@@ -31,6 +31,9 @@ Ext.define('HreRem.model.EstadoPublicacion', {
     			name:'motivo'
     		},
     		{
+    			name: 'usuario'
+    		},
+    		{
     			name:'diasPeriodo'
     		}
     ],
@@ -40,7 +43,5 @@ Ext.define('HreRem.model.EstadoPublicacion', {
 		api: {
             read: 'activo/getEstadoPublicacionByActivo'
         }
-
     }
-
 });

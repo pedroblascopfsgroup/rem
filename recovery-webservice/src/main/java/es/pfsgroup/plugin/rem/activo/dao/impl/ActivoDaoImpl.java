@@ -484,14 +484,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public int publicarActivo(Long idActivo){
+	public int publicarActivo(Long idActivo, String username){
 		StringBuilder procedureHQL = new StringBuilder(
 							" BEGIN ");
-		procedureHQL.append("   ACTIVO_PUBLICACION_AUTO(:idActivoParam); ");
+		procedureHQL.append("   ACTIVO_PUBLICACION_AUTO(:idActivoParam, :usernameParam); ");
 		procedureHQL.append(" END; ");
 		
 		Query callProcedureSql = this.getSession().createSQLQuery(procedureHQL.toString());
 		callProcedureSql.setParameter("idActivoParam", idActivo);
+		callProcedureSql.setParameter("usernameParam", username);
 		
 		return callProcedureSql.executeUpdate();
 	}

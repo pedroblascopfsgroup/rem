@@ -92,6 +92,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 				title: HreRem.i18n('title.informacion.imagen'),
 				items :
 					[
+						{
+							name: 'id',
+							xtype: 'textfieldbase',
+							bind: {value: '{id}',hidden:true},
+							fieldLabel:  "id"
+						},
 						{ 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.numero.activo'),
 		                	reference: 'numeroActivoFoto',
@@ -102,12 +108,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 							}
 		                },
 		                { 
+		                	name: 'nombre',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.nombre'),
 		                	bind: {
 								value: '{nombre}'
 							}
 		                },
 		                { 
+		                	name: 'descripcion',
 		                	xtype: 'textareafieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
 		                	bind: {
@@ -115,6 +123,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 							}
 		                },
 		                { 
+		                	name: 'fechaDocumento',
 		                	xtype: 'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
 		                	bind:		'{fechaDocumento}'

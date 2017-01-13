@@ -48,7 +48,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     private UtilDiccionarioApi diccionarioApi;    
     
     private final String GESTOR_DOCUMENTAL = "GESTOR_DOC";
-	
+    
 	@Override
 	public List<DtoAdjunto> getAdjuntosActivo(Activo activo) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
@@ -100,7 +100,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		Long respuesta = null;
 
 
-		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(gasto.getNumGastoHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, null);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(gasto.getNumGastoHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_GASTO);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
 		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
 		respuesta =  new Long(respuestaCrearDocumento.getIdDocumento());

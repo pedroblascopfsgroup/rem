@@ -72,7 +72,7 @@ DECLARE
     	T_TFI('T013_RatificacionComite'					,'0'		,'label'	,'titulo'				,'<p style="margin-bottom: 10px"></p>'								 	,''												,''												,''					),
     	T_TFI('T013_RatificacionComite'					,'1'		,'date'		,'fechaRespuesta'		,'Fecha ratificación'													,''												,''												,''					),
     	T_TFI('T013_RatificacionComite'					,'2'		,'combo'	,'comboResolucion'		,'¿Ratifica?'															,''												,''												,'DDSiNo'			),
-    	T_TFI('T013_RatificacionComite'					,'3'		,'textarea'	,'observaciones'		,'Observaciones'														,''												,''												,''					),
+    	T_TFI('T013_RatificacionComite'					,'3'		,'textarea'	,'observaciones'		,'Observaciones'														,''												,''												,''					)
 		);
     V_TMP_T_TFI T_TFI;
 
@@ -161,6 +161,14 @@ BEGIN
     		  ' SET TAP_SCRIPT_DECISION = ''valores[''''T013_RatificacionComite''''][''''comboResolucion''''] == DDSiNo.SI ?  (checkReserva() ? ''''AceptaConReserva'''' : checkDerechoTanteo() ? ''''AceptaSinReservaConTanteo'''' : ''''AceptaSinReservaSinTanteo'''') : ''''Rechaza'''' '' '||
     		  ' WHERE TAP_CODIGO = ''T013_RatificacionComite'' ';
     		  	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    /* Ratificación comité */
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''checkBankia() ? (ratificarComite() ? null : ''''Ha fallado la ratificación del comité'''') : null'' '||	  
+			  ' WHERE TAP_CODIGO = ''T013_RatificacionComite'' ';
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     

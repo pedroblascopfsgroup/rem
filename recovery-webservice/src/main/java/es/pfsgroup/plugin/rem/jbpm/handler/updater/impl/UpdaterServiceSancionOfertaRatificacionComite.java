@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +20,11 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 
 @Component
-public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterService {
+public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;
@@ -41,11 +37,11 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
-    private static final String COMBO_PROCEDE = "comboProcede";
-    private static final String MOTIVO_ANULACION = "motivoAnulacion";
+
+    private static final String COMBO_RESOLUCION = "comboResolucion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
-    private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
+   	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
+   	private static final String MOTIVO_ANULACION = "Bankia no ratifica la oferta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -54,20 +50,26 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+//			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RPTA_OFERTANTE);
+//			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+//			expediente.setEstado(estado);
+			
 			
 			for(TareaExternaValor valor :  valores){
 				
-				if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
+				if(COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 				{
 					Filter filtro;
-				
-					
-					if(DDSiNo.NO.equals(valor.getValor())){
-
-						//Anula el expediente
+					if(DDSiNo.SI.equals(valor.getValor())){
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
+					}
+					else{
+						//Resuelve el expediente
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-						
-						expediente.setFechaAnulacion(new Date());
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
 						
 						//Finaliza el trámite
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
@@ -82,54 +84,22 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 								ofertaApi.descongelarOferta(oferta);
 							}
 						}
-						Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
-						ofertaAceptada.setResultadoTanteo(genericDao.get(DDResultadoTanteo.class, filtroTanteo));
 						
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						genericDao.save(ExpedienteComercial.class, expediente);
-						
-						Reserva reserva = expediente.getReserva();
-						if(!Checks.esNulo(reserva)){
-							reserva.setIndicadorDevolucionReserva(0);
-							Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
-							DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
-							reserva.setEstadoReserva(estadoReserva);
-							genericDao.save(Reserva.class, reserva);
-						}
-					}else{
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						genericDao.save(ExpedienteComercial.class, expediente);
-						
-						Reserva reserva = expediente.getReserva();
-						if(!Checks.esNulo(reserva)){
-							reserva.setIndicadorDevolucionReserva(1);
-							Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
-							DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
-							reserva.setEstadoReserva(estadoReserva);
-							genericDao.save(Reserva.class, reserva);
-						}
-					}
+						expediente.setMotivoAnulacion(MOTIVO_ANULACION);
 
+
+					}
+					
+					genericDao.save(ExpedienteComercial.class, expediente);
 				}
 				
-				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-				{
-					Reserva reserva = expediente.getReserva();
-					if(!Checks.esNulo(reserva)){
-						reserva.setMotivoAnulacion(valor.getValor());
-						genericDao.save(Reserva.class, reserva);
-					}
-				}
 			}
 		}
 
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_RESOLUCION_EXPEDIENTE};
+		return new String[]{CODIGO_T013_RATIFICACION_COMITE};
 	}
 
 	public String[] getKeys() {

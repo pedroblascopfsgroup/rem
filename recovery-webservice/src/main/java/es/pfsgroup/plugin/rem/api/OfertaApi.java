@@ -307,7 +307,6 @@ public interface OfertaApi {
 	public boolean checkPosicionamiento(TareaExterna tareaExterna);
 
 	/**
-<<<<<<< HEAD
 	 * Este método obtiene los detalles de una oferta por ID de oferta requeridos
 	 * en la pestaña ofertas de un activo.
 	 * 
@@ -349,5 +348,13 @@ public interface OfertaApi {
 	 * @return List<Oferta> Devuelve una lista de todas las ofertas pertenecientes a todos los titulares de un activo
 	 */
 	public List<Oferta> getOtrasOfertasTitularesOferta(Oferta oferta);
+
+	/**
+	 * Método que ratifica el comité de Bankia
+	 * @param tareaExterna
+	 * @return
+	 */
+	boolean ratificacionComite(TareaExterna tareaExterna);
+
 }
 

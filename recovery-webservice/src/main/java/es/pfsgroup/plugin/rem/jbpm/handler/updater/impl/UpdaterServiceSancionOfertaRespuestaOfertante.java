@@ -61,11 +61,18 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 				{
 					Filter filtro;
 					if(DDSiNo.SI.equals(valor.getValor())){
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+						//Si el activo es de Bankia, se ratifica el comité
+						if(!trabajoApi.checkBankia(expediente.getTrabajo())){
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+						}
 					}
 					else{
 						//Resuelve el expediente
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
 						
 						//Finaliza el trámite
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
@@ -85,8 +92,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 
 
 					}
-					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-					expediente.setEstado(estado);
+					
 					genericDao.save(ExpedienteComercial.class, expediente);
 				}
 				

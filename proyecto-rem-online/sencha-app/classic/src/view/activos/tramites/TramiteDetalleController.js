@@ -237,7 +237,6 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 			
 			task.delay(500);
 		}
-		debugger;
 		me.onClickBotonRefrescar(button);
 	},
 	
@@ -266,7 +265,6 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 				me.getView().unmask();
 			}
 		})
-		debugger;
 		me.onClickBotonRefrescar(button);
 		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
 	},
@@ -296,7 +294,6 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 				me.getView().unmask();
 			}
 		})
-		debugger;
 		me.onClickBotonRefrescar(button);
 		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
 	},

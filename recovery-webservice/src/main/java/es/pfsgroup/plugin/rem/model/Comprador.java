@@ -28,7 +28,6 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVFileItem;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 

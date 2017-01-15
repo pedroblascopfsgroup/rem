@@ -2,12 +2,14 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.capgemini.devon.dto.WebDto;
+
 /**
  * Dto para el grid de precios vigentes
  * @author Carlos Feliu
  *
  */
-public class DtoPrecioVigente {
+public class DtoPrecioVigente extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 

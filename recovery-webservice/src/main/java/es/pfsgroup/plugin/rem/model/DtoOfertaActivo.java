@@ -1,12 +1,14 @@
 package es.pfsgroup.plugin.rem.model;
 
+import es.capgemini.devon.dto.WebDto;
+
 
 /**
  * Dto para el grid de ofertas de la pestaña activos
  * @author Carlos Feliu
  *
  */
-public class DtoOfertaActivo {
+public class DtoOfertaActivo extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 

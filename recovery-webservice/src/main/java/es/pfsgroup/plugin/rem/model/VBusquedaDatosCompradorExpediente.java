@@ -5,13 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
 
 @Entity
 @Table(name = "V_BUSQUEDA_DATOS_COMPRADOR_EXP", schema = "${entity.schema}")

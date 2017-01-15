@@ -118,6 +118,7 @@ BEGIN
 		CAST(PVE.PVE_COD_API_PROVEEDOR AS VARCHAR2(10 CHAR))                               		AS CODIGO_PROVEEDOR,
 		CAST(DDTPR.DD_TPR_CODIGO AS VARCHAR2(5 CHAR))                             				AS COD_TIPO_PROVEEDOR,
 		CAST(PVE.PVE_NOMBRE AS VARCHAR2(60 CHAR))                                 				AS NOMBRE,
+		CAST(PVE.PVE_TELF_CONTACTO_VIS AS VARCHAR2(50 CHAR))                           			AS TELFONO_CONTACTO_VISITAS,
 		CAST(NULL AS VARCHAR2(60 CHAR)) 														AS APELLIDOS,
 		CAST(SOC.DD_TVI_CODIGO AS VARCHAR2(5 CHAR))                                           	AS COD_TIPO_VIA,
 		CAST(SOC.PRD_NOMBRE AS VARCHAR2(100 CHAR))                             					AS NOMBRE_CALLE,

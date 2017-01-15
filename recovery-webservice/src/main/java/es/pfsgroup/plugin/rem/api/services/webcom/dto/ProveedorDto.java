@@ -6,6 +6,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
@@ -43,6 +44,9 @@ public class ProveedorDto implements WebcomRESTDto {
 	private BooleanDataType modificarInformes;
 	private BooleanDataType activo;
 	private BooleanDataType abierta;
+	@MappedColumn("TELFONO_CONTACTO_VISITAS")
+	private StringDataType telefonoContactoVisitas;
+	
 
 	@NestedDto(groupBy = "idProveedorRem", type = DelegacionDto.class)
 	private List<DelegacionDto> delegaciones;
@@ -262,4 +266,14 @@ public class ProveedorDto implements WebcomRESTDto {
 	public void setDelegaciones(List<DelegacionDto> delegaciones) {
 		this.delegaciones = delegaciones;
 	}
+
+	public StringDataType getTelefonoContactoVisitas() {
+		return telefonoContactoVisitas;
+	}
+
+	public void setTelefonoContactoVisitas(StringDataType telefonoContactoVisitas) {
+		this.telefonoContactoVisitas = telefonoContactoVisitas;
+	}
+	
+	
 }

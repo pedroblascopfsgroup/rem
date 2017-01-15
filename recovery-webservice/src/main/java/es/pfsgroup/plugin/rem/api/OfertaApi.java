@@ -156,14 +156,16 @@ public interface OfertaApi {
 	/**
 	 * Método que rechaza una oferta
 	 * @param oferta
+	 * @return Boolean true si ha podido rechazar la oferta false en caso contrario
 	 */
-	public void rechazarOferta(Oferta oferta);
+	public Boolean rechazarOferta(Oferta oferta);
 	
 	/**
 	 * Método que descongela una oferta
 	 * @param oferta
+	 * @return Boolean true si ha podido rechazar la oferta false en caso contrario
 	 */
-	public void descongelarOferta(Oferta oferta);
+	public Boolean descongelarOferta(Oferta oferta);
 	
 	/**
 	 * Método que saca la oferta a partir de una tarea externa
@@ -305,7 +307,6 @@ public interface OfertaApi {
 	public boolean checkPosicionamiento(TareaExterna tareaExterna);
 
 	/**
-<<<<<<< HEAD
 	 * Este método obtiene los detalles de una oferta por ID de oferta requeridos
 	 * en la pestaña ofertas de un activo.
 	 * 
@@ -347,5 +348,13 @@ public interface OfertaApi {
 	 * @return List<Oferta> Devuelve una lista de todas las ofertas pertenecientes a todos los titulares de un activo
 	 */
 	public List<Oferta> getOtrasOfertasTitularesOferta(Oferta oferta);
+
+	/**
+	 * Método que ratifica el comité de Bankia
+	 * @param tareaExterna
+	 * @return
+	 */
+	boolean ratificacionComite(TareaExterna tareaExterna);
+
 }
 

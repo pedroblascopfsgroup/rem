@@ -1726,6 +1726,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		try {
 			genericDao.update(ExpedienteComercial.class, expedienteComercial);
 		} catch(Exception e) {
+			logger.error(e);
 			return false;
 		}
 		return true;
@@ -2969,4 +2970,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		return true;
 	}
+	
+
+	
 }

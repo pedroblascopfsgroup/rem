@@ -14,9 +14,11 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -29,10 +31,12 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
@@ -83,7 +87,10 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
 	
-	
+    @Autowired
+    private TareaActivoApi tareaActivoApi;
+    
+    
 	
 	public ActivoTramite get(Long idTramite){
 		return activoTramiteDao.get(idTramite);
@@ -337,7 +344,12 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				}
 		
 				//Si la unidad de gestiÃ³n no es ninguna de las definidas, retorna un mensaje fijo de advertencia.
-				if (!uGestion.isEmpty() && !"A".equals(uGestion) && !"P".equals(uGestion) && !"E".equals(uGestion) && !"G".equals(uGestion)){
+				if (!uGestion.isEmpty() && 
+						!"A".equals(uGestion) &&
+						!"T".equals(uGestion) &&
+						!"P".equals(uGestion) &&
+						!"E".equals(uGestion) &&
+						!"G".equals(uGestion)){
 					mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.unidadGestionInvalida").concat(" ").concat(uGestion);
 				}
 				
@@ -458,5 +470,27 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		
 		return this.getTareaValorByNombre(allValoresTramite,"emailPropietario");
 	}
+	
+	
+	@Override
+	public List<TareaProcedimiento> getTareasActivasByIdTramite(Long idTramite) {
+		TareaActivo tarAct = null;
+		List<TareaProcedimiento> listaTareasProc = new ArrayList<TareaProcedimiento>();
+		
+		List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(idTramite);
+		if(!Checks.esNulo(listaTareas)){
+			for(int i=0; i<listaTareas.size(); i++){
+				tarAct = listaTareas.get(i);
+				if(Checks.esNulo(tarAct.getFechaFin())){
+					listaTareasProc.add(tarAct.getTareaExterna().getTareaProcedimiento());
+				}
+			}
+		}
+
+		return listaTareasProc;
+	}
+	
+	
+	
 	
 }

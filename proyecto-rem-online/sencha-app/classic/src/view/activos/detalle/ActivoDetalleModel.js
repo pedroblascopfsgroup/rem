@@ -860,6 +860,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				autoLoad: true
 			},
 			
+		comboSituacionComercial: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'situacionComercial'}
+			},
+			autoLoad: true
+		},
+			
+			
 		comboEstadoOferta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

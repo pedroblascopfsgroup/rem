@@ -22,6 +22,7 @@ public class ActivoGenerarSaltoImpl extends ActivoBaseActionHandler implements G
 
 	private static final long serialVersionUID = -6204184256333027776L;
 	public static final String CODIGO_SALTO_CIERRE = "CierreEconomico";
+	public static final String CODIGO_SALTO_RESOLUCION = "ResolucionExpediente";
 	public static final String CODIGO_FIN = "Fin";
 
 

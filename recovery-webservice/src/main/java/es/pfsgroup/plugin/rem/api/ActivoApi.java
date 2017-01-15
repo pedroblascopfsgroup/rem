@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
@@ -819,4 +820,20 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Boolean getDptoPrecio(Activo activo);
+
+	/**
+	 * ESte método obtiene información de la tab comercial del activo.
+	 * 
+	 * @param dto : dto con el ID de activo a filtrar.
+	 * @return Devuevle un dto DtoComercialActivo con información sobre la tab comercial del activo.
+	 */
+	public DtoComercialActivo getComercialActivo(DtoComercialActivo dto);
+
+	/**
+	 * Este método almacena los cambios obrtenidos del dto.
+	 * 
+	 * @param dto : contiene los cambios a almacenar.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 */
+	public boolean saveComercialActivo(DtoComercialActivo dto);
 }

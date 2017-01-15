@@ -378,7 +378,16 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAL_ID")
     private DDTipoAlquiler tipoAlquiler;
-    
+
+    @Column(name = "ACT_VENTA_EXTERNA_FECHA")
+    private Date fechaVentaExterna;
+
+    @Column(name = "ACT_VENTA_EXTERNA_OBSERVACION")
+    private String observacionesVentaExterna;
+
+    @Column(name = "ACT_VENTA_EXTERNA_IMPORTE")
+    private Double importeVentaExterna;
+
 	@Version   
 	private Long version;
 
@@ -1472,6 +1481,30 @@ public class Activo implements Serializable, Auditable {
 		
 		return propietario;
 		
+	}
+
+	public Date getFechaVentaExterna() {
+		return fechaVentaExterna;
+	}
+
+	public void setFechaVentaExterna(Date fechaVentaExterna) {
+		this.fechaVentaExterna = fechaVentaExterna;
+	}
+
+	public String getObservacionesVentaExterna() {
+		return observacionesVentaExterna;
+	}
+
+	public void setObservacionesVentaExterna(String observacionesVentaExterna) {
+		this.observacionesVentaExterna = observacionesVentaExterna;
+	}
+
+	public Double getImporteVentaExterna() {
+		return importeVentaExterna;
+	}
+
+	public void setImporteVentaExterna(Double importeVentaExterna) {
+		this.importeVentaExterna = importeVentaExterna;
 	}
 	
 	

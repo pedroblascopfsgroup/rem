@@ -46,9 +46,10 @@ public interface ConfirmarOperacionApi {
 	/**
 	 * Registra la devolución de la reserva. Insertar en entregas a cuentas en negativo,
 	 * Actualiza estado reserva a CODIGO_RESUELTA_DEVUELTA, el estado de la oferta CODIGO_RECHAZADA, el estado del expediente ANULADO,
-	 * Poner estadoReserva "Resuelta. Importe devuelto".
+	 * Poner fecha de devolución e importe devolución
+	 * Actualiza fecha de devolución e importe devuelto
 	 * @param ConfirmacionOpDto con los datos necesarios para registrar la devolución de la reserva
-	 * @return void 
+	 * @return void
 	 */
 	public void devolverReserva(ConfirmacionOpDto confirmacionOpDto) throws Exception;
 	

@@ -101,6 +101,9 @@ Ext.define('HreRem.model.Tramite', {
     	},
     	{
       		name : 'countActivos'
+    	},
+    	{
+    		name: 'ocultarBotonResolucion'
     	}
     ],
 

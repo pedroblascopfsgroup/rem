@@ -202,7 +202,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
 				btn.up('tabbar').down('button[itemId=botoneditar]').show();
 				
-				me.getViewModel().set("editing", false);
+				if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+		 			me.getViewModel().set("editingFirstLevel", false);
+		 		} else {
+		 			me.getViewModel().set("editing", false);
+		 		}
 			}
 		
 			if (!form.saveMultiple) {
@@ -618,8 +622,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 								field.fireEvent('edit');});
 								
 		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
-		me.getViewModel().set("editing", true);
-		
+		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+ 			me.getViewModel().set("editingFirstLevel", true);
+ 		} else {
+ 			me.getViewModel().set("editing", true);
+ 		}
 	},
     
 	onClickBotonGuardar: function(btn) {
@@ -656,7 +663,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							{ 
 								field.fireEvent('save');
 								field.fireEvent('update');});
-		me.getViewModel().set("editing", false);
+
+		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+ 			me.getViewModel().set("editingFirstLevel", false);
+ 		} else {
+ 			me.getViewModel().set("editing", false);
+ 		}
 	},
 
 	onClickBotonCancelarPropietario: function(btn) {		
@@ -1935,7 +1947,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
 				btn.up('tabbar').down('button[itemId=botoneditar]').show();
 				
-				me.getViewModel().set("editing", false);
+				if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+		 			me.getViewModel().set("editingFirstLevel", false);
+		 		} else {
+		 			me.getViewModel().set("editing", false);
+		 		}
 			}
 		
 			if (!form.saveMultiple) {
@@ -2265,5 +2281,82 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    	me.getView().fireEvent('abrirDetalleActivoOfertas', record);
 	    }
 	
+	},
+	onClickBotonGuardarInfoFoto: function(btn){
+		var me = this;
+		var tienePrincipal = false;
+		btn.up('tabpanel').mask();
+		form= btn.up('tabpanel').getActiveTab().getForm();
+		var fotosActuales = btn.up('tabpanel').getActiveTab().down('dataview').getStore().data.items;
+		for (i=0; i < fotosActuales.length; i++) {
+			if(form.getValues().id != fotosActuales[i].data.id && form.getValues().principal){
+				console.log(i+" id"+fotosActuales[i].data.id)
+				console.log(i+" es princpal ?"+fotosActuales[i].data.principal)
+				console.log(i+" interior exterior ? "+fotosActuales[i].data.interiorExterior)
+				if (fotosActuales[i].data.principal == 'true' && form.getValues().interiorExterior.toString() == fotosActuales[i].data.interiorExterior){
+					tienePrincipal = true;
+	            	break;
+	            }
+			}
+		}
+		if(!tienePrincipal){
+			var url =  $AC.getRemoteUrl('activo/updateFotosById');
+			var tienePrincipal = false;
+			var params={"id":form.findField("id").getValue()};
+			if(form.findField("nombre")!=null){
+				params['nombre']= form.findField("nombre").getValue();
+			}
+			if(form.findField("principal")!=null){
+				params['principal']= form.findField("principal").getValue();
+			}
+			if(form.findField("interiorExterior")!=null){
+				params['interiorExterior']= form.findField("interiorExterior").getValue();
+			}
+			if(form.findField("orden")!=null){
+				params['orden']= form.findField("orden").getValue();
+			}
+			if(form.findField("descripcion")!=null){
+				params['descripcion']= form.findField("descripcion").getValue();
+			}
+			if(form.findField("fechaDocumento")!=null){
+				params['fechaDocumento']= form.findField("fechaDocumento").getValue();
+			}
+	
+	       Ext.Ajax.request({
+			     url: url,
+			     params:params,
+			     success: function (a, operation, context) {
+			    	btn.up('tabpanel').unmask();
+			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    	me.onClickBotonRefrescar();
+			    	btn.hide();
+			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
+			 		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
+							function (field, index) 
+								{ 
+									field.fireEvent('save');
+									field.fireEvent('update');});
+			 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+			 			me.getViewModel().set("editingFirstLevel", false);
+			 		} else {
+			 			me.getViewModel().set("editing", false);
+			 		}
+	            },
+	            failure: function (a, operation, context) {
+	            	  Ext.toast({
+					     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+					     width: 360,
+					     height: 100,
+					     align: 't'									     
+					 });
+	            	  btn.up('tabpanel').unmask();
+	            }
+		    });
+		}else{
+			me.fireEvent("errorToast", "Ya dispone de una foto principal");
+			btn.up('tabpanel').unmask();
+		}
 	}
+	
 });

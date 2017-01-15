@@ -37,6 +37,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -45,8 +46,8 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
@@ -146,6 +147,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Autowired
 	private UpdaterStateGastoApi updaterStateApi;
 	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+		
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 	@Resource
@@ -332,6 +336,23 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoImpugnacion impugnacion = new GastoImpugnacion();						
 		impugnacion.setGastoProveedor(gastoProveedor);				
 		genericDao.save(GastoImpugnacion.class, impugnacion);
+		
+		gastoProveedor.setGastoDetalleEconomico(detalleEconomico);
+		gastoProveedor.setGastoGestion(gestion);
+		gastoProveedor.setGastoInfoContabilidad(contabilidad);
+		
+		// Creamos el contenedor del gasto en gestor documental.
+		
+		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {				
+			Integer idExpediente;
+			try {
+				idExpediente = gestorDocumentalAdapterApi.crearGasto(gastoProveedor, usuario.getUsername());
+				logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gastoProveedor.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
+			} catch (GestorDocumentalException gexc) {
+				logger.debug(gexc.getMessage());
+			}
+			
+		}
 		
 		return gastoProveedor;
 		
@@ -1346,13 +1367,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
     @BusinessOperationDefinition("gastoProveedorManager.getAdjuntosGasto")
-	public List<DtoAdjunto> getAdjuntos(Long id) {
+	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException {
+		
+		GastoProveedor gasto = findOne(id);
 		
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
-		
-		try{
+
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			
-			GastoProveedor gasto = findOne(id);
+			return gestorDocumentalAdapterApi.getAdjuntosGasto(gasto.getNumGastoHaya().toString());
+			
+		} else {
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", id);
 			List<AdjuntoGasto> adjuntosGasto = genericDao.getList(AdjuntoGasto.class, filtro);
@@ -1361,7 +1386,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			for (AdjuntoGasto adjunto : adjuntosGasto) {
 				DtoAdjunto dto = new DtoAdjunto();
 				
-				BeanUtils.copyProperties(dto, adjunto);
+				try {
+					BeanUtils.copyProperties(dto, adjunto);
+				} catch (IllegalAccessException e) {
+					logger.error(e.getMessage());
+					
+				} catch (InvocationTargetException e) {
+					logger.error(e.getMessage());
+				}
 				dto.setIdGasto(gasto.getId());
 				dto.setDescripcionTipo(adjunto.getTipoDocumentoGasto().getDescripcion());
 				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());				
@@ -1369,21 +1401,58 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				listaAdjuntos.add(dto);
 				
 			}
-		
-		}catch(Exception ex){
-			logger.error(ex.getStackTrace());
+			
 		}
-
 		return listaAdjuntos;
+		
 	}
 	
 	@Override
 	@BusinessOperation(overrides = "gastoProveedorManager.upload")
 	@Transactional(readOnly = false)
-	public String upload(WebFileItem fileItem) throws Exception {
+	public String upload(WebFileItem fileItem) {
 
-		ActivoAdjuntoActivo adjuntoActivo= null;
 		GastoProveedor gasto= findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
+		AdjuntoGasto adjuntoGasto;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		try {
+
+			adjuntoGasto = createAdjuntoGasto(fileItem, gasto);		
+			Auditoria.save(adjuntoGasto);
+			
+			genericDao.save(AdjuntoGasto.class, adjuntoGasto);
+
+			if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+	
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+				DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao
+						.get(DDTipoDocumentoGasto.class, filtro);	
+				
+				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoGasto(gasto, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+				
+				adjuntoGasto.setIdDocRestClient(idDocRestClient);
+				
+				genericDao.update(AdjuntoGasto.class, adjuntoGasto);		
+
+			}
+
+			// Comprobamos si tenemos que cambiar el estado del gasto.
+			boolean estadoCambiado = updaterStateApi.updaterStates(gasto, null);	  
+			if(estadoCambiado) {
+				gasto.getAdjuntos().add(adjuntoGasto);		
+				genericDao.save(GastoProveedor.class, gasto);
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+		return null;
+
+	}
+
+	public AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto) throws Exception {
 		
 		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
 		
@@ -1405,36 +1474,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		adjuntoGasto.setDescripcion(fileItem.getParameter("descripcion"));			
 		
 		adjuntoGasto.setFechaDocumento(new Date());
-
-		Auditoria.save(adjuntoGasto);
-        
-		genericDao.save(AdjuntoGasto.class, adjuntoGasto);
 		
-		gasto.getAdjuntos().add(adjuntoGasto);
-		
-		for(GastoProveedorActivo g: gasto.getGastoProveedorActivos()){
-			
-			if(!Checks.esNulo(adjuntoGasto) && !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto()) 
-					&& !Checks.esNulo(adjuntoGasto.getTipoDocumentoGasto().getMatricula())){
-				activoAdapter.uploadDocumento(fileItem, g.getActivo(), adjuntoGasto.getTipoDocumentoGasto().getMatricula());
-				adjuntoActivo= g.getActivo().getAdjuntos().get(g.getActivo().getAdjuntos().size()-1);
-			}
-			
-		}
-		
-		if(!Checks.esNulo(adjuntoActivo)){
-			adjuntoGasto.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
-			genericDao.update(AdjuntoGasto.class, adjuntoGasto);
-		}
-		
-		// Comprobamos si tenemos que cambiar el estado del gasto.
-		boolean estadoCambiado = updaterStateApi.updaterStates(gasto, null);	  
-		if(estadoCambiado) {
-			genericDao.save(GastoProveedor.class, gasto);
-		}
-		
-		return null;
-
+		return adjuntoGasto;
 	}
 	
 	@Override
@@ -1467,12 +1508,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		GastoProveedor gasto= findOne(dtoAdjunto.getIdGasto());
 		AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
-		
-		FileItem fileItem = adjuntoGasto.getAdjunto().getFileItem();
-		fileItem.setContentType(adjuntoGasto.getContentType());
-		fileItem.setFileName(adjuntoGasto.getNombre());
-		
-		return adjuntoGasto.getAdjunto().getFileItem();
+		FileItem fileItem = null;
+		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				fileItem = gestorDocumentalAdapterApi.getFileItem(adjuntoGasto.getIdDocRestClient());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		} else {
+			fileItem = adjuntoGasto.getAdjunto().getFileItem();
+			fileItem.setContentType(adjuntoGasto.getContentType());
+			fileItem.setFileName(adjuntoGasto.getNombre());
+		}
+
+		return fileItem;
 	}
 	
 	@Override

@@ -24,6 +24,8 @@ public class GestorDocumentalConstants {
 	public static final String[] generalDocumentoModif = {"Número Registro:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
 	public static final String[] archivoFisico = {"Proveedor Custodia:", "Referencia Custodia:", "Contenedor:", "Lote:", "Posición:", "Documento Original:"};
 	
+	public static final String[] gastoMetadatos = {"ID:", "IDGasto:", "IDReo:", "Fechagasto:", "Cliente:"};
+	
 	
 	public final static HashMap<String, String> tipoExpedientePorCodigo;
 

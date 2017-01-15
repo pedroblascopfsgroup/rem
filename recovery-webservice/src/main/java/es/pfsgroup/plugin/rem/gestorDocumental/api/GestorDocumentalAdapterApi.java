@@ -23,4 +23,8 @@ public interface GestorDocumentalAdapterApi {
 
 	boolean modoRestClientActivado();
 
+	Integer crearGasto(GastoProveedor gasto,  String usuarioLogado) throws GestorDocumentalException;
+
+	List<DtoAdjunto> getAdjuntosGasto(String numGasto) throws GestorDocumentalException;
+
 }

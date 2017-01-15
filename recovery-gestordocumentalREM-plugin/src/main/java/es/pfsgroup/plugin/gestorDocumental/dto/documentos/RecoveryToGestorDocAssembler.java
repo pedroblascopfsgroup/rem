@@ -16,8 +16,10 @@ public class RecoveryToGestorDocAssembler {
 	private String PASSWORD;
 
 	public RecoveryToGestorDocAssembler(Properties appProperties){
-		USUARIO = appProperties.getProperty("rest.client.gestor.documental.user");
-		PASSWORD = appProperties.getProperty("rest.client.gestor.documental.pass");
+		//USUARIO = appProperties.getProperty("rest.client.gestor.documental.user");
+		//PASSWORD = appProperties.getProperty("rest.client.gestor.documental.pass");
+		USUARIO="srv.rem_ot";
+		PASSWORD="Futures9";
 	}
 	
 	public CabeceraPeticionRestClientDto getCabeceraPeticionRestClient(String idExp, String tipoExp, String claseExp) {

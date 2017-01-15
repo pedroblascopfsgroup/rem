@@ -58,7 +58,8 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String GENERAL_DOCUMENTO = "generalDocumento";
 	private static final String ARCHIVO_FISICO = "archivoFisico";	
 	
-	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "rest.client.gestor.documental.documentos";
+	//private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "rest.client.gestor.documental.documentos";
+	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "http://10.126.128.3:8080/csHaya/DocumentosServicios";
 	private static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
 	
 	@Override

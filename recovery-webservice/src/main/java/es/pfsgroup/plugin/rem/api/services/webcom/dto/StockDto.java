@@ -6,6 +6,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class StockDto implements WebcomRESTDto{
@@ -37,18 +38,11 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codMunicipioRegistro;
 	private StringDataType registro;
 	private StringDataType referenciaCatastral;
-	@DecimalDataTypeFormat(decimals=2)
-	private DoubleDataType superficie;
-	@DecimalDataTypeFormat(decimals=2)
-	private DoubleDataType superficieConstruida;
-	@DecimalDataTypeFormat(decimals=2)
-	private DoubleDataType superficieRegistral;
 	private BooleanDataType ascensor;
 	private LongDataType dormitorios;
 	private LongDataType banyos;
 	private LongDataType aseos;
 	private LongDataType garajes;
-	private BooleanDataType nuevo;
 	private StringDataType codEstadoComercial;
 	private StringDataType codTipoVenta;
 	@DecimalDataTypeFormat(decimals=8)
@@ -76,6 +70,43 @@ public class StockDto implements WebcomRESTDto{
 	private LongDataType antiguedad;
 	private StringDataType codCartera;
 	private StringDataType codRatio;
+	
+	//Petición HREOS-1399
+	private BooleanDataType esNuevo;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType utilSuperficie;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType construidaSuperficie;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType registralSuperficie;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType parcelaSuperficie;
+	private LongDataType idActivoUvem;
+	private DoubleDataType valorAprobadoVenta;
+	private DateDataType fechaValorAprobadoVenta;
+	private DoubleDataType valorAprobadoRenta;
+	private DateDataType fechaValorAprobadoRenta;
+	private BooleanDataType riesgoOcupacion;
+	private DateDataType fechaPosesion;
+	@MappedColumn("FECHA_CONTRATO_DATOS_OCU")
+	private DateDataType fechaContratoDatosOcupacionales;
+	@MappedColumn("PLAZO_CONTRATO_DATOS_OCU")
+	private DateDataType plazoContratoDatosOcupacionales;
+	@MappedColumn("RENTA_MENSUAL_DATOS_OCU")
+	private DoubleDataType rentaMensualDatosOcupacionales;
+	@MappedColumn("RECIBIDO_IMPORTE_DATOS_ADM")
+	private DoubleDataType recibidoImporteDatosAdministracion;
+	@MappedColumn("IBI_IMPORTE_DATOS_ADM")
+	private DoubleDataType ibiImporteDatosAdministracion;
+	@MappedColumn("DERRAMA_IMPORTE_DATOS_ADM")
+	private DoubleDataType derramaImporteDatosAdministracion;
+	@MappedColumn("DETALLE_DERRAMA_DATOS_ADM")
+	private StringDataType detalleDerramaDatosAdministracion;
+	private StringDataType anejoTrastero;
+	private BooleanDataType existePiscina;
+	
+	
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -201,24 +232,6 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setReferenciaCatastral(StringDataType referenciaCatastral) {
 		this.referenciaCatastral = referenciaCatastral;
-	}
-	public DoubleDataType getSuperficie() {
-		return superficie;
-	}
-	public void setSuperficie(DoubleDataType superficie) {
-		this.superficie = superficie;
-	}
-	public DoubleDataType getSuperficieConstruida() {
-		return superficieConstruida;
-	}
-	public void setSuperficieConstruida(DoubleDataType superficieConstruida) {
-		this.superficieConstruida = superficieConstruida;
-	}
-	public DoubleDataType getSuperficieRegistral() {
-		return superficieRegistral;
-	}
-	public void setSuperficieRegistral(DoubleDataType superficieRegistral) {
-		this.superficieRegistral = superficieRegistral;
 	}
 	public BooleanDataType getAscensor() {
 		return ascensor;
@@ -400,12 +413,6 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodRatio(StringDataType codRatio) {
 		this.codRatio = codRatio;
 	}
-	public BooleanDataType getNuevo() {
-		return nuevo;
-	}
-	public void setNuevo(BooleanDataType nuevo) {
-		this.nuevo = nuevo;
-	}
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
 	}
@@ -418,5 +425,142 @@ public class StockDto implements WebcomRESTDto{
 	public void setFechaAccion(DateDataType fechaAccion) {
 		this.fechaAccion = fechaAccion;
 	}
+	public BooleanDataType getEsNuevo() {
+		return esNuevo;
+	}
+	public void setEsNuevo(BooleanDataType esNuevo) {
+		this.esNuevo = esNuevo;
+	}
+	public DoubleDataType getUtilSuperficie() {
+		return utilSuperficie;
+	}
+	public void setUtilSuperficie(DoubleDataType utilSuperficie) {
+		this.utilSuperficie = utilSuperficie;
+	}
+	public DoubleDataType getConstruidaSuperficie() {
+		return construidaSuperficie;
+	}
+	public void setConstruidaSuperficie(DoubleDataType construidaSuperficie) {
+		this.construidaSuperficie = construidaSuperficie;
+	}
+	public DoubleDataType getRegistralSuperficie() {
+		return registralSuperficie;
+	}
+	public void setRegistralSuperficie(DoubleDataType registralSuperficie) {
+		this.registralSuperficie = registralSuperficie;
+	}
+	public DoubleDataType getParcelaSuperficie() {
+		return parcelaSuperficie;
+	}
+	public void setParcelaSuperficie(DoubleDataType parcelaSuperficie) {
+		this.parcelaSuperficie = parcelaSuperficie;
+	}
+	public LongDataType getIdActivoUvem() {
+		return idActivoUvem;
+	}
+	public void setIdActivoUvem(LongDataType idActivoUvem) {
+		this.idActivoUvem = idActivoUvem;
+	}
+	public DoubleDataType getValorAprobadoVenta() {
+		return valorAprobadoVenta;
+	}
+	public void setValorAprobadoVenta(DoubleDataType valorAprobadoVenta) {
+		this.valorAprobadoVenta = valorAprobadoVenta;
+	}
+	public DateDataType getFechaValorAprobadoVenta() {
+		return fechaValorAprobadoVenta;
+	}
+	public void setFechaValorAprobadoVenta(DateDataType fechaValorAprobadoVenta) {
+		this.fechaValorAprobadoVenta = fechaValorAprobadoVenta;
+	}
+	public DoubleDataType getValorAprobadoRenta() {
+		return valorAprobadoRenta;
+	}
+	public void setValorAprobadoRenta(DoubleDataType valorAprobadoRenta) {
+		this.valorAprobadoRenta = valorAprobadoRenta;
+	}
+	public DateDataType getFechaValorAprobadoRenta() {
+		return fechaValorAprobadoRenta;
+	}
+	public void setFechaValorAprobadoRenta(DateDataType fechaValorAprobadoRenta) {
+		this.fechaValorAprobadoRenta = fechaValorAprobadoRenta;
+	}
+	public BooleanDataType getRiesgoOcupacion() {
+		return riesgoOcupacion;
+	}
+	public void setRiesgoOcupacion(BooleanDataType riesgoOcupacion) {
+		this.riesgoOcupacion = riesgoOcupacion;
+	}
+	public DateDataType getFechaPosesion() {
+		return fechaPosesion;
+	}
+	public void setFechaPosesion(DateDataType fechaPosesion) {
+		this.fechaPosesion = fechaPosesion;
+	}
+	public DateDataType getFechaContratoDatosOcupacionales() {
+		return fechaContratoDatosOcupacionales;
+	}
+	public void setFechaContratoDatosOcupacionales(
+			DateDataType fechaContratoDatosOcupacionales) {
+		this.fechaContratoDatosOcupacionales = fechaContratoDatosOcupacionales;
+	}
+	public DateDataType getPlazoContratoDatosOcupacionales() {
+		return plazoContratoDatosOcupacionales;
+	}
+	public void setPlazoContratoDatosOcupacionales(
+			DateDataType plazoContratoDatosOcupacionales) {
+		this.plazoContratoDatosOcupacionales = plazoContratoDatosOcupacionales;
+	}
+	public DoubleDataType getRentaMensualDatosOcupacionales() {
+		return rentaMensualDatosOcupacionales;
+	}
+	public void setRentaMensualDatosOcupacionales(
+			DoubleDataType rentaMensualDatosOcupacionales) {
+		this.rentaMensualDatosOcupacionales = rentaMensualDatosOcupacionales;
+	}
+	public DoubleDataType getRecibidoImporteDatosAdministracion() {
+		return recibidoImporteDatosAdministracion;
+	}
+	public void setRecibidoImporteDatosAdministracion(
+			DoubleDataType recibidoImporteDatosAdministracion) {
+		this.recibidoImporteDatosAdministracion = recibidoImporteDatosAdministracion;
+	}
+	public DoubleDataType getIbiImporteDatosAdministracion() {
+		return ibiImporteDatosAdministracion;
+	}
+	public void setIbiImporteDatosAdministracion(
+			DoubleDataType ibiImporteDatosAdministracion) {
+		this.ibiImporteDatosAdministracion = ibiImporteDatosAdministracion;
+	}
+	public DoubleDataType getDerramaImporteDatosAdministracion() {
+		return derramaImporteDatosAdministracion;
+	}
+	public void setDerramaImporteDatosAdministracion(
+			DoubleDataType derramaImporteDatosAdministracion) {
+		this.derramaImporteDatosAdministracion = derramaImporteDatosAdministracion;
+	}
+	public StringDataType getDetalleDerramaDatosAdministracion() {
+		return detalleDerramaDatosAdministracion;
+	}
+	public void setDetalleDerramaDatosAdministracion(
+			StringDataType detalleDerramaDatosAdministracion) {
+		this.detalleDerramaDatosAdministracion = detalleDerramaDatosAdministracion;
+	}
+	public StringDataType getAnejoTrastero() {
+		return anejoTrastero;
+	}
+	public void setAnejoTrastero(StringDataType anejoTrastero) {
+		this.anejoTrastero = anejoTrastero;
+	}
+	public BooleanDataType getExistePiscina() {
+		return existePiscina;
+	}
+	public void setExistePiscina(BooleanDataType existePiscina) {
+		this.existePiscina = existePiscina;
+	}
+	
+	
+	
+	
 			
 }

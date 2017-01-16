@@ -2,13 +2,15 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.capgemini.devon.dto.WebDto;
+
 
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
  * @author Benjamín Guerrero
  *
  */
-public class DtoCarga {
+public class DtoCarga extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 

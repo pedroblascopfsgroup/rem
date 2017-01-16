@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Controller
 public class AgrupacionController extends ParadiseJsonController {
@@ -55,6 +58,8 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
+
+	private final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -185,7 +190,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -205,7 +210,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", false);
 			model.put("msg", jvex.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -221,7 +226,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -237,7 +242,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -253,7 +258,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -269,7 +274,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -331,7 +336,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -347,13 +352,13 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			if(e.getMessage().equals(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG)) {
+			if (e.getMessage().equals(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG)) {
 				model.put("msg", AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 				model.put("success", false);
 			} else {
-				e.printStackTrace();
+				logger.error(e);
 				model.put("success", false);
-			}		
+			}
 		}
 
 		return createModelAndViewJson(model);
@@ -368,7 +373,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -392,7 +397,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -408,7 +413,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -422,7 +427,9 @@ public class AgrupacionController extends ParadiseJsonController {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<DtoFoto> listaDtoFotos = new ArrayList<DtoFoto>();
 
-		if (agrupacion.getTipoAgrupacion() != null && agrupacion.getTipoAgrupacion().getCodigo().equals("01")) {
+		if (agrupacion.getTipoAgrupacion() != null
+				&& (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA))) {
 
 			List<ActivoFoto> listaFotos = activoAgrupacionApi.getFotosAgrupacionById(id);
 
@@ -446,9 +453,9 @@ public class AgrupacionController extends ParadiseJsonController {
 						listaDtoFotos.add(fotoDto);
 
 					} catch (IllegalAccessException e) {
-						e.printStackTrace();
+						logger.error(e);
 					} catch (InvocationTargetException e) {
-						e.printStackTrace();
+						logger.error(e);
 					}
 
 				}
@@ -466,18 +473,21 @@ public class AgrupacionController extends ParadiseJsonController {
 					try {
 
 						DtoFoto fotoDto = new DtoFoto();
-
-						BeanUtils.copyProperty(fotoDto, "path",
-								"/pfs/activo/getFotoActivoById.htm?idFoto=" + listaFotos.get(i).getId());
+						if (listaFotos.get(i).getRemoteId() != null) {
+							BeanUtils.copyProperty(fotoDto, "path", listaFotos.get(i).getUrlThumbnail());
+						} else {
+							BeanUtils.copyProperty(fotoDto, "path",
+									"/pfs/activo/getFotoActivoById.htm?idFoto=" + listaFotos.get(i).getId());
+						}
 						BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
 						BeanUtils.copyProperty(fotoDto, "numeroActivo", listaFotos.get(i).getActivo().getId());
 
 						listaDtoFotos.add(fotoDto);
 
 					} catch (IllegalAccessException e) {
-						e.printStackTrace();
+						logger.error(e);
 					} catch (InvocationTargetException e) {
-						e.printStackTrace();
+						logger.error(e);
 					}
 
 				}
@@ -507,16 +517,15 @@ public class AgrupacionController extends ParadiseJsonController {
 					DtoFoto fotoDto = new DtoFoto();
 
 					BeanUtils.copyProperty(fotoDto, "id", listaFotos.get(i).getId());
-					
 
 					BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
 
 					listaDtoFotos.add(fotoDto);
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error(e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 
 			}
@@ -552,7 +561,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", errores != null);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 			model.put("errores", e.getCause());
 		}
@@ -576,7 +585,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", errores != null);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 			model.put("errores", e.getCause());
 		}
@@ -636,7 +645,7 @@ public class AgrupacionController extends ParadiseJsonController {
 				model.put("msg", AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
 				model.put("success", false);
 			} else {
-				e.printStackTrace();
+				logger.error(e);
 				model.put("success", false);
 			}
 		}
@@ -645,13 +654,14 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getGestoresLoteComercial(@RequestParam Long agrId, @RequestParam String codigoGestor, ModelMap model) {
+	public ModelAndView getGestoresLoteComercial(@RequestParam Long agrId, @RequestParam String codigoGestor,
+			ModelMap model) {
 
 		try {
 			model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor));
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("success", false);
 		}
 
@@ -660,12 +670,14 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void exportarActivosLoteComercial(Long agrID, DtoAgrupacionFilter dtoAgrupacionFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void exportarActivosLoteComercial(Long agrID, DtoAgrupacionFilter dtoAgrupacionFilter,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		dtoAgrupacionFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoAgrupacionFilter.setLimit(excelReportGeneratorApi.getLimit());
 
-		List<VActivosAgrupacion> listaActivosPorAgrupacion = (List<VActivosAgrupacion>) adapter.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID).getResults();
+		List<VActivosAgrupacion> listaActivosPorAgrupacion = (List<VActivosAgrupacion>) adapter
+				.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID).getResults();
 
 		ExcelReport report = new AgrupacionListadoActivosExcelReport(listaActivosPorAgrupacion);
 

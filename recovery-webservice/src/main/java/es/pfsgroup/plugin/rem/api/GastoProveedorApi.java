@@ -6,6 +6,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -163,7 +164,7 @@ public interface GastoProveedorApi {
     	 * @return
     	 */
 	    @BusinessOperationDefinition("gastoProveedorManager.getAdjuntosGasto")
-		public Object getAdjuntos(Long id);
+		public Object getAdjuntos(Long id) throws GestorDocumentalException;
 	    
 	    /**
 		 * 

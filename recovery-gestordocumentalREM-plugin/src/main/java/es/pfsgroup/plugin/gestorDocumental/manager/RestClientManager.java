@@ -31,6 +31,8 @@ public class RestClientManager implements RestClientApi {
 	public static final String METHOD_PUT = "PUT";
 	public static final String METHOD_DELETE = "DELETE";
 	
+	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
+	
 	@Resource
 	private Properties appProperties;
 
@@ -79,6 +81,16 @@ public class RestClientManager implements RestClientApi {
 	    
 		if (response == null) return null;
 		return response.readEntity(serverRequest.getResponseClass());
+	}
+	
+
+	@Override
+	public boolean modoRestClientActivado() {
+		Boolean activado = Boolean.valueOf(appProperties.getProperty(PROPIEDAD_ACTIVAR_REST_CLIENT));
+		if (activado == null) {
+			activado = false;
+		}
+		return activado;
 	}
 	
 	

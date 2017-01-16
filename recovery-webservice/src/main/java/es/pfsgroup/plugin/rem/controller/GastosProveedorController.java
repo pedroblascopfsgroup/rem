@@ -492,7 +492,13 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntos(@RequestParam Long idGasto, ModelMap model){
 
-		model.put("data", gastoProveedorApi.getAdjuntos(idGasto));
+		try {
+			model.put("data", gastoProveedorApi.getAdjuntos(idGasto));
+		
+		} catch (Exception e) {
+			model.put("msg", e.getMessage());
+			model.put("success", false);
+		}
 		
 		return createModelAndViewJson(model);
 		

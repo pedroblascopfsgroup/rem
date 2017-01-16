@@ -2,11 +2,13 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.capgemini.devon.dto.WebDto;
+
 /**
  * Dto para la pestaña cabecera de la ficha de Agrupación.
  * @author Benjamín Guerrero
  */
-public class DtoAgrupaciones {
+public class DtoAgrupaciones extends WebDto {
 
 	private String nombre;
 	private String descripcion;

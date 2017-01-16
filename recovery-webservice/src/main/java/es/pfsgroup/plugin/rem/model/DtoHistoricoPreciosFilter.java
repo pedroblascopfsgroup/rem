@@ -10,6 +10,11 @@ public class DtoHistoricoPreciosFilter extends WebDto {
 	
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String idActivo;
 	
 

@@ -6,7 +6,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
+
+import javax.annotation.Resource;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -74,12 +77,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
     @Autowired
     private ActivoApi activoApi;
     
+	@Resource
+	private Properties appProperties;
+    
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();    
 
 	@Override
 	public String managerName() {
 		return "genericManager";
 	}
+	
+	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 	
 	@Override
 	@BusinessOperationDefinition("genericManager.getAuthenticationData")

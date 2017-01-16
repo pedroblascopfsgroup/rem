@@ -151,7 +151,21 @@ public class ClienteComercial implements Serializable, Auditable {
     
     @Column(name = "CLC_OBSERVACIONES")
     private String observaciones;
-   
+    
+    
+    //Se añaden nuevos atributos petición HREOS-1395
+    @Column(name = "CLC_RECHAZA_PUBLI")
+    private Boolean rechazaPublicidad;
+    
+    @Column(name = "CLC_ID_SALESFORCE")
+    private String idClienteSalesforce;
+    
+    @Column(name = "CLC_TELF_CONTACTO_VIS")
+    private String telefonoContactoVisitas;
+    
+	
+	
+	
 	@Version   
 	private Long version;
 
@@ -430,6 +444,30 @@ public class ClienteComercial implements Serializable, Auditable {
 		}
 		
 		return nombre;
+	}
+
+	public Boolean getRechazaPublicidad() {
+		return rechazaPublicidad;
+	}
+
+	public void setRechazaPublicidad(Boolean rechazaPublicidad) {
+		this.rechazaPublicidad = rechazaPublicidad;
+	}
+
+	public String getIdClienteSalesforce() {
+		return idClienteSalesforce;
+	}
+
+	public void setIdClienteSalesforce(String idClienteSalesforce) {
+		this.idClienteSalesforce = idClienteSalesforce;
+	}
+
+	public String getTelefonoContactoVisitas() {
+		return telefonoContactoVisitas;
+	}
+
+	public void setTelefonoContactoVisitas(String telefonoContactoVisitas) {
+		this.telefonoContactoVisitas = telefonoContactoVisitas;
 	}
 
    

@@ -117,6 +117,9 @@ public class Visita implements Serializable, Auditable {
     @Column(name="VIS_PROCEDENCIA")
     private String procendencia; 
     
+    @Column(name="VIS_TELF_CONTACTO_VIS")
+    private String telefonoContactoVisitas; 
+    
     
 /*    @Column(name="VIS_VISITA_PRESCRIPTOR")
     private Integer realizaVisitaPrescriptor;   
@@ -326,6 +329,14 @@ public class Visita implements Serializable, Auditable {
 
 	public void setProcendencia(String procendencia) {
 		this.procendencia = procendencia;
+	}
+
+	public String getTelefonoContactoVisitas() {
+		return telefonoContactoVisitas;
+	}
+
+	public void setTelefonoContactoVisitas(String telefonoContactoVisitas) {
+		this.telefonoContactoVisitas = telefonoContactoVisitas;
 	}
     
     

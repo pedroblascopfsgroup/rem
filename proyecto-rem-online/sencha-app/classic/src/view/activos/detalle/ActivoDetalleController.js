@@ -605,6 +605,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
   
     	    	 btn.up("gestoresactivo").down("[reference=listadoGestores]").getStore().load();
     	         btn.up("gestoresactivo").down("form").reset();
+    	         
+    	         if(Ext.decode(response.responseText).success == "false") {
+					me.fireEvent("errorToast", HreRem.i18n("msg.activo.gestores.noasignar.tramite.multiactivo"));
+    	         }
     	     }
     	 });
     },

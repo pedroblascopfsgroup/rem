@@ -28,6 +28,15 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	          	 bind: {
 	          		 hidden: '{tramite.ocultarBotonCierre}'
 	          	 }
+             },
+             {
+	           	 name: 'btnSaltoRE',
+	           	 itemId: 'btnSaltoRE',
+	           	 text: 'Avanzar a Resolución Expediente',
+	          	 handler: 'saltoResolucionExpediente',
+	          	 bind: {
+	          		 hidden: '{tramite.ocultarBotonResolucion}'
+	          	 }
              }
    		];
 

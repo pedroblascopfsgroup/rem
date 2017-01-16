@@ -29,5 +29,8 @@ public interface TareaActivoApi {
 		
 		public void saltoCierreEconomico(Long idTareaExterna);
 		
+		public void saltoResolucionExpediente(Long idTareaExterna);
+		
 		public void saltoFin(Long idTareaExterna);
+		
     }

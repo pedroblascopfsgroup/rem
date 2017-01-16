@@ -172,6 +172,12 @@ public class TareaActivoManager implements TareaActivoApi {
 	public void saltoCierreEconomico(Long idTareaExterna){
 			saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoResolucionExpediente(Long idTareaExterna){
+		saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESOLUCION);
+	}
 		
 	@Override
 	@Transactional(readOnly=false)

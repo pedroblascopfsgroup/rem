@@ -133,6 +133,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoComercializacionDescripcion;
 	private String tipoAlquilerCodigo;
 	private String tipoAlquilerDescripcion;
+	private Boolean bloqueoTipoComercializacionAutomatico;
 
 	//Activo Bancarico datos:
 	private String claseActivoCodigo;
@@ -1183,6 +1184,15 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setTipoActivoMediadorCodigo(String tipoActivoMediadorCodigo) {
 		this.tipoActivoMediadorCodigo = tipoActivoMediadorCodigo;
+	}
+
+	public Boolean getBloqueoTipoComercializacionAutomatico() {
+		return bloqueoTipoComercializacionAutomatico;
+	}
+
+	public void setBloqueoTipoComercializacionAutomatico(
+			Boolean bloqueoTipoComercializacionAutomatico) {
+		this.bloqueoTipoComercializacionAutomatico = bloqueoTipoComercializacionAutomatico;
 	}
 	
 

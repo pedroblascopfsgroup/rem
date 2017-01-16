@@ -58,6 +58,10 @@ public class VisitaDto implements Serializable {
 	private Long idUsuarioRemAccion;
 	private Date fecha;
 	
+	//Se añaden nuevos atributos petición HREOS-1396
+	@Size(max=14,groups = { Insert.class, Update.class })
+	private String telefonoContactoVisitas;
+	
 	
 	public Long getIdVisitaWebcom() {
 		return idVisitaWebcom;
@@ -148,6 +152,12 @@ public class VisitaDto implements Serializable {
 	}
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
+	}
+	public String getTelefonoContactoVisitas() {
+		return telefonoContactoVisitas;
+	}
+	public void setTelefonoContactoVisitas(String telefonoContactoVisitas) {
+		this.telefonoContactoVisitas = telefonoContactoVisitas;
 	}	
 	
 	/*public Boolean getVisitaPrescriptor() {
@@ -169,4 +179,5 @@ public class VisitaDto implements Serializable {
 		this.visitaApiCustodio = visitaApiCustodio;
 	}
 	*/
+	
 }

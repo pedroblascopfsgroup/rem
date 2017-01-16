@@ -322,11 +322,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.inscrito", dto.getInscrito());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conPosesion", dto.getConPosesion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoComercializacion", dto.getTipoComercializacion());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conOfertaAprobada", dto.getConOfertaAprobada());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conReserva", dto.getConReserva());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.destinoComercialCodigo", dto.getDestinoComercialCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conOfertaAprobada", dto.getConOfertaAprobada());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conReserva", dto.getConReserva());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tieneMediador", dto.getTieneMediador());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tieneLLavesMediador", dto.getTieneLLavesMediador());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tieneLLavesMediador", dto.getTieneLLavesMediador());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoInformeComercial", dto.getEstadoInformeComercial());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTasacion", dto.getConTasacion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoProvincia", dto.getProvinciaCodigo());
@@ -607,5 +607,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activoLlave.id", idLlave);
 		
 		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
+	public Integer isIntegradoAgrupacionObraNuevaOrAsistida(Long id) {
+
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo in ('01','13')");
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
 	}
 }

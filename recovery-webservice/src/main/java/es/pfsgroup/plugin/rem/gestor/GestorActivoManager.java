@@ -9,15 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -31,11 +28,10 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.DefaultUserAssigantionService;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
@@ -72,7 +68,8 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 	
 
 	@Transactional(readOnly = false)
-	public void insertarGestorAdicionalActivo(GestorEntidadDto dto) {
+	public Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto) {
+		Boolean inserccionOK = true;
 		if(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO.equals(dto.getTipoEntidad())){
 			if (!Checks.esNulo(dto.getIdEntidad()) && !Checks.esNulo(dto.getIdUsuario())/* && !Checks.esNulo(dto.getIdTipoDespacho())*/) {
 
@@ -93,24 +90,33 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 					gestorEntidadDao.save(gac);
 					this.guardarHistoricoGestorAdicionalEntidad(gac, act);
 				} else {
-					if (!dto.getIdUsuario().equals(gac.getUsuario().getId())) {
-						this.actualizaFechaHastaHistoricoGestorAdicionalActivo(gac);
-						gac.setUsuario(usu);
-						gac.setAuditoria(Auditoria.getNewInstance());
-						this.guardarHistoricoGestorAdicionalEntidad(gac, act);
+					//Comprobamos que el activo cumpla las condiciones para poder cambiar de gestor
+					if(this.validarTramitesNoMultiActivo(dto.getIdEntidad())) {
+						if (!dto.getIdUsuario().equals(gac.getUsuario().getId())) {
+							this.actualizaFechaHastaHistoricoGestorAdicionalActivo(gac);
+							gac.setUsuario(usu);
+							gac.setAuditoria(Auditoria.getNewInstance());
+							this.guardarHistoricoGestorAdicionalEntidad(gac, act);
+						}
+						gestorEntidadDao.saveOrUpdate(gac);
+						
+						//Actualizamos usuarios de las tareas
+						actualizarTareas(dto.getIdEntidad());
 					}
-					gestorEntidadDao.saveOrUpdate(gac);
-					
-					//Actualizamos usuarios de las tareas
-					actualizarTareas(dto.getIdEntidad());
+					else {
+						inserccionOK = false;
+					}
 				}
 			}
 		}else{
 			//super.insertarGestorAdicionalEntidad(dto);
 		}
+		
+		return inserccionOK;
 	}
 	
-	private void actualizarTareas(Long idActivo){
+	@Override
+	public void actualizarTareas(Long idActivo) {
 		
 		List<ActivoTramite> listaTramites = activoTramiteApi.getListaTramitesActivo(idActivo);
 
@@ -121,7 +127,7 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 				
 				UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
 				
-				if(userAssigantionService instanceof DefaultUserAssigantionService)
+				if(!(userAssigantionService instanceof TrabajoUserAssigantionService))
 				{
 					Usuario gestor = userAssigantionService.getUser(tareaExterna);
 				
@@ -257,6 +263,53 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public Boolean existeGestorEnActivo(Activo activo, String codGestor) {
+		
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codGestor);
+		EXTDDTipoGestor gestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		Usuario gestor = this.getGestorByActivoYTipo(activo, gestorActivo.getId());
+		
+		if(!Checks.esNulo(gestor))
+			return true;
+		else
+			return false;
+	}
+	
+	/**
+	 * Comprueba que el activo no tenga trámites MULTIACTIVO con tareas activas
+	 * @param listaTramites
+	 * @return
+	 */
+	@Override
+	public Boolean validarTramitesNoMultiActivo(Long idActivo) {
+		
+		List<ActivoTramite> listaTramites = activoTramiteApi.getListaTramitesActivo(idActivo);
+		
+		for(ActivoTramite tramite : listaTramites) {
+			if(tramite.getActivos().size() > 1 && Checks.esNulo(tramite.getFechaFin()))
+				return false;
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public Usuario getGestorComercialActual(Activo activo, String codGestor) {
+		
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codGestor);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		Usuario usuario = getGestorByActivoYTipo(activo,tipoGestor.getId());
+		if(Checks.esNulo(usuario)) {
+			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
+			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			usuario = getGestorByActivoYTipo(activo,tipoGestor.getId());
+		}
+		
+		return usuario;
 	}
 
 }

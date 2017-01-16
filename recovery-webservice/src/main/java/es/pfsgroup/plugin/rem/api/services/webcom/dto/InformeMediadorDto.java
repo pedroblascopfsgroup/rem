@@ -423,6 +423,10 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType existeConserjeVigilancia;
 	private StringDataType otrosZonasComunes;
 	
+	//Solicitud HREOS-1398
+	private BooleanDataType aceptado;
+	private StringDataType motivoRechazo;
+	
 	@NestedDto(groupBy="idActivoHaya", type=PlantaDto.class)
 	private List<PlantaDto> plantas;
 	
@@ -2217,4 +2221,17 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setActivosVinculados(List<ActivoVinculadoDto> activosVinculados) {
 		this.activosVinculados = activosVinculados;
 	}
+	public BooleanDataType getAceptado() {
+		return aceptado;
+	}
+	public void setAceptado(BooleanDataType aceptado) {
+		this.aceptado = aceptado;
+	}
+	public StringDataType getMotivoRechazo() {
+		return motivoRechazo;
+	}
+	public void setMotivoRechazo(StringDataType motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
+	}
+	
 }

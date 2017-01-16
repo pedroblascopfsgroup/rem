@@ -12,6 +12,11 @@ import es.capgemini.devon.dto.WebDto;
  */
 public class DtoActivoCargasTab extends WebDto {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String numeroActivo;
     private Integer conCargas;
     private Date fechaRevisionCarga;

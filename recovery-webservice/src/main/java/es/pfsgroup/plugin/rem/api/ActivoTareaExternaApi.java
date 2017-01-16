@@ -96,5 +96,11 @@ public interface ActivoTareaExternaApi {
      */
     public TareaExterna obtenerTareasAdmisionByCodigo(Activo activo, String codigoTarea);
 
-	
+    /**
+     * Comprueba si existen tareas activas para el tipo de gestor y tramite indicados
+     * @param activo
+     * @param codGestor
+     * @return
+     */
+    public Boolean existenTareasActivasByTramiteAndTipoGestor(Activo activo, String codTramite, String codGestor);
 }

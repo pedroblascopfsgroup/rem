@@ -59,16 +59,19 @@ BEGIN
         MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' PRO
         USING ( SELECT  
                                 MIG.PRO_PROPIETARIO_CODIGO_UVEM,
-                                MIG.PRO_COD_CARTERA,
+                                CRA.DD_CRA_ID,
                                 MIG.PRO_COD_SUBCARTERA
                                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+                                INNER JOIN DD_CRA_CARTERA CRA
+									ON CRA.DD_CRA_CODIGO = MIG.PRO_COD_CARTERA
                                 INNER JOIN ACT_PRO_PROPIETARIO PRO
 									ON PRO.PRO_CODIGO_UVEM = MIG.PRO_PROPIETARIO_CODIGO_UVEM
-								WHERE PRO.USUARIOCREAR = ''MIG''
+									AND PRO.DD_CRA_ID != CRA.DD_CRA_ID
+								WHERE PRO.USUARIOCREAR = ''MIG''								
                           ) AUX
-                ON (PRO.PRO_CODIGO_UVEM = AUX.PRO_PROPIETARIO_CODIGO_UVEM)
+                ON (PRO.PRO_CODIGO_UVEM = AUX.PRO_PROPIETARIO_CODIGO_UVEM AND PRO.USUARIOCREAR = ''MIG'')
                 WHEN MATCHED THEN UPDATE SET
-          PRO.DD_CRA_ID = (SELECT DD_CRA_ID FROM DD_CRA_CARTERA WHERE DD_CRA_CODIGO = AUX.PRO_COD_CARTERA)
+          PRO.DD_CRA_ID = AUX.DD_CRA_ID
           ,PRO.USUARIOMODIFICAR = ''MIG2''
           ,PRO.FECHAMODIFICAR = SYSDATE
       '

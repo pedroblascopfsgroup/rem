@@ -52,6 +52,12 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 			    ]
     		},
     		
+    		comboSiNoBoolean: {
+    			data : [
+			        {"codigo":"true", "descripcion": eval(String.fromCharCode(34,83,237,34))},
+			        {"codigo":"false", "descripcion":"No"} 
+			    ]
+    		},
     		
     		comboSiNoNSRem: {
     			data : [

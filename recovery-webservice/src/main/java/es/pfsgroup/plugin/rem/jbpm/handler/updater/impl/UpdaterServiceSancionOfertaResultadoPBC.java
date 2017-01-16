@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -59,24 +58,26 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 					//TODO: Rellenar campo PBC del expediente cuando esté creado.
 					if(DDSiNo.NO.equals(valor.getValor()))
 					{
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						expediente.setEstadoPbc(0);
-						expediente.setFechaAnulacion(new Date());
-						genericDao.save(ExpedienteComercial.class, expediente);
-						
-						//Finaliza el trámite
-						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-						genericDao.save(ActivoTramite.class, tramite);
-
-						//Rechaza la oferta y descongela el resto
-						ofertaApi.rechazarOferta(ofertaAceptada);
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						for(Oferta oferta : listaOfertas){
-							if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
-								ofertaApi.descongelarOferta(oferta);
+						if(!ofertaApi.checkReserva(ofertaAceptada)){
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+							expediente.setEstadoPbc(0);
+							expediente.setFechaAnulacion(new Date());
+							genericDao.save(ExpedienteComercial.class, expediente);
+							
+							//Finaliza el trámite
+							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+							genericDao.save(ActivoTramite.class, tramite);
+	
+							//Rechaza la oferta y descongela el resto
+							ofertaApi.rechazarOferta(ofertaAceptada);
+							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+							for(Oferta oferta : listaOfertas){
+								if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
+									ofertaApi.descongelarOferta(oferta);
+								}
 							}
 						}
 					}else{

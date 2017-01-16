@@ -400,7 +400,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="T013_DevolucionLlavesDecision" name="avanzaBPM"></transition>
 	</state>
 	
 	<decision name ="T013_DevolucionLlavesDecision" expression="#{T013_DevolucionLlavesDecision}">

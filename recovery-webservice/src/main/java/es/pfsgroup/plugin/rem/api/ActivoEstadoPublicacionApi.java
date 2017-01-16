@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.sql.SQLException;
 
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
+
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 
 public interface ActivoEstadoPublicacionApi {
@@ -28,4 +30,12 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return Devuelve el estado de publicación en el que se encuentra el activo.
 	 */
 	public DtoCambioEstadoPublicacion getHistoricoEstadoPublicacionByActivo(Long id);
+
+	/**
+	 * Metodo que evalua el mensaje de retorno con las excepciones del procedure ACTIVO_PUBLICACION_AUTO,
+	 * lanzadas por llamar al metodo publicacionChangeState 
+	 * @param e
+	 * @return
+	 */
+	public String getMensajeExceptionProcedure(InvalidDataAccessResourceUsageException e);
 }

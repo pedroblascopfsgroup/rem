@@ -15,6 +15,7 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROYECTO = "01";
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROMOCION = "02";
 	public static final String CODIGO_CLASE_EXPEDIENTE_ACTIVO = "03";
+	public static final String CODIGO_CLASE_GASTO = "07";
 	
 	public static final String TIPO_CONSULTA_RELACION_EXPEDIENTE = "Tipo Expediente";
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";
@@ -22,6 +23,8 @@ public class GestorDocumentalConstants {
 	public static final String[] generalDocumento = {"Número Registro:", "Fecha Documento:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
 	public static final String[] generalDocumentoModif = {"Número Registro:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
 	public static final String[] archivoFisico = {"Proveedor Custodia:", "Referencia Custodia:", "Contenedor:", "Lote:", "Posición:", "Documento Original:"};
+	
+	public static final String[] gastoMetadatos = {"ID:", "IDGasto:", "IDReo:", "Fechagasto:", "Cliente:"};
 	
 	
 	public final static HashMap<String, String> tipoExpedientePorCodigo;

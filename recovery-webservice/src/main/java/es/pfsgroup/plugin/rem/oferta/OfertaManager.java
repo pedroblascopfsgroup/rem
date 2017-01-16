@@ -938,6 +938,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
+	public boolean ratificacionComite(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		Long porcentajeImpuesto = null;
+		if(!Checks.esNulo(expediente.getCondicionante())){
+			if(!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())){
+				//porcentajeImpuesto = Long.parseLong(String.format("%.0f",expediente.getCondicionante().getTipoAplicable()));
+				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+			}else{
+				return false;
+			}
+		}
+
+		try {
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
+			return true;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+
+	}	
+	
+	@Override
 	public boolean checkPoliticaCorporativa(TareaExterna tareaExterna){
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());

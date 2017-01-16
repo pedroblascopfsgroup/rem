@@ -232,6 +232,10 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@Column(name = "PVE_TOP_PROP")
 	private Integer topPropuesto;
 	
+	@Column(name = "PVE_TELF_CONTACTO_VIS")
+	private String telefonoContactoVisitas;
+	
+	
 
 	@Version   
 	private Long version;

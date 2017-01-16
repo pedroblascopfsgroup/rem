@@ -1,11 +1,13 @@
 package es.pfsgroup.plugin.rem.model;
 
+import es.capgemini.devon.dto.WebDto;
+
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
  * @author Benjamín Guerrero
  *
  */
-public class DtoActivosSubdivision {
+public class DtoActivosSubdivision extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 	

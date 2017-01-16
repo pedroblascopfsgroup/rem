@@ -142,12 +142,42 @@
 	</state>
 	
 	<decision name ="T013_RespuestaOfertanteDecision" expression="#{T013_RespuestaOfertanteDecision}">
+		<transition to="T013_RatificacionComite" name="AceptaBankia"></transition>
 		<transition to="forkReserva" name="AceptaConReserva"></transition>
 		<transition to="forkSinReservaConTanteo" name="AceptaSinReservaConTanteo"></transition>
 		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
 		<transition to="Fin" name="Rechaza"></transition>
 	</decision>
 
+	<state name="T013_RatificacionComite">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T013_RatificacionComiteDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T013_RatificacionComiteDecision" expression="#{T013_RatificacionComiteDecision}">
+		<transition to="forkReserva" name="AceptaConReserva"></transition>
+		<transition to="forkSinReservaConTanteo" name="AceptaSinReservaConTanteo"></transition>
+		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
+		<transition to="Fin" name="Rechaza"></transition>
+	</decision>
+	
 	<fork name="forkReserva">
 		<transition to="T013_InstruccionesReserva" name="reserva"></transition>
 		<transition to="T013_InformeJuridico" name="informe"></transition>

@@ -57,6 +57,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosList', {
 		            flex: 2
 		        },
 		        {
+		        	dataIndex: 'usuario',
+		            text: HreRem.i18n('fieldlabel.usuario'),
+		            flex: 1
+		        },
+		        {
 		            dataIndex: 'estadoPublicacion',
 		            text: HreRem.i18n('title.publicaciones.historico.estado'),
 		            flex: 1

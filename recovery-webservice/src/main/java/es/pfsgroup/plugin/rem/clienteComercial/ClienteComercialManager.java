@@ -404,9 +404,16 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 					cliente.setUnidadPoblacional(null);
 				}
 			}
-			if (((JSONObject) jsonFields).containsKey("observaciones")) {
-				cliente.setObservaciones(clienteDto.getObservaciones());
+			if (((JSONObject) jsonFields).containsKey("rechazaPublicidad")) {
+				cliente.setRechazaPublicidad(clienteDto.getRechazaPublicidad());
 			}
+			if (((JSONObject) jsonFields).containsKey("idClienteSalesforce")) {
+				cliente.setIdClienteSalesforce(clienteDto.getIdClienteSalesforce());
+			}
+			if (((JSONObject) jsonFields).containsKey("telefonoContactoVisitas")) {
+				cliente.setTelefonoContactoVisitas(clienteDto.getTelefonoContactoVisitas());
+			}
+
 
 			clienteComercialDao.saveOrUpdate(cliente);
 			

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
@@ -49,7 +50,7 @@ public class ResolucionComiteController {
 	private AnotacionApi anotacionApi;
 	
 	@Autowired
-	private ActivoTramiteApi ActivoTramiteApi;
+	private ActivoTramiteApi activoTramiteApi;
 	
 	@Autowired
 	private RestApi restApi;
@@ -75,6 +76,8 @@ public class ResolucionComiteController {
 		Notificacion notifrem = null;
 		JSONObject jsonFields = null;
 		HashMap<String, String> errorsList = null;
+		Usuario usu = null;
+		Boolean ratificacion = false;
 		
 		try {
 
@@ -101,12 +104,29 @@ public class ResolucionComiteController {
 							throw new Exception("No existe el expediente comercial de la oferta.");
 						}
 						
-						List<ActivoTramite> listaTramites = ActivoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+						List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
 						if(Checks.esNulo(listaTramites) || listaTramites.size() == 0){
 							throw new Exception("No se ha podido recuperar el trámite de la oferta.");
 						}
 						
-						Usuario usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", listaTramites.get(0).getId());
+						//Averiguamos en que estado se encuentra el tramite de la oferta para enviar aviso/correo
+						ActivoTramite tramite = listaTramites.get(0);
+						List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+						for(int i=0;i< listaTareas.size(); i++){
+							TareaProcedimiento tarea = listaTareas.get(i);						
+							if(!Checks.esNulo(tarea) && tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")){
+								ratificacion = true;
+								break;
+							}
+						}
+						
+						if(ratificacion){
+							usu = gestorActivoApi.userFromTarea("T013_RatificacionComite", tramite.getId());
+						}else{
+							usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
+						}
+						
+						
 						if(Checks.esNulo(usu)){
 							throw new Exception("No se ha podido recuperar el usuario a quién notificar.");
 						}

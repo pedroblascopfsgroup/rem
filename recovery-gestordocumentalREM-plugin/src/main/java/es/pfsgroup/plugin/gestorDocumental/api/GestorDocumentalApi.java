@@ -115,6 +115,12 @@ public interface GestorDocumentalApi {
 	 * @return RespuestaGeneral
 	 * @throws GestorDocumentalException 
 	 */
-	RespuestaCatalogoDocumental catalogoDocumental(String codTipo, String codClase) throws GestorDocumentalException;	
+	RespuestaCatalogoDocumental catalogoDocumental(String codTipo, String codClase) throws GestorDocumentalException;
+	
+	/**
+	 * Método que nos dirá si el gestor documental está activo
+	 * @return
+	 */
+	boolean modoRestClientActivado();
 
 }

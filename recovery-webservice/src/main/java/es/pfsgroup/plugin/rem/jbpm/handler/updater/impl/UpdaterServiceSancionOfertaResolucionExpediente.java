@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 
 @Component
@@ -86,19 +87,29 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						Reserva reserva = expediente.getReserva();
 						if(!Checks.esNulo(reserva)){
 							reserva.setIndicadorDevolucionReserva(0);
+							Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
+							DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
+							reserva.setEstadoReserva(estadoReserva);
+							genericDao.save(Reserva.class, reserva);
 						}
 					}else{
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "05"); //Cambiar por constante cuando se haga PULL.
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						Reserva reserva = expediente.getReserva();
 						if(!Checks.esNulo(reserva)){
 							reserva.setIndicadorDevolucionReserva(1);
+							Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
+							DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
+							reserva.setEstadoReserva(estadoReserva);
+							genericDao.save(Reserva.class, reserva);
 						}
 					}
 
@@ -109,6 +120,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					Reserva reserva = expediente.getReserva();
 					if(!Checks.esNulo(reserva)){
 						reserva.setMotivoAnulacion(valor.getValor());
+						genericDao.save(Reserva.class, reserva);
 					}
 				}
 			}

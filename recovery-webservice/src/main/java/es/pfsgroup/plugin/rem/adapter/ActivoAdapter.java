@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -198,7 +199,7 @@ public class ActivoAdapter {
 
 	@Autowired
 	private GenericAdapter genericAdapter;
-
+	
 	@Autowired
 	private TabActivoFactoryApi tabActivoFactory;
 
@@ -211,7 +212,7 @@ public class ActivoAdapter {
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
 
-	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
+	//private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 
@@ -2688,7 +2689,9 @@ public class ActivoAdapter {
 			if (!Checks.esNulo(tramite.getTrabajo()))
 				if (!DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre", true);
-
+			if (!Checks.esNulo(tramite.getTrabajo()))
+				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
 			beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
 			if (!Checks.esNulo(tramite.getTrabajo())) {
 				// Trabajos asociados con expediente comercial
@@ -2987,7 +2990,7 @@ public class ActivoAdapter {
 	public List<DtoAdjunto> getAdjuntosActivo(Long id)
 			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
-		if (modoRestClient()) {
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Activo activo = activoApi.get(id);
 			return gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
 		} else {
@@ -3015,7 +3018,7 @@ public class ActivoAdapter {
 	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
 
 		if (Checks.esNulo(activoEntrada)) {
-			if (modoRestClient()) {
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				Activo activo = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
 				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
@@ -3029,7 +3032,7 @@ public class ActivoAdapter {
 				activoApi.upload(webFileItem);
 			}
 		} else {
-			if (modoRestClient()) {
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
@@ -3078,7 +3081,7 @@ public class ActivoAdapter {
 
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		boolean borrado = false;
-		if (modoRestClient()) {
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			try {
 				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
@@ -3091,13 +3094,14 @@ public class ActivoAdapter {
 		return borrado;
 	}
 
-	private boolean modoRestClient() {
+	// MOVIDO A GENERIC MANAGER
+	/*private boolean modoRestClient() {
 		Boolean activar = Boolean.valueOf(appProperties.getProperty(PROPIEDAD_ACTIVAR_REST_CLIENT));
 		if (activar == null) {
 			activar = false;
 		}
 		return activar;
-	}
+	}*/
 
 	// public List<DtoActivoAviso> getAvisosActivoById(Long id) {
 	// FIXME: Formatear aquí o en vista cuando se sepa el diseño.

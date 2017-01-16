@@ -2,12 +2,14 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.capgemini.devon.dto.WebDto;
+
 
 /**
  * DTO que gestiona las provisiones y suplidos
  *
  */
-public class DtoProvisionSuplido {
+public class DtoProvisionSuplido extends WebDto {
 
 	private static final long serialVersionUID = 1L;
 	

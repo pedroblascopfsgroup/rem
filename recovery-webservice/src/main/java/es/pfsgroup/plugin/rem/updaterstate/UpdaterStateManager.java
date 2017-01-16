@@ -1,21 +1,27 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 @Service("updaterStateManager")
 public class UpdaterStateManager implements UpdaterStateApi{
@@ -35,6 +41,9 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 	
 	@Override
 	public Boolean getStateAdmision(Activo activo) {
@@ -131,6 +140,86 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 		
 		return codigo;
-	}	
+	}
+	
+	@Override
+	public void updaterStateTipoComercializacion(Activo activo) {
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
+		//Si el activo tiene activado el bloqueo para el cambio automático o No es comercializable, no hará nada
+		if(!activo.getBloqueoTipoComercializacionAutomatico() && (Checks.esNulo(perimetro) || perimetro.getAplicaComercializar() == 1)) {
+			String codigoTipoComercializacion = this.getCodigoTipoComercializacionFromActivo(activo); 
+			
+			//Si el tipoComercializacion calculado no es nulo y es distinto al actual del Activo, entonces...
+			if(!Checks.esNulo(codigoTipoComercializacion) && !codigoTipoComercializacion.equals(activo.getTipoComercializar().getCodigo())) {
+				
+				HashMap<String,String> mapaComercial = new HashMap<String,String> ();
+				mapaComercial.put(DDTipoComercializar.CODIGO_SINGULAR, "GCOMSIN");
+				mapaComercial.put(DDTipoComercializar.CODIGO_RETAIL, "GCOMRET");
+				
+				//Comprobamos que se pueda realizar el cambio, analizando tareas activas comerciales y si hay gestor adecuado en el activo
+				if(gestorActivoApi.existeGestorEnActivo(activo, mapaComercial.get(codigoTipoComercializacion))) {
+					activo.setTipoComercializar((DDTipoComercializar)utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class,codigoTipoComercializacion));
+					genericDao.update(Activo.class, activo);
+					gestorActivoApi.actualizarTareas(activo.getId());
+				}
+				//Si no existe el gestor comercial adecuado, pero no hay tareas activas para dicho tipo, se puede realizar el cambio en el activo de tipo comercializar
+				else if(!activoTareaExternaApi.existenTareasActivasByTramiteAndTipoGestor(activo, "T013", mapaComercial.get(codigoTipoComercializacion))) {
+					
+					activo.setTipoComercializar((DDTipoComercializar)utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class,codigoTipoComercializacion));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * (Activo en Promocion Obra Nueva o Asistida // Activo de 1ª o 2ª Residencia )-> Retail
+	 * Cajamar: VNC <= 500000 -> Retail), en caso contrario -> Singular
+	 * Sareb/Bankia: AprobadoVenta (si no hay, valorTasacion) <= 500000 -> Retail), en caso contrario -> Singular
+	 * @param activo
+	 * @return
+	 */
+	private String getCodigoTipoComercializacionFromActivo(Activo activo) {
+		
+		String codigoTipoComercializacion = null;
+		
+		if(activoApi.isIntegradoAgrupacionObraNuevaOrAsistida(activo))
+			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
+		else if(DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino()) ||
+				DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino()))
+			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
+		else 
+		{
+			Double importeLimite = (double) 500000;
+			
+			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()))
+			{
+				Double valorVNC = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
+				if(!Checks.esNulo(valorVNC)) {
+					if(valorVNC <= importeLimite)
+						codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
+					else
+						codigoTipoComercializacion = DDTipoComercializar.CODIGO_SINGULAR;
+				}
+			} 
+			else if(DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) ||
+					DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) 
+			{
+				importeLimite += 100000;
+				Double valorActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+				
+				if(Checks.esNulo(valorActivo))
+					valorActivo = activoApi.getTasacionMasReciente(activo).getValoracionBien().getImporteValorTasacion().doubleValue();
+				
+				if(!Checks.esNulo(valorActivo)) {
+					if(valorActivo <= importeLimite)
+						codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
+					else
+						codigoTipoComercializacion = DDTipoComercializar.CODIGO_SINGULAR;
+				}
+			}
+		}
+		
+		return codigoTipoComercializacion;
+	}
 
 }

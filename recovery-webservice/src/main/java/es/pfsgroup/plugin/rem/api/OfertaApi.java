@@ -208,6 +208,14 @@ public interface OfertaApi {
 	public boolean checkReserva(TareaExterna tareaExterna);
 	
 	/**
+	 * Método que comprueba si un activo tiene reserva.
+	 * 
+	 * @param tareaExterna
+	 * @return true si tiene reserva, false si no la tiene.
+	 */
+	public boolean checkReserva(Oferta oferta);
+	
+	/**
 	 * Método que comprueba si el activo tiene derecho de tanteo por la Generalitat
 	 * @param trabajo
 	 * @return true si tiene derecho de tanteo, false si no lo tiene

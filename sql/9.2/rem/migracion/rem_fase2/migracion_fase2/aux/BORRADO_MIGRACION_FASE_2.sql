@@ -195,7 +195,7 @@ BEGIN
 	WHERE ADJ.GPV_ID IN (
 	select gpv_id from ADG_ADJUNTOS_GASTO adg
 	where not exists (
-	  select 1 from GPV_GASTOS_PROVEEDOR gpv where gpv.GPV_ID = adg.GPV_ID)
+	  select 1 from GPV_GASTOS_PROVEEDOR gpv where gpv.GPV_ID = adg.GPV_ID));
 
 	DELETE FROM ADE_ADJUNTO_EXPEDIENTE ADJ
 	WHERE ADJ.ECO_ID IN (

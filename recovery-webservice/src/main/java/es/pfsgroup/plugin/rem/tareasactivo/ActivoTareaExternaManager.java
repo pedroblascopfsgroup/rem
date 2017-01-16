@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
-import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -20,13 +18,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
-import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 
 
@@ -52,6 +49,9 @@ public class ActivoTareaExternaManager /*extends TareaExternaManager*/ implement
     
     @Autowired
     private ActivoTramiteApi activoTramiteApi;
+    
+    @Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.rem.test.tareas.ActivoTareaExternaManagerApi#getTareasByIdTramite(java.lang.Long)
@@ -149,4 +149,23 @@ public class ActivoTareaExternaManager /*extends TareaExternaManager*/ implement
 		return (!Checks.estaVacio(listaTareas)? listaTareas.get(0) : null);
     }
     
+    @Override
+    public Boolean existenTareasActivasByTramiteAndTipoGestor(Activo activo, String codTramite, String codGestor) {
+    	    
+    	Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codGestor);
+		EXTDDTipoGestor gestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(activo, gestorActivo.getId());
+		
+		if(!Checks.esNulo(gestorActivo)) {
+			List<ActivoTramite> listaTramites = activoTramiteApi.getListaTramitesActivo(activo.getId());
+			
+			for(ActivoTramite tramite : listaTramites) {
+				if(codTramite.equals(tramite.getTipoTramite().getCodigo()) && !Checks.estaVacio(this.getActivasByIdTramite(tramite.getId(), gestor))) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+    }
 }

@@ -171,6 +171,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
+
     
     COMMIT;
 EXCEPTION

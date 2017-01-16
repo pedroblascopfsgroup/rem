@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 
 @Component
@@ -46,6 +47,9 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 
 	SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -72,8 +76,11 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 			//Cambiar estado de la propuesta, y asignarle fecha de carga
 			activoApi.actualizarFechaYEstadoCargaPropuesta(Long.parseLong(exc.dameCelda(1, 2)));
 			
+			
+			
 			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilas(); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, EXCEL_COL_NUMACTIVO)));
+				Boolean actualizatTipoComercializacionActivo = false;
 				
 				//Si hay Valoracion = Valor Neto Contable (VNC) actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 38))){
@@ -82,6 +89,7 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 							Double.parseDouble(exc.dameCelda(fila, 38).replace(",", ".")),
 							null,
 							null);
+					actualizatTipoComercializacionActivo = true;
 				}
 				
 				//Si hay Valoracion = Precio Aprobado venta para actualizar o crear
@@ -91,6 +99,8 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 							Double.parseDouble(exc.dameCelda(fila, 66).replace(",", ".")),
 							exc.dameCelda(fila, 67),
 							exc.dameCelda(fila, 68));
+					actualizatTipoComercializacionActivo = true;
+					
 				}
 				
 				//Si hay Valoracion = Precio Aprobado renta para actualizar o crear
@@ -173,6 +183,10 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 							exc.dameCelda(fila, 35),
 							null);
 				}
+				
+				//Actualizar el tipoComercialización del activo
+				if(actualizatTipoComercializacionActivo)
+					updaterState.updaterStateTipoComercializacion(activo);
 				
 			}
 

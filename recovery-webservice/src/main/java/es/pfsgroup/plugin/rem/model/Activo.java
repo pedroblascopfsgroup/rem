@@ -388,6 +388,9 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_VENTA_EXTERNA_IMPORTE")
     private Double importeVentaExterna;
 
+    @Column(name = "ACT_BLOQUEO_TIPO_COMERCIALIZAR")
+    private Boolean bloqueoTipoComercializacionAutomatico;
+    
 	@Version   
 	private Long version;
 
@@ -1505,6 +1508,16 @@ public class Activo implements Serializable, Auditable {
 
 	public void setImporteVentaExterna(Double importeVentaExterna) {
 		this.importeVentaExterna = importeVentaExterna;
+	}
+	
+	public Boolean getBloqueoTipoComercializacionAutomatico() {
+		return bloqueoTipoComercializacionAutomatico;
+	}
+
+	public void setBloqueoTipoComercializacionAutomatico(
+			Boolean bloqueoTipoComercializacionAutomatico) {
+		this.bloqueoTipoComercializacionAutomatico = bloqueoTipoComercializacionAutomatico;
+
 	}
 	
 	

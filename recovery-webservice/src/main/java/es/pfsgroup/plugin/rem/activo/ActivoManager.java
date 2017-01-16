@@ -50,6 +50,9 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -201,6 +204,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
 	@Override
 	public String managerName() {
@@ -224,6 +230,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -611,6 +623,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
 
 				genericDao.save(ActivoValoraciones.class, activoValoracion);
+			}
+			
+			if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(dto.getCodigoTipoPrecio())) {
+				//Actualizar el tipoComercialización del activo
+				updaterState.updaterStateTipoComercializacion(activo);
 			}
 
 		} catch (Exception ex) {
@@ -2310,6 +2327,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						beanUtilNotNull.copyProperty(tasacion, "valoracionBien", valoracionBien);
 
 						genericDao.save(ActivoTasacion.class, tasacion);
+						//Actualizar el tipoComercialización del activo
+						updaterState.updaterStateTipoComercializacion(activo);
 					}
 				}
 			} catch (Exception e) {
@@ -3117,5 +3136,30 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		activoDao.save(activo);
 
 		return true;
+	}
+	
+	public boolean isIntegradoAgrupacionObraNuevaOrAsistida(Activo activo) {
+		Integer contador = activoDao.isIntegradoAgrupacionObraNuevaOrAsistida(activo.getId());
+		if (contador > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public Double getImporteValoracionActivoByCodigo(Activo activo, String codTipoPrecio) {
+		
+		List<ActivoValoraciones> listActivoValoracion = activo.getValoracion();
+		if (!Checks.estaVacio(listActivoValoracion)) {
+			for (ActivoValoraciones valoracion : listActivoValoracion)
+			{
+				if (codTipoPrecio.equals(valoracion.getTipoPrecio().getCodigo()) && (Checks.esNulo(valoracion.getFechaFin()) || valoracion.getFechaFin().after(new Date()))) {
+					return valoracion.getImporte();
+				}
+			}			
+		}
+		
+		return null;
 	}
 }

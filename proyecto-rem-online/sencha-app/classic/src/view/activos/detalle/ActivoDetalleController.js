@@ -1245,6 +1245,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(false);
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
@@ -1258,6 +1262,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(false);
+    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
@@ -1269,6 +1277,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicacionpublicar').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(false);
+    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
     		break;
     	case "chkbxpublicaciondespublicar":
     		me.chkbxPublicacionForzadaLastState = view.lookupReference('chkbxpublicacionforzada').getValue();
@@ -1281,6 +1293,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicacionpublicar').reset();
     		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(false);
+    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
@@ -1292,6 +1308,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicacionpublicar').reset();
     		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(false);
+    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;

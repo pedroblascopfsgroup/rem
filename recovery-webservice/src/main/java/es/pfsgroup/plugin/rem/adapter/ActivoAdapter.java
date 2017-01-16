@@ -49,7 +49,6 @@ import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -2992,7 +2991,16 @@ public class ActivoAdapter {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Activo activo = activoApi.get(id);
-			return gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
+			listaAdjuntos =	gestorDocumentalAdapterApi.getAdjuntosActivo(activo);			
+			
+			for(DtoAdjunto adj: listaAdjuntos){
+				ActivoAdjuntoActivo adjuntoActivo = activo.getAdjunto(adj.getId());
+				adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
+				adj.setContentType(adjuntoActivo.getContentType());
+				adj.setGestor(adjuntoActivo.getAuditoria().getUsuarioCrear());
+				adj.setTamanyo(adjuntoActivo.getTamanyo());				
+			}		
+			
 		} else {
 			listaAdjuntos = getAdjuntosActivo(id, listaAdjuntos);
 		}
@@ -3007,8 +3015,9 @@ public class ActivoAdapter {
 			DtoAdjunto dto = new DtoAdjunto();
 
 			BeanUtils.copyProperties(dto, adjunto);
-			dto.setIdActivo(activo.getId());
+			dto.setIdEntidad(activo.getId());
 			dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
+			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
 
 			listaAdjuntos.add(dto);
 		}

@@ -6,8 +6,18 @@ Ext.define('HreRem.model.AdjuntoProveedor', {
     idProperty: 'id',
 
     fields: [
+		    
+    
+         
+    		{
+		    	name: 'idEntidad'
+		    },
 		    {
-		    	name: 'idProveedor'
+		    	name: 'idProveedor',
+    			calculate: function(data) { 
+    				return Ext.isEmpty(data.idActivo) ? data.idEntidad : data.idProveedor; 
+    			},
+    			depends: 'idEntidad' 
 		    },
 		    {
 		    	name: 'codigoTipo'

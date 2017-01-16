@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
@@ -468,7 +469,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
      * @param adjuntoId long
      */
 	@RequestMapping(method = RequestMethod.POST)
-    public ModelAndView deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
+    public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		
 		boolean success= false;
 		

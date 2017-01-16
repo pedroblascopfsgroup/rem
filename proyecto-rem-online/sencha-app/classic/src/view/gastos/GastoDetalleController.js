@@ -903,7 +903,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		idGasto = me.getViewModel().get("gasto.id");
 
 		record.erase({
-			params: {idGasto: idGasto},
+			params: {idEntidad: idGasto},
             success: function(record, operation) {
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
            		 grid.fireEvent("afterdelete", grid);

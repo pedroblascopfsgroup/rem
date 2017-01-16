@@ -119,14 +119,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaDocumentosExpedientes respuesta = null;
 		respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
-		for (DtoAdjunto adjunto : list) {
-			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
-			if (tipoDoc==null) {
-				adjunto.setDescripcionTipo("");
-			} else {
-				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
-			}			
-		}
 
 		return list;
 	}

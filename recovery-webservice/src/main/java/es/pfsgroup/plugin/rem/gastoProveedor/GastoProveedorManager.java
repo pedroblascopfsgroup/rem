@@ -38,6 +38,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.gestorDocumental.model.DDTdnTipoDocumento;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -48,6 +49,7 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
@@ -109,6 +111,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public final String PESTANA_CONTABILIDAD = "contabilidad";
 	public final String PESTANA_GESTION = "gestion";
 	public final String PESTANA_IMPUGNACION = "impugnacion";
+	
+	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
+	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_DESC = "Expedient not found:";
 	
 
 	@Autowired
@@ -340,20 +345,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoProveedor.setGastoDetalleEconomico(detalleEconomico);
 		gastoProveedor.setGastoGestion(gestion);
 		gastoProveedor.setGastoInfoContabilidad(contabilidad);
-		
-		// Creamos el contenedor del gasto en gestor documental.
-		
-		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {				
-			Integer idExpediente;
-			try {
-				idExpediente = gestorDocumentalAdapterApi.crearGasto(gastoProveedor, usuario.getUsername());
-				logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gastoProveedor.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
-			} catch (GestorDocumentalException gexc) {
-				logger.debug(gexc.getMessage());
-			}
-			
-		}
-		
+
 		return gastoProveedor;
 		
 	}
@@ -1370,12 +1362,41 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException {
 		
 		GastoProveedor gasto = findOne(id);
+		Usuario usuario = genericAdapter.getUsuarioLogado();
 		
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+
+			try {
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosGasto(gasto.getNumGastoHaya().toString());
+				
+				for(DtoAdjunto adj: listaAdjuntos){
+					AdjuntoGasto adjuntoGasto = gasto.getAdjunto(adj.getId());
+					adj.setDescripcionTipo(adjuntoGasto.getTipoDocumentoGasto().getDescripcion());
+					adj.setContentType(adjuntoGasto.getContentType());
+					adj.setGestor(adjuntoGasto.getAuditoria().getUsuarioCrear());
+					adj.setTamanyo(adjuntoGasto.getTamanyo());		
+				}	
+				
+				
+			} catch (GestorDocumentalException gex) {
+				String[] error = gex.getMessage().split("-");
+				
+				// Si no existe el expediente lo creamos
+				if(EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0])) {
 			
-			return gestorDocumentalAdapterApi.getAdjuntosGasto(gasto.getNumGastoHaya().toString());
+					Integer idExpediente;
+					try {
+						idExpediente = gestorDocumentalAdapterApi.crearGasto(gasto, usuario.getUsername());
+						logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gasto.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
+					} catch (GestorDocumentalException gexc) {
+						logger.debug(gexc.getMessage());
+					}
+				}
+				
+				throw gex;		
+			}
 			
 		} else {
 			
@@ -1394,7 +1415,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				} catch (InvocationTargetException e) {
 					logger.error(e.getMessage());
 				}
-				dto.setIdGasto(gasto.getId());
+				dto.setIdEntidad(gasto.getId());
 				dto.setDescripcionTipo(adjunto.getTipoDocumentoGasto().getDescripcion());
 				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());				
 				
@@ -1429,6 +1450,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao
 						.get(DDTipoDocumentoGasto.class, filtro);	
 				
+				
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoGasto(gasto, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
 				
 				adjuntoGasto.setIdDocRestClient(idDocRestClient);
@@ -1446,6 +1468,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			return e.getMessage();
 		}
 		
 		return null;
@@ -1484,7 +1507,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
     public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		
 		try{
-			GastoProveedor gasto= findOne(dtoAdjunto.getIdGasto());
+			GastoProveedor gasto= findOne(dtoAdjunto.getIdEntidad());
 			AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
 			
 			
@@ -1506,7 +1529,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
     @BusinessOperationDefinition("gastoProveedorManager.getFileItemAdjunto")
 	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
 		
-		GastoProveedor gasto= findOne(dtoAdjunto.getIdGasto());
+		GastoProveedor gasto= findOne(dtoAdjunto.getIdEntidad());
 		AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
 		FileItem fileItem = null;
 		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {

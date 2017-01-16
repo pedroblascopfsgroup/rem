@@ -297,7 +297,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 
-		Activo activo = get(dtoAdjunto.getIdActivo());
+		Activo activo = get(dtoAdjunto.getIdEntidad());
 		ActivoAdjuntoActivo adjunto = activo.getAdjunto(dtoAdjunto.getId());
 
 		if (adjunto == null) {

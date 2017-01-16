@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.capgemini.devon.dto.WebDto;
+
 
 
 
@@ -10,7 +12,7 @@ import java.util.Date;
  * @author Benjamín Guerrero
  *
  */
-public class DtoAgrupacionesActivo {
+public class DtoAgrupacionesActivo extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 

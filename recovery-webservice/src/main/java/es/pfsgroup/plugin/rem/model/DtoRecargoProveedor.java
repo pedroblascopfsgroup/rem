@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import es.capgemini.devon.dto.WebDto;
+
 
 /**
  * DTO que gestiona los presupuestos presentados para un trabajo
@@ -7,7 +9,7 @@ package es.pfsgroup.plugin.rem.model;
  * @author Carlos Feliu
  *
  */
-public class DtoRecargoProveedor {
+public class DtoRecargoProveedor extends WebDto {
 
 	private static final long serialVersionUID = 1L;
 	

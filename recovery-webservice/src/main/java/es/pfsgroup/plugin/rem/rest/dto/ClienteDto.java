@@ -96,6 +96,12 @@ public class ClienteDto implements Serializable{
 		Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
 	
+	//Se añaden nuevos atributos petición HREOS-1395
+	private Boolean rechazaPublicidad;
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String idClienteSalesforce;
+	@Size(max=14,groups = { Insert.class, Update.class })
+	private String telefonoContactoVisitas;
 	
 	public Date getFechaAccion() {
 		return fechaAccion;
@@ -259,6 +265,24 @@ public class ClienteDto implements Serializable{
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Boolean getRechazaPublicidad() {
+		return rechazaPublicidad;
+	}
+	public void setRechazaPublicidad(Boolean rechazaPublicidad) {
+		this.rechazaPublicidad = rechazaPublicidad;
+	}
+	public String getIdClienteSalesforce() {
+		return idClienteSalesforce;
+	}
+	public void setIdClienteSalesforce(String idClienteSalesforce) {
+		this.idClienteSalesforce = idClienteSalesforce;
+	}
+	public String getTelefonoContactoVisitas() {
+		return telefonoContactoVisitas;
+	}
+	public void setTelefonoContactoVisitas(String telefonoContactoVisitas) {
+		this.telefonoContactoVisitas = telefonoContactoVisitas;
 	}
 	
 	

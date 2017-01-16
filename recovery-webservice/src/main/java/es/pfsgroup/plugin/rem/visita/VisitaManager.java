@@ -523,6 +523,10 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					}
 				}
 			}
+			
+			if (((JSONObject) jsonFields).containsKey("telefonoContactoVisitas")) {
+				visita.setTelefonoContactoVisitas(visitaDto.getTelefonoContactoVisitas());
+			}	
 
 			visitaDao.saveOrUpdate(visita);
 		}

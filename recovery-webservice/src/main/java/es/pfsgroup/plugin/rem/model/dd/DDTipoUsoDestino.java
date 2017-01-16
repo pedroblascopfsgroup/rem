@@ -31,9 +31,13 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoUsoDestino implements Auditable, Dictionary {
 	
 
-	/**
-	 * 
-	 */
+	public static final String TIPO_USO_PRIMERA_RESIDENCIA = "01";
+	public static final String TIPO_USO_SEGUNDA_RESIDENCIA = "06";
+	public static final String TIPO_USO_TERCIARIO = "02";
+	public static final String TIPO_USO_INDUSTRIAL = "03";
+	public static final String TIPO_USO_DOTACIONAL = "04";
+	public static final String TIPO_USO_OTROS = "05";
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

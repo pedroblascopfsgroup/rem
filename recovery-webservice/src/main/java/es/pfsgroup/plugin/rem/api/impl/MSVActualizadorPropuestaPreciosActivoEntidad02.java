@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class MSVActualizadorPropuestaPreciosActivoEntidad02 implements MSVLiberator {
@@ -45,6 +46,9 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad02 implements MSVLibera
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 
 	SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -73,6 +77,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad02 implements MSVLibera
 			
 			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilas(); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, EXCEL_COL_NUMACTIVO)));
+				Boolean actualizatTipoComercializacionActivo = false;
 				
 				//Si hay Valoracion = Valor Neto Contable (Valor de Transferencia) actualizar o crear -- Columna AS
 				if(!Checks.esNulo(exc.dameCelda(fila, 44))){
@@ -81,6 +86,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad02 implements MSVLibera
 							Double.parseDouble(exc.dameCelda(fila, 44).replace(",", ".")),
 							null,
 							null);
+					actualizatTipoComercializacionActivo = true;
 				}
 				
 				//Si hay Valoracion = Precio Aprobado venta(Precio Web Referencia) para actualizar o crear -- Columna AW
@@ -90,6 +96,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad02 implements MSVLibera
 							Double.parseDouble(exc.dameCelda(fila, 48).replace(",", ".")),
 							exc.dameCelda(fila, 49),
 							exc.dameCelda(fila, 50));
+					actualizatTipoComercializacionActivo = true;
 				}
 				
 				//Si hay Valoracion = Precio Aprobado renta (Precio Renta Referencia) para actualizar o crear -- Columna AZ
@@ -156,6 +163,10 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad02 implements MSVLibera
 							null,
 							null);
 				}
+				
+				//Actualizar el tipoComercialización del activo
+				if(actualizatTipoComercializacionActivo)
+					updaterState.updaterStateTipoComercializacion(activo);
 				
 			}
 

@@ -103,6 +103,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 		}
 		return respuesta;
@@ -142,6 +143,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;
@@ -167,6 +169,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;
@@ -200,6 +203,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;
@@ -226,6 +230,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;
@@ -251,6 +256,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;
@@ -275,6 +281,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;
@@ -310,6 +317,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;
@@ -336,6 +344,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;

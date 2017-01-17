@@ -3004,16 +3004,23 @@ public class ActivoAdapter {
 	public List<DtoAdjunto> getAdjuntosActivo(Long id)
 			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Activo activo = activoApi.get(id);
 			listaAdjuntos =	gestorDocumentalAdapterApi.getAdjuntosActivo(activo);			
 			
 			for(DtoAdjunto adj: listaAdjuntos){
-				ActivoAdjuntoActivo adjuntoActivo = activo.getAdjunto(adj.getId());
-				adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
-				adj.setContentType(adjuntoActivo.getContentType());
-				adj.setGestor(adjuntoActivo.getAuditoria().getUsuarioCrear());
-				adj.setTamanyo(adjuntoActivo.getTamanyo());				
+				ActivoAdjuntoActivo adjuntoActivo = activo.getAdjuntoGD(adj.getId());
+				if(!Checks.esNulo(adjuntoActivo)) {
+					if(!Checks.esNulo(adjuntoActivo.getTipoDocumentoActivo())) {
+						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
+					}
+					adj.setContentType(adjuntoActivo.getContentType());
+					if(!Checks.esNulo(adjuntoActivo.getAuditoria())) {
+						adj.setGestor(adjuntoActivo.getAuditoria().getUsuarioCrear());
+					}
+					adj.setTamanyo(adjuntoActivo.getTamanyo());
+				}
 			}		
 			
 		} else {

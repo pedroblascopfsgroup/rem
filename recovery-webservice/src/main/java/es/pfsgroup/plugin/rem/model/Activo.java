@@ -1332,6 +1332,18 @@ public class Activo implements Serializable, Auditable {
         }
         return null;
     }
+    
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public ActivoAdjuntoActivo getAdjuntoGD(Long idDocRestClient) {
+    	for (ActivoAdjuntoActivo adj : getAdjuntos()) {
+            if (adj.getIdDocRestClient().equals(id)) { return adj; }
+        }
+        return null;
+    }
 
 	public Integer getLlavesHre() {
 		return llavesHre;

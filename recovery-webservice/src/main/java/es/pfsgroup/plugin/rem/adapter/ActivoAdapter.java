@@ -1259,7 +1259,7 @@ public class ActivoAdapter {
 	 * Activo activo = activoApi.get(id); if (valoracionesDto.getBloqueoPrecio()
 	 * != null) { if (valoracionesDto.getBloqueoPrecio() > 0) {
 	 * activo.setBloqueoPrecioFechaIni(new Date()); Usuario usuarioLogado =
-	 * proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+	 * genericAdapter.getUsuarioLogado();
 	 * activo.setGestorBloqueoPrecio(usuarioLogado); } else {
 	 * activo.setBloqueoPrecioFechaIni(null);
 	 * activo.setGestorBloqueoPrecio(null); } }
@@ -1877,7 +1877,7 @@ public class ActivoAdapter {
 
 		ActivoObservacion activoObservacion = new ActivoObservacion();
 		Activo activo = activoApi.get(idActivo);
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		try {
 
@@ -1906,7 +1906,7 @@ public class ActivoAdapter {
 
 		ActivoCondicionEspecifica activoCondicionEspecifica = new ActivoCondicionEspecifica();
 		Activo activo = activoApi.get(idActivo);
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		try {
 			activoCondicionEspecifica.setFechaDesde(dtoCondicionHistorico.getFechaAlta());
@@ -2454,7 +2454,7 @@ public class ActivoAdapter {
 
 	public Page getActivos(DtoActivoFilter dtoActivoFiltro) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		if (!Checks.esNulo(usuarioCartera))
@@ -2730,7 +2730,7 @@ public class ActivoAdapter {
 
 	public List<DtoListadoTareas> getTareasTramite(Long idTramite) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		List<TareaExterna> tareasTramite = new ArrayList<TareaExterna>();
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
@@ -3051,7 +3051,7 @@ public class ActivoAdapter {
 		if (Checks.esNulo(activoEntrada)) {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				Activo activo = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
-				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
 				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao
@@ -3064,7 +3064,7 @@ public class ActivoAdapter {
 			}
 		} else {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
 				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao
@@ -3088,7 +3088,7 @@ public class ActivoAdapter {
 		// Activo activo =
 		// activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
 		// Usuario usuarioLogado =
-		// proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		// genericAdapter.getUsuarioLogado();
 		//
 		// Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 		// webFileItem.getParameter("tipo"));
@@ -3113,7 +3113,7 @@ public class ActivoAdapter {
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		boolean borrado = false;
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 			try {
 				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
 			} catch (Exception e) {
@@ -3137,7 +3137,7 @@ public class ActivoAdapter {
 	// public List<DtoActivoAviso> getAvisosActivoById(Long id) {
 	// FIXME: Formatear aquí o en vista cuando se sepa el diseño.
 	public DtoAviso getAvisosActivoById(Long id) {
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		List<DtoAviso> avisos = activoAvisadorApi.getListActivoAvisador(id, usuarioLogado);
 
@@ -3192,7 +3192,7 @@ public class ActivoAdapter {
 	 * dtoPresupuestoFiltro) {
 	 * 
 	 * Usuario usuarioLogado =
-	 * proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+	 * genericAdapter.getUsuarioLogado();
 	 * 
 	 * return (Page)
 	 * activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro,
@@ -3202,7 +3202,7 @@ public class ActivoAdapter {
 	@SuppressWarnings("unchecked")
 	public DtoPage findAllHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dtoPresupuestoFiltro) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		Page pagePresupuestosActivo = activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro, usuarioLogado);
 
@@ -3249,7 +3249,7 @@ public class ActivoAdapter {
 	@SuppressWarnings("unchecked")
 	public DtoPresupuestoGraficoActivo findLastPresupuesto(DtoActivosTrabajoFilter dtoFilter) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		DtoPresupuestoGraficoActivo presupuestoGrafico = new DtoPresupuestoGraficoActivo();
 
@@ -3568,7 +3568,7 @@ public class ActivoAdapter {
 		}
 		Filter llaveIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
 		ActivoLlave llave = genericDao.get(ActivoLlave.class, llaveIDFilter);
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		if (!Checks.esNulo(llave) && !Checks.esNulo(usuarioLogado)) {
 			llave.getAuditoria().setBorrado(true);
@@ -3671,7 +3671,7 @@ public class ActivoAdapter {
 				}
 
 				// Datos auditoria
-				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				if (!Checks.esNulo(usuarioLogado)) {
 					movimiento.getAuditoria().setFechaModificar(new Date());
 					movimiento.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
@@ -3699,7 +3699,7 @@ public class ActivoAdapter {
 		}
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
 		ActivoMovimientoLlave movimiento = genericDao.get(ActivoMovimientoLlave.class, filtro);
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		// Datos auditoria
 		if (!Checks.esNulo(movimiento) && !Checks.esNulo(usuarioLogado)) {

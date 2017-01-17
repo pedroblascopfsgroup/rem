@@ -41,6 +41,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_PROPIETARIO = "msg.validacion.gasto.propietario";
 	private static final String VALIDACION_TIPO_SUBTIPO = "msg.validacion.gasto.tipo.subtipo";
 	
+	private static final String COD_DESTINATARIO_HAYA = "02";
+	
 	
 	
 	@Override
@@ -58,7 +60,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			return error;
 		}
 		
-		if(Checks.esNulo(gasto.getPropietario())) {
+		if(!Checks.esNulo(gasto.getDestinatarioGasto()) && !COD_DESTINATARIO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo()) &&  Checks.esNulo(gasto.getPropietario())) {
 			error = messageServices.getMessage(VALIDACION_PROPIETARIO);
 			return error;
 		}

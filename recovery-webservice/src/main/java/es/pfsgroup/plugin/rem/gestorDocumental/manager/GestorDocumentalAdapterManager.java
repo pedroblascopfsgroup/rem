@@ -166,8 +166,13 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaGeneral respuesta = null;
 		try {
 			respuesta = gestorDocumentalApi.bajaDocumento(login, idDocumento.intValue());
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getCodigoError())) {
+				logger.debug(respuesta.getCodigoError() + " - " + respuesta.getMensajeError());				
+			}
+			
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
 		}
 		if(!Checks.esNulo(respuesta) && "".equals(respuesta.getCodigoError())) {
 			return true;

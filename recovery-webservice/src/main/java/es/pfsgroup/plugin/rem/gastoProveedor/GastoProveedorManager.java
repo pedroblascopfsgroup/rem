@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {
@@ -1470,13 +1471,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				genericDao.update(AdjuntoGasto.class, adjuntoGasto);		
 
 			}
-
-			// Comprobamos si tenemos que cambiar el estado del gasto.
-			boolean estadoCambiado = updaterStateApi.updaterStates(gasto, null);	  
-			if(estadoCambiado) {
-				gasto.getAdjuntos().add(adjuntoGasto);		
-				genericDao.save(GastoProveedor.class, gasto);
-			}
+			
+			gasto.getAdjuntos().add(adjuntoGasto);
+			// Comprobamos si ha cambiado el estado del gasto.
+			updaterStateApi.updaterStates(gasto, null);	  
+			genericDao.save(GastoProveedor.class, gasto);
+			
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -1517,24 +1517,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@BusinessOperation(overrides = "gastoProveedorManager.deleteAdjunto")
 	@Transactional(readOnly = false)
     public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
-		
-		try{
-			GastoProveedor gasto= findOne(dtoAdjunto.getIdEntidad());
-			AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
+
+			boolean borrado = false;
 			
-			
-			
-		    if (adjuntoGasto == null) { return false; }
-		    gasto.getAdjuntos().remove(adjuntoGasto);
-		    genericDao.save(GastoProveedor.class, gasto);
-		    
-		}catch (Exception e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-	    
-	    
-	    return true;
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();				
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
+
+			} else {
+				try {
+					GastoProveedor gasto= findOne(dtoAdjunto.getIdEntidad());
+					AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());				
+				    if (adjuntoGasto == null) { return false; }
+				    gasto.getAdjuntos().remove(adjuntoGasto);
+				    genericDao.save(GastoProveedor.class, gasto);
+				    borrado = true;
+				} catch (Exception ex) {
+					logger.debug(ex.getMessage());
+					borrado = false;
+				}
+			}
+			return borrado;
 	}
 	
 	@Override

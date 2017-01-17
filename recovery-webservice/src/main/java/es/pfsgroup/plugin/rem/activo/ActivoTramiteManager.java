@@ -14,11 +14,9 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -101,7 +99,8 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	}
 	
 	public List<ActivoTramite> getListaTramitesActivo(Long idActivo){
-		return activoTramiteDao.getListaTramitesActivo(idActivo);
+		//return activoTramiteDao.getListaTramitesActivo(idActivo);
+		return activoTramiteDao.getListaTramitesFromActivoTrabajo(idActivo);
 	}
 	
 	public Page getTramitesActivoTrabajo(Long idTrabajo,  WebDto webDto ){		

@@ -17,8 +17,14 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_MARKETING = "GMARK";
 	public static final String CODIGO_SUPERVISOR_PRECIOS = "SPREC";
 	public static final String CODIGO_SUPERVISOR_MARKETING = "SMARK";
+	public static final String CODIGO_GESTOR_COMERCIAL = "GCOM";
+	public static final String CODIGO_GESTOR_COMERCIAL_RETAIL = "GCOMRET";
+	public static final String CODIGO_GESTOR_COMERCIAL_SINGULAR = "GCOMSIN";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL = "SCOM";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_RETAIL = "SCOMRET";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_SINGULAR = "SCOMSIN";
 	
-	void insertarGestorAdicionalActivo(GestorEntidadDto dto);
+	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 
 	Usuario getGestorByActivoYTipo(Activo activo, Long tipo);
 	
@@ -45,4 +51,34 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 * @return devuelve el Usuario si existe y null si no existe.
 	 */
 	public Usuario userFromTarea(String codigoTarea, Long idTramite);
+	
+	/**
+	 * Actualiza las tareas del activo, asignando los gestores adecuados.
+	 * @param idActivo
+	 */
+	public void actualizarTareas(Long idActivo);
+	
+	/**
+	 * Comprueba si existe el gestor en el activo, a través del código TGE
+	 * @param activo
+	 * @param codGestor
+	 * @return
+	 */
+	public Boolean existeGestorEnActivo(Activo activo, String codGestor);
+	
+	/**
+	 * Comprueba si se pueden actualizar las tareas
+	 * @param idActivo
+	 * @return
+	 */
+	public Boolean validarTramitesNoMultiActivo(Long idActivo);
+	
+	/**
+	 * Devuelve el gestor comercial, si existe en el activo, por el codigo pasado por
+	 * parametro (GCOMRET, GCOMSIN), y si no es ninguno de esos dos, comprobará si tiene GCOM
+	 * @param activo
+	 * @param codGestor
+	 * @return
+	 */
+	public Usuario getGestorComercialActual(Activo activo, String codGestor);
 }

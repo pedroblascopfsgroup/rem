@@ -333,7 +333,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		idProveedor = me.getViewModel().get("proveedor.id");
 
 		record.erase({
-			params: {idProveedor: idProveedor},
+			params: {idEntidad: idProveedor},
             success: function(record, operation) {
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
            		 grid.fireEvent("afterdelete", grid);

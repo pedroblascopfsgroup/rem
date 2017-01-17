@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class MSVActualizadorPropuestaPreciosActivoEntidad01 implements MSVLiberator {
@@ -45,6 +46,9 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad01 implements MSVLibera
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 
 	SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -73,6 +77,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad01 implements MSVLibera
 			
 			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilasByHoja(1); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCeldaByHoja(fila, EXCEL_COL_NUMACTIVO, 1)));
+				Boolean actualizatTipoComercializacionActivo = false;
 				
 				//Si hay Valoracion = Valor Neto Contable (VNC) actualizar o crear -- Columna AH
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 33, 1))){
@@ -81,6 +86,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad01 implements MSVLibera
 							Double.parseDouble(exc.dameCeldaByHoja(fila, 33, 1).replace(",", ".")),
 							null,
 							null);
+					actualizatTipoComercializacionActivo = true;
 				}
 				
 				//Si hay Valoracion = Precio Aprobado venta(Actual web) para actualizar o crear -- Columna BJ
@@ -90,6 +96,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad01 implements MSVLibera
 							Double.parseDouble(exc.dameCeldaByHoja(fila, 61, 1).replace(",", ".")),
 							exc.dameCeldaByHoja(fila, 62, 1),
 							exc.dameCeldaByHoja(fila, 63, 1));
+					actualizatTipoComercializacionActivo = true;
 				}
 				
 				//Si hay Valoracion = Precio Aprobado renta para actualizar o crear -- Columna BM
@@ -166,6 +173,10 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad01 implements MSVLibera
 							exc.dameCeldaByHoja(fila, 30, 1),
 							null);
 				}
+				
+				//Actualizar el tipoComercialización del activo
+				if(actualizatTipoComercializacionActivo)
+					updaterState.updaterStateTipoComercializacion(activo);
 				
 			}
 

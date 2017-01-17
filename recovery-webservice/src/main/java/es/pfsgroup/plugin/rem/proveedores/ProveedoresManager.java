@@ -852,7 +852,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
-		ActivoProveedor proveedor = proveedoresDao.get(dtoAdjunto.getIdProveedor());
+		ActivoProveedor proveedor = proveedoresDao.get(dtoAdjunto.getIdEntidad());
 		ActivoAdjuntoProveedor adjunto = proveedor.getAdjunto(dtoAdjunto.getId());
 		
 	    if (adjunto == null) { return false; }
@@ -876,7 +876,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					DtoAdjunto dto = new DtoAdjunto();
 					
 					BeanUtils.copyProperties(dto, adjunto);
-					beanUtilNotNull.copyProperty(dto, "idProveedor", adjunto.getProveedor().getId());
+					beanUtilNotNull.copyProperty(dto, "idEntidad", adjunto.getProveedor().getId());
 					beanUtilNotNull.copyProperty(dto, "descripcionTipo", adjunto.getTipoDocumentoProveedor().getDescripcion());
 					beanUtilNotNull.copyProperty(dto, "gestor", adjunto.getAuditoria().getUsuarioCrear());				
 					

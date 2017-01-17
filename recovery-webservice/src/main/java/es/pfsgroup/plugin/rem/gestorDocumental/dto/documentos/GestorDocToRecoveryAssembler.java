@@ -36,8 +36,7 @@ public class GestorDocToRecoveryAssembler {
 			for (IdentificacionDocumento idnDoc : documentosExp.getDocumentos()) {
 				DtoAdjunto dtoAdj = new DtoAdjunto();
 				dtoAdj.setId(new Long(idnDoc.getIdentificadorNodo()));
-				dtoAdj.setIdActivo(new Long(idnDoc.getIdExpedienteHaya()));
-//				dtoAdj.setIdTrabajo(null);
+				dtoAdj.setIdEntidad(new Long(idnDoc.getIdExpedienteHaya()));
 				dtoAdj.setNombre(idnDoc.getNombreNodo());
 				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
 				dtoAdj.setDescripcionTipo("");

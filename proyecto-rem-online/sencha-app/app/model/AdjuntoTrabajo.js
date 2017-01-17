@@ -7,8 +7,15 @@ Ext.define('HreRem.model.AdjuntoTrabajo', {
 
     fields: [   
     		
-		    {
-		    	name: 'idTrabajo'
+    		{
+		    	name: 'idEntidad'
+		    },
+			{
+		    	name: 'idTrabajo',
+    			calculate: function(data) { 
+    				return Ext.isEmpty(data.idTrabajo) ? data.idEntidad : data.idTrabajo; 
+    			},
+    			depends: 'idEntidad' 
 		    },
 		    {
 		    	name: 'codigoTipo'

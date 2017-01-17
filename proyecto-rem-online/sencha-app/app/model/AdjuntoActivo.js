@@ -7,11 +7,24 @@ Ext.define('HreRem.model.AdjuntoActivo', {
 
     fields: [   
     		
-		    {
-		    	name: 'idActivo'	
+		    
+     
+    		{
+		    	name: 'idEntidad'
 		    },
 		    {
-		    	name: 'idTrabajo'
+		    	name: 'idActivo',
+    			calculate: function(data) { 
+    				return Ext.isEmpty(data.idActivo) ? data.idEntidad : data.idActivo; 
+    			},
+    			depends: 'idEntidad' 
+		    },
+			{
+		    	name: 'idTrabajo',
+    			calculate: function(data) { 
+    				return Ext.isEmpty(data.idTrabajo) ? data.idEntidad : data.idTrabajo; 
+    			},
+    			depends: 'idEntidad' 
 		    },
 		    {
 		    	name: 'codigoTipo'

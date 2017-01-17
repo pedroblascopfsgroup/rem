@@ -753,7 +753,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		idActivo = me.getViewModel().get("activo.id");
 
 		record.erase({
-			params: {idActivo: idActivo},
+			params: {idEntidad: idActivo},
             success: function(record, operation) {
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 

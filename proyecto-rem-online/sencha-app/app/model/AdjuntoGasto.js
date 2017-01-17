@@ -7,8 +7,16 @@ Ext.define('HreRem.model.AdjuntoGasto', {
 
     fields: [   
     		
+		    
+    		{
+		    	name: 'idEntidad'
+		    },
 		    {
-		    	name: 'idGasto'
+		    	name: 'idGasto',
+    			calculate: function(data) { 
+    				return Ext.isEmpty(data.idGasto) ? data.idEntidad : data.idGasto; 
+    			},
+    			depends: 'idEntidad' 
 		    },
 		    {
 		    	name: 'codigoTipo'

@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
@@ -1294,8 +1295,46 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 	
+	@Override
+	public Boolean isActivoConOfertaYExpedienteAprobadoReservadoDevuelto(Activo activo) {
+		
+		// Si no se encuentra en una agrupación de tipo 'lote comercial' examinar si el activo tuviese alguna oferta aceptada.
+		for (ActivoOferta acof: activo.getOfertas()) {
+			Oferta of = acof.getPrimaryKey().getOferta();
+			if(this.isOfertaAceptadaConExpedienteAprobadoReservadoDevuelto(of)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
+	@Override
+	public Boolean isAgrupacionConOfertaYExpedienteAprobadoReservadoDevuelto(ActivoAgrupacion agrupacion) {
+		
+		// Comprobar si la grupación tiene ofertas aceptadas con expediente en estado Aprobado, Reservado o En devolución
+		for (Oferta of: agrupacion.getOfertas()) {
+			if(this.isOfertaAceptadaConExpedienteAprobadoReservadoDevuelto(of)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
+	private Boolean isOfertaAceptadaConExpedienteAprobadoReservadoDevuelto(Oferta of) {
+		if(!Checks.esNulo(of.getEstadoOferta()) 
+				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
+			//Si la oferta esta aceptada, se comprueba que el expediente esté (Aprobado, Reservado, o En devolución), para pasar la nueva oferta a Congelada.
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(of.getId());
+			if(!Checks.esNulo(expediente.getEstado()) 
+				&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
+					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))) {
+		
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }
-

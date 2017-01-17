@@ -368,7 +368,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		}
 	},
 	
-    onActivosAgrupacionListDobleClick: function(grid, record) {        	
+    onActivosAgrupacionListDobleClick: function(grid, record) {
     	var me = this,  
     	titulo = "Activo " + record.get("numActivo"),
     	id = record.get("activoId");  	
@@ -509,26 +509,24 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
 	    	window.destroy();
+	    	if(!Ext.isEmpty(window.parent.lookupController().lookupReference('listadoactivosagrupacion')))
+	    		window.parent.lookupController().lookupReference('listadoactivosagrupacion').setTopBar(false);
 		};
 
 		me.onSaveFormularioCompleto(form, success);	
-		
 	},
 	
-	
-
 	onSaveFormularioCompleto: function(form, success) {
 		var me = this;
 		record = form.getBindRecord();
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
 
 		if(form.isFormValid()) {
-
 			form.mask(HreRem.i18n("msg.mask.espere"));
-
 			record.save({
 			    success: success,
 			 	failure: function(record, operation) {
+			 		
 			 		var response = Ext.decode(operation.getResponse().responseText);
 			 		if(response.success === "false" && Ext.isDefined(response.msg)) {
 						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);

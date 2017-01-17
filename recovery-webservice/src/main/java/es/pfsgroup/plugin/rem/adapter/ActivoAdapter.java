@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -126,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -220,6 +222,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private AnotacionApi anotacionApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	@Resource
     MessageService messageServices;
@@ -3444,9 +3449,6 @@ public class ActivoAdapter {
 				throw new Exception(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
 			}
 		}
-
-		
-		
 		
 		try {
 			Oferta oferta = new Oferta();
@@ -3463,26 +3465,8 @@ public class ActivoAdapter {
 			 * ){ oferta.setAgrupacion(agrupacion); } } }
 			 */
 
-			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-			for (ActivoOferta acof : activo.getOfertas()) {
-				Oferta of = acof.getPrimaryKey().getOferta();
-				if (!Checks.esNulo(of.getEstadoOferta())
-						&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
-					codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
-				}
-			}
-			// Comprobar si el activo se encuentra en una agrupación de tipo 'lote comercial'.
-			if(activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())) {
-				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
-			} else {
-				// Si no se encuentra en una agrupación de tipo 'lote comercial' examinar si el activo tuviese alguna oferta aceptada.
-				for (ActivoOferta acof: activo.getOfertas()) {
-					Oferta of = acof.getPrimaryKey().getOferta();
-					if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
-						codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
-					}
-				}
-			}
+			String codigoEstado = this.getEstadoNuevaOferta(activo);
+			
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class,
@@ -3762,5 +3746,18 @@ public class ActivoAdapter {
 				}
 			}
 		}
+	}
+	
+	private String getEstadoNuevaOferta(Activo activo) {
+		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+
+		// Comprobar si el activo se encuentra en una agrupación de tipo 'lote comercial'.
+		// Y que tenga oferta aceptada de expediente con estasdo (aprobado, reservado, en devolución)
+		if(activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId()) ||
+				ofertaApi.isActivoConOfertaYExpedienteAprobadoReservadoDevuelto(activo)) {
+			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+		}
+		
+		return codigoEstado;
 	}
 }

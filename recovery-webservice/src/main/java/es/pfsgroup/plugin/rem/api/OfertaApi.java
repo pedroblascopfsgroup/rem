@@ -9,6 +9,7 @@ import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
@@ -369,6 +370,22 @@ public interface OfertaApi {
 	 * @return
 	 */
 	boolean ratificacionComite(TareaExterna tareaExterna);
+	
+	/**
+	 * Método para comprobar que el ACTIVO tenga una oferta ACEPTADA con un expediente comercial con algunos
+	 * de estos tres estados (Aprobado, Reservado o Devuelto)
+	 * @param activo
+	 * @return
+	 */
+	public Boolean isActivoConOfertaYExpedienteAprobadoReservadoDevuelto(Activo activo);
+	
+	/**
+	 * Método para comprobar que la AGRUPACION tenga una oferta ACEPTADA con un expediente comercial con algunos
+	 * de estos tres estados (Aprobado, Reservado o Devuelto)
+	 * @param agrupacion
+	 * @return
+	 */
+	public Boolean isAgrupacionConOfertaYExpedienteAprobadoReservadoDevuelto(ActivoAgrupacion agrupacion);
 
 }
 

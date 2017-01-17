@@ -51,9 +51,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 								rowdblclick: 'onActivosAgrupacionListDobleClick',
 								boxready: function() {
 									//Si la agrupacion tiene oferta vivas, no se puede agregar/quitar activos
-									var desactivarBotones = !this.lookupController().getViewModel().get('agrupacionficha').getData().existenOfertasVivas;
-									this.down('#removeButton').setVisible(desactivarBotones);
-									this.down('#addButton').setVisible(desactivarBotones);
+									var desactivarBotones = !this.lookupController().getViewModel().get('agrupacionficha').getData().existenOfertasVivas;								
+									this.setTopBar(desactivarBotones);
 								}
 						    },
 						    

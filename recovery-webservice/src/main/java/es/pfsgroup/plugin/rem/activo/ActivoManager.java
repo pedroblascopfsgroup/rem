@@ -374,23 +374,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
 			// estados a Congelada excepto los que ya estuvieran en Rechazada
 			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
-				List<VOfertasActivosAgrupacion> listaOfertas = activoAdapter.getListOfertasActivos(dto.getIdActivo());
-
-				for (VOfertasActivosAgrupacion vOferta : listaOfertas) {
-
-					if (!vOferta.getIdOferta().equals(dto.getIdOferta().toString())) {
-						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "id",
-								Long.parseLong(vOferta.getIdOferta()));
-						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
-
-						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
-						if (!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())) {
-							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
-							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
-						}
-					}
-				}
 
 				List<Activo> listaActivos = new ArrayList<Activo>();
 				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {

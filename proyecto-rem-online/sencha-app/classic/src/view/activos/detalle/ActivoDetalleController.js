@@ -1264,8 +1264,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
     		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(false);
-    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(false);
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;

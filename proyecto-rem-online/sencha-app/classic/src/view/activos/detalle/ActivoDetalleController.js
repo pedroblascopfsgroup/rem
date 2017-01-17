@@ -1208,11 +1208,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		// Si el checkbox es de la sección de publicación, no hacer nada.
     		switch (id){
     		case "chkbxpublicacionordinaria":
+    			view.lookupReference('textfieldpublicacionpublicar').reset();
+    			view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
+    			break;
     		case "chkbxpublicacionforzada":
-    			return;
+    			view.lookupReference('textfieldpublicacionpublicar').reset();
+    			view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
+    			break;
         	case "chkbxpublicacionocultarprecio":
         		// textfield.
         		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    			view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
         		// textarea.
         		view.lookupReference('textareapublicacionocultacionprecio').reset();
         		break;
@@ -1222,10 +1228,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         		view.lookupReference('chkbxpublicacionordinaria').setValue(me.chkbxPublicacionOrdinariaLastState);
         		// textfield.
         		view.lookupReference('textfieldpublicaciondespublicar').reset();
+        		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
         		break;
         	case "chkbxpublicacionocultacionforzada":
         		// textfield.
         		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+				view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
         		break;
         	default:
         		break;
@@ -1264,8 +1272,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
     		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(false);
-    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
+    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(false);
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;

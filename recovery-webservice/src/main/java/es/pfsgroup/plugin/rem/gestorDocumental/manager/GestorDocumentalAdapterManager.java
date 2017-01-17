@@ -125,13 +125,18 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	
 	// TODO Refactorizar con metodo anterior.
 	@Override
-	public Long uploadDocumentoGasto(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws Exception {
+	public Long uploadDocumentoGasto(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta = null;
 
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(gasto.getNumGastoHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_GASTO);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
 		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+		
+		if(!Checks.esNulo(respuestaCrearDocumento) && !Checks.esNulo(respuestaCrearDocumento.getCodigoError())) {
+			logger.debug(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+			throw new GestorDocumentalException(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+		}
 		respuesta =  new Long(respuestaCrearDocumento.getIdDocumento());
 		
 		return respuesta;
@@ -161,8 +166,13 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaGeneral respuesta = null;
 		try {
 			respuesta = gestorDocumentalApi.bajaDocumento(login, idDocumento.intValue());
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getCodigoError())) {
+				logger.debug(respuesta.getCodigoError() + " - " + respuesta.getMensajeError());				
+			}
+			
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
 		}
 		if(!Checks.esNulo(respuesta) && "".equals(respuesta.getCodigoError())) {
 			return true;
@@ -182,8 +192,14 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
 		CrearGastoDto crearGastoDto = recoveryToGestorAssembler.getCrearGastoDto(gasto.getNumGastoHaya().toString(), gasto.getNumGastoHaya().toString(), idReo, fechaGasto , cliente, descripcionExpediente, usuarioLogado);
+		RespuestaCrearExpediente respuesta = null;
 		
-		RespuestaCrearExpediente respuesta = gestorDocumentalExpedientesApi.crearGasto(crearGastoDto);
+		try {
+			respuesta = gestorDocumentalExpedientesApi.crearGasto(crearGastoDto);
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
 		
 		Integer idExpediente = null;
 		

@@ -185,7 +185,7 @@ public interface OfertaApi {
 	
 	
 	/**
-	 * Método que saca las ofertas a partir de un trabajo
+	 * Método que saca las ofertas de un activo a partir de su trabajo
 	 * @param trabajo
 	 * @return
 	 */
@@ -198,6 +198,12 @@ public interface OfertaApi {
 	 * @return Oferta
 	 */
 	public Oferta getOfertaAceptadaByActivo(Activo activo);
+
+	/**
+	 * Método que obtiene la oferta aceptada de un activo que ha sido aprobado.
+	 * @param activo
+	 */
+	public Oferta getOfertaAceptadaExpdteAprobado(Activo activo);
 
 	/**
 	 * Método que comprueba si un activo tiene reserva.

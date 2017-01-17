@@ -694,7 +694,7 @@ public interface ActivoApi {
 	public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor);
 
 	/**
-	 * Averigua si el activo tiene ofertas acpetadas
+	 * Averigua si el activo tiene ofertas acpetadas // MODIFICACIÓN: Mira si el expediente está aprobado (y estados posteriores).
 	 * 
 	 * @param activo
 	 * @return

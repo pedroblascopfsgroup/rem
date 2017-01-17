@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -224,6 +225,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -2330,7 +2334,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(activoTasacion)) {
 
 			try {
-				beanUtilNotNull.copyProperty(dtoTasacion, "id", activoTasacion.getId());
+				beanUtilNotNull.copyProperty(dtoTasacion, "idSolicitudREM", activoTasacion.getId());
 				beanUtilNotNull.copyProperty(dtoTasacion, "fechaSolicitudTasacion",
 						activoTasacion.getAuditoria().getFechaCrear());
 				beanUtilNotNull.copyProperty(dtoTasacion, "gestorSolicitud",
@@ -2568,7 +2572,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			i++;
 			ofertaAux = tmp.getPrimaryKey().getOferta();
 			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
-				ofertaAceptada = ofertaAux;
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAux.getId());
+				if(!Checks.esNulo(expediente)){ //Si el expediente está aprobado (o estados posteriores).
+					if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado())
+					|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado())
+					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado()))
+						ofertaAceptada = ofertaAux;
+				}
 			}
 		}
 		return ofertaAceptada;

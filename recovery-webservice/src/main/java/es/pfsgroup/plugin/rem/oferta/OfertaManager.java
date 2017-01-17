@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -606,7 +607,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
 			ActivoOferta actOfr = listaActivoOferta.get(0);
 			if (!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())) {
-				ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+				//ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+				ofertaAcepted = getOfertaAceptadaExpdteAprobado(actOfr.getPrimaryKey().getActivo());
 			}
 		}
 
@@ -656,14 +658,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 
+//	@Override
+//	public Oferta trabajoToOferta(Trabajo trabajo) {
+//		Oferta ofertaAceptada = null;
+//		Activo activo = trabajo.getActivo();
+//		if (!Checks.esNulo(activo)) {
+//			ofertaAceptada = getOfertaAceptadaByActivo(activo);
+//		}
+//		return ofertaAceptada;
+//	}
+	
 	@Override
-	public Oferta trabajoToOferta(Trabajo trabajo) {
-		Oferta ofertaAceptada = null;
-		Activo activo = trabajo.getActivo();
-		if (!Checks.esNulo(activo)) {
-			ofertaAceptada = getOfertaAceptadaByActivo(activo);
-		}
-		return ofertaAceptada;
+	public Oferta trabajoToOferta(Trabajo trabajo){
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+		
+		return expediente.getOferta();
 	}
 	
 	@Override
@@ -714,13 +723,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta ofertaAceptada = null;
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
-			Activo activo = trabajo.getActivo();
-			if (!Checks.esNulo(activo)) {
-				ofertaAceptada = getOfertaAceptadaByActivo(activo);
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+			if (!Checks.esNulo(expediente)){
+				ofertaAceptada = expediente.getOferta();
 			}
 		}
 		return ofertaAceptada;
 	}
+
 
 	@Override
 	public Oferta getOfertaAceptadaByActivo(Activo activo) {
@@ -734,6 +744,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return null;
 	}
 
+	@Override 
+	public Oferta getOfertaAceptadaExpdteAprobado(Activo activo){
+		List<ActivoOferta> listaOfertas = activo.getOfertas();
+		
+		for (ActivoOferta activoOferta : listaOfertas) {
+			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())  ||
+					DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())	  ||
+					DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))
+				return oferta;
+			}
+
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public boolean checkDerechoTanteo(Trabajo trabajo) {
 		Oferta ofertaAceptada = trabajoToOferta(trabajo);

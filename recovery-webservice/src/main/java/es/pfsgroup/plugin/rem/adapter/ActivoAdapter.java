@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -33,6 +35,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
@@ -49,7 +52,6 @@ import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -82,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -125,16 +128,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
+import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -211,10 +217,18 @@ public class ActivoAdapter {
 
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
+	
+	@Autowired
+	private AnotacionApi anotacionApi;
+	
+	@Resource
+    MessageService messageServices;
 
 	//private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
+	private static final String AVISO_TITULO_GESTOR_COMERCIAL = "activo.aviso.titulo.cambio.gestor.comercial";
+	private static final String AVISO_MENSAJE_GESTOR_COMERCIAL = "activo.aviso.descripcion.cambio.gestor.comercial";
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -1245,7 +1259,7 @@ public class ActivoAdapter {
 	 * Activo activo = activoApi.get(id); if (valoracionesDto.getBloqueoPrecio()
 	 * != null) { if (valoracionesDto.getBloqueoPrecio() > 0) {
 	 * activo.setBloqueoPrecioFechaIni(new Date()); Usuario usuarioLogado =
-	 * proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+	 * genericAdapter.getUsuarioLogado();
 	 * activo.setGestorBloqueoPrecio(usuarioLogado); } else {
 	 * activo.setBloqueoPrecioFechaIni(null);
 	 * activo.setGestorBloqueoPrecio(null); } }
@@ -1863,7 +1877,7 @@ public class ActivoAdapter {
 
 		ActivoObservacion activoObservacion = new ActivoObservacion();
 		Activo activo = activoApi.get(idActivo);
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		try {
 
@@ -1892,7 +1906,7 @@ public class ActivoAdapter {
 
 		ActivoCondicionEspecifica activoCondicionEspecifica = new ActivoCondicionEspecifica();
 		Activo activo = activoApi.get(idActivo);
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		try {
 			activoCondicionEspecifica.setFechaDesde(dtoCondicionHistorico.getFechaAlta());
@@ -2440,7 +2454,7 @@ public class ActivoAdapter {
 
 	public Page getActivos(DtoActivoFilter dtoActivoFiltro) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		if (!Checks.esNulo(usuarioCartera))
@@ -2482,7 +2496,7 @@ public class ActivoAdapter {
 				BeanUtils.copyProperties(dtoGestor, gestor);
 				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
 				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
-				BeanUtils.copyProperty(dtoGestor, "id", gestor.getUsuario().getId());
+				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
@@ -2498,8 +2512,8 @@ public class ActivoAdapter {
 
 	public Boolean insertarGestorAdicional(GestorEntidadDto dto) {
 		dto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
-		gestorActivoApi.insertarGestorAdicionalActivo(dto);
-		return true;
+		return gestorActivoApi.insertarGestorAdicionalActivo(dto);
+		//return true;
 	}
 
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto) {
@@ -2716,7 +2730,7 @@ public class ActivoAdapter {
 
 	public List<DtoListadoTareas> getTareasTramite(Long idTramite) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		List<TareaExterna> tareasTramite = new ArrayList<TareaExterna>();
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
@@ -2990,9 +3004,25 @@ public class ActivoAdapter {
 	public List<DtoAdjunto> getAdjuntosActivo(Long id)
 			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Activo activo = activoApi.get(id);
-			return gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
+			listaAdjuntos =	gestorDocumentalAdapterApi.getAdjuntosActivo(activo);			
+			
+			for(DtoAdjunto adj: listaAdjuntos){
+				ActivoAdjuntoActivo adjuntoActivo = activo.getAdjuntoGD(adj.getId());
+				if(!Checks.esNulo(adjuntoActivo)) {
+					if(!Checks.esNulo(adjuntoActivo.getTipoDocumentoActivo())) {
+						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
+					}
+					adj.setContentType(adjuntoActivo.getContentType());
+					if(!Checks.esNulo(adjuntoActivo.getAuditoria())) {
+						adj.setGestor(adjuntoActivo.getAuditoria().getUsuarioCrear());
+					}
+					adj.setTamanyo(adjuntoActivo.getTamanyo());
+				}
+			}		
+			
 		} else {
 			listaAdjuntos = getAdjuntosActivo(id, listaAdjuntos);
 		}
@@ -3007,8 +3037,9 @@ public class ActivoAdapter {
 			DtoAdjunto dto = new DtoAdjunto();
 
 			BeanUtils.copyProperties(dto, adjunto);
-			dto.setIdActivo(activo.getId());
+			dto.setIdEntidad(activo.getId());
 			dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
+			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
 
 			listaAdjuntos.add(dto);
 		}
@@ -3020,7 +3051,7 @@ public class ActivoAdapter {
 		if (Checks.esNulo(activoEntrada)) {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				Activo activo = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
-				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
 				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao
@@ -3033,7 +3064,7 @@ public class ActivoAdapter {
 			}
 		} else {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
 				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao
@@ -3057,7 +3088,7 @@ public class ActivoAdapter {
 		// Activo activo =
 		// activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
 		// Usuario usuarioLogado =
-		// proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		// genericAdapter.getUsuarioLogado();
 		//
 		// Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 		// webFileItem.getParameter("tipo"));
@@ -3082,7 +3113,7 @@ public class ActivoAdapter {
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		boolean borrado = false;
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 			try {
 				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
 			} catch (Exception e) {
@@ -3106,7 +3137,7 @@ public class ActivoAdapter {
 	// public List<DtoActivoAviso> getAvisosActivoById(Long id) {
 	// FIXME: Formatear aquí o en vista cuando se sepa el diseño.
 	public DtoAviso getAvisosActivoById(Long id) {
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		List<DtoAviso> avisos = activoAvisadorApi.getListActivoAvisador(id, usuarioLogado);
 
@@ -3161,7 +3192,7 @@ public class ActivoAdapter {
 	 * dtoPresupuestoFiltro) {
 	 * 
 	 * Usuario usuarioLogado =
-	 * proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+	 * genericAdapter.getUsuarioLogado();
 	 * 
 	 * return (Page)
 	 * activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro,
@@ -3171,7 +3202,7 @@ public class ActivoAdapter {
 	@SuppressWarnings("unchecked")
 	public DtoPage findAllHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dtoPresupuestoFiltro) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		Page pagePresupuestosActivo = activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro, usuarioLogado);
 
@@ -3218,7 +3249,7 @@ public class ActivoAdapter {
 	@SuppressWarnings("unchecked")
 	public DtoPresupuestoGraficoActivo findLastPresupuesto(DtoActivosTrabajoFilter dtoFilter) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		DtoPresupuestoGraficoActivo presupuestoGrafico = new DtoPresupuestoGraficoActivo();
 
@@ -3383,6 +3414,11 @@ public class ActivoAdapter {
 		activo = tabActivoService.saveTabActivo(activo, dto);
 
 		activoApi.saveOrUpdate(activo);
+		
+		//Cambios dependientes que requieren que se hayan guardado previamente en el activo
+		if(tabActivoService instanceof TabActivoDatosBasicos) {
+			this.comprobacionesDatosFichaCabecera(activo, (DtoActivoFichaCabecera) dto);
+		}
 
 		return true;
 	}
@@ -3532,7 +3568,7 @@ public class ActivoAdapter {
 		}
 		Filter llaveIDFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
 		ActivoLlave llave = genericDao.get(ActivoLlave.class, llaveIDFilter);
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		if (!Checks.esNulo(llave) && !Checks.esNulo(usuarioLogado)) {
 			llave.getAuditoria().setBorrado(true);
@@ -3635,7 +3671,7 @@ public class ActivoAdapter {
 				}
 
 				// Datos auditoria
-				Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				if (!Checks.esNulo(usuarioLogado)) {
 					movimiento.getAuditoria().setFechaModificar(new Date());
 					movimiento.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
@@ -3663,7 +3699,7 @@ public class ActivoAdapter {
 		}
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
 		ActivoMovimientoLlave movimiento = genericDao.get(ActivoMovimientoLlave.class, filtro);
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		// Datos auditoria
 		if (!Checks.esNulo(movimiento) && !Checks.esNulo(usuarioLogado)) {
@@ -3675,5 +3711,56 @@ public class ActivoAdapter {
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Realiza comprobaciones y acciones a realizar por los datos modificados en la Ficha Cabecera
+	 * @param activo
+	 * @param dtoFicha
+	 */
+	private void comprobacionesDatosFichaCabecera(Activo activo, DtoActivoFichaCabecera dtoFicha) {
+		
+		//Comprueba si ha habido cambios en el Tipo Comercializar para actualizar el gestor comercial de las tareas
+		if(!Checks.esNulo(dtoFicha.getTipoComercializarCodigo())) {
+			this.comprobacionCambioTipoComercializacion(activo);
+		}
+	}
+	
+	private void comprobacionCambioTipoComercializacion(Activo activo) {
+		
+		String codGestorSingular = "GCOMSIN", codGestorRetail = "GCOMRET";
+		Boolean isActivoRetail = DDTipoComercializar.CODIGO_RETAIL.equals(activo.getTipoComercializar().getCodigo());
+		
+		//Comprobamos que se pueda realizar el cambio, analizando tareas activas comerciales y si hay gestor adecuado en el activo
+		if(gestorActivoApi.existeGestorEnActivo(activo, isActivoRetail ? codGestorRetail : codGestorSingular)) {
+			if(gestorActivoApi.validarTramitesNoMultiActivo(activo.getId()))
+				gestorActivoApi.actualizarTareas(activo.getId());
+			else {
+				//El activo pertenece a un trámite multiactivo, y por tanto no se puede cambiar el gestor en las taras, enviamos un aviso al gestor comercial anterior
+				//Si ahora el activo es Retail, entonces antes era Singular. Y viceversa.
+				String codComercialAnterior = isActivoRetail ? "GCOMSIN" : "GCOMRET";
+				Usuario usuario = gestorActivoApi.getGestorComercialActual(activo,codComercialAnterior); 
+				
+				if(!Checks.esNulo(usuario) && activoTareaExternaApi.existenTareasActivasByTramiteAndTipoGestor(activo, "T013", codComercialAnterior)) {
+					Notificacion notif  = new Notificacion();
+					String tipoComercialDesc = !isActivoRetail ? DDTipoComercializar.DESCRIPCION_SINGULAR : DDTipoComercializar.DESCRIPCION_RETAIL;
+					String tipoComercialDescAnterior = isActivoRetail ? DDTipoComercializar.DESCRIPCION_SINGULAR : DDTipoComercializar.DESCRIPCION_RETAIL;
+					String[] datosDescripcion = {activo.getNumActivo().toString(),tipoComercialDescAnterior,tipoComercialDesc};
+					String descripcion = messageServices.getMessage(AVISO_MENSAJE_GESTOR_COMERCIAL, datosDescripcion);
+					
+					notif.setIdActivo(activo.getId());
+					notif.setDestinatario(usuario.getId());
+					notif.setTitulo(messageServices.getMessage(AVISO_TITULO_GESTOR_COMERCIAL));
+					notif.setDescripcion(descripcion);
+					notif.setFecha(null);
+					try {
+						anotacionApi.saveNotificacion(notif);
+					} catch (ParseException e) {
+						logger.error("No se ha podido enviar el aviso por no poder cambiar el gestor comercial en las tareas: " + e);
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 }

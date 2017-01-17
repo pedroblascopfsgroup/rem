@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
@@ -1121,8 +1122,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 	@Override
 	@Transactional(readOnly = false)
-	public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
-		ExpedienteComercial expediente = findOne(dtoAdjunto.getIdExpediente());
+	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		ExpedienteComercial expediente = findOne(dtoAdjunto.getIdEntidad());
 		AdjuntoExpedienteComercial adjunto = expediente.getAdjunto(dtoAdjunto.getId());
 		
 	    if (adjunto == null) { return false; }

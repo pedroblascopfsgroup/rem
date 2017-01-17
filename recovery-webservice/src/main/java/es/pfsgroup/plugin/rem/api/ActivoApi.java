@@ -806,13 +806,14 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public ActivoValoraciones getValoracionAprobadoVenta(Activo activo);
+	
 	/**
 	 * Devuelve la última tasación del activo
 	 * @param activo
 	 * @return
 	 */
-	public ActivoTasacion getTasacionMasReciente(Activo activo);
 
+	public ActivoTasacion getTasacionMasReciente(Activo activo);
 	
 	/**
 	 * Comprueba si el activo tiene el check de precio a true
@@ -836,4 +837,22 @@ public interface ActivoApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	public boolean saveComercialActivo(DtoComercialActivo dto);
+
+	/**
+	 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo
+	 * Obra Nueva ó Asistida (PDV)
+	 * 
+	 * @param activo
+	 * @return
+	 */
+	public boolean isIntegradoAgrupacionObraNuevaOrAsistida(Activo activo);
+	
+	/**
+	 * Devuelve el importe de la valoracion filtrado por el tipo de precio, 
+	 * y si esta vigente. 
+	 * @param activo
+	 * @param codTipoPrecio
+	 * @return
+	 */
+	public Double getImporteValoracionActivoByCodigo(Activo activo, String codTipoPrecio);
 }

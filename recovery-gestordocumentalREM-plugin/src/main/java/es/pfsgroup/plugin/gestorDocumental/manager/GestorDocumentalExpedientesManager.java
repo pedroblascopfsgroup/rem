@@ -51,9 +51,9 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
 
 		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 		}
-		if (!Checks.esNulo(respuesta)) {
+		if (Checks.esNulo(respuesta)) {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);			
 		}
 		

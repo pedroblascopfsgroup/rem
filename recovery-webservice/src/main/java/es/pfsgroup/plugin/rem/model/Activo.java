@@ -388,6 +388,9 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_VENTA_EXTERNA_IMPORTE")
     private Double importeVentaExterna;
 
+    @Column(name = "ACT_BLOQUEO_TIPO_COMERCIALIZAR")
+    private Boolean bloqueoTipoComercializacionAutomatico;
+    
 	@Version   
 	private Long version;
 
@@ -1329,6 +1332,18 @@ public class Activo implements Serializable, Auditable {
         }
         return null;
     }
+    
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public ActivoAdjuntoActivo getAdjuntoGD(Long idDocRestClient) {
+    	for (ActivoAdjuntoActivo adj : getAdjuntos()) {
+            if (adj.getIdDocRestClient().equals(id)) { return adj; }
+        }
+        return null;
+    }
 
 	public Integer getLlavesHre() {
 		return llavesHre;
@@ -1505,6 +1520,16 @@ public class Activo implements Serializable, Auditable {
 
 	public void setImporteVentaExterna(Double importeVentaExterna) {
 		this.importeVentaExterna = importeVentaExterna;
+	}
+	
+	public Boolean getBloqueoTipoComercializacionAutomatico() {
+		return bloqueoTipoComercializacionAutomatico;
+	}
+
+	public void setBloqueoTipoComercializacionAutomatico(
+			Boolean bloqueoTipoComercializacionAutomatico) {
+		this.bloqueoTipoComercializacionAutomatico = bloqueoTipoComercializacionAutomatico;
+
 	}
 	
 	

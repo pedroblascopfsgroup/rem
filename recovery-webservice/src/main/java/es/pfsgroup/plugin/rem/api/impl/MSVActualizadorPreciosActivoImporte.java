@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 
 @Component
@@ -43,6 +44,9 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 
 	SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -78,6 +82,8 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 							Double.parseDouble(exc.dameCelda(fila, 1)),
 							exc.dameCelda(fila, 2),
 							exc.dameCelda(fila, 3));
+					//Actualizar el tipoComercialización del activo
+					updaterState.updaterStateTipoComercializacion(activo);
 				}
 				
 				//Si hay Valoracion = Precio Minimo para actualizar o crear

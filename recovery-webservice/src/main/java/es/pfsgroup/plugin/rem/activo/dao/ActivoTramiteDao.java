@@ -48,5 +48,7 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 
 
 	List<ActivoTramite> getTramitesActivoTrabajoList(Long idTrabajo);
+	
+	public List<ActivoTramite> getListaTramitesFromActivoTrabajo(Long idActivo);
 
 }

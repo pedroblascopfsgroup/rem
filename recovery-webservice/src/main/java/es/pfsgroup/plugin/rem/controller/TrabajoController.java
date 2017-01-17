@@ -274,7 +274,7 @@ public class TrabajoController extends ParadiseJsonController {
 		DtoAdjunto dtoAdjunto = new DtoAdjunto();
 		
 		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
-		dtoAdjunto.setIdTrabajo(Long.parseLong(request.getParameter("idTrabajo")));
+		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("idTrabajo")));
 	
 		
        	FileItem fileItem = trabajoApi.getFileItemAdjunto(dtoAdjunto);

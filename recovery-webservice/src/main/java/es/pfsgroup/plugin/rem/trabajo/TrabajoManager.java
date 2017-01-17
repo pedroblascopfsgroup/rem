@@ -1111,7 +1111,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional(readOnly = false)
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 
-		Trabajo trabajo = trabajoDao.get(dtoAdjunto.getIdTrabajo());
+		Trabajo trabajo = trabajoDao.get(dtoAdjunto.getIdEntidad());
 		AdjuntoTrabajo adjunto = trabajo.getAdjunto(dtoAdjunto.getId());
 
 		if (adjunto == null) {
@@ -1370,7 +1370,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperationDefinition("trabajoManager.getFileItemAdjunto")
 	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
 
-		Trabajo trabajo = trabajoDao.get(dtoAdjunto.getIdTrabajo());
+		Trabajo trabajo = trabajoDao.get(dtoAdjunto.getIdEntidad());
 		AdjuntoTrabajo adjuntoTrabajo = trabajo.getAdjunto(dtoAdjunto.getId());
 
 		FileItem fileItem = adjuntoTrabajo.getAdjunto().getFileItem();
@@ -1394,7 +1394,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				DtoAdjunto dto = new DtoAdjunto();
 
 				BeanUtils.copyProperties(dto, adjunto);
-				dto.setIdTrabajo(trabajo.getId());
+				dto.setIdEntidad(trabajo.getId());
 				dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
 				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
 

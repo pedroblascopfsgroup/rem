@@ -44,7 +44,7 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'DD_MAN_ID',		 				'NUMBER(16,0)',						'Motivo de anulación del expediente.'),
+    	T_ALTER(  'DD_MAN_ID',		 				'NUMBER(16,0)',						'Motivo de anulación del expediente.')
 		);
     V_T_ALTER T_ALTER;
     
@@ -53,7 +53,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 							CAMPO FK 					TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_ECO_MOTIVO_ANUL',				'DD_MAN_ID',				V_ESQUEMA||'.DD_MAN_MOTIVO_ANULACION',			'DD_MAN_ID'			),
+    	T_FK(	'FK_ECO_MOTIVO_ANUL',				'DD_MAN_ID',				V_ESQUEMA||'.DD_MAN_MOTIVO_ANULACION',			'DD_MAN_ID'			)
     );
     V_T_FK T_FK;
     

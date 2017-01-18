@@ -569,7 +569,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
 		me.fireEvent("downloadFile", config);
     },
-    
+
 	onClickBotonGuardarInfoFoto: function(btn){
 		var me = this;
 		btn.up('tabpanel').mask();
@@ -638,6 +638,70 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
             	  btn.up('tabpanel').unmask();
             }
 	    });
+	},
+
+	onClickPublicarActivosSeleccionadosSubmenuGrid: function(menuItem) {
+		var me = this;
+
+		menuItem.up('activosagrupacionlist').mask();
+
+		var arraySelection = menuItem.up('activosagrupacionlist').getActivoIDPersistedSelection();
+		var url = $AC.getRemoteUrl('agrupacion/publicarActivosAgrupacion');
+		var params = {
+					'agrupacionID': me.getViewModel().get("agrupacionficha.id"),
+					'activosID': arraySelection
+				};
+
+		me.genericAJAXController(menuItem, url, params);
+	},
+
+	onClickPublicarSubdivisionesActivosSeleccioandosSubmenuGrid: function(menuItem) {
+		var me = this;
+
+		menuItem.up('activosagrupacionlist').mask();
+
+		var arraySelection = menuItem.up('activosagrupacionlist').getActivoIDPersistedSelection();
+		var url = $AC.getRemoteUrl('agrupacion/publicarSubdivisionesActivosAgrupacion');
+		var params = {
+					'agrupacionID': me.getViewModel().get("agrupacionficha.id"),
+					'activosID': arraySelection
+				};
+
+		me.genericAJAXController(menuItem, url, params);
+	},
+
+	onClickPublicarAgrupacionSubmenuGrid: function(menuItem) {
+		var me = this;
+
+		menuItem.up('activosagrupacionlist').mask();
+
+		var url = $AC.getRemoteUrl('agrupacion/publicarAgrupacion');
+		var params = {
+				'agrupacionID': me.getViewModel().get("agrupacionficha.id")
+			};
+
+		me.genericAJAXController(menuItem, url, params);
+	},
+
+	genericAJAXController: function(menuItem, url, params) {
+		var me = this;
+
+		Ext.Ajax.request({
+		     url: url,
+		     params:params,
+		     success: function (response, operation, context) {
+				 if(Ext.decode(response.responseText).success === 'false') {
+					 me.fireEvent("errorToast", Ext.decode(response.responseText).msg);
+				 } else {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				 }
+				 menuItem.up('activosagrupacionlist').unmask();
+            },
+
+            failure: function (a, operation, context) {
+          	   me.fireEvent("errorToast", 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN');
+          	   menuItem.up('activosagrupacionlist').unmask();
+           }
+	    });
 	}
-		
 });

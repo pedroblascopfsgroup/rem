@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.uri.UriComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -67,7 +68,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(PASSWORD_PATH).append(crearGasto.getPassword());
 		sb.append("&").append(DESCRIPCION_EXPEDIENTE_PATH).append(crearGasto.getDescripcionExpediente());
 		sb.append("&").append(COD_CLASE_PATH).append(crearGasto.getCodClase());
-		sb.append("&").append(GASTO_METADATOS_PATH).append(crearGasto.getGastoMetadatos());
+		sb.append("&").append(GASTO_METADATOS_PATH).append(UriComponent.encode(crearGasto.getGastoMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
 		return sb.toString();
 	}
 	

@@ -718,6 +718,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return true;
 	}
+	
+	@Override
+	public Boolean congelarOferta(Oferta oferta){
+		try {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+			DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			genericDao.save(Oferta.class, oferta);
+			
+		} catch(Exception e) {
+			logger.error(e);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna) {

@@ -144,6 +144,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -380,7 +381,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
 				}
 				DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
+						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, this.getSubtipoTrabajoByOferta(oferta));
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null);
 
 				crearExpediente(oferta, trabajo);
@@ -3154,5 +3155,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public String getSubtipoTrabajoByOferta(Oferta oferta) {
+		if(oferta.getTipoOferta().getCodigo().equals(DDTipoOferta.CODIGO_VENTA)) {
+			return DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA;
+		}
+		else
+			return DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER;
 	}
 }

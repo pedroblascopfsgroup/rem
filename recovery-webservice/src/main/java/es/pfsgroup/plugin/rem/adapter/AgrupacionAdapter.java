@@ -1025,7 +1025,7 @@ public class AgrupacionAdapter {
 					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
 				}
 
-				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
+				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
 				Trabajo trabajo= trabajoApi.create(subtipoTrabajo, listaActivos, null);
 
 				activoManager.crearExpediente(oferta,trabajo);

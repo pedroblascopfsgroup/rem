@@ -855,4 +855,11 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Double getImporteValoracionActivoByCodigo(Activo activo, String codTipoPrecio);
+	
+	/**
+	 * Devuelve el codigo del subtipo de trabajo segun el tipo de Oferta
+	 * @param oferta
+	 * @return
+	 */
+	public String getSubtipoTrabajoByOferta(Oferta oferta);
 }

@@ -964,6 +964,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 		// Módulo de Expediente comercial ----------
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T013");
+		}
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
+		}
+		
+		/*
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_COMERCIALIZACION)) {
 			if (!Checks.esNulo(trabajo.getActivo())) {
 				
@@ -978,7 +986,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 				}
 			}
-		}
+		}*/
 
 		if (Checks.esNulo(tipoTramite.getId())) {
 			return null;

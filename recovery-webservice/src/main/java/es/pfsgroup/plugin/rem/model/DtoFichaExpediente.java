@@ -60,7 +60,9 @@ public class DtoFichaExpediente extends WebDto {
 
 	private Date fechaPosicionamiento;
 
-	private String motivoAnulacion;
+	private String codMotivoAnulacion;
+
+	private String descMotivoAnulacion;
 
 	private Date fechaAnulacion;
 
@@ -269,12 +271,20 @@ public class DtoFichaExpediente extends WebDto {
 		this.fechaPosicionamiento = fechaPosicionamiento;
 	}
 
-	public String getMotivoAnulacion() {
-		return motivoAnulacion;
+	public String getCodMotivoAnulacion() {
+		return codMotivoAnulacion;
 	}
 
-	public void setMotivoAnulacion(String motivoAnulacion) {
-		this.motivoAnulacion = motivoAnulacion;
+	public void setCodMotivoAnulacion(String codMotivoAnulacion) {
+		this.codMotivoAnulacion = codMotivoAnulacion;
+	}
+	
+	public String getDescMotivoAnulacion() {
+		return descMotivoAnulacion;
+	}
+
+	public void setDescMotivoAnulacion(String descMotivoAnulacion) {
+		this.descMotivoAnulacion = descMotivoAnulacion;
 	}
 
 	public Date getFechaAnulacion() {

@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -611,7 +612,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dto.setFechaPosicionamiento(expediente.getUltimoPosicionamiento().getFechaPosicionamiento());					
 				}
 
-				dto.setMotivoAnulacion(expediente.getMotivoAnulacion());
+				if(!Checks.esNulo(expediente.getMotivoAnulacion())){
+					dto.setCodMotivoAnulacion(expediente.getMotivoAnulacion().getCodigo());
+					dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
+				}
+				
 				dto.setFechaAnulacion(expediente.getFechaAnulacion());
 				if(!Checks.esNulo(reserva)) {
 					if(!Checks.esNulo(reserva.getEstadoDevolucion())) {
@@ -2067,6 +2072,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			try {
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);			
 
+				if(!Checks.esNulo(dto.getCodMotivoAnulacion())){
+					DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
+							(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
+					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
+				}
+				
 				if(!Checks.esNulo(expedienteComercial.getReserva())){
 					if(!Checks.esNulo(dto.getEstadoDevolucionCodigo())) {
 						DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoDevolucion.class, dto.getEstadoDevolucionCodigo());

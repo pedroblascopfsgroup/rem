@@ -13,6 +13,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 
 @Component
 public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterService {
@@ -37,11 +39,15 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired
+    private UtilDiccionarioApi utilDiccionarioApi;
 
     private static final String COMBO_RESOLUCION = "comboResolucion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
    	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
-   	private static final String MOTIVO_ANULACION = "Bankia no ratifica la oferta";
+   	private static final String MOTIVO_NO_RATIFICADA = "604"; //NO RATIFICADA
+//   	private static final String MOTIVO_ANULACION = "Bankia no ratifica la oferta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -85,7 +91,10 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							}
 						}
 						
-						expediente.setMotivoAnulacion(MOTIVO_ANULACION);
+						// Motivo anulacion: NO RATIFICADA
+						DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
+								(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, MOTIVO_NO_RATIFICADA);
+						expediente.setMotivoAnulacion(motivoAnulacionExpediente);
 
 
 					}

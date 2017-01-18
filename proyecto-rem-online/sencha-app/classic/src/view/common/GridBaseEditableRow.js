@@ -292,7 +292,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 		}
     	
     },
-    
+
     disableAddButton: function(disabled) {
     	
     	var me = this;

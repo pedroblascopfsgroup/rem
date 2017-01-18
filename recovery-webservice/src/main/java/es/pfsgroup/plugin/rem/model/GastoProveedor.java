@@ -393,7 +393,7 @@ public class GastoProveedor implements Serializable, Auditable {
      */
     public AdjuntoGasto getAdjuntoGD(Long idDocRestClient) {
         for (AdjuntoGasto adj : getAdjuntos()) {
-            if (adj.getIdDocRestClient().equals(id)) { return adj; }
+        	if(!Checks.esNulo(idDocRestClient) && adj.getIdDocRestClient().equals(idDocRestClient)) { return adj; }
         }
         return null;
     }

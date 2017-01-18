@@ -98,7 +98,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {

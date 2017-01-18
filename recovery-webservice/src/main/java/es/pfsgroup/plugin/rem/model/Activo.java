@@ -1340,7 +1340,7 @@ public class Activo implements Serializable, Auditable {
      */
     public ActivoAdjuntoActivo getAdjuntoGD(Long idDocRestClient) {
     	for (ActivoAdjuntoActivo adj : getAdjuntos()) {
-            if (adj.getIdDocRestClient().equals(id)) { return adj; }
+    		if(!Checks.esNulo(idDocRestClient) && adj.getIdDocRestClient().equals(idDocRestClient)) { return adj; }
         }
         return null;
     }

@@ -58,8 +58,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 				if(tabNext.getReference() == 'activosagrupacion' && !Ext.isEmpty(this.down("[reference=listadoactivosagrupacion]"))) {
 
 					var desactivarBotones = !this.lookupController().getViewModel().get('agrupacionficha').getData().existenOfertasVivas;
-					this.down("[reference=listadoactivosagrupacion]").down('#removeButton').setVisible(desactivarBotones);
-					this.down("[reference=listadoactivosagrupacion]").down('#addButton').setVisible(desactivarBotones);
+					this.down("[reference=listadoactivosagrupacion]").visibilityAddButton(desactivarBotones);
+					this.down("[reference=listadoactivosagrupacion]").visibilityRemoveButton(desactivarBotones);
 				}
 				
             	return true;

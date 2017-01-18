@@ -206,7 +206,7 @@ BEGIN
             ,ECO_FECHA_ALTA
             ,ECO_FECHA_SANCION 
             ,ECO_FECHA_ANULACION
-            ,ECO_MOTIVO_ANULACION 
+            ,DD_MAN_ID 
             , VERSION
             , USUARIOCREAR
             , FECHACREAR
@@ -244,9 +244,9 @@ BEGIN
         END                                                                                                                 AS ECO_FECHA_ANULACION,
         CASE
             WHEN MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
-            THEN MAN.DD_MAN_DESCRIPCION_LARGA
+            THEN MAN.DD_MAN_ID
             ELSE NULL
-        END  																												AS ECO_MOTIVO_ANULACION,
+        END  																												AS DD_MAN_ID,
           0                                                                                                                 AS VERSION,
           ''MIG2''                                                                                                          AS USUARIOCREAR,
           SYSDATE                                                                                                           AS FECHACREAR

@@ -1,3 +1,26 @@
+--/*
+--#########################################
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20170118
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-719
+--## PRODUCTO=NO
+--## 
+--## Finalidad: ASIGNACION DE GESTORES PARA LOS NUEVOS ACTIVOS
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
 declare
 --v0.3
 

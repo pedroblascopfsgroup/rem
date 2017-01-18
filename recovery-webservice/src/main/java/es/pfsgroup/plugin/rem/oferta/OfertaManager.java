@@ -1336,7 +1336,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 	
-	private Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of) {
+	@Override
+	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of) {
 		if(!Checks.esNulo(of.getEstadoOferta()) 
 				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
 			//Si la oferta esta aceptada, se comprueba que el expediente esté (Aprobado, Reservado, o En devolución), para pasar la nueva oferta a Congelada.

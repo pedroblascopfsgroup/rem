@@ -380,7 +380,7 @@ public interface OfertaApi {
 	
 	/**
 	 * Método para comprobar que el ACTIVO tenga una oferta ACEPTADA con un expediente comercial con algunos
-	 * de estos tres estados (Aprobado, Reservado o Devuelto)
+	 * de los estados finalizados del expediente
 	 * @param activo
 	 * @return
 	 */
@@ -388,11 +388,18 @@ public interface OfertaApi {
 	
 	/**
 	 * Método para comprobar que la AGRUPACION tenga una oferta ACEPTADA con un expediente comercial con algunos
-	 * de estos tres estados (Aprobado, Reservado o Devuelto)
+	 * de los estados finalizados del expediente
 	 * @param agrupacion
 	 * @return
 	 */
 	public Boolean isAgrupacionConOfertaYExpedienteBlocked(ActivoAgrupacion agrupacion);
+	
+	/**
+	 * Comprueba que la oferta y su expediente comercial esten aprobados
+	 * @param of
+	 * @return
+	 */
+	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of);
 
 }
 

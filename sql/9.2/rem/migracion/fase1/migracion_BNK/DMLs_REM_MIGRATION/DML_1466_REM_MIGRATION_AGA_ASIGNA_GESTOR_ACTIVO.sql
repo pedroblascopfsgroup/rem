@@ -1,13 +1,13 @@
 --/*
 --#########################################
---## AUTOR=CLV
---## FECHA_CREACION=20160803
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20170118
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-719
 --## PRODUCTO=NO
 --## 
---## Finalidad: Proceso de migración 'MIG_APT_PRESUPUESTO_TRABAJO' -> 'ACT_PRT_PRESUPUESTO_TRABAJO'
+--## Finalidad: ASIGNACION DE GESTORES PARA LOS NUEVOS ACTIVOS
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:

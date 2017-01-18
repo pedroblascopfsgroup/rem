@@ -79,7 +79,8 @@ DECLARE
                                                             T_TABLAS('REM01','GAH_GESTOR_ACTIVO_HISTORICO'),
                                                             T_TABLAS('REM01','GAC_GESTOR_ADD_ACTIVO'),
                                                             T_TABLAS('REM01','VIS_VISITAS'),
-                                                            T_TABLAS('REM01','ACT_ACTIVO')
+                                                            T_TABLAS('REM01','ACT_ACTIVO'),
+                                                            T_TABLAS('REM01','ACT_LCO_LOTE_COMERCIAL')
                         );
        
 BEGIN
@@ -165,6 +166,7 @@ BEGIN
   delete from rem01.ACT_REG_INFO_REGISTRAL where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_ONV_OBRA_NUEVA ONV where EXISTS (SELECT 1 FROM REM01.ACT_AGR_AGRUPACION AGR WHERE AGR.AGR_ID = ONV.AGR_ID AND AGR.usuariocrear= 'MIGRAREM01BNK');
   delete from rem01.ACT_RES_RESTRINGIDA RES where EXISTS (SELECT 1 FROM REM01.ACT_AGR_AGRUPACION AGR WHERE AGR.AGR_ID = RES.AGR_ID AND AGR.usuariocrear= 'MIGRAREM01BNK');
+  delete from rem01.ACT_LCO_LOTE_COMERCIAL LCO WHERE EXISTS (SELECT 1 FROM REM01.ACT_AGR_AGRUPACION AGR WHERE AGR.AGR_ID = LCO.AGR_ID AND AGR.usuariocrear= 'MIGRAREM01BNK');
   delete from rem01.ACT_AGR_AGRUPACION where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_AGA_AGRUPACION_ACTIVO where usuariocrear= 'MIGRAREM01BNK';
   commit;

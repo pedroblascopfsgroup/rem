@@ -3754,7 +3754,7 @@ public class ActivoAdapter {
 		// Comprobar si el activo se encuentra en una agrupación de tipo 'lote comercial'.
 		// Y que tenga oferta aceptada de expediente con estasdo (aprobado, reservado, en devolución)
 		if(activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId()) ||
-				ofertaApi.isActivoConOfertaYExpedienteAprobadoReservadoDevuelto(activo)) {
+				ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) {
 			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 		}
 		

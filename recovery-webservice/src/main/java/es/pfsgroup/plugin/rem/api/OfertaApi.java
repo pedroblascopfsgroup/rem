@@ -384,7 +384,7 @@ public interface OfertaApi {
 	 * @param activo
 	 * @return
 	 */
-	public Boolean isActivoConOfertaYExpedienteAprobadoReservadoDevuelto(Activo activo);
+	public Boolean isActivoConOfertaYExpedienteBlocked(Activo activo);
 	
 	/**
 	 * Método para comprobar que la AGRUPACION tenga una oferta ACEPTADA con un expediente comercial con algunos
@@ -392,7 +392,7 @@ public interface OfertaApi {
 	 * @param agrupacion
 	 * @return
 	 */
-	public Boolean isAgrupacionConOfertaYExpedienteAprobadoReservadoDevuelto(ActivoAgrupacion agrupacion);
+	public Boolean isAgrupacionConOfertaYExpedienteBlocked(ActivoAgrupacion agrupacion);
 
 }
 

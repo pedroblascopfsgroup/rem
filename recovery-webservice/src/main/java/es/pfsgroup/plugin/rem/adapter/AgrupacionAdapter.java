@@ -1487,7 +1487,7 @@ public class AgrupacionAdapter {
 		}
 
 		// Comprobar si la grupación tiene ofertas aceptadas para establecer la nueva oferta en estado congelada.
-		if(ofertaApi.isAgrupacionConOfertaYExpedienteAprobadoReservadoDevuelto(agrupacion)) {
+		if(ofertaApi.isAgrupacionConOfertaYExpedienteBlocked(agrupacion)) {
 			codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
 		}
 		

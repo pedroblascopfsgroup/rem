@@ -970,24 +970,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
 		}
-		
-		/*
-		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_COMERCIALIZACION)) {
-			if (!Checks.esNulo(trabajo.getActivo())) {
-				
-				//Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(trabajo.getActivo());
-				Oferta oferta = expedienteComercialApi.findOneByTrabajo(trabajo).getOferta();
-				
-				if (!Checks.esNulo(oferta)) {
-					if (DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
-						tipoTramite = tipoProcedimientoManager.getByCodigo("T013");
-					} else {
-						tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
-					}
-				}
-			}
-		}*/
 
+		
 		if (Checks.esNulo(tipoTramite.getId())) {
 			return null;
 		}

@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	recordClass: "HreRem.model.Activo",
     
     requires: ['HreRem.model.Activo'],
-    
+
     initComponent: function () {
 
         var me = this;
@@ -286,10 +286,20 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'datefieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
-						colspan: 2,
+					//	colspan: 2,
 						bind:		'{activo.fechaAltaActivoRem}',
 						readOnly	: true
-					},					
+					},
+					{
+						xtype : 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.bloqueo.tipo.comercializacion'),
+						labelWidth: 200,
+						bind: {
+							store : '{comboSiNoBoolean}',
+							value: '{activo.bloqueoTipoComercializacionAutomatico}',
+							disabled: '{!activo.aplicaComercializar}'
+						}
+					},
 		            {    
 		                
 						xtype:'fieldsettable',
@@ -455,7 +465,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								colspan: 3,
 								items :
 									[
-									{//COMBOS SIN VALOR HASTA QUE SE CONFIRME QUE DICCIONARIOS USAR
+									{
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.comercializacion'),
 										bind: {
@@ -496,6 +506,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}
 									]
 							}
+							
 						]
 					}, //Fin condiciones
 					//Datos bancarios
@@ -578,9 +589,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     
     funcionRecargar: function() {
     	var me = this; 
-		me.recargar = false;		
-		me.lookupController().cargarTabData(me);
-    	
+		me.recargar = false;
+		me.lookupController().cargarTabData(me);    	
     },
     
     actualizarCoordenadas: function(latitud, longitud) {

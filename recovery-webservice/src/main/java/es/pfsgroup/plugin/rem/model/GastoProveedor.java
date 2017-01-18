@@ -385,6 +385,18 @@ public class GastoProveedor implements Serializable, Auditable {
         }
         return null;
     }
+    
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public AdjuntoGasto getAdjuntoGD(Long idDocRestClient) {
+        for (AdjuntoGasto adj : getAdjuntos()) {
+        	if(!Checks.esNulo(idDocRestClient) && adj.getIdDocRestClient().equals(idDocRestClient)) { return adj; }
+        }
+        return null;
+    }
 
 	public DDEstadoGasto getEstadoGasto() {
 		return estadoGasto;

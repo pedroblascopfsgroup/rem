@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class TabActivoDatosBasicos implements TabActivoService {
@@ -60,6 +61,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 
 	@Override
 	public String[] getKeys() {
@@ -440,6 +444,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
 				DDTipoUsoDestino tipoUsoDestino = (DDTipoUsoDestino) diccionarioApi.dameValorDiccionarioByCod(DDTipoUsoDestino.class,  dto.getTipoUsoDestinoCodigo());
 				activo.setTipoUsoDestino(tipoUsoDestino);
+				//Actualizar el tipoComercialización del activo
+				updaterState.updaterStateTipoComercializacion(activo);
 			}
 			
 			if (!Checks.esNulo(dto.getEstadoActivoCodigo())) {

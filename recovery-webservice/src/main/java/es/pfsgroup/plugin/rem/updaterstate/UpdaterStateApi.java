@@ -28,6 +28,12 @@ public interface UpdaterStateApi {
 	 * @param activo
 	 */
 	public void updaterStateDisponibilidadComercial(Activo activo);
+	
+	/**
+	 * Actualiza el tipo de comercialización del activo (Singular / Retail)
+	 * @param activo
+	 */
+	public void updaterStateTipoComercializacion(Activo activo);
 
 	
 }

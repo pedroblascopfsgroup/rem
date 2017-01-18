@@ -32,7 +32,10 @@ public class DDTipoComercializar implements Auditable, Dictionary {
 	
 	public static final String CODIGO_SINGULAR = "01";
     public static final String CODIGO_RETAIL = "02";
-
+    
+    public static final String DESCRIPCION_SINGULAR = "Singular";
+    public static final String DESCRIPCION_RETAIL = "Retail";
+    
 	/**
 	 * 
 	 */

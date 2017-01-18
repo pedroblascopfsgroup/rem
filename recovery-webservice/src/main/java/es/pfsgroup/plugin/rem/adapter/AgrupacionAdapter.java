@@ -24,7 +24,6 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.users.domain.Usuario;
-
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -90,6 +89,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
 import es.pfsgroup.plugin.rem.validate.BusinessValidators;
@@ -153,6 +153,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private TrabajoApi trabajoApi;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	
@@ -437,6 +440,9 @@ public class AgrupacionAdapter {
 			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				activoApi.updateActivoAsistida(activo);
 			}
+			
+			//Actualizar el tipoComercialización del activo
+			updaterState.updaterStateTipoComercializacion(activo);
 
 		} catch (JsonViewerException jve) {
 		    throw jve;

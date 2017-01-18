@@ -13,14 +13,8 @@ public class DtoAdjunto implements Serializable{
 
     private Long id;
     
-    private Long idGasto;
-    
-    private Long idActivo;
-    
-    private Long idTrabajo;
-    
-    private Long idProveedor;
-    
+    private Long idEntidad;    
+   
     private String codigoTipo;
 
     private String descripcionTipo;   
@@ -45,20 +39,12 @@ public class DtoAdjunto implements Serializable{
 		this.id = id;
 	}
 	
-	public Long getIdActivo() {
-		return idActivo;
+	public Long getIdEntidad() {
+		return idEntidad;
 	}
 
-	public void setIdActivo(Long idActivo) {
-		this.idActivo = idActivo;
-	}
-
-	public Long getIdTrabajo() {
-		return idTrabajo;
-	}
-
-	public void setIdTrabajo(Long idTrabajo) {
-		this.idTrabajo = idTrabajo;
+	public void setIdEntidad(Long idEntidad) {
+		this.idEntidad = idEntidad;
 	}
 
 	public String getCodigoTipo() {
@@ -123,21 +109,5 @@ public class DtoAdjunto implements Serializable{
 
 	public void setGestor(String gestor) {
 		this.gestor = gestor;
-	}
-
-	public Long getIdProveedor() {
-		return idProveedor;
-	}
-
-	public void setIdProveedor(Long idProveedor) {
-		this.idProveedor = idProveedor;
-	}
-
-	public Long getIdGasto() {
-		return idGasto;
-	}
-
-	public void setIdGasto(Long idGasto) {
-		this.idGasto = idGasto;
 	}
 }

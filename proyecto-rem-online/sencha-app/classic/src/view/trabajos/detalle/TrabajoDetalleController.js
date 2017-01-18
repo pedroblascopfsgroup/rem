@@ -300,7 +300,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		idTrabajo = me.getViewModel().get("trabajo.id");
 
 		record.erase({
-			params: {idTrabajo: idTrabajo},
+			params: {idEntidad: idTrabajo},
             success: function(record, operation) {
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
            		 grid.fireEvent("afterdelete", grid);

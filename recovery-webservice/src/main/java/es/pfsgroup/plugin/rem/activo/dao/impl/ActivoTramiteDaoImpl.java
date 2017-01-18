@@ -77,4 +77,13 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		return HibernateQueryUtils.list(this, hb);
 	}
 	
+	public List<ActivoTramite> getListaTramitesFromActivoTrabajo(Long idActivo) {
+		
+		HQLBuilder hb = new HQLBuilder("select tra from ActivoTramite tra, VBusquedaTramitesActivo v");
+		hb.appendWhere("tra.id = v.idTramite");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "v.idActivo", idActivo);
+		
+		return HibernateQueryUtils.list(this, hb);
+	}
+	
 }

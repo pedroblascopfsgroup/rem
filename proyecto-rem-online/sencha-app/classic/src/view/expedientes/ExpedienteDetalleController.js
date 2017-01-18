@@ -317,7 +317,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		idExpediente = me.getViewModel().get("expediente.id");
 
 		record.erase({
-			params: {idExpediente: idExpediente},
+			params: {idEntidad: idExpediente},
             success: function(record, operation) {
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
            		 grid.fireEvent("afterdelete", grid);

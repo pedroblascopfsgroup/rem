@@ -31,7 +31,11 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
 					        try {
 					    		var response = Ext.JSON.decode(operation.getResponse().responseText);    				    		
 					    		if (response.success == "false")  {
-					    			me.fireEvent("errorToast", response.errorMessage);
+					    			if(!Ext.isEmpty(response.errorMessage)) {
+					    				me.fireEvent("errorToast", response.errorMessage);
+					    			} else {
+					    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					    			}
 					    		}
 					    	}catch(err) {}
 					    },

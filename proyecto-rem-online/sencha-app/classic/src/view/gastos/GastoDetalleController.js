@@ -901,14 +901,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this;
 		idGasto = me.getViewModel().get("gasto.id");
-
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		record.erase({
 			params: {idEntidad: idGasto},
             success: function(record, operation) {
+            	 me.getView().unmask();
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
            		 grid.fireEvent("afterdelete", grid);
             },
             failure: function(record, operation) {
+            	  me.getView().unmask();
                   me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                   grid.fireEvent("afterdelete", grid);
             }

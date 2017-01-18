@@ -1379,8 +1379,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 						adj.setTamanyo(adjuntoGasto.getTamanyo());
 					}
-				}	
-				
+				}					
 				
 			} catch (GestorDocumentalException gex) {
 				String[] error = gex.getMessage().split("-");
@@ -1393,6 +1392,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						idExpediente = gestorDocumentalAdapterApi.crearGasto(gasto, usuario.getUsername());
 						logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gasto.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
 					} catch (GestorDocumentalException gexc) {
+						gexc.printStackTrace();
 						logger.debug(gexc.getMessage());
 					}
 				}
@@ -1544,15 +1544,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
 		
 		GastoProveedor gasto= findOne(dtoAdjunto.getIdEntidad());
-		AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
+		AdjuntoGasto adjuntoGasto= null;
 		FileItem fileItem = null;
 		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
+				 adjuntoGasto= gasto.getAdjuntoGD(dtoAdjunto.getId());
 				fileItem = gestorDocumentalAdapterApi.getFileItem(adjuntoGasto.getIdDocRestClient());
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		} else {
+			adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
 			fileItem = adjuntoGasto.getAdjunto().getFileItem();
 			fileItem.setContentType(adjuntoGasto.getContentType());
 			fileItem.setFileName(adjuntoGasto.getNombre());

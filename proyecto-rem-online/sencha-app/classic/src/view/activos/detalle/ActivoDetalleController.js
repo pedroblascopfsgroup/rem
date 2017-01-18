@@ -751,18 +751,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this;
 		idActivo = me.getViewModel().get("activo.id");
-
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		record.erase({
 			params: {idEntidad: idActivo},
             success: function(record, operation) {
+            	 grid.fireEvent("afterdelete", grid);
+           		 me.getView().unmask();
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-
-           		 grid.fireEvent("afterdelete", grid);
             },
             failure: function(record, operation) {
-
-                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                  grid.fireEvent("afterdelete", grid);
+				 grid.fireEvent("afterdelete", grid);
+				 me.getView().unmask();
+                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
             }
             
         });	

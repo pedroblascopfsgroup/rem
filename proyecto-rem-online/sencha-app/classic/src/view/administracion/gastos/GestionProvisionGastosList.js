@@ -13,17 +13,15 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
         
         me.setTitle(HreRem.i18n('title.listado.gastos.provision'));
         
-        var labelSeleccionados = {xtype: 'displayfieldbase', itemId: 'displaySelection'};
 		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
 		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
 		var separador = {xtype: 'tbfill'};
-		var espacio = {xtype: 'tbspacer'};
 			
 		me.tbar = {
     		xtype: 'toolbar',
     		reference: 'tbarprovisiongastoslist',
     		dock: 'top',
-    		items: [separador, labelSeleccionados, espacio, configAutorizarBtn, configRechazarButton]
+    		items: [separador, configAutorizarBtn, configRechazarButton]
 		};
         
         me.listeners = {	    	
@@ -134,7 +132,17 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
 		            displayInfo: true,
 		            bind: {
 		                store: '{provisionGastos}'
-		            }
+		            },
+		            items:[
+			            	{
+			            		xtype: 'tbfill'
+			            	},
+			                {
+			                	xtype: 'displayfieldbase',
+			                	itemId: 'displaySelection',
+			                	fieldStyle: 'color:#0c364b; padding-top: 4px'
+			                }
+	            	]
 		        }
 		];
 		    

@@ -217,8 +217,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
-							reference: 'comboMotivoAnulacion',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
+		                	editable: true,
 				        	bind: {
 				        		store: '{comboMotivoAnulacion}',
 			            		value: '{expediente.codMotivoAnulacion}'

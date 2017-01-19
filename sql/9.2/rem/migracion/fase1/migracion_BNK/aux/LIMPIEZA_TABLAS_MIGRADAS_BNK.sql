@@ -80,7 +80,8 @@ DECLARE
                                                             T_TABLAS('REM01','GAC_GESTOR_ADD_ACTIVO'),
                                                             T_TABLAS('REM01','VIS_VISITAS'),
                                                             T_TABLAS('REM01','ACT_ACTIVO'),
-                                                            T_TABLAS('REM01','ACT_LCO_LOTE_COMERCIAL')
+                                                            T_TABLAS('REM01','ACT_LCO_LOTE_COMERCIAL'),
+                                                            T_TABLAS('REM01','ACT_ABA_ACTIVO_BANCARIO')
                         );
        
 BEGIN
@@ -155,6 +156,7 @@ BEGIN
   delete from rem01.ACT_MLV_MOVIMIENTO_LLAVE where usuariocrear= 'MIGRAREM01BNK';
   commit;
   delete from rem01.ACT_PDV_PLAN_DIN_VENTAS where usuariocrear= 'MIGRAREM01BNK';
+  delete from rem01.ACT_ABA_ACTIVO_BANCARIO where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_PRO_PROPIETARIO where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_PRT_PRESUPUESTO_TRABAJO where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_PRV_PARAMENTO_VERTICAL where usuariocrear= 'MIGRAREM01BNK';

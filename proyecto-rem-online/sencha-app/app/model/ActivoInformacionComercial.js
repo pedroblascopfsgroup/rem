@@ -595,7 +595,7 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     	    	name:'horno'
     	    },
     	    {
-    	    	name:'suelos'
+    	    	name:'suelosCocina'
     	    },
     	    {
     	    	name:'azulejos'
@@ -631,7 +631,7 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     	    	name:'alicatadoMarmol'
     	    },
     	    {
-    	    	name:'alicatadoGrafito'
+    	    	name:'alicatadoGranito'
     	    },
     	    {
     	    	name:'alicatadoAzulejo'

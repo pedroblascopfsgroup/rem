@@ -186,7 +186,7 @@ public class DtoActivoInformacionComercial extends WebDto {
 	//--
     private Integer amueblada; 
     private Integer estadoAmueblada; 
-    private Integer encimeraCocina;   
+    private Integer encimera;   
 	private Integer encimeraGranito;
 	private Integer encimeraMarmol;
 	private Integer encimeraOtroMaterial;	
@@ -209,7 +209,7 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private Integer banyeraHidromasaje;
 	private Integer columnaHidromasaje;
     private Integer alicatadoMarmol;   
-	private Integer alicatadoGrafito;
+	private Integer alicatadoGranito;
 	private Integer alicatadoAzulejo;
 	private Integer encimeraBanyo;
     private Integer encimeraBanyoMarmol;   
@@ -1180,11 +1180,11 @@ public class DtoActivoInformacionComercial extends WebDto {
 	public void setEstadoAmueblada(Integer estadoAmueblada) {
 		this.estadoAmueblada = estadoAmueblada;
 	}
-	public Integer getEncimeraCocina() {
-		return encimeraCocina;
+	public Integer getEncimera() {
+		return encimera;
 	}
-	public void setEncimeraCocina(Integer encimeraCocina) {
-		this.encimeraCocina = encimeraCocina;
+	public void setEncimera(Integer encimera) {
+		this.encimera = encimera;
 	}
 	public Integer getEncimeraGranito() {
 		return encimeraGranito;
@@ -1312,11 +1312,11 @@ public class DtoActivoInformacionComercial extends WebDto {
 	public void setAlicatadoMarmol(Integer alicatadoMarmol) {
 		this.alicatadoMarmol = alicatadoMarmol;
 	}
-	public Integer getAlicatadoGrafito() {
-		return alicatadoGrafito;
+	public Integer getalicatadoGranito() {
+		return alicatadoGranito;
 	}
-	public void setAlicatadoGrafito(Integer alicatadoGrafito) {
-		this.alicatadoGrafito = alicatadoGrafito;
+	public void setalicatadoGranito(Integer alicatadoGranito) {
+		this.alicatadoGranito = alicatadoGranito;
 	}
 	public Integer getAlicatadoAzulejo() {
 		return alicatadoAzulejo;

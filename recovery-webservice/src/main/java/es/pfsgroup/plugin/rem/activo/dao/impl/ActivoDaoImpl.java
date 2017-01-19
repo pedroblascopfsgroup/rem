@@ -497,8 +497,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return callProcedureSql.executeUpdate();
 	}
 	
-    public Long getNextNumOferta() {
+    public Long getNextNumExpedienteComercial() {
 		String sql = "SELECT S_ECO_NUM_EXPEDIENTE.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+	}
+    
+    public Long getNextNumOferta() {
+		String sql = "SELECT S_OFR_NUM_OFERTA.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
     

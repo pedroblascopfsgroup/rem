@@ -63,6 +63,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
     public Long getNextNumOferta();
     
+    public Long getNextNumExpedienteComercial();
+    
     public Long getNextClienteRemId();
 
 	public Page getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);

@@ -807,7 +807,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) ||
 					DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())	  ||
 					DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))
+					DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
 				return oferta;
 			}
 
@@ -1346,12 +1347,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public Boolean isActivoConOfertaYExpedienteAprobadoReservadoDevuelto(Activo activo) {
+	public Boolean isActivoConOfertaYExpedienteBlocked(Activo activo) {
 		
 		// Si no se encuentra en una agrupación de tipo 'lote comercial' examinar si el activo tuviese alguna oferta aceptada.
 		for (ActivoOferta acof: activo.getOfertas()) {
 			Oferta of = acof.getPrimaryKey().getOferta();
-			if(this.isOfertaAceptadaConExpedienteAprobadoReservadoDevuelto(of)) {
+			if(this.isOfertaAceptadaConExpedienteBlocked(of)) {
 				return true;
 			}
 		}
@@ -1359,11 +1360,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public Boolean isAgrupacionConOfertaYExpedienteAprobadoReservadoDevuelto(ActivoAgrupacion agrupacion) {
+	public Boolean isAgrupacionConOfertaYExpedienteBlocked(ActivoAgrupacion agrupacion) {
 		
 		// Comprobar si la grupación tiene ofertas aceptadas con expediente en estado Aprobado, Reservado o En devolución
 		for (Oferta of: agrupacion.getOfertas()) {
-			if(this.isOfertaAceptadaConExpedienteAprobadoReservadoDevuelto(of)) {
+			if(this.isOfertaAceptadaConExpedienteBlocked(of)) {
 				return true;
 			}
 		}
@@ -1371,15 +1372,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 	
-	private Boolean isOfertaAceptadaConExpedienteAprobadoReservadoDevuelto(Oferta of) {
+	@Override
+	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of) {
 		if(!Checks.esNulo(of.getEstadoOferta()) 
 				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
-			//Si la oferta esta aceptada, se comprueba que el expediente esté (Aprobado, Reservado, o En devolución), para pasar la nueva oferta a Congelada.
+			//Si la oferta esta aceptada, se comprueba que el expediente esté con alguno de los siguientes estados..., para pasar la nueva oferta a Congelada.
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(of.getId());
 			if(!Checks.esNulo(expediente.getEstado()) 
 				&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
 					|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
-					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))) {
+					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo()) 
+					|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))) {
 		
 				return true;
 			}

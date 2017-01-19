@@ -127,7 +127,6 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -145,7 +144,6 @@ import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service
 public class ActivoAdapter {
@@ -3754,7 +3752,7 @@ public class ActivoAdapter {
 		// Comprobar si el activo se encuentra en una agrupación de tipo 'lote comercial'.
 		// Y que tenga oferta aceptada de expediente con estasdo (aprobado, reservado, en devolución)
 		if(activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId()) ||
-				ofertaApi.isActivoConOfertaYExpedienteAprobadoReservadoDevuelto(activo)) {
+				ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) {
 			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 		}
 		

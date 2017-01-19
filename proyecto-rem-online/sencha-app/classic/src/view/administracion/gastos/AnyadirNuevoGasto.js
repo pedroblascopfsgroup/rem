@@ -145,9 +145,9 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													store: storeEmisoresGasto,
 													loadOnBind: false,
 													emptyText: HreRem.i18n('txt.seleccionar.emisor'),
-    												valueField		: 'codigo',
+    												valueField		: 'id',
     												bind: {
-    													value: '{gastoNuevo.codigoEmisor}',
+    													value: '{gastoNuevo.idEmisor}',
     													disabled: '{!buscadorNifEmisorField.value}'
     												},
     												tpl: Ext.create('Ext.XTemplate',

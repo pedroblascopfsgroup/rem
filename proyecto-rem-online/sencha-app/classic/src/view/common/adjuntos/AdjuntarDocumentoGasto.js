@@ -120,7 +120,8 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoGasto', {
                 success: function(fp, o) {
                 	
                 	if(o.result.success == "false") {
-                		me.fireEvent("errorToast", o.result.errorMessage);
+                		var errorTxt = Ext.isEmpty(o.result.errores) ? Ext.isEmpty(o.result.errorMessage) ? HreRem.i18n("msg.operacion.ok") : o.result.errorMessage : o.result.errores;   
+                		me.fireEvent("errorToast", errorTxt);
                 	}else{
                 		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
                 	}

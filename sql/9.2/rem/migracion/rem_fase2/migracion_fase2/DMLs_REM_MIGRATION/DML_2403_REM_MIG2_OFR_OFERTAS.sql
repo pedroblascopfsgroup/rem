@@ -66,6 +66,10 @@ BEGIN
             OFR_FECHA_RECHAZO,
             OFR_IND_LOTE_RESTRINGIDO,
             OFR_IMPORTE_APROBADO,
+            PVE_ID_PRESCRIPTOR,
+			PVE_ID_API_RESPONSABLE,
+			PVE_ID_CUSTODIO,
+			PVE_ID_FDV,
             VERSION,
             USUARIOCREAR,
             FECHACREAR,
@@ -78,36 +82,68 @@ BEGIN
           HAVING COUNT(1) > 1
           )
         SELECT 
-            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                             OFR_ID, 
-            MIG.OFR_COD_OFERTA                                                                                  OFR_COD_OFERTA,            
-            AGR.AGR_ID                                                                                                  AGR_ID,
+            '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                     OFR_ID, 
+            MIG.OFR_COD_OFERTA                                          OFR_COD_OFERTA,            
+            AGR.AGR_ID                                                  AGR_ID,
             CASE WHEN MIG.OFR_IMPORTE = 0 THEN null
-            ELSE MIG.OFR_IMPORTE END                                                                    OFR_IMPORTE,
-            CLC.CLC_ID                                                                                                  CLC_ID,
-            EOF.DD_EOF_ID                                                                                               DD_EOF_ID,
-            TOF.DD_TOF_ID                                                                                               DD_TOF_ID,
-            VIS.VIS_ID                                                                                                  VIS_ID,
-            EVO.DD_EVO_ID                                                                                               DD_EVO_ID,            
-            MIG.OFR_FECHA_ALTA                                                                                  OFR_FECHA_ALTA,
+            ELSE MIG.OFR_IMPORTE END                                    OFR_IMPORTE,
+            CLC.CLC_ID                                                  CLC_ID,
+            EOF.DD_EOF_ID                                               DD_EOF_ID,
+            TOF.DD_TOF_ID                                               DD_TOF_ID,
+            VIS.VIS_ID                                                  VIS_ID,
+            EVO.DD_EVO_ID                                               DD_EVO_ID,            
+            MIG.OFR_FECHA_ALTA                                          OFR_FECHA_ALTA,
             CASE WHEN MIG.OFR_FECHA_NOTIFICACION IS null 
             AND  MIG.OFR_COD_ESTADO_OFERTA = ''01'' THEN SYSDATE                
-            ELSE MIG.OFR_FECHA_NOTIFICACION END                                                 OFR_FECHA_NOTIFICACION,
+            ELSE MIG.OFR_FECHA_NOTIFICACION END                         OFR_FECHA_NOTIFICACION,
             CASE WHEN MIG.OFR_IMPORTE_CONTRAOFERTA = 0 THEN null
-            ELSE MIG.OFR_IMPORTE_CONTRAOFERTA END                                               OFR_IMPORTE_CONTRAOFERTA,
+            ELSE MIG.OFR_IMPORTE_CONTRAOFERTA END                       OFR_IMPORTE_CONTRAOFERTA,
             CASE WHEN MIG.OFR_IMPORTE_CONTRAOFERTA != 0 
             AND MIG.OFR_FECHA_CONTRAOFERTA is null THEN SYSDATE
-            ELSE MIG.OFR_FECHA_CONTRAOFERTA END                                                 OFR_FECHA_CONTRAOFERTA,
-            USU.USU_ID                                                                                                  USU_ID,
+            ELSE MIG.OFR_FECHA_CONTRAOFERTA END                         OFR_FECHA_CONTRAOFERTA,
+            USU.USU_ID                                                  USU_ID,
             CASE WHEN MIG.OFR_FECHA_RECHAZO IS null 
             AND  MIG.OFR_COD_ESTADO_OFERTA = ''02'' THEN SYSDATE
-            ELSE MIG.OFR_FECHA_RECHAZO END                                                              OFR_FECHA_RECHAZO,
-            MIG.OFR_IND_LOTE_RESTRINGIDO                                                                OFR_IND_LOTE_RESTRINGIDO,
+            ELSE MIG.OFR_FECHA_RECHAZO END                              OFR_FECHA_RECHAZO,
+            MIG.OFR_IND_LOTE_RESTRINGIDO                                OFR_IND_LOTE_RESTRINGIDO,
             CASE WHEN MIG.OFR_IMPORTE_APROBADO = 0 THEN null
-            ELSE MIG.OFR_IMPORTE_APROBADO END                                                   OFR_IMPORTE_APROBADO,
-            0                                                                                                                   VERSION,
-            ''MIG2''                                                            USUARIOCREAR,
-            SYSDATE                                                             FECHACREAR,
-            0                                                                   BORRADO
+            ELSE MIG.OFR_IMPORTE_APROBADO END                           OFR_IMPORTE_APROBADO,
+            (SELECT PVE_ID 
+			FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
+			INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR 
+				ON TPR.DD_TPR_ID = PVE.DD_TPR_ID
+			WHERE TPR.DD_TPR_CODIGO IN 
+			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
+			AND PVE_COD_UVEM = MIG.OFR_COD_PRESCRIPTOR_UVEM
+			) 															PVE_ID_PRESCRIPTOR,
+            (SELECT PVE_ID 
+			FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
+			INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR 
+				ON TPR.DD_TPR_ID = PVE.DD_TPR_ID
+			WHERE TPR.DD_TPR_CODIGO IN 
+			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
+			AND PVE_COD_UVEM = MIG.OFR_COD_API_RESPONSABLE_UVEM
+			)															PVE_ID_API_RESPONSABLE,
+            (SELECT PVE_ID 
+			FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
+			INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR 
+				ON TPR.DD_TPR_ID = PVE.DD_TPR_ID
+			WHERE TPR.DD_TPR_CODIGO IN 
+			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
+			AND PVE_COD_UVEM = MIG.OFR_COD_CUSTODIO_UVEM
+			)											                PVE_ID_CUSTODIO,
+            (SELECT PVE_ID 
+			FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
+			INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR 
+				ON TPR.DD_TPR_ID = PVE.DD_TPR_ID
+			WHERE TPR.DD_TPR_CODIGO IN 
+			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
+			AND PVE_COD_UVEM = MIG.OFR_COD_FDV_UVEM
+			)				                                            PVE_ID_FDV,           
+            0                                                           VERSION,
+            ''MIG2''                                                    USUARIOCREAR,
+            SYSDATE                                                     FECHACREAR,
+            0                                                           BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
             LEFT JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_NUM_AGRUP_UVEM = MIG.OFR_COD_AGRUPACION
             LEFT JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_WEBCOM_ID = MIG.OFR_COD_CLIENTE_WEBCOM
@@ -170,7 +206,7 @@ BEGIN
             ,ECO_FECHA_ALTA
             ,ECO_FECHA_SANCION 
             ,ECO_FECHA_ANULACION
-            ,ECO_MOTIVO_ANULACION 
+            ,DD_MAN_ID 
             , VERSION
             , USUARIOCREAR
             , FECHACREAR
@@ -208,9 +244,9 @@ BEGIN
         END                                                                                                                 AS ECO_FECHA_ANULACION,
         CASE
             WHEN MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
-            THEN MAN.DD_MAN_DESCRIPCION_LARGA
+            THEN MAN.DD_MAN_ID
             ELSE NULL
-        END  																												AS ECO_MOTIVO_ANULACION,
+        END  																												AS DD_MAN_ID,
           0                                                                                                                 AS VERSION,
           ''MIG2''                                                                                                          AS USUARIOCREAR,
           SYSDATE                                                                                                           AS FECHACREAR

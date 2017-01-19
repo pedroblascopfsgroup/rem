@@ -113,7 +113,9 @@ BEGIN
                                 ACT_COD_TIPO_COMERCIALIZACION,
                                 ACT_FECHA_IND_PRECIAR,
                                 ACT_FECHA_IND_REPRECIAR,
-                                ACT_FECHA_IND_DESCUENTO
+                                ACT_FECHA_IND_DESCUENTO,
+                                ACT_FECHA_VENTA,
+                                ACT_IMPORTE_VENTA
                                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' 
                           ) AUX
                 ON (ACT.ACT_NUM_ACTIVO = AUX.ACT_NUMERO_ACTIVO)
@@ -127,6 +129,8 @@ BEGIN
                   ,ACT.ACT_FECHA_IND_PRECIAR = AUX.ACT_FECHA_IND_PRECIAR
                   ,ACT.ACT_FECHA_IND_REPRECIAR = AUX.ACT_FECHA_IND_REPRECIAR
                   ,ACT.ACT_FECHA_IND_DESCUENTO = AUX.ACT_FECHA_IND_DESCUENTO
+                  ,ACT.ACT_VENTA_EXTERNA_FECHA = AUX.ACT_FECHA_VENTA
+                  ,ACT.ACT_VENTA_EXTERNA_IMPORTE = AUX.ACT_IMPORTE_VENTA
           ,ACT.USUARIOMODIFICAR = ''MIG2''
           ,ACT.FECHAMODIFICAR = SYSDATE
       '

@@ -15,16 +15,14 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     	var me = this;
     	      	
       	var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, secFunPermToRender: 'CREAR_GASTO'};
-      	var labelSeleccionados = {xtype: 'displayfieldbase', itemId: 'displaySelection'/*, cls: 'logo-headerbar'*/};
 		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizar', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
 		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazar', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
 		var separador = {xtype: 'tbfill'};
-		var espacio = {xtype: 'tbspacer'};
 			
 		me.tbar = {
     		xtype: 'toolbar',
     		dock: 'top',
-    		items: [configAddBtn, separador, labelSeleccionados, espacio, configAutorizarBtn, configRechazarButton]
+    		items: [configAddBtn, separador, configAutorizarBtn, configRechazarButton]
 		};
       	
     	me.columns = [
@@ -139,7 +137,17 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 		            displayInfo: true,
 		            bind: {
 		                store: '{gastosAdministracion}'
-		            }
+		            },
+		            items:[
+			            	{
+			            		xtype: 'tbfill'
+			            	},
+			                {
+			                	xtype: 'displayfieldbase',
+			                	itemId: 'displaySelection',
+			                	fieldStyle: 'color:#0c364b; padding-top: 4px'
+			                }
+	            	]
 		        }
 		];
 		

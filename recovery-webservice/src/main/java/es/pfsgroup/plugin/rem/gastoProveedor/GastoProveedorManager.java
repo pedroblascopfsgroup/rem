@@ -98,7 +98,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {
@@ -348,10 +347,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 	
 	private GastoProveedor dtoToGastoProveedor(DtoFichaGastoProveedor dto, GastoProveedor gastoProveedor) {
-		gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
+		
+		if(Checks.esNulo(dto.getNumGastoHaya())) {
+			gastoProveedor.setNumGastoHaya(gastoDao.getNextNumGasto());
+		} else {
+			gastoProveedor.setNumGastoHaya(dto.getNumGastoHaya());
+		}
 
 		if(!Checks.esNulo(dto.getCodigoEmisor())){				
 			ActivoProveedor proveedor = searchProveedorCodigo(dto.getCodigoEmisor().toString());
+			gastoProveedor.setProveedor(proveedor);
+		}
+		
+		if(!Checks.esNulo(dto.getIdEmisor())){		
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdEmisor() );
+			ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtro);
 			gastoProveedor.setProveedor(proveedor);
 		}
 		
@@ -464,17 +474,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	public boolean existeGasto(DtoFichaGastoProveedor dto) {
 		
-		GastoProveedor gasto = new GastoProveedor();
-		gasto = dtoToGastoProveedor(dto, gasto);
 		
 		boolean existeGasto = false;
 		
-		Filter filtroReferencia = genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", gasto.getReferenciaEmisor());
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.id", gasto.getTipoGasto().getId());
-		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", gasto.getSubtipoGasto().getId());
-		Filter filtroEmisor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", gasto.getProveedor().getId());
-		Filter filtroFechaEmision = genericDao.createFilter(FilterType.EQUALS, "fechaEmision", gasto.getFechaEmision());
-		Filter filtroDestinatario = genericDao.createFilter(FilterType.EQUALS, "destinatarioGasto.id", gasto.getDestinatarioGasto().getId());
+		Filter filtroReferencia = genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getReferenciaEmisor());
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", dto.getTipoGastoCodigo());
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", dto.getSubtipoGastoCodigo());
+		Filter filtroEmisor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", dto.getIdEmisor());
+		Filter filtroFechaEmision = genericDao.createFilter(FilterType.EQUALS, "fechaEmision", dto.getFechaEmision());
+		Filter filtroDestinatario = genericDao.createFilter(FilterType.EQUALS, "destinatarioGasto.codigo", dto.getDestinatarioGastoCodigo());
 		
 		
 		List<GastoProveedor> lista = genericDao.getList(GastoProveedor.class, filtroReferencia, filtroTipo, filtroSubtipo, filtroEmisor, filtroFechaEmision ,filtroDestinatario);
@@ -482,7 +490,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(!Checks.esNulo(lista) && !lista.isEmpty()) {
 			for (int i = 0; !existeGasto && i<lista.size(); i++){
 				GastoProveedor g = lista.get(i);
-				if(!Checks.esNulo(gasto.getEstadoGasto())) {	
+				if(!Checks.esNulo(g.getEstadoGasto())) {	
 					if (!DDEstadoGasto.ANULADO.equals(g.getEstadoGasto().getCodigo()) &&
 							!DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(g.getEstadoGasto().getCodigo())) {
 						existeGasto = true;
@@ -1380,8 +1388,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 						adj.setTamanyo(adjuntoGasto.getTamanyo());
 					}
-				}	
-				
+				}					
 				
 			} catch (GestorDocumentalException gex) {
 				String[] error = gex.getMessage().split("-");
@@ -1394,6 +1401,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						idExpediente = gestorDocumentalAdapterApi.crearGasto(gasto, usuario.getUsername());
 						logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gasto.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
 					} catch (GestorDocumentalException gexc) {
+						gexc.printStackTrace();
 						logger.debug(gexc.getMessage());
 					}
 				}
@@ -1545,15 +1553,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
 		
 		GastoProveedor gasto= findOne(dtoAdjunto.getIdEntidad());
-		AdjuntoGasto adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
+		AdjuntoGasto adjuntoGasto= null;
 		FileItem fileItem = null;
 		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
+				 adjuntoGasto= gasto.getAdjuntoGD(dtoAdjunto.getId());
 				fileItem = gestorDocumentalAdapterApi.getFileItem(adjuntoGasto.getIdDocRestClient());
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		} else {
+			adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
 			fileItem = adjuntoGasto.getAdjunto().getFileItem();
 			fileItem.setContentType(adjuntoGasto.getContentType());
 			fileItem.setFileName(adjuntoGasto.getNombre());

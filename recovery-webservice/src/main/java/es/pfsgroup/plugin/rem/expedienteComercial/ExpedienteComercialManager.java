@@ -2076,6 +2076,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
 							(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
 					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
+				} else {
+					
+					expedienteComercial.setMotivoAnulacion(null);
 				}
 				
 				if(!Checks.esNulo(expedienteComercial.getReserva())){

@@ -772,7 +772,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) ||
 					DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())	  ||
 					DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))
+					DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
 				return oferta;
 			}
 
@@ -1340,14 +1341,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of) {
 		if(!Checks.esNulo(of.getEstadoOferta()) 
 				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
-			//Si la oferta esta aceptada, se comprueba que el expediente esté (Aprobado, Reservado, o En devolución), para pasar la nueva oferta a Congelada.
+			//Si la oferta esta aceptada, se comprueba que el expediente esté con alguno de los siguientes estados..., para pasar la nueva oferta a Congelada.
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(of.getId());
 			if(!Checks.esNulo(expediente.getEstado()) 
 				&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
 					|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
 					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
 					|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo()) 
-					|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo()) )) {
+					|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))) {
 		
 				return true;
 			}

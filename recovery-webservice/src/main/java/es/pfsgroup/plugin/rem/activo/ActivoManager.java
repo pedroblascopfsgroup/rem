@@ -2586,7 +2586,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(expediente)){ //Si el expediente está aprobado (o estados posteriores).
 					if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado())
 					|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado())
-					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado()))
+					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado()))
 						ofertaAceptada = ofertaAux;
 				}
 			}

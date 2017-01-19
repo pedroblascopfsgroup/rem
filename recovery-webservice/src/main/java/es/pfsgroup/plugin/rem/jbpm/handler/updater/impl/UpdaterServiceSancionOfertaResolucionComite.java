@@ -67,9 +67,17 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 				if(COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 				{
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
-						if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor()))
+						if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())){
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
-						else{
+							
+							//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
+							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+							for(Oferta oferta : listaOfertas){
+								if(!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())){
+									ofertaApi.congelarOferta(oferta);
+								}
+							}
+						}else{
 							if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())){
 								//Deniega el expediente
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);

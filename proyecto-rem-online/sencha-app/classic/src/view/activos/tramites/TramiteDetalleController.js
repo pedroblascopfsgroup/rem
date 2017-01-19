@@ -253,10 +253,12 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 			params: {idTareaExterna : idTareaExterna},
 			success: function(response, opts){
 				data = Ext.decode(response.responseText);
-				if(data.success == 'true')
+				if(data.success == 'true') {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				else
+				} else {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
+				}
+				me.onClickBotonRefrescar(button);
 			},
 			failure: function(options, success, response){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
@@ -265,7 +267,6 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 				me.getView().unmask();
 			}
 		})
-		me.onClickBotonRefrescar(button);
 		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
 	},
 	
@@ -282,10 +283,12 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 			params: {idTareaExterna : idTareaExterna},
 			success: function(response, opts){
 				data = Ext.decode(response.responseText);
-				if(data.success == 'true')
+				if(data.success == 'true') {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				else
+				} else {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
+				}
+				me.onClickBotonRefrescar(button);
 			},
 			failure: function(options, success, response){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
@@ -294,7 +297,6 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 				me.getView().unmask();
 			}
 		})
-		me.onClickBotonRefrescar(button);
 		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
 	},
 	

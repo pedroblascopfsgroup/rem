@@ -247,6 +247,22 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					me.getStore().load();
 				}
 			}
+			
+			//Si todos los estados de las Ofertas = Rechazada -> Se podran agregar activos a al agrupacion
+			if(CONST.ESTADOS_OFERTA['RECHAZADA'] == estado) {
+				if(!Ext.isEmpty(me.lookupController().lookupReference('listadoactivosagrupacion'))) {
+					var arrayOfertas = me.getView().getStore();
+					var mostrarTopBarListaActivos = true;
+					for(var i=0; i< arrayOfertas.count();i++) {
+						if(arrayOfertas.getAt(i).get('codigoEstadoOferta') != CONST.ESTADOS_OFERTA['RECHAZADA']) {
+							mostrarTopBarListaActivos = false;
+							break;	
+						}
+					}
+					
+					me.lookupController().lookupReference('listadoactivosagrupacion').setTopBar(mostrarTopBarListaActivos);
+				}
+			}
 					
 	},
 	
@@ -259,6 +275,11 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
 				var codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta;
+				var codigoEstadoExpediente=  me.getStore().getData().items[i].data.codigoEstadoExpediente;
+				var expedienteBlocked = CONST.ESTADOS_EXPEDIENTE['APROBADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['RESERVADO'] == codigoEstadoExpediente 
+						|| CONST.ESTADOS_EXPEDIENTE['EN_DEVOLUCION'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['VENDIDO'] == codigoEstadoExpediente 
+						|| CONST.ESTADOS_EXPEDIENTE['FIRMADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['BLOQUEO_ADM'] == codigoEstadoExpediente;
+				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta && expedienteBlocked;
 			}
 		}
 		

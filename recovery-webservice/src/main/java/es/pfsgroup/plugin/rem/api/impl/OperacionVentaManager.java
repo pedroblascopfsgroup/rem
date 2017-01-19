@@ -174,12 +174,14 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
 			}
 
-			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
-			if (ofertaAceptada==null) {
-				model.put("error", RestApi.REST_NO_RELATED_OFFER_ACCEPTED);
-				throw new Exception(RestApi.REST_NO_RELATED_OFFER_ACCEPTED);					
-			}
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
+//			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
+//			if (ofertaAceptada==null) {
+//				model.put("error", RestApi.REST_NO_RELATED_OFFER_ACCEPTED);
+//				throw new Exception(RestApi.REST_NO_RELATED_OFFER_ACCEPTED);					
+//			}
+
+			//Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 			ExpedienteComercial expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
 			if (expediente==null) {
 				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);

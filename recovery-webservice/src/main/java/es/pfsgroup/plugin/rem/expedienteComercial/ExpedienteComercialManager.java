@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
@@ -189,6 +190,22 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Override
 	public ExpedienteComercial findOneByNumExpediente(Long numExpediente){
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numExpediente", numExpediente);
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+		
+		return expediente;
+	}
+	
+	@Override
+	public ExpedienteComercial findOneByTrabajo(Trabajo trabajo){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+		
+		return expediente;
+	}
+	
+	@Override
+	public ExpedienteComercial findOneByOferta(Oferta oferta){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		
 		return expediente;

@@ -72,6 +72,14 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 							expediente.setEstado(estado);
+							
+							//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
+							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+							for(Oferta oferta : listaOfertas){
+								if(!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())){
+									ofertaApi.congelarOferta(oferta);
+								}
+							}
 						}
 					}
 					else{

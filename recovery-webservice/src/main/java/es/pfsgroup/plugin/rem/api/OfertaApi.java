@@ -9,6 +9,7 @@ import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
@@ -161,9 +162,16 @@ public interface OfertaApi {
 	public Boolean rechazarOferta(Oferta oferta);
 	
 	/**
-	 * Método que descongela una oferta
+	 * Método que congela una oferta y oculta las tareas pendientes
 	 * @param oferta
-	 * @return Boolean true si ha podido rechazar la oferta false en caso contrario
+	 * @return Boolean true si ha podido congelar la oferta false en caso contrario
+	 */
+	public Boolean congelarOferta(Oferta oferta);
+	
+	/**
+	 * Método que descongela una oferta y desoculta las tareas pendientes
+	 * @param oferta
+	 * @return Boolean true si ha podido descongelar la oferta false en caso contrario
 	 */
 	public Boolean descongelarOferta(Oferta oferta);
 	
@@ -185,7 +193,7 @@ public interface OfertaApi {
 	
 	
 	/**
-	 * Método que saca las ofertas a partir de un trabajo
+	 * Método que saca las ofertas de un activo a partir de su trabajo
 	 * @param trabajo
 	 * @return
 	 */
@@ -198,6 +206,12 @@ public interface OfertaApi {
 	 * @return Oferta
 	 */
 	public Oferta getOfertaAceptadaByActivo(Activo activo);
+
+	/**
+	 * Método que obtiene la oferta aceptada de un activo que ha sido aprobado.
+	 * @param activo
+	 */
+	public Oferta getOfertaAceptadaExpdteAprobado(Activo activo);
 
 	/**
 	 * Método que comprueba si un activo tiene reserva.
@@ -363,6 +377,29 @@ public interface OfertaApi {
 	 * @return
 	 */
 	boolean ratificacionComite(TareaExterna tareaExterna);
+	
+	/**
+	 * Método para comprobar que el ACTIVO tenga una oferta ACEPTADA con un expediente comercial con algunos
+	 * de los estados finalizados del expediente
+	 * @param activo
+	 * @return
+	 */
+	public Boolean isActivoConOfertaYExpedienteBlocked(Activo activo);
+	
+	/**
+	 * Método para comprobar que la AGRUPACION tenga una oferta ACEPTADA con un expediente comercial con algunos
+	 * de los estados finalizados del expediente
+	 * @param agrupacion
+	 * @return
+	 */
+	public Boolean isAgrupacionConOfertaYExpedienteBlocked(ActivoAgrupacion agrupacion);
+	
+	/**
+	 * Comprueba que la oferta y su expediente comercial esten aprobados
+	 * @param of
+	 * @return
+	 */
+	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of);
 
 }
 

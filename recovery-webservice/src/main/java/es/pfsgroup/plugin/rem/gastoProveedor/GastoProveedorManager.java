@@ -1552,17 +1552,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
     @BusinessOperationDefinition("gastoProveedorManager.getFileItemAdjunto")
 	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
 		
-		GastoProveedor gasto= findOne(dtoAdjunto.getIdEntidad());
 		AdjuntoGasto adjuntoGasto= null;
 		FileItem fileItem = null;
 		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
-				 adjuntoGasto= gasto.getAdjuntoGD(dtoAdjunto.getId());
-				fileItem = gestorDocumentalAdapterApi.getFileItem(adjuntoGasto.getIdDocRestClient());
+				//adjuntoGasto= gasto.getAdjuntoGD(dtoAdjunto.getId());
+				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId());
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		} else {
+			GastoProveedor gasto= findOne(dtoAdjunto.getIdEntidad());
 			adjuntoGasto= gasto.getAdjunto(dtoAdjunto.getId());
 			fileItem = adjuntoGasto.getAdjunto().getFileItem();
 			fileItem.setContentType(adjuntoGasto.getContentType());

@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -156,6 +157,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	
@@ -1026,21 +1030,6 @@ public class AgrupacionAdapter {
 						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 					}
 				}
-				List<VOfertasActivosAgrupacion> listaOfertas= getListOfertasAgrupacion(dto.getIdAgrupacion());
-
-				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
-
-					if(!vOferta.getIdOferta().equals(dto.getIdOferta().toString())){
-						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(vOferta.getIdOferta()));
-						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
-
-						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
-						if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())){
-							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
-							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
-						}
-					}
-				}
 
 				List<Activo>listaActivos= new ArrayList<Activo>();
 
@@ -1048,7 +1037,7 @@ public class AgrupacionAdapter {
 					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
 				}
 
-				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
+				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
 				Trabajo trabajo= trabajoApi.create(subtipoTrabajo, listaActivos, null);
 
 				activoManager.crearExpediente(oferta,trabajo);
@@ -1087,26 +1076,7 @@ public class AgrupacionAdapter {
 		try{
 			ClienteComercial clienteComercial= new ClienteComercial();
 
-			String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-			// Comprobar si alguno de los activos de la agrupación restringida se encuentra, además, en una agrupación de tipo 'lote comercial'.
-			if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
-				List<Long> activosID = new ArrayList<Long>();
-				for(ActivoAgrupacionActivo activosAgrupacion : agrupacion.getActivos()) {
-					activosID.add(activosAgrupacion.getActivo().getId());
-				}
-
-				if(!Checks.estaVacio(activosID) && activoAgrupacionActivoDao.algunActivoDeAgrRestringidaEnAgrLoteComercial(activosID)) {
-					codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
-				}
-
-			}
-
-			// Comprobar si la grupación tiene ofertas aceptadas para establecer la nueva oferta en estado congelada.
-			for (Oferta of: agrupacion.getOfertas()) {
-				if(!Checks.esNulo(of.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
-					codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
-				}
-			}
+			String codigoEstado = this.getEstadoNuevaOferta(agrupacion);
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
@@ -1730,5 +1700,28 @@ public class AgrupacionAdapter {
 		}
 
 		return true;
+		
 	}
+	
+	private String getEstadoNuevaOferta(ActivoAgrupacion agrupacion) {
+		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+
+		if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+			List<Long> activosID = new ArrayList<Long>();
+			for(ActivoAgrupacionActivo activosAgrupacion : agrupacion.getActivos()) {
+				activosID.add(activosAgrupacion.getActivo().getId());
+			}
+
+			if(!Checks.estaVacio(activosID) && activoAgrupacionActivoDao.algunActivoDeAgrRestringidaEnAgrLoteComercial(activosID)) {
+				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+			}
+		}
+
+		// Comprobar si la grupación tiene ofertas aceptadas para establecer la nueva oferta en estado congelada.
+		if(ofertaApi.isAgrupacionConOfertaYExpedienteBlocked(agrupacion)) {
+			codigoEstado =  DDEstadoOferta.CODIGO_CONGELADA;
+		}
+		
+		return codigoEstado;
+	}	
 }

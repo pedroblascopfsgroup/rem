@@ -61,6 +61,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "DD_EEC_DESCRIPCION")
 	private String descripcionEstadoExpediente;
 	
+	@Column(name = "DD_EEC_CODIGO")
+	private String codigoEstadoExpediente;
+	
 	@Column(name = "DD_TOF_CODIGO")  
 	private String codigoTipoOferta;
 	
@@ -251,6 +254,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setCanalPrescripcionCodigo(String canalPrescripcionCodigo) {
 		this.canalPrescripcionCodigo = canalPrescripcionCodigo;
+	}
+
+	public String getCodigoEstadoExpediente() {
+		return codigoEstadoExpediente;
+	}
+
+	public void setCodigoEstadoExpediente(String codigoEstadoExpediente) {
+		this.codigoEstadoExpediente = codigoEstadoExpediente;
 	}
 	
 	 

@@ -42,14 +42,17 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -122,7 +125,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -143,6 +145,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -232,12 +235,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 	
 	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired 
+    private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	private static final String AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL = "activo.aviso.aceptatar.oferta.activo.dentro.lote.comercial";
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.get")
@@ -354,10 +365,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	@Transactional(readOnly = false)
-	public boolean saveOfertaActivo(DtoOfertaActivo dto) {
+	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException {
 
 		boolean resultado = true;
-
+		//Si el activo pertenece a un lote comercial, no se pueden aceptar ofertas de forma individual en el activo
+		if(activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(dto.getIdActivo())) {
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
+		}
+		
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
@@ -367,37 +382,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			oferta.setEstadoOferta(tipoOferta);
 
-			// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
-			// estados a Congelada excepto los que ya estuvieran en Rechazada
+			// Al aceptar la oferta, se crea el trabajo de sancion oferta y el expedietne comercial
 			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
-				List<VOfertasActivosAgrupacion> listaOfertas = activoAdapter.getListOfertasActivos(dto.getIdActivo());
-
-				for (VOfertasActivosAgrupacion vOferta : listaOfertas) {
-
-					if (!vOferta.getIdOferta().equals(dto.getIdOferta().toString())) {
-						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "id",
-								Long.parseLong(vOferta.getIdOferta()));
-						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
-
-						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
-						if (!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())) {
-							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
-							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
-						}
-					}
-				}
-
 				List<Activo> listaActivos = new ArrayList<Activo>();
 				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
 				}
 				DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
+						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, this.getSubtipoTrabajoByOferta(oferta));
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null);
 
 				crearExpediente(oferta, trabajo);
-
 			}
 
 			genericDao.update(Oferta.class, oferta);
@@ -433,7 +428,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
 			nuevoExpediente.setEstado(estadoExpediente);
-			nuevoExpediente.setNumExpediente(activoDao.getNextNumOferta());
+			nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
 			nuevoExpediente.setTrabajo(trabajo);
 
 			// Creación de formalización y condicionantes. Evita errores en los
@@ -2349,7 +2344,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(activoTasacion)) {
 
 			try {
-				beanUtilNotNull.copyProperty(dtoTasacion, "id", activoTasacion.getId());
+				beanUtilNotNull.copyProperty(dtoTasacion, "idSolicitudREM", activoTasacion.getId());
 				beanUtilNotNull.copyProperty(dtoTasacion, "fechaSolicitudTasacion",
 						activoTasacion.getAuditoria().getFechaCrear());
 				beanUtilNotNull.copyProperty(dtoTasacion, "gestorSolicitud",
@@ -2587,7 +2582,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			i++;
 			ofertaAux = tmp.getPrimaryKey().getOferta();
 			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
-				ofertaAceptada = ofertaAux;
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAux.getId());
+				if(!Checks.esNulo(expediente)){ //Si el expediente está aprobado (o estados posteriores).
+					if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado())
+					|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado())
+					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado()))
+						ofertaAceptada = ofertaAux;
+				}
 			}
 		}
 		return ofertaAceptada;
@@ -3161,5 +3162,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public String getSubtipoTrabajoByOferta(Oferta oferta) {
+		if(oferta.getTipoOferta().getCodigo().equals(DDTipoOferta.CODIGO_VENTA)) {
+			return DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA;
+		}
+		else
+			return DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER;
 	}
 }

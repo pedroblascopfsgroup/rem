@@ -359,6 +359,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gastoProveedor.setProveedor(proveedor);
 		}
 		
+		if(!Checks.esNulo(dto.getIdEmisor())){		
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdEmisor() );
+			ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtro);
+			gastoProveedor.setProveedor(proveedor);
+		}
+		
 		if(!Checks.esNulo(dto.getNifPropietario())) {
 			ActivoPropietario propietario = searchPropietarioNif(dto.getNifPropietario());
 			gastoProveedor.setPropietario(propietario);			

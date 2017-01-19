@@ -190,7 +190,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";
 		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getCartera().getDescripcion() : "";
 		if(Checks.esNulo(cliente) && gasto.esAutorizadoSinActivos()) {			
-			cliente = DDCartera.DESCRIPCION_CARTERA_BANKIA;
+			if(!Checks.esNulo(gasto.getPropietario())) {
+				cliente = gasto.getPropietario().getCartera().getDescripcion();				
+			}
 		}		
 		String descripcionExpediente = gasto.getConcepto();	
 		

@@ -203,6 +203,14 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 	
 	@Override
+	public ExpedienteComercial findOneByOferta(Oferta oferta){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+		
+		return expediente;
+	}
+	
+	@Override
 	public Object getTabExpediente(Long id, String tab) {
 		
 		ExpedienteComercial expediente = findOne(id);

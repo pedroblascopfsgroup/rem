@@ -162,14 +162,14 @@ public interface OfertaApi {
 	public Boolean rechazarOferta(Oferta oferta);
 	
 	/**
-	 * Método que congela una oferta
+	 * Método que congela una oferta y oculta las tareas pendientes
 	 * @param oferta
 	 * @return Boolean true si ha podido congelar la oferta false en caso contrario
 	 */
 	public Boolean congelarOferta(Oferta oferta);
 	
 	/**
-	 * Método que descongela una oferta
+	 * Método que descongela una oferta y desoculta las tareas pendientes
 	 * @param oferta
 	 * @return Boolean true si ha podido descongelar la oferta false en caso contrario
 	 */

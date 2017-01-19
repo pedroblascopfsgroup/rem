@@ -235,14 +235,14 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
 
-		/**
-		 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento.
-		 * Esta verificación está pensada para trámites (ya que se identifica el trabajo)
-		 * @param idTrabajo
-		 * @param codigoSubtipoDocumento Código del subtipo de documento del expediente
-		 * @return
-		 */
-		public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
+	/**
+	 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento.
+	 * Esta verificación está pensada para trámites (ya que se identifica el trabajo)
+	 * @param idTrabajo
+	 * @param codigoSubtipoDocumento Código del subtipo de documento del expediente
+	 * @return
+	 */
+	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
 		
 
 
@@ -510,6 +510,13 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	public boolean deleteBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+
+	/**
+	 * Devuelve el expediente de la oferta en caso de que exista.
+	 * @param oferta
+	 * @return
+	 */
+	public ExpedienteComercial findOneByOferta(Oferta oferta);
 	
 	
 }

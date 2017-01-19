@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -34,6 +35,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -45,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -55,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -121,6 +125,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 	
 	@Override
 	public String managerName() {
@@ -712,6 +719,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setEstadoOferta(estado);
 			genericDao.save(Oferta.class, oferta);
 			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+			if(!Checks.esNulo(expediente)){
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				if(!Checks.estaVacio(tramites)){
+					Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
+					for(TareaActivo tarea : tareasTramite){
+						//Si se ha borrado sin acabarse, al descongelar se descongela.
+						if(tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())){
+							tarea.getAuditoria().setBorrado(false);
+						}
+					}
+				}
+			}
+			
 		} catch(Exception e) {
 			logger.error(e);
 			return false;
@@ -726,6 +748,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
 			oferta.setEstadoOferta(estado);
 			genericDao.save(Oferta.class, oferta);
+			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+			if(!Checks.esNulo(expediente)){
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				ActivoTramite tramite = tramites.get(0);
+				
+				Set<TareaActivo> tareasTramite = tramite.getTareas();
+				for(TareaActivo tarea : tareasTramite){
+					tarea.getAuditoria().setBorrado(true);
+				}
+			}
+			
 			
 		} catch(Exception e) {
 			logger.error(e);

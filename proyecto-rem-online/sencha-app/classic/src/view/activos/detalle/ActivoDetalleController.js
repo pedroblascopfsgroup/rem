@@ -2240,7 +2240,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		success: function(response, opts){
     			var record = JSON.parse(response.responseText);
     			if(record.success === 'true') {
-    				Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
+    				var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
+    				me.getView().add(ventana);
+    				ventana.show();
     			} else {
     				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
     			}
@@ -2389,6 +2391,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("errorToast", "Ya dispone de una foto principal");
 			btn.up('tabpanel').unmask();
 		}
+	},
+
+	onClickMostrarPrescriptorVisita: function(btn) {
+		var me = this;
+		var record = btn.up('visitascomercialdetalle').getViewModel().get('detallevisita');
+		var codigoProveedor = record.codigoPrescriptorREM;
+		var titulo = 'Proveedor '+codigoProveedor;
+		var idProveedor = record.idPrescriptorREM;
+
+    	me.getView().fireEvent('abrirDetalleProveedorDirectly', idProveedor, titulo);
+	},
+
+	onClickMostrarCustodioVisita: function(btn) {
+		var me = this;
+		var record = btn.up('visitascomercialdetalle').getViewModel().get('detallevisita');
+		var codigoProveedor = record.codigoCustodioREM;
+		var titulo = 'Proveedor '+codigoProveedor;
+		var idProveedor = record.idCustodioREM;
+
+    	me.getView().fireEvent('abrirDetalleProveedorDirectly', idProveedor, titulo);
 	}
-	
 });

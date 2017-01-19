@@ -77,6 +77,30 @@ public class VBusquedaVisitasDetalle implements Serializable {
 	
 	@Column(name="CLC_EMAIL")
 	private String emailCliente;
+
+	@Column(name="ID_CUSTODIO_REM")
+	private String idCustodioREM;
+
+	@Column(name="CODIGO_CUSTODIO_REM")
+	private String codigoCustodioREM;
+
+	@Column(name="SUBTIPO_CUSTODIO_DESC")
+	private String subtipoCustodioDescripcion;
+
+	@Column(name="SUBTIPO_CUSTODIO_COD")
+	private String subtipoCustodioCodigo;
+
+	@Column(name="ID_PRESCRIPTOR_REM")
+	private String idPrescriptorREM;
+
+	@Column(name="CODIGO_PRESCRIPTOR_REM")
+	private String codigoPrescriptorREM;
+
+	@Column(name="SUBTIPO_PRESCRIPTOR_DESC")
+	private String subtipoPrescriptorDescripcion;
+
+	@Column(name="SUBTIPO_PRESCRIPTOR_COD")
+	private String subtipoPrescriptorCodigo;
 	
 	
 	public String getId() {
@@ -238,6 +262,70 @@ public class VBusquedaVisitasDetalle implements Serializable {
 
 	public void setEmailCliente(String emailCliente) {
 		this.emailCliente = emailCliente;
+	}
+
+	public String getCodigoCustodioREM() {
+		return codigoCustodioREM;
+	}
+
+	public void setCodigoCustodioREM(String codigoCustodioREM) {
+		this.codigoCustodioREM = codigoCustodioREM;
+	}
+
+	public String getSubtipoCustodioDescripcion() {
+		return subtipoCustodioDescripcion;
+	}
+
+	public void setSubtipoCustodioDescripcion(String subtipoCustodioDescripcion) {
+		this.subtipoCustodioDescripcion = subtipoCustodioDescripcion;
+	}
+
+	public String getCodigoPrescriptorREM() {
+		return codigoPrescriptorREM;
+	}
+
+	public void setCodigoPrescriptorREM(String codigoPrescriptorREM) {
+		this.codigoPrescriptorREM = codigoPrescriptorREM;
+	}
+
+	public String getSubtipoPrescriptorDescripcion() {
+		return subtipoPrescriptorDescripcion;
+	}
+
+	public void setSubtipoPrescriptorDescripcion(String subtipoPrescriptorDescripcion) {
+		this.subtipoPrescriptorDescripcion = subtipoPrescriptorDescripcion;
+	}
+
+	public String getSubtipoCustodioCodigo() {
+		return subtipoCustodioCodigo;
+	}
+
+	public void setSubtipoCustodioCodigo(String subtipoCustodioCodigo) {
+		this.subtipoCustodioCodigo = subtipoCustodioCodigo;
+	}
+
+	public String getSubtipoPrescriptorCodigo() {
+		return subtipoPrescriptorCodigo;
+	}
+
+	public void setSubtipoPrescriptorCodigo(String subtipoPrescriptorCodigo) {
+		this.subtipoPrescriptorCodigo = subtipoPrescriptorCodigo;
+	}
+
+	public String getIdCustodioREM() {
+		return idCustodioREM;
+	}
+
+	public void setIdCustodioREM(String idCustodioREM) {
+		this.idCustodioREM = idCustodioREM;
+	}
+
+	public String getIdPrescriptorREM() {
+		return idPrescriptorREM;
+	}
+
+	public void setIdPrescriptorREM(String idPrescriptorREM) {
+		this.idPrescriptorREM = idPrescriptorREM;
 	}
 	
 

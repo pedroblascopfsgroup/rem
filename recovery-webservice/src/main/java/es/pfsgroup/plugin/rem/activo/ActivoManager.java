@@ -428,7 +428,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
 			nuevoExpediente.setEstado(estadoExpediente);
-			nuevoExpediente.setNumExpediente(activoDao.getNextNumOferta());
+			nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
 			nuevoExpediente.setTrabajo(trabajo);
 
 			// Creación de formalización y condicionantes. Evita errores en los

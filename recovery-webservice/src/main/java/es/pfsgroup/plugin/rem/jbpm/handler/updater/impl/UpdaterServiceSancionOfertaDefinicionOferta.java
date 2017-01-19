@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
@@ -54,6 +55,14 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
+				
+				//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
+				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+				for(Oferta oferta : listaOfertas){
+					if(!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())){
+						ofertaApi.congelarOferta(oferta);
+					}
+				}
 			}
 		}else{
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());

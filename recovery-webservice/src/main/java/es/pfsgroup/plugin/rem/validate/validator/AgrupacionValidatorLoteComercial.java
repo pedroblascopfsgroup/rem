@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -28,6 +29,9 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 
     @Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+    
+    @Autowired
+    private OfertaApi ofertaApi;
 
 	@Override
 	public String[] getKeys() {
@@ -64,7 +68,7 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 							for(Oferta oferta : ofertasAgrupacion) {
 								if(!Checks.esNulo(oferta.getEstadoOferta())){
 
-									if(oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
+									if(ofertaApi.isOfertaAceptadaConExpedienteBlocked(oferta)) {
 										return ERROR_OFERTA_AGRUPACION_ACTIVO_ACEPTADA;
 									} else if(oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
 										DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
@@ -86,7 +90,7 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 				for(ActivoOferta ofertaActivo : ofertasActivo) {
 					if(!Checks.esNulo(ofertaActivo.getPrimaryKey()) && !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta()) && !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())){
 
-						if(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
+						if(ofertaApi.isOfertaAceptadaConExpedienteBlocked(ofertaActivo.getPrimaryKey().getOferta())) {
 							return ERROR_OFERTA_ACTIVO_ACEPTADA;
 						} else if(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
 							DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);

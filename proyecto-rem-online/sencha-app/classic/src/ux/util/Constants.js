@@ -210,7 +210,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	APROBADO: '11',
     	DENEGADO: '12',
     	PTE_DOBLE_FIRMA: '13',
-    	RPTA_OFERTANTE: '14'
+    	RPTA_OFERTANTE: '14',
+    	EN_DEVOLUCION: '16'
     },
     
     ESTADOS_GASTO: {

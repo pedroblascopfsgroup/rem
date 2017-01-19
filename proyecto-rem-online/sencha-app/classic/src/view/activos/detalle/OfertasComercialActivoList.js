@@ -288,7 +288,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
 				var codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
-				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta;
+				var codigoEstadoExpediente=  me.getStore().getData().items[i].data.codigoEstadoExpediente;
+				var expedienteBlocked = CONST.ESTADOS_EXPEDIENTE['APROBADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['RESERVADO'] == codigoEstadoExpediente 
+					|| CONST.ESTADOS_EXPEDIENTE['EN_DEVOLUCION'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['VENDIDO'] == codigoEstadoExpediente 
+					|| CONST.ESTADOS_EXPEDIENTE['FIRMADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['BLOQUEO_ADM'] == codigoEstadoExpediente;
+				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta && expedienteBlocked;
 			}
 		}
 		

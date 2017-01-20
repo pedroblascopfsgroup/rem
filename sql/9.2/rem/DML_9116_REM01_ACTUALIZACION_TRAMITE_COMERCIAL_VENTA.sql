@@ -37,9 +37,17 @@ DECLARE
     
 BEGIN
 
-    /* Ratificación comité */
+    /* Respuesta ofertante */
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
 			  ' SET TAP_SCRIPT_VALIDACION_JBPM = ''checkBankia() ? (ratificarComite() ? null : ''''Ha fallado la ratificación del comité'''') : null'' '||	  
+			  ' WHERE TAP_CODIGO = ''T013_RespuestaOfertante'' ';
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    
+        /* Ratificación comité */
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			  ' SET TAP_SCRIPT_VALIDACION_JBPM = '''' '||	  
 			  ' WHERE TAP_CODIGO = ''T013_RatificacionComite'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);

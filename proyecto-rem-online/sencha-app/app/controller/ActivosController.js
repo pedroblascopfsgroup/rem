@@ -64,6 +64,10 @@ Ext.define('HreRem.controller.ActivosController', {
 			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionActivo'
     	},
     	
+    	'visitascomercialdetalle':{
+    		abrirDetalleProveedorDirectly: 'abrirDetalleProveedorById'
+    	},
+
     	'activosdetallemain' : {
         	crearnotificacion: 'crearNotificacion',
         	abrirDetalleTramite : 'abrirDetalleTramite',
@@ -72,6 +76,7 @@ Ext.define('HreRem.controller.ActivosController', {
         	refrescarActivo: 'refrescarDetalleActivo',
         	abrirDetalleActivo: 'abrirDetalleActivoById',
         	abrirDetalleProveedor: 'abrirDetalleProveedor',
+        	
         	abrirDetalleGasto: 'abrirDetalleGasto'
     	},
 
@@ -753,7 +758,6 @@ Ext.define('HreRem.controller.ActivosController', {
 	},
 	
     crearNotificacion: function(idActivo){
-    	//debugger;
         var window;
         window = Ext.create('HreRem.view.activos.CrearNotificacion',idActivo);
         window.getViewModel().set("idActivo",idActivo);
@@ -776,7 +780,6 @@ Ext.define('HreRem.controller.ActivosController', {
     abrirDetalleTramite: function(grid,record) {
 
     	var me = this;
-    	//debugger;
     	//Sacar que valor le paso para referenciar el trámite
     	var titulo = "Tramite " + record.get("idTramite");
     	var idRecord = record.get("idTramite");
@@ -788,7 +791,6 @@ Ext.define('HreRem.controller.ActivosController', {
     abrirDetalleTramiteTarea: function(grid,record) {
 
     	var me = this;
-    	//debugger;
     	//Sacar que valor le paso para referenciar el trámite
     	var titulo = "Tramite " + record.get("idTramite");
     	var idRecord = record.get("idTramite");
@@ -800,7 +802,6 @@ Ext.define('HreRem.controller.ActivosController', {
     abrirDetalleTramiteHistoricoTarea: function(grid,record) {
 
     	var me = this;
-    	//debugger;
     	//Sacar que valor le paso para referenciar el trámite
     	var titulo = "Tramite " + record.get("idTramite");
     	var idRecord = record.get("idTramite");
@@ -812,7 +813,6 @@ Ext.define('HreRem.controller.ActivosController', {
     abrirDetalleTramiteById: function(id, titulo) {
     	
     	var me = this;
-    	//debugger;
     	var cfg = {};
     	cfg.title = titulo;
      	
@@ -822,7 +822,6 @@ Ext.define('HreRem.controller.ActivosController', {
     	HreRem.model.Tramite.load(id, {
     		scope: this,
 		    success: function(tramite) {
-		    	//debugger;
 		    	me.logTime("Load tramite success"); 
 		    	me.setLogTime(); 
 		    	tab.getViewModel().set("tramite", tramite);
@@ -838,7 +837,6 @@ Ext.define('HreRem.controller.ActivosController', {
     abrirDetalleTramiteTareasById: function(id, titulo, activeTabXtype) {
     	
     	var me = this;
-    	//debugger;
     	var cfg = {};
     	cfg.title = titulo;
      	
@@ -848,7 +846,6 @@ Ext.define('HreRem.controller.ActivosController', {
     	HreRem.model.Tramite.load(id, {
     		scope: this,
 		    success: function(tramite) {
-		    	//debugger;
 		    	me.logTime("Load tramite success"); 
 		    	me.setLogTime(); 
 		    	tab.getViewModel().set("tramite", tramite);
@@ -941,7 +938,6 @@ Ext.define('HreRem.controller.ActivosController', {
     },
     
     abrirDetalleProveedorById: function(id, titulo, refLinks) {
-
     	var me = this,
     	cfg = {}, 
     	tab=null;

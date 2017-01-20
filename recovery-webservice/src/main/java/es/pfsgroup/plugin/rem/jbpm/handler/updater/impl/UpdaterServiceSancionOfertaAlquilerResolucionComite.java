@@ -49,11 +49,14 @@ public class UpdaterServiceSancionOfertaAlquilerResolucionComite implements Upda
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
 		ActivoSituacionPosesoria situacionPosesoria = tramite.getActivo().getSituacionPosesoria();
-		Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(tramite.getActivo());
-		ExpedienteComercial expedienteComercial = null;
+//		Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(tramite.getActivo());
+//		ExpedienteComercial expedienteComercial = null;
+//		
+//		if(!Checks.esNulo(ofertaAceptada))
+//			expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
-		if(!Checks.esNulo(ofertaAceptada))
-			expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
+		Oferta ofertaAceptada = expedienteComercial.getOferta();
 		
 		for(TareaExternaValor valor :  valores){
 

@@ -156,7 +156,7 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							emptyDisplayText: '-',
 							bind: {
 								store: '{comboBuenoMaloRem}',
-								value: '{infoComercial.suelos}'
+								value: '{infoComercial.suelosCocina}'
 							}
 						},
 						{ 

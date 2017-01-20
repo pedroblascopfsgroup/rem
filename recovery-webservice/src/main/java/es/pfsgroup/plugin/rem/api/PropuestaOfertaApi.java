@@ -29,7 +29,7 @@ public interface PropuestaOfertaApi{
 	
     
     
-    public Map<String, Object> sendFileBase64(HttpServletResponse response, File file, ModelMap model);
+    public Map<String, Object> sendFileBase64(HttpServletResponse response, File file, ModelMap model) throws Exception;
     
  
     /**
@@ -39,7 +39,7 @@ public interface PropuestaOfertaApi{
 	 * @param model
 	 * @return HashMap<String, String> 
 	 */
-    public Map<String, Object> paramsHojaDatos(ActivoOferta activoOferta, ModelMap model);
+    public Map<String, Object> paramsHojaDatos(ActivoOferta activoOferta, ModelMap model) throws Exception;
     
     /**
 	 * Devuelve el dataSource necesario para pintar el PDF de HojaDatos
@@ -48,7 +48,7 @@ public interface PropuestaOfertaApi{
 	 * @param model
 	 * @return List<Object>
 	 */
-    public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model);
+    public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model) throws Exception;
     
     
     public File getPDFFile(Map<String, Object> params, List<Object> dataSource, String template, ModelMap model) throws JRException, IOException, Exception;

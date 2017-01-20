@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucionActivoSimple" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="1.026316236461414"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1611"/>
+	<property name="ireport.y" value="0"/>
 	<subDataset name="dataset1" uuid="859ad764-5c2d-4f72-be54-c78b00433dc1">
 		<queryString>
 			<![CDATA[]]>
@@ -159,7 +159,7 @@
 				<reportElement x="0" y="46" width="555" height="39" uuid="82b43702-baa3-41dd-996e-d87da766061d"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="0" y="0" width="502" height="32" uuid="51f24aab-725e-4da5-8146-2db0f4176fe4"/>
+				<reportElement x="0" y="0" width="487" height="32" uuid="51f24aab-725e-4da5-8146-2db0f4176fe4"/>
 				<textElement textAlignment="Center">
 					<font fontName="Verdana" size="12" isBold="true" isItalic="true"/>
 				</textElement>
@@ -271,12 +271,9 @@ TIPO DE PROPUESTA VENTA]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{NumVisitasWeb}]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement x="443" y="0" width="93" height="22" backcolor="#000000" uuid="57e0b161-7ddd-41d6-b25a-ea214f70866c"/>
-			</rectangle>
-			<image isLazy="true">
-				<reportElement mode="Transparent" x="455" y="1" width="70" height="32" uuid="fbf118da-5da6-4736-991f-1e2da52dda37"/>
-				<imageExpression><![CDATA[this.getClass().getResourceAsStream("jasper/Bankia_logo_sinfondo.png")]]></imageExpression>
+			<image hAlign="Right" isLazy="true">
+				<reportElement mode="Transparent" x="465" y="0" width="90" height="44" uuid="fbf118da-5da6-4736-991f-1e2da52dda37"/>
+				<imageExpression><![CDATA[this.getClass().getResourceAsStream("jasper/logo_bankia.png")]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
@@ -1885,9 +1882,6 @@ TIPO DE PROPUESTA VENTA]]></text>
 					</textElement>
 					<text><![CDATA[Firma Tasadora]]></text>
 				</staticText>
-				<line>
-					<reportElement stretchType="RelativeToTallestObject" x="1" y="39" width="554" height="1" uuid="10eb96d7-d65e-45fb-ae72-a6b6919f95a5"/>
-				</line>
 				<componentElement>
 					<reportElement stretchType="RelativeToTallestObject" x="1" y="40" width="554" height="20" uuid="d6d98285-2cde-4ca2-b987-4244d06db968"/>
 					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">

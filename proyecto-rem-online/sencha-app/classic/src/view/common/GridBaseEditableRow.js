@@ -161,7 +161,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	     });
             
         me.addListener('containerclick', function(editor){
-            me.getSelectionModel().deselectAll();
+        	if(me.allowDeselect)
+        		me.getSelectionModel().deselectAll();
         });
         	
         me.addListener('afterbind', function(grid) {

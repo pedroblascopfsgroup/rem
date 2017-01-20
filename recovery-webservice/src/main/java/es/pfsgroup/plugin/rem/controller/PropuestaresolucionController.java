@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.itextpdf.text.DocumentException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -118,6 +122,8 @@ public class PropuestaresolucionController {
 							}
 								
 						}
+						
+						logger.debug("------------ Creamos fichero temporal-----------------");
 						File salida = File.createTempFile("jasper", ".pdf");
 						FileUtilsREM.concatenatePdfs(files, salida);
 						
@@ -139,10 +145,12 @@ public class PropuestaresolucionController {
 
 			} catch (Exception e) {
 				logger.error(e);
-				request.getPeticionRest().setErrorDesc(e.getMessage());
+				e.printStackTrace();
+				request.getPeticionRest().setErrorDesc(RestApi.REST_MSG_UNEXPECTED_ERROR);
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+				
 			} finally {
 				logger.debug("RESPUESTA: " + model);
 			}

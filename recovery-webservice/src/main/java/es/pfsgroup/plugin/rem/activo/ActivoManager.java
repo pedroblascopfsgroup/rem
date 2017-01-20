@@ -2932,9 +2932,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave) {
+	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave, Long idActivo) {
 
-		Page page = activoDao.getListMovimientosLlaveByLlave(dto, idLlave);
+		Page page;
+		if(!Checks.esNulo(idLlave))
+			page = activoDao.getListMovimientosLlaveByLlave(dto, idLlave);
+		else
+			page = activoDao.getListMovimientosLlaveByActivo(dto, idActivo);
 
 		List<DtoMovimientoLlave> movimientos = new ArrayList<DtoMovimientoLlave>();
 

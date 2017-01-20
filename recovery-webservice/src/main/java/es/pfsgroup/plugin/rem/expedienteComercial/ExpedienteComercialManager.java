@@ -2792,9 +2792,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			ofertaUVEM.setImporteVenta(importeTotal.toString());
 		}
 		
-		if (condExp.getEntidadFinanciacion() != null) {
-			ofertaUVEM.setEntidad("00000");
-		}
+		//HREOS-1420 -Siempre se enviará 00000 (Bankia) para el servicio de consulta del cobro de la reserva y de la venta.
+		ofertaUVEM.setEntidad("00000");
+		
 		
 		if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
 			ofertaUVEM.setImpuestos("S");

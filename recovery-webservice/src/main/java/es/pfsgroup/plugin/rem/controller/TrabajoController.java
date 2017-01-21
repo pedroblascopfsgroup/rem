@@ -1068,7 +1068,7 @@ public class TrabajoController extends ParadiseJsonController {
 			}
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error trabajo", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));	
 			model.put("data", listaRespuesta);

@@ -84,7 +84,7 @@ public class ClientesController {
 			}
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error cliente", e);
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
@@ -148,7 +148,7 @@ public class ClientesController {
 			model.put("error", null);
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error cliente", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);

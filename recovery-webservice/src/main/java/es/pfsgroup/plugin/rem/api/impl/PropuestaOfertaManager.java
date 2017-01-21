@@ -462,7 +462,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		
 		
 		if (!Checks.estaVacio(activo.getTasacion()))
-		{
+{
 			//De la lista de tasaciones que tiene el activo cogemos la más reciente
 			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
 			if (tasacionMasReciente!=null) {

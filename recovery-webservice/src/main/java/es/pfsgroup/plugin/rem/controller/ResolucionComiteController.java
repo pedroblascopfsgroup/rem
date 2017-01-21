@@ -159,20 +159,15 @@ public class ResolucionComiteController {
 			}
 			
 		} catch (JsonMappingException e3) {
-			logger.error(e3);
+			logger.error("Error json resolucion comite", e3);
 			model.put("id", jsonFields.get("id"));
 			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");			
 		
 		} catch (Exception e2) {	
-			logger.error(e2);
+			logger.error("Error resolucion comite", e2);
 			model.put("id", jsonFields.get("id"));	
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			
-		} catch (Throwable t) {	
-			logger.error(t);
-			model.put("id", jsonFields.get("id"));	
-			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");
-		
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 		}

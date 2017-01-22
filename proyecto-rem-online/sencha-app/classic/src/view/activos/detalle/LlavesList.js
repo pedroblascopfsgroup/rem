@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
     xtype		: 'llaveslist',
     reference	: 'llaveslistref',
 	topBar		: true,
+	allowDeselect: false,
 	idPrincipal : 'activo.id',
 	
     bind: {
@@ -19,7 +20,6 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
      	
     	me.listeners = {	    	
  			rowclick: 'onLlavesListClick',
- 			deselect: 'onLlavesListDeselected',
  			rowdblclick: 'valdacionesEdicionLlavesList',
  			beforeedit: 'valdacionesEdicionLlavesList'
  	    };

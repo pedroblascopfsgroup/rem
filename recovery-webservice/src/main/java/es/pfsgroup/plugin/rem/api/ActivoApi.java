@@ -791,7 +791,7 @@ public interface ActivoApi {
 	 * @param dto
 	 * @return
 	 */
-	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);
+	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave, Long idActivo);
 
 	/**
 	 * Guarda la propuesta

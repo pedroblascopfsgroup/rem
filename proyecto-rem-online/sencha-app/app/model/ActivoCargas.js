@@ -3,30 +3,24 @@
  */
 Ext.define('HreRem.model.ActivoCargas', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
 
     fields: [    
   
-    		{
-    			name:'id'
-    		},
+		    {
+		    	name: 'idActivo',
+		    	critical: true
+		    },
     		{
     			name:'fechaRevision',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'descripcionCarga'
     		},
     		{
-    			name:'idCarga'
+    			name:'idActivoCarga',
+    			critical: true
     		},
     		{
     			name:'titular'
@@ -39,57 +33,29 @@ Ext.define('HreRem.model.ActivoCargas', {
     		},
     		{
     			name:'fechaPresentacion',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'fechaInscripcion',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'fechaCancelacion',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'fechaCancelacionRegistral',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'subtipoCargaCodigo'
     		},
     		{
-    			name:'subtipoCargaDesc'
+    			name:'subtipoCargaDescripcion'
     		},    		
     		{
     			name:'situacionCargaCodigo'
@@ -98,7 +64,7 @@ Ext.define('HreRem.model.ActivoCargas', {
     			name:'subtipoCargaCodigoEconomica'
     		},
     		{
-    			name:'subtipoCargaDesconomica'
+    			name:'subtipoCargaDescripcionEconomica'
     		},    		
     		{
     			name:'situacionCargaCodigoEconomica'
@@ -107,7 +73,7 @@ Ext.define('HreRem.model.ActivoCargas', {
     			name:'tipoCargaCodigo'
     		},
     		{
-    			name:'tipoCargaDesc'
+    			name:'tipoCargaDescripcion'
     		},    		
     		{
     			name: 'isCargaRegistral',
@@ -128,7 +94,7 @@ Ext.define('HreRem.model.ActivoCargas', {
     			name:'tipoCargaCodigoEconomica'
     		},
     		{
-    			name:'tipoCargaDescEconomica'
+    			name:'tipoCargaDescripcionEconomica'
     		},    		
     		{
     			name:'descripcionCargaEconomica'
@@ -141,15 +107,9 @@ Ext.define('HreRem.model.ActivoCargas', {
     		},
     		{
     			name:'fechaCancelacionEconomica',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
+    			type: 'date',
+    			dateFormat: 'c'
+    			
     		},
     		{
     			name:'ordenCarga'
@@ -163,7 +123,8 @@ Ext.define('HreRem.model.ActivoCargas', {
 		api: {
 			read: 'activo/getCargaById',
             create: 'activo/saveActivoCarga',
-            update: 'activo/saveActivoCarga'
+            update: 'activo/saveActivoCarga',
+            destroy: 'activo/deleteCarga'
         }
     }
     

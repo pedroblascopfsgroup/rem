@@ -14,7 +14,7 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
 	
 	recordClass: "HreRem.model.ActivoCargasTab",
 	
-	requires: ['HreRem.model.ActivoCargasTab'],
+	requires: ['HreRem.model.ActivoCargasTab', 'HreRem.view.common.FieldSetTable'],
 
     initComponent: function () {
 
@@ -55,252 +55,69 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
             	        
             	]
             },
-            //Meter este grid y los dos bloques de abajo dentro de otro form
-            //con recordClass ActivoCarga
         	{
-					xtype: 'formBase',
-					cls	: 'panel-base shadow-panel',
-					reference: 'formCargas',
-				    collapsed: false,
-				    colspan: 3,
-
-					recordName: "carga",
-					
-					recordClass: "HreRem.model.ActivoCargas",
-					
-					requires: ['HreRem.view.common.FieldSetTable'],
-				    
-				    
-				    items: [
-				    
-					{
-					    xtype		: 'gridBase',
-					    title		: HreRem.i18n('title.listado.cargas'),
-					    reference: 'listadoCargasActivo',
-						layout:'fit',
-						minHeight: 240,
-						
-						cls	: 'panel-base shadow-panel',
-						//height: '100%',
-						bind: {
-							store: '{storeCargas}'
-						},
-						columns: [
+        		xtype		: 'gridBase',
+				title		: HreRem.i18n('title.listado.cargas'),
+				reference: 'listadoCargasActivo',
+				topBar		: true,
+				cls	: 'panel-base shadow-panel',
+				bind: {
+					store: '{storeCargas}'
+				},
+				
+				columns: [
 						    {   text: HreRem.i18n('header.tipo.carga'),
 					        	dataIndex: 'tipoCargaDescripcion',
-					        	width: 200
+					        	flex: 1
 					        },
 					        {   text: HreRem.i18n('header.subtipo.carga'),
-					        	dataIndex: 'subtipoCargaDescripcion',
-					        	width: 200 
+					        	flex: 1,
+					        	dataIndex: 'subtipoCargaDescripcion'
 					        },	
 					        {   text: 'Estado carga registral',
-					        	dataIndex: 'estadoDescripcion',
-					        	width: 200 
+					        	flex: 1,
+					        	dataIndex: 'estadoDescripcion'
 					        },	
 					        {   text: 'Estado carga econ&oacute;mica',
-					        	dataIndex: 'estadoEconomicaDescripcion',
-					        	width: 200 
+					        	flex: 1,
+					        	dataIndex: 'estadoEconomicaDescripcion'
 					        },	
 							{
 					            text: HreRem.i18n('header.titular'),
-					            dataIndex: 'titular',
-					            width: 200
+					            flex: 1,
+					            dataIndex: 'titular'
 					        },
 					        {	text: 'Importe registral',
 					        	dataIndex: 'importeRegistral',
-					        	width: 200,
 					        	renderer: function(value) {
 					        		return Ext.util.Format.currency(value);
-					        	}
+					        	},
+					        	flex: 1
 					        },
 					        {   text: 'Importe econ&oacute;mico',
 					        	dataIndex: 'importeEconomico',
-					        	width: 200,
 					        	renderer: function(value) {
 					        		return Ext.util.Format.currency(value);
-					        	} 
+					        	},
+					        	flex: 1
 					        }
 					       	        
-					    ],
-					    dockedItems : [
-					        {
-					            xtype: 'pagingtoolbar',
-					            dock: 'bottom',
-					            displayInfo: true,
-					            bind: {
-					                store: '{storeCargas}'
-					            }
-					        }
-					    ],
-					    listeners : [
-					    	{rowdblclick: 'onCargasListDobleClick'}
-					    ]
-					},
-		
-					{    
-						xtype:'fieldset',
-						title:HreRem.i18n('title.carga.registral'),
-						hidden: true,
-						bind: {
-							hidden: '{!carga.isCargaRegistral}',
-							disabled: '{!carga.isCargaRegistral}'
-						},
-						reference:'registral',
-						defaultType: 'textfieldbase',
-						layout: {
-					        type: 'table',
-					        columns: 2,
-					        trAttrs: {height: '45px', width: '100%'},
-					        tableAttrs: {
-					            style: {
-					                width: '100%'
-					            }
-					        }
-				    	},
-						items :
-							[
-				                { 
-							 		fieldLabel: HreRem.i18n('fieldlabel.tipo.carga'),
-							 		width:		400,
-					            	bind:		'{carga.tipoCargaDesc}'
-								}, 
-				                { 
-							 		fieldLabel: HreRem.i18n('fieldlabel.subtipo.carga'),
-							 		width:		400,
-					            	bind:		'{carga.subtipoCargaDesc}'
-								}, 
-								{ 
-									
-									fieldLabel: HreRem.i18n('fieldlabel.descripcion.carga'),
-									width:		450,
-				                	bind:		'{carga.descripcionCarga}'
-				                },
-				                {
-				                	maskRe: /^\d*$/, 
-							 		fieldLabel: HreRem.i18n('fieldlabel.orden'),
-							 		width:		300,
-					            	bind:		'{carga.ordenCarga}'
-								},
-								{ 
-						        	xtype: 'comboboxfieldbase',
-						        	editable: false,
-									fieldLabel: HreRem.i18n('fieldlabel.estado'),
-						        	width: 		400,
-						        	bind: {
-					            		store: '{comboEstadoCarga}',
-					            		value: '{carga.situacionCargaCodigo}'
-					            	}
-						        },
-				                { 
-							 		fieldLabel: HreRem.i18n('fieldlabel.titular.carga'),
-							 		width:		400,
-					            	bind:		'{carga.titular}'
-								},
-								{ 
-									xtype:'currencyfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.importe.registral'),
-									width:		250,
-				                	bind:		'{carga.importeRegistral}'
-				                },
-				                { 
-				                	xtype:'currencyfieldbase',
-							 		fieldLabel: HreRem.i18n('fieldlabel.importe.real'),					 		
-							 		width:		250,
-					            	bind:		'{carga.importeEconomico}'
-								},
-								{
-									xtype:'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.carga.registro'),
-							 		width:		280,
-					            	bind:		'{carga.fechaInscripcion}'
-					            	
-								},
-								{
-									xtype:'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.cancelacion.economica.carga'),
-							 		width:		280,
-					            	bind:		'{carga.fechaCancelacion}'
-					            	
-								},
-								{
-									xtype:'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.cancelacion'),
-							 		width:		280,
-					            	bind:		'{carga.fechaPresentacion}'
-					            	
-								},
-								{
-									xtype:'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.cancelacion.registral'),
-							 		width:		280,
-					            	bind:		'{carga.fechaCancelacionRegistral}'
-					            	
-								}
-								
-							 ]
-		                
-		            },
-		            
-		            {    
-						xtype:'fieldsettable',
-						title:HreRem.i18n('title.carga.economica'),
-						hidden: true,
-						bind: {
-							hidden: '{!carga.isCargaEconomica}',
-							disabled: '{!carga.isCargaEconomica}'
-						},	
-						reference:'economica',
-						defaultType: 'textfieldbase',
-						items :
-							[
-				                { 
-							 		fieldLabel: HreRem.i18n('fieldlabel.tipo.carga'),
-							 		width:		400,
-					            	bind:		'{carga.tipoCargaDescEconomica}'
-								}, 
-				                { 
-							 		fieldLabel: HreRem.i18n('fieldlabel.subtipo.carga'),
-							 		width:		400,
-					            	bind:		'{carga.subtipoCargaDescEconomica}'
-								}, 
-								{ 
-									fieldLabel: HreRem.i18n('fieldlabel.descripcion.carga'),
-									width:		450,
-				                	bind:		'{carga.descripcionCargaEconomica}'
-				                },
-						        { 
-						        	xtype: 'comboboxfieldbase',
-						        	editable: false,
-							 		fieldLabel: HreRem.i18n('fieldlabel.estado'),
-						        	width: 		400,
-						        	bind: {
-					            		store: '{comboEstadoCarga}',
-					            		value: '{carga.situacionCargaCodigoEconomica}'
-					            	}
-						        },  				        
-				                { 
-							 		fieldLabel: HreRem.i18n('fieldlabel.titular.carga'),
-							 		width:		400,
-					            	bind:		'{carga.titularEconomica}'
-								},
-								{ 
-									xtype:'currencyfieldbase',
-							 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
-							 		width:		250,
-					            	bind:		'{carga.importeEconomicoEconomica}'
-								},
-								{
-									xtype:'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.cancelacion.economica.carga'),
-							 		width:		280,
-				                	bind:		'{carga.fechaCancelacionEconomica}'
-								}
-		
-							 ]
-		                 
-		            }
-		        ]
+				],
+				dockedItems : [
+						        {
+						            xtype: 'pagingtoolbar',
+						            dock: 'bottom',
+						            displayInfo: true,
+						            bind: {
+						                store: '{storeCargas}'
+						            }
+					        	}
+				],
+				listeners : [
+					{afterrender: 'onRenderCargasList'	},
+				   	{rowdblclick: 'onCargasListDobleClick'}
+				]
+
         	}
             
             

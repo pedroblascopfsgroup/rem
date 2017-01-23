@@ -77,7 +77,6 @@ public class UpdaterStateManager implements UpdaterStateApi{
 					activo.setAdmision(tareasAdmision && fechasAdmision);
 				}
 			}
-		}
 	}
 	
 	private void updaterStateGestion(Activo activo){

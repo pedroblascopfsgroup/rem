@@ -64,19 +64,19 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	private void updaterStateAdmision(Activo activo){
 		//En caso de que esté 'OK' no se modifica el estado.
-			if(!this.getStateAdmision(activo)){
-				TareaExterna tareaExternaDocAdmision = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionAdmision");
-				if(!Checks.esNulo(tareaExternaDocAdmision)){
-					TareaActivo tareaDocAdmision = (TareaActivo) tareaExternaDocAdmision.getTareaPadre();
-				
-					TareaExterna tareaExternaInfo = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingInformacion");
-					TareaActivo tareaInfo = (TareaActivo) tareaExternaInfo.getTareaPadre();
+		if(!this.getStateAdmision(activo)){
+			TareaExterna tareaExternaDocAdmision = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionAdmision");
+			if(!Checks.esNulo(tareaExternaDocAdmision)){
+				TareaActivo tareaDocAdmision = (TareaActivo) tareaExternaDocAdmision.getTareaPadre();
 			
-					Boolean tareasAdmision = (!Checks.esNulo(tareaDocAdmision.getFechaFin()) && !Checks.esNulo(tareaInfo.getFechaFin()));
-					Boolean fechasAdmision = (!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getFechaInscripcionReg()) && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(activo.getFechaRevisionCarga()));
-					activo.setAdmision(tareasAdmision && fechasAdmision);
-				}
+				TareaExterna tareaExternaInfo = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingInformacion");
+				TareaActivo tareaInfo = (TareaActivo) tareaExternaInfo.getTareaPadre();
+		
+				Boolean tareasAdmision = (!Checks.esNulo(tareaDocAdmision.getFechaFin()) && !Checks.esNulo(tareaInfo.getFechaFin()));
+				Boolean fechasAdmision = (!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getFechaInscripcionReg()) && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(activo.getFechaRevisionCarga()));
+				activo.setAdmision(tareasAdmision && fechasAdmision);
 			}
+		}
 	}
 	
 	private void updaterStateGestion(Activo activo){

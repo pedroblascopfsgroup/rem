@@ -88,10 +88,11 @@ public class ClienteWebcomGenerico {
 		}
 
 		logger.debug("Llamada a servicio " + endpoint.toString() + " con parámetros " + paramsList);
-
+		JSONObject response = null;
+		JSONObject requestBody = null;
 		try {
 			// Llamada al servicio
-			JSONObject requestBody = WebcomRequestUtils.createRequestJson(paramsList);
+			requestBody = WebcomRequestUtils.createRequestJson(paramsList);
 			String jsonString = requestBody.toString();
 			registroLlamada.logTiempPrepararJson();
 			registroLlamada.setToken(requestBody.getString(WebcomRequestUtils.JSON_PROPERTY_ID));
@@ -115,19 +116,11 @@ public class ClienteWebcomGenerico {
 
 			debugJsonFile(jsonString);
 
-			JSONObject response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
+			response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
 					(endpoint.getTimeout() * 1000), endpoint.getCharset());
 			registroLlamada.setResponse(response.toString());
 
 			logger.debug("Respuesta recibida " + response);
-
-			if (response.containsKey("data")) {
-				trazarObjetosRechazados(registroLlamada, response.getJSONArray("data"),false);
-			} else {
-				if (response.containsKey("error") && requestBody.containsKey("data")) {
-					trazarObjetosRechazados(registroLlamada, requestBody.getJSONArray("data"),true);
-				}
-			}
 
 			// Gestión de errores si respuesta OK
 			if (response.containsKey("error")) {
@@ -148,7 +141,16 @@ public class ClienteWebcomGenerico {
 		} catch (NoSuchAlgorithmException e) {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
 		} finally {
+			if (response != null && response.containsKey("data")) {
+				trazarObjetosRechazados(registroLlamada, response.getJSONArray("data"), false);
+			} else {
+				if ((response == null || (response.containsKey("error") && response.getBoolean("error")))
+						&& requestBody.containsKey("data")) {
+					trazarObjetosRechazados(registroLlamada, requestBody.getJSONArray("data"), true);
+				}
+			}
 			registroLlamada.logTiempoPeticionRest();
+
 		}
 	}
 

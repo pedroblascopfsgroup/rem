@@ -209,8 +209,9 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 						Class control = handler.getDtoClass();
 						CambiosList listPendientes = new CambiosList(tamanyoBloque);
 						handler.actualizarVistaMaterializada();
-						ErrorServicioWebcom errorServicioWeb = null;
+						ErrorServicioWebcom errorServicioWeb;
 						do {
+							errorServicioWeb = null;
 							boolean somethingdone = false;
 							RestLlamada registro = new RestLlamada();
 							registro.setIteracion(iteracion);
@@ -230,8 +231,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 											"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
 											e);
 								}
-								errorServicioWeb = e;
-								break;
+								if(!e.isReintentable()){
+									errorServicioWeb = e;
+									break;
+								}else{
+									errorServicioWeb = e;
+								}
 							} catch (CambiosBDDaoError e) {
 								logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
 										+ "], no se han podido obtener los cambios", e);

@@ -38,7 +38,7 @@ DECLARE
 BEGIN
 
     /* Respuesta ofertante */
-        V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||	
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||	
     		  ' SET TAP_SCRIPT_DECISION = ''valores[''''T013_RespuestaOfertante''''][''''comboRespuesta''''] == DDSiNo.SI ?  (checkBankia() ? ''''AceptaBankia'''' :  (checkReserva() ? ''''AceptaConReserva'''' : ( checkDerechoTanteo() ? ''''AceptaSinReservaConTanteo'''' : ''''AceptaSinReservaSinTanteo''''))) : ''''Rechaza'''' '' '||
     		  ' WHERE TAP_CODIGO = ''T013_RespuestaOfertante'' ';
     		  	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');

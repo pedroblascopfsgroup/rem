@@ -306,8 +306,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoDatosRegistrales(DtoActivoDatosRegistrales activoDto, @RequestParam Long id,
-			ModelMap model) {
+	public ModelAndView saveActivoDatosRegistrales(DtoActivoDatosRegistrales activoDto, @RequestParam Long id,ModelMap model) {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_REGISTRALES);
@@ -325,12 +324,11 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoCarga(DtoActivoCargas cargaDto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveActivoCarga(DtoActivoCargas cargaDto, ModelMap model) {
 
 		try {
-			boolean success = adapter.saveActivoCarga(cargaDto, id);
+			boolean success = activoApi.saveActivoCarga(cargaDto);
 			model.put("success", success);
-			// model.put("totalCount", page.getTotalCount());
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -432,7 +430,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListCargasById(Long id, ModelMap model) {
+	public ModelAndView getListCargasById(Long id, WebDto webDto, ModelMap model) {
 
 		model.put("data", adapter.getListCargasById(id));
 
@@ -2282,5 +2280,21 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteCarga(DtoActivoCargas dtoCarga, ModelMap model) {
+
+		try {
+			model.put("success", activoApi.deleteCarga(dtoCarga));
+		} catch (Exception e) {
+			logger.error(e);
+			model.put("success", false);
+			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+
 	}
 }

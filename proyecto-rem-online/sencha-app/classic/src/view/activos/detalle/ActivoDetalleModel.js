@@ -298,7 +298,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
     		
-    		comboSubtipoCarga: {
+    		comboTiposCarga: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposCarga'}
+				}
+    		},
+    		
+    		comboSubtiposCarga: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
@@ -306,19 +315,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {codigoTipoCarga: '{carga.tipoCargaCodigo}'}
 				}
     		},
-    		
-    		comboSubtipoCargaEconomica: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getComboSubtipoCarga',
-					extraParams: {codigoTipoCarga: '{carga.tipoCargaCodigoEconomica}'}
-				}
-    		},
 
     		storeCargas: {    	
     		 pageSize: $AC.getDefaultPageSize(),
-			 model : 'HreRem.model.Carga',
+			 model : 'HreRem.model.ActivoCargas',
 		     proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'activo/getListCargasById',

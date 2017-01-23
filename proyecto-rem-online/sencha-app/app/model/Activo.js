@@ -30,6 +30,13 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'isCarteraCajamar',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
     			name: 'subcarteraCodigo'
     		},
     		{

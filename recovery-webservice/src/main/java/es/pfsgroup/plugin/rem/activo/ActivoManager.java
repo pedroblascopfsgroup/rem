@@ -44,13 +44,17 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -63,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
@@ -85,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -138,9 +144,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -210,6 +218,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private ActivoCargasApi activoCargasApi;
 
 	@Override
 	public String managerName() {
@@ -3171,5 +3182,74 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		else
 			return DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER;
+	}
+	
+	@Transactional(readOnly = false)
+	public Boolean saveActivoCarga(DtoActivoCargas cargaDto) {
+
+		ActivoCargas cargaSeleccionada = null;
+		
+		if(!Checks.esNulo(cargaDto.getIdActivoCarga())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", cargaDto.getIdActivoCarga());
+			cargaSeleccionada = (ActivoCargas) genericDao.get(ActivoCargas.class, filtro);
+		} else {
+			cargaSeleccionada = new ActivoCargas();
+			
+			Activo activo = get(cargaDto.getIdActivo());			
+			cargaSeleccionada.setActivo(activo);			
+			NMBBienCargas cargaBien = new NMBBienCargas();
+			DDTipoCarga tipoCargaBien = (DDTipoCarga) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCarga.class, "0");
+			cargaBien.setTipoCarga(tipoCargaBien);
+			cargaBien.setBien(activo.getBien());
+			genericDao.save(NMBBienCargas.class, cargaBien);
+			cargaSeleccionada.setCargaBien(cargaBien);			
+		}
+
+		try {
+
+			beanUtilNotNull.copyProperties(cargaSeleccionada, cargaDto);
+			beanUtilNotNull.copyProperties(cargaSeleccionada.getCargaBien(), cargaDto);
+			
+			if(!Checks.esNulo(cargaDto.getEstadoCodigo())) {
+				DDSituacionCarga situacionCarga = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionCarga.class, cargaDto.getEstadoCodigo());
+				cargaSeleccionada.getCargaBien().setSituacionCarga(situacionCarga);
+				
+			}
+			if(!Checks.esNulo(cargaDto.getEstadoEconomicaCodigo())) {
+				DDSituacionCarga situacionCarga = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionCarga.class, cargaDto.getEstadoEconomicaCodigo());
+				cargaSeleccionada.getCargaBien().setSituacionCargaEconomica(situacionCarga);
+			}
+			if(!Checks.esNulo(cargaDto.getTipoCargaCodigo())) {
+				DDTipoCargaActivo tipoCarga = (DDTipoCargaActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCargaActivo.class, cargaDto.getTipoCargaCodigo());
+				cargaSeleccionada.setTipoCargaActivo(tipoCarga);
+			}
+
+			if(!Checks.esNulo(cargaDto.getSubtipoCargaCodigo())) {
+				DDSubtipoCarga subtipoCarga = (DDSubtipoCarga) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoCarga.class, cargaDto.getSubtipoCargaCodigo());
+				cargaSeleccionada.setSubtipoCarga(subtipoCarga);
+			}
+
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		activoCargasApi.saveOrUpdate(cargaSeleccionada);
+		// genericDao.save(ActivoCargas.class, cargaSeleccionada);
+
+		return true;
+
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean deleteCarga(DtoActivoCargas dto) {
+		
+		genericDao.deleteById(ActivoCargas.class, dto.getIdActivoCarga());
+
+		return true;	
+		
+	
 	}
 }

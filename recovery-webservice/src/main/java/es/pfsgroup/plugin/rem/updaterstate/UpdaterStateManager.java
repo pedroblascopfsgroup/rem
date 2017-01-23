@@ -47,12 +47,12 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Override
 	public Boolean getStateAdmision(Activo activo) {
-		return activo.getAdmision();
+		return (Checks.esNulo(activo.getAdmision() ? false : activo.getAdmision()));
 	}
 
 	@Override
 	public Boolean getStateGestion(Activo activo) {
-		return activo.getGestion();
+		return (Checks.esNulo(activo.getGestion() ? false : activo.getGestion()));
 	}
 
 	@Override
@@ -64,17 +64,18 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	private void updaterStateAdmision(Activo activo){
 		//En caso de que esté 'OK' no se modifica el estado.
-		if(!this.getStateAdmision(activo)){
-			TareaExterna tareaExternaDocAdmision = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionAdmision");
-			if(!Checks.esNulo(tareaExternaDocAdmision)){
-				TareaActivo tareaDocAdmision = (TareaActivo) tareaExternaDocAdmision.getTareaPadre();
+			if(!this.getStateAdmision(activo)){
+				TareaExterna tareaExternaDocAdmision = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionAdmision");
+				if(!Checks.esNulo(tareaExternaDocAdmision)){
+					TareaActivo tareaDocAdmision = (TareaActivo) tareaExternaDocAdmision.getTareaPadre();
+				
+					TareaExterna tareaExternaInfo = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingInformacion");
+					TareaActivo tareaInfo = (TareaActivo) tareaExternaInfo.getTareaPadre();
 			
-				TareaExterna tareaExternaInfo = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingInformacion");
-				TareaActivo tareaInfo = (TareaActivo) tareaExternaInfo.getTareaPadre();
-		
-				Boolean tareasAdmision = (!Checks.esNulo(tareaDocAdmision.getFechaFin()) && !Checks.esNulo(tareaInfo.getFechaFin()));
-				Boolean fechasAdmision = (!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getFechaInscripcionReg()) && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(activo.getFechaRevisionCarga()));
-				activo.setAdmision(tareasAdmision && fechasAdmision);
+					Boolean tareasAdmision = (!Checks.esNulo(tareaDocAdmision.getFechaFin()) && !Checks.esNulo(tareaInfo.getFechaFin()));
+					Boolean fechasAdmision = (!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getFechaInscripcionReg()) && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(activo.getFechaRevisionCarga()));
+					activo.setAdmision(tareasAdmision && fechasAdmision);
+				}
 			}
 		}
 	}

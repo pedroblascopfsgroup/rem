@@ -33,5 +33,11 @@ public interface InfoTablasBD {
 	 * @return
 	 */
 	String clavePrimaria();
+	
+	/**
+	 * Registro identificador unico en el json
+	 * @return
+	 */
+	String clavePrimariaJson();
 
 }

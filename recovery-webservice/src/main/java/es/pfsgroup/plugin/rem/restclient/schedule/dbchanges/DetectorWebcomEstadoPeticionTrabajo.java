@@ -53,4 +53,9 @@ public class DetectorWebcomEstadoPeticionTrabajo extends DetectorCambiosBD<Estad
 		return true;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_TRABAJO_REM";
+	}
+
 }

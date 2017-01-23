@@ -52,4 +52,9 @@ public class DetectorWebcomEstadoOferta  extends DetectorCambiosBD<EstadoOfertaD
 		return true;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_OFERTA_REM";
+	}
+
 }

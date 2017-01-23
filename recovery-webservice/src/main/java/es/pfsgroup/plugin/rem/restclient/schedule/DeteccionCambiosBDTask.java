@@ -101,6 +101,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		logger.info("[inicio] Envío de información completa a WEBCOM mediante REST");
 		RestLlamada registro = new RestLlamada();
 		boolean somethingdone = false;
+		ErrorServicioWebcom errorServicioWeb = null;
+		ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
 		try {
 
 			long startTime = System.currentTimeMillis();
@@ -108,15 +110,37 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			logger.debug(handler.getClass().getSimpleName() + ": obtenemos toda la información de la  BD");
 			List<?> listPendientes = handler.listDatosCompletos(control, registro);
 			somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
-
+			llamadas.add(registro);
 			ejecutaTarea(handler, listPendientes, control, registro);
+
+			if ((errorServicioWeb != null && !errorServicioWeb.isReintentable()) || errorServicioWeb == null) {
+				logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+				handler.marcaComoEnviados(control, llamadas);
+			}
 
 			logger.debug("TIMER DETECTOR FULL enviaInformacionCompleta [" + handler.getClass().getSimpleName() + "]: "
 					+ (System.currentTimeMillis() - startTime));
 
+		} catch (ErrorServicioWebcom e) {
+			if (e.isReintentable()) {
+				logger.error(
+						"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
+						e);
+			} else {
+				logger.fatal(
+						"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
+						e);
+			}
+			errorServicioWeb = e;
 		} finally {
 			if (somethingdone && (registroLlamadas != null)) {
-				registroLlamadas.guardaRegistroLlamada(registro);
+				registroLlamadas.guardaRegistroLlamada(registro,handler);
+			}
+			if ((errorServicioWeb != null && !errorServicioWeb.isReintentable())
+					|| errorServicioWeb == null) {
+				logger.debug(
+						handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+				handler.marcaComoEnviados(control, llamadas);
 			}
 			logger.info("[fin] Envío de información completa a WEBCOM mediante REST");
 			running = false;
@@ -185,6 +209,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 						Class control = handler.getDtoClass();
 						CambiosList listPendientes = new CambiosList(tamanyoBloque);
 						handler.actualizarVistaMaterializada();
+						ErrorServicioWebcom errorServicioWeb = null;
 						do {
 							boolean somethingdone = false;
 							RestLlamada registro = new RestLlamada();
@@ -195,18 +220,35 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								ejecutaTarea(handler, listPendientes, control, registro);
 								logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
 										+ "]: " + (System.currentTimeMillis() - startTime));
+							} catch (ErrorServicioWebcom e) {
+								if (e.isReintentable()) {
+									logger.error(
+											"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
+											e);
+								} else {
+									logger.fatal(
+											"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
+											e);
+								}
+								errorServicioWeb = e;
+								break;
 							} catch (CambiosBDDaoError e) {
 								logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
 										+ "], no se han podido obtener los cambios", e);
 							} finally {
 								if (somethingdone && (registroLlamadas != null)) {
-									registroLlamadas.guardaRegistroLlamada(registro);
+									registroLlamadas.guardaRegistroLlamada(registro,handler);
 									llamadas.add(registro);
 								}
 							}
 						} while (listPendientes != null && listPendientes.getPaginacion().getHasMore());
-						logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
-						handler.marcaComoEnviados(control, llamadas);
+
+						if ((errorServicioWeb != null && !errorServicioWeb.isReintentable())
+								|| errorServicioWeb == null) {
+							logger.debug(
+									handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+							handler.marcaComoEnviados(control, llamadas);
+						}
 					}
 				}
 			} else {
@@ -220,28 +262,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void ejecutaTarea(DetectorCambiosBD<?> handler, List listPendientes, Class control, RestLlamada registro) {
+	public void ejecutaTarea(DetectorCambiosBD<?> handler, List listPendientes, Class control, RestLlamada registro)
+			throws ErrorServicioWebcom {
 
 		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
 			logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
-			try {
-				handler.invocaServicio(listPendientes, registro);
-			} catch (ErrorServicioWebcom e) {
-				if (e.isReintentable()) {
-					logger.error(
-							"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
-							e);
-					return;
-				} else {
-					logger.fatal(
-							"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
-							e);
-				}
-			}
-
-			// logger.debug(handler.getClass().getName() + ": marcando los
-			// registros de la BD como enviados");
-			// handler.marcaComoEnviados(control, registro);
+			handler.invocaServicio(listPendientes, registro);
 
 		} else {
 			logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");

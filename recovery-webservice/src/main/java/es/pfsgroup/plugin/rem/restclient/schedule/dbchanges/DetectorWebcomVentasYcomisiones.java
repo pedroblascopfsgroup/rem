@@ -53,4 +53,9 @@ public class DetectorWebcomVentasYcomisiones extends DetectorCambiosBD<Comisione
 		return true;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_OFERTA_REM";
+	}
+
 }

@@ -53,4 +53,9 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 		return true;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_ACTIVO_HAYA";
+	}
+
 }

@@ -22,7 +22,7 @@ public class DtoActivoCargas {
 	
     private Date fechaRevision;
     private String descripcionCarga;
-    private Long idCarga;
+    private Long idActivoCarga;
     private String titular;
     private String importeRegistral;
     private String importeEconomico;
@@ -31,26 +31,24 @@ public class DtoActivoCargas {
     private Date fechaCancelacion;
     private Date fechaCancelacionRegistral;
     private String ordenCarga;
+    private String estadoCodigo;
+    private String estadoDescripcion;
+    private String estadoEconomicaCodigo;
+    private String estadoEconomicaDescripcion;
+    private Long idActivo;
+    
+    
     
     // Mapeados a mano
     private String subtipoCargaCodigo;
-    private String situacionCargaCodigo;
     private String tipoCargaCodigo;
-    
-    // Descripción Carga y Subtipo Carga
-    private String subtipoCargaDesc;
-    private String tipoCargaDesc;
-    private String subtipoCargaDescEconomica;
-    private String tipoCargaDescEconomica;    
-    
-    // Mapeados a mano por duplicidad
-    private String subtipoCargaCodigoEconomica;
-    private String situacionCargaCodigoEconomica;
-    private String tipoCargaCodigoEconomica;
-    private String descripcionCargaEconomica;
-    private String titularEconomica;
-    private String importeEconomicoEconomica;
-    private Date fechaCancelacionEconomica;
+    private String situacionCargaCodigo;
+
+    private String subtipoCargaDescripcion;
+    private String tipoCargaDescripcion;
+    private String situacionCargaDescripcion;
+ 
+
     
 	public Date getFechaRevision() {
 		return fechaRevision;
@@ -64,11 +62,11 @@ public class DtoActivoCargas {
 	public void setDescripcionCarga(String descripcionCarga) {
 		this.descripcionCarga = descripcionCarga;
 	}
-	public Long getIdCarga() {
-		return idCarga;
+	public Long getIdActivoCarga() {
+		return idActivoCarga;
 	}
-	public void setIdCarga(Long idCarga) {
-		this.idCarga = idCarga;
+	public void setIdActivoCarga(Long idActivoCarga) {
+		this.idActivoCarga = idActivoCarga;
 	}
 	public String getTitular() {
 		return titular;
@@ -130,48 +128,23 @@ public class DtoActivoCargas {
 	public void setTipoCargaCodigo(String tipoCargaCodigo) {
 		this.tipoCargaCodigo = tipoCargaCodigo;
 	}
-	public String getSubtipoCargaCodigoEconomica() {
-		return subtipoCargaCodigoEconomica;
+	public String getSubtipoCargaDescripcion() {
+		return subtipoCargaDescripcion;
 	}
-	public void setSubtipoCargaCodigoEconomica(String subtipoCargaCodigoEconomica) {
-		this.subtipoCargaCodigoEconomica = subtipoCargaCodigoEconomica;
+	public void setSubtipoCargaDescripcion(String subtipoCargaDescripcion) {
+		this.subtipoCargaDescripcion = subtipoCargaDescripcion;
 	}
-	public String getSituacionCargaCodigoEconomica() {
-		return situacionCargaCodigoEconomica;
+	public String getTipoCargaDescripcion() {
+		return tipoCargaDescripcion;
 	}
-	public void setSituacionCargaCodigoEconomica(
-			String situacionCargaCodigoEconomica) {
-		this.situacionCargaCodigoEconomica = situacionCargaCodigoEconomica;
+	public void setTipoCargaDescripcion(String tipoCargaDescripcion) {
+		this.tipoCargaDescripcion = tipoCargaDescripcion;
 	}
-	public String getTipoCargaCodigoEconomica() {
-		return tipoCargaCodigoEconomica;
+	public String getSituacionCargaDescripcion() {
+		return situacionCargaDescripcion;
 	}
-	public void setTipoCargaCodigoEconomica(String tipoCargaCodigoEconomica) {
-		this.tipoCargaCodigoEconomica = tipoCargaCodigoEconomica;
-	}
-	public String getDescripcionCargaEconomica() {
-		return descripcionCargaEconomica;
-	}
-	public void setDescripcionCargaEconomica(String descripcionCargaEconomica) {
-		this.descripcionCargaEconomica = descripcionCargaEconomica;
-	}
-	public String getTitularEconomica() {
-		return titularEconomica;
-	}
-	public void setTitularEconomica(String titularEconomica) {
-		this.titularEconomica = titularEconomica;
-	}
-	public String getImporteEconomicoEconomica() {
-		return importeEconomicoEconomica;
-	}
-	public void setImporteEconomicoEconomica(String importeEconomicoEconomica) {
-		this.importeEconomicoEconomica = importeEconomicoEconomica;
-	}
-	public Date getFechaCancelacionEconomica() {
-		return fechaCancelacionEconomica;
-	}
-	public void setFechaCancelacionEconomica(Date fechaCancelacionEconomica) {
-		this.fechaCancelacionEconomica = fechaCancelacionEconomica;
+	public void setSituacionCargaDescripcion(String situacionCargaDescripcion) {
+		this.situacionCargaDescripcion = situacionCargaDescripcion;
 	}
 	public String getOrdenCarga() {
 		return ordenCarga;
@@ -180,29 +153,34 @@ public class DtoActivoCargas {
 		this.ordenCarga = ordenCarga;
 	}
 	
-	public String getSubtipoCargaDesc() {
-		return subtipoCargaDesc;
+	public String getEstadoCodigo() {
+		return estadoCodigo;
 	}
-	public void setSubtipoCargaDesc(String subtipoCargaDesc) {
-		this.subtipoCargaDesc = subtipoCargaDesc;
+	public void setEstadoCodigo(String estadoCodigo) {
+		this.estadoCodigo = estadoCodigo;
 	}
-	public String getTipoCargaDesc() {
-		return tipoCargaDesc;
+	public String getEstadoDescripcion() {
+		return estadoDescripcion;
 	}
-	public void setTipoCargaDesc(String tipoCargaDesc) {
-		this.tipoCargaDesc = tipoCargaDesc;
+	public void setEstadoDescripcion(String estadoDescripcion) {
+		this.estadoDescripcion = estadoDescripcion;
 	}
-	public String getSubtipoCargaDescEconomica() {
-		return subtipoCargaDescEconomica;
+	public String getEstadoEconomicaCodigo() {
+		return estadoEconomicaCodigo;
 	}
-	public void setSubtipoCargaDescEconomica(String subtipoCargaDescEconomica) {
-		this.subtipoCargaDescEconomica = subtipoCargaDescEconomica;
+	public void setEstadoEconomicaCodigo(String estadoEconomicaCodigo) {
+		this.estadoEconomicaCodigo = estadoEconomicaCodigo;
 	}
-	public String getTipoCargaDescEconomica() {
-		return tipoCargaDescEconomica;
+	public String getEstadoEconomicaDescripcion() {
+		return estadoEconomicaDescripcion;
 	}
-	public void setTipoCargaDescEconomica(String tipoCargaDescEconomica) {
-		this.tipoCargaDescEconomica = tipoCargaDescEconomica;
+	public void setEstadoEconomicaDescripcion(String estadoEconomicaDescripcion) {
+		this.estadoEconomicaDescripcion = estadoEconomicaDescripcion;
 	}
-    
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}    
 }

@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -862,4 +863,8 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public String getSubtipoTrabajoByOferta(Oferta oferta);
+	
+	public Boolean deleteCarga(DtoActivoCargas dto);
+	
+	public Boolean saveActivoCarga(DtoActivoCargas cargaDto);
 }

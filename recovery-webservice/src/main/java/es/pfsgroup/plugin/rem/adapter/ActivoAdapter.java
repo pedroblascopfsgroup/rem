@@ -44,12 +44,10 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
-import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -93,7 +91,6 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoCarga;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
@@ -127,7 +124,6 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -166,9 +162,6 @@ public class ActivoAdapter {
 
 	@Autowired
 	private ActivoApi activoApi;
-
-	@Autowired
-	private ActivoCargasApi activoCargasApi;
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
@@ -1600,96 +1593,7 @@ public class ActivoAdapter {
 	 * }
 	 * 
 	 */
-
-	public boolean saveActivoCarga(DtoActivoCargas cargaDto, Long idCarga) {
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idCarga);
-		ActivoCargas cargaSeleccionada = (ActivoCargas) genericDao.get(ActivoCargas.class, filtro);
-
-		try {
-
-			beanUtilNotNull.copyProperties(cargaSeleccionada, cargaDto);
-			beanUtilNotNull.copyProperties(cargaSeleccionada.getCargaBien(), cargaDto);
-
-			if (cargaSeleccionada.getTipoCargaActivo().getCodigo().equals("REG")) {
-
-				/*
-				 * if (cargaDto.getTipoCargaCodigo() != null) {
-				 * 
-				 * DDTipoCargaActivo tipoCargaNueva = (DDTipoCargaActivo)
-				 * proxyFactory.proxy
-				 * (UtilDiccionarioApi.class).dameValorDiccionarioByCod(
-				 * DDTipoCargaActivo.class, cargaDto.getTipoCargaCodigo());
-				 * 
-				 * cargaSeleccionada.setTipoCargaActivo(tipoCargaNueva);
-				 * 
-				 * }
-				 */
-
-				if (cargaDto.getSubtipoCargaCodigo() != null) {
-
-					DDSubtipoCarga subtipoCargaNueva = (DDSubtipoCarga) proxyFactory.proxy(UtilDiccionarioApi.class)
-							.dameValorDiccionarioByCod(DDSubtipoCarga.class, cargaDto.getSubtipoCargaCodigo());
-
-					cargaSeleccionada.setSubtipoCarga(subtipoCargaNueva);
-
-				}
-
-				if (cargaDto.getSituacionCargaCodigo() != null) {
-
-					DDSituacionCarga situacionCargaNueva = (DDSituacionCarga) proxyFactory
-							.proxy(UtilDiccionarioApi.class)
-							.dameValorDiccionarioByCod(DDSituacionCarga.class, cargaDto.getSituacionCargaCodigo());
-
-					cargaSeleccionada.getCargaBien().setSituacionCarga(situacionCargaNueva);
-
-				}
-
-			} else if (cargaSeleccionada.getTipoCargaActivo().getCodigo().equals("ECO")) {
-
-				if (cargaDto.getSubtipoCargaCodigoEconomica() != null) {
-
-					DDSubtipoCarga subtipoCargaNuevaEconomica = (DDSubtipoCarga) proxyFactory
-							.proxy(UtilDiccionarioApi.class)
-							.dameValorDiccionarioByCod(DDSubtipoCarga.class, cargaDto.getSubtipoCargaCodigoEconomica());
-
-					cargaSeleccionada.setSubtipoCarga(subtipoCargaNuevaEconomica);
-
-				}
-
-				if (cargaDto.getSituacionCargaCodigoEconomica() != null) {
-
-					DDSituacionCarga situacionCargaNuevaEconomica = (DDSituacionCarga) proxyFactory
-							.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSituacionCarga.class,
-									cargaDto.getSituacionCargaCodigoEconomica());
-
-					cargaSeleccionada.getCargaBien().setSituacionCarga(situacionCargaNuevaEconomica);
-
-				}
-
-				beanUtilNotNull.copyProperty(cargaSeleccionada.getCargaBien(), "titular",
-						cargaDto.getTitularEconomica());
-				beanUtilNotNull.copyProperty(cargaSeleccionada.getCargaBien(), "importeEconomico",
-						cargaDto.getImporteEconomicoEconomica());
-				beanUtilNotNull.copyProperty(cargaSeleccionada.getCargaBien(), "fechaCancelacion",
-						cargaDto.getFechaCancelacionEconomica());
-				beanUtilNotNull.copyProperty(cargaSeleccionada.getCargaBien(), "descripcionCarga",
-						cargaDto.getDescripcionCargaEconomica());
-
-			}
-
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-		activoCargasApi.saveOrUpdate(cargaSeleccionada);
-		// genericDao.save(ActivoCargas.class, cargaSeleccionada);
-
-		return true;
-
-	}
+	
 
 	@Transactional(readOnly = false)
 	public boolean saveDistribucion(DtoDistribucion dtoDistribucion, Long idDistribucion) {
@@ -2009,32 +1913,37 @@ public class ActivoAdapter {
 
 	}
 
-	public List<DtoCarga> getListCargasById(Long id) {
+	public List<DtoActivoCargas> getListCargasById(Long id) {
 
 		Activo activo = activoApi.get(id);
-		// DtoCarga cargaDto = new ArrayList<DtoCarga>();
-		List<DtoCarga> listaDtoCarga = new ArrayList<DtoCarga>();
+		List<DtoActivoCargas> listaDtoCarga = new ArrayList<DtoActivoCargas>();
 
 		if (activo.getCargas() != null) {
 
 			for (int i = 0; i < activo.getCargas().size(); i++) {
-				DtoCarga cargaDto = new DtoCarga();
+				DtoActivoCargas cargaDto = new DtoActivoCargas();
 				try {
 					ActivoCargas activoCarga = activo.getCargas().get(i);
-					BeanUtils.copyProperties(cargaDto, activoCarga);
-					BeanUtils.copyProperties(cargaDto, activoCarga.getCargaBien());
-					if (activoCarga.getTipoCargaActivo() != null)
-						BeanUtils.copyProperty(cargaDto, "tipoCargaDescripcion",
-								activoCarga.getTipoCargaActivo().getDescripcion());
-					if (activoCarga.getSubtipoCarga() != null)
-						BeanUtils.copyProperty(cargaDto, "subtipoCargaDescripcion",
-								activoCarga.getSubtipoCarga().getDescripcion());
-					if (activoCarga.getCargaBien().getSituacionCarga() != null)
-						BeanUtils.copyProperty(cargaDto, "estadoDescripcion",
-								activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
-					if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null)
-						BeanUtils.copyProperty(cargaDto, "estadoEconomicaDescripcion",
-								activoCarga.getCargaBien().getSituacionCargaEconomica().getDescripcion());
+					beanUtilNotNull.copyProperties(cargaDto, activoCarga);
+					beanUtilNotNull.copyProperties(cargaDto, activoCarga.getCargaBien());
+					beanUtilNotNull.copyProperty(cargaDto, "idActivoCarga", activoCarga.getId());
+					
+					if (activoCarga.getTipoCargaActivo() != null) {
+						beanUtilNotNull.copyProperty(cargaDto, "tipoCargaDescripcion",activoCarga.getTipoCargaActivo().getDescripcion());
+						beanUtilNotNull.copyProperty(cargaDto, "tipoCargaCodigo",activoCarga.getTipoCargaActivo().getCodigo());
+					}
+					if (activoCarga.getSubtipoCarga() != null) {
+						beanUtilNotNull.copyProperty(cargaDto, "subtipoCargaDescripcion",activoCarga.getSubtipoCarga().getDescripcion());
+						beanUtilNotNull.copyProperty(cargaDto, "subtipoCargaCodigo",activoCarga.getSubtipoCarga().getCodigo());
+					}
+					if (activoCarga.getCargaBien().getSituacionCarga() != null) {
+						beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
+						beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",activoCarga.getCargaBien().getSituacionCarga().getCodigo());
+					}
+					if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null){
+						beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",activoCarga.getCargaBien().getSituacionCargaEconomica().getDescripcion());
+						beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",activoCarga.getCargaBien().getSituacionCargaEconomica().getCodigo());
+					}
 
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
@@ -2046,6 +1955,62 @@ public class ActivoAdapter {
 		}
 
 		return listaDtoCarga;
+
+	}
+	
+	public DtoActivoCargas getCargaById(Long id) {
+
+		DtoActivoCargas dtoCarga = new DtoActivoCargas();
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		ActivoCargas cargaSeleccionada = (ActivoCargas) genericDao.get(ActivoCargas.class, filtro);
+
+		try {
+
+			beanUtilNotNull.copyProperties(dtoCarga, cargaSeleccionada);
+			beanUtilNotNull.copyProperties(dtoCarga, cargaSeleccionada.getCargaBien());
+
+			if (cargaSeleccionada.getTipoCargaActivo() != null) {
+				beanUtilNotNull.copyProperty(dtoCarga, "tipoCargaCodigo", cargaSeleccionada.getTipoCargaActivo().getCodigo());
+				beanUtilNotNull.copyProperty(dtoCarga, "tipoCargaDesc",
+						cargaSeleccionada.getTipoCargaActivo().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoCarga, "tipoCargaCodigoEconomica",
+						cargaSeleccionada.getTipoCargaActivo().getCodigo());
+				beanUtilNotNull.copyProperty(dtoCarga, "tipoCargaDescEconomica",
+						cargaSeleccionada.getTipoCargaActivo().getDescripcion());
+			}
+
+			if (cargaSeleccionada.getSubtipoCarga() != null) {
+				beanUtilNotNull.copyProperty(dtoCarga, "subtipoCargaCodigo", cargaSeleccionada.getSubtipoCarga().getCodigo());
+				beanUtilNotNull.copyProperty(dtoCarga, "subtipoCargaDesc",
+						cargaSeleccionada.getSubtipoCarga().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoCarga, "subtipoCargaCodigoEconomica",
+						cargaSeleccionada.getSubtipoCarga().getCodigo());
+				beanUtilNotNull.copyProperty(dtoCarga, "subtipoCargaDescEconomica",
+						cargaSeleccionada.getSubtipoCarga().getDescripcion());
+			}
+
+			if (cargaSeleccionada.getCargaBien().getSituacionCarga() != null) {
+				beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo",
+						cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
+				beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica",
+						cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
+			}
+
+			beanUtilNotNull.copyProperty(dtoCarga, "titularEconomica", cargaSeleccionada.getCargaBien().getTitular());
+			beanUtilNotNull.copyProperty(dtoCarga, "importeEconomicoEconomica",
+					cargaSeleccionada.getCargaBien().getImporteEconomico());
+			beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionEconomica",
+					cargaSeleccionada.getCargaBien().getFechaCancelacion());
+			beanUtilNotNull.copyProperty(dtoCarga, "descripcionCargaEconomica", cargaSeleccionada.getDescripcionCarga());
+
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		return dtoCarga;
 
 	}
 
@@ -2396,62 +2361,6 @@ public class ActivoAdapter {
 		Order order = new Order(OrderType.ASC, "principal, orden");
 
 		return genericDao.getListOrdered(ActivoFoto.class, order, filtro);
-
-	}
-
-	public DtoActivoCargas getCargaById(Long id) {
-
-		DtoActivoCargas dtoCarga = new DtoActivoCargas();
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-		ActivoCargas cargaSeleccionada = (ActivoCargas) genericDao.get(ActivoCargas.class, filtro);
-
-		try {
-
-			BeanUtils.copyProperties(dtoCarga, cargaSeleccionada);
-			BeanUtils.copyProperties(dtoCarga, cargaSeleccionada.getCargaBien());
-
-			if (cargaSeleccionada.getTipoCargaActivo() != null) {
-				BeanUtils.copyProperty(dtoCarga, "tipoCargaCodigo", cargaSeleccionada.getTipoCargaActivo().getCodigo());
-				BeanUtils.copyProperty(dtoCarga, "tipoCargaDesc",
-						cargaSeleccionada.getTipoCargaActivo().getDescripcion());
-				BeanUtils.copyProperty(dtoCarga, "tipoCargaCodigoEconomica",
-						cargaSeleccionada.getTipoCargaActivo().getCodigo());
-				BeanUtils.copyProperty(dtoCarga, "tipoCargaDescEconomica",
-						cargaSeleccionada.getTipoCargaActivo().getDescripcion());
-			}
-
-			if (cargaSeleccionada.getSubtipoCarga() != null) {
-				BeanUtils.copyProperty(dtoCarga, "subtipoCargaCodigo", cargaSeleccionada.getSubtipoCarga().getCodigo());
-				BeanUtils.copyProperty(dtoCarga, "subtipoCargaDesc",
-						cargaSeleccionada.getSubtipoCarga().getDescripcion());
-				BeanUtils.copyProperty(dtoCarga, "subtipoCargaCodigoEconomica",
-						cargaSeleccionada.getSubtipoCarga().getCodigo());
-				BeanUtils.copyProperty(dtoCarga, "subtipoCargaDescEconomica",
-						cargaSeleccionada.getSubtipoCarga().getDescripcion());
-			}
-
-			if (cargaSeleccionada.getCargaBien().getSituacionCarga() != null) {
-				BeanUtils.copyProperty(dtoCarga, "situacionCargaCodigo",
-						cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
-				BeanUtils.copyProperty(dtoCarga, "situacionCargaCodigoEconomica",
-						cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
-			}
-
-			BeanUtils.copyProperty(dtoCarga, "titularEconomica", cargaSeleccionada.getCargaBien().getTitular());
-			BeanUtils.copyProperty(dtoCarga, "importeEconomicoEconomica",
-					cargaSeleccionada.getCargaBien().getImporteEconomico());
-			BeanUtils.copyProperty(dtoCarga, "fechaCancelacionEconomica",
-					cargaSeleccionada.getCargaBien().getFechaCancelacion());
-			BeanUtils.copyProperty(dtoCarga, "descripcionCargaEconomica", cargaSeleccionada.getDescripcionCarga());
-
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-		return dtoCarga;
 
 	}
 

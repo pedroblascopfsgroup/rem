@@ -53,4 +53,9 @@ public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoO
 		return false;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_AGRUPACION_REM";
+	}
+
 }

@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -25,6 +26,7 @@ import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -86,10 +88,11 @@ public class ClienteWebcomGenerico {
 		}
 
 		logger.debug("Llamada a servicio " + endpoint.toString() + " con parámetros " + paramsList);
-
+		JSONObject response = null;
+		JSONObject requestBody = null;
 		try {
 			// Llamada al servicio
-			JSONObject requestBody = WebcomRequestUtils.createRequestJson(paramsList);
+			requestBody = WebcomRequestUtils.createRequestJson(paramsList);
 			String jsonString = requestBody.toString();
 			registroLlamada.logTiempPrepararJson();
 			registroLlamada.setToken(requestBody.getString(WebcomRequestUtils.JSON_PROPERTY_ID));
@@ -112,8 +115,8 @@ public class ClienteWebcomGenerico {
 			registroLlamada.setEndpoint(endpointUrl);
 
 			debugJsonFile(jsonString);
-			
-			JSONObject response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
+
+			response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
 					(endpoint.getTimeout() * 1000), endpoint.getCharset());
 			registroLlamada.setResponse(response.toString());
 
@@ -138,8 +141,29 @@ public class ClienteWebcomGenerico {
 		} catch (NoSuchAlgorithmException e) {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
 		} finally {
+			if (response != null && response.containsKey("data")) {
+				trazarObjetosRechazados(registroLlamada, response.getJSONArray("data"), false);
+			} else {
+				if ((response == null || (response.containsKey("error") && response.getBoolean("error")))
+						&& requestBody.containsKey("data")) {
+					trazarObjetosRechazados(registroLlamada, requestBody.getJSONArray("data"), true);
+				}
+			}
 			registroLlamada.logTiempoPeticionRest();
+
 		}
+	}
+
+	private void trazarObjetosRechazados(RestLlamada registroLlamada, JSONArray data, boolean trazandoRequest) {
+		ArrayList<JSONObject> datosErroneos = new ArrayList<JSONObject>();
+		for (int i = 0; i < data.size(); i++) {
+			JSONObject jsonObject = data.getJSONObject(i);
+			if (trazandoRequest || (jsonObject.containsKey("succes") && !jsonObject.getBoolean("succes"))) {
+				datosErroneos.add(jsonObject);
+			}
+
+		}
+		registroLlamada.setDatosErroneos(datosErroneos);
 	}
 
 	private void debugJsonFile(String jsonString) {

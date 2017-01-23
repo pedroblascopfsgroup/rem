@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.restclient.registro.model;
 
+
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -10,11 +12,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import net.sf.json.JSONObject;
 
 @Entity
 @Table(name = "RST_LLAMADA", schema = "${entity.schema}")
@@ -86,6 +90,10 @@ public class RestLlamada implements Serializable, Auditable {
 
 	@Column(name = "RST_MS_INSERTAR_HIST")
 	private Long msInsertarHistorico;
+	
+	@Transient
+	private ArrayList<JSONObject> datosErroneos;
+	
 
 	public RestLlamada() {
 		this.startTime = System.currentTimeMillis();
@@ -287,6 +295,14 @@ public class RestLlamada implements Serializable, Auditable {
 
 	public void setMsPrepararJson(Long msPrepararJson) {
 		this.msPrepararJson = msPrepararJson;
+	}
+
+	public ArrayList<JSONObject> getDatosErroneos() {
+		return datosErroneos;
+	}
+
+	public void setDatosErroneos(ArrayList<JSONObject> datosErroneos) {
+		this.datosErroneos = datosErroneos;
 	}
 
 }

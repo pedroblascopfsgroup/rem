@@ -90,7 +90,7 @@ public class FotosController {
 				}
 			}
 		} catch (Exception  e) {
-			logger.error(e);
+			logger.error("Error fotos", e);
 		} 
 		logger.error(
 				"######################################################################################################");

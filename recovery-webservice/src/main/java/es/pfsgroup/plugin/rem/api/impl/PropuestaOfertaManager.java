@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -204,13 +205,25 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		mapaValores.put("Activo", activo.getNumActivoUvem().toString());		
 		mapaValores.put("FRecepOf", FileUtilsREM.stringify(oferta.getFechaAlta()) );
 		mapaValores.put("FProp", FileUtilsREM.stringify(new Date()));
-		Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
-		Long tipo = genericDao.get(EXTDDTipoGestor.class, filter).getId();		
-		if (gestorActivoApi.getGestorByActivoYTipo(activo, tipo)!=null) {
-			mapaValores.put("Gestor", gestorActivoApi.getGestorByActivoYTipo(activo, tipo).getApellidoNombre());
+		
+		//Si el tipo es nulo, por defecto, se entiende como tipo RETAIL 
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		String codigoComercializacionActivo = Checks.esNulo(activo.getTipoComercializar()) ? DDTipoComercializar.CODIGO_RETAIL : activo.getTipoComercializar().getCodigo();		
+		if(codigoComercializacionActivo.equals(DDTipoComercializar.CODIGO_RETAIL)) {
+			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL_RETAIL);
+		} 
+		else if(codigoComercializacionActivo.equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL_SINGULAR);
+		}
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		if (!Checks.esNulo(tipoGestor) ){
+			mapaValores.put("Gestor", FileUtilsREM.stringify(null));
+			
+		}else if(gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId())!=null) {
+			mapaValores.put("Gestor", gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId()).getApellidoNombre());	
 		} else {
 			mapaValores.put("Gestor", FileUtilsREM.stringify(null));
-		}			
+		}		
 		mapaValores.put("FPublWeb", FileUtilsREM.stringify(activo.getFechaPublicable()));
 		mapaValores.put("NumVisitasWeb", FileUtilsREM.stringify(activo.getVisitas().size()));		
 		
@@ -234,14 +247,17 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}
 		List<ActivoAdmisionDocumento> listaAdmisionDocumento = activo.getAdmisionDocumento();
 		boolean isFoundCalificacion = false;
-		for (int m = 0; m < listaAdmisionDocumento.size(); m++) {
-			ActivoAdmisionDocumento admisionDocumento = listaAdmisionDocumento.get(m);
-			if (admisionDocumento.getTipoCalificacionEnergetica()!=null && 
-				admisionDocumento.getEstadoDocumento()!=null && 
-				DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO.equals(admisionDocumento.getEstadoDocumento().getCodigo())) {
-				mapaValores.put("CertificadoEnergetico", admisionDocumento.getTipoCalificacionEnergetica().getDescripcionLarga());
-				isFoundCalificacion = true;
-			} 				
+		if(!Checks.esNulo(listaAdmisionDocumento)){
+			for (int m = 0; m < listaAdmisionDocumento.size(); m++) {
+				ActivoAdmisionDocumento admisionDocumento = listaAdmisionDocumento.get(m);
+				if (!Checks.esNulo(admisionDocumento) &&
+					!Checks.esNulo(admisionDocumento.getTipoCalificacionEnergetica()) && 
+					!Checks.esNulo(admisionDocumento.getEstadoDocumento()) && 
+					DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO.equals(admisionDocumento.getEstadoDocumento().getCodigo())) {
+					mapaValores.put("CertificadoEnergetico", admisionDocumento.getTipoCalificacionEnergetica().getDescripcionLarga());
+					isFoundCalificacion = true;
+				} 				
+			}
 		}
 		if (!isFoundCalificacion) {
 			mapaValores.put("CertificadoEnergetico",FileUtilsREM.stringify(null));
@@ -252,12 +268,14 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		mapaValores.put("Parcela",FileUtilsREM.stringify(activo.getTotalSuperficieParcela()));
 		List<ActivoPropietarioActivo> listaPropietarios = activo.getPropietariosActivo();
 		if (!Checks.esNulo(listaPropietarios) && listaPropietarios.size()>0 && 
-			!Checks.esNulo(listaPropietarios.get(0).getPropietario()) && listaPropietarios.get(0).getPropietario().getFullName()!=null){
+			!Checks.esNulo(listaPropietarios.get(0)) &&
+			!Checks.esNulo(listaPropietarios.get(0).getPropietario()) && 
+			!Checks.esNulo(listaPropietarios.get(0).getPropietario().getFullName())){
 			mapaValores.put("SociedadPatrimonial",listaPropietarios.get(0).getPropietario().getFullName()); 
 		} else {
 			mapaValores.put("SociedadPatrimonial",FileUtilsREM.stringify(null)); 
 		}
-		NMBBien bien =  activo.getBien();
+	
 	
 		if(!Checks.esNulo(activo.getInfoAdministrativa()) && !Checks.esNulo(activo.getInfoAdministrativa().getTipoVpo())){				
 			mapaValores.put("regimenProteccion",FileUtilsREM.stringify(activo.getInfoAdministrativa().getTipoVpo().getDescripcion())); 
@@ -265,15 +283,13 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			mapaValores.put("regimenProteccion",FileUtilsREM.stringify(null)); 
 		}
 		
-		if (bien!=null) {
-			if (bien.getDatosRegistrales()!=null) {
-				mapaValores.put("FincaRegistral",FileUtilsREM.stringify(bien.getDatosRegistrales()));
-			} else {
-				mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
-			}
+		NMBBien bien =  activo.getBien();
+		if (!Checks.esNulo(bien) && !Checks.esNulo(bien.getDatosRegistrales())) {
+			mapaValores.put("FincaRegistral",FileUtilsREM.stringify(bien.getDatosRegistrales()));
 		} else {
 			mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
 		}
+		
 		if (activo.getInfoComercial()!=null) {
 			mapaValores.put("FRecepcionLlaves",FileUtilsREM.stringify(activo.getInfoComercial().getFechaRecepcionLlaves()));
 		} else {
@@ -316,23 +332,30 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			mapaValores.put("SituacionLiquidacionInscripcion","Titulo sin inscribir ni liquidar.");
 		} 
 		
-		if (new Integer(1).equals(activo.getConCargas())) {
+		if(!Checks.esNulo(activo.getConCargas()) && activo.getConCargas().equals(Integer.valueOf(1))){
 			mapaValores.put("Situaciondecargas","CON CARGAS");
 		} else {
 			mapaValores.put("Situaciondecargas","SIN CARGAS");
 		}
+		
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
-		if (new Integer(1).equals(perimetroActivo.getAplicaComercializar())) {
+		if (!Checks.esNulo(perimetroActivo) && 
+			!Checks.esNulo(perimetroActivo.getAplicaComercializar()) && 
+			perimetroActivo.getAplicaComercializar().equals(Integer.valueOf(1))) {
 			mapaValores.put("Comercializacion","SI");
 		} else {
 			mapaValores.put("Comercializacion","NO");
 		}
-		if (activo.getTipoTitulo()!=null) {
+		if (!Checks.esNulo(activo.getTipoTitulo())) {
 			mapaValores.put("Entrada",FileUtilsREM.stringify(activo.getTipoTitulo().getDescripcionLarga()));
 		} else {
 			mapaValores.put("Entrada",FileUtilsREM.stringify(null));
 		}
-		mapaValores.put("CantidadOfertas", FileUtilsREM.stringify(activoApi.cantidadOfertas(activo)));
+		if (!Checks.esNulo(activoApi.cantidadOfertas(activo))) {
+			mapaValores.put("CantidadOfertas", FileUtilsREM.stringify(activoApi.cantidadOfertas(activo)));
+		} else {
+			mapaValores.put("CantidadOfertas",FileUtilsREM.stringify(null));
+		}	
 		Double mayorOfertaRecibida = activoApi.mayorOfertaRecibida(activo);
 		if(!Checks.esNulo(mayorOfertaRecibida)){
 			mapaValores.put("MayorOfertaRecibida", FileUtilsREM.stringify(mayorOfertaRecibida)+"€");
@@ -349,7 +372,11 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}else{
 			mapaValores.put("ImporteInicial", FileUtilsREM.stringify(null));
 		}
-		mapaValores.put("FechaContraoferta", FileUtilsREM.stringify(oferta.getFechaContraoferta()));
+		if(!Checks.esNulo(oferta.getFechaContraoferta())){
+			mapaValores.put("FechaContraoferta", FileUtilsREM.stringify(oferta.getFechaContraoferta()));
+		}else{
+			mapaValores.put("FechaContraoferta", FileUtilsREM.stringify(null));
+		}
 		if(!Checks.esNulo(oferta.getImporteContraOferta())){
 			mapaValores.put("Contraoferta", FileUtilsREM.stringify(oferta.getImporteContraOferta())+"€"); 
 		}else{
@@ -363,39 +390,44 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 //			Si con situación posesoria "libre": El ofertante requiere que el activo esté libre de ocupantes.
 //			Si con situación posesoria "ocupado con título": El ofertante acepta que el activo esté arrendado.
 		Integer poseInicial = condExp.getPosesionInicial();
-		DDSituacionesPosesoria sitaPosesion = condExp.getSituacionPosesoria();
-		String txtPosesion = "";
-		if (poseInicial==null) {
-			txtPosesion += "";
-		} else {
-			if (poseInicial.equals(new Integer(1))) {
-				txtPosesion += "El ofertante requiere que haya posesión inicial.";
+		if(!Checks.esNulo(condExp)){
+			String txtPosesion = "";
+			if (Checks.esNulo(poseInicial)) {
+				txtPosesion += "";
 			} else {
-				txtPosesion += "El ofertante acepta que no haya posesión inicial.";
+				if (poseInicial.equals(new Integer(1))) {
+					txtPosesion += "El ofertante requiere que haya posesión inicial.";
+				} else {
+					txtPosesion += "El ofertante acepta que no haya posesión inicial.";
+				}
 			}
-		}
-		if (sitaPosesion==null) {
-			txtPosesion += "El ofertante acepta cualquier situación posesoria.";
-		} else {
-			if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)) {
-				txtPosesion += "El ofertante requiere que el activo esté libre de ocupantes.";
-			} else if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)) {
-				txtPosesion += "El ofertante acepta que el activo esté arrendado.";
+			DDSituacionesPosesoria sitaPosesion = condExp.getSituacionPosesoria();
+			if (Checks.esNulo(sitaPosesion)) {
+				txtPosesion += "El ofertante acepta cualquier situación posesoria.";
+			} else {
+				if (!Checks.esNulo(sitaPosesion.getCodigo()) && sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)) {
+					txtPosesion += "El ofertante requiere que el activo esté libre de ocupantes.";
+				} else if (!Checks.esNulo(sitaPosesion.getCodigo()) && sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)) {
+					txtPosesion += "El ofertante acepta que el activo esté arrendado.";
+				}
 			}
+			mapaValores.put("Posesion", txtPosesion);			
+		}else{
+			mapaValores.put("Posesion", FileUtilsREM.stringify(null));
 		}
-		mapaValores.put("Posesion", txtPosesion);
 		
-		if(!Checks.esNulo(condExp.getCargasImpuestos())){
+		
+		if(!Checks.esNulo(condExp) && !Checks.esNulo(condExp.getCargasImpuestos())){
 			mapaValores.put("Impuestos", FileUtilsREM.stringify(condExp.getCargasImpuestos())+"€");
 		}else{
 			mapaValores.put("Impuestos", FileUtilsREM.stringify(null));
 		}
-		if(!Checks.esNulo(condExp.getCargasComunidad())){
+		if(!Checks.esNulo(condExp) && !Checks.esNulo(condExp.getCargasComunidad())){
 			mapaValores.put("Comunidades", FileUtilsREM.stringify(condExp.getCargasComunidad())+"€");
 		}else{
 			mapaValores.put("Comunidades", FileUtilsREM.stringify(null));
 		}
-		if(!Checks.esNulo(condExp.getCargasComunidad())){
+		if(!Checks.esNulo(condExp) && !Checks.esNulo(condExp.getCargasComunidad())){
 			mapaValores.put("Otros", FileUtilsREM.stringify(condExp.getCargasOtros())+"€");
 		}else{
 			mapaValores.put("Otros", FileUtilsREM.stringify(null));
@@ -403,99 +435,117 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 //			Si hay contenido en impuestos y en el combo "por cuenta de" pone "comprador": El comprador asume el pago de los impuestos pendientes.
 //			Si hay contenido en comunidades y en el combo "por cuenta de" pone "vendedor": El comprador no asume el pago de los impuestos pendientes.
 //			Si hay contenido en otros y en el combo "por cuenta de" pone "según ley": El comprador requiere que los gastos sean asumidos por quien corresponda según ley.
-		DDTiposPorCuenta porCuentaImpuestos = condExp.getTipoPorCuentaImpuestos();
-		DDTiposPorCuenta porCuentaComunidad = condExp.getTipoPorCuentaComunidad();
-		DDTiposPorCuenta porCuentaOtros = condExp.getTipoPorCuentaCargasOtros();
-		String txtCargas = "";
-		if (condExp.getCargasImpuestos()!=null && porCuentaImpuestos!=null && porCuentaImpuestos.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_COMPRADOR)) {
-			txtCargas += "El comprador asume el pago de los impuestos pendientes. ";
+		if(!Checks.esNulo(condExp)){
+			DDTiposPorCuenta porCuentaImpuestos = condExp.getTipoPorCuentaImpuestos();
+			DDTiposPorCuenta porCuentaComunidad = condExp.getTipoPorCuentaComunidad();
+			DDTiposPorCuenta porCuentaOtros = condExp.getTipoPorCuentaCargasOtros();
+			String txtCargas = "";
+			if (condExp.getCargasImpuestos()!=null && porCuentaImpuestos!=null && porCuentaImpuestos.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_COMPRADOR)) {
+				txtCargas += "El comprador asume el pago de los impuestos pendientes. ";
+			}
+			if (condExp.getCargasComunidad()!=null && porCuentaComunidad!=null && porCuentaComunidad.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_VENDEDOR)) {
+				txtCargas += "El comprador no asume el pago de los impuestos pendientes. ";
+			}
+			if (condExp.getCargasOtros()!=null && porCuentaOtros!=null && porCuentaOtros.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_SEGUN_LEY)) {
+				txtCargas += "El comprador requiere que los gastos sean asumidos por quien corresponda según ley. ";
+			}
+			mapaValores.put("Tratamientodecargas", txtCargas);
+		}else{
+			mapaValores.put("Tratamientodecargas", FileUtilsREM.stringify(null));
 		}
-		if (condExp.getCargasComunidad()!=null && porCuentaComunidad!=null && porCuentaComunidad.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_VENDEDOR)) {
-			txtCargas += "El comprador no asume el pago de los impuestos pendientes. ";
-		}
-		if (condExp.getCargasOtros()!=null && porCuentaOtros!=null && porCuentaOtros.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_SEGUN_LEY)) {
-			txtCargas += "El comprador requiere que los gastos sean asumidos por quien corresponda según ley. ";
-		}
-		mapaValores.put("Tratamientodecargas", txtCargas);
 		
-		mapaValores.put("Importe", FileUtilsREM.stringify(condExp.getGastosNotaria()));
+		if(!Checks.esNulo(condExp) && !Checks.esNulo(condExp.getGastosNotaria())){
+			mapaValores.put("Importe", FileUtilsREM.stringify(condExp.getGastosNotaria()));
+		}else{
+			mapaValores.put("Importe", FileUtilsREM.stringify(null));
+		}
 		mapaValores.put("OpCondicionadaa", "-");
 		
-		DDTiposPorCuenta tipoPlusValia = condExp.getTipoPorCuentaPlusvalia();
-		if (tipoPlusValia!=null) {
-			mapaValores.put("Plusvalia", FileUtilsREM.stringify(tipoPlusValia.getDescripcionLarga()));
+		if (!Checks.esNulo(condExp) &&  !Checks.esNulo(condExp.getTipoPorCuentaPlusvalia())) {
+			mapaValores.put("Plusvalia", FileUtilsREM.stringify(condExp.getTipoPorCuentaPlusvalia().getDescripcionLarga()));
 		} else {
 			mapaValores.put("Plusvalia", FileUtilsREM.stringify(null));
 		}
-		DDTiposPorCuenta tipoNotaria = condExp.getTipoPorCuentaNotaria();
-		if (tipoNotaria!=null) {
-			mapaValores.put("Notaria", FileUtilsREM.stringify(tipoNotaria.getDescripcionLarga()));
+		if (!Checks.esNulo(condExp) &&  !Checks.esNulo(condExp.getTipoPorCuentaNotaria())) {
+			mapaValores.put("Notaria", FileUtilsREM.stringify(condExp.getTipoPorCuentaNotaria().getDescripcionLarga()));
 		} else {
 			mapaValores.put("Notaria", FileUtilsREM.stringify(null));
 		}
-		DDTiposPorCuenta tipoOtros = condExp.getTipoPorCuentaGastosOtros();
-		if (tipoOtros!=null) {
-			mapaValores.put("OtrosImporteOferta",  FileUtilsREM.stringify(tipoOtros.getDescripcionLarga()));
+		if (!Checks.esNulo(condExp) &&  !Checks.esNulo(condExp.getTipoPorCuentaGastosOtros())) {
+			mapaValores.put("OtrosImporteOferta",  FileUtilsREM.stringify(condExp.getTipoPorCuentaGastosOtros().getDescripcionLarga()));
 		} else {
 			mapaValores.put("OtrosImporteOferta", FileUtilsREM.stringify(null));
 		}
-		if (condExp!=null) {
-			if (!Checks.esNulo(condExp.getPorcentajeReserva())) {
+		if (!Checks.esNulo(condExp) && !Checks.esNulo(condExp.getPorcentajeReserva())) {
 				mapaValores.put("Reserva", FileUtilsREM.stringify(condExp.getPorcentajeReserva())+"%");
+		} else {
+			if (!Checks.esNulo(condExp) && !Checks.esNulo(condExp.getImporteReserva())) {
+				mapaValores.put("Reserva", FileUtilsREM.stringify(condExp.getImporteReserva())+"€");
 			} else {
-				if (!Checks.esNulo(condExp.getImporteReserva())) {
-					mapaValores.put("Reserva", FileUtilsREM.stringify(condExp.getImporteReserva())+"€");
-				} else {
-					mapaValores.put("Reserva", FileUtilsREM.stringify(null));
-				}
+				mapaValores.put("Reserva", FileUtilsREM.stringify(null));
 			}
 		}
+		
 		//importe RESERVA/importe OFERTA duda COE_CONDICIONANTES_EXPEDIENTE -> RES_RESERVAS
 		//sumatorio de ERE_ENTREGAS_RESERVA para el exp
-		if (activo.getInfoRegistral()!=null && activo.getInfoRegistral().getInfoRegistralBien()!=null) {
-			if (activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()==null) {
-				mapaValores.put("Inscripcion", "SI");
-			} else {
-				mapaValores.put("Inscripcion", "NO");
-			}
-		}			
+		if (!Checks.esNulo(activo.getInfoRegistral()) && 
+			!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) &&
+			!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion())) {
+			mapaValores.put("Inscripcion", "SI");
+		} else {
+			mapaValores.put("Inscripcion", "NO");
+		}
+					
 		
 		
-		if (!Checks.estaVacio(activo.getTasacion()))
-		{
+		if (!Checks.estaVacio(activo.getTasacion())){
 			//De la lista de tasaciones que tiene el activo cogemos la más reciente
 			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
 			if (tasacionMasReciente!=null) {
 				Date fechaValorTasacionMasReciente = new Date();
-				if (tasacionMasReciente.getValoracionBien().getFechaValorTasacion() != null)
-				{
+				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien()) && 
+					!Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())){
 					fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
 				}
 				for (int i = 0; i < activo.getTasacion().size(); i++) {
 					ActivoTasacion tas = activo.getTasacion().get(i);
-					if (tas.getValoracionBien().getFechaValorTasacion() != null
-							&& tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {
+					if (!Checks.esNulo(tas) && 
+						!Checks.esNulo(tas.getValoracionBien()) && 
+						!Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())
+						&& tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {
 						fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
 						tasacionMasReciente = tas;
 					}
 				}
-				if(!Checks.esNulo(oferta.getImporteContraOferta())){
-					mapaValores.put("ValorTasacion",  FileUtilsREM.stringify(tasacionMasReciente.getValoracionBien().getImporteValorTasacion())+"€");
-				}else{
-					mapaValores.put("ValorTasacion",  FileUtilsREM.stringify(null));
-				}
-				mapaValores.put("ValorTasacionFecha", FileUtilsREM.stringify(tasacionMasReciente.getValoracionBien().getFechaValorTasacion()));
-				Double importeTasacion = tasacionMasReciente.getValoracionBien().getImporteValorTasacion().doubleValue();
-				if (tasacionMasReciente.getValoracionBien().getImporteValorTasacion()!=null && importeTasacion!= null &&importeTasacion!=0) {						
-					Double valorTasacionDto = 100*( 1 -(oferta.getImporteOferta()/ importeTasacion));
-					if(!Checks.esNulo(valorTasacionDto)){
-						mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(valorTasacionDto)+"%");
+				if(!Checks.esNulo(tasacionMasReciente.getValoracionBien())){				 
+					if(!Checks.esNulo(tasacionMasReciente.getValoracionBien().getImporteValorTasacion())){
+						mapaValores.put("ValorTasacion",  FileUtilsREM.stringify(tasacionMasReciente.getValoracionBien().getImporteValorTasacion())+"€");
 					}else{
-						mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(null));
+						mapaValores.put("ValorTasacion",  FileUtilsREM.stringify(null));
 					}
-				} else {
-					mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(null));
+					if(!Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())){
+						mapaValores.put("ValorTasacionFecha", FileUtilsREM.stringify(tasacionMasReciente.getValoracionBien().getFechaValorTasacion()));
+					}else{
+						mapaValores.put("ValorTasacionFecha",  FileUtilsREM.stringify(null));
+					}
+					
+					
+					if (!Checks.esNulo(oferta.getImporteOferta()) &&
+						!Checks.esNulo(tasacionMasReciente.getValoracionBien().getImporteValorTasacion()) && 
+						!tasacionMasReciente.getValoracionBien().getImporteValorTasacion().equals(Double.valueOf(0.0))) {	
+						
+						Double importeTasacion = tasacionMasReciente.getValoracionBien().getImporteValorTasacion().doubleValue();
+						Double valorTasacionDto = 100*( 1 -(oferta.getImporteOferta()/ importeTasacion));
+						if(!Checks.esNulo(valorTasacionDto)){
+							mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(valorTasacionDto)+"%");
+						}else{
+							mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(null));
+						}
+					} else {
+						mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(null));
+					}				
 				}
+				
 			}  else {
 				mapaValores.put("ValorTasacion",  FileUtilsREM.stringify(null));
 				mapaValores.put("ValorTasacionFecha", FileUtilsREM.stringify(null));
@@ -557,13 +607,14 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			
 			//De la lista de valoraciones del activo obtenemos aquella que tiene el codigo APROVADO_VENTA
 			List<ActivoValoraciones> listActivoValoracion = activo.getValoracion();
-			if (listActivoValoracion!=null) {
+			if (!Checks.estaVacio(listActivoValoracion)) {
 				ActivoValoraciones activoAprobVenta = null;
 				Boolean isAprobado = false;
-				for (int j = 0; j < listActivoValoracion.size() && !isAprobado; j++)
-				{
+				for (int j = 0; j < listActivoValoracion.size() && !isAprobado; j++){
 						ActivoValoraciones tmp = listActivoValoracion.get(j);
-						if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(tmp.getTipoPrecio().getCodigo())) {
+						if (!Checks.esNulo(tmp) &&  
+							!Checks.esNulo(tmp.getTipoPrecio()) && 
+							DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(tmp.getTipoPrecio().getCodigo())) {
 							activoAprobVenta = tmp;
 							isAprobado = true;
 						}
@@ -574,9 +625,16 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 					}else{
 						mapaValores.put("ValorAprobVenta", FileUtilsREM.stringify(null));
 					}
-					mapaValores.put("ValorAprobVentaFecha", FileUtilsREM.stringify(activoAprobVenta.getFechaInicio()));
+					if (Checks.esNulo(activoAprobVenta.getFechaInicio())) {
+						mapaValores.put("ValorAprobVentaFecha", FileUtilsREM.stringify(activoAprobVenta.getFechaInicio())+"€");
+					}else{
+						mapaValores.put("ValorAprobVentaFecha", FileUtilsREM.stringify(null));
+					}
 					Double importeTasacion = activoAprobVenta.getImporte();
-					if (!Checks.esNulo(importeTasacion) && importeTasacion!=0) {
+					if (!Checks.esNulo(oferta.getImporteOferta()) &&
+						!Checks.esNulo(importeTasacion) && 
+						!importeTasacion.equals(Double.valueOf(0.0))) {
+						
 						Double valorTasacionDto = 100*( 1-(oferta.getImporteOferta()/importeTasacion));
 						if (!Checks.esNulo(valorTasacionDto)) {
 							mapaValores.put("ValorAprobVentaDto", FileUtilsREM.stringify(valorTasacionDto)+"%");
@@ -591,244 +649,254 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 					mapaValores.put("ValorAprobVentaFecha", FileUtilsREM.stringify(null));
 					mapaValores.put("ValorAprobVentaDto", FileUtilsREM.stringify(null));
 				}
+			} else{
+				mapaValores.put("ValorAprobVenta", FileUtilsREM.stringify(null));
+				mapaValores.put("ValorAprobVentaFecha", FileUtilsREM.stringify(null));
+				mapaValores.put("ValorAprobVentaDto", FileUtilsREM.stringify(null));
 			}
 			
 		}
 		
+		
+		
+		/***********************************INFORMACION COMERCIAL**********************************************/
 		//Obtenemos la información de todas las tablas relacionadas con la DESCRIPCION FISICA DEL ACTIVO
 		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoInfoComercial infoComercial = (ActivoInfoComercial) genericDao.get(ActivoInfoComercial.class, activoFilter);
-		
-		Filter comercialFilter = genericDao.createFilter(FilterType.EQUALS, "id", infoComercial.getId());
-		ActivoVivienda vivienda = (ActivoVivienda) genericDao.get(ActivoVivienda.class, comercialFilter);
-		
-		Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", infoComercial.getId());
-		ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
-		
-		//Descripción fisica del EDIFICIO
-		if (edificio!=null) {
-			mapaValores.put("ActivoEdificio",FileUtilsREM.stringify(edificio.getEdiDescripcion()));
-		} else {
-			mapaValores.put("ActivoEdificio",FileUtilsREM.stringify(null));
-		}
-		
-		//Todo lo relacionado con la tabla VIVIENDA
-		if (vivienda!=null) {
-			mapaValores.put("ActivoInterior",FileUtilsREM.stringify(vivienda.getDistribucionTxt()));
-			mapaValores.put("ActivoPlantas",FileUtilsREM.stringify(vivienda.getNumPlantasInter()));
-			if (vivienda.getEstadoConservacion()!=null) {
-				mapaValores.put("ActivoConservacion",FileUtilsREM.stringify(vivienda.getEstadoConservacion().getDescripcionLarga()));
+		if(!Checks.esNulo(infoComercial)){
+			
+			//Descripción fisica del EDIFICIO
+			Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", infoComercial.getId());
+			ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);		
+			if(!Checks.esNulo(edificio)){						
+				mapaValores.put("ActivoEdificio",FileUtilsREM.stringify(edificio.getEdiDescripcion()));
 			} else {
-				mapaValores.put("ActivoConservacion",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoEdificio",FileUtilsREM.stringify(null));
 			}
-			if (vivienda.getTipoOrientacion()!=null) {
-				mapaValores.put("ActivoOrientacion",vivienda.getTipoOrientacion().getDescripcionLarga());
-			} else {
-				mapaValores.put("ActivoOrientacion",FileUtilsREM.stringify(null));
-			}
-			//Obtener cuantos habitaciones de cada tipo hay y
-			//la superficie en m2 del salon
-			Integer dormitorio = null;
-			Integer aseo = null;
-			Integer patio = null;
-			Integer porche = null;
-			Integer banyo = null;
-			Float salon = null;
-			Integer balcon = null;
-			Integer hall = null;
-			List<ActivoDistribucion> distribucion = vivienda.getDistribucion();
-			if (distribucion!=null) {
-				for (int i = 0; i < distribucion.size(); i++) {
-					if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_DORMITORIO)) {
-						if (dormitorio==null) {
-							dormitorio=1;
-						} else {
-							dormitorio++;
-						}
-					}
-					if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_ASEO)) {
-						if (aseo==null) {
-							aseo=1;
-						} else {
-							aseo++;
-						}
-					}	
-					if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_PATIO)) {
-						if (patio==null) {
-							patio=1;
-						} else {
-							patio++;
-						}
-					}	
-					if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_PORCHE)) {
-						if (porche==null) {
-							porche=1;
-						} else {
-							porche++;
-						}
-					}
-					if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_SALON)) {
-						if (salon==null) {
-							salon=distribucion.get(i).getSuperficie();
-						} else {
-							salon+=distribucion.get(i).getSuperficie();
-						}
-					}	
-					if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_BANYO)) {
-						if (banyo==null) {
-							banyo=1;
-						} else {
-							banyo++;
-						}
-					}
-					if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_BALCON)) {
-						if (balcon==null) {
-							balcon=1;
-						} else {
-							balcon++;
-						}
-					}	
-					if (distribucion.get(i).getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_HALL)) {
-						if (hall==null) {
-							hall=1;
-						} else {
-							hall++;
-						}
-					}						
-				}
-				if (dormitorio!=null) {
-					mapaValores.put("ActivoDormitorios", FileUtilsREM.stringify(dormitorio));
-				} else {
-					mapaValores.put("ActivoDormitorios", NOT_AVAILABLE_ROOM);
-				}
-				if (aseo!=null) {
-					mapaValores.put("ActivoAseos", FileUtilsREM.stringify(aseo));
-				} else {
-					mapaValores.put("ActivoAseos", NOT_AVAILABLE_ROOM);
-				}
-				if (patio!=null) {
-					mapaValores.put("ActivoPatio", FileUtilsREM.stringify(patio));
-				} else {
-					mapaValores.put("ActivoPatio", NOT_AVAILABLE_ROOM);
-				}
-				if (porche!=null) {
-					mapaValores.put("ActivoPorche", FileUtilsREM.stringify(porche));
-				} else {
-					mapaValores.put("ActivoPorche", NOT_AVAILABLE_ROOM);
-				}
-				if (salon!=null) {
-					mapaValores.put("ActivoSalon", FileUtilsREM.stringify(salon+" m2"));
-				} else {
-					mapaValores.put("ActivoSalon", NOT_AVAILABLE_ROOM);
-				}
-				if (banyo!=null) {
-					mapaValores.put("ActivoBanyos", FileUtilsREM.stringify(banyo));
-				} else {
-					mapaValores.put("ActivoBanyos", NOT_AVAILABLE_ROOM);
-				}
-				if (balcon!=null) {
-					mapaValores.put("ActivoBalcones", FileUtilsREM.stringify(balcon));
-				} else {
-					mapaValores.put("ActivoBalcones", NOT_AVAILABLE_ROOM);
-				}
-				if (hall!=null) {
-					mapaValores.put("ActivoHall", FileUtilsREM.stringify(hall));
-				} else {
-					mapaValores.put("ActivoHall", NOT_AVAILABLE_ROOM);
-				}					
-			}
-			if (vivienda.getUltimaPlanta()!=null) {
-				if (vivienda.getUltimaPlanta().equals(new Integer(1))) {
-					mapaValores.put("ActivoUltPlanta","SI");
-				} else {
-					mapaValores.put("ActivoUltPlanta","NO");
-				}
-			} else {
-				mapaValores.put("ActivoUltPlanta",FileUtilsREM.stringify(null));
-			}
-			if (vivienda.getOcupado()!=null) {
-				if (vivienda.getOcupado().equals(new Integer(1))) {
-					mapaValores.put("ActivoOcupada","SI");
-				} else {
-					mapaValores.put("ActivoOcupada","NO");
-				}
-			} else {
-				mapaValores.put("ActivoOcupada",FileUtilsREM.stringify(null));
-			}
-			if (vivienda.getUbicacionActivo()!=null) {
-				mapaValores.put("ActivoUbicacion",FileUtilsREM.stringify(vivienda.getUbicacionActivo().getDescripcionLarga()));
-			} else {
-				mapaValores.put("ActivoUbicacion",FileUtilsREM.stringify(null));
-			}				
-			mapaValores.put("ActivoDistrito",FileUtilsREM.stringify(vivienda.getDistrito()));
-			mapaValores.put("ActivoAntiguedad",FileUtilsREM.stringify(vivienda.getAnyoConstruccion()));
-			mapaValores.put("ActivoRehabilitacion",FileUtilsREM.stringify(vivienda.getAnyoRehabilitacion()));
-			if (vivienda.getTipoVivienda()!=null) {
-				mapaValores.put("ActivoTipo",FileUtilsREM.stringify(vivienda.getTipoVivienda().getDescripcionLarga()));
-			} else {
-				mapaValores.put("ActivoTipo",FileUtilsREM.stringify(null));
-			}				
-		} else {
-			mapaValores.put("ActivoInterior",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoPlantas",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoConservacion",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoOrientacion",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoDormitorios",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoAseos",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoPatio",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoPorche",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoSalon",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoBanyos",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoBalcones",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoHall",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoUltPlanta",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoOcupada",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoUbicacion",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoUbicacion",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoDistrito",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoAntiguedad",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoRehabilitacion",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoTipo",FileUtilsREM.stringify(null));
-		}
-		
-		//Todo lo relacionado con la tabla INFORMACION COMERCIAL
-		mapaValores.put("ActivoZona",FileUtilsREM.stringify(infoComercial.getZona()));
-		
+			
 
-		//Todo lo relacionado con la tabla ANEJO			
-		ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
-				genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
-				genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_GARAJE),
-				genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
-		if (!Checks.esNulo(activoDistribucion)) {
-			if(activoDistribucion.getCantidad() > 0){
-				mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(true));
-			}else{
-				mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(false));
+			//Todo lo relacionado con la tabla VIVIENDA
+			Filter comercialFilter = genericDao.createFilter(FilterType.EQUALS, "id", infoComercial.getId());	
+			ActivoVivienda vivienda = (ActivoVivienda) genericDao.get(ActivoVivienda.class, comercialFilter);
+			if(!Checks.esNulo(vivienda)){
+				mapaValores.put("ActivoInterior",FileUtilsREM.stringify(vivienda.getDistribucionTxt()));
+				mapaValores.put("ActivoPlantas",FileUtilsREM.stringify(vivienda.getNumPlantasInter()));
+				if (vivienda.getEstadoConservacion()!=null) {
+					mapaValores.put("ActivoConservacion",FileUtilsREM.stringify(vivienda.getEstadoConservacion().getDescripcionLarga()));
+				} else {
+					mapaValores.put("ActivoConservacion",FileUtilsREM.stringify(null));
+				}
+				if (vivienda.getTipoOrientacion()!=null) {
+					mapaValores.put("ActivoOrientacion",vivienda.getTipoOrientacion().getDescripcionLarga());
+				} else {
+					mapaValores.put("ActivoOrientacion",FileUtilsREM.stringify(null));
+				}
+				//Obtener cuantos habitaciones de cada tipo hay y
+				//la superficie en m2 del salon
+				Integer dormitorio = null;
+				Integer aseo = null;
+				Integer patio = null;
+				Integer porche = null;
+				Integer banyo = null;
+				Float salon = null;
+				Integer balcon = null;
+				Integer hall = null;
+				List<ActivoDistribucion> distribucion = vivienda.getDistribucion();
+				if (!Checks.estaVacio(distribucion)) {
+					for (int i = 0; i < distribucion.size(); i++) {
+						ActivoDistribucion dist = distribucion.get(i);
+						if(!Checks.esNulo(dist) && !Checks.esNulo(dist.getTipoHabitaculo())){
+							if (dist.getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_DORMITORIO)) {
+								if (dormitorio==null) {
+									dormitorio=1;
+								} else {
+									dormitorio++;
+								}
+							}
+							if (dist.getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_ASEO)) {
+								if (aseo==null) {
+									aseo=1;
+								} else {
+									aseo++;
+								}
+							}	
+							if (dist.getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_PATIO)) {
+								if (patio==null) {
+									patio=1;
+								} else {
+									patio++;
+								}
+							}	
+							if (dist.getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_PORCHE)) {
+								if (porche==null) {
+									porche=1;
+								} else {
+									porche++;
+								}
+							}
+							if (dist.getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_SALON)) {
+								if (salon==null) {
+									salon=distribucion.get(i).getSuperficie();
+								} else {
+									salon+=distribucion.get(i).getSuperficie();
+								}
+							}	
+							if (dist.getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_BANYO)) {
+								if (banyo==null) {
+									banyo=1;
+								} else {
+									banyo++;
+								}
+							}
+							if (dist.getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_BALCON)) {
+								if (balcon==null) {
+									balcon=1;
+								} else {
+									balcon++;
+								}
+							}	
+							if (dist.getTipoHabitaculo().getCodigo().equals(DDTipoHabitaculo.TIPO_HABITACULO_HALL)) {
+								if (hall==null) {
+									hall=1;
+								} else {
+									hall++;
+								}
+							}						
+						}
+					}
+					if (dormitorio!=null) {
+						mapaValores.put("ActivoDormitorios", FileUtilsREM.stringify(dormitorio));
+					} else {
+						mapaValores.put("ActivoDormitorios", NOT_AVAILABLE_ROOM);
+					}
+					if (aseo!=null) {
+						mapaValores.put("ActivoAseos", FileUtilsREM.stringify(aseo));
+					} else {
+						mapaValores.put("ActivoAseos", NOT_AVAILABLE_ROOM);
+					}
+					if (patio!=null) {
+						mapaValores.put("ActivoPatio", FileUtilsREM.stringify(patio));
+					} else {
+						mapaValores.put("ActivoPatio", NOT_AVAILABLE_ROOM);
+					}
+					if (porche!=null) {
+						mapaValores.put("ActivoPorche", FileUtilsREM.stringify(porche));
+					} else {
+						mapaValores.put("ActivoPorche", NOT_AVAILABLE_ROOM);
+					}
+					if (salon!=null) {
+						mapaValores.put("ActivoSalon", FileUtilsREM.stringify(salon+" m2"));
+					} else {
+						mapaValores.put("ActivoSalon", NOT_AVAILABLE_ROOM);
+					}
+					if (banyo!=null) {
+						mapaValores.put("ActivoBanyos", FileUtilsREM.stringify(banyo));
+					} else {
+						mapaValores.put("ActivoBanyos", NOT_AVAILABLE_ROOM);
+					}
+					if (balcon!=null) {
+						mapaValores.put("ActivoBalcones", FileUtilsREM.stringify(balcon));
+					} else {
+						mapaValores.put("ActivoBalcones", NOT_AVAILABLE_ROOM);
+					}
+					if (hall!=null) {
+						mapaValores.put("ActivoHall", FileUtilsREM.stringify(hall));
+					} else {
+						mapaValores.put("ActivoHall", NOT_AVAILABLE_ROOM);
+					}					
+				}
+				if (vivienda.getUltimaPlanta()!=null) {
+					if (vivienda.getUltimaPlanta().equals(new Integer(1))) {
+						mapaValores.put("ActivoUltPlanta","SI");
+					} else {
+						mapaValores.put("ActivoUltPlanta","NO");
+					}
+				} else {
+					mapaValores.put("ActivoUltPlanta",FileUtilsREM.stringify(null));
+				}
+				if (vivienda.getOcupado()!=null) {
+					if (vivienda.getOcupado().equals(new Integer(1))) {
+						mapaValores.put("ActivoOcupada","SI");
+					} else {
+						mapaValores.put("ActivoOcupada","NO");
+					}
+				} else {
+					mapaValores.put("ActivoOcupada",FileUtilsREM.stringify(null));
+				}
+				if (vivienda.getUbicacionActivo()!=null) {
+					mapaValores.put("ActivoUbicacion",FileUtilsREM.stringify(vivienda.getUbicacionActivo().getDescripcionLarga()));
+				} else {
+					mapaValores.put("ActivoUbicacion",FileUtilsREM.stringify(null));
+				}				
+				mapaValores.put("ActivoDistrito",FileUtilsREM.stringify(vivienda.getDistrito()));
+				mapaValores.put("ActivoAntiguedad",FileUtilsREM.stringify(vivienda.getAnyoConstruccion()));
+				mapaValores.put("ActivoRehabilitacion",FileUtilsREM.stringify(vivienda.getAnyoRehabilitacion()));
+				if (vivienda.getTipoVivienda()!=null) {
+					mapaValores.put("ActivoTipo",FileUtilsREM.stringify(vivienda.getTipoVivienda().getDescripcionLarga()));
+				} else {
+					mapaValores.put("ActivoTipo",FileUtilsREM.stringify(null));
+				}				
+			} else {
+				mapaValores.put("ActivoInterior",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoPlantas",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoConservacion",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoOrientacion",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoDormitorios",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoAseos",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoPatio",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoPorche",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoSalon",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoBanyos",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoBalcones",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoHall",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoUltPlanta",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoOcupada",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoUbicacion",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoUbicacion",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoDistrito",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoAntiguedad",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoRehabilitacion",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoTipo",FileUtilsREM.stringify(null));
 			}
-			mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(activoDistribucion.getCantidad()));
-			mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(activoDistribucion.getSuperficie()));
-		}else{
-			mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(null));
-			mapaValores.put("ActivoSubtipologia",FileUtilsREM.stringify(null));
-		}
-		
-		activoDistribucion = genericDao.get(ActivoDistribucion.class,
-				genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
-				genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO),
-				genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
-		if (!Checks.esNulo(activoDistribucion)) {						
-			if(activoDistribucion.getCantidad() > 0){
-				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(true));
+			
+			//Todo lo relacionado con la tabla INFORMACION COMERCIAL
+			mapaValores.put("ActivoZona",FileUtilsREM.stringify(infoComercial.getZona()));
+			
+	
+			//Todo lo relacionado con la tabla ANEJO			
+			ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
+					genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
+					genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_GARAJE),
+					genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
+			if (!Checks.esNulo(activoDistribucion)) {
+				if(activoDistribucion.getCantidad() > 0){
+					mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(true));
+				}else{
+					mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(false));
+				}
+				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(activoDistribucion.getCantidad()));
+				mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(activoDistribucion.getSuperficie()));
 			}else{
-				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(false));
+				mapaValores.put("ActivoGaraje",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoPlazas",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoSuperficie",FileUtilsREM.stringify(null));
+				mapaValores.put("ActivoSubtipologia",FileUtilsREM.stringify(null));
 			}
-		}else{
-			mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(null));
-		}
-		
+			
+			activoDistribucion = genericDao.get(ActivoDistribucion.class,
+					genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
+					genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO),
+					genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
+			if (!Checks.esNulo(activoDistribucion)) {						
+				if(activoDistribucion.getCantidad() > 0){
+					mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(true));
+				}else{
+					mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(false));
+				}
+			}else{
+				mapaValores.put("ActivoTrastero",FileUtilsREM.stringify(null));
+			}
+		}			
 	
 		
 		/****************************************LOTE**********************************************/
@@ -841,22 +909,22 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				mapaValores.put("numActivos", FileUtilsREM.stringify(listaActivos.size()));
 				for(int i=0; i<listaActivos.size();i++){
 					Activo act = listaActivos.get(0).getPrimaryKey().getActivo();
-					if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_EDIFICIO_COMPLETO)){
+					if(!Checks.esNulo(act) && !Checks.esNulo(act.getTipoActivo()) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_EDIFICIO_COMPLETO)){
 						contEdi++;
 					}
-					if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_VIVIENDA)){
+					if(!Checks.esNulo(act) && !Checks.esNulo(act.getTipoActivo()) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_VIVIENDA)){
 						contViv++;
 					}
-					if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_COMERCIAL)){
+					if(!Checks.esNulo(act) && !Checks.esNulo(act.getTipoActivo()) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_COMERCIAL)){
 						contCom++;
 					}
-					if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_INDUSTRIAL)){
+					if(!Checks.esNulo(act) && !Checks.esNulo(act.getTipoActivo()) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_INDUSTRIAL)){
 						contInd++;
 					}
-					if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_SUELO)){
+					if(!Checks.esNulo(act) && !Checks.esNulo(act.getTipoActivo()) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_SUELO)){
 						contSue++;
 					}
-					if(!Checks.esNulo(act) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_OTROS)){
+					if(!Checks.esNulo(act) && !Checks.esNulo(act.getTipoActivo()) && act.getTipoActivo().getCodigo().equalsIgnoreCase(DDTipoActivo.COD_OTROS)){
 						contVar++;
 					}
 				}
@@ -935,170 +1003,212 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			throw new Exception(RestApi.REST_NO_RELATED_ASSET);
 		}
 
+		ExpedienteComercial expCom = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+		
 		
 		//*********************************listaCliente**************************************************/
-		List<CompradorExpediente> clientes = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getCompradores();
-		List<Object> listaCliente = new ArrayList<Object>();
-		DtoCliente cliente = null;
-		for (int i = 0; i < clientes.size(); i++) {
-			VBusquedaDatosCompradorExpediente datosComprador = expedienteComercialApi.getDatosCompradorById(clientes.get(i).getComprador()); 
-			cliente = new DtoCliente();
-			cliente.setNombreCliente(FileUtilsREM.stringify(datosComprador.getNombreRazonSocial()));
-			String direccion = "";
-			if (datosComprador.getDireccion() != null) {
-				direccion += datosComprador.getDireccion();
-			}
-			if (datosComprador.getCodigoPostal() != null) {
-				direccion += " ";
-				direccion += datosComprador.getCodigoPostal();
-			}
-			if (datosComprador.getMunicipioDescripcion() != null) {
-				direccion = direccion + "(" +datosComprador.getMunicipioDescripcion()+ ")";
-			}
-			cliente.setDireccionCliente(direccion);
-			cliente.setDniCliente(FileUtilsREM.stringify(datosComprador.getNumDocumento()));
-			cliente.setTlfCliente(FileUtilsREM.stringify(datosComprador.getTelefono1()));
-			if (datosComprador.getAntiguoDeudor() != null) {
-				if (datosComprador.getAntiguoDeudor() == 1) {
-					cliente.setDeudor("SI");
-				} else {
-					cliente.setDeudor("NO");
+		if(!Checks.esNulo(expCom)){
+			List<CompradorExpediente> clientes = expCom.getCompradores();
+			
+			if(!Checks.estaVacio(clientes)){
+				List<Object> listaCliente = new ArrayList<Object>();
+				DtoCliente cliente = null;
+				for (int i = 0; i < clientes.size(); i++) {
+					CompradorExpediente comp = clientes.get(i);
+					
+					if(!Checks.esNulo(comp)){
+						VBusquedaDatosCompradorExpediente datosComprador = expedienteComercialApi.getDatosCompradorById(comp.getComprador()); 
+						
+						if(!Checks.esNulo(datosComprador)){
+							cliente = new DtoCliente();
+							cliente.setNombreCliente(FileUtilsREM.stringify(datosComprador.getNombreRazonSocial()));
+							String direccion = "";
+							if (datosComprador.getDireccion() != null) {
+								direccion += datosComprador.getDireccion();
+							}
+							if (datosComprador.getCodigoPostal() != null) {
+								direccion += " ";
+								direccion += datosComprador.getCodigoPostal();
+							}
+							if (datosComprador.getMunicipioDescripcion() != null) {
+								direccion = direccion + "(" +datosComprador.getMunicipioDescripcion()+ ")";
+							}
+							cliente.setDireccionCliente(direccion);
+							cliente.setDniCliente(FileUtilsREM.stringify(datosComprador.getNumDocumento()));
+							cliente.setTlfCliente(FileUtilsREM.stringify(datosComprador.getTelefono1()));
+							if (datosComprador.getAntiguoDeudor() != null) {
+								if (datosComprador.getAntiguoDeudor() == 1) {
+									cliente.setDeudor("SI");
+								} else {
+									cliente.setDeudor("NO");
+								}
+							} else {
+								cliente.setDeudor(FileUtilsREM.stringify(null));
+							}
+							if (datosComprador.getRelacionAntDeudor() != null) {
+								if (datosComprador.getRelacionAntDeudor() == 1) {
+									cliente.setrBienes("SI");
+								} else {
+									cliente.setrBienes("NO");
+								}
+							} else {
+								cliente.setrBienes(FileUtilsREM.stringify(null));
+							}
+							listaCliente.add(cliente);
+						}					
+					}
 				}
-			} else {
-				cliente.setDeudor(FileUtilsREM.stringify(null));
+				propuestaOferta.setListaCliente(listaCliente);
 			}
-			if (datosComprador.getRelacionAntDeudor() != null) {
-				if (datosComprador.getRelacionAntDeudor() == 1) {
-					cliente.setrBienes("SI");
-				} else {
-					cliente.setrBienes("NO");
-				}
-			} else {
-				cliente.setrBienes(FileUtilsREM.stringify(null));
-			}
-			listaCliente.add(cliente);
 		}
-		propuestaOferta.setListaCliente(listaCliente);
-		
 		
 		
 		
 		//*********************************listaHonorario**************************************************/
-		List<Object> listaHonorario = new ArrayList<Object>();
-		DtoHonorarios honorarios = null;
-		Long idExpediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId()).getId();
-		List<GastosExpediente> listaGastosExpediente = genericDao.getList(GastosExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
-		for (int j = 0; j < listaGastosExpediente.size(); j++) {
-			GastosExpediente gasto = listaGastosExpediente.get(j);
-			if(!Checks.esNulo(gasto)){
-				honorarios = new DtoHonorarios();
-				if (gasto.getProveedor()!=null) {
-					honorarios.setNombreHonorarios(FileUtilsREM.stringify(gasto.getProveedor().getNombre()));
-				} else {
-					honorarios.setNombreHonorarios(FileUtilsREM.stringify(null));
-				}							
-				if (gasto.getAccionGastos()!=null) {
-					honorarios.setConceptoHonorarios(FileUtilsREM.stringify(gasto.getAccionGastos().getDescripcion()));
-				}else{
-					honorarios.setConceptoHonorarios(FileUtilsREM.stringify(null));
-				}
-				if (!Checks.esNulo(gasto.getTipoCalculo()) && DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(gasto.getTipoCalculo().getCodigo())) {
-					if(!Checks.esNulo(gasto.getImporteCalculo())){
-						honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(gasto.getImporteCalculo())+"%");
-					}else{
-						honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(null));
+		
+		if(!Checks.esNulo(expCom)){
+			List<GastosExpediente> listaGastosExpediente = genericDao.getList(GastosExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expCom.getId()));
+			
+			if(!Checks.estaVacio(listaGastosExpediente)){
+				List<Object> listaHonorario = new ArrayList<Object>();
+				for (int j = 0; j < listaGastosExpediente.size(); j++) {
+					GastosExpediente gasto = listaGastosExpediente.get(j);
+					
+					if(!Checks.esNulo(gasto)){
+						DtoHonorarios honorarios = new DtoHonorarios();
+						if (gasto.getProveedor()!=null) {
+							honorarios.setNombreHonorarios(FileUtilsREM.stringify(gasto.getProveedor().getNombre()));
+						} else {
+							honorarios.setNombreHonorarios(FileUtilsREM.stringify(null));
+						}							
+						if (gasto.getAccionGastos()!=null) {
+							honorarios.setConceptoHonorarios(FileUtilsREM.stringify(gasto.getAccionGastos().getDescripcion()));
+						}else{
+							honorarios.setConceptoHonorarios(FileUtilsREM.stringify(null));
+						}
+						if (!Checks.esNulo(gasto.getTipoCalculo()) && DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(gasto.getTipoCalculo().getCodigo())) {
+							if(!Checks.esNulo(gasto.getImporteCalculo())){
+								honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(gasto.getImporteCalculo())+"%");
+							}else{
+								honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(null));
+							}
+						} else {
+							honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(null));
+						}
+						if(!Checks.esNulo(gasto.getImporteFinal())){
+							honorarios.setImporteHonorarios(FileUtilsREM.stringify(gasto.getImporteFinal())+"€");
+						}else{
+							honorarios.setImporteHonorarios(FileUtilsREM.stringify(null));
+						}
+						listaHonorario.add(honorarios);
 					}
-				} else {
-					honorarios.setPorcentajeHonorarios(FileUtilsREM.stringify(null));
 				}
-				if(!Checks.esNulo(gasto.getImporteFinal())){
-					honorarios.setImporteHonorarios(FileUtilsREM.stringify(gasto.getImporteFinal())+"€");
-				}else{
-					honorarios.setImporteHonorarios(FileUtilsREM.stringify(null));
-				}
-				listaHonorario.add(honorarios);
+				propuestaOferta.setListaHonorario(listaHonorario);
 			}
 		}
-		propuestaOferta.setListaHonorario(listaHonorario);
-		
-		
 		
 		
 		
 		//*********************************listaOfertasPorActivo*************************************************/
 		List<ActivoOferta> listaOfertaPorActivo = activo.getOfertas();
-		List<Object> listaOferta = new ArrayList<Object>();
-		DtoOferta ofertaActivo =null;
-		for (int k = 0; k < listaOfertaPorActivo.size(); k++) {
-			Oferta tmpOferta = listaOfertaPorActivo.get(k).getPrimaryKey().getOferta();
-			ofertaActivo = new DtoOferta();
-			ofertaActivo.setNumOferta(FileUtilsREM.stringify(tmpOferta.getNumOferta()));
-			if (tmpOferta.getCliente()!=null) {
-				ofertaActivo.setTitularOferta(FileUtilsREM.stringify(tmpOferta.getCliente().getNombreCompleto()));
-			} else {
-				ofertaActivo.setTitularOferta(FileUtilsREM.stringify(null));
+		
+		if(!Checks.estaVacio(listaOfertaPorActivo)){
+			List<Object> listaOferta = new ArrayList<Object>();
+			DtoOferta ofertaActivo =null;
+			for (int k = 0; k < listaOfertaPorActivo.size(); k++) {
+				Oferta tmpOferta = listaOfertaPorActivo.get(k).getPrimaryKey().getOferta();
+				
+				if(!Checks.esNulo(tmpOferta)){
+					ofertaActivo = new DtoOferta();
+					if (tmpOferta.getNumOferta()!=null) {
+						ofertaActivo.setNumOferta(FileUtilsREM.stringify(tmpOferta.getNumOferta()));
+					} else {
+						ofertaActivo.setNumOferta(FileUtilsREM.stringify(null));
+					}
+					if (tmpOferta.getCliente()!=null && !Checks.esNulo(tmpOferta.getCliente().getNombreCompleto())) {
+						ofertaActivo.setTitularOferta(FileUtilsREM.stringify(tmpOferta.getCliente().getNombreCompleto()));
+					} else {
+						ofertaActivo.setTitularOferta(FileUtilsREM.stringify(null));
+					}
+					if(!Checks.esNulo(tmpOferta.getImporteOferta())){
+						ofertaActivo.setImporteOferta(FileUtilsREM.stringify(tmpOferta.getImporteOferta())+"€");
+					}else{
+						ofertaActivo.setImporteOferta(FileUtilsREM.stringify(null));
+					}
+					if(!Checks.esNulo(tmpOferta.getFechaAlta())){
+						ofertaActivo.setFechaOferta(FileUtilsREM.stringify(tmpOferta.getFechaAlta()));
+					}else{
+						ofertaActivo.setFechaOferta(FileUtilsREM.stringify(null));
+					}
+					if (tmpOferta.getEstadoOferta()!=null) {
+						ofertaActivo.setSituacionOferta(FileUtilsREM.stringify(tmpOferta.getEstadoOferta().getDescripcionLarga()));
+					} else {
+						ofertaActivo.setSituacionOferta(FileUtilsREM.stringify(null));
+					}
+					listaOferta.add(ofertaActivo);
+				}
 			}
-			if(!Checks.esNulo(tmpOferta.getImporteOferta())){
-				ofertaActivo.setImporteOferta(FileUtilsREM.stringify(tmpOferta.getImporteOferta())+"€");
-			}else{
-				ofertaActivo.setImporteOferta(FileUtilsREM.stringify(null));
-			}
-			ofertaActivo.setFechaOferta(FileUtilsREM.stringify(tmpOferta.getFechaAlta()));
-			if (tmpOferta.getEstadoOferta()!=null) {
-				ofertaActivo.setSituacionOferta(FileUtilsREM.stringify(tmpOferta.getEstadoOferta().getDescripcionLarga()));
-			} else {
-				ofertaActivo.setSituacionOferta(FileUtilsREM.stringify(null));
-			}
-			listaOferta.add(ofertaActivo);
+			propuestaOferta.setListaOferta(listaOferta);	
 		}
-		propuestaOferta.setListaOferta(listaOferta);
+		
 		
 		
 		
 		
 		//*********************************listaOtrasOfertasPorTitulares*************************************************/
 		List<Oferta> listaOtrasOfertasPorTitulares = ofertaApi.getOtrasOfertasTitularesOferta(oferta);
-		List<Object> listaOtrasOferta = new ArrayList<Object>();
-		DtoOferta ofertaOtroActivo =null;
-		for (int k = 0; k < listaOtrasOfertasPorTitulares.size(); k++) {
-			Oferta tmpOferta = listaOtrasOfertasPorTitulares.get(k);
-			ofertaOtroActivo = new DtoOferta();
-			
-			
-			ofertaOtroActivo.setNumOferta(FileUtilsREM.stringify(tmpOferta.getNumOferta()));
-			if (tmpOferta.getAgrupacion()!=null) {
-				ofertaOtroActivo.setNumAgrup(FileUtilsREM.stringify(tmpOferta.getAgrupacion().getNumAgrupRem()));
-			}else {
-				ofertaOtroActivo.setNumAgrup(FileUtilsREM.stringify(null));
+		
+		if(!Checks.estaVacio(listaOtrasOfertasPorTitulares)){
+			List<Object> listaOtrasOferta = new ArrayList<Object>();
+			DtoOferta ofertaOtroActivo =null;
+			for (int k = 0; k < listaOtrasOfertasPorTitulares.size(); k++) {
+				Oferta tmpOferta = listaOtrasOfertasPorTitulares.get(k);
+				
+				if(!Checks.esNulo(tmpOferta)){
+					ofertaOtroActivo = new DtoOferta();
+					
+					if (tmpOferta.getNumOferta()!=null) {
+						ofertaOtroActivo.setNumOferta(FileUtilsREM.stringify(tmpOferta.getNumOferta()));
+					}else {
+						ofertaOtroActivo.setNumOferta(FileUtilsREM.stringify(null));
+					}					
+					if (tmpOferta.getAgrupacion()!=null) {
+						ofertaOtroActivo.setNumAgrup(FileUtilsREM.stringify(tmpOferta.getAgrupacion().getNumAgrupRem()));
+					}else {
+						ofertaOtroActivo.setNumAgrup(FileUtilsREM.stringify(null));
+					}				
+					if (tmpOferta.getActivoPrincipal()!=null) {
+						ofertaOtroActivo.setNumActivo(FileUtilsREM.stringify(tmpOferta.getActivoPrincipal().getNumActivo()));
+					}else {
+						ofertaOtroActivo.setNumActivo(FileUtilsREM.stringify(null));
+					}				
+					if (tmpOferta.getCliente()!=null && tmpOferta.getCliente().getNombreCompleto()!=null) {
+						ofertaOtroActivo.setTitularOferta(FileUtilsREM.stringify(tmpOferta.getCliente().getNombreCompleto()));
+					} else {
+						ofertaOtroActivo.setTitularOferta(FileUtilsREM.stringify(null));
+					}				
+					if(!Checks.esNulo(tmpOferta.getImporteOferta())){
+						ofertaOtroActivo.setImporteOferta(FileUtilsREM.stringify(tmpOferta.getImporteOferta())+"€");
+					}else{
+						ofertaOtroActivo.setImporteOferta(FileUtilsREM.stringify(null));
+					}		
+					if(!Checks.esNulo(tmpOferta.getFechaAlta())){
+						ofertaOtroActivo.setFechaOferta(FileUtilsREM.stringify(tmpOferta.getFechaAlta()));
+					} else {
+						ofertaOtroActivo.setFechaOferta(FileUtilsREM.stringify(null));
+					}	
+					if (tmpOferta.getEstadoOferta()!=null) {
+						ofertaOtroActivo.setSituacionOferta(FileUtilsREM.stringify(tmpOferta.getEstadoOferta().getDescripcionLarga()));
+					} else {
+						ofertaOtroActivo.setSituacionOferta(FileUtilsREM.stringify(null));
+					}
+					listaOtrasOferta.add(ofertaOtroActivo);
+				}
 			}
-			
-			if (tmpOferta.getActivoPrincipal()!=null) {
-				ofertaOtroActivo.setNumActivo(FileUtilsREM.stringify(tmpOferta.getActivoPrincipal().getNumActivo()));
-			}else {
-				ofertaOtroActivo.setNumActivo(FileUtilsREM.stringify(null));
-			}
-			
-			if (tmpOferta.getCliente()!=null) {
-				ofertaOtroActivo.setTitularOferta(FileUtilsREM.stringify(tmpOferta.getCliente().getNombreCompleto()));
-			} else {
-				ofertaOtroActivo.setTitularOferta(FileUtilsREM.stringify(null));
-			}
-			
-			if(!Checks.esNulo(tmpOferta.getImporteOferta())){
-				ofertaOtroActivo.setImporteOferta(FileUtilsREM.stringify(tmpOferta.getImporteOferta())+"€");
-			}else{
-				ofertaOtroActivo.setImporteOferta(FileUtilsREM.stringify(null));
-			}
-			
-			ofertaOtroActivo.setFechaOferta(FileUtilsREM.stringify(tmpOferta.getFechaAlta()));
-			if (tmpOferta.getEstadoOferta()!=null) {
-				ofertaOtroActivo.setSituacionOferta(FileUtilsREM.stringify(tmpOferta.getEstadoOferta().getDescripcionLarga()));
-			} else {
-				ofertaOtroActivo.setSituacionOferta(FileUtilsREM.stringify(null));
-			}
-			listaOtrasOferta.add(ofertaOtroActivo);
+			propuestaOferta.setListaOtrasOfertas(listaOtrasOferta);
 		}
-		propuestaOferta.setListaOtrasOfertas(listaOtrasOferta);
+		
+		
 		
 
 		
@@ -1108,45 +1218,51 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		dtoVisitasFilter.setNumActivo(activo.getNumActivo());
 		List<Visita> listaVisitas = visitaApi.getListaVisitasOrdenada(dtoVisitasFilter);			
 		
-		List<Object> lista = new ArrayList<Object>();
-		DtoVisita visitaActivo =null;
-		for (int k = 0; k < listaVisitas.size() && k<10; k++) {
-			Visita visita = listaVisitas.get(k);
-			visitaActivo = new DtoVisita();
-			visitaActivo.setFechaSolicitud(FileUtilsREM.stringify(visita.getFechaSolicitud()));
-			
-			if(!Checks.esNulo(visita.getCliente())){
-				visitaActivo.setSolicitante(FileUtilsREM.stringify(visita.getCliente().getNombreCompleto()));
-				visitaActivo.setNifSolicitante(FileUtilsREM.stringify(visita.getCliente().getDocumento()));
-			}else{
-				visitaActivo.setSolicitante(FileUtilsREM.stringify(null));
-				visitaActivo.setNifSolicitante(FileUtilsREM.stringify(null));
-			}			
-			if(!Checks.esNulo(visita.getEstadoVisita())){
-				visitaActivo.setSituacionVisita(FileUtilsREM.stringify(visita.getEstadoVisita().getDescripcion()));
-			}else{
-				visitaActivo.setSituacionVisita(FileUtilsREM.stringify(null));
+		if(!Checks.estaVacio(listaVisitas)){
+			List<Object> lista = new ArrayList<Object>();
+			DtoVisita visitaActivo =null;
+			for (int k = 0; k < listaVisitas.size() && k<10; k++) {
+				Visita visita = listaVisitas.get(k);
+				
+				if(!Checks.esNulo(visita)){
+					visitaActivo = new DtoVisita();
+					visitaActivo.setFechaSolicitud(FileUtilsREM.stringify(visita.getFechaSolicitud()));
+					
+					if(!Checks.esNulo(visita.getCliente())){
+						visitaActivo.setSolicitante(FileUtilsREM.stringify(visita.getCliente().getNombreCompleto()));
+						visitaActivo.setNifSolicitante(FileUtilsREM.stringify(visita.getCliente().getDocumento()));
+					}else{
+						visitaActivo.setSolicitante(FileUtilsREM.stringify(null));
+						visitaActivo.setNifSolicitante(FileUtilsREM.stringify(null));
+					}			
+					if(!Checks.esNulo(visita.getEstadoVisita())){
+						visitaActivo.setSituacionVisita(FileUtilsREM.stringify(visita.getEstadoVisita().getDescripcion()));
+					}else{
+						visitaActivo.setSituacionVisita(FileUtilsREM.stringify(null));
+					}
+					
+					visitaActivo.setFechaVisita(FileUtilsREM.stringify(visita.getFechaVisita()));
+					
+					lista.add(visitaActivo);
+				}
 			}
-			
-			visitaActivo.setFechaVisita(FileUtilsREM.stringify(visita.getFechaVisita()));
-			
-			lista.add(visitaActivo);
+			propuestaOferta.setListaVisitas(lista);		
 		}
-		propuestaOferta.setListaVisitas(lista);
 		
 		
 		
 		
 		
 		//*********************************listaTasacion**************************************************/
-		DtoTasacionInforme tasacion = null;
-		List<Object> listaTasacion = new ArrayList<Object>();
 		List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
-		if (listActivoTasacion!=null) {
+		
+		if (!Checks.estaVacio(listActivoTasacion)) {
+			List<Object> listaTasacion = new ArrayList<Object>();
 			for (int k = 0; k < listActivoTasacion.size(); k++) {
-				ActivoTasacion tas = listActivoTasacion.get(k);				
+				ActivoTasacion tas = listActivoTasacion.get(k);	
+				
 				if(!Checks.esNulo(tas)){
-					tasacion = new DtoTasacionInforme();					
+					DtoTasacionInforme tasacion = new DtoTasacionInforme();					
 					tasacion.setNumTasacion(FileUtilsREM.stringify(tas.getIdExterno()));
 					if(!Checks.esNulo(tas.getTipoTasacion())){
 						tasacion.setTipoTasacion(FileUtilsREM.stringify(tas.getTipoTasacion().getDescripcion()));
@@ -1163,8 +1279,9 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 					listaTasacion.add(tasacion);
 				}
 			}
+			propuestaOferta.setListaTasacion(listaTasacion);
 		}
-		propuestaOferta.setListaTasacion(listaTasacion);
+		
 		
 		array.add(propuestaOferta);
 		

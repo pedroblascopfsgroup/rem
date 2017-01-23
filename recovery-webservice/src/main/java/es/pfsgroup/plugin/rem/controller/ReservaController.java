@@ -105,7 +105,7 @@ public class ReservaController {
 				model.put("error", errorList);
 			}
 		}catch(Exception e){
-			logger.error(e);
+			logger.error("Error reserva", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));
 			model.put("data", respuesta);

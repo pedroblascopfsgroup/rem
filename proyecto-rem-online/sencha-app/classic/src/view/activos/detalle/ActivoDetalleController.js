@@ -2,7 +2,7 @@
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',  
-    requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo'],
+    requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle'],
     
     control: {
     	
@@ -34,6 +34,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
              afterdelete: function(grid) {
              	grid.getStore().load();
              }
+         },
+         
+         'cargasactivo gridBase': {
+         	abrirFormulario: 'abrirFormularioAnyadirCarga',
+         	onClickRemove: 'onClickRemoveCarga'         	
          }
          
      },
@@ -131,34 +136,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
 		});
 	
-	},
-	
-	onCargasListDobleClick: function (grid, record) {
-		
-		var me = this,
-		form = grid.up("form"),
-		model = form.getModelInstance(),
-		idCarga = record.get("id"),
-		tipoCarga = record.get("tipoCargaDescripcion"),
-		fieldsetVisible = "";
-		
-		if (tipoCarga == 'Registral') {
-			fieldsetVisible =  grid.up('form').down('[reference=registral]');
-		} else {
-			fieldsetVisible =  grid.up('form').down('[reference=economica]');
-		}
-		
-		fieldsetVisible.mask(HreRem.i18n("msg.mask.loading"));
-	
-		model.setId(idCarga);
-		model.load({			
-		    success: function(record) {	
-		    	form.setBindRecord(record);
-		    	fieldsetVisible.unmask();				    	
-		    }
-		});
-		
-		
 	},
 	
 	onListadoPropietariosDobleClick: function (grid, record) {
@@ -749,7 +726,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	borrarDocumentoAdjunto: function(grid, record) {
-		var me = this;
+		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		record.erase({
@@ -2409,5 +2386,99 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var idProveedor = record.idCustodioREM;
 
     	me.getView().fireEvent('abrirDetalleProveedorDirectly', idProveedor, titulo);
+	},
+	
+	onRenderCargasList: function(grid) {
+		var me = this,
+		isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar"),
+		items = grid.getDockedItems('toolbar[dock=top]');
+		if (items.length > 0){
+			items[0].setVisible(isCarteraCajamar)
+		}
+	},
+	
+	onCargasListDobleClick: function (grid, record) {
+		
+		var me = this;
+		me.fireEvent("log",("*********CARGA SELECCIONADA********"));
+		me.fireEvent("log",record);
+		var isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar");
+		Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: isCarteraCajamar}).show();
+
+	},
+	
+	abrirFormularioAnyadirCarga: function(grid) {
+		var me = this,
+		record = Ext.create("HreRem.model.ActivoCargas");
+		record.set("idActivo", me.getViewModel().get("activo.id"));
+		Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form")}).show();		
+	},
+    
+    onClickRemoveCarga: function(grid, record) {
+    	
+    	var me = this,
+		idCarga = record.get("idActivoCarga");
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		record.erase({
+			params: {idActivoCarga: idCarga},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 me.getView().unmask();
+           		 grid.getStore().load();
+            },
+            failure: function(record, operation) {
+                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                 me.getView().unmask();
+                 grid.getStore().load();
+            }
+            
+        });	
+    	
+    },
+	
+	onClickBotonCancelarCarga: function(btn) { 
+		var me = this;
+		var window = btn.up('window');
+		
+		window.parent.funcionRecargar();
+		window.destroy();
+		
+	},
+	
+	onClickBotonGuardarCarga: function(btn) {
+		
+		var me = this,
+		form = me.lookupReference("formDetalleCarga"),
+		window = form.up('window'),
+		record = form.getBindRecord();
+
+		if(form.isFormValid()) {
+
+			form.mask(HreRem.i18n("msg.mask.espere"));
+
+			record.save({
+			    success: function(record, operation) {
+			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					form.unmask();
+					window.parent.funcionRecargar();
+					window.destroy();
+			    },
+			 	failure: function(record, operation) {
+			 		var response = Ext.decode(operation.getResponse().responseText);
+			 		if(response.success === "false" && Ext.isDefined(response.msg)) {
+						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+					} else {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					}
+					form.unmask();
+			    }
+
+			});
+		} else {		
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+		
+		
 	}
+		
 });

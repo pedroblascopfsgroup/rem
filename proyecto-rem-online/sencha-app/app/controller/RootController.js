@@ -19,7 +19,14 @@ Ext.define('HreRem.controller.RootController', {
     	me.initConfigApp();
     	   
     },
-    
+    listen: {
+        controller : {
+    		'*': {    		
+	    		log: 'log',
+	    		warn: 'warn'    		
+    		}
+    	}
+    },
     
  	control: {
     	
@@ -44,7 +51,7 @@ Ext.define('HreRem.controller.RootController', {
     	
     	var me = this;
     	
-    	if(!Ext.isEmpty(me.winLogin)) {
+    	if(!Ext.isEmpty(me.winin)) {
     		me.winLogin.destroy();
     		me.winLogin= null;
     	}

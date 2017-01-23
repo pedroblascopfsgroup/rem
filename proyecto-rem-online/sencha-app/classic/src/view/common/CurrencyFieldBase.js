@@ -8,7 +8,6 @@ Ext.define('HreRem.view.common.CurrencyFieldBase', {
 
     labelWidth: 150,
     
-    maxWidth: 400,
     
     hideTrigger: true,
 	keyNavEnable: false,

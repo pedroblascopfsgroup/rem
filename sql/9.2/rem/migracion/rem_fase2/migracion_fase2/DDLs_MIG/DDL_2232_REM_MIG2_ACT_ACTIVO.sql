@@ -45,22 +45,26 @@ BEGIN
         EXECUTE IMMEDIATE '
         CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
         (
-                ACT_NUMERO_ACTIVO                                               NUMBER(16,0)                    NOT NULL,
-                ACT_COD_CARTERA                                                 VARCHAR2(20 CHAR)               NOT NULL,
-                ACT_COD_SUBCARTERA                                              VARCHAR2(20 CHAR)               NOT NULL,
+                ACT_NUMERO_ACTIVO                                       NUMBER(16,0)                    NOT NULL,
+                ACT_COD_CARTERA                                         VARCHAR2(20 CHAR)               NOT NULL,
+                ACT_COD_SUBCARTERA                                      VARCHAR2(20 CHAR)               NOT NULL,
                 ACT_COD_SUBCARTERA_ANTERIOR                             VARCHAR2(20 CHAR),
-                ACT_COD_TIPO_COMERCIALIZACION                   VARCHAR2(20 CHAR),
+                ACT_COD_TIPO_COMERCIALIZACION                   		VARCHAR2(20 CHAR),
                 ACT_COD_TIPO_ALQUILER                                   VARCHAR2(20 CHAR),
-                ACT_FECHA_VENTA                                                 DATE,
-                ACT_IMPORTE_VENTA                                               NUMBER(16,2),
-                ACT_COD_PROPIETARIO_UVEM_ANT                    NUMBER(16,0),
-                ACT_BLOQUEO_PRECIO_FECHA_INI                    DATE,
+                ACT_FECHA_VENTA                                         DATE,
+                ACT_IMPORTE_VENTA                                       NUMBER(16,2),
+                ACT_COD_PROPIETARIO_UVEM_ANT                    		NUMBER(16,0),
+                ACT_BLOQUEO_PRECIO_FECHA_INI                    		DATE,
                 ACT_BLOQUEO_PRECIO_USU_ID                               VARCHAR2(50 CHAR),
                 ACT_COD_TIPO_PUBLICACION                                VARCHAR2(20 CHAR),
                 ACT_COD_ESTADO_PUBLICACION                              VARCHAR2(20 CHAR),
                 ACT_FECHA_IND_PRECIAR                                   DATE,
                 ACT_FECHA_IND_REPRECIAR                                 DATE,
-                ACT_FECHA_IND_DESCUENTO                                 DATE
+                ACT_FECHA_IND_DESCUENTO                                 DATE,
+                ACT_GESTOR_COMERCIAL									VARCHAR2(40 CHAR),
+                ACT_GESTORIA_COMERCIAL									VARCHAR2(40 CHAR),
+                ACT_GESTOR_FORMALIZACION								VARCHAR2(40 CHAR),
+                ACT_GESTORIA_FORMALIZACION								VARCHAR2(40 CHAR)
         )'
         ;
 

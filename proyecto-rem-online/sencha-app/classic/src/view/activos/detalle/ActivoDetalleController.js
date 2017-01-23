@@ -2075,6 +2075,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	beforeLoadLlaves: function(store, operation, opts) {
 		var me = this,
 		idActivo = this.getViewModel().get('activo').id;
+		me.lookupReference('movimientosllavelistref').disableAddButton(true);
 		
 		if(idActivo != null) {
 			store.getProxy().extraParams = {idActivo: idActivo};	
@@ -2092,13 +2093,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.lookupReference('movimientosllavelistref').disableAddButton(false);
 	},
 	
-	onLlavesListDeselected: function() {
-		var me = this;
-		
-		me.lookupReference('movimientosllavelistref').disableAddButton(true);
-		me.lookupReference('movimientosllavelistref').getStore().loadPage(0);
-	},
-	
 	beforeLoadMovimientosLlave: function(store, operation, opts) {
 
 		var me = this;		
@@ -2110,6 +2104,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				
 				return true;
 			}
+		}
+		else {
+			store.getProxy().extraParams = {idActivo: this.getViewModel().get('activo').id};
+			return true;
 		}
 	},
 	

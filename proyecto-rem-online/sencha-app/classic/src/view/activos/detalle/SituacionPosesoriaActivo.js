@@ -384,7 +384,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		    				title: HreRem.i18n('title.situacion.posesoria.movimientos.llave'),
 		    				defaultType: 'textfieldbase',
 		    				reference: 'fieldsetmovimientosllavelist',
-		    				collapsed: true,
+		    				collapsed: false,
 		    				colspan: 4,
 		    				items : [
 		    				    {

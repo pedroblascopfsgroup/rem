@@ -87,7 +87,7 @@ public class VisitasController {
 			}
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error visitas", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);

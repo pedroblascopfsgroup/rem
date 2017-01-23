@@ -78,7 +78,7 @@ public class ReintegroController {
 			}
 			
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error reintegro", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			if (jsonFields != null) {
 				model.put("id", jsonFields.get("id"));

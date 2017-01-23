@@ -434,6 +434,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
          	storeMovimientosLlave: {
          		pageSize: 10,
          		model: 'HreRem.model.MovimientosLlave',
+         		sorters: [{ property: 'numLlave', direction: 'DESC' }],
          		proxy: {
          			type: 'uxproxy',
          			remoteUrl: 'activo/getListMovimientosLlaveByLlave',

@@ -2187,11 +2187,11 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getListMovimientosLlaveByLlave(ModelMap model, WebDto dto, Long idLlave) {
+	public ModelAndView getListMovimientosLlaveByLlave(ModelMap model, WebDto dto, Long idLlave, Long idActivo) {
 
 		try {
-
-			DtoPage page = activoApi.getListMovimientosLlaveByLlave(dto, idLlave);
+			
+			DtoPage page = activoApi.getListMovimientosLlaveByLlave(dto, idLlave, idActivo);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());

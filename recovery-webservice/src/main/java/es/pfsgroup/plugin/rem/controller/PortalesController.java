@@ -54,7 +54,7 @@ public class PortalesController {
 			model.put("error", null);
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error portales", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);

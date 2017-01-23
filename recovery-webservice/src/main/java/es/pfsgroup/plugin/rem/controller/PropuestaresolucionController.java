@@ -118,6 +118,8 @@ public class PropuestaresolucionController {
 							}
 								
 						}
+						
+						logger.debug("------------ Creamos fichero temporal-----------------");
 						File salida = File.createTempFile("jasper", ".pdf");
 						FileUtilsREM.concatenatePdfs(files, salida);
 						
@@ -138,11 +140,12 @@ public class PropuestaresolucionController {
 				}
 
 			} catch (Exception e) {
-				logger.error(e);
-				request.getPeticionRest().setErrorDesc(e.getMessage());
+				logger.error("Error al generar el informe.", e);
+				request.getPeticionRest().setErrorDesc(RestApi.REST_MSG_UNEXPECTED_ERROR);
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+				
 			} finally {
 				logger.debug("RESPUESTA: " + model);
 			}

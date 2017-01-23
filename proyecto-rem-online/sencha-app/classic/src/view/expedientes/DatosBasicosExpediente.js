@@ -215,12 +215,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							reference: 'textFieldPeticionario',
 							bind: '{expediente.peticionarioAnulacion}'
 						},
-						{
-							xtype: 'textfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.motivo.anulacion'),
-							reference: 'textFieldMotivoAnulacion',
-							bind: '{expediente.motivoAnulacion}'
-						},
+						{ 
+							xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
+		                	editable: true,
+				        	bind: {
+				        		store: '{comboMotivoAnulacion}',
+			            		value: '{expediente.codMotivoAnulacion}'
+			            	}
+				        },
 						{    
 			                xtype:'fieldsettable',
 							defaultType: 'displayfield',

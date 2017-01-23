@@ -3,18 +3,12 @@ Ext.define('HreRem.view.activos.detalle.MovimientosLlaveList', {
     xtype		: 'movimientosllavelist',
     reference	: 'movimientosllavelistref',
 	topBar		: true,
-	loadAfterBind: false,
     bind: {
         store: '{storeMovimientosLlave}'
     },
     
     listeners: { 	
-    	boxready: function (tabPanel) { 
-    		tabPanel.disableAddButton(true);
-    	},
-
     	edit: 'onClickEditRowMovimientosLlaveList',
-    	
 		boxready:'quitarEdicionEnGridEditablePorFueraPerimetro'
     },
     

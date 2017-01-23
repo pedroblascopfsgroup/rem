@@ -19,56 +19,40 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de carteras.
+ * Modelo que gestiona el diccionario de motivos de anulacion de un expediente comercial
  * 
- * @author Benjamín Guerrero
+ * @author Bender
  *
  */
 @Entity
-@Table(name = "DD_CRA_CARTERA", schema = "${entity.schema}")
+@Table(name = "DD_MAN_MOTIVO_ANULACION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDCartera implements Auditable, Dictionary {
+public class DDMotivoAnulacionExpediente implements Auditable, Dictionary {
 
-	public static final String CODIGO_CARTERA_CAJAMAR = "01";
-	public static final String CODIGO_CARTERA_SAREB = "02";
-	public static final String CODIGO_CARTERA_BANKIA = "03";
-	public static final String DESCRIPCION_CARTERA_BANKIA = "Bankia";
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_CRA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDCarteraGenerator")
-	@SequenceGenerator(name = "DDCarteraGenerator", sequenceName = "S_DD_CRA_CARTERA")
+	@Column(name = "DD_MAN_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoAnulacionExpedienteGenerator")
+	@SequenceGenerator(name = "DDMotivoAnulacionExpedienteGenerator", sequenceName = "S_DD_MAN_MOTIVO_ANULACION")
 	private Long id;
-	 
-	@Column(name = "DD_CRA_CODIGO")   
+	    
+	@Column(name = "DD_MAN_CODIGO")   
 	private String codigo;
-	
-	@Column(name = "DD_CRA_CIF")   
-	private String cif;
 	 
-	@Column(name = "DD_CRA_DESCRIPCION")   
+	@Column(name = "DD_MAN_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_CRA_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	    
-	
-	    
+	@Column(name = "DD_MAN_DESCRIPCION_LARGA")   
+	private String descripcionLarga;	    
+
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
 
-	 
-	 
-	 
 	public Long getId() {
 		return id;
 	}
@@ -83,14 +67,6 @@ public class DDCartera implements Auditable, Dictionary {
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
-	}
-	
-	public String getCif() {
-		return cif;
-	}
-
-	public void setCif(String cif) {
-		this.cif = cif;
 	}
 
 	public String getDescripcion() {
@@ -108,7 +84,6 @@ public class DDCartera implements Auditable, Dictionary {
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
 	}
-
 
 	public Long getVersion() {
 		return version;

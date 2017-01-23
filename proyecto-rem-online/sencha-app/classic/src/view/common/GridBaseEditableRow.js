@@ -161,7 +161,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	     });
             
         me.addListener('containerclick', function(editor){
-            me.getSelectionModel().deselectAll();
+        	if(me.allowDeselect)
+        		me.getSelectionModel().deselectAll();
         });
         	
         me.addListener('afterbind', function(grid) {
@@ -357,7 +358,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     {
     	var me = this;
     	me.topBar = topBar;
-    	if(!me.topBar) {
+    	//if(!me.topBar) {
     		var toolbarDockItem = me.dockedItems.filterBy(
 	    		function (item, key) {
 	    			return item.tipo == "toolbaredicion";
@@ -366,7 +367,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     		if(!Ext.isEmpty(toolbarDockItem) && toolbarDockItem.items.length > 0 ) {
     			toolbarDockItem.items[0].setVisible(topBar);
     		}
-    	}
+    	//}
     },
     
     getEditOnSelect: function()

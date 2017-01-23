@@ -53,7 +53,7 @@ public class InformemediadorController {
 			model.put("error", null);
 			
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error informe", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			if (jsonFields != null) {
 				model.put("id", jsonFields.get("id"));

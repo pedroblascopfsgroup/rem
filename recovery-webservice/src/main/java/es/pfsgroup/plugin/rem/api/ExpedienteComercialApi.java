@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -50,6 +51,13 @@ public interface ExpedienteComercialApi {
 	 * @return ExpedienteComercial
 	 */
 	public ExpedienteComercial findOneByNumExpediente(Long numExpediente);
+	
+	/**
+	 * Recupera el ExpedienteComercial indicado.
+	 * @param trabajo
+	 * @return ExpedienteComercial
+	 */
+	public ExpedienteComercial findOneByTrabajo(Trabajo trabajo);
 	
 	/**
 	 * Método que recupera un conjunto de datos del expediente comercial según
@@ -227,14 +235,14 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
 
-		/**
-		 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento.
-		 * Esta verificación está pensada para trámites (ya que se identifica el trabajo)
-		 * @param idTrabajo
-		 * @param codigoSubtipoDocumento Código del subtipo de documento del expediente
-		 * @return
-		 */
-		public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
+	/**
+	 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento.
+	 * Esta verificación está pensada para trámites (ya que se identifica el trabajo)
+	 * @param idTrabajo
+	 * @param codigoSubtipoDocumento Código del subtipo de documento del expediente
+	 * @return
+	 */
+	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
 		
 
 
@@ -502,6 +510,13 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	public boolean deleteBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+
+	/**
+	 * Devuelve el expediente de la oferta en caso de que exista.
+	 * @param oferta
+	 * @return
+	 */
+	public ExpedienteComercial findOneByOferta(Oferta oferta);
 	
 	
 }

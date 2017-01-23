@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
@@ -102,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -188,6 +190,22 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Override
 	public ExpedienteComercial findOneByNumExpediente(Long numExpediente){
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numExpediente", numExpediente);
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+		
+		return expediente;
+	}
+	
+	@Override
+	public ExpedienteComercial findOneByTrabajo(Trabajo trabajo){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+		
+		return expediente;
+	}
+	
+	@Override
+	public ExpedienteComercial findOneByOferta(Oferta oferta){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		
 		return expediente;
@@ -611,7 +629,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dto.setFechaPosicionamiento(expediente.getUltimoPosicionamiento().getFechaPosicionamiento());					
 				}
 
-				dto.setMotivoAnulacion(expediente.getMotivoAnulacion());
+				if(!Checks.esNulo(expediente.getMotivoAnulacion())){
+					dto.setCodMotivoAnulacion(expediente.getMotivoAnulacion().getCodigo());
+					dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
+				}
+				
 				dto.setFechaAnulacion(expediente.getFechaAnulacion());
 				if(!Checks.esNulo(reserva)) {
 					if(!Checks.esNulo(reserva.getEstadoDevolucion())) {
@@ -2067,6 +2089,15 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			try {
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);			
 
+				if(!Checks.esNulo(dto.getCodMotivoAnulacion())){
+					DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
+							(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
+					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
+				} else {
+					
+					expedienteComercial.setMotivoAnulacion(null);
+				}
+				
 				if(!Checks.esNulo(expedienteComercial.getReserva())){
 					if(!Checks.esNulo(dto.getEstadoDevolucionCodigo())) {
 						DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoDevolucion.class, dto.getEstadoDevolucionCodigo());
@@ -2761,9 +2792,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			ofertaUVEM.setImporteVenta(importeTotal.toString());
 		}
 		
-		if (condExp.getEntidadFinanciacion() != null) {
-			ofertaUVEM.setEntidad("00000");
-		}
+		//HREOS-1420 -Siempre se enviará 00000 (Bankia) para el servicio de consulta del cobro de la reserva y de la venta.
+		ofertaUVEM.setEntidad("00000");
+		
 		
 		if (condExp.getReservaConImpuesto() != null && condExp.getReservaConImpuesto() == 1) {
 			ofertaUVEM.setImpuestos("S");

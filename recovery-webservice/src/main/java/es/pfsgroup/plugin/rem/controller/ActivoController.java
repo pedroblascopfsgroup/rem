@@ -35,6 +35,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -659,8 +660,12 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
 			model.put("success", success);
-
-		} catch (Exception e) {
+		} 
+		catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+		} 
+		catch (Exception e) {
 			logger.error(e);
 			model.put("success", false);
 		}
@@ -2184,11 +2189,11 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getListMovimientosLlaveByLlave(ModelMap model, WebDto dto, Long idLlave) {
+	public ModelAndView getListMovimientosLlaveByLlave(ModelMap model, WebDto dto, Long idLlave, Long idActivo) {
 
 		try {
-
-			DtoPage page = activoApi.getListMovimientosLlaveByLlave(dto, idLlave);
+			
+			DtoPage page = activoApi.getListMovimientosLlaveByLlave(dto, idLlave, idActivo);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());

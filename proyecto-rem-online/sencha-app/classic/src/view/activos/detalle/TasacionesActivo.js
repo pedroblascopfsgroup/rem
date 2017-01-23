@@ -72,7 +72,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						    	xtype: 'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.id.ultima.solicitud.rem'),
 								width:		250,
-								bind:		'{tasacionBankia.id}',
+								bind:		'{tasacionBankia.idSolicitudREM}',
 								readOnly: true
 						    },
 						    {

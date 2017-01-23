@@ -1,7 +1,14 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
+import java.io.IOException;
+
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.uri.UriComponent;
@@ -52,6 +59,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
 
 		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 		}
 		if (Checks.esNulo(respuesta)) {
@@ -84,6 +92,34 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 
 	private Object getResponse(ServerRequest serverRequest) {
 		serverRequest.setRestClientUrl(URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES);
-		return restClientApi.getResponse(serverRequest);
+		
+		Object resp = restClientApi.getResponse(serverRequest);		
+		
+		logger.debug("--------------------------");
+		logger.debug(" RestClient RESPONSE");
+		logger.debug("--------------------------");
+		ObjectMapper mapper = new ObjectMapper();
+		if (resp != null) {
+			String respInString = "El servidor del gestor documental no envió la respuesta correctamente.";
+			try {
+				respInString = mapper.writeValueAsString(resp);
+				JSONObject jsonObject = JSONObject.fromObject(respInString);
+				jsonObject.remove("contenido");
+				respInString = jsonObject.toString();	
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			logger.debug("\n"+respInString);
+		} else {
+			logger.debug(" No hay respuesta del servidor.");
+		}
+
+		logger.debug("--------------------------");
+		
+		return resp;
 	}
 }

@@ -694,7 +694,7 @@ public interface ActivoApi {
 	public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor);
 
 	/**
-	 * Averigua si el activo tiene ofertas acpetadas
+	 * Averigua si el activo tiene ofertas acpetadas // MODIFICACIÓN: Mira si el expediente está aprobado (y estados posteriores).
 	 * 
 	 * @param activo
 	 * @return
@@ -791,7 +791,7 @@ public interface ActivoApi {
 	 * @param dto
 	 * @return
 	 */
-	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);
+	public DtoPage getListMovimientosLlaveByLlave(WebDto dto, Long idLlave, Long idActivo);
 
 	/**
 	 * Guarda la propuesta
@@ -855,4 +855,11 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Double getImporteValoracionActivoByCodigo(Activo activo, String codTipoPrecio);
+	
+	/**
+	 * Devuelve el codigo del subtipo de trabajo segun el tipo de Oferta
+	 * @param oferta
+	 * @return
+	 */
+	public String getSubtipoTrabajoByOferta(Oferta oferta);
 }

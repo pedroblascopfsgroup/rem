@@ -751,18 +751,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this;
 		idActivo = me.getViewModel().get("activo.id");
-
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		record.erase({
 			params: {idEntidad: idActivo},
             success: function(record, operation) {
+            	 grid.fireEvent("afterdelete", grid);
+           		 me.getView().unmask();
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-
-           		 grid.fireEvent("afterdelete", grid);
             },
             failure: function(record, operation) {
-
-                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                  grid.fireEvent("afterdelete", grid);
+				 grid.fireEvent("afterdelete", grid);
+				 me.getView().unmask();
+                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
             }
             
         });	
@@ -2098,6 +2098,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	beforeLoadLlaves: function(store, operation, opts) {
 		var me = this,
 		idActivo = this.getViewModel().get('activo').id;
+		me.lookupReference('movimientosllavelistref').disableAddButton(true);
 		
 		if(idActivo != null) {
 			store.getProxy().extraParams = {idActivo: idActivo};	
@@ -2115,13 +2116,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.lookupReference('movimientosllavelistref').disableAddButton(false);
 	},
 	
-	onLlavesListDeselected: function() {
-		var me = this;
-		
-		me.lookupReference('movimientosllavelistref').disableAddButton(true);
-		me.lookupReference('movimientosllavelistref').getStore().loadPage(0);
-	},
-	
 	beforeLoadMovimientosLlave: function(store, operation, opts) {
 
 		var me = this;		
@@ -2133,6 +2127,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				
 				return true;
 			}
+		}
+		else {
+			store.getProxy().extraParams = {idActivo: this.getViewModel().get('activo').id};
+			return true;
 		}
 	},
 	
@@ -2240,7 +2238,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		success: function(response, opts){
     			var record = JSON.parse(response.responseText);
     			if(record.success === 'true') {
-    				Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
+    				var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
+    				me.getView().add(ventana);
+    				ventana.show();
     			} else {
     				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
     			}
@@ -2389,6 +2389,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("errorToast", "Ya dispone de una foto principal");
 			btn.up('tabpanel').unmask();
 		}
+	},
+
+	onClickMostrarPrescriptorVisita: function(btn) {
+		var me = this;
+		var record = btn.up('visitascomercialdetalle').getViewModel().get('detallevisita');
+		var codigoProveedor = record.codigoPrescriptorREM;
+		var titulo = 'Proveedor '+codigoProveedor;
+		var idProveedor = record.idPrescriptorREM;
+
+    	me.getView().fireEvent('abrirDetalleProveedorDirectly', idProveedor, titulo);
+	},
+
+	onClickMostrarCustodioVisita: function(btn) {
+		var me = this;
+		var record = btn.up('visitascomercialdetalle').getViewModel().get('detallevisita');
+		var codigoProveedor = record.codigoCustodioREM;
+		var titulo = 'Proveedor '+codigoProveedor;
+		var idProveedor = record.idCustodioREM;
+
+    	me.getView().fireEvent('abrirDetalleProveedorDirectly', idProveedor, titulo);
 	}
-	
 });

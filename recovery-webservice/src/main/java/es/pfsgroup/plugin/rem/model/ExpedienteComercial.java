@@ -34,6 +34,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 
 
 /**
@@ -104,8 +105,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_FECHA_ANULACION")
     private Date fechaAnulacion;
     
-    @Column(name="ECO_MOTIVO_ANULACION")
-    private String motivoAnulacion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MAN_ID")
+    private DDMotivoAnulacionExpediente motivoAnulacion;
     
     @Column(name="ECO_FECHA_CONT_PROPIETARIO")
     private Date fechaContabilizacionPropietario;
@@ -289,11 +291,11 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		this.fechaAnulacion = fechaAnulacion;
 	}
 
-	public String getMotivoAnulacion() {
+	public DDMotivoAnulacionExpediente getMotivoAnulacion() {
 		return motivoAnulacion;
 	}
 
-	public void setMotivoAnulacion(String motivoAnulacion) {
+	public void setMotivoAnulacion(DDMotivoAnulacionExpediente motivoAnulacion) {
 		this.motivoAnulacion = motivoAnulacion;
 	}
 	

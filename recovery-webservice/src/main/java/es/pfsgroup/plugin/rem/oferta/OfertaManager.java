@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -34,16 +35,19 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -54,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -61,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -119,6 +125,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 	
 	@Override
 	public String managerName() {
@@ -606,7 +615,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
 			ActivoOferta actOfr = listaActivoOferta.get(0);
 			if (!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())) {
-				ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+				//ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+				ofertaAcepted = getOfertaAceptadaExpdteAprobado(actOfr.getPrimaryKey().getActivo());
 			}
 		}
 
@@ -656,14 +666,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 
+//	@Override
+//	public Oferta trabajoToOferta(Trabajo trabajo) {
+//		Oferta ofertaAceptada = null;
+//		Activo activo = trabajo.getActivo();
+//		if (!Checks.esNulo(activo)) {
+//			ofertaAceptada = getOfertaAceptadaByActivo(activo);
+//		}
+//		return ofertaAceptada;
+//	}
+	
 	@Override
-	public Oferta trabajoToOferta(Trabajo trabajo) {
-		Oferta ofertaAceptada = null;
-		Activo activo = trabajo.getActivo();
-		if (!Checks.esNulo(activo)) {
-			ofertaAceptada = getOfertaAceptadaByActivo(activo);
-		}
-		return ofertaAceptada;
+	public Oferta trabajoToOferta(Trabajo trabajo){
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+		
+		return expediente.getOferta();
 	}
 	
 	@Override
@@ -702,6 +719,49 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setEstadoOferta(estado);
 			genericDao.save(Oferta.class, oferta);
 			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+			if(!Checks.esNulo(expediente)){
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				if(!Checks.estaVacio(tramites)){
+					Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
+					for(TareaActivo tarea : tareasTramite){
+						//Si se ha borrado sin acabarse, al descongelar se descongela.
+						if(tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())){
+							tarea.getAuditoria().setBorrado(false);
+						}
+					}
+				}
+			}
+			
+		} catch(Exception e) {
+			logger.error(e);
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public Boolean congelarOferta(Oferta oferta){
+		try {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+			DDEstadoOferta estado =  genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			genericDao.save(Oferta.class, oferta);
+			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+			if(!Checks.esNulo(expediente)){
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				ActivoTramite tramite = tramites.get(0);
+				
+				Set<TareaActivo> tareasTramite = tramite.getTareas();
+				for(TareaActivo tarea : tareasTramite){
+					tarea.getAuditoria().setBorrado(true);
+				}
+			}
+			
+			
 		} catch(Exception e) {
 			logger.error(e);
 			return false;
@@ -714,13 +774,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta ofertaAceptada = null;
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
-			Activo activo = trabajo.getActivo();
-			if (!Checks.esNulo(activo)) {
-				ofertaAceptada = getOfertaAceptadaByActivo(activo);
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+			if (!Checks.esNulo(expediente)){
+				ofertaAceptada = expediente.getOferta();
 			}
 		}
 		return ofertaAceptada;
 	}
+
 
 	@Override
 	public Oferta getOfertaAceptadaByActivo(Activo activo) {
@@ -734,6 +795,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return null;
 	}
 
+	@Override 
+	public Oferta getOfertaAceptadaExpdteAprobado(Activo activo){
+		List<ActivoOferta> listaOfertas = activo.getOfertas();
+		
+		for (ActivoOferta activoOferta : listaOfertas) {
+			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())  ||
+					DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())	  ||
+					DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()) ||
+					DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
+				return oferta;
+			}
+
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public boolean checkDerechoTanteo(Trabajo trabajo) {
 		Oferta ofertaAceptada = trabajoToOferta(trabajo);
@@ -1263,8 +1346,50 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 	
+	@Override
+	public Boolean isActivoConOfertaYExpedienteBlocked(Activo activo) {
+		
+		// Si no se encuentra en una agrupación de tipo 'lote comercial' examinar si el activo tuviese alguna oferta aceptada.
+		for (ActivoOferta acof: activo.getOfertas()) {
+			Oferta of = acof.getPrimaryKey().getOferta();
+			if(this.isOfertaAceptadaConExpedienteBlocked(of)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
+	@Override
+	public Boolean isAgrupacionConOfertaYExpedienteBlocked(ActivoAgrupacion agrupacion) {
+		
+		// Comprobar si la grupación tiene ofertas aceptadas con expediente en estado Aprobado, Reservado o En devolución
+		for (Oferta of: agrupacion.getOfertas()) {
+			if(this.isOfertaAceptadaConExpedienteBlocked(of)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
+	@Override
+	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of) {
+		if(!Checks.esNulo(of.getEstadoOferta()) 
+				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
+			//Si la oferta esta aceptada, se comprueba que el expediente esté con alguno de los siguientes estados..., para pasar la nueva oferta a Congelada.
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(of.getId());
+			if(!Checks.esNulo(expediente.getEstado()) 
+				&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
+					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo()) 
+					|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))) {
+		
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }
-

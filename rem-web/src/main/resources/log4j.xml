@@ -147,12 +147,15 @@
 		<appender-ref ref="email" />
 	</logger>
 	
-	<logger name="es.pfsgroup.plugin.rem.restclient" additivity="false">
+	<logger name="es.pfsgroup.plugin.rem.restclient" 
+		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	
-	<logger name="es.pfsgroup.plugin.rem.rest" additivity="false">
+	<logger name="es.pfsgroup.plugin.rem.rest" 
+		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
@@ -160,31 +163,37 @@
 	<logger name="es.pfsgroup.plugin.rem.controller.ClientesController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 
 	<logger name="es.pfsgroup.plugin.rem.controller.VisitasController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.OfertasController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.TrabajoController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.ComisionesController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.NotificacionesController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.InformemediadorController"
@@ -195,36 +204,49 @@
 	<logger name="es.pfsgroup.plugin.rem.controller.PortalesController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.PropuestaresolucionController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>	
 	<logger name="es.pfsgroup.plugin.rem.controller.ReservaController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.ReintegroController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
+		<appender-ref ref="fileRest" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.controller.ConfirmacionoperacionController"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.ResolucionComiteController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.api.impl.UvemManager"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.rest.api.impl.GestorDocumentalFotos"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 

@@ -8,7 +8,7 @@ INTO TABLE REM01.MIG2_PVE_PROVEEDORES
 TRUNCATE
 TRAILING NULLCOLS
 (       
-        PVE_COD_UVEM                                    POSITION(1:17)                  INTEGER EXTERNAL                                                "TO_NUMBER(SUBSTR(REPLACE(REPLACE(REPLACE(TRIM(:PVE_COD_POSTAL),';',' '), '\"',''),'''',''),2,16))",
+        PVE_COD_UVEM                                    POSITION(1:17)                  INTEGER EXTERNAL                                                "TO_NUMBER(SUBSTR(REPLACE(REPLACE(REPLACE(TRIM(:PVE_COD_UVEM),';',' '), '\"',''),'''',''),2,16))",
         PVE_COD_TIPO_PROVEEDOR                          POSITION(18:37)                 CHAR                                                            "REPLACE(REPLACE(REPLACE(TRIM(:PVE_COD_TIPO_PROVEEDOR),';',' '), '\"',''),'''','')",
         PVE_NOMBRE                                      POSITION(38:287)                CHAR                                                            "REPLACE(REPLACE(REPLACE(TRIM(:PVE_NOMBRE),';',' '), '\"',''),'''','')",
         PVE_NOMBRE_COMERCIAL                            POSITION(288:537)               CHAR                                                            "REPLACE(REPLACE(REPLACE(TRIM(:PVE_NOMBRE_COMERCIAL),';',' '), '\"',''),'''','')",

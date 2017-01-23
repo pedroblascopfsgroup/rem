@@ -70,22 +70,22 @@ public class ActivoBanyo implements Serializable, Auditable {
     private Integer alicatadoMarmol;   
 	
 	@Column(name = "BNY_ALICATADO_GRANITO")
-	private Integer alicatadoGrafito;
+	private Integer alicatadoGranito;
 	 
 	@Column(name = "BNY_ALICATADO_AZULEJO")
 	private Integer alicatadoAzulejo;
 	
 	@Column(name = "BNY_ENCIMERA")
-	private Integer encimera;
+	private Integer encimeraBanyo;
 	
 	@Column(name = "BNY_MARMOL")
-    private Integer marmol;   
+    private Integer encimeraBanyoMarmol;   
 	
 	@Column(name = "BNY_GRANITO")
-	private Integer granito;
+	private Integer encimeraBanyoGranito;
 	 
 	@Column(name = "BNY_OTRO_MATERIAL")
-	private Integer otroMaterial;
+	private Integer encimeraBanyoOtroMaterial;
 	
 	@Column(name = "BNY_SANITARIOS")
 	private Integer sanitarios;
@@ -94,7 +94,7 @@ public class ActivoBanyo implements Serializable, Auditable {
 	private Integer estadoSanitarios;
 
 	@Column(name = "BNY_SUELOS")
-	private Integer suelos;
+	private Integer suelosBanyo;
 
 	@Column(name = "BNY_GRIFO_MONOMANDO")
 	private Integer grifoMonomando;
@@ -179,12 +179,12 @@ public class ActivoBanyo implements Serializable, Auditable {
 		this.alicatadoMarmol = alicatadoMarmol;
 	}
 
-	public Integer getAlicatadoGrafito() {
-		return alicatadoGrafito;
+	public Integer getAlicatadoGranito() {
+		return alicatadoGranito;
 	}
 
-	public void setAlicatadoGrafito(Integer alicatadoGrafito) {
-		this.alicatadoGrafito = alicatadoGrafito;
+	public void setAlicatadoGranito(Integer alicatadoGranito) {
+		this.alicatadoGranito = alicatadoGranito;
 	}
 
 	public Integer getAlicatadoAzulejo() {
@@ -195,36 +195,36 @@ public class ActivoBanyo implements Serializable, Auditable {
 		this.alicatadoAzulejo = alicatadoAzulejo;
 	}
 
-	public Integer getEncimera() {
-		return encimera;
+	public Integer getEncimeraBanyo() {
+		return encimeraBanyo;
 	}
 
-	public void setEncimera(Integer encimera) {
-		this.encimera = encimera;
+	public void setEncimeraBanyo(Integer encimeraBanyo) {
+		this.encimeraBanyo = encimeraBanyo;
 	}
 
-	public Integer getMarmol() {
-		return marmol;
+	public Integer getEncimeraBanyoMarmol() {
+		return encimeraBanyoMarmol;
 	}
 
-	public void setMarmol(Integer marmol) {
-		this.marmol = marmol;
+	public void setEncimeraBanyoMarmol(Integer encimeraBanyoMarmol) {
+		this.encimeraBanyoMarmol = encimeraBanyoMarmol;
 	}
 
-	public Integer getGranito() {
-		return granito;
+	public Integer getEncimeraBanyoGranito() {
+		return encimeraBanyoGranito;
 	}
 
-	public void setGranito(Integer granito) {
-		this.granito = granito;
+	public void setEncimeraBanyoGranito(Integer encimeraBanyoGranito) {
+		this.encimeraBanyoGranito = encimeraBanyoGranito;
 	}
 
-	public Integer getOtroMaterial() {
-		return otroMaterial;
+	public Integer getEncimeraBanyoOtroMaterial() {
+		return encimeraBanyoOtroMaterial;
 	}
 
-	public void setOtroMaterial(Integer otroMaterial) {
-		this.otroMaterial = otroMaterial;
+	public void setEncimeraBanyoOtroMaterial(Integer encimeraBanyoOtroMaterial) {
+		this.encimeraBanyoOtroMaterial = encimeraBanyoOtroMaterial;
 	}
 
 	public Integer getSanitarios() {
@@ -243,12 +243,12 @@ public class ActivoBanyo implements Serializable, Auditable {
 		this.estadoSanitarios = estadoSanitarios;
 	}
 
-	public Integer getSuelos() {
-		return suelos;
+	public Integer getSuelosBanyo() {
+		return suelosBanyo;
 	}
 
-	public void setSuelos(Integer suelos) {
-		this.suelos = suelos;
+	public void setSuelosBanyo(Integer suelosBanyo) {
+		this.suelosBanyo = suelosBanyo;
 	}
 
 	public Integer getGrifoMonomando() {

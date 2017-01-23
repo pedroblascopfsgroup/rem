@@ -497,8 +497,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return callProcedureSql.executeUpdate();
 	}
 	
-    public Long getNextNumOferta() {
+    public Long getNextNumExpedienteComercial() {
 		String sql = "SELECT S_ECO_NUM_EXPEDIENTE.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+	}
+    
+    public Long getNextNumOferta() {
+		String sql = "SELECT S_OFR_NUM_OFERTA.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
     
@@ -603,10 +608,48 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave) {
 		
-		HQLBuilder hb = new HQLBuilder(" from ActivoMovimientoLlave mov");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activoLlave.id", idLlave);
+		HQLBuilder hb = new HQLBuilder("select mov from ActivoMovimientoLlave mov, ActivoLlave lla ");
+		hb.appendWhere("lla.id = mov.activoLlave.id");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "lla.id", idLlave);
+		
+		this.ordenarMovimientos(dto,hb);
 		
 		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
+	public Page getListMovimientosLlaveByActivo(WebDto dto, Long idActivo) {
+		
+		HQLBuilder hb = new HQLBuilder("select mov from ActivoMovimientoLlave mov, ActivoLlave lla " );
+		hb.appendWhere("lla.id = mov.activoLlave.id");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "lla.activo.id", idActivo);
+		
+		this.ordenarMovimientos(dto,hb);
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	/**
+	 * Inserta un orderBy en la consulta, para los movimientos, ya que al ser una consulta de dos tablas, 
+	 * no las ordena por defecto desde sencha.
+	 * @param dto
+	 * @param hb
+	 */
+	private void ordenarMovimientos(WebDto dto, HQLBuilder hb) {
+		
+		if(!Checks.esNulo(dto.getSort())) {
+			String numLlave = "numLlave", codigoTipoTenedor = "codigoTipoTenedor";
+			if(numLlave.equalsIgnoreCase(dto.getSort())) {
+				hb.orderBy("lla.numLlave", dto.getDir().toLowerCase());
+			}
+			else if(codigoTipoTenedor.equalsIgnoreCase(dto.getSort())) {
+				hb.orderBy("mov.codTenedor", dto.getDir().toLowerCase());
+			}
+			else {
+				hb.orderBy("mov."+dto.getSort(), dto.getDir().toLowerCase());
+			}
+				
+		}
 	}
 	
 	@Override

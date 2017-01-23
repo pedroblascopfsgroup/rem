@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
@@ -81,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
@@ -178,11 +180,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private OfertaApi ofertaApi;
 
 	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
 	private PropuestaPrecioDao propuestaDao;
 
 	@Autowired
 	private ProcessAdapter processAdapter;
-
+	
 	@Resource
 	MessageService messageServices;
 
@@ -959,19 +964,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 		// Módulo de Expediente comercial ----------
-		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_COMERCIALIZACION)) {
-			if (!Checks.esNulo(trabajo.getActivo())) {
-				Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(trabajo.getActivo());
-				if (!Checks.esNulo(oferta)) {
-					if (DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
-						tipoTramite = tipoProcedimientoManager.getByCodigo("T013");
-					} else {
-						tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
-					}
-				}
-			}
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T013");
+		}
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
 		}
 
+		
 		if (Checks.esNulo(tipoTramite.getId())) {
 			return null;
 		}

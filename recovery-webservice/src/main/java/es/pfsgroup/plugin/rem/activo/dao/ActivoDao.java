@@ -63,6 +63,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
     public Long getNextNumOferta();
     
+    public Long getNextNumExpedienteComercial();
+    
     public Long getNextClienteRemId();
 
 	public Page getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
@@ -80,6 +82,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Page getLlavesByActivo(DtoLlaves dto);
 	
 	public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);
+	
+	public Page getListMovimientosLlaveByActivo(WebDto dto, Long idActivo);
 	
 	public Integer isIntegradoAgrupacionObraNuevaOrAsistida(Long id);
 

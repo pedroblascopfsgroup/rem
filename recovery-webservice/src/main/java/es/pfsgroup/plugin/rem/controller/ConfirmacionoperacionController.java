@@ -102,7 +102,7 @@ public class ConfirmacionoperacionController {
 			}
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error confirmacion operacion", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);

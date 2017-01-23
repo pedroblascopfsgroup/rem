@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -32,6 +34,8 @@ import es.pfsgroup.commons.utils.Checks;
 
 public class FileUtilsREM {
 	
+	private final static Log logger = LogFactory.getLog(FileUtilsREM.class);
+	
 	private final static String CODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 	
 	
@@ -40,7 +44,9 @@ public class FileUtilsREM {
 		return base64Encode(bytes);
 	}
 
-    private static String base64Encode(byte[] in)       {
+    private static String base64Encode(byte[] in) throws IOException{
+    	logger.debug("------------ Llamada a base64Encode-----------------");
+    	
         StringBuilder out = new StringBuilder((in.length * 4) / 3);
         int b;
         for (int i = 0; i < in.length; i += 3)  {
@@ -70,6 +76,8 @@ public class FileUtilsREM {
 
     
     public static byte[] read(File file) throws IOException {
+    	logger.debug("------------ Llamada a read-----------------");
+    	
 	    ByteArrayOutputStream ous = null;
 	    InputStream ios = null;
 	    try {
@@ -135,6 +143,8 @@ public class FileUtilsREM {
      */
     public static Document doMerge(List<byte[]> list, OutputStream outputStream)
             throws DocumentException, IOException {
+    	logger.debug("------------ Llamada a doMerge-----------------");
+    	
         Document document = new Document();
         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
         document.open();
@@ -162,7 +172,8 @@ public class FileUtilsREM {
     
     
     public static void mergeFiles(List<File> files, File mergedFile) {
-    	 
+    	logger.debug("------------ Llamada a mergeFiles-----------------");
+    	
 		FileWriter fstream = null;
 		BufferedWriter out = null;
 		try {
@@ -202,6 +213,8 @@ public class FileUtilsREM {
     
     
     public static void concatenatePdfs(List<File> listOfPdfFiles, File outputFile) throws DocumentException, IOException {
+    	logger.debug("------------ Llamada a concatenatePdfs-----------------");
+    	
         Document document = new Document();
         FileOutputStream outputStream = new FileOutputStream(outputFile);
         PdfCopy copy = new PdfSmartCopy(document, outputStream);

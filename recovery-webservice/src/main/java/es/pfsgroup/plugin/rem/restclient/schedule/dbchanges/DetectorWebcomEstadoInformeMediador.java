@@ -53,4 +53,9 @@ public class DetectorWebcomEstadoInformeMediador  extends DetectorCambiosBD<Info
 		return true;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_INFORME_MEDIADOR_WEBCOM";
+	}
+
 }

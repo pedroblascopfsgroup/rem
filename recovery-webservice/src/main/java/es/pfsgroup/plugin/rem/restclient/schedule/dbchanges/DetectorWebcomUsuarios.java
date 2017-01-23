@@ -53,4 +53,9 @@ public class DetectorWebcomUsuarios  extends DetectorCambiosBD<UsuarioDto> {
 		return true;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_USUARIO_REM";
+	}
+
 }

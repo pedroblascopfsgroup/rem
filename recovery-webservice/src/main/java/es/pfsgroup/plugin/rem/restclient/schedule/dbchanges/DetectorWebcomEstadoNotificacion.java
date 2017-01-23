@@ -53,4 +53,9 @@ public class DetectorWebcomEstadoNotificacion extends DetectorCambiosBD<Notifica
 		return true;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_NOTIFICACION_REM";
+	}
+
 }

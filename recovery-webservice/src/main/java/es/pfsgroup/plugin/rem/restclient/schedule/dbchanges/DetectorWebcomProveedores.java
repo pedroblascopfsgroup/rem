@@ -52,6 +52,11 @@ public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 	public boolean isActivo() {
 		return true;
 	}
+
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_PROVEEDOR_REM";
+	}
 	
 
 }

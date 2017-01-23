@@ -6,29 +6,27 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
-import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
+import es.pfsgroup.plugin.rem.restclient.registro.dao.RestDatoRechazadoDao;
+import es.pfsgroup.plugin.rem.restclient.registro.model.DatosRechazados;
 
 @Repository
-public class RestLlamadaDaoImpl extends AbstractEntityDao<RestLlamada, Long> implements RestLlamadaDao{
-	
+public class RestDatoRechazadoDaoImpl extends AbstractEntityDao<DatosRechazados, Long> implements RestDatoRechazadoDao {
 
 	@Override
-	public void guardaRegistro(final RestLlamada obj) {
+	public void guardaRegistro(DatosRechazados obj) {
 		Session session = getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		try{
+		try {
 			Auditoria.save(obj);
 			session.persist(obj);
 			tx.commit();
-		}finally{
-			if (session.isOpen()){
+		} finally {
+			if (session.isOpen()) {
 				session.flush();
 				session.close();
 			}
 		}
-		
-		
+
 	}
 
 }

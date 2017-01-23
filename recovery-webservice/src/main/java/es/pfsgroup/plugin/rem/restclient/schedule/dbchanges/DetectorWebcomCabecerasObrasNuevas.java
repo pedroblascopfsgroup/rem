@@ -53,4 +53,9 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 		return true;
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return "ID_SUBDIVISION_AGRUPACION_REM";
+	}
+
 }

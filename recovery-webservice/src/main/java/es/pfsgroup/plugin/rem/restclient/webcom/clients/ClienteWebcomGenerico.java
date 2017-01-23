@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -25,6 +26,7 @@ import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -112,12 +114,20 @@ public class ClienteWebcomGenerico {
 			registroLlamada.setEndpoint(endpointUrl);
 
 			debugJsonFile(jsonString);
-			
+
 			JSONObject response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
 					(endpoint.getTimeout() * 1000), endpoint.getCharset());
 			registroLlamada.setResponse(response.toString());
 
 			logger.debug("Respuesta recibida " + response);
+
+			if (response.containsKey("data")) {
+				trazarObjetosRechazados(registroLlamada, response.getJSONArray("data"),false);
+			} else {
+				if (response.containsKey("error") && requestBody.containsKey("data")) {
+					trazarObjetosRechazados(registroLlamada, requestBody.getJSONArray("data"),true);
+				}
+			}
 
 			// Gestión de errores si respuesta OK
 			if (response.containsKey("error")) {
@@ -140,6 +150,18 @@ public class ClienteWebcomGenerico {
 		} finally {
 			registroLlamada.logTiempoPeticionRest();
 		}
+	}
+
+	private void trazarObjetosRechazados(RestLlamada registroLlamada, JSONArray data, boolean trazandoRequest) {
+		ArrayList<JSONObject> datosErroneos = new ArrayList<JSONObject>();
+		for (int i = 0; i < data.size(); i++) {
+			JSONObject jsonObject = data.getJSONObject(i);
+			if (trazandoRequest || (jsonObject.containsKey("succes") && !jsonObject.getBoolean("succes"))) {
+				datosErroneos.add(jsonObject);
+			}
+
+		}
+		registroLlamada.setDatosErroneos(datosErroneos);
 	}
 
 	private void debugJsonFile(String jsonString) {

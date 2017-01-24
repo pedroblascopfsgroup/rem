@@ -76,7 +76,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	private String send(String endpoint, String jsonString)
 			throws RestClientException, HttpClientException, IOException {
 		AuthtokenResponse authToken = this.getAuthtoken();
-		logger.debug("enviando: " + jsonString);
+		logger.error("enviando: " + jsonString);
 		JSONObject resultado = cliente.send(authToken.getData().getAuthtoken(), endpoint, jsonString);
 		if (resultado.containsKey("error") && resultado.getString("error") != null) {
 			if (resultado.getString("error").equals(ResponseGestorDocumentalFotos.ACCESS_DENIED)) {
@@ -90,7 +90,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 				throwException(resultado.getString("error"));
 			}
 		}
-		logger.debug("reci: " + resultado.toString());
+		logger.error("reci: " + resultado.toString());
 		return resultado.toString();
 	}
 

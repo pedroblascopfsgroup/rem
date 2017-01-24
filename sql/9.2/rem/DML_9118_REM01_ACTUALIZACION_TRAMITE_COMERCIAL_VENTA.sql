@@ -43,17 +43,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
-    
-    V_TFI_TAP_CODIGO := 'T013_DefinicionOferta';
-  	V_TFI_TFI_NOMBRE := 'titulo';
- 	V_TFI_CAMPO := 'tfi_label';
-  	V_TFI_VALOR := '<p style="margin-bottom: 10px">Ha aceptado una oferta de alquiler y se ha creado un expediente comercial asociado a la misma. A continuación deberá rellenar todos los campos necesarios para definir la oferta, pudiendo darse la siguiente casuística para finalizar la tarea:</p><p style="margin-bottom: 10px">A) Si tiene atribuciones para sancionar la oferta, al pulsar el botón Aceptar finalizará esta tarea y se le lanzará a la gestoría de formalización una nueva tarea para la realización del "Posicionamiento y firma).</p><p style="margin-bottom: 10px">B) Si no tiene atribuciones para sancionar la oferta, deberá preparar la propuesta y remitirla al comité sancionador, indicando abajo la fecha de envío.</p><p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
 
-  	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
-             SET '||V_TFI_CAMPO||'='''||V_TFI_VALOR||''' 
-             WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TFI_TAP_CODIGO||''') 
-               AND TFI_NOMBRE = '''||V_TFI_TFI_NOMBRE||'''
-             ';
 
   DBMS_OUTPUT.PUT_LINE('[SQL]: '||V_MSQL);
   EXECUTE IMMEDIATE V_MSQL;

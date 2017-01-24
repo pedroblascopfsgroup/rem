@@ -2395,6 +2395,13 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return codigoComite;	
 		
 	}
+	
+	@Override
+	public DDComiteSancion comiteSancionadorByCodigo(String codigo){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filtro);
+		return comiteSancion;
+	}
 
 	private InstanciaDecisionDto expedienteComercialToInstanciaDecision(ExpedienteComercial expediente) {
 		

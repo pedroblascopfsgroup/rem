@@ -40,7 +40,7 @@ $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/HIST_ACTIVOS_PRECIOS.ctl		
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROPUESTAS_PRECIOS.ctl				log=./CTLs_DATs/logs/PROPUESTAS_PRECIOS.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVO_PROPUESTAS.ctl					log=./CTLs_DATs/logs/ACTIVO_PROPUESTAS.log
 #$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDORES.ctl						log=./CTLs_DATs/logs/PROVEEDORES.log
-$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDORES_DIRECCIONES.ctl			log=./CTLs_DATs/logs/PROVEEDORES_DIRECCIONES.log
+#$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDORES_DIRECCIONES.ctl			log=./CTLs_DATs/logs/PROVEEDORES_DIRECCIONES.log
 #$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDOR_CONTACTO.ctl				log=./CTLs_DATs/logs/PROVEEDOR_CONTACTO.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_PROVEEDORES.ctl				log=./CTLs_DATs/logs/GASTOS_PROVEEDORES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/GASTOS_PROVEEDORES_ACT_TBJ.ctl		log=./CTLs_DATs/logs/GASTOS_PROVEEDORES_ACT_TBJ.log

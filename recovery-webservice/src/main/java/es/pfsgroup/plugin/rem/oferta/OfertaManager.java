@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service("ofertaManager")
@@ -986,7 +987,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
-					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(expediente.getComiteSancion().getCodigo()) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(expediente.getComiteSancion().getCodigo()))
+					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
+					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
 				}
 			}
@@ -1001,7 +1003,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
-					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(expediente.getComiteSancion().getCodigo()) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(expediente.getComiteSancion().getCodigo()))
+					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
+					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
 				}
 			}
@@ -1025,7 +1028,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		try {
 			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
-			uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
+			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
+			String codigoComite = resultadoDto.getCodigoComite();
+			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+			expediente.setComiteSancion(comite);
+			
 			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

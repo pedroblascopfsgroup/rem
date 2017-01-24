@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -517,6 +518,13 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public ExpedienteComercial findOneByOferta(Oferta oferta);
+
+	/**
+	 * Devuelve la descripción de un comité dado su código
+	 * @param codigo
+	 * @return
+	 */
+	public DDComiteSancion comiteSancionadorByCodigo(String codigo);
 	
 	
 }

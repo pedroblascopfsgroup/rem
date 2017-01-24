@@ -209,10 +209,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 						Class control = handler.getDtoClass();
 						CambiosList listPendientes = new CambiosList(tamanyoBloque);
 						handler.actualizarVistaMaterializada();
-						ErrorServicioWebcom errorServicioWeb;
 						Boolean marcarComoEnviado = false;
 						do {
-							errorServicioWeb = null;
 							boolean somethingdone = false;
 							RestLlamada registro = new RestLlamada();
 							registro.setIteracion(iteracion);
@@ -229,6 +227,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									} else {
 										listPendientes.getPaginacion().setHasMore(false);
 									}
+								}
+								if (registro.getEndpoint() != null) {
+									registro.setEndpoint(registro.getEndpoint().concat("(")
+											.concat(String.valueOf(listPendientes.getPaginacion().getNumeroBloque()).concat(")")));
 								}
 								marcarComoEnviado = true;
 								logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()

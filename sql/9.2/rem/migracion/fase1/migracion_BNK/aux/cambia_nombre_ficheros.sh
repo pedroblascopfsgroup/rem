@@ -28,6 +28,7 @@ mv Fich_Proveedor_Contacto.dat 											/Documentos/Git/recovery/sql/9.2/rem/m
 mv Fich_Proveedores.dat 												/Documentos/Git/recovery/sql/9.2/rem/migracion/fase1/migracion_BNK/CTLs_DATs/DATs/PROVEEDORES.dat
 mv Fich_Trabajo.dat 													/Documentos/Git/recovery/sql/9.2/rem/migracion/fase1/migracion_BNK/CTLs_DATs/DATs/TRABAJO.dat
 mv Fich_Propietarios.dat 												/Documentos/Git/recovery/sql/9.2/rem/migracion/fase1/migracion_BNK/CTLs_DATs/DATs/PROPIETARIOS.dat
+mv Fich_Proveedor_Direccion.dat 										/Documentos/Git/recovery/sql/9.2/rem/migracion/fase1/migracion_BNK/CTLs_DATs/DATs/PROVEEDORES_DIRECCIONES.dat
 
 echo "Nombres cambiados, verificar cambios"
 

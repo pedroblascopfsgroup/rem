@@ -55,6 +55,7 @@ $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ENTIDAD_PROVEEDOR.ctl   		
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/TRABAJO.ctl                    log=./CTLs_DATs/logs/TRABAJO.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PRESUPUESTO_TRABAJO.ctl        log=./CTLs_DATs/logs/PRESUPUESTO_TRABAJO.log
 #[FASE II]#34#PROVISION_SUPLIDO
+$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDORES_DIRECCIONES.ctl	 log=./CTLs_DATs/logs/PROVEEDORES_DIRECCIONES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDOR_CONTACTO.ctl         log=./CTLs_DATs/logs/PROVEEDOR_CONTACTO.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVO_PRECIO.ctl              log=./CTLs_DATs/logs/ACTIVO_PRECIO.log
 $ORACLE_HOME/bin/sqlplus REM01/$1 @aux/Mig_estadisticas.sql > ./CTLs_DATs/logs/$0.log

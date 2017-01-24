@@ -12,7 +12,6 @@ mv Fich_Ofertas.dat 													/Documentos/Git/recovery/sql/9.2/rem/migracion/
 mv Fich_Ofertas_Alquiler.dat 											/Documentos/Git/recovery/sql/9.2/rem/migracion/rem_fase2/migracion_fase2/CTLs_DATs/DATs/ACTIVOS_DATOS_ALQUILERES.dat
 mv Fich_Perimetro_Activo.dat 											/Documentos/Git/recovery/sql/9.2/rem/migracion/rem_fase2/migracion_fase2/CTLs_DATs/DATs/PERIMETRO_ACTIVOS.dat
 mv Fich_Propuestas_Precio.dat 											/Documentos/Git/recovery/sql/9.2/rem/migracion/rem_fase2/migracion_fase2/CTLs_DATs/DATs/PROPUESTAS_PRECIOS.dat
-mv Fich_Proveedor_Direccion.dat 										/Documentos/Git/recovery/sql/9.2/rem/migracion/rem_fase2/migracion_fase2/CTLs_DATs/DATs/PROVEEDORES_DIRECCIONES.dat
 mv Fich_Visitas.dat 													/Documentos/Git/recovery/sql/9.2/rem/migracion/rem_fase2/migracion_fase2/CTLs_DATs/DATs/VISITAS.dat
 mv Fich_Observaciones_Oferta.dat 										/Documentos/Git/recovery/sql/9.2/rem/migracion/rem_fase2/migracion_fase2/CTLs_DATs/DATs/OFERTAS_OBSERVACIONES.dat
 mv Fich_Ofertas_Activo.dat 												/Documentos/Git/recovery/sql/9.2/rem/migracion/rem_fase2/migracion_fase2/CTLs_DATs/DATs/OFERTAS_ACTIVO.dat

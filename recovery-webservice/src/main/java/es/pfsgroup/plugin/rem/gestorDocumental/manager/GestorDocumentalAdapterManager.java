@@ -179,6 +179,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			return true;
 		}
 		return false;
+		
 	}
 
 	

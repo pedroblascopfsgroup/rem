@@ -74,7 +74,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("/crearGasto");
 		sb.append("?").append(USUARIO_PATH).append(crearGasto.getUsuario());
 		sb.append("&").append(PASSWORD_PATH).append(crearGasto.getPassword());
-		sb.append("&").append(DESCRIPCION_EXPEDIENTE_PATH).append(crearGasto.getDescripcionExpediente());
+		sb.append("&").append(DESCRIPCION_EXPEDIENTE_PATH).append(UriComponent.encode(crearGasto.getDescripcionExpediente(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED)));
 		sb.append("&").append(COD_CLASE_PATH).append(crearGasto.getCodClase());
 		sb.append("&").append(GASTO_METADATOS_PATH).append(UriComponent.encode(crearGasto.getGastoMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
 		return sb.toString();

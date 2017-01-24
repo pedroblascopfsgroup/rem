@@ -22,7 +22,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
-import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -32,6 +31,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoConfiguracionPropuestasPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
@@ -44,9 +44,6 @@ public class PreciosController extends ParadiseJsonController{
 
 	@Autowired
 	private PreciosApi preciosApi;
-	
-	@Autowired
-	private UploadAdapter uploadAdapter;
 	
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;	
@@ -285,7 +282,67 @@ public class PreciosController extends ParadiseJsonController{
 		
 		return createModelAndViewJson(model);
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getConfiguracionGeneracionPropuestas(ModelMap model){
+
+		try {
+			model.put("data", preciosApi.getConfiguracionGeneracionPropuestas());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createConfiguracionGeneracionPropuesta(ModelMap model, DtoConfiguracionPropuestasPrecios dto){
+
+		try {
+			model.put("success", preciosApi.createConfiguracionGeneracionPropuesta(dto));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteConfiguracionGeneracionPropuesta(ModelMap model, DtoConfiguracionPropuestasPrecios dto){
+
+		try {
+			model.put("success", preciosApi.deleteConfiguracionGeneracionPropuesta(dto));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateConfiguracionGeneracionPropuesta(ModelMap model, DtoConfiguracionPropuestasPrecios dto){
+
+		try {
+			model.put("success", preciosApi.updateConfiguracionGeneracionPropuesta(dto));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

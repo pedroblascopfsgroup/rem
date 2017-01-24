@@ -8,6 +8,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoConfiguracionPropuestasPrecios;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
@@ -125,4 +126,35 @@ public interface PreciosApi {
 	 * @throws InvocationTargetException
 	 */
 	public <T> List<T> getDatosPropuestaByEntidad(PropuestaPrecio propuesta) throws IllegalAccessException, InvocationTargetException;
+
+	/**
+	 * Este método obtiene una lista de configuración de propuestas de precios.
+	 * 
+	 * @return Devuelve una lista de DtoConfiguracionPropuestasPrecios por cada propuesta encontrada.
+	 */
+	public List<DtoConfiguracionPropuestasPrecios> getConfiguracionGeneracionPropuestas();
+
+	/**
+	 * Este método elimina una regla por su ID.
+	 * 
+	 * @param dto : dto con el ID de la regla a eliminar.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 */
+	public boolean deleteConfiguracionGeneracionPropuesta(DtoConfiguracionPropuestasPrecios dto);
+
+	/**
+	 * Este método genera una nueva regla con los datos del dto.
+	 * 
+	 * @param dto : contiene los datos de la nueva regla.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 */
+	public boolean createConfiguracionGeneracionPropuesta(DtoConfiguracionPropuestasPrecios dto);
+
+	/**
+	 * Este método modifica una regla con los datos del dto por el ID de regla.
+	 * 
+	 * @param dto : dto con los datos y el ID de la regla a modificar.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 */
+	public boolean updateConfiguracionGeneracionPropuesta(DtoConfiguracionPropuestasPrecios dto);
 }

@@ -30,6 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -43,7 +44,9 @@ import es.pfsgroup.plugin.rem.model.ActivoPropuesta;
 import es.pfsgroup.plugin.rem.model.ActivoPropuesta.ActivoPropuestaPk;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
+import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoConfiguracionPropuestasPrecios;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
@@ -55,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.VDatosPropuestaEntidad02;
 import es.pfsgroup.plugin.rem.model.VDatosPropuestaEntidad03;
 import es.pfsgroup.plugin.rem.model.VDatosPropuestaUnificada;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -108,7 +112,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Autowired
 	private TrabajoDao trabajoDao;
-	
+
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+
 	//Porcentajes para el calculo de precios propuestos
 	private static final Double porc120 = 1.20;
 	private static final Double porc115 = 1.15;
@@ -692,4 +698,113 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		return listDto;
 	}
 
+	@Override
+	public List<DtoConfiguracionPropuestasPrecios> getConfiguracionGeneracionPropuestas() {
+		List<DtoConfiguracionPropuestasPrecios> listaPropuestas = new ArrayList<DtoConfiguracionPropuestasPrecios>();
+		List<CarteraCondicionesPrecios> listaCondiciones = genericDao.getList(CarteraCondicionesPrecios.class);
+
+		if(!Checks.estaVacio(listaCondiciones)) {
+			for(CarteraCondicionesPrecios condicion: listaCondiciones) {
+				DtoConfiguracionPropuestasPrecios dto = new DtoConfiguracionPropuestasPrecios();
+
+				dto.setIdRegla(condicion.getId().toString());
+				if(!Checks.esNulo(condicion.getCartera())) {
+					dto.setCarteraCodigo(condicion.getCartera().getCodigo());
+				}
+				if(!Checks.esNulo(condicion.getPropuestaPrecio())) {
+					dto.setPropuestaPrecioCodigo(condicion.getPropuestaPrecio().getCodigo());
+				}
+				if(!Checks.esNulo(condicion.getCondicionIndicadorPrecio())) {
+					dto.setIndicadorCondicionCodigo(condicion.getCondicionIndicadorPrecio().getCodigo());
+				}
+				dto.setMayorQueText(condicion.getMayorQue());
+				dto.setMenorQueText(condicion.getMenorQue());
+				dto.setIgualQueText(condicion.getIgualQue());
+				
+				listaPropuestas.add(dto);
+			}
+		}
+
+		return listaPropuestas;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteConfiguracionGeneracionPropuesta(DtoConfiguracionPropuestasPrecios dto) {
+		if(Checks.esNulo(dto.getIdRegla())) {
+			return false;
+		}
+
+		genericDao.deleteById(CarteraCondicionesPrecios.class, Long.parseLong(dto.getIdRegla()));
+
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createConfiguracionGeneracionPropuesta(DtoConfiguracionPropuestasPrecios dto) {
+		CarteraCondicionesPrecios nuevaRegla = new CarteraCondicionesPrecios();
+
+		try{
+			if(!Checks.esNulo(dto.getCarteraCodigo())) {
+				DDCartera cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, dto.getCarteraCodigo());
+				nuevaRegla.setCartera(cartera);
+			}
+			if(!Checks.esNulo(dto.getPropuestaPrecioCodigo())) {
+				DDTipoPropuestaPrecio propuestaPrecio = (DDTipoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPropuestaPrecio.class, dto.getPropuestaPrecioCodigo());
+				nuevaRegla.setPropuestaPrecio(propuestaPrecio);
+			}
+			if(!Checks.esNulo(dto.getIndicadorCondicionCodigo())) {
+				DDCondicionIndicadorPrecio indicadorPrecio = (DDCondicionIndicadorPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDCondicionIndicadorPrecio.class, dto.getIndicadorCondicionCodigo());
+				nuevaRegla.setCondicionIndicadorPrecio(indicadorPrecio);
+			}
+			nuevaRegla.setMenorQue(dto.getMenorQueText());
+			nuevaRegla.setMayorQue(dto.getMayorQueText());
+			nuevaRegla.setIgualQue(dto.getIgualQueText());
+
+			genericDao.save(CarteraCondicionesPrecios.class, nuevaRegla);
+		}catch(Exception e) {
+			logger.error(e.getMessage());
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateConfiguracionGeneracionPropuesta(DtoConfiguracionPropuestasPrecios dto) {
+		if(Checks.esNulo(dto.getIdRegla())) {
+			return false;
+		}
+
+		Filter filterReglaID = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdRegla()));
+		CarteraCondicionesPrecios regla = genericDao.get(CarteraCondicionesPrecios.class, filterReglaID);
+		if(!Checks.esNulo(regla)) {
+			try{
+				if(!Checks.esNulo(dto.getCarteraCodigo())) {
+					DDCartera cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, dto.getCarteraCodigo());
+					regla.setCartera(cartera);
+				}
+				if(!Checks.esNulo(dto.getPropuestaPrecioCodigo())) {
+					DDTipoPropuestaPrecio propuestaPrecio = (DDTipoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPropuestaPrecio.class, dto.getPropuestaPrecioCodigo());
+					regla.setPropuestaPrecio(propuestaPrecio);
+				}
+				if(!Checks.esNulo(dto.getIndicadorCondicionCodigo())) {
+					DDCondicionIndicadorPrecio indicadorPrecio = (DDCondicionIndicadorPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDCondicionIndicadorPrecio.class, dto.getIndicadorCondicionCodigo());
+					regla.setCondicionIndicadorPrecio(indicadorPrecio);
+				}
+				beanUtilNotNull.copyProperty(regla, "menorQue", dto.getMenorQueText());
+				beanUtilNotNull.copyProperty(regla, "mayorQue", dto.getMayorQueText());
+				beanUtilNotNull.copyProperty(regla, "igualQue", dto.getIgualQueText());
+
+				genericDao.save(CarteraCondicionesPrecios.class, regla);
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

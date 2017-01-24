@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service("ofertaManager")
@@ -799,19 +800,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public Oferta getOfertaAceptadaExpdteAprobado(Activo activo){
 		List<ActivoOferta> listaOfertas = activo.getOfertas();
 		
-		for (ActivoOferta activoOferta : listaOfertas) {
-			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
-			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
-				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-				if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())  ||
-					DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())	  ||
-					DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
-				return oferta;
+		if(!Checks.estaVacio(listaOfertas)){
+			for (ActivoOferta activoOferta : listaOfertas) {
+				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+					ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+					if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())  ||
+						DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) ||
+						DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())	  ||
+						DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo()) ||
+						DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()) ||
+						DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
+					return oferta;
+				}
+	
 			}
-
 		}
 		
 		return null;
@@ -984,7 +987,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
-					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(expediente.getComiteSancion().getCodigo()) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(expediente.getComiteSancion().getCodigo()))
+					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
+					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
 				}
 			}
@@ -999,7 +1003,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
-					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(expediente.getComiteSancion().getCodigo()) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(expediente.getComiteSancion().getCodigo()))
+					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
+					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
 				}
 			}
@@ -1023,7 +1028,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		try {
 			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
-			uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
+			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
+			String codigoComite = resultadoDto.getCodigoComite();
+			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+			expediente.setComiteSancion(comite);
+			
 			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1374,7 +1383,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of) {
-		if(!Checks.esNulo(of.getEstadoOferta()) 
+		if(!Checks.esNulo(of) && !Checks.esNulo(of.getEstadoOferta()) 
 				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
 			//Si la oferta esta aceptada, se comprueba que el expediente esté con alguno de los siguientes estados..., para pasar la nueva oferta a Congelada.
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(of.getId());

@@ -2588,21 +2588,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		int i = 0;
 		Oferta ofertaAux = null;
 		Oferta ofertaAceptada = null;
-		while (i < listaActivoOferta.size() && ofertaAceptada == null) {
-			ActivoOferta tmp = listaActivoOferta.get(i);
-			i++;
-			ofertaAux = tmp.getPrimaryKey().getOferta();
-			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
-				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAux.getId());
-				if(!Checks.esNulo(expediente)){ //Si el expediente está aprobado (o estados posteriores).
-					if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado())
-					|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado())
-					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado()) || DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado()))
-						ofertaAceptada = ofertaAux;
+		if(!Checks.estaVacio(listaActivoOferta)){
+			while (i < listaActivoOferta.size() && ofertaAceptada == null) {
+				ActivoOferta tmp = listaActivoOferta.get(i);
+				i++;
+				ofertaAux = tmp.getPrimaryKey().getOferta();
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+					ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAux.getId());
+					if(!Checks.esNulo(expediente)){ //Si el expediente está aprobado (o estados posteriores).
+						if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) || DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo()) || DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()) || DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
+							ofertaAceptada = ofertaAux;
+					}
 				}
 			}
 		}
-		return ofertaAceptada;
+		return ofertaAceptada;		
 	}
 
 	private Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna) {
@@ -3205,6 +3207,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDTipoCarga tipoCargaBien = (DDTipoCarga) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCarga.class, "0");
 			cargaBien.setTipoCarga(tipoCargaBien);
 			cargaBien.setBien(activo.getBien());
+			cargaBien.setEconomica(false);
 			genericDao.save(NMBBienCargas.class, cargaBien);
 			cargaSeleccionada.setCargaBien(cargaBien);			
 		}

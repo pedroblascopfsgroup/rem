@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
@@ -91,6 +92,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
 	private PreciosApi preciosApi;
+    
+    @Autowired
+    private TrabajoApi trabajoApi;
     
     /**
      * Genera un vector de valores de las tareas del idTramite
@@ -250,9 +254,22 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-            				if (!Checks.esNulo(expediente))
-            					if(!Checks.esNulo(expediente.getComiteSancion()))
-            						item.setValue(expediente.getComiteSancion().getDescripcion());
+            				if (!Checks.esNulo(expediente)){
+		            			if(trabajoApi.checkBankia(tareaExterna)){
+		            				String codigoComite = null;
+									try {
+										codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									if(!Checks.esNulo(codigoComite))
+										item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
+		            			}else{
+			            				if(!Checks.esNulo(expediente.getComiteSancion()))
+			            					item.setValue(expediente.getComiteSancion().getDescripcion());
+			            			}
+		            		}
             			}
             		}
             		if(item.getNombre().equals("cartera")){

@@ -249,6 +249,8 @@ public class UvemManager implements UvemManagerApi {
 			// recuperando resultado...
 			numeroIdentificadorTasacion = servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2();
 			
+			logger.info("NumeroIdentificadorDeTasacionlnuita2: " + servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2());
+			
 		}catch (WIMetaServiceException  e) {
 			logger.error(e);
 			throw e;
@@ -998,6 +1000,9 @@ public class UvemManager implements UvemManagerApi {
 			result.setCodigoComite(servicioGMPDJB13_INS.getCodigoComitecocom7() + "");
 			result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
 			
+			logger.info("CodigoComitecocom7: " + servicioGMPDJB13_INS.getCodigoComitecocom7());
+			logger.info("CodigoDeOfertaHayacoofhx2: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
+
 		}catch (WIException e) {
 			logger.error(e);
 			throw e;
@@ -1136,7 +1141,10 @@ public class UvemManager implements UvemManagerApi {
 			}
 			
 			importe = servicioGMPAJC34_INS.getImporteMonetarioConcedido();
-	
+			
+			logger.info("ImporteMonetarioConcedido: " + servicioGMPAJC34_INS.getImporteMonetarioConcedido());
+
+
 			if (importe == null){
 				throw new WIException("GMPAJC34_NO_RESULT_AVAILABLE");
 			}

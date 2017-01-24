@@ -50,6 +50,7 @@ DECLARE
                                                             T_TABLAS('REM01','ACT_SDV_SUBDIVISION_ACTIVO'),
                                                             T_TABLAS('REM01','ACT_SOL_SOLADO'),
                                                             T_TABLAS('REM01','ACT_SPS_SIT_POSESORIA'),
+                                                            T_TABLAS('REM01','ACT_PRD_PROVEEDOR_DIRECCION'),
                                                             T_TABLAS('REM01','ACT_TAS_TASACION'),
                                                             T_TABLAS('REM01','ACT_TBJ TBJ'),
                                                             T_TABLAS('REM01','ACT_TBJ_TRABAJO'),
@@ -161,6 +162,7 @@ BEGIN
   delete from rem01.ACT_PRT_PRESUPUESTO_TRABAJO where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_PRV_PARAMENTO_VERTICAL where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.ACT_PVC_PROVEEDOR_CONTACTO where usuariocrear= 'MIG2';
+  DELETE FROM rem01.ACT_PRD_PROVEEDOR_DIRECCION WHERE USUARIOCREAR = 'MIG2';
   delete from rem01.ACT_PAC_PROPIETARIO_ACTIVO where usuariocrear= 'MIGRAREM01BNK';
   commit;
   delete from rem01.ACT_ETP_ENTIDAD_PROVEEDOR ETP where EXISTS (SELECT 1 FROM REM01.ACT_PVE_PROVEEDOR PVE WHERE PVE.PVE_ID = ETP.PVE_ID AND PVE.usuariocrear= 'MIGRAREM01BNK');

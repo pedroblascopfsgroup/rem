@@ -161,15 +161,16 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			if (resultado != null && resultado.size() > 0) {
 				// existen o pueden existir
-				if (cambios.getPaginacion().getTamanyoBloque() != null) {
-					if (resultado.size() == cambios.getPaginacion().getTamanyoBloque()) {
-						cambios.getPaginacion().setHasMore(true);
-						cambios.getPaginacion().setNumeroBloque(cambios.getPaginacion().getNumeroBloque() + 1);
-
-					} else {
-						cambios.getPaginacion().setHasMore(false);
-					}
-				}
+				/*
+				 * if (cambios.getPaginacion().getTamanyoBloque() != null) { if
+				 * (resultado.size() ==
+				 * cambios.getPaginacion().getTamanyoBloque()) {
+				 * cambios.getPaginacion().setHasMore(true);
+				 * cambios.getPaginacion().setNumeroBloque(cambios.getPaginacion
+				 * ().getNumeroBloque() + 1);
+				 * 
+				 * } else { cambios.getPaginacion().setHasMore(false); } }
+				 */
 				String selectDatoHistorico = null;
 				int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
 				try {
@@ -521,7 +522,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		try {
 			refreshMaterializedView(infoTablas, session);
 		} catch (Throwable t) {
-			throw new CambiosBDDaoError("No se ha podido actualizar la vista materializada "+infoTablas.nombreVistaDatosActuales());
+			throw new CambiosBDDaoError(
+					"No se ha podido actualizar la vista materializada " + infoTablas.nombreVistaDatosActuales());
 		} finally {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Cerrando sesión");

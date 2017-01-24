@@ -3207,6 +3207,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDTipoCarga tipoCargaBien = (DDTipoCarga) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCarga.class, "0");
 			cargaBien.setTipoCarga(tipoCargaBien);
 			cargaBien.setBien(activo.getBien());
+			cargaBien.setEconomica(false);
 			genericDao.save(NMBBienCargas.class, cargaBien);
 			cargaSeleccionada.setCargaBien(cargaBien);			
 		}

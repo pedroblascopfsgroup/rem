@@ -187,8 +187,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.ingreso.cheque'),
-	                	bind:		'{expediente.fechaContabilizacionPropietario}',
-	                	readOnly: true
+	                	bind:		'{expediente.fechaContabilizacionPropietario}'
 	                }
 
 				]

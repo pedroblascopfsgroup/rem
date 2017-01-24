@@ -105,7 +105,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                	reference: 'comboComiteSeleccionado',
 						                	bind: {
 												store: '{comboComites}',
-												value: '{datosbasicosoferta.comiteSancionadorCodigo}'
+												value: '{datosbasicosoferta.comiteSancionadorCodigo}',
+												bind: {
+													disabled: '{esCarteraBankia}'
+												}
 											}
 						                },
 						                {

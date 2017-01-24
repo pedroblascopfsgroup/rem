@@ -267,7 +267,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									}
 								} else {
 									marcarComoEnviado = false;
-									if(contError==MAXIMO_INTENTOS){
+									if(contError.equals(MAXIMO_INTENTOS)){
 										//salimos del while y vamos a por el siguiente handler
 										break;
 									}else{

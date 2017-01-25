@@ -92,9 +92,10 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
 	private PreciosApi preciosApi;
-    
+
     @Autowired
-    private TrabajoApi trabajoApi;
+	private TrabajoApi trabajoApi;
+
     
     /**
      * Genera un vector de valores de las tareas del idTramite
@@ -284,6 +285,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}
             			ofertaAceptada.getActivosOferta().get(0);
+            		}
+            		if(item.getNombre().equals("numIncremento")){
+            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+            			Trabajo trabajo = tramite.getTrabajo();
+            			item.setValue(String.valueOf(trabajoApi.getExcesoPresupuestoActivo(trabajo)));
             		}
             		
             	}

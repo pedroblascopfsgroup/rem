@@ -82,6 +82,8 @@
 	<decision name="T004_EleccionPresupuestoDecision" expression="#{T004_EleccionPresupuestoDecision}">
 		<transition to="T004_DisponibilidadSaldo" name="PresupuestoValido"></transition>
 		<transition to="T004_SolicitudPresupuestos" name="PresupuestoInvalido"></transition>
+		<transition to="T004_AutorizacionBankia" name="ValidoSuperaLimiteBankia"></transition>
+		<transition to="T004_FijacionPlazo" name="ValidoDentroLimiteBankia"></transition>
 	</decision>
 
 
@@ -111,6 +113,8 @@
 		<transition to="T004_SolicitudExtraordinaria" name="SuperaLimite"></transition>
 		<transition to="T004_FijacionPlazo" name="ConSaldo"></transition>
 	</decision>
+
+
 
 
 	<state name="T004_SolicitudExtraordinaria">
@@ -333,10 +337,53 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T004_DisponibilidadSaldo" name="avanzaBPM"></transition>
+		<transition to="T004_EleccionProveedorYTarifaDecision" name="avanzaBPM"></transition>
 	</state>
 	
+	<decision name="T004_EleccionProveedorYTarifaDecision" expression="#{T004_EleccionProveedorYTarifaDecision}">
+		<transition to="T004_DisponibilidadSaldo" name="avanzaBPM"></transition>
+		<transition to="T004_AutorizacionBankia" name="SuperaLimiteBankia"></transition>
+		<transition to="T004_FijacionPlazo" name="DentroLimiteBankia"></transition>
+	</decision>
+	
+	<state name="T004_AutorizacionBankia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T004_AutorizacionBankiaDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T004_AutorizacionBankiaDecision" expression="#{T004_AutorizacionBankiaDecision}">
+		<transition to="FIn2" name="KO"></transition>
+		<transition to="T004_FijacionPlazo" name="OK"></transition>
+	</decision>
+	
 	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>activoEndProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	<end-state name="FIn2">
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">

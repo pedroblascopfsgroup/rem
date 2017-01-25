@@ -1758,8 +1758,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		if (!Checks.esNulo(ultimoPresupuestoActivo) && !Checks.esNulo(ultimoPresupuestoActivo.getImporteInicial()))
-			ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial() + ultimoPresupuestoActivo.getSumaIncrementos();
-
+			if(!Checks.esNulo(ultimoPresupuestoActivo.getSumaIncrementos()))
+				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial() + ultimoPresupuestoActivo.getSumaIncrementos();
+			else
+				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial();
 /*
 		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 		List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);

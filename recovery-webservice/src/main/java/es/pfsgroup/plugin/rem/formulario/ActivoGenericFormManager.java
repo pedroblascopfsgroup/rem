@@ -287,9 +287,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			ofertaAceptada.getActivosOferta().get(0);
             		}
             		if(item.getNombre().equals("numIncremento")){
-            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
-            			Trabajo trabajo = tramite.getTrabajo();
-            			item.setValue(String.valueOf(trabajoApi.getExcesoPresupuestoActivo(trabajo)));
+            			if(trabajoApi.checkSuperaPresupuestoActivoTarea(tareaExterna)){
+	            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+	            			Trabajo trabajo = tramite.getTrabajo();
+	            			item.setValue(String.valueOf(trabajoApi.getExcesoPresupuestoActivo(trabajo)));
+            			}
             		}
             		
             	}

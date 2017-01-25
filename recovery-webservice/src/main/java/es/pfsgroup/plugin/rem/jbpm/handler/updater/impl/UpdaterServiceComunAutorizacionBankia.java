@@ -80,20 +80,22 @@ public class UpdaterServiceComunAutorizacionBankia implements
 		// Evalua si es necesario hacer un incremento de presupuesto
 		if(DDSiNo.SI.equals(valorComboIncremento)){
 			
-			// Crea un nuevo incremento
-			IncrementoPresupuesto nuevoIncremento = new IncrementoPresupuesto();
-			nuevoIncremento.setPresupuestoActivo(presupuesto);
-			nuevoIncremento.setTrabajo(tramite.getTrabajo());
-			
-			// Actualiza la fecha de incremento
-			if(!Checks.esNulo(fechaIncremento)){
-				nuevoIncremento.setFechaAprobacion(fechaIncremento);
+			if(trabajoApi.checkSuperaPresupuestoActivo(tramite.getTrabajo())){
+				// Crea un nuevo incremento
+				IncrementoPresupuesto nuevoIncremento = new IncrementoPresupuesto();
+				nuevoIncremento.setPresupuestoActivo(presupuesto);
+				nuevoIncremento.setTrabajo(tramite.getTrabajo());
+				
+				// Actualiza la fecha de incremento
+				if(!Checks.esNulo(fechaIncremento)){
+					nuevoIncremento.setFechaAprobacion(fechaIncremento);
+				}
+				// Establece valores del incremento, viendo el exceso de presupuesto
+				Float importeExcesoPresupuesto = trabajoApi.getExcesoPresupuestoActivo(tramite.getTrabajo());
+				nuevoIncremento.setImporteIncremento(importeExcesoPresupuesto);
+				
+				genericDao.save(IncrementoPresupuesto.class, nuevoIncremento);
 			}
-			// Establece valores del incremento, viendo el exceso de presupuesto
-			Float importeExcesoPresupuesto = trabajoApi.getExcesoPresupuestoActivo(tramite.getTrabajo());
-			nuevoIncremento.setImporteIncremento(importeExcesoPresupuesto);
-			
-			genericDao.save(IncrementoPresupuesto.class, nuevoIncremento);
 		}
 		
 

@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.restclient.registro;
 
 import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -11,11 +14,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestDatoRechazadoDao;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
 import es.pfsgroup.plugin.rem.restclient.registro.model.DatosRechazados;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
+import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import net.sf.json.JSONObject;
 
@@ -28,10 +33,25 @@ public class RegistroLlamadasManager {
 
 	@Autowired
 	private RestDatoRechazadoDao datosRechazadosDao;
+	
+	@Resource
+	private Properties appProperties;
 
 	@Transactional(readOnly = false, noRollbackFor = ErrorServicioWebcom.class, propagation = Propagation.NEVER)
-	public void guardaRegistroLlamada(RestLlamada llamada, @SuppressWarnings("rawtypes") DetectorCambiosBD handler) {
+	public void guardaRegistroLlamada(RestLlamada llamada, @SuppressWarnings("rawtypes") DetectorCambiosBD handler,Integer contError) {
 		logger.debug("Guardando traza de la llamada en BD");
+		
+		Integer MAXIMO_INTENTOS = DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT;
+		String maximoIntentosProperties = !Checks
+				.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
+						? appProperties.getProperty("rest.client.webcom.maximo.intentos") : null;
+		try {
+			if (maximoIntentosProperties != null) {
+				MAXIMO_INTENTOS = Integer.parseInt(maximoIntentosProperties);
+			}
+		} catch (Exception e) {
+			MAXIMO_INTENTOS = DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT;
+		}
 
 		llamadaDao.guardaRegistro(llamada);
 
@@ -40,6 +60,7 @@ public class RegistroLlamadasManager {
 		if (llamada.getDatosErroneos() != null && llamada.getDatosErroneos().size() > 0 && jsonStyleName != null
 				&& !jsonStyleName.isEmpty()) {
 			for (JSONObject jsonObject : llamada.getDatosErroneos()) {
+				boolean isHttp= false;
 				try {
 					if (jsonObject.containsKey(jsonStyleName) && handler.nombreVistaDatosActuales() != null) {
 						String id = jsonObject.getString(jsonStyleName);
@@ -51,9 +72,17 @@ public class RegistroLlamadasManager {
 								datoRechazado.setDatosInvalidos(jsonObject.getJSONArray("invalidFields").toString());
 							}else{
 								datoRechazado.setDatosInvalidos("error http");
+								isHttp= true;
 							}
 							datoRechazado.setIteracion(llamada.getIteracion());
-							datosRechazadosDao.guardaRegistro(datoRechazado);
+							
+							if(!isHttp){
+								datosRechazadosDao.guardaRegistro(datoRechazado);
+							}else if(contError == MAXIMO_INTENTOS){
+								datosRechazadosDao.guardaRegistro(datoRechazado);
+							}
+							
+							
 						}
 					}
 				} catch (Exception e) {

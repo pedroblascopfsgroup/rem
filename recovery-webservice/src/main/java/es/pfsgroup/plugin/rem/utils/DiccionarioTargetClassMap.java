@@ -171,6 +171,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("areaBloqueo", DDAreaBloqueo.class);
 		mapa.put("tipoBloqueo", DDTipoBloqueo.class);
 		mapa.put("situacionComercial", DDSituacionComercial.class);
+		mapa.put("tipoPropuestaPrecio", DDTipoPropuestaPrecio.class);
+		mapa.put("indicadorCondicionPrecio", DDCondicionIndicadorPrecio.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

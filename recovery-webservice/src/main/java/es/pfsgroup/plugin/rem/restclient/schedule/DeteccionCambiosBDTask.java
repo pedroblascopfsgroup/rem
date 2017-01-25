@@ -43,7 +43,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	private RegistroLlamadasManager registroLlamadas;
 
-	private Integer MAXIMO_INTENTOS_DEFAULT = 5;
+	public static Integer MAXIMO_INTENTOS_DEFAULT = 5;
 	@Resource
 	private Properties appProperties;
 
@@ -135,7 +135,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			errorServicioWeb = e;
 		} finally {
 			if (somethingdone && (registroLlamadas != null)) {
-				registroLlamadas.guardaRegistroLlamada(registro, handler);
+				registroLlamadas.guardaRegistroLlamada(registro, handler,0);
 			}
 			if ((errorServicioWeb != null && !errorServicioWeb.isReintentable()) || errorServicioWeb == null) {
 				logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
@@ -268,16 +268,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									}
 								} else {
 									marcarComoEnviado = false;
-									if (contError == MAXIMO_INTENTOS) {
-										break;
-									} else {
-										if (listPendientes != null
-												&& listPendientes.getPaginacion().getTamanyoBloque() != null) {
-											listPendientes.getPaginacion().setHasMore(true);											
-										}										
-										contError++;
-									}
-
+									contError++;
 								}
 							} catch (CambiosBDDaoError e) {
 								marcarComoEnviado = false;
@@ -286,11 +277,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								break;
 							} finally {
 								if (somethingdone && (registroLlamadas != null)) {
-									registroLlamadas.guardaRegistroLlamada(registro, handler);
+									registroLlamadas.guardaRegistroLlamada(registro, handler,contError);
 									llamadas.add(registro);
 								}
 							}
-						} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore()));
+						} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
+								|| (contError > 0 && contError < MAXIMO_INTENTOS));
 
 						if (marcarComoEnviado) {
 							logger.debug(

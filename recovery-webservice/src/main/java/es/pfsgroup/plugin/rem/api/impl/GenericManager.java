@@ -43,11 +43,13 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -76,7 +78,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
     
     @Autowired
     private ActivoApi activoApi;
-    
+
 	@Resource
 	private Properties appProperties;
     
@@ -559,5 +561,30 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 
 		return listaTiposBloqueo;
+	}
+
+	@Override
+	public List<DDCondicionIndicadorPrecio> getIndicadorCondicionPrecioFiltered(String codigoCartera) {
+		List<DDCondicionIndicadorPrecio> listaTipoPropuestas = new ArrayList<DDCondicionIndicadorPrecio>();
+
+		if(Checks.esNulo(codigoCartera)) {
+			return listaTipoPropuestas;
+		}
+
+		// Obtener todos los tipos de propuestas.
+		listaTipoPropuestas.addAll(genericDao.getList(DDCondicionIndicadorPrecio.class));
+
+		// Obtener la lista de reglas actual filtradas por cartera.
+		Filter filtroUsadoActualmentePorCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", codigoCartera);
+		List<CarteraCondicionesPrecios> listaUsadoActualmentePorCartera = genericDao.getList(CarteraCondicionesPrecios.class, filtroUsadoActualmentePorCartera);
+
+		// Por cada regla actual, contrastar la propuesta de precio usada con la lista de todas ellas y si coincide eliminarla de la lista.
+		for(CarteraCondicionesPrecios condicion: listaUsadoActualmentePorCartera) {
+			if(listaTipoPropuestas.contains(condicion.getCondicionIndicadorPrecio())) {
+				listaTipoPropuestas.remove(condicion.getCondicionIndicadorPrecio());
+			}
+		}
+
+		return listaTipoPropuestas;
 	}
 }

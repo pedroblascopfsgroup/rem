@@ -156,38 +156,48 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											collapsed: true,
 											items :	[
 											       	 // fila 0
-												 	{
-												 		xtype: 'combo',
-												 		name: 'provinciaCodigo',
-												 		reference: 'provinciaCombo',
-												 		fieldLabel:	HreRem.i18n('fieldlabel.proveedores.provincia'),
+												 	{ 
+											        	xtype: 'comboboxfieldbase',
+											        	name: 'provinciaCodigo',
+											        	reference: 'provinciaCombo',
+												    	addUxReadOnlyEditFieldPlugin: false,
+											        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 											        	bind: {
-										            		store: '{comboProvincia}'
+										            		store: '{comboFiltroProvincias}'
 										            	},
-										            	displayField: 'descripcion',
-														valueField: 'codigo',
-														publishes: 'value'
-												 	},
-												 	{
-												 		xtype: 'combo',
-												 		name: 'municipioCodigo',
-												 		reference: 'municipioCombo',
-												 		fieldLabel:	HreRem.i18n('fieldlabel.proveedores.municipio'),
+										            	listeners: {
+										                    'select': function(combo, records, opts) {
+										                    	var chainedCombo = me.up('configuracionmain').lookupReference('municipioCombo');
+										                    	var store = chainedCombo.getStore();
+										                    	chainedCombo.setDisabled(false);
+										                    	chainedCombo.clearValue();
+										                    	store.clearFilter();
+										                    	store.filter([{
+										                            filterFn: function(rec){
+										                                if (rec.getData().provincia.codigo == records.getData().codigo){
+										                                    return true;
+										                                }
+										                                return false;
+										                            }
+										                        }]);
+										                    }
+										                }
+											        },
+											        { 
+											        	xtype: 'comboboxfieldbase',
+											        	name: 'municipioCodigo',
+											        	reference: 'municipioCombo',
+												    	addUxReadOnlyEditFieldPlugin: false,
+											        	fieldLabel: HreRem.i18n('fieldlabel.proveedores.municipio'),
+											        	disabled: true,
 											        	bind: {
-										            		store: '{comboMunicipio}',
-										            		disabled: '{!provinciaCombo.value}',
-										            		filters: {
-										            			property: 'codigoProvincia',
-										            			value: '{provinciaCombo.value}'
-										            		}
-										            	},
-										            	displayField: 'descripcion',
-														valueField: 'codigo'
-												 	},
+											        		store: '{comboFiltroMunicipios}'
+										            	}
+											        },
 												 	{
-														fieldLabel:  HreRem.i18n('fieldlabel.proveedores.cp'),
+														fieldLabel: HreRem.i18n('fieldlabel.proveedores.cp'),
 														name: 'codigoPostal',
-									                	bind:		'{proveedor.cp}'
+									                	bind: '{proveedor.cp}'
 												 	}
 											]
 							                

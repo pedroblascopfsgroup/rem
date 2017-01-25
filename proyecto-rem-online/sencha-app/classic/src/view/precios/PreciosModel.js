@@ -1,8 +1,8 @@
 Ext.define('HreRem.view.precios.PreciosModel', {
-    extend: 'HreRem.view.common.DDViewModel',
-    alias: 'viewmodel.precios',
-    
-    stores: {
+    extend	: 'HreRem.view.common.DDViewModel',
+    alias	: 'viewmodel.precios',
+    requires: ['HreRem.model.ConfiguracionGeneracionPropuestasModel'],
+    stores	: {
     	
     	
     		activos: {
@@ -80,7 +80,55 @@ Ext.define('HreRem.view.precios.PreciosModel', {
     	    	remoteSort: true,
     	    	remoteFilter: true
     		},
-    		
+
+    		configuracionGeneracionPropuestas: {
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.ConfiguracionGeneracionPropuestasModel',
+    	    	proxy: {
+    		        type: 'uxproxy',
+    		        remoteUrl: 'precios/getConfiguracionGeneracionPropuestas',
+    			    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+    	    	}
+    		},
+
+    		comboCartera: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'entidadesPropietarias'}
+				},
+				autoLoad: true
+    		},
+
+    		comboTipoPropuestaPrecio: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoPropuestaPrecio'}
+				},
+				autoLoad: true
+    		},
+
+    		comboIndicadorCondicionPrecioFiltered: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getIndicadorCondicionPrecioFiltered'
+				}
+    		},
+
+    		comboIndicadorCondicionPrecio: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'indicadorCondicionPrecio'}
+				},
+				autoLoad: true
+    		},
+
     		numActivosByTipoPrecioAmpliada: {
     			
     			pageSize: $AC.getDefaultPageSize(),

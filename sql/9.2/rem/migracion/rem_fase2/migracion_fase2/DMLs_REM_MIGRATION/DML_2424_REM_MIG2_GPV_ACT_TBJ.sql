@@ -282,7 +282,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_1||' ANALIZADA.');
           
       --Inicio del proceso de volcado sobre GPV_TBJ
-      DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_2||'.');
+      /*DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_2||'.');
       
       V_SENTENCIA := '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_2||' (
@@ -313,7 +313,7 @@ BEGIN
       
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_2||' COMPUTE STATISTICS');
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');*/
       
       
       -- INFORMAMOS A LA TABLA INFO GPV_ACT      
@@ -367,7 +367,7 @@ BEGIN
       
       -- INFORMAMOS A LA TABLA INFO GPV_TBJ      
       -- Registros MIG
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
+     /* V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
       EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
       
       -- Total registros rechazados
@@ -411,7 +411,7 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_SENTENCIA;
       
-      COMMIT;  
+      COMMIT;  */
 
 EXCEPTION
       WHEN OTHERS THEN

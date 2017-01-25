@@ -151,7 +151,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			// System.out.println(queryString);
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Ejecutando: " + queryString);
+					logger.trace("Ejecutando: " + queryString);
 				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
 			} catch (Throwable t) {
@@ -161,15 +161,16 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			if (resultado != null && resultado.size() > 0) {
 				// existen o pueden existir
-				if (cambios.getPaginacion().getTamanyoBloque() != null) {
-					if (resultado.size() == cambios.getPaginacion().getTamanyoBloque()) {
-						cambios.getPaginacion().setHasMore(true);
-						cambios.getPaginacion().setNumeroBloque(cambios.getPaginacion().getNumeroBloque() + 1);
-
-					} else {
-						cambios.getPaginacion().setHasMore(false);
-					}
-				}
+				/*
+				 * if (cambios.getPaginacion().getTamanyoBloque() != null) { if
+				 * (resultado.size() ==
+				 * cambios.getPaginacion().getTamanyoBloque()) {
+				 * cambios.getPaginacion().setHasMore(true);
+				 * cambios.getPaginacion().setNumeroBloque(cambios.getPaginacion
+				 * ().getNumeroBloque() + 1);
+				 * 
+				 * } else { cambios.getPaginacion().setHasMore(false); } }
+				 */
 				String selectDatoHistorico = null;
 				int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
 				try {
@@ -179,7 +180,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 						selectDatoHistorico = selectFromDatosHistoricos + WHERE + infoTablas.clavePrimaria() + " = "
 								+ r[posPk];
 						if (logger.isDebugEnabled()) {
-							logger.debug("Ejecutando: " + selectDatoHistorico);
+							logger.trace("Ejecutando: " + selectDatoHistorico);
 						}
 						Object[] historico = queryExecutor.sqlRunUniqueResult(session, selectDatoHistorico);
 						if (historico != null) {
@@ -199,7 +200,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 		} finally {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Cerrando sesión");
+				logger.trace("Cerrando sesión");
 			}
 			if (session != null) {
 				if (session.isOpen()) {
@@ -249,7 +250,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Ejecutando: " + queryString);
+					logger.trace("Ejecutando: " + queryString);
 				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
 				if (resultado != null) {
@@ -266,7 +267,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 		} finally {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Cerrando sesión");
+				logger.trace("Cerrando sesión");
 			}
 			if (session != null) {
 				if (session.isOpen()) {
@@ -328,7 +329,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String queryDelete = "TRUNCATE TABLE " + infoTablas.nombreTablaDatosHistoricos();
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Ejecutando: " + queryDelete);
+					logger.trace("Ejecutando: " + queryDelete);
 				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryDelete);
 				if (registro != null) {
@@ -345,7 +346,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					+ columns + FROM + infoTablas.nombreVistaDatosActuales();
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Ejecutando: " + queryInsert);
+					logger.trace("Ejecutando: " + queryInsert);
 				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryInsert);
 				if (registro != null) {
@@ -521,7 +522,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		try {
 			refreshMaterializedView(infoTablas, session);
 		} catch (Throwable t) {
-			throw new CambiosBDDaoError("No se ha podido actualizar la vista materializada "+infoTablas.nombreVistaDatosActuales());
+			throw new CambiosBDDaoError(
+					"No se ha podido actualizar la vista materializada " + infoTablas.nombreVistaDatosActuales());
 		} finally {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Cerrando sesión");

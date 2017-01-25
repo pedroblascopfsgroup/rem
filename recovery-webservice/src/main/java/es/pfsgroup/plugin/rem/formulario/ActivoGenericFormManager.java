@@ -96,6 +96,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     @Autowired
 	private TrabajoApi trabajoApi;
     
+    @Autowired
+    private TrabajoApi trabajoApi;
+    
     /**
      * Genera un vector de valores de las tareas del idTramite
      * @param idTramite El trámite del cual se quiere extraer sus valores de tareas
@@ -254,9 +257,22 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-            				if (!Checks.esNulo(expediente))
-            					if(!Checks.esNulo(expediente.getComiteSancion()))
-            						item.setValue(expediente.getComiteSancion().getDescripcion());
+            				if (!Checks.esNulo(expediente)){
+		            			if(trabajoApi.checkBankia(tareaExterna)){
+		            				String codigoComite = null;
+									try {
+										codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									if(!Checks.esNulo(codigoComite))
+										item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
+		            			}else{
+			            				if(!Checks.esNulo(expediente.getComiteSancion()))
+			            					item.setValue(expediente.getComiteSancion().getDescripcion());
+			            			}
+		            		}
             			}
             		}
             		if(item.getNombre().equals("cartera")){

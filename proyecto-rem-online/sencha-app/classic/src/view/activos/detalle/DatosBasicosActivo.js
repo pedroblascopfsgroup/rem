@@ -286,20 +286,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'datefieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
-					//	colspan: 2,
+						colspan: 2,
 						bind:		'{activo.fechaAltaActivoRem}',
 						readOnly	: true
 					},
-					{
-						xtype : 'comboboxfieldbase',
-						fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.bloqueo.tipo.comercializacion'),
-						labelWidth: 200,
-						bind: {
-							store : '{comboSiNoBoolean}',
-							value: '{activo.bloqueoTipoComercializacionAutomatico}',
-							disabled: '{!activo.aplicaComercializar}'
-						}
-					},
+					
 		            {    
 		                
 						xtype:'fieldsettable',
@@ -460,6 +451,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'fieldsettable',
 								defaultType: 'textfieldbase',
 								title: HreRem.i18n('title.perimetros.comercializacion'),
+								reference: 'bloquecomercializable',
+								bind:{visible: '{activo.aplicaComercializar}'},
 								border: true,
 								colapsible: false,
 								colspan: 3,
@@ -470,8 +463,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.comercializacion'),
 										bind: {
 											store: '{comboTipoComercializarActivo}',
-											value: '{activo.tipoComercializarCodigo}',
-											visible: '{activo.aplicaComercializar}'
+											value: '{activo.tipoComercializarCodigo}'
 										}
 									},
 									{
@@ -479,8 +471,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
 											store: '{comboTipoDestinoComercialCreaFiltered}',
-											value: '{activo.tipoComercializacionCodigo}',
-											visible: '{activo.aplicaComercializar}'
+											value: '{activo.tipoComercializacionCodigo}'
 										}
 									},
 									{
@@ -488,19 +479,40 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
 										bind: {
 											store: '{comboTipoAlquiler}',
-											visible: '{activo.aplicaComercializar}',
 											disabled: '{!activo.isDestinoComercialAlquiler}',
 											value: '{activo.tipoAlquilerCodigo}'
 										}
 									},
+									{
+										xtype : 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.bloqueo.tipo.comercializacion'),
+										labelWidth: 200,
+										bind: {
+											store : '{comboSiNoBoolean}',
+											value: '{activo.bloqueoTipoComercializacionAutomatico}'
+										}
+									}
 									
+									]
+							},
+							//Bloque Comercialización
+							{    
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								title: HreRem.i18n('title.perimetros.comercializacion'),
+								reference: 'bloquenocomercializable',
+								bind:{visible: '{!activo.aplicaComercializar}'},
+								border: true,
+								colapsible: false,
+								colspan: 3,
+								items :
+									[
 									//Disponibilidad Comercial
 									{
 										xtype: 'textfieldbase',
 										fieldLabel: HreRem.i18n('title.publicaciones.estadoDisponibilidadComercial'),
 										bind : {
-											value: '{activo.situacionComercialDescripcion}',
-											visible: '{!activo.aplicaComercializar}'
+											value: '{activo.situacionComercialDescripcion}'
 										}, 
 										readOnly	: true
 									}

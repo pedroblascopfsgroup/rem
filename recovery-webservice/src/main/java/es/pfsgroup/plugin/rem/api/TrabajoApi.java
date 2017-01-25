@@ -635,5 +635,6 @@ public interface TrabajoApi {
 	 */
 	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response, String codPlantilla) throws Exception;
 
+	public Boolean checkSuperaDelegacion(TareaExterna tarea);
 
 }

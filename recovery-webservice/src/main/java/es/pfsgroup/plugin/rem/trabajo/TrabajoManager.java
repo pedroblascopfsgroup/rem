@@ -1721,6 +1721,27 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return hayPresupuestoAutorizado;
 	}
+	
+	@Override
+	public Boolean checkSuperaDelegacion(TareaExterna tarea) {
+		String PRESUPUESTO_AUTORIZADO = "02";
+
+		Boolean hayPresupuestoAutorizado = false;
+
+		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
+
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);
+
+		for (PresupuestoTrabajo presupuestoTrabajo : presupuestosTrabajo) {
+			if (PRESUPUESTO_AUTORIZADO.equals(presupuestoTrabajo.getEstadoPresupuesto().getCodigo())) {
+				if(presupuestoTrabajo.getImporte()>5000L)
+					return true;
+			}
+		}
+
+		return false;
+	}
 
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivoTarea")

@@ -200,15 +200,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 											    xtype: 'itemselectorbase',
 											    reference: 'itemselTerritorial',
 											    fieldLabel: HreRem.i18n('fieldlabel.proveedor.territorial'),
-											    store: {
-											    	model: 'HreRem.model.ComboBase',
-													proxy: {
-														type: 'uxproxy',
-														remoteUrl: 'generic/getDiccionario',
-														extraParams: {diccionario: 'provincias'}
-													},
-													autoLoad: true
-											    },
+											    store: me.up('proveedoresdetallemain').getViewModel().getStore('comboFiltroProvincias'),
 											    bind: {
 											    	value: '{proveedor.territorialCodigo}'
 											    }

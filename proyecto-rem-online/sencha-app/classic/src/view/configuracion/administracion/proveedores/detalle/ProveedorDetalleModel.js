@@ -84,15 +84,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 					extraParams: {diccionario: 'motivoRetencionPago'}
     			}
 		},
-		comboTerritorial: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'provincias'}
-			},
-			autoLoad: true
-		},
 		direccionesDelegaciones: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.DireccionesDelegacionesModel',

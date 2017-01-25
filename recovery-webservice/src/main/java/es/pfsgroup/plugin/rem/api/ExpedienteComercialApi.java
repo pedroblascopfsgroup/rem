@@ -211,11 +211,11 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Recupera la informacion de un Comprador de un Expediente Comercial
 	 * 
-	 * @param idComprador
+	 * @param idCom
+	 * @param idExp
 	 * @return
 	 */
-	public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idComprador);
-
+	public VBusquedaDatosCompradorExpediente getDatosCompradorById(String idCom, String idExp);
 	/**
 	 * Método que guarda la información de la pestaña Condicionantes del
 	 * expediente

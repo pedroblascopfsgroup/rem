@@ -1153,11 +1153,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 	
 	@Override
-	public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long id) {
+	public VBusquedaDatosCompradorExpediente getDatosCompradorById(String idCom, String idExp) {
 		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id.toString());
+		Filter filtroCom = genericDao.createFilter(FilterType.EQUALS, "id", idCom);
+		Filter filtroEco = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial", idExp);
 		
-		return genericDao.get(VBusquedaDatosCompradorExpediente.class, filtro);
+		return genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroCom, filtroEco);
 	}
 
 	private DtoCondiciones expedienteToDtoCondiciones(ExpedienteComercial expediente) {

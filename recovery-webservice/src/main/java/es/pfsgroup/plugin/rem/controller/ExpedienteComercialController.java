@@ -630,10 +630,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getCompradorById(Long id, ModelMap model ) {
+	public ModelAndView getCompradorById(VBusquedaDatosCompradorExpediente dto, ModelMap model ) {
 		
 		try {
-			VBusquedaDatosCompradorExpediente comprador = expedienteComercialApi.getDatosCompradorById(id);
+			VBusquedaDatosCompradorExpediente comprador = expedienteComercialApi.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
 			model.put("data", comprador);
 			//model.put("success", true);
 		}catch (Exception e) {

@@ -340,6 +340,30 @@ public interface TrabajoApi {
 	public Boolean existePresupuestoTrabajo(TareaExterna tarea);
 
 	/**
+	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera el ultimo presupuesto del activo
+	 * @param tarea
+	 * @return
+	 */
+	@BusinessOperationDefinition("trabajoManager.checkSuperaPresupuestoActivoTarea")
+	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea);
+	
+	/**
+	 * Verifica para un trabajo si el presupuesto acumulado del trabajo supera el ultimo presupuesto del activo
+	 * @param trabajo
+	 * @return
+	 */
+	@BusinessOperationDefinition("trabajoManager.checkSuperaPresupuestoActivo")
+	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo);
+	
+	/**
+	 * Obtiene el importe de exceso del acumulado de presupuestos del trabajo con el ultimo presupuesto del activo
+	 * @param trabajo
+	 * @return
+	 */
+	@BusinessOperationDefinition("trabajoManager.getExcesoPresupuestoActivo")
+	public Float getExcesoPresupuestoActivo(Trabajo trabajo);
+	
+	/**
 	 * Evalúa para una tarea, si existe tarifa(s) asociados al trabajo
 	 * 
 	 * @param TareaExterna
@@ -610,5 +634,6 @@ public interface TrabajoApi {
 	 * @throws Exception
 	 */
 	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response, String codPlantilla) throws Exception;
+
 
 }

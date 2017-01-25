@@ -158,7 +158,7 @@ public class ClienteWebcomGenerico {
 		ArrayList<JSONObject> datosErroneos = new ArrayList<JSONObject>();
 		for (int i = 0; i < data.size(); i++) {
 			JSONObject jsonObject = data.getJSONObject(i);
-			if (trazandoRequest || (jsonObject.containsKey("succes") && !jsonObject.getBoolean("succes"))) {
+			if (trazandoRequest || (jsonObject.containsKey("success") && !jsonObject.getBoolean("success"))) {
 				datosErroneos.add(jsonObject);
 			}
 

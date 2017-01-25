@@ -179,15 +179,14 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 															fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 											            	name:		'descripcionPoblacion'
 														 },
-														 { 
-												        	xtype: 'combo',
+														 {
+												        	xtype: 'comboboxfieldbase',
 												        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 												        	name: 'codigoProvincia',
+												        	addUxReadOnlyEditFieldPlugin: false,
 												        	bind: {
 											            		store: '{comboFiltroProvincias}'
 											            	},
-											            	displayField: 'descripcion',
-								    						valueField: 'codigo',
 								    						listeners: {
 											                	saveSingleField: 'onSaveSingleField'
 											            	}

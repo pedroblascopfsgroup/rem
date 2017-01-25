@@ -183,7 +183,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	cellClickContadorAutomatico: function(view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 		
 		var me = this;	
-		//debugger;
+
 		if(cellIndex != 0 && cellIndex != 1 && cellIndex != 3) {
 			
 			this.tipoPropuestaCodigo = me.tipoPropuestaByColumnaSeleccionadaAutomatica(cellIndex);
@@ -425,6 +425,86 @@ Ext.define('HreRem.view.precios.PreciosController', {
 			me.fireEvent("warnToast", HreRem.i18n("msg.historico.propuesta.sin.documento.en.trabajo"));   
 	   }
 
-   }
+   },
 
+   onChangeCarteraChainedCombo: function(combo) {
+	   	var me = this,
+	   	chainedCombo = me.lookupReference(combo.chainedReference);    	
+	   	me.getViewModel().notify();
+	   	if(!Ext.isEmpty(chainedCombo.getValue())) {
+				chainedCombo.clearValue();
+	   	}
+
+	   	var chainedStore = chainedCombo.getStore();
+
+	   	if(!Ext.isEmpty(chainedStore)) {
+	   		chainedStore.getProxy().extraParams = {
+	   			'codigoCartera' : combo.getValue()
+	   		}
+
+	    	chainedStore.load({
+				callback: function(records, operation, success) {
+	   				if(!Ext.isEmpty(records) && records.length > 0) {
+	   					if (chainedCombo.selectFirst == true) {
+		   					chainedCombo.setSelection(1);
+		   				};
+	   					chainedCombo.setDisabled(false);
+	   				} else {
+	   					chainedCombo.setDisabled(true);
+	   				}
+				}
+			});
+	   	}
+   },
+
+   /**
+    * Este método habilita los campos de edición en caso de ser necesario especificar condiciones.
+    */
+   onChangeIndicadorCondicionPrecio: function(combo) {
+	   	var me = this;
+
+		var colMenorQue = me.lookupReference('cbColMenorQue');
+		var colMayorQue = me.lookupReference('cbColMayorQue');
+		var colIgualQue = me.lookupReference('cbColIgualQue');
+
+		var condicion = combo.getSelectedRecord().getData().necesitaCondicion;
+
+		if(Ext.isEmpty(condicion)) {
+			// Si viene null deshabilitar campos de edición.
+			colMenorQue.setDisabled(true);
+			colMayorQue.setDisabled(true);
+			colIgualQue.setDisabled(true);
+		} else if(condicion == 1) {
+			// Si viene relleno con 1 habilitar campos de edición.
+			colMenorQue.setDisabled(false);
+			colMayorQue.setDisabled(false);
+			colIgualQue.setDisabled(false);
+			// Validar los campos para que se muestre la necesidad de completar.
+			colMenorQue.validate();
+			colMayorQue.validate();
+			colIgualQue.validate();
+		} else {
+			// Si viene cualquier otra cosa deshabilitar campos de edición.
+			colMenorQue.setDisabled(true);
+			colMayorQue.setDisabled(true);
+			colIgualQue.setDisabled(true);
+		}
+   },
+
+   /**
+    * Este método comprueba si al menos un campo de los 3 contiene datos.
+    */
+   validateCamposRellenos: function(value) {
+	    var me = this;
+
+	   	var colMenorQue = me.lookupReference('cbColMenorQue');
+		var colMayorQue = me.lookupReference('cbColMayorQue');
+		var colIgualQue = me.lookupReference('cbColIgualQue');
+
+		if(Ext.isEmpty(colMenorQue.getValue()) && Ext.isEmpty(colMayorQue.getValue()) && Ext.isEmpty(colIgualQue.getValue())) {
+			return HreRem.i18n("msg.error.validate.emptpy.fields");
+		} else {
+			return true;
+		}
+   }
 });

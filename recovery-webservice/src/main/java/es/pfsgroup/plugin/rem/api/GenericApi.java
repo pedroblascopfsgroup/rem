@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -182,6 +183,14 @@ public interface GenericApi {
 	 * @return Devuelve una lista con los resultados filtrados.
 	 */
 	public List<DDTipoBloqueo> getDiccionarioTipoBloqueo(String areaCodigo);
+
+	/**
+	 * Este método obtiene una lista con los datos filtrados por el código de cartera.
+	 * 
+	 * @param codigoCartera : código de cartera.
+	 * @return Devuelve una lista con los resultados filtrados.
+	 */
+	public List<DDCondicionIndicadorPrecio> getIndicadorCondicionPrecioFiltered(String codigoCartera);
 
 }
 

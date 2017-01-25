@@ -268,7 +268,16 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									}
 								} else {
 									marcarComoEnviado = false;
-									contError++;
+									if (contError == MAXIMO_INTENTOS) {
+										break;
+									} else {
+										if (listPendientes != null
+												&& listPendientes.getPaginacion().getTamanyoBloque() != null) {
+											listPendientes.getPaginacion().setHasMore(true);											
+										}										
+										contError++;
+									}
+
 								}
 							} catch (CambiosBDDaoError e) {
 								marcarComoEnviado = false;
@@ -277,21 +286,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								break;
 							} finally {
 								if (somethingdone && (registroLlamadas != null)) {
-									if (registro.getEndpoint() != null
-											&& listPendientes.getPaginacion().getNumeroBloque() != null) {
-										registro.setEndpoint(
-												registro.getEndpoint().concat("(")
-														.concat(String
-																.valueOf(listPendientes.getPaginacion()
-																		.getNumeroBloque())
-																.concat("-").concat(contError.toString()).concat(")")));
-									}
 									registroLlamadas.guardaRegistroLlamada(registro, handler);
 									llamadas.add(registro);
 								}
 							}
-						} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
-								|| (contError > 0 && contError < MAXIMO_INTENTOS));
+						} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore()));
 
 						if (marcarComoEnviado) {
 							logger.debug(

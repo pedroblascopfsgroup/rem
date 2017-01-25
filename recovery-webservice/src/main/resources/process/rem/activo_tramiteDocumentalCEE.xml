@@ -32,6 +32,7 @@
 		<transition to="Fin" name="KO"></transition>
 		<transition to="T003_SolicitudExtraordinaria" name="OKSinSaldo"></transition>
 		<transition to="T003_EmisionCertificado" name="OKConSaldo"></transition>
+		<transition to="T003_AutorizacionBankia" name="OKSinSaldoBankia"></transition>
 	</decision>
 
 	<state name="T003_SolicitudExtraordinaria">
@@ -190,6 +191,33 @@
 		<transition to="T003_EmisionCertificado" name="DirectoEmision"></transition>
 	</node>
 		
+	<state name="T003_AutorizacionBankia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T003_AutorizacionBankiaDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="T003_AutorizacionBankiaDecision" expression="#{T003_AutorizacionBankiaDecision}">
+		<transition to="Fin2" name="KO"></transition>
+		<transition to="T003_EmisionCertificado" name="OK"></transition>
+	</decision>
+		
 	<end-state name="Fin">
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"
@@ -199,5 +227,15 @@
 			</action>
 		</event>
 	</end-state>
-
+	
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>activoEndProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+	
 </process-definition>

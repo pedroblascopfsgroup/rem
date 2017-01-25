@@ -6,8 +6,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     disableValidation: true,
     reference: 'compradoresexpedienteref',
     scrollable	: 'y',
-//    controller: 'expedientedetalle',
-   
+  
 
     initComponent: function () {
 
@@ -28,9 +27,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							store: '{storeCompradoresExpediente}'
 						},									
 						listeners : {
-					    	rowdblclick: 'onCompradoresListDobleClick'/*,
-					    	rowclick: 'onCompradoresListClick'*/
-					    	
+					    	rowdblclick: 'onCompradoresListDobleClick'					    	
 					    },
 					    features: [{
 				            id: 'summary',
@@ -326,13 +323,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		//recargar grid
 		var listadoCompradores = me.down("[reference=listadoCompradores]");
 		listadoCompradores.getStore().load();
-		//recargar datos dependiendo de la fila seleccionada
-		var records= listadoCompradores.getSelection();
-		if(!Ext.isEmpty(records)){
-			var record = records[0];
-			var gridView= listadoCompradores.getView();
-			me.lookupController().onCompradoresListClick(gridView,record);
-		}
 		
 //		me.lookupController().cargarTabData(me);
 

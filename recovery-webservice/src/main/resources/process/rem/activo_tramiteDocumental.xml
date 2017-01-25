@@ -33,6 +33,7 @@
 		<transition to="T002_SolicitudLPOGestorInterno" name="OKSinPago"></transition>
 		<transition to="T002_SolicitudDocumentoGestoria" name="OKConPagoYSaldo"></transition>
 		<transition to="T002_SolicitudExtraordinaria" name="OKConPagoYSinSaldo"></transition>
+		<transition to="T002_AutorizacionBankia" name="OKConPagoYSinSaldoBankia"></transition>
 	</decision>
 
 
@@ -238,6 +239,33 @@
 		<transition to="T002_SolicitudDocumentoGestoria" name="GestorActivo"></transition>
 	</node>
 	
+	<state name="T002_AutorizacionBankia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T002_AutorizacionBankiaDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T002_AutorizacionBankiaDecision" expression="#{T002_AutorizacionBankiaDecision}">
+		<transition to="Fin2" name="KO"></transition>
+		<transition to="T002_SolicitudDocumentoGestoria" name="OK"></transition>
+	</decision>
+	
 	<end-state name="Fin">
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"
@@ -247,5 +275,15 @@
 			</action>
 		</event>
 	</end-state>
-
+	
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>activoEndProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+	
 </process-definition>

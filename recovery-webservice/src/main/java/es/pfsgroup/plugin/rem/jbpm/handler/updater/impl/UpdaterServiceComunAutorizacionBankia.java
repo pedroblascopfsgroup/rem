@@ -32,6 +32,8 @@ public class UpdaterServiceComunAutorizacionBankia implements
 	private static final String FECHA_AMPLIACION = "fecha";
 	private static final String COMBO_AMPLIACION = "comboAmpliacion";
 	private static final String CODIGO_T004_AUTORIZACION_BANKIA = "T004_AutorizacionBankia";
+	private static final String CODIGO_T002_AUTORIZACION_BANKIA = "T002_AutorizacionBankia";
+	private static final String CODIGO_T003_AUTORIZACION_BANKIA = "T003_AutorizacionBankia";
 	
 	@Autowired
 	ActivoManager activoApi;
@@ -103,7 +105,8 @@ public class UpdaterServiceComunAutorizacionBankia implements
 
 	public String[] getCodigoTarea() {
 		// TODO Constantes con los nombres de los nodos que ejecutan este guardado adicional
-		return new String[] {CODIGO_T004_AUTORIZACION_BANKIA};
+		return new String[] {CODIGO_T004_AUTORIZACION_BANKIA, CODIGO_T002_AUTORIZACION_BANKIA, 
+				CODIGO_T003_AUTORIZACION_BANKIA};
 	}
 
 	public String[] getKeys() {

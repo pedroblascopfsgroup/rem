@@ -95,9 +95,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
     @Autowired
 	private TrabajoApi trabajoApi;
-    
-    @Autowired
-    private TrabajoApi trabajoApi;
+
     
     /**
      * Genera un vector de valores de las tareas del idTramite

@@ -418,7 +418,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			Page page;
 			if(!Checks.esNulo(dtoPersonaContacto.getDelegacion())) {
 				// Filtrado por la delegacion seleccionada.
-				Filter delegacionIDFilter = genericDao.createFilter(FilterType.EQUALS, "delegacion.id", dtoPersonaContacto.getDelegacion());
+				Filter delegacionIDFilter = genericDao.createFilter(FilterType.EQUALS, "delegacion.id", Long.parseLong(dtoPersonaContacto.getDelegacion()));
 				page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter, delegacionIDFilter);
 			} else {
 				page = genericDao.getPage(ActivoProveedorContacto.class, dtoPersonaContacto, proveedorIDFilter);

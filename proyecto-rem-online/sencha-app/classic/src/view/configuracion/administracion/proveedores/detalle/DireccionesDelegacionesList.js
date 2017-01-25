@@ -4,31 +4,21 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
     reference	: 'direccionesdelegacioneslistref',
 	topBar		: true,
 	idPrincipal : 'proveedor.id',
-	
-    bind: {
+
+    bind		: {
         store: '{direccionesDelegaciones}'
     },
-    
+
     initComponent: function () {
-     	
      	var me = this;
-		
-     	me.storeMunicipios = new Ext.data.Store({
-			model: 'HreRem.model.ComboLocalidadBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getComboMunicipioSinFiltro'
-			},
-			autoLoad: true
-		});
-	    
+
      	me.listeners = {
      			rowclick: 'onDireccionesDelegacionesGridClick',
      			deselect: 'onDireccionesDelegacionesGridDeselect',
      			beforeedit: function(editor, gridNfo) {
      				var grid = this;
 				    var gridColumns = grid.headerCt.getGridColumns();
-				    
+
 				    for (var i = 0; i < gridColumns.length; i++) {
 					    if (gridColumns[i].dataIndex == 'localidadCodigo') {
 					    	var comboEditor = this.columns && this.columns[i].getEditor ? this.columns[i].getEditor() : this.getEditor ? this.getEditor():null;
@@ -38,8 +28,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 					    }
 				    }
      			}
-     	}
-	    
+     	};
+
 		me.columns = [
 		        {
 		        	dataIndex: 'id',
@@ -49,8 +39,15 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        },
 		        {
 		        	xtype: 'gridcolumn',
-			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoDireccionProveedor').findRecord('codigo', value);
+			        renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+			            var store =  this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoDireccionProveedor');
+			        	if(store.isLoading()) {
+			        		store.on('load', function(store, items){
+            		       		var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref').getView();
+            		       		grid.refreshNode(rowIndex);
+            		       	});
+			        	}
+			            var foundedRecord = store.findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -73,7 +70,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        },
 		        {
 		        	xtype: 'gridcolumn',
-			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+			        renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
 			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboSiNoRem').findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
@@ -110,8 +107,15 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        },
 		        {
 		        	xtype: 'gridcolumn',
-			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoVia').findRecord('codigo', value);
+			        renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+			        	var store =  this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoVia');
+			        	if(store.isLoading()) {
+			        		store.on('load', function(store, items){
+            		       		var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref').getView();
+            		       		grid.refreshNode(rowIndex);
+            		       	});
+			        	}
+			            var foundedRecord = store.findRecord('codigo', value);
 			            var descripcion;
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
@@ -166,8 +170,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        },
 		        {
 		        	xtype: 'gridcolumn',
-			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboTerritorial').findRecord('codigo', value);
+			        renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+			            var foundedRecord = this.up('proveedoresdetallemain').getViewModel().getStore('comboFiltroProvincias').findRecord('codigo', value);
 			            var me = this;
         		       	var comboEditor = me.columns && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor():null;
 			            var descripcion;
@@ -188,7 +192,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
 			            bind: {
-			            	store: '{comboTerritorial}'
+			            	store: '{comboFiltroProvincias}'
 			            },
 			            reference: 'cbDDColProvincia',
 			            chainedStore: me.storeMunicipios,
@@ -209,38 +213,37 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        },
 		        {
 		        	xtype: 'gridcolumn',
-			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			        	var me = this,
-			        	descripcion,
-        		       	comboEditor = me.columns && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor():null,
-        		       	chainedComboEditor = me.columns && me.columns[colIndex-1].getEditor ? me.columns[colIndex-1].getEditor() : null;
+			        renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+			        	var me = this;
 
-        		       	if(!Ext.isEmpty(comboEditor)) {
-            		       	var store = comboEditor.getStore();
-            		       	if(!Ext.isEmpty(store) && !Ext.isEmpty(chainedComboEditor)) {
-	            		       	if(store.isLoaded()) {
-	            		       		store.clearFilter();
-	            		       		var record = store.findRecord("codigo", value);
-		            		       	if(!Ext.isEmpty(record)) {
-		            		       		if(!(metaData.lastValue instanceof Array)) {
-		            		       			metaData.lastValue = Ext.Array;
-		            		       		}
-		            		       		metaData.lastValue[rowIndex] = record.getData().descripcion;
-		            		       		return record.getData().descripcion;
-		            		       	} else {
-		            		       		return metaData.lastValue[rowIndex] ? metaData.lastValue[rowIndex] : null;
-		            		       	}
-	            		       	} else {
-	            		       		if(!store.isLoading()){
-	            		       			store.load();
+        		       	var store = me.up('proveedoresdetallemain').getViewModel().getStore('comboFiltroMunicipios');
+        		       	if(!Ext.isEmpty(store)) {
+            		       	if(store.isLoaded()) {
+            		       		store.clearFilter();
+            		       		var record = store.findRecord("codigo", value);
+	            		       	if(!Ext.isEmpty(record)) {
+	            		       		if(!(metaData.lastValue instanceof Array)) {
+	            		       			metaData.lastValue = Ext.Array;
 	            		       		}
-	            		       		store.on('load', function(store, items){
-		            		       		var grid = comboEditor.up('direccionesdelegacioneslist').getView();
-		            		       		grid.refreshNode(rowIndex);
-		            		       	});
+	            		       		metaData.lastValue[rowIndex] = record.getData().descripcion;
+	            		       		return record.getData().descripcion;
+	            		       	} else {
+	            		       		if(Ext.isDefined(metaData.lastValue) && (metaData.lastValue instanceof Array)) {
+	            		       			return metaData.lastValue[rowIndex] ? metaData.lastValue[rowIndex] : null;
+	            		       		} else {
+	            		       			return value;
+	            		       		}
 	            		       	}
+            		       	} else {
+            		       		if(!store.isLoading()){
+            		       			store.load();
+            		       		}
+            		       		store.on('load', function(store, items){
+	            		       		var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref').getView();
+	            		       		grid.refreshNode(rowIndex);
+	            		       	});
             		       	}
-            		    }
+        		       	}
 			        	return value;
 			        },
 		        	dataIndex: 'localidadCodigo',
@@ -250,7 +253,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			            xtype: 'comboboxfieldbase',
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
-			            store: me.storeMunicipios,
+			            bind: {
+			            	store: '{comboFiltroMunicipios}'
+			            },
 			            allowBlank: false,
 			            editable: false,
 			            addUxReadOnlyEditFieldPlugin: false,

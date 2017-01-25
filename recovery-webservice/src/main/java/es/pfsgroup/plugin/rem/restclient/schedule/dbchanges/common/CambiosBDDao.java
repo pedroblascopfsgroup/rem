@@ -151,7 +151,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			// System.out.println(queryString);
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Ejecutando: " + queryString);
+					logger.trace("Ejecutando: " + queryString);
 				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
 			} catch (Throwable t) {
@@ -180,7 +180,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 						selectDatoHistorico = selectFromDatosHistoricos + WHERE + infoTablas.clavePrimaria() + " = "
 								+ r[posPk];
 						if (logger.isDebugEnabled()) {
-							logger.debug("Ejecutando: " + selectDatoHistorico);
+							logger.trace("Ejecutando: " + selectDatoHistorico);
 						}
 						Object[] historico = queryExecutor.sqlRunUniqueResult(session, selectDatoHistorico);
 						if (historico != null) {
@@ -200,7 +200,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 		} finally {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Cerrando sesión");
+				logger.trace("Cerrando sesión");
 			}
 			if (session != null) {
 				if (session.isOpen()) {
@@ -250,7 +250,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Ejecutando: " + queryString);
+					logger.trace("Ejecutando: " + queryString);
 				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
 				if (resultado != null) {
@@ -267,7 +267,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 		} finally {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Cerrando sesión");
+				logger.trace("Cerrando sesión");
 			}
 			if (session != null) {
 				if (session.isOpen()) {
@@ -329,7 +329,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String queryDelete = "TRUNCATE TABLE " + infoTablas.nombreTablaDatosHistoricos();
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Ejecutando: " + queryDelete);
+					logger.trace("Ejecutando: " + queryDelete);
 				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryDelete);
 				if (registro != null) {
@@ -346,7 +346,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					+ columns + FROM + infoTablas.nombreVistaDatosActuales();
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Ejecutando: " + queryInsert);
+					logger.trace("Ejecutando: " + queryInsert);
 				}
 				queryExecutor.sqlRunExecuteUpdate(session, queryInsert);
 				if (registro != null) {

@@ -169,7 +169,7 @@ public abstract class ServiciosWebcomBaseManager {
 
 			logger.debug("Invocando al servicio " + endpoint);
 			getClienteWebcom().send(endpoint, paramsList, registroLlamada);
-			logger.debug("Respuesta recibida " + endpoint);
+			logger.trace("Respuesta recibida " + endpoint);
 
 		} catch (ErrorServicioWebcom e) {
 			logger.error("Error al invocar " + endpoint + " con parámetros " + paramsList.toString(), e);

@@ -120,7 +120,7 @@ public class ClienteWebcomGenerico {
 					(endpoint.getTimeout() * 1000), endpoint.getCharset());
 			registroLlamada.setResponse(response.toString());
 
-			logger.debug("Respuesta recibida " + response);
+			logger.trace("Respuesta recibida " + response);
 
 			// Gestión de errores si respuesta OK
 			if (response.containsKey("error")) {

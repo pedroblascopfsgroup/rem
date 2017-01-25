@@ -1719,6 +1719,46 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	@Override
+	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivoTarea")
+	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea) {
+		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
+		
+		return checkSuperaPresupuestoActivo(trabajo);		
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivo")
+	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo) {
+
+		if(getExcesoPresupuestoActivo(trabajo) > 0L)
+			return true;
+		else
+			return false;
+	}
+
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.getExcesoPresupuestoActivo")
+	public Float getExcesoPresupuestoActivo(Trabajo trabajo) {
+		
+		Long ultimoPresupuestoActivo = 0L;
+		
+		if (!Checks.esNulo(trabajo.getActivo()))
+			ultimoPresupuestoActivo = activoApi.getUltimoPresupuesto(trabajo.getActivo().getId());
+		
+
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);
+
+		Long totalPresupuestoTrabajo = 0L;
+		
+		for (PresupuestoTrabajo presupuestoTrabajo : presupuestosTrabajo) {
+			totalPresupuestoTrabajo = (long) (totalPresupuestoTrabajo + presupuestoTrabajo.getImporte());
+		}
+
+		return (float) (totalPresupuestoTrabajo - ultimoPresupuestoActivo);			
+	}
+	
+	@Override
 	@BusinessOperation(overrides = "trabajoManager.existeTarifaTrabajo")
 	public Boolean existeTarifaTrabajo(TareaExterna tarea) {
 
@@ -2592,4 +2632,5 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 	}
+	
 }

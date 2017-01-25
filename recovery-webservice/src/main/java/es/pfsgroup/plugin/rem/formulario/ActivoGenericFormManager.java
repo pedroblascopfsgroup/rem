@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
@@ -91,6 +92,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
 	private PreciosApi preciosApi;
+
+    @Autowired
+	private TrabajoApi trabajoApi;
     
     /**
      * Genera un vector de valores de las tareas del idTramite
@@ -267,6 +271,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}
             			ofertaAceptada.getActivosOferta().get(0);
+            		}
+            		if(item.getNombre().equals("numIncremento")){
+            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+            			Trabajo trabajo = tramite.getTrabajo();
+            			item.setValue(String.valueOf(trabajoApi.getExcesoPresupuestoActivo(trabajo)));
             		}
             		
             	}

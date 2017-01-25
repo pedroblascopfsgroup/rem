@@ -43,6 +43,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	private RegistroLlamadasManager registroLlamadas;
 
+	public static Integer MAXIMO_INTENTOS_DEFAULT = 5;
 	@Resource
 	private Properties appProperties;
 
@@ -134,12 +135,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			errorServicioWeb = e;
 		} finally {
 			if (somethingdone && (registroLlamadas != null)) {
-				registroLlamadas.guardaRegistroLlamada(registro,handler);
+				registroLlamadas.guardaRegistroLlamada(registro, handler,0);
 			}
-			if ((errorServicioWeb != null && !errorServicioWeb.isReintentable())
-					|| errorServicioWeb == null) {
-				logger.debug(
-						handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+			if ((errorServicioWeb != null && !errorServicioWeb.isReintentable()) || errorServicioWeb == null) {
+				logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
 				handler.marcaComoEnviados(control, llamadas);
 			}
 			logger.info("[fin] Envío de información completa a WEBCOM mediante REST");
@@ -187,6 +186,18 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			tamanyoBloque = null;
 		}
 
+		Integer MAXIMO_INTENTOS = MAXIMO_INTENTOS_DEFAULT;
+		String maximoIntentosProperties = !Checks
+				.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
+						? appProperties.getProperty("rest.client.webcom.maximo.intentos") : null;
+		try {
+			if (maximoIntentosProperties != null) {
+				MAXIMO_INTENTOS = Integer.parseInt(maximoIntentosProperties);
+			}
+		} catch (Exception e) {
+			MAXIMO_INTENTOS = MAXIMO_INTENTOS_DEFAULT;
+		}
+
 		long iteracion = System.currentTimeMillis();
 		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
 		try {
@@ -210,6 +221,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 						CambiosList listPendientes = new CambiosList(tamanyoBloque);
 						handler.actualizarVistaMaterializada();
 						Boolean marcarComoEnviado = false;
+						Integer contError = 0;
 						do {
 							boolean somethingdone = false;
 							RestLlamada registro = new RestLlamada();
@@ -218,21 +230,20 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								listPendientes = handler.listPendientes(control, registro, listPendientes);
 								somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
 								ejecutaTarea(handler, listPendientes, control, registro);
-								//pasamos de bloque
-								if (listPendientes!= null && listPendientes.getPaginacion().getTamanyoBloque() != null) {
+								// pasamos de bloque
+								if (listPendientes != null
+										&& listPendientes.getPaginacion().getTamanyoBloque() != null) {
 									if (listPendientes.size() == listPendientes.getPaginacion().getTamanyoBloque()) {
 										listPendientes.getPaginacion().setHasMore(true);
-										listPendientes.getPaginacion().setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
+										listPendientes.getPaginacion()
+												.setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
 
 									} else {
 										listPendientes.getPaginacion().setHasMore(false);
 									}
 								}
-								if (registro.getEndpoint() != null) {
-									registro.setEndpoint(registro.getEndpoint().concat("(")
-											.concat(String.valueOf(listPendientes.getPaginacion().getNumeroBloque()).concat(")")));
-								}
 								marcarComoEnviado = true;
+								contError = 0;
 								logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
 										+ "]: " + (System.currentTimeMillis() - startTime));
 							} catch (ErrorServicioWebcom e) {
@@ -245,17 +256,19 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 											"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
 											e);
 								}
-								//si no es reintentable siguiente bloque
-								if(!e.isReintentable()){
+								// si no es reintentable siguiente bloque
+								if (!e.isReintentable()) {
 									if (listPendientes.size() == listPendientes.getPaginacion().getTamanyoBloque()) {
 										listPendientes.getPaginacion().setHasMore(true);
-										listPendientes.getPaginacion().setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
+										listPendientes.getPaginacion()
+												.setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
 
 									} else {
 										listPendientes.getPaginacion().setHasMore(false);
 									}
-								}else{
+								} else {
 									marcarComoEnviado = false;
+									contError++;
 								}
 							} catch (CambiosBDDaoError e) {
 								marcarComoEnviado = false;
@@ -264,11 +277,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								break;
 							} finally {
 								if (somethingdone && (registroLlamadas != null)) {
-									registroLlamadas.guardaRegistroLlamada(registro,handler);
+									registroLlamadas.guardaRegistroLlamada(registro, handler,contError);
 									llamadas.add(registro);
 								}
 							}
-						} while (listPendientes != null && listPendientes.getPaginacion().getHasMore());
+						} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
+								|| (contError > 0 && contError < MAXIMO_INTENTOS));
 
 						if (marcarComoEnviado) {
 							logger.debug(

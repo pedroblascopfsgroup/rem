@@ -284,8 +284,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 														.concat(String
 																.valueOf(listPendientes.getPaginacion()
 																		.getNumeroBloque())
-																.concat("-").concat(contError.toString()).concat(")")
-																.concat(MAXIMO_INTENTOS.toString())));
+																.concat("-").concat(contError.toString()).concat(")")));
 									}
 									registroLlamadas.guardaRegistroLlamada(registro, handler);
 									llamadas.add(registro);

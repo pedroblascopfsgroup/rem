@@ -185,10 +185,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		} catch (Exception e) {
 			tamanyoBloque = null;
 		}
-		
+
 		Integer MAXIMO_INTENTOS = MAXIMO_INTENTOS_DEFAULT;
-		String maximoIntentosProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
-				? appProperties.getProperty("rest.client.webcom.maximo.intentos") : null;
+		String maximoIntentosProperties = !Checks
+				.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
+						? appProperties.getProperty("rest.client.webcom.maximo.intentos") : null;
 		try {
 			if (maximoIntentosProperties != null) {
 				MAXIMO_INTENTOS = Integer.parseInt(maximoIntentosProperties);
@@ -220,7 +221,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 						CambiosList listPendientes = new CambiosList(tamanyoBloque);
 						handler.actualizarVistaMaterializada();
 						Boolean marcarComoEnviado = false;
-						Integer contError=0;
+						Integer contError = 0;
 						do {
 							boolean somethingdone = false;
 							RestLlamada registro = new RestLlamada();
@@ -267,12 +268,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									}
 								} else {
 									marcarComoEnviado = false;
-									if(contError.equals(MAXIMO_INTENTOS)){
-										//salimos del while y vamos a por el siguiente handler
-										break;
-									}else{
-										contError++;
-									}
+									contError++;
 								}
 							} catch (CambiosBDDaoError e) {
 								marcarComoEnviado = false;
@@ -285,15 +281,18 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 											&& listPendientes.getPaginacion().getNumeroBloque() != null) {
 										registro.setEndpoint(
 												registro.getEndpoint().concat("(")
-														.concat(String.valueOf(
-																listPendientes.getPaginacion().getNumeroBloque())
-																.concat("-").concat(contError.toString()).concat(")").concat(MAXIMO_INTENTOS.toString())));
+														.concat(String
+																.valueOf(listPendientes.getPaginacion()
+																		.getNumeroBloque())
+																.concat("-").concat(contError.toString()).concat(")")
+																.concat(MAXIMO_INTENTOS.toString())));
 									}
 									registroLlamadas.guardaRegistroLlamada(registro, handler);
 									llamadas.add(registro);
 								}
 							}
-						} while (listPendientes != null && listPendientes.getPaginacion().getHasMore());
+						} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
+								|| (contError > 0 && contError < MAXIMO_INTENTOS));
 
 						if (marcarComoEnviado) {
 							logger.debug(

@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=24/01/2017
+--## FECHA_CREACION=20170124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HREOS-1438

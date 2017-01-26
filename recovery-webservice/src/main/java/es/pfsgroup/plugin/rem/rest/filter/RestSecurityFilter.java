@@ -31,7 +31,7 @@ public class RestSecurityFilter implements Filter {
 	@Autowired
 	private RestApi restApi;
 
-	private String WORKINGCODE = "2038";
+	public static String WORKINGCODE = "2038";
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -64,7 +64,7 @@ public class RestSecurityFilter implements Filter {
 			logger.debug("Datos de la peticion id:".concat(restRequest.getBody()));
 
 			jsonFields = restRequest.getJsonObject();
-			restApi.doSessionConfig(response, WORKINGCODE);
+			restApi.doSessionConfig(RestSecurityFilter.WORKINGCODE);
 
 			String signature = ((HttpServletRequest) request).getHeader("signature");
 			peticion.setSignature(signature);

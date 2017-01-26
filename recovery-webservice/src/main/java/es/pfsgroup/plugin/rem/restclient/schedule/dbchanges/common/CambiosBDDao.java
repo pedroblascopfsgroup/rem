@@ -535,7 +535,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 		}
 	}
-
+	
 	private void refreshMaterializedView(InfoTablasBD infoTablas, Session session) {
 		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + infoTablas.nombreVistaDatosActuales()
 				+ "','C'); end;";

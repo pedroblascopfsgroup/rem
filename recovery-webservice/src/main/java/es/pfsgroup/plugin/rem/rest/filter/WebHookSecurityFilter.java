@@ -37,7 +37,7 @@ public class WebHookSecurityFilter implements Filter {
 		
 		RestRequestWrapper restRequest = null;
 		try {
-			restApi.doSessionConfig(response, WORKINGCODE);
+			restApi.doSessionConfig(WORKINGCODE);
 			String authHeader = ((HttpServletRequest) request).getHeader("AUTHORIZATION");
 			if(restApi.validateWebhookSignature(request,authHeader)){
 				restRequest = new RestRequestWrapper((HttpServletRequest) request);

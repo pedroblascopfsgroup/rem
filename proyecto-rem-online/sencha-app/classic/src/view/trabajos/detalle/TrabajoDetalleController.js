@@ -70,9 +70,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		if(combo.getValue() != "02" && combo.getValue() != "03") {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
+			me.lookupReference("containerEnglobaTodosActivosRef").setVisible(true);
+			me.lookupReference("containerEnglobaTodosActivosAgrRef").setVisible(true);
 		} 
 		else {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
+			me.lookupReference("containerEnglobaTodosActivosRef").setVisible(false);
+			me.lookupReference("containerEnglobaTodosActivosAgrRef").setVisible(false);
+			
+			me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue();
+			me.lookupReference("checkEnglobaTodosActivosRef").setValue();
 		} 
     	
     },

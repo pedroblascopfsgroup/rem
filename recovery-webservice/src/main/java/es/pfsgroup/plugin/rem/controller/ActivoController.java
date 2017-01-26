@@ -364,6 +364,9 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORMACION_COMERCIAL);
+			
+			//Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
+			activoApi.calcularRatingActivo(id);
 			model.put("success", success);
 
 		} catch (Exception e) {
@@ -417,6 +420,9 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORME_COMERCIAL);
+			
+			//Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
+			activoApi.calcularRatingActivo(id);
 			model.put("success", success);
 
 		} catch (Exception e) {

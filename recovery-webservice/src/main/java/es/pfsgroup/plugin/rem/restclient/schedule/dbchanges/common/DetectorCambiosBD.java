@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.filter.RestSecurityFilter;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
@@ -44,6 +46,9 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	@Autowired
 	private CambiosBDDao dao;
+	
+	@Autowired
+	private RestApi restApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -290,5 +295,14 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		logger.debug("Relenamos el dto " + dtoClass + " con " + datos);
 		Converter.updateObjectFromHashMap(datos, dto, null);
 		return dto;
+	}
+	
+	/**
+	 * Configura el contexto hibernate
+	 * @param workingCode
+	 * @throws Exception
+	 */
+	public void setdbContext() throws Exception{
+		restApi.doSessionConfig(RestSecurityFilter.WORKINGCODE);
 	}
 }

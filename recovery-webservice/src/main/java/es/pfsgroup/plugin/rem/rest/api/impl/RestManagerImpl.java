@@ -518,7 +518,7 @@ public class RestManagerImpl implements RestApi {
 		return jsonResp;
 	}
 
-	public void doSessionConfig(ServletResponse response, String workingCode) throws Exception {
+	public void doSessionConfig(String workingCode) throws Exception {
 		// Obtenemos la entidad partiendo del working code y establecemos el
 		// contextholder
 		// necesario para acceder al esquema de la entidad

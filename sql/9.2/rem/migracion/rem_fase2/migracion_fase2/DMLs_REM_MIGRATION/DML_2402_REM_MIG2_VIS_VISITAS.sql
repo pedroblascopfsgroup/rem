@@ -242,24 +242,28 @@ BEGIN
           INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID
           WHERE TPR.DD_TPR_CODIGO IN (''04'',''18'',''23'',''30'',''31'')
           AND PVE_COD_UVEM = VIS.VIS_COD_PRESCRIPTOR_UVEM
+          AND ROWNUM = 1
     ) PVE_ID_PRESCRIPTOR,
                 (SELECT PVE_ID 
           FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
           INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID
           WHERE TPR.DD_TPR_CODIGO IN (''04'',''18'',''23'',''30'',''31'')
           AND PVE_COD_UVEM = VIS.VIS_COD_API_CUSTODIO_UVEM
+          AND ROWNUM = 1
     )   PVE_ID_API_CUSTODIO,
                 (SELECT PVE_ID 
           FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
           INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID
           WHERE TPR.DD_TPR_CODIGO IN (''04'',''18'',''23'',''30'',''31'')
           AND PVE_COD_UVEM = VIS.VIS_COD_API_RESPONSABLE_UVEM
+          AND ROWNUM = 1
     )                   PVE_ID_API_RESPONSABLE,
                 (SELECT PVE_ID 
           FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
           INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID
           WHERE TPR.DD_TPR_CODIGO IN (''04'',''18'',''23'',''30'',''31'')
           AND PVE_COD_UVEM = VIS.VIS_COD_FVD_UVEM
+          AND ROWNUM = 1
     )                                           PVE_ID_FDV,
                 VIS.VIS_OBSERVACIONES                                                                                   VIS_OBSERVACIONES,
                 VIS.VIS_FECHA_CONCERTACION                                                                              VIS_FECHA_CONCERTACION,

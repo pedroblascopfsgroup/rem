@@ -3082,11 +3082,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Obtener datos de venta en REM.
 				if(!Checks.esNulo(exp)) {
 					beanUtilNotNull.copyProperty(dto, "fechaVenta", exp.getFechaVenta());
+					
+					Double importe = null;
+					
 					if(!Checks.esNulo(oferta.getImporteContraOferta())) {
-						beanUtilNotNull.copyProperty(dto, "importeVenta", oferta.getImporteContraOferta());
+						importe =  oferta.getImporteContraOferta();
 					} else {
-						beanUtilNotNull.copyProperty(dto, "importeVenta", oferta.getImporteOferta());
+						importe = oferta.getImporteOferta();
 					}
+					for(ActivoOferta activoOferta: oferta.getActivosOferta()) {
+						if (activo.getId().equals(activoOferta.getPrimaryKey().getActivo().getId())) {
+							importe = activoOferta.getImporteActivoOferta();
+						}
+					}
+					
+					beanUtilNotNull.copyProperty(dto, "importeVenta", importe);
 				}
 			}
 
@@ -3258,5 +3268,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return true;	
 		
 	
+	}
+	
+	@Override
+	public void calcularRatingActivo(Long idActivo) {
+		activoDao.actualizarRatingActivo(idActivo, usuarioApi.getUsuarioLogado().getUsername());
 	}
 }

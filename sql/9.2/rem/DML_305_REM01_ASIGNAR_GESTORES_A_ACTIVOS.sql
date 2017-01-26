@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20170125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=HREOS-1432
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Asignar los siguientes usuarios-gestores a todos los activos.

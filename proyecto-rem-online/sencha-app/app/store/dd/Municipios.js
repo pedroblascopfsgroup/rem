@@ -6,6 +6,5 @@ Ext.define('HreRem.store.dd.Municipios', {
      proxy: {
 		type: 'uxproxy',
 		remoteUrl: 'generic/getComboMunicipioSinFiltro'
-	 },
-	 autoLoad: true
+	 }
  });

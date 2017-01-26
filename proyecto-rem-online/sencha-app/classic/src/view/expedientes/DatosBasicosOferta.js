@@ -126,7 +126,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								                	readOnly: true,								                	
 								                	bind: {
 														store: '{comboComites}',
-														value: '{datosbasicosoferta.comitePropuestoCodigo}'
+														value: '{datosbasicosoferta.comitePropuestoCodigo}',
+														disabled: '{!esCarteraBankia}'
 													}
 								                },
 								                {

@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -658,5 +659,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo in ('01','13')");
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+	}
+	
+	@Override
+	public void actualizarRatingActivo(Long idActivo, String username) {	
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query = session.createSQLQuery(
+		"CALL CALCULO_RATING_ACTIVO_AUTO(:idActivo, :username)")
+		.setParameter("idActivo", idActivo)
+		.setParameter("username", username);
+
+		query.executeUpdate();
 	}
 }

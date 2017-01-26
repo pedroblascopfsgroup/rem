@@ -12,5 +12,6 @@ public interface WebcomRESTDto {
 	
 	DateDataType getFechaAccion();
 	
-	void setFechaAccion(DateDataType value);
+	void setFechaAccion(DateDataType value);	
+	
 }

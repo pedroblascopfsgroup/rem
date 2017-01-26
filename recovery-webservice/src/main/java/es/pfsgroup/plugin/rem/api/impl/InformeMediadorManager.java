@@ -1419,6 +1419,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				
 
 				adapter.crearTramitePublicacion(informeEntity.getActivo().getId());
+				
+				//Actualizamos el rating del activo
+				activoApi.calcularRatingActivo(informeEntity.getActivo().getId());
 
 				map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 				map.put("idinformeMediadorRem", informeEntity.getId());

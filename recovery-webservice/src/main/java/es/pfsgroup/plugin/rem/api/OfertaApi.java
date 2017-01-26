@@ -14,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -400,6 +401,14 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of);
+
+	/**
+	 * Este método resetea el PBC.
+	 * 
+	 * @param expediente : entidad expediente.
+	 * @return Devuelve True si la operación ha sido satisfactoria, False si ha habido un error.
+	 */
+	public boolean resetPBC(ExpedienteComercial expediente);
 
 }
 

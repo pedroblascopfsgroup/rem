@@ -502,6 +502,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if("".equals(dto.getNumVisita()))
 			oferta.setVisita(null);
 		
+		if(!Checks.esNulo(dto.getImporteOferta())) {
+			// Si el importe de la oferta ha cambiado.
+			ofertaApi.resetPBC(expedienteComercial);
+		}
+		
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
 		} catch (IllegalAccessException e) {
@@ -1391,7 +1396,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				else{
 					condiciones.setReservaConImpuesto(1);
 				}
-			}	
+			}
+			if(!Checks.esNulo(dto.getRenunciaExencion()) || !Checks.esNulo(dto.getReservaConImpuesto()) || !Checks.esNulo(dto.getTipoImpuestoCodigo()) || !Checks.esNulo(dto.getTipoAplicable())) {
+				// Si se cambia algún dato del apartado Fiscales.
+				ofertaApi.resetPBC(condiciones.getExpediente());
+			}
 
 			//Gastos CompraVenta
 			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe()) || "".equals(dto.getPlusvaliaPorCuentaDe())){
@@ -1893,6 +1902,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					
 							if(!Checks.esNulo(dto.getPorcentajeCompra())){
 								compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
+								ofertaApi.resetPBC(expedienteComercial);
 							}
 							if(!Checks.esNulo(dto.getTitularContratacion())){
 								compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
@@ -1922,6 +1932,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 							if(!Checks.esNulo(dto.getCodigoRegimenMatrimonial())){
 								DDRegimenesMatrimoniales regimenMatrimonial = (DDRegimenesMatrimoniales) utilDiccionarioApi.dameValorDiccionarioByCod(DDRegimenesMatrimoniales.class, dto.getCodigoRegimenMatrimonial());
 								compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
+								ofertaApi.resetPBC(expedienteComercial);
 							}
 							
 							if(!Checks.esNulo(dto.getAntiguoDeudor())){
@@ -2364,6 +2375,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			genericDao.save(ExpedienteComercial.class, expediente);
 			
+			ofertaApi.resetPBC(expediente);
 			
 			return true;
 			
@@ -2861,6 +2873,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			if(!Checks.esNulo(compradorExpediente)){
 				if(compradorExpediente.getTitularContratacion()==0){
 					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
+					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
+					ofertaApi.resetPBC(expediente);
 				}
 				else{
 					throw new JsonViewerException("Operación no permitida, por ser el titular de la contratación");

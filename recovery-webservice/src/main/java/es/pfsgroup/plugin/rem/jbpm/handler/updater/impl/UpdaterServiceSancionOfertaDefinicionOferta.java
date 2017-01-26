@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -40,6 +41,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
     
    	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
     private static final String FECHA_ENVIO_COMITE = "fechaEnvio";
+    private static final String COMBO_CONFLICTO = "comboConflicto";
+    private static final String COMBO_RIESGO = "comboRiesgo";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -74,23 +77,30 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 			}
 		}
 		for(TareaExternaValor valor :  valores){
-			
-//			if(FECHA_ENVIO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-//			{
-//				try {
-//					Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-//					if(!Checks.esNulo(ofertaAceptada)){
-//						ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-//						/*
-//						 * Hay que cambiar por la fecha de envío a comité que no aparece en la pestaña indicada en este momento
-//						 * expediente.setFechaSancion(ft.parse(valor.getValor()));
-//						 */
-//					}
-//				} catch (ParseException e) {
-//					e.printStackTrace();
-//				}
-//
-//			}
+			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+			if(!Checks.esNulo(ofertaAceptada)){
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+				if(COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					if(DDSiNo.SI.equals(valor.getValor())){
+						expediente.setRiesgoReputacional(1);
+					}
+					else{
+						if(DDSiNo.NO.equals(valor.getValor())){
+							expediente.setRiesgoReputacional(0);
+						}
+					}
+				}
+				if(COMBO_CONFLICTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					if(DDSiNo.SI.equals(valor.getValor())){
+						expediente.setConflictoIntereses(1);
+					}
+					else{
+						if(DDSiNo.NO.equals(valor.getValor())){
+							expediente.setConflictoIntereses(0);
+						}
+					}
+				}
+			}
 		}
 
 	}

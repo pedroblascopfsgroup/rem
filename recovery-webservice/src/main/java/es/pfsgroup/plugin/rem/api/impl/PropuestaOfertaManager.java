@@ -1017,7 +1017,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 					CompradorExpediente comp = clientes.get(i);
 					
 					if(!Checks.esNulo(comp)){
-						VBusquedaDatosCompradorExpediente datosComprador = expedienteComercialApi.getDatosCompradorById(comp.getComprador()); 
+						
+						VBusquedaDatosCompradorExpediente datosComprador = expedienteComercialApi.getDatosCompradorById(comp.getComprador().toString(), expCom.getId().toString()); 
 						
 						if(!Checks.esNulo(datosComprador)){
 							cliente = new DtoCliente();

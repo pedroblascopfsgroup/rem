@@ -424,6 +424,15 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkEjerce(tareaExterna);
 			}
+			def checkSuperaPresupuestoActivo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkSuperaPresupuestoActivoTarea(tareaExterna);
+            }
+            
+            def checkSuperaDelegacion = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkSuperaDelegacion(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

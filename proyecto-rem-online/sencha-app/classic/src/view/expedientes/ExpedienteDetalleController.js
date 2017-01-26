@@ -605,7 +605,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		model = null,
 		models = null,
 		nameModels = null,
-		id = window.idComprador;
+		id = window.idComprador,
+		idExpediente = window.expediente.get("id");
+
 		if(!Ext.isEmpty(id)){
 			var form= window.down('formBase');
 			form.mask(HreRem.i18n("msg.mask.loading"));
@@ -615,6 +617,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				if(Ext.isDefined(model.getProxy().getApi().read)) {
 					// Si la API tiene metodo de lectura (read).
 					model.load({
+						params: {idExpedienteComercial: idExpediente},
 					    success: function(record) {
 					    	form.setBindRecord(record);			    	
 					    	form.unmask();
@@ -736,23 +739,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
-	},
-	
-	onCompradoresListClick: function(gridView,record){
-		var me=this,
-		idCliente = record.get("id"),
-		model = Ext.create('HreRem.model.FichaComprador');
-		
-//		var fieldset =  me.lookupReference('estadoPbcCompradoRef');
-//		fieldset.mask(HreRem.i18n("msg.mask.loading"));
-	
-		model.setId(idCliente);
-		model.load({			
-		    success: function(record) {	
-		    	me.getViewModel().set("detalleComprador", record);
-//		    	fieldset.unmask();
-		    }
-		});
 	},
 	
 	onHaCambiadoDestinoActivo: function(combo, value){
@@ -1146,7 +1132,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 
 		var peticionario = dateField.up('expedientedetallemain').lookupReference('textFieldPeticionario');
-		var motivoAnulacion = dateField.up('expedientedetallemain').lookupReference('textFieldMotivoAnulacion');
+		var motivoAnulacion = dateField.up('expedientedetallemain').lookupReference('comboMotivoAnulacion');
 
 		if(Ext.isEmpty(dateField.getValue())) {
 			peticionario.allowBlank = true;

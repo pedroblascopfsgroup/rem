@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.trabajo;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -85,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -96,6 +98,8 @@ import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
@@ -1717,7 +1721,96 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return hayPresupuestoAutorizado;
 	}
+	
+	@Override
+	public Boolean checkSuperaDelegacion(TareaExterna tarea) {
+		String PRESUPUESTO_AUTORIZADO = "02";
 
+		Boolean hayPresupuestoAutorizado = false;
+
+		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
+
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);
+
+		for (PresupuestoTrabajo presupuestoTrabajo : presupuestosTrabajo) {
+			if (PRESUPUESTO_AUTORIZADO.equals(presupuestoTrabajo.getEstadoPresupuesto().getCodigo())) {
+				if(presupuestoTrabajo.getImporte()>5000L)
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivoTarea")
+	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea) {
+		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
+		
+		return checkSuperaPresupuestoActivo(trabajo);		
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivo")
+	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo) {
+
+		if(getExcesoPresupuestoActivo(trabajo) > 0L)
+			return true;
+		else
+			return false;
+	}
+
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.getExcesoPresupuestoActivo")
+	public Float getExcesoPresupuestoActivo(Trabajo trabajo) {
+		
+		Double ultimoPresupuestoActivoImporte = 0D;
+		Double acumuladoTrabajosActivoImporte = 0D;
+		Long idUltimoPresupuestoActivo = null;
+		VBusquedaPresupuestosActivo ultimoPresupuestoActivo = null;
+		
+		if (!Checks.esNulo(trabajo.getActivo()))
+			idUltimoPresupuestoActivo = activoApi.getUltimoPresupuesto(trabajo.getActivo().getId());
+		
+		if (!Checks.esNulo(idUltimoPresupuestoActivo)){
+			Filter filtroPresupuesto = genericDao.createFilter(FilterType.EQUALS, "id", idUltimoPresupuestoActivo.toString());
+			ultimoPresupuestoActivo = (VBusquedaPresupuestosActivo) genericDao.get(VBusquedaPresupuestosActivo.class, filtroPresupuesto);
+		}
+		
+		if (!Checks.esNulo(ultimoPresupuestoActivo) && !Checks.esNulo(ultimoPresupuestoActivo.getImporteInicial()))
+			if(!Checks.esNulo(ultimoPresupuestoActivo.getSumaIncrementos()))
+				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial() + ultimoPresupuestoActivo.getSumaIncrementos();
+			else
+				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial();
+/*
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);
+
+		for (PresupuestoTrabajo presupuestoTrabajo : presupuestosTrabajo) {
+			totalPresupuestoTrabajo = (long) (totalPresupuestoTrabajo + presupuestoTrabajo.getImporte());
+		}
+*/
+
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", trabajo.getActivo().getId().toString());
+		List<VBusquedaActivosTrabajo> listaTrabajosActivo = (List<VBusquedaActivosTrabajo>) genericDao.getList(VBusquedaActivosTrabajo.class, filtroActivo);
+
+		BigDecimal importeParticipacionTrabajo = new BigDecimal(0);
+		for (VBusquedaActivosTrabajo trabajoActivo : listaTrabajosActivo) {
+			if(!Checks.esNulo(trabajoActivo.getImporteParticipa()))
+				importeParticipacionTrabajo = new BigDecimal(trabajoActivo.getImporteParticipa());
+			else
+				importeParticipacionTrabajo = new BigDecimal(0);
+			
+			acumuladoTrabajosActivoImporte = acumuladoTrabajosActivoImporte + importeParticipacionTrabajo.doubleValue();
+		}
+
+	
+		BigDecimal importeExcesoPresupuesto = new BigDecimal(acumuladoTrabajosActivoImporte - ultimoPresupuestoActivoImporte);
+		
+		return importeExcesoPresupuesto.floatValue();			
+	}
+	
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.existeTarifaTrabajo")
 	public Boolean existeTarifaTrabajo(TareaExterna tarea) {
@@ -2592,4 +2685,5 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 	}
+	
 }

@@ -1409,13 +1409,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean resetPBC(ExpedienteComercial expediente) {
 		if(Checks.esNulo(expediente)) {
 			return false;
 		}
 
+		// Reiniciar estado del PBC.
+		expediente.setEstadoPbc(null);
+		genericDao.update(ExpedienteComercial.class, expediente);
+
+		// Avisar al gestor de formalización del activo.
 		Notificacion notificacion = new Notificacion();
 
 		if(!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
@@ -1430,7 +1435,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		notificacion.setTitulo("Notificación PBC reiniciado");
-		notificacion.setDescripcion("Se ha reiniciado el PBC");
+		notificacion.setDescripcion("Se ha reiniciado el PBC del expediente");
 		notificacion.setFecha(new Date());
 		
 		try {

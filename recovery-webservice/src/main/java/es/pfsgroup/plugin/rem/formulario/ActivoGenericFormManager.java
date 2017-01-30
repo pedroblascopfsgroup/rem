@@ -257,7 +257,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				if (!Checks.esNulo(expediente)){
-            					if(ofertaApi.checkAtribuciones(tareaExterna)){
+            					if(trabajoApi.checkFormalizacion(tareaExterna)){
 			            			if(trabajoApi.checkBankia(tareaExterna)){
 			            				String codigoComite = null;
 										try {

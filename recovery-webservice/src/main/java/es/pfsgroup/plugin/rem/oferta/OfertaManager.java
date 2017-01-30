@@ -1003,6 +1003,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
+					
+					
 					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
 					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
@@ -1032,6 +1034,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			String codigoComite = resultadoDto.getCodigoComite();
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
+			genericDao.save(ExpedienteComercial.class, expediente);
 			
 			return true;
 		} catch (Exception e) {

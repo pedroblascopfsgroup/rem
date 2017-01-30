@@ -3269,4 +3269,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 	
 	}
+	
+	@Override
+	public void calcularRatingActivo(Long idActivo) {
+		activoDao.actualizarRatingActivo(idActivo, usuarioApi.getUsuarioLogado().getUsername());
+	}
 }

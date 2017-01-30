@@ -1035,7 +1035,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -1061,7 +1060,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -1399,6 +1397,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean resetPBC(ExpedienteComercial expediente) {
+		if(Checks.esNulo(expediente)) {
+			return false;
+		}
+		//TODO: método a la espera de ser terminado.
+		return true;
 	}
 	
 }

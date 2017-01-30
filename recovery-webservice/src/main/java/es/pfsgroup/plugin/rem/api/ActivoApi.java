@@ -867,4 +867,10 @@ public interface ActivoApi {
 	public Boolean deleteCarga(DtoActivoCargas dto);
 	
 	public Boolean saveActivoCarga(DtoActivoCargas cargaDto);
+	
+	/**
+	 * Actualiza el rating del activo pasado por parametro, con el procedure CALCULO_RATING_ACTIVO_AUTO
+	 * @param idActivo
+	 */
+	public void calcularRatingActivo(Long idActivo);
 }

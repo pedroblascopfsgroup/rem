@@ -8,6 +8,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -525,6 +526,21 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public DDComiteSancion comiteSancionadorByCodigo(String codigo);
+
+	/** 
+	 * Este método obtiene el expediente comercial del activo indicado, el cual
+	 * no se encuentre en los siguientes estados:
+	 * -En trámite.
+	 * -Pendiente Sanción.
+	 * -Contraorfertado.
+	 * -Vendido.
+	 * -Denegado.
+	 * -Anulado.
+	 * 
+	 * @param activo
+	 * @return
+	 */
+	public ExpedienteComercial getExpedienteComercialResetPBC(Activo activo);
 	
 	
 }

@@ -91,7 +91,7 @@ BEGIN
 		CAST(ACT_SD.AGR_NUM_AGRUP_REM AS NUMBER(16,0))                       	              			AS ID_AGRUPACION_REM,
 		CAST(ACT_SD.DD_TPA_CODIGO AS VARCHAR2(5 CHAR))                       							AS COD_TIPO_ACTIVO,
 		CAST(ACT_SD.DD_SAC_CODIGO AS VARCHAR2(5 CHAR))                       							AS COD_SUBTIPO_ACTIVO,
-		CAST(ACT_SD.DESCRIPCION AS VARCHAR2(60 CHAR))                       							AS NOMBRE,
+		CAST(ACT_SD.DESCRIPCION AS VARCHAR2(100 CHAR))                       							AS NOMBRE,
 		CAST(ACT_SD.PLANTAS AS NUMBER(16,0))                       	          							AS PLANTAS,
 		CAST(ACT_SD.DORMITORIOS AS NUMBER(16,0))                       	      							AS HABITACIONES,
 		CAST(ACT_SD.BANYOS AS NUMBER(16,0))                       	                    				AS BANYOS,

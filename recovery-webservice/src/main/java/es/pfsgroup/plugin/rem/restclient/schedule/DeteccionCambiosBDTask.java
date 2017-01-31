@@ -16,6 +16,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.rest.filter.RestSecurityFilter;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDaoError;
@@ -135,7 +136,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			errorServicioWeb = e;
 		} finally {
 			if (somethingdone && (registroLlamadas != null)) {
-				registroLlamadas.guardaRegistroLlamada(registro, handler,0);
+				registroLlamadas.guardaRegistroLlamada(registro, handler, 0);
 			}
 			if ((errorServicioWeb != null && !errorServicioWeb.isReintentable()) || errorServicioWeb == null) {
 				logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
@@ -210,6 +211,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			if ((registroCambiosHandlersAjecutar != null) && (!registroCambiosHandlersAjecutar.isEmpty())) {
 				// ordenamos los handlers por peso
 				Collections.sort(registroCambiosHandlersAjecutar);
+				//importante: Si no hacemos esto no se pueden actualizar las vistas materializadas
+				registroCambiosHandlersAjecutar.get(0).setdbContext();
 				for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
 					if (handler.isActivo()) {
 						logger.debug("EJECUTANDO HANDLER: " + handler.getClass().getName());
@@ -277,7 +280,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								break;
 							} finally {
 								if (somethingdone && (registroLlamadas != null)) {
-									registroLlamadas.guardaRegistroLlamada(registro, handler,contError);
+									registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
 									llamadas.add(registro);
 								}
 							}
@@ -294,6 +297,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			} else {
 				logger.warn("El registro de cambios en BD aún no está disponible");
 			}
+
+		} catch (Exception e) {
+			running = false;
+			logger.error("Imposible ejecutar el detector de cambios",e);
 		} finally {
 			running = false;
 			logger.info("[fin] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");

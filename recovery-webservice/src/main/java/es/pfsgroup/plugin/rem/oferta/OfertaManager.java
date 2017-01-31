@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.security.UsuarioSecurityManager;
@@ -30,6 +32,8 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
+import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -37,6 +41,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -129,6 +134,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private NotificacionAdapter notificacionAdapter;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 	
 	@Override
 	public String managerName() {
@@ -1003,6 +1014,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
+					
+					
 					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
 					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
@@ -1032,10 +1045,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			String codigoComite = resultadoDto.getCodigoComite();
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
+			genericDao.save(ExpedienteComercial.class, expediente);
 			
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -1061,7 +1074,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -1399,6 +1411,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean resetPBC(ExpedienteComercial expediente) {
+		if(Checks.esNulo(expediente)) {
+			return false;
+		}
+
+		// Reiniciar estado del PBC.
+		expediente.setEstadoPbc(null);
+		genericDao.update(ExpedienteComercial.class, expediente);
+
+		// Avisar al gestor de formalización del activo.
+		Notificacion notificacion = new Notificacion();
+
+		if(!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+			notificacion.setIdActivo(expediente.getOferta().getActivoPrincipal().getId());
+			
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			EXTDDTipoGestor gestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			Usuario usuario = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), gestorActivo.getId());
+			if(!Checks.esNulo(usuario)) {
+				notificacion.setDestinatario(usuario.getId());
+			}
+		}
+
+		notificacion.setTitulo("Notificación PBC reiniciado");
+		notificacion.setDescripcion("Se ha reiniciado el PBC del expediente");
+		notificacion.setFecha(new Date());
+		
+		try {
+			notificacionAdapter.saveNotificacion(notificacion);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return true;
 	}
 	
 }

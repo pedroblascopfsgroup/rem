@@ -70,9 +70,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		if(combo.getValue() != "02" && combo.getValue() != "03") {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
+			me.lookupReference("containerEnglobaTodosActivosRef").setVisible(true);
+			me.lookupReference("containerEnglobaTodosActivosAgrRef").setVisible(true);
 		} 
 		else {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
+			me.lookupReference("containerEnglobaTodosActivosRef").setVisible(false);
+			me.lookupReference("containerEnglobaTodosActivosAgrRef").setVisible(false);
+			
+			me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue();
+			me.lookupReference("checkEnglobaTodosActivosRef").setValue();
 		} 
     	
     },
@@ -233,8 +240,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var me =this;
 
 		// Comprobar el estado del checkbox para agrupar los activos en un trabajo.
-		var check = me.lookupReference('checkEnglobaTodosActivosRef').getValue();
-		if(!check) {
+		var check = me.lookupReference('checkEnglobaTodosActivosRef').getValue();	
+		if(!check && Ext.isEmpty(me.getView().idActivo)) {
 			// Si el check no está seleccionado avisar de que se van a crear tantos trabajos como activos.
 			Ext.MessageBox.confirm(
 					HreRem.i18n("msgbox.multiples.trabajos.title"),

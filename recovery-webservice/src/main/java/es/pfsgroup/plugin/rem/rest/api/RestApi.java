@@ -253,6 +253,6 @@ public interface RestApi {
 	 * @param workingCode
 	 * @throws Exception
 	 */
-	public void doSessionConfig(ServletResponse response, String workingCode) throws Exception;
+	public void doSessionConfig(String workingCode) throws Exception;
 
 }

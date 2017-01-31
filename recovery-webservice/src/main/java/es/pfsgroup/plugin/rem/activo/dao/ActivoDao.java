@@ -89,6 +89,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Integer isIntegradoAgrupacionObraNuevaOrAsistida(Long id);
 
 	public Boolean getDptoPrecio(Activo activo);
+	
+	public void actualizarRatingActivo(Long idActivo, String username);
 
 	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo);
 

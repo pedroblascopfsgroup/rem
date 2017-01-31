@@ -23,6 +23,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_COMERCIAL = "SCOM";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_RETAIL = "SCOMRET";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_SINGULAR = "SCOMSIN";
+	public static final String CODIGO_GESTOR_FORMALIZACION = "GFORM";
+	public static final String CODIGO_GESTORIA_FORMALIZACION = "GIAFORM";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

@@ -240,36 +240,48 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   											}
 						        	   									      ]						           
 						        	   						},
-						        	   						{
-		        	   											xtype: 'checkboxfieldbase',
-		        	   											reference: 'checkEnglobaTodosActivosRef',
-						        	   							margin: '20 0 10 0',
-						        	   							boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
-						        	   							bind: '{trabajo.esSolicitudConjunta}'
-						        	   						},
-						        	   						{
-						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
-						        	   							cls: 'texto-info'
-						        	   						},
-						        	   						{
-						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
-						        	   							cls: 'texto-info'
-						        	   						},
-						        	   						{
-						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
-						        	   							cls: 'texto-info'
-						        	   						},
-						        	   						{
-						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
-						        	   							cls: 'texto-info'
-						        	   						},
-						        	   						{
-						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
-						        	   							cls: 'texto-info',
-						        	   							margin: '0 0 20 0'
+						        	   						{   
+																xtype: 'container',
+																//width: '33%',
+																reference: 'containerEnglobaTodosActivosRef',
+																layout: {
+																	type: 'vbox',
+																	align: 'stretch'
+																},
+																items :
+																[
+														           
+								        	   						{
+				        	   											xtype: 'checkboxfieldbase',
+				        	   											reference: 'checkEnglobaTodosActivosRef',
+								        	   							margin: '20 0 10 0',
+								        	   							boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
+								        	   							bind: '{trabajo.esSolicitudConjunta}'
+								        	   						},
+								        	   						{
+								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
+								        	   							cls: 'texto-info'
+								        	   						},
+								        	   						{
+								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
+								        	   							cls: 'texto-info'
+								        	   						},
+								        	   						{
+								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
+								        	   							cls: 'texto-info'
+								        	   						},
+								        	   						{
+								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
+								        	   							cls: 'texto-info'
+								        	   						},
+								        	   						{
+								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
+								        	   							cls: 'texto-info',
+								        	   							margin: '0 0 20 0'
+								        	   						}
+						        	   						    ]
 						        	   						}
-						        	   						    
-						        	   						]
+						        	   				]
 						        	},
 						           {
 						           		xtype:'fieldset',					
@@ -350,35 +362,46 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 													        }
 													    ]						           
 										           },
-										           {
-										           		xtype: 'checkboxfieldbase',
-										           		reference: 'checkEnglobaTodosActivosAgrRef',
-										           		margin: '20 0 10 0',
-														boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
-														bind: '{trabajo.esSolicitudConjunta}'
-										           },
-										           {
-										           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
-										           		cls: 'texto-info'
-										           },
-										           {
-										           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
-										           		cls: 'texto-info'
-										           },
-										           {
-										           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
-										           		cls: 'texto-info'
-										           },
-										           {
-										           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
-										           		cls: 'texto-info'
-										           },
-										           {
-										           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
-										           		cls: 'texto-info',
-										           		margin: '0 0 20 0'
+										           {   
+														xtype: 'container',
+														//width: '33%',
+														reference: 'containerEnglobaTodosActivosAgrRef',
+														layout: {
+															type: 'vbox',
+															align: 'stretch'
+														},
+														items :
+														[
+												           {
+												           		xtype: 'checkboxfieldbase',
+												           		reference: 'checkEnglobaTodosActivosAgrRef',
+												           		margin: '20 0 10 0',
+																boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
+																bind: '{trabajo.esSolicitudConjunta}'
+												           },
+												           {
+												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
+												           		cls: 'texto-info'
+												           },
+												           {
+												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
+												           		cls: 'texto-info'
+												           },
+												           {
+												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
+												           		cls: 'texto-info'
+												           },
+												           {
+												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
+												           		cls: 'texto-info'
+												           },
+												           {
+												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
+												           		cls: 'texto-info',
+												           		margin: '0 0 20 0'
+												           }
+												         ]
 										           }
-										           
 							           ]
 						           },
 				           

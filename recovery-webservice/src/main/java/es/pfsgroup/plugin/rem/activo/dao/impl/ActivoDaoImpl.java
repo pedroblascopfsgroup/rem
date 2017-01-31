@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -675,4 +676,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	
+	@Override
+	public void actualizarRatingActivo(Long idActivo, String username) {	
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query = session.createSQLQuery(
+		"CALL CALCULO_RATING_ACTIVO_AUTO(:idActivo, :username)")
+		.setParameter("idActivo", idActivo)
+		.setParameter("username", username);
+
+		query.executeUpdate();
+	}
+
 }

@@ -115,6 +115,7 @@ BEGIN
 			WHERE TPR.DD_TPR_CODIGO IN 
 			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
 			AND PVE_COD_UVEM = TO_CHAR(MIG.OFR_COD_PRESCRIPTOR_UVEM)
+			AND ROWNUM = 1
 			) 															PVE_ID_PRESCRIPTOR,
             (SELECT PVE_ID 
 			FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
@@ -123,6 +124,7 @@ BEGIN
 			WHERE TPR.DD_TPR_CODIGO IN 
 			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
 			AND PVE_COD_UVEM = TO_CHAR(MIG.OFR_COD_API_RESPONSABLE_UVEM)
+			AND ROWNUM = 1
 			)															PVE_ID_API_RESPONSABLE,
             (SELECT PVE_ID 
 			FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
@@ -131,6 +133,7 @@ BEGIN
 			WHERE TPR.DD_TPR_CODIGO IN 
 			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
 			AND PVE_COD_UVEM = TO_CHAR(MIG.OFR_COD_CUSTODIO_UVEM)
+			AND ROWNUM = 1
 			)											                PVE_ID_CUSTODIO,
             (SELECT PVE_ID 
 			FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
@@ -139,6 +142,7 @@ BEGIN
 			WHERE TPR.DD_TPR_CODIGO IN 
 			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
 			AND PVE_COD_UVEM = TO_CHAR(MIG.OFR_COD_FDV_UVEM)
+			AND ROWNUM = 1
 			)				                                            PVE_ID_FDV,           
             0                                                           VERSION,
             ''MIG2''                                                    USUARIOCREAR,

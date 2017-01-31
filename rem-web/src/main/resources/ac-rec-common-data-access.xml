@@ -160,6 +160,7 @@
            <value>es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento</value>
            <value>es.capgemini.pfs.ruleengine.rule.dd.DDRule</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDResolucionComite</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente</value>
     </list>
     </property>
     </bean>

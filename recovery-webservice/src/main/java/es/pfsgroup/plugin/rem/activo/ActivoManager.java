@@ -57,9 +57,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -217,10 +215,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	GestorDocumentalFotosApi gestorDocumentalFotos;
 	
 	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
+	private ActivoCargasApi activoCargasApi;
 	
 	@Autowired
-	private ActivoCargasApi activoCargasApi;
+	private OfertaApi ofertaApi;
 
 	@Override
 	public String managerName() {
@@ -247,12 +245,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
-	@Autowired
-	private ActivoTareaExternaApi activoTareaExternaApi;
-	
-	@Autowired
-	private GestorActivoApi gestorActivoApi;
 	
 	@Autowired 
     private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
@@ -365,6 +357,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				saveActivoValoracion(activo, activoValoracion, dto);
 
 			}
+
+			ExpedienteComercial expediente = expedienteComercialApi.getExpedienteComercialResetPBC(activo);
+			if(!Checks.esNulo(expediente)) {
+				ofertaApi.resetPBC(expediente);
+			}
+
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
 			resultado = false;

@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -90,5 +91,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Boolean getDptoPrecio(Activo activo);
 	
 	public void actualizarRatingActivo(Long idActivo, String username);
+
+	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo);
 
 }

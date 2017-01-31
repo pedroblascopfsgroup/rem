@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -660,6 +661,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long numActivo) {
+		
+		HQLBuilder hb = new HQLBuilder(" from VOfertasActivosAgrupacion voa");
+		
+		hb.appendWhere("voa.activos like ('%''"+numActivo+"''%')");
+		
+		return (List<VOfertasActivosAgrupacion>) getSession().createQuery(hb.toString()).list();
+				
+		
+	}
+	
 	
 	@Override
 	public void actualizarRatingActivo(Long idActivo, String username) {	
@@ -671,4 +686,5 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		query.executeUpdate();
 	}
+
 }

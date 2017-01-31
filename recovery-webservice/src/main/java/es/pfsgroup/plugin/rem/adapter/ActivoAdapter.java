@@ -2820,10 +2820,10 @@ public class ActivoAdapter {
 	}
 
 	public List<VOfertasActivosAgrupacion> getListOfertasActivos(Long idActivo) {
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
-
-		return genericDao.getList(VOfertasActivosAgrupacion.class, filtro);
+		
+		Activo activo = getActivoById(idActivo);
+		
+		return activoDao.getListOfertasActivo(activo.getNumActivo());
 
 	}
 

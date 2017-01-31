@@ -23,6 +23,8 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBK
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -30,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -64,6 +67,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
 	@Override
 	public String[] getKeys() {
@@ -322,6 +331,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		try {
 			beanUtilNotNull.copyProperties(activo, dto);
 			
+			boolean reiniciarPBC = false;
+			
 			if (Checks.esNulo(activo.getLocalizacion())) {
 				activo.setLocalizacion(new ActivoLocalizacion());
 				activo.getLocalizacion().setActivo(activo);
@@ -398,30 +409,35 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (!Checks.esNulo(dto.getPaisCodigo())) {
 				DDCicCodigoIsoCirbeBKP pais = (DDCicCodigoIsoCirbeBKP) diccionarioApi.dameValorDiccionarioByCod(DDCicCodigoIsoCirbeBKP.class,  dto.getPaisCodigo());
 				activo.getLocalizacion().getLocalizacionBien().setPais(pais);
+				reiniciarPBC = true;
 			}
 			
 			if (!Checks.esNulo(dto.getTipoViaCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoViaCodigo());
 				DDTipoVia tipoViaNueva = (DDTipoVia) genericDao.get(DDTipoVia.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setTipoVia(tipoViaNueva);
+				reiniciarPBC = true;
 			}
 			
 			if (!Checks.esNulo(dto.getProvinciaCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
 				DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setProvincia(provincia);
+				reiniciarPBC = true;
 			}
 			
 			if (!Checks.esNulo(dto.getMunicipioCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
 				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setLocalidad(municipioNuevo);
+				reiniciarPBC = true;
 			}
 			
 			if (!Checks.esNulo(dto.getInferiorMunicipioCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getInferiorMunicipioCodigo());
 				DDUnidadPoblacional inferiorNuevo = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setUnidadPoblacional(inferiorNuevo);
+				reiniciarPBC = true;
 			}
 			
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
@@ -429,11 +445,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (!Checks.esNulo(dto.getTipoActivoCodigo())) {
 				DDTipoActivo tipoActivo = (DDTipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDTipoActivo.class,  dto.getTipoActivoCodigo());
 				activo.setTipoActivo(tipoActivo);
+				reiniciarPBC = true;
 			}
 			
 			if (!Checks.esNulo(dto.getSubtipoActivoCodigo())) {
 				DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class,  dto.getSubtipoActivoCodigo());
 				activo.setSubtipoActivo(subtipoActivo);
+				reiniciarPBC = true;
 			}
 			
 			if (!Checks.esNulo(dto.getTipoTitulo())) {
@@ -471,6 +489,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoEstadoInfComercialHistorico.setFecha(new Date());
 				activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_MANUAL);
 				genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
+				reiniciarPBC = true;
 			}
 
 			// Perimetro -------
@@ -614,7 +633,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			// -----
 			
-			
+			if(reiniciarPBC) {
+				ExpedienteComercial expediente = expedienteComercialApi.getExpedienteComercialResetPBC(activo);
+				if(!Checks.esNulo(expediente)) {
+					ofertaApi.resetPBC(expediente);
+				}
+			}
 			
 			
 		} catch (IllegalAccessException e) {

@@ -72,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
@@ -115,6 +116,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -3055,6 +3057,45 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) {
+		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getIdExpediente()));
+		
+		
+		Formalizacion formalizacion = expediente.getFormalizacion();
+		if(!Checks.esNulo(formalizacion)){
+			
+			String numExpedienteRiesgo = dto.getNumExpediente();			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodTipoRiesgo());
+			DDTipoRiesgoClase tipoRiesgo = genericDao.get(DDTipoRiesgoClase.class, filtro);
+			
+			if(!Checks.esNulo(numExpedienteRiesgo) && !Checks.esNulo(tipoRiesgo)){
+				Long capitalConcedido;
+				try {
+					capitalConcedido = uvemManagerApi.consultaDatosPrestamo(numExpedienteRiesgo, Integer.parseInt(tipoRiesgo.getCodigo()));
+					
+					if(!Checks.esNulo(capitalConcedido)){
+						formalizacion.setCapitalConcedido(capitalConcedido/100);
+						
+						formalizacion.setNumExpediente(numExpedienteRiesgo);
+						formalizacion.setTipoRiesgoClase(tipoRiesgo);
+
+						genericDao.save(Formalizacion.class, formalizacion);
+						return true;
+					}
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}
+		return false;
 	}
 	
 }

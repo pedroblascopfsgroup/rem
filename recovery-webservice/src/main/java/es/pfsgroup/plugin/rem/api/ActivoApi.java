@@ -163,9 +163,32 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.getMaxOrdenFotoByIdSubdivision")
 	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
 
+	/**
+	 * Obtiene el presupuesto de un activo para el ejercicio actual 
+	 * (no el ultimo ejercicio de tabla ejercicios, sino el del año actual)
+	 * @param id
+	 * @return
+	 */
 	@BusinessOperationDefinition("activoManager.getUltimoPresupuesto")
-	Long getUltimoPresupuesto(Long id);
+	public Long getPresupuestoActual(Long id);
 
+	/**
+	 * Obtiene el presupuesto de un activo para el ultimo ejercicio registrado
+	 * (el ultimo ejercicio registrado en la tabla ejercicios)
+	 * @param id
+	 * @return
+	 */
+	@BusinessOperationDefinition("activoManager.getUltimoHistoricoPresupuesto")
+	public Long getUltimoHistoricoPresupuesto(Long id);
+	
+	/**
+	 * True si el activo tiene asignado un presupuesto para el ejercicio actual, "aunque sea 0 euros"
+	 * @param idActivo
+	 * @return
+	 */
+	@BusinessOperationDefinition("activoManager.checkHayPresupuestoEjercicioActual")
+	public boolean checkHayPresupuestoEjercicioActual(Long idActivo);
+	
 	@BusinessOperationDefinition("activoManager.getListHistoricoPresupuestos")
 	public Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuarioLogado);
 

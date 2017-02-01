@@ -1619,7 +1619,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 
 			if (idPresupuesto == null || idPresupuesto == 0) {
-				idPresupuesto = activoApi.getUltimoPresupuesto(idActivo);
+				idPresupuesto = activoApi.getUltimoHistoricoPresupuesto(idActivo);
 			}
 
 			List<DtoIncrementoPresupuestoActivo> listaIncrementos = adapter

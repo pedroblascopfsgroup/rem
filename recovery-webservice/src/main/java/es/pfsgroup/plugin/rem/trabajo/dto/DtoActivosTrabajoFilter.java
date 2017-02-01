@@ -18,6 +18,7 @@ public class DtoActivosTrabajoFilter extends WebDto {
 	private String idActivo;
 	private String estadoCodigo;
 	private String estadoContable;
+	private String ejercicioPresupuestario;
 
 	public String getIdTrabajo() {
 		return idTrabajo;
@@ -49,6 +50,14 @@ public class DtoActivosTrabajoFilter extends WebDto {
 
 	public void setEstadoContable(String estadoContable) {
 		this.estadoContable = estadoContable;
+	}
+
+	public String getEjercicioPresupuestario() {
+		return ejercicioPresupuestario;
+	}
+
+	public void setEjercicioPresupuestario(String ejercicioPresupuestario) {
+		this.ejercicioPresupuestario = ejercicioPresupuestario;
 	}
 	
 	

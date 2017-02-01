@@ -9,8 +9,8 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "V_BUSQUEDA_ACTIVOS_TRABAJO", schema = "${entity.schema}")
-public class VBusquedaActivosTrabajo implements Serializable {
+@Table(name = "V_BUSQUEDA_ACT_TBJ_PRESUPUESTO", schema = "${entity.schema}")
+public class VBusquedaActivosTrabajoPresupuesto implements Serializable {
 
 	/**
 	 * 
@@ -60,6 +60,18 @@ public class VBusquedaActivosTrabajo implements Serializable {
 	@Column(name = "SPS_CON_TITULO")
 	private String situacionPosesoriaTitulo;
 	
+	@Column(name = "SALDO_DISPONIBLE")
+	private String saldoDisponible;
+	
+	@Column(name = "PORCENTAJE_PARTICIPACION")
+	private String participacion;
+	
+	@Column(name = "IMPORTE_PARTICIPA")
+	private String importeParticipa;
+	
+	@Column(name = "SALDO_NECESARIO")
+	private String saldoNecesario;
+	
 	@Column(name="DD_EST_CODIGO")
 	private String codigoEstado;
 	
@@ -68,6 +80,12 @@ public class VBusquedaActivosTrabajo implements Serializable {
 	
 	@Column(name="DD_EST_ESTADO_CONTABLE")
 	private String estadoContable;
+	
+	@Column(name="EJE_ANYO")
+    private String ejercicio;
+	
+	@Column(name="PTO_ID")
+	private String idPresupuesto;
 	
 	public String getIdVista() {
 		return idVista;
@@ -182,6 +200,38 @@ public class VBusquedaActivosTrabajo implements Serializable {
 		this.situacionPosesoriaTitulo = situacionPosesoriaTitulo;
 	}
 
+	public String getSaldoDisponible() {
+		return saldoDisponible;
+	}
+
+	public void setSaldoDisponible(String saldoDisponible) {
+		this.saldoDisponible= saldoDisponible;
+	}
+
+	public String getParticipacion() {
+		return participacion;
+	}
+
+	public void setParticipacion(String participacion) {
+		this.participacion = participacion;
+	}
+
+	public String getImporteParticipa() {
+		return importeParticipa;
+	}
+
+	public void setImporteParticipa(String importeParticipa) {
+		this.importeParticipa = importeParticipa;
+	}
+
+	public String getSaldoNecesario() {
+		return saldoNecesario;
+	}
+
+	public void setSaldoNecesario(String saldoNecesario) {
+		this.saldoNecesario = saldoNecesario;
+	}
+
 	public String getCodigoEstado() {
 		return codigoEstado;
 	}
@@ -206,10 +256,24 @@ public class VBusquedaActivosTrabajo implements Serializable {
 		this.estadoContable = estadoContable;
 	}
 
+	public String getEjercicio() {
+		return ejercicio;
+	}
+
+	public void setEjercicio(String ejercicio) {
+		this.ejercicio = ejercicio;
+	}
+
+	public String getIdPresupuesto() {
+		return idPresupuesto;
+	}
+
+	public void setIdPresupuesto(String idPresupuesto) {
+		this.idPresupuesto = idPresupuesto;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
-	
 
 }

@@ -1053,7 +1053,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveFormalizacionFinanciacion(ModelMap model, DtoFormalizacionFinanciacion dto) {
 		try {
 			model.put("success", expedienteComercialApi.saveFormalizacionFinanciacion(dto));

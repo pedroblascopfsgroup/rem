@@ -3138,6 +3138,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public boolean saveFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto) {
 		if(Checks.esNulo(dto.getId())) {
 			return false;

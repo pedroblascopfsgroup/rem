@@ -91,6 +91,9 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 					bind: {
 						store: '{storeListadoProcesos}'
 					},
+					listeners: {
+						select : 'onSelectProcesoCargaMasiva'
+					},
 					columns: [				
 
 					    {
@@ -122,7 +125,7 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 				        	dataIndex: 'fechaCrear',
 				        	sortable: true,
 				        	flex: 1,
-				            formatter: 'date("d/m/Y")'
+				            formatter: 'date("d/m/Y H:i:s")'
 				        }
 					],
 
@@ -135,18 +138,21 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 						        	itemId:'procesarButton',
 						        	cls: 'tbar-grid-button',
 						        	handler: 'onClickBotonProcesar',
+						        	disabled: true,
 						        	text: 'Procesar'
 						        },
 						        {
 						        	itemId:'removeButton',
 						        	cls: 'tbar-grid-button',
-						        	text: 'Eliminar'
+						        	text: 'Eliminar',
+						        	hidden: true
 						        },
 						        {
 						        	itemId:'downloadButton',
 						        	cls: 'tbar-grid-button',
 						        	handler: 'onClickDescargarErrores',
-						        	text: 'Descargar errores'
+						        	text: 'Descargar errores',
+						        	disabled: true
 						        }			    	
 					    	]
 					    },

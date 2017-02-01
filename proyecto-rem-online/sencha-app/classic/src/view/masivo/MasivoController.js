@@ -23,7 +23,13 @@ Ext.define('HreRem.view.masivo.MasivoController', {
                 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));                			
                 		} else {		                			                	
 		                    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		                    me.getView().lookupReference("listadoCargamasiva").getStore().load();                			
+		                    
+		                    
+		                    me.getView().lookupReference("listadoCargamasiva").getSelectionModel().deselectAll();
+                        	me.getView().lookupReference("listadoCargamasiva").getSelectionModel().clearSelections();
+		                    me.getView().lookupReference("listadoCargamasiva").getStore().load();
+		                    me.getView().lookupReference("listadoCargamasiva").down('#procesarButton').setDisabled(true);
+    						me.getView().lookupReference("listadoCargamasiva").down('#downloadButton').setDisabled(true);
                 		}
                 	}
 
@@ -72,6 +78,7 @@ Ext.define('HreRem.view.masivo.MasivoController', {
     	parameters.idProcess = this.getView().down('grid').selection.data.id;
         parameters.idOperation = this.getView().down('grid').selection.data.tipoOperacionId;
     	var url =  $AC.getRemoteUrl('agrupacion/procesarMasivo');
+    	me.getView().mask(HreRem.i18n('msg.mask.loading'));
 		Ext.Ajax.request({
 			 method: 'GET',
 		     url: url,
@@ -83,7 +90,18 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 				     url:$AC.getRemoteUrl('process/setStateProcessed'),
 				     params: parameters,
 				     success: function(response, opts) {
+				     	me.getView().unmask();
 				     	btn.up('grid').getStore().load();
+				     	btn.up('grid').getSelectionModel().deselectAll();
+                        btn.up('grid').getSelectionModel().clearSelections();
+                        btn.up('grid').down('#procesarButton').setDisabled(true);
+    					btn.up('grid').down('#downloadButton').setDisabled(true);
+				     	
+				     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				     },
+				     failure: function(response, opts) {
+				     	me.getView().unmask();
+				     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				     }
 			     });
 		     },
@@ -93,10 +111,32 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 				     url:$AC.getRemoteUrl('process/setStateError'),
 				     params: parameters,
 				     success: function(response, opts) {
+				     	me.getView().unmask();
 				     	btn.up('grid').getStore().load();
+				     	btn.up('grid').getSelectionModel().deselectAll();
+                        btn.up('grid').getSelectionModel().clearSelections();
+                        btn.up('grid').down('#procesarButton').setDisabled(true);
+    					btn.up('grid').down('#downloadButton').setDisabled(true);
+				     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				     },
+				     failure: function(response, opts) {
+				     	me.getView().unmask();
+				     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				     }
 			     });
 		     }
 		 });
+    },
+    
+    onSelectProcesoCargaMasiva: function(view, record) {
+    	
+    	var me = this,
+    	grid = me.lookupReference("listadoCargamasiva"),
+    	processButton = grid.down('#procesarButton'),
+    	downloadButton = grid.down('#downloadButton'); 
+    	
+    	processButton.setDisabled(!record.get("sePuedeProcesar"));
+    	downloadButton.setDisabled(!record.get("conErrores"));
+    	
     }
 });

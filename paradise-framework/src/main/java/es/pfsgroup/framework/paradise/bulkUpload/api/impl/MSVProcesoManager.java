@@ -1,7 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,34 +8,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.pagination.PaginationParams;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
-
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.recovery.bpmframework.api.RecoveryBPMfwkBatchApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoMSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
-import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoFiltroProcesos;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
-import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.recovery.bpmframework.api.RecoveryBPMfwkBatchApi;
 
 @Component
 @Transactional(readOnly = false)
@@ -75,11 +71,11 @@ public class MSVProcesoManager implements MSVProcesoApi {
 				procesoMasivo.setTipoOperacion(tipoOperacion);
 			} else {
 				throw new BusinessOperationException(
-						"Necesitamos un tipo de operación válido para dar de alta un proceso masivo");
+						"Necesitamos un tipo de operaciï¿½n vï¿½lido para dar de alta un proceso masivo");
 			}
 		} else {
 			throw new BusinessOperationException(
-					"Necesitamos un tipo de operación válido para dar de alta un proceso masivo");
+					"Necesitamos un tipo de operaciï¿½n vï¿½lido para dar de alta un proceso masivo");
 		}
 
 		MSVDDEstadoProceso estadoProceso = genericDao.get(MSVDDEstadoProceso.class,
@@ -152,6 +148,8 @@ public class MSVProcesoManager implements MSVProcesoApi {
 
 		for (MSVProcesoMasivo proceso : listaProcesos) {
 			DtoMSVProcesoMasivo nuevoDto = new DtoMSVProcesoMasivo();
+			boolean sePuedeProcesar = false;
+			boolean conErrores = false;
 			try {
 				beanUtilNotNull.copyProperty(nuevoDto, "id", proceso.getId());
 				if(!Checks.esNulo(proceso.getTipoOperacion())) {
@@ -159,11 +157,18 @@ public class MSVProcesoManager implements MSVProcesoApi {
 					beanUtilNotNull.copyProperty(nuevoDto, "tipoOperacionId", proceso.getTipoOperacion().getId());
 				}
 				if(!Checks.esNulo(proceso.getEstadoProceso())){
-					beanUtilNotNull.copyProperty(nuevoDto, "estadoProceso",	proceso.getEstadoProceso().getDescripcion());
+					beanUtilNotNull.copyProperty(nuevoDto, "estadoProceso",	proceso.getEstadoProceso().getDescripcion());					
+					if(MSVDDEstadoProceso.CODIGO_VALIDADO.equals(proceso.getEstadoProceso().getCodigo())) {
+						sePuedeProcesar = true;
+					} else if (MSVDDEstadoProceso.CODIGO_ERROR.equals(proceso.getEstadoProceso().getCodigo())){
+						conErrores = true;
+					}
+					beanUtilNotNull.copyProperty(nuevoDto, "sePuedeProcesar", sePuedeProcesar);
+					beanUtilNotNull.copyProperty(nuevoDto, "conErrores", conErrores);
 				}
 				beanUtilNotNull.copyProperty(nuevoDto, "nombre", proceso.getDescripcion());
 				if (!Checks.esNulo(proceso.getAuditoria())) {
-					beanUtilNotNull.copyProperty(nuevoDto, "usuario", proceso.getAuditoria().getUsuarioCrear());;
+					beanUtilNotNull.copyProperty(nuevoDto, "usuario", proceso.getAuditoria().getUsuarioCrear());
 					beanUtilNotNull.copyProperty(nuevoDto, "fechaCrear", proceso.getAuditoria().getFechaCrear());
 				}
 
@@ -196,7 +201,7 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	}
 
 	/**
-	 * Cambia el nombre de las columnas de ordenación para que coincidan con las del objeto de Hibernate.
+	 * Cambia el nombre de las columnas de ordenaciï¿½n para que coincidan con las del objeto de Hibernate.
 	 * @param dto
 	 */
 	private void parseaColumnasOrder(PaginationParams dto) {
@@ -267,7 +272,7 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	
 	/**
 	 * Comprueba si un usuario tiene un perfil determinado.
-	 * @param descripcionPerfil descripción del perfil.
+	 * @param descripcionPerfil descripciï¿½n del perfil.
 	 * @param u usuario
 	 * @return
 	 */
@@ -310,7 +315,7 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	}	
 	
 	/**
-	 * Devuelve el estado del proceso si ya ha realizado todas las funciones la operación o queda alguna pendiente de ejecutar por batch
+	 * Devuelve el estado del proceso si ya ha realizado todas las funciones la operaciï¿½n o queda alguna pendiente de ejecutar por batch
 	 * @param tipoOperacion
 	 * @return
 	 */

@@ -16,6 +16,8 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	private String usuario;
 	private Date fechaCrear;
 	private int totalCount;
+	private boolean sePuedeProcesar;
+	private boolean conErrores;
 
 
 	public String getId() {
@@ -65,5 +67,17 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	}
 	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;
+	}
+	public boolean getSePuedeProcesar() {
+		return sePuedeProcesar;
+	}
+	public void setSePuedeProcesar(boolean sePuedeProcesar) {
+		this.sePuedeProcesar = sePuedeProcesar;
+	}
+	public boolean getConErrores() {
+		return conErrores;
+	}
+	public void setConErrores(boolean conErrores) {
+		this.conErrores = conErrores;
 	}
 }

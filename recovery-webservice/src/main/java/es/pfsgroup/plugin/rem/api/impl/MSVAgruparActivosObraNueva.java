@@ -46,13 +46,15 @@ public class MSVAgruparActivosObraNueva implements MSVLiberator {
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);		
-		Long agrupationId = new Long(exc.dameCelda(1, 1));
+		Long numAgrupRem = new Long(exc.dameCelda(1, 0));
+		Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
 		
 		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
-			agrupacionAdapter.createActivoAgrupacion(agrupationId, new Long(exc.dameCelda(fila, 0)), new Integer(exc.dameCelda(fila, 2)));		
+			agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null);		
 		}
 
 		return true;
+		
 	}
 
 }

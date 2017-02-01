@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 
 @Component
@@ -115,14 +116,24 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 				}
 				
-				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-				{
+				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+// TODO: En caso de anulacion (en esta tarea, Resolucion expediente - Procede = NO), las reservas en principio no hay que anularlas
+// se anula solo el expediente. Ya que el estado de las reservas se ha definido por el valor del campo "procede" y el 
+// y el indicador de "devolucion" (ya tratado en la logica de arriba). En ningun caso deben las reservas. Bankia lo hara por WS.
+					/* Codigo anterior de anulacion de reservas
 					Reserva reserva = expediente.getReserva();
 					if(!Checks.esNulo(reserva)){
 						reserva.setMotivoAnulacion(valor.getValor());
 						genericDao.save(Reserva.class, reserva);
 					}
+					*/
+					
+					// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
+					DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+					expediente.setMotivoAnulacion(motivoAnulacion);
 				}
+				
 			}
 		}
 

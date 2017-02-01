@@ -517,7 +517,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	}	    	
 	    },
 
-	    comboMotivoAnulacion: {
+	    storeMotivoAnulacion: {
 	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',

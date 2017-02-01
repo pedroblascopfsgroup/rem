@@ -1004,13 +1004,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 								me.habilitarCampo(me.down('[name=fechaFirma]'));
 								me.habilitarCampo(me.down('[name=notario]'));
 								me.habilitarCampo(me.down('[name=numProtocolo]'));
-								me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+								me.habilitarCampo(me.down('[name=precioEscrituracion]'));
 								me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 							}else{
 								me.deshabilitarCampo(me.down('[name=fechaFirma]'));
 								me.deshabilitarCampo(me.down('[name=notario]'));
 								me.deshabilitarCampo(me.down('[name=numProtocolo]'));
-								me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+								me.deshabilitarCampo(me.down('[name=precioEscrituracion]'));
 								me.habilitarCampo(me.down('[name=motivoAnulacion]'));
 							}
 						})
@@ -1077,6 +1077,23 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 				    		}
 				    	})
 				    },
+				    
+					T013_ResolucionExpedienteValidacion: function(){
+						var me = this;
+
+						me.deshabilitarCampo(me.down('[name=tipoArras]'));
+						me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+						
+						me.down('[name=comboProcede]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.habilitarCampo(me.down('[name=tipoArras]'));
+								me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+							}else{
+								me.deshabilitarCampo(me.down('[name=tipoArras]'));
+								me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+							}
+						})
+					},
 						
 					T014_PosicionamientoFirmaValidacion: function(){
 						var me = this;

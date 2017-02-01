@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
@@ -541,6 +542,12 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public ExpedienteComercial getExpedienteComercialResetPBC(Activo activo);
+	
+	/**
+	 * Este método recibe un expediente comercial, llama al WS para obtener los datos del préstamo y los guarda en el expediente.
+	 * @param dto
+	 */
+	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto);
 	
 	
 }

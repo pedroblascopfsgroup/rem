@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Añadir columna DD_TRC_ID en tabla DD_TRC_TIPO_RIESGO_CLASE, FOR_NUMEXPEDIENTE, FOR_CAPITALCONCEDIDO.
+--## Finalidad: Añadir columna DD_TRC_ID en tabla FOR_FORMALIZACION, FOR_NUMEXPEDIENTE, FOR_CAPITALCONCEDIDO.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -29,8 +29,10 @@ DECLARE
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TRC_TIPO_RIESGO_CLASE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_COLUMN VARCHAR2(500 CHAR):= 'Indicador del tipo de riesgo clase.'; -- Vble. para el comentario de la columna.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'FOR_FORMALIZACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_COLUMN_TRC VARCHAR2(500 CHAR):= 'Indicador del tipo de riesgo clase.'; -- Vble. para el comentario de la columna.
+    V_COMMENT_COLUMN_NUMEX VARCHAR2(500 CHAR):= 'Número de expediente de riesgo.'; -- Vble. para el comentario de la columna.
+    V_COMMENT_COLUMN_CAP VARCHAR2(500 CHAR):= 'Capital concedido.'; -- Vble. para el comentario de la columna.
 
 BEGIN
 
@@ -44,11 +46,40 @@ BEGIN
 		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (DD_TRC_ID NUMBER(16))';
 		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TRC_ID... Creado');
 		-- Creamos comentario	
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TRC_ID IS '''||V_COMMENT_COLUMN||'''';		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TRC_ID IS '''||V_COMMENT_COLUMN_TRC||'''';		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 	END IF;
 	
+		-- Comprobamos si existe columna DD_TRC_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''FOR_NUMEXPEDIENTE'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FOR_NUMEXPEDIENTE... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (FOR_NUMEXPEDIENTE VARCHAR2(100 CHAR))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FOR_NUMEXPEDIENTE... Creado');
+		-- Creamos comentario	
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FOR_NUMEXPEDIENTE IS '''||V_COMMENT_COLUMN_NUMEX||'''';		
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
+	END IF;
+	
+	-- Comprobamos si existe columna DD_TRC_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''FOR_CAPITALCONCEDIDO'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FOR_CAPITALCONCEDIDO... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (FOR_CAPITALCONCEDIDO NUMBER(16,2))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FOR_CAPITALCONCEDIDO... Creado');
+		-- Creamos comentario	
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FOR_CAPITALCONCEDIDO IS '''||V_COMMENT_COLUMN_CAP||'''';		
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
+	END IF;
 	
 	--Comprobamos si existe foreign key FK_FORMALIZACION_DDTRC
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_FORMALIZACION_DDTRC'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
@@ -62,7 +93,7 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_FORMALIZACION_DDTRC... Foreign key creada.');
 	END IF;
-
+	
 	
 	EXCEPTION
 	     WHEN OTHERS THEN

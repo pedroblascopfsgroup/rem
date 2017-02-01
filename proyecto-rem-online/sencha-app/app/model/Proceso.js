@@ -34,6 +34,14 @@ Ext.define('HreRem.model.Proceso', {
     			name: 'fechaCrear',
     			type: 'date',
     			dateFormat: 'c'
+    		},
+    		{
+    			name: 'sePuedeProcesar',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'conErrores',
+    			type: 'boolean'
     		}
     		
     ] 

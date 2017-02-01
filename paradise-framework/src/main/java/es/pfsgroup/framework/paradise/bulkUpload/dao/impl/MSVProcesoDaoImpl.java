@@ -47,6 +47,7 @@ public class MSVProcesoDaoImpl extends AbstractEntityDao<MSVProcesoMasivo, Long>
 	private HQLBuilder getFiltroProcesos(String username) {
 		HQLBuilder hb = new HQLBuilder("from MSVProcesoMasivo proc");
 		HQLBuilder.addFiltroIgualQue(hb, "proc.auditoria.usuarioCrear", username);
+		hb.orderBy("proc.auditoria.fechaCrear", HQLBuilder.ORDER_DESC);
 		return hb;
 	}
 	

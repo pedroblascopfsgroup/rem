@@ -428,11 +428,14 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkSuperaPresupuestoActivoTarea(tareaExterna);
             }
-            
             def checkSuperaDelegacion = {
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkSuperaDelegacion(tareaExterna);
             }
+			def checkHayPresupuestoEjercicioActual = {
+				def activoManager = ctx.getBean("activoManager");
+				return activoManager.checkHayPresupuestoEjercicioActual(idActivo);
+			}
   			 ]]></value>
   		</list>
   	</property>

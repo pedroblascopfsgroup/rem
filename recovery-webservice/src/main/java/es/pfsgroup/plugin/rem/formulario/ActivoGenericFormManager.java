@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 
 @Service
 public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
@@ -233,10 +234,16 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	{
             		if(item.getNombre().equals("saldoDisponible"))
             		{
+            			SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
+            			String ejercicioActual = dfAnyo.format(new Date());
+            			
+            			// El saldo disponible debe ser el del activo, para el ejercicio actual
             			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", ((TareaActivo) tareaExterna.getTareaPadre()).getActivo().getId().toString());
-            			List<VBusquedaActivosTrabajo> lista = genericDao.getList(VBusquedaActivosTrabajo.class, filtroActivo);
+            			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
+            			List<VBusquedaActivosTrabajoPresupuesto> lista = genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicio);
             			if(!Checks.estaVacio(lista))
             				item.setValue(lista.get(0).getSaldoDisponible() + "€");
+
             		}
             		if(item.getNombre().equals("nombrePropuesta"))
             		{

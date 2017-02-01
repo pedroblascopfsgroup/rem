@@ -96,7 +96,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareasexpediente', ocultarBotonesEdicion: true})}, ['TAB_TRÁMITES_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosexpediente', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_EXPEDIENTES']);
-	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionexpediente', ocultarBotonesEdicion: true})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionexpediente', funPermEdition: ['EDITAR_TAB_FORMALIZACION_EXPEDIENTES']})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTION_ECONOMICA_EXPEDIENTES']);
 
 	        me.addPlugin({ptype: 'lazyitems', items: items});

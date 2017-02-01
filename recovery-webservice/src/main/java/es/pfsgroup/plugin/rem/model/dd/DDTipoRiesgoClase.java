@@ -44,7 +44,7 @@ public class DDTipoRiesgoClase implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_TRC_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoRiesgoClaseGenerator")
-	@SequenceGenerator(name = "DDTipoAdelantoGenerator", sequenceName = "S_DD_TRC_TIPO_RIESGO_CLASE")
+	@SequenceGenerator(name = "DDTipoRiesgoClaseGenerator", sequenceName = "S_DD_TRC_TIPO_RIESGO_CLASE")
 	private Long id;
 	
 	@Column(name = "DD_TRC_CODIGO")   

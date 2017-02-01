@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -103,6 +104,7 @@ public class Formalizacion implements Serializable, Auditable {
 	@Column(name="FOR_IMPORTE")
 	private Double importe;
 
+	@ManyToOne
 	@JoinColumn(name = "DD_TRC_ID")
     private DDTipoRiesgoClase tipoRiesgoClase;
     

@@ -99,6 +99,7 @@ import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -1410,6 +1411,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return trabajoDao.getListActivosTrabajo(dto);
 	}
+	
+	@Override
+	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto) {
+
+		return trabajoDao.getListActivosTrabajoPresupuesto(dto);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -1765,38 +1772,36 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.getExcesoPresupuestoActivo")
 	public Float getExcesoPresupuestoActivo(Trabajo trabajo) {
 		
+		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
+		String ejercicioActual = dfAnyo.format(new Date());
+		
 		Double ultimoPresupuestoActivoImporte = 0D;
 		Double acumuladoTrabajosActivoImporte = 0D;
 		Long idUltimoPresupuestoActivo = null;
 		VBusquedaPresupuestosActivo ultimoPresupuestoActivo = null;
 		
+		// Obtiene el presupuesto del activo, si se asigno para el ejercicio actual
 		if (!Checks.esNulo(trabajo.getActivo()))
-			idUltimoPresupuestoActivo = activoApi.getUltimoPresupuesto(trabajo.getActivo().getId());
-		
+			idUltimoPresupuestoActivo = activoApi.getPresupuestoActual(trabajo.getActivo().getId());
+ 		
 		if (!Checks.esNulo(idUltimoPresupuestoActivo)){
-			Filter filtroPresupuesto = genericDao.createFilter(FilterType.EQUALS, "id", idUltimoPresupuestoActivo.toString());
-			ultimoPresupuestoActivo = (VBusquedaPresupuestosActivo) genericDao.get(VBusquedaPresupuestosActivo.class, filtroPresupuesto);
+			Filter filtroUltimoPresupuesto = genericDao.createFilter(FilterType.EQUALS, "id", idUltimoPresupuestoActivo.toString());
+			ultimoPresupuestoActivo = (VBusquedaPresupuestosActivo) genericDao.get(VBusquedaPresupuestosActivo.class, filtroUltimoPresupuesto);
 		}
-		
+ 		
 		if (!Checks.esNulo(ultimoPresupuestoActivo) && !Checks.esNulo(ultimoPresupuestoActivo.getImporteInicial()))
 			if(!Checks.esNulo(ultimoPresupuestoActivo.getSumaIncrementos()))
 				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial() + ultimoPresupuestoActivo.getSumaIncrementos();
 			else
 				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial();
-/*
-		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);
 
-		for (PresupuestoTrabajo presupuestoTrabajo : presupuestosTrabajo) {
-			totalPresupuestoTrabajo = (long) (totalPresupuestoTrabajo + presupuestoTrabajo.getImporte());
-		}
-*/
-
+		// Obtiene el acumulado de presupuestos de trabajos del activo, para el ejercicio actual
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", trabajo.getActivo().getId().toString());
-		List<VBusquedaActivosTrabajo> listaTrabajosActivo = (List<VBusquedaActivosTrabajo>) genericDao.getList(VBusquedaActivosTrabajo.class, filtroActivo);
+		Filter filtroEjercicioActual = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
+		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = (List<VBusquedaActivosTrabajoPresupuesto>) genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicioActual);
 
 		BigDecimal importeParticipacionTrabajo = new BigDecimal(0);
-		for (VBusquedaActivosTrabajo trabajoActivo : listaTrabajosActivo) {
+		for (VBusquedaActivosTrabajoPresupuesto trabajoActivo : listaTrabajosActivo) {
 			if(!Checks.esNulo(trabajoActivo.getImporteParticipa()))
 				importeParticipacionTrabajo = new BigDecimal(trabajoActivo.getImporteParticipa());
 			else
@@ -1807,10 +1812,72 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	
 		BigDecimal importeExcesoPresupuesto = new BigDecimal(acumuladoTrabajosActivoImporte - ultimoPresupuestoActivoImporte);
-		
-		return importeExcesoPresupuesto.floatValue();			
+
+		return importeExcesoPresupuesto.floatValue();
 	}
 	
+/*****************
+ * Es un intento de obtener el exceso de presupuesto de trabajos sobre el activo, utilizando solo datos de la vista
+ * No se puede utilizar ya que la vista cambia dinamicamente los datos antes y despues de avanzar las tareas de 
+ * "Analisis Peticion" de los tramites.
+ * Se vuelve a utilizar una version mejorada de getExcesoPresupuestoActivo, volviendo a realizar los calculos
+ * en lugar de obtener el exceso por el Saldo disponible de la vista.
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.getExcesoPresupuestoActivo")
+	public Float getExcesoPresupuestoActivo(Trabajo trabajo) {
+		
+		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
+		String ejercicioActual = dfAnyo.format(new Date());
+
+		// De la vista de presupuestos Activo - Trabajo, tomamos el "Saldo disponible del activo" del
+		// registro que encontremos buscando por trabajo y ejercicio. Supuestamente solo debe haber 1 registro
+		// buscando por la clave idTrabajo pero se controla recuperando una lista por si hubiera un caso no controlado
+		// En la vista, "Saldo disponible" se refiere al activo no al trabajo, por tanto sirve el de cualquier registro
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idTrabajo", trabajo.getId().toString());
+		Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
+		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = (List<VBusquedaActivosTrabajoPresupuesto>) genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicio);
+		VBusquedaActivosTrabajoPresupuesto trabajoActivo = null;
+		BigDecimal saldoDisponibleActivo = new BigDecimal(0);
+		BigDecimal importeParticipadoTrabajo = new BigDecimal(0);
+		BigDecimal importeResultante = new BigDecimal(0);
+		BigDecimal importeExcesoPresupuesto = new BigDecimal(0);
+
+		// Se toma el primer registro de la lista Trabajo-Activo-Presupuesto
+		// Son los datos de presupuesto del trabajo pasado por parametro para el ejercicio actual
+		if (listaTrabajosActivo.size() > 0)
+			trabajoActivo = listaTrabajosActivo.get(0);
+		
+		// De este se extrae el "saldo disponible del activo"
+		if (!Checks.esNulo(trabajoActivo) && !Checks.esNulo(trabajoActivo.getSaldoDisponible()))
+			saldoDisponibleActivo = new BigDecimal(trabajoActivo.getSaldoDisponible());
+		
+		// Este saldo disponible NO esta teniendo en cuenta el coste de este trabajo, participado sobre el activo
+		// Por tanto el coste participado se descuenta del total disponible
+		if (!Checks.esNulo(trabajoActivo) && !Checks.esNulo(trabajoActivo.getImporteParticipa()))
+			importeParticipadoTrabajo = new BigDecimal(trabajoActivo.getImporteParticipa());
+
+//
+//		// Se valora si el saldo Disponible del Activo es positivo o negativo
+//		// saldoDisponibleActivo negativo - Es el exceso de presupuesto que acumulan los trabajos sobre el saldo del activo (incluido actual), para este ejercicio
+//		// saldoDisponibleActivo positivo - Saldo restante del activo, despues de descontar trabajos (incluido actual), para este ejercicio
+//		if (saldoDisponibleActivo.compareTo(new BigDecimal(0)) <= 0)
+//			importeExcesoPresupuesto = saldoDisponibleActivo.negate();
+//		
+		
+		// Resultante = Disponible - coste participado (trabajo actual)
+		importeResultante = saldoDisponibleActivo.subtract(importeParticipadoTrabajo);
+		
+		// Se valora si el importe Resultante es positivo o negativo
+		// importeResultante negativo - Es el exceso de presupuesto que acumulan los trabajos sobre el saldo del activo (incluido actual), para este ejercicio
+		// importeResultante positivo - Saldo restante del activo, despues de descontar trabajos (incluido actual), para este ejercicio
+		if (importeResultante.compareTo(new BigDecimal(0)) <= 0)
+			importeExcesoPresupuesto = importeResultante.negate();
+	
+		// Este metodo solo retorna importe distinto de cero cuando hay exceso (importe de exceso)
+		return importeExcesoPresupuesto.floatValue();			
+	}
+*****************/
+
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.existeTarifaTrabajo")
 	public Boolean existeTarifaTrabajo(TareaExterna tarea) {

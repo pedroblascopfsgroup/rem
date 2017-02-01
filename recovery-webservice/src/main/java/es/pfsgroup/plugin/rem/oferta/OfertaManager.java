@@ -999,8 +999,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
 					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
-					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
+					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
+				}else{
+					if(trabajoApi.checkBankia(tareaExterna)){
+						String codigoComite = null;
+						try {
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComite))
+							return true;
+					}
 				}
 			}
 		}
@@ -1014,11 +1026,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
-					
-					
 					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
-					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
+					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
+				}else{
+					if(trabajoApi.checkBankia(trabajo)){
+						String codigoComite = null;
+						try {
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComite))
+							return true;
+					}
 				}
 			}
 		}

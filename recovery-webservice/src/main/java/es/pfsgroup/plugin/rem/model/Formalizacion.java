@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
 
 
 /**
@@ -101,8 +102,16 @@ public class Formalizacion implements Serializable, Auditable {
 	
 	@Column(name="FOR_IMPORTE")
 	private Double importe;
-	
+
+	@JoinColumn(name = "DD_TRC_ID")
+    private DDTipoRiesgoClase tipoRiesgoClase;
     
+    @Column(name = "FOR_NUMEXPEDIENTE")
+    private String numExpediente;
+    
+    @Column(name = "FOR_CAPITALCONCEDIDO")
+    private Long capitalConcedido;	
+	
     @Version   
 	private Long version;
 
@@ -270,7 +279,29 @@ public class Formalizacion implements Serializable, Auditable {
 		this.fechaContabilizacion = fechaContabilizacion;
 	}
     
-    
+    public DDTipoRiesgoClase getTipoRiesgoClase() {
+		return tipoRiesgoClase;
+	}
+
+	public void setTipoRiesgoClase(DDTipoRiesgoClase tipoRiesgoClase) {
+		this.tipoRiesgoClase = tipoRiesgoClase;
+	}
+
+	public String getNumExpediente() {
+		return numExpediente;
+	}
+
+	public void setNumExpediente(String numExpediente) {
+		this.numExpediente = numExpediente;
+	}
+
+	public Long getCapitalConcedido() {
+		return capitalConcedido;
+	}
+
+	public void setCapitalConcedido(Long capitalConcedido) {
+		this.capitalConcedido = capitalConcedido;
+	}
     
     
    

@@ -3078,7 +3078,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					capitalConcedido = uvemManagerApi.consultaDatosPrestamo(numExpedienteRiesgo, Integer.parseInt(tipoRiesgo.getCodigo()));
 					
 					if(!Checks.esNulo(capitalConcedido)){
-						formalizacion.setCapitalConcedido(capitalConcedido/100);
+						formalizacion.setCapitalConcedido(capitalConcedido.doubleValue()/100);
 						
 						formalizacion.setNumExpediente(numExpedienteRiesgo);
 						formalizacion.setTipoRiesgoClase(tipoRiesgo);
@@ -3115,7 +3115,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dto.setTiposFinanciacionCodigo(formalizacion.getTipoRiesgoClase().getCodigo());
 				}
 				if(!Checks.esNulo(formalizacion.getCapitalConcedido())) {
-					dto.setCapitalConcedido(formalizacion.getCapitalConcedido().toString());
+					dto.setCapitalConcedido(formalizacion.getCapitalConcedido());
 				}
 			}
 			

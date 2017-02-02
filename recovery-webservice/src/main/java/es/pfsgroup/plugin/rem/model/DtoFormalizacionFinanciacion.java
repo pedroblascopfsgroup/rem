@@ -13,7 +13,7 @@ public class DtoFormalizacionFinanciacion extends WebDto {
 	private Integer solicitaFinanciacion;
 	private String tiposFinanciacionCodigo;
 	private String estadosFinanciacion;
-	private String capitalConcedido;
+	private Double capitalConcedido;
 	private Date fechaInicioFinanciacion;
 	private Date fechaFinFinanciacion;
 	private String entidadFinanciacion;
@@ -44,10 +44,10 @@ public class DtoFormalizacionFinanciacion extends WebDto {
 	public void setEstadosFinanciacion(String estadosFinanciacion) {
 		this.estadosFinanciacion = estadosFinanciacion;
 	}
-	public String getCapitalConcedido() {
+	public Double getCapitalConcedido() {
 		return capitalConcedido;
 	}
-	public void setCapitalConcedido(String capitalConcedido) {
+	public void setCapitalConcedido(Double capitalConcedido) {
 		this.capitalConcedido = capitalConcedido;
 	}
 	public Date getFechaInicioFinanciacion() {

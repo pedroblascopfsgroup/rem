@@ -112,7 +112,7 @@ public class Formalizacion implements Serializable, Auditable {
     private String numExpediente;
     
     @Column(name = "FOR_CAPITALCONCEDIDO")
-    private Long capitalConcedido;	
+    private Double capitalConcedido;	
 	
     @Version   
 	private Long version;
@@ -297,11 +297,11 @@ public class Formalizacion implements Serializable, Auditable {
 		this.numExpediente = numExpediente;
 	}
 
-	public Long getCapitalConcedido() {
+	public Double getCapitalConcedido() {
 		return capitalConcedido;
 	}
 
-	public void setCapitalConcedido(Long capitalConcedido) {
+	public void setCapitalConcedido(Double capitalConcedido) {
 		this.capitalConcedido = capitalConcedido;
 	}
     

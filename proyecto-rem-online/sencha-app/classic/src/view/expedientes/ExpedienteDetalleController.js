@@ -801,13 +801,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickConsultaFormalizacionBankia: function(btn) {
 		var me = this;
 		var tipoRiesgoCodigo = me.lookupReference('comboTipoFinanciacion').getValue();
+		var numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo').getValue();
 		var url =  $AC.getRemoteUrl('expedientecomercial/obtencionDatosPrestamo');
 
 		Ext.Ajax.request({
 		     url: url,
 		     params:  {
 		    	 idExpediente : me.getViewModel().get("expediente.id"),
-		    	 numExpediente : me.getViewModel().get("expediente.numExpediente"),
+		    	 numExpediente : numExpedienteRiesgo,
 		    	 codTipoRiesgo : tipoRiesgoCodigo
 		    	 },
 		     success: function(response, opts) {

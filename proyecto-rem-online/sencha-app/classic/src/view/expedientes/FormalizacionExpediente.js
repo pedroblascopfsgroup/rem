@@ -69,6 +69,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									[
 										{ 
 						                	xtype: 'textfieldbase',
+						                	reference: 'numExpedienteRiesgo',
 											fieldLabel: HreRem.i18n('fieldlabel.num.expediente'),
 											bind: '{financiacion.numExpedienteRiesgo}',
 											maxLength: 250,
@@ -92,7 +93,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						                	bind:{
 						                		disabled: '{!editing}'
 						                	},
-						                	text: 'PET',
+						                	text: 'Consultar',
 						                	handler: 'onClickConsultaFormalizacionBankia',
 						                	margin: '0 0 15 110'
 						                }

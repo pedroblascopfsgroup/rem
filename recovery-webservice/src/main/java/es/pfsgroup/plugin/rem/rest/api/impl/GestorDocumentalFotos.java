@@ -201,7 +201,6 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		HashMap<String, String> metadata = new HashMap<String, String>();
 		if (propiedad.equals(PROPIEDAD.ACTIVO)) {
 			Activo activo = activoManager.get(idRegistro);
-			activo.getCartera().getCodigo();
 			metadata.put("propiedad", "activo");
 			metadata.put("id_activo_haya", String.valueOf(idRegistro));
 			if (activo != null && activo.getCartera() != null) {

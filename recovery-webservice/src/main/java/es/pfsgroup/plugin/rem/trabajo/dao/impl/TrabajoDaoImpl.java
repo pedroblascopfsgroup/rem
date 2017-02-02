@@ -102,6 +102,19 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	}
 
 	@Override
+	public Page getListActivosTrabajoPresupuesto(DtoActivosTrabajoFilter dto) {
+
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosTrabajoPresupuesto acttbj");		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idTrabajo", dto.getIdTrabajo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.ejercicio", dto.getEjercicioPresupuestario());
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
 	public Page getObservaciones(DtoTrabajoFilter dto) {
 		HQLBuilder hb = new HQLBuilder(" from TrabajoObservacion tbo");		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbo.trabajo.id", Long.parseLong(dto.getIdTrabajo()));

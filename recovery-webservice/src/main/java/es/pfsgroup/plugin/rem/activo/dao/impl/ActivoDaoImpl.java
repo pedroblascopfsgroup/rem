@@ -2,9 +2,9 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -225,8 +225,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	}
     
-    
-    
     @Override
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
 
@@ -300,13 +298,35 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
     
     @Override
-   	public Long getUltimoPresupuesto(Long id) {
+   	public Long getPresupuestoActual(Long id) {
 
-       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto where presupuesto.activo.id = " + id 
-       			+ " and presupuesto.ejercicio.anyo = (select max(ejer.anyo) from Ejercicio ejer) ");
+    	SimpleDateFormat df = new SimpleDateFormat("yyyy");
+    	String yearNow = df.format(new Date());
+    	
+       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
+       			+ " where presupuesto.activo.id = " + id 
+       			+ " and presupuesto.ejercicio.anyo = " + yearNow);
+
        	try {
-       		//Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-       		if (getHibernateTemplate().find(hb.toString()) != null)
+       		if (getHibernateTemplate().find(hb.toString()).size() > 0)
+	       		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+       		else return null;
+       	} catch (Exception e) {
+       		e.printStackTrace();
+       		return null;
+       	}
+
+   	}
+    
+    @Override
+   	public Long getUltimoHistoricoPresupuesto(Long id) {
+
+       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
+       			+ " where presupuesto.activo.id = " + id 
+       			+ " order by presupuesto.ejercicio.anyo desc ");
+
+       	try {
+       		if (getHibernateTemplate().find(hb.toString()).size() > 0)
 	       		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
        		else return null;
        	} catch (Exception e) {

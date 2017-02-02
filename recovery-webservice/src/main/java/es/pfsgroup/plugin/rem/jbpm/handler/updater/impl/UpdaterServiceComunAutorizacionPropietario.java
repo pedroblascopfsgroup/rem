@@ -47,7 +47,7 @@ public class UpdaterServiceComunAutorizacionPropietario implements
 			List<TareaExternaValor> valores) {
 
 		Activo activo = tramite.getActivo();
-		Long idIncremento = activoApi.getUltimoPresupuesto(activo.getId());
+		Long idIncremento = activoApi.getPresupuestoActual(activo.getId());
 		Filter filterIncremento = genericDao.createFilter(FilterType.EQUALS,"id", idIncremento);
 		PresupuestoActivo presupuesto = genericDao.get(PresupuestoActivo.class,filterIncremento);
 

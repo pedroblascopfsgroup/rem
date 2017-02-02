@@ -188,7 +188,8 @@ BEGIN
                 VERSION,
                 USUARIOCREAR,
                 FECHACREAR,
-                BORRADO
+                BORRADO,
+                VIS_PROCEDENCIA
                 )
                 WITH INSERTAR AS (
                 SELECT DISTINCT 
@@ -224,17 +225,17 @@ BEGIN
           HAVING COUNT(1) > 1
           )
                 SELECT
-                '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                         VIS_ID, 
-                VIS.VIS_COD_VISITA_WEBCOM                                                                               VIS_WEBCOM_ID,
-                '||V_ESQUEMA||'.S_VIS_NUM_VISITA.NEXTVAL                                                VIS_NUM_VISITA,
-                VIS.ACT_ID                                                                                                              ACT_ID,
-                VIS.CLC_ID                                                                                                              CLC_ID,
+                '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                         					   VIS_ID, 
+                VIS.VIS_COD_VISITA_WEBCOM                                                                              VIS_WEBCOM_ID,
+                '||V_ESQUEMA||'.S_VIS_NUM_VISITA.NEXTVAL                                                			   VIS_NUM_VISITA,
+                VIS.ACT_ID                                                                                             ACT_ID,
+                VIS.CLC_ID                                                                                             CLC_ID,
                 (SELECT DD_EVI_ID 
                 FROM '||V_ESQUEMA||'.DD_EVI_ESTADOS_VISITA
-                WHERE DD_EVI_CODIGO =  VIS.VIS_COD_ESTADO_VISITA)                               DD_EVI_ID,
+                WHERE DD_EVI_CODIGO =  VIS.VIS_COD_ESTADO_VISITA)                               						DD_EVI_ID,
                 (SELECT DD_SVI_ID 
                 FROM '||V_ESQUEMA||'.DD_SVI_SUBESTADOS_VISITA
-                WHERE DD_SVI_CODIGO =  VIS.VIS_COD_SUBESTADO_VISISTA)                   DD_SVI_ID,
+                WHERE DD_SVI_CODIGO =  VIS.VIS_COD_SUBESTADO_VISISTA)                   								DD_SVI_ID,
                 VIS.VIS_FECHA_REAL_VISITA                                                                               VIS_FECHA_VISITA,
                 VIS.VIS_FECHA_SOLCITUD                                                                                  VIS_FECHA_SOLCITUD,
                 (SELECT PVE_ID 
@@ -267,10 +268,11 @@ BEGIN
     )                                           PVE_ID_FDV,
                 VIS.VIS_OBSERVACIONES                                                                                   VIS_OBSERVACIONES,
                 VIS.VIS_FECHA_CONCERTACION                                                                              VIS_FECHA_CONCERTACION,
-                0                                                                                                                               VERSION,
-                ''MIG2''                                                                USUARIOCREAR,
-                SYSDATE                                                                         FECHACREAR,
-                0                                                                               BORRADO
+                0                                                                                                       VERSION,
+                ''MIG2''                                                                								USUARIOCREAR,
+                SYSDATE                                                                         						FECHACREAR,
+                0                                                                               						BORRADO,
+                REPLACE(VIS.VIS_COD_PROCEDENCIA, ''.'')																	VIS_PROCEDENCIA
                 FROM INSERTAR VIS
                 WHERE NOT EXISTS (
             SELECT 1

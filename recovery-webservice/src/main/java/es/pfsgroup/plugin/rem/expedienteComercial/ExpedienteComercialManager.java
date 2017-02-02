@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
+import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
@@ -1173,7 +1174,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		DtoCondiciones dto = new DtoCondiciones(); 
 		CondicionanteExpediente condiciones = expediente.getCondicionante();
-		
+
 		//Si el expediente pertenece a una agrupacion miramos el activo principal
 		if(!Checks.esNulo(expediente.getOferta().getAgrupacion())){
 			
@@ -3077,7 +3078,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					capitalConcedido = uvemManagerApi.consultaDatosPrestamo(numExpedienteRiesgo, Integer.parseInt(tipoRiesgo.getCodigo()));
 					
 					if(!Checks.esNulo(capitalConcedido)){
-						formalizacion.setCapitalConcedido(capitalConcedido/100);
+						formalizacion.setCapitalConcedido(capitalConcedido.doubleValue()/100);
 						
 						formalizacion.setNumExpediente(numExpedienteRiesgo);
 						formalizacion.setTipoRiesgoClase(tipoRiesgo);
@@ -3086,16 +3087,85 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 						return true;
 					}
 				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public DtoFormalizacionFinanciacion getFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto) {
+		if(Checks.esNulo(dto.getId())) {
+			return null;
+		}
+		
+		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getId()));
+		if(!Checks.esNulo(expediente)) {
+			
+			// Bankia.
+			Formalizacion formalizacion = expediente.getFormalizacion();
+			if(!Checks.esNulo(formalizacion)){
+				
+				dto.setNumExpedienteRiesgo(formalizacion.getNumExpediente());
+				if(!Checks.esNulo(formalizacion.getTipoRiesgoClase())) {
+					dto.setTiposFinanciacionCodigo(formalizacion.getTipoRiesgoClase().getCodigo());
+				}
+				if(!Checks.esNulo(formalizacion.getCapitalConcedido())) {
+					dto.setCapitalConcedido(formalizacion.getCapitalConcedido());
+				}
+			}
+			
+			// Financiación.
+			CondicionanteExpediente condiciones = expediente.getCondicionante();
+			if(!Checks.esNulo(condiciones)){
+				
+				dto.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
+				if(!Checks.esNulo(condiciones.getEstadoFinanciacion())){
+					dto.setEstadosFinanciacion(condiciones.getEstadoFinanciacion().getCodigo());
+				}
+				dto.setEntidadFinanciacion(condiciones.getEntidadFinanciacion());
+				dto.setFechaInicioExpediente(condiciones.getFechaInicioExpediente());
+				dto.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
+				dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
+			}
+		}
+
+		return dto;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto) {
+		if(Checks.esNulo(dto.getId())) {
+			return false;
+		}
+		
+		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getId()));
+		if(!Checks.esNulo(expediente)) {
+		
+			CondicionanteExpediente condiciones = expediente.getCondicionante();
+			if(!Checks.esNulo(condiciones)){
+				
+				condiciones.setSolicitaFinanciacion(dto.getSolicitaFinanciacion());
+				
+				if(!Checks.esNulo(dto.getEstadosFinanciacion())){
+					DDEstadoFinanciacion estadoFinanciacion = (DDEstadoFinanciacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoFinanciacion.class, dto.getEstadosFinanciacion());
+					condiciones.setEstadoFinanciacion(estadoFinanciacion);
+				}
+				condiciones.setEntidadFinanciacion(dto.getEntidadFinanciacion());
+				condiciones.setFechaInicioExpediente(dto.getFechaInicioExpediente());
+				condiciones.setFechaInicioFinanciacion(dto.getFechaInicioFinanciacion());
+				condiciones.setFechaFinFinanciacion(dto.getFechaFinFinanciacion());
+				
+				genericDao.save(CondicionanteExpediente.class, condiciones);
+			}
+		}
+		
+		return true;
 	}
 	
 }

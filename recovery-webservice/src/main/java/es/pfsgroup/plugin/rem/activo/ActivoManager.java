@@ -991,11 +991,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@BusinessOperationDefinition("activoManager.getUltimoPresupuesto")
-	public Long getUltimoPresupuesto(Long id) {
+	public Long getPresupuestoActual(Long id) {
 
-		return activoDao.getUltimoPresupuesto(id);
+		return activoDao.getPresupuestoActual(id);
 	}
 
+	@BusinessOperationDefinition("activoManager.getUltimoHistoricoPresupuesto")
+	public Long getUltimoHistoricoPresupuesto(Long id) {
+		
+		return activoDao.getUltimoHistoricoPresupuesto(id);
+	}
+	
+	@BusinessOperationDefinition("activoManager.checkHayPresupuestoEjercicioActual")
+	public boolean checkHayPresupuestoEjercicioActual(Long idActivo) {
+
+		return !Checks.esNulo(activoDao.getPresupuestoActual(idActivo));
+	}
+	
 	@BusinessOperationDefinition("activoManager.comprobarPestanaCheckingInformacion")
 	public Boolean comprobarPestanaCheckingInformacion(Long idActivo) {
 		Activo activo = this.get(idActivo);

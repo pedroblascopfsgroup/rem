@@ -104,7 +104,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onSaveFormularioCompleto: function(btn, form) {
 		var me = this;
-		
+
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && form.disableValidation) {
 
@@ -189,6 +189,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					me.getView().unmask();
 	            }
 			});		
+		} else {
+			if (contador < records.length) {
+				contador++;
+				me.saveMultipleRecords(contador, records);
+			}
 		}
 	},
 
@@ -791,6 +796,52 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 				});
 		}
+	},
+	
+	onClickConsultaFormalizacionBankia: function(btn) {
+		var me = this;
+		var tipoRiesgoCodigo = me.lookupReference('comboTipoFinanciacion').getValue();
+		var numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo').getValue();
+		var url =  $AC.getRemoteUrl('expedientecomercial/obtencionDatosPrestamo');
+
+		Ext.Ajax.request({
+		     url: url,
+		     params:  {
+		    	 idExpediente : me.getViewModel().get("expediente.id"),
+		    	 numExpediente : numExpedienteRiesgo,
+		    	 codTipoRiesgo : tipoRiesgoCodigo
+		    	 },
+		     success: function(response, opts) {
+			   var data = {};
+			   try {
+			   	data = Ext.decode(response.responseText);
+			   }  catch (e){ };
+			   
+			   if(data.success === "true") {
+				   me.getView().funcionRecargar();
+			   }else {
+			   		//me.fireEvent("errorToast", data.msg);
+				   me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			   }
+		     },
+
+		     failure: function(response) {
+	     		var data = {};
+               try {
+               	data = Ext.decode(response.responseText);
+               }
+               catch (e){ };
+               if (!Ext.isEmpty(data.msg)) {
+               	me.fireEvent("errorToast", data.msg);
+               } else {
+               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+               }
+		     },
+
+		     callback: function() {
+		     	me.getView().unmask();
+		     }
+   	});
 	},
 	
 	onHaCambiadoFechaInicioFinanciacion: function(field, value, oldValue){

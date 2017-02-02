@@ -6,9 +6,11 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
     disableValidation	: true,
     reference			: 'formalizacionExpediente',
     scrollable			: 'y',
-	recordName			: "resolucion",
-	recordClass			: "HreRem.model.ExpedienteFormalizacionResolucion",
-    requires			: ['HreRem.model.ExpedienteFormalizacionResolucion', 'HreRem.view.expedientes.BloqueosFormalizacionList', 'HreRem.model.BloqueosFormalizacionModel'],
+    saveMultiple		: true,
+    records				: ['resolucion', 'financiacion'],
+    recordsClass		: ['HreRem.model.ExpedienteFormalizacionResolucion', 'HreRem.model.ExpedienteFinanciacion'],
+    requires			: ['HreRem.model.ExpedienteFormalizacionResolucion', 'HreRem.model.ExpedienteFinanciacion',
+    						'HreRem.view.expedientes.BloqueosFormalizacionList', 'HreRem.model.BloqueosFormalizacionModel'],
     listeners			: {
 		boxready :'cargarTabData'
 	},
@@ -18,6 +20,146 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 		me.setTitle(HreRem.i18n('title.formalizacion'));
 
         var items= [
+        // Apartado Financiación.
+        	{
+				xtype:'fieldsettable',
+				collapsible: false,
+				bind: {
+			    	hidden: '{!esOfertaVenta}',
+			    	disabled: '{!esOfertaVenta}'
+	            },
+				defaultType: 'displayfieldbase',				
+				title: HreRem.i18n('title.financiacion'),
+				items : [
+					{ 
+						xtype: 'comboboxfieldbase',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.solicita.financiacion'),
+			        	bind: {
+		            		store: '{comboSiNoRem}',
+		            		value: '{financiacion.solicitaFinanciacion}'
+		            	},
+			            displayField: 'descripcion',
+    					valueField: 'codigo',
+    					listeners: {
+	                		change:  'onHaCambiadoSolicitaFinanciacion'
+	            		}
+			        },
+			      // Subapartado de Bankia.
+			        {
+						xtype:'fieldsettable',
+						collapsible: false,
+						bind: {
+					    	hidden: '{!expediente.esBankia}'
+			            },
+						defaultType: 'displayfieldbase',				
+						title: HreRem.i18n('title.formalizacion.financiacion.bankia'),
+						colspan: 2,
+						rowspan: 3,
+						items : [
+						// Subapartado consulta.
+							{
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								collapsible: false,
+								title: HreRem.i18n('title.formalizacion.financiacion.consulta'),
+								colspan: 2,
+								rowspan: 4,
+								margin: '0 15 0 0',
+								items :
+									[
+										{ 
+						                	xtype: 'textfieldbase',
+						                	reference: 'numExpedienteRiesgo',
+											fieldLabel: HreRem.i18n('fieldlabel.num.expediente'),
+											bind: '{financiacion.numExpedienteRiesgo}',
+											maxLength: 250,
+											colspan: 3
+						                },
+										
+						                { 
+											xtype: 'comboboxfieldbase',
+						                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.financiacion'),
+						                	reference: 'comboTipoFinanciacion',
+								        	bind: {
+							            		store: '{comboTiposFinanciacion}',
+							            		value: '{financiacion.tiposFinanciacionCodigo}'
+							            	},
+							            	colspan: 3
+								        },
+								        {
+						                	xtype: 'button',
+						                	reference: 'botonConsultaFormalizacionBankia',
+						                	disabled: true,
+						                	bind:{
+						                		disabled: '{!editing}'
+						                	},
+						                	text: 'Consultar',
+						                	handler: 'onClickConsultaFormalizacionBankia',
+						                	margin: '0 0 15 110'
+						                }
+									]
+							},
+						// Campos derecha.
+							{ 
+								xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.expediente'),
+					        	bind: {
+				            		store: '{comboEstadosFinanciacion}',
+				            		value: '{financiacion.estadosFinanciacion}'
+				            	},
+				            	hidden: true
+					        },
+					        { 
+								xtype: 'currencyfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.capital.concedido'),
+								reference: 'cncyCapitalConcedido',
+								readOnly: true,
+								bind: '{financiacion.capitalConcedido}'
+			                },
+					        {
+					        	xtype:'datefieldbase',
+								formatter: 'date("d/m/Y")',
+								reference: 'fechaInicioFinanciacion',
+					        	fieldLabel: HreRem.i18n('fieldlabel.inicio.financiacion'),
+					        	bind: '{financiacion.fechaInicioFinanciacion}',
+					        	maxValue: null,
+					        	listeners: {
+					        		change: 'onHaCambiadoFechaInicioFinanciacion'
+					        	},
+				            	hidden: true
+					        },
+					        {
+					        	xtype:'datefieldbase',
+								formatter: 'date("d/m/Y")',
+								reference: 'fechaFinFinanciacion',
+					        	fieldLabel: HreRem.i18n('fieldlabel.fin.financiacion'),
+					        	bind: '{financiacion.fechaFinFinanciacion}',
+					        	maxValue: null,
+					        	listeners: {
+					        		change: 'onHaCambiadoFechaFinFinanciacion'
+					        	},
+				            	hidden: true
+					        }
+						]
+			        },
+			        { 
+						xtype: 'textfieldbase',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.entidad.financiera'),
+			        	bind: '{financiacion.entidadFinanciacion}',
+			        	reference: 'entidadFinanciacion',
+    					disabled: true
+			        },
+			        {
+		        		xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						reference: 'fechaInicioFinanciacion',
+			        	fieldLabel: HreRem.i18n('fieldlabel.inicio.expediente'),
+			        	bind: '{financiacion.fechaInicioExpediente}',
+			        	maxValue: null
+			        }
+		        ]
+			},
+        // Apartado Bloqueos.
         	{
         		xtype:'fieldset',
 				collapsible: true,
@@ -31,6 +173,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					}
 				]
         	},
+        // Apartado Posicionamiento y Firma.
 			{   
 				xtype:'fieldset',
 				collapsible: true,
@@ -330,6 +473,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	                }
 				]			
 			},
+		// Apartado Subsanaciones.
 			{   
 				xtype:'fieldset',
 				collapsible: true,
@@ -396,6 +540,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					}
 		        ]
 			},
+		// Aparatado Resolución.
 			{   
 				xtype:'fieldsettable',
 				defaultType: 'displayfieldbase',				

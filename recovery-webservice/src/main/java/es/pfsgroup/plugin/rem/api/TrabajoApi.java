@@ -177,6 +177,14 @@ public interface TrabajoApi {
 	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajo")
 	public Page getListActivos(DtoActivosTrabajoFilter dto);
 
+	/**
+	 * Devuelve la lista de activos de un trabajo con datos de presupuestos
+	 * @param dto
+	 * @return
+	 */
+	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajoPresupuesto")
+	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto);
+
 	@BusinessOperationDefinition("trabajoManager.findOne")
 	Trabajo findOne(Long id);
 
@@ -341,6 +349,8 @@ public interface TrabajoApi {
 
 	/**
 	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera el ultimo presupuesto del activo
+	 * Retorna true si hay un exceso de presupuesto sobre el saldo del activo
+	 * Retorna false si el activo tiene suficiente saldo
 	 * @param tarea
 	 * @return
 	 */
@@ -348,7 +358,9 @@ public interface TrabajoApi {
 	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea);
 	
 	/**
-	 * Verifica para un trabajo si el presupuesto acumulado del trabajo supera el ultimo presupuesto del activo
+	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera el ultimo presupuesto del activo
+	 * Retorna true si hay un exceso de presupuesto sobre el saldo del activo
+	 * Retorna false si el activo tiene suficiente saldo
 	 * @param trabajo
 	 * @return
 	 */
@@ -356,7 +368,8 @@ public interface TrabajoApi {
 	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo);
 	
 	/**
-	 * Obtiene el importe de exceso del acumulado de presupuestos del trabajo con el ultimo presupuesto del activo
+	 * Obtiene el importe de exceso de presupuesto del activo, para el acumulado de presupuestos de trabajos
+	 * incluyendo el presupuesto del trabajo que se consulta
 	 * @param trabajo
 	 * @return
 	 */

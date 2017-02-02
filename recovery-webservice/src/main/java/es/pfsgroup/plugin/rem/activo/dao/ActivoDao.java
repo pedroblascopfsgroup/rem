@@ -42,7 +42,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	public Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuLogado);
 
-	public Long getUltimoPresupuesto(Long id);
+	public Long getPresupuestoActual(Long id);
+	
+	public Long getUltimoHistoricoPresupuesto(Long id);
 
 	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
 	

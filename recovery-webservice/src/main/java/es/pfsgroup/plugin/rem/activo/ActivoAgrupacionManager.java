@@ -185,8 +185,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	public String uploadFoto(File fileItem) {
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
-		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+		ActivoAgrupacion agrupacion = this.get(agrupacionId);
 		ActivoFoto activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 		if (activoFoto == null) {
 			activoFoto = new ActivoFoto(fileItem);

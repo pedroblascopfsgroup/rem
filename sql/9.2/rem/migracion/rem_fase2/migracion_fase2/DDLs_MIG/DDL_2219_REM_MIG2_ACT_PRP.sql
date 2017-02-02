@@ -49,7 +49,8 @@ CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
         ACT_PRP_NUM_PROPUESTA                   NUMBER(16,0)                    NOT NULL,
         ACT_PRP_PRECIO_PROPUESTO                NUMBER(16,2)                    NOT NULL,   
         ACT_PRP_PRECIO_SANCIONADO               NUMBER(16,2),
-        ACT_PRP_MOTIVO_DESCARTE                 VARCHAR2(256 CHAR)
+        ACT_PRP_MOTIVO_DESCARTE                 VARCHAR2(256 CHAR),
+        ACT_PRP_VALOR_LIQUIDATIVO				NUMBER(16,2)
 )'
 ;
 

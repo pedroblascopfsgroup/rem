@@ -243,7 +243,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			if (gestorDocumentalFotos.isActive()) {
 
 				fileReponse = gestorDocumentalFotos.uploadSubdivision(fileItem.getFileItem().getFile(),
-						fileItem.getFileItem().getFileName(), subdivisionId, agrupacionId,
+						fileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
 						fileItem.getParameter("descripcion"));
 				activoFoto = new ActivoFoto(fileReponse.getData());
 

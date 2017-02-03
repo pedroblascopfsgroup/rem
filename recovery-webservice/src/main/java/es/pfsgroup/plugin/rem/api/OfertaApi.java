@@ -409,6 +409,13 @@ public interface OfertaApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria, False si ha habido un error.
 	 */
 	public boolean resetPBC(ExpedienteComercial expediente);
+	
+	/**
+	 * Este método comprueba si hay impuestos.
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkImpuestos(TareaExterna tareaExterna);
 
 }
 

@@ -42,12 +42,10 @@ DECLARE
     TYPE T_TFI IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TFI;
     V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-    				--TAP_CODIGO 							--TFI_TIPO 			--TFI_NOMBRE 		--TFI_BUSINESS_OP					--tfi_label 								--TFI_ERROR_VALIDACION													--TFI_VALIDACION
-		T_TFI(   'T013_InstruccionesReserva',   			'textinf', 			'comboVPO',				'',								'Activo VPO',								'',																		'false' ),
+    			 --TAP_CODIGO 								--TFI_TIPO 			--TFI_NOMBRE 			--TFI_BUSINESS_OP				--TFI_LABEL 								--TFI_ERROR_VALIDACION													--TFI_VALIDACION
 		T_TFI(   'T013_InstruccionesReserva',   			'combo',			'Tipo de arras',	  	'DDTipoArras',					'Tipo de arras',							'Debe indicar el tipo de arras',										'false' ),
 		T_TFI(   'T013_InstruccionesReserva',   			'date',   			'fechaEnvio',	  		'',								'Fecha de envío',							'',																		'' ),
 		T_TFI(   'T013_InstruccionesReserva',   			'textarea',   		'observaciones',		'',								'',											'',																		'' )
-
 		);
     V_TMP_T_TFI T_TFI;
 

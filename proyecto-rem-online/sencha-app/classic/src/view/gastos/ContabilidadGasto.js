@@ -32,46 +32,54 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 									items :
 										[
 
-														{ 
-															xtype:'comboboxfieldbase',
-															fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
-											        		bind: {
-										            			store: '{comboEjercicioContabilidad}',
-										            			value: '{contabilidad.ejercicioImputaGasto}'
-										            		},
-										            		displayField	: 'anyo',  
-   															valueField		: 'id'
-												        },
-														{ 
-															xtype: 'textfieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad'),
-											                bind: '{contabilidad.periodicidadDescripcion}',
-											                readOnly: true,
-											                colspan: 2
-														},
-														{ 
-															xtype: 'textfieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
-											                bind: '{contabilidad.cuentaContable}'											                
-														},
-														{
-															xtype: 'datefieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.contabilizacion'),
-															bind:		'{contabilidad.fechaContabilizacion}',
-															formatter: 'date("d/m/Y")',
-															readOnly: true,
-															colspan: 2
-														},
-														{ 
-															xtype: 'textfieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
-											                bind: '{contabilidad.partidaPresupuestaria}'
-														},	
-														{ 
-															xtype: 'displayfieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.contabilizado.por'),
-											                bind: '{contabilidad.contabilizadoPorDescripcion}'
-														}
+													{ 
+														xtype:'comboboxfieldbase',
+														fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
+														labelWidth: 200,
+										        		bind: {
+									            			store: '{comboEjercicioContabilidad}',
+									            			value: '{contabilidad.ejercicioImputaGasto}'
+									            		},
+									            		displayField	: 'anyo',  
+														valueField		: 'id'
+											        },
+													{ 
+														xtype: 'textfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
+										                bind: '{contabilidad.cuentaContable}'											                
+													},
+													{
+														xtype: 'datefieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.contabilizacion'),
+														bind:		'{contabilidad.fechaContabilizacion}',
+														formatter: 'date("d/m/Y")',
+														readOnly: true
+													},
+													{
+														xtype: 'datefieldbase',
+														labelWidth: 200,
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.devengo'),
+														bind:		'{contabilidad.fechaDevengoEspecial}',
+														formatter: 'date("d/m/Y")'
+													},
+													{ 
+														xtype: 'textfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
+										                bind: '{contabilidad.partidaPresupuestaria}'
+													},	
+													{ 
+														xtype: 'displayfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.contabilizado.por'),
+										                bind: '{contabilidad.contabilizadoPorDescripcion}'
+													},																
+													{ 
+														xtype: 'textfieldbase',
+														labelWidth: 200,
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad'),
+										                bind: '{contabilidad.periodicidadDescripcion}',
+										                readOnly: true						
+													}
+														
 										]
 					           }
 

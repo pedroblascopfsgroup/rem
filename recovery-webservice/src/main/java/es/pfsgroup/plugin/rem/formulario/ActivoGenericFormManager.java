@@ -305,6 +305,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            			item.setValue(String.valueOf(trabajoApi.getExcesoPresupuestoActivo(trabajo)));
             			}
             		}
+            		if(item.getNombre().equals("comboVPO")){
+            			item.setValue("PENDIENTE DE HACER");
+            		}
             		
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA))

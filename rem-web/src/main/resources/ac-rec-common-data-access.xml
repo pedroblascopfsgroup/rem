@@ -161,6 +161,7 @@
            <value>es.capgemini.pfs.ruleengine.rule.dd.DDRule</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDResolucionComite</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDTiposArras</value>
     </list>
     </property>
     </bean>

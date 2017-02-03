@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
@@ -94,7 +95,7 @@ public interface GestorDocumentalFotosApi {
 	 * @throws HttpClientException
 	 */
 	public FileResponse uploadSubdivision(java.io.File fileToUpload, String name, BigDecimal idSubdivision,
-			Long idAgrupacion, String descripcion) throws IOException, RestClientException, HttpClientException;
+			ActivoAgrupacion agrupacion, String descripcion) throws IOException, RestClientException, HttpClientException;
 
 	/**
 	 * Actualiza los metadatos de un fichero

@@ -38,19 +38,19 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract {
 
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
-	public static final String ACTIVE_PRIZE_NAN = "Uno de los importes indicados no es un valor numérico correcto";
+	public static final String ACTIVE_PRIZE_NAN = "Uno de los importes indicados no es un valor numÃ©rico correcto";
 	public static final String ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED = "El precio de descuento aprobado no puede ser mayor al precio de descuento publicado (P.Descuento <= P.Descuento Pub.) o uno de estos precios no tiene un formato correcto";
-	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED = "El precio aprobado de venta no puede ser menor al precio mínimo autorizado (P.Minimo <= P.Aprobado Venta) o uno de estos precios no tiene un formato correcto";
+	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED = "El precio aprobado de venta no puede ser menor al precio mÃ­nimo autorizado (P.Minimo <= P.Aprobado Venta) o uno de estos precios no tiene un formato correcto";
 	public static final String ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED = "El precio de descuento publicado no puede ser mayor al precio aprobado de venta (P.Descuento Pub. <= P.Aprobado Venta) o uno de estos precios no tiene un formato correcto";
 	public static final String ACTIVE_PAV_DATE_INIT_EXCEEDED = "La fecha de inicio del precio aprobado de venta no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
-	public static final String ACTIVE_PMA_DATE_INIT_EXCEEDED = "La fecha de inicio del precio mínimo autorizado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
+	public static final String ACTIVE_PMA_DATE_INIT_EXCEEDED = "La fecha de inicio del precio mÃ­nimo autorizado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
 	public static final String ACTIVE_PAR_DATE_INIT_EXCEEDED = "La fecha de inicio del precio aprobado de renta no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
 	public static final String ACTIVE_PDA_DATE_INIT_EXCEEDED = "La fecha de inicio del precio de descuento aprobado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
 	public static final String ACTIVE_PDP_DATE_INIT_EXCEEDED = "La fecha de inicio del precio de descuento publicado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
-	public static final String ACTIVE_PAV_END_DATE_LESS_PMA_END_DATE = "La fecha fin del precio aprobado de venta ha de ser menor o igual a la fecha fin del precio mínimo autorizado";
-	public static final String ACTIVE_PAV_BEGIN_DATE_GREATER_PMA_BEGIN_DATE = "La fecha inicio del precio aprobado de venta ha de ser mayor o igual a la fecha inicio del precio mínimo autorizado";
-	public static final String ACTIVE_PMA_BEGIN_DATE_TODAY = "La fecha de inicio del precio mínimo debe ser menor o igual a hoy";
-	public static final String ACTIVE_PMA_END_DATE_TODAY = "La fecha de fin del precio mínimo debe ser mayor o igual a hoy";
+	public static final String ACTIVE_PAV_END_DATE_LESS_PMA_END_DATE = "La fecha fin del precio aprobado de venta ha de ser menor o igual a la fecha fin del precio mÃ­nimo autorizado";
+	public static final String ACTIVE_PAV_BEGIN_DATE_GREATER_PMA_BEGIN_DATE = "La fecha inicio del precio aprobado de venta ha de ser mayor o igual a la fecha inicio del precio mÃ­nimo autorizado";
+	public static final String ACTIVE_PMA_BEGIN_DATE_TODAY = "La fecha de inicio del precio mÃ­nimo debe ser menor o igual a hoy";
+	public static final String ACTIVE_PMA_END_DATE_TODAY = "La fecha de fin del precio mÃ­nimo debe ser mayor o igual a hoy";
 	public static final String ACTIVE_PDA_BEGIN_DATE_NOT_EXISTS = "La fecha de inicio del precio de descuento aprobado no puede dejarse en blanco";
 	public static final String ACTIVE_PDA_END_DATE_NOT_EXISTS = "La fecha de fin del precio de descuento aprobado no puede dejarse en blanco";
 	public static final String ACTIVE_PDP_BEGIN_DATE_NOT_EXISTS = "La fecha de inicio del precio de descuento publicado no puede dejarse en blanco";
@@ -58,14 +58,14 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
 	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
 	public static final String ACTIVE_OFERTA_APROBADA = "El activo tiene ofertas aprobadas. No se pueden actualizar precios";
-	public static final String ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE = "La fecha de fin del precio de descuento aprobado no puede ser posterior a la fecha fin del precio mínimo";
-	public static final String ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE = "La fecha de inicio del precio de descuento aprobado no puede ser anterior a la fecha inicio del precio mínimo";
+	public static final String ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE = "La fecha de fin del precio de descuento aprobado no puede ser posterior a la fecha fin del precio mÃ­nimo";
+	public static final String ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE = "La fecha de inicio del precio de descuento aprobado no puede ser anterior a la fecha inicio del precio mÃ­nimo";
 	public static final String ACTIVE_PDW_BEGIN_DATE_LESS_PDA_BEGIN_DATE = "La fecha de inicio del precio descuento publicado no puede ser anterior a la fecha inicio del precio descuento aprovado";
 	public static final String ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE = "La fecha de inicio del precio descuento publicado no puede ser anterior a la fecha inicio del precio aprobado venta";
 	public static final String ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio descuento aprobado";
 	public static final String ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio aprobado venta";
-	public static final String ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB = "Los precios especificados no cumplen las reglas al ser introducidos junto con los actuales precios";
-	public static final String ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB = "Las fechas especificadas no cumplen las reglas al ser introducidas junto con las actuales fechas";
+	public static final String ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB = "Los precios especificados no cumplen las reglas al ser introducidos junto con los precios actuales del activo";
+	public static final String ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB = "Las fechas especificadas no cumplen las reglas al ser introducidas junto con las fechas actuales de los precios del activo";
 
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -203,7 +203,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					fechaInicioPDP = fechas.get(8);
 					fechaFinPDP = fechas.get(9);
 	
-					//Obtener fechas de importes de la excel y machacar las actuales fechas del activo si están definidas.
+					//Obtener fechas de importes de la excel y machacar las actuales fechas del activo si estï¿½n definidas.
 					if(!Checks.esNulo(exc.dameCelda(i, 2))) {
 						fechaInicioPAV = ft.parse(exc.dameCelda(i, 2));
 					}
@@ -338,7 +338,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 				importePDA = importes.get(3);
 				importePDP = importes.get(4);
 
-				//Obtener importes de la excel y machacar los actuales importes del activo si están definidos.
+				//Obtener importes de la excel y machacar los actuales importes del activo si estï¿½n definidos.
 				if(!Checks.esNulo(exc.dameCelda(i, 1))) {
 					importePAV = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 1)));
 				}
@@ -552,7 +552,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Double precioDescuentoAprobado = null;
 		Double precioDescuentoPublicado = null;
 		
-		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
+		// Validacion que evalua si los precios estan dentro de los lï¿½mites, comparandolos entre si
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
@@ -588,20 +588,23 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		Double precioVentaAprobado = null;
 		Double precioMinimoAuth = null;
-		
-		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
+
+		// Validacion que evalua si los precios estan dentro de los lï¿½mites, comparandolos entre si y con el precio minimo actual si existe.
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
 					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
 					precioMinimoAuth = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
+
+				
 					
 					// Condiciones Limites: dto<=dto web<=aprobado
 					
-					// Limite: Precio Aprobado Venta >= Precio Minimo Auth
+					// Limite: Precio Aprobado Venta > Precio Minimo Auth o > Precio Minimo Auth actual
 					if(!Checks.esNulo(precioMinimoAuth) && 
 							!Checks.esNulo(precioVentaAprobado) &&
-							(precioMinimoAuth > precioVentaAprobado)){
+							(precioMinimoAuth > precioVentaAprobado))
+							{
 						if (!listaFilas.contains(i))
 							listaFilas.add(i);
 					}
@@ -624,7 +627,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Double precioVentaAprobado = null;
 		Double precioDescuentoPublicado = null;
 		
-		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
+		// Validacion que evalua si los precios estan dentro de los lï¿½mites, comparandolos entre si
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
@@ -662,7 +665,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPAV = null;
 		Date fechaFinPAV = null;
 		
-		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		// Validacion que evalua si las fechas de precios estan dentro de los lï¿½mites
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
@@ -697,7 +700,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPAR = null;
 		Date fechaFinPAR = null;
 		
-		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		// Validacion que evalua si las fechas de precios estan dentro de los lï¿½mites
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
@@ -731,7 +734,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 		Date fechaFinPMA = null;
 		
-		// Validación que evalua si la fecha de inicio del precio mínimo es superior al día de hoy.
+		// Validaciï¿½n que evalua si la fecha de inicio del precio mï¿½nimo es superior al dï¿½a de hoy.
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
@@ -763,7 +766,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 		Date fechaInicioPMA = null;
 		
-		// Validación que evalua si la fecha de inicio del precio mínimo es superior al día de hoy.
+		// Validaciï¿½n que evalua si la fecha de inicio del precio mï¿½nimo es superior al dï¿½a de hoy.
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
@@ -796,7 +799,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPMA = null;
 		Date fechaFinPMA = null;
 		
-		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		// Validacion que evalua si las fechas de precios estan dentro de los lï¿½mites
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
@@ -831,7 +834,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si la fecha de inicio de descuento aprobado no se encuentra establecida.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no está vacío.
+				if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no estï¿½ vacï¿½o.
 					if(Checks.esNulo(exc.dameCelda(i, 11))) { // Comprobar que la fecha tampoco.
 						listaFilas.add(i);
 					}
@@ -854,7 +857,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si la fecha de fin de descuento aprobado no se encuentra establecida.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no está vacío.
+				if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no estï¿½ vacï¿½o.
 					if(Checks.esNulo(exc.dameCelda(i, 12))) { // Comprobar que la fecha tampoco.
 						listaFilas.add(i);
 					}
@@ -877,7 +880,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si la fecha de inicio de descuento publicado no se encuentra establecida.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no está vacío.
+				if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no estï¿½ vacï¿½o.
 					if(Checks.esNulo(exc.dameCelda(i, 14))) { // Comprobar que la fecha tampoco.
 						listaFilas.add(i);
 					}
@@ -900,7 +903,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPAV = null;
 		Date fechaInicioPMA = null;
 
-		// Validacion que evalua si la fecha de fin del aprobado venta es menor o igual que la fecha fin del mínimo autorizado.
+		// Validacion que evalua si la fecha de fin del aprobado venta es menor o igual que la fecha fin del mï¿½nimo autorizado.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 				try {
@@ -935,7 +938,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaFinPDW = null;
 		Date fechaFinPAV = null;
 
-		// Validación que evalua si la fecha de fin del descuento publicado es menor o igual que la fecha fin del aprobado venta.
+		// Validaciï¿½n que evalua si la fecha de fin del descuento publicado es menor o igual que la fecha fin del aprobado venta.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 				try {
@@ -970,7 +973,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaFinPDW = null;
 		Date fechaFinPDA = null;
 
-		// Validación que evalua si la fecha de fin del descuento publicado es menor o igual que la fecha fin del descuento aprobado.
+		// Validaciï¿½n que evalua si la fecha de fin del descuento publicado es menor o igual que la fecha fin del descuento aprobado.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 				try {
@@ -1005,7 +1008,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPDW = null;
 		Date fechaInicioPAV = null;
 
-		// Validación que evalua si la fecha de inicio del descuento publicado es mayor o igual que la fecha inicio del aprobado venta.
+		// Validaciï¿½n que evalua si la fecha de inicio del descuento publicado es mayor o igual que la fecha inicio del aprobado venta.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 				try {
@@ -1040,7 +1043,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPDW = null;
 		Date fechaInicioPDA = null;
 
-		// Validación que evalua si la fecha de inicio del descuento publicado es mayor o igual que la fecha inicio del descuento aprobado.
+		// Validaciï¿½n que evalua si la fecha de inicio del descuento publicado es mayor o igual que la fecha inicio del descuento aprobado.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 				try {
@@ -1075,7 +1078,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPDA = null;
 		Date fechaInicioPMA = null;
 
-		// Validación que evalua si la fecha de inicio del descuento aprobado es mayor o igual que la fecha inicio del mínimo autorizado.
+		// Validaciï¿½n que evalua si la fecha de inicio del descuento aprobado es mayor o igual que la fecha inicio del mï¿½nimo autorizado.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 				try {
@@ -1110,7 +1113,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaFinPDA = null;
 		Date fechaFinPMA = null;
 
-		// Validación que evalua si la fecha de fin del descuento aprobado es menor o igual que la fecha fin del mínimo autorizado.
+		// Validaciï¿½n que evalua si la fecha de fin del descuento aprobado es menor o igual que la fecha fin del mï¿½nimo autorizado.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 				try {
@@ -1145,7 +1148,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaFinPAV = null;
 		Date fechaFinPMA = null;
 
-		// Validacion que evalua si la fecha de fin del aprobado venta es menor o igual que la fecha fin del mínimo autorizado.
+		// Validacion que evalua si la fecha de fin del aprobado venta es menor o igual que la fecha fin del mï¿½nimo autorizado.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 				try {
@@ -1180,7 +1183,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si la fecha de fin de descuento publicado no se encuentra establecida.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no está vacío.
+				if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no estï¿½ vacï¿½o.
 					if(Checks.esNulo(exc.dameCelda(i, 15))) { // Comprobar que la fecha tampoco.
 						listaFilas.add(i);
 					}
@@ -1203,7 +1206,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPDA = null;
 		Date fechaFinPDA = null;
 		
-		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		// Validacion que evalua si las fechas de precios estan dentro de los lï¿½mites
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{
@@ -1238,7 +1241,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaInicioPDP = null;
 		Date fechaFinPDP = null;
 		
-		// Validacion que evalua si las fechas de precios estan dentro de los límites
+		// Validacion que evalua si las fechas de precios estan dentro de los lï¿½mites
 		try {
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				try{

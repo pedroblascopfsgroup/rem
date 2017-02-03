@@ -2493,7 +2493,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			throw new Exception("No hay activos para la oferta indicada.");
 		}
 		
-		
+		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();	
+		Double sumatorioImporte = new Double(0);
+		Double sumatorioPorcentaje = new Double(0);
 		for(int i=0; i< listaActivos.size(); i++){
 			Activo activo = listaActivos.get(i).getPrimaryKey().getActivo();
 			if(Checks.esNulo(activo)){
@@ -2505,13 +2507,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
-			Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();
-			
-			try {
-				importeXActivo = (importeTotal * porcentajeParti)/100;
-			} catch (Exception e) {
-				logger.error(e);
-			}
+			importeXActivo = (importeTotal * porcentajeParti)/100;
+			sumatorioImporte += importeXActivo;
+			sumatorioPorcentaje += porcentajeParti;
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			//ImportePorActivo
 			instData.setImporteConSigno(importeXActivo.longValue());
@@ -2530,6 +2528,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			//PorcentajeImpuesto
 			instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
 			instanciaList.add(instData);
+		}
+		
+		if(!sumatorioImporte.equals(importeTotal)){
+			throw new Exception("La suma de los importes es diferente al importe de la oferta");
 		}
 		
 		

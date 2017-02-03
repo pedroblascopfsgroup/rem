@@ -24,6 +24,11 @@ Ext.define('HreRem.model.GastoContabilidad', {
 			dateFormat: 'c'
    		},
    		{
+    		name: 'fechaDevengoEspecial',
+    		type : 'date',
+			dateFormat: 'c'
+   		},
+   		{
    			name: 'periodicidadEspecial'
    		},
    		{

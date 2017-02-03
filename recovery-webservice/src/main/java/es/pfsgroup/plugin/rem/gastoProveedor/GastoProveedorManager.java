@@ -1025,6 +1025,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 				
 				dto.setFechaContabilizacion(contabilidadGasto.getFechaContabilizacion());
+				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
 				if(!Checks.esNulo(contabilidadGasto.getContabilizadoPor())){
 					dto.setContabilizadoPorDescripcion(contabilidadGasto.getContabilizadoPor().getDescripcion());
 				}

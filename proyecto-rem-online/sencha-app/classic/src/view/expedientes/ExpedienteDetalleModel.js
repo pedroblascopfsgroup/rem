@@ -525,6 +525,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
 	    },
+	    
+	    comboComitesPropuestos: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getComitesByCartera',
+		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+	    	}	    	
+	    },
 
 	    storeMotivoAnulacion: {
 	    	model: 'HreRem.model.ComboBase',

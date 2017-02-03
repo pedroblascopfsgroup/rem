@@ -145,4 +145,11 @@ public interface  ParticularValidatorApi {
 	 */
 	public Boolean existeActivoEnPropuesta(String numActivo, String numPropuesta);
 	
+	/**
+	 * Recupera el precio mínimo autorizado actual de un activo
+	 * @param numActivo
+	 * @return
+	 */
+	public BigDecimal getPrecioMinimoAutorizadoActualActivo(String numActivo);
+	
 }

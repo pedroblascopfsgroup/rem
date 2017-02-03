@@ -105,6 +105,8 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType anejoTrastero;
 	private BooleanDataType existePiscina;
 	
+	private LongDataType idLoteRem;
+	private BooleanDataType esActivoPrincipal;
 	
 	
 	public LongDataType getIdActivoHaya() {
@@ -557,6 +559,18 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setExistePiscina(BooleanDataType existePiscina) {
 		this.existePiscina = existePiscina;
+	}
+	public LongDataType getIdLoteRem() {
+		return idLoteRem;
+	}
+	public void setIdLoteRem(LongDataType idLoteRem) {
+		this.idLoteRem = idLoteRem;
+	}
+	public BooleanDataType getEsActivoPrincipal() {
+		return esActivoPrincipal;
+	}
+	public void setEsActivoPrincipal(BooleanDataType esActivoPrincipal) {
+		this.esActivoPrincipal = esActivoPrincipal;
 	}
 	
 	

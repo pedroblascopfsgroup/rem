@@ -607,6 +607,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Si los nuevos datos no traen observaciones (null), 
 				// debe quitar las escritas para el precio o valoracion anterior
 				activoValoracion.setObservaciones(dto.getObservaciones());
+				
+				activoValoracion.setGestor(adapter.getUsuarioLogado());
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
 

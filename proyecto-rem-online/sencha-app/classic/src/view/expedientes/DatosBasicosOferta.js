@@ -103,12 +103,12 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                	xtype: 'comboboxfieldbase',
 						                	fieldLabel:  HreRem.i18n('fieldlabel.comite.seleccionado'),
 						                	reference: 'comboComiteSeleccionado',
+						                	readOnly: false,
 						                	bind: {
 												store: '{comboComites}',
 												value: '{datosbasicosoferta.comiteSancionadorCodigo}',
-												bind: {
-													disabled: '{esCarteraBankia}'
-												}
+												readOnly: '{esCarteraBankia}'
+												
 											}
 						                },
 						                {
@@ -125,7 +125,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								                	reference: 'comboComitePropuesto',
 								                	readOnly: true,								                	
 								                	bind: {
-														store: '{comboComites}',
+														store: '{comboComitesPropuestos}',
 														value: '{datosbasicosoferta.comitePropuestoCodigo}',
 														disabled: '{!esCarteraBankia}'
 													}

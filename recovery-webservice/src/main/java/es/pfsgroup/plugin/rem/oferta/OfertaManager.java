@@ -1073,6 +1073,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			return true;
 		} catch (Exception e) {
+			logger.error("Error en el alta de comite.", e);
 			e.printStackTrace();
 			return false;
 		}

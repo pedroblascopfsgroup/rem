@@ -78,9 +78,7 @@ CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
         COE_IND_PROCEDE_DESCALIFICA                             		NUMBER(1,0),
         COE_COD_SITUACION_POSESORIA                             		VARCHAR2(20 CHAR),
         COE_COD_ESTADO_TITULO                                   		VARCHAR2(20 CHAR),
-        COE_IND_POSESION_INICIAL                                		NUMBER(1,0),
-        COE_GESTOR_FORMALIZACION										VARCHAR2(40),
-        COE_GESTORIA_FORMALIZACION										VARCHAR2(40)     
+        COE_IND_POSESION_INICIAL                                		NUMBER(1,0)
 )'
 ;
 

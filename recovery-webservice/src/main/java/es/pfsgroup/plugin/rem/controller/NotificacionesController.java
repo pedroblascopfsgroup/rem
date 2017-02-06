@@ -8,8 +8,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +19,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class NotificacionesController {
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	@Autowired
 	private AnotacionApi anotacionApi;
@@ -94,12 +98,10 @@ public class NotificacionesController {
 				if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {
 					Notificacion notificacionBbdd = new Notificacion();
 					Activo activo = activoApi.getByNumActivo(notificacion.getIdActivoHaya());
-					if(Checks.esNulo(activo)){
-						throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-					}
+					Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 					notificacionBbdd.setIdActivo(activo.getId());
 					notificacionBbdd.setIdTareaAppExterna(notificacion.getIdNotificacionWebcom());
-					notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
+					notificacionBbdd.setDestinatario(gestor.getId());
 					notificacionBbdd.setTitulo(notificacion.getTitulo());
 					notificacionBbdd.setDescripcion(notificacion.getDescripcion());
 					if(!Checks.esNulo(notificacion.getFechaRealizacion())){

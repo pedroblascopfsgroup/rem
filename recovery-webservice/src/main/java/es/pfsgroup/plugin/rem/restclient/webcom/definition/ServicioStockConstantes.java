@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.webcom.definition;
 
+
 public class ServicioStockConstantes extends ConstantesGenericas{
 	public static final String ID_ACTIVO_HAYA = "idActivoHaya";
 	public static final String COD_TIPO_VIA = "codTipoVia";
@@ -12,24 +13,17 @@ public class ServicioStockConstantes extends ConstantesGenericas{
 	public static final String COD_PEDANIA = "codPedania";
 	public static final String COD_PROVINCIA = "codProvincia";
 	public static final String CODIGO_POSTAL = "codigoPostal";
-	public static final String ACTUAL_IMPORTE = "actualImporte";
-	public static final String ANTERIOR_IMPORTE = "anteriorImporte";
-	public static final String DESDE_IMPORTE = "desdeImporte";
-	public static final String HASTA_IMPORTE = "hastaImporte";
 	public static final String COD_TIPO_INMUEBLE = "codTipoInmueble";
 	public static final String COD_SUBTIPO_INMUEBLE = "codSubtipoInmueble";
 	public static final String FINCA_REGISTRAL = "fincaRegistral";
 	public static final String COD_MUNICIPIO_REGISTRO = "codMunicipioRegistro";
 	public static final String REGISTRO = "registro";
 	public static final String REFERENCIA_CATASTRAL = "referenciaCatastral";
-	public static final String SUPERFICIE = "superficie";
-	public static final String SUPERFICIE_REGISTRAL = "superficieRegistral";
 	public static final String ASCENSOR = "ascensor";
 	public static final String DORMITORIOS = "dormitorios";
 	public static final String BANYOS = "banyos";
 	public static final String ASEOS = "aseos";
 	public static final String GARAJES = "garajes";
-	public static final String NUEVO = "nuevo";
 	public static final String COD_ESTADO_COMERCIAL = "codEstadoComercial";
 	public static final String COD_TIPO_VENTA = "codTipoVenta";
 	public static final String LAT = "lat";
@@ -55,4 +49,39 @@ public class ServicioStockConstantes extends ConstantesGenericas{
 	public static final String ANTIGUEDAD = "antiguedad";
 	public static final String COD_CARTERA = "codCartera";
 	public static final String COD_RATIO = "codRatio";
+	
+	//Petición HREOS-1399
+	public static final String ES_NUEVO = "esNuevo";
+	public static final String UTIL_SUPERFICIE = "utilSuperficie";
+	public static final String CONSTRUIDA_SUPERFICIE = "construidaSuperficie";
+	public static final String REGISTRAL_SUPERFICIE = "registralSuperficie";
+	public static final String PARCELA_SUPERFICIE = "parcelaSuperficie";
+	public static final String ID_ACTIVO_UVEM = "idActivoUvem";
+	public static final String RIESGO_OCUPACION = "riesgoOcupacion";
+	public static final String FECHA_POSESION = "fechaPosesion";
+	public static final String FECHA_CONTRATO_DATOS_OCUPACIONALES = "fechaContratoDatosOcupacionales";
+	public static final String PLAZO_CONTRATO_DATOS_OCUPACIONALES = "plazoContratoDatosOcupacionales";
+	public static final String RENTA_MENSUAL_DATOS_OCUPACIONALES = "rentaMensualDatosOcupacionales";
+	public static final String RECIBIDO_IMPORTE_DATOS_ADMINISTRACION = "recibidoImporteDatosAdministracion";
+	public static final String IBI_IMPORTE_DATOS_ADMINISTRACION = "ibiImporteDatosAdministracion";
+	public static final String DERRAMA_IMPORTE_DATOS_ADMINISTRACION = "derramaImporteDatosAdministracion";
+	public static final String DETALLE_DERRAMA_DATOS_ADMINISTRACION = "detalleDerramaDatosAdministracion";
+	public static final String ANEJO_TRASTERO = "anejoTrastero";
+	public static final String EXISTE_PISCINA = "existePiscina";
+		
+	//HREOS-1479
+	public static final String ID_LOTE_REM = "idLoteRem";
+	public static final String ES_ACTIVO_PRINCIPAL = "esActivoPrincipal";
+		
+	//HREOS-1478
+	public static final String ACTUAL_IMPORTE_DESCUENTO_WEB = "actualImporteDescuentoWeb";
+	public static final String DESDE_IMPORTE_DESCUENTO_WEB = "desdeImporteDescuentoWeb";
+	public static final String HASTA_IMPORTE_DESCUENTO_WEB = "hastaImporteDescuentoWeb";
+	public static final String VALOR_APROBADO_RENTA = "valorAprobadoRenta";
+	public static final String FECHA_VALOR_APROBADO_RENTA = "fechaValorAprobadoRenta";	
+	public static final String ANTERIOR_VALOR_APROBADO_RENTA = "anteriorValorAprobadoRenta";
+	public static final String VALOR_APROBADO_VENTA = "valorAprobadoVenta";
+	public static final String FECHA_VALOR_APROBADO_VENTA = "fechaValorAprobadoVenta";
+	public static final String ANTERIOR_VALOR_APROBADO_VENTA = "anteriorValorAprobadoVenta";
+		
 }

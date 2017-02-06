@@ -1,33 +1,26 @@
 package es.pfsgroup.plugin.rem.tests.restclient.webcom;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
-import es.pfsgroup.recovery.api.UsuarioApi;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONNull;
-import net.sf.json.JSONObject;
 
 public class ServiciosWebcomTestsBase {
 	
@@ -51,7 +44,7 @@ public class ServiciosWebcomTestsBase {
 //		}
 	
 		try {
-			when(httpClientMock.processRequest(anyString(), anyString(), anyMap(), any(JSONObject.class), anyInt(),
+			when(httpClientMock.processRequest(anyString(), anyString(), anyMap(), anyString(), anyInt(),
 					anyString())).thenReturn(new JSONObject());
 		} catch (HttpClientException e) {
 		}
@@ -61,7 +54,7 @@ public class ServiciosWebcomTestsBase {
 		ArgumentCaptor<JSONObject> jsonArg = ArgumentCaptor.forClass(JSONObject.class);
 		ArgumentCaptor<Map> headersArg = ArgumentCaptor.forClass(Map.class);
 		try {
-			Mockito.verify(httpClient).processRequest(anyString(), eq(method), headersArg.capture(), jsonArg.capture(),
+			Mockito.verify(httpClient).processRequest(anyString(), eq(method), headersArg.capture(), jsonArg.toString(),
 					anyInt(), eq(charset));
 		} catch (HttpClientException e) {
 	

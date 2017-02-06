@@ -4,10 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
 
 public class CambioBDStub extends CambioBD{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Map<String, Object> data;
 	private Map<String, Object> vh = new HashMap<String, Object>();
 	

@@ -30,6 +30,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 
 	Usuario getGestorByActivoYTipo(Activo activo, Long tipo);
 	
+	Usuario getGestorByActivoYTipo(Activo activo, String codigoTipo);
+	
 	Boolean isGestorActivo(Activo activo, Usuario usuario);
 	
 	Boolean isSupervisorActivo(Activo activo, Usuario usuario);

@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -25,8 +24,8 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.HibernateExecutionFacade;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
@@ -50,7 +49,8 @@ public class CambioBDDaoTests {
 	private static class TestInfoTabla implements InfoTablasBD {
 
 		private String clavePrimaria = "TERCER_CAMPO";
-
+		private String clavePrimariaJson = "TERCER_CAMPO";
+		
 		public void cambiaClavePrimaria(String s) {
 			this.clavePrimaria = s;
 		}
@@ -68,6 +68,11 @@ public class CambioBDDaoTests {
 		@Override
 		public String clavePrimaria() {
 			return clavePrimaria;
+		}
+
+		@Override
+		public String clavePrimariaJson() {
+			return clavePrimariaJson;
 		}
 
 	}
@@ -101,7 +106,10 @@ public class CambioBDDaoTests {
 		datosHistoricos = new String[] { "7", "2016-10-10T00:00:00", "1", "1", "1", "AAA", "777", null };
 		hibernateExecutionFacadeBehaviour();
 
-		List<CambioBD> cambios = dao.listCambios(TestDto.class, new TestInfoTabla(), null);
+		Integer tamanyoBloque = Integer.valueOf(1000);
+		CambiosList listPendientes = new CambiosList(tamanyoBloque);
+		
+		CambiosList cambios = dao.listCambios(TestDto.class, new TestInfoTabla(), null, listPendientes);
 		assertEquals("La lista de cambios debe contener sólo 1 elemento", 1, cambios.size());
 
 		String query = uniqueQueryCaptor.getValue();
@@ -120,7 +128,10 @@ public class CambioBDDaoTests {
 		TestInfoTabla infoTablas = new TestInfoTabla();
 		infoTablas.cambiaClavePrimaria("ESTO_NO_ES_UN_CAMPO");
 
-		List<CambioBD> cambios = dao.listCambios(TestDto.class, infoTablas, null);
+		Integer tamanyoBloque = Integer.valueOf(1000);
+		CambiosList listPendientes = new CambiosList(tamanyoBloque);
+		
+		CambiosList cambios = dao.listCambios(TestDto.class, infoTablas, null, listPendientes);
 
 		assertEquals("La lista de cambios debe contener sólo 1 elemento", 1, cambios.size());
 

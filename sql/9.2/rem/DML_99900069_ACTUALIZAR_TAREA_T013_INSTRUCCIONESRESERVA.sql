@@ -42,7 +42,7 @@ DECLARE
     --                TAP_CODIGO                                                 TFI_NOMBRE                       TFI_TIPO				TFI_ORDEN	 	BORRADO	TFI_VALIDACION					TFI_ERROR_VALIDACION		TFI_BUSINESS_OPERATION
 		   T_TFI(   'T013_InstruccionesReserva'                       ,        'titulo'      		,             'label'       ,    	'0'		,		0		,''								,''							,''	),
 		   T_TFI(   'T013_InstruccionesReserva'                       ,        'comboVPO'    	  	,             'combo'       ,  		'1'		,		1		,''								,''							,''),
-		   T_TFI(   'T013_InstruccionesReserva'                   	  ,        'Tipo de arras'      ,             'combo'       ,    	'2'		,		0		,'false' 						,'Debe indicar el tipo de arras'	,'DDTipoArras'),
+		   T_TFI(   'T013_InstruccionesReserva'                   	  ,        'Tipo de arras'      ,             'combo'       ,    	'2'		,		0		,'false' 						,'Debe indicar el tipo de arras'	,'DDTiposArras'),
 		   T_TFI(   'T013_InstruccionesReserva'                    	  ,        'fechaEnvio'         ,             'date'        ,  		'3'		,		0		,''								,''							,''),
 		   T_TFI(   'T013_InstruccionesReserva'                    	  ,        'observaciones'      ,             'textarea'    ,      	'4'		,		0		,''								,''							,''),
 		   T_TFI(   'T013_InstruccionesReserva'                    	  ,        'Tipo de arras'      ,             'combo'       ,    	'5'		,		1		,''								,''							,''),

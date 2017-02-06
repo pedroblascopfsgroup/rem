@@ -56,8 +56,15 @@ Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
 	    				}
     				}
     			}
+    		},
+    		{
+    			name:'numProtocolo'
+    		},
+    		{
+    			name:'fechaVenta',
+    			type:'date',
+    			dateFormat: 'c'
     		}
-
 
     ],
     

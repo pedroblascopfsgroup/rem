@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -38,8 +41,11 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -49,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
@@ -178,8 +185,17 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 	
+	@Autowired
+	private ActivoTramiteDao tramiteDao;
+	
 	@Resource
     MessageService messageServices;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -1723,8 +1739,35 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		resolucionDto.setFechaResolucion(formalizacion.getFechaResolucion());
 		resolucionDto.setImporte(formalizacion.getImporte());
 		resolucionDto.setFechaPago(formalizacion.getFechaPago());
+		this.rellenarDatosVentaFormalizacion(formalizacion, resolucionDto);
 		
 		return resolucionDto;
+	}
+	
+	private void rellenarDatosVentaFormalizacion(Formalizacion formalizacion, DtoFormalizacionResolucion resolucionDto) {
+		
+		List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(formalizacion.getExpediente().getTrabajo().getId(), "T013");
+		
+		if(!Checks.estaVacio(listaTramites)) {
+			
+			List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(listaTramites.get(0).getId());
+			TareaExterna tex = null;
+			for(TareaExterna tarea : listaTareas) {
+				if(tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
+					tex = tarea;
+					break;
+				}
+			}
+			if(!Checks.esNulo(tex)) {
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				try {
+					resolucionDto.setFechaVenta(df.parse(activoTramiteApi.getTareaValorByNombre(tex.getValores(),"fechaFirma")));
+				} catch (ParseException e) {
+					logger.error(e.getMessage());
+				}
+				resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(),"numProtocolo"));
+			}
+		}
 	}
 
 
@@ -3063,6 +3106,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) {
 		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getIdExpediente()));
 		
@@ -3089,8 +3133,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 						return true;
 					}
 				} catch (NumberFormatException e) {
+					logger.error("Error en la obtención de datos de préstamo.",e);
 					e.printStackTrace();
 				} catch (Exception e) {
+					logger.error("Error en la obtención de datos de préstamo", e);
 					e.printStackTrace();
 				}
 

@@ -436,6 +436,10 @@
 				def activoManager = ctx.getBean("activoManager");
 				return activoManager.checkHayPresupuestoEjercicioActual(idActivo);
 			}
+			def checkImpuestos = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkImpuestos(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

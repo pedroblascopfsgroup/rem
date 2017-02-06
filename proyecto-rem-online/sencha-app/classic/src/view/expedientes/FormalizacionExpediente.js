@@ -478,6 +478,54 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 				xtype:'fieldset',
 				collapsible: true,
 				defaultType: 'displayfieldbase',				
+				title: HreRem.i18n('title.venta'),
+				layout: {
+			        type: 'hbox',
+			       	align: 'stretch'
+			    },
+				items : [
+					{
+						xtype: 'container',
+						layout: {type: 'vbox'},
+						defaultType: 'textfieldbase',
+						width: '50%',
+						items: [
+							{
+								xtype:'datefieldbase',
+								formatter: 'date("d/m/Y")',
+								fieldLabel: HreRem.i18n('fieldlabel.formalizacion.fecha.venta'),
+								bind: '{resolucion.fechaVenta}'
+								
+							},
+							 {
+			                	xtype: 'button',
+			                	reference: 'btnGenerarFacturaVenta',
+			                	text: HreRem.i18n('btn.generar.factura.venta'),
+			                	handler: 'onClickGenerarFacturaPdf',
+			                	margin: '10 10 10 10',
+			                	bind:{visible:'{expediente.isCarteraBankia}'}
+			                }
+            			]
+					},
+					{
+						xtype: 'container',
+						layout: {type: 'vbox'},
+						defaultType: 'textfieldbase',
+						width: '50%',
+						items: [
+							{
+								xtype:'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.formalizacion.numero.protocolo'),
+								bind: '{resolucion.numProtocolo}'
+							}
+            			]
+					}
+				]
+			},
+			{   
+				xtype:'fieldset',
+				collapsible: true,
+				defaultType: 'displayfieldbase',				
 				title: HreRem.i18n('title.subsanaciones'),
 				items : [
 					{

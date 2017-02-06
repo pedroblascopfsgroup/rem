@@ -40,7 +40,7 @@ DECLARE
 BEGIN
 
     	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_VALIDACION = ''checkPoliticaCorporativa() ? (checkBankia() ? (checkImpuestos() ? ''''null'''' : ''''Debe indicar el tipo de impuesto y tipo aplicable.'''' ) : ''''null''''  ) : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''' '' '||	  
+			  ' SET TAP_SCRIPT_VALIDACION = ''checkPoliticaCorporativa() ? (checkBankia() ? (checkImpuestos() ? null : ''''Debe indicar el tipo de impuesto y tipo aplicable.'''' ) : null  ) : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''' '' '||	  
 			  ' WHERE TAP_CODIGO = ''T013_DefinicionOferta'' ';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);

@@ -458,10 +458,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoCondicionante.setAuditoria(Auditoria.getNewInstance());
 			nuevoCondicionante.setExpediente(nuevoExpediente);
 			//Comprobamos si tiene derecho de tanteo
+			boolean noCumple = false;
 			 for (CondicionTanteoApi condicion: condiciones) {
-					if(condicion.checkCondicion(oferta.getActivoPrincipal()))
-						nuevoCondicionante.setSujetoTanteoRetracto(1);
+					if(!condicion.checkCondicion(oferta.getActivoPrincipal()))
+						noCumple = true;	
  			}
+			if(!noCumple)
+				nuevoCondicionante.setSujetoTanteoRetracto(1);
 			
 			nuevoExpediente.setCondicionante(nuevoCondicionante);
 

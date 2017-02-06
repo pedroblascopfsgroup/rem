@@ -1029,20 +1029,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 							}
 						})
 					},
-					
-				    T013_InformeJuridicoValidacion: function() {
-				    	var me = this;
-				    	
-				    	me.deshabilitarCampo(me.down('[name=tipoIncidencia]'));
-				    	
-				    	me.down('[name=comboResultado]').addListener('change', function(combo){
-				    		if(combo.value == '01'){
-				    			me.deshabilitarCampo(me.down('[name=tipoIncidencia]'));
-				    		}else{
-				    			me.habilitarCampo(me.down('[name=tipoIncidencia]'));
-				    		}
-				    	})
-				    },
+				
 				    
 					T013_ResolucionTanteoValidacion: function() {
 						var me = this;

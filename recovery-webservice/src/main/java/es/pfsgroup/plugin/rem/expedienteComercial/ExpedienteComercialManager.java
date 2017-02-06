@@ -3106,6 +3106,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) {
 		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getIdExpediente()));
 		
@@ -3132,8 +3133,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 						return true;
 					}
 				} catch (NumberFormatException e) {
+					logger.error("Error en la obtención de datos de préstamo.",e);
 					e.printStackTrace();
 				} catch (Exception e) {
+					logger.error("Error en la obtención de datos de préstamo", e);
 					e.printStackTrace();
 				}
 

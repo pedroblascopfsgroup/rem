@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -248,6 +249,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired 
     private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private List<CondicionTanteoApi> condiciones;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -453,13 +457,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			CondicionanteExpediente nuevoCondicionante = new CondicionanteExpediente();
 			nuevoCondicionante.setAuditoria(Auditoria.getNewInstance());
 			nuevoCondicionante.setExpediente(nuevoExpediente);
+			//Comprobamos si tiene derecho de tanteo
+			 for (CondicionTanteoApi condicion: condiciones) {
+					if(condicion.checkCondicion(oferta.getActivoPrincipal()))
+						nuevoCondicionante.setSujetoTanteoRetracto(1);
+ 			}
+			
 			nuevoExpediente.setCondicionante(nuevoCondicionante);
 
 			// Establecer la fecha de aceptación/alta a ahora.
 			nuevoExpediente.setFechaAlta(new Date());
 
 			crearCompradores(oferta, nuevoExpediente);
-
+			
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
 			crearGastosExpediente(nuevoExpediente, oferta);

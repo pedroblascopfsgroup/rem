@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -76,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -1470,6 +1472,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return true;
+	}
+	
+	@Override
+	public boolean checkImpuestos(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(ofertaAceptada);
+			if(!Checks.esNulo(expediente)){
+				CondicionanteExpediente condicionante = expediente.getCondicionante();
+				if(!Checks.esNulo(condicionante)){
+					if(!Checks.esNulo(expediente.getCondicionante().getTipoImpuesto()) && !Checks.esNulo(expediente.getCondicionante().getTipoAplicable()))
+						return true;
+				}
+			}
+		
+		}
+		return true;		
 	}
 	
 }

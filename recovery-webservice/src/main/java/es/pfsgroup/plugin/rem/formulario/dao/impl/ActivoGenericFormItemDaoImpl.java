@@ -18,7 +18,10 @@ public class ActivoGenericFormItemDaoImpl extends AbstractEntityDao<GenericFormI
     @Override
     public List<GenericFormItem> getByIdTareaProcedimiento(Long id) {
         DetachedCriteria criteria = DetachedCriteria.forClass(GenericFormItem.class);
-        criteria.add(Restrictions.eq("tareaProcedimiento.id", id)).addOrder(Order.asc("order"));
+        criteria.add(Restrictions.eq("tareaProcedimiento.id", id))
+        		.add(Restrictions.eq("auditoria.borrado", false))
+        		.addOrder(Order.asc("order"));
+        
         return getHibernateTemplate().findByCriteria(criteria);
     }
 }

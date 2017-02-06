@@ -45,10 +45,8 @@ import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 
 @Service

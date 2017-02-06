@@ -38,4 +38,19 @@ public class DetectorCambiosEjemplo extends DetectorCambiosBD<ExampleDto>{
 	public void invocaServicio(List<ExampleDto> data, RestLlamada registro) throws ErrorServicioWebcom {
 	}
 
+	@Override
+	public String clavePrimariaJson() {
+		return null;
+	}
+
+	@Override
+	protected Integer getWeight() {
+		return null;
+	}
+
+	@Override
+	public boolean isActivo() {
+		return false;
+	}
+
 }

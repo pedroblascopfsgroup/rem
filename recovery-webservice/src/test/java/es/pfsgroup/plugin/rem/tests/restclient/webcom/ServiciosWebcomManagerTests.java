@@ -2,11 +2,8 @@ package es.pfsgroup.plugin.rem.tests.restclient.webcom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
@@ -17,10 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -45,7 +44,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
-import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
@@ -56,8 +54,6 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstant
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioProveedoresConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
@@ -150,10 +146,10 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		StockDto stock1 = setupDto(new StockDto());
 		StockDto stock2 = setupDto(new StockDto());
 
-		double actualImporte = 100.00;
+		double actualImporteDescuentoWeb = 100.00;
 		Long codigoAgrupacionObraNueva = 1L;
 
-		stock1.setActualImporte(WebcomDataType.doubleDataType(actualImporte));
+		stock1.setActualImporteDescuentoWeb(WebcomDataType.doubleDataType(actualImporteDescuentoWeb));
 		// ¿El campo idEstado existirá o no?
 		// stock1.setIdEstado(WebcomDataType.booleanDataType(true));
 		stock2.setCodigoAgrupacionObraNueva(WebcomDataType.longDataType(codigoAgrupacionObraNueva));
@@ -173,7 +169,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertDataBasicContent(requestData, 0);
 		assertDataBasicContent(requestData, 1);
 
-		assertDataEquals(requestData, 0, ServicioStockConstantes.ACTUAL_IMPORTE, "100.00");
+		assertDataEquals(requestData, 0, ServicioStockConstantes.ACTUAL_IMPORTE_DESCUENTO_WEB, "100.00");
 		// ¿El campo idEstado existirá o no?
 		// assertDataEquals(requestData, 0, ServicioStockConstantes.ID_ESTADO,
 		// Boolean.TRUE);
@@ -298,7 +294,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		Mockito.reset(httpClient);
 		HttpClientException exception = new HttpClientException("error!!", 404);
 		try {
-			Mockito.when(httpClient.processRequest(anyString(), anyString(), anyMap(), any(JSONObject.class), anyInt(),
+			Mockito.when(httpClient.processRequest(anyString(), anyString(), anyMap(), anyString(), anyInt(),
 					anyString())).thenThrow(exception);
 
 			manager.webcomRestEstadoPeticionTrabajo(createEstadoDtoList());

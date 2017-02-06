@@ -59,7 +59,9 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -248,6 +250,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired 
     private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private List<CondicionTanteoApi> condiciones;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -459,7 +464,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoExpediente.setFechaAlta(new Date());
 
 			crearCompradores(oferta, nuevoExpediente);
-
+			//TODO: Comprobar condiciones tanteo. Ya está creada la lista de autowired
+			/*
+			 * 		for (CondicionTanteoApi condicion: condiciones) {
+						if(condicion)
+							tanteo = true;
+        			}
+			 */
+			
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
 			crearGastosExpediente(nuevoExpediente, oferta);

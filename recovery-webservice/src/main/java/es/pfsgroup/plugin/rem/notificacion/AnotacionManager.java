@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJRegistro;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.notificacion.api.RegistroApi;
@@ -103,6 +104,9 @@ public class AnotacionManager implements AnotacionApi{
 	
 	@Autowired
 	private EmailContentUtil emailContentUtil;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 	
 	// FIXME Mover esta dependencia al emailContentUtil
 	@Resource(name = "velocityEngine")
@@ -619,6 +623,11 @@ public class AnotacionManager implements AnotacionApi{
 					genericDao.createFilter(FilterType.EQUALS, "numActivo", notificacionDto.getIdActivoHaya()));
 			if (Checks.esNulo(activo)) {
 				hashErrores.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
+			}else{
+				Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+				if (Checks.esNulo(gestor)) {
+					hashErrores.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
 			}
 		}
 

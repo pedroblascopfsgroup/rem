@@ -34,7 +34,7 @@ import net.sf.json.JSONObject;
 
 @Controller
 public class NotificacionesController {
-	
+
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 
@@ -42,13 +42,12 @@ public class NotificacionesController {
 	private AnotacionApi anotacionApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
-	
+
 	@Autowired
 	private RestApi restApi;
-	
+
 	@Autowired
 	private ActivoApi activoApi;
-
 
 	/**
 	 * Inserta una notificacion Ejem: IP:8080/pfs/rest/notificaciones HEADERS:
@@ -69,7 +68,7 @@ public class NotificacionesController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/notificaciones")
-	public void saveNotificacion(ModelMap model, RestRequestWrapper request,HttpServletResponse response)
+	public void saveNotificacion(ModelMap model, RestRequestWrapper request, HttpServletResponse response)
 			throws JsonParseException, JsonMappingException, IOException {
 
 		NotificacionRequestDto jsonData = null;
@@ -77,39 +76,51 @@ public class NotificacionesController {
 		Map<String, Object> map = null;
 		HashMap<String, String> errorsList = null;
 		JSONObject jsonFields = null;
-		
+
 		try {
 			jsonFields = request.getJsonObject();
 			logger.debug("PETICIÓN: " + jsonFields);
-			
-			jsonData = (NotificacionRequestDto) request.getRequestData(NotificacionRequestDto.class);		
-			
-			
-			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);				
+
+			jsonData = (NotificacionRequestDto) request.getRequestData(NotificacionRequestDto.class);
+
+			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 			}
-				
+
 			List<NotificacionDto> notificaciones = jsonData.getData();
-	
+
 			for (NotificacionDto notificacion : notificaciones) {
 				map = new HashMap<String, Object>();
 				errorsList = anotacionApi.validateNotifPostRequestData(notificacion, jsonFields);
-				
+
 				if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {
 					Notificacion notificacionBbdd = new Notificacion();
 					Activo activo = activoApi.getByNumActivo(notificacion.getIdActivoHaya());
-					Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+					Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(activo,
+							GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 					notificacionBbdd.setIdActivo(activo.getId());
 					notificacionBbdd.setIdTareaAppExterna(notificacion.getIdNotificacionWebcom());
 					notificacionBbdd.setDestinatario(gestor.getId());
 					notificacionBbdd.setTitulo(notificacion.getTitulo());
-					notificacionBbdd.setDescripcion(notificacion.getDescripcion());
-					if(!Checks.esNulo(notificacion.getFechaRealizacion())){
+					String remitente = null;
+					String descripcion = notificacion.getDescripcion();
+					if (activo.getInfoComercial() != null && activo.getInfoComercial().getMediadorInforme() != null) {
+						if (activo.getInfoComercial().getMediadorInforme().getNombreComercial() != null) {
+							remitente = activo.getInfoComercial().getMediadorInforme().getNombreComercial();
+						} else {
+							remitente = activo.getInfoComercial().getMediadorInforme().getNombre();
+						}
+					}
+					if (remitente != null && descripcion != null) {
+						descripcion = remitente.concat(":\n").concat(descripcion);
+					}
+					notificacionBbdd.setDescripcion(descripcion);
+					if (!Checks.esNulo(notificacion.getFechaRealizacion())) {
 						notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
-					}else{
+					} else {
 						notificacionBbdd.setFecha(null);
 					}
-					
+
 					Notificacion notifrem = anotacionApi.saveNotificacion(notificacionBbdd);
 					map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
 					map.put("idNotificacionRem", notifrem.getIdsNotificacionCreada().get(0));
@@ -121,11 +132,11 @@ public class NotificacionesController {
 				}
 				listaRespuesta.add(map);
 			}
-			
+
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", "null");
-			
+
 		} catch (Exception e) {
 			logger.error("Error notificaciones", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
@@ -136,7 +147,7 @@ public class NotificacionesController {
 		} finally {
 			logger.debug("RESPUESTA: " + model);
 		}
-		restApi.sendResponse(response,model,request);
+		restApi.sendResponse(response, model, request);
 	}
 
 }

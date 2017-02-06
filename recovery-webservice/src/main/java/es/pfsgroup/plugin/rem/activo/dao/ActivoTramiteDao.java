@@ -50,5 +50,13 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 	List<ActivoTramite> getTramitesActivoTrabajoList(Long idTrabajo);
 	
 	public List<ActivoTramite> getListaTramitesFromActivoTrabajo(Long idActivo);
+	
+	/**
+	 * Devuelve una lista de tramites asociados a un trabajo, y filtrado por el codigo del tipo de tramite
+	 * @param idTrabajo
+	 * @param codigoTramite
+	 * @return
+	 */
+	public List<ActivoTramite> getTramitesByTipoAndTrabajo(Long idTrabajo, String codigoTramite);
 
 }

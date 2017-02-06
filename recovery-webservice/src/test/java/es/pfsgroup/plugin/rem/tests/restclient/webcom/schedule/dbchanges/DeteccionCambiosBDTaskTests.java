@@ -8,9 +8,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyObject;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +34,9 @@ import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomEstadoPeticionTrabajo;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomStock;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomVentasYcomisiones;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
@@ -85,25 +84,26 @@ public class DeteccionCambiosBDTaskTests {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testDeteccionCambiosStock() throws ErrorServicioWebcom {
-
+			
 		Map<String, Object> data1 = new HashMap<String, Object>();
 		data1.put(ServicioStockConstantes.ID_ACTIVO_HAYA, "1");
-		data1.put(ServicioStockConstantes.NUEVO, true);
+		data1.put(ServicioStockConstantes.ES_NUEVO, true);
 		data1.put(ServicioStockConstantes.COD_TIPO_VIA, "ABCDE");
-		data1.put(ServicioStockConstantes.ANTERIOR_IMPORTE, 1.2);
-
+		data1.put(ServicioStockConstantes.ACTUAL_IMPORTE_DESCUENTO_WEB, 1.2);
 		Date fecha = new Date();
-		data1.put(ServicioStockConstantes.DESDE_IMPORTE, fecha);
+		data1.put(ServicioStockConstantes.DESDE_IMPORTE_DESCUENTO_WEB, fecha);
 
-		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
-		cambiosBD.add(new CambioBDStub(data1));
+		//List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
+		Integer tamanyoBloque = Integer.valueOf(1000);
+		CambiosList listPendientes = new CambiosList(tamanyoBloque);
+		listPendientes.add(new CambioBDStub(data1));
 
 		Map<String, Object> data2 = new HashMap<String, Object>();
 		data2.put(ServicioStockConstantes.ID_ACTIVO_HAYA, "2");
-		cambiosBD.add(new CambioBDStub(data2));
-
-		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class)))
-				.thenReturn(cambiosBD);
+		listPendientes.add(new CambioBDStub(data2));
+		
+		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class), listPendientes))
+				.thenReturn(listPendientes);
 
 		//////////////////////////
 		task.detectaCambios();
@@ -117,13 +117,13 @@ public class DeteccionCambiosBDTaskTests {
 
 		assertEquals("ID_ACTIVO HAYA tiene el valor esperado", new Long(1),
 				stockEnviado.get(0).getIdActivoHaya().getValue());
-		assertEquals("El NUEVO no tiene el valor esperado", Boolean.TRUE, stockEnviado.get(0).getNuevo().getValue());
+		assertEquals("El ES_NUEVO no tiene el valor esperado", Boolean.TRUE, stockEnviado.get(0).getEsNuevo().getValue());
 		assertEquals("El COD_TIPO_VIA no tiene el valor esperado", "ABCDE",
 				stockEnviado.get(0).getCodTipoVia().getValue());
-		assertEquals("El ANTERIOR_IMPORTE no tiene el valor esperado", new Double(1.2),
-				stockEnviado.get(0).getAnteriorImporte().getValue());
-		assertEquals("El DESDE_IMPORTE no tiene el valor esperado", fecha,
-				stockEnviado.get(0).getDesdeImporte().getValue());
+		assertEquals("El ACTUAL_IMPORTE_DESCUENTO_WEB no tiene el valor esperado", new Double(1.2),
+				stockEnviado.get(0).getActualImporteDescuentoWeb().getValue());
+		assertEquals("El DESDE_IMPORTE_DESCUENTO_WEB no tiene el valor esperado", fecha,
+				stockEnviado.get(0).getDesdeImporteDescuentoWeb().getValue());
 
 		assertEquals("ID_ACTIVO HAYA tiene el valor esperado", new Long(2),
 				stockEnviado.get(1).getIdActivoHaya().getValue());
@@ -140,10 +140,13 @@ public class DeteccionCambiosBDTaskTests {
 		data.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, 1L);
 		data.put(EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, "Z");
 
-		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
-		cambiosBD.add(new CambioBDStub(data));
+		//List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
+		//cambiosBD.add(new CambioBDStub(data));
+		Integer tamanyoBloque = Integer.valueOf(1000);
+		CambiosList listPendientes = new CambiosList(tamanyoBloque);
+		listPendientes.add(new CambioBDStub(data));
 		when(detectorCambiosDao.listCambios(eq(EstadoTrabajoDto.class), any(InfoTablasBD.class),
-				any(RestLlamada.class))).thenReturn(cambiosBD);
+				any(RestLlamada.class), listPendientes)).thenReturn(listPendientes);
 
 		//////////////////////////
 		task.detectaCambios();
@@ -164,6 +167,7 @@ public class DeteccionCambiosBDTaskTests {
 
 	@Test
 	public void testDeteccionDeCambios_ValoresNullados() throws ErrorServicioWebcom {
+		
 		// Simularemos que el detector de cambios nos devuelve campos nullados
 		// para distintos tipos de datos y nos aseguraremos que se ha seteado el
 		// NullDataType adecuado.
@@ -174,16 +178,19 @@ public class DeteccionCambiosBDTaskTests {
 		// LongDataType
 		data.put(ServicioStockConstantes.ID_ACTIVO_HAYA, null);
 		// DateDataType
-		data.put(ServicioStockConstantes.DESDE_IMPORTE, null);
+		data.put(ServicioStockConstantes.DESDE_IMPORTE_DESCUENTO_WEB, null);
 		// FloatDataType
-		data.put(ServicioStockConstantes.SUPERFICIE, null);
+		data.put(ServicioStockConstantes.CONSTRUIDA_SUPERFICIE, null);
 		// BooleanDataType
 		data.put(ServicioStockConstantes.ASCENSOR, null);
 
-		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
-		cambiosBD.add(new CambioBDStub(data));
-		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class)))
-				.thenReturn(cambiosBD);
+		//List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
+		//cambiosBD.add(new CambioBDStub(data));
+		Integer tamanyoBloque = Integer.valueOf(1000);
+		CambiosList listPendientes = new CambiosList(tamanyoBloque);
+		listPendientes.add(new CambioBDStub(data));
+		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class), listPendientes))
+				.thenReturn(listPendientes);
 
 		//////////////////////////
 		task.detectaCambios();
@@ -198,9 +205,9 @@ public class DeteccionCambiosBDTaskTests {
 		// NullLongDataType
 		assertNull("El valor no es un NullDataType", (stock.getIdActivoHaya().getValue()));
 		// NullDateDataType
-		assertNull("El valor no es un NullDataType", (stock.getDesdeImporte().getValue()));
+		assertNull("El valor no es un NullDataType", (stock.getDesdeImporteDescuentoWeb().getValue()));
 		// NullFloatDataType
-		assertNull("El valor no es un NullDataType", (stock.getSuperficie().getValue()));
+		assertNull("El valor no es un NullDataType", (stock.getConstruidaSuperficie().getValue()));
 		// NullBooleanDataType
 		assertNull("El valor no es un NullDataType", (stock.getAscensor().getValue()));
 
@@ -229,9 +236,14 @@ public class DeteccionCambiosBDTaskTests {
 		String newValue = "nuevas observaciones";
 		data.put(VentasYComisionesConstantes.OBSERVACIONES, newValue);
 
-		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
+		//List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
+		//CambioBDStub stub = new CambioBDStub(data);
+		//cambiosBD.add(stub);
+		Integer tamanyoBloque = Integer.valueOf(1000);
+		CambiosList listPendientes = new CambiosList(tamanyoBloque);
 		CambioBDStub stub = new CambioBDStub(data);
-		cambiosBD.add(stub);
+		listPendientes.add(stub);
+		
 		// El stub debe devolver el map de datos históricos"
 		Map<String, Object> vh = new HashMap<String, Object>();
 		vh.put(VentasYComisionesConstantes.ID_OFERTA_REM, 1L);
@@ -240,8 +252,8 @@ public class DeteccionCambiosBDTaskTests {
 		vh.put(VentasYComisionesConstantes.OBSERVACIONES, "observaciones antiguas");
 		stub.setValoresHistoricos(vh);
 
-		when(detectorCambiosDao.listCambios(eq(ComisionesDto.class), any(InfoTablasBD.class), any(RestLlamada.class)))
-				.thenReturn(cambiosBD);
+		when(detectorCambiosDao.listCambios(eq(ComisionesDto.class), any(InfoTablasBD.class), any(RestLlamada.class), listPendientes))
+				.thenReturn(listPendientes);
 
 		//////////////////////////
 		task.detectaCambios();
@@ -267,8 +279,15 @@ public class DeteccionCambiosBDTaskTests {
 	
 	
 	private RestLlamada compruebaSeGuardaRegistro() {
+		
+		//(RestLlamada llamada, @SuppressWarnings("rawtypes") DetectorCambiosBD handler,Integer contError)
+			
+		
 		ArgumentCaptor<RestLlamada> llamadaCaptor = ArgumentCaptor.forClass(RestLlamada.class);
-		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture());
+		ArgumentCaptor<DetectorCambiosBD> handler = ArgumentCaptor.forClass(DetectorCambiosBD.class);
+		Integer contError = Integer.valueOf(0);
+		 
+		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture(), handler.capture(), contError);
 
 		RestLlamada registro = llamadaCaptor.getValue();
 		return registro;

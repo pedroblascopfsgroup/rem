@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -248,6 +249,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired 
     private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private List<CondicionTanteoApi> condiciones;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -453,13 +457,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			CondicionanteExpediente nuevoCondicionante = new CondicionanteExpediente();
 			nuevoCondicionante.setAuditoria(Auditoria.getNewInstance());
 			nuevoCondicionante.setExpediente(nuevoExpediente);
+			//Comprobamos si tiene derecho de tanteo
+			boolean noCumple = false;
+			 for (CondicionTanteoApi condicion: condiciones) {
+					if(!condicion.checkCondicion(oferta.getActivoPrincipal()))
+						noCumple = true;	
+ 			}
+			if(!noCumple)
+				nuevoCondicionante.setSujetoTanteoRetracto(1);
+			
 			nuevoExpediente.setCondicionante(nuevoCondicionante);
 
 			// Establecer la fecha de aceptación/alta a ahora.
 			nuevoExpediente.setFechaAlta(new Date());
 
 			crearCompradores(oferta, nuevoExpediente);
-
+			
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
 			crearGastosExpediente(nuevoExpediente, oferta);
@@ -607,6 +620,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Si los nuevos datos no traen observaciones (null), 
 				// debe quitar las escritas para el precio o valoracion anterior
 				activoValoracion.setObservaciones(dto.getObservaciones());
+				
+				activoValoracion.setGestor(adapter.getUsuarioLogado());
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
 
@@ -991,11 +1006,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@BusinessOperationDefinition("activoManager.getUltimoPresupuesto")
-	public Long getUltimoPresupuesto(Long id) {
+	public Long getPresupuestoActual(Long id) {
 
-		return activoDao.getUltimoPresupuesto(id);
+		return activoDao.getPresupuestoActual(id);
 	}
 
+	@BusinessOperationDefinition("activoManager.getUltimoHistoricoPresupuesto")
+	public Long getUltimoHistoricoPresupuesto(Long id) {
+		
+		return activoDao.getUltimoHistoricoPresupuesto(id);
+	}
+	
+	@BusinessOperationDefinition("activoManager.checkHayPresupuestoEjercicioActual")
+	public boolean checkHayPresupuestoEjercicioActual(Long idActivo) {
+
+		return !Checks.esNulo(activoDao.getPresupuestoActual(idActivo));
+	}
+	
 	@BusinessOperationDefinition("activoManager.comprobarPestanaCheckingInformacion")
 	public Boolean comprobarPestanaCheckingInformacion(Long idActivo) {
 		Activo activo = this.get(idActivo);

@@ -208,6 +208,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}   
     	},
     	
+    	comboTiposFinanciacion: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFinanciacion'}
+			}   
+    	},
+    	
     	comboEntidadesFinancieras: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -516,8 +525,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
 	    },
+	    
+	    comboComitesPropuestos: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getComitesByCartera',
+		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+	    	}	    	
+	    },
 
-	    comboMotivoAnulacion: {
+	    storeMotivoAnulacion: {
 	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',

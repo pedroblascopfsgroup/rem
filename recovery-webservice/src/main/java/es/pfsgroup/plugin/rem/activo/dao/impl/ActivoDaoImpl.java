@@ -2,7 +2,10 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -221,8 +225,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	}
     
-    
-    
     @Override
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
 
@@ -296,13 +298,35 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
     
     @Override
-   	public Long getUltimoPresupuesto(Long id) {
+   	public Long getPresupuestoActual(Long id) {
 
-       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto where presupuesto.activo.id = " + id 
-       			+ " and presupuesto.ejercicio.anyo = (select max(ejer.anyo) from Ejercicio ejer) ");
+    	SimpleDateFormat df = new SimpleDateFormat("yyyy");
+    	String yearNow = df.format(new Date());
+    	
+       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
+       			+ " where presupuesto.activo.id = " + id 
+       			+ " and presupuesto.ejercicio.anyo = " + yearNow);
+
        	try {
-       		//Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-       		if (getHibernateTemplate().find(hb.toString()) != null)
+       		if (getHibernateTemplate().find(hb.toString()).size() > 0)
+	       		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+       		else return null;
+       	} catch (Exception e) {
+       		e.printStackTrace();
+       		return null;
+       	}
+
+   	}
+    
+    @Override
+   	public Long getUltimoHistoricoPresupuesto(Long id) {
+
+       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
+       			+ " where presupuesto.activo.id = " + id 
+       			+ " order by presupuesto.ejercicio.anyo desc ");
+
+       	try {
+       		if (getHibernateTemplate().find(hb.toString()).size() > 0)
 	       		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
        		else return null;
        	} catch (Exception e) {
@@ -336,8 +360,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPostal", dto.getCodPostal());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
    		
-   		if (dto.getSubcarteraCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
+   		if (dto.getSubcarteraCodigo() != null) {
+   			if("00".equals(dto.getSubcarteraCodigo())) {
+   				List<String> lista = new ArrayList<String>();
+   				Collections.addAll(lista, "'"+DDSubcartera.CODIGO_BAN_BFA+"'", "'"+DDSubcartera.CODIGO_BAN_BH+"'", "'"+DDSubcartera.CODIGO_BAN_BK+"'");
+   				HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.subcarteraCodigo", lista);
+   			} else {
+   				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
+   			}
+   		}
    		
    		if (dto.getEstadoActivoCodigo() != null)
    			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());

@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -76,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -999,8 +1001,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
 					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
-					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
+					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
+				}else{
+					if(trabajoApi.checkBankia(tareaExterna)){
+						String codigoComite = null;
+						try {
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComite))
+							return true;
+					}
 				}
 			}
 		}
@@ -1014,11 +1028,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if(!Checks.esNulo(expediente)){
 				if(!Checks.esNulo(expediente.getComiteSancion())){
-					
-					
 					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
-					if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
+					if(DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion) || DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion))
 						return true;
+				}else{
+					if(trabajoApi.checkBankia(trabajo)){
+						String codigoComite = null;
+						try {
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComite))
+							return true;
+					}
 				}
 			}
 		}
@@ -1448,6 +1472,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return true;
+	}
+	
+	@Override
+	public boolean checkImpuestos(TareaExterna tareaExterna){
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(ofertaAceptada);
+			if(!Checks.esNulo(expediente)){
+				CondicionanteExpediente condicionante = expediente.getCondicionante();
+				if(!Checks.esNulo(condicionante)){
+					if(!Checks.esNulo(expediente.getCondicionante().getTipoImpuesto()) && !Checks.esNulo(expediente.getCondicionante().getTipoAplicable()))
+						return true;
+				}
+			}
+		
+		}
+		return false;		
 	}
 	
 }

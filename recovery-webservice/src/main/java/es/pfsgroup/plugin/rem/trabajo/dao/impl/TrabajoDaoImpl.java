@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -53,6 +54,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
    		
+   		if(!Checks.esNulo(dto.getAnulado()) && BooleanUtils.toBoolean(dto.getAnulado())) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.importeTotal", 0);
+   		}
+
    		if(Checks.esNulo(dto.getNumActivo()) && Checks.esNulo(dto.getIdActivo())) {
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);
    		} 
@@ -101,6 +106,19 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
+	@Override
+	public Page getListActivosTrabajoPresupuesto(DtoActivosTrabajoFilter dto) {
+
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosTrabajoPresupuesto acttbj");		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idTrabajo", dto.getIdTrabajo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.ejercicio", dto.getEjercicioPresupuestario());
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
 	@Override
 	public Page getObservaciones(DtoTrabajoFilter dto) {
 		HQLBuilder hb = new HQLBuilder(" from TrabajoObservacion tbo");		

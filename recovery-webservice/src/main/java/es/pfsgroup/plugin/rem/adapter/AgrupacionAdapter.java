@@ -622,10 +622,12 @@ public class AgrupacionAdapter {
 
 		ActivoAgrupacionActivo activoAgrupacionActivo = activoAgrupacionActivoApi.get(id);
 		Activo activo =  activoAgrupacionActivo.getActivo();
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(activoAgrupacionActivo.getAgrupacion().getId());
+		
+		int numActivos = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(activoAgrupacionActivo.getAgrupacion().getId());
+		
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
-		if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
-
-			int numActivos = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(activoAgrupacionActivo.getAgrupacion().getId());
 			if (numActivos == 0) {
 				throw new JsonViewerException("No hay ningún activo asociado a esta agrupación.");
 			} else if (numActivos == 1) {
@@ -638,7 +640,7 @@ public class AgrupacionAdapter {
 		}
 
 		// Para los activos pertenecientes a una agrupación de tipo lote comercial.
-		if(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+		if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 			// Obtener las agrupaciones donde se encuentra el activo a eliminar de la agrupación lote comercial.
 			boolean incluidoAgrupacionRestringida = false;
 			List<ActivoAgrupacionActivo> agrupacionesActivo = activoAgrupacionActivo.getActivo().getAgrupaciones();
@@ -682,7 +684,7 @@ public class AgrupacionAdapter {
 				}
 
 				// Obtener una lista de asociaciones entre la agrupación lote comercial y los activos obtenidos relacionados con el activo a borrar.
-				List<ActivoAgrupacionActivo> agrupacionesActivoABorrar = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionIDAndActivos(activoAgrupacionActivo.getAgrupacion().getId(), activosID);
+				List<ActivoAgrupacionActivo> agrupacionesActivoABorrar = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionIDAndActivos(agrupacion.getId(), activosID);
 				if(!Checks.estaVacio(agrupacionesActivoABorrar)) {
 					for(ActivoAgrupacionActivo agrupaciones : agrupacionesActivoABorrar) {
 						activoAgrupacionActivoApi.delete(agrupaciones);
@@ -708,13 +710,23 @@ public class AgrupacionAdapter {
 			}
 		}
 
-		if(!activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+		if(!agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 			try {
-				if (activoAgrupacionActivo.getActivo().equals(activoAgrupacionActivo.getAgrupacion().getActivoPrincipal())) {
-					activoAgrupacionActivo.getAgrupacion().setActivoPrincipal(null);
-					genericDao.update(ActivoAgrupacion.class, activoAgrupacionActivo.getAgrupacion());
+				if (activoAgrupacionActivo.getActivo().equals(agrupacion.getActivoPrincipal())) {
+					agrupacion.setActivoPrincipal(null);
+					genericDao.update(ActivoAgrupacion.class, agrupacion);
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+				if(numActivos == 1 && agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId());
+					ActivoObraNueva obraNueva = genericDao.get(ActivoObraNueva.class, filtro);
+					
+					obraNueva.setProvincia(null);
+					obraNueva.setCodigoPostal(null);
+					obraNueva.setLocalidad(null);
+					
+					genericDao.update(ActivoObraNueva.class, obraNueva);
+				}
 		
 			} catch (Exception e) {
 				e.printStackTrace();

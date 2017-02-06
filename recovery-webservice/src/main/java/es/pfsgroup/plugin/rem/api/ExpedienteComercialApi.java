@@ -18,9 +18,11 @@ import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
+import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
@@ -542,5 +544,24 @@ public interface ExpedienteComercialApi {
 	 */
 	public ExpedienteComercial getExpedienteComercialResetPBC(Activo activo);
 	
-	
+	/**
+	 * Este método recibe un expediente comercial, llama al WS para obtener los datos del préstamo y los guarda en el expediente.
+	 * @param dto
+	 */
+	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto);
+
+	/**
+	 * Este método obtiene los datos del apartado 'Financiación' de la tab 'Formalización' del expediente.
+	 * @param dto : DTO con el ID de expediente a filtrar.
+	 * @return
+	 */
+	public DtoFormalizacionFinanciacion getFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto);
+
+	/**
+	 * Este método guarda los cambios del apartado 'Financiación' de la tab 'Formalización' del expediente.
+	 * @param dto : DTO con los cambios a guardar.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 */
+	public boolean saveFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto);
+
 }

@@ -17,6 +17,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.dto.AuthtokenRequest;
 import es.pfsgroup.plugin.rem.rest.dto.AuthtokenResponse;
@@ -54,6 +58,12 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 
 	@Autowired
 	private ServletContext servletContext;
+
+	@Autowired
+	private ActivoApi activoManager;
+
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionManager;
 
 	ObjectMapper mapper = new ObjectMapper();
 
@@ -113,7 +123,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		String secret = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
 				WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL, null);
 
-		if(appId==null || appId.isEmpty() || secret==null || secret.isEmpty()){
+		if (appId == null || appId.isEmpty() || secret == null || secret.isEmpty()) {
 			throw new RestConfigurationException("configure al app_id y el app_secret");
 		}
 		logger.error(secret);
@@ -149,7 +159,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	}
 
 	@Override
-	public FileResponse uploadSubdivision(File fileToUpload, String name, BigDecimal idSubdivision, Long idAgrupacion,
+	public FileResponse uploadSubdivision(File fileToUpload, String name, BigDecimal idSubdivision, ActivoAgrupacion agrupacion,
 			String descripcion) throws IOException, RestClientException, HttpClientException {
 		FileUpload file = new FileUpload();
 		file.setFile_base64(FileUtilsREM.base64Encode(fileToUpload));
@@ -157,7 +167,11 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		HashMap<String, String> metadata = new HashMap<String, String>();
 		metadata.put("propiedad", "subdivision");
 		metadata.put("id_subdivision_haya", String.valueOf(idSubdivision));
-		metadata.put("id_agrupacion_haya", String.valueOf(idAgrupacion));
+		metadata.put("id_agrupacion_haya", String.valueOf(agrupacion.getNumAgrupRem()));
+		if (agrupacion != null && agrupacion.getActivoPrincipal() != null
+				&& agrupacion.getActivoPrincipal().getCartera() != null) {
+			metadata.put("cartera", agrupacion.getActivoPrincipal().getCartera().getCodigo());
+		}
 
 		if (descripcion != null) {
 			metadata.put("descripcion", descripcion);
@@ -185,14 +199,20 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		file.setBasename(name);
 		HashMap<String, String> metadata = new HashMap<String, String>();
 		if (propiedad.equals(PROPIEDAD.ACTIVO)) {
+			Activo activo = activoManager.getByNumActivo(idRegistro);
 			metadata.put("propiedad", "activo");
-			metadata.put("id_activo_haya", String.valueOf(idRegistro));
+			metadata.put("id_activo_haya", String.valueOf(activo.getNumActivoRem()));
+			if (activo != null && activo.getCartera() != null) {
+				metadata.put("cartera", activo.getCartera().getCodigo());
+			}
 		} else if (propiedad.equals(PROPIEDAD.AGRUPACION)) {
+			ActivoAgrupacion agrupacion = activoAgrupacionManager.get(idRegistro);
 			metadata.put("propiedad", "agrupacion");
-			metadata.put("id_agrupacion_haya", String.valueOf(idRegistro));
-		} else if (propiedad.equals(PROPIEDAD.SUBDIVISION)) {
-			metadata.put("propiedad", "subdivision");
-			metadata.put("id_subdivision_haya", String.valueOf(idRegistro));
+			metadata.put("id_agrupacion_haya", String.valueOf(agrupacion.getNumAgrupRem()));
+			if (agrupacion != null && agrupacion.getActivoPrincipal() != null
+					&& agrupacion.getActivoPrincipal().getCartera() != null) {
+				metadata.put("cartera", agrupacion.getActivoPrincipal().getCartera().getCodigo());
+			}
 		}
 		if (tipo != null) {
 			if (tipo.equals(TIPO.WEB)) {

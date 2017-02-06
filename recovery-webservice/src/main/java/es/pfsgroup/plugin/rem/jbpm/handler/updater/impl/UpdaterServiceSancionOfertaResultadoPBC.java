@@ -14,6 +14,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -23,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 
 @Component
 public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
@@ -39,9 +41,13 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
+    @Autowired
+    private UtilDiccionarioApi utilDiccionarioApi;
+    
     private static final String COMBO_RESULTADO = "comboResultado";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+    private static final String MOTIVO_ANULACION = "motivoAnulacion";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -64,6 +70,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							expediente.setEstado(estado);
 							expediente.setEstadoPbc(0);
 							expediente.setFechaAnulacion(new Date());
+							
 							genericDao.save(ExpedienteComercial.class, expediente);
 							
 							//Finaliza el trámite
@@ -83,6 +90,15 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 					}else{
 						expediente.setEstadoPbc(1);
 						genericDao.save(ExpedienteComercial.class, expediente);
+					}
+				}
+				
+				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					if(!ofertaApi.checkReserva(ofertaAceptada)){
+						// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
+						DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+						expediente.setMotivoAnulacion(motivoAnulacion);
 					}
 				}
 			}

@@ -1,24 +1,20 @@
 package es.pfsgroup.plugin.rem.tests.restclient.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ser.ArraySerializers;
-import org.hibernate.mapping.Collection;
 import org.junit.Test;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
-import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleSubDto;
@@ -41,7 +37,7 @@ public class ConverterTests {
 		 */
 
 		StockDto dto = new StockDto();
-		dto.setActualImporte(DoubleDataType.doubleDataType(100.1));
+		dto.setActualImporteDescuentoWeb(DoubleDataType.doubleDataType(100.1));
 		dto.setLat(DoubleDataType.doubleDataType(1111.333));
 		dto.setLng(DoubleDataType.doubleDataType(1234567.1234567890));
 
@@ -49,7 +45,7 @@ public class ConverterTests {
 
 		// Según la definición del DTO es @DecimalDataTypeFormat(decimals=2)
 		assertEquals("El float no se ha parseado como se esperaba", "100.10",
-				resultado.get(ServicioStockConstantes.ACTUAL_IMPORTE));
+				resultado.get(ServicioStockConstantes.ACTUAL_IMPORTE_DESCUENTO_WEB));
 
 		// Según la definición del DTO es @DecimalDataTypeFormat(decimals=8)
 		assertEquals("El float no se ha parseado como se esperaba", "1111.33300000",

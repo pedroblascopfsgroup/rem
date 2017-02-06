@@ -728,4 +728,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+	
+	@Override
+	public BigDecimal getPrecioMinimoAutorizadoActualActivo(String numActivo) {
+		BigDecimal resultado = null;
+		Object[] resultados = rawDao.getExecuteSQLArray(
+				"		SELECT (SELECT VAL_IMPORTE FROM V_PRECIOS_VIGENTES"
+				+ "		WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = '04')"
+				+ " 	AND ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_ACTIVO.ACT_NUM_ACTIVO = "+numActivo+")) AS IMPORTE_PMA"
+				+ "		FROM DUAL ");
+
+		for(Object o: resultados){
+			resultado = ((BigDecimal) o);
+		}
+
+		return resultado;
+	}
 }

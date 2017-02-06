@@ -26,12 +26,6 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codPedania;
 	private StringDataType codProvincia;
 	private StringDataType codigoPostal;
-	@DecimalDataTypeFormat(decimals=2)
-	private DoubleDataType actualImporte;
-	@DecimalDataTypeFormat(decimals=2)
-	private DoubleDataType anteriorImporte;
-	private DateDataType desdeImporte;
-	private DateDataType hastaImporte;
 	private StringDataType codTipoInmueble;
 	private StringDataType codSubtipoInmueble;
 	private StringDataType fincaRegistral;
@@ -82,10 +76,6 @@ public class StockDto implements WebcomRESTDto{
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType parcelaSuperficie;
 	private LongDataType idActivoUvem;
-	private DoubleDataType valorAprobadoVenta;
-	private DateDataType fechaValorAprobadoVenta;
-	private DoubleDataType valorAprobadoRenta;
-	private DateDataType fechaValorAprobadoRenta;
 	private BooleanDataType riesgoOcupacion;
 	private DateDataType fechaPosesion;
 	@MappedColumn("FECHA_CONTRATO_DATOS_OCU")
@@ -104,6 +94,27 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType detalleDerramaDatosAdministracion;
 	private StringDataType anejoTrastero;
 	private BooleanDataType existePiscina;
+	
+	//HREOS-1479
+	private LongDataType idLoteRem;
+	private BooleanDataType esActivoPrincipal;
+	
+	//HREOS-1478
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType actualImporteDescuentoWeb;
+	private DateDataType desdeImporteDescuentoWeb;
+	private DateDataType hastaImporteDescuentoWeb;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType valorAprobadoRenta;
+	private DateDataType fechaValorAprobadoRenta;	
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType anteriorValorAprobadoRenta;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType valorAprobadoVenta;
+	private DateDataType fechaValorAprobadoVenta;
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType anteriorValorAprobadoVenta;
+	
 	
 	
 	
@@ -172,31 +183,7 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setCodigoPostal(StringDataType codigoPostal) {
 		this.codigoPostal = codigoPostal;
-	}
-	public DoubleDataType getActualImporte() {
-		return actualImporte;
-	}
-	public void setActualImporte(DoubleDataType actualImporte) {
-		this.actualImporte = actualImporte;
-	}
-	public DoubleDataType getAnteriorImporte() {
-		return anteriorImporte;
-	}
-	public void setAnteriorImporte(DoubleDataType anteriorImporte) {
-		this.anteriorImporte = anteriorImporte;
-	}
-	public DateDataType getDesdeImporte() {
-		return desdeImporte;
-	}
-	public void setDesdeImporte(DateDataType desdeImporte) {
-		this.desdeImporte = desdeImporte;
-	}
-	public DateDataType getHastaImporte() {
-		return hastaImporte;
-	}
-	public void setHastaImporte(DateDataType hastaImporte) {
-		this.hastaImporte = hastaImporte;
-	}
+	}	
 	public StringDataType getCodTipoInmueble() {
 		return codTipoInmueble;
 	}
@@ -557,6 +544,51 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setExistePiscina(BooleanDataType existePiscina) {
 		this.existePiscina = existePiscina;
+	}
+	public LongDataType getIdLoteRem() {
+		return idLoteRem;
+	}
+	public void setIdLoteRem(LongDataType idLoteRem) {
+		this.idLoteRem = idLoteRem;
+	}
+	public BooleanDataType getEsActivoPrincipal() {
+		return esActivoPrincipal;
+	}
+	public void setEsActivoPrincipal(BooleanDataType esActivoPrincipal) {
+		this.esActivoPrincipal = esActivoPrincipal;
+	}
+	public DoubleDataType getActualImporteDescuentoWeb() {
+		return actualImporteDescuentoWeb;
+	}
+	public void setActualImporteDescuentoWeb(
+			DoubleDataType actualImporteDescuentoWeb) {
+		this.actualImporteDescuentoWeb = actualImporteDescuentoWeb;
+	}
+	public DateDataType getDesdeImporteDescuentoWeb() {
+		return desdeImporteDescuentoWeb;
+	}
+	public void setDesdeImporteDescuentoWeb(DateDataType desdeImporteDescuentoWeb) {
+		this.desdeImporteDescuentoWeb = desdeImporteDescuentoWeb;
+	}
+	public DateDataType getHastaImporteDescuentoWeb() {
+		return hastaImporteDescuentoWeb;
+	}
+	public void setHastaImporteDescuentoWeb(DateDataType hastaImporteDescuentoWeb) {
+		this.hastaImporteDescuentoWeb = hastaImporteDescuentoWeb;
+	}
+	public DoubleDataType getAnteriorValorAprobadoRenta() {
+		return anteriorValorAprobadoRenta;
+	}
+	public void setAnteriorValorAprobadoRenta(
+			DoubleDataType anteriorValorAprobadoRenta) {
+		this.anteriorValorAprobadoRenta = anteriorValorAprobadoRenta;
+	}
+	public DoubleDataType getAnteriorValorAprobadoVenta() {
+		return anteriorValorAprobadoVenta;
+	}
+	public void setAnteriorValorAprobadoVenta(
+			DoubleDataType anteriorValorAprobadoVenta) {
+		this.anteriorValorAprobadoVenta = anteriorValorAprobadoVenta;
 	}
 	
 	

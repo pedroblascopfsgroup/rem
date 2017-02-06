@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GenerarFacturaVentaActivosApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -43,6 +44,12 @@ public class OperacionVentaController {
 
 		@Autowired
 		private ExcelReportGeneratorApi excelReportGeneratorApi;
+		
+		@Autowired
+		private GenerarFacturaVentaActivosApi facturaVentaApi;
+		
+		@Autowired
+		private ExcelReportGeneratorApi reportApi;
 
 		@SuppressWarnings("unchecked")
 		@RequestMapping(method = RequestMethod.POST, value = "/operacionventa")
@@ -135,6 +142,23 @@ public class OperacionVentaController {
 //			if (model.get("error")!=null && model.get("error")!="") {				
 //				restApi.sendResponse(response, model,request);
 //			}
+		}
+		
+		@SuppressWarnings("unchecked")
+		@RequestMapping(method = RequestMethod.GET)
+		public void operacionVentaFacturaPDF(Long numExpediente, HttpServletRequest request, HttpServletResponse response) {
+			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
+			
+			try {
+				
+				File file = facturaVentaApi.getFacturaVenta(expediente);
+				reportApi.sendReport(file, response);
+			
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 			
 }

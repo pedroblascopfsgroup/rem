@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -115,7 +116,6 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
@@ -139,6 +139,7 @@ import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
 @Service
@@ -3131,12 +3132,12 @@ public class ActivoAdapter {
 			dtoFilter.setStart(0);
 			dtoFilter.setEstadoContable("1");
 
-			Page vista = trabajoApi.getListActivos(dtoFilter);
+			Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
 			if (vista.getTotalCount() > 0) {
 
-				List<VBusquedaActivosTrabajo> listaTemp = (List<VBusquedaActivosTrabajo>) vista.getResults();
+				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista.getResults();
 				presupuesto.setDispuesto(new Double(0));
-				for (VBusquedaActivosTrabajo activoTrabajoTemp : listaTemp) {
+				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
 
 					presupuesto.setDispuesto(
 							presupuesto.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
@@ -3165,64 +3166,65 @@ public class ActivoAdapter {
 
 		DtoPresupuestoGraficoActivo presupuestoGrafico = new DtoPresupuestoGraficoActivo();
 
-		Long idPresupuesto = activoApi.getUltimoPresupuesto(Long.valueOf(dtoFilter.getIdActivo()));
+		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
+		String ejercicioActual = dfAnyo.format(new Date());
+		
+		Long idPresupuesto = activoApi.getUltimoHistoricoPresupuesto(Long.parseLong(dtoFilter.getIdActivo()));
 		DtoHistoricoPresupuestosFilter dtoFiltroHistorico = new DtoHistoricoPresupuestosFilter();
 		dtoFiltroHistorico.setIdActivo(dtoFilter.getIdActivo());
-		dtoFiltroHistorico.setIdPresupuesto(idPresupuesto.toString());
+		dtoFiltroHistorico.setIdPresupuesto(String.valueOf(idPresupuesto));
 		dtoFiltroHistorico.setLimit(1);
 		dtoFiltroHistorico.setStart(0);
 
+		// Esta consulta solo deberia obtener 1 registro: el presupuesto para el ultimo ejercicio registrado (y no borrado)
+		// NO hay que coger el primer registro que salga en el historico de presupuestos porque si no sale ordenado, no coge el bueno
+		// esto se hace gracias a calcular el id de presupuesto con el metodo "getUltimoHistoricoPresupuesto"
 		VBusquedaPresupuestosActivo presupuestoActivo = (VBusquedaPresupuestosActivo) activoApi
 				.getListHistoricoPresupuestos(dtoFiltroHistorico, usuarioLogado).getResults().get(0);
 
-		// Disponible
-		Page vista = trabajoApi.getListActivos(dtoFilter);
+		
+		// Disponible para ejercicio actual
+		dtoFilter.setEjercicioPresupuestario(ejercicioActual);
+		Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
 		if (vista.getTotalCount() > 0) {
-			VBusquedaActivosTrabajo activoTrabajo = (VBusquedaActivosTrabajo) vista.getResults().get(0);
+			VBusquedaActivosTrabajoPresupuesto activoTrabajo = (VBusquedaActivosTrabajoPresupuesto) vista.getResults().get(0);
 			presupuestoGrafico.setDisponible(new Double(activoTrabajo.getSaldoDisponible()));
 
 			dtoFilter.setEstadoContable("1");
 
-			// Gastado + Pendiente de pago
-			vista = trabajoApi.getListActivos(dtoFilter);
+			// Gastado + Pendiente de pago, para el ejercicio actual
+			dtoFilter.setEjercicioPresupuestario(ejercicioActual);
+			vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
 			if (vista.getTotalCount() > 0) {
 
-				List<VBusquedaActivosTrabajo> listaTemp = (List<VBusquedaActivosTrabajo>) vista.getResults();
+				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista.getResults();
 				presupuestoGrafico.setGastado(new Double(0));
-				for (VBusquedaActivosTrabajo activoTrabajoTemp : listaTemp) {
+				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
 
 					presupuestoGrafico.setGastado(
 							presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
 
 				}
-				// activoTrabajo = (VBusquedaActivosTrabajo)
-				// vista.getResults().get(0);
 
-				// presupuestoGrafico.setGastado(new
-				// Double(activoTrabajo.getImporteParticipa()));
 			} else {
 				presupuestoGrafico.setGastado(new Double(0));
 			}
 
-			// Pendiente de pago
-
+			// Pendiente de pago, para el ejercicio actual
 			dtoFilter.setEstadoCodigo(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
-			vista = trabajoApi.getListActivos(dtoFilter);
+			dtoFilter.setEjercicioPresupuestario(ejercicioActual);
+			vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
 			if (vista.getTotalCount() > 0) {
-				// activoTrabajo = (VBusquedaActivosTrabajo)
-				// vista.getResults().get(0);
 
-				List<VBusquedaActivosTrabajo> listaTemp = (List<VBusquedaActivosTrabajo>) vista.getResults();
+				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista.getResults();
 				presupuestoGrafico.setDispuesto(new Double(0));
-				for (VBusquedaActivosTrabajo activoTrabajoTemp : listaTemp) {
+				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
 
 					presupuestoGrafico.setDispuesto(
 							presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
 
 				}
 
-				// presupuestoGrafico.setDispuesto(new
-				// Double(activoTrabajo.getImporteParticipa()));
 			} else {
 				presupuestoGrafico.setDispuesto(new Double(0));
 			}
@@ -3236,13 +3238,6 @@ public class ActivoAdapter {
 					Double.valueOf(((presupuestoGrafico.getDispuesto() / presupuestoGrafico.getPresupuesto()) * 100)));
 			presupuestoGrafico.setGastadoPorcentaje(
 					Double.valueOf(((presupuestoGrafico.getGastado() / presupuestoGrafico.getPresupuesto()) * 100)));
-			/*
-			 * if ( (presupuestoGrafico.getDisponiblePorcentaje() +
-			 * presupuestoGrafico.getDispuestoPorcentaje() +
-			 * presupuestoGrafico.getGastadoPorcentaje()) != 100 ) {
-			 * presupuestoGrafico.setDisponiblePorcentaje(presupuestoGrafico.
-			 * getDisponiblePorcentaje() + 1); }
-			 */
 
 			presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
 
@@ -3265,9 +3260,7 @@ public class ActivoAdapter {
 		}
 
 		return presupuestoGrafico;
-		// return (Page)
-		// activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro,
-		// usuarioLogado);
+
 	}
 
 	public List<DtoIncrementoPresupuestoActivo> findAllIncrementosPresupuestoById(Long idPresupuesto) {

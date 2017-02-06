@@ -100,6 +100,13 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name:'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'esBankia',
+				calculate: function(data) {
+        			return data.entidadPropietariaCodigo == CONST.CARTERA['BANKIA'];
+        		},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
     			name: 'tipoExpedienteCodigo'
     		},
     		{
@@ -156,6 +163,13 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'estadoDevolucionCodigo'
+    		},
+    		{
+    			name: 'isCarteraBankia',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['BANKIA'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
     		}
     ],
     

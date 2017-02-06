@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -23,7 +22,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambioBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common.utilities.DetectorCambiosEjemplo;
@@ -42,7 +41,7 @@ public class DetectorCambiosBDTests {
 	@Test
 	public void listPendientes_DTOs_anidados() {
 
-		ArrayList<CambioBD> cambios = new ArrayList<CambioBD>();
+
 
 		/*
 		 * En este ejemplo, el dao va a devolver 3 registros cambiados.
@@ -63,21 +62,27 @@ public class DetectorCambiosBDTests {
 		// Campos cambiados en el tercer registro
 		Map<String, Object> data3 = new HashMap<String, Object>();
 
-		cambios.add(creaMock(1L, data1));
-		cambios.add(creaMock(1L, data2));
-		cambios.add(creaMock(2L, data3));
+		
+		Integer tamanyoBloque = Integer.valueOf(1000);
+		CambiosList listPendientes = new CambiosList(tamanyoBloque);		
+		listPendientes.add(creaMock(1L, data1));
+		listPendientes.add(creaMock(1L, data2));
+		listPendientes.add(creaMock(2L, data3));
 
-		when(dao.listCambios(any(Class.class), any(InfoTablasBD.class), any(RestLlamada.class))).thenReturn(cambios);
+		
+		
+		when(dao.listCambios(any(Class.class), any(InfoTablasBD.class), any(RestLlamada.class), listPendientes)).thenReturn(listPendientes);
 
 		////////////////////////
-		List<ExampleDto> lista = detector.listPendientes(ExampleDto.class, null);
+		//public CambiosList listPendientes(Class<?> dtoClass, RestLlamada registro, CambiosList listPendientes) {
+		CambiosList lista = detector.listPendientes(ExampleDto.class, null, listPendientes);
 		////////////////////////
 
 		assertEquals("No se han creado la cantidad de DTOS esperada", 2, lista.size());
 		/*
 		 * Validación del primer DTO
 		 */
-		ExampleDto dto = lista.get(0);
+		ExampleDto dto = (ExampleDto)lista.get(0);
 		assertEquals(CAMPO_OBLIGATORIO, dto.getCampoObligatorio());
 		// Tiene que tener 2 sub-stos en listado1 y 1 sub-dto en listado2
 		assertEquals("La cantidad de sub-dtos no es la esperada", 2,dto.getListado1().size());
@@ -93,7 +98,7 @@ public class DetectorCambiosBDTests {
 		 * Validación del segundo DTO
 		 */
 		// Comprobamos que los dos listados están vacíos
-		dto = lista.get(1);
+		dto = (ExampleDto) lista.get(1);
 		assertEquals("La cantidad de sub-dtos no es la esperada", 0,dto.getListado1().size());
 		assertEquals("La cantidad de sub-dtos no es la esperada", 0,dto.getListado2().size());
 

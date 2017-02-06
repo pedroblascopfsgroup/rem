@@ -34,6 +34,8 @@ public class DtoFormalizacionResolucion extends WebDto {
 	private String docIdentificativo;
 	private String motivoResolucion;
 	private Double importe;
+	private Date fechaVenta;
+	private String numProtocolo;
 	
 	
 	public Long getIdFormalizacion() {
@@ -113,6 +115,18 @@ public class DtoFormalizacionResolucion extends WebDto {
 	}
 	public void setImporte(Double importe) {
 		this.importe = importe;
+	}
+	public Date getFechaVenta() {
+		return fechaVenta;
+	}
+	public void setFechaVenta(Date fechaVenta) {
+		this.fechaVenta = fechaVenta;
+	}
+	public String getNumProtocolo() {
+		return numProtocolo;
+	}
+	public void setNumProtocolo(String numProtocolo) {
+		this.numProtocolo = numProtocolo;
 	}
 	
 	

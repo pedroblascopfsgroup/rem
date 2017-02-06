@@ -61,10 +61,10 @@ BEGIN
                 ACT_FECHA_IND_PRECIAR                                   DATE,
                 ACT_FECHA_IND_REPRECIAR                                 DATE,
                 ACT_FECHA_IND_DESCUENTO                                 DATE,
-                ACT_GESTOR_COMERCIAL									VARCHAR2(40 CHAR),
-                ACT_GESTORIA_COMERCIAL									VARCHAR2(40 CHAR),
-                ACT_GESTOR_FORMALIZACION								VARCHAR2(40 CHAR),
-                ACT_GESTORIA_FORMALIZACION								VARCHAR2(40 CHAR)
+                ACT_GESTOR_COMERCIAL									VARCHAR2(50 CHAR),
+                ACT_GESTORIA_ADMISION									VARCHAR2(50 CHAR),
+                ACT_GESTOR_ACTIVO										VARCHAR2(50 CHAR),
+                ACT_GESTORIA_ADMINISTRACION								VARCHAR2(50 CHAR)
         )'
         ;
 

@@ -1489,7 +1489,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		
 		}
-		return true;		
+		return false;		
 	}
 	
 }

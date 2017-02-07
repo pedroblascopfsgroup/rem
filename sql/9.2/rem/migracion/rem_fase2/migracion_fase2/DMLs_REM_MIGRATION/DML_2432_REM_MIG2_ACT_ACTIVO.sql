@@ -137,7 +137,7 @@ BEGIN
       
       V_REG_INSERTADOS := SQL%ROWCOUNT;
       
-      -- ACTUALIZACION DE LA FECHA Y EL IMPORTE DE VENTA      
+      -- ACTUALIZACION DE LA FECHA Y EL IMPORTE DE VENTA EN ACT_ACTIVO     
       V_SENTENCIA := '
 		MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' ACT
         USING (  SELECT MIG2.ACT_NUMERO_ACTIVO, MIG2.ACT_FECHA_VENTA, MIG2.ACT_IMPORTE_VENTA 
@@ -161,7 +161,31 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');            
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      
+      
+       -- ACTUALIZACION DE LA FECHA DE VENTA EN ECO_EXPEDIENTE_COMERCIAL     
+      V_SENTENCIA := '
+		MERGE INTO '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+        USING ( SELECT ECO_ID, ACT_FECHA_VENTA FROM(
+                SELECT DISTINCT ECO.ECO_ID, MIG.ACT_FECHA_VENTA, ROW_NUMBER()
+                   OVER (PARTITION BY ECO.ECO_ID ORDER BY MIG.ACT_FECHA_VENTA DESC) AS ORDEN FROM '||V_ESQUEMA||'.MIG2_ACT_ACTIVO MIG
+                INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                  ON MIG.ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
+                INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACT_OFR
+                  ON ACT_OFR.ACT_ID = ACT.ACT_ID
+                INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                  ON ECO.OFR_ID = ACT_OFR.OFR_ID
+                where ECO.DD_EEC_ID = 8) 
+                WHERE ORDEN = 1 ) AUX
+                ON (ECO.ECO_ID = AUX.ECO_ID)
+                WHEN MATCHED THEN UPDATE SET
+                  ECO.ECO_FECHA_VENTA = AUX.ACT_FECHA_VENTA
+      '
+      ;
+      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');                        
       
       COMMIT;
       
@@ -273,7 +297,10 @@ MERGE INTO ECO_EXPEDIENTE_COMERCIAL ECO
                           ) AUX
                 ON (ECO.ECO_ID = AUX.ECO_ID)
                 WHEN MATCHED THEN UPDATE SET
-                  ECO.ECO_FECHA_VENTA = AUX.ACT_FECHA_VENTA;*/
+                  ECO.ECO_FECHA_VENTA = AUX.ACT_FECHA_VENTA;
+                  
+                  ROW_NUMBER()
+   OVER (PARTITION BY department_id ORDER BY employee_id) AS emp_id*/
 
 
 

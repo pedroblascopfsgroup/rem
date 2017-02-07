@@ -669,7 +669,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setImporteDevolucionEntregas(expediente.getImporteDevolucionEntregas());
 
 				if(!Checks.esNulo(expediente.getCondicionante())) {
-					dto.setTieneReserva(expediente.getCondicionante().getTipoCalculoReserva() != null);
+					//dto.setTieneReserva(expediente.getCondicionante().getTipoCalculoReserva() != null);
+					Integer tieneReserva = expediente.getCondicionante().getSolicitaReserva();
+					dto.setTieneReserva(!Checks.esNulo(tieneReserva) && tieneReserva == 1 ? true : false);
 
 					Integer ocultar = expediente.getCondicionante().getSujetoTanteoRetracto();
 					dto.setOcultarPestTanteoRetracto(!Checks.esNulo(ocultar) && ocultar == 1 ? false : true);
@@ -1364,17 +1366,20 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		Reserva reserva = expedienteComercial.getReserva();
 
 		// Creamos la reserva si se existe en condiciones y no se ha creado todavia
-		if(!Checks.esNulo(condiciones.getTipoCalculoReserva()) && Checks.esNulo(reserva)) {
-			reserva = new Reserva();
-			DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_FIRMA);
-			reserva.setEstadoReserva(estadoReserva);
-			reserva.setExpediente(expedienteComercial);
-			reserva.setNumReserva(reservaDao.getNextNumReservaRem());
-
-			genericDao.save(Reserva.class, reserva);
-
-			//Actualiza la disponibilidad comercial del activo
-			ofertaApi.updateStateDispComercialActivosByOferta(expedienteComercial.getOferta());
+		//if(!Checks.esNulo(condiciones.getTipoCalculoReserva()) && Checks.esNulo(reserva)) {
+		if(!Checks.esNulo(condiciones.getSolicitaReserva()) && Checks.esNulo(reserva)){
+			if(condiciones.getSolicitaReserva() == 1){
+				reserva = new Reserva();
+				DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_FIRMA);
+				reserva.setEstadoReserva(estadoReserva);
+				reserva.setExpediente(expedienteComercial);
+				reserva.setNumReserva(reservaDao.getNextNumReservaRem());
+	
+				genericDao.save(Reserva.class, reserva);
+	
+				//Actualiza la disponibilidad comercial del activo
+				ofertaApi.updateStateDispComercialActivosByOferta(expedienteComercial.getOferta());
+			}
 		} 
 
 		return true;

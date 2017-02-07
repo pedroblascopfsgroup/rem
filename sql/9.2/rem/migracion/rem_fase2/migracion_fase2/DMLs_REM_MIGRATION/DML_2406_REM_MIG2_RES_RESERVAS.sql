@@ -123,7 +123,7 @@ BEGIN
             DD_ERE_ID,
             RES_FECHA_SOLICITUD,
             RES_FECHA_RESOLUCION,
-			DD_MAN_ID
+			DD_MAN_ID,
             VERSION,
             USUARIOCREAR,
             FECHACREAR,
@@ -168,7 +168,7 @@ BEGIN
       RES.DD_ERE_ID                                                     DD_ERE_ID,
       RES.RES_FECHA_SOLICITUD                                           RES_FECHA_SOLICITUD,
       RES.RES_FECHA_RESOLUCION                                          RES_FECHA_RESOLUCION,
-      RES.DD_MAN_ID														DD_MAN_ID
+      RES.DD_MAN_ID														DD_MAN_ID,
       ''0''                                                             VERSION,
       ''MIG2''                                                          USUARIOCREAR,
       SYSDATE                                                           FECHACREAR,

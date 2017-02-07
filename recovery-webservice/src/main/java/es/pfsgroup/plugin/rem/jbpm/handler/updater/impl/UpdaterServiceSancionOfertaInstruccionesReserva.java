@@ -23,7 +23,9 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 @Component
 public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterService {
@@ -41,6 +43,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     private ExpedienteComercialApi expedienteComercialApi;
     
     private static final String FECHA_ENVIO = "fechaEnvio";
+    private static final String TIPO_ARRAS = "tipoArras";
    	private static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -63,6 +66,17 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
+					}
+				}
+				
+				if(TIPO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					Reserva reserva = expediente.getReserva();
+					if(!Checks.esNulo(reserva)){
+						
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
+						DDTiposArras tipoArras = (DDTiposArras) genericDao.get(DDTiposArras.class, filtro);						
+						reserva.setTipoArras(tipoArras);
+						genericDao.save(Reserva.class, reserva);
 					}
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);

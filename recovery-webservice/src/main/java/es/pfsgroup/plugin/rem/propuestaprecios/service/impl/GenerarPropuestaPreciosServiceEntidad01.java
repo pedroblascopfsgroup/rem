@@ -65,7 +65,7 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 		try {
 			file = new File(ruta);
 			WorkbookSettings workbookSettings = new WorkbookSettings();
-			workbookSettings.setEncoding( "Cp1252" );
+			//workbookSettings.setEncoding( "Cp1252" );
 			workbookSettings.setSuppressWarnings(true);
 			workbookSettings.setCellValidationDisabled(true);
 			workbookSettings.setMergedCellChecking(false);

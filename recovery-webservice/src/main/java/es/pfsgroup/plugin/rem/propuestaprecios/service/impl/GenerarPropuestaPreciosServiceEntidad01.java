@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.propuestaprecios.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -23,20 +24,28 @@ import jxl.write.biff.RowsExceededException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosEntidad01;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 
 @Component
 public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuestaPreciosService {
 	
+	@Autowired
+	private GenericABMDao genericDao;
+	
 	private Workbook libroExcel; 
 	private WritableWorkbook libroEditable;
 	private File file;
 	
 	protected static final Log logger = LogFactory.getLog(GenerarPropuestaPreciosServiceEntidad01.class);
+	private static final String txtFechaSancion = "Fecha Sanción: ";
 	
 
 	@Override
@@ -102,7 +111,8 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 			}
 			
 			//Rellenamos la primera hoja RESUMEN
-			this.rellenarPrimeraHojaResumen(libroEditable.getSheet(0), fila);
+			PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, genericDao.createFilter(FilterType.EQUALS, "numPropuesta",Long.parseLong(numPropuesta)));
+			this.rellenarPrimeraHojaResumen(libroEditable.getSheet(0), fila, propuesta.getFechaSancion());
 			
 			libroEditable.write();
 			libroEditable.close();
@@ -229,10 +239,10 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 	 * @param hoja
 	 * @param fila
 	 */
-	private void rellenarPrimeraHojaResumen(WritableSheet hoja, Integer fila) {
+	private void rellenarPrimeraHojaResumen(WritableSheet hoja, Integer fila, Date fechaSancion) {
 
 		try {
-			
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			//Settear celdas mergeadas restantes a Blank, para evitar warnings en el log
 			this.formateoCeldasMergeadas(hoja);
 			
@@ -272,6 +282,11 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 					,hoja.getCell(13, 5).getCellFormat()));
 			hoja.addCell(new Formula(14, 5, "IF(SUM(DETALLE!BM7:DETALLE!BM"+fila+")=0,\"\", IF(SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")=0, \"\", ROUND(IF(SUM(DETALLE!BM7:DETALLE!BM"+fila+")-1<>0, (((SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")/SUM(DETALLE!BM7:DETALLE!BM"+fila+"))-1)*-1), \"\"), 2)))"
 					,hoja.getCell(14, 5).getCellFormat()));
+			
+			//----------------------------------------------------------------------------------------------------------------------
+			//Fecha Sanción		txtFechaSancion
+			if(!Checks.esNulo(fechaSancion))
+				hoja.addCell(new Label(1,8,txtFechaSancion.concat(sdf.format(fechaSancion)),hoja.getCell(1, 8).getCellFormat()));
 						
 		} catch (RowsExceededException e) {
 			logger.error(e.getMessage());

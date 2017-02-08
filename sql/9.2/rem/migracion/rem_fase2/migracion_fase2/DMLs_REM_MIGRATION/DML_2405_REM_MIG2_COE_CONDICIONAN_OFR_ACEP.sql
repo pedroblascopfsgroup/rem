@@ -150,7 +150,8 @@ BEGIN
         VERSION,
         USUARIOCREAR,
         FECHACREAR,
-        BORRADO
+        BORRADO,
+        COE_SOLICITA_RESERVA
         )       
         SELECT 
         '||V_ESQUEMA||'.S_COE_CONDICIONANTES_EXP.NEXTVAL                        COE_ID,
@@ -187,11 +188,16 @@ BEGIN
         MIG.COE_IND_PROCEDE_DESCALIFICA                                                                         COE_PROCEDE_DESCALIFICACION,
         MIG.COE_IND_POSESION_INICIAL                                                                            COE_POSESION_INICIAL,
         SIP.DD_SIP_ID                                                                                                           DD_SIP_ID,                                                                                              
-        ETI.DD_ETI_ID                                                                                                           DD_ETI_ID,
-        ''0''                                                                           VERSION,
-        ''MIG2''                                                                        USUARIOCREAR,
-        SYSDATE                                                                         FECHACREAR,
-        0                                                                               BORRADO
+        ETI.DD_ETI_ID                                                   DD_ETI_ID,
+        ''0''                                                           VERSION,
+        ''MIG2''                                                        USUARIOCREAR,
+        SYSDATE                                                         FECHACREAR,
+        0                                                               BORRADO,
+        CASE
+			WHEN MIG.COE_IMPORTE_RESERVA = ''0''
+			THEN 0
+            ELSE 1
+        END                                                             AS COE_SOLICITA_RESERVA
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR
                 ON OFR.OFR_NUM_OFERTA = MIG.COE_COD_OFERTA

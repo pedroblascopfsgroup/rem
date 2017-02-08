@@ -58,6 +58,7 @@ $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PRESUPUESTO_TRABAJO.ctl   
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDORES_DIRECCIONES.ctl	 log=./CTLs_DATs/logs/PROVEEDORES_DIRECCIONES.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/PROVEEDOR_CONTACTO.ctl         log=./CTLs_DATs/logs/PROVEEDOR_CONTACTO.log
 $ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ACTIVO_PRECIO.ctl              log=./CTLs_DATs/logs/ACTIVO_PRECIO.log
+$ORACLE_HOME/bin/sqlldr REM01/$1  control=./CTLs_DATs/ADMISION_DOCUMENTOS.ctl        log=./CTLs_DATs/logs/ADMISION_DOCUMENTOS.log
 $ORACLE_HOME/bin/sqlplus REM01/$1 @aux/Mig_estadisticas.sql > ./CTLs_DATs/logs/$0.log
 if [ $? != 0 ] ; then echo -e "\n\n======>>> "Error en @aux/Mig_estadisticas.sql >> ./CTLs_DATs/logs/$0.log ; exit 1 ; fi
 

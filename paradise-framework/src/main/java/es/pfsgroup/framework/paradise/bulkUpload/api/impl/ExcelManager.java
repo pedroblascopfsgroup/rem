@@ -159,19 +159,14 @@ public class ExcelManager implements ExcelManagerApi {
 
 		MSVDtoValidacion dtoValidacionFormato = null;
 		try {
-			if(MSV_PROCESS_CODE_PROPUESTA_PRECIOS_ACTIVO.equals(document.getProcesoMasivo().getTipoOperacion().getCodigo())){
-				dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
-				document.setErroresFichero(document.getContenidoFichero());
-			}else{
-				dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
-				if (dtoValidacionFormato != null) {
-					if (dtoValidacionFormato.getFicheroTieneErrores()) {
-						dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
-						document.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
-					} else {
-						dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
-						document.setErroresFichero(document.getContenidoFichero());
-					}
+			dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
+			if (dtoValidacionFormato != null) {
+				if (dtoValidacionFormato.getFicheroTieneErrores()) {
+					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
+					document.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
+				} else {
+					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
+					document.setErroresFichero(document.getContenidoFichero());
 				}
 			}
 		} catch (RuntimeException err) {
@@ -271,7 +266,7 @@ public class ExcelManager implements ExcelManagerApi {
 			}
 		}
 		if (Checks.esNulo(proceso)) {
-			throw new BusinessOperationException("No hemos encontrado ningún proceso que se corresponda con ese id");
+			throw new BusinessOperationException("No hemos encontrado ningï¿½n proceso que se corresponda con ese id");
 		}
 
 		document.setProcesoMasivo(proceso);
@@ -287,7 +282,7 @@ public class ExcelManager implements ExcelManagerApi {
 	
 	private MSVProcesoMasivo findOne(Long id) {
 		if (Checks.esNulo(id)) {
-			throw new BusinessOperationException("No se puede subir un fichero que no esté asociado a un proceso");
+			throw new BusinessOperationException("No se puede subir un fichero que no estï¿½ asociado a un proceso");
 		}
 		return procesoDao.get(id);
 	}

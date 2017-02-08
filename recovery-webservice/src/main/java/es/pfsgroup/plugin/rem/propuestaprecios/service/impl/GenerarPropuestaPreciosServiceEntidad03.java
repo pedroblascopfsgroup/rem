@@ -74,7 +74,7 @@ public class GenerarPropuestaPreciosServiceEntidad03 implements GenerarPropuesta
 		try {
 			file = new File(ruta);
 			WorkbookSettings workbookSettings = new WorkbookSettings();
-			workbookSettings.setEncoding( "Cp1252" );
+			//workbookSettings.setEncoding( "Cp1252" );
 			workbookSettings.setSuppressWarnings(true);
 			libroExcel = Workbook.getWorkbook( file, workbookSettings );
 			// Rellenamos colores para el formato de celdas

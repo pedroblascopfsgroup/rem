@@ -69,7 +69,7 @@ public class GenerarPropuestaPreciosServiceUnficada implements GenerarPropuestaP
 		
 			file = new File(ruta);
 			WorkbookSettings workbookSettings = new WorkbookSettings();
-			workbookSettings.setEncoding( "Cp1252" );
+			//workbookSettings.setEncoding( "Cp1252" );
 			workbookSettings.setSuppressWarnings(true);
 			workbookSettings.setCellValidationDisabled(true);
 			workbookSettings.setMergedCellChecking(false);

@@ -2376,21 +2376,26 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {
-		DespachoExterno despachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false).get(0);
-		List<Usuario> listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
+		List<DespachoExterno> listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
 		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
-
-		try {
-			for (Usuario usuario : listaUsuarios) {
-				DtoUsuario dtoUsuario = new DtoUsuario();
-				BeanUtils.copyProperties(dtoUsuario, usuario);
-				listaUsuariosDto.add(dtoUsuario);
+		
+		if(!Checks.estaVacio(listDespachoExterno)) {
+			DespachoExterno despachoExterno = listDespachoExterno.get(0);
+			List<Usuario> listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
+		
+			try {
+				for (Usuario usuario : listaUsuarios) {
+					DtoUsuario dtoUsuario = new DtoUsuario();
+					BeanUtils.copyProperties(dtoUsuario, usuario);
+					listaUsuariosDto.add(dtoUsuario);
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
 			}
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
 		}
+		
 		return listaUsuariosDto;
 	}
 

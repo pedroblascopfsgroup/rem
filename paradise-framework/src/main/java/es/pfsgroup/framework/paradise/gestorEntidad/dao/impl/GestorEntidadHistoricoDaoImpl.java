@@ -40,6 +40,10 @@ public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntid
 		if (GestorEntidadDto.TIPO_ENTIDAD_ACTIVO.equals(tipoEntidad)) {
 			where = " where geh.activo.id = '"+idEntidad+"'";
 		}
+		
+		if (GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL.equals(tipoEntidad)) {
+			where = " where geh.expedienteComercial.id = '"+idEntidad+"'";
+		}
 
 		return where;
 	}
@@ -56,6 +60,9 @@ public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntid
 		}
 		else if(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO.equals(tipoEntidad)){
 			hqlUpdate.append(" where geh.activo.id = '"+idEntidad+"'");
+		}
+		else if(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL.equals(tipoEntidad)){
+			hqlUpdate.append(" where geh.expedienteComercial.id = '"+idEntidad+"'");
 		}
 		
         hqlUpdate.append(" and gah.tipoGestor.id = :idGestor and gah.fechaHasta is null");

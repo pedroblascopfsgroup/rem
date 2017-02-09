@@ -3,6 +3,9 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -68,26 +71,29 @@ public class MSVHojaExcel {
 	}
 
 	/**
-	 * devuelve el número de filas reales de una hoja excel.
-	 * Se considera que una fila es real si alguna de sus celda no está vacía.
+	 * Devuelve el numero de filas reales de la hoja excel
+	 * Debe usarse en hojas excel que solo tienen 1 hoja y 1 fila de cabecera
+	 * Se considera que una fila es real si alguna de sus celda no esta vacia.
 	 * @return 
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
 	public Integer getNumeroFilas() throws IllegalArgumentException, IOException {
 
-		return this.getNumeroFilasByHoja(0);
+		return this.getNumeroFilasByHoja(0,1);
 	}
 	
 	/**
-	 * devuelve el número de filas reales de la hoja excel indicada por parametro
-	 * Se considera que una fila es real si alguna de sus celda no está vacía.
-	 * @param numHoja
+	 * Devuelve el numero de filas reales de la hoja excel indicada por parametro
+	 * primeraFilaDatos indica la fila en la que comienzan los datos (para cabeceras de mas de 1 fila)
+	 * Se considera que una fila es real si alguna de sus celda no esta vacia.
+	 * @param numHoja (minimo 0)
+	 * @param primeraFilaDatos (minimo 1)
 	 * @return
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
-	public Integer getNumeroFilasByHoja(int numHoja) throws IllegalArgumentException, IOException {
+	public Integer getNumeroFilasByHoja(int numHoja, int primeraFilaDatos) throws IllegalArgumentException, IOException {
 		if (!isOpen) {
 			abrir();
 		}
@@ -95,7 +101,7 @@ public class MSVHojaExcel {
 		if (this.filasReales < 0){
 			Sheet hoja = libroExcel.getSheet(numHoja);
 			this.filasReales = 0;
-			for (int i= hoja.getRows() - 1; i>0; i--) {
+			for (int i= hoja.getRows() - primeraFilaDatos; i>(primeraFilaDatos-1); i--) {
 				Cell[] fila = hoja.getRow(i);
 				if (!this.filaVacia(fila)){
 					this.filasReales = i + 1;
@@ -278,7 +284,28 @@ public class MSVHojaExcel {
 			DateFormat df = new SimpleDateFormat(FormatUtils.DDMMYYYY);
 			cellContent = df.format(dc.getDate());
 		} else {
-			cellContent = cell.getContents();
+		
+			if (cell.getType() == CellType.NUMBER) 
+			{ 
+				DecimalFormat df = new DecimalFormat();
+				DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+				
+				// Formato numerico compatible con n
+				symbols.setDecimalSeparator('.'); // Simbolo de miles
+				symbols.setGroupingSeparator(','); // Simbolo de decimales
+				symbols.setMinusSign('-'); // Simbolo numero negativo
+				if(!Checks.esNulo(cell.getContents()) && cell.getContents().contains("E"))
+					symbols.setExponentSeparator("E"); // Simbolo numero exponencial
+				df.setDecimalFormatSymbols(symbols);
+				
+				try {
+					cellContent = df.format(df.parse(cell.getContents()));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			} else {
+				cellContent = cell.getContents();
+			}
 		}
 		
 		return cellContent;

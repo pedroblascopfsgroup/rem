@@ -54,7 +54,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 
 	SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 	
-	private int numUltimaFila; // En esta excel, el último registro es un resumen, no se tiene en cuenta para validar
+//	private int numUltimaFila; // En esta excel, el último registro es un resumen, no se tiene en cuenta para validar
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -77,13 +77,14 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 		
-		this.numUltimaFila = this.getNumFilasRealesHojaExcel(exc);
+//		this.numUltimaFila = this.getNumFilasRealesHojaExcel(exc);
 
 		try {
 			//Cambiar estado de la propuesta, y asignarle fecha de carga
 			activoApi.actualizarFechaYEstadoCargaPropuesta(Long.parseLong(exc.dameCeldaByHoja(1, 2, 1)));
 			
-			for (int fila = EXCEL_FILA_INICIAL; fila <= this.numUltimaFila; fila++) {
+//			for (int fila = EXCEL_FILA_INICIAL; fila <= this.numUltimaFila; fila++) {
+			for (int fila = EXCEL_FILA_INICIAL; fila <= exc.getNumeroFilasByHoja(1, EXCEL_FILA_INICIAL); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCeldaByHoja(fila, EXCEL_COL_NUMACTIVO, 1)));
 				Boolean actualizatTipoComercializacionActivo = false;
 				
@@ -230,30 +231,30 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 		activoApi.saveActivoValoracion(activo, activoValoracion, dtoActivoValoracion);
 	}
 	
-	/**
-	 * Esta excel puede contener una fila RESUMEN en la última posición, y no se debe tener en cuenta 
-	 * para las validadciones.
-	 * @param exc
-	 * @return
-	 */
-	private Integer getNumFilasRealesHojaExcel(MSVHojaExcel exc) {
-		Integer ultimaFila = null;
-		
-		try {
-			ultimaFila = exc.getNumeroFilasByHoja(1) - 1;
-			if(exc.dameCeldaByHoja(ultimaFila, EXCEL_COL_NUMACTIVO, 1).isEmpty() && 
-					exc.dameCeldaByHoja(ultimaFila, 6, 1).contains("Activos:"))
-				ultimaFila--;
-		
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		return ultimaFila;
-	}
+//	/**
+//	 * Esta excel puede contener una fila RESUMEN en la última posición, y no se debe tener en cuenta 
+//	 * para las validadciones.
+//	 * @param exc
+//	 * @return
+//	 */
+//	private Integer getNumFilasRealesHojaExcel(MSVHojaExcel exc) {
+//		Integer ultimaFila = null;
+//		
+//		try {
+//			ultimaFila = exc.getNumeroFilasByHoja(1) - 1;
+//			if(exc.dameCeldaByHoja(ultimaFila, EXCEL_COL_NUMACTIVO, 1).isEmpty() && 
+//					exc.dameCeldaByHoja(ultimaFila, 6, 1).contains("Activos:"))
+//				ultimaFila--;
+//		
+//		} catch (IllegalArgumentException e) {
+//			logger.error(e.getMessage());
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			logger.error(e.getMessage());
+//			e.printStackTrace();
+//		}
+//		
+//		return ultimaFila;
+//	}
 
 }

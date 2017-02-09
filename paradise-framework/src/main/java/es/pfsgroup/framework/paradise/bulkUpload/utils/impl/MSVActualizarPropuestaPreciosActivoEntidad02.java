@@ -405,7 +405,7 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
-			for(int i=EXCEL_FILA_INICIAL; i<exc.getNumeroFilasByHoja(1);i++){
+			for(int i=EXCEL_FILA_INICIAL; i<exc.getNumeroFilasByHoja(1,EXCEL_FILA_INICIAL);i++){
 				if(!particularValidator.existeActivoEnPropuesta(exc.dameCeldaByHoja(i, EXCEL_COL_NUMACTIVO, 1),exc.dameCeldaByHoja(1, 2, 1)))
 					listaFilas.add(i);
 			}

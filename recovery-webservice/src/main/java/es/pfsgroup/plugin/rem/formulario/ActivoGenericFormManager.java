@@ -236,11 +236,14 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			String ejercicioActual = dfAnyo.format(new Date());
             			
             			// El saldo disponible debe ser el del activo, para el ejercicio actual
+            			// Si no hay saldo disponible en ejercicio actual, se muestra 0€
             			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", ((TareaActivo) tareaExterna.getTareaPadre()).getActivo().getId().toString());
             			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
             			List<VBusquedaActivosTrabajoPresupuesto> lista = genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicio);
             			if(!Checks.estaVacio(lista))
             				item.setValue(lista.get(0).getSaldoDisponible() + "€");
+            			else
+            				item.setValue("0€");
 
             		}
             		if(item.getNombre().equals("nombrePropuesta"))

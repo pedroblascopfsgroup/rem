@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -164,7 +165,17 @@ public abstract class WebcomDataType<T> {
 	public static Object valueOf(Object o, DecimalDataTypeFormat format) throws WebcomDataTypeParseException {
 		Object val = valueOf(o);
 		if ((val != null) && (val instanceof Number) && (format != null)) {
-			String[] split = val.toString().split("\\" + SEPARDOR_DECIMALES);
+			String valString = null;
+			if (val instanceof Double) {
+				// si el numero es muy pequenyo o muy grante el toString nos
+				// devolvera el numero en notacion cientifica.
+				// esto no lo queremos
+				DecimalFormat num = new DecimalFormat("###.#######");
+				valString = num.format((Double) val);
+			} else {
+				valString = val.toString();
+			}
+			String[] split = valString.split("\\" + SEPARDOR_DECIMALES);
 			if (split.length > 1) {
 				String parteentera = split[0];
 				if (split.length == 2) {

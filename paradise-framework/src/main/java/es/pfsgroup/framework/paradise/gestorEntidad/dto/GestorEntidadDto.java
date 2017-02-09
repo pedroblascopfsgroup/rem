@@ -12,6 +12,7 @@ public class GestorEntidadDto extends WebDto {
 	public static final String TIPO_ENTIDAD_EXPEDIENTE = "1";
 	public static final String TIPO_ENTIDAD_ASUNTO = "2";
 	public static final String TIPO_ENTIDAD_ACTIVO = "3";
+	public static final String TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL = "4";
 
 	private Long idEntidad;
 	private String tipoEntidad;

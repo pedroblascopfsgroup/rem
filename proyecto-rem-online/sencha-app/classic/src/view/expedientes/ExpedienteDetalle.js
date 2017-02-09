@@ -7,7 +7,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente',
     			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
     			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente',
-				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.OfertaTanteoYRetracto'],
+				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.OfertaTanteoYRetracto',
+				'HreRem.view.expedientes.GestoresExpediente'],
 
     listeners	: {
 			boxready: function (tabPanel) {
@@ -95,6 +96,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'compradoresexpediente', ocultarBotonesEdicion: true})}, ['TAB_COMPRADORES_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareasexpediente', ocultarBotonesEdicion: true})}, ['TAB_TRÁMITES_EXPEDIENTES']);
+	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestoresexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTORES_EXPEDIENTES']);//Poner permiso especifico?
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosexpediente', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionexpediente', funPermEdition: ['EDITAR_TAB_FORMALIZACION_EXPEDIENTES']})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTION_ECONOMICA_EXPEDIENTES']);

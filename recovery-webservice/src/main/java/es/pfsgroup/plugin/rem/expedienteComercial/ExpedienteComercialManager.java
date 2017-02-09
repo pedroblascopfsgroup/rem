@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -29,14 +30,18 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -47,6 +52,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
@@ -78,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
@@ -86,6 +93,7 @@ import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -196,6 +204,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private GestorExpedienteComercialApi gestorExpedienteApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -3221,4 +3232,61 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return true;
 	}
 	
+	@Override
+	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {
+		return activoAdapter.getComboUsuarios(idTipoGestor);
+	}
+	
+	@Override
+	public Boolean insertarGestorAdicional(GestorEntidadDto dto) {
+		dto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+		return gestorExpedienteApi.insertarGestorAdicionalExpedienteComercial(dto);
+	}
+	
+	@Override
+	public List<DtoListadoGestores> getGestores(Long idExpediente) {
+		GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
+		gestorEntidadDto.setIdEntidad(idExpediente);
+		gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+		List<GestorEntidadHistorico> gestoresEntidad = gestorExpedienteApi
+				.getListGestoresAdicionalesHistoricoData(gestorEntidadDto);
+
+		List<DtoListadoGestores> listadoGestoresDto = new ArrayList<DtoListadoGestores>();
+
+		for (GestorEntidadHistorico gestor : gestoresEntidad) {
+			DtoListadoGestores dtoGestor = new DtoListadoGestores();
+			try {
+				BeanUtils.copyProperties(dtoGestor, gestor);
+				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
+				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
+				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+
+			listadoGestoresDto.add(dtoGestor);
+		}
+
+		return listadoGestoresDto;
+
+	}
+	
+	@Override
+	public List<EXTDDTipoGestor> getComboTipoGestor() {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		List<EXTDDTipoGestor> listAllTiposGestor = (List<EXTDDTipoGestor>) genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		List<EXTDDTipoGestor> listTiposGestor = new ArrayList<EXTDDTipoGestor>();
+		
+		if(!Checks.estaVacio(listAllTiposGestor)) {
+			for(EXTDDTipoGestor tipoGestor : listAllTiposGestor) {
+				if(Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercial()).contains(tipoGestor.getCodigo()))
+					listTiposGestor.add(tipoGestor);
+			}
+		}
+		
+		return listTiposGestor;
+	}
 }

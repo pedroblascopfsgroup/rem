@@ -598,6 +598,33 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getBloqueosFormalizacion',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
-		} 
+		},
+		
+		comboUsuarios: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'expedientecomercial/getComboUsuarios',
+			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
+			}
+		},
+		
+		storeGestores: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.GestorActivo',
+		   	proxy: {
+		   		type: 'uxproxy',
+		   	    remoteUrl: 'expedientecomercial/getGestores',
+		   	    extraParams: {idExpediente: '{expediente.id}'}
+		    }
+		},
+		
+		comboTipoGestorFilteredExpediente: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'expedientecomercial/getComboTipoGestorFiltered'
+			}/*,autoLoad: true*/
+		}
     }
 });

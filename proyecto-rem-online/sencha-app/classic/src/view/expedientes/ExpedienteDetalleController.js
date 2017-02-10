@@ -1357,7 +1357,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	     params: parametros,
 
     	     success: function(response, opts) {
-    	    	 debugger;
+    	    	
     	    	 btn.up("gestoresexpediente").down("[reference=listadoGestoresExpediente]").getStore().load();
     	         btn.up("gestoresexpediente").down("form").reset();
     	         /*

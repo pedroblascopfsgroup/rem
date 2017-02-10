@@ -210,11 +210,11 @@ BEGIN
                       '''|| TRIM(V_TMP_TIPO_USU_GRU(2)) ||''',
                       '''|| TRIM(V_TMP_TIPO_USU_GRU(3)) ||''',
                       '''|| TRIM(V_TMP_TIPO_USU_GRU(4)) ||''',
-                      '''|| TRIM(V_TMP_TIPO_USU_GRU(5)) ||''',
+                      '''|| TRIM(V_TMP_TIPO_USU_GRU(5)) ||''',+
                       '''|| TRIM(V_TMP_TIPO_USU_GRU(6)) ||''',
                       '''|| TRIM(V_TMP_TIPO_USU_GRU(7)) ||''',
                       '|| TRIM(V_TMP_TIPO_USU_GRU(8)) ||',
-                      SYSDATE,
+                      SYSDATE+365,
                       ''REM_F2_GEST'',
                       SYSDATE,
                       0 

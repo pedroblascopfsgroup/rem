@@ -78,7 +78,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 													width: 		'100%',
 													colspan: 1,
 										        	bind: {
-									            		store: '{comboTipoTrabajoCreaFiltered}',
+									            		store: '{storeTipoTrabajoCreaFiltered}',
 									            		value: '{trabajo.tipoTrabajoCodigo}'
 									            	},
 						    						listeners: {
@@ -692,11 +692,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	
     	var me = this,    	
     	form = me.down('formBase'); 
-		
+
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
 
 		me.getViewModel().set('idActivo', me.idActivo);
+		me.getViewModel().notify();
 		    	
     	me.down("[reference=checkFechaConcreta]").setValue(false);
     	me.down("[reference=checkFechaTope]").setValue(false);
@@ -723,9 +724,16 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
      	}
     	
+    	// Recarga las advertencias del trabajo
     	if(!Ext.isEmpty(me.down("[reference=textAdvertenciaCrearTrabajo]"))) {
     		me.down("[reference=textAdvertenciaCrearTrabajo]").setText("");	
     	}
+    	
+    	// Recarga el combo de tipos de trabajo
+    	me.down("[reference=tipoTrabajo]").reset();
+		me.down("[reference=tipoTrabajo]").getStore().removeAll();
+    	me.down("[reference=tipoTrabajo]").getStore().load();
+
     }
 
 

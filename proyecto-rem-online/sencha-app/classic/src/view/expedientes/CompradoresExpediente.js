@@ -120,6 +120,17 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						   		text: HreRem.i18n('fieldlabel.relacion.hre'),
 					            dataIndex: 'relacionHre',
 					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('header.compradores.numero.factura'),
+					            dataIndex: 'numFactura',
+					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('header.compradores.fecha.factura'),
+					            dataIndex: 'fechaFactura',
+					            flex: 1,
+					            formatter: 'date("d/m/Y")'
 						   }
 					    ],
 					    dockedItems : [

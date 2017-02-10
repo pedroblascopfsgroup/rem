@@ -43,6 +43,14 @@ Ext.define('HreRem.model.CompradorExpediente', {
     		},
     		{
     			name:'idExpedienteComercial'
+    		},
+    		{
+    			name:'numFactura'
+    		},
+    		{
+    			name:'fechaFactura',
+        		type : 'date',
+        		dateFormat: 'c'
     		}
     		
     ],

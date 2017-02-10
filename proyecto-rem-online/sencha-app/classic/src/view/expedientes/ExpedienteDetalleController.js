@@ -1341,5 +1341,30 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config.url= $AC.getRemoteUrl("operacionventa/operacionVentaFacturaPDF");
 
 		me.fireEvent("downloadFile", config);		
-	}
+	},
+	
+	onAgregarGestoresClick: function(btn){
+		
+		var me = this;
+
+    	var url =  $AC.getRemoteUrl('expedientecomercial/insertarGestorAdicional');
+    	var parametros = btn.up("combogestoresexpediente").getValues();
+    	parametros.idExpediente = me.getViewModel().get("expediente.id");
+
+    	Ext.Ajax.request({
+    		
+    	     url: url,
+    	     params: parametros,
+
+    	     success: function(response, opts) {
+    	    	
+    	    	 btn.up("gestoresexpediente").down("[reference=listadoGestoresExpediente]").getStore().load();
+    	         btn.up("gestoresexpediente").down("form").reset();
+    	         /*
+    	         if(Ext.decode(response.responseText).success == "false") {
+					me.fireEvent("errorToast", HreRem.i18n("msg.activo.gestores.noasignar.tramite.multiactivo"));
+    	         }*/
+    	     }
+    	 });
+    }
 });

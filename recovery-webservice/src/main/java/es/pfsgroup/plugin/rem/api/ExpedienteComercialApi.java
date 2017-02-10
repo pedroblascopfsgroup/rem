@@ -7,6 +7,8 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -20,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
@@ -27,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -563,5 +567,31 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	public boolean saveFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto);
+	
+	/**
+	 * Devuelve un listado de usuarios según el tipo de gestor pasado por parámetro
+	 * @param idTipoGestor
+	 * @return
+	 */
+	public List<DtoUsuario> getComboUsuarios(long idTipoGestor);
 
+	/**
+	 * Inserta un gestor en el expediente comercial
+	 * @param dto
+	 * @return
+	 */
+	public Boolean insertarGestorAdicional(GestorEntidadDto dto);
+	
+	/**
+	 * Recupera los gestores del expediente
+	 * @param idExpediente
+	 * @return
+	 */
+	public List<DtoListadoGestores> getGestores(Long idExpediente);
+	
+	/**
+	 * Devuelve una lista de los tipos de gestor correspondientes a los expedientes comerciales
+	 * @return
+	 */
+	public List<EXTDDTipoGestor> getComboTipoGestor();
 }

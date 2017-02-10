@@ -23,6 +23,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -1063,5 +1064,53 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		}	
 
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboUsuarios(Long idTipoGestor, WebDto webDto, ModelMap model) {
+
+		model.put("data", expedienteComercialApi.getComboUsuarios(idTipoGestor));
+
+		return new ModelAndView("jsonView", model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView insertarGestorAdicional(Long idExpediente, Long usuarioGestor, Long tipoGestor, WebDto webDto,
+			ModelMap model) {
+
+		try {
+			GestorEntidadDto dto = new GestorEntidadDto();
+			dto.setIdEntidad(idExpediente);
+			dto.setIdUsuario(usuarioGestor);
+			dto.setIdTipoGestor(tipoGestor);
+
+			boolean success = expedienteComercialApi.insertarGestorAdicional(dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestores(Long idExpediente, WebDto webDto, ModelMap model) {
+
+		model.put("data", expedienteComercialApi.getGestores(idExpediente));
+
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoGestorFiltered(WebDto webDto, ModelMap model){
+		
+		model.put("data", expedienteComercialApi.getComboTipoGestor());
+		return new ModelAndView("jsonView", model);
 	}
 }

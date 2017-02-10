@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,6 +56,12 @@ public class VBusquedaCompradoresExpediente implements Serializable {
     
     @Column(name="CEX_TITULAR_CONTRATACION")
     private Integer titularContratacion;
+    
+    @Column(name = "CEX_NUM_FACTURA")
+    private String numFactura;
+    
+    @Column(name = "CEX_FECHA_FACTURA")
+    private Date fechaFactura;
 	
 	
 	public String getId() {
@@ -159,6 +166,22 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 
 	public void setTitularContratacion(Integer titularContratacion) {
 		this.titularContratacion = titularContratacion;
+	}
+
+	public String getNumFactura() {
+		return numFactura;
+	}
+
+	public void setNumFactura(String numFactura) {
+		this.numFactura = numFactura;
+	}
+
+	public Date getFechaFactura() {
+		return fechaFactura;
+	}
+
+	public void setFechaFactura(Date fechaFactura) {
+		this.fechaFactura = fechaFactura;
 	}
 	
 

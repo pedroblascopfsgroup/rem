@@ -1456,20 +1456,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			EXTDDTipoGestor gestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-			Usuario usuario = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), gestorActivo.getId());
-			if(!Checks.esNulo(usuario)) {
-				notificacion.setDestinatario(usuario.getId());
+			if(!Checks.esNulo(gestorActivo)){
+				Usuario usuario = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), gestorActivo.getId());
+				if(!Checks.esNulo(usuario)) {
+					notificacion.setDestinatario(usuario.getId());
+					
+					notificacion.setTitulo("Notificación PBC reiniciado");
+					notificacion.setDescripcion("Se ha reiniciado el PBC de la oferta: "+expediente.getOferta().getNumOferta()+".");
+					notificacion.setFecha(new Date());
+					
+					try {
+						notificacionAdapter.saveNotificacion(notificacion);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
 			}
-		}
-
-		notificacion.setTitulo("Notificación PBC reiniciado");
-		notificacion.setDescripcion("Se ha reiniciado el PBC del expediente");
-		notificacion.setFecha(new Date());
-		
-		try {
-			notificacionAdapter.saveNotificacion(notificacion);
-		} catch (ParseException e) {
-			e.printStackTrace();
 		}
 		
 		return true;

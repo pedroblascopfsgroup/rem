@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin_Arnal
---## FECHA_CREACION=20170110
+--## FECHA_CREACION=20170201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1089
+--## INCIDENCIA_LINK=HREOS-1089-HREOS-1511
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_GRF_GESTORIA_RECEP_FICH los datos añadidos de T_ARRAY_DATA
@@ -39,16 +39,16 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-	T_TIPO_DATA('4','pinos' ,'Pinos XXI' ,'Pinos XXI', 'PINOS','4366','9990000000100','21'),  
-	T_TIPO_DATA('3','uniges' ,'Unigés' ,'Unigés', 'UNIGES','3199','9990000000200','22'),    
-	T_TIPO_DATA('2','montalvo' ,'Montalvo' ,'Montalvo', 'MONTALVO','45139','9990000000300','23'),
-	T_TIPO_DATA('1','gutierrez_labrador' ,'Gutiérrez Labrador' ,'Gutiérrez Labrador', 'GUTIERREZL','2084','9990000000400','24'),
-	T_TIPO_DATA('5','garsa' ,'Garsa' ,'Garsa', 'GARSA','45321','9990000000500','25'),
-	T_TIPO_DATA('6','ogf' ,'OGF' ,'OGF', 'OGF','59','9990000000600','26'),
-	T_TIPO_DATA('8','diagonal_company' ,'Diagonal Gest' ,'Diagonal Gest', 'DIAGONAL','2082','9990000000700','27'),
-        T_TIPO_DATA('9','grupoBC' ,'Grupo BC' ,'Grupo BC', 'GRUPOBC','1056','9990000000800','28'),
-        T_TIPO_DATA('10','tinsa_certify' ,'Tinsa Certify' ,'Tinsa Certify', 'TINSACERTIFY','50148','9990000000900','30'),
-	T_TIPO_DATA('7','tecnotramit' ,'Tecnotramit' ,'Tecnotramit', 'TECNOTRAMIT','58','null','null')
+		T_TIPO_DATA('4','pinos' ,'Pinos XXI' ,'Pinos XXI', 'PINOS','4366','9990000000100','21','pinos02'),  
+		T_TIPO_DATA('3','uniges' ,'Unigés' ,'Unigés', 'UNIGES','3199','9990000000200','22','uniges02'),    
+		T_TIPO_DATA('2','montalvo' ,'Montalvo' ,'Montalvo', 'MONTALVO','45139','9990000000300','23','montalvo02'),
+		T_TIPO_DATA('1','gutierrez_labrador' ,'Gutiérrez Labrador' ,'Gutiérrez Labrador', 'GUTIERREZL','2084','9990000000400','24','gl02'),
+		T_TIPO_DATA('5','garsa' ,'Garsa' ,'Garsa', 'GARSA','45321','9990000000500','25','garsa02'),
+		T_TIPO_DATA('6','ogf' ,'OGF' ,'OGF', 'OGF','59','9990000000600','26','ogf02'),
+		T_TIPO_DATA('8','diagonal_company' ,'Diagonal Gest' ,'Diagonal Gest', 'DIAGONAL','2082','9990000000700','27','diagonal02'),
+		T_TIPO_DATA('9','grupoBC' ,'Grupo BC' ,'Grupo BC', 'GRUPOBC','1056','9990000000800','28','cenahi02'),
+		T_TIPO_DATA('10','tinsa_certify' ,'Tinsa Certify' ,'Tinsa Certify', 'TINSACERTIFY','50148','9990000000900','30','tinsacer02'),
+		T_TIPO_DATA('7','tecnotramit' ,'Tecnotramit' ,'Tecnotramit', 'TECNOTRAMIT','58','null','null','tecnotra02')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -78,6 +78,7 @@ BEGIN
 					', PVE_COD_REM = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
 					', NUCLII = '|| V_TMP_TIPO_DATA(7)||''||
 					', POS_5_A_6_PROV = '|| V_TMP_TIPO_DATA(8)||''||
+					', USERNAME_GIAADMT = '''|| TRIM(V_TMP_TIPO_DATA(9)) ||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
 		  	EXECUTE IMMEDIATE V_MSQL;
@@ -89,8 +90,8 @@ BEGIN
           		EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
           		V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (' ||
                       		'DD_'||V_TRES_LETRAS_TABLA||'_ID, DD_'||V_TRES_LETRAS_TABLA||'_CODIGO, DD_'||V_TRES_LETRAS_TABLA||'_CARPETA , DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION, DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA,' ||
-				' DD_GRF_NOM_GES_FICH, PVE_COD_REM, NUCLII, POS_5_A_6_PROV, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      		'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''','||V_TMP_TIPO_DATA(7)||','||V_TMP_TIPO_DATA(8)||','||
+				' DD_GRF_NOM_GES_FICH, PVE_COD_REM, NUCLII, POS_5_A_6_PROV, USERNAME_GIAADMT, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      		'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''','||V_TMP_TIPO_DATA(7)||','||V_TMP_TIPO_DATA(8)||',,'''||TRIM(V_TMP_TIPO_DATA(9))||''''||
                       		'0, ''DML'',SYSDATE,0 FROM DUAL';
 			DBMS_OUTPUT.PUT_LINE(V_MSQL);
           		EXECUTE IMMEDIATE V_MSQL;

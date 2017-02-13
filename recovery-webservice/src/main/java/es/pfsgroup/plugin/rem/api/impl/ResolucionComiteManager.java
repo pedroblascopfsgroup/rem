@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -17,8 +18,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -50,6 +53,9 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
 	private GenericABMDao genericDao;
 
 
@@ -67,8 +73,8 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 	@Override
 	public HashMap<String, String> validateResolucionPostRequestData(ResolucionComiteDto resolucionComiteDto, Object jsonFields) throws Exception {
 		HashMap<String, String> hashErrores = null;
-
-
+		Usuario usu = null;
+		
 		hashErrores = restApi.validateRequestObject(resolucionComiteDto, TIPO_VALIDACION.INSERT);	
 
 		if (!Checks.esNulo(resolucionComiteDto.getCodigoResolucion())) {
@@ -85,23 +91,48 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 						hashErrores.put("ofertaHRE", "La oferta no tiene expediente comercial asociado.");
 						
 					}else{
-						List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
-						if(Checks.esNulo(listaTramites) || listaTramites.size() == 0){
-							hashErrores.put("ofertaHRE", "No se han podido obtener el trámite asociado a la oferta.");
+						
+						Activo act = ofr.getActivoPrincipal();
+						if(Checks.esNulo(act)){
+							hashErrores.put("ofertaHRE", "No se ha podido obtener el activo asociado a la oferta.");
 							
 						}else{
-							ActivoTramite tramite = listaTramites.get(0);
-							List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
-							if(Checks.esNulo(listaTareas) || listaTareas.size() == 0){
-								hashErrores.put("ofertaHRE", "El expediente asociado a la oferta se encuentra finalizado.");
+						
+							List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+							if(Checks.esNulo(listaTramites) || listaTramites.size() == 0){
+								hashErrores.put("ofertaHRE", "No se han podido obtener el trámite asociado a la oferta.");
 								
 							}else{
-								for(int i=0;i< listaTareas.size(); i++){
-									TareaProcedimiento tarea = listaTareas.get(i);
-									if(!Checks.esNulo(tarea) && tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite") &&
-											resolucionComiteDto.getCodigoResolucion().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
-										hashErrores.put("ofertaHRE", "La oferta no se puede volver a contraofertar.");
-										break;
+								ActivoTramite tramite = listaTramites.get(0);
+								List<TareaProcedimiento> listaTareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+								if(Checks.esNulo(listaTareasActivas) || listaTareasActivas.size() == 0){
+									hashErrores.put("ofertaHRE", "El expediente asociado a la oferta se encuentra finalizado.");
+									
+								}else{
+
+									List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasByIdTramite(tramite.getId());
+									for(int i=0;i< listaTareas.size(); i++){
+										TareaProcedimiento tarea = listaTareas.get(i);						
+										if(!Checks.esNulo(tarea)){
+											if(tarea.getCodigo().equalsIgnoreCase("T013_ResolucionComite") || tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")){
+												usu = gestorActivoApi.userFromTarea(tarea.getCodigo(), tramite.getId());
+												break;
+											}
+										}
+									}
+									if(Checks.esNulo(usu)){
+										hashErrores.put("ofertaHRE", "No se ha podido obtener el usuario al que se enviará la notificación.");
+										
+									}else{
+									
+										for(int i=0;i< listaTareas.size(); i++){
+											TareaProcedimiento tarea = listaTareas.get(i);
+											if(!Checks.esNulo(tarea) && tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite") &&
+													resolucionComiteDto.getCodigoResolucion().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
+												hashErrores.put("ofertaHRE", "La oferta no se puede volver a contraofertar.");
+												break;
+											}
+										}
 									}
 								}
 							}
@@ -144,10 +175,14 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		resol = new ResolucionComiteBankia();
 		beanUtilNotNull.copyProperties(resol, resolucionComiteDto);
 
+		
 		if (!Checks.esNulo(resolucionComiteDto.getOfertaHRE())) {
 			Oferta oferta = (Oferta) genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", resolucionComiteDto.getOfertaHRE()));
 			if (!Checks.esNulo(oferta)) {
-				resol.setOferta(oferta);
+				ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				if (!Checks.esNulo(eco)) {
+					resol.setExpediente(eco);
+				}
 			}
 		}
 		if (!Checks.esNulo(resolucionComiteDto.getCodigoComite())) {

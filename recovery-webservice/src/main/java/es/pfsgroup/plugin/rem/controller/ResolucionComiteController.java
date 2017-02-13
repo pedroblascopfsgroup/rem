@@ -27,6 +27,8 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
@@ -78,6 +80,8 @@ public class ResolucionComiteController {
 		HashMap<String, String> errorsList = null;
 		Usuario usu = null;
 		Boolean ratificacion = false;
+		String cuerpo = "";
+		Long unidadGestion = null;
 		
 		try {
 
@@ -99,7 +103,7 @@ public class ResolucionComiteController {
 					
 					//Envío correo/notificación
 					if(!Checks.esNulo(resol)){
-						ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(resol.getOferta().getId());
+						ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(resol.getExpediente().getId());
 						if(Checks.esNulo(eco)){
 							throw new Exception("No existe el expediente comercial de la oferta.");
 						}
@@ -126,25 +130,61 @@ public class ResolucionComiteController {
 							usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
 						}
 						
-						
-						if(Checks.esNulo(usu)){
-							throw new Exception("No se ha podido recuperar el usuario a quién notificar.");
-						}
-						
-						notif = new Notificacion();
-						notif.setIdActivo(resol.getOferta().getActivoPrincipal().getId());
-						notif.setDestinatario(usu.getId());
-						notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resol.getOferta().getNumOferta());
-						notif.setDescripcion(ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_MSG);
-						notif.setFecha(null);
-						
-						notifrem = anotacionApi.saveNotificacion(notif);
-						if(Checks.esNulo(notifrem)){
-							errorsList.put("error", "Se ha producido un error al enviar la notificación.");
-						}else{
-							notif.setPara(usu.getEmail());
-							notificatorApi.notificator(resol,notif);
-							logger.debug("\tEnviando correo a: " + notif.getPara());
+						if(!Checks.esNulo(usu)){
+			
+							notif = new Notificacion();
+							Activo actPpal = eco.getOferta().getActivoPrincipal();
+							ActivoAgrupacion agrup = eco.getOferta().getAgrupacion();
+							
+							//Construimos cuerpo correo/aviso
+							cuerpo = ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_INITMSG.concat("\n");
+							if(!Checks.esNulo(resol.getExpediente()) && 
+							   !Checks.esNulo(resol.getExpediente().getOferta()) &&
+							   !Checks.esNulo(resol.getExpediente().getOferta().getNumOferta())){
+								cuerpo += "Oferta HRE: " + resol.getExpediente().getOferta().getNumOferta() + ".\n";
+							}
+							if(!Checks.esNulo(agrup)){
+								unidadGestion = agrup.getNumAgrupRem();
+								cuerpo += "Lote: " + agrup.getNumAgrupRem() + ".\n";
+							}else{
+								unidadGestion = actPpal.getNumActivo();
+								cuerpo += "Activo: " + actPpal.getNumActivo() + ".\n";
+							}												
+							if(!Checks.esNulo(resol.getComite()) &&
+							   !Checks.esNulo(resol.getComite().getDescripcion())){
+								cuerpo +=  "Comité decisor: " + resol.getComite().getDescripcion() + ".\n";
+							}
+							if(!Checks.esNulo(resol.getEstadoResolucion()) &&
+							   !Checks.esNulo(resol.getEstadoResolucion().getDescripcion())){
+								cuerpo +=  "Resolución: " + resol.getEstadoResolucion().getDescripcion() + ".\n";
+							}
+							if(!Checks.esNulo(resol.getMotivoDenegacion()) && 
+							   !Checks.esNulo(resol.getMotivoDenegacion().getDescripcion())){
+								cuerpo +=  "Motivo denegación: " + resol.getMotivoDenegacion().getDescripcion() + ".\n";
+							}
+							if(!Checks.esNulo(resol.getFechaAnulacion())){
+								cuerpo +=  "Fecha anulación: " + resol.getFechaAnulacion() + ".\n";
+							}
+							if(!Checks.esNulo(resol.getImporteContraoferta())){
+								cuerpo +=  "Importe contraoferta: " + resol.getImporteContraoferta() + ".\n";
+							}
+							
+							cuerpo += ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_ENDMSG;
+									
+							notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resolucionComiteDto.getOfertaHRE() + " del activo/lote " + unidadGestion);
+							notif.setDescripcion(cuerpo);
+							notif.setIdActivo(actPpal.getId());
+							notif.setDestinatario(usu.getId());	
+							notif.setFecha(null);
+							
+							notifrem = anotacionApi.saveNotificacion(notif);
+							if(Checks.esNulo(notifrem)){
+								errorsList.put("error", "Se ha producido un error al enviar la notificación.");
+							}else{
+								notif.setPara(usu.getEmail());
+								notificatorApi.notificator(resol,notif);
+								logger.debug("\tEnviando correo a: " + notif.getPara());
+							}
 						}
 					}
 				}

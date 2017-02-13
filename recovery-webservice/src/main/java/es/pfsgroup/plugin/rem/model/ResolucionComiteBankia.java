@@ -54,8 +54,8 @@ public class ResolucionComiteBankia implements Serializable, Auditable {
     private Long id;
     				
 	@OneToOne
-    @JoinColumn(name = "OFR_ID")
-    private Oferta oferta;
+    @JoinColumn(name = "ECO_ID")
+    private ExpedienteComercial expediente;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_COS_ID")
@@ -95,12 +95,12 @@ public class ResolucionComiteBankia implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public Oferta getOferta() {
-		return oferta;
+	public ExpedienteComercial getExpediente() {
+		return expediente;
 	}
 
-	public void setOferta(Oferta oferta) {
-		this.oferta = oferta;
+	public void setExpediente(ExpedienteComercial expediente) {
+		this.expediente = expediente;
 	}
 
 	public DDComiteSancion getComite() {

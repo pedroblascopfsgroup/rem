@@ -43,4 +43,11 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 */
 	public void deleteCompradorExpediente(Long idExpediente, Long idComprador);
 	
+	/**
+	 * Devuelve el expedienteComercial asociado al trabajo
+	 * @param idTrabajo
+	 * @return
+	 */
+	public ExpedienteComercial getExpedienteComercialByTrabajo(Long idTrabajo);
+	
 }

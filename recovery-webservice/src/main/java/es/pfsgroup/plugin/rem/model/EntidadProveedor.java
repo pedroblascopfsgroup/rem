@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,10 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoColaboracion;
 
@@ -28,7 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoColaboracion;
 @Entity
 @Table(name = "ACT_ETP_ENTIDAD_PROVEEDOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-//@Where(clause = Auditoria.UNDELETED_RESTICTION)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class EntidadProveedor implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -62,8 +66,12 @@ public class EntidadProveedor implements Serializable {
 	@Column(name = "ETP_ESTADO")
 	private String estado;
 
-//	@Embedded
-//	private Auditoria auditoria;
+	@Version   
+	private Long version;
+
+	@Embedded
+	private Auditoria auditoria;
+	
 	
 	public Long getId() {
 		return id;
@@ -129,13 +137,21 @@ public class EntidadProveedor implements Serializable {
 		this.estado = estado;
 	}
 
-//	public Auditoria getAuditoria() {
-//		return auditoria;
-//	}
-//
-//	public void setAuditoria(Auditoria auditoria) {
-//		this.auditoria = auditoria;
-//	}
+	public Long getVersion() {
+		return version;
+	}
 
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+	
 
 }

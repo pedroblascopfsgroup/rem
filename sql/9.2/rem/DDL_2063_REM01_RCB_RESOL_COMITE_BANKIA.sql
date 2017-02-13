@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20161025
+--## FECHA_CREACION=20170213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HREOS-1044
@@ -68,7 +68,7 @@ BEGIN
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
 		RCB_ID           			NUMBER(16)                  NOT NULL,
-		OFR_ID        				NUMBER(16)          		NOT NULL,
+		ECO_ID        				NUMBER(16)          		NOT NULL,
 		DD_COS_ID           		NUMBER(16)                  NOT NULL,
 		DD_ERE_ID					NUMBER(16)                  NOT NULL,
 		DD_DCB_ID					NUMBER(16),
@@ -111,9 +111,9 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
 
 	-- Creamos foreign key OFR_ID.
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_RESOLBK_OFERTA FOREIGN KEY (OFR_ID) REFERENCES '||V_ESQUEMA||'.OFR_OFERTAS (OFR_ID) ON DELETE SET NULL)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_RESOLBK_EXPEDIENTE FOREIGN KEY (ECO_ID) REFERENCES '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL (ECO_ID) ON DELETE SET NULL)';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_RESOLBK_OFERTA... Foreign key creada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_RESOLBK_EXPEDIENTE... Foreign key creada.');
 	
 	-- Creamos foreign key DD_COS_ID.
 	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_RESOLBK_DDCOMITE FOREIGN KEY (DD_COS_ID) REFERENCES '||V_ESQUEMA||'.DD_COS_COMITES_SANCION (DD_COS_ID) ON DELETE SET NULL)';
@@ -139,7 +139,7 @@ BEGIN
 	
 	-- Creamos comentarios sobre las columnas
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.RCB_ID IS ''Código identificador único de la resolución bankia''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.OFR_ID IS ''Oferta asociada a la resolución''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ECO_ID IS ''Expediente asociado a la resolución''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_COS_ID IS ''Código comité bankia de la resolución''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_ERE_ID IS ''Código del estado de la resolución''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_DCB_ID IS ''Código del motivo de denegación''';

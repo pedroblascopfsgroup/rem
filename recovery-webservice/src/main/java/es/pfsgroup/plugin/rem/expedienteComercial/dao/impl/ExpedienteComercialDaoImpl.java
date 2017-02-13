@@ -11,7 +11,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 @Repository("ExpedienteComercialDao")
@@ -61,5 +60,19 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 		StringBuilder sb = new StringBuilder("delete from CompradorExpediente ce where ce.primaryKey.comprador = "+idComprador+" and ce.primaryKey.expediente= "+idExpediente);		
 		getSession().createQuery(sb.toString()).executeUpdate();
+	}
+	
+	@Override
+	public ExpedienteComercial getExpedienteComercialByTrabajo(Long idTrabajo) {
+		
+		HQLBuilder hql = new HQLBuilder("from ExpedienteComercial exp");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "exp.trabajo.id", idTrabajo);
+		
+		List<ExpedienteComercial> listaExpedientes = HibernateQueryUtils.list(this, hql);
+
+		if(!Checks.estaVacio(listaExpedientes))
+			return listaExpedientes.get(0);
+		else
+			return null;
 	}
 }

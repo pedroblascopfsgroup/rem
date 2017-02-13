@@ -11,7 +11,6 @@ import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 import jxl.write.Blank;
-import jxl.write.Formula;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
@@ -178,14 +177,14 @@ public class GenerarPropuestaPreciosServiceEntidad03 implements GenerarPropuesta
 			//Columnas 19 - 26 sin saber de donde sacar dichos valores
 			
 			//Formulas ----
-			Integer numFila = fila +1;
+		/*	Integer numFila = fila +1;
 			hoja.addCell(new Formula(27, fila, "IF(ISBLANK(S"+numFila+"),\"\",IF(ISBLANK(Q"+numFila+"),\"\",ROUND(S"+numFila+"-Q"+numFila+",2))"));//PrecioPropuesto - VNC
 			//Descuentos - Tasacion y VNC
 			hoja.addCell(new Formula(28, fila, "IF(ISBLANK(J"+numFila+"),\"\",IF(ISBLANK(S"+numFila+"),\"\",ROUND(J"+numFila+"-S"+numFila+",2))"));//ValorTasacion - PrecioPropuesto
 			hoja.addCell(new Formula(29, fila, "IF(ISBLANK(J"+numFila+"),\"\", IF(ISBLANK(S"+numFila+"), \"\", ROUND(IF(J"+numFila+"-1<>0, ((S"+numFila+"/J"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Tas/Propuesto
 			hoja.addCell(new Formula(30, fila, "IF(ISBLANK(S"+numFila+"),\"\",IF(ISBLANK(R"+numFila+"),\"\",ROUND(S"+numFila+"-R"+numFila+",2))"));//Propuesto - publicado
 			hoja.addCell(new Formula(31, fila, "IF(R"+numFila+"<>0, ROUND(-AE"+numFila+"/R"+numFila+",2), \"\"))"));//porcentaje (Propuesto - Publciado) sobre Propuesto
-			
+			*/
 			hoja.addCell(new Label(32,fila,dto.getSociedadPropietaria()));
 			if(!Checks.esNulo(dto.getFechaPublicacion()))
 				hoja.addCell(new Label(33,fila,sdf.format(dto.getFechaPublicacion())));

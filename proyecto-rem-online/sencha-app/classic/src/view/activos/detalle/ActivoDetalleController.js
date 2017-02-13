@@ -1838,16 +1838,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var ref = chkbx.getReference();
 
+		// Si se quita comercializar, hay que quitar tambien los datos de formalizacion en perimetro
+		var chkbxPerimetroComercializar = me.lookupReference('chkbxPerimetroComercializar');
+		var textFieldPerimetroComer = me.lookupReference('textFieldPerimetroComer');
+		var comboMotivoPerimetroComer = me.lookupReference('comboMotivoPerimetroComer');
+		var chkbxFormalizar = me.lookupReference('chkbxPerimetroFormalizar');
+		var textFieldFormalizar = me.lookupReference('textFieldPerimetroFormalizar');
+		var textFieldPerimetroGestion = me.lookupReference('textFieldPerimetroGestion');
+		
 		switch(ref){
 		case 'chkbxPerimetroComercializar':
-			if(!chkbx.getValue()) {
-				var chkbxFormalizar = me.lookupReference('chkbxPerimetroFormalizar');
-				var textFieldFormalizar = me.lookupReference('textFieldPerimetroFormalizar');
-				if(!Ext.isEmpty(chkbxFormalizar.getValue()) && chkbxFormalizar.getValue()) {
-					chkbxFormalizar.setValue(false);
-					textFieldFormalizar.reset();
-				}
+			if(!Ext.isEmpty(chkbxPerimetroComercializar.getValue()) && chkbxPerimetroComercializar.getValue()) {
+				comboMotivoPerimetroComer.reset();
+				textFieldPerimetroComer.reset();
+			} else {
+				textFieldPerimetroComer.reset();
+				chkbxFormalizar.setValue(false);
+				textFieldFormalizar.reset();
 			}
+			break;
+
+		case 'chkbxPerimetroGestion':
+			textFieldPerimetroGestion.reset();
+			break;
+			
+		case 'chkbxPerimetroFormalizar':			
+			textFieldFormalizar.reset();
 			break;
 		default:
 			break;

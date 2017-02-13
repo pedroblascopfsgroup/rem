@@ -10,7 +10,6 @@ import javax.servlet.ServletContext;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
-import jxl.write.Formula;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
@@ -117,7 +116,7 @@ public class GenerarPropuestaPreciosServiceEntidad02 implements GenerarPropuesta
 	 */
 	private void rellenarFilaExcelPropuestaPrecio(WritableSheet hoja, DtoGenerarPropuestaPreciosEntidad02 dto, Integer fila) {
 		
-		Integer numFila = fila+1; //Numero fila real correspondiente a la hoja excel
+	//	Integer numFila = fila+1; //Numero fila real correspondiente a la hoja excel
 		try {
 			
 	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -190,7 +189,8 @@ public class GenerarPropuestaPreciosServiceEntidad02 implements GenerarPropuesta
 			Double precioMetro = getPrecioPropuestoPorMetroCuadrado(dto.getValorPropuesto(),dto.getSuperficieTotal());
 			if(!Checks.esNulo(precioMetro) && precioMetro != 0.0)
 				hoja.addCell(new Number(41,fila,precioMetro,numberFormat));
-			hoja.addCell(new Formula(42, fila, "IF(ISBLANK(AK"+numFila+"),\"\",IF(ISBLANK(AS"+numFila+"),\"\",ROUND(AK"+numFila+"-AS"+numFila+",2))"));//PrecioPropuesto - VNC(valor transferencia)
+
+			//hoja.addCell(new Formula(42, fila, "IF(ISBLANK(AK"+numFila+"),\"\",IF(ISBLANK(AS"+numFila+"),\"\",ROUND(AK"+numFila+"-AS"+numFila+",2))"));//PrecioPropuesto - VNC(valor transferencia)
 			
 			if(!Checks.esNulo(dto.getValorLiquidativo()) && dto.getValorLiquidativo() != 0.0)
 				hoja.addCell(new Number(43,fila,dto.getValorLiquidativo(),numberFormat));

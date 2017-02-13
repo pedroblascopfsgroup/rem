@@ -12,7 +12,6 @@ import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 import jxl.write.Blank;
-import jxl.write.Formula;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
@@ -44,9 +43,9 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 	private WritableWorkbook libroEditable;
 	private File file;
 	
-	protected static final Log logger = LogFactory.getLog(GenerarPropuestaPreciosServiceEntidad01.class);
-	private static final String txtFechaSancion = "Fecha Sanción: ";
-	private static final int filaInicial = 6;
+	protected  Log logger = LogFactory.getLog(GenerarPropuestaPreciosServiceEntidad01.class);
+	private  String txtFechaSancion = "Fecha Sanción: ";
+	private  int filaInicial = 6;
 	
 
 	@Override
@@ -135,8 +134,10 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 	 */
 	private void rellenarFilaExcelPropuestaPrecio(WritableSheet hoja, DtoGenerarPropuestaPreciosEntidad01 dto, Integer fila) {
 		
-		Integer numFila = fila+1; //Numero fila real correspondiente a la hoja excel
+		//Integer numFila = fila+1; //Numero fila real correspondiente a la hoja excel
 		try {
+			
+			
 			
 	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	        NumberFormat decimalNo = new NumberFormat("#.00"); 
@@ -224,10 +225,10 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 				hoja.addCell(new Number(51,fila,dto.getValorPropuesto(),numberFormat));
 			// 52 Motivo precio
 			
-			hoja.addCell(new Formula(53, fila, "IF(ISBLANK(AZ"+numFila+"),\"\",IF(ISBLANK(AH"+numFila+"),\"\",ROUND(AZ"+numFila+"-AH"+numFila+",2))"));//(IMPACTO) Propuesto - VNC
-			hoja.addCell(new Formula(54, fila, "IF(ISBLANK(AJ"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AJ"+numFila+"-1<>0, ((AZ"+numFila+"/AJ"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Tas/Propuesto
-			hoja.addCell(new Formula(55, fila, "IF(ISBLANK(AD"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AD"+numFila+"-1<>0, ((AZ"+numFila+"/AD"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Valor Haya/Propuesto
-			hoja.addCell(new Formula(56, fila, "IF(ISBLANK(AP"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AP"+numFila+"-1<>0, ((AZ"+numFila+"/AP"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Valor actual web/Propuesto
+		//	hoja.addCell(new Formula(53, fila, "IF(ISBLANK(AZ"+numFila+"),\"\",IF(ISBLANK(AH"+numFila+"),\"\",ROUND(AZ"+numFila+"-AH"+numFila+",2))"));//(IMPACTO) Propuesto - VNC
+		//	hoja.addCell(new Formula(54, fila, "IF(ISBLANK(AJ"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AJ"+numFila+"-1<>0, ((AZ"+numFila+"/AJ"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Tas/Propuesto
+		//	hoja.addCell(new Formula(55, fila, "IF(ISBLANK(AD"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AD"+numFila+"-1<>0, ((AZ"+numFila+"/AD"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Valor Haya/Propuesto
+		//	hoja.addCell(new Formula(56, fila, "IF(ISBLANK(AP"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AP"+numFila+"-1<>0, ((AZ"+numFila+"/AP"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Valor actual web/Propuesto
 	
 		} catch (WriteException e) {
 			logger.error(e.getMessage());

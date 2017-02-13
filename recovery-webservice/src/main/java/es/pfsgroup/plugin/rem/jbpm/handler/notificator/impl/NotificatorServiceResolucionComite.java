@@ -2,9 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -71,11 +68,11 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 	    String correos = notif.getPara();
 	    Collections.addAll(mailsPara, correos.split(";"));
 		
-	    contenido = "<p>El comité decisor " + resol.getComite().getDescripcion() + ", ha "+resol.getEstadoResolucion().getDescripcion()+" oferta de número " + resol.getOferta().getNumOferta() + "</p>"
+	    contenido = "<p>El comité decisor " + resol.getComite().getDescripcion() + ", ha "+resol.getEstadoResolucion().getDescripcion()+" oferta de número " + resol.getExpediente().getOferta().getNumOferta() + "</p>"
  		  		 + "<p>Por favor, entre en la aplicación REM y finalice la tarea que tiene pendiente en la agenda.</p>"
  		  		 + "<p>Gracias.</p>";
 	    
-		titulo = "Notificación de resolución comité Bankia sobre la oferta número (" + resol.getOferta().getNumOferta() + ".)";
+		titulo = "Notificación de resolución comité Bankia sobre la oferta número (" + resol.getExpediente().getOferta().getNumOferta() + ".)";
 		
 		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(resol, contenido));
 	}
@@ -91,8 +88,8 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 	
 	private String getOferta(ResolucionComiteBankia resol){
 		String ofr = "";
-		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getOferta())){
-			ofr = resol.getOferta().getNumOferta().toString();
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getExpediente().getOferta())){
+			ofr = resol.getExpediente().getOferta().getNumOferta().toString();
 		}
 		return ofr;
 	}

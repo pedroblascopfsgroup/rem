@@ -99,7 +99,7 @@ public class ResolucionComiteController {
 					
 					//Envío correo/notificación
 					if(!Checks.esNulo(resol)){
-						ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(resol.getOferta().getId());
+						ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(resol.getExpediente().getId());
 						if(Checks.esNulo(eco)){
 							throw new Exception("No existe el expediente comercial de la oferta.");
 						}
@@ -126,25 +126,23 @@ public class ResolucionComiteController {
 							usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
 						}
 						
-						
-						if(Checks.esNulo(usu)){
-							throw new Exception("No se ha podido recuperar el usuario a quién notificar.");
-						}
-						
-						notif = new Notificacion();
-						notif.setIdActivo(resol.getOferta().getActivoPrincipal().getId());
-						notif.setDestinatario(usu.getId());
-						notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resol.getOferta().getNumOferta());
-						notif.setDescripcion(ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_MSG);
-						notif.setFecha(null);
-						
-						notifrem = anotacionApi.saveNotificacion(notif);
-						if(Checks.esNulo(notifrem)){
-							errorsList.put("error", "Se ha producido un error al enviar la notificación.");
-						}else{
-							notif.setPara(usu.getEmail());
-							notificatorApi.notificator(resol,notif);
-							logger.debug("\tEnviando correo a: " + notif.getPara());
+						if(!Checks.esNulo(usu)){
+			
+							notif = new Notificacion();
+							notif.setIdActivo(eco.getOferta().getActivoPrincipal().getId());
+							notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resolucionComiteDto.getOfertaHRE());
+							notif.setDestinatario(usu.getId());
+							notif.setDescripcion(ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_MSG);
+							notif.setFecha(null);
+							
+							notifrem = anotacionApi.saveNotificacion(notif);
+							if(Checks.esNulo(notifrem)){
+								errorsList.put("error", "Se ha producido un error al enviar la notificación.");
+							}else{
+								notif.setPara(usu.getEmail());
+								notificatorApi.notificator(resol,notif);
+								logger.debug("\tEnviando correo a: " + notif.getPara());
+							}
 						}
 					}
 				}

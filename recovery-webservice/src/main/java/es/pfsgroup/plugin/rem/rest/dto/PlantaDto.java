@@ -24,13 +24,10 @@ public class PlantaDto implements Serializable {
 			Update.class })
 	private String codTipoEstancia;
 
-	@NotNull(groups = Insert.class)
 	private Long numeroEstancias;
 
-	@NotNull(groups = Insert.class)
 	private Float estancias;
 
-	@NotNull(groups = Insert.class)
 	private String descripcionEstancias;
 
 	public Integer getNumero() {

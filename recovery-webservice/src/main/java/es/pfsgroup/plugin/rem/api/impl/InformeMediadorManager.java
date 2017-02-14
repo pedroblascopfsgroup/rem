@@ -1175,6 +1175,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		if (permisos != null) {
 			if (permisos.containsKey(codigoTipoBien)
 					&& (fieldValor == null || (fieldValor instanceof String && ((String) fieldValor).isEmpty()))) {
+				if(fiedlName.length()>2){
+					fiedlName = fiedlName.substring(0,1).toLowerCase().concat(fiedlName.substring(1));
+				}
 				errorsList.put(fiedlName, RestApi.REST_MSG_MISSING_REQUIRED);
 			}
 		}
@@ -1251,7 +1254,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			throws Exception {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = null;
-		String codHabitaculo = null;
 		
 		for (InformeMediadorDto informe : informes) {
 			map = new HashMap<String, Object>();

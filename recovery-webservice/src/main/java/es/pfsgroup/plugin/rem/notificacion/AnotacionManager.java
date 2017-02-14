@@ -321,8 +321,7 @@ public class AnotacionManager implements AnotacionApi{
 					
 				}
 			} catch (EXTCrearTareaException e) {
-				logger.error("Error creando tarea");
-				e.printStackTrace();
+				logger.error("Error creando tarea", e);
 				throw new FrameworkException("Error creando la tarea");
 			}
 
@@ -399,8 +398,7 @@ public class AnotacionManager implements AnotacionApi{
 					null
 			);
 		} catch (Exception e) {
-			logger.error("Error enviando los mails de una nueva anotación");
-			e.printStackTrace();
+			logger.error("Error enviando los mails de una nueva anotación",e);
 			throw new FrameworkException(
 					"Error enviando los mails de una nueva anotación");
 		}

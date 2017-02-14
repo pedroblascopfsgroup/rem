@@ -191,4 +191,12 @@ public interface ActivoTramiteApi {
 	 */
 	public List<TareaProcedimiento>  getTareasActivasByIdTramite(Long idTramite);
 	
+	
+	/**
+	 * Devuelve todas las tareas que hayan en el tramite abiertas y cerradas
+	 * @param idTramite identificador del tramite	
+	 * @return
+	 */
+	public List<TareaProcedimiento> getTareasByIdTramite(Long idTramite);
 }
+

@@ -2,9 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -15,10 +13,12 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.rest.api.NotificatorApi;
 
@@ -65,19 +65,11 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 	public void notificator(ResolucionComiteBankia resol, Notificacion notif) {		
 		List<String> mailsPara = new ArrayList<String>();
 		List<String> mailsCC = new ArrayList<String>();
-		String contenido = "";
-		String titulo = "";
 		
 	    String correos = notif.getPara();
 	    Collections.addAll(mailsPara, correos.split(";"));
 		
-	    contenido = "<p>El comité decisor " + resol.getComite().getDescripcion() + ", ha "+resol.getEstadoResolucion().getDescripcion()+" oferta de número " + resol.getOferta().getNumOferta() + "</p>"
- 		  		 + "<p>Por favor, entre en la aplicación REM y finalice la tarea que tiene pendiente en la agenda.</p>"
- 		  		 + "<p>Gracias.</p>";
-	    
-		titulo = "Notificación de resolución comité Bankia sobre la oferta número (" + resol.getOferta().getNumOferta() + ".)";
-		
-		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(resol, contenido));
+		genericAdapter.sendMail(mailsPara, mailsCC, notif.getTitulo(), this.generateCuerpo(resol, notif.getDescripcion()));
 	}
 	
 	
@@ -89,10 +81,27 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 	}
 	
 	
+	private String getUnidadGestion(ResolucionComiteBankia resol){
+		String ud = "";
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getExpediente()) && !Checks.esNulo(resol.getExpediente().getOferta())){
+			Oferta ofr = resol.getExpediente().getOferta();
+			if(!Checks.esNulo(ofr.getAgrupacion()) && !Checks.esNulo(ofr.getAgrupacion().getNumAgrupRem())){
+				ud = ofr.getAgrupacion().getNumAgrupRem().toString();
+				
+			}else if(!Checks.esNulo(ofr.getActivoPrincipal()) && !Checks.esNulo(ofr.getActivoPrincipal().getNumActivo())){
+				ud = ofr.getActivoPrincipal().getNumActivo().toString();
+				
+			} else {
+				ud = " - ";
+			}
+		}
+		return ud;
+	}
+	
 	private String getOferta(ResolucionComiteBankia resol){
 		String ofr = "";
-		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getOferta())){
-			ofr = resol.getOferta().getNumOferta().toString();
+		if(!Checks.esNulo(resol) && !Checks.esNulo(resol.getExpediente().getOferta())){
+			ofr = resol.getExpediente().getOferta().getNumOferta().toString();
 		}
 		return ofr;
 	}
@@ -163,7 +172,12 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
 				+ "								Oferta HRE:<strong>"+this.getOferta(resol)+"</strong>"
 				+ "							</div>"
-				+ "						</div>"				
+				+ "						</div>"	
+				+ "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Activo/Lote HRE:<strong>"+this.getUnidadGestion(resol)+"</strong>"
+				+ "							</div>"
+				+ "						</div>"	
 				+ "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
 				+ "								Comité decisor: <strong>"+this.getComite(resol) +"</strong>"

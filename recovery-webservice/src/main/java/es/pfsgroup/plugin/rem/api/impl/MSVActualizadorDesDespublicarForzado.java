@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class MSVActualizadorDesDespublicarForzado implements MSVLiberator {
 
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, SQLException {
+	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, SQLException, ParseException {
 
 		// Desmarcar "Despublicacion forzada": el activo vuelve al estado de publicacion anterior (del historico)
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());

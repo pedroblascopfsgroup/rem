@@ -92,7 +92,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 16, 1))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 16, 1).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 16, 1)),
 							null,
 							null);
 					actualizatTipoComercializacionActivo = true;
@@ -102,7 +102,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 18, 1))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 18, 1).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 18, 1)),
 							exc.dameCeldaByHoja(fila, 19, 1),
 							exc.dameCeldaByHoja(fila, 20, 1));
 					actualizatTipoComercializacionActivo = true;
@@ -112,7 +112,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 24, 1))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 24, 1).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 24, 1)),
 							exc.dameCeldaByHoja(fila, 25, 1),
 							exc.dameCeldaByHoja(fila, 26, 1));
 				}
@@ -121,7 +121,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 21, 1))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 21, 1).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 21, 1)),
 							exc.dameCeldaByHoja(fila, 22, 1),
 							exc.dameCeldaByHoja(fila, 23, 1));
 				}
@@ -130,7 +130,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 56))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_DESC_APROBADO, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 56).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 56)),
 							exc.dameCeldaByHoja(fila, 57),
 							exc.dameCeldaByHoja(fila, 58));
 				}
@@ -139,7 +139,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 59))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 59).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 59)),
 							exc.dameCeldaByHoja(fila, 60),
 							exc.dameCeldaByHoja(fila, 61));
 				}
@@ -148,7 +148,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 11, 1))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 11, 1).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 11, 1)),
 							exc.dameCeldaByHoja(fila, 10, 1),
 							null);
 				}
@@ -157,7 +157,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 15, 1))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 15, 1).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 15, 1)),
 							exc.dameCeldaByHoja(fila, 14, 1),
 							null);
 				}
@@ -166,7 +166,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 16, 1))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_PT, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 16, 1).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 16, 1)),
 							null,
 							null);
 				}
@@ -175,7 +175,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 				if(!Checks.esNulo(exc.dameCeldaByHoja(fila, 13, 1))){
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_FSV_VENTA, 
-							Double.parseDouble(exc.dameCeldaByHoja(fila, 13, 1).replace(",", ".")),
+							Double.parseDouble(exc.dameCeldaByHoja(fila, 13, 1)),
 							exc.dameCeldaByHoja(fila, 12, 1),
 							null);
 				}

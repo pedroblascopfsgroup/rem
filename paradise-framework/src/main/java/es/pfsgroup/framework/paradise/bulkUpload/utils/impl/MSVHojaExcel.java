@@ -255,7 +255,7 @@ public class MSVHojaExcel {
 	}
 
 	public String dameCelda(int fila, int columna) 
-			throws IllegalArgumentException, IOException {
+			throws IllegalArgumentException, IOException, ParseException {
 		
 		return dameCeldaByHoja(fila,columna,0);
 	}
@@ -268,9 +268,10 @@ public class MSVHojaExcel {
 	 * @return
 	 * @throws IllegalArgumentException
 	 * @throws IOException
+	 * @throws ParseException 
 	 */
 	public String dameCeldaByHoja(int fila, int columna, int numHoja) 
-			throws IllegalArgumentException, IOException {
+			throws IllegalArgumentException, IOException, ParseException {
 		if (!isOpen) {
 			abrir();
 		}
@@ -287,22 +288,7 @@ public class MSVHojaExcel {
 		
 			if (cell.getType() == CellType.NUMBER) 
 			{ 
-				DecimalFormat df = new DecimalFormat();
-				DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-				
-				// Formato numerico compatible con n
-				symbols.setDecimalSeparator('.'); // Simbolo de miles
-				symbols.setGroupingSeparator(','); // Simbolo de decimales
-				symbols.setMinusSign('-'); // Simbolo numero negativo
-				if(!Checks.esNulo(cell.getContents()) && cell.getContents().contains("E"))
-					symbols.setExponentSeparator("E"); // Simbolo numero exponencial
-				df.setDecimalFormatSymbols(symbols);
-				
-				try {
-					cellContent = df.format(df.parse(cell.getContents()));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
+				cellContent = String.valueOf(getValidatedNumber(cell.getContents()));
 			} else {
 				cellContent = cell.getContents();
 			}
@@ -311,6 +297,28 @@ public class MSVHojaExcel {
 		return cellContent;
 	}
 
+	public Double getValidatedNumber(String cellValue) throws ParseException{
+		DecimalFormat df = new DecimalFormat();
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		
+		// Formato numerico compatible con notacion latina
+		symbols.setDecimalSeparator(','); // Simbolo de decimales
+		symbols.setMinusSign('-'); // Simbolo numero negativo
+		
+		if(!Checks.esNulo(cellValue) && cellValue.contains("."))
+			symbols.setGroupingSeparator('.'); // Simbolo de miles
+		
+		if(!Checks.esNulo(cellValue) && cellValue.contains("E"))
+			symbols.setExponentSeparator("E"); // Simbolo numero exponencial
+		
+		df.setDecimalFormatSymbols(symbols);
+		
+		if(!Checks.esNulo(cellValue))
+			return df.parse(cellValue).doubleValue();
+		else
+			return null;
+	}
+	
 	public void cerrar() {
 		
 		libroExcel = null;

@@ -351,7 +351,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var activo = me.lookupController().getViewModel().get('activo');
 
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
-			||activo.get('situacionComercialDescripcion') == "Vendido" ) {
+			|| activo.get('isVendido') ) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

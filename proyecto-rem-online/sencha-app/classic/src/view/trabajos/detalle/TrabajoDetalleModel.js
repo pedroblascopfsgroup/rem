@@ -53,6 +53,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		 return true;
 	    	 else
 	    		 return false;
+	    },
+	    
+	    enableAddPresupuesto: function(get) {
+	    	var esTarificado = get('gestionEconomica.esTarificado');
+	    	if (!Ext.isEmpty(esTarificado))
+	    		 return true;
+	    	 else
+	    		 return false;
 	    }
     },
     

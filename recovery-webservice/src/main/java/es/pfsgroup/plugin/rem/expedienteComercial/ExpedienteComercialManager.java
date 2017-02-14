@@ -2321,10 +2321,16 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			compradorExpediente.setPrimaryKey(pk);
 			compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
 			
+			Filter filtroRegimenMatrimonial = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoRegimenMatrimonial());
+			DDRegimenesMatrimoniales regimenMatrimonial = genericDao.get(DDRegimenesMatrimoniales.class, filtroRegimenMatrimonial);
+			if(!Checks.esNulo(regimenMatrimonial))
+				compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
+			
 			Filter filtroEstadoCivil = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodEstadoCivil());
 			DDEstadosCiviles estadoCivil = genericDao.get(DDEstadosCiviles.class, filtroEstadoCivil);
+			if(!Checks.esNulo(estadoCivil))
+				compradorExpediente.setEstadoCivil(estadoCivil);
 			
-			compradorExpediente.setEstadoCivil(estadoCivil);
 			expediente.getCompradores().add(compradorExpediente);
 			
 			genericDao.save(ExpedienteComercial.class, expediente);

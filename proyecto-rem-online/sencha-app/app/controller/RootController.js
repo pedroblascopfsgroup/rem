@@ -51,7 +51,7 @@ Ext.define('HreRem.controller.RootController', {
     	
     	var me = this;
     	
-    	if(!Ext.isEmpty(me.winin)) {
+    	if(!Ext.isEmpty(me.winLogin)) {
     		me.winLogin.destroy();
     		me.winLogin= null;
     	}

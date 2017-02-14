@@ -28,6 +28,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -40,6 +41,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -57,6 +59,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -252,7 +255,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private List<CondicionTanteoApi> condiciones;
-
+	
+	@Autowired
+	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
+	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 	private static final String AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL = "activo.aviso.aceptatar.oferta.activo.dentro.lote.comercial";
@@ -476,6 +482,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
 			crearGastosExpediente(nuevoExpediente, oferta);
+			
+			// Se asigna un gestor de Formalización al crear un nuevo expediente.
+			asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
 
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
@@ -3298,5 +3307,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public void calcularRatingActivo(Long idActivo) {
 		activoDao.actualizarRatingActivo(idActivo, usuarioApi.getUsuarioLogado().getUsername());
+	}
+	
+	@SuppressWarnings("static-access")
+	private void asignarGestorYSupervisorFormalizacionToExpediente(ExpedienteComercial expediente) {
+		GestorEntidadDto dto = new GestorEntidadDto();
+		dto.setIdEntidad(expediente.getId());
+		dto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+
+		//TODO: Hasta saber que criterios necesitamos para elegir un usuario u otro, asignamos el gestor/supervisor de GRUPO.
+		this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM",dto);
+		this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+	}
+	
+	private void agregarTipoGestorYUsuarioEnDto(String codTipoGestor, String username, GestorEntidadDto dto) {
+		
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codTipoGestor));
+		Usuario usu = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
+		
+		if(!Checks.esNulo(tipoGestor) && !Checks.esNulo(usu)) {
+			dto.setIdTipoGestor(tipoGestor.getId());
+			dto.setIdUsuario(usu.getId());
+			gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(dto);
+		}
 	}
 }

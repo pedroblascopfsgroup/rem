@@ -262,7 +262,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					//height: '100%',
 			    					reference: 'gridpresupuestostrabajo',
 			    					bind: {
-			    						store: '{storePresupuestosTrabajo}'
+			    						store: '{storePresupuestosTrabajo}',
+			    						topBar: '{enableAddPresupuesto}'
 			    					},
 			    					
 			    					secFunToEdit: 'EDITAR_LIST_PRESUPUESTOS_TRABAJO',

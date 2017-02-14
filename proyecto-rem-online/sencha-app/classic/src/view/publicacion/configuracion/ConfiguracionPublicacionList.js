@@ -89,7 +89,8 @@ Ext.define('HreRem.view.publicacion.configuracion.ConfiguracionPublicacionList',
 			            bind: {
 			            	store: '{comboTipoActivo}'
 			            },
-			            reference: 'cbColTipoActivo'
+			            reference: 'cbColTipoActivo',
+		            	publishes: 'value'
 			        }
 		 		},
 		 		{
@@ -110,7 +111,12 @@ Ext.define('HreRem.view.publicacion.configuracion.ConfiguracionPublicacionList',
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
 			            bind: {
-			            	store: '{comboSubtipoActivo}'
+			            	store: '{comboSubtipoActivo}',
+			            	disabled: '{!cbColTipoActivo.value}',
+			                filters: {
+			                	property: 'codigoTipoActivo',
+			                	value: '{cbColTipoActivo.value}'
+			                }
 			            },
 			            reference: 'cbColSubtipoActivo'
 			        }

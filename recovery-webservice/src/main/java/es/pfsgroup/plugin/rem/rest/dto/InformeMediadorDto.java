@@ -34,9 +34,6 @@ import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
 public class InformeMediadorDto implements Serializable {
 
-	/**
-	 * 
-	 */
 	@EntityDefinition(procesar = false)
 	private static final long serialVersionUID = 1L;
 
@@ -81,6 +78,7 @@ public class InformeMediadorDto implements Serializable {
 		Update.class })
 	private Long idProveedorRem;
 
+	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
 	private Boolean posibleInforme;
 
@@ -172,7 +170,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "fechaRecepcionLlaves")
 	private Date fechaRecepcionLlavesApi;
 
-	// ? ACT_ICO_INF_COMERCIAL DD_LOC_REGISTRO_ID
+	@NotNull(groups = Insert.class)
 	@Diccionary(clase = Localidad.class, message = "El codMunicipioRegistro no existe", groups = { Insert.class,
 			Update.class })
 	@EntityDefinition(procesar = false, motivo = "Falta columna DD_LOC_REGISTRO_ID en ACT_ICO_INFO_COMERCIAL")

@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -19,13 +20,20 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadHistoricoDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
-import es.pfsgroup.framework.paradise.gestorEntidad.manager.GestorEntidadManager;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorExpedienteComercialHistorico;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 
 @Component
 public class GestorExpedienteComercialManager implements GestorExpedienteComercialApi {
@@ -41,6 +49,26 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 	
 	@Autowired
 	GestorEntidadHistoricoDao gestorEntidadHistoricoDao;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private UserAssigantionServiceFactoryApi userAssigantionServiceFactoryApi;
+	
+	@Autowired
+	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
+	
+	@Override
+	public String[] getCodigosTipoGestorExpedienteComercial() {
+		
+		return new String[]{CODIGO_GESTOR_COMERCIAL_RETAIL, CODIGO_GESTOR_COMERCIAL_BACKOFFICE, CODIGO_GESTOR_COMERCIAL_SINGULAR,
+				CODIGO_GESTOR_FORMALIZACION, CODIGO_GESTORIA_FORMALIZACION, CODIGO_SUPERVISOR_COMERCIAL_RETAIL, CODIGO_SUPERVISOR_COMERCIAL_SINGULAR,
+				CODIGO_SUPERVISOR_FORMALIZACION};
+	}
 	
 	@Override
 	@Transactional(readOnly = false)
@@ -77,12 +105,37 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 					gestorEntidadDao.saveOrUpdate(gec);
 					
 					//Actualizamos usuarios de las tareas
-					//actualizarTareas(dto.getIdEntidad());
+					actualizarTareas(expediente.getTrabajo().getId());
 				}
 			}
 		}
 		
 		return inserccionOK;
+	}
+	
+	@Override
+	public void actualizarTareas(Long idTrabajo) {
+		
+		List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(idTrabajo);
+
+		for (ActivoTramite tramite : listaTramites) {
+			List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(tramite.getId());
+			for(TareaExterna tareaExterna : listaTareas){
+				EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
+				
+				UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
+				
+				if(!(userAssigantionService instanceof TrabajoUserAssigantionService))
+				{
+					Usuario gestor = userAssigantionService.getUser(tareaExterna);
+				
+					if(!Checks.esNulo(gestor)){
+						TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
+						tareaActivo.setUsuario(gestor);
+					}
+				}
+			}
+		}
 	}
 	
 	private void guardarHistoricoGestorAdicionalEntidad(GestorEntidad gee, Object obj) {
@@ -109,18 +162,16 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 		}
 	}
 	
+	@Override
 	public List<GestorEntidadHistorico> getListGestoresAdicionalesHistoricoData(GestorEntidadDto dto) {
 		List<GestorEntidadHistorico> listado = gestorEntidadHistoricoDao.getListOrderedByEntidad(dto);
 
 		return listado;
 	}
-	
-	@Override
-	public String[] getCodigosTipoGestorExpedienteComercial() {
-		
-		return new String[]{CODIGO_GESTOR_COMERCIAL_RETAIL, CODIGO_GESTOR_COMERCIAL_BACKOFFICE, CODIGO_GESTOR_COMERCIAL_SINGULAR,
-				CODIGO_GESTOR_FORMALIZACION, CODIGO_GESTORIA_FORMALIZACION, CODIGO_SUPERVISOR_COMERCIAL_RETAIL, CODIGO_SUPERVISOR_COMERCIAL_SINGULAR,
-				CODIGO_SUPERVISOR_FORMALIZACION};
-	}
 
+	@Override
+	public Usuario getGestorByExpedienteComercialYTipo(ExpedienteComercial expediente, String tipo) {
+		
+		return gestorExpedienteComercialDao.getUsuarioGestorBycodigoTipoYExpedienteComercial(tipo, expediente);
+	}
 }

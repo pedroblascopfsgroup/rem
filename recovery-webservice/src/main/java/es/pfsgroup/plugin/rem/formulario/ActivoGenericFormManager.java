@@ -45,9 +45,11 @@ import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 @Service
 public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
@@ -305,6 +307,21 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            			Trabajo trabajo = tramite.getTrabajo();
 	            			item.setValue(String.valueOf(trabajoApi.getExcesoPresupuestoActivo(trabajo)));
             			}
+            		}
+            		if(item.getNombre().equals("tipoArras")){
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if (!Checks.esNulo(expediente)){
+            					Reserva reserva = expediente.getReserva();
+            					if(!Checks.esNulo(reserva)){
+            						DDTiposArras tipoArras = reserva.getTipoArras();
+            						if(!Checks.esNulo(tipoArras)){
+            							item.setValue(tipoArras.getDescripcion());
+            						}
+            					}
+            				}
+            			}	
             		}
             		
             	}

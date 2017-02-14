@@ -8,7 +8,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     topBar		: true,
 	removeButton: false,
     listeners	: {
-    	boxready: function() {
+    	focusenter: function() {
+    		me = this;
+    		me.evaluarEdicion();
+    	},
+    	boxReady: function() {
     		me = this;
     		me.evaluarEdicion();
     	},
@@ -346,7 +350,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo');
 
-		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')) {
+		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
+			||activo.get('situacionComercialDescripcion') == "Vendido" ) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

@@ -12,7 +12,6 @@ import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 import jxl.write.Blank;
-import jxl.write.Formula;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
@@ -44,8 +43,9 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 	private WritableWorkbook libroEditable;
 	private File file;
 	
-	protected static final Log logger = LogFactory.getLog(GenerarPropuestaPreciosServiceEntidad01.class);
-	private static final String txtFechaSancion = "Fecha Sanción: ";
+	protected  Log logger = LogFactory.getLog(GenerarPropuestaPreciosServiceEntidad01.class);
+	private  String txtFechaSancion = "Fecha Sanción: ";
+	private  int filaInicial = 6;
 	
 
 	@Override
@@ -74,7 +74,7 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 		try {
 			file = new File(ruta);
 			WorkbookSettings workbookSettings = new WorkbookSettings();
-			//workbookSettings.setEncoding( "Cp1252" );
+			workbookSettings.setEncoding( "Cp1252" );
 			workbookSettings.setSuppressWarnings(true);
 			workbookSettings.setCellValidationDisabled(true);
 			workbookSettings.setMergedCellChecking(false);
@@ -103,7 +103,7 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 			hojaDetalle.addCell(valor);
 			
 			//Bucle para rellenar listado de activos
-			int fila = 6;
+			int fila = filaInicial;
 			for(DtoGenerarPropuestaPreciosEntidad01 dto : listDto) {
 			
 				rellenarFilaExcelPropuestaPrecio(hojaDetalle, (es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosEntidad01) dto,fila);
@@ -112,7 +112,7 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 			
 			//Rellenamos la primera hoja RESUMEN
 			PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, genericDao.createFilter(FilterType.EQUALS, "numPropuesta",Long.parseLong(numPropuesta)));
-			this.rellenarPrimeraHojaResumen(libroEditable.getSheet(0), fila, propuesta.getFechaSancion());
+			this.rellenarPrimeraHojaResumen(libroEditable.getSheet(0), fila-filaInicial, propuesta.getFechaSancion());
 			
 			libroEditable.write();
 			libroEditable.close();
@@ -134,8 +134,10 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 	 */
 	private void rellenarFilaExcelPropuestaPrecio(WritableSheet hoja, DtoGenerarPropuestaPreciosEntidad01 dto, Integer fila) {
 		
-		Integer numFila = fila+1; //Numero fila real correspondiente a la hoja excel
+		//Integer numFila = fila+1; //Numero fila real correspondiente a la hoja excel
 		try {
+			
+			
 			
 	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	        NumberFormat decimalNo = new NumberFormat("#.00"); 
@@ -223,10 +225,10 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 				hoja.addCell(new Number(51,fila,dto.getValorPropuesto(),numberFormat));
 			// 52 Motivo precio
 			
-			hoja.addCell(new Formula(53, fila, "IF(ISBLANK(AZ"+numFila+"),\"\",IF(ISBLANK(AH"+numFila+"),\"\",ROUND(AZ"+numFila+"-AH"+numFila+",2))"));//(IMPACTO) Propuesto - VNC
-			hoja.addCell(new Formula(54, fila, "IF(ISBLANK(AJ"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AJ"+numFila+"-1<>0, ((AZ"+numFila+"/AJ"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Tas/Propuesto
-			hoja.addCell(new Formula(55, fila, "IF(ISBLANK(AD"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AD"+numFila+"-1<>0, ((AZ"+numFila+"/AD"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Valor Haya/Propuesto
-			hoja.addCell(new Formula(56, fila, "IF(ISBLANK(AP"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AP"+numFila+"-1<>0, ((AZ"+numFila+"/AP"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Valor actual web/Propuesto
+		//	hoja.addCell(new Formula(53, fila, "IF(ISBLANK(AZ"+numFila+"),\"\",IF(ISBLANK(AH"+numFila+"),\"\",ROUND(AZ"+numFila+"-AH"+numFila+",2))"));//(IMPACTO) Propuesto - VNC
+		//	hoja.addCell(new Formula(54, fila, "IF(ISBLANK(AJ"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AJ"+numFila+"-1<>0, ((AZ"+numFila+"/AJ"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Tas/Propuesto
+		//	hoja.addCell(new Formula(55, fila, "IF(ISBLANK(AD"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AD"+numFila+"-1<>0, ((AZ"+numFila+"/AD"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Valor Haya/Propuesto
+		//	hoja.addCell(new Formula(56, fila, "IF(ISBLANK(AP"+numFila+"),\"\", IF(ISBLANK(AZ"+numFila+"), \"\", ROUND(IF(AP"+numFila+"-1<>0, ((AZ"+numFila+"/AP"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Valor actual web/Propuesto
 	
 		} catch (WriteException e) {
 			logger.error(e.getMessage());
@@ -246,45 +248,10 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 			//Settear celdas mergeadas restantes a Blank, para evitar warnings en el log
 			this.formateoCeldasMergeadas(hoja);
 			
-			//----------------------------------------------------------------------------------------------------------------------
 			// Número de activos totales
-			hoja.addCell(new Formula(1,5,"COUNTA(DETALLE!F7:DETALLE!F"+fila+")",hoja.getCell(1, 5).getCellFormat()));
-			// Valor tasación
-			hoja.addCell(new Formula(2,5,"SUM(DETALLE!AJ7:DETALLE!AJ"+fila+")",hoja.getCell(2, 5).getCellFormat()));			
-			// VNC
-			hoja.addCell(new Formula(3,5,"SUM(DETALLE!AH7:DETALLE!AH"+fila+")",hoja.getCell(3, 5).getCellFormat()));
-			// Precio autorizado
-			hoja.addCell(new Formula(4,5,"SUM(DETALLE!AN7:DETALLE!AN"+fila+")",hoja.getCell(4, 5).getCellFormat()));
-			// Precio propuesto
-			hoja.addCell(new Formula(5,5,"SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")",hoja.getCell(5, 5).getCellFormat()));
-			// IMPACTO
-			hoja.addCell(new Formula(6,5,"SUM(DETALLE!BB7:DETALLE!BB"+fila+")",hoja.getCell(6, 5).getCellFormat()));
-			// Precio autorizado
-			hoja.addCell(new Formula(7,5,"SUM(DETALLE!BF7:DETALLE!BF"+fila+")",hoja.getCell(7, 5).getCellFormat()));
-			// IMPACTO ????
-			
-			
-			//----------------------------------------------------------------------------------------------------------------------
-			//Descuento - Tasacion
-			hoja.addCell(new Formula(9, 5, "IF(SUM(DETALLE!AJ7:DETALLE!AJ"+fila+")=0,\"\", IF(SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")=0, \"\", ROUND(IF(SUM(DETALLE!AJ7:DETALLE!AJ"+fila+")-1<>0, (((SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")/SUM(DETALLE!AJ7:DETALLE!AJ"+fila+"))-1)*-1), \"\"), 2)))"
-					,hoja.getCell(9, 5).getCellFormat()));
-			hoja.addCell(new Formula(10, 5, "IF(SUM(DETALLE!BF7:DETALLE!BF"+fila+")=0,\"\", IF(SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")=0, \"\", ROUND(IF(SUM(DETALLE!BF7:DETALLE!BF"+fila+")-1<>0, (((SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")/SUM(DETALLE!BF7:DETALLE!BF"+fila+"))-1)*-1), \"\"), 2)))"
-					,hoja.getCell(10, 5).getCellFormat()));
-			
-			//Descuento - Valor haya
-			hoja.addCell(new Formula(11, 5, "IF(SUM(DETALLE!AD7:DETALLE!AD"+fila+")=0,\"\", IF(SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")=0, \"\", ROUND(IF(SUM(DETALLE!AD7:DETALLE!AD"+fila+")-1<>0, (((SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")/SUM(DETALLE!AD7:DETALLE!AD"+fila+"))-1)*-1), \"\"), 2)))"
-					,hoja.getCell(11, 5).getCellFormat()));
-			hoja.addCell(new Formula(12, 5, "IF(SUM(DETALLE!BJ7:DETALLE!BJ"+fila+")=0,\"\", IF(SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")=0, \"\", ROUND(IF(SUM(DETALLE!BJ7:DETALLE!BJ"+fila+")-1<>0, (((SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")/SUM(DETALLE!BJ7:DETALLE!BJ"+fila+"))-1)*-1), \"\"), 2)))"
-					,hoja.getCell(12, 5).getCellFormat()));
-			
-			//Descuento - Valor haya
-			hoja.addCell(new Formula(13, 5, "IF(SUM(DETALLE!AP7:DETALLE!AP"+fila+")=0,\"\", IF(SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")=0, \"\", ROUND(IF(SUM(DETALLE!AP7:DETALLE!AP"+fila+")-1<>0, (((SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")/SUM(DETALLE!AP7:DETALLE!AP"+fila+"))-1)*-1), \"\"), 2)))"
-					,hoja.getCell(13, 5).getCellFormat()));
-			hoja.addCell(new Formula(14, 5, "IF(SUM(DETALLE!BM7:DETALLE!BM"+fila+")=0,\"\", IF(SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")=0, \"\", ROUND(IF(SUM(DETALLE!BM7:DETALLE!BM"+fila+")-1<>0, (((SUM(DETALLE!AZ7:DETALLE!AZ"+fila+")/SUM(DETALLE!BM7:DETALLE!BM"+fila+"))-1)*-1), \"\"), 2)))"
-					,hoja.getCell(14, 5).getCellFormat()));
-			
-			//----------------------------------------------------------------------------------------------------------------------
-			//Fecha Sanción		txtFechaSancion
+			hoja.addCell(new Number(1,5,fila,hoja.getCell(1, 5).getCellFormat()));
+
+			//Fecha Sanción
 			if(!Checks.esNulo(fechaSancion))
 				hoja.addCell(new Label(1,8,txtFechaSancion.concat(sdf.format(fechaSancion)),hoja.getCell(1, 8).getCellFormat()));
 						
@@ -295,6 +262,10 @@ public class GenerarPropuestaPreciosServiceEntidad01 implements GenerarPropuesta
 		}
 	}
 	
+	/**
+	 * Evita warnings por celdas mergeadas
+	 * @param hoja
+	 */
 	private void formateoCeldasMergeadas(WritableSheet hoja) {
 
 		//(hoja, colIni, colFin, rowIni, rowFin)

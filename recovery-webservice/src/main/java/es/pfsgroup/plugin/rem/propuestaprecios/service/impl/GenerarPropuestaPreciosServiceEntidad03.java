@@ -7,15 +7,10 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
-import jxl.Sheet;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
-import jxl.format.Alignment;
-import jxl.format.CellFormat;
-import jxl.format.Colour;
 import jxl.read.biff.BiffException;
 import jxl.write.Blank;
-import jxl.write.Formula;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
@@ -39,11 +34,7 @@ public class GenerarPropuestaPreciosServiceEntidad03 implements GenerarPropuesta
 	private Workbook libroExcel; 
 	private WritableWorkbook libroEditable;
 	private File file;
-
-	private Colour colorAzul;
-	private Colour colorVerde;
-	private Colour colorCarne;
-	private Colour colorBlanco = Colour.WHITE;
+	private static final int filaInicial = 8;
 	
 	protected static final Log logger = LogFactory.getLog(GenerarPropuestaPreciosServiceEntidad03.class);
 	
@@ -74,11 +65,9 @@ public class GenerarPropuestaPreciosServiceEntidad03 implements GenerarPropuesta
 		try {
 			file = new File(ruta);
 			WorkbookSettings workbookSettings = new WorkbookSettings();
-			//workbookSettings.setEncoding( "Cp1252" );
+			workbookSettings.setEncoding( "Cp1252" );
 			workbookSettings.setSuppressWarnings(true);
 			libroExcel = Workbook.getWorkbook( file, workbookSettings );
-			// Rellenamos colores para el formato de celdas
-			this.completarColores(libroExcel.getSheet(0));
 			
 		} catch (BiffException e) {
 			logger.error(e.getMessage());
@@ -114,9 +103,9 @@ public class GenerarPropuestaPreciosServiceEntidad03 implements GenerarPropuesta
 				fila++;
 			}
 			
-			// Rellenamos los resumenes, en la Hoja de talle, y luego en la Hoja Resumen
-			this.rellenarUltimaFilaResumen(hojaDetalle, fila);
-			this.rellenarPrimeraHojaResumen(libroEditable.getSheet(0),fila+1);
+			this.formateoCeldasMergeadasResumen(libroEditable.getSheet(0));
+			// Número total de activos
+			libroEditable.getSheet(0).addCell(new Number(1,7,fila-filaInicial,libroEditable.getSheet(0).getCell(1, 7).getCellFormat()));
 			
 			libroEditable.write();
 			libroEditable.close();
@@ -188,14 +177,14 @@ public class GenerarPropuestaPreciosServiceEntidad03 implements GenerarPropuesta
 			//Columnas 19 - 26 sin saber de donde sacar dichos valores
 			
 			//Formulas ----
-			Integer numFila = fila +1;
+		/*	Integer numFila = fila +1;
 			hoja.addCell(new Formula(27, fila, "IF(ISBLANK(S"+numFila+"),\"\",IF(ISBLANK(Q"+numFila+"),\"\",ROUND(S"+numFila+"-Q"+numFila+",2))"));//PrecioPropuesto - VNC
 			//Descuentos - Tasacion y VNC
 			hoja.addCell(new Formula(28, fila, "IF(ISBLANK(J"+numFila+"),\"\",IF(ISBLANK(S"+numFila+"),\"\",ROUND(J"+numFila+"-S"+numFila+",2))"));//ValorTasacion - PrecioPropuesto
 			hoja.addCell(new Formula(29, fila, "IF(ISBLANK(J"+numFila+"),\"\", IF(ISBLANK(S"+numFila+"), \"\", ROUND(IF(J"+numFila+"-1<>0, ((S"+numFila+"/J"+numFila+"-1)*-1), \"\"), 2)))")); //Porcentaje Tas/Propuesto
 			hoja.addCell(new Formula(30, fila, "IF(ISBLANK(S"+numFila+"),\"\",IF(ISBLANK(R"+numFila+"),\"\",ROUND(S"+numFila+"-R"+numFila+",2))"));//Propuesto - publicado
 			hoja.addCell(new Formula(31, fila, "IF(R"+numFila+"<>0, ROUND(-AE"+numFila+"/R"+numFila+",2), \"\"))"));//porcentaje (Propuesto - Publciado) sobre Propuesto
-			
+			*/
 			hoja.addCell(new Label(32,fila,dto.getSociedadPropietaria()));
 			if(!Checks.esNulo(dto.getFechaPublicacion()))
 				hoja.addCell(new Label(33,fila,sdf.format(dto.getFechaPublicacion())));
@@ -217,111 +206,6 @@ public class GenerarPropuestaPreciosServiceEntidad03 implements GenerarPropuesta
 		}
 		
 	}
-	
-	/**
-	 * En la segunda Hoja DETALLE, se agrega una última fila con el resumen.
-	 * @param hoja
-	 * @param fila
-	 */
-	private void rellenarUltimaFilaResumen(WritableSheet hoja, Integer fila) {
-		
-		Integer numFila = fila;
-		try {
-			
-			// Fondo Azul, negrita, bordeado y Align Right
-			CellFormat formatoGeneral = personalizarFormatoCelda(hoja.getCell(1, 1).getCellFormat(),colorAzul,Alignment.RIGHT);//
-			
-			// Número de activos totales
-			hoja.addCell(new Label(6,numFila,"Nº Activos:",personalizarFormatoCelda(formatoGeneral,colorBlanco,null)));
-			hoja.addCell(new Formula(7,numFila,"COUNTA(C9:C"+fila+")",personalizarFormatoCelda(formatoGeneral,colorBlanco,null)));
-			
-			//Suma valores - 																[valor unificado (Nombre columna en hoja excel generada)]
-			hoja.addCell(new Label(8,numFila,"",formatoGeneral));
-			hoja.addCell(new Formula(9,numFila,"SUM(J9:J"+fila+")",formatoGeneral));		// Tasacion
-			hoja.addCell(new Label(10,numFila,"",formatoGeneral));
-			hoja.addCell(new Formula(11,numFila,"SUM(L9:L"+fila+")",formatoGeneral));		// Estimado Venta (Valor Colaborador)
-			hoja.addCell(new Label(12,numFila,"",formatoGeneral));
-			hoja.addCell(new Formula(13,numFila,"SUM(N9:N"+fila+")",formatoGeneral));		// FSV
-			hoja.addCell(new Label(14,numFila,"",formatoGeneral));
-			hoja.addCell(new Formula(15,numFila,"SUM(P9:P"+fila+")",formatoGeneral));		// Liquidativo (Asesoramiento JLL)
-			hoja.addCell(new Formula(16,numFila,"SUM(Q9:Q"+fila+")",personalizarFormatoCelda(formatoGeneral,colorVerde,null)));		// VNC
-			hoja.addCell(new Formula(17,numFila,"SUM(R9:R"+fila+")",formatoGeneral));		// Precio publicado
-			hoja.addCell(new Formula(18,numFila,"SUM(S9:S"+fila+")",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));		// Precio propuesto
-			hoja.addCell(new Label(19,numFila,"",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));
-			hoja.addCell(new Label(20,numFila,"",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));						
-			hoja.addCell(new Formula(21,numFila,"SUM(V9:V"+fila+")",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));		// Precio mínimo
-			hoja.addCell(new Label(22,numFila,"",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));
-			hoja.addCell(new Label(23,numFila,"",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));
-			hoja.addCell(new Formula(24,numFila,"SUM(Y9:Y"+fila+")",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));		// Precio Renta
-			hoja.addCell(new Label(25,numFila,"",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));
-			hoja.addCell(new Label(26,numFila,"",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));
-			hoja.addCell(new Formula(27,numFila,"SUM(AB9:AB"+fila+")",personalizarFormatoCelda(formatoGeneral,colorCarne,null)));	// (Impacto CTA Rtdos)
-			hoja.addCell(new Formula(28,numFila,"SUM(AC9:AC"+fila+")",formatoGeneral));	// (S / Tasacion)
-			hoja.addCell(new Formula(29, numFila, "IF(ISBLANK(J"+fila+"),\"\", IF(ISBLANK(S"+fila+"), \"\", ROUND(IF(J"+fila+"-1<>0, ((S"+fila+"/J"+fila+"-1)*-1), \"\"), 2)))",formatoGeneral)); //Porcentaje Tas/Propuesto
-			hoja.addCell(new Formula(30,numFila,"SUM(AE9:AE"+fila+")",formatoGeneral));	// (S / VNC)
-			hoja.addCell(new Formula(31, numFila, "IF(R"+fila+"<>0, ROUND(-AE"+fila+"/R"+fila+",2), \"\"))",formatoGeneral));//porcentaje (Propuesto - Publciado) sobre Propuesto
-			
-		} catch (RowsExceededException e) {
-			logger.error(e.getMessage());
-		} catch (WriteException e) {
-			logger.error(e.getMessage());
-		}
-	}
-	
-	/**
-	 * Agrega formula a la Hoja Resumen del informe
-	 * @param hoja
-	 * @param fila
-	 */
-	private void rellenarPrimeraHojaResumen(WritableSheet hoja, Integer fila) {
-
-		Integer numFila = 7; 		// Fila que apunta a la hoja DETALLE del fichero excel
-		Integer numFilaTipologia = 26;
-		
-		try {
-			//Settear celdas mergeadas restantes a Blank, para evitar warnings en el log
-			this.formateoCeldasMergeadasResumen(hoja);
-			
-			// Fondo Azul, negrita, centrado y bordeado
-			CellFormat formatoGeneral = hoja.getCell(2, 25).getCellFormat();//C26 de hoja Resumen
-			
-			//Datos propuesta - Gestor
-			hoja.addCell(new Formula(2,1,"IF(ISBLANK(DETALLE!C2),\"\",DETALLE!C2)",personalizarFormatoCelda(formatoGeneral,colorBlanco,Alignment.LEFT)));
-			hoja.addCell(new Formula(2,2,"IF(ISBLANK(DETALLE!C3),\"\",DETALLE!C3)",personalizarFormatoCelda(formatoGeneral,colorBlanco,Alignment.LEFT)));
-			
-			// Número de activos totales
-			hoja.addCell(new Formula(1,numFila,"DETALLE!H"+fila,hoja.getCell(1, 7).getCellFormat()));
-			hoja.addCell(new Formula(2,numFila,"DETALLE!J"+fila,hoja.getCell(2, 7).getCellFormat()));
-			hoja.addCell(new Formula(3,numFila,"DETALLE!Q"+fila,hoja.getCell(3, 7).getCellFormat()));
-			hoja.addCell(new Formula(4,numFila,"DETALLE!R"+fila,hoja.getCell(4, 7).getCellFormat()));
-			hoja.addCell(new Formula(5,numFila,"DETALLE!S"+fila,hoja.getCell(5, 7).getCellFormat()));
-			hoja.addCell(new Formula(6,numFila,"DETALLE!AB"+fila,hoja.getCell(6, 7).getCellFormat()));
-			hoja.addCell(new Formula(7,numFila,"DETALLE!AC"+fila,hoja.getCell(7, 7).getCellFormat()));
-			hoja.addCell(new Formula(8,numFila,"DETALLE!AD"+fila,hoja.getCell(8, 7).getCellFormat()));
-			hoja.addCell(new Formula(9,numFila,"DETALLE!AE"+fila,hoja.getCell(9, 7).getCellFormat()));
-			hoja.addCell(new Formula(10,numFila,"DETALLE!AF"+fila,hoja.getCell(10, 7).getCellFormat()));
-			
-			//Format: Fondo Blanco, bordeado y centrado
-			formatoGeneral = personalizarFormatoCelda(hoja.getCell(1, 26).getCellFormat(),null,Alignment.CENTRE);
-			// Fórmulas Motivo Precio
-			hoja.addCell(new Formula(2,numFilaTipologia,construirFormulaMotivoPrecio(27,"C"),formatoGeneral));
-			hoja.addCell(new Formula(2,numFilaTipologia+1,construirFormulaMotivoPrecio(28,"C"),formatoGeneral));
-			hoja.addCell(new Formula(3,numFilaTipologia,construirFormulaMotivoPrecio(27,"D"),formatoGeneral));
-			hoja.addCell(new Formula(3,numFilaTipologia+1,construirFormulaMotivoPrecio(28,"D"),formatoGeneral));
-			hoja.addCell(new Formula(4,numFilaTipologia,construirFormulaMotivoPrecio(27,"E"),formatoGeneral));
-			hoja.addCell(new Formula(4,numFilaTipologia+1,construirFormulaMotivoPrecio(28,"E"),formatoGeneral));
-			
-		} catch (RowsExceededException e) {
-			logger.error(e.getMessage());
-		} catch (WriteException e) {
-			logger.error(e.getMessage());
-		}
-	}
-	
-	private String construirFormulaMotivoPrecio(Integer filaTipo, String columnaMotivo) {
-		
-		return "SUMPRODUCT((OFFSET(DETALLE!AN9,0,0,B8) = B"+filaTipo+") * (OFFSET(DETALLE!AQ9,0,0,B8) = "+columnaMotivo+"26))";
-	}
 
 	@Override
 	public void vaciarLibros() {
@@ -329,41 +213,11 @@ public class GenerarPropuestaPreciosServiceEntidad03 implements GenerarPropuesta
 		this.libroEditable = null;
 		this.libroExcel = null;
 	}
-
+	
 	/**
-	 * Agregar a la celda color de fondo y alineamiento de texto
-	 * @param formatoGeneral
-	 * @param colorFondo
-	 * @param alineamiento
-	 * @return
+	 * Evita warnings por celdas mergeadas
+	 * @param hoja
 	 */
-	private WritableCellFormat personalizarFormatoCelda(CellFormat formatoGeneral, Colour colorFondo, Alignment alineamiento) {
-		WritableCellFormat formato = new WritableCellFormat(formatoGeneral);
-		
-		try {
-			
-			if(!Checks.esNulo(alineamiento))
-				formato.setAlignment(alineamiento);
-			if(!Checks.esNulo(colorFondo))
-				formato.setBackground(colorFondo);
-			
-			
-		} catch (WriteException e) {
-			logger.error(e.getMessage());
-		}
-		
-		return formato;
-	}
-	
-	/*
-	 * Colores principales de las celdas
-	 */
-	public void completarColores(Sheet hojaResumen) {
-		this.colorAzul = hojaResumen.getCell(2,4).getCellFormat().getBackgroundColour();
-		this.colorVerde = hojaResumen.getCell(3,4).getCellFormat().getBackgroundColour();
-		this.colorCarne = hojaResumen.getCell(5,5).getCellFormat().getBackgroundColour();
-	}
-	
 	private void formateoCeldasMergeadasResumen(WritableSheet hoja) {
 
 		//(hoja, colIni, colFin, rowIni, rowFin)

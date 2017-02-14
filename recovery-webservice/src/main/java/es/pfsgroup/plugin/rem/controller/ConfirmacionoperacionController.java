@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.plugin.rem.api.AnulacionesApi;
 import es.pfsgroup.plugin.rem.api.ConfirmarOperacionApi;
-import es.pfsgroup.plugin.rem.api.ReintegroApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ConfirmacionOpDto;
 import es.pfsgroup.plugin.rem.rest.dto.ConfirmacionOpRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class ConfirmacionoperacionController {
@@ -32,13 +30,10 @@ public class ConfirmacionoperacionController {
 	private RestApi restApi;
 
 	@Autowired
-	private GenericABMDao genericDao;
-	
-	@Autowired
-	private ReintegroApi reintegroApi;
-	
-	@Autowired
 	private ConfirmarOperacionApi confirmarOperacionApi;
+	
+	@Autowired
+	private AnulacionesApi anulacionesApi;
 	
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -69,28 +64,18 @@ public class ConfirmacionoperacionController {
 					
 					if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.COBRO_RESERVA)){
 						confirmarOperacionApi.cobrarReserva(confirmacionOpDto);
-						
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.COBRO_VENTA)){					
 						confirmarOperacionApi.cobrarVenta(confirmacionOpDto);
-						
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.DEVOLUCION_RESERVA)){
 						confirmarOperacionApi.devolverReserva(confirmacionOpDto);					
-						
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.REINTEGRO_RESERVA)){					
 						confirmarOperacionApi.reintegrarReserva(confirmacionOpDto);
-
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_COBRO_RESERVA)){
-						//Not implemented yet
-						confirmarOperacionApi.anularCobroReserva(confirmacionOpDto);
-						
+						anulacionesApi.anularCobroReserva(confirmacionOpDto);
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_COBRO_VENTA)){
-						//Not implemented yet
-						confirmarOperacionApi.anularCobroVenta(confirmacionOpDto);
-						
+						anulacionesApi.anularCobroVenta(confirmacionOpDto);
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_DEVOLUCION_RESERVA)){
-						//Not implemented yet
-						confirmarOperacionApi.anularDevolucionReserva(confirmacionOpDto);
-						
+						anulacionesApi.anularDevolucionReserva(confirmacionOpDto);
 					}	
 				}
 

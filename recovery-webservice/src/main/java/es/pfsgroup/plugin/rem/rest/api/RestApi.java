@@ -46,9 +46,9 @@ public interface RestApi {
 	public static final String REST_NO_RELATED_COND_EXPEDIENT = "NO_EXISTE_CONDICIONANTE_EXPEDIENTE_RELACIONADO";
 	public static final String REST_NO_RELATED_ASSET = "SIN_ACTIVO_RELACIONADO_CON_LA_OFERTA";
 	public static final String REST_MSG_MISSING_REQUIRED = "REQUIRED";
-	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
+	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID";
 	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";
-	public static final String REST_MSG_OVERFLOW = "OVERFLOW";
+	public static final String REST_MSG_OVERFLOW = "INVALID";
 	public static final String REST_UNIQUE_VIOLATED = "INVALID";// "UNIQUE_CONSTRAINT_VIOLATED";
 	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
 	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";

@@ -357,6 +357,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							},
 							{
 								xtype: 'textfieldbase',
+								reference: 'textFieldPerimetroGestion',
 								bind:		'{activo.motivoAplicaGestion}'
 							},
 							
@@ -402,6 +403,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							},
 							{
 								xtype: 'comboboxfieldbase',
+								reference: 'comboMotivoPerimetroComer',
 								bind: {
 									store: '{comboMotivoAplicaComercializarActivo}',
 									value: '{activo.motivoAplicaComercializarCodigo}',
@@ -410,6 +412,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							},
 							{
 								xtype: 'textfieldbase',
+								reference: 'textFieldPerimetroComer',
 								visible: false,
 								maxLength: '256',
 								bind: {
@@ -441,7 +444,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroFormalizar',
 								bind: {
-									readOnly: '{!activo.aplicaComercializar}',
 									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},

@@ -236,6 +236,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		//HREOS-843 Situacion Comercial del activo
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
+			BeanUtils.copyProperty(activoDto, "situacionComercialCodigo", activo.getSituacionComercial().getCodigo());
 			BeanUtils.copyProperty(activoDto, "situacionComercialDescripcion", activo.getSituacionComercial().getDescripcion());
 		}
 

@@ -544,7 +544,20 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'bloqueoTipoComercializacionAutomatico',
 				type: 'boolean'
-			}
+			},
+			{
+				name: 'situacionComercialCodigo'
+			},
+    		{
+    			name: 'isVendido',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.situacionComercialCodigo)){
+    					return false;
+    				}
+    				return data.situacionComercialCodigo == CONST.SITUACION_COMERCIAL['VENDIDO'];
+    			},
+    			depends: 'situacionComercialCodigo'
+    		}
     ],
     
 	proxy: {

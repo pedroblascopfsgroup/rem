@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -59,6 +60,8 @@ public class DDSubtipoActivo implements Auditable, Dictionary {
 	@Column(name = "DD_SAC_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
+	@Transient
+	private String codigoTipoActivo;
 	
 	    
 	@Version   
@@ -122,6 +125,14 @@ public class DDSubtipoActivo implements Auditable, Dictionary {
 
 	public void setTipoActivo(DDTipoActivo tipoActivo) {
 		this.tipoActivo = tipoActivo;
+	}
+
+	public String getCodigoTipoActivo() {
+		return tipoActivo.getCodigo();
+	}
+
+	public void setCodigoTipoActivo(String codigoTipoActivo) {
+		this.codigoTipoActivo = tipoActivo.getCodigo();
 	}
 
 }

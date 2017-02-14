@@ -34,9 +34,6 @@ import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
 public class InformeMediadorDto implements Serializable {
 
-	/**
-	 * 
-	 */
 	@EntityDefinition(procesar = false)
 	private static final long serialVersionUID = 1L;
 
@@ -71,13 +68,11 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private Long idActivoHaya;
 
-	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
 	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRemAnterior no existe", groups = { Insert.class,
 		Update.class })
 	private Long idProveedorRemAnterior;
 
-	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
 	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
 		Update.class })
@@ -87,7 +82,6 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private Boolean posibleInforme;
 
-	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
 	private String motivoNoPosibleInforme;
 
@@ -107,6 +101,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = Insert.class)
 	private Date fechaUltimaVisita;
 
+	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoVia.class, message = "El codTpoVivienda de activo no existe", groups = { Insert.class,
 			Update.class })
 	@EntityDefinition(propertyName = "tipoVia", classObj = DDTipoVia.class)
@@ -175,7 +170,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "fechaRecepcionLlaves")
 	private Date fechaRecepcionLlavesApi;
 
-	// ? ACT_ICO_INF_COMERCIAL DD_LOC_REGISTRO_ID
+	@NotNull(groups = Insert.class)
 	@Diccionary(clase = Localidad.class, message = "El codMunicipioRegistro no existe", groups = { Insert.class,
 			Update.class })
 	@EntityDefinition(procesar = false, motivo = "Falta columna DD_LOC_REGISTRO_ID en ACT_ICO_INFO_COMERCIAL")

@@ -64,29 +64,4 @@ public interface ConfirmarOperacionApi {
 	public void reintegrarReserva(ConfirmacionOpDto confirmacionOpDto) throws Exception;
 	
 	
-	/**
-	 * 
-	 * @param ConfirmacionOpDto con los datos necesarios para registrar el reintegro de la reserva
-	 * @return void 
-	 */
-	public void anularCobroReserva(ConfirmacionOpDto confirmacionOpDto) throws Exception;
-	
-	
-	/**
-	 * 
-	 * @param ConfirmacionOpDto con los datos necesarios para registrar el reintegro de la reserva
-	 * @return void 
-	 */
-	public void anularCobroVenta(ConfirmacionOpDto confirmacionOpDto) throws Exception;
-	
-	
-	/**
-	 * 
-	 * @param ConfirmacionOpDto con los datos necesarios para registrar el reintegro de la reserva
-	 * @return void 
-	 */
-	public void anularDevolucionReserva(ConfirmacionOpDto confirmacionOpDto) throws Exception;
-	
-	
-	
 }

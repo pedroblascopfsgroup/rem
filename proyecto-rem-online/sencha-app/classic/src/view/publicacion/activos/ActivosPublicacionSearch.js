@@ -100,10 +100,12 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					       		xtype: 'comboboxfieldbase',
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('fieldlabel.publicaciones.activos.search.tipoActivo'),
+					        	reference: 'filtroComboTipoActivo',
 					        	name: 'tipoActivo',
 					        	bind: {
 				            		store: '{comboTipoActivo}'
-				            	}
+				            	},
+				            	publishes: 'value'
 					        },
 					        {
 					        	xtype: 'comboboxfieldbase',
@@ -111,7 +113,12 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.publicaciones.activos.search.subtipoActivo'),
 					        	name: 'subtipoActivo',
 					        	bind: {
-				            		store: '{comboSubtipoActivo}'
+				            		store: '{comboSubtipoActivo}',
+				            		disabled: '{!filtroComboTipoActivo.value}',
+					                filters: {
+					                	property: 'codigoTipoActivo',
+					                	value: '{filtroComboTipoActivo.value}'
+					                }
 				            	}
 					        }
 						]

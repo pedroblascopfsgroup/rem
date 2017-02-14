@@ -2,8 +2,10 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface GestorExpedienteComercialApi {
 
@@ -36,4 +38,18 @@ public interface GestorExpedienteComercialApi {
 	 * @return
 	 */
 	public String[] getCodigosTipoGestorExpedienteComercial();
+	
+	/**
+	 * Actualiza las tareas del tramite de un expediente comercial
+	 * @param idTrabajo
+	 */
+	public void actualizarTareas(Long idTrabajo);
+	
+	/**
+	 * Devuelve el gestor del expediente comercial según el codigo del tipoGestor pasado por parámetro
+	 * @param expediente
+	 * @param tipo
+	 * @return
+	 */
+	public Usuario getGestorByExpedienteComercialYTipo(ExpedienteComercial expediente, String tipo);
 }

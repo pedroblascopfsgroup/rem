@@ -818,7 +818,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			   }  catch (e){ };
 			   
 			   if(data.success === "true") {
-				   me.getView().funcionRecargar();
+				   //me.getView().funcionRecargar();
+				   me.lookupReference('formalizacionExpediente').funcionRecargar();
 			   }else {
 			   		//me.fireEvent("errorToast", data.msg);
 				   me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

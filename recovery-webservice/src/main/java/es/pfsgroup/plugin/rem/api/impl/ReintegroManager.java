@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -32,9 +31,6 @@ public class ReintegroManager extends BusinessOperationOverrider<ReintegroApi> i
 
 	@Autowired
 	private RestApi restApi;
-
-	@Autowired
-	private GenericABMDao genericDao;
 
 	@Autowired
 	private OfertaApi ofertaApi;

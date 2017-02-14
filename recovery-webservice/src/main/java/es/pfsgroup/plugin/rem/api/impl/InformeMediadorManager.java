@@ -1175,6 +1175,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		if (permisos != null) {
 			if (permisos.containsKey(codigoTipoBien)
 					&& (fieldValor == null || (fieldValor instanceof String && ((String) fieldValor).isEmpty()))) {
+				if (fiedlName.length() > 2) {
+					fiedlName = fiedlName.substring(0, 1).toLowerCase().concat(fiedlName.substring(1));
+				}
 				errorsList.put(fiedlName, RestApi.REST_MSG_MISSING_REQUIRED);
 			}
 		}
@@ -1251,8 +1254,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			throws Exception {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = null;
-		String codHabitaculo = null;
-		
+
 		for (InformeMediadorDto informe : informes) {
 			map = new HashMap<String, Object>();
 			HashMap<String, String> errorsList = null;
@@ -1272,7 +1274,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					errorsList.putAll(errorsListPlanta);
 				}
 			}
-			this.validateInformeMediadorDto(informe, informe.getCodTipoActivo(), errorsList);
+			// this.validateInformeMediadorDto(informe,
+			// informe.getCodTipoActivo(), errorsList);
 			if (errorsList.size() == 0) {
 
 				ActivoInfoComercial informeEntity = null;
@@ -1361,66 +1364,77 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys);
 				// Si viene información de las plantas lo guardamos
 				List<PlantaDto> plantas = informe.getPlantas();
-				for (PlantaDto planta : plantas) {
-					ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
-							genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
-							genericDao.createFilter(FilterType.EQUALS, "infoComercial", informeEntity));
-					if (activoDistribucion == null) {
-						activoDistribucion = new ActivoDistribucion();
+				if (plantas != null) {
+					for (PlantaDto planta : plantas) {
+						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
+								genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
+								genericDao.createFilter(FilterType.EQUALS, "infoComercial", informeEntity));
+						if (activoDistribucion == null) {
+							activoDistribucion = new ActivoDistribucion();
+						}
+						activoDistribucion.setNumPlanta(planta.getNumero());
+						activoDistribucion.setInfoComercial(informeEntity);
+						DDTipoHabitaculo tipoHabitaculo = null;
+						if (planta.getCodTipoEstancia() != null && !planta.getCodTipoEstancia().isEmpty()) {
+							tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
+						}
+						activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
+						activoDistribucion.setCantidad(planta.getNumero());
+						activoDistribucion.setSuperficie(planta.getEstancias());
+						activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
+						genericDao.save(ActivoDistribucion.class, activoDistribucion);
 					}
-					activoDistribucion.setNumPlanta(planta.getNumero());
-					activoDistribucion.setInfoComercial(informeEntity);
-					DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
-					activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
-					activoDistribucion.setCantidad(planta.getNumero());
-					activoDistribucion.setSuperficie(planta.getEstancias());
-					activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
-					genericDao.save(ActivoDistribucion.class, activoDistribucion);
 				}
-				//Si vienen campos anejos, meter en distribucion
-				if(!Checks.esNulo(informe.getAnejoGarage()) || !Checks.esNulo(informe.getNumeroPlazasGaraje()) || !Checks.esNulo(informe.getSuperficiePlazasGaraje())){				
+				// Si vienen campos anejos, meter en distribucion
+				if (!Checks.esNulo(informe.getAnejoGarage()) || !Checks.esNulo(informe.getNumeroPlazasGaraje())
+						|| !Checks.esNulo(informe.getSuperficiePlazasGaraje())) {
 					ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
 							genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
-							genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_GARAJE),
-							genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo", informe.getIdActivoHaya()));
+							genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo",
+									DDTipoHabitaculo.TIPO_HABITACULO_GARAJE),
+							genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo",
+									informe.getIdActivoHaya()));
 					if (activoDistribucion == null) {
 						activoDistribucion = new ActivoDistribucion();
 					}
 					activoDistribucion.setNumPlanta(Integer.valueOf(0));
 					activoDistribucion.setInfoComercial(informeEntity);
 					DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoHabitaculo.TIPO_HABITACULO_GARAJE));
-					activoDistribucion.setTipoHabitaculo(tipoHabitaculo);					
+							genericDao.createFilter(FilterType.EQUALS, "codigo",
+									DDTipoHabitaculo.TIPO_HABITACULO_GARAJE));
+					activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
 					activoDistribucion.setCantidad(informe.getNumeroPlazasGaraje());
 					activoDistribucion.setSuperficie(informe.getSuperficiePlazasGaraje());
 					activoDistribucion.setDescripcion(informe.getAnejoGarage());
 
 					genericDao.save(ActivoDistribucion.class, activoDistribucion);
 				}
-				
-				if(!Checks.esNulo(informe.getAnejoTrastero())){				
+
+				if (!Checks.esNulo(informe.getAnejoTrastero())) {
 					ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
 							genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
-							genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo", DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO),
-							genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo", informe.getIdActivoHaya()));
+							genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo",
+									DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO),
+							genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo",
+									informe.getIdActivoHaya()));
 					if (activoDistribucion == null) {
 						activoDistribucion = new ActivoDistribucion();
 					}
 					activoDistribucion.setNumPlanta(Integer.valueOf(0));
 					activoDistribucion.setInfoComercial(informeEntity);
 					DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO));
+							genericDao.createFilter(FilterType.EQUALS, "codigo",
+									DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO));
 					activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
 					activoDistribucion.setDescripcion(informe.getAnejoTrastero());
-					
+
 					genericDao.save(ActivoDistribucion.class, activoDistribucion);
 				}
-				
 
 				adapter.crearTramitePublicacion(informeEntity.getActivo().getId());
-				
-				//Actualizamos el rating del activo
+
+				// Actualizamos el rating del activo
 				activoApi.calcularRatingActivo(informeEntity.getActivo().getId());
 
 				map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());

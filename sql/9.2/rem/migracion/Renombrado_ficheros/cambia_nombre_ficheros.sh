@@ -3,8 +3,8 @@
 echo "SE INICIA EL PROCESO DE RENOMBRADO DE LOS FICHEROS F1 Y F2"
 
 echo "Descomprimiendo ficheros"
-unrar e Ficheros_FaseI_*.rar
-unrar e Ficheros_FaseII_*.rar
+unzip MIGRACION_REM_FaseI_20170210.zip
+unzip MIGRACION_REM_FaseII_20170210.zip
 
 
 echo "Organizando, renombrando y distribuyendo ficheros"

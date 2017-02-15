@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--## 	    0.2 Se cambia usuario ogf02 a ogf2, ademas se arregla el insert con error
 --##########################################
 --*/
 
@@ -44,7 +45,7 @@ DECLARE
 		T_TIPO_DATA('2','montalvo' ,'Montalvo' ,'Montalvo', 'MONTALVO','45139','9990000000300','23','montalvo02'),
 		T_TIPO_DATA('1','gutierrez_labrador' ,'Gutiérrez Labrador' ,'Gutiérrez Labrador', 'GUTIERREZL','2084','9990000000400','24','gl02'),
 		T_TIPO_DATA('5','garsa' ,'Garsa' ,'Garsa', 'GARSA','45321','9990000000500','25','garsa02'),
-		T_TIPO_DATA('6','ogf' ,'OGF' ,'OGF', 'OGF','59','9990000000600','26','ogf02'),
+		T_TIPO_DATA('6','ogf' ,'OGF' ,'OGF', 'OGF','59','9990000000600','26','ogf2'),
 		T_TIPO_DATA('8','diagonal_company' ,'Diagonal Gest' ,'Diagonal Gest', 'DIAGONAL','2082','9990000000700','27','diagonal02'),
 		T_TIPO_DATA('9','grupoBC' ,'Grupo BC' ,'Grupo BC', 'GRUPOBC','1056','9990000000800','28','cenahi02'),
 		T_TIPO_DATA('10','tinsa_certify' ,'Tinsa Certify' ,'Tinsa Certify', 'TINSACERTIFY','50148','9990000000900','30','tinsacer02'),

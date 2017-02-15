@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin_Arnal
---## FECHA_CREACION=20170201
+--## FECHA_CREACION=20170202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1089-HREOS-1511
@@ -91,7 +91,7 @@ BEGIN
           		V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (' ||
                       		'DD_'||V_TRES_LETRAS_TABLA||'_ID, DD_'||V_TRES_LETRAS_TABLA||'_CODIGO, DD_'||V_TRES_LETRAS_TABLA||'_CARPETA , DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION, DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA,' ||
 				' DD_GRF_NOM_GES_FICH, PVE_COD_REM, NUCLII, POS_5_A_6_PROV, USERNAME_GIAADMT, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      		'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''','||V_TMP_TIPO_DATA(7)||','||V_TMP_TIPO_DATA(8)||',,'''||TRIM(V_TMP_TIPO_DATA(9))||''''||
+                      		'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''','||V_TMP_TIPO_DATA(7)||','||V_TMP_TIPO_DATA(8)||','''||TRIM(V_TMP_TIPO_DATA(9))||''','||
                       		'0, ''DML'',SYSDATE,0 FROM DUAL';
 			DBMS_OUTPUT.PUT_LINE(V_MSQL);
           		EXECUTE IMMEDIATE V_MSQL;

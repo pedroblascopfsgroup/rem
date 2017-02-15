@@ -302,14 +302,17 @@ public class MSVHojaExcel {
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 		
 		// Formato numerico compatible con notacion latina
-		symbols.setDecimalSeparator(','); // Simbolo de decimales
+		symbols.setDecimalSeparator('.'); // Simbolo de decimales
 		symbols.setMinusSign('-'); // Simbolo numero negativo
 		
-		if(!Checks.esNulo(cellValue) && cellValue.contains("."))
-			symbols.setGroupingSeparator('.'); // Simbolo de miles
+		if(!Checks.esNulo(cellValue) && cellValue.contains(","))
+			symbols.setGroupingSeparator(','); // Simbolo de miles
 		
 		if(!Checks.esNulo(cellValue) && cellValue.contains("E"))
 			symbols.setExponentSeparator("E"); // Simbolo numero exponencial
+		
+		if(!Checks.esNulo(cellValue) && cellValue.contains("%"))
+			symbols.setPercent('%'); // Simbolo porcentaje
 		
 		df.setDecimalFormatSymbols(symbols);
 		

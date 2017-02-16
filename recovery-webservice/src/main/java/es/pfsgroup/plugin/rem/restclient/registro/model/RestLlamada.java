@@ -176,7 +176,7 @@ public class RestLlamada implements Serializable, Auditable {
 			this.request = request;
 		} else {
 			this.request = request.substring(0, MAX_CHARS_JSON) + ".... [too long...]";
-		}
+		}	
 	}
 
 	public String getResponse() {

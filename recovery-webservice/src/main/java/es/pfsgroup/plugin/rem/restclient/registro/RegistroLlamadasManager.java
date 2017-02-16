@@ -69,7 +69,11 @@ public class RegistroLlamadasManager {
 							datoRechazado.setVista(handler.nombreVistaDatosActuales());
 							datoRechazado.setIdObjeto(Long.valueOf(id));
 							if (jsonObject.containsKey("invalidFields")) {
-								datoRechazado.setDatosInvalidos(jsonObject.getJSONObject("invalidFields").toString());
+								String invalidFields = jsonObject.getJSONObject("invalidFields").toString();
+								if(invalidFields.length()>99){
+									invalidFields = invalidFields.substring(0,99);
+								}
+								datoRechazado.setDatosInvalidos(invalidFields);
 							}else{
 								datoRechazado.setDatosInvalidos("error http");
 								isHttp= true;

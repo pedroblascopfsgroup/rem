@@ -189,7 +189,8 @@ BEGIN
     (SELECT PVE.PVE_ID
 		FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
 		WHERE PVE.PVE_COD_UVEM = MIG.PVE_CODIGO 
-		AND PVE.DD_TPR_ID IN(SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR TPR WHERE TPR.DD_TPR_CODIGO IN (''04'',''18'',''23'',''28'',''29'',''30'',''31'',''33'',''34'')))                        ICO_MEDIADOR_ID,
+		AND PVE.DD_TPR_ID IN(SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR TPR WHERE TPR.DD_TPR_CODIGO IN (''04'',''18'',''23'',''28'',''29'',''30'',''31'',''33'',''34''))
+		AND ROWNUM = 1)                        ICO_MEDIADOR_ID,
     MIG.ICO_DESCRIPCION                                                                  ICO_DESCRIPCION,
     MIG.ICO_ANO_CONSTRUCCION                                                     ICO_ANO_CONSTRUCCION,
     MIG.ICO_ANO_REHABILITACION                                                  ICO_ANO_REHABILITACION,

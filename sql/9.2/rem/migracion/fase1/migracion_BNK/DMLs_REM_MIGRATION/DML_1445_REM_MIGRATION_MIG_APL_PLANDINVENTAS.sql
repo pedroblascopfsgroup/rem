@@ -321,7 +321,7 @@ BEGIN
 	)
 	SELECT
 	'''||V_TABLA_MIG||''',
-	'''||V_TABLA||''',
+	''ACT_ABA_ACTIVO_BANCARIO'',
 	'||V_REG_MIG||',
 	'||V_REG_INSERTADOS||',
 	'||V_REJECTS||',

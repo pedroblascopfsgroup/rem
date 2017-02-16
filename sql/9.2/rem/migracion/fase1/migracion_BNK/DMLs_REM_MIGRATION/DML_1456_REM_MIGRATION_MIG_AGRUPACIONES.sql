@@ -93,7 +93,7 @@ BEGIN
 	MIG.AGR_TEXTO_WEB                                       			AGR_TEXTO_WEB,
 	(SELECT ACT_ID
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO
-	WHERE ACT_NUM_ACTIVO = MIG.AGR_ACT_PRINCIPAL)           			AGR_ACT_PRINCIPAL,
+	WHERE ACT_NUM_ACTIVO_UVEM = MIG.AGR_ACT_PRINCIPAL)           		AGR_ACT_PRINCIPAL,
 	NULL		                                            			AGR_GESTOR_ID,
 	NULL										                        AGR_MEDIADOR_ID,
 	''0''                                                 				VERSION,

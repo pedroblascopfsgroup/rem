@@ -44,14 +44,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Estado Trabajo");
+		logger.trace("Invocando servicio Webcom: Estado Trabajo");
 
 		ParamsList paramsList = createParamsList(estadoTrabajo);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.estadoPeticionTrabajo(appProperties), paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 	}
 
@@ -62,14 +62,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	
 	
 	public void webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Estado Oferta");
+		logger.trace("Invocando servicio Webcom: Estado Oferta");
  
 		ParamsList paramsList = createParamsList(estadoOferta);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.estadoOferta(appProperties), paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 
 	}
@@ -80,14 +80,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestStock(List<StockDto> stock, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Stock");
+		logger.trace("Invocando servicio Webcom: Stock");
 
 		ParamsList paramsList = createParamsList(stock);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.stock(appProperties),paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 
 	}
@@ -98,14 +98,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Estado notificaciones");
+		logger.trace("Invocando servicio Webcom: Estado notificaciones");
 
 		ParamsList paramsList = createParamsList(notificaciones);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.estadoNotificacion(appProperties), paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 
 	}
@@ -116,14 +116,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestVentasYcomisiones(List<ComisionesDto> comisiones, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Ventas y Comisiones");
+		logger.trace("Invocando servicio Webcom: Ventas y Comisiones");
 
 		ParamsList paramsList = createParamsList(comisiones);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.ventasYcomisiones(appProperties), paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 
 	}
@@ -134,14 +134,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestProveedores(List<ProveedorDto> proveedores, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Envio datos Proveedores");
+		logger.trace("Invocando servicio Webcom: Envio datos Proveedores");
 
 		ParamsList paramsList = createParamsList(proveedores);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.proveedores(appProperties), paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 
 	}
@@ -152,14 +152,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
+		logger.trace("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
 
 		ParamsList paramsList = createParamsList(informes);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.estadoInformeMediador(appProperties), paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 
 	}
@@ -170,14 +170,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Envio Cabeceras Obras Nuevas");
+		logger.trace("Invocando servicio Webcom: Envio Cabeceras Obras Nuevas");
 
 		ParamsList paramsList = createParamsList(cabeceras);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.cabecerasObrasNuevas(appProperties),paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 
 	}
@@ -188,14 +188,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Envio Activos Obras Nuevas");
+		logger.trace("Invocando servicio Webcom: Envio Activos Obras Nuevas");
 
 		ParamsList paramsList = createParamsList(activos);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.activosObrasNuevas(appProperties), paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 
 	}
@@ -206,14 +206,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestUsuarios(List<UsuarioDto> usuarios, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Envio Usuarios");
+		logger.trace("Invocando servicio Webcom: Envio Usuarios");
 
 		ParamsList paramsList = createParamsList(usuarios);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.usuarios(appProperties),paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 		
 	}
@@ -224,14 +224,14 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 	
 	public void webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas, RestLlamada registro) throws ErrorServicioWebcom {
-		logger.info("Invocando servicio Webcom: Envio Obras Nuevas Campanyas");
+		logger.trace("Invocando servicio Webcom: Envio Obras Nuevas Campanyas");
 
 		ParamsList paramsList = createParamsList(campanyas);
 
 		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(WebcomEndpoint.obrasNuevasCampanyas(appProperties), paramsList, registro);
 		} else {
-			logger.debug("ParamsList vacío. Nada que enviar");
+			logger.trace("ParamsList vacío. Nada que enviar");
 		}
 	}
 

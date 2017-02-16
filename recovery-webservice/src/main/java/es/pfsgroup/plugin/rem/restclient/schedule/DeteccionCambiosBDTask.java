@@ -115,11 +115,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			ejecutaTarea(handler, listPendientes, control, registro);
 
 			if ((errorServicioWeb != null && !errorServicioWeb.isReintentable()) || errorServicioWeb == null) {
-				logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+				logger.trace(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
 				handler.marcaComoEnviados(control, llamadas);
 			}
 
-			logger.debug("TIMER DETECTOR FULL enviaInformacionCompleta [" + handler.getClass().getSimpleName() + "]: "
+			logger.trace("TIMER DETECTOR FULL enviaInformacionCompleta [" + handler.getClass().getSimpleName() + "]: "
 					+ (System.currentTimeMillis() - startTime));
 
 		} catch (ErrorServicioWebcom e) {
@@ -199,7 +199,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 
 		long iteracion = System.currentTimeMillis();
-		logger.info("[inicio] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
+		logger.debug("[DETECCIÓN CAMBIOS] Inicio [it=" + iteracion + "]");
 		try {
 			List<DetectorCambiosBD> registroCambiosHandlersAjecutar = registroCambiosHandlers;
 			if (handlerToExecute != null) {
@@ -210,15 +210,16 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			if ((registroCambiosHandlersAjecutar != null) && (!registroCambiosHandlersAjecutar.isEmpty())) {
 				// ordenamos los handlers por peso
 				Collections.sort(registroCambiosHandlersAjecutar);
-				//importante: Si no hacemos esto no se pueden actualizar las vistas materializadas
+				// importante: Si no hacemos esto no se pueden actualizar las
+				// vistas materializadas
 				registroCambiosHandlersAjecutar.get(0).setdbContext();
 				for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
 					if (handler.isActivo()) {
-						logger.debug("EJECUTANDO HANDLER: " + handler.getClass().getName());
+						logger.debug("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
 						ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
 						long startTime = System.currentTimeMillis();
 
-						logger.debug(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
+						logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
 						Class control = handler.getDtoClass();
 						CambiosList listPendientes = new CambiosList(tamanyoBloque);
 						handler.actualizarVistaMaterializada();
@@ -231,6 +232,14 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							try {
 								listPendientes = handler.listPendientes(control, registro, listPendientes);
 								somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
+								if (somethingdone) {
+									logger.debug("[DETECCIÓN CAMBIOS] Enviando " + listPendientes.size()
+											+ " cambios mediante el handler " + handler.getClass().getName());
+								} else {
+									logger.debug(
+											"[DETECCIÓN CAMBIOS] No se han encontrado cambios para enviar. Handler: "
+													+ handler.getClass().getName());
+								}
 								ejecutaTarea(handler, listPendientes, control, registro);
 								// pasamos de bloque
 								if (listPendientes != null
@@ -246,7 +255,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								}
 								marcarComoEnviado = true;
 								contError = 0;
-								logger.debug("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
+								logger.trace("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
 										+ "]: " + (System.currentTimeMillis() - startTime));
 							} catch (ErrorServicioWebcom e) {
 								if (e.isReintentable()) {
@@ -287,7 +296,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								|| (contError > 0 && contError < MAXIMO_INTENTOS));
 
 						if (marcarComoEnviado) {
-							logger.debug(
+							logger.trace(
 									handler.getClass().getName() + ": marcando los registros de la BD como enviados");
 							handler.marcaComoEnviados(control, llamadas);
 						}
@@ -299,10 +308,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 		} catch (Exception e) {
 			running = false;
-			logger.error("Imposible ejecutar el detector de cambios",e);
+			logger.error("Imposible ejecutar el detector de cambios", e);
 		} finally {
 			running = false;
-			logger.info("[fin] Detección de cambios en BD  WEBCOM mediante REST [it=" + iteracion + "]");
+			logger.debug("[DETECCIÓN CAMBIOS] Fin [it=" + iteracion + "]");
 		}
 
 	}
@@ -312,11 +321,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			throws ErrorServicioWebcom {
 
 		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
-			logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
+			logger.trace(handler.getClass().getName() + ": invocando al servicio REST");
 			handler.invocaServicio(listPendientes, registro);
 
 		} else {
-			logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
+			logger.trace("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
 		}
 	}
 

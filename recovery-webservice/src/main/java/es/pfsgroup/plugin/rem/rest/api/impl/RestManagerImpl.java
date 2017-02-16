@@ -242,6 +242,8 @@ public class RestManagerImpl implements RestApi {
 	@Override
 	public void sendResponse(HttpServletResponse response, RestRequestWrapper request, JSONObject jsonResp,
 			String result) {
+		logger.debug("[REST API] Respuesta:");
+		logger.debug(jsonResp.toString());
 		response.reset();
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
 		PrintWriter out;
@@ -522,14 +524,12 @@ public class RestManagerImpl implements RestApi {
 		// Obtenemos la entidad partiendo del working code y establecemos el
 		// contextholder
 		// necesario para acceder al esquema de la entidad
-		Entidad entidad;
+		Entidad entidad = null;
 		try {
 			entidad = entidadDao.findByWorkingCode(workingCode);
 		} catch (Exception e) {
 			logger.error("Error obteniendo la entidad: ");
 		}
-
-		entidad = entidadDao.findByWorkingCode(workingCode);
 
 		if (entidad != null) {
 			DbIdContextHolder.setDbId(entidad.getId());

@@ -69,8 +69,6 @@ public class VisitasController {
 		try {
 
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
-			
 			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
 			List<VisitaDto> listaVisitaDto = jsonData.getData();
 
@@ -92,8 +90,6 @@ public class VisitasController {
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 
 		restApi.sendResponse(response, model,request);

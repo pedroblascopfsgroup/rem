@@ -42,7 +42,6 @@ public class InformemediadorController {
 		
 		try {
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
 			
 			jsonData = (InformemediadorRequestDto) request.getRequestData(InformemediadorRequestDto.class);
 			List<InformeMediadorDto> informes = jsonData.getData();
@@ -60,8 +59,6 @@ public class InformemediadorController {
 			}
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 
 		restApi.sendResponse(response, model,request);

@@ -72,8 +72,6 @@ public class PropuestaresolucionController {
 			try {
 				
 				jsonFields = request.getJsonObject();
-				logger.debug("PETICIÓN: " + jsonFields);
-				
 				jsonData = (PropuestaRequestDto) request.getRequestData(PropuestaRequestDto.class);
 				propuestaDto = jsonData.getData();
 	
@@ -146,8 +144,6 @@ public class PropuestaresolucionController {
 				model.put("data", listaRespuesta);
 				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 				
-			} finally {
-				logger.debug("RESPUESTA: " + model);
 			}
 			restApi.sendResponse(response, model,request);
 

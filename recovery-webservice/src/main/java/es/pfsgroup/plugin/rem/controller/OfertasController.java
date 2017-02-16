@@ -124,8 +124,6 @@ public class OfertasController {
 		try {
 
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
-			
 			jsonData = (OfertaRequestDto) request.getRequestData(OfertaRequestDto.class);
 			List<OfertaDto> listaOfertaDto = jsonData.getData();
 
@@ -147,8 +145,6 @@ public class OfertasController {
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 
 		restApi.sendResponse(response, model,request);

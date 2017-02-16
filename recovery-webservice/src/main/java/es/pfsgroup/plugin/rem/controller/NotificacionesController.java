@@ -79,8 +79,6 @@ public class NotificacionesController {
 
 		try {
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
-
 			jsonData = (NotificacionRequestDto) request.getRequestData(NotificacionRequestDto.class);
 
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
@@ -144,8 +142,6 @@ public class NotificacionesController {
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			map.put("success", false);
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 		restApi.sendResponse(response, model, request);
 	}

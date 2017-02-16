@@ -87,13 +87,15 @@ public class ClienteWebcomGenerico {
 			throw new IllegalArgumentException("'registroLlamada' no puede ser NULL");
 		}
 
-		logger.debug("Llamada a servicio " + endpoint.toString() + " con parámetros " + paramsList);
+		logger.trace("Llamada a servicio " + endpoint.toString() + " con parámetros " + paramsList);
 		JSONObject response = null;
 		JSONObject requestBody = null;
 		try {
 			// Llamada al servicio
 			requestBody = WebcomRequestUtils.createRequestJson(paramsList);
 			String jsonString = requestBody.toString();
+			logger.debug("[DETECCIÓN CAMBIOS] Request:");
+			logger.debug(jsonString);
 			registroLlamada.logTiempPrepararJson();
 			registroLlamada.setToken(requestBody.getString(WebcomRequestUtils.JSON_PROPERTY_ID));
 			registroLlamada.setRequest(jsonString);
@@ -105,7 +107,7 @@ public class ClienteWebcomGenerico {
 
 			String signature = WebcomSignatureUtils.computeSignatue(apiKey, publicAddress, jsonString);
 			registroLlamada.setSignature(signature);
-			logger.debug("Cálculo del signature [apiKey=" + apiKey + ", ip=" + publicAddress + "] => " + signature);
+			logger.trace("Cálculo del signature [apiKey=" + apiKey + ", ip=" + publicAddress + "] => " + signature);
 
 			Map<String, String> headers = new HashMap<String, String>();
 			headers.put("signature", signature);
@@ -120,8 +122,11 @@ public class ClienteWebcomGenerico {
 					(endpoint.getTimeout() * 1000), endpoint.getCharset());
 			registroLlamada.setResponse(response.toString());
 
-			logger.trace("Respuesta recibida " + response);
-
+			logger.debug("[DETECCIÓN CAMBIOS] Response:");
+			if(response != null && !response.isEmpty()){
+				logger.debug(response.toString());
+			}
+			
 			// Gestión de errores si respuesta OK
 			if (response.containsKey("error")) {
 				String error = response.getString("error");

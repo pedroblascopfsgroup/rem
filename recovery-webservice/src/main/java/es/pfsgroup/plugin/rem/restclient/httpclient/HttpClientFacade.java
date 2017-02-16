@@ -38,7 +38,7 @@ public class HttpClientFacade {
 			throw new HttpClientFacadeInternalError("JSON request is required");
 		}
 
-		logger.debug("Estableciendo coneixón con httpClient [url=" + serviceUrl + ", method=" + sendMethod
+		logger.trace("Estableciendo coneixón con httpClient [url=" + serviceUrl + ", method=" + sendMethod
 				+ ", timeout=" + responseTimeOut + ", charset=" + charSet + "]");
 
 		// Essentially return a new HttpClient(), but can be pulled from Spring
@@ -48,26 +48,26 @@ public class HttpClientFacade {
 		try {
 			HttpClient httpclient = new HttpClient();
 			method = getHttpMethodFromString(sendMethod, jsonString, charSet);
-			logger.debug("Método de conexión: " + method.toString());
+			logger.trace("Método de conexión: " + method.toString());
 
 			if (headers != null && (!headers.isEmpty())) {
 				for (Entry<String, String> e : headers.entrySet()) {
-					logger.debug("Se añade Header [" + e.getKey() + " : " + e.getValue() + "]");
+					logger.trace("Se añade Header [" + e.getKey() + " : " + e.getValue() + "]");
 					method.addRequestHeader(e.getKey(), e.getValue());
 				}
 			}
 			// Below
 			method.setPath(serviceUrl);
-			logger.debug("http.protocol.version : " + HttpVersion.HTTP_1_1);
+			logger.trace("http.protocol.version : " + HttpVersion.HTTP_1_1);
 			httpclient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
 
-			logger.debug("http.socket.timeout : " + responseTimeOut);
+			logger.trace("http.socket.timeout : " + responseTimeOut);
 			httpclient.getParams().setParameter("http.socket.timeout", responseTimeOut*1000);
 
-			logger.debug("http.protocol.content-charset : " + charSet);
+			logger.trace("http.protocol.content-charset : " + charSet);
 			httpclient.getParams().setParameter("http.protocol.content-charset", charSet);
 
-			logger.debug("Lanzando peticion : httpClient.executeMethod()");
+			logger.trace("Lanzando peticion : httpClient.executeMethod()");
 			responseCode = httpclient.executeMethod(method);
 
 			if (responseCode >= 300) {
@@ -77,11 +77,11 @@ public class HttpClientFacade {
 				throw new HttpClientException("Código de error inespeado", responseCode, null);
 			}
 
-			logger.debug("Petición finalizada. Response Code : " + responseCode);
+			logger.trace("Petición finalizada. Response Code : " + responseCode);
 
 			String respBody = getResponseBody(method);// See details Below
-			logger.debug("-- RESPONSE BODY --");
-			logger.debug(respBody);
+			logger.trace("-- RESPONSE BODY --");
+			logger.trace(respBody);
 			
 			if (respBody.trim().isEmpty()){
 				throw new HttpClientException("Empty response", responseCode);
@@ -100,10 +100,10 @@ public class HttpClientFacade {
 
 	private void setRequestParams(PostMethod method, String jsonString, String charSet)
 			throws UnsupportedEncodingException {
-		logger.debug("Configurando PostMethod");
+		logger.trace("Configurando PostMethod");
 		String contentType = "application/json";
-		logger.debug(" - Content Type : " + contentType);
-		logger.debug(" - charset : " + charSet);
+		logger.trace(" - Content Type : " + contentType);
+		logger.trace(" - charset : " + charSet);
 
 		StringRequestEntity entity = new StringRequestEntity(jsonString, contentType, charSet);
 		method.setRequestEntity(entity);

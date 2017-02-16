@@ -60,8 +60,9 @@ public class RestSecurityFilter implements Filter {
 			restRequest.setTiempoInicio(System.currentTimeMillis());
 			peticion = restApi.crearPeticionObj(restRequest);
 			RequestDto datajson = (RequestDto) restRequest.getRequestData(RequestDto.class);
-			logger.debug("Ejecutando request id:".concat(datajson.getId()));
-			logger.debug("Datos de la peticion id:".concat(restRequest.getBody()));
+			logger.debug("[REST API] Ejecutando request servicio=".concat(restApi.obtenerNombreServicio(request))
+					.concat(" id=[").concat(datajson.getId()).concat("]. Datos:"));
+			logger.debug(restRequest.getBody());
 
 			jsonFields = restRequest.getJsonObject();
 			restApi.doSessionConfig(RestSecurityFilter.WORKINGCODE);

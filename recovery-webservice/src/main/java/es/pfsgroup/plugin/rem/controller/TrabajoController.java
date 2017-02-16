@@ -1052,8 +1052,6 @@ public class TrabajoController extends ParadiseJsonController {
 		try {
 			
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
-			
 			jsonData = (TrabajoRequestDto) request.getRequestData(TrabajoRequestDto.class);
 			List<TrabajoDto> listaTrabajoDto = jsonData.getData();			
 
@@ -1074,8 +1072,6 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 
 		restApi.sendResponse(response, model,request);

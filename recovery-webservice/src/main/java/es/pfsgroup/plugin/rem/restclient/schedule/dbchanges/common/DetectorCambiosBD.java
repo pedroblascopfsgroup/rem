@@ -216,7 +216,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 				for (Object cambio : listCambios) {
 					try {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Obtenemos los cambios registros cambiados en BD");
+							logger.trace("Obtenemos los cambios registros cambiados en BD");
 						}
 						Map<String, Object> camposActualizados = ((CambioBD) cambio).getCambios();
 						if (!camposActualizados.isEmpty()) {
@@ -238,7 +238,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 								fusionCambios.addDataMap(datos);
 							}
 						} else if (logger.isDebugEnabled()) {
-							logger.debug("Map de cambios vacío, nada que notificar");
+							logger.trace("Map de cambios vacío, nada que notificar");
 						}
 					} catch (Exception e) {
 						logger.error(e);
@@ -292,7 +292,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	private T creaYRellenaDto(Class<?> dtoClass, Map<String, Object> datos) {
 		T dto = createDtoInstance();
-		logger.debug("Relenamos el dto " + dtoClass + " con " + datos);
+		logger.trace("Relenamos el dto " + dtoClass + " con " + datos);
 		Converter.updateObjectFromHashMap(datos, dto, null);
 		return dto;
 	}

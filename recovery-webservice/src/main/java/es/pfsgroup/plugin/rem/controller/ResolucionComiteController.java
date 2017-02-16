@@ -86,8 +86,6 @@ public class ResolucionComiteController {
 		try {
 
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
-				
 			jsonData = (ResolucionComiteRequestDto) request.getRequestData(ResolucionComiteRequestDto.class);			
 			resolucionComiteDto = jsonData.getData();
 
@@ -208,8 +206,6 @@ public class ResolucionComiteController {
 			model.put("id", jsonFields.get("id"));	
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 
 		restApi.sendResponse(response, model,request);

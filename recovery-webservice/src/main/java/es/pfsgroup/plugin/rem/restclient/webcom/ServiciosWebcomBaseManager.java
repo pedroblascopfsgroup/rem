@@ -103,7 +103,7 @@ public abstract class ServiciosWebcomBaseManager {
 			throw new IllegalArgumentException("'params' no puede ser NULL");
 		}
 
-		logger.debug("Compprobando obligatoriedad de campos.");
+		logger.trace("Compprobando obligatoriedad de campos.");
 
 		ArrayList<String> missingFields = new ArrayList<String>();
 		if (!fieldExists(params, ConstantesGenericas.FECHA_ACCION)) {
@@ -135,7 +135,7 @@ public abstract class ServiciosWebcomBaseManager {
 		if (!missingFields.isEmpty()) {
 			throw new FaltanCamposObligatoriosException(missingFields);
 		}
-		logger.debug("Todos los campos requeridos estan presentes");
+		logger.trace("Todos los campos requeridos estan presentes");
 
 	}
 
@@ -167,7 +167,7 @@ public abstract class ServiciosWebcomBaseManager {
 
 		try {
 
-			logger.debug("Invocando al servicio " + endpoint);
+			logger.trace("Invocando al servicio " + endpoint);
 			getClienteWebcom().send(endpoint, paramsList, registroLlamada);
 			logger.trace("Respuesta recibida " + endpoint);
 
@@ -281,7 +281,7 @@ public abstract class ServiciosWebcomBaseManager {
 	protected <T extends WebcomRESTDto> ParamsList createParamsList(List<T> dtoList) {
 		ParamsList paramsList = new ParamsList();
 		if (dtoList != null) {
-			logger.debug("Convirtiendo dtoList -> ParamsList");
+			logger.trace("Convirtiendo dtoList -> ParamsList");
 			for (WebcomRESTDto dto : dtoList) {
 				HashMap<String, Object> params = createParametersMap(dto);
 				params.putAll(Converter.dtoToMap(dto));
@@ -291,7 +291,7 @@ public abstract class ServiciosWebcomBaseManager {
 				paramsList.add(params);
 			}
 		} else {
-			logger.debug("'dtoList' es NULL");
+			logger.trace("'dtoList' es NULL");
 		}
 		return paramsList;
 	}

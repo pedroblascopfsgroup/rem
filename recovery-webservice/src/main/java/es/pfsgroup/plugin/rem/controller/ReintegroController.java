@@ -44,8 +44,6 @@ public class ReintegroController {
 		
 		try {
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
-			
 			jsonData = (ReintegroRequestDto) request.getRequestData(ReintegroRequestDto.class);
 			reintegroDto = jsonData.getData();
 				
@@ -74,8 +72,6 @@ public class ReintegroController {
 			model.put("ofertaHRE", jsonData.getData().getOfertaHRE());
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 		
 		restApi.sendResponse(response, model,request);

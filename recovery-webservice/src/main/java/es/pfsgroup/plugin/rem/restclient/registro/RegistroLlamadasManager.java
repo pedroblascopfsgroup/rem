@@ -39,7 +39,7 @@ public class RegistroLlamadasManager {
 
 	@Transactional(readOnly = false, noRollbackFor = ErrorServicioWebcom.class, propagation = Propagation.NEVER)
 	public void guardaRegistroLlamada(RestLlamada llamada, @SuppressWarnings("rawtypes") DetectorCambiosBD handler,Integer contError) {
-		logger.debug("Guardando traza de la llamada en BD");
+		logger.trace("Guardando traza de la llamada en BD");
 		
 		Integer MAXIMO_INTENTOS = DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT;
 		String maximoIntentosProperties = !Checks
@@ -118,7 +118,7 @@ public class RegistroLlamadasManager {
 
 	@Transactional(readOnly = false, noRollbackFor = ErrorServicioWebcom.class, propagation = Propagation.NEVER)
 	public void guardaRegistroLlamada(List<RestLlamada> llamadas) {
-		logger.debug("Guardando traza de la llamada en BD");
+		logger.trace("Guardando traza de la llamada en BD");
 
 		for (RestLlamada llamada : llamadas) {
 			llamadaDao.guardaRegistro(llamada);

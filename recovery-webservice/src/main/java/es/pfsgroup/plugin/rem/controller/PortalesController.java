@@ -44,8 +44,6 @@ public class PortalesController {
 		
 		try {
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
-			
 			jsonData = (PortalesRequestDto) request.getRequestData(PortalesRequestDto.class);
 			listaPortalesDto = jsonData.getData();
 			listaRespuesta = activoApi.saveOrUpdate(listaPortalesDto);
@@ -60,8 +58,6 @@ public class PortalesController {
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 
 		restApi.sendResponse(response, model,request);

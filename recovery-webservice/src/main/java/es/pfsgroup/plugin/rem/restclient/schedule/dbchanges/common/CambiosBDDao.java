@@ -322,7 +322,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 		Session session = this.sesionFactoryFacade.getSession(this);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Inicando transacción");
+			logger.trace("Inicando transacción");
 		}
 		Transaction tx = session.beginTransaction();
 		try {
@@ -359,7 +359,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 						queryInsert, infoTablas, t);
 			}
 			if (logger.isDebugEnabled()) {
-				logger.debug("Comiteando transacción");
+				logger.trace("Comiteando transacción");
 			}
 			tx.commit();
 		} catch (CambiosBDDaoError e) {
@@ -369,7 +369,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			throw e;
 		} finally {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Cerrando sesión");
+				logger.trace("Cerrando sesión");
 			}
 			if (session != null) {
 				if (session.isOpen()) {
@@ -379,7 +379,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("TIMER DETECTOR Marcado de cambios: " + (System.currentTimeMillis() - startTime));
+			logger.trace("TIMER DETECTOR Marcado de cambios: " + (System.currentTimeMillis() - startTime));
 		}
 	}
 
@@ -483,12 +483,12 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	private Long getIdRestUser(Session session) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Obteniendo el ID para el usuario: " + REST_USER);
+			logger.trace("Obteniendo el ID para el usuario: " + REST_USER);
 		}
 		if (restUserId == null) {
 			try {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Buscando " + REST_USER + " con criteria");
+					logger.trace("Buscando " + REST_USER + " con criteria");
 				}
 				Criteria criteria = queryExecutor.createCriteria(session, Usuario.class)
 						.add(Restrictions.eq("username", REST_USER));
@@ -497,7 +497,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER);
 				}
 				if (logger.isDebugEnabled()) {
-					logger.debug("Guardando restUserId en caché");
+					logger.trace("Guardando restUserId en caché");
 				}
 				this.restUserId = restUser.getId();
 
@@ -506,7 +506,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("Devolviendo restUserId=" + this.restUserId + " de la caché");
+			logger.trace("Devolviendo restUserId=" + this.restUserId + " de la caché");
 		}
 		return this.restUserId;
 
@@ -526,7 +526,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					"No se ha podido actualizar la vista materializada " + infoTablas.nombreVistaDatosActuales());
 		} finally {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Cerrando sesión");
+				logger.trace("Cerrando sesión");
 			}
 			if (session != null) {
 				if (session.isOpen()) {
@@ -541,7 +541,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				+ "','C'); end;";
 		try {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+				logger.trace("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
 			}
 			queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
 		} catch (Throwable t) {

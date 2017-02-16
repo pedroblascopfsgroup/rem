@@ -60,8 +60,6 @@ public class ComisionesController {
 
 		try {
 			jsonFields = request.getJsonObject();
-			logger.debug("PETICIÓN: " + jsonFields);
-			
 			jsonData = (ComisionRequestDto) request.getRequestData(ComisionRequestDto.class);
 			List<ComisionDto> listaComisionDto = jsonData.getData();
 
@@ -81,8 +79,6 @@ public class ComisionesController {
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
-		} finally {
-			logger.debug("RESPUESTA: " + model);
 		}
 
 		restApi.sendResponse(response, model,request);

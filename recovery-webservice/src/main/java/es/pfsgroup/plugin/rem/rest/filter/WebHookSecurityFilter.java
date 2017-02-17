@@ -48,7 +48,7 @@ public class WebHookSecurityFilter implements Filter {
 				chain.doFilter(restRequest, response);
 			} else {
 				logger.error("Petición webhook no autorizada");
-				peticion.setResult(RestApi.REST_MSG_INVALID_SIGNATURE);				
+				peticion.setResult(RestApi.CODE_ERROR);				
 			}
 
 		} catch (Exception e) {

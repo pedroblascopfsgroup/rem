@@ -11,8 +11,6 @@ import java.util.Properties;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,8 +68,6 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	@Resource
 	private Properties appProperties;
 
-	private final Log logger = LogFactory.getLog(getClass());
-
 	@Override
 	public boolean isActive() {
 		boolean resultado = false;
@@ -126,7 +122,6 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		if (appId == null || appId.isEmpty() || secret == null || secret.isEmpty()) {
 			throw new RestConfigurationException("configure al app_id y el app_secret");
 		}
-		logger.error(secret);
 		request.setApp_id(appId);
 		request.setApp_secret(secret);
 		String jsonResponse = null;

@@ -163,7 +163,9 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public void guardarPeticionRest(PeticionRest peticion) {
-		peticionDao.saveOrUpdate(peticion);
+		if (peticion != null) {
+			peticionDao.saveOrUpdate(peticion);
+		}
 	}
 
 	@Override

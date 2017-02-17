@@ -46,7 +46,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	@Autowired
 	private CambiosBDDao dao;
-	
+
 	@Autowired
 	private RestApi restApi;
 
@@ -120,13 +120,14 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	}
 
-	public CambiosList listDatosCompletos(Class<?> dtoClass, RestLlamada registro) {
+	public CambiosList listDatosCompletos(Class<?> dtoClass, RestLlamada registro, CambiosList listPendientes) {
 
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
 
-		final CambiosList cambios = dao.listDatosActuales(dtoClass, this, registro);
+		final CambiosList cambios = dao.listDatosActuales(dtoClass, this, registro, listPendientes);
+		cambios.setPaginacion(listPendientes.getPaginacion());
 
 		return extractDtos(dtoClass, new DataAccessOperation() {
 			@Override
@@ -296,13 +297,14 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		Converter.updateObjectFromHashMap(datos, dto, null);
 		return dto;
 	}
-	
+
 	/**
 	 * Configura el contexto hibernate
+	 * 
 	 * @param workingCode
 	 * @throws Exception
 	 */
-	public void setdbContext() throws Exception{
+	public void setdbContext() throws Exception {
 		restApi.doSessionConfig(RestSecurityFilter.WORKINGCODE);
 	}
 }

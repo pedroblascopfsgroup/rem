@@ -15,7 +15,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.AnulacionesApi;
 import es.pfsgroup.plugin.rem.api.ConfirmarOperacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -32,7 +31,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
-import es.pfsgroup.plugin.rem.rest.dto.AnulacionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ConfirmacionOpDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReintegroDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
@@ -63,9 +61,6 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 
 	@Autowired
 	private GenericABMDao genericDao;
-
-	@Autowired
-	private AnulacionesApi anulacionesApi;
 	
 	
 
@@ -91,40 +86,33 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 				&& !confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_DEVOLUCION_RESERVA)
 				&& !confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.REINTEGRO_RESERVA)) {
 			hashErrores.put("accion", RestApi.REST_MSG_UNKNOWN_KEY);
+			
 		} else if (!Checks.esNulo(confirmacionOpDto.getResultado())
 				&& !confirmacionOpDto.getResultado().equals(Integer.valueOf(0))
 				&& !confirmacionOpDto.getResultado().equals(Integer.valueOf(1))) {
 			hashErrores.put("resultado", RestApi.REST_MSG_UNKNOWN_KEY);
+			
 		} else {
+			
 			if (confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.COBRO_RESERVA)
 					|| confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.COBRO_VENTA)
-					|| confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.DEVOLUCION_RESERVA)) {
+					|| confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.DEVOLUCION_RESERVA)
+					|| confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_COBRO_RESERVA)
+					|| confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_COBRO_VENTA)
+					|| confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_DEVOLUCION_RESERVA)) {
 				ReservaDto reservaDto = new ReservaDto();
 				reservaDto.setAccion(confirmacionOpDto.getAccion());
 				reservaDto.setActivo(confirmacionOpDto.getActivo());
 				errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields);
 				hashErrores.putAll(errorList);
+				
 			} else if (confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.REINTEGRO_RESERVA)) {
 				ReintegroDto reintegroDto = new ReintegroDto();
 				reintegroDto.setOfertaHRE(confirmacionOpDto.getOfertaHRE());
 				errorList = reintegroApi.validateReintegroPostRequestData(reintegroDto, jsonFields);
 				hashErrores.putAll(errorList);
-			} else if (confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_COBRO_RESERVA)) {
-				AnulacionDto anulacionDto = new AnulacionDto();
-				anulacionDto.setOfertaHRE(confirmacionOpDto.getOfertaHRE());
-				errorList = anulacionesApi.validateAnulacionCobroReservaPostRequestData(anulacionDto, jsonFields);
-				hashErrores.putAll(errorList);
-			} else if (confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_COBRO_VENTA)) {
-				AnulacionDto anulacionDto = new AnulacionDto();
-				anulacionDto.setOfertaHRE(confirmacionOpDto.getOfertaHRE());
-				errorList = anulacionesApi.validateAnulacionCobroVentaPostRequestData(anulacionDto, jsonFields);
-				hashErrores.putAll(errorList);
-			} else if (confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_DEVOLUCION_RESERVA)) {
-				AnulacionDto anulacionDto = new AnulacionDto();
-				anulacionDto.setOfertaHRE(confirmacionOpDto.getOfertaHRE());
-				errorList = anulacionesApi.validateAnulacionDevolucionReservaPostRequestData(anulacionDto, jsonFields);
-				hashErrores.putAll(errorList);
-			}
+				
+			} 
 		}
 
 		return hashErrores;
@@ -413,6 +401,57 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
 
+	}
+	
+	
+
+	
+	/**
+	 * Anula el cobro de la reserva si es en el mismo día que el cobro.
+	 * Borra de entregas a cuentas la reserva,
+	 * Actualiza fecha firma reserva y fecha envío reserva a null
+	 * Actualiza el estado del expediente como "Aprobado" y el estado de la reserva a "Pendiente firma"
+	 * @param ConfirmacionOpDto con los datos necesarios para registrar el cobro de la reserva
+	 * @return void
+	 */
+	@Override
+	public void anularCobroReserva(ConfirmacionOpDto confirmacionOpDto)
+			throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
+	
+	/**
+	 * Anula el cobro de la venta si es en el mismo día que el cobro.
+	 * Borra de entregas a cuentas la venta,
+	 * Actualiza fecha contabilizacionPropietario y fecha venta a null
+	 * @param ConfirmacionOpDto con los datos necesarios para registrar el cobro de la venta
+	 * @return void 
+	 */
+	@Override
+	public void anularCobroVenta(ConfirmacionOpDto confirmacionOpDto)
+			throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	/**
+	 * Anula la devolución del cobro de la reserva si es en el mismo día que la devolución. 
+	 * Borra de entregas a cuentas la devolución.
+	 * Actualiza estado reserva a "Pendiente de devolución", el estado de la oferta "Aceptada", el estado del expediente "En devolución",
+	 * Poner fecha de devolución e importe devolución a null,
+	 * @param ConfirmacionOpDto con los datos necesarios para registrar la devolución de la reserva
+	 * @return void
+	 */
+	@Override
+	public void anularDevolucionReserva(ConfirmacionOpDto confirmacionOpDto)
+			throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

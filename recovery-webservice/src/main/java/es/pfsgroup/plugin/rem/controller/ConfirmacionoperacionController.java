@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.api.AnulacionesApi;
 import es.pfsgroup.plugin.rem.api.ConfirmarOperacionApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ConfirmacionOpDto;
 import es.pfsgroup.plugin.rem.rest.dto.ConfirmacionOpRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-import net.sf.json.JSONObject;
 
 @Controller
 public class ConfirmacionoperacionController {
@@ -31,9 +31,7 @@ public class ConfirmacionoperacionController {
 
 	@Autowired
 	private ConfirmarOperacionApi confirmarOperacionApi;
-	
-	@Autowired
-	private AnulacionesApi anulacionesApi;
+
 	
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -70,11 +68,11 @@ public class ConfirmacionoperacionController {
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.REINTEGRO_RESERVA)){					
 						confirmarOperacionApi.reintegrarReserva(confirmacionOpDto);
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_COBRO_RESERVA)){
-						anulacionesApi.anularCobroReserva(confirmacionOpDto);
+						confirmarOperacionApi.anularCobroReserva(confirmacionOpDto);
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_COBRO_VENTA)){
-						anulacionesApi.anularCobroVenta(confirmacionOpDto);
+						confirmarOperacionApi.anularCobroVenta(confirmacionOpDto);
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_DEVOLUCION_RESERVA)){
-						anulacionesApi.anularDevolucionReserva(confirmacionOpDto);
+						confirmarOperacionApi.anularDevolucionReserva(confirmacionOpDto);
 					}	
 				}
 

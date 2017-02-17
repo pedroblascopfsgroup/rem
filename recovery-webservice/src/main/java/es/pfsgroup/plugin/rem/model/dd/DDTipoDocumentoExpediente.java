@@ -29,6 +29,13 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoDocumentoExpediente implements Auditable, Dictionary {
 	
+	public static final String CODIGO_IDENTIFICACION= "01";
+    public static final String CODIGO_TANTEO = "02";
+    public static final String CODIGO_RESERVA = "03";
+    public static final String CODIGO_FORMALIZACION = "04";
+    public static final String CODIGO_SANCION = "05";
+    
+	    
 	/**
 	 * 
 	 */

@@ -84,7 +84,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 implements MSVLibera
 			activoApi.actualizarFechaYEstadoCargaPropuesta(Long.parseLong(exc.dameCeldaByHoja(1, 2, 1)));
 			
 //			for (int fila = EXCEL_FILA_INICIAL; fila <= this.numUltimaFila; fila++) {
-			for (int fila = EXCEL_FILA_INICIAL; fila <= exc.getNumeroFilasByHoja(1, EXCEL_FILA_INICIAL); fila++) {
+			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilasByHoja(1, EXCEL_FILA_INICIAL); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCeldaByHoja(fila, EXCEL_COL_NUMACTIVO, 1)));
 				Boolean actualizatTipoComercializacionActivo = false;
 				

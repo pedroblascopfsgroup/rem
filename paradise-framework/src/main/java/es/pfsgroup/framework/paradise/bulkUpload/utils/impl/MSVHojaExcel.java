@@ -101,10 +101,13 @@ public class MSVHojaExcel {
 		if (this.filasReales < 0){
 			Sheet hoja = libroExcel.getSheet(numHoja);
 			this.filasReales = 0;
-			for (int i= hoja.getRows() - primeraFilaDatos; i>(primeraFilaDatos-1); i--) {
+			
+			for(int i = primeraFilaDatos; i<hoja.getRows();i++) {
 				Cell[] fila = hoja.getRow(i);
 				if (!this.filaVacia(fila)){
 					this.filasReales = i + 1;
+				}
+				else { //Al encontrar la primera fila vacia, se sale del bucle para dejar de contar filas con datos
 					break;
 				}
 			}
@@ -164,11 +167,19 @@ public class MSVHojaExcel {
 	private boolean filaVacia(Cell[] fila) {
 		for (int i=0; i<fila.length; i++) {
 			Cell celda = fila[i];
-			if (celda != null && StringUtils.hasText(celda.getContents())){
+			
+			if (celda != null && StringUtils.hasText(celda.getContents()) && this.tipoCeldasSinFormulas(celda.getType())){
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	private boolean tipoCeldasSinFormulas(CellType tipo) {
+		if(!(CellType.BOOLEAN_FORMULA.equals(tipo) || CellType.DATE_FORMULA.equals(tipo) || CellType.FORMULA_ERROR.equals(tipo) 
+				|| CellType.NUMBER_FORMULA.equals(tipo) || CellType.STRING_FORMULA.equals(tipo)))
+			return true;
+		return false;
 	}
 
 	/**

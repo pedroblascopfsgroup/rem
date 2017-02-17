@@ -18,10 +18,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
@@ -125,8 +123,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
 		try {
-			DbIdContextHolder.setDbId(1L);
-
 			String columIdUsuarioRemAccion = field2column(ConstantesGenericas.ID_USUARIO_REM_ACCION);
 			String selectFromDatosActuales = SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales() + WHERE
 					+ columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
@@ -144,11 +140,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			List<Object[]> resultado = null;
 
-			// refreshMaterializedView(infoTablas, session);
-			// System.out.println("########################################");
-			// System.out.println("bloque:"+
-			// cambios.getPaginacion().getNumeroBloque());
-			// System.out.println(queryString);
 			try {
 				if (logger.isDebugEnabled()) {
 					logger.trace("Ejecutando: " + queryString);
@@ -160,17 +151,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 
 			if (resultado != null && resultado.size() > 0) {
-				// existen o pueden existir
-				/*
-				 * if (cambios.getPaginacion().getTamanyoBloque() != null) { if
-				 * (resultado.size() ==
-				 * cambios.getPaginacion().getTamanyoBloque()) {
-				 * cambios.getPaginacion().setHasMore(true);
-				 * cambios.getPaginacion().setNumeroBloque(cambios.getPaginacion
-				 * ().getNumeroBloque() + 1);
-				 * 
-				 * } else { cambios.getPaginacion().setHasMore(false); } }
-				 */
 				String selectDatoHistorico = null;
 				int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
 				try {
@@ -216,7 +196,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	}
 
-	public CambiosList listDatosActuales(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro) {
+	public CambiosList listDatosActuales(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro,
+			CambiosList cambios) {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -227,37 +208,35 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 		Session session = this.sesionFactoryFacade.getSession(this);
 
-		Integer tamanyoBloque = null;
-
-		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
-				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : "";
-		try {
-			tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
-		} catch (Exception e) {
-			tamanyoBloque = null;
-		}
-
-		CambiosList cambios = new CambiosList(tamanyoBloque);
-
 		FieldInfo[] fields = getDtoFields(dtoClass);
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
 		String queryString = SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales();
+		if (cambios.getPaginacion().getTamanyoBloque() != null) {
+			queryString = "SELECT " + columns + " FROM (SELECT ROWNUM AS CONTADOR,CONSULTA.* FROM(" + queryString
+					+ ") CONSULTA) WHERE CONTADOR >"
+					+ String.valueOf(
+							cambios.getPaginacion().getTamanyoBloque() * cambios.getPaginacion().getNumeroBloque())
+					+ " AND CONTADOR <" + String.valueOf(((cambios.getPaginacion().getNumeroBloque() + 1)
+							* cambios.getPaginacion().getTamanyoBloque()) + 1);
+		}
 		try {
-			DbIdContextHolder.setDbId(1L);
 			List<Object[]> resultado = null;
-			refreshMaterializedView(infoTablas, session);
 
 			try {
 				if (logger.isDebugEnabled()) {
 					logger.trace("Ejecutando: " + queryString);
 				}
 				resultado = queryExecutor.sqlRunList(session, queryString);
-				if (resultado != null) {
+				if (resultado != null && resultado.size() > 0) {
 					for (Object[] r : resultado) {
 						CambioBD cambio = new CambioBD(fields);
 						cambio.setDatosActuales(r);
 						cambios.add(cambio);
+					}
+				} else {
+					if (cambios.getPaginacion().getTamanyoBloque() != null) {
+						cambios.getPaginacion().setHasMore(false);
 					}
 				}
 			} catch (Throwable t) {
@@ -535,7 +514,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			}
 		}
 	}
-	
+
 	private void refreshMaterializedView(InfoTablasBD infoTablas, Session session) {
 		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + infoTablas.nombreVistaDatosActuales()
 				+ "','C'); end;";

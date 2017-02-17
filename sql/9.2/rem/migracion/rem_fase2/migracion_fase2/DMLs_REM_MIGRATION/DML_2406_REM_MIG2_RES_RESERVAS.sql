@@ -209,12 +209,7 @@ BEGIN
                               ELSE NULL
                         END                                                                                                                    AS ECO_MOTIVO_ANULACION,
                         NULL                                                                                                                   AS ECO_FECHA_CONT_PROPIETARIO,
-                        NVL(OFR.USU_ID,
-                              (SELECT USU_ID
-                                    FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS
-                                    WHERE USU_USERNAME = ''MIGRACION''
-                                    AND BORRADO = 0)
-                        )                                                                                                                         AS ECO_PETICIONARIO_ANULACION,
+                        NULL                                                                                                                   AS ECO_PETICIONARIO_ANULACION,
                         CASE
                               WHEN RES.RES_FECHA_ANULACION IS NOT NULL
                                     THEN RES_IMPORTE_DEVUELTO
@@ -244,6 +239,8 @@ BEGIN
                   ,ECO.ECO_FECHA_SANCION_COMITE = AUX.ECO_FECHA_SANCION_COMITE      
       '
       ;   
+      
+      --Según comentario de Tomás y Manuel, eliminamos ECO_PETICIONARIO_ANULACION porque nunca va a venir informado y mejor que esté blanco.
       
       V_TABLE_ECO := SQL%ROWCOUNT;
       

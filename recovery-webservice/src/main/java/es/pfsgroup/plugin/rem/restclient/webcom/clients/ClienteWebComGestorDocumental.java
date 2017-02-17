@@ -6,12 +6,16 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import net.sf.json.JSONObject;
 
@@ -26,9 +30,15 @@ public class ClienteWebComGestorDocumental {
 	@Resource
 	private Properties appProperties;
 
+	@Autowired
+	private RestLlamadaDao llamadaDao;
+
+	private final Log logger = LogFactory.getLog(getClass());
+
 	public JSONObject send(String authtoken, String endpoint, String jsonString)
 			throws NumberFormatException, HttpClientException, RestConfigurationException {
-
+		RestLlamada registro = new RestLlamada();
+		registro.setMetodo("POST");
 		Map<String, String> headers = new HashMap<String, String>();
 		if (authtoken != null) {
 			headers.put("AUTHTOKEN", authtoken);
@@ -43,12 +53,21 @@ public class ClienteWebComGestorDocumental {
 		} else {
 			serviceUrl = urlBase.concat("/").concat(endpoint);
 		}
+		registro.setEndpoint(serviceUrl);
+		registro.setRequest(jsonString);
 
 		String timeout = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
 				WebcomRESTDevonProperties.TIMEOUT_CONEXION, DEFAULT_TIMEOUT);
 
 		JSONObject result = httpClient.processRequest(serviceUrl, "POST", headers, jsonString,
 				Integer.parseInt(timeout), "UTF-8");
+
+		try {
+			registro.setResponse(result.toString());
+			llamadaDao.guardaRegistro(registro);
+		} catch (Exception e) {
+			logger.error("Error al trazar la llamada al CDM", e);
+		}
 
 		return result;
 	}

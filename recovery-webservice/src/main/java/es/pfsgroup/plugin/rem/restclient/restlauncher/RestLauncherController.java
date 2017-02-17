@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 
 @Controller
@@ -11,28 +13,38 @@ public class RestLauncherController {
 
 	@Autowired
 	private RestLauncher launcher;
-	
+
+	@Autowired
+	private GenericAdapter genericAdapter;
+
 	/*
 	 * ACTUALIZAR VISTAS MATERIALIZADAS
 	 */
-	
+
 	@RequestMapping
 	public String actualizarVistasMaterializadas() throws ErrorServicioWebcom {
-		launcher.actualizarVistasMaterializadas();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.actualizarVistasMaterializadas();
+		}
+
 		return "default";
 	}
-	
-	
+
 	/*
 	 * 
-	 * TODOS LOS CAMBIOS 
+	 * TODOS LOS CAMBIOS
 	 * 
 	 * 
 	 */
-	
+
 	@RequestMapping
 	public String enviarCambiosWebcom() throws ErrorServicioWebcom {
-		launcher.enviarCambios();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCambios();
+		}
+
 		return "default";
 	}
 
@@ -45,13 +57,21 @@ public class RestLauncherController {
 
 	@RequestMapping
 	public String enviarCompletoStockWebcom() throws ErrorServicioWebcom {
-		launcher.enviarCompletoStockWebcom();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoStockWebcom();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarStockWebcom() throws ErrorServicioWebcom {
-		launcher.enviarStockWebcom();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarStockWebcom();
+		}
+
 		return "default";
 	}
 
@@ -64,13 +84,21 @@ public class RestLauncherController {
 
 	@RequestMapping
 	public String enviarCompletoUsuariosWebcom() throws ErrorServicioWebcom {
-		launcher.enviarCompletoUsuariosWebcom();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoUsuariosWebcom();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarUsuariosWebcom() throws ErrorServicioWebcom {
-		launcher.enviarUsuariosWebcom();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarUsuariosWebcom();
+		}
+
 		return "default";
 	}
 
@@ -82,13 +110,21 @@ public class RestLauncherController {
 	 */
 	@RequestMapping
 	public String enviarCompletoProveedoresWebcom() throws ErrorServicioWebcom {
-		launcher.enviarCompletoProveedoresWebcom();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoProveedoresWebcom();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarProveedoresWebcom() throws ErrorServicioWebcom {
-		launcher.enviarProveedoresWebcom();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarProveedoresWebcom();
+		}
+
 		return "default";
 	}
 
@@ -101,13 +137,21 @@ public class RestLauncherController {
 
 	@RequestMapping
 	public String enviarCompletoActivosObrasNuevas() throws ErrorServicioWebcom {
-		launcher.enviarCompletoActivosObrasNuevas();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoActivosObrasNuevas();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarActivosObrasNuevas() throws ErrorServicioWebcom {
-		launcher.enviarActivosObrasNuevas();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarActivosObrasNuevas();
+		}
+
 		return "default";
 	}
 
@@ -120,13 +164,21 @@ public class RestLauncherController {
 
 	@RequestMapping
 	public String enviarCompletoCabecerasObrasNuevas() throws ErrorServicioWebcom {
-		launcher.enviarCompletoCabecerasObrasNuevas();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoCabecerasObrasNuevas();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarCabecerasObrasNuevas() throws ErrorServicioWebcom {
-		launcher.enviarCabecerasObrasNuevas();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCabecerasObrasNuevas();
+		}
+
 		return "default";
 	}
 
@@ -139,13 +191,21 @@ public class RestLauncherController {
 
 	@RequestMapping
 	public String enviarCompletoEstadosInformeMediador() throws ErrorServicioWebcom {
-		launcher.enviarCompletoEstadosInformeMediador();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoEstadosInformeMediador();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarEstadosInformeMediador() throws ErrorServicioWebcom {
-		launcher.enviarEstadosInformeMediador();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarEstadosInformeMediador();
+		}
+
 		return "default";
 	}
 
@@ -158,13 +218,21 @@ public class RestLauncherController {
 
 	@RequestMapping
 	public String enviarCompletoEstadoNotificacion() throws ErrorServicioWebcom {
-		launcher.enviarCompletoEstadoNotificacion();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoEstadoNotificacion();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarEstadoNotificacion() throws ErrorServicioWebcom {
-		launcher.enviarEstadoNotificacion();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarEstadoNotificacion();
+		}
+
 		return "default";
 	}
 
@@ -177,13 +245,21 @@ public class RestLauncherController {
 
 	@RequestMapping
 	public String enviarCompletoEstadoOferta() throws ErrorServicioWebcom {
-		launcher.enviarCompletoEstadoOferta();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoEstadoOferta();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarEstadoOferta() throws ErrorServicioWebcom {
-		launcher.enviarEstadoOferta();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarEstadoOferta();
+		}
+
 		return "default";
 	}
 
@@ -196,54 +272,76 @@ public class RestLauncherController {
 
 	@RequestMapping
 	public String enviarCompletoPeticionTrabajo() throws ErrorServicioWebcom {
-		launcher.enviarCompletoPeticionTrabajo();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoPeticionTrabajo();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarPeticionTrabajo() throws ErrorServicioWebcom {
-		launcher.enviarPeticionTrabajo();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarPeticionTrabajo();
+		}
+
 		return "default";
 	}
-	
+
 	/*
 	 * 
 	 * 
-	 *	OBRAS NUEVAS CAMPANYAS 
+	 * OBRAS NUEVAS CAMPANYAS
 	 * 
 	 */
-	
+
 	@RequestMapping
 	public String enviarCompletoObrasNuevasCampanyas() throws ErrorServicioWebcom {
-		launcher.enviarCompletoObrasNuevasCampanyas();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoObrasNuevasCampanyas();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarObrasNuevasCampanyas() throws ErrorServicioWebcom {
-		launcher.enviarObrasNuevasCampanyas();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarObrasNuevasCampanyas();
+		}
+
 		return "default";
 	}
-	
+
 	/*
 	 * 
 	 * 
-	 * VENTAS Y COMISIONES 
+	 * VENTAS Y COMISIONES
 	 * 
 	 */
-	
+
 	@RequestMapping
 	public String enviarCompletoVentasYcomisiones() throws ErrorServicioWebcom {
-		launcher.enviarCompletoVentasYcomisiones();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoVentasYcomisiones();
+		}
+
 		return "default";
 	}
 
 	@RequestMapping
 	public String enviarVentasYcomisiones() throws ErrorServicioWebcom {
-		launcher.enviarVentasYcomisiones();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarVentasYcomisiones();
+		}
+
 		return "default";
 	}
-	
-	
 
 }

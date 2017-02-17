@@ -104,12 +104,7 @@ BEGIN
 	                                                                                  CASE
 	                                                                                    WHEN (CON_CARGAS = 1) 
 	                                                                                      THEN ''16''
-	                                                                                      ELSE  
-																							CASE
-																								WHEN (EPU.DD_EPU_CODIGO = ''01'') 
-																									THEN ''01''
-																									ELSE NULL
-																							END
+	                                                                                      ELSE ''01''
 	                                                                                  END
 	                                                                            END
 	                                                                        END

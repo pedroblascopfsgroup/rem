@@ -48,6 +48,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
+    private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -87,20 +88,28 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								}
 							}
 						}
+						
+						//Motivo anulación
+						if(!ofertaApi.checkReserva(ofertaAceptada)){
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_ANULACION_IRREGULARIDADES);
+							DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+							expediente.setMotivoAnulacion(motivoAnulacion);
+						}
+						
 					}else{
 						expediente.setEstadoPbc(1);
 						genericDao.save(ExpedienteComercial.class, expediente);
 					}
 				}
 				
-				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-					if(!ofertaApi.checkReserva(ofertaAceptada)){
-						// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
-						DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
-						expediente.setMotivoAnulacion(motivoAnulacion);
-					}
-				}
+//				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+//					if(!ofertaApi.checkReserva(ofertaAceptada)){
+//						// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
+//						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "601");
+//						DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+//						expediente.setMotivoAnulacion(motivoAnulacion);
+//					}
+//				}
 			}
 		}
 	}

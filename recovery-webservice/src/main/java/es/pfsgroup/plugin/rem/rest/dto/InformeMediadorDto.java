@@ -86,12 +86,6 @@ public class InformeMediadorDto implements Serializable {
 	private String motivoNoPosibleInforme;
 
 	@NotNull(groups = Insert.class)
-	@Diccionary(clase = DDSubtipoActivo.class, message = "El codSubtipoImueble no existe", groups = { Insert.class,
-			Update.class })
-	@EntityDefinition(propertyName = "subtipoActivo", classObj = DDSubtipoActivo.class)
-	private String codSubtipoImueble;
-
-	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoVivienda.class, message = "El codTpoVivienda de activo no existe", groups = {
 			Insert.class, Update.class })
 	@EntityDefinition(propertyName = "tipoVivienda", classObj = DDTipoVivienda.class)
@@ -154,7 +148,6 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "ubicacionActivo", classObj = DDUbicacionActivo.class)
 	private String codUbicacion;
 
-	@NotNull(groups = Insert.class) // <------------------------------------------------------------------------------------------------------Diccionario???
 	@EntityDefinition(propertyName = "distrito")
 	private String codDistrito;
 
@@ -189,7 +182,7 @@ public class InformeMediadorDto implements Serializable {
 	@Diccionary(clase = DDTipoGradoPropiedad.class, message = "El codTipoPropiedad no existe", groups = { Insert.class,
 			Update.class })
 	@EntityDefinition(procesar = false)
-	private String codTipoPropiedad;// <---------------------------------Diccionario???
+	private String codTipoPropiedad;
 
 	@NotNull(groups = Insert.class)
 	@EntityDefinition(procesar = false)
@@ -989,14 +982,6 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setMotivoNoPosibleInforme(String motivoNoPosibleInforme) {
 		this.motivoNoPosibleInforme = motivoNoPosibleInforme;
-	}
-
-	public String getCodSubtipoImueble() {
-		return codSubtipoImueble;
-	}
-
-	public void setCodSubtipoImueble(String codSubtipoImueble) {
-		this.codSubtipoImueble = codSubtipoImueble;
 	}
 
 	public String getCodTipoVivienda() {

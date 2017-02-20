@@ -246,7 +246,6 @@ public class MSVHojaExcel {
 		
 		WritableSheet hoja = copy.getSheet(numHoja);
 		int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja,numFilaCabeceras);
-		int numErrores = mapaErrores.size();
 		
 		Iterator<String> it = mapaErrores.keySet().iterator();
 		int columna = numColumnas;
@@ -299,7 +298,7 @@ public class MSVHojaExcel {
 		
 			if (cell.getType() == CellType.NUMBER) 
 			{ 
-				cellContent = String.valueOf(getValidatedNumber(cell.getContents()));
+				cellContent = getValidatedNumber(cell.getContents());
 			} else {
 				cellContent = cell.getContents();
 			}
@@ -308,14 +307,16 @@ public class MSVHojaExcel {
 		return cellContent;
 	}
 
-	public Double getValidatedNumber(String cellValue) throws ParseException{
+	public String getValidatedNumber(String cellValue) throws ParseException{
 		DecimalFormat df = new DecimalFormat();
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 		
 		// Formato numerico compatible con notacion latina
-		symbols.setDecimalSeparator('.'); // Simbolo de decimales
-		symbols.setMinusSign('-'); // Simbolo numero negativo
+		if(!Checks.esNulo(cellValue) && cellValue.contains("."))
+			symbols.setDecimalSeparator('.'); // Simbolo de decimales
 		
+		symbols.setMinusSign('-'); // Simbolo numero negativo
+
 		if(!Checks.esNulo(cellValue) && cellValue.contains(","))
 			symbols.setGroupingSeparator(','); // Simbolo de miles
 		
@@ -326,9 +327,9 @@ public class MSVHojaExcel {
 			symbols.setPercent('%'); // Simbolo porcentaje
 		
 		df.setDecimalFormatSymbols(symbols);
-		
+
 		if(!Checks.esNulo(cellValue))
-			return df.parse(cellValue).doubleValue();
+			return String.valueOf(df.parse(cellValue));
 		else
 			return null;
 	}

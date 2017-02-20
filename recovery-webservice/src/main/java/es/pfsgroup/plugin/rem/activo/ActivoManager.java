@@ -3028,7 +3028,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idPropuesta);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numPropuesta", idPropuesta);
 		PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, filtro);
 
 		propuesta.setFechaCarga(new Date());

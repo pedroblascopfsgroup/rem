@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.trabajo;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -608,6 +609,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return listaActivos;

@@ -32,6 +32,30 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
 	
+    public static final String CODIGO_DNI = "01";
+    public static final String CODIGO_CIF = "02";
+    public static final String CODIGO_NIF = "03";
+    public static final String CODIGO_VALORACION_ESTADO_CONSERVACION = "04";
+    public static final String CODIGO_RESOLUCION_TANTEO = "05";
+    public static final String CODIGO_CONTRATO_RESERVA = "06";
+    public static final String CODIGO_MINUTA = "07";
+    public static final String CODIGO_RESOL_COMITE = "08";
+    public static final String CODIGO_CONTRATO_ALQUILER = "09";
+    public static final String CODIGO_FICHA_LEGAL = "10";
+    //public static final String CODIGO_CONTRATO_RESERVA = "11";
+    public static final String CODIGO_JUSTIFICANTE_RESERVA = "12";
+    public static final String CODIGO_COMUNICACION_A_HABITATGE_RESERVA = "13";
+    public static final String CODIGO_RESPUESTA_A_HABITATGE = "14";
+    public static final String CODIGO_FICHA_ESCRITURA_INMUEBLE = "15";
+    public static final String CODIGO_ESCRITURA_COMPRAVENTA = "16";
+    public static final String CODIGO_JUSTIFICANTE_COMPRAVENTA = "17";
+    public static final String CODIGO_RECIBI_ENTREGA_LLAVES = "18";
+    public static final String CODIGO_COPIA_SIMPLE = "19";
+    public static final String CODIGO_LIQUIDACION_PLUSVALIA = "20";
+    public static final String CODIGO_AUTORIZACION_VENTA = "21";
+    public static final String CODIGO_CONTRAOFERTA= "22";
+    public static final String CODIGO_APROBACION= "23";
+    
 	/**
 	 * 
 	 */

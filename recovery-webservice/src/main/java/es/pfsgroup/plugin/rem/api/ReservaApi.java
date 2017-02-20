@@ -8,9 +8,11 @@ import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
 public interface ReservaApi {
 
 	public static final String COBRO_RESERVA = "1";
+	public static final String ANULACION_COBRO_RESERVA = "2";
 	public static final String COBRO_VENTA = "3";
+	public static final String ANULACION_COBRO_VENTA = "4";
 	public static final String DEVOLUCION_RESERVA = "5";
-	
+	public static final String ANULACION_DEVOLUCION_RESERVA = "6";
 	
 	/**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de las peticiones POST.

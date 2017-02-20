@@ -47,7 +47,6 @@ public interface ConfirmarOperacionApi {
 	 * Registra la devolución de la reserva. Insertar en entregas a cuentas en negativo,
 	 * Actualiza estado reserva a CODIGO_RESUELTA_DEVUELTA, el estado de la oferta CODIGO_RECHAZADA, el estado del expediente ANULADO,
 	 * Poner fecha de devolución e importe devolución
-	 * Actualiza fecha de devolución e importe devuelto
 	 * @param ConfirmacionOpDto con los datos necesarios para registrar la devolución de la reserva
 	 * @return void
 	 */
@@ -63,5 +62,37 @@ public interface ConfirmarOperacionApi {
 	 */
 	public void reintegrarReserva(ConfirmacionOpDto confirmacionOpDto) throws Exception;
 	
+
+	/**
+	 * Anula el cobro de la reserva si es en el mismo día que el cobro.
+	 * Borra de entregas a cuentas la reserva,
+	 * Actualiza fecha firma reserva y fecha envío reserva a null
+	 * Actualiza el estado del expediente como "Aprobado" y el estado de la reserva a "Pendiente firma"
+	 * @param ConfirmacionOpDto con los datos necesarios para registrar el cobro de la reserva
+	 * @return void
+	 */
+	public void  anularCobroReserva(ConfirmacionOpDto confirmacionOpDto)throws Exception;
+	
+	
+	
+	/**
+	 * Anula el cobro de la venta si es en el mismo día que el cobro.
+	 * Borra de entregas a cuentas la venta,
+	 * Actualiza fecha contabilizacionPropietario y fecha venta a null
+	 * @param ConfirmacionOpDto con los datos necesarios para registrar el cobro de la venta
+	 * @return void 
+	 */
+	public void  anularCobroVenta(ConfirmacionOpDto confirmacionOpDto)throws Exception;
+	
+	
+	/**
+	 * Anula la devolución del cobro de la reserva si es en el mismo día que la devolución. 
+	 * Borra de entregas a cuentas la devolución.
+	 * Actualiza estado reserva a "Pendiente de devolución", el estado de la oferta "Aceptada", el estado del expediente "En devolución",
+	 * Poner fecha de devolución e importe devolución a null,
+	 * @param ConfirmacionOpDto con los datos necesarios para registrar la devolución de la reserva
+	 * @return void
+	 */
+	public void  anularDevolucionReserva(ConfirmacionOpDto confirmacionOpDto)throws Exception;
 	
 }

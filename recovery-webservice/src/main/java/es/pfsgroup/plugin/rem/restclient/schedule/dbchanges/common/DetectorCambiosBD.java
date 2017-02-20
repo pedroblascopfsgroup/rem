@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.context.SecurityContextHolder;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
@@ -49,6 +52,9 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private ServletContext servletContext;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -306,5 +312,26 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 */
 	public void setdbContext() throws Exception {
 		restApi.doSessionConfig(RestSecurityFilter.WORKINGCODE);
+	}
+
+	/**
+	 * Cierra la sesion
+	 */
+	public void closeSession() {
+		SecurityContextHolder.clearContext();
+	}
+	
+	/**
+	 * Devuelve true si la apirest esta cerrada
+	 * 
+	 * @return
+	 */
+	public boolean isApiRestCerrada(){
+		boolean restLocked = false;
+		if (servletContext.getAttribute(RestApi.REST_API_WEBCOM) != null
+				&& (Boolean) servletContext.getAttribute(RestApi.REST_API_WEBCOM)) {
+			restLocked = true;
+		}
+		return restLocked;
 	}
 }

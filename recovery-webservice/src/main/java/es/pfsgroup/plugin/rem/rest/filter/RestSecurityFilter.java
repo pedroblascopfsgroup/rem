@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.rest.filter;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -15,6 +16,7 @@ import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ALGORITMO_FIRMA;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -30,6 +32,9 @@ public class RestSecurityFilter implements Filter {
 
 	@Autowired
 	private RestApi restApi;
+
+	@Autowired
+	private ServletContext servletContext;
 
 	public static String WORKINGCODE = "2038";
 
@@ -82,8 +87,26 @@ public class RestSecurityFilter implements Filter {
 			}
 			restRequest.setPeticionRest(peticion);
 			if (broker != null) {
+				boolean restLocked = false;
+				if (servletContext.getAttribute(RestApi.REST_API_ALL) != null
+						&& (Boolean) servletContext.getAttribute(RestApi.REST_API_ALL)) {
+					restLocked = true;
+				} else {
+					ALGORITMO_FIRMA firmaTipo = restApi.obtenerAlgoritmoFirma(request);
+					if (firmaTipo.equals(ALGORITMO_FIRMA.DEFAULT)) {
+						if (servletContext.getAttribute(RestApi.REST_API_WEBCOM) != null
+								&& (Boolean) servletContext.getAttribute(RestApi.REST_API_WEBCOM)) {
+							restLocked = true;
+						}
+					} else if (firmaTipo.equals(ALGORITMO_FIRMA.NO_IP)) {
+						if (servletContext.getAttribute(RestApi.REST_API_BANKIA) != null
+								&& (Boolean) servletContext.getAttribute(RestApi.REST_API_BANKIA)) {
+							restLocked = true;
+						}
+					}
+				}
 
-				if (!restApi.validateSignature(broker, signature, restRequest)) {
+				if (!restApi.validateSignature(broker, signature, restRequest) || restLocked) {
 					logger.error("REST: La firma no es correcta");
 					peticion.setResult(RestApi.CODE_ERROR);
 					peticion.setErrorDesc(RestApi.REST_MSG_INVALID_SIGNATURE);

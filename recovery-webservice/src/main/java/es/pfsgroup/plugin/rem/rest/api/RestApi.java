@@ -55,6 +55,10 @@ public interface RestApi {
 	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";
 	public static final String REST_LOGGED_USER_USERNAME_FULL = "REST-USER";
 	public static final Object REST_LOGGED_USER_EMPTY_PASSWORD = "";
+	public static final String REST_API_LOCKED = "REST_API_LOCKED";
+	public static final String REST_API_ALL = "TODOS";
+	public static final String REST_API_WEBCOM = "WEBCOM";
+	public static final String REST_API_BANKIA = "BANKIA";
 
 	/**
 	 * Valida la firma

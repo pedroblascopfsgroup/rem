@@ -148,100 +148,108 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				// importante: Si no hacemos esto no se pueden actualizar las
 				// vistas materializadas
 				registroCambiosHandlersAjecutar.get(0).setdbContext();
-				for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
-					if (handler.isActivo()) {
-						logger.debug("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
-						ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
-						long startTime = System.currentTimeMillis();
+				if (!registroCambiosHandlersAjecutar.get(0).isApiRestCerrada()) {
+					for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
+						if (handler.isActivo()) {
+							logger.debug("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
+							ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
+							long startTime = System.currentTimeMillis();
 
-						logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
-						Class control = handler.getDtoClass();
-						CambiosList listPendientes = new CambiosList(tamanyoBloque);
-						handler.actualizarVistaMaterializada();
-						Boolean marcarComoEnviado = false;
-						Integer contError = 0;
-						do {
-							boolean somethingdone = false;
-							RestLlamada registro = new RestLlamada();
-							registro.setIteracion(iteracion);
-							try {
-								if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
-									listPendientes = handler.listPendientes(control, registro, listPendientes);
-								} else {
-									listPendientes = handler.listDatosCompletos(control, registro, listPendientes);
-								}
-
-								somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
-								if (somethingdone) {
-									logger.debug("[DETECCIÓN CAMBIOS] Enviando " + listPendientes.size()
-											+ " cambios mediante el handler " + handler.getClass().getName());
-								} else {
-									logger.debug(
-											"[DETECCIÓN CAMBIOS] No se han encontrado cambios para enviar. Handler: "
-													+ handler.getClass().getName());
-								}
-								ejecutaTarea(handler, listPendientes, control, registro);
-								// pasamos de bloque
-								if (listPendientes != null
-										&& listPendientes.getPaginacion().getTamanyoBloque() != null) {
-									if (listPendientes.size() == listPendientes.getPaginacion().getTamanyoBloque()) {
-										listPendientes.getPaginacion().setHasMore(true);
-										listPendientes.getPaginacion()
-												.setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
-
+							logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
+							Class control = handler.getDtoClass();
+							CambiosList listPendientes = new CambiosList(tamanyoBloque);
+							handler.actualizarVistaMaterializada();
+							Boolean marcarComoEnviado = false;
+							Integer contError = 0;
+							do {
+								boolean somethingdone = false;
+								RestLlamada registro = new RestLlamada();
+								registro.setIteracion(iteracion);
+								try {
+									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
+										listPendientes = handler.listPendientes(control, registro, listPendientes);
 									} else {
-										listPendientes.getPaginacion().setHasMore(false);
+										listPendientes = handler.listDatosCompletos(control, registro, listPendientes);
 									}
-								}
-								marcarComoEnviado = true;
-								contError = 0;
-								logger.trace("TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
-										+ "]: " + (System.currentTimeMillis() - startTime));
-							} catch (ErrorServicioWebcom e) {
-								if (e.isReintentable()) {
-									logger.error(
-											"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
-											e);
-								} else {
-									logger.fatal(
-											"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
-											e);
-								}
-								// si no es reintentable siguiente bloque
-								if (!e.isReintentable()) {
-									if (listPendientes.size() == listPendientes.getPaginacion().getTamanyoBloque()) {
-										listPendientes.getPaginacion().setHasMore(true);
-										listPendientes.getPaginacion()
-												.setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
 
+									somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
+									if (somethingdone) {
+										logger.debug("[DETECCIÓN CAMBIOS] Enviando " + listPendientes.size()
+												+ " cambios mediante el handler " + handler.getClass().getName());
 									} else {
-										listPendientes.getPaginacion().setHasMore(false);
+										logger.debug(
+												"[DETECCIÓN CAMBIOS] No se han encontrado cambios para enviar. Handler: "
+														+ handler.getClass().getName());
 									}
-								} else {
+									ejecutaTarea(handler, listPendientes, control, registro);
+									// pasamos de bloque
+									if (listPendientes != null
+											&& listPendientes.getPaginacion().getTamanyoBloque() != null) {
+										if (listPendientes.size() == listPendientes.getPaginacion()
+												.getTamanyoBloque()) {
+											listPendientes.getPaginacion().setHasMore(true);
+											listPendientes.getPaginacion().setNumeroBloque(
+													listPendientes.getPaginacion().getNumeroBloque() + 1);
+
+										} else {
+											listPendientes.getPaginacion().setHasMore(false);
+										}
+									}
+									marcarComoEnviado = true;
+									contError = 0;
+									logger.trace(
+											"TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
+													+ "]: " + (System.currentTimeMillis() - startTime));
+								} catch (ErrorServicioWebcom e) {
+									if (e.isReintentable()) {
+										logger.error(
+												"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
+												e);
+									} else {
+										logger.fatal(
+												"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
+												e);
+									}
+									// si no es reintentable siguiente bloque
+									if (!e.isReintentable()) {
+										if (listPendientes.size() == listPendientes.getPaginacion()
+												.getTamanyoBloque()) {
+											listPendientes.getPaginacion().setHasMore(true);
+											listPendientes.getPaginacion().setNumeroBloque(
+													listPendientes.getPaginacion().getNumeroBloque() + 1);
+
+										} else {
+											listPendientes.getPaginacion().setHasMore(false);
+										}
+									} else {
+										marcarComoEnviado = false;
+										contError++;
+									}
+								} catch (CambiosBDDaoError e) {
 									marcarComoEnviado = false;
-									contError++;
+									logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
+											+ "], no se han podido obtener los cambios", e);
+									break;
+								} finally {
+									if (somethingdone && (registroLlamadas != null)) {
+										registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
+										llamadas.add(registro);
+									}
 								}
-							} catch (CambiosBDDaoError e) {
-								marcarComoEnviado = false;
-								logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
-										+ "], no se han podido obtener los cambios", e);
-								break;
-							} finally {
-								if (somethingdone && (registroLlamadas != null)) {
-									registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
-									llamadas.add(registro);
-								}
-							}
-						} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
-								|| (contError > 0 && contError < MAXIMO_INTENTOS));
+							} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
+									|| (contError > 0 && contError < MAXIMO_INTENTOS));
 
-						if (marcarComoEnviado) {
-							logger.trace(
-									handler.getClass().getName() + ": marcando los registros de la BD como enviados");
-							handler.marcaComoEnviados(control, llamadas);
+							if (marcarComoEnviado) {
+								logger.trace(handler.getClass().getName()
+										+ ": marcando los registros de la BD como enviados");
+								handler.marcaComoEnviados(control, llamadas);
+							}
 						}
 					}
+				}else{
+					logger.error("La API REST esta cerrada no se ejecutará");
 				}
+				registroCambiosHandlersAjecutar.get(0).closeSession();
 			} else {
 				logger.warn("El registro de cambios en BD aún no está disponible");
 			}

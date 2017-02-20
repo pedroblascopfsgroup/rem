@@ -105,7 +105,7 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 //						}
 						
 						if(ofertaApi.isOfertaAceptadaConExpedienteBlocked(ofertaActivo.getPrimaryKey().getOferta())) {
-							return ERROR_OFERTA_ACTIVO_ACEPTADA;
+							return ERROR_OFERTA_ACTIVO_EXPED_TRAMITADO;
 						} else if(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
 							DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
 							ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);

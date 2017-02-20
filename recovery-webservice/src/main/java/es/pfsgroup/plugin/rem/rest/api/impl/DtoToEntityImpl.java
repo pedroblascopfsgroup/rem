@@ -246,9 +246,9 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	private void guardarEntity(ArrayList<Serializable> objetoEntitys) throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
 		for (Serializable objetoEntity : objetoEntitys) {
-			logger.debug("Guardando..." + objetoEntity.getClass().getName());
+			logger.trace("Guardando..." + objetoEntity.getClass().getName());
 			Serializable primaryKey = genericaRestDaoImp.save(objetoEntity);
-			logger.debug("Exito..." + primaryKey.getClass().getName());
+			logger.trace("Exito..." + primaryKey.getClass().getName());
 			String primaryKeFieldName = this.findPrimaryKey(objetoEntity);
 			this.setProperty(primaryKeFieldName, primaryKey.getClass(), null, null, primaryKey, objetoEntity);
 			this.setFk(objetoEntity, objetoEntitys);

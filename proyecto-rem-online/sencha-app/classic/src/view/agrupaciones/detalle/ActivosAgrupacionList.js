@@ -28,10 +28,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		},
 		boxready: function() {
 			var me = this;
-			//Si la agrupacion tiene oferta vivas, no se puede agregar/quitar activos
-			var desactivarBotones = !me.lookupController().getViewModel().get('agrupacionficha').getData().existenOfertasVivas;
-			me.visibilityAddButton(desactivarBotones);
-			me.visibilityRemoveButton(desactivarBotones);
 		},
 		edit: function(editor, context, eOpts) {
 			var me = this;
@@ -371,22 +367,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     	return me.pagingSelectPersist.deselectAll();     		
     },
 
-    visibilityAddButton: function(visibility) {
-    	var me = this;
-
-    	if (!Ext.isEmpty(me.down('#addButton'))) {
-    		me.down('#addButton').setVisible(visibility);  		
-    	}
-    },
-
-    visibilityRemoveButton: function(visibility) {
-    	var me = this;
-
-    	if (!Ext.isEmpty(me.down('#removeButton'))) {
-    		me.down('#removeButton').setVisible(visibility);  		
-    	}
-    },
-
     onAddClick: function(btn){
     	
 		var me = this;
@@ -414,7 +394,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 			        	me.mask(HreRem.i18n("msg.mask.espere"));
 			    		me.rowEditing.cancelEdit();
 			            var sm = me.getSelectionModel();
-			            sm.getSelection()[0].erase({
+
+						// Se borra 1 activo de la agrupacion
+						me.selection.erase({
+							params: {agrId: me.selection.data.agrId, activoId: me.selection.data.activoId},
 			            	success: function (a, operation, c) {
                                 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 								me.unmask();
@@ -436,7 +419,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 								me.deleteFailureFn()
                             }
                         });
-
+						
 			            if (me.getStore().getCount() > 0) {
 			                sm.select(0);
 			            }

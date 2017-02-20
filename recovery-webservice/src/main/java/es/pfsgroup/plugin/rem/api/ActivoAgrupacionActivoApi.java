@@ -51,4 +51,6 @@ public interface ActivoAgrupacionActivoApi {
 	 */
 	public List<ActivoAgrupacionActivo> getListActivosAgrupacion(DtoAgrupacionFilter dtoAgrupActivo);
 
+	Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion);
+
 }

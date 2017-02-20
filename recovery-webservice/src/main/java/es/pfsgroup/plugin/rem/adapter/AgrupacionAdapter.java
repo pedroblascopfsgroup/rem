@@ -617,6 +617,19 @@ public class AgrupacionAdapter {
 		
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = false)
+	public boolean deleteOneActivoAgrupacionActivo(Long idAgrupacion, Long idActivo) throws JsonViewerException{
+		
+		ActivoAgrupacionActivo activoAgrupacionActivo = activoAgrupacionActivoApi.getByIdActivoAndIdAgrupacion(idActivo, idAgrupacion);
+		if(!Checks.esNulo(activoAgrupacionActivo)){
+			activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+			return true;
+		} else {
+			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación.");
+		}
+	}
+	
 	@Transactional(readOnly = false)
 	public boolean deleteActivoAgrupacion(Long id) throws JsonViewerException{
 
@@ -1422,14 +1435,7 @@ public class AgrupacionAdapter {
 	
 	//Devuelve verdadero si en la agrupación existe alguna Oferta activa (estado != RECHAZADA)
 	private Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion) {
-		List<VOfertasActivosAgrupacion> lista = this.getListOfertasAgrupacion(idAgrupacion);
-		
-		for(VOfertasActivosAgrupacion oferta : lista) {
-			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta()))
-				return true;
-		}
-		
-		return false;
+		return activoAgrupacionActivoApi.existenOfertasActivasEnAgrupacion(idAgrupacion);
 	}
 	
 	/**

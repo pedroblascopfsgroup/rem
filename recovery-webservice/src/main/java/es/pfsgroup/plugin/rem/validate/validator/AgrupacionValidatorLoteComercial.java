@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -26,6 +27,9 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 
     @Autowired 
     private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
+    
+    @Autowired 
+    private ActivoAgrupacionApi activoAgrupacionApi;
 
     @Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -51,7 +55,12 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 		if(!Checks.esNulo(activo.getSituacionComercial()) && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) {
 			return ERROR_ACTIVO_VENDIDO;
 		}
-
+		
+		// Validacion perimetro NO-COMERCIALIZABLE
+		if(!Checks.esNulo(activo.getSituacionComercial()) && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)) {
+			return ERROR_ACTIVO_NO_COMERCIALIZABLE;
+		}
+		
 		// Validación ofertas agrupación restringida del activo.
 		boolean incluidoAgrupacionRestringida = false;
 		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
@@ -82,6 +91,7 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 			}
 		}
 
+//		boolean tieneOfertasVivas = false;
 		if(!incluidoAgrupacionRestringida) {
 			// Validación ofertas activo.
 			List<ActivoOferta> ofertasActivo = activo.getOfertas();
@@ -90,6 +100,10 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 				for(ActivoOferta ofertaActivo : ofertasActivo) {
 					if(!Checks.esNulo(ofertaActivo.getPrimaryKey()) && !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta()) && !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())){
 
+//						if (!DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())){
+//							tieneOfertasVivas = true;
+//						}
+						
 						if(ofertaApi.isOfertaAceptadaConExpedienteBlocked(ofertaActivo.getPrimaryKey().getOferta())) {
 							return ERROR_OFERTA_ACTIVO_ACEPTADA;
 						} else if(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
@@ -101,6 +115,11 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 			}
 		}
 
+// Aunque el activo tenga ofertas vivas, puede incluirse/excluirse del lote		
+//		// Validacion activo con ofertas vivas (No rechazadas)
+//		if(tieneOfertasVivas)
+//			return ERROR_ACTIVO_CON_OFERTAS_VIVAS;
+		
 		ActivoAgrupacionActivo primerActivoAgrupacion = activoAgrupacionActivoApi.primerActivoPorActivoAgrupacion(agrupacion.getId());
 		if (primerActivoAgrupacion == null) return "";
 

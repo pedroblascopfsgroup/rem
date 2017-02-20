@@ -1,35 +1,34 @@
---/*
 --###############################################################################################################################################################################--
---## AUTOR=MANUEL RODRIGUEZ
+--## AUTOR=SERGIO GARCIA
 --## FECHA_CREACION=20161212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=HREOS-373
+--## INCIDENCIA_LINK=HREOS-1503
 --## PRODUCTO=NO
---## Finalidad: Procedimiento que actualiza información adicional a los activos a partir de la
+--## Finalidad: Procedimiento que actualiza informaci&oacute;n adicional a los activos a partir de la
 --##			tabla APR_AUX_STOCK_BIENES, con datos procedentes de UVEM.
 --##                                                                                                                                                                           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:                                                                                                                                                                ##--
---##        0.1 Versión inicial                                                                                                                                                ##--
+--##        0.1 Versi&oacute;n inicial                                                                                                                                                ##--
 --##        0.2 Modificado mapeo de algunos campos, actualizacion de ACT_AJD_ADJJUDICIAL.DD_EDJ_ID                                                                             ##--
---##        0.3 Se copia el contenido del campo 'FECHA_REALIZACION_POSESION','BIE_ADJ_F_REA_POSESION' ---> ACT_SPS_SIT_POSESORIA.SPS_FECHA_TOMA_POSESION                       ##--
+--##        0.3 Se copia el contenido del campo 'FECHA_REALIZACION_POSESION','BIE_ADJ_F_REA_POSESION' ---!= ACT_SPS_SIT_POSESORIA.SPS_FECHA_TOMA_POSESION                       ##--
 --##            Se actualiza el campo BIE_DATOS_REGISTRALES con lo que viene en NUM_REFER_CATASTRAL de stock_bienes.dat                                                        ##--
---##		0.4 [Hito: 1.0.3-rem-etl] Modificado mapeo FECHA AUTO ADJUDICACION y FECHA FIRMEZA AUTO ADJUDICACION, también hacemos que siempre actualize DD_EDJ_ID.             ##--
+--##		0.4 [Hito: 1.0.3-rem-etl] Modificado mapeo FECHA AUTO ADJUDICACION y FECHA FIRMEZA AUTO ADJUDICACION, tambi&eacute;n hacemos que siempre actualize DD_EDJ_ID.             ##--
 --##		0.5 [Hito: 1.0.5-rem] [HREOS-467] Modificar USUARIOMODIFICAR                                                                                                       ##--
---##			[Hito: 1.0.5-rem] [HREOS-456] Control posesion en ETL Actualización activos desde Recovery (SAREB)                                                             ##--
---##		0.6 [Hito: 1.0.6-rem] [HREOS-519] Desactivar actualización DD_TPO_ID de ACT_SPS_SIT_POSESORIA para incluirla directamente al ETL                                   ##--
+--##			[Hito: 1.0.5-rem] [HREOS-456] Control posesion en ETL Actualizaci&oacute;n activos desde Recovery (SAREB)                                                             ##--
+--##		0.6 [Hito: 1.0.6-rem] [HREOS-519] Desactivar actualizaci&oacute;n DD_TPO_ID de ACT_SPS_SIT_POSESORIA para incluirla directamente al ETL                                   ##--
 --##			[Hito: 1.0.6-rem] [HREOS-530] Actualizar ACT_CAT_CATASTRO.                                                                                                     ##--
---##		0.7 /*[Hito: 1.0.7-patch-rem] [HREOS-574] Se añade la actualización de CARGAS desde Recovery*/--COMENTADO, SE SACARÁ NUEVA VERSIÓN CUANDO ENTRE EL PROCESO.        ##--
---##		0.8 [Hito: ] [HREOS-600] Se añade en ACT_AJD_ADJJUDICIAL el ASU_ID_EXTERNO (AJD_ID_ASUNTO) y el LETRADO (AJD_LETRADO)         									   ##--
---##		0.8 [Hito: ] [HREOS-600] Se añade en ACT_AJD_ADJJUDICIAL el ASU_ID_EXTERNO y el LETRADO            																   ##--
---##		0.9 [Hito: ] [HREOS-1106] Se añade FECHA_AUTO_ADJUD_FIRME en BIE_ADJ_ADJUDICACION y se cambia valor de AJD_FECHA_ADJUDICACION y el merge de DD_EJD_ID.			   ##--
---##        0.10 [Hito: ] [HREOS-1106] Se actualiza ACT_TIT_TITULO con la información de DE BIE_ADJ_ADJUDICACION.                                                        	   ##--																									   ##--
---##                                                                																										   ##--
+--##		0.7 /*[Hito: 1.0.7-patch-rem] [HREOS-574] Se a&ntilde;ade la actualizaci&oacute;n de CARGAS desde Recovery*/--COMENTADO, SE SACAR&Aacute; NUEVA VERSI&Oacute;N CUANDO ENTRE EL PROCESO.        ##--
+--##		0.8 [Hito: ] [HREOS-600] Se a&ntilde;ade en ACT_AJD_ADJJUDICIAL el ASU_ID_EXTERNO (AJD_ID_ASUNTO) y el LETRADO (AJD_LETRADO)         									   ##--
+--##		0.8 [Hito: ] [HREOS-600] Se a&ntilde;ade en ACT_AJD_ADJJUDICIAL el ASU_ID_EXTERNO y el LETRADO            																   ##--
+--##		0.9 [Hito: ] [HREOS-1106] Se a&ntilde;ade FECHA_AUTO_ADJUD_FIRME en BIE_ADJ_ADJUDICACION y se cambia valor de AJD_FECHA_ADJUDICACION y el merge de DD_EJD_ID.			   ##--
+--##        0.10 [Hito: ] [HREOS-1106] Se actualiza ACT_TIT_TITULO con la informaci&oacute;n de DE BIE_ADJ_ADJUDICACION.                                                        	   ##--																									   ##--
+--##        0.11 [Hito: ] [HREOS-1503] Se actualizan los borrados de las cargas que vienen por sincronización en las tablas ACT_CRG_CARGAS y BIE_CAR_CARGAS.                      	   ##--																									   ##--
 --###############################################################################################################################################################################--
 --*/
 
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+--Para permitir la visualizaci&oacute;n de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
@@ -41,7 +40,7 @@ create or replace PROCEDURE SP_UPA_UPDATE_ACTIVES_SAREB (
 	PL_OUTPUT       OUT VARCHAR2
 )
 AS
---V0.10
+--V0.11
 
 V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -178,7 +177,7 @@ BEGIN
 
 	PL_OUTPUT := ' ';
 
-	DBMS_OUTPUT.PUT_LINE('[INFO] INICIO DEL PROCESO DE ACTUALIZACIÓN DE INFORMACIÓN DE ACTIVOS.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] INICIO DEL PROCESO DE ACTUALIZACI&Oacute;N DE INFORMACI&Oacute;N DE ACTIVOS.');
 	DBMS_OUTPUT.PUT_LINE('*********************************************************************');
 	DBMS_OUTPUT.PUT_LINE('');
 
@@ -218,7 +217,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS != 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_BIEN.['||V_TMP_TIPO_TABLA1(2)||']');
 
@@ -329,7 +328,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS != 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES.['||V_TMP_TIPO_TABLA2(2)||']');
 
@@ -436,7 +435,7 @@ BEGIN
 	;
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS != 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION.['||V_TMP_TIPO_TABLA3(2)||']');
 
@@ -545,7 +544,7 @@ BEGIN
 	;
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS != 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_AJD_ADJJUDICIAL.['||V_TMP_TIPO_TABLA4(2)||']');
 
@@ -721,7 +720,7 @@ BEGIN
 	;
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS != 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_ACTIVO.['||V_TMP_TIPO_TABLA5(2)||']');
 
@@ -829,7 +828,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS != 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_CAT_CATASTRO.['||V_TMP_TIPO_TABLA6(2)||']');
 
@@ -951,7 +950,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS != 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA.['||V_TMP_TIPO_TABLA7(2)||']');
 
@@ -1341,13 +1340,93 @@ BEGIN
 	   --------------------------------------------------              --------------------------------------------------
 	  -----##########################################-----	  -----##########################################-----
 	 -----   	  -----	 -----   	  -----
-	----	PARTE DE ACTUALIZACIÓN DE CARGAS	----        ----	PARTE DE ACTUALIZACIÓN DE CARGAS	----
+	----	PARTE DE ACTUALIZACI&Oacute;N DE CARGAS	----        ----	PARTE DE ACTUALIZACI&Oacute;N DE CARGAS	----
 	 -----	  -----          -----	  -----
 	  -----##########################################-----            -----##########################################-----
 	   --------------------------------------------------              --------------------------------------------------
 
 
+	--------------------------------------------------
+	-----       ACTUALIZAMOS BORRADO DE CARGAS EN BIE_CAR_CARGAS Y ACT_CRG_CARGAS  -----***HREOS-1503***
+	--------------------------------------------------
+	V_NOT_UPDATE := '';
 
+	DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZAMOS LAS CARGAS BORRADAS QUE VIENEN DE SINCRONIZACION...');
+	DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------');
+	
+	 V_SQL := '				  
+ 
+	MERGE INTO '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG USING
+	(
+	SELECT CAR.ACT_ID, CAR.CRG_ORDEN,APR.ANULACION_TOTAL_CARGAS 
+	FROM '||V_ESQUEMA||'.APR_AUX_CARGA_BIENES APR
+	INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+	ON ACT.ACT_NUM_ACTIVO_UVEM = APR.NUMERO_ACTIVO
+	INNER JOIN '||V_ESQUEMA||'.ACT_CRG_CARGAS CAR
+	ON CAR.ACT_ID = ACT.ACT_ID
+	AND CAR.CRG_ORDEN = APR.NUMERO_ORDEN
+	WHERE APR.ANULACION_TOTAL_CARGAS=1
+	group by CAR.ACT_ID, CAR.CRG_ORDEN,APR.ANULACION_TOTAL_CARGAS) ANU
+	ON (CRG.ACT_ID = ANU.ACT_ID)
+	WHEN MATCHED THEN UPDATE SET
+	CRG.BORRADO=1,
+	CRG.USUARIOBORRAR = ''SINCRONIZA'',
+	CRG.FECHABORRAR = SYSDATE
+	WHERE CRG.BORRADO=0
+    AND CRG.CRG_ORDEN = ANU.CRG_ORDEN 
+		'
+		;
+		
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN MARCADO COMO BORRADOS ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_CRG_CARGAS.');
+    PL_OUTPUT := PL_OUTPUT||'[INFO] SE HAN MARCADO COMO BORRADOS ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.ACT_CRG_CARGAS. '||CHR(10)||CHR(10);              
+                  
+    COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('******************************************************');
+	DBMS_OUTPUT.PUT_LINE('');              	
+		
+	
+	 V_SQL := '				  
+	
+	MERGE INTO '||V_ESQUEMA||'BIE_CAR_CARGAS BIE USING
+	(
+	SELECT CAR.BIE_CAR_ID, APR.ANULACION_TOTAL_CARGAS 
+	FROM '||V_ESQUEMA||'.APR_AUX_CARGA_BIENES APR
+	INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+	ON ACT.ACT_NUM_ACTIVO_UVEM = APR.NUMERO_ACTIVO
+	INNER JOIN '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
+	ON CRG.ACT_ID = ACT.ACT_ID
+	AND CRG.CRG_ORDEN = APR.NUMERO_ORDEN
+	INNER JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS CAR
+	ON CRG.BIE_CAR_ID = CAR.BIE_CAR_ID
+	WHERE apr.anulacion_total_cargas=1
+	) ANU
+	ON (BIE.BIE_CAR_ID = ANU.BIE_CAR_ID)
+	WHEN MATCHED THEN UPDATE SET
+	BIE.BORRADO=1,
+	BIE.USUARIOBORRAR = ''SINCRONIZA'',
+	BIE.FECHABORRAR = SYSDATE
+	WHERE BIE.BORRADO=0
+	'
+		;
+		
+	EXECUTE IMMEDIATE V_SQL;
+	
+	V_NUM_TABLAS := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN MARCADO COMO BORRADOS ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.');
+    PL_OUTPUT := PL_OUTPUT||'[INFO] SE HAN MARCADO COMO BORRADOS ['||V_NUM_TABLAS||'] REGISTROS EN '||V_ESQUEMA||'.BIE_CAR_CARGAS. '||CHR(10)||CHR(10);              
+                  
+    COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('******************************************************');
+	DBMS_OUTPUT.PUT_LINE('');        
+	   
+	   
 
 /*
 	--------------------------------------------------
@@ -1390,7 +1469,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[BIE_CAR_TITULAR]');
 
@@ -1487,7 +1566,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[DD_TPC_ID]');
 
@@ -1589,7 +1668,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[BIE_CAR_IMPORTE_REGISTRAL]');
 
@@ -1691,7 +1770,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[BIE_CAR_IMPORTE_ECONOMICO]');
 
@@ -1790,7 +1869,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[BIE_CAR_REGISTRAL]');
 
@@ -1889,7 +1968,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[DD_SIC_ID]');
 
@@ -1988,7 +2067,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[BIE_CAR_FECHA_INSCRIPCION]');
 
@@ -2085,7 +2164,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[BIE_CAR_FECHA_CANCELACION]');
 
@@ -2181,7 +2260,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[BIE_CAR_ECONOMICA]');
 
@@ -2277,7 +2356,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.BIE_CAR_CARGAS.[DD_SIC_ID2]');
 
@@ -2385,7 +2464,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_CRG_CARGAS.[DD_TCA_ID]');
 
@@ -2485,7 +2564,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_CRG_CARGAS.[DD_STC_ID]');
 
@@ -2586,7 +2665,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_CRG_CARGAS.[CRG_FECHA_CANCEL_REGISTRAL]');
 
@@ -2685,7 +2764,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_CRG_CARGAS.[CRG_PROCEDIMIENTO_ID]');
 
@@ -2784,7 +2863,7 @@ BEGIN
 	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 
-	IF V_NUM_TABLAS > 0 THEN
+	IF V_NUM_TABLAS &gt; 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] EXISTEN ['||V_NUM_TABLAS||'] CAMPOS A ACTUALIZAR EN '||V_ESQUEMA||'.ACT_CRG_CARGAS.[CRG_RECOVERY_ID]');
 
@@ -2863,4 +2942,3 @@ EXCEPTION
     RAISE;
 
 END SP_UPA_UPDATE_ACTIVES_SAREB;
-/

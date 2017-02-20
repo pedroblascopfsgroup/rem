@@ -7,12 +7,19 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 		
 		var me = this;
 		me.getViewModel().data.activospublicacion.load(1);
+		
 	},
 	
 	// Función que se ejecuta al hacer click en el botón de Limpiar.
 	onCleanFiltersClick: function(btn) {
+		var form = btn.up('panel').getForm();
+		
+		form.reset();
 
-		btn.up('panel').getForm().reset();
+		form.findField('admision').setValue(false);
+		form.findField('gestion').setValue(false);
+		form.findField('estadoPublicacionCodigo').setValue(null);
+		
 	},
 	
 	paramLoading: function(store, operation, opts) {

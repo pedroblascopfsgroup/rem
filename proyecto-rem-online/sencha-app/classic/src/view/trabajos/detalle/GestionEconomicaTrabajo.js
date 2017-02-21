@@ -177,7 +177,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					//Tocar el vertical align del label
 			    					xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.nombre'),
-						        	rowspan:	3,
+						        	rowspan:	2,
 						        	labelWidth:	150,
 						        	width: 		480,
 						        	bind: {
@@ -187,25 +187,45 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 					            	displayField: 'nombreComercial',
 		    						valueField: 'idProveedor',
 		    						listeners: {
-		    							change: 'onChangeProveedor'
+		    							change: 'onChangeComboProveedorGE'
 		    						}
 			    				},
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.usuario.contacto'),
 									width: 		480,
-									bind:		'{proveedor.nombreContacto}',
+									bind:		'{proveedor.nombre}',
 									readOnly: true
 								},
+								
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
 									width: 		480,
-									bind:		'{proveedor.emailContacto}',
+									bind:		'{proveedor.email}',
 									readOnly: true
 								},
 								{
+			    					//Tocar el vertical align del label
+			    					xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
+						        	reference: 'proveedorContactoCombo',
+						        	labelWidth:	150,
+						        	width: 		480,
+						        	bind: {
+					            		store: '{comboProveedorContacto}',
+					            		value: '{gestionEconomica.idProveedorContacto}',
+					            		disabled: '{!gestionEconomica.idProveedor}'
+					            	},
+					            	displayField: 'nombre',
+		    						valueField: 'id',
+		    						allowBlank: true,
+		    						listeners: {
+		    							change: 'onChangeProveedor'
+		    						}
+			    				},
+								{
 									fieldLabel: HreRem.i18n('fieldlabel.telefono.contacto'),
 									width: 		480,
-									bind:		'{proveedor.telefono1Contacto}',
+									bind:		'{proveedor.telefono1}',
 									readOnly: true
 								}
 							]

@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -150,6 +151,9 @@ public class MSVActualizarPreciosActivoDesbloqueo extends MSVExcelValidatorAbstr
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return true;
 	}
@@ -159,16 +163,17 @@ public class MSVActualizarPreciosActivoDesbloqueo extends MSVExcelValidatorAbstr
 		
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+				try {
+					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 			}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	

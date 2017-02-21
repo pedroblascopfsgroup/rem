@@ -106,11 +106,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		String codigo = null;
 		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 		
-		if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
-			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
-		}
-		else if(activoApi.isActivoVendido(activo)) {
+		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
+		}
+		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
+			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
 		}
 		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;

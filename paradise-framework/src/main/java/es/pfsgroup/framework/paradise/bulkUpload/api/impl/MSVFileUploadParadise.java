@@ -28,6 +28,9 @@ public class MSVFileUploadParadise {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@Autowired
+	private ExcelManagerApi excelManagerApi;
+	
 	@BusinessOperation(MSV_BO_PARADISE_UPLOAD_AND_VALDIATE)
 	@Transactional(readOnly = false, noRollbackFor=RuntimeException.class)
 	public String uploadAndValidate(WebFileItem uploadForm) {
@@ -42,6 +45,29 @@ public class MSVFileUploadParadise {
 				dto.setIdTipoOperacion(Long.parseLong(uploadForm.getParameter("idTipoOperacion")));
 				dto.setExcelFile(efb);
 				proxyFactory.proxy(ExcelManagerApi.class).uploadAndValidate(dto);
+
+			}
+		}catch (Exception e) {
+			throw new BusinessOperationException(e);
+		}
+		return null;
+	}
+	
+
+	
+	@Transactional(readOnly = false, noRollbackFor=RuntimeException.class)
+	public String upload(WebFileItem uploadForm) {
+		try {
+			if (uploadForm != null) {
+
+				ExcelFileBean efb = new ExcelFileBean();
+				efb.setFileItem(uploadForm.getFileItem());
+
+				MSVExcelFileItemDto dto = new MSVExcelFileItemDto();
+				dto.setProcessId(Long.parseLong(uploadForm.getParameter("idProceso")));
+				dto.setIdTipoOperacion(Long.parseLong(uploadForm.getParameter("idTipoOperacion")));
+				dto.setExcelFile(efb);
+				excelManagerApi.uploadOnly(dto);
 
 			}
 		}catch (Exception e) {

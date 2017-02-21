@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
@@ -26,6 +30,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
+import es.pfsgroup.framework.paradise.utils.JsonViewer;
 
 @Service
 @Transactional(readOnly = false)
@@ -49,6 +54,9 @@ public class ProcessAdapter {
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private ExcelManagerApi excelManagerApi;
+	
 	public Long initProcess(MSVDtoAltaProceso dto) throws Exception {
 		return apiProxyFactory.proxy(MSVProcesoApi.class).iniciarProcesoMasivo(dto);
 	}
@@ -65,6 +73,16 @@ public class ProcessAdapter {
 		
 		return fileUploadParadise.uploadAndValidate(fileItem);
 		
+	}
+	
+	public String subirFichero(WebFileItem fileItem) {
+		
+		return fileUploadParadise.upload(fileItem);
+		
+	}
+	
+	public Boolean validarMasivo(Long idProceso) throws Exception {
+		return excelManagerApi.validateContentOnly(idProceso);
 	}
 
 	public List<MSVDDOperacionMasiva> getTiposOperacion() {

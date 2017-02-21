@@ -19,12 +19,15 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoHistDao;
+import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivoHistorico;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoAgrupacionActivoManager")
@@ -46,6 +49,9 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 
 	@Autowired
 	private ActivoAgrupacionActivoHistDao activoAgrupacionActivoHistDao;
+	
+	@Autowired
+	private AgrupacionAdapter agrupacionAdapter;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -175,6 +181,19 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 		}
 		
 		return lista;	
+	}
+	
+	//Devuelve verdadero si en la agrupación existe alguna Oferta activa (estado != RECHAZADA)
+	@Override
+	public Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion) {
+		List<VOfertasActivosAgrupacion> lista = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
+		
+		for(VOfertasActivosAgrupacion oferta : lista) {
+			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta()))
+				return true;
+		}
+		
+		return false;
 	}
 
 }

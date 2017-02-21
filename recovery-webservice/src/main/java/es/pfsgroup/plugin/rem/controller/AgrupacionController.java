@@ -199,6 +199,26 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteOneActivoAgrupacionActivo(@RequestParam Long agrId, @RequestParam Long activoId, ModelMap model) {
+
+		try {
+			boolean success = adapter.deleteOneActivoAgrupacionActivo(agrId, activoId);
+			model.put("success", success);
+
+		} catch (JsonViewerException jvex) {
+			jvex.printStackTrace();
+			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+		} catch (Exception e) {
+			logger.error(e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteActivoAgrupacion(@RequestParam Long id, ModelMap model) {
 
 		try {

@@ -43,7 +43,7 @@ Ext.define('HreRem.model.ActivosExpediente', {
 		type: 'uxproxy',
 		api: {
 			create: '',
-            update: 'expedientecomercial/updateListadoActivos',
+            update: 'expedientecomercial/updateActivoExpediente',
             destroy: ''
         }
     }

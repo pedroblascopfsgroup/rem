@@ -401,7 +401,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			oferta.setEstadoOferta(tipoOferta);
 
-			// Al aceptar la oferta, se crea el trabajo de sancion oferta y el expedietne comercial
+			// Al aceptar la oferta, se crea el trabajo de sancion oferta y el expediente comercial
 			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
 				List<Activo> listaActivos = new ArrayList<Activo>();
 				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {

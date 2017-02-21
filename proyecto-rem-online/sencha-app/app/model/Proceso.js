@@ -42,6 +42,10 @@ Ext.define('HreRem.model.Proceso', {
     		{
     			name: 'conErrores',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'validable',
+    			type: 'boolean'
     		}
     		
     ] 

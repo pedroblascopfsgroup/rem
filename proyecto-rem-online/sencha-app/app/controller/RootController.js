@@ -12,6 +12,7 @@ Ext.define('HreRem.controller.RootController', {
     
     models: ['HreRem.model.User'],
     
+    
     init: function() {
     	
     	var me = this;
@@ -107,7 +108,7 @@ Ext.define('HreRem.controller.RootController', {
      */
     showUI: function(userName, store, storeTop) {
     	var me = this;
-    	me.initConfigRem();    	
+    	me.initConfigRem();
         me.viewport = Ext.create('HreRem.view.Viewport',{userName: userName, menuPrincipal: store, menuTop : storeTop});
     },
     
@@ -146,26 +147,16 @@ Ext.define('HreRem.controller.RootController', {
  	showLogin: function() {
     	
     	var me = this;
-    	
-    	// Si ya hemos creado el viewport y hay un fallo de conexión o por inactividad volveremos al login, por eso
-    	// hacemos un destroy de cualquier window que pueda existir a excepción de la ventana de login. 
-    	if(!Ext.isEmpty(me.viewport)) {
-    		window.location.href = window.location.href; 
-	  		/*me.viewport.destroy();
-	  		
-	  		Ext.Array.each(Ext.ComponentQuery.query('window'), function(window, index) {
-	  			if(window != me.winLogin) {
-	  				window.destroy();
-	  			}
-	  		});*/
-	  	};
-    	
-    	if(Ext.isEmpty(me.winLogin)){
-			me.winLogin = Ext.create('HreRem.view.login.Login');
-		} else {
-			me.winLogin.show();
-		};
-
+    	// Si ya hemos creado el viewport y por inactividad volvemos al login, refrescamos la página. 
+    	if(!Ext.isEmpty(me.viewport)) {    		
+    		location.reload(true);    		
+	  	} else {	  		
+	  		if(Ext.isEmpty(me.winLogin)){
+				me.winLogin = Ext.create('HreRem.view.login.Login');
+			} else {
+				me.winLogin.show();
+			}
+	  	}
     },
     
     onLoginFailure:function(action) {
@@ -191,7 +182,8 @@ Ext.define('HreRem.controller.RootController', {
 		Ext.Ajax.on('requestexception', function(con, response, op, e) {
 			switch (response.status) {
 				
-				case me.errorCodes['SC_UNAUTHORIZED']:
+				case me.errorCodes['SC_UNAUTHORIZED']:					
+					con.abortAll(); // Si hay más peticiones pendientes van a dar el mismo error. Las cancelamos.			
 					me.showLogin();
 					me.log(HreRem.i18n('msg.error.usuario.no.identificado'));
 					break;

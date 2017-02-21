@@ -80,6 +80,71 @@ public class ProcessController {
 		
 	}
 
+	
+	/**
+	 * Función que sube el fichero
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView upload(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		ModelMap model = new ModelMap();
+		String result = null;
+		Long idProceso = null;
+		
+		try {			
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			
+			MSVDtoAltaProceso dto = new MSVDtoAltaProceso();
+			dto.setIdTipoOperacion(Long.parseLong(fileItem.getParameter("idTipoOperacion")));
+			dto.setDescripcion(fileItem.getParameter("fileUpload"));	
+			
+			idProceso = processAdapter.initProcess(dto);	
+			
+			Map<String, String> parameters = fileItem.getParameters();			
+			parameters.put("idProceso", String.valueOf(idProceso));
+			parameters.put("idTipoOperacion", fileItem.getParameter("idTipoOperacion"));
+			fileItem.setParameters(parameters);
+			
+			result = processAdapter.subirFichero(fileItem);
+			model.put("success", true);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errorMessage", e.getCause());
+		}
+		
+		return JsonViewer.createModelAndViewJson(model);
+		
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView validar(Long idProcess, ModelMap model) {
+
+		try {
+			model.put("data", processAdapter.validarMasivo(idProcess));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return JsonViewer.createModelAndViewJson(model);
+	}
+	
+	
+//	@RequestMapping(method = RequestMethod.GET)
+//	public ModelAndView validarFichero(Long id) throws Exception{
+//	
+//		return JsonViewer.createModelAndViewJson(new ModelMap("data", processAdapter.validarFichero(id)));
+//		
+//	}
+	
 	/**
 	 * FunciÃ³n que inicia el proceso de carga masiva haciendo el upload del fichero a la vez
 	 * @param request

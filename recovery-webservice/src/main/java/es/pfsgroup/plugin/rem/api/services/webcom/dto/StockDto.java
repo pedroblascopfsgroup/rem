@@ -115,8 +115,9 @@ public class StockDto implements WebcomRESTDto{
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType anteriorValorAprobadoVenta;
 	
-	
-	
+	//Petición HREOS-1551
+	private LongDataType idAsistida;
+	private LongDataType codigoCabeceraAsistida;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -590,8 +591,19 @@ public class StockDto implements WebcomRESTDto{
 			DoubleDataType anteriorValorAprobadoVenta) {
 		this.anteriorValorAprobadoVenta = anteriorValorAprobadoVenta;
 	}
-	
-	
+	public LongDataType getIdAsistida() {
+		return idAsistida;
+	}
+	public void setIdAsistida(LongDataType idAsistida) {
+		this.idAsistida = idAsistida;
+	}
+	public LongDataType getCodigoCabeceraAsistida() {
+		return codigoCabeceraAsistida;
+	}
+	public void setCodigoCabeceraAsistida(LongDataType codigoCabeceraAsistida) {
+		this.codigoCabeceraAsistida = codigoCabeceraAsistida;
+	}
+
 	
 	
 			

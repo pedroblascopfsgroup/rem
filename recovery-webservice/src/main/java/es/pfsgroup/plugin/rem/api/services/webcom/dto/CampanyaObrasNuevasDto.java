@@ -31,6 +31,9 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	private StringDataType descripcion;
 	private LongDataType asociadosActivos;
 	
+	//Petición HREOS-1551
+	private StringDataType codSubCartera;
+
 	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -133,5 +136,11 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	}
 	public void setAsociadosActivos(LongDataType asociadosActivos) {
 		this.asociadosActivos = asociadosActivos;
+	}
+	public StringDataType getCodSubCartera() {
+		return codSubCartera;
+	}
+	public void setCodSubCartera(StringDataType codSubCartera) {
+		this.codSubCartera = codSubCartera;
 	}
 }

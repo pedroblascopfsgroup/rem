@@ -4,9 +4,9 @@
 --## FECHA_CREACION=20160920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-1551
 --## PRODUCTO=NO
---## Finalidad: Tabla para almacentar el historico de las cabeceras de Obra Nueva enviadas a webcom.
+--## Finalidad: Tabla para almacentar el historico de las cabeceras de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -34,7 +34,7 @@ DECLARE
     V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_CABEC_ONV_WEBCOM'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'CWH_CABEC_ONV_WEBCOM_HIST'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_MSQL VARCHAR2(4000 CHAR); 
-	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para almacentar el historico de las cabeceras de Obra Nueva enviadas a webcom.'; -- Vble. para los comentarios de las tablas
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para almacentar el historico de las cabeceras de Obra Nueva y Asistidas enviadas a webcom.'; -- Vble. para los comentarios de las tablas
 
     CUENTA NUMBER;
     
@@ -138,10 +138,9 @@ BEGIN
 					INNER JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
 				    INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID
 					INNER JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DDTAG ON DDTAG.DD_TAG_ID = AGR.DD_TAG_ID
-				    INNER JOIN '||V_ESQUEMA||'.ACT_ONV_OBRA_NUEVA ONV ON ONV.AGR_ID = AGR.AGR_ID
 					LEFT JOIN '||V_ESQUEMA||'.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID
 					LEFT JOIN '||V_ESQUEMA||'.VI_PIVOT_DISTRIBUCION PVD ON PVD.ICO_ID = VIV.ICO_ID
-					WHERE DDTAG.DD_TAG_CODIGO = ''01'' AND (AGA.BORRADO IS NULL OR AGA.BORRADO = 0) 
+					WHERE (DDTAG.DD_TAG_CODIGO = ''01'' OR DDTAG.DD_TAG_CODIGO = ''13'') AND (AGA.BORRADO IS NULL OR AGA.BORRADO = 0) 
 					GROUP BY ACT.DD_TPA_ID, ACT.DD_SAC_ID, VIV.VIV_NUM_PLANTAS_INTERIOR, PVD.DORMITORIOS, PVD.BANYOS, AGR.AGR_NUM_AGRUP_REM, 
 					AGR.FECHACREAR, AGR.FECHAMODIFICAR, AGR.USUARIOCREAR, AGR.USUARIOMODIFICAR	
 			) SUBD

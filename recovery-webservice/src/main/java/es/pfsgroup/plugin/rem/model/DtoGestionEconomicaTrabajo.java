@@ -54,6 +54,8 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	private String telefonoProveedorContacto;
 	
 	private Double importeTotal;
+	
+	private Long idProveedorContacto;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -214,4 +216,13 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	public void setImporteTotal(Double importeTotal) {
 		this.importeTotal = importeTotal;
 	}
+
+	public Long getIdProveedorContacto() {
+		return idProveedorContacto;
+	}
+
+	public void setIdProveedorContacto(Long idProveedorContacto) {
+		this.idProveedorContacto = idProveedorContacto;
+	}
+	
 }

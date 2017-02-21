@@ -302,7 +302,8 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.coste.adquisicion'),
-							   bind:  '{valoraciones.costeAdquisicion}'
+							   bind:  '{valoraciones.costeAdquisicion}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='01')
 							 }						 
 							 
 							]

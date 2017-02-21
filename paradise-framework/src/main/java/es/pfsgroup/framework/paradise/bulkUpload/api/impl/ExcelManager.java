@@ -133,6 +133,35 @@ public class ExcelManager implements ExcelManagerApi {
 	}
 	
 	@Override
+	public Boolean uploadOnly(MSVExcelFileItemDto excelFileItemDto) throws Exception {
+
+		MSVDocumentoMasivo document = null;
+		MSVProcesoMasivo process = null;
+		try {
+			document = upload(excelFileItemDto);
+			process = validateFormat(document);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public Boolean validateContentOnly(Long idProcess){
+		
+		MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
+		MSVProcesoMasivo process = null;
+		        
+        try {
+        	process = validateContent(document);
+        } catch (Exception e) {
+        	return false;
+        }
+        return true;
+		
+	}
+		
+	@Override
 	public MSVDocumentoMasivo upload(MSVExcelFileItemDto excelFileItemDto) throws Exception {
 
 		MSVDocumentoMasivo document = crearNuevoDocumentoMasivo(excelFileItemDto);

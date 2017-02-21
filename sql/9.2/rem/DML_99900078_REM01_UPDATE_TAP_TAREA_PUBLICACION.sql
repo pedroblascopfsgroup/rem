@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20170203
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1337
+--## INCIDENCIA_LINK=HREOS-1579
 --## PRODUCTO=NO
 --##
---## Finalidad: INSERTA filas de TFI_TAREAS_FORM_ITEMS - Campos tarea T003_AutorizacionBankia del T. OBTENCION DOCUMENTAL CEE
+--## Finalidad: MODIFICA campo en TAP_TAREA_PROCEDIMIENTO - Campo TAP_DESCRIPCION - corregir descripción de la primera tarea del trámite de publicación 'T011%'
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -39,10 +39,13 @@ DECLARE
 
 BEGIN
 
-    	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_VALIDACION = ''checkPoliticaCorporativa() ? (checkBankia() ? (checkImpuestos() ? null : ''''Debe indicar el tipo de impuesto y tipo aplicable.'''' ) : null  ) : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''' '' '||	  
-			  ' WHERE TAP_CODIGO = ''T013_DefinicionOferta'' ';
-	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando el tipo del campo de la tarea.......');
+    --DBMS_OUTPUT.PUT_LINE('COMENZANDO EL PROCESO DE ACTUALIZACIÓN');
+      
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+		  ' SET TAP_DESCRIPCION = REPLACE(TAP_DESCRIPCION, ''recial'', ''ercial'') '||	  
+		  ' WHERE TAP_CODIGO = ''T011_RevisionInformeComercial'' ';
+		  
+    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando la descripción del campo de la tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     

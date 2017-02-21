@@ -359,6 +359,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 							EntidadProveedor entidadProveedor = new EntidadProveedor();
 							entidadProveedor.setCartera(cartera);
 							entidadProveedor.setProveedor(proveedor);
+							Auditoria auditoria = new Auditoria();
+							auditoria.setUsuarioCrear("REM");
+							auditoria.setFechaCrear(new Date());
+							entidadProveedor.setAuditoria(auditoria);
 							genericDao.save(EntidadProveedor.class, entidadProveedor);
 						}
 					}

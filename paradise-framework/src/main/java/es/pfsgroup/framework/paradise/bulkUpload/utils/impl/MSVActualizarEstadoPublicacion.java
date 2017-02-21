@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -163,6 +164,9 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return true;
 	}
@@ -172,8 +176,12 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+				try {
+					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 			}
 			} catch (IllegalArgumentException e) {
 				listaFilas.add(0);
@@ -190,45 +198,46 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++)
-				if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(operacionMasiva.getCodigo()) ||
-						MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(operacionMasiva.getCodigo()))
-				{
-					// Validación estado no publicado: Se valida que los activos estén "no publicados"
-					// y si alguno no tuviera puesto el estado de publicación (null) debe tomarse como "no publicado" para validar
-					if(!particularValidator.estadoNoPublicadoOrNull(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoOcultaractivo(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoDesocultaractivo(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoOcultarprecio(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoDesocultarprecio(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoDespublicar(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadosValidosDespublicarForzado(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadosValidosDesDespublicarForzado(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoAutorizaredicion(exc.dameCelda(i, 0)));
-						listaFilas.add(i);
+				try {
+					if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(operacionMasiva.getCodigo()) ||
+							MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(operacionMasiva.getCodigo()))
+					{
+						// Validación estado no publicado: Se valida que los activos estén "no publicados"
+						// y si alguno no tuviera puesto el estado de publicación (null) debe tomarse como "no publicado" para validar
+						if(!particularValidator.estadoNoPublicadoOrNull(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoOcultaractivo(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoDesocultaractivo(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoOcultarprecio(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoDesocultarprecio(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoDespublicar(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadosValidosDespublicarForzado(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadosValidosDesDespublicarForzado(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoAutorizaredicion(exc.dameCelda(i, 0)));
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
 				}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 		
 	}
@@ -238,18 +247,18 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.isActivoPrePublicable(exc.dameCelda(i, 0))){
+				try {
+					if(!particularValidator.isActivoPrePublicable(exc.dameCelda(i, 0))){
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
 			}
-			
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 		
 	}

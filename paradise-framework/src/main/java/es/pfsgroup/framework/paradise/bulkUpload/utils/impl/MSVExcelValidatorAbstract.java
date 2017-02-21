@@ -147,7 +147,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 			// si tiene errores previos no ser� necesario analizar el fichero
 			Boolean erroresPrevios = false;
 
-			List<String> cabecerasExcel = null;
+			List<String> cabecerasExcelHoja0 = null;
 			List<String> cabecerasExcelPlantilla = null;
 			
 			String numeroMaximoFilas = appProperties.getProperty(KEY_NUMERO_MAXIMO_FILAS);
@@ -155,31 +155,32 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 				numeroMaximoFilas = "5000";
 			}
 			// recuperamos las cabeceras del excel
+			Integer numFilasDatosHoja0 = exc.getNumeroFilas();
 			if (!Checks.esNulo(exc)) {
 				try {
 					// validacion tama�o minimo
-					if (exc.getNumeroFilas() < 2) {
+					if (numFilasDatosHoja0 < 2) {
 						erroresPrevios = true;
 						listaErrores.add(ERROR_TAMANYO_MINIMO);
 					}
-					cabecerasExcel = exc.getCabeceras();
+					cabecerasExcelHoja0 = exc.getCabeceras();
 					if (excPlantilla != null){
 						cabecerasExcelPlantilla = excPlantilla.getCabeceras();
 					}
-					if (exc.getNumeroFilas() > Integer.parseInt(numeroMaximoFilas)) {
+					if (numFilasDatosHoja0 > Integer.parseInt(numeroMaximoFilas)) {
 						erroresPrevios = true;
 						listaErrores.add(ERROR_TAMANYO_MAXIMO);
 					}
 					// validacion de que tiene el n�mero de columnas que
 					// esperamos
-					if (validacionFormato && (!Checks.esNulo(cabecerasExcel)) && (!Checks.estaVacio(cabecerasExcel))) {
-						if (cabecerasExcel.size() != listaValidacion.size()) {
+					if (validacionFormato && (!Checks.esNulo(cabecerasExcelHoja0)) && (!Checks.estaVacio(cabecerasExcelHoja0))) {
+						if (cabecerasExcelHoja0.size() != listaValidacion.size()) {
 							erroresPrevios = true;
-							String error_num_columnas = "Se esperan " + listaValidacion.size() + " columnas y se han recibido " + cabecerasExcel.size();
+							String error_num_columnas = "Se esperan " + listaValidacion.size() + " columnas y se han recibido " + cabecerasExcelHoja0.size();
 							listaErrores.add(error_num_columnas);
 						}
 						//Validamos que el nombre de las columnas sea el correcto.
-						else if (!this.validarNombreCabeceras(cabecerasExcel,cabecerasExcelPlantilla)){
+						else if (!this.validarNombreCabeceras(cabecerasExcelHoja0,cabecerasExcelPlantilla)){
 							erroresPrevios = true;
 							listaErrores.add(ERROR_NOMBRES_CABECERA);
 						}
@@ -198,36 +199,36 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 			
 			boolean erroresContenido = false;
 			if (!erroresPrevios) {
-				for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {				
+				for (int fila = 1; fila < numFilasDatosHoja0; fila++) {				
 					StringBuilder errorDesc = new StringBuilder();
 					// PBO: Preparar la recogida de datos para las validaciones multivalor (compuesta)
 					Map<String, String> mapaDatos = new HashMap<String, String>();
-					for (int columna = 0; columna < exc.getCabeceras().size(); columna++) {
+					for (int columna = 0; columna < cabecerasExcelHoja0.size(); columna++) {
 						List<String> contenidoColumna = new ArrayList<String>();
 						contenidoColumna.add(null);
-						for (int i = 1; i < exc.getNumeroFilas(); i++) {
+						for (int i = 1; i < numFilasDatosHoja0; i++) {
 							contenidoColumna.add(exc.dameCelda(i, columna));
 						}
 						String contenidoCelda = contenidoColumna.get(fila);
 						ResultadoValidacion resultadoValidacion;
 						if (validacionFormato) {							
-							resultadoValidacion = validaCelda(listaValidacion.get(columna), contenidoCelda, cabecerasExcel.get(columna));
+							resultadoValidacion = validaCelda(listaValidacion.get(columna), contenidoCelda, cabecerasExcelHoja0.get(columna));
 							if (resultadoValidacion.getValido()) {
-								resultadoValidacion = validaColumna(listaValidacion.get(columna), fila, contenidoColumna, cabecerasExcel.get(columna));
+								resultadoValidacion = validaColumna(listaValidacion.get(columna), fila, contenidoColumna, cabecerasExcelHoja0.get(columna));
 							}
 						} else {
-							resultadoValidacion = validaContenidoCelda(cabecerasExcel.get(columna), contenidoCelda, contentValidators);
+							resultadoValidacion = validaContenidoCelda(cabecerasExcelHoja0.get(columna), contenidoCelda, contentValidators);
 						}
 						errorDesc.append((resultadoValidacion.getErroresFila() != null ? resultadoValidacion.getErroresFila() : ""));
 						if (!resultadoValidacion.getValido()) {
 							erroresContenido = true;
 						}
 						//PBO: recuperar los valores con sus columnas, para pasarlo a la validaci�n multivalor (compuesta)
-						mapaDatos.put(cabecerasExcel.get(columna), contenidoCelda);
+						mapaDatos.put(cabecerasExcelHoja0.get(columna), contenidoCelda);
 					}
 					//PBO: Invocar a la validaci�n multivalor (compuesta)
 					if (!validacionFormato) {
-						ResultadoValidacion resultadoValidacionCompuesta = validaContenidoFila(mapaDatos, exc.getCabeceras(), compositeValidators);
+						ResultadoValidacion resultadoValidacionCompuesta = validaContenidoFila(mapaDatos, cabecerasExcelHoja0, compositeValidators);
 						errorDesc.append((resultadoValidacionCompuesta.getErroresFila() != null ? resultadoValidacionCompuesta.getErroresFila() : ""));
 						if (!resultadoValidacionCompuesta.getValido()) {
 							erroresContenido = true;

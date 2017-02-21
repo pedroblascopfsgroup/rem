@@ -126,6 +126,9 @@ Ext.define('HreRem.model.GestionEconomicaTrabajo', {
     		},
     		{
     			name: 'importeTotal'
+    		},
+    		{
+    			name: 'idProveedorContacto'
     		}
     ],
     

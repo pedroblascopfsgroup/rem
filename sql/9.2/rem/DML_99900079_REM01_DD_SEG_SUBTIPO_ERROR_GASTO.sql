@@ -10,7 +10,8 @@
 --## Finalidad: Script que añade en DD_SEG_SUBTIPO_ERROR_GASTO los tipos de error definidos en gestorias 
 --## VERSIONES:
 --##        0.1 Versión inicial
--- ##       0.2 Gustavo Mora quitamos letra a códigos subtipo gasto 
+--##        0.2 Gustavo Mora: quitamos letra a códigos subtipo gasto
+--##        0.3 Diego Crespo: Añadimos códigos nuevos al subtipo '04' 
 --##########################################
 --*/
 
@@ -43,7 +44,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(250);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-       T_TIPO_DATA('02'  , '01' , 'Liq nombre ant titu' , 'Liquidación a nombre de anterior titular' ),
+        T_TIPO_DATA('02'  , '01' , 'Liq nombre ant titu' , 'Liquidación a nombre de anterior titular' ),
         T_TIPO_DATA('02' , '02' , 'Liq pagar nuevo prop' , 'Liquidación a pagar por nuevo propietario (comprador)'),
         T_TIPO_DATA('02' , '03' , 'Imp liq no coincide' , 'Importe liquidación no coincide con el tecleado' ),
         T_TIPO_DATA('02' , '04' , 'Error de tecleo    ' , 'Error de tecleo' ),
@@ -118,6 +119,22 @@ DECLARE
         T_TIPO_DATA('04' , '81' , 'Fech Lím Pago errone' , 'Fecha límite del pago (FELIPG) con contenido NO valido'	),
         T_TIPO_DATA('04' , '82' , 'PLUSVALIA err AgrPro' , 'Las PLUSVALIAS deben de ir agrupadas en provisiones al efecto' ),
         T_TIPO_DATA('04' , '83' , 'Provi solo para PLUS' , 'La provisión solo admite PLUSVALIAS' ),
+	T_TIPO_DATA('04' , '100' , 'Error linea comandos' , 'Errores en linea de comandos' ),
+	T_TIPO_DATA('04' , '101' , 'Tipo factura erroneo' , 'Tipo de factura erroneo' ),
+	T_TIPO_DATA('04' , '102' , 'Trae act, tip fac no' , 'Trae activo y tipo de factura es sin activo' ),
+	T_TIPO_DATA('04' , '103' , 'Sin fecha devengo   ' , 'Sin fecha de devengo' ),
+	T_TIPO_DATA('04' , '104' , 'Sin importe de gasto' , 'Sin importe del gasto' ),
+	T_TIPO_DATA('04' , '105' , 'No existe la acción ' , 'No existe la acción' ),
+	T_TIPO_DATA('04' , '106' , 'Acc no admit tip fac' , 'Tipo de acción no admitida para este tipo de factura' ),
+	T_TIPO_DATA('04' , '107' , 'No existe proveedor ' , 'No existe el proveedor' ),
+	T_TIPO_DATA('04' , '108' , 'User aut, no tab par' , 'Usuario autorizador no existe en tabla de parametros' ),
+	T_TIPO_DATA('04' , '300' , 'Ret GMNKNM28 con err' , 'Retorno de GMNKNM28 con error' ),
+	T_TIPO_DATA('04' , '301' , 'No existe proveedor ' , 'No existe el proveedor' ),
+	T_TIPO_DATA('04' , '302' , 'User aut, no tab par' , 'Usuario autorizador no existe en tabla de parametros' ),
+	T_TIPO_DATA('04' , '401' , 'Import cero lin fact' , 'Importe cero en linea de factura' ),
+	T_TIPO_DATA('04' , '402' , 'Import cero cab fact' , 'Importe cero en cabecera de factura' ),
+	T_TIPO_DATA('04' , '403' , 'ImpCab dif SumImpLin' , 'No coincide importe cabecera, con suma importes lineas' ),
+	T_TIPO_DATA('04' , '404' , 'Lineas fact sin imp ' , 'Factura con lineas sin importe' ),
 
         T_TIPO_DATA('05' , '00' , 'NO ENVIADA A GRM' , 'NO ENVIADA A GRM' ),
         T_TIPO_DATA('05' , '01' , 'ENVIADA A GRM' , 'ENVIADA A GRM' ),
@@ -462,10 +479,11 @@ BEGIN
 
 	       	  	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
 		        		'SET DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID = '''||TRIM( V_TEG_ID )||''''|| 
-					', DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION = SUBSTR('''||TRIM(V_TMP_TIPO_DATA(3))||'''1, 20)'|| 
+					', DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION = SUBSTR('''||TRIM(V_TMP_TIPO_DATA(3))||''',1, 20)'|| 
 					', DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+         
 		  	EXECUTE IMMEDIATE V_MSQL;
 
 		  	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
@@ -508,5 +526,4 @@ END;
 
 /
 
-EXIT
-
+EXIT;

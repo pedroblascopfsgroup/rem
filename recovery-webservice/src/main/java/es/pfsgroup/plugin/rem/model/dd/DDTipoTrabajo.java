@@ -60,7 +60,8 @@ public class DDTipoTrabajo implements Auditable, Dictionary {
 	@Column(name = "DD_TTR_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
-	
+	@Column(name = "DD_TTR_FILTRAR")   
+	private String filtrar;
 	    
 	@Version   
 	private Long version;
@@ -92,6 +93,14 @@ public class DDTipoTrabajo implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+
+	public String getFiltrar() {
+		return filtrar;
+	}
+
+	public void setFiltrar(String filtrar) {
+		this.filtrar = filtrar;
 	}
 
 	public String getCodigo() {

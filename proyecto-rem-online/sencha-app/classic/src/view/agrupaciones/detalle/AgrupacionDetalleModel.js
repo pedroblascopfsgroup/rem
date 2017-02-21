@@ -4,7 +4,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     alias: 'viewmodel.agrupaciondetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
-    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial'],
+    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial',
+    'HreRem.model.ActivoAgrupacionActivo'],
     
     data: {
     	agrupacionficha: null
@@ -124,17 +125,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
 		storeActivos: {
 			 pageSize: $AC.getDefaultPageSize(),
-			 model: 'HreRem.model.ActivoAgrupacion',
+			 model: 'HreRem.model.ActivoAgrupacionActivo',
 			 proxy: {
 			    type: 'uxproxy',
 				remoteUrl: 'agrupacion/getListActivosAgrupacionById',
-				extraParams: {id: '{agrupacionficha.id}'},
-				
-				api: {
-		            read:    'agrupacion/getListActivosAgrupacionById',
-		            create:  'agrupacion/createActivoAgrupacion',
-		            destroy: 'agrupacion/deleteActivoAgrupacion'
-		        }
+				extraParams: {id: '{agrupacionficha.id}'}
 			 },
 		     remoteSort: true
 		},

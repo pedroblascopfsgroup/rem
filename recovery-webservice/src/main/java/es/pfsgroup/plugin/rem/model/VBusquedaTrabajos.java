@@ -114,6 +114,9 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="RANGO")
 	private Integer rango;
 	
+	@Column(name="DD_TTR_FILTRAR")
+	private Integer filtrar;
+	
 
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
@@ -353,6 +356,14 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setRango(Integer rango) {
 		this.rango = rango;
+	}
+
+	public Integer getFiltrar() {
+		return filtrar;
+	}
+
+	public void setFiltrar(Integer filtrar) {
+		this.filtrar = filtrar;
 	}
 
 }

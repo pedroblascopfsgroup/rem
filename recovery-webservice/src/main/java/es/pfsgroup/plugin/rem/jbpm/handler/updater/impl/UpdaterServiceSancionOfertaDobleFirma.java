@@ -54,6 +54,9 @@ public class UpdaterServiceSancionOfertaDobleFirma implements UpdaterService {
 				{
 					ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
 					genericDao.save(Oferta.class, ofertaAceptada);
+					
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 				}
 				
 			}

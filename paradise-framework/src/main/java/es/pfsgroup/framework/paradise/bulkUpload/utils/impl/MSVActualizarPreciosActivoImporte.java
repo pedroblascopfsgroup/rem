@@ -301,10 +301,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -330,64 +328,67 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
 
-				// Obtener los importes actuales del activo.
-				List<BigDecimal> importes = particularValidator.getImportesActualesActivo(exc.dameCelda(i, 0));
-				importePAV = importes.get(0);
-				importePMA = importes.get(1);
-				importePAR = importes.get(2);
-				importePDA = importes.get(3);
-				importePDP = importes.get(4);
-
-				//Obtener importes de la excel y machacar los actuales importes del activo si est�n definidos.
-				if(!Checks.esNulo(exc.dameCelda(i, 1))) {
-					importePAV = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 1)));
-				}
-				if(!Checks.esNulo(exc.dameCelda(i, 4))) {
-					importePMA = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 4)));
-				}
-				if(!Checks.esNulo(exc.dameCelda(i, 7))) {
-					importePAR = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 7)));
-				}
-				if(!Checks.esNulo(exc.dameCelda(i, 10))) {
-					importePDA = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 10)));
-				}
-				if(!Checks.esNulo(exc.dameCelda(i, 13))) {
-					importePDP = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 13)));
-				}
-
-				// Comprobaciones de las reglas en base a los precios temporales.
-				if(!Checks.esNulo(importePAV) && !Checks.esNulo(importePMA) && (importePMA.compareTo(importePAV) == 1)) {
-					// adjuntar linea, es erroneo.
-					if(!listaFilas.contains(i)) {
-						listaFilas.add(i);
+				try {
+					// Obtener los importes actuales del activo.
+					List<BigDecimal> importes = particularValidator.getImportesActualesActivo(exc.dameCelda(i, 0));
+					importePAV = importes.get(0);
+					importePMA = importes.get(1);
+					importePAR = importes.get(2);
+					importePDA = importes.get(3);
+					importePDP = importes.get(4);
+	
+					//Obtener importes de la excel y machacar los actuales importes del activo si est�n definidos.
+					if(!Checks.esNulo(exc.dameCelda(i, 1))) {
+						importePAV = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 1)));
 					}
-				}
-
-				if(!Checks.esNulo(importePDA) && !Checks.esNulo(importePDP) && (importePDA.compareTo(importePDP) == 1)) {
-					// adjuntar linea, es erroneo.
-					if(!listaFilas.contains(i)) {
-						listaFilas.add(i);
+					if(!Checks.esNulo(exc.dameCelda(i, 4))) {
+						importePMA = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 4)));
 					}
-				}
-
-				if(!Checks.esNulo(importePDA) && !Checks.esNulo(importePAV) && (importePDA.compareTo(importePAV) == 1)) {
-					// adjuntar linea, es erroneo.
-					if(!listaFilas.contains(i)) {
-						listaFilas.add(i);
+					if(!Checks.esNulo(exc.dameCelda(i, 7))) {
+						importePAR = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 7)));
 					}
-				}
-
-				if(!Checks.esNulo(importePDP) && !Checks.esNulo(importePAV) && (importePDP.compareTo(importePAV) == 1)) {
-					// adjuntar linea, es erroneo.
-					if(!listaFilas.contains(i)) {
-						listaFilas.add(i);
+					if(!Checks.esNulo(exc.dameCelda(i, 10))) {
+						importePDA = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 10)));
 					}
+					if(!Checks.esNulo(exc.dameCelda(i, 13))) {
+						importePDP = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 13)));
+					}
+	
+					// Comprobaciones de las reglas en base a los precios temporales.
+					if(!Checks.esNulo(importePAV) && !Checks.esNulo(importePMA) && (importePMA.compareTo(importePAV) == 1)) {
+						// adjuntar linea, es erroneo.
+						if(!listaFilas.contains(i)) {
+							listaFilas.add(i);
+						}
+					}
+	
+					if(!Checks.esNulo(importePDA) && !Checks.esNulo(importePDP) && (importePDA.compareTo(importePDP) == 1)) {
+						// adjuntar linea, es erroneo.
+						if(!listaFilas.contains(i)) {
+							listaFilas.add(i);
+						}
+					}
+	
+					if(!Checks.esNulo(importePDA) && !Checks.esNulo(importePAV) && (importePDA.compareTo(importePAV) == 1)) {
+						// adjuntar linea, es erroneo.
+						if(!listaFilas.contains(i)) {
+							listaFilas.add(i);
+						}
+					}
+	
+					if(!Checks.esNulo(importePDP) && !Checks.esNulo(importePAV) && (importePDP.compareTo(importePAV) == 1)) {
+						// adjuntar linea, es erroneo.
+						if(!listaFilas.contains(i)) {
+							listaFilas.add(i);
+						}
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -448,9 +449,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 					return false;
 			}
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		return true;
@@ -461,14 +461,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+				try {
+					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
 			}
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -478,14 +483,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si el activo tiene activo el bloqueo de precios. No pueden actualizarse precios.
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
+				try {
+					if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
 			}
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -495,14 +505,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si el activo tiene ofertas activas. No pueden actualizarse precios.
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
+				try {
+					if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
 			}
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -531,15 +546,13 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 							(!Checks.esNulo(precioDescuentoAprobado) && precioDescuentoAprobado.isNaN()) ||
 							(!Checks.esNulo(precioDescuentoPublicado) && precioDescuentoPublicado.isNaN()) )
 						listaFilas.add(i);	
-				} catch (NumberFormatException e) {
+				} catch (ParseException e) {
 					listaFilas.add(i);
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -568,15 +581,13 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						if (!listaFilas.contains(i))
 							listaFilas.add(i);
 					}
-				} catch (NumberFormatException e) {
+				} catch (ParseException e) {
 					listaFilas.add(i);
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -608,14 +619,14 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						if (!listaFilas.contains(i))
 							listaFilas.add(i);
 					}
-				} catch (NumberFormatException e) {
+				} catch (ParseException e) {
 					listaFilas.add(i);
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -643,15 +654,13 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						if (!listaFilas.contains(i))
 							listaFilas.add(i);
 					}
-				} catch (NumberFormatException e) {
+				} catch (ParseException e) {
 					listaFilas.add(i);
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -684,10 +693,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}		
@@ -719,13 +726,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}		
+		}
 		return listaFilas;
 	}
 
@@ -751,13 +756,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}		
+		}
 		return listaFilas;
 	}
 
@@ -783,13 +786,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}		
+		}
 		return listaFilas;
 	}
 
@@ -818,13 +819,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}		
+		}
 		return listaFilas;
 	}
 
@@ -834,16 +833,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si la fecha de inicio de descuento aprobado no se encuentra establecida.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no est� vac�o.
-					if(Checks.esNulo(exc.dameCelda(i, 11))) { // Comprobar que la fecha tampoco.
-						listaFilas.add(i);
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no est� vac�o.
+						if(Checks.esNulo(exc.dameCelda(i, 11))) { // Comprobar que la fecha tampoco.
+							listaFilas.add(i);
+						}
 					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -857,16 +859,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si la fecha de fin de descuento aprobado no se encuentra establecida.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no est� vac�o.
-					if(Checks.esNulo(exc.dameCelda(i, 12))) { // Comprobar que la fecha tampoco.
-						listaFilas.add(i);
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no est� vac�o.
+						if(Checks.esNulo(exc.dameCelda(i, 12))) { // Comprobar que la fecha tampoco.
+							listaFilas.add(i);
+						}
 					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -880,16 +885,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si la fecha de inicio de descuento publicado no se encuentra establecida.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no est� vac�o.
-					if(Checks.esNulo(exc.dameCelda(i, 14))) { // Comprobar que la fecha tampoco.
-						listaFilas.add(i);
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no est� vac�o.
+						if(Checks.esNulo(exc.dameCelda(i, 14))) { // Comprobar que la fecha tampoco.
+							listaFilas.add(i);
+						}
 					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -921,10 +929,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -956,10 +962,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -991,10 +995,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -1026,10 +1028,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -1061,10 +1061,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -1096,10 +1094,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -1131,10 +1127,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -1166,10 +1160,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -1183,16 +1175,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Validacion que evalua si la fecha de fin de descuento publicado no se encuentra establecida.
 		try {
 			for(int i = 1; i < exc.getNumeroFilas(); i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no est� vac�o.
-					if(Checks.esNulo(exc.dameCelda(i, 15))) { // Comprobar que la fecha tampoco.
-						listaFilas.add(i);
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no est� vac�o.
+						if(Checks.esNulo(exc.dameCelda(i, 15))) { // Comprobar que la fecha tampoco.
+							listaFilas.add(i);
+						}
 					}
-				}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}	
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -1225,13 +1220,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}		
+		}
 		return listaFilas;
 	}
 
@@ -1260,13 +1253,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}		
+		}
 		return listaFilas;
 	}
 }

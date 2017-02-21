@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -209,6 +210,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		return true;
 	}
@@ -218,13 +222,15 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+				try {
+					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -240,18 +246,20 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			String codigoTipoComercial = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION)))
-					codigoTipoComercial = exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION).substring(0, 2);
-				else 
-					codigoTipoComercial = null;
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION)))
+						codigoTipoComercial = exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION).substring(0, 2);
+					else 
+						codigoTipoComercial = null;
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
 				
 				if(!(Checks.esNulo(codigoTipoComercial) || "01".equals(codigoTipoComercial) || "02".equals(codigoTipoComercial)) )
 					listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -267,18 +275,20 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String codigoMotivoConComercial = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
 
-				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL)))
-					codigoMotivoConComercial = exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL).substring(0, 2);
-				else 
-					codigoMotivoConComercial = null;
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL)))
+						codigoMotivoConComercial = exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL).substring(0, 2);
+					else 
+						codigoMotivoConComercial = null;
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
 				
 				if(!(Checks.esNulo(codigoMotivoConComercial) || "01".equals(codigoMotivoConComercial) || "02".equals(codigoMotivoConComercial) || "03".equals(codigoMotivoConComercial) ) )
 					listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -293,15 +303,17 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			Integer codigoMotivoSinComercial = 0;
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				codigoMotivoSinComercial = exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL).isEmpty() ? Integer.valueOf(0) :
-					Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL));
+				try {
+					codigoMotivoSinComercial = exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL).isEmpty() ? Integer.valueOf(0) :
+						Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL));
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
 				if(codigoMotivoSinComercial < 0 || codigoMotivoSinComercial > 63)
 					listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -325,24 +337,25 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				// Si la celda no tiene valor, debe validarse correctamente
 				// Si la S o la N van en minusculas, deben ser valores validos
 				// No deben tenerse en cuenta espacios en blanco
-				valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
-				valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
-				valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
-				valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
-				
-				// Valida valores correctos de los campos S/N/<nulo>
-				if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
-						|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))
-						|| !("S".equals(valorConComercial) || "N".equals(valorConComercial) || "-".equals(valorConComercial))
-						|| !("S".equals(valorConFormalizar) || "N".equals(valorConFormalizar) || "-".equals(valorConFormalizar))
-						)
+				try {
+					valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
+					valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
+					valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
+					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
+					
+					// Valida valores correctos de los campos S/N/<nulo>
+					if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
+							|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))
+							|| !("S".equals(valorConComercial) || "N".equals(valorConComercial) || "-".equals(valorConComercial))
+							|| !("S".equals(valorConFormalizar) || "N".equals(valorConFormalizar) || "-".equals(valorConFormalizar))
+							)
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
-			
+				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -357,22 +370,23 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			String valorEnPerimetro = "-";
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				
-				valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
-				if("N".equals(valorEnPerimetro) || ("-".equals(valorEnPerimetro) && !particularValidator.esActivoIncluidoPerimetro(exc.dameCelda(i, 0)))) {
+				try {
+					valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
+					if("N".equals(valorEnPerimetro) || ("-".equals(valorEnPerimetro) && !particularValidator.esActivoIncluidoPerimetro(exc.dameCelda(i, 0)))) {
+						
+						String valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
+						String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
+						String valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 					
-					String valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
-					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
-					String valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
-				
-					if("S".equals(valorConGestion) || "S".equals(valorConComercial) || "S".equals(valorConFormalizar) )
-						listaFilas.add(i);
+						if("S".equals(valorConGestion) || "S".equals(valorConComercial) || "S".equals(valorConFormalizar) )
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -390,18 +404,21 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String valorConFormalizar = "-";
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				
-				valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
-				if(!"-".equals(valorConFormalizar)) {
-					
-					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
-					if("N".equals(valorConComercial) && "S".equals(valorConFormalizar) )
-						listaFilas.add(i);
+				try {
+					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
+
+					if(!"-".equals(valorConFormalizar)) {
+						
+						String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
+						if("N".equals(valorConComercial) && "S".equals(valorConFormalizar) )
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -417,18 +434,20 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String codigoDestinoComercial = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
 
-				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL)))
-					codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
-				else 
-					codigoDestinoComercial = null;
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL)))
+						codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
+					else 
+						codigoDestinoComercial = null;
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
 				
 				if(!(Checks.esNulo(codigoDestinoComercial) || "01".equals(codigoDestinoComercial) || "02".equals(codigoDestinoComercial) || "03".equals(codigoDestinoComercial) ) )
 					listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -444,18 +463,20 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String codigoTipoAlquiler = null;
 			for(int i=1; i<exc.getNumeroFilas();i++){
 
-				if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_ALQUILER)))
-					codigoTipoAlquiler = exc.dameCelda(i, COL_NUM_TIPO_ALQUILER).substring(0, 2);
-				else 
-					codigoTipoAlquiler = null;
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_ALQUILER)))
+						codigoTipoAlquiler = exc.dameCelda(i, COL_NUM_TIPO_ALQUILER).substring(0, 2);
+					else 
+						codigoTipoAlquiler = null;
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
 				
 				if(!(Checks.esNulo(codigoTipoAlquiler) || "01".equals(codigoTipoAlquiler) || "02".equals(codigoTipoAlquiler) || "03".equals(codigoTipoAlquiler) || "04".equals(codigoTipoAlquiler) ) )
 					listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -473,21 +494,23 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String valorConComercializar = "-";
 			for(int i=1; i<exc.getNumeroFilas();i++){
 				
-				valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
-				if("S".equals(valorConFormalizar)) {
-					
-					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
-					if("-".equals(valorConComercial) ) {
+				try {
+					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
+					if("S".equals(valorConFormalizar)) {
 						
-						if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, 0)));
-							listaFilas.add(i);
+						String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
+						if("-".equals(valorConComercial) ) {
+							
+							if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, 0)));
+								listaFilas.add(i);
+						}
 					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}

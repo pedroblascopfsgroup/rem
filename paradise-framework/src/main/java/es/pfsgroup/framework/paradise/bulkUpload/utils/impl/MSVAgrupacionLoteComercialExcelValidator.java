@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -231,6 +232,9 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (ParseException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}

@@ -87,11 +87,15 @@ public interface ExcelManagerApi {
 	
 	@BusinessOperationDefinition(MSV_BO_UPLOAD_AND_VALDIATE)
 	Boolean uploadAndValidate(MSVExcelFileItemDto uploadForm) throws Exception;
+	
+	Boolean uploadOnly(MSVExcelFileItemDto uploadForm) throws Exception;
+	
+	Boolean validateContentOnly(Long idProcess) throws Exception;
 
 	MSVDocumentoMasivo upload(MSVExcelFileItemDto uploadForm) throws Exception;
-
+	
 	MSVProcesoMasivo validateFormat(MSVDocumentoMasivo document) throws Exception;
-
+	
 	@BusinessOperationDefinition(MSV_BO_IS_VALID_PROCESS)
 	Boolean isValidProcess(Long idProceso);
 

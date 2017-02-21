@@ -18,6 +18,7 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	private int totalCount;
 	private boolean sePuedeProcesar;
 	private boolean conErrores;
+	private boolean validable;
 
 
 	public String getId() {
@@ -79,5 +80,11 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	}
 	public void setConErrores(boolean conErrores) {
 		this.conErrores = conErrores;
+	}
+	public boolean getValidable(){
+		return validable;
+	}
+	public void setValidable(boolean validable){
+		this.validable = validable;
 	}
 }

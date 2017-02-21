@@ -1,6 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
@@ -150,6 +153,7 @@ public class MSVProcesoManager implements MSVProcesoApi {
 			DtoMSVProcesoMasivo nuevoDto = new DtoMSVProcesoMasivo();
 			boolean sePuedeProcesar = false;
 			boolean conErrores = false;
+			boolean validable = false;
 			try {
 				beanUtilNotNull.copyProperty(nuevoDto, "id", proceso.getId());
 				if(!Checks.esNulo(proceso.getTipoOperacion())) {
@@ -162,9 +166,12 @@ public class MSVProcesoManager implements MSVProcesoApi {
 						sePuedeProcesar = true;
 					} else if (MSVDDEstadoProceso.CODIGO_ERROR.equals(proceso.getEstadoProceso().getCodigo())){
 						conErrores = true;
+					} else if (MSVDDEstadoProceso.CODIGO_PTE_VALIDAR.equals(proceso.getEstadoProceso().getCodigo())){
+						validable = true;
 					}
 					beanUtilNotNull.copyProperty(nuevoDto, "sePuedeProcesar", sePuedeProcesar);
 					beanUtilNotNull.copyProperty(nuevoDto, "conErrores", conErrores);
+					beanUtilNotNull.copyProperty(nuevoDto, "validable", validable);
 				}
 				beanUtilNotNull.copyProperty(nuevoDto, "nombre", proceso.getDescripcion());
 				if (!Checks.esNulo(proceso.getAuditoria())) {

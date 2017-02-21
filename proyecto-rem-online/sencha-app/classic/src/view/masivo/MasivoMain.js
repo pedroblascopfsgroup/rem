@@ -19,7 +19,7 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 		me.items = [
 				{
 					xtype: 'formBase',
-					url: $AC.getRemoteUrl('process/initProcessUpload'),					
+					url: $AC.getRemoteUrl('process/upload'),					
 					height: 160,
 					bodyPadding: '20 10 10 10',
 					title: HreRem.i18n('title.operaciones.plantillas'),
@@ -134,6 +134,13 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 					    	xtype: 'toolbar',
 					    	dock: 'top',
 					    	items: [
+						    	{
+							       	itemId:'validarButton',
+							       	cls: 'tbar-grid-button',
+							       	handler: 'onClickBotonValidar',
+							       	disabled: true,
+							       	text: 'Validar'
+							    },
 					    		{
 						        	itemId:'procesarButton',
 						        	cls: 'tbar-grid-button',

@@ -559,7 +559,7 @@ public class RestManagerImpl implements RestApi {
 					WebcomRESTDevonProperties.APP_SECRET_GESTOR_DOCUMENTAL, null);
 
 			String urlBase = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-					WebcomRESTDevonProperties.BASE_URL_GESTOR_DOCUMENTAL, null);
+					WebcomRESTDevonProperties.BASE_URL_WEBHOOK, null);
 
 			String ip = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
 					WebcomRESTDevonProperties.SERVER_PUBLIC_ADDRESS, null);

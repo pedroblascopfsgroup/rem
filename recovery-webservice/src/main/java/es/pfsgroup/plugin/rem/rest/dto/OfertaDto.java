@@ -35,7 +35,6 @@ public class OfertaDto implements Serializable {
 	private List<OfertaTitularAdicionalDto> titularesAdicionales;
 	@NotNull(groups = { Insert.class })
 	private Long idProveedorRemPrescriptor;
-	@NotNull(groups = { Insert.class })
 	private Long idProveedorRemCustodio;
 	private Long idProveedorRemResponsable;
 	private Long idProveedorRemFdv;

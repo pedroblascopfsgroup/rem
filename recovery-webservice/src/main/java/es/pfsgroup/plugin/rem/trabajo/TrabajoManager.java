@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.trabajo;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +42,8 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
@@ -609,6 +612,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
 		return listaActivos;
 	}
@@ -866,17 +871,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		BeanUtilNotNull beanUtils = new BeanUtilNotNull();
 		beanUtils.copyProperties(trabajo, dtoGestionEconomica);
-		// A través del combo de proveedor se seteará el PVC_ID (contacto de
-		// proveedor) del trabajo
-		// De momento, el primer contacto del array de contactos relacionadois
-		if (dtoGestionEconomica.getIdProveedor() != null) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "proveedor.id",
-					dtoGestionEconomica.getIdProveedor());
-			List<ActivoProveedorContacto> contactosProveedor = (List<ActivoProveedorContacto>) genericDao
-					.getList(ActivoProveedorContacto.class, filtro);
-			if (!Checks.estaVacio(contactosProveedor)) {
-				trabajo.setProveedorContacto(contactosProveedor.get(0));
-			}
+		
+		if(!Checks.esNulo(dtoGestionEconomica.getIdProveedorContacto())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoGestionEconomica.getIdProveedorContacto());
+			ActivoProveedorContacto proveedorContacto = genericDao.get(ActivoProveedorContacto.class, filtro);
+			
+			if(!Checks.esNulo(proveedorContacto))
+				trabajo.setProveedorContacto(proveedorContacto);
 		}
 	}
 
@@ -1084,6 +1085,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		dtoTrabajo.setDiasRetrasoMesCurso(trabajo.getDiasRetrasoMesCurso());
 
 		if (trabajo.getProveedorContacto() != null) {
+			dtoTrabajo.setIdProveedorContacto(trabajo.getProveedorContacto().getId());
+			
 			if (trabajo.getProveedorContacto().getProveedor() != null) {
 				dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
 			}
@@ -1978,11 +1981,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public List<VProveedores> getComboProveedor(Long idTrabajo) {
 
 		Trabajo trabajo = findOne(idTrabajo);
-		Long idCartera = trabajo.getActivo().getCartera().getId();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idCartera", idCartera);
-
-		return (List<VProveedores>) genericDao.getList(VProveedores.class, filtro);
-
+		Activo activo = trabajo.getActivo();
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getProvincia())) {
+			
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera", activo.getCartera().getCodigo());
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigoProvincia", activo.getProvincia());
+			Order orden = new Order(OrderType.ASC,"nombreComercial");
+			
+			return (List<VProveedores>) genericDao.getListOrdered(VProveedores.class, orden, filtro1, filtro2);
+		}
+		
+		return new ArrayList<VProveedores>();
+	}
+	
+	@Override
+	public List<ActivoProveedorContacto> getComboProveedorContacto(Long idProveedor) {
+		
+		if(!Checks.esNulo(idProveedor)) {
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+			Order orden = new Order(OrderType.ASC,"nombre");
+			
+			return (List<ActivoProveedorContacto>) genericDao.getListOrdered(ActivoProveedorContacto.class, orden, filtro1);
+		}
+		
+		return new ArrayList<ActivoProveedorContacto>();
 	}
 
 	@Override

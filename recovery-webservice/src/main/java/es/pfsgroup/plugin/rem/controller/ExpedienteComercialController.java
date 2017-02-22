@@ -971,10 +971,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateListadoActivos(DtoActivosExpediente dto, @RequestParam Long idEntidad, ModelMap model) {
+	public ModelAndView updateActivoExpediente(DtoActivosExpediente dto, @RequestParam Long idEntidad, ModelMap model) {
 		try {		
 			
-			model.put("success", expedienteComercialApi.updateListadoActivos(dto, idEntidad));
+			model.put("success", expedienteComercialApi.updateActivoExpediente(dto, idEntidad));
 			
 		} catch (Exception e) {
 			e.printStackTrace();

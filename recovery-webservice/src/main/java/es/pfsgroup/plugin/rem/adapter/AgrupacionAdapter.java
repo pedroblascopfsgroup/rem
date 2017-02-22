@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.adapter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -419,7 +420,11 @@ public class AgrupacionAdapter {
 			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException(AgrupacionValidator.ERROR_NOT_ASISTIDA);
 			}
-
+			
+			if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && activoApi.isActivoAsistido(activo)){
+				throw new JsonViewerException(AgrupacionValidator.ERROR_OBRANUEVA_NO_ASISTIDA);
+			}
+			
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos
 			if (num == 0) {
 				activoAgrupacionValidate(activo, agrupacion);
@@ -1206,6 +1211,8 @@ public class AgrupacionAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		

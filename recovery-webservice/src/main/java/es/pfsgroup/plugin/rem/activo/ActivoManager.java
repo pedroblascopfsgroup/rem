@@ -401,7 +401,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			oferta.setEstadoOferta(tipoOferta);
 
-			// Al aceptar la oferta, se crea el trabajo de sancion oferta y el expedietne comercial
+			// Al aceptar la oferta, se crea el trabajo de sancion oferta y el expediente comercial
 			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
 				List<Activo> listaActivos = new ArrayList<Activo>();
 				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
@@ -514,6 +514,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPrimaryKey(pk);
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
+				compradorExpedienteNuevo.setPorcionCompra(100.00);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -548,6 +549,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPrimaryKey(pk);
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
+				compradorExpedienteNuevo.setPorcionCompra(100.00);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			}
@@ -572,6 +574,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+					compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+
 
 					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 				} else {
@@ -590,6 +594,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+					compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+
 
 					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 
@@ -3028,7 +3034,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public void actualizarFechaYEstadoCargaPropuesta(Long idPropuesta) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idPropuesta);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numPropuesta", idPropuesta);
 		PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, filtro);
 
 		propuesta.setFechaCarga(new Date());

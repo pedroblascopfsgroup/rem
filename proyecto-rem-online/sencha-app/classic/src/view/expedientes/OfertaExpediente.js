@@ -84,9 +84,11 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
     	var me = this;
     	me.setTitle(HreRem.i18n('title.oferta'));
 
-    	me.items = [];
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'datosbasicosoferta', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'ofertatanteoyretracto', bind: {disabled: '{esExpedienteNoSujetoTramiteTanteo}'}, funPermEdition: ['EDITAR_TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']})}, ['TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']);
+    	var items = [];
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosoferta', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertatanteoyretracto', bind: {disabled: '{esExpedienteNoSujetoTramiteTanteo}'}, funPermEdition: ['EDITAR_TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']})}, ['TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']);
+    	
+    	me.addPlugin({ptype: 'lazyitems', items: items});
 
     	me.callParent();
     },

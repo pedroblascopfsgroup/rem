@@ -168,6 +168,9 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return true;
 	}
@@ -177,16 +180,18 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+				try {
+					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 			}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -196,16 +201,18 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		// Validacion que evalua si el activo tiene activo el bloqueo de precios. No pueden actualizarse precios.
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
+				try {
+					if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 			}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -215,16 +222,18 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		// Validacion que evalua si el activo tiene ofertas activas. No pueden actualizarse precios.
 		try{
 			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
+				try {
+					if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 			}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -245,15 +254,13 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 					if((!Checks.esNulo(precioFSVVenta) && precioFSVVenta.isNaN()) ||
 							(!Checks.esNulo(precioFSVRenta) && precioFSVRenta.isNaN()) )
 						listaFilas.add(i);	
-				} catch (NumberFormatException e) {
+				} catch (ParseException e) {
 					listaFilas.add(i);
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -282,15 +289,13 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 						if (!listaFilas.contains(i))
 							listaFilas.add(i);
 					}
-				} catch (NumberFormatException e) {
+				} catch (ParseException e) {
 					listaFilas.add(i);
 					logger.error(e.getMessage());
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}

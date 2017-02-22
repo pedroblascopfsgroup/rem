@@ -58,7 +58,8 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       {
 			            text: HreRem.i18n("header.importe.participacion"),
 			            dataIndex: 'importeParticipacion',
-			            flex:1
+			            flex:1,
+			       		renderer: Utils.rendererCurrency
 			       },
 			       {   
 			       		text: HreRem.i18n("header.porcentaje.participacion"),
@@ -82,12 +83,14 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       {   
 			       		text: HreRem.i18n("header.precio.minimo.autorizado"),
 			       	    dataIndex: 'precioMinimo',
-			       		flex:1
+			       		flex:1,
+			       		renderer: Utils.rendererCurrency
 			       },
 			       {   
 			       		text: HreRem.i18n("header.precio.aprobado.venta"),
 			       	    dataIndex: 'precioAprobadoVenta',
-			       		flex:1
+			       		flex:1,
+			       		renderer: Utils.rendererCurrency
 			       }
 			       	        
 			    ],
@@ -117,7 +120,8 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 		var me = this; 
 		me.recargar = false;
 		Ext.Array.each(me.query('grid'), function(grid) {
-  			grid.getStore().load();
+			grid.mask();
+  			grid.getStore().load({callback: function() {grid.unmask();}});
   		});	
     }
     

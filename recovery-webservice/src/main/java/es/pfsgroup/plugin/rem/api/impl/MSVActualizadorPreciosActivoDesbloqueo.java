@@ -57,7 +57,8 @@ public class MSVActualizadorPreciosActivoDesbloqueo implements MSVLiberator {
 		
 		Usuario gestorBloqueoPrecio = adapter.getUsuarioLogado();
 	
-		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
+		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
+		for (int fila = 1; fila < numFilas; fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 			activo.setBloqueoPrecioFechaIni(null);
 			activo.setGestorBloqueoPrecio(gestorBloqueoPrecio);

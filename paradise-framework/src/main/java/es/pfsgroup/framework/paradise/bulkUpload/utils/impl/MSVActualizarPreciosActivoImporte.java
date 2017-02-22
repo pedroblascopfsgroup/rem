@@ -2,7 +2,6 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,6 +20,7 @@ import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
@@ -32,6 +32,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
@@ -84,6 +85,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private MSVProcesoApi msvProcesoApi;
+	
+	private Integer numFilasHoja;
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -96,10 +102,18 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
-
+		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
+		
 		// Validaciones especificas no contenidas en el fichero Excel de validacion.
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-
+		
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		try {
+			this.numFilasHoja = exc.getNumeroFilasByHoja(0,operacionMasiva);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 //			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
@@ -188,7 +202,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		Date fechaFinPDP = null;
 
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try{
 					// Obtener las fechas actuales del activo.
 					List<Date> fechas = particularValidator.getFechasImportesActualesActivo(exc.dameCelda(i, 0));
@@ -326,7 +340,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		BigDecimal importePDP = null;
 
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 
 				try {
 					// Obtener los importes actuales del activo.
@@ -445,7 +459,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	
 	private boolean isActiveExists(MSVHojaExcel exc){
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 					return false;
 			}
@@ -460,7 +474,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
@@ -482,7 +496,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si el activo tiene activo el bloqueo de precios. No pueden actualizarse precios.
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
@@ -504,7 +518,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si el activo tiene ofertas activas. No pueden actualizarse precios.
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
@@ -531,7 +545,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si los precios son numeros correctos
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
 					precioMinimoAuth = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
@@ -567,7 +581,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si los precios estan dentro de los l�mites, comparandolos entre si
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					precioDescuentoAprobado = !Checks.esNulo(exc.dameCelda(i, 10)) ? Double.parseDouble(exc.dameCelda(i, 10)) : null;
 					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, 13)) ? Double.parseDouble(exc.dameCelda(i, 13)) : null;
@@ -602,7 +616,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validacion que evalua si los precios estan dentro de los l�mites, comparandolos entre si y con el precio minimo actual si existe.
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
 					precioMinimoAuth = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
@@ -640,7 +654,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si los precios estan dentro de los l�mites, comparandolos entre si
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
 					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, 13)) ? Double.parseDouble(exc.dameCelda(i, 13)) : null;
@@ -676,7 +690,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si las fechas de precios estan dentro de los l�mites
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					fechaInicioPAV = !Checks.esNulo(exc.dameCelda(i, 2)) ? ft.parse(exc.dameCelda(i, 2)) : null;
 					fechaFinPAV = !Checks.esNulo(exc.dameCelda(i, 3)) ? ft.parse(exc.dameCelda(i, 3)) : null;
@@ -709,7 +723,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si las fechas de precios estan dentro de los l�mites
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					fechaInicioPAR = !Checks.esNulo(exc.dameCelda(i, 8)) ? ft.parse(exc.dameCelda(i, 8)) : null;
 					fechaFinPAR = !Checks.esNulo(exc.dameCelda(i, 9)) ? ft.parse(exc.dameCelda(i, 9)) : null;
@@ -741,7 +755,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validaci�n que evalua si la fecha de inicio del precio m�nimo es superior al d�a de hoy.
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, 6)) ? ft.parse(exc.dameCelda(i, 6)) : null;
 					
@@ -771,7 +785,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validaci�n que evalua si la fecha de inicio del precio m�nimo es superior al d�a de hoy.
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, 5)) ? ft.parse(exc.dameCelda(i, 5)) : null;
 					
@@ -802,7 +816,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si las fechas de precios estan dentro de los l�mites
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, 5)) ? ft.parse(exc.dameCelda(i, 5)) : null;
 					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, 6)) ? ft.parse(exc.dameCelda(i, 6)) : null;
@@ -832,7 +846,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validacion que evalua si la fecha de inicio de descuento aprobado no se encuentra establecida.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no est� vac�o.
 						if(Checks.esNulo(exc.dameCelda(i, 11))) { // Comprobar que la fecha tampoco.
@@ -858,7 +872,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validacion que evalua si la fecha de fin de descuento aprobado no se encuentra establecida.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no est� vac�o.
 						if(Checks.esNulo(exc.dameCelda(i, 12))) { // Comprobar que la fecha tampoco.
@@ -884,7 +898,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validacion que evalua si la fecha de inicio de descuento publicado no se encuentra establecida.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no est� vac�o.
 						if(Checks.esNulo(exc.dameCelda(i, 14))) { // Comprobar que la fecha tampoco.
@@ -913,7 +927,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validacion que evalua si la fecha de fin del aprobado venta es menor o igual que la fecha fin del m�nimo autorizado.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					 fechaInicioPAV = !Checks.esNulo(exc.dameCelda(i, 2)) ? ft.parse(exc.dameCelda(i, 2)) : null;
 					 fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, 5)) ? ft.parse(exc.dameCelda(i, 5)) : null;
@@ -946,7 +960,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validaci�n que evalua si la fecha de fin del descuento publicado es menor o igual que la fecha fin del aprobado venta.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					fechaFinPAV = !Checks.esNulo(exc.dameCelda(i, 3)) ? ft.parse(exc.dameCelda(i, 3)) : null;
 					fechaFinPDW = !Checks.esNulo(exc.dameCelda(i, 15)) ? ft.parse(exc.dameCelda(i, 15)) : null;
@@ -979,7 +993,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validaci�n que evalua si la fecha de fin del descuento publicado es menor o igual que la fecha fin del descuento aprobado.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, 12)) ? ft.parse(exc.dameCelda(i, 12)) : null;
 					fechaFinPDW = !Checks.esNulo(exc.dameCelda(i, 15)) ? ft.parse(exc.dameCelda(i, 15)) : null;
@@ -1012,7 +1026,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validaci�n que evalua si la fecha de inicio del descuento publicado es mayor o igual que la fecha inicio del aprobado venta.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					fechaInicioPAV = !Checks.esNulo(exc.dameCelda(i, 2)) ? ft.parse(exc.dameCelda(i, 2)) : null;
 					fechaInicioPDW = !Checks.esNulo(exc.dameCelda(i, 14)) ? ft.parse(exc.dameCelda(i, 14)) : null;
@@ -1045,7 +1059,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validaci�n que evalua si la fecha de inicio del descuento publicado es mayor o igual que la fecha inicio del descuento aprobado.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, 11)) ? ft.parse(exc.dameCelda(i, 11)) : null;
 					fechaInicioPDW = !Checks.esNulo(exc.dameCelda(i, 14)) ? ft.parse(exc.dameCelda(i, 14)) : null;
@@ -1078,7 +1092,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validaci�n que evalua si la fecha de inicio del descuento aprobado es mayor o igual que la fecha inicio del m�nimo autorizado.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, 5)) ? ft.parse(exc.dameCelda(i, 5)) : null;
 					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, 11)) ? ft.parse(exc.dameCelda(i, 11)) : null;
@@ -1111,7 +1125,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validaci�n que evalua si la fecha de fin del descuento aprobado es menor o igual que la fecha fin del m�nimo autorizado.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, 6)) ? ft.parse(exc.dameCelda(i, 6)) : null;
 					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, 12)) ? ft.parse(exc.dameCelda(i, 12)) : null;
@@ -1144,7 +1158,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validacion que evalua si la fecha de fin del aprobado venta es menor o igual que la fecha fin del m�nimo autorizado.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					fechaFinPAV = !Checks.esNulo(exc.dameCelda(i, 3)) ? ft.parse(exc.dameCelda(i, 3)) : null;
 					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, 6)) ? ft.parse(exc.dameCelda(i, 6)) : null;
@@ -1174,7 +1188,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 		// Validacion que evalua si la fecha de fin de descuento publicado no se encuentra establecida.
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){
+			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no est� vac�o.
 						if(Checks.esNulo(exc.dameCelda(i, 15))) { // Comprobar que la fecha tampoco.
@@ -1203,7 +1217,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si las fechas de precios estan dentro de los l�mites
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, 11)) ? ft.parse(exc.dameCelda(i, 11)) : null;
 					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, 12)) ? ft.parse(exc.dameCelda(i, 12)) : null;
@@ -1236,7 +1250,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		
 		// Validacion que evalua si las fechas de precios estan dentro de los l�mites
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					fechaInicioPDP = !Checks.esNulo(exc.dameCelda(i, 14)) ? ft.parse(exc.dameCelda(i, 14)) : null;
 					fechaFinPDP = !Checks.esNulo(exc.dameCelda(i, 15)) ? ft.parse(exc.dameCelda(i, 15)) : null;

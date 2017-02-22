@@ -75,10 +75,9 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 		try {
 			//Cambiar estado de la propuesta, y asignarle fecha de carga
 			activoApi.actualizarFechaYEstadoCargaPropuesta(Long.parseLong(exc.dameCelda(1, 2)));
-			
-			
-			
-			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilas(); fila++) {
+				
+			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
+			for (int fila = EXCEL_FILA_INICIAL; fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, EXCEL_COL_NUMACTIVO)));
 				Boolean actualizatTipoComercializacionActivo = false;
 				

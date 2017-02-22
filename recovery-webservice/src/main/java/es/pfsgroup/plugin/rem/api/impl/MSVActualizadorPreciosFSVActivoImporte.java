@@ -66,7 +66,8 @@ public class MSVActualizadorPreciosFSVActivoImporte implements MSVLiberator {
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 
 		try {
-			for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
+			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
+			for (int fila = 1; fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				
 				//Si hay Valoracion = Precio FSV Venta

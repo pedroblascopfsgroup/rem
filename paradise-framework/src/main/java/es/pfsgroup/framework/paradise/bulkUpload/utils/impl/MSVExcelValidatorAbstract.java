@@ -155,6 +155,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 				numeroMaximoFilas = "5000";
 			}
 			// recuperamos las cabeceras del excel
+			exc.setPosColumnaByFormato(this.convertListToStringSeparatedByComma(listaValidacion));
 			Integer numFilasDatosHoja0 = exc.getNumeroFilas();
 			if (!Checks.esNulo(exc)) {
 				try {
@@ -492,4 +493,12 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 			Map<String, String> mapaDatos,
 			List<String> listaCabeceras,
 			MSVBusinessCompositeValidators compositeValidators);
+	
+	private String convertListToStringSeparatedByComma(List<String> lista) {
+		StringBuilder sb = new StringBuilder();
+        for(String str : lista){
+            sb.append(str).append(",");
+        }
+        return sb.toString();
+	}
 }

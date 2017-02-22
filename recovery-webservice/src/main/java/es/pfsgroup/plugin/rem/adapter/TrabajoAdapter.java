@@ -264,7 +264,8 @@ public class TrabajoAdapter {
 		MSVHojaExcel exc = excelParser.getExcel(document.getContenidoFichero().getFile());
 		
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){ //Nos saltamos la línea del título	
+			Integer numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion());
+			for(int i = 1; i < numFilas; i++){ //Nos saltamos la línea del título	
 				listIdActivos.add(exc.dameCelda(i, 0));
 			}
 			

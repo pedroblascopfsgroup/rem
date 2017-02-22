@@ -33,6 +33,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
@@ -90,6 +91,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	@Resource
     MessageService messageServices;
 	
+	private Integer numFilasHoja;
+	
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -102,9 +105,17 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
+		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
 		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		try {
+			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 //			if (!isActiveExists(exc)){
@@ -200,7 +211,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	
 	private boolean isActiveExists(MSVHojaExcel exc){
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 					return false;
 			}
@@ -221,7 +232,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
@@ -245,7 +256,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// Codigos validos 00 (ninguno) 01 (Singular) 02 (Retail) 
 		try{
 			String codigoTipoComercial = null;
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION)))
 						codigoTipoComercial = exc.dameCelda(i, COL_NUM_TIPO_COMERCIALIZACION).substring(0, 2);
@@ -273,7 +284,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// Codigos validos 00 (ninguno) 01 (ordinario) 02 (pdv) 03 (performing) 
 		try{
 			String codigoMotivoConComercial = null;
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_MOTIVO_CON_COMERCIAL)))
@@ -302,7 +313,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// Codigos validos 00 (ninguno) 01 (V.P.O Auto) 02 (perdido) 03 (desistido) ... 63 (no comer. pte. propuesta) 
 		try{
 			Integer codigoMotivoSinComercial = 0;
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					codigoMotivoSinComercial = exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL).isEmpty() ? Integer.valueOf(0) :
 						Integer.valueOf(exc.dameCelda(i, COL_NUM_MOTIVO_SIN_COMERCIAL));
@@ -331,7 +342,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String valorConComercial = "-";
 			String valorConFormalizar = "-";
 			
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				
 				//Columnas EN_PERIMETRO, CON_GESTION, CON_COMERCIAL
 				// Si la celda no tiene valor, debe validarse correctamente
@@ -369,7 +380,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// que el resto de CHECKS no esten activados afirmativamente
 		try{
 			String valorEnPerimetro = "-";
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
 					if("N".equals(valorEnPerimetro) || ("-".equals(valorEnPerimetro) && !particularValidator.esActivoIncluidoPerimetro(exc.dameCelda(i, 0)))) {
@@ -402,7 +413,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		 */
 		try{
 			String valorConFormalizar = "-";
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				
 				try {
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
@@ -432,7 +443,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// Codigos validos 00 (ninguno) 01 (Venta) 02 (Alquiler y venta) 03 (Alquiler) 
 		try{
 			String codigoDestinoComercial = null;
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL)))
@@ -461,7 +472,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		// Codigos validos 00 (ninguno) 01 (Ordinario) 02 (Con opción a compra) 03 (Fondo social) 04 (Especial) 
 		try{
 			String codigoTipoAlquiler = null;
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_TIPO_ALQUILER)))
@@ -492,7 +503,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		try{
 			String valorConFormalizar = "-";
 			String valorConComercializar = "-";
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				
 				try {
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();

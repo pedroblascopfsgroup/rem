@@ -52,7 +52,8 @@ public class MSVAgruparActivosRestringido implements MSVLiberator {
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);		
 		Long agrupationId = new Long(exc.dameCelda(1, 1));
 		
-		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
+		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
+		for (int fila = 1; fila < numFilas; fila++) {
 			agrupacionAdapter.createActivoAgrupacion(agrupationId, new Long(exc.dameCelda(fila, 0)), new Integer(exc.dameCelda(fila, 2)));		
 		}
 

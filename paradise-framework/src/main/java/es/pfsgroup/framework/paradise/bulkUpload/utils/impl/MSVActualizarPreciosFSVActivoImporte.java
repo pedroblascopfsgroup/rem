@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
@@ -39,7 +40,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstract {
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
-	public static final String ACTIVE_PRIZE_NAN = "Uno de los importes indicados no es un valor numérico correcto";
+	public static final String ACTIVE_PRIZE_NAN = "msg.error.masivo.actualizar.precios.fsv.activo.importe.formato.incorrecto";
 	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor FSV de Renta no puede ser mayor al valor FSV de Renta (FSV Venta >= FSV Renta) o uno de estos valores no tiene un formato correcto";
 	
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
@@ -65,6 +66,11 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Resource
+    MessageService messageServices;
+	
+	private Integer numFilasHoja;
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -77,20 +83,28 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
+		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
 		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-		
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		try {
+			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+				
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 //			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				mapaErrores.put(ACTIVE_PRIZE_NAN, getNANPrecioIncorrectoRows(exc));
+				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZE_NAN), getNANPrecioIncorrectoRows(exc));
 				mapaErrores.put(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED, getLimitePreciosVentaRentaIncorrectoRows(exc));
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZE_NAN).isEmpty() ||
+							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty() ||
 							!mapaErrores.get(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED).isEmpty() ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -158,7 +172,7 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 	
 	private boolean isActiveExists(MSVHojaExcel exc){
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 					return false;
 			}
@@ -179,7 +193,7 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
@@ -200,7 +214,7 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		
 		// Validacion que evalua si el activo tiene activo el bloqueo de precios. No pueden actualizarse precios.
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
@@ -221,7 +235,7 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		
 		// Validacion que evalua si el activo tiene ofertas activas. No pueden actualizarse precios.
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
 						listaFilas.add(i);
@@ -245,7 +259,7 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		
 		// Validacion que evalua si los precios son numeros correctos
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					precioFSVVenta = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
 					precioFSVRenta = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;
@@ -273,9 +287,9 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		Double valorFSVVenta = null;
 		Double valorFSVRenta = null;
 		
-		// Validacion que evalua si los precios estan dentro de los límites, comparandolos entre si
+		// Validacion que evalua si los precios estan dentro de los lï¿½mites, comparandolos entre si
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					valorFSVVenta = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
 					valorFSVRenta = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;

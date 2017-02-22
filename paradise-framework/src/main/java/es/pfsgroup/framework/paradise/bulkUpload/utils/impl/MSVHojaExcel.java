@@ -12,10 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.util.StringUtils;
-
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
+
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import jxl.Cell;
 import jxl.CellType;
 import jxl.DateCell;
@@ -50,6 +50,8 @@ public class MSVHojaExcel {
 	
 	private int columnasReales = -1;
 	
+	private int posColumnaPrincipal = -1;
+	
 	private Workbook libroExcel; 
 	
 	private File file;
@@ -80,37 +82,32 @@ public class MSVHojaExcel {
 	 */
 	public Integer getNumeroFilas() throws IllegalArgumentException, IOException {
 
-		return this.getNumeroFilasByHoja(0,1);
+		return this.getNumeroFilasByHoja(0,null);
 	}
 	
 	/**
 	 * Devuelve el numero de filas reales de la hoja excel indicada por parametro
 	 * primeraFilaDatos indica la fila en la que comienzan los datos (para cabeceras de mas de 1 fila)
 	 * Se considera que una fila es real si alguna de sus celda no esta vacia.
+	 * Cuenta las filas reales de la primera columna OBLOGATORIA de la hoja excel
 	 * @param numHoja (minimo 0)
-	 * @param primeraFilaDatos (minimo 1)
+	 * @param tipoMasivo para obtener la posicion de la primera columna obligatoria
 	 * @return
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
-	public Integer getNumeroFilasByHoja(int numHoja, int primeraFilaDatos) throws IllegalArgumentException, IOException {
+	public Integer getNumeroFilasByHoja(int numHoja, MSVDDOperacionMasiva tipoMasivo) throws IllegalArgumentException, IOException {
 		if (!isOpen) {
 			abrir();
 		}
 		
 		if (this.filasReales < 0){
+			
+			this.setPrimeraColumnaObligatoriaByOperacion(tipoMasivo);
+			
 			Sheet hoja = libroExcel.getSheet(numHoja);
 			this.filasReales = 0;
-			
-			for(int i = primeraFilaDatos; i<hoja.getRows();i++) {
-				Cell[] fila = hoja.getRow(i);
-				if (!this.filaVacia(fila)){
-					this.filasReales = i + 1;
-				}
-				else { //Al encontrar la primera fila vacia, se sale del bucle para dejar de contar filas con datos
-					break;
-				}
-			}
+			this.filasReales = hoja.getColumn(this.posColumnaPrincipal).length;
 		}
 		 
 		return this.filasReales;
@@ -137,49 +134,9 @@ public class MSVHojaExcel {
 		if (this.columnasReales < 0){
 			this.columnasReales = 0;
 			Sheet hoja = libroExcel.getSheet(numHoja);
-			/*Cell[] cabeceras = hoja.getRow(numFila);
-			
-			//Masivo propuesta precios: Si no se detecta la cabecera en fila0, prueba con fila7
-			if(cabeceras.length == 0)
-				cabeceras = hoja.getRow(7);
-
-			//for (int i=cabeceras.length - 1; i>0; i--) {
-			for (int i=cabeceras.length -1; i>=0; i--){
-				Cell celda = cabeceras[i];
-				if (celda != null && StringUtils.hasText(celda.getContents())){
-					this.columnasReales = i + 1;
-					break;
-				}
-			}*/
-			
 			this.columnasReales = hoja.getRow(numFila).length;
 		}		
 		return this.columnasReales;
-	}
-
-	/**
-	 * Comprueba si una fila de una hoja excel está vacia.
-	 * Para que una fila esté vacía todas sus celdas deben estar vacías.
-	 * Una celda está vacía si su contenido es nulo o de tamaño cero.
-	 * @param fila
-	 * @return
-	 */
-	private boolean filaVacia(Cell[] fila) {
-		for (int i=0; i<fila.length; i++) {
-			Cell celda = fila[i];
-			
-			if (celda != null && StringUtils.hasText(celda.getContents()) && this.tipoCeldasSinFormulas(celda.getType())){
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	private boolean tipoCeldasSinFormulas(CellType tipo) {
-		if(!(CellType.BOOLEAN_FORMULA.equals(tipo) || CellType.DATE_FORMULA.equals(tipo) || CellType.FORMULA_ERROR.equals(tipo) 
-				|| CellType.NUMBER_FORMULA.equals(tipo) || CellType.STRING_FORMULA.equals(tipo)))
-			return true;
-		return false;
 	}
 
 	/**
@@ -563,6 +520,30 @@ public class MSVHojaExcel {
 			e.printStackTrace();
 		}
 		return ok;
+	}
+	
+	private void setPrimeraColumnaObligatoriaByOperacion(MSVDDOperacionMasiva tipoMasivo) {
+		if(!Checks.esNulo(tipoMasivo)) {
+
+			setPosColumnaByFormato(tipoMasivo.getValidacionFormato());
+		}
+		else
+			this.posColumnaPrincipal= 0;
+	}
+	
+	public void setPosColumnaByFormato(String validacionFormato) {
+		if(this.posColumnaPrincipal < 0 && !Checks.esNulo(validacionFormato)) {
+			String[] formato = validacionFormato.split(",");
+			
+			for(int i=0; i<formato.length;i++) {
+				if(formato[i].contains("*")) {
+					this.posColumnaPrincipal = i;
+					break;
+				}
+			}
+		}
+		else
+			this.posColumnaPrincipal= 0;
 	}
 		
 }

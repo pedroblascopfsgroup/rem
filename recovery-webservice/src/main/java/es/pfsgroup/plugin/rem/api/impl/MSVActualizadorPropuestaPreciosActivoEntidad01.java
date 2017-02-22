@@ -67,7 +67,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad01 implements MSVLibera
 
 	@Override
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
-			
+
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 
@@ -75,7 +75,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad01 implements MSVLibera
 			//Cambiar estado de la propuesta, y asignarle fecha de carga
 			activoApi.actualizarFechaYEstadoCargaPropuesta(Long.parseLong(exc.dameCeldaByHoja(1, 2, 1)));
 			
-			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilasByHoja(1,EXCEL_FILA_INICIAL); fila++) {
+			for (int fila = EXCEL_FILA_INICIAL; fila < exc.getNumeroFilasByHoja(1,file.getProcesoMasivo().getTipoOperacion()); fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCeldaByHoja(fila, EXCEL_COL_NUMACTIVO, 1)));
 				Boolean actualizatTipoComercializacionActivo = false;
 				

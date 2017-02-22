@@ -598,7 +598,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		MSVHojaExcel exc = excelParser.getExcel(documento.getContenidoFichero().getFile());
 
 		try {
-			for (int i = 1; i < exc.getNumeroFilas(); i++) {
+			Integer numFilas = exc.getNumeroFilasByHoja(0,documento.getProcesoMasivo().getTipoOperacion());
+			for (int i = 1; i < numFilas; i++) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo",
 						Long.parseLong(exc.dameCelda(i, 0)));
 				Activo activo = genericDao.get(Activo.class, filtro);

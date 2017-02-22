@@ -23,6 +23,7 @@ import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
@@ -34,6 +35,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
@@ -60,10 +62,15 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 	@Autowired
 	private ParticularValidatorApi particularValidator;
 	
+	@Autowired
+	private MSVProcesoApi msvProcesoApi;
+	
 	@Resource
     MessageService messageServices;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
+	
+	private Integer numFilasHoja;
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -76,10 +83,18 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
+		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
 		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-		
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		try {
+			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+				
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {	
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 			// Validaciones de grupo, para todos los activos de una agrupacion en el excel:
@@ -176,7 +191,7 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 				
 				
 				// Se recorre todo el excel para extraer las distintas agrupaciones en una lista
-				for(int a=1; a<exc.getNumeroFilas(); a++){
+				for(int a=1; a<this.numFilasHoja; a++){
 					listaNumAgrupaciones.add(Long.parseLong(exc.dameCelda(a, 0)));
 				}
 				// Se toman precauciones para crear una lista con agrupaciones unicas,
@@ -190,7 +205,7 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 				for(Long numAgrupacion : uniqueListNumAgrupaciones){
 					// Se recorre el excel en busca de activos
 					List<Long> numActivos = new ArrayList<Long>();
-					for(int a=1; a<exc.getNumeroFilas(); a++){
+					for(int a=1; a<this.numFilasHoja; a++){
 						// Si es una fila de la agrupacion que se esta evaluando, se anota el activo
 						if(numAgrupacion.equals(Long.parseLong(exc.dameCelda(a, 0))))
 							numActivos.add(Long.parseLong(exc.dameCelda(a, 1)));				
@@ -252,7 +267,7 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 		int a=1;
 		Boolean filaEncontrada = false;
 		try {
-			while (a<exc.getNumeroFilas() && !filaEncontrada){
+			while (a<this.numFilasHoja && !filaEncontrada){
 				if(numAgrupacion.equals(Long.parseLong(exc.dameCelda(a, 0)))){
 					// En el excel, Agrega un texto de validacion en la primera fila de cada agrupacion
 					numFilaError = a;
@@ -283,7 +298,7 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 
 		int i = 0;
 		try{
-			for(i=1; i<exc.getNumeroFilas();i++){
+			for(i=1; i<this.numFilasHoja;i++){
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 1)))
 					listaFilas.add(i);
 			}
@@ -303,7 +318,7 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 		Long numAgrupacion;
 		int i = 0;
 		try {
-			for(i=1; i<exc.getNumeroFilas();i++){
+			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = Long.parseLong(exc.dameCelda(i, 0));
 				numActivo = Long.parseLong(exc.dameCelda(i, 1));
 				if(particularValidator.esActivoEnAgrupacion(numActivo, numAgrupacion))
@@ -326,7 +341,7 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 		
 		int i = 0;
 		try {
-			for(i=1; i<exc.getNumeroFilas();i++){
+			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = Long.parseLong(exc.dameCelda(i, 0));
 				numActivo = Long.parseLong(exc.dameCelda(i, 1));
 				//Valida que el activo no este en una agrupacion de obra nueva(01) o que ya este en una asistida(13)

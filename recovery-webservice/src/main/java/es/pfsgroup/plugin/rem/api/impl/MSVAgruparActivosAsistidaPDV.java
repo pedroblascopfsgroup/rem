@@ -50,7 +50,8 @@ public class MSVAgruparActivosAsistidaPDV implements MSVLiberator {
 		Long numAgrupRem = new Long(exc.dameCelda(1, 0));
 		Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
 		
-		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
+		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
+		for (int fila = 1; fila < numFilas; fila++) {
 			agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null);		
 		}
 

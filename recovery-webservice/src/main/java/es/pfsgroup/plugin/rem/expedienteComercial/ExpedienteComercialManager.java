@@ -2602,7 +2602,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
-			importeXActivo = (importeTotal * porcentajeParti)/100;
+			if(porcentajeParti != null && porcentajeParti > 0){
+				importeXActivo = (importeTotal * porcentajeParti)/100;
+			}else{
+				importeXActivo = new Double(0);
+			}
+			
 			sumatorioImporte += importeXActivo;
 			sumatorioPorcentaje += porcentajeParti;
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();

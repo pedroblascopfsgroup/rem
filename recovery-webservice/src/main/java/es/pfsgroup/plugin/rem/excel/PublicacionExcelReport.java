@@ -54,6 +54,7 @@ public class PublicacionExcelReport extends AbstractExcelReport implements Excel
 			fila.add(publicacion.getCartera());
 			fila.add(publicacion.getDireccion());
 			fila.add(publicacion.getEstadoPublicacionDescripcion());
+			fila.add(mapeoBoolean(publicacion.getAdmision()));
 			fila.add(mapeoBoolean(publicacion.getGestion()));
 			fila.add(mapeoBoolean(publicacion.getPublicacion()));
 			fila.add(mapeoBoolean(publicacion.getPrecio()));

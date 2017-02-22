@@ -12,6 +12,8 @@ public class DtoDataSource {
 	private List<Object> listaOtrasOfertas;
 	private List<Object> listaVisitas;
 	private List<Object> listaActivo;
+	private List<Object> listaFotosWeb;
+	private List<Object> listaFotosTecnicas;
 	
 	public List<Object> getListaCliente() {
 		return listaCliente;
@@ -75,6 +77,22 @@ public class DtoDataSource {
 
 	public void setListaActivo(List<Object> listaActivo) {
 		this.listaActivo = listaActivo;
+	}
+
+	public List<Object> getListaFotosWeb() {
+		return listaFotosWeb;
+	}
+
+	public void setListaFotosWeb(List<Object> listaFotosWeb) {
+		this.listaFotosWeb = listaFotosWeb;
+	}
+
+	public List<Object> getListaFotosTecnicas() {
+		return listaFotosTecnicas;
+	}
+
+	public void setListaFotosTecnicas(List<Object> listaFotosTecnicas) {
+		this.listaFotosTecnicas = listaFotosTecnicas;
 	}
 	
 }

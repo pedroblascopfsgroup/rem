@@ -34,6 +34,10 @@ public class DDTipoFoto implements Auditable, Dictionary {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static String COD_WEB="01";
+	
+	public static String COD_TECNICA="02";
 
 	@Id
 	@Column(name = "DD_TFO_ID")

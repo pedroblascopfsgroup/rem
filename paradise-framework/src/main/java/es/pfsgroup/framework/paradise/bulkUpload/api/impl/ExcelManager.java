@@ -188,7 +188,9 @@ public class ExcelManager implements ExcelManagerApi {
 
 		MSVDtoValidacion dtoValidacionFormato = null;
 		try {
-			dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
+			String codigoOPM = document.getProcesoMasivo().getTipoOperacion().getCodigo();
+			if(!("CPPA_01".equals(codigoOPM) || "CPPA_02".equals(codigoOPM) || "CPPA_03".equals(codigoOPM)))
+				dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
 			if (dtoValidacionFormato != null) {
 				if (dtoValidacionFormato.getFicheroTieneErrores()) {
 					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
@@ -214,10 +216,16 @@ public class ExcelManager implements ExcelManagerApi {
 		MSVDtoAltaProceso dtoModifProceso = new MSVDtoAltaProceso();
 		dtoModifProceso.setIdProceso(document.getProcesoMasivo().getId());
 		try {
-			if (isValidProcess(document.getProcesoMasivo().getId())) {
+			String codigoOPM = document.getProcesoMasivo().getTipoOperacion().getCodigo();
+			if(!("CPPA_01".equals(codigoOPM) || "CPPA_02".equals(codigoOPM) || "CPPA_03".equals(codigoOPM))) {
+				if (isValidProcess(document.getProcesoMasivo().getId())) {
+					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_VALIDADO);
+				} else {
+					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
+				}
+			}
+			else {
 				dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_VALIDADO);
-			} else {
-				dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
 			}
 		} catch (RuntimeException err) {
 			logger.error("Ha fallado el validador de contenido del fichero Excel", err);

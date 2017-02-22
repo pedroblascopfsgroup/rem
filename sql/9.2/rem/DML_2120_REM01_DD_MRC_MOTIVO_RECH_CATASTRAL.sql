@@ -1,7 +1,7 @@
 ﻿--/*
 --##########################################
 --## AUTOR=Joaquin_Arnal
---## FECHA_CREACION=20161201
+--## FECHA_CREACION=20170111
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1210
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Gustavo Mora: Cambio validacion F08
 --##########################################
 --*/
 
@@ -43,7 +44,7 @@ DECLARE
 	T_TIPO_DATA('T01' ,'Formato incorrecto: Error tamaño' , '0', ' ' ),
         T_TIPO_DATA('T02' ,'Formato incorrecto: Error tipo' ,'0', ' '),
         -- T_TIPO_DATA('F01' ,'aaaa' ,'1', 'WHERE AUX.FECHA_ANULACION is not null AND NOT EXISTS (SELECT * FROM GPV_GASTOS_PROVEEDOR GPV WHERE GPV.GPV_NUM_GASTO_GESTORIA = AUX.COD_GASTO_GESTORIA AND GPV.DD_GRF_ID = #TOKEN_IDGESTORIA# )'),
-        T_TIPO_DATA('F01' ,'Id activo no existe', '1', 'WHERE NOT EXISTS (SELECT * FROM ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO_REM = AUX.ID_ACTIVO)')
+        T_TIPO_DATA('F01' ,'Id activo no existe', '1', 'WHERE NOT EXISTS (SELECT * FROM ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = AUX.ID_ACTIVO)')
 	   ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

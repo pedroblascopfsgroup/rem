@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin_Arnal
---## FECHA_CREACION=20160208
+--## FECHA_CREACION=20160222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1089-HREOS-1527
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Gustavo Mora: Activamos la validación de actvos
 --##########################################
 --*/
 
@@ -52,7 +53,7 @@ DECLARE
         T_TIPO_DATA('F01' ,'Llega fecha de anulación y no existe gasto en la tabla' ,'1', 'WHERE AUX.FECHA_ANULACION is not null AND NOT EXISTS (SELECT * FROM GPV_GASTOS_PROVEEDOR GPV WHERE GPV.GPV_NUM_GASTO_GESTORIA = AUX.COD_GASTO_GESTORIA AND GPV.DD_GRF_ID = #TOKEN_IDGESTORIA# )'),
         T_TIPO_DATA('F02' ,'Llega alta de gasto que ya existe', '1', 'WHERE AUX.TIPO_ENVIO like ''''01'''' AND EXISTS (SELECT * FROM GPV_GASTOS_PROVEEDOR GPV WHERE GPV.GPV_NUM_GASTO_GESTORIA = AUX.COD_GASTO_GESTORIA AND GPV.DD_GRF_ID = #TOKEN_IDGESTORIA#)'),
         T_TIPO_DATA('F03', 'Error en tipo / subtipo de gasto', '1', 'LEFT JOIN DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_CODIGO = trim(AUX.TIPO_GASTO) LEFT JOIN DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_CODIGO = trim(AUX.SUBTIPO_GASTO) WHERE (TGA.DD_TGA_ID is null OR STG.DD_STG_ID is null)' ),
-        T_TIPO_DATA('F04' ,'No existe el activo' , '0', 'WHERE NOT EXISTS (SELECT * FROM ACT_ACTIVO ACT  WHERE ACT.ACT_NUM_ACTIVO = AUX.COD_ACTIVO) AND AUX.COD_ACTIVO is not null' ),
+        T_TIPO_DATA('F04' ,'No existe el activo' , '1', 'WHERE NOT EXISTS (SELECT * FROM ACT_ACTIVO ACT  WHERE ACT.ACT_NUM_ACTIVO = AUX.COD_ACTIVO) AND AUX.COD_ACTIVO is not null' ),
         T_TIPO_DATA('F05' ,'Gasto cíclico sin fecha inicio o fin', '1', 'WHERE AUX.ID_PRIMER_GASTO_SERIE is not null AND (AUX.FECHA_FIN_EMISION is null or AUX.FECHA_INICIO_EMISION is null)' ),
         T_TIPO_DATA('F06' ,'Llega anulación de un gasto que YA está pagado', '1', 'WHERE AUX.TIPO_ENVIO like ''''04'''' AND EXISTS (SELECT * FROM GPV_GASTOS_PROVEEDOR GPV  JOIN DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID AND EGA.DD_EGA_CODIGO = ''''05'''' WHERE GPV.GPV_NUM_GASTO_GESTORIA = AUX.COD_GASTO_GESTORIA AND GPV.DD_GRF_ID = #TOKEN_IDGESTORIA# )'),
         T_TIPO_DATA('F07' ,'Llega modificación de un gasto que YA está pagado o autorizado' , '1' ,'WHERE AUX.TIPO_ENVIO like ''''03'''' AND EXISTS (SELECT *  FROM GPV_GASTOS_PROVEEDOR GPV JOIN DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID AND EGA.DD_EGA_CODIGO in (''''03'''',''''05'''') WHERE GPV.GPV_NUM_GASTO_GESTORIA = AUX.COD_GASTO_GESTORIA AND GPV.DD_GRF_ID = #TOKEN_IDGESTORIA# )' ),

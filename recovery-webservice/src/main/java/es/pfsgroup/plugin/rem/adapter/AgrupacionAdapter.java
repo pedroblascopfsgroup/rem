@@ -420,7 +420,11 @@ public class AgrupacionAdapter {
 			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException(AgrupacionValidator.ERROR_NOT_ASISTIDA);
 			}
-
+			
+			if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && activoApi.isActivoAsistido(activo)){
+				throw new JsonViewerException(AgrupacionValidator.ERROR_OBRANUEVA_NO_ASISTIDA);
+			}
+			
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos
 			if (num == 0) {
 				activoAgrupacionValidate(activo, agrupacion);

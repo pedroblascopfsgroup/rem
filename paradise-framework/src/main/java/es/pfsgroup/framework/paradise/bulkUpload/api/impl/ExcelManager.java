@@ -189,16 +189,21 @@ public class ExcelManager implements ExcelManagerApi {
 		MSVDtoValidacion dtoValidacionFormato = null;
 		try {
 			String codigoOPM = document.getProcesoMasivo().getTipoOperacion().getCodigo();
-			if(!("CPPA_01".equals(codigoOPM) || "CPPA_02".equals(codigoOPM) || "CPPA_03".equals(codigoOPM)))
+			if(!("CPPA_01".equals(codigoOPM) || "CPPA_02".equals(codigoOPM) || "CPPA_03".equals(codigoOPM))) {
 				dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
-			if (dtoValidacionFormato != null) {
-				if (dtoValidacionFormato.getFicheroTieneErrores()) {
-					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
-					document.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
-				} else {
-					dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
-					document.setErroresFichero(document.getContenidoFichero());
+				if (dtoValidacionFormato != null) {
+					if (dtoValidacionFormato.getFicheroTieneErrores()) {
+						dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
+						document.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
+					} else {
+						dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
+						document.setErroresFichero(document.getContenidoFichero());
+					}
 				}
+			}
+			else {
+				dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
+				document.setErroresFichero(document.getContenidoFichero());
 			}
 		} catch (RuntimeException err) {
 			logger.error("Ha fallado el validador de formato del fichero Excel", err);

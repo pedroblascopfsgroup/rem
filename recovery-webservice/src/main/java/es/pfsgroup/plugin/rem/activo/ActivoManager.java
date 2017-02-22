@@ -514,6 +514,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPrimaryKey(pk);
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
+				compradorExpedienteNuevo.setPorcionCompra(100.00);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -548,6 +549,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPrimaryKey(pk);
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
+				compradorExpedienteNuevo.setPorcionCompra(100.00);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			}
@@ -572,6 +574,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+					compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+
 
 					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 				} else {
@@ -590,6 +594,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+					compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+
 
 					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 

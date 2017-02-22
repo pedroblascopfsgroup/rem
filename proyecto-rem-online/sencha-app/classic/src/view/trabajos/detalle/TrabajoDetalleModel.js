@@ -286,6 +286,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     				remoteUrl: 'trabajo/getListActivosByProceso',
     				extraParams: {idProceso: 'idProceso'}
     			}
+    		},
+    		
+    		comboProveedorContacto : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{gestionEconomica.idProveedor}'}
+				}, 
+				autoLoad: false
     		}
 
     }

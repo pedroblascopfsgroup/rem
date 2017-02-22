@@ -28,6 +28,7 @@ public class WebcomRESTDevonProperties {
 	public static final String APP_ID_GESTOR_DOCUMENTAL = "rest.client.webcom.app.id.gestor.documental";
 	//z[99I(sZluG){yfCdd]xO_eb-(A9Wxof{C{sZ_Tr2h/MLT$D=VH9T)bRCl1IY7ANd&W{qPeIPf[y(NuqbgtvpS4r3PI[}z)?J-[36fw=&M]60
 	public static final String APP_SECRET_GESTOR_DOCUMENTAL = "rest.client.webcom.app.secret.gestor.documental";
+	public static final String BASE_URL_WEBHOOK = "rest.client.webcom.webhook.url";
 
 	// Esta property se usa en el fichero de configuración de Spring
 	// ac-rem-deteccion-cambios-bd.xml

@@ -35,7 +35,7 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		
    	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.activo.id", idActivo);
    	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.id", idAgrupacion);
-   	    HQLBuilder.addFiltroIgualQue(hb, "aa.auditoria.borrado", true);
+   	    HQLBuilder.addFiltroIgualQue(hb, "aa.auditoria.borrado", false );
 
 		return HibernateQueryUtils.uniqueResult(this, hb);
 

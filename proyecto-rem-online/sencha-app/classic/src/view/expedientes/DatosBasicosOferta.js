@@ -86,7 +86,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.contraoferta'),
 		                	bind:		{
 		                		value: '{datosbasicosoferta.importeContraOferta}',
-		                		disabled: '{esCarteraSareb}'
+		                		readOnly: '{esCarteraSareb}'
 		                	},
 		                	colspan: 2
 		                },
@@ -109,6 +109,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 												value: '{datosbasicosoferta.comiteSancionadorCodigo}',
 												readOnly: '{esCarteraBankia}'
 												
+											},
+											// TODO Sobreescribimos la función porque está dando problemas la carga del store. 
+											// En un fúturo esta función deberia desaparecer.
+											setStore: function(store) {
+												if(Ext.isEmpty(store)) {													
+													Ext.log({dump: this,level: 'error'},"Recibo un store vacio comite seleccionado");
+												} else {
+													Ext.log({dump: store, level:"info"},"Seteo el store");
+													this.bindStore(store);
+												}
+												
 											}
 						                },
 						                {
@@ -128,6 +139,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 														store: '{comboComitesPropuestos}',
 														value: '{datosbasicosoferta.comitePropuestoCodigo}',
 														disabled: '{!esCarteraBankia}'
+													},
+													// TODO Sobreescribimos la función porque está dando problemas la carga del store. 
+													// En un fúturo esta función deberia desaparecer.
+													setStore: function(store) {
+														if(Ext.isEmpty(store)) {													
+															Ext.log({dump: this,level: 'error'},"Recibo un store vacio para comite propuesto");
+														} else {
+															Ext.log({dump: store, level:"info"},"Seteo el store");
+															this.bindStore(store);
+														}
+														
 													}
 								                },
 								                {

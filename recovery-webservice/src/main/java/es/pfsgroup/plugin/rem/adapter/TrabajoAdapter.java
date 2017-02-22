@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.adapter;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -263,7 +264,8 @@ public class TrabajoAdapter {
 		MSVHojaExcel exc = excelParser.getExcel(document.getContenidoFichero().getFile());
 		
 		try {
-			for(int i = 1; i < exc.getNumeroFilas(); i++){ //Nos saltamos la línea del título	
+			Integer numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion());
+			for(int i = 1; i < numFilas; i++){ //Nos saltamos la línea del título	
 				listIdActivos.add(exc.dameCelda(i, 0));
 			}
 			
@@ -271,6 +273,9 @@ public class TrabajoAdapter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -3,15 +3,21 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
@@ -35,7 +41,7 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
-	public static final String ACTIVE_NOT_PREPUBLICABLE = "El activo no reúne las condiciones para ser publicado (Admisión, Gestión, Informe comercial aceptado).";
+	public static final String ACTIVE_NOT_PREPUBLICABLE = "msg.error.masivo.actualizar.estado.publicacion.activo.no.prepublicable";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -54,6 +60,13 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Resource
+    MessageService messageServices;
+	
+	private Integer numFilasHoja;
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -70,6 +83,13 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		try {
+			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 //			if (!isActiveExists(exc)){
@@ -79,14 +99,14 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 				
 				//Errores especificos para publicaciones ordinarias
 				if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(operacionMasiva.getCodigo())){
-					mapaErrores.put(ACTIVE_NOT_PREPUBLICABLE, isActiveSinCondicionesPublicableRows(exc));					
+					mapaErrores.put(messageServices.getMessage(ACTIVE_NOT_PREPUBLICABLE), isActiveSinCondicionesPublicableRows(exc));					
 				}
 
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || 
 							!mapaErrores.get(ACTIVE_NOT_ACTUALIZABLE).isEmpty() ||
-							(!Checks.esNulo(mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE)) && !mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE).isEmpty()) ){
+							(!Checks.esNulo(mapaErrores.get(messageServices.getMessage(ACTIVE_NOT_PREPUBLICABLE))) && !mapaErrores.get(messageServices.getMessage(ACTIVE_NOT_PREPUBLICABLE)).isEmpty()) ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -153,7 +173,7 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 	
 	private boolean isActiveExists(MSVHojaExcel exc){
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 					return false;
 			}
@@ -161,6 +181,9 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -171,9 +194,13 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 			}
 			} catch (IllegalArgumentException e) {
 				listaFilas.add(0);
@@ -189,46 +216,47 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++)
-				if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(operacionMasiva.getCodigo()) ||
-						MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(operacionMasiva.getCodigo()))
-				{
-					// Validación estado no publicado: Se valida que los activos estén "no publicados"
-					// y si alguno no tuviera puesto el estado de publicación (null) debe tomarse como "no publicado" para validar
-					if(!particularValidator.estadoNoPublicadoOrNull(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoOcultaractivo(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoDesocultaractivo(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoOcultarprecio(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoDesocultarprecio(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoDespublicar(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadosValidosDespublicarForzado(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadosValidosDesDespublicarForzado(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
-				}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(operacionMasiva.getCodigo())){
-					if(!particularValidator.estadoAutorizaredicion(exc.dameCelda(i, 0)));
-						listaFilas.add(i);
+			for(int i=1; i<this.numFilasHoja;i++)
+				try {
+					if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(operacionMasiva.getCodigo()) ||
+							MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(operacionMasiva.getCodigo()))
+					{
+						// ValidaciÃ³n estado no publicado: Se valida que los activos estÃ¡n "no publicados"
+						// y si alguno no tuviera puesto el estado de publicaciÃ³n (null) debe tomarse como "no publicado" para validar
+						if(!particularValidator.estadoNoPublicadoOrNull(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoOcultaractivo(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoDesocultaractivo(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoOcultarprecio(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoDesocultarprecio(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoDespublicar(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadosValidosDespublicarForzado(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadosValidosDesDespublicarForzado(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(operacionMasiva.getCodigo())){
+						if(!particularValidator.estadoAutorizaredicion(exc.dameCelda(i, 0)));
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
 				}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 		
 	}
@@ -237,19 +265,19 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.isActivoPrePublicable(exc.dameCelda(i, 0))){
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.isActivoPrePublicable(exc.dameCelda(i, 0))){
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
 			}
-			
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 		
 	}

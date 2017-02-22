@@ -18,6 +18,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -649,5 +650,12 @@ public interface TrabajoApi {
 	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response, String codPlantilla) throws Exception;
 
 	public Boolean checkSuperaDelegacion(TareaExterna tarea);
+	
+	/**
+	 * Devuelve un lsitado de ProveedoresContacto filtrado por proveedor
+	 * @param idProveedor
+	 * @return
+	 */
+	public List<ActivoProveedorContacto> getComboProveedorContacto(Long idProveedor);
 
 }

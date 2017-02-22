@@ -3,16 +3,19 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.util.StringUtils;
-
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
+
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import jxl.Cell;
 import jxl.CellType;
 import jxl.DateCell;
@@ -47,6 +50,8 @@ public class MSVHojaExcel {
 	
 	private int columnasReales = -1;
 	
+	private int posColumnaPrincipal = -1;
+	
 	private Workbook libroExcel; 
 	
 	private File file;
@@ -68,40 +73,41 @@ public class MSVHojaExcel {
 	}
 
 	/**
-	 * devuelve el número de filas reales de una hoja excel.
-	 * Se considera que una fila es real si alguna de sus celda no está vacía.
+	 * Devuelve el numero de filas reales de la hoja excel
+	 * Debe usarse en hojas excel que solo tienen 1 hoja y 1 fila de cabecera
+	 * Se considera que una fila es real si alguna de sus celda no esta vacia.
 	 * @return 
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
 	public Integer getNumeroFilas() throws IllegalArgumentException, IOException {
 
-		return this.getNumeroFilasByHoja(0);
+		return this.getNumeroFilasByHoja(0,null);
 	}
 	
 	/**
-	 * devuelve el número de filas reales de la hoja excel indicada por parametro
-	 * Se considera que una fila es real si alguna de sus celda no está vacía.
-	 * @param numHoja
+	 * Devuelve el numero de filas reales de la hoja excel indicada por parametro
+	 * primeraFilaDatos indica la fila en la que comienzan los datos (para cabeceras de mas de 1 fila)
+	 * Se considera que una fila es real si alguna de sus celda no esta vacia.
+	 * Cuenta las filas reales de la primera columna OBLOGATORIA de la hoja excel
+	 * @param numHoja (minimo 0)
+	 * @param tipoMasivo para obtener la posicion de la primera columna obligatoria
 	 * @return
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
-	public Integer getNumeroFilasByHoja(int numHoja) throws IllegalArgumentException, IOException {
+	public Integer getNumeroFilasByHoja(int numHoja, MSVDDOperacionMasiva tipoMasivo) throws IllegalArgumentException, IOException {
 		if (!isOpen) {
 			abrir();
 		}
 		
 		if (this.filasReales < 0){
+			
+			this.setPrimeraColumnaObligatoriaByOperacion(tipoMasivo);
+			
 			Sheet hoja = libroExcel.getSheet(numHoja);
 			this.filasReales = 0;
-			for (int i= hoja.getRows() - 1; i>0; i--) {
-				Cell[] fila = hoja.getRow(i);
-				if (!this.filaVacia(fila)){
-					this.filasReales = i + 1;
-					break;
-				}
-			}
+			this.filasReales = hoja.getColumn(this.posColumnaPrincipal).length;
 		}
 		 
 		return this.filasReales;
@@ -128,41 +134,9 @@ public class MSVHojaExcel {
 		if (this.columnasReales < 0){
 			this.columnasReales = 0;
 			Sheet hoja = libroExcel.getSheet(numHoja);
-			/*Cell[] cabeceras = hoja.getRow(numFila);
-			
-			//Masivo propuesta precios: Si no se detecta la cabecera en fila0, prueba con fila7
-			if(cabeceras.length == 0)
-				cabeceras = hoja.getRow(7);
-
-			//for (int i=cabeceras.length - 1; i>0; i--) {
-			for (int i=cabeceras.length -1; i>=0; i--){
-				Cell celda = cabeceras[i];
-				if (celda != null && StringUtils.hasText(celda.getContents())){
-					this.columnasReales = i + 1;
-					break;
-				}
-			}*/
-			
 			this.columnasReales = hoja.getRow(numFila).length;
 		}		
 		return this.columnasReales;
-	}
-
-	/**
-	 * Comprueba si una fila de una hoja excel está vacia.
-	 * Para que una fila esté vacía todas sus celdas deben estar vacías.
-	 * Una celda está vacía si su contenido es nulo o de tamaño cero.
-	 * @param fila
-	 * @return
-	 */
-	private boolean filaVacia(Cell[] fila) {
-		for (int i=0; i<fila.length; i++) {
-			Cell celda = fila[i];
-			if (celda != null && StringUtils.hasText(celda.getContents())){
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -229,7 +203,6 @@ public class MSVHojaExcel {
 		
 		WritableSheet hoja = copy.getSheet(numHoja);
 		int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja,numFilaCabeceras);
-		int numErrores = mapaErrores.size();
 		
 		Iterator<String> it = mapaErrores.keySet().iterator();
 		int columna = numColumnas;
@@ -249,7 +222,7 @@ public class MSVHojaExcel {
 	}
 
 	public String dameCelda(int fila, int columna) 
-			throws IllegalArgumentException, IOException {
+			throws IllegalArgumentException, IOException, ParseException {
 		
 		return dameCeldaByHoja(fila,columna,0);
 	}
@@ -262,9 +235,10 @@ public class MSVHojaExcel {
 	 * @return
 	 * @throws IllegalArgumentException
 	 * @throws IOException
+	 * @throws ParseException 
 	 */
 	public String dameCeldaByHoja(int fila, int columna, int numHoja) 
-			throws IllegalArgumentException, IOException {
+			throws IllegalArgumentException, IOException, ParseException {
 		if (!isOpen) {
 			abrir();
 		}
@@ -278,12 +252,45 @@ public class MSVHojaExcel {
 			DateFormat df = new SimpleDateFormat(FormatUtils.DDMMYYYY);
 			cellContent = df.format(dc.getDate());
 		} else {
-			cellContent = cell.getContents();
+		
+			if (cell.getType() == CellType.NUMBER) 
+			{ 
+				cellContent = getValidatedNumber(cell.getContents());
+			} else {
+				cellContent = cell.getContents();
+			}
 		}
 		
 		return cellContent;
 	}
 
+	public String getValidatedNumber(String cellValue) throws ParseException{
+		DecimalFormat df = new DecimalFormat();
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		
+		// Formato numerico compatible con notacion latina
+		if(!Checks.esNulo(cellValue) && cellValue.contains("."))
+			symbols.setDecimalSeparator('.'); // Simbolo de decimales
+		
+		symbols.setMinusSign('-'); // Simbolo numero negativo
+
+		if(!Checks.esNulo(cellValue) && cellValue.contains(","))
+			symbols.setGroupingSeparator(','); // Simbolo de miles
+		
+		if(!Checks.esNulo(cellValue) && cellValue.contains("E"))
+			symbols.setExponentSeparator("E"); // Simbolo numero exponencial
+		
+		if(!Checks.esNulo(cellValue) && cellValue.contains("%"))
+			symbols.setPercent('%'); // Simbolo porcentaje
+		
+		df.setDecimalFormatSymbols(symbols);
+
+		if(!Checks.esNulo(cellValue))
+			return String.valueOf(df.parse(cellValue));
+		else
+			return null;
+	}
+	
 	public void cerrar() {
 		
 		libroExcel = null;
@@ -513,6 +520,30 @@ public class MSVHojaExcel {
 			e.printStackTrace();
 		}
 		return ok;
+	}
+	
+	private void setPrimeraColumnaObligatoriaByOperacion(MSVDDOperacionMasiva tipoMasivo) {
+		if(!Checks.esNulo(tipoMasivo)) {
+
+			setPosColumnaByFormato(tipoMasivo.getValidacionFormato());
+		}
+		else
+			this.posColumnaPrincipal= 0;
+	}
+	
+	public void setPosColumnaByFormato(String validacionFormato) {
+		if(this.posColumnaPrincipal < 0 && !Checks.esNulo(validacionFormato)) {
+			String[] formato = validacionFormato.split(",");
+			
+			for(int i=0; i<formato.length;i++) {
+				if(formato[i].contains("*")) {
+					this.posColumnaPrincipal = i;
+					break;
+				}
+			}
+		}
+		else
+			this.posColumnaPrincipal= 0;
 	}
 		
 }

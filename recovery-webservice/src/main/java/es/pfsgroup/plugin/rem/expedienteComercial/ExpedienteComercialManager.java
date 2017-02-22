@@ -36,9 +36,9 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
@@ -552,6 +552,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		expedienteComercial.setOferta(oferta);
 		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		
+		// Si se ha modificado el importe de la oferta o de la contraoferta actualizamos el listado de activos.
+		if(!Checks.esNulo(dto.getImporteOferta()) || !Checks.esNulo(dto.getImporteContraOferta())) {		
+			this.updateParticipacionActivosOferta(oferta);			
+		}
+		
 		
 		return true;
 	}
@@ -2596,7 +2602,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
-			importeXActivo = (importeTotal * porcentajeParti)/100;
+			if(porcentajeParti != null && porcentajeParti > 0){
+				importeXActivo = (importeTotal * porcentajeParti)/100;
+			}else{
+				importeXActivo = new Double(0);
+			}
+			
 			sumatorioImporte += importeXActivo;
 			sumatorioPorcentaje += porcentajeParti;
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
@@ -3002,31 +3013,43 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id){
+	public boolean updateActivoExpediente(DtoActivosExpediente dto, Long id){
 		
 		ExpedienteComercial expedienteComercial = findOne(id);
 		Oferta oferta= expedienteComercial.getOferta();
+		Double importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
 		try{
-		//Recorre la relacion activo-trabajo del expediente, modifica la participacion del que coincida con el activo que estamos buscando
-//				if(!Checks.esNulo(expedienteComercial.getTrabajo())){
-//					for(ActivoTrabajo activoTrabajo: expedienteComercial.getTrabajo().getActivosTrabajo()){
-//						
-//						if(!Checks.esNulo(dto.getIdActivo()) && !Checks.esNulo(dto.getPorcentajeParticipacion()) && activoTrabajo.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
-//							activoTrabajo.setParticipacion(Float.parseFloat(dto.getPorcentajeParticipacion().toString()));
-//							genericDao.update(ActivoTrabajo.class, activoTrabajo);
-//							return true;
-//						}
-//					}
-//				}
+
 			List<ActivoOferta> activosOferta= expedienteComercial.getOferta().getActivosOferta();
 			for(ActivoOferta activoOferta: activosOferta){
 				if(activoOferta.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())){
 					if(!Checks.esNulo(dto.getIdActivo())){
 						if(!Checks.esNulo(dto.getPorcentajeParticipacion())){
 							activoOferta.setPorcentajeParticipacion(dto.getPorcentajeParticipacion());
-							activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*dto.getPorcentajeParticipacion())/100);
+							activoOferta.setImporteActivoOferta((importeOferta*dto.getPorcentajeParticipacion())/100);
 						}
 					}
+				}
+			}
+			
+		}catch(Exception e) {
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean updateParticipacionActivosOferta(Oferta oferta){
+		
+		Double importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
+		try{
+			
+			List<ActivoOferta> activosOferta= oferta.getActivosOferta();
+			for(ActivoOferta activoOferta: activosOferta){
+				if(!Checks.esNulo(activoOferta.getPorcentajeParticipacion())){
+					activoOferta.setImporteActivoOferta((importeOferta*activoOferta.getPorcentajeParticipacion())/100);
 				}
 			}
 			

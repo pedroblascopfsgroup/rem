@@ -33,11 +33,44 @@ DECLARE
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_OPM_OPERACION_MASIVA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    
+    TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
+    V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
+	  T_FUNCION('CPPA_01', 	's,s,s,s,s,s,s,s*'),
+	  T_FUNCION('CPPA_02', 	's,s*'),
+	  T_FUNCION('CPPA_03', 	's,s,s,s*'),
+	  T_FUNCION('CPPA', 	's,s,s,s,s*')
+    ); 
+    V_TMP_FUNCION T_FUNCION;
+    V_MSQL_1 VARCHAR2(4000 CHAR);
 
 BEGIN
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
 
+	 -- LOOP para actualizar los valores en DD_OPM_OPERACION_MASIVA -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE EN DD_OPM_OPERACION_MASIVA] ');
+     FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST
+      LOOP
+            V_TMP_FUNCION := V_FUNCION(I);
+			
+			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA WHERE DD_OPM_CODIGO = '''||V_TMP_FUNCION(1)||'''';
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+			
+			-- Si existe la FUNCION
+			IF V_NUM_TABLAS > 0 THEN	  
+				V_MSQL_1 := 'UPDATE '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA' ||
+							' SET DD_OPM_VALIDACION_FORMATO ='''||TRIM(V_TMP_FUNCION(2))||''''||
+							' WHERE DD_OPM_CODIGO ='''||TRIM(V_TMP_FUNCION(1))||'''';
+		    	
+				EXECUTE IMMEDIATE V_MSQL_1;
+				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA actualizados correctamente.');
+				
+		    END IF;	
+      END LOOP;
+	
+	
 	-- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME = ''CHK1_DD_OPM_OPERACION_MASIVA'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	

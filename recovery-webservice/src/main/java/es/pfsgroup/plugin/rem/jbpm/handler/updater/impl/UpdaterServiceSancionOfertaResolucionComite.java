@@ -111,6 +111,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 				if(IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 				{
 					ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
+					
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 				}
 				
 				genericDao.save(ExpedienteComercial.class, expediente);

@@ -2,17 +2,19 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
@@ -24,6 +26,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
@@ -45,6 +48,12 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private MSVProcesoApi msvProcesoApi;
+	
+	protected final Log logger = LogFactory.getLog(getClass());
+	private Integer numFilasHoja;
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -57,9 +66,17 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
+		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
 		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		try {
+			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {			
 			if (!isActiveSharingPlace(exc)) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -131,14 +148,14 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	
 	private boolean isActiveSharingPlace(MSVHojaExcel exc) {
 		try {
-			if (exc.getNumeroFilas()<3) return true;
+			if (this.numFilasHoja<3) return true;
 			int i = 1;
 			String numAgr = exc.dameCelda(i, 0);
 			String location = particularValidator.getCarteraLocationByNumAgr(numAgr);
 			if (location==null) return false;
 			boolean isFound = false;
 			String tmp = null;
-			while (!isFound && i < exc.getNumeroFilas() ) {				
+			while (!isFound && i < this.numFilasHoja ) {				
 				tmp = particularValidator.getCarteraLocationTipPatrimByNumAct(exc.dameCelda(i, 1));
 				if (tmp==null || !tmp.equals(location)) return false;
 				i++;

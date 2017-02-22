@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class MSVAgruparActivosLoteComercial implements MSVLiberator {
 	}
 
 	@Override
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
+	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, ParseException {
 		
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		
@@ -49,7 +50,8 @@ public class MSVAgruparActivosLoteComercial implements MSVLiberator {
 		
 		Long numAgrupRem;
 		Long agrupacionId;
-		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
+		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
+		for (int fila = 1; fila < numFilas; fila++) {
 			numAgrupRem = new Long(exc.dameCelda(fila, 0));
 			agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
 			agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null);		

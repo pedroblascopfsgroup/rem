@@ -476,13 +476,13 @@ public interface ExpedienteComercialApi {
 	public boolean deleteCompradorExpediente(Long idExpediente, Long idComprador);
 	
 	/**
-	 * Método que actualiza la información de los activos comercializables
+	 * Método que actualiza la información de los activos de un expediente
 	 * 
 	 * @param dto
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean updateListadoActivos(DtoActivosExpediente dto, Long id);
+	public boolean updateActivoExpediente(DtoActivosExpediente dto, Long id);
 	
 	
 	/**
@@ -594,4 +594,11 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public List<EXTDDTipoGestor> getComboTipoGestor();
+	
+	/**
+	 * Actualiza el importe con el que participa un activo en un expediente
+	 * @param Oferta oferta
+	 * @return
+	 */
+	public boolean updateParticipacionActivosOferta(Oferta oferta);
 }

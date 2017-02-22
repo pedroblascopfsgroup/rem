@@ -772,6 +772,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		config.url= $AC.getRemoteUrl("trabajo/downloadTemplateActivosTrabajo");
 		
 		me.fireEvent("downloadFile", config);
+     },
+     
+     onChangeComboProveedorGE: function(combo) {
+    	 if(!Ext.isEmpty(combo.getValue())) {
+    		 
+	    	 var me = this,
+	    	 comboContactos = me.lookupReference("proveedorContactoCombo");   
+	    	 comboContactos.setDisabled(false);
+	    	 comboContactos.setAllowBlank(false);   
+	    	 
+	    	 comboContactos.getStore().getProxy().extraParams = {idProveedor: combo.getValue()};
+	    	 comboContactos.getStore().load();
+    	 }
      }
-    	
 });

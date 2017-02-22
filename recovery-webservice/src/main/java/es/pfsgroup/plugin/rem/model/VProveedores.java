@@ -34,20 +34,17 @@ public class VProveedores implements Serializable {
 	@Column(name = "DD_TPR_DESCRIPCION")
 	private String descripcionTipoProveedor;
 	
-	@Column(name = "DD_CRA_ID")
-	private Long idCartera ;
+	@Column(name = "DD_CRA_CODIGO")
+	private String codigoCartera ;
 	
 	@Column(name = "DD_CRA_DESCRIPCION")
 	private String cartera ;
 	
-	@Column(name = "PVC_NOMBRE")
-	private String nombreContacto ;
-		
-	@Column(name = "PVC_TELF1")
-	private String telefono1Contacto ;
-		
-	@Column(name = "PVC_EMAIL")
-	private String emailContacto ;
+	@Column(name = "DD_PRV_CODIGO")
+	private String codigoProvincia ;
+	
+	@Column(name = "DD_PRV_DESCRIPCION")
+	private String provinciaDescripcion ;
 	
 
 	public Long getIdProveedor() {
@@ -90,14 +87,6 @@ public class VProveedores implements Serializable {
 		this.descripcionTipoProveedor = descripcionTipoProveedor;
 	}
 
-	public Long getIdCartera() {
-		return idCartera;
-	}
-
-	public void setIdCartera(Long idCartera) {
-		this.idCartera = idCartera;
-	}
-
 	public String getCartera() {
 		return cartera;
 	}
@@ -106,33 +95,29 @@ public class VProveedores implements Serializable {
 		this.cartera = cartera;
 	}
 
-	public String getNombreContacto() {
-		return nombreContacto;
+	public String getCodigoCartera() {
+		return codigoCartera;
 	}
 
-	public void setNombreContacto(String nombreContacto) {
-		this.nombreContacto = nombreContacto;
+	public void setCodigoCartera(String codigoCartera) {
+		this.codigoCartera = codigoCartera;
 	}
 
-	public String getTelefono1Contacto() {
-		return telefono1Contacto;
+	public String getCodigoProvincia() {
+		return codigoProvincia;
 	}
 
-	public void setTelefono1Contacto(String telefono1Contacto) {
-		this.telefono1Contacto = telefono1Contacto;
+	public void setCodigoProvincia(String codigoProvincia) {
+		this.codigoProvincia = codigoProvincia;
 	}
 
-	public String getEmailContacto() {
-		return emailContacto;
+	public String getProvinciaDescripcion() {
+		return provinciaDescripcion;
 	}
 
-	public void setEmailContacto(String emailContacto) {
-		this.emailContacto = emailContacto;
+	public void setProvinciaDescripcion(String provinciaDescripcion) {
+		this.provinciaDescripcion = provinciaDescripcion;
 	}
-	
-
-
-
 
 }
 	

@@ -263,6 +263,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
 		Order order = new Order(OrderType.DESC, "id");
+		Activo activo = activoApi.get(id);
 		List<ActivoHistoricoEstadoPublicacion> list = genericDao.getListOrdered(ActivoHistoricoEstadoPublicacion.class, order, filtroActivo, filtroBorrado);
 		if(!Checks.estaVacio(list)){
 			// Obtener el último estado o estado actual.
@@ -300,6 +301,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							dto.setPublicacionOrdinaria(true); // Se marca este check para indicar de que estado inicial viene.
 						} else {
 							dto.setPublicacionForzada(true); // Se marca este check para indicar de que estado inicial viene.
+							// Si estaba activado el indicador de publicable, tambien debe activarse publicacion ordinaria
+							if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getFechaPublicable())){
+								dto.setPublicacionOrdinaria(true);
+							}
 						}
 						
 						if(!Checks.esNulo(activoHistoricoEstadoPublicacion.getMotivo())){
@@ -318,6 +323,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						if(!Checks.esNulo(activoHistoricoEstadoPublicacion.getMotivo())){
 							dto.setMotivoPublicacion(activoHistoricoEstadoPublicacion.getMotivo());
 						}
+						// Si estaba activado el indicador de publicable, tambien debe activarse publicacion ordinaria
+						if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getFechaPublicable())){
+							dto.setPublicacionOrdinaria(true);
+						}
 					} else if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(activoHistoricoEstadoPublicacion.getEstadoPublicacion().getCodigo())) {
 						dto.setPublicacionOrdinaria(true);
 						if(!Checks.esNulo(activoHistoricoEstadoPublicacion.getMotivo())){
@@ -328,7 +337,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 		} else {
 			// Si la lista de historico viene vacia, aun así, comprobar la fecha de publicación del activo. Si está rellena poner estado publicación ordinaria.
-			Activo activo = activoApi.get(id);
 			if(!Checks.esNulo(activo.getFechaPublicable())) {
 				dto.setPublicacionOrdinaria(true);
 			}

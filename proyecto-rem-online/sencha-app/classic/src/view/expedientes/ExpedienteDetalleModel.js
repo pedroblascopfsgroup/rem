@@ -66,15 +66,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}
 	     	return false;
 	     	
-	     },
-	     
-	     esSolicitadaReserva: function(get){
-			if(get('condiciones.solicitaReserva')==1){
-				return true;
-			}
-			return false;
-	     	
-	     },
+	     },  
 	     
 	     
 	     onEstaSujetoTanteo: function(get){
@@ -106,9 +98,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     esExpedienteSinReserva: function(get) {
 	     	
-	     	var tieneReserva = get('expediente.tieneReserva');
 	     	
-	     	return tieneReserva === false;
+	     	if(!Ext.isEmpty(get('condiciones.solicitaReserva'))) {
+	    	 	return get('condiciones.solicitaReserva') == "0";
+	     	} else {
+	    	 	return !get('expediente.tieneReserva');
+	    	}
+
 	     	
 	     },
 		
@@ -142,14 +138,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     esExpedienteSinReservaOdeTipoAlquiler: function(get) {
-	    	 var me = this;
-
-	    	 if(me.getData().esExpedienteSinReserva)
-	    		 return true;
-	    	 else {
-	    		 var tipoExpediente = get('expediente.tipoExpedienteCodigo');
-			     return tipoExpediente === "02";
-	    	 }
+	    	 var me = this;	    	 
+	    	 return get('esExpedienteSinReserva') ||  get('expediente.tipoExpedienteCodigo') === "02";	    	 
 	     }
 	     
 		

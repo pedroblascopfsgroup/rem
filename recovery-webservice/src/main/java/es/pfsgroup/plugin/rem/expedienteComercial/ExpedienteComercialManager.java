@@ -1131,6 +1131,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		ExpedienteComercial expediente = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
 		
 		ActivoAdjuntoActivo adjuntoActivo= null;
+		
+		if(fileItem.getFileItem().getLength() == 0) {
+			throw new JsonViewerException("Está intentando adjuntar un fichero vacio");			
+		}
+		
 		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
 		
 		AdjuntoExpedienteComercial adjuntoExpediente = new AdjuntoExpedienteComercial();

@@ -20,6 +20,9 @@ Ext.define('HreRem.view.common.DateFieldBase', {
 	 */
 	maxValue: $AC.getCurrentDate(),
 	
+	// Evitamos que aparezca como tooltip el formato experado, para que se vea bién el mensaje de validación.
+	formatText: "",
+	
 	privates: {
 		
 		onBindNotify: function(value, oldValue, binding) {

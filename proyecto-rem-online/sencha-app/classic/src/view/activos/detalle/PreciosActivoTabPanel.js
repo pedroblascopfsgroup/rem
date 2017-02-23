@@ -7,6 +7,8 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivoTabPanel', {
     requires	: ['HreRem.view.activos.detalle.ValoresPreciosActivo', 'HreRem.view.activos.detalle.TasacionesActivo', 'HreRem.view.activos.detalle.PropuestasPreciosActivo'],
     listeners	: {
     	boxready: function (tabPanel) {
+    		
+    		var me = this;
 			var tab = tabPanel.getActiveTab();
 
 			// Si la pestaña necesita botones de edicion

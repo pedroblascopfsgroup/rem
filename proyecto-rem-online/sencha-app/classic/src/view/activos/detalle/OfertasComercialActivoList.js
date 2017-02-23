@@ -9,11 +9,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	removeButton: false,
     listeners	: {
     	focusenter: function() {
-    		me = this;
+    		var me = this;
     		me.evaluarEdicion();
     	},
     	boxReady: function() {
-    		me = this;
+    		var me = this;
     		me.evaluarEdicion();
     	},
     	rowclick: 'onOfertaListClick'

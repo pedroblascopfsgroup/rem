@@ -620,21 +620,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			// Actualizacion Valoracion existente
 			if (!Checks.esNulo(activoValoracion)) {
-				// Si ya existia una valoracion, actualizamos el importe que se
-				// ha
-				// modificado por web
-				// Pero antes, pasa la valoracion anterior al historico
-				saveActivoValoracionHistorico(activoValoracion);
-
+				// Si ya existia una valoracion, actualizamos los datos
+				// Pero antes, pasa la valoracion anterior al historico si se ha modificado el precio o las fechas.
+			
+				if(
+						(!Checks.esNulo(dto.getFechaFin()) && !dto.getFechaFin().equals(activoValoracion.getFechaFin())) ||
+						(!Checks.esNulo(activoValoracion.getFechaFin()) && Checks.esNulo(dto.getFechaFin())) ||
+						(!Checks.esNulo(dto.getFechaInicio()) && !dto.getFechaInicio().equals(activoValoracion.getFechaInicio())) || 
+						(!Checks.esNulo(dto.getImporte()) && !dto.getImporte().equals(activoValoracion.getImporte()))
+				) {
+					saveActivoValoracionHistorico(activoValoracion);
+				}
+				
 				beanUtilNotNull.copyProperties(activoValoracion, dto);
 
 				activoValoracion.setFechaCarga(new Date());
 
-				// Si los nuevos datos no traen observaciones (null),
-
 				// Si los nuevos datos no traen observaciones (null), 
 				// debe quitar las escritas para el precio o valoracion anterior
-				activoValoracion.setObservaciones(dto.getObservaciones());
+				//activoValoracion.setObservaciones(dto.getObservaciones());
 				
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
 
@@ -680,8 +684,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setActivo(activoValoracion.getActivo());
 		historicoValoracion.setTipoPrecio(activoValoracion.getTipoPrecio());
 		historicoValoracion.setImporte(activoValoracion.getImporte());
-		historicoValoracion.setFechaInicio(activoValoracion.getFechaInicio());
-		historicoValoracion.setFechaFin(activoValoracion.getFechaFin());
+		historicoValoracion.setFechaInicio(activoValoracion.getFechaInicio());		
+		historicoValoracion.setFechaFin(new Date());
 		historicoValoracion.setFechaAprobacion(activoValoracion.getFechaAprobacion());
 		historicoValoracion.setFechaCarga(activoValoracion.getFechaCarga());
 		historicoValoracion.setGestor(activoValoracion.getGestor());

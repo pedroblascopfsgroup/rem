@@ -5,7 +5,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
     
     listeners: {
     	boxready: function() {
-    		me = this;
+    		var me = this;
     		me.lookupController().cargarTabData(me);
     		me.evaluarEdicion();
     	}
@@ -106,6 +106,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						                            xtype: 'datefield',
 						                            validationEvent: 'change',
 						                            reference: 'dateFieldStartDate',
+						                            formatText: "",
 						                            validator: function(value){
 						                                me.startValidityDate=this.getValue();
 						                                if(typeof me.endValidityDate !== 'undefined' && !Ext.isEmpty(me.endValidityDate)) {
@@ -129,6 +130,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												flex: 1,
 												editor: {
 						                            xtype: 'datefield',
+						                            formatText: "",
 						                            minValue: Ext.Date.format(new Date(),'d/m/Y'),
 						                            minText: HreRem.i18n('info.datefield.min.date.msg.validacion'),
 						                            validationEvent: 'change',

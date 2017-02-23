@@ -138,7 +138,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
                 success: function(fp, o) {
                 	
                 	if(o.result.success == "false") {
-                		me.fireEvent("errorToast", o.result.errorMessage);
+                		me.fireEvent("errorToast", o.result.errores);
                 	}else{
                 		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
                 	}

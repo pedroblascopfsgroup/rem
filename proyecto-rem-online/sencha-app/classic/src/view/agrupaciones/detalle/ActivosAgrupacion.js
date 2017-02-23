@@ -24,9 +24,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacion', {
 			            	reference: 'btnExportarActivosLoteComercial',
 			            	text: HreRem.i18n('title.activo.administracion.exportar.excel'),
 			            	handler: 'onClickExportarActivosLoteComercial',
-			            	bind : {
+			            	/*bind : {
 								hidden: '{!esAgrupacionLoteComercial}'
-							},
+							},*/
 							margin: '15 0 0 15'
 			            },
 				    	{

@@ -138,7 +138,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     esExpedienteSinReservaOdeTipoAlquiler: function(get) {
-	    	 var me = this;	    	 
+	    	 var me = this;
 	    	 return get('esExpedienteSinReserva') ||  get('expediente.tipoExpedienteCodigo') === "02";	    	 
 	     }
 	     

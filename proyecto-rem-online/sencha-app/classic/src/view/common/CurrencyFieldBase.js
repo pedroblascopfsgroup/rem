@@ -11,7 +11,7 @@ Ext.define('HreRem.view.common.CurrencyFieldBase', {
     
     hideTrigger: true,
 	keyNavEnable: false,
-	mouseWheelEnable: false,
+	mouseWheelEnabled: false,
 
 	initComponent: function() {    	
 	    var me = this;    	

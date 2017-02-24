@@ -20,15 +20,13 @@ Ext.define('HreRem.model.BusquedaTrabajo', {
     			}
     		}, 
     		{
-    			name:'numActivo',
+    			name:'numActivo'
     		},
     		{
-    			name: 'numActivoRem',
-
+    			name: 'numActivoRem'
     		}, 
     		{
-    			name: 'numAgrupacionRem',
-
+    			name: 'numAgrupacionRem'
     		},    	
     		{
     			name: 'codigoTipo'

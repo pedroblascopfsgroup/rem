@@ -26,7 +26,7 @@ Ext.define('HreRem.controller.RefreshController', {
 		else if(resultQuery.length==0) {	
 			me.log("No se ha encontrado el componente a refrescar");
 		} else {
-			me.log("No es posible utilizar esta funciñon para refrescar componentes instanciados más de una vez");
+			me.log("No es posible utilizar esta función para refrescar componentes instanciados más de una vez");
 		}
    	},
    	

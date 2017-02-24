@@ -56,6 +56,7 @@ Ext.define('HreRem.view.gastos.DocumentosGasto', {
 					        },
 					        {   text: HreRem.i18n('header.tamano'),
 					        	dataIndex: 'tamanyo',
+					        	hidden: true,
 					        	flex: 1,
 					        	renderer: function(value) {
 					        		if(Ext.isEmpty(value)) {
@@ -68,6 +69,7 @@ Ext.define('HreRem.view.gastos.DocumentosGasto', {
 					        },
 					        {   text: HreRem.i18n('header.tipo.archivo'),
 					        	dataIndex: 'contentType',
+					        	hidden: true,
 					        	flex: 1,
 					        	hidden: true
 					        },
@@ -79,6 +81,7 @@ Ext.define('HreRem.view.gastos.DocumentosGasto', {
 					        {	
 					        	text: HreRem.i18n('header.gestor'),
 					        	dataIndex: 'gestor',
+					        	hidden: true,
 					        	flex: 1					        	
 					        },
 					        {   text: HreRem.i18n('header.entidad.aplica'),

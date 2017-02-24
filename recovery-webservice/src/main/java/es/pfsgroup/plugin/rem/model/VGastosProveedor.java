@@ -163,8 +163,8 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="PVE_ID_GESTORIA")
 	private String idGestoria;
 	
-	@Column(name="TIENE_DOC_ADJUNTOS")
-	private Boolean tieneDocAdjuntos;
+	@Column(name="GPV_EXISTE_DOCUMENTO")
+	private Boolean existeDocumento;
 	
 	@Column(name="PRO_NOMBRE")
 	private String nombrePropietario;
@@ -557,12 +557,12 @@ public class VGastosProveedor implements Serializable {
 		this.idGestoria = idGestoria;
 	}
 
-	public Boolean getTieneDocAdjuntos() {
-		return tieneDocAdjuntos;
+	public Boolean getExisteDocumento() {
+		return existeDocumento;
 	}
 
-	public void setTieneDocAdjuntos(Boolean tieneDocAdjuntos) {
-		this.tieneDocAdjuntos = tieneDocAdjuntos;
+	public void setExisteDocumento(Boolean existeDocumento) {
+		this.existeDocumento = existeDocumento;
 	}
 
 	public String getNombrePropietario() {

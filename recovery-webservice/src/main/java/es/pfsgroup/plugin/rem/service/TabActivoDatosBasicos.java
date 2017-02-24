@@ -225,14 +225,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 		}
 
-		// Obtener estado de aceptación del informe comercial.
-		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		Order order = new Order(OrderType.DESC, "id");
-		List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
-		if(!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
-			ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
-				BeanUtils.copyProperty(activoDto, "informeComercialAceptado", historico.getEstadoInformeComercial().getCodigo().equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION) ? true : false);
-		}
+		// Obtener si el ultimo estado del informe comercial es ACEPTADO.
+		BeanUtils.copyProperty(activoDto, "informeComercialAceptado", activoApi.isInformeComercialAceptado(activo));
+
 
 		//HREOS-843 Situacion Comercial del activo
 		if(!Checks.esNulo(activo.getSituacionComercial())) {

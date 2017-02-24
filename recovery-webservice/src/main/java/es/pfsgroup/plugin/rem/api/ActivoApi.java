@@ -421,6 +421,13 @@ public interface ActivoApi {
 	public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo);
 
 	/**
+	 * Validacion TRUE o FALSE que indica si el ultimo estado del INF. Comercial es ACEPTADO
+	 * @param activo
+	 * @return
+	 */
+	public boolean isInformeComercialAceptado(Activo activo);
+	
+	/**
 	 * Este método obtiene los estados, el historial, del mediador de la pestaña
 	 * informe comercial.
 	 * 

@@ -136,6 +136,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -1503,6 +1504,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return listaDtoEstadosInfoComercial;
 	}
 
+	public boolean isInformeComercialAceptado(Activo activo){
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Order order = new Order(OrderType.DESC, "id");
+		List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
+		if(!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
+			ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
+			
+			if(historico.getEstadoInformeComercial().getCodigo().equals(
+					DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION) ) 
+				return true;
+		}
+		
+		return false;
+	}
+	
+	
 	@Override
 	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);

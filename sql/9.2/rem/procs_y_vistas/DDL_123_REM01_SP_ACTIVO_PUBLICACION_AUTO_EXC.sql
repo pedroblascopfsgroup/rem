@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170109
+--## FECHA_CREACION=20170224
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1297
+--## INCIDENCIA_LINK=HREOS-1584
 --## PRODUCTO=NO
 --## Finalidad: Crear una procedure para establecer el estado de publicación de los activos a publicado segun condiciones.
 --## REPETIDO: Este script está repetido por cuestiones de actualización del contenido del procedure 'ACTIVO_PUBLICACION_AUTO'.
@@ -13,6 +13,7 @@
 --## ANOTHER REPE: La ejecucion simple (1 act), apunta a otras vistas sin requerir indicador de publicable (anulado).
 --## ANOTHER REPE: Se borran las otras vistas (repe anterior) para usar las mismas pero filtrando en el propio cursor en lugar de la vista.
 --## ANOTHER REPE: Se actualiza el procedure para establecer un nombre de usuario a las gestiones relizadas.
+--## ANOTHER REPE: En publicacion ordinaria individual, se incluyen para publicar los que esten en estado DESPUBLICADO.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -72,9 +73,9 @@ create or replace PROCEDURE '||V_ESQUEMA||'.ACTIVO_PUBLICACION_AUTO (ACT_ID_PARA
           SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_SIN_PRECIO_PUBLI_MAN WHERE ACT_ID = ACT_ID_PARAM;
       ELSE
 	    	OPEN V_PUBLICAR FOR 
-          SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_PUBLI_MAN WHERE INFORME_COMERCIAL = 1 
+          SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_PUBLI_MAN WHERE INFORME_COMERCIAL = 1 AND (ESTADO_PUBLICACION_CODIGO IS NULL OR ESTADO_PUBLICACION_CODIGO <> ''05'')
           UNION 
-          SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_SIN_PRECIO_PUBLI_MAN WHERE INFORME_COMERCIAL = 1;
+          SELECT ACT_ID, ESTADO_PUBLICACION_CODIGO, CONDICIONADO from '||V_ESQUEMA||'.V_ACTIVO_SIN_PRECIO_PUBLI_MAN WHERE INFORME_COMERCIAL = 1 AND (ESTADO_PUBLICACION_CODIGO IS NULL OR ESTADO_PUBLICACION_CODIGO <> ''05'');
 	    END IF;
       --Escoge entre cursores dependiendo de si se llama al procedure con o sin parametro de activo
       --Asigna el cursor escogido, al cursor por referencia

@@ -110,16 +110,11 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 												readOnly: '{esCarteraBankia}'
 												
 											},
-											// TODO Sobreescribimos la función porque está dando problemas la carga del store. 
-											// En un fúturo esta función deberia desaparecer.
+											// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
 											setStore: function(store) {
-												if(Ext.isEmpty(store)) {													
-													Ext.log({dump: this,level: 'error'},"Recibo un store vacio comite seleccionado");
-												} else {
-													Ext.log({dump: store, level:"info"},"Seteo el store");
+												if(!Ext.isEmpty(store)) {
 													this.bindStore(store);
 												}
-												
 											}
 						                },
 						                {
@@ -140,16 +135,11 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 														value: '{datosbasicosoferta.comitePropuestoCodigo}',
 														disabled: '{!esCarteraBankia}'
 													},
-													// TODO Sobreescribimos la función porque está dando problemas la carga del store. 
-													// En un fúturo esta función deberia desaparecer.
+													// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
 													setStore: function(store) {
-														if(Ext.isEmpty(store)) {													
-															Ext.log({dump: this,level: 'error'},"Recibo un store vacio para comite propuesto");
-														} else {
-															Ext.log({dump: store, level:"info"},"Seteo el store");
+														if(!Ext.isEmpty(store)) {
 															this.bindStore(store);
 														}
-														
 													}
 								                },
 								                {

@@ -12,7 +12,7 @@ Ext.define('HreRem.view.common.NumberFieldBase', {
 
     hideTrigger: true,
 	keyNavEnable: false,
-	mouseWheelEnable: false,
+	mouseWheelEnabled: false,
 	
     /**
      * Atributo para formatear el valor del campo cuando se está utilizando el plugin UxReadOnlyEditField y está en modo viewOnly

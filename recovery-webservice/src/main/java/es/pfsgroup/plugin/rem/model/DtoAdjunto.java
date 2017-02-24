@@ -30,6 +30,9 @@ public class DtoAdjunto implements Serializable{
 	private Date fechaDocumento;
 	
 	private String gestor;
+	
+	private String matricula;
+	
 
 	public Long getId() {
 		return id;
@@ -109,5 +112,13 @@ public class DtoAdjunto implements Serializable{
 
 	public void setGestor(String gestor) {
 		this.gestor = gestor;
+	}
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
 	}
 }

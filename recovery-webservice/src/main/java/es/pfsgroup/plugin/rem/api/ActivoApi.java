@@ -102,7 +102,7 @@ public interface ActivoApi {
 	 * @param fileItem
 	 * @return
 	 */
-	public String uploadFoto(File fileItem);
+	public String uploadFoto(File fileItem) throws Exception;
 
 	/**
 	 * Recupera la lista completa de Activos

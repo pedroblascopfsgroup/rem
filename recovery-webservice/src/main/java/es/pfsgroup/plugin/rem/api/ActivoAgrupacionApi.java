@@ -51,7 +51,7 @@ public interface ActivoAgrupacionApi {
     @BusinessOperationDefinition("activoAgrupacionManager.uploadFoto")
     public String uploadFoto(WebFileItem fileItem);
     
-    public String uploadFoto(File fileItem);
+    public String uploadFoto(File fileItem) throws Exception;
     
     @BusinessOperationDefinition("activoAgrupacionManager.getFotosActivosAgrupacionById")
     public List<ActivoFoto> getFotosActivosAgrupacionById(Long id);
@@ -59,7 +59,7 @@ public interface ActivoAgrupacionApi {
     @BusinessOperationDefinition("activoAgrupacionManager.uploadFotoSubdivision")
 	String uploadFotoSubdivision(WebFileItem fileItem);
     
-    public String uploadFotoSubdivision(File fileItem);
+    public String uploadFotoSubdivision(File fileItem) throws Exception;
 
 	public boolean createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion);
 

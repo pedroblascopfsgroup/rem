@@ -80,6 +80,8 @@ public class WebcomSignatureUtils {
 			}
 		}
 		generatedSignature = hexString.toString();
+		logger.error(".-------------------------------------------------------");
+		logger.error(generatedSignature);
 		return generatedSignature;
 	}
 

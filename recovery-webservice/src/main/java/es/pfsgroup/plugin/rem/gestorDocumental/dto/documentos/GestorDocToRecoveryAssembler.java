@@ -24,6 +24,8 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosE
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 
 public class GestorDocToRecoveryAssembler {
+	
+	private static final String TIPO_EXPEDIENTE_DOCUMENTOS_GASTO = "AI";
 
 	private static final Log logger = LogFactory.getLog(GestorDocToRecoveryAssembler.class);
 
@@ -43,6 +45,7 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setContentType(null);
 				dtoAdj.setTamanyo(null);
 				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
+				dtoAdj.setMatricula(TIPO_EXPEDIENTE_DOCUMENTOS_GASTO +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
 						        
 				Date fechaDocumento = null;
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){

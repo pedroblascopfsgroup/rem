@@ -183,45 +183,53 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
-	public String uploadFoto(File fileItem) {
-		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
-		ActivoAgrupacion agrupacion = this.get(agrupacionId);
-		ActivoFoto activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
-		if (activoFoto == null) {
-			activoFoto = new ActivoFoto(fileItem);
+	public String uploadFoto(File fileItem) throws Exception {
+		if (fileItem.getMetadata().get("id_agrupacion_haya") == null) {
+			throw new Exception("La foto no tiene agrupacion");
 		}
 
+		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
+		ActivoAgrupacion agrupacion = this.get(agrupacionId);
 		try {
-
-			activoFoto.setAgrupacion(agrupacion);
-
-			activoFoto.setNombre(fileItem.getBasename());
-
-			if (fileItem.getMetadata().containsKey("descripcion")) {
-				activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
-			}
-
-			activoFoto.setPrincipal(false);
-
-			Date fechaSubida = new Date();
-			if (fileItem.getMetadata().containsKey("fecha_subida")) {
-				try {
-					fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
-							.parse(fileItem.getMetadata().get("fecha_subida"));
-				} catch (Exception e) {
-					logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+			if (agrupacion != null) {
+				ActivoFoto activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
+				if (activoFoto == null) {
+					activoFoto = new ActivoFoto(fileItem);
 				}
+
+				activoFoto.setAgrupacion(agrupacion);
+
+				activoFoto.setNombre(fileItem.getBasename());
+
+				if (fileItem.getMetadata().containsKey("descripcion")) {
+					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+				}
+
+				activoFoto.setPrincipal(false);
+
+				Date fechaSubida = new Date();
+				if (fileItem.getMetadata().containsKey("fecha_subida")) {
+					try {
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+								.parse(fileItem.getMetadata().get("fecha_subida"));
+					} catch (Exception e) {
+						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+					}
+				}
+
+				activoFoto.setFechaDocumento(fechaSubida);
+
+				Auditoria.save(activoFoto);
+
+				agrupacion.getFotos().add(activoFoto);
+
+				genericDao.save(ActivoAgrupacion.class, agrupacion);
+
+			} else {
+				throw new Exception("La foto esta asociada a una agrupacion inexistente");
 			}
-
-			activoFoto.setFechaDocumento(fechaSubida);
-
-			Auditoria.save(activoFoto);
-
-			agrupacion.getFotos().add(activoFoto);
-
-			genericDao.save(ActivoAgrupacion.class, agrupacion);
 		} catch (Exception e) {
-			logger.error(e);
+			throw new Exception(e.getMessage());
 		}
 		return "success";
 	}
@@ -278,53 +286,65 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		return "success";
 	}
 
-	public String uploadFotoSubdivision(File fileItem) {
+	public String uploadFotoSubdivision(File fileItem) throws Exception {
+		if (fileItem.getMetadata().get("id_subdivision_haya") == null) {
+			throw new Exception("La foto no tiene subdivision");
+		}
+		if (fileItem.getMetadata().get("id_agrupacion_haya") == null) {
+			throw new Exception("La foto no tiene agrupacion");
+		}
 		BigDecimal subdivisionId = new BigDecimal(fileItem.getMetadata().get("id_subdivision_haya"));
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
-		ActivoFoto activoFoto;
-		Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
-		orden++;
 		try {
-			activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
-			if (activoFoto == null) {
-				activoFoto = new ActivoFoto(fileItem);
-			}
-
-			activoFoto.setSubdivision(subdivisionId);
-
-			activoFoto.setAgrupacion(agrupacion);
-
-			activoFoto.setNombre(fileItem.getBasename());
-
-			if (fileItem.getMetadata().containsKey("descripcion")) {
-				activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
-			}
-
-			activoFoto.setPrincipal(false);
-
-			Date fechaSubida = new Date();
-			if (fileItem.getMetadata().containsKey("fecha_subida")) {
-				try {
-					fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
-							.parse(fileItem.getMetadata().get("fecha_subida"));
-				} catch (Exception e) {
-					logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+			if (agrupacion != null) {
+				ActivoFoto activoFoto;
+				Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
+				orden++;
+				activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
+				if (activoFoto == null) {
+					activoFoto = new ActivoFoto(fileItem);
 				}
+
+				activoFoto.setSubdivision(subdivisionId);
+
+				activoFoto.setAgrupacion(agrupacion);
+
+				activoFoto.setNombre(fileItem.getBasename());
+
+				if (fileItem.getMetadata().containsKey("descripcion")) {
+					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+				}
+
+				activoFoto.setPrincipal(false);
+
+				Date fechaSubida = new Date();
+				if (fileItem.getMetadata().containsKey("fecha_subida")) {
+					try {
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+								.parse(fileItem.getMetadata().get("fecha_subida"));
+					} catch (Exception e) {
+						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+					}
+				}
+
+				activoFoto.setFechaDocumento(fechaSubida);
+
+				activoFoto.setOrden(orden);
+
+				Auditoria.save(activoFoto);
+
+				agrupacion.getFotos().add(activoFoto);
+
+				genericDao.save(ActivoAgrupacion.class, agrupacion);
+
+			} else {
+				throw new Exception("La foto esta asociada a una subdivision inexsitente");
 			}
-
-			activoFoto.setFechaDocumento(fechaSubida);
-
-			activoFoto.setOrden(orden);
-
-			Auditoria.save(activoFoto);
-
-			agrupacion.getFotos().add(activoFoto);
-
-			genericDao.save(ActivoAgrupacion.class, agrupacion);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error guardando la foto de la subdivision",e);
+			throw new Exception(e.getMessage());
 		}
 		return "success";
 	}

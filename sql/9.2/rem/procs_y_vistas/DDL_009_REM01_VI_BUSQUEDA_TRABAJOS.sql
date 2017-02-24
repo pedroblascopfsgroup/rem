@@ -1,9 +1,9 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20161020
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170223
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --## Finalidad: DDL

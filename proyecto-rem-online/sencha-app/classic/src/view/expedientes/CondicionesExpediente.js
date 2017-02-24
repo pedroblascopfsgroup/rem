@@ -73,8 +73,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'tipoCalculo',
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
-								            		value: '{condiciones.tipoCalculo}',
-								            		disabled: '{!esSolicitadaReserva}'
+								            		value: '{condiciones.tipoCalculo}'
 								            	},
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',

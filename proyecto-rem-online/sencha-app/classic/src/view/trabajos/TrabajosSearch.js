@@ -64,7 +64,11 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 					        	reference: 'filtroComboTipoTrabajo',
 					        	name: 'codigoTipo',
 					        	bind: {
-				            		store: '{comboTipoTrabajo}'
+				            		store: '{comboTipoTrabajo}',
+				            		filters:{
+				            			property: 'filtrar',
+				            			value: /^(?!(1{1}$)).*$/
+				            		}
 				            	},
 				            	displayField: 'descripcion',
 	    						valueField: 'codigo',

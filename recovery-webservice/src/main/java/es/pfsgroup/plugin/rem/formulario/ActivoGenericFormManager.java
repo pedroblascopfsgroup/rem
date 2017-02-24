@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -383,6 +384,41 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			else
             				item.setValue(DDSiNo.SI);
             		}
+            		
+            		if(item.getNombre().equals("comboConflicto"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if (!Checks.esNulo(expediente)){
+            					if(!Checks.esNulo(expediente.getConflictoIntereses())) {            						
+            						if(BooleanUtils.toBoolean(expediente.getConflictoIntereses())) {
+            							item.setValue(DDSiNo.SI);
+            						} else {
+            							item.setValue(DDSiNo.NO);
+            						}
+            					}
+            				}
+            			}
+            		}
+            		
+            		if(item.getNombre().equals("comboRiesgo"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if (!Checks.esNulo(expediente)){
+            					if(!Checks.esNulo(expediente.getRiesgoReputacional())) {            						
+            						if(BooleanUtils.toBoolean(expediente.getRiesgoReputacional())) {
+            							item.setValue(DDSiNo.SI);
+            						} else {
+            							item.setValue(DDSiNo.NO);
+            						}
+            					}
+            				}
+            			}
+            		}
+            		            		
             	}
             }
         }

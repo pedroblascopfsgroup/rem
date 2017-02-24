@@ -12,9 +12,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
@@ -38,7 +36,6 @@ public class InformeMediadorDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@NotNull(groups = { Insert.class, Update.class })
-	@UniqueKey(clase=ActivoInfoComercial.class,field="idWebcom",message="El idwebcom ya existe",groups={Insert.class,Update.class})
 	@EntityDefinition(propertyName = "idWebcom")
 	private Long idInformeMediadorWebcom;
 

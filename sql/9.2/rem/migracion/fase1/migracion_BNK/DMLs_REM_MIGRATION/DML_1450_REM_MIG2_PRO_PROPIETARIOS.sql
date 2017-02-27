@@ -57,16 +57,15 @@ BEGIN
       
       V_SENTENCIA := '
         MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' PRO
-        USING ( SELECT  
+        USING ( SELECT DISTINCT 
                                 MIG.PRO_PROPIETARIO_CODIGO_UVEM,
-                                CRA.DD_CRA_ID,
-                                MIG.PRO_COD_SUBCARTERA
+                                CRA.DD_CRA_ID
                                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                                 INNER JOIN DD_CRA_CARTERA CRA
 									ON CRA.DD_CRA_CODIGO = MIG.PRO_COD_CARTERA
                                 INNER JOIN ACT_PRO_PROPIETARIO PRO
 									ON PRO.PRO_CODIGO_UVEM = MIG.PRO_PROPIETARIO_CODIGO_UVEM
-									AND PRO.DD_CRA_ID != CRA.DD_CRA_ID
+									AND PRO.DD_CRA_ID IS NULL
 								WHERE PRO.USUARIOCREAR = ''MIG''								
                           ) AUX
                 ON (PRO.PRO_CODIGO_UVEM = AUX.PRO_PROPIETARIO_CODIGO_UVEM AND PRO.USUARIOCREAR = ''MIG'')

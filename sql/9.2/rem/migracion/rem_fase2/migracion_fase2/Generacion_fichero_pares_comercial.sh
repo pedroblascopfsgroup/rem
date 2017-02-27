@@ -4,7 +4,7 @@ if [ "$#" -ne 1 ]; then
     exit
 fi
 
-sql_dir="DMLs_REM_MIGRATION/"
+sql_dir="post_migracion/"
 
 echo "#################################################################"
 echo "#####    INICIO GENERACION FICHERO COMERCIAL ####################"

@@ -35,7 +35,6 @@ public class VisitaDto implements Serializable {
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
 		Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemPrescriptor;
-	@NotNull(groups = { Insert.class})
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemCustodio no existe", groups = { Insert.class,
 		Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemCustodio;

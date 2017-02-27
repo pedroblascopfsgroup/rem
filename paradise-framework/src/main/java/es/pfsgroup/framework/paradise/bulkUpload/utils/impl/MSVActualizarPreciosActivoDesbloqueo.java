@@ -3,11 +3,14 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +54,10 @@ public class MSVActualizarPreciosActivoDesbloqueo extends MSVExcelValidatorAbstr
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	protected final Log logger = LogFactory.getLog(getClass());
+	
+	private Integer numFilasHoja;
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
@@ -63,9 +70,17 @@ public class MSVActualizarPreciosActivoDesbloqueo extends MSVExcelValidatorAbstr
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
+		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
 		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		try {
+			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 //			if (!isActiveExists(exc)){
@@ -140,7 +155,7 @@ public class MSVActualizarPreciosActivoDesbloqueo extends MSVExcelValidatorAbstr
 	
 	private boolean isActiveExists(MSVHojaExcel exc){
 		try {
-			for(int i=1; i<exc.getNumeroFilas();i++){
+			for(int i=1; i<this.numFilasHoja;i++){
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
 					return false;
 			}
@@ -148,6 +163,9 @@ public class MSVActualizarPreciosActivoDesbloqueo extends MSVExcelValidatorAbstr
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -158,17 +176,18 @@ public class MSVActualizarPreciosActivoDesbloqueo extends MSVExcelValidatorAbstr
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
-			for(int i=1; i<exc.getNumeroFilas();i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
 					listaFilas.add(i);
+				}
 			}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	

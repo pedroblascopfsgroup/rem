@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.adapter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -419,7 +420,11 @@ public class AgrupacionAdapter {
 			if(DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException(AgrupacionValidator.ERROR_NOT_ASISTIDA);
 			}
-
+			
+			if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && activoApi.isActivoAsistido(activo)){
+				throw new JsonViewerException(AgrupacionValidator.ERROR_OBRANUEVA_NO_ASISTIDA);
+			}
+			
 			// Si es el primer activo, validamos si tenemos los datos necesarios del activo, y modificamos la agrupación con esos datos
 			if (num == 0) {
 				activoAgrupacionValidate(activo, agrupacion);
@@ -617,6 +622,19 @@ public class AgrupacionAdapter {
 		
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = false)
+	public boolean deleteOneActivoAgrupacionActivo(Long idAgrupacion, Long idActivo) throws JsonViewerException{
+		
+		ActivoAgrupacionActivo activoAgrupacionActivo = activoAgrupacionActivoApi.getByIdActivoAndIdAgrupacion(idActivo, idAgrupacion);
+		if(!Checks.esNulo(activoAgrupacionActivo)){
+			activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+			return true;
+		} else {
+			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación.");
+		}
+	}
+	
 	@Transactional(readOnly = false)
 	public boolean deleteActivoAgrupacion(Long id) throws JsonViewerException{
 
@@ -1194,6 +1212,8 @@ public class AgrupacionAdapter {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
 		
 		//TODO: Cambiar estado DocumentoMasivo
@@ -1422,14 +1442,7 @@ public class AgrupacionAdapter {
 	
 	//Devuelve verdadero si en la agrupación existe alguna Oferta activa (estado != RECHAZADA)
 	private Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion) {
-		List<VOfertasActivosAgrupacion> lista = this.getListOfertasAgrupacion(idAgrupacion);
-		
-		for(VOfertasActivosAgrupacion oferta : lista) {
-			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta()))
-				return true;
-		}
-		
-		return false;
+		return activoAgrupacionActivoApi.existenOfertasActivasEnAgrupacion(idAgrupacion);
 	}
 	
 	/**

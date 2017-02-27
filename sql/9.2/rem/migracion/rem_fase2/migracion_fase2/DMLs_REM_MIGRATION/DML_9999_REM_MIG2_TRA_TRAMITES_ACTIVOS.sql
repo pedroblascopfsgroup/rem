@@ -114,7 +114,7 @@ BEGIN
                               --Instrucciones reserva
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
                                     AND ACH.ACH_CODIGO_HITO = 5 
-                                    AND EEC.DD_EEC_CODIGO = ''11'' -- Reservado
+                                    AND EEC.DD_EEC_CODIGO = ''11'' -- Aprobado
                                     AND PAC_CHECK_FORMALIZAR = 1
                                           THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InstruccionesReserva'')
                               --Informe jurídico
@@ -123,12 +123,18 @@ BEGIN
                                     AND EEC.DD_EEC_CODIGO = ''04'' -- Contraofertado
                                     AND PAC_CHECK_FORMALIZAR = 1
                                           THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InformeJuridico'')
-                              --Instrucciones reserva
+                              --Resultado PBC
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
                                     AND ACH.ACH_CODIGO_HITO = 7 
                                     AND EEC.DD_EEC_CODIGO = ''04'' -- Contraofertado
                                     AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InstruccionesReserva'')
+                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'')                          
+                              --Resultado PBC
+                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
+                                    AND ACH.ACH_CODIGO_HITO = 7 
+                                    AND EEC.DD_EEC_CODIGO = ''11'' -- Aprobado
+                                    AND PAC_CHECK_FORMALIZAR = 1
+                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'')                                         
                               --Posicionamiento y firma
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
                                     AND ACH.ACH_CODIGO_HITO = 9 

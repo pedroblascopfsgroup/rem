@@ -36,8 +36,8 @@ public class DDSubcartera implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
 	public static final String CODIGO_CAJ_ASISTIDA = "01";
-	public static final String CODIGO_SAR_ASISTIDA = "02";
-	public static final String CODIGO_BAN_ASISTIDA = "03";
+	public static final String CODIGO_SAR_ASISTIDA = "03";
+	public static final String CODIGO_BAN_ASISTIDA = "05";
 	public static final String CODIGO_BAN_BH = "06";
 	public static final String CODIGO_BAN_BFA = "07";
 	public static final String CODIGO_BAN_BK = "08";

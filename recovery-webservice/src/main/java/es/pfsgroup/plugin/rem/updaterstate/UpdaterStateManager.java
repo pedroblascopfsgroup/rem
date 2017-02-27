@@ -150,7 +150,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			String codigoTipoComercializacion = this.getCodigoTipoComercializacionFromActivo(activo); 
 			
 			//Si el tipoComercializacion calculado no es nulo y es distinto al actual del Activo, entonces...
-			if(!Checks.esNulo(codigoTipoComercializacion) && !codigoTipoComercializacion.equals(activo.getTipoComercializar().getCodigo())) {
+			if(!Checks.esNulo(codigoTipoComercializacion) && !Checks.esNulo(activo.getTipoComercializar()) && !codigoTipoComercializacion.equals(activo.getTipoComercializar().getCodigo())) {
 				
 				HashMap<String,String> mapaComercial = new HashMap<String,String> ();
 				mapaComercial.put(DDTipoComercializar.CODIGO_SINGULAR, "GCOMSIN");

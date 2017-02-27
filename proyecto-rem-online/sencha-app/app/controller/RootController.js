@@ -147,6 +147,7 @@ Ext.define('HreRem.controller.RootController', {
  	showLogin: function() {
     	
     	var me = this;
+
     	// Si ya hemos creado el viewport y por inactividad volvemos al login, refrescamos la página. 
     	if(!Ext.isEmpty(me.viewport)) {    		
     		location.reload(true);    		

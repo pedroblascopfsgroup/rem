@@ -15,6 +15,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+
+
 //import org.codehaus.jackson.map.JsonMappingException;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -26,12 +28,15 @@ import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.NotificatorApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -63,6 +68,8 @@ public class ResolucionComiteController {
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	@Autowired
 	NotificatorApi notificatorApi;
@@ -101,7 +108,13 @@ public class ResolucionComiteController {
 					
 					//Envío correo/notificación
 					if(!Checks.esNulo(resol)){
-						ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(resol.getExpediente().getId());
+						
+						Oferta ofr = ofertaApi.getOfertaByNumOfertaRem(resolucionComiteDto.getOfertaHRE());
+						if(Checks.esNulo(ofr) || (!Checks.esNulo(ofr) && !ofr.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA))){
+							throw new Exception("No existe la oferta o no esta aceptada.");
+						}
+						
+						ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
 						if(Checks.esNulo(eco)){
 							throw new Exception("No existe el expediente comercial de la oferta.");
 						}
@@ -136,10 +149,10 @@ public class ResolucionComiteController {
 							
 							//Construimos cuerpo correo/aviso
 							cuerpo = ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_INITMSG.concat("\n");
-							if(!Checks.esNulo(resol.getExpediente()) && 
-							   !Checks.esNulo(resol.getExpediente().getOferta()) &&
-							   !Checks.esNulo(resol.getExpediente().getOferta().getNumOferta())){
-								cuerpo += "Oferta HRE: " + resol.getExpediente().getOferta().getNumOferta() + ".\n";
+							if(!Checks.esNulo(eco) && 
+							   !Checks.esNulo(eco.getOferta()) &&
+							   !Checks.esNulo(eco.getOferta().getNumOferta())){
+								cuerpo += "Oferta HRE: " + eco.getOferta().getNumOferta() + ".\n";
 							}
 							if(!Checks.esNulo(agrup)){
 								unidadGestion = agrup.getNumAgrupRem();

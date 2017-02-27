@@ -738,6 +738,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  			
 				  success: function(response,opts){
 					  //Si se puede crear la propuesta, la crea
+					  boton = me.lookupReference("botonGenerarPropuesta");
 					  if(Ext.JSON.decode(response.responseText).success == "true") {
 					    	params.nombrePropuesta = text;
 					    	params.idTrabajo = idTrabajo;
@@ -746,6 +747,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 							config.url= $AC.getRemoteUrl('trabajo/createPropuestaPreciosFromTrabajo');
 							
 							me.fireEvent("downloadFile", config);
+							boton.setDisabled(true);
 					  }
 					  else {
 						  me.fireEvent("errorToast", Ext.JSON.decode(response.responseText).mensaje); 

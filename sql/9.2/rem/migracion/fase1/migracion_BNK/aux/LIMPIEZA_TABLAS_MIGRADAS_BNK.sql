@@ -82,7 +82,8 @@ DECLARE
                                                             T_TABLAS('REM01','VIS_VISITAS'),
                                                             T_TABLAS('REM01','ACT_ACTIVO'),
                                                             T_TABLAS('REM01','ACT_LCO_LOTE_COMERCIAL'),
-                                                            T_TABLAS('REM01','ACT_ABA_ACTIVO_BANCARIO')
+                                                            T_TABLAS('REM01','ACT_ABA_ACTIVO_BANCARIO'),
+                                                            T_TABLAS('REM01','ACT_ADO_ADMISION_DOCUMENTO')
                         );
        
 BEGIN
@@ -222,6 +223,7 @@ BEGIN
   delete from rem01.bie_bien_entidad where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.bie_sui_subasta_instrucciones where usuariocrear= 'MIGRAREM01BNK';
   delete from rem01.emp_nmbembargos_procedimientos where usuariocrear= 'MIGRAREM01BNK';
+  delete from rem01.ACT_ADO_ADMISION_DOCUMENTO where usuariocrear= 'MIGRAREM01BNK';
   commit;
   delete from rem01.GAH_GESTOR_ACTIVO_HISTORICO GAH where EXISTS (SELECT 1 FROM rem01.ACT_ACTIVO ACT WHERE ACT.ACT_ID = GAH.ACT_ID AND ACT.usuariocrear= 'MIGRAREM01BNK');
   delete from rem01.GAC_GESTOR_ADD_ACTIVO GAC where EXISTS (SELECT 1 FROM rem01.ACT_ACTIVO ACT WHERE ACT.ACT_ID = GAC.ACT_ID AND ACT.usuariocrear= 'MIGRAREM01BNK');
@@ -681,15 +683,7 @@ BEGIN
 	WHERE ADE.AGR_ID NOT IN (
 	  SELECT ECO.AGR_ID FROM ACT_AGR_AGRUPACION ECO WHERE ADE.AGR_ID = ECO.AGR_ID)
 	  );
-	  
-	DELETE FROM ECO_EXPEDIENTE_COMERCIAL ADE2
-	WHERE ADE2.OFR_ID IN (
-	SELECT ADE.OFR_ID FROM ECO_EXPEDIENTE_COMERCIAL ECO
-	INNER JOIN OFR_OFERTAS ADE
-	  ON ADE.OFR_ID = ECO.OFR_ID
-	WHERE ADE.AGR_ID NOT IN (
-	  SELECT ECO.AGR_ID FROM ACT_AGR_AGRUPACION ECO WHERE ADE.AGR_ID = ECO.AGR_ID)
-	  );
+	 
 	  
 	DELETE FROM OEX_OBS_EXPEDIENTE ADE2
 	WHERE ADE2.ECO_ID IN (
@@ -709,15 +703,6 @@ BEGIN
 	  SELECT ECO.AGR_ID FROM ACT_AGR_AGRUPACION ECO WHERE ADE.AGR_ID = ECO.AGR_ID)
 	  );
 	  
-	  
-	DELETE FROM RCB_RESOL_COMITE_BANKIA ADE2
-	WHERE ADE2.OFR_ID IN (
-	SELECT ERE.OFR_ID FROM RCB_RESOL_COMITE_BANKIA ERE
-	INNER JOIN OFR_OFERTAS ADE
-	  ON ADE.OFR_ID = ERE.OFR_ID
-	WHERE ADE.AGR_ID NOT IN (
-	  SELECT ECO.AGR_ID FROM ACT_AGR_AGRUPACION ECO WHERE ADE.AGR_ID = ECO.AGR_ID)
-	  );
 	DELETE FROM ACT_PAC_PROPIETARIO_ACTIVO ADE2
 	WHERE ADE2.PRO_ID IN (
 	SELECT ADE.PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO ADE

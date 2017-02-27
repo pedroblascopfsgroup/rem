@@ -158,7 +158,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta = ofertaDao.get(id);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error en OfertasManager",ex);
 		}
 
 		return oferta;
@@ -187,7 +187,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error en OfertasManager",ex);
 		}
 
 		return oferta;
@@ -216,7 +216,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error en OfertasManager",ex);
 		}
 
 		return oferta;
@@ -278,7 +278,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			lista = ofertaDao.getListaOfertas(ofertaDto);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error en OfertasManager",ex);
 		}
 
 		return lista;
@@ -717,7 +717,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			genericDao.save(Oferta.class, oferta);
 			
 		} catch(Exception e) {
-			logger.error(e);
+			logger.error("error en OfertasManager",e);
 			return false;
 		}
 		return true;
@@ -748,7 +748,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 		} catch(Exception e) {
-			logger.error(e);
+			logger.error("error en OfertasManager",e);
 			return false;
 		}
 		return true;
@@ -776,7 +776,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			
 		} catch(Exception e) {
-			logger.error(e);
+			logger.error("error en OfertasManager",e);
 			return false;
 		}
 		return true;
@@ -1036,8 +1036,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						try {
 							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							logger.error("error en OfertasManager",e);
 						}
 						if(DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComite))
 							return true;
@@ -1073,7 +1072,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return true;
 		} catch (Exception e) {
 			logger.error("Error en el alta de comite.", e);
-			e.printStackTrace();
 			return false;
 		}
 
@@ -1098,7 +1096,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en OfertasManager",e);
 			return false;
 		}
 
@@ -1386,7 +1384,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return listaOfertasTotales;
 			
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("error en OfertasManager",e);
 			return listaOfertasTotales;
 		}
 	}
@@ -1467,7 +1465,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					try {
 						notificacionAdapter.saveNotificacion(notificacion);
 					} catch (ParseException e) {
-						e.printStackTrace();
+						logger.error("error en OfertasManager",e);
 					}
 				}
 			}

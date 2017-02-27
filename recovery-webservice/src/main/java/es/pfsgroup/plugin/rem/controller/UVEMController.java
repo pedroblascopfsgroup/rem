@@ -51,7 +51,7 @@ public class UVEMController {
 					.getNumeroIdentificadorDeTasacionlnuita2();
 			model.put("numeroIdentificadorTasacion", numeroIdentificadorTasacion);
 		} catch (WIException e) {
-			logger.error(e.getMessage());
+			logger.error("error en UVEMController",e);
 			model.put("error", true);
 			model.put("errorDesc", e.getMessage());
 		} catch (TipoDeDatoException e) {
@@ -139,7 +139,7 @@ public class UVEMController {
 
 			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("error en UVEMController",e);
 			model.put("error", true);
 			model.put("errorDesc", e.getMessage());
 		}

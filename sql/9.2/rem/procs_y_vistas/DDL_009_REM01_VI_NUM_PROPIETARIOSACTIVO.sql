@@ -1,16 +1,18 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIÉRREZ
---## FECHA_CREACION=20160628
+--## AUTOR=JOSEVI
+--## FECHA_CREACION=20170227
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-1591
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial DANIEL GUTIERREZ
+--## 0.2 JOSEVI: Vista usada para mostrar PROINDIVISO en vista V_COND_DISPONIBILIDAD.
+--##             Nuevas condiciones: Varios propietarios activo o 1 propietario con menos de 100%
 --##########################################
 --*/
 
@@ -44,10 +46,18 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_NUM_PROPIETARIOSACTIVO...');
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_NUM_PROPIETARIOSACTIVO (ACT_ID, NUM)
 	AS
-		SELECT
-			PAC.ACT_ID,
-			COUNT(*)
-			FROM '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC GROUP BY ACT_ID';
+    select PAC.ACT_ID, NPROP.NUM_PROPIETARIOS AS NUM from (  
+          select
+            PAC1.ACT_ID idactivo,
+          COUNT(*) num_propietarios
+          FROM REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC1
+          GROUP BY PAC1.ACT_ID
+    ) nprop
+    INNER JOIN REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC ON NPROP.idactivo = PAC.ACT_ID
+    WHERE
+    NPROP.NUM_PROPIETARIOS > 1
+    OR (NPROP.NUM_PROPIETARIOS = 1 AND PAC.PAC_PORC_PROPIEDAD < 100)
+    GROUP BY PAC.ACT_ID, NPROP.NUM_PROPIETARIOS';
 
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_NUM_PROPIETARIOSACTIVO...Creada OK');

@@ -146,8 +146,19 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 					    xtype: 'toolbar',
 					    dock: 'top',
 					    items: [
-							{cls:'tbar-grid-button', text: HreRem.i18n('title.generar.propuesta'), itemId:'generarPropuestaFromTrabajo', handler: 'onClickGenerarPropuesta', hidden: true}
-					    ]
+							{
+								cls:'tbar-grid-button', 
+								text: HreRem.i18n('title.generar.propuesta'), 
+								itemId:'generarPropuestaFromTrabajo', 
+								handler: 'onClickGenerarPropuesta', 
+								reference: 'botonGenerarPropuesta',
+								hidden: true,
+								listeners:{
+									beforerender: 'comprobarExistePropuestaTrabajo'
+								} 
+								
+							}
+						]
 					},
 			        {
 			            xtype: 'pagingtoolbar',

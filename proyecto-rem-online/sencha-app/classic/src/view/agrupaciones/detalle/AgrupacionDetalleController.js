@@ -239,8 +239,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
-		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idAgrupacion}); 		
+		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idAgrupacion});
+		me.getViewModel().data.storeFotos.on('load',function(){
+			me.getView().unmask();
+		});
 		me.getViewModel().data.storeFotos.load();
 		
 	},

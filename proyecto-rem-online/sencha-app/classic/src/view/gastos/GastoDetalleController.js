@@ -22,9 +22,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
              download: 'downloadDocumentoAdjunto',
              afterupload: function(grid) {
              	grid.up('form').funcionRecargar();
+             	grid.fireEvent("refreshComponent", "gestiongastos");
              },
              afterdelete: function(grid) {
              	grid.getStore().load();
+             	grid.fireEvent("refreshComponent", "gestiongastos");
              }
          }
     	

@@ -267,7 +267,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("error en expedienteComercialManager",e);
 		}
 		
 		return dto;
@@ -331,9 +331,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					beanUtilNotNull.copyProperty(entregaReserva, "idEntrega", entrega.getId());
 					beanUtilNotNull.copyProperty(entregaReserva, "fechaCobro", entrega.getFechaEntrega());
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("error en expedienteComercialManager",e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("error en expedienteComercialManager",e);
 				}
 				
 				lista.add(entregaReserva);
@@ -539,9 +539,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		}
 		
 //		oferta.setFechaAlta(dto.getFechaAlta());
@@ -582,11 +582,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					oferta.setResultadoTanteo((DDResultadoTanteo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoTanteo.class, dtoTanteoYRetractoOferta.getResultadoTanteoCodigo()));
 				
 			} catch (IllegalAccessException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 			} catch (InvocationTargetException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 			}
 		}
 		
@@ -821,11 +819,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dtoTanteoYRetractoOferta.setCondicionesTransmision(messageServices.getMessage(TANTEO_CONDICIONES_TRANSMISION));
 				
 			} catch (IllegalAccessException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 			} catch (InvocationTargetException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 			}
 		}
 	
@@ -890,9 +886,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		}
 		
 		return true;
@@ -917,7 +913,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		} 
 
 		return true;
@@ -932,7 +928,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			genericDao.deleteById(ObservacionesExpedienteComercial.class, idObservacion);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		} 
 
 		return true;
@@ -972,7 +968,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			observacionDto.setIdUsuario(idUsuario);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		}
 		
 		return observacionDto;
@@ -1065,7 +1061,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		}
 		
 		return dtoActivo;
@@ -1104,7 +1100,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 		
 		}catch(Exception ex){
-			ex.printStackTrace();
+			logger.error("error en expedienteComercialManager",ex);
 		}
 
 		return listaAdjuntos;
@@ -1544,7 +1540,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				condiciones.setSujetoTanteoRetracto(dto.getSujetoTramiteTanteo() == true ? 1 : 0);
 			}
 		}catch(Exception ex) {
-			logger.error(ex.getMessage());
+			logger.error("error en expedienteComercialManager",ex);
 			return condiciones;
 		}
 		
@@ -1583,12 +1579,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			beanUtilNotNull.copyProperty(posicionamientoDto, "horaPosicionamiento", posicionamiento.getFechaPosicionamiento());
 			
 		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 			
 		} catch (InvocationTargetException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		}
 
 		return posicionamientoDto;
@@ -1790,7 +1784,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				try {
 					resolucionDto.setFechaVenta(df.parse(activoTramiteApi.getTareaValorByNombre(tex.getValores(),"fechaFirma")));
 				} catch (ParseException e) {
-					logger.error(e.getMessage());
+					logger.error("error en expedienteComercialManager",e);
 				}
 				resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(),"numProtocolo"));
 			}
@@ -1822,6 +1816,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		try {
 			genericDao.save(EntregaReserva.class, entregaReserva);
 		} catch(Exception e) {
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 		return true;
@@ -1833,7 +1828,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		try {
 			genericDao.update(ExpedienteComercial.class, expedienteComercial);
 		} catch(Exception e) {
-			logger.error(e);
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 		return true;
@@ -1855,10 +1850,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 			genericDao.save(Reserva.class, reserva);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 
@@ -2072,7 +2067,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 			}
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 
@@ -2101,7 +2096,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			return true;
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 		
@@ -2153,7 +2148,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 		
@@ -2168,7 +2163,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		try {
 			estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 		} catch(Exception e) {
-			return null;
+			logger.error("error en expedienteComercialManager",e);
 		}		
 		return estado;
 	}
@@ -2213,9 +2208,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 			}			
 		}
 
@@ -2254,7 +2249,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				
 			}
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 		
@@ -2285,10 +2280,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				}
 				
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 				return false;
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 				return false;
 			}
 			
@@ -2306,7 +2301,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				genericDao.deleteById(EntregaReserva.class, idEntrega);
 				
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 				return false;
 			} 
 		
@@ -2496,7 +2491,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				return true;
 				
 			}catch (Exception e) {
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 				return false;
 			} 
 		}
@@ -2515,7 +2510,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		try {
 			resultadoDto = uvemManagerApi.consultarInstanciaDecision(instancia);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("error en expedienteComercialManager",e);
 			throw new Exception(e);
 		}
 		
@@ -2689,7 +2684,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		try {
 			genericDao.deleteById(Posicionamiento.class, idPosicionamiento);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		} 
 		
 		return true;
@@ -2807,12 +2802,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 		}
 		catch (JsonViewerException e) {
-			logger.error(e.getMessage());
+			logger.error("error en expedienteComercialManager",e);
 			throw e;
 //			e.printStackTrace();
 		} 
 		catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("error en expedienteComercialManager",e);
 			throw new Exception(e);
 //			e.printStackTrace();
 		}
@@ -2890,7 +2885,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			return true;
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		} 
 	}
@@ -2903,7 +2898,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			genericDao.deleteById(GastosExpediente.class, idHonorario);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		} 
 
 		return true;
@@ -3006,12 +3001,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				throw new JsonViewerException("Error al eliminar comprador");
 			}
 		} catch (JsonViewerException e) {
-			logger.error(e.getMessage());
+			logger.error("error en expedienteComercialManager",e);
 			throw e;
 //			e.printStackTrace();
 		} 
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
 		} 
 
 		return true;
@@ -3038,6 +3033,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 		}catch(Exception e) {
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 		
@@ -3059,6 +3055,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 		}catch(Exception e) {
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 		
@@ -3130,6 +3127,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 			genericDao.save(BloqueoActivoFormalizacion.class, bloqueo);
 		} catch(Exception e) {
+			logger.error("error en expedienteComercialManager",e);
 			return false;
 		}
 
@@ -3208,10 +3206,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					}
 				} catch (NumberFormatException e) {
 					logger.error("Error en la obtención de datos de préstamo.",e);
-					e.printStackTrace();
 				} catch (Exception e) {
 					logger.error("Error en la obtención de datos de préstamo", e);
-					e.printStackTrace();
 				}
 
 			}
@@ -3319,9 +3315,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
 				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("error en expedienteComercialManager",e);
 			}
 
 			listadoGestoresDto.add(dtoGestor);

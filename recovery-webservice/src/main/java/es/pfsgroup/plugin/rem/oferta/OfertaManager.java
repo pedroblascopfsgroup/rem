@@ -346,7 +346,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("idUsuarioRem", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
-		if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {
+		//Por ws no se envía nunca el estado de la oferta. 
+		/*if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {
 			// Perimetros: NO se pueden ACEPTAR Ofertas en activos que no
 			// tengan condicion comercial en el perimetro
 			// Se valida lo primero pq debe hacerse aunque el diccionario
@@ -368,7 +369,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 									.concat(DDEstadoOferta.CODIGO_RECHAZADA));
 				}
 			}
-		}
+		}*/
 		if (!Checks.esNulo(ofertaDto.getCodTipoOferta())) {
 			DDTipoOferta tipoOfr = (DDTipoOferta) genericDao.get(DDTipoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodTipoOferta()));

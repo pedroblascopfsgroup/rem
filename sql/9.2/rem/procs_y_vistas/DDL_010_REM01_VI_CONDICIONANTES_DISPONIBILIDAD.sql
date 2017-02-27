@@ -11,7 +11,8 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial ANAHUAC DE VICENTE
---## 0.2 JOSEVI: Nuevas condiciones: Varios propietarios activo o 1 propietario con menos de 100%
+--## 0.2 JOSEVI: Nuevas condiciones: Varios propietarios activo o 1 propietario con menos de 100%.
+--##             Calculo de condicionado/no condicionado desde la vista
 --##########################################
 --*/
 
@@ -62,6 +63,20 @@ BEGIN
 		       ACT.ACT_CON_CARGAS AS CON_CARGAS,
 		       NVL2(SPS2.SPS_ID,1,0) AS OCUPADO_SINTITULO,
 		       NVL2(SPS6.SPS_ID,1,0) AS ESTADO_PORTAL_EXTERNO,
+           NVL2(EAC1.DD_EAC_ID    || --RUINA
+            BDR.BIE_ID            || --PENDIENTE_INSCRIPCION
+            EON.DD_EON_ID         || --OBRANUEVA_SINDECLARAR
+            SPS4.SPS_ID           || --SIN_TOMA_POSESION_INICIAL
+            NPA.ACT_ID            || --PROINDIVISO
+            EAC2.DD_EAC_ID        || --OBRANUEVA_ENCONSTRUCCION
+            SPS3.SPS_ID           || --OCUPADO_CONTITULO
+            SPS1.SPS_ID           || --TAPIADO
+            SPS2.SPS_ID           || --OCUPADO_SINTITULO
+            REG2.REG_ID           || --DIVHORIZONTAL_NOINSCRITA
+            SPS5.SPS_OTRO            --OTRO
+            ,(SELECT DD_ECO_DESCRIPCION FROM DD_ECO_ESTADO_DIS_COMERCIAL WHERE DD_ECO_CODIGO = '01')
+            ,(SELECT DD_ECO_DESCRIPCION FROM DD_ECO_ESTADO_DIS_COMERCIAL WHERE DD_ECO_CODIGO = '02')
+            ) as ESTADO_DISP_COMERCIAL,
 		       0 AS BORRADO
 		FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		LEFT JOIN '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO EAC1 ON EAC1.DD_EAC_ID = ACT.DD_EAC_ID AND EAC1.DD_EAC_CODIGO = ''05'' -- RUINA

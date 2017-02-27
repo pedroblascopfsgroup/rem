@@ -47,9 +47,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 				                	fieldLabel:  HreRem.i18n('title.publicaciones.estadoDisponibilidadComercial'),
 				                	reference: 'fieldEstadoDisponibilidadComercial',
 				                	bind: '{activoCondicionantesDisponibilidad.estadoDisponibilidadComercial}',
-				                	listeners: {
-				                		change: 'onChangeEstadoDisponibilidadComercial'
-				                	},
 				                	readOnly: true
 			                    }
 							]

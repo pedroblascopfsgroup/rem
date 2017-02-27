@@ -73,6 +73,9 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	@Column(name = "DIVHORIZONTAL_NOINSCRITA")
 	private Boolean divHorizontalNoInscrita;
 	
+	@Column(name = "ESTADO_DISP_COMERCIAL")
+	private String estadoDisponibilidadComercial;
+	
 
 	public Long getIdActivo() {
 		return idActivo;
@@ -186,6 +189,14 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 
 	public void setPortalesExternos(Boolean portalesExternos) {
 		this.portalesExternos = portalesExternos;
+	}
+
+	public String getEstadoDisponibilidadComercial() {
+		return estadoDisponibilidadComercial;
+	}
+
+	public void setEstadoDisponibilidadComercial(String estadoDisponibilidadComercial) {
+		this.estadoDisponibilidadComercial = estadoDisponibilidadComercial;
 	}
 	
 }

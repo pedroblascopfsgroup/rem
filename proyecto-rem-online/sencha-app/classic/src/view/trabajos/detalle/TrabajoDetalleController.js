@@ -765,6 +765,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
      },
      
+     comprobarExistePropuestaTrabajo: function(){
+     	var me = this, params = {},
+       	idTrabajo = me.getViewModel().get('trabajo').get('id');
+     	//LLamada para comprobar si se puede crear la propuesta
+     	var url = $AC.getRemoteUrl('trabajo/comprobarCreacionPropuesta');
+ 	    Ext.Ajax.request({
+ 		  url:url,
+ 		  params:  {idTrabajo : idTrabajo},
+ 		  			
+ 		  success: function(response,opts){
+ 			  boton = me.lookupReference("botonGenerarPropuesta");
+ 			  //Si se puede crear la propuesta, activa el boton sino lo desactiva
+ 			  if(Ext.JSON.decode(response.responseText).success == "true") {
+ 				  boton.setDisabled(false);
+ 			  }
+ 			  else {
+ 				  boton.setDisabled(true);
+ 			  }		
+ 		  }
+     	});
+      },
+     
      onClickBotonDescargarPlantilla: function(btn) {
     	var me = this,
 		config = {};

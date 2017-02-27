@@ -66,7 +66,7 @@ public class OfertasController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ofertasController",e);
 			model.put("success", false);
 		}
 
@@ -158,7 +158,7 @@ public class OfertasController {
 			model.put("data", ofertaApi.getDetalleOfertaById(dto));
 			model.put("success", true);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ofertasController",e);
 			model.put("success", false);		
 		}
 
@@ -173,7 +173,7 @@ public class OfertasController {
 			model.put("data", ofertaApi.getOfertantesByOfertaId(dtoOfertantesOferta));
 			model.put("success", true);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ofertasController",e);
 			model.put("success", false);		
 		}
 
@@ -188,7 +188,7 @@ public class OfertasController {
 			model.put("data", ofertaApi.getHonorariosByOfertaId(dtoHonorariosOferta));
 			model.put("success", true);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ofertasController",e);
 			model.put("success", false);		
 		}
 

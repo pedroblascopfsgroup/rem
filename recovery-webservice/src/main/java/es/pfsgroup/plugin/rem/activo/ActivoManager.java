@@ -3337,4 +3337,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(dto);
 		}
 	}
+	
+	@Override
+	public void calcularSingularRetailActivo(Long idActivo) {
+		activoDao.actualizarSingularRetailActivo(idActivo, usuarioApi.getUsuarioLogado().getUsername(),0,0);
+	}
+	
+	@Override
+	public String getCodigoTipoComercializarByActivo(Long idActivo) {
+		return activoDao.getCodigoTipoComercializarByActivo(idActivo);
+	}
 }

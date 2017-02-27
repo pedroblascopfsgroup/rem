@@ -896,4 +896,12 @@ public interface ActivoApi {
 	 * @param idActivo
 	 */
 	public void calcularRatingActivo(Long idActivo);
+	
+	/**
+	 * Actualiza el tipo comercializar (Singular/Retail) del activo
+	 * @param idActivo
+	 */
+	public void calcularSingularRetailActivo(Long idActivo);
+	
+	public String getCodigoTipoComercializarByActivo(Long idActivo);
 }

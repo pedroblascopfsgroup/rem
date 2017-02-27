@@ -96,4 +96,20 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo);
 
+	/**
+	 * Realiza una llamada al procedure CALCULO_SINGULAR_RETAIL_AUTO, el cual calcula el tipo comercializar que 
+	 * le corresponde al activo según X criterios.
+	 * @param idActivo - Activo a actualizar
+	 * @param username - usuario que realiza la modificación
+	 * @param all_activos - Indicador para hacerlo en todos los activos
+	 * @param ingore_block - Indicador para ignorar el bloque automático indicado en el activo, el cual impide que este proceso automático lo recalcule.
+	 */
+	public void actualizarSingularRetailActivo(Long idActivo, String username, Integer all_activos, Integer ingore_block);
+	
+	/**
+	 * Devuelve el códgio del tipo de comercializar (Singular/Retail) del activo, con una consulta SQL directa.
+	 * @param idActivo
+	 * @return
+	 */
+	public String getCodigoTipoComercializarByActivo(Long idActivo);
 }

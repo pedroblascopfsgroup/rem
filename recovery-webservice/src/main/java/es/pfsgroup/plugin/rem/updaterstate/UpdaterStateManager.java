@@ -118,7 +118,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
 		}
-		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).isCondicionado()) {
+		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;
 		}
 		else if (!Checks.esNulo(activo.getTipoComercializacion())) {

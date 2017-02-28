@@ -42,11 +42,14 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 				                	},
 				                	readOnly: true
 			                    },
-			                    {
-				                	xtype: 'textfieldbase',
+			                	{
+				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.publicaciones.estadoDisponibilidadComercial'),
 				                	reference: 'fieldEstadoDisponibilidadComercial',
-				                	bind: '{activoCondicionantesDisponibilidad.estadoDisponibilidadComercial}',
+				                	bind: {
+				                		store: '{storeEstadoDisponibilidadComercial}',
+				                		value: '{activoCondicionantesDisponibilidad.estadoCondicionadoCodigo}'
+				                	},
 				                	readOnly: true
 			                    }
 							]

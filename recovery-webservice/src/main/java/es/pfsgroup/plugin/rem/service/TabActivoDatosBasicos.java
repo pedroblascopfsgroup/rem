@@ -457,7 +457,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
 				DDTipoUsoDestino tipoUsoDestino = (DDTipoUsoDestino) diccionarioApi.dameValorDiccionarioByCod(DDTipoUsoDestino.class,  dto.getTipoUsoDestinoCodigo());
-				activo.setTipoUsoDestino(tipoUsoDestino);
+				activo.setTipoUsoDestino(tipoUsoDestino);				
 				//Actualizar el tipoComercialización del activo
 				updaterState.updaterStateTipoComercializacion(activo);
 			}
@@ -487,7 +487,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 				reiniciarPBC = true;
 			}
-
+			
 			// Perimetro -------
 			// Solo se guardan los datos si el usuario ha cambiado algun campo de perimetros
 			// El control de cambios se realiza revisando los datos que transporta el dto

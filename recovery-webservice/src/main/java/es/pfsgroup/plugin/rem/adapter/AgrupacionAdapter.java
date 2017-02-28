@@ -169,6 +169,8 @@ public class AgrupacionAdapter {
 	public static final String PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG = "No ha sido posible publicar. Algún activo no tiene las condiciones necesarias";
 	public static final String PUBLICACION_MOTIVO_MSG = "Publicado desde agrupación";
 	public static final String PUBLICACION_AGRUPACION_BAJA_ERROR_MSG = "No ha sido posible publicar. La agrupación está dada de baja";
+	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
+	
     
 	public DtoAgrupaciones getAgrupacionById(Long id){
 
@@ -1292,6 +1294,17 @@ public class AgrupacionAdapter {
 	public boolean saveAgrupacion(DtoAgrupaciones dto, Long id) {
 		
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		
+		//Primero comprobamos si estamos dandola de baja y se cumplen todos los requisitos para poder hacerlo
+		
+		if(!Checks.esNulo(dto.getFechaBaja())) {
+			String error = validarBajaAgrupacion(agrupacion);
+			
+			if(!Checks.esNulo(error)) {
+				throw new JsonViewerException(error);
+			}
+		}		
+		
 		// SI ES TIPO OBRA NUEVA
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
 			
@@ -1425,6 +1438,17 @@ public class AgrupacionAdapter {
 	}
 
 	
+	private String validarBajaAgrupacion(ActivoAgrupacion agrupacion) {
+		
+		String error = null;
+		
+		if(existenOfertasActivasEnAgrupacion(agrupacion.getId())) {			
+			error = AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS;
+		}
+
+		return error;
+	}
+
 	public List<ActivoFoto> getFotosActivosAgrupacionById(Long id) {
 		
 		return activoAgrupacionApi.getFotosActivosAgrupacionById(id);
@@ -1684,6 +1708,7 @@ public class AgrupacionAdapter {
 
 		List<ActivoAgrupacionActivo> activosAgrupaciones = (List<ActivoAgrupacionActivo>) genericDao.getList(ActivoAgrupacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacionID));
 		List<Activo> activosList = new ArrayList<Activo>();
+		List<Activo> activosDefinitivosList = new ArrayList<Activo>();
 
 		if(!Checks.estaVacio(activosAgrupaciones)) {
 			for(ActivoAgrupacionActivo activoAgrupacion : activosAgrupaciones) {
@@ -1695,7 +1720,7 @@ public class AgrupacionAdapter {
 		for(Activo activo : activosList) {
 			if(!Checks.esNulo(activo.getEstadoPublicacion())) {
 				if(DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
-					activosList.add(activo);
+					activosDefinitivosList.add(activo);
 				} else {
 					// Si algún activo tiene estado y no se encuentra en estado 'No Publicado' comprobar si ya ha sido publicado.
 					if(!DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(activo.getEstadoPublicacion().getCodigo())) {
@@ -1705,7 +1730,7 @@ public class AgrupacionAdapter {
 				}
 			} else {
 				// Sin estado de publicación se añade el activo.
-				activosList.add(activo);
+				activosDefinitivosList.add(activo);
 			}
 		}
 

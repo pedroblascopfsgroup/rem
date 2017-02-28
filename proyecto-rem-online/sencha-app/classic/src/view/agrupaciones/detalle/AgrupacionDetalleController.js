@@ -108,18 +108,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	   		
 			me.getViewModel().set("editing", false);
 			
-	   		me.getView().mask(HreRem.i18n("msg.mask.loading"));	   	
-
+	   		me.getView().mask(HreRem.i18n("msg.mask.loading"));	
+	   		
 	   		form.getBindRecord().save({
 
-		   		success: function (a, operation, c) {
-		   			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		   			me.getView().unmask();
-		   			me.onClickBotonRefrescar();
+		   		success: function (a, operation) {		  
+			   		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			   		me.getView().unmask();
+			   		me.onClickBotonRefrescar();					
 		   		},		   		          
-		   		failure: function (a, operation) {
-		   		    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		   		    me.getView().unmask();
+		   		failure: function(a, operation) {
+		   			Utils.defaultOperationFailure(a, operation, form);
 		   		}
 		   	});
 
@@ -239,8 +238,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
-		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idAgrupacion}); 		
+		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idAgrupacion});
+		me.getViewModel().data.storeFotos.on('load',function(){
+			me.getView().unmask();
+		});
 		me.getViewModel().data.storeFotos.load();
 		
 	},
@@ -509,8 +512,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
 	    	window.destroy();
-	    	if(!Ext.isEmpty(window.parent.lookupController().lookupReference('listadoactivosagrupacion')))
-	    		window.parent.lookupController().lookupReference('listadoactivosagrupacion').setTopBar(false);
 		};
 
 		me.onSaveFormularioCompleto(form, success);	
@@ -534,6 +535,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 					} else {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				 		form.unmask();
+					}
+					
+					if(Ext.isDefined(form.funcionRefrescar)) {
+						form.funcionRefrescar();
+					} else {
+						if (Ext.isDefined(form.otrafuncion)) {
+							alert("gdsgdfgdfgdf");
+						}
 					}
 			    }
 			});

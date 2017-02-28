@@ -127,7 +127,7 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.activo.id", dtoAgrupActivo.getActId());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.id", dtoAgrupActivo.getAgrId());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.tipoAgrupacion.codigo", dtoAgrupActivo.getTipoAgrupacion());
-		
+		hql.appendWhere("aa.agrupacion.fechaBaja IS NULL");
 		
 		return HibernateQueryUtils.list(this, hql);
 	}

@@ -53,6 +53,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_PERIMETRO_DESTINO_COMERCIAL = "msg.error.masivo.actualizar.perimetro.activo.destino.comercial";
 	public static final String VALID_PERIMETRO_TIPO_ALQUILER = "msg.error.masivo.actualizar.perimetro.activo.tipo.alquiler";
 	public static final String VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE = "No puede indicar 'S' en la columna 'Formalizar' porque el activo no es comercializable";
+	public static final String VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "msg.error.masivo.actualizar.perimetro.activo.ofertas.vivas";
 	
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_EN_PERIMETRO_SN = 1;
@@ -130,6 +131,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL), getPerimetroConDestinoComercial(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER), getPerimetroTipoAlquilerRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE, getFormalizarActivoNoComercializable(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS), getComercializarConOfertasVivas(exc));
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() 								||
@@ -141,7 +143,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty() 	|| 
 							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL)).isEmpty()			||
 							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER)).isEmpty() 				||
-							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE).isEmpty() ) {
+							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE).isEmpty()						||
+							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS)).isEmpty()) {
 						
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -515,6 +518,33 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 							if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, 0)));
 								listaFilas.add(i);
 						}
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> getComercializarConOfertasVivas(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		/* Validacion que evalua en el caso de poner valor N en Comercializar.
+		 * Comprueba que el activo NO tenga ofertas vivas, para poder quitarlo de comercialización.
+		 */
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
+					if("N".equals(valorConComercial) ) {
+						
+						if(particularValidator.existeActivoConOfertaViva(exc.dameCelda(i, 0)));
+							listaFilas.add(i);
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);

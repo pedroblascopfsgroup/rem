@@ -12,8 +12,8 @@
   <name>paradise-framework</name>
 
 	<properties>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<dependencies>
@@ -204,7 +204,7 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
-					<encoding>ISO-8859-1</encoding>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -220,7 +220,7 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>2.7.1</version>
 				<configuration>
-					<sourceEncoding>ISO-8859-1</sourceEncoding>
+					<sourceEncoding>UTF-8</sourceEncoding>
 					<minimumTokens>20</minimumTokens>
 					<targetJdk>1.6</targetJdk>
 					<rulesets>

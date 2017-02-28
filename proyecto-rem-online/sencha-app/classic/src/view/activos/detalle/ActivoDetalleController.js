@@ -192,7 +192,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					
 					form.getBindRecord().save({
-						success: function (a, operation, c) {
+						success: function (a, operation) {
 							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
 							me.refrescarActivo(form.refreshAfterSave);
@@ -200,8 +200,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			            },
 				            
 			            failure: function (a, operation) {
-			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-							 me.getView().unmask();
+			            	Utils.defaultOperationFailure(a, operation, form);
 			            }
 					});
 				}

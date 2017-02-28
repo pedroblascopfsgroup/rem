@@ -2931,7 +2931,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta(): oferta.getImporteContraOferta();
 		if (importeTotal != null) {
-			ofertaUVEM.setImporteVenta(num.format(importeReserva));
+			ofertaUVEM.setImporteVenta(num.format(importeTotal));
 		}
 		
 		//HREOS-1420 -Siempre se enviará 00000 (Bankia) para el servicio de consulta del cobro de la reserva y de la venta.

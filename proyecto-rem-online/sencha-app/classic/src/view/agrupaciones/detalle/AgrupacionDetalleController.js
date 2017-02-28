@@ -539,10 +539,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 					
 					if(Ext.isDefined(form.funcionRefrescar)) {
 						form.funcionRefrescar();
-					} else {
-						if (Ext.isDefined(form.otrafuncion)) {
-							alert("gdsgdfgdfgdf");
-						}
 					}
 			    }
 			});

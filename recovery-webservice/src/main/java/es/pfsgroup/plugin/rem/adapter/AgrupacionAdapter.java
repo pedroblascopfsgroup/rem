@@ -1708,6 +1708,7 @@ public class AgrupacionAdapter {
 
 		List<ActivoAgrupacionActivo> activosAgrupaciones = (List<ActivoAgrupacionActivo>) genericDao.getList(ActivoAgrupacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacionID));
 		List<Activo> activosList = new ArrayList<Activo>();
+		List<Activo> activosDefinitivosList = new ArrayList<Activo>();
 
 		if(!Checks.estaVacio(activosAgrupaciones)) {
 			for(ActivoAgrupacionActivo activoAgrupacion : activosAgrupaciones) {
@@ -1719,7 +1720,7 @@ public class AgrupacionAdapter {
 		for(Activo activo : activosList) {
 			if(!Checks.esNulo(activo.getEstadoPublicacion())) {
 				if(DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
-					activosList.add(activo);
+					activosDefinitivosList.add(activo);
 				} else {
 					// Si algún activo tiene estado y no se encuentra en estado 'No Publicado' comprobar si ya ha sido publicado.
 					if(!DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(activo.getEstadoPublicacion().getCodigo())) {
@@ -1729,7 +1730,7 @@ public class AgrupacionAdapter {
 				}
 			} else {
 				// Sin estado de publicación se añade el activo.
-				activosList.add(activo);
+				activosDefinitivosList.add(activo);
 			}
 		}
 

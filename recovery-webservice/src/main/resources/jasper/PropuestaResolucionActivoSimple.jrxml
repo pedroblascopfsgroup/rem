@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-22T17:03:01 -->
+<!-- 2017-02-28T12:24:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucionActivoSimple" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="1.026316236461414"/>
 	<property name="ireport.x" value="0"/>
@@ -166,8 +166,12 @@
 	<field name="listaHonorario" class="java.util.List"/>
 	<field name="listaOtrasOfertas" class="java.util.List"/>
 	<field name="listaVisitas" class="java.util.List"/>
-	<field name="listaFotosWeb" class="java.util.List"/>
-	<field name="listaFotosTecnicas" class="java.util.List"/>
+	<field name="listaFotosWebPrimera" class="java.util.List"/>
+	<field name="listaFotosTecnicasPrimera" class="java.util.List"/>
+	<field name="listaFotosWebSegunda" class="java.util.List"/>
+	<field name="listaFotosWebTercera" class="java.util.List"/>
+	<field name="listaFotosTecnicasSegunda" class="java.util.List"/>
+	<field name="listaFotosTecnicasTercera" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -1947,7 +1951,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				</componentElement>
 			</elementGroup>
 		</band>
-		<band height="146">
+		<band height="170">
 			<staticText>
 				<reportElement x="1" y="14" width="219" height="13" uuid="91d2bd84-8825-448d-9f37-c952aa159a63"/>
 				<textElement>
@@ -1959,18 +1963,74 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<reportElement x="0" y="5" width="100" height="1" uuid="d5eeaf36-d5ba-4c29-a423-4e68eed65b36"/>
 			</break>
 			<componentElement>
-				<reportElement key="" positionType="FixRelativeToBottom" x="5" y="30" width="184" height="110" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CFCDCC" uuid="50abe83a-b49b-4f83-bd13-504367eab9fa">
-					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				<reportElement key="" positionType="Float" mode="Opaque" x="1" y="31" width="186" height="130" backcolor="#EDECEB" uuid="50abe83a-b49b-4f83-bd13-504367eab9fa">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 					<property name="com.jaspersoft.studio.unit.CONTENTS.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal" ignoreWidth="true">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical" ignoreWidth="true">
 					<datasetRun subDataset="DatasetFotos" uuid="33d0c76e-12c3-4b14-afb9-b5d4c776b793">
-						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosWeb})]]></dataSourceExpression>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosWebPrimera})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:listContents height="110" width="184">
-						<image hAlign="Center">
-							<reportElement x="0" y="0" width="184" height="110" uuid="64f6251d-1e4b-494a-aa8b-34cfab12da6a">
+					<jr:listContents height="130" width="186">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+							<reportElement x="0" y="0" width="185" height="130" uuid="64f6251d-1e4b-494a-aa8b-34cfab12da6a">
+								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+							</reportElement>
+							<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<imageExpression><![CDATA[$F{urlThumbnail}]]></imageExpression>
+						</image>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement key="" positionType="Float" mode="Opaque" x="186" y="31" width="186" height="130" backcolor="#EDECEB" uuid="e47b4ca6-c2c0-4f11-b0c5-d21e32ab4683">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical" ignoreWidth="true">
+					<datasetRun subDataset="DatasetFotos" uuid="6b6f5507-544e-4c87-8e6f-01d7a64e0df2">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosWebSegunda})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="130" width="186">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+							<reportElement x="0" y="0" width="184" height="130" uuid="4a6cc166-59ff-4ce7-8d5d-00f99c88d761">
+								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+							</reportElement>
+							<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<imageExpression><![CDATA[$F{urlThumbnail}]]></imageExpression>
+						</image>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement key="" positionType="Float" mode="Opaque" x="370" y="31" width="186" height="130" backcolor="#EDECEB" uuid="24039c97-4d3f-45a7-ac52-839bb388557f">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical" ignoreWidth="true">
+					<datasetRun subDataset="DatasetFotos" uuid="780b4d5d-bf42-48af-9413-754cda849922">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosWebTercera})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="130" width="186">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+							<reportElement x="0" y="0" width="186" height="130" uuid="29392ed0-6e86-45b3-8386-a1b3dfb4e629">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
 							<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
@@ -1985,7 +2045,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 				</jr:list>
 			</componentElement>
 		</band>
-		<band height="50">
+		<band height="185">
 			<break>
 				<reportElement x="0" y="5" width="100" height="1" uuid="d3f727d9-17e9-43d5-bd2b-d10fd64f137c"/>
 			</break>
@@ -1996,6 +2056,88 @@ TIPO DE PROPUESTA VENTA]]></text>
 				</textElement>
 				<text><![CDATA[LISTADO DE FOTOS TÉCNICAS]]></text>
 			</staticText>
+			<componentElement>
+				<reportElement key="" positionType="Float" mode="Opaque" x="1" y="31" width="186" height="130" backcolor="#EDECEB" uuid="70d1cdcd-e114-4917-97a9-03f833e79506">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical" ignoreWidth="true">
+					<datasetRun subDataset="DatasetFotos" uuid="441f9d6a-be8b-4f5e-8667-c1df57d882d6">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosTecnicasPrimera})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="130" width="186">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+							<reportElement x="0" y="0" width="185" height="130" uuid="9a96d867-732d-427b-a889-73439b9e80fb">
+								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+							</reportElement>
+							<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<imageExpression><![CDATA[$F{urlThumbnail}]]></imageExpression>
+						</image>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement key="" positionType="Float" mode="Opaque" x="186" y="31" width="186" height="130" backcolor="#EDECEB" uuid="8b0f0775-a6d7-48bd-b449-40111d6b559d">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical" ignoreWidth="true">
+					<datasetRun subDataset="DatasetFotos" uuid="de050c90-10fa-4b24-9632-75a553c2902f">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosTecnicasSegunda})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="130" width="186">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+							<reportElement x="0" y="0" width="184" height="130" uuid="3948f489-6ce5-4802-a736-dfbb1016f609">
+								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+							</reportElement>
+							<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<imageExpression><![CDATA[$F{urlThumbnail}]]></imageExpression>
+						</image>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement key="" positionType="Float" mode="Opaque" x="370" y="31" width="186" height="130" backcolor="#EDECEB" uuid="9275c7fd-870a-4278-9d5c-31dc7c69cb52">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical" ignoreWidth="true">
+					<datasetRun subDataset="DatasetFotos" uuid="7efe9e8f-84b8-4324-a884-680b18bfd9ed">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosTecnicasTercera})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="130" width="186">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+							<reportElement x="0" y="0" width="186" height="130" uuid="6a343a1b-4e04-493c-a74b-c62d4151260f">
+								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+							</reportElement>
+							<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<imageExpression><![CDATA[$F{urlThumbnail}]]></imageExpression>
+						</image>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
 		</band>
 	</detail>
 	<pageFooter>

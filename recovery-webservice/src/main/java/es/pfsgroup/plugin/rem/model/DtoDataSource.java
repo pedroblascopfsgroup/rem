@@ -12,8 +12,12 @@ public class DtoDataSource {
 	private List<Object> listaOtrasOfertas;
 	private List<Object> listaVisitas;
 	private List<Object> listaActivo;
-	private List<Object> listaFotosWeb;
-	private List<Object> listaFotosTecnicas;
+	private List<Object> listaFotosWebPrimera;
+	private List<Object> listaFotosWebSegunda;
+	private List<Object> listaFotosWebTercera;
+	private List<Object> listaFotosTecnicasPrimera;
+	private List<Object> listaFotosTecnicasSegunda;
+	private List<Object> listaFotosTecnicasTercera;
 	
 	public List<Object> getListaCliente() {
 		return listaCliente;
@@ -79,20 +83,54 @@ public class DtoDataSource {
 		this.listaActivo = listaActivo;
 	}
 
-	public List<Object> getListaFotosWeb() {
-		return listaFotosWeb;
+	public List<Object> getListaFotosWebPrimera() {
+		return listaFotosWebPrimera;
 	}
 
-	public void setListaFotosWeb(List<Object> listaFotosWeb) {
-		this.listaFotosWeb = listaFotosWeb;
+	public void setListaFotosWebPrimera(List<Object> listaFotosWebPrimera) {
+		this.listaFotosWebPrimera = listaFotosWebPrimera;
 	}
 
-	public List<Object> getListaFotosTecnicas() {
-		return listaFotosTecnicas;
+	public List<Object> getListaFotosWebSegunda() {
+		return listaFotosWebSegunda;
 	}
 
-	public void setListaFotosTecnicas(List<Object> listaFotosTecnicas) {
-		this.listaFotosTecnicas = listaFotosTecnicas;
+	public void setListaFotosWebSegunda(List<Object> listaFotosWebSegunda) {
+		this.listaFotosWebSegunda = listaFotosWebSegunda;
 	}
+
+	public List<Object> getListaFotosWebTercera() {
+		return listaFotosWebTercera;
+	}
+
+	public void setListaFotosWebTercera(List<Object> listaFotosWebTercera) {
+		this.listaFotosWebTercera = listaFotosWebTercera;
+	}
+
+	public List<Object> getListaFotosTecnicasPrimera() {
+		return listaFotosTecnicasPrimera;
+	}
+
+	public void setListaFotosTecnicasPrimera(List<Object> listaFotosTecnicasPrimera) {
+		this.listaFotosTecnicasPrimera = listaFotosTecnicasPrimera;
+	}
+
+	public List<Object> getListaFotosTecnicasSegunda() {
+		return listaFotosTecnicasSegunda;
+	}
+
+	public void setListaFotosTecnicasSegunda(List<Object> listaFotosTecnicasSegunda) {
+		this.listaFotosTecnicasSegunda = listaFotosTecnicasSegunda;
+	}
+
+	public List<Object> getListaFotosTecnicasTercera() {
+		return listaFotosTecnicasTercera;
+	}
+
+	public void setListaFotosTecnicasTercera(List<Object> listaFotosTecnicasTercera) {
+		this.listaFotosTecnicasTercera = listaFotosTecnicasTercera;
+	}
+	
+	
 	
 }

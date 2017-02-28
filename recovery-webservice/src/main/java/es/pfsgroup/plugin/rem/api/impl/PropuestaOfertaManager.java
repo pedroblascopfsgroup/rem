@@ -1314,20 +1314,58 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}
 
 		List<ActivoFoto> listaActivoFoto = activoAdapter.getListFotosActivoById(activo.getId());
-		ArrayList<Object> fotosWeb = new ArrayList<Object>();
-		ArrayList<Object> fotosTecnicas = new ArrayList<Object>();
+		ArrayList<Object> fotosWebPrimera = new ArrayList<Object>();
+		ArrayList<Object> fotosWebSegunda = new ArrayList<Object>();
+		ArrayList<Object> fotosWebTercera = new ArrayList<Object>();
+		ArrayList<Object> fotosTecnicasPrimera = new ArrayList<Object>();
+		ArrayList<Object> fotosTecnicasSegunda = new ArrayList<Object>();
+		ArrayList<Object> fotosTecnicasTercera = new ArrayList<Object>();
+		int fotowebCont = 1;
+		int fotoTecnicaCont = 1;
 		if (listaActivoFoto != null && !listaActivoFoto.isEmpty()) {
 			for (ActivoFoto foto : listaActivoFoto) {
 				if (foto.getTipoFoto() != null && foto.getTipoFoto().getCodigo().equals(DDTipoFoto.COD_WEB)) {
-					fotosWeb.add(foto);
+					switch (fotowebCont) {
+					case 1:
+						fotosWebPrimera.add(foto);
+						fotowebCont++;
+						break;
+					case 2:
+						fotosWebSegunda.add(foto);
+						fotowebCont++;
+						break;
+					case 3:
+						fotosWebTercera.add(foto);
+						fotowebCont = 1;
+						break;
+					}
+
 				} else if (foto.getTipoFoto() != null
 						&& foto.getTipoFoto().getCodigo().equals(DDTipoFoto.COD_TECNICA)) {
-					fotosTecnicas.add(foto);
+					//fotosTecnicas.add(foto);
+					switch (fotoTecnicaCont) {
+					case 1:
+						fotosTecnicasPrimera.add(foto);
+						fotoTecnicaCont++;
+						break;
+					case 2:
+						fotosTecnicasSegunda.add(foto);
+						fotoTecnicaCont++;
+						break;
+					case 3:
+						fotosTecnicasTercera.add(foto);
+						fotoTecnicaCont = 1;
+						break;
+					}
 				}
 			}
 		}
-		propuestaOferta.setListaFotosWeb(fotosWeb);
-		propuestaOferta.setListaFotosTecnicas(fotosTecnicas);
+		propuestaOferta.setListaFotosWebPrimera(fotosWebPrimera);
+		propuestaOferta.setListaFotosWebSegunda(fotosWebSegunda);
+		propuestaOferta.setListaFotosWebTercera(fotosWebTercera);
+		propuestaOferta.setListaFotosTecnicasPrimera(fotosTecnicasPrimera);
+		propuestaOferta.setListaFotosTecnicasSegunda(fotosTecnicasSegunda);
+		propuestaOferta.setListaFotosTecnicasTercera(fotosTecnicasTercera);
 
 		array.add(propuestaOferta);
 

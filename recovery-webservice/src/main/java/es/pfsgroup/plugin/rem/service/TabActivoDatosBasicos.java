@@ -2,13 +2,15 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -16,8 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
@@ -54,6 +55,8 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class TabActivoDatosBasicos implements TabActivoService {
+	
+	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
     
 
 	@Autowired
@@ -73,6 +76,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Resource
+    MessageService messageServices;
 
 	@Override
 	public String[] getKeys() {
@@ -321,7 +327,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	}
 
 	@Override
-	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
 		
 		try {
@@ -528,6 +534,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getAplicaComercializar())) {
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaComercializar(new Date());
+					
+					if(!dto.getAplicaComercializar()) {
+						String error = validarPerimetroComercializarActivo(activo);
+						
+						if(!Checks.esNulo(error))
+							throw new JsonViewerException(error);
+					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
 					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
@@ -644,5 +657,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		return activo;
+	}
+	
+	/**
+	 * Comprueba que el activo no tenga ofertas activas
+	 * @param activo
+	 * @return
+	 */
+	private String validarPerimetroComercializarActivo(Activo activo) {
+		
+		String error = null;
+		
+		if(activoApi.isActivoConOfertasVivas(activo)) {
+			error = messageServices.getMessage(MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS);
+		}
+		
+		return error;
 	}
 }

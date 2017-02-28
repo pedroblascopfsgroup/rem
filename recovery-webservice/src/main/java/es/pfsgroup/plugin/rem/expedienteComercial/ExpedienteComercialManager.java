@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -2907,8 +2908,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 
 	@Override
-	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) {
+	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) throws Exception{
 		Double importeReserva = null;
+		DecimalFormat num = new DecimalFormat("###.##");
+		
 		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
 		OfertaUVEMDto ofertaUVEM = new OfertaUVEMDto();
 		if (oferta.getTipoOferta() != null) {
@@ -2923,12 +2926,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if (condExp != null) {
 			importeReserva = condExp.getImporteReserva();
 			if (importeReserva != null) {
-				ofertaUVEM.setImporteReserva(importeReserva.toString());
+				ofertaUVEM.setImporteReserva(num.format(importeReserva));
 			}
 		}
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta(): oferta.getImporteContraOferta();
 		if (importeTotal != null) {
-			ofertaUVEM.setImporteVenta(importeTotal.toString());
+			ofertaUVEM.setImporteVenta(num.format(importeReserva));
 		}
 		
 		//HREOS-1420 -Siempre se enviará 00000 (Bankia) para el servicio de consulta del cobro de la reserva y de la venta.
@@ -2957,7 +2960,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 
 	@Override
-	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) {
+	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) throws Exception{
 		ArrayList<TitularUVEMDto> listaTitularUVEM = new ArrayList<TitularUVEMDto>();
 		for (int k = 0; k < expedienteComercial.getCompradores().size(); k++) {
 			CompradorExpediente compradorExpediente = expedienteComercial.getCompradores().get(k);

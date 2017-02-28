@@ -427,14 +427,14 @@ public interface ExpedienteComercialApi {
 	 * @param oferta
 	 * @return
 	 */
-	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial); 
+	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) throws Exception; 
 	
 	/**
 	 * Obtiene la lista de titulares para uvem
 	 * @param expedienteComercial
 	 * @return
 	 */
-	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial);
+	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) throws Exception;
 	
 	/**
 	 * Método que devuelve los datos de un comprador de Bankia (WebService Ursus) por número de comprador

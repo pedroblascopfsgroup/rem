@@ -29,6 +29,7 @@ Ext.define('HreRem.model.Oferta', {
     	'fechaSolicitud',
     	'idVisita',
     	'fechaVisita',
+    	'codigoPrescriptor',
     	 {
         	name: 'descItemMenu',
         	convert: function (value, rec) {

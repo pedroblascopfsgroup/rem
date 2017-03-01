@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -75,8 +76,8 @@ import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -116,6 +117,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
@@ -139,7 +141,6 @@ import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
@@ -220,6 +221,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ProveedoresApi proveedoresApi;
 
 	@Resource
 	MessageService messageServices;
@@ -3367,6 +3371,8 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean createOfertaActivo(DtoOfertasFilter dto) throws Exception {
+		List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
+		
 		Activo activo = activoApi.get(dto.getIdActivo());
 
 		// Comprobar el tipo de destino comercial que tiene actualmente el
@@ -3389,8 +3395,6 @@ public class ActivoAdapter {
 
 		try {
 			Oferta oferta = new Oferta();
-			ActivoOferta activoOferta = new ActivoOferta();
-			ActivoOfertaPk activoOfertaPk = new ActivoOfertaPk();
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			/*
@@ -3428,17 +3432,13 @@ public class ActivoAdapter {
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
-
-			List<ActivoOferta> listaActivosOfertas = new ArrayList<ActivoOferta>();
-			activoOfertaPk.setActivo(activo);
-			activoOfertaPk.setOferta(oferta);
-			activoOferta.setPrimaryKey(activoOfertaPk);
-			activoOferta.setPorcentajeParticipacion(100.00);
-			activoOferta.setImporteActivoOferta(oferta.getImporteOferta());
-			listaActivosOfertas.add(activoOferta);
-			oferta.setActivosOferta(listaActivosOfertas);
+			
+			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
+			oferta.setActivosOferta(listaActOfr);
 
 			oferta.setCliente(clienteComercial);
+			
+			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 
 			genericDao.save(Oferta.class, oferta);
 		} catch (Exception ex) {

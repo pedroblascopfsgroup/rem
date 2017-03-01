@@ -38,6 +38,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -104,7 +105,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
-
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -465,60 +469,45 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setCliente(cliente);
 				}
 			}
+			if (!Checks.esNulo(ofertaDto.getImporte())) {
+				oferta.setImporteOferta(ofertaDto.getImporte());
+			}
 			if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
-				ActivoOferta actOfr = null;
+				ActivoAgrupacion agrupacion = null;
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 				List<ActivoAgrupacionActivo> listaAgrups = null;
-				List<ActivoAgrupacionActivo> listaActivos = null;
-				List<Activo> lact = new ArrayList<Activo>();
 
-				Activo activo = (Activo) genericDao.get(Activo.class,
-						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
+				Activo activo = (Activo) genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
 				if (!Checks.esNulo(activo)) {
-					// Añadimos el activo de la oferta
-					lact.add(activo);
-					actOfr = buildActivoOferta(activo, oferta, null);
-					listaActOfr.add(actOfr);
-
-					// Añadimos a la oferta el resto de activos de las
-					// agupaciones restringidas a las que pertenece el
-					// activo
+					
+					// Verificamos si el activo pertenece a una agrupación restringida
 					DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
 					dtoAgrupActivo.setActId(activo.getId());
 					dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 					listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-					if (!Checks.esNulo(listaAgrups) && listaAgrups.size() > 0) {
-						// Recorremos las agrupaciones del activo
-						for (int i = 0; i < listaAgrups.size(); i++) {
-							ActivoAgrupacionActivo agrAct = listaAgrups.get(i);
-							if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
-								oferta.setAgrupacion(agrAct.getAgrupacion());
-								DtoAgrupacionFilter dtoAgrupActivo2 = new DtoAgrupacionFilter();
-								dtoAgrupActivo2.setAgrId(agrAct.getAgrupacion().getId());
-								listaActivos = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo2);
-
-								if (!Checks.esNulo(listaActivos) && listaActivos.size() > 0) {
-									// Para cada agrupacion obtenemos los
-									// activos de la agrupacion para
-									// añadirlos a la oferta.
-									for (int j = 0; j < listaActivos.size(); j++) {
-										agrAct = listaActivos.get(j);
-										if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getActivo())
-												&& !Checks.esNulo(lact) && !lact.contains(agrAct.getActivo())) {
-											lact.add(agrAct.getActivo());
-											actOfr = buildActivoOferta(agrAct.getActivo(), oferta, null);
-											listaActOfr.add(actOfr);
-										}
-									}
-								}
-							}
+					if (!Checks.esNulo(listaAgrups) && listaAgrups.size() > 0) {						
+						ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
+						if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
+							//Seteamos la agrupación restringida a la oferta
+							agrupacion = agrAct.getAgrupacion();
+							oferta.setAgrupacion(agrupacion);
 						}
 					}
-					if (!Checks.esNulo(listaActOfr) && listaActOfr.size() > 0) {
-						oferta.setActivosOferta(listaActOfr);
+
+					if(!Checks.esNulo(agrupacion)){
+						//Oferta sobre 1 lote restringido de n activos
+						listaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
+					}else{
+						//Oferta sobre 1 único activo
+						listaActOfr = buildListaActivoOferta(activo, null, oferta);
 					}
+					
+					//Seteamos la lista de ActivosOferta
+					oferta.setActivosOferta(listaActOfr);
+
 				}
 			}
+
 			if (!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())) {
 				Usuario user = (Usuario) genericDao.get(Usuario.class,
 						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));
@@ -562,9 +551,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(fdv)) {
 					oferta.setFdv(fdv);
 				}
-			}
-			if (!Checks.esNulo(ofertaDto.getImporte())) {
-				oferta.setImporteOferta(ofertaDto.getImporte());
 			}
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
 				List<TitularesAdicionalesOferta> listaTit = new ArrayList<TitularesAdicionalesOferta>();
@@ -675,16 +661,57 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		restApi.doLogin(usuarioSecurity);
 	}
 
-	private ActivoOferta buildActivoOferta(Activo activo, Oferta oferta, Double importe) {
-		ActivoOfertaPk pk = new ActivoOfertaPk();
-		ActivoOferta activoOferta = new ActivoOferta();
-		pk.setActivo(activo);
-		pk.setOferta(oferta);
+	@Override
+	public List<ActivoOferta> buildListaActivoOferta(Activo activo, ActivoAgrupacion agrupacion, Oferta oferta) throws Exception {
+		List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 
-		activoOferta.setPrimaryKey(pk);
-		activoOferta.setImporteActivoOferta(importe);
-		return activoOferta;
+		if (Checks.esNulo(oferta)){
+			throw new Exception("Parámetros incorrectos. La oferta es nulo.");
+			
+		}else if ((Checks.esNulo(activo) && Checks.esNulo(agrupacion)) ||
+				 (!Checks.esNulo(activo) && !Checks.esNulo(agrupacion))){
+			throw new Exception("Parámetros incorrectos. Enviar un activo o una agrupación.");
+			
+		}else if(!Checks.esNulo(activo)){
+			ActivoOfertaPk pk = new ActivoOfertaPk();
+			ActivoOferta activoOferta = new ActivoOferta();
+			pk.setActivo(activo);
+			pk.setOferta(oferta);
+
+			activoOferta.setPrimaryKey(pk);
+			activoOferta.setImporteActivoOferta(oferta.getImporteOferta());
+			activoOferta.setPorcentajeParticipacion(Double.valueOf(100.00));
+			listaActOfr.add(activoOferta);
+			
+		}else{
+			//Mapa con los valores Tasacion/Aprobado venta de cada activo
+			Map<String,Double> valoresTasacion = new HashMap<String,Double>();
+			valoresTasacion = activoAgrupacionApi.asignarValoresTasacionAprobadoVenta(agrupacion.getActivos());
+			
+			if(!Checks.estaVacio(valoresTasacion)) {
+				//En cada activo de la agrupacion se añade una oferta en la tabla ACT_OFR
+				for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
+	
+					ActivoOferta activoOferta= new ActivoOferta();
+					ActivoOfertaPk pk= new ActivoOfertaPk();
+	
+					pk.setActivo(activos.getActivo());
+					pk.setOferta(oferta);
+					activoOferta.setPrimaryKey(pk);
+					
+					if(!Checks.estaVacio(valoresTasacion)) {
+						String participacion = String.valueOf(activoAgrupacionApi.asignarPorcentajeParticipacionEntreActivos(activos, valoresTasacion, valoresTasacion.get("total")));
+						activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
+						activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
+					}
+					listaActOfr.add(activoOferta);
+				}
+			}
+		} 
+	
+		return listaActOfr;
 	}
+
 
 	@Override
 	public DDEstadoOferta getDDEstadosOfertaByCodigo(String codigo) {

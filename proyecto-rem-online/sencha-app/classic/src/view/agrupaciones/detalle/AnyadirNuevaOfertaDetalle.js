@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'anyadirnuevaofertadetalle',
+    reference	: 'anyadirNuevaOfertaDetalle',
     collapsed: false,
 	scrollable	: 'y',
 	cls:'',	  				
@@ -125,7 +126,50 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				            	    	allowBlank:	false,
 				            	    	bind:		'{oferta.deDerechoTanteo}',
 							        	inputValue: true
-				            	    }
+				            	    },
+				            	    {
+										xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('header.visita.detalle.proveedor.presriptor.codigo.rem'),
+										name: 'buscadorPrescriptores',
+										//disabled: true,
+										bind: {
+											value: '{oferta.codigoPrescriptor}'
+										},
+										allowBlank: false,
+										triggers: {
+											
+												buscarEmisor: {
+										            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+										            handler: 'buscarPrescriptor'
+										        }
+										},
+										cls: 'searchfield-input sf-con-borde',
+										emptyText:  'Introduce el código del Prescriptor',
+										enableKeyEvents: true,
+								        listeners: {
+								        	specialKey: function(field, e) {
+								        		if (e.getKey() === e.ENTER) {
+								        			field.lookupController().buscarPrescriptor(field);											        			
+								        		}
+								        	}/*,
+								        	
+								        	blur: function(field, e) {											        		
+								        		if(!Ext.isEmpty(field.getValue())) {
+								        			field.lookupController().buscarPrescriptor(field);
+								        		}
+								        	}*/
+								        	
+								        	
+								        }
+				                	},
+				                	{
+										xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('header.visita.detalle.proveedor.presriptor.codigo.rem'),
+										name: 'nombrePrescriptor',
+										//disabled: true,
+										readOnly: true,
+										allowBlank: false
+									}
 									
 
 				            	]

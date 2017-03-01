@@ -253,4 +253,11 @@ public interface ProveedoresApi {
 	 */
 	public Long getCodigoProveedorByNif(String parameter);
 	
+	/**
+	 * Método que busca el código del proveedor a través de su codigo.
+	 * 
+	 * @param codigoUnicoProveedor : codigo identificativo del proveedor.
+	 * @return Devuelve el proveedor encontrado.
+	 */
+	public Object searchProveedorCodigo(String codigoUnicoProveedor);
 }

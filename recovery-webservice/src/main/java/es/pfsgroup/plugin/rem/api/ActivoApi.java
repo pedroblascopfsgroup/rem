@@ -903,4 +903,11 @@ public interface ActivoApi {
 	 * @param idActivo
 	 */
 	public void calcularRatingActivo(Long idActivo);
+	
+	/**
+	 * Comprueba si el activo tiene alguna oferta viva (Estado != Rechazada)
+	 * @param activo
+	 * @return
+	 */
+	public boolean isActivoConOfertasVivas(Activo activo);
 }

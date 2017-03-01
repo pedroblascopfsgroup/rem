@@ -9,8 +9,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -30,6 +27,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
+import net.sf.json.JSONObject;
 
 @Controller
 public class PropuestaresolucionController {
@@ -44,9 +42,6 @@ public class PropuestaresolucionController {
 		
 		@Autowired
 		private PropuestaOfertaApi propuestaOfertaApi;
-		
-		@Autowired
-		private ParamReportsApi paramReportsApi;
 		
 		@Autowired 
 		private OfertaApi ofertaApi;

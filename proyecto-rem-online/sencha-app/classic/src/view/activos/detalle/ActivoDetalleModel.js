@@ -1031,6 +1031,42 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'ofertas/getHonorariosByOfertaId'
 			}
+		},
+		comboTipoProveedor: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionarioSubtipoProveedor',
+					extraParams: {codigoTipoProveedor: '03'}
+				}
+		},
+		
+		filtroComboPrescriptor: {
+			model: 'HreRem.model.Proveedor',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'proveedores/getProveedores',
+			extraParams: {tipoProveedorCodigo: '03', subtipoProveedorCodigo: '{tipoProveedor.selection.codigo}'}
+			}
 		}
+//		,
+//		
+//		filtroComboPrescriptor: {
+//			//pageSize: $AC.getDefaultPageSize(),
+//   		 	model: 'HreRem.model.ComboBase',
+//       		proxy: {
+//		        type: 'uxproxy',
+//		        remoteUrl: 'proveedores/getProveedores',
+//		        actionMethods: {read: 'POST'},
+//		        extraParams: {codigoTipoProveedor: '03', codigoSubtipoProveedor: '{tipoProveedorCodigo.selection.codigo}'}
+//	    	},	    	
+//	    autoLoad: true/*,
+//	    	session: true,
+//	    	remoteSort: true,
+//	    	remoteFilter: true,
+//	    	listeners : {
+//	            beforeload : 'paramLoading'
+//	        }*/
+//		}
      }    
 });

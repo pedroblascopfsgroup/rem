@@ -406,14 +406,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoIncluidoPerimetro(String numActivo){
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+		String resultado = rawDao.getExecuteSQL("SELECT act.ACT_ID "
 				+ "		FROM ACT_ACTIVO act "
-				+ "		INNER JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
+				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
 				+ "		ON act.ACT_ID            = pac.ACT_ID "
 				+ "		WHERE " 
-				+ "		pac.PAC_INCLUIDO         = 1 "
+				+ "		(pac.PAC_INCLUIDO = 1 or pac.PAC_ID is null)"
 				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
-		if("0".equals(resultado))
+		if(Checks.esNulo(resultado))
 			return false;
 		else
 			return true;
@@ -637,7 +637,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " 	ON pac.ACT_ID = act.ACT_ID "
 				+ "		WHERE " 
 				+ "		act.ACT_NUM_ACTIVO ="+numActivo+" "
-				+ "		and pac.PAC_CHECK_COMERCIALIZAR = 0 "
+				+ "		and (pac.PAC_INCLUIDO = 0 OR pac.PAC_CHECK_COMERCIALIZAR = 0) "
 				+ "		AND act.BORRADO = 0"
 				+ "		AND pac.BORRADO = 0");
 		if("0".equals(resultado))
@@ -746,5 +746,39 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 
 		return resultado;
+	}
+	
+	@Override
+	public Boolean existeActivoConOfertaViva(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
+				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
+				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
+				+ "		WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean existeActivoConExpedienteComercialVivo(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "	  	FROM VI_OFERTAS_ACTIVOS_AGRUPACION v "
+				+ " 	INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON v.ECO_ID = eco.ECO_ID "
+				+ "  	INNER JOIN ACT_TBJ_TRABAJO tbj ON eco.TBJ_ID = tbj.TBJ_ID "
+				+ "  	INNER JOIN ACT_TRA_TRAMITE tra ON tbj.TBJ_ID = tra.TBJ_ID "
+				+ "  	INNER JOIN TAC_TAREAS_ACTIVOS tac ON tra.TRA_ID = tac.TRA_ID "
+				+ "  	INNER JOIN TAR_TAREAS_NOTIFICACIONES tar ON tac.TAR_ID = TAR.TAR_ID "
+				+ " 	WHERE V.ACTIVOS LIKE '%''"+numActivo+"''%' "
+				+ "    	AND tar.TAR_FECHA_FIN IS NULL "
+				+ "     AND ROWNUM=1 ");
+		
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
 	}
 }

@@ -34,6 +34,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -3345,5 +3346,34 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return listTiposGestor;
+	}
+	
+	@Override
+	public boolean isExpedienteComercialVivoByActivo(Activo activo) {
+		
+		List<ActivoOferta> listaOfertas = activo.getOfertas();
+		
+		if(!Checks.estaVacio(listaOfertas)){
+			for (ActivoOferta activoOferta : listaOfertas) {
+				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+				
+				if (!Checks.esNulo(oferta.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+					ExpedienteComercial expediente = this.expedienteComercialPorOferta(oferta.getId());
+					
+					if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getTrabajo())) {
+						List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+						
+						for(ActivoTramite tramite : listaTramites) {
+							List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+							
+							if(!Checks.esNulo(tareasActivas))
+								return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 }

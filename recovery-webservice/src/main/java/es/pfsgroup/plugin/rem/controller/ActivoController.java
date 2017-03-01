@@ -297,7 +297,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (JsonViewerException jvex) {
-			logger.error(jvex);
+			//logger.error(jvex);
 			model.put("success", false);
 			model.put("msgError", jvex.getMessage());
 		} catch (Exception e) {

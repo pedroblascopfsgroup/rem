@@ -601,4 +601,12 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean updateParticipacionActivosOferta(Oferta oferta);
+	
+	/**
+	 * Comprueba si el activo tiene un expediente comercial vivo, es decir,
+	 * que no tenga ninguna tarea activa.
+	 * @param activo
+	 * @return
+	 */
+	public boolean isExpedienteComercialVivoByActivo(Activo activo);
 }

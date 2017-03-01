@@ -243,7 +243,7 @@ BEGIN
                 INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
                         ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
                 INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT 
-                        ON ACT.ACT_NUM_ACTIVO_UVEM = MIG.GPT_ACT_NUMERO_ACTIVO
+                        ON ACT.ACT_NUM_ACTIVO = MIG.GPT_ACT_NUMERO_ACTIVO
                 '
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;
@@ -301,6 +301,13 @@ BEGIN
                         ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
                 INNER JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ 
                         ON TBJ.TBJ_NUM_TRABAJO = MIG.GPT_TBJ_NUM_TRABAJO
+
+			     WHERE gpT_tbj_num_trabajo NOT IN 
+                   (select gpT_tbj_num_trabajo from '||V_ESQUEMA||'.mig2_gpv_act_tbj
+                     where gpT_tbj_num_trabajo is not null
+                     GROUP BY gpT_tbj_num_trabajo
+                     HAVING COUNT(1) > 1)
+
                 '
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;

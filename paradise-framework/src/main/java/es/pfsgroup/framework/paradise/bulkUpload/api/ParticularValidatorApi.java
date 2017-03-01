@@ -152,4 +152,17 @@ public interface  ParticularValidatorApi {
 	 */
 	public BigDecimal getPrecioMinimoAutorizadoActualActivo(String numActivo);
 	
+	/**
+	 * Comprueba si el activo tiene alguna oferta viva (estado != Rechazada)
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean existeActivoConOfertaViva(String numActivo);
+	
+	/**
+	 * Comprueba que el activo no este en un expediente comercial vivo (con trámites en activo)
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean existeActivoConExpedienteComercialVivo(String numActivo);
 }

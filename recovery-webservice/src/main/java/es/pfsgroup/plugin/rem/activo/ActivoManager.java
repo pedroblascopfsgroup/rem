@@ -3416,4 +3416,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return this.isActivoVendido(activo);
 	}
 	
+	public boolean isActivoConOfertasVivas(Activo activo) {
+		
+		List<ActivoOferta> listaActivoOferta = activo.getOfertas();
+		
+		for(ActivoOferta actOfr : listaActivoOferta) {
+			Oferta oferta = actOfr.getPrimaryKey().getOferta();
+			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta()) && 
+					!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

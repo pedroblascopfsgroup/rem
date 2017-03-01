@@ -145,7 +145,9 @@ public class RestSecurityFilter implements Filter {
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 		} finally {
 			SecurityContextHolder.clearContext();
-			restApi.guardarPeticionRest(peticion);
+			if(restRequest.isTrace()){
+				restApi.guardarPeticionRest(peticion);
+			}
 		}
 	}
 }

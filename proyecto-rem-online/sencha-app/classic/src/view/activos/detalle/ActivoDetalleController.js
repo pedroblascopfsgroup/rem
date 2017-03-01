@@ -192,7 +192,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					
 					form.getBindRecord().save({
-						success: function (a, operation, c) {
+						success: function (a, operation) {
 							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
 							me.refrescarActivo(form.refreshAfterSave);
@@ -200,8 +200,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			            },
 				            
 			            failure: function (a, operation) {
-			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-							 me.getView().unmask();
+			            	Utils.defaultOperationFailure(a, operation, form);
 			            }
 					});
 				}
@@ -952,12 +951,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		
 		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idActivo, tipoFoto: '01'}); 
 		me.getViewModel().data.storeFotosTecnicas.getProxy().setExtraParams({'id':idActivo, tipoFoto: '02'}); 
 		
-		me.getViewModel().data.storeFotos.load();
-		me.getViewModel().data.storeFotosTecnicas.load();
+		me.getViewModel().data.storeFotos.on('load',function(){
+			me.getViewModel().data.storeFotosTecnicas.load();
+		});
+		
+		me.getViewModel().data.storeFotosTecnicas.on('load',function(){
+			me.getView().unmask();
+		});
+		me.getViewModel().data.storeFotos.load();	
 
 	},
 
@@ -1100,20 +1106,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		btn.up('form').getForm().reset();
 	},
 
-	// Función que define el estado de un activo según su estado de disponibilidad comercial.
-    onChangeEstadoDisponibilidadComercial: function(field){
-    	var me = this;
-    	var store = me.getViewModel().getStore('storeEstadoDisponibilidadComercial');
-
-    	if(field.getValue() === "true") {
-    		// Condicionado.
-    		field.setValue(store.findRecord('codigo','01').getData().descripcion);
-    	} else if(field.getValue() === "false") {
-    		// Disponible.
-    		field.setValue(store.findRecord('codigo','02').getData().descripcion);
-    	}
-    },
-    
     // Esta función es llamada cuando cambia el estado de publicación del activo.
     onChangeEstadoPublicacion: function(field){
     	var me = this;
@@ -2495,6 +2487,58 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 		
 		
+	},
+	buscarPrescriptor: function(field, e){
+		
+		var me= this;
+		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigo');
+		var codPrescriptor = field.getValue();
+		var data;
+		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$)).*$");
+
+		
+		Ext.Ajax.request({
+		    			
+		 		url: url,
+		   		params: {codigoUnicoProveedor : codPrescriptor},
+		    		
+		    	success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+		    		var buscadorPrescriptor = field.up('formBase').down('[name=buscadorPrescriptores]'),
+		    		nombrePrescriptorField = field.up('formBase').down('[name=nombrePrescriptor]');
+		    		
+			    	if(!Utils.isEmptyJSON(data.data)){
+						var id= data.data.id;
+						var tipoProveedorCodigo = data.data.tipoProveedor.codigo;
+						
+		    		    var nombrePrescriptor= data.data.nombre;
+		    		    
+		    		    if(re.test(tipoProveedorCodigo)){
+			    		    if(!Ext.isEmpty(buscadorPrescriptor)) {
+			    		    	buscadorPrescriptor.setValue(codPrescriptor);
+			    		    }
+			    		    if(!Ext.isEmpty(nombrePrescriptorField)) {
+			    		    	nombrePrescriptorField.setValue(nombrePrescriptor);
+	
+				    		}
+		    		    }else{
+		    		    	nombrePrescriptorField.setValue('');
+		    				me.fireEvent("errorToast", "El código del Proveedor introducido no es un Prescriptor");
+		    			}
+			    	} else {
+			    		if(!Ext.isEmpty(nombrePrescriptorField)) {
+			    			nombrePrescriptorField.setValue('');
+		    		    }
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));
+			    		buscadorPrescriptor.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));		    		    
+			    	}		    		    	 
+		    	},
+		    	failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	},
+		    	callback: function(options, success, response){
+				}   		     
+		});		
 	}
 		
 });

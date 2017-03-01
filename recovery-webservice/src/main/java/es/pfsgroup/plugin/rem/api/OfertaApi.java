@@ -10,6 +10,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
@@ -417,5 +418,14 @@ public interface OfertaApi {
 	 */
 	public boolean checkImpuestos(TareaExterna tareaExterna);
 	
+	/**
+	 * Este método construye una lista de ActivoOferta para la creación de ofertas.
+	 * @param activo a incluir en la oferta
+	 * @param agrupacion a incluir en la oferta
+	 * @param oferta con la información de la oferta
+	 * @return List<ActivoOferta> 
+	 */
+	public List<ActivoOferta> buildListaActivoOferta(Activo activo, ActivoAgrupacion agrupacion, Oferta oferta) throws Exception;
+
 }
 

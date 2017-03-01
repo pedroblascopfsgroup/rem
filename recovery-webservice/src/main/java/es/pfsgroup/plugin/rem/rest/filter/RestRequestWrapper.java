@@ -30,6 +30,8 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 	
 	private long tiempoInicio;
 	private long tiempoFin;
+	private boolean trace = true;
+	
 	
 
 	public RestRequestWrapper(HttpServletRequest request) throws IOException, Exception {
@@ -138,6 +140,13 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 	public void setTiempoFin(long tiempoFin) {
 		this.tiempoFin = tiempoFin;
 	}
-	
+
+	public boolean isTrace() {
+		return trace;
+	}
+
+	public void setTrace(boolean trace) {
+		this.trace = trace;
+	}	
 
 }

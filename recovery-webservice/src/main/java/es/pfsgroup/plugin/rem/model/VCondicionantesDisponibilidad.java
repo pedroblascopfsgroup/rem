@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -13,6 +14,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
+
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDisponibilidadComercial;
 
 
 
@@ -27,7 +30,7 @@ import es.pfsgroup.commons.utils.Checks;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class VCondicionantesDisponibilidad  implements Serializable {
-
+	
 	/**
 	 * 
 	 */
@@ -73,7 +76,13 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	@Column(name = "DIVHORIZONTAL_NOINSCRITA")
 	private Boolean divHorizontalNoInscrita;
 	
+	@Column(name = "ES_CONDICIONADO")
+	private Boolean isCondicionado;
+	
+	@Column(name = "EST_DISP_COM_CODIGO")
+	private String estadoCondicionadoCodigo;
 
+	
 	public Long getIdActivo() {
 		return idActivo;
 	}
@@ -170,16 +179,6 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 		this.divHorizontalNoInscrita = divHorizontalNoInscrita;
 	}
 	
-	public Boolean isCondicionado() {
-		if(ruina || pendienteInscripcion || obraNuevaSinDeclarar || sinTomaPosesionInicial || proindiviso || obraNuevaEnConstruccion || 
-				 ocupadoConTitulo || tapiado || ocupadoSinTitulo || divHorizontalNoInscrita || !Checks.esNulo(otro)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
 	public Boolean getPortalesExternos() {
 		return portalesExternos;
 	}
@@ -188,4 +187,20 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 		this.portalesExternos = portalesExternos;
 	}
 	
+	public Boolean getIsCondicionado() {
+		return isCondicionado;
+	}
+	
+	public void setIsCondicionado(Boolean isCondicionado) {
+		this.isCondicionado = isCondicionado;
+	}
+
+	public String getEstadoCondicionadoCodigo() {
+		return estadoCondicionadoCodigo;
+	}
+	
+	public void setEstadoCondicionadoCodigo(String estadoCondicionadoCodigo) {
+		this.estadoCondicionadoCodigo = estadoCondicionadoCodigo;
+	}
+
 }

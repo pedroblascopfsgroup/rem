@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.activo;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +18,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -24,7 +27,10 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
@@ -387,5 +393,48 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		return activoAgrupacionDao.getFotosAgrupacionById(id);
 
 	}
+
+	@Override
+	public Map<String,Double> asignarValoresTasacionAprobadoVenta(List<ActivoAgrupacionActivo> activos) throws Exception{
+		
+		Map<String,Double> valores = new HashMap<String,Double>();
+		Double total = 0.0;
+		
+		for(ActivoAgrupacionActivo activo : activos) {
+			Double valor = null;
+			ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo.getActivo());
+			if(!Checks.esNulo(tasacion)) {
+				valor = Double.parseDouble(tasacion.getValoracionBien().getImporteValorTasacion().toString());
+			}
+			else {
+				ActivoValoraciones valoracion = activoApi.getValoracionAprobadoVenta(activo.getActivo());
+				if(!Checks.esNulo(valoracion)) {
+					valor = valoracion.getImporte();
+				}
+				else {
+					//Con que haya un activo sin valor tasacion o valor aprobado venta, no se haran las asignaciones de ninguno.
+					return null;
+				}
+			}
+			valores.put(activo.getActivo().getId().toString(), valor);
+			total = total + valor;
+		}
+		
+		valores.put("total", total);
+		return valores;
+	}
+
+	@Override
+	public Float asignarPorcentajeParticipacionEntreActivos(ActivoAgrupacionActivo activo, Map<String,Double> valores, Double total) throws Exception{
+		
+		if(total <= 0)
+			return (float) 0;
+		
+		Float porcentaje = (float) (valores.get(activo.getActivo().getId().toString()) * 100);
+		porcentaje = (float) (porcentaje / total);
+		
+		return porcentaje;
+	}
+
 
 }

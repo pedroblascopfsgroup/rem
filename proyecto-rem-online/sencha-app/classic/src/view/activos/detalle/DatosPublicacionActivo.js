@@ -42,13 +42,13 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 				                	},
 				                	readOnly: true
 			                    },
-			                    {
-				                	xtype: 'textfieldbase',
+			                	{
+				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.publicaciones.estadoDisponibilidadComercial'),
 				                	reference: 'fieldEstadoDisponibilidadComercial',
-				                	bind: '{activoCondicionantesDisponibilidad.estadoDisponibilidadComercial}',
-				                	listeners: {
-				                		change: 'onChangeEstadoDisponibilidadComercial'
+				                	bind: {
+				                		store: '{storeEstadoDisponibilidadComercial}',
+				                		value: '{activoCondicionantesDisponibilidad.estadoCondicionadoCodigo}'
 				                	},
 				                	readOnly: true
 			                    }
@@ -293,7 +293,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.ocultacionprecio'),
 								 reference: 'seccionOcultacionPrecio',
-								 hidden: true,
 								 margin: '5 8 10 8',
 								 minHeight	: 150,
 								 collapsible: false,
@@ -334,7 +333,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.despublicacionforzada'),
 								 reference: 'seccionDespublicacionForzada',
-								 hidden: true,
 								 margin: '5 8 10 8',
 								 minHeight	: 150,
 								 collapsible: false,
@@ -371,7 +369,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.ocultacionforzada'),
 								 reference: 'seccionOcultacionForzada',
-								 hidden: true,
 								 margin: '5 8 10 8',
 								 minHeight	: 150,
 								 collapsible: false,

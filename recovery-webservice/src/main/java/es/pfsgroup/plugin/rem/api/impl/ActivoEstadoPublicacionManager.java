@@ -148,24 +148,33 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		// PUBLICACION ORDINARIA
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) && dtoCambioEstadoPublicacion.getPublicacionOrdinaria()){ // Publicación ordinaria.
-			// Si cumple condiciones de publicar o ya estaba como Publicable, se publica el activo
-			if(cumpleCondicionesPublicar){
-				// Si el activo NO tenia "Fecha publicable"(indicador), se le asigna una
-				// Se marca el activo con el indicador de publicable porque va a publicarse
-				if(Checks.esNulo(activo.getFechaPublicable())) {
-					activo.setFechaPublicable(new Date());
-					activoApi.saveOrUpdate(activo);
+			// Se revisa el historico para ver si el activo YA se encuentra en estado "Publicado Ordinario"
+			// en cuyo caso NO se hace nada por recibir un cambio a "publicar ordinario"
+			ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
+			if(!Checks.esNulo(ultimoHistorico) && !Checks.esNulo(ultimoHistorico.getEstadoPublicacion())
+					&& !DDEstadoPublicacion.CODIGO_PUBLICADO.equals(ultimoHistorico.getEstadoPublicacion().getCodigo()) ){
+				// Si cumple condiciones de publicar o ya estaba como Publicable, se publica el activo
+				if(cumpleCondicionesPublicar){
+					// Si el activo NO tenia "Fecha publicable"(indicador), se le asigna una
+					// Se marca el activo con el indicador de publicable porque va a publicarse
+					if(Checks.esNulo(activo.getFechaPublicable())) {
+						activo.setFechaPublicable(new Date());
+						activoApi.saveOrUpdate(activo);
+					}
+					
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
+					motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
+					
+					// Ademas, se publica el activo lanzando el procedure para este
+					publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
+					
+				// Si en publicacion ordinaria no se cumplen condiciones, devuelve error
+				} else {
+					return false;
 				}
-				
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
-				motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
-				
-				// Ademas, se publica el activo lanzando el procedure para este
-				publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
-				
-			// Si en publicacion ordinaria no se cumplen condiciones, devuelve error
 			} else {
-				return false;
+				// No se hace nada si el activo ya estaba publicado ordinario y se intenta publicar ordinario
+				return true;
 			}
 			
 		// NO PUBLICADO: Deseleccionada cualquier opción DTO (ni ordinaria, ni forzada, ni precio oculto, ni despublicar).

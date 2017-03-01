@@ -147,7 +147,7 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 													{ 
 											        	xtype: 'comboboxfieldbase',
 											        	editable: false,
-														fieldLabel: HreRem.i18n('fieldlabel.estado.economico'),
+														fieldLabel: HreRem.i18n('fieldlabel.estado.registral'),
 											        	bind: {
 										            		store: '{comboEstadoCarga}',
 										            		value: '{carga.estadoCodigo}'
@@ -161,7 +161,7 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 									                { 
 											        	xtype: 'comboboxfieldbase',
 											        	editable: false,
-												 		fieldLabel: HreRem.i18n('fieldlabel.estado.registral'),
+												 		fieldLabel: HreRem.i18n('fieldlabel.estado.economico'),
 											        	bind: {
 										            		store: '{comboEstadoCarga}',
 										            		value: '{carga.estadoEconomicaCodigo}'

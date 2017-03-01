@@ -108,18 +108,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	   		
 			me.getViewModel().set("editing", false);
 			
-	   		me.getView().mask(HreRem.i18n("msg.mask.loading"));	   	
-
+	   		me.getView().mask(HreRem.i18n("msg.mask.loading"));	
+	   		
 	   		form.getBindRecord().save({
 
-		   		success: function (a, operation, c) {
-		   			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		   			me.getView().unmask();
-		   			me.onClickBotonRefrescar();
+		   		success: function (a, operation) {		  
+			   		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			   		me.getView().unmask();
+			   		me.onClickBotonRefrescar();					
 		   		},		   		          
-		   		failure: function (a, operation) {
-		   		    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		   		    me.getView().unmask();
+		   		failure: function(a, operation) {
+		   			Utils.defaultOperationFailure(a, operation, form);
 		   		}
 		   	});
 
@@ -239,8 +238,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
-		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idAgrupacion}); 		
+		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idAgrupacion});
+		me.getViewModel().data.storeFotos.on('load',function(){
+			me.getView().unmask();
+		});
 		me.getViewModel().data.storeFotos.load();
 		
 	},
@@ -509,8 +512,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	window.parent.funcionRecargar();
 	    	window.destroy();
-	    	if(!Ext.isEmpty(window.parent.lookupController().lookupReference('listadoactivosagrupacion')))
-	    		window.parent.lookupController().lookupReference('listadoactivosagrupacion').setTopBar(false);
 		};
 
 		me.onSaveFormularioCompleto(form, success);	
@@ -534,6 +535,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 					} else {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				 		form.unmask();
+					}
+					
+					if(Ext.isDefined(form.funcionRefrescar)) {
+						form.funcionRefrescar();
 					}
 			    }
 			});
@@ -701,5 +706,56 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
           	   menuItem.up('activosagrupacionlist').unmask();
            }
 	    });
+	},
+	buscarPrescriptor: function(field, e){
+			
+			var me= this;
+			var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigo');
+			var codPrescriptor = field.getValue();
+			var data;
+			var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$)).*$");
+	
+			Ext.Ajax.request({
+			    			
+			 		url: url,
+			   		params: {codigoUnicoProveedor : codPrescriptor},
+			    		
+			    	success: function(response, opts) {
+				    	data = Ext.decode(response.responseText);
+			    		var buscadorPrescriptor = field.up('formBase').down('[name=buscadorPrescriptores]'),
+			    		nombrePrescriptorField = field.up('formBase').down('[name=nombrePrescriptor]');
+			    		
+				    	if(!Utils.isEmptyJSON(data.data)){
+							var id= data.data.id;
+							var tipoProveedorCodigo = data.data.tipoProveedor.codigo;
+							
+			    		    var nombrePrescriptor= data.data.nombre;
+			    		    
+			    		    if(re.test(tipoProveedorCodigo)){
+				    		    if(!Ext.isEmpty(buscadorPrescriptor)) {
+				    		    	buscadorPrescriptor.setValue(codPrescriptor);
+				    		    }
+				    		    if(!Ext.isEmpty(nombrePrescriptorField)) {
+				    		    	nombrePrescriptorField.setValue(nombrePrescriptor);
+		
+					    		}
+			    		    }else{
+			    		    	nombrePrescriptorField.setValue('');
+			    				me.fireEvent("errorToast", "El código del Proveedor introducido no es un Prescriptor");
+			    			}
+				    	} else {
+				    		if(!Ext.isEmpty(nombrePrescriptorField)) {
+				    			nombrePrescriptorField.setValue('');
+			    		    }
+				    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));
+				    		buscadorPrescriptor.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));				    		    
+				    	}			    		    	 
+			    	},
+			    	failure: function(response) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	},
+			    	callback: function(options, success, response){
+					}			    		     
+			});
 	}
 });

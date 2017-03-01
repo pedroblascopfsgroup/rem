@@ -12,6 +12,12 @@ public class DtoDataSource {
 	private List<Object> listaOtrasOfertas;
 	private List<Object> listaVisitas;
 	private List<Object> listaActivo;
+	private List<Object> listaFotosWebPrimera;
+	private List<Object> listaFotosWebSegunda;
+	private List<Object> listaFotosWebTercera;
+	private List<Object> listaFotosTecnicasPrimera;
+	private List<Object> listaFotosTecnicasSegunda;
+	private List<Object> listaFotosTecnicasTercera;
 	
 	public List<Object> getListaCliente() {
 		return listaCliente;
@@ -76,5 +82,55 @@ public class DtoDataSource {
 	public void setListaActivo(List<Object> listaActivo) {
 		this.listaActivo = listaActivo;
 	}
+
+	public List<Object> getListaFotosWebPrimera() {
+		return listaFotosWebPrimera;
+	}
+
+	public void setListaFotosWebPrimera(List<Object> listaFotosWebPrimera) {
+		this.listaFotosWebPrimera = listaFotosWebPrimera;
+	}
+
+	public List<Object> getListaFotosWebSegunda() {
+		return listaFotosWebSegunda;
+	}
+
+	public void setListaFotosWebSegunda(List<Object> listaFotosWebSegunda) {
+		this.listaFotosWebSegunda = listaFotosWebSegunda;
+	}
+
+	public List<Object> getListaFotosWebTercera() {
+		return listaFotosWebTercera;
+	}
+
+	public void setListaFotosWebTercera(List<Object> listaFotosWebTercera) {
+		this.listaFotosWebTercera = listaFotosWebTercera;
+	}
+
+	public List<Object> getListaFotosTecnicasPrimera() {
+		return listaFotosTecnicasPrimera;
+	}
+
+	public void setListaFotosTecnicasPrimera(List<Object> listaFotosTecnicasPrimera) {
+		this.listaFotosTecnicasPrimera = listaFotosTecnicasPrimera;
+	}
+
+	public List<Object> getListaFotosTecnicasSegunda() {
+		return listaFotosTecnicasSegunda;
+	}
+
+	public void setListaFotosTecnicasSegunda(List<Object> listaFotosTecnicasSegunda) {
+		this.listaFotosTecnicasSegunda = listaFotosTecnicasSegunda;
+	}
+
+	public List<Object> getListaFotosTecnicasTercera() {
+		return listaFotosTecnicasTercera;
+	}
+
+	public void setListaFotosTecnicasTercera(List<Object> listaFotosTecnicasTercera) {
+		this.listaFotosTecnicasTercera = listaFotosTecnicasTercera;
+	}
+	
+	
 	
 }

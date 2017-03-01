@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -16,11 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.WebHookRequest;
@@ -47,7 +52,7 @@ public class FotosController {
 
 	@Autowired
 	private ActivoAdapter activoAdapter;
-	
+
 	@Autowired
 	private RestApi restApi;
 
@@ -123,12 +128,52 @@ public class FotosController {
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			logger.error("Error fotos", e);
 		}
-		restApi.sendResponse(response, model,request);
+		restApi.sendResponse(response, model, request);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/fotos/fueraToken")
 	public void fueraToken(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		servletContext.setAttribute("idAuthToken", null);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/fotos/download")
+	public ModelAndView getFotoActivoById(Long idFoto, RestRequestWrapper request, HttpServletResponse response) {
+		request.setTrace(false);
+		ActivoFoto actvFoto = activoAdapter.getFotoActivoById(idFoto);
+		if (actvFoto.getRemoteId() != null) {
+			// response.setHeader("Location", actvFoto.getUrl());
+			return new ModelAndView("redirect:" + actvFoto.getUrl());
+		} else {
+			FileItem fileItem = activoAdapter.getFotoActivoById(idFoto).getAdjunto().getFileItem();
+
+			try {
+				ServletOutputStream salida = response.getOutputStream();
+
+				response.setHeader("Content-disposition", "inline");
+				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+				response.setHeader("Cache-Control", "max-age=0");
+				response.setHeader("Expires", "0");
+				response.setHeader("Pragma", "public");
+				response.setDateHeader("Expires", 0); // prevents caching at the
+														// proxy
+
+				if (fileItem.getContentType() != null) {
+					response.setContentType(fileItem.getContentType());
+				} else {
+					response.setContentType("Content-type: image/jpeg");
+				}
+				request.getPeticionRest().setResult("OK");
+				// Write
+				FileUtils.copy(fileItem.getInputStream(), salida);
+				salida.flush();
+				salida.close();
+
+			} catch (Exception e) {
+				logger.error(e);
+			}
+			return null;
+		}
+
 	}
 
 }

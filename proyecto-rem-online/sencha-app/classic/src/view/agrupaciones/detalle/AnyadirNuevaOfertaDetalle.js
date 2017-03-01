@@ -164,7 +164,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				                	},
 				                	{
 										xtype: 'textfieldbase',
-										fieldLabel: HreRem.i18n('header.visita.detalle.proveedor.presriptor.codigo.rem'),
+										fieldLabel: HreRem.i18n('fieldlabel.prescriptor'),
 										name: 'nombrePrescriptor',
 										//disabled: true,
 										readOnly: true,

@@ -354,7 +354,11 @@ public class AgrupacionController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.saveAgrupacion(dtoAgrupacion, id);
 			model.put("success", success);
-
+			
+		} catch (JsonViewerException jvex) {
+			logger.error(jvex);
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
 		} catch (Exception e) {
 			logger.error(e);
 			model.put("success", false);

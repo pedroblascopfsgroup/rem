@@ -192,7 +192,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					
 					form.getBindRecord().save({
-						success: function (a, operation, c) {
+						success: function (a, operation) {
 							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
 							me.refrescarActivo(form.refreshAfterSave);
@@ -200,8 +200,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			            },
 				            
 			            failure: function (a, operation) {
-			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-							 me.getView().unmask();
+			            	Utils.defaultOperationFailure(a, operation, form);
 			            }
 					});
 				}
@@ -1107,20 +1106,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		btn.up('form').getForm().reset();
 	},
 
-	// Función que define el estado de un activo según su estado de disponibilidad comercial.
-    onChangeEstadoDisponibilidadComercial: function(field){
-    	var me = this;
-    	var store = me.getViewModel().getStore('storeEstadoDisponibilidadComercial');
-
-    	if(field.getValue() === "true") {
-    		// Condicionado.
-    		field.setValue(store.findRecord('codigo','01').getData().descripcion);
-    	} else if(field.getValue() === "false") {
-    		// Disponible.
-    		field.setValue(store.findRecord('codigo','02').getData().descripcion);
-    	}
-    },
-    
     // Esta función es llamada cuando cambia el estado de publicación del activo.
     onChangeEstadoPublicacion: function(field){
     	var me = this;

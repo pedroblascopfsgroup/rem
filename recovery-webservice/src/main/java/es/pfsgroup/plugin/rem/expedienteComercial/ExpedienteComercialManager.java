@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -2907,8 +2909,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 
 	@Override
-	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) {
+	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) throws Exception{
 		Double importeReserva = null;
+		DecimalFormat num = new DecimalFormat("###.##");
+		
 		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
 		OfertaUVEMDto ofertaUVEM = new OfertaUVEMDto();
 		if (oferta.getTipoOferta() != null) {
@@ -2923,12 +2927,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if (condExp != null) {
 			importeReserva = condExp.getImporteReserva();
 			if (importeReserva != null) {
-				ofertaUVEM.setImporteReserva(importeReserva.toString());
+				ofertaUVEM.setImporteReserva(num.format(importeReserva));
 			}
 		}
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta(): oferta.getImporteContraOferta();
 		if (importeTotal != null) {
-			ofertaUVEM.setImporteVenta(importeTotal.toString());
+			ofertaUVEM.setImporteVenta(num.format(importeTotal));
 		}
 		
 		//HREOS-1420 -Siempre se enviará 00000 (Bankia) para el servicio de consulta del cobro de la reserva y de la venta.
@@ -2957,7 +2961,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 
 	@Override
-	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) {
+	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) throws Exception{
 		ArrayList<TitularUVEMDto> listaTitularUVEM = new ArrayList<TitularUVEMDto>();
 		for (int k = 0; k < expedienteComercial.getCompradores().size(); k++) {
 			CompradorExpediente compradorExpediente = expedienteComercial.getCompradores().get(k);
@@ -3342,5 +3346,34 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return listTiposGestor;
+	}
+	
+	@Override
+	public boolean isExpedienteComercialVivoByActivo(Activo activo) {
+		
+		List<ActivoOferta> listaOfertas = activo.getOfertas();
+		
+		if(!Checks.estaVacio(listaOfertas)){
+			for (ActivoOferta activoOferta : listaOfertas) {
+				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+				
+				if (!Checks.esNulo(oferta.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+					ExpedienteComercial expediente = this.expedienteComercialPorOferta(oferta.getId());
+					
+					if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getTrabajo())) {
+						List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+						
+						for(ActivoTramite tramite : listaTramites) {
+							List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+							
+							if(!Checks.esNulo(tareasActivas))
+								return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 }

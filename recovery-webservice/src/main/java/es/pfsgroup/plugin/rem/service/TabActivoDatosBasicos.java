@@ -2,13 +2,15 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -16,8 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
@@ -54,6 +55,9 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class TabActivoDatosBasicos implements TabActivoService {
+	
+	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
+	public static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
     
 
 	@Autowired
@@ -73,6 +77,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Resource
+    MessageService messageServices;
 
 	@Override
 	public String[] getKeys() {
@@ -321,7 +328,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	}
 
 	@Override
-	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
 		
 		try {
@@ -457,7 +464,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
 				DDTipoUsoDestino tipoUsoDestino = (DDTipoUsoDestino) diccionarioApi.dameValorDiccionarioByCod(DDTipoUsoDestino.class,  dto.getTipoUsoDestinoCodigo());
-				activo.setTipoUsoDestino(tipoUsoDestino);
+				activo.setTipoUsoDestino(tipoUsoDestino);				
 				//Actualizar el tipoComercialización del activo
 				updaterState.updaterStateTipoComercializacion(activo);
 			}
@@ -487,7 +494,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 				reiniciarPBC = true;
 			}
-
+			
 			// Perimetro -------
 			// Solo se guardan los datos si el usuario ha cambiado algun campo de perimetros
 			// El control de cambios se realiza revisando los datos que transporta el dto
@@ -528,10 +535,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getAplicaComercializar())) {
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaComercializar(new Date());
+					
+					//Validacion al desmarcar check comercializar
+					if(!dto.getAplicaComercializar()) {
+						this.validarPerimetroActivo(activo,1);
+					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
 					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaFormalizar(new Date());
+					
+					//Validacion al desmarcar check formalizar
+					if(!dto.getAplicaFormalizar()) {
+						this.validarPerimetroActivo(activo,2);;
+					}
 				}
 				if(!Checks.esNulo(dto.getAplicaGestion())) {
 					perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
@@ -645,4 +662,35 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		return activo;
 	}
+	
+	/**
+	 * Valida condiciones del perimitro, según se marque/desmarque los checks.
+	 * case 1: Al desmarcar check comercializar, no se puede hacer si el activo tiene ofertas vivas. (estado != rechazada)
+	 * case 2: Al desmarcar check formalizar, no se puede hacer si el activo tiene un exp. comercial vivo (tareas activas)
+	 * @param activo
+	 * @return
+	 */
+	private void validarPerimetroActivo(Activo activo, Integer numVal) {
+		
+		String error = null;
+		
+		switch(numVal) {
+			case 1: {
+				if(activoApi.isActivoConOfertasVivas(activo))
+					error = messageServices.getMessage(MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS);
+				break;
+			}
+			case 2: {
+				if(expedienteComercialApi.isExpedienteComercialVivoByActivo(activo))
+					error = messageServices.getMessage(MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO);
+				break;
+			}
+			default:
+				break;
+		}
+		
+		if(!Checks.esNulo(error))
+			throw new JsonViewerException(error);
+	}
+	
 }

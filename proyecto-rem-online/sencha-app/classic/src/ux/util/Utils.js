@@ -56,6 +56,51 @@ Ext.define('HreRem.ux.util.Utils', {
    isEmptyJSON: function (obj) {
  		for(var i in obj) { return false; }
  		return true;
+   },
+   
+	/**
+	 * Función failure por defecto para las operaciones de los modelos.
+	 * @param {} a
+	 * @param {} operation
+	 * @param {} view - Formulario repsentativo del modelo.
+	 * @param {} beforeFailureFn Funcion que se ejecutará antes de las operaciones por defecto.
+	 * @param {} afterFailureFn Funcion que se ejecutará después de las operaciones por defecto.
+	 */
+   defaultOperationFailure: function (a, operation, form, beforeFailureFn, afterFailureFn) {
+
+		var response = Ext.decode(operation.getResponse().responseText),
+		beforeFailureFn = Ext.isFunction(beforeFailureFn) ? beforeFailureFn : Ext.emptyFn,
+		afterFailureFn = Ext.isFunction(afterFailureFn) ? afterFailureFn : Ext.emptyFn;
+		
+		beforeFailureFn();
+		
+		if(Ext.isDefined(response.msgError)) {
+			form.fireEvent("errorToast", response.msgError);
+		} else {
+			form.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		}
+		this.unmaskAll();
+		
+		if(Ext.isFunction(form.funcionRecargar)) {
+			form.funcionRecargar();
+		}
+		
+		afterFailureFn();
+   },
+   
+   /**
+    * Busca todos los componentes con la propiedad masked a true, y les quita la mascara
+    */
+   unmaskAll: function () {
+   		
+   		var cmps = Ext.ComponentQuery.query('[masked=true]');
+   		
+   		// TODO Si en algun momento necesitamos que a algún componente no se le quite la mascara,
+   		// podriamos añadir un atributo que impida que se le quite la mascara aquí.
+   		Ext.Array.each(cmps, function(cmp, index) {   			
+   			cmp.unmask();   		
+   		});
+   	
    }
     
 });

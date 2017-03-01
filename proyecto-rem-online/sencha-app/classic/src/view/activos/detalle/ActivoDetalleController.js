@@ -2522,6 +2522,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 				    		}
 		    		    }else{
+		    		    	nombrePrescriptorField.setValue('');
 		    				me.fireEvent("errorToast", "El código del Proveedor introducido no es un Prescriptor");
 		    			}
 			    	} else {
@@ -2529,20 +2530,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			    			nombrePrescriptorField.setValue('');
 		    		    }
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));
-			    		buscadorPrescriptor.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));	
-		    		    
-			    	}
-		    		    	 
+			    		buscadorPrescriptor.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));		    		    
+			    	}		    		    	 
 		    	},
 		    	failure: function(response) {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		    	},
 		    	callback: function(options, success, response){
-				}
-		    		     
-		});
-	
-		
+				}   		     
+		});		
 	}
 		
 });

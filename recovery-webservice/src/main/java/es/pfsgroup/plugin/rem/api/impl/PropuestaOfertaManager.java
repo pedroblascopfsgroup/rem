@@ -1018,7 +1018,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 	}
 
 	@Override
-	public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model) throws Exception {
+	public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model, String selfUrl)
+			throws Exception {
 		logger.debug("------------ Llamada dataSourceHojaDatos-----------------");
 
 		Activo activo = null;
@@ -1324,6 +1325,10 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		int fotoTecnicaCont = 1;
 		if (listaActivoFoto != null && !listaActivoFoto.isEmpty()) {
 			for (ActivoFoto foto : listaActivoFoto) {
+				if (foto.getUrlThumbnail() == null || foto.getUrlThumbnail().isEmpty()) {
+					foto.setUrlThumbnail(selfUrl.concat("/webhook/fotos/download?idFoto=")
+							.concat(String.valueOf(foto.getId())));
+				}
 				if (foto.getTipoFoto() != null && foto.getTipoFoto().getCodigo().equals(DDTipoFoto.COD_WEB)) {
 					switch (fotowebCont) {
 					case 1:
@@ -1342,7 +1347,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 				} else if (foto.getTipoFoto() != null
 						&& foto.getTipoFoto().getCodigo().equals(DDTipoFoto.COD_TECNICA)) {
-					//fotosTecnicas.add(foto);
+					// fotosTecnicas.add(foto);
 					switch (fotoTecnicaCont) {
 					case 1:
 						fotosTecnicasPrimera.add(foto);

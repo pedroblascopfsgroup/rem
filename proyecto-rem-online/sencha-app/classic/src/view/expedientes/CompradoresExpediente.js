@@ -20,7 +20,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
             	items : [
                 	{
 					    xtype		: 'gridBase',
-					    topBar		: true,
+					    topBar		: $AU.userHasFunction(['TAB_COMPRADORES_EXP_BTN_EDICION']),
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						bind: {

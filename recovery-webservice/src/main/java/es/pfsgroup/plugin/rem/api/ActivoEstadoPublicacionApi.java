@@ -4,7 +4,9 @@ import java.sql.SQLException;
 
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
 
 public interface ActivoEstadoPublicacionApi {
 
@@ -17,12 +19,21 @@ public interface ActivoEstadoPublicacionApi {
 	
 	/**
 	 * Método que cambia el estado de publicación de un activo en base a los check marcados en la pestaña
-	 * datos de la publicación
+	 * datos de la publicación, aplicando TODAS las validaciones para publicar
 	 * @param dtoCambioEstadoPublicacion: DTO con la información obtenida.
 	 * @throws SQLException 
 	 */
-	public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException;
+	public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException, JsonViewerException;
 
+	/**
+	 * Método que cambia el estado de publicación de un activo en base a los check marcados en la pestaña
+	 * datos de la publicación, permitiendo configurar las validaciones necesarias para publicar
+	 * @param dtoCambioEstadoPublicacion
+	 * @param validacionesPublicacion
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, ActivoPublicacionValidator validacionesPublicacion) throws SQLException, JsonViewerException;
 	/**
 	 * Método que obtiene el estado de publicación por el ID del activo, así como su motivo y las observaciones si tuviese.
 	 * 

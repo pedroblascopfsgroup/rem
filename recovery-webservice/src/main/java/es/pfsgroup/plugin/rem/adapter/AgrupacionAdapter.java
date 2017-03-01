@@ -1589,6 +1589,9 @@ public class AgrupacionAdapter {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
+				return false;
 			}
 		}
 
@@ -1678,6 +1681,9 @@ public class AgrupacionAdapter {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
+				return false;
 			}
 		} 
 
@@ -1745,6 +1751,9 @@ public class AgrupacionAdapter {
 				activoEstadoPublicacionApi.publicacionChangeState(dtoPublicacion);
 			} catch (SQLException e) {
 				e.printStackTrace();
+				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
 				return false;
 			}
 		}

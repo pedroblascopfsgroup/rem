@@ -23,6 +23,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -36,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
+import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
@@ -99,7 +101,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     
     @Override
     @Transactional(readOnly = false)
-    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException{
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException, JsonViewerException {
+    	return publicacionChangeState(dtoCambioEstadoPublicacion, null);
+    }
+    		
+    @Override
+    @Transactional(readOnly = false)
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, ActivoPublicacionValidator validacionesPublicacion) throws SQLException, JsonViewerException{
     	ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
 		Filter filtro = null;
@@ -107,12 +115,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		DDEstadoPublicacion estadoPublicacionActual = null;
 		String motivo = null;
 		
-		boolean cumpleCondicionesPublicar = 
-				activo.getAdmision() // Tiene OK de admision
-				&& activo.getGestion() // Tiene OK de gestion
-				&& activoApi.getDptoPrecio(activo) // Tiene OK de precios
-				&& !activoApi.checkTiposDistintos(activo) // Tipos activo Inf. comercial iguales
-				&& activoApi.isInformeComercialAceptado(activo); // Tiene Inf. comercial aceptado
+		//Para hacer un cambio en estados de publicacion es necesario saber que validaciones es necesario aplicar
+		//Si no se indicaron por parametro, por defecto se aplican todas las validaciones de publicacion
+		if(Checks.esNulo(validacionesPublicacion))
+			validacionesPublicacion = (new ActivoPublicacionValidator()).initPublicacionValidator(activo); // Todas las condiciones necesarias para T. de publicacion
+		
+		boolean cumpleCondicionesPublicar = validacionesPublicacion.cumpleValidaciones();
 
 		//Iniciativa: Si el activo no tuviera estado de publicación (null), debe tomarse como "NO PUBLICADO"
 		estadoPublicacionActual = activo.getEstadoPublicacion();
@@ -170,6 +178,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					
 				// Si en publicacion ordinaria no se cumplen condiciones, devuelve error
 				} else {
+					new JsonViewerException("No es posible publicar el activo. Revise condiciones (Gestion, Admision, Inf. Comercial, Precio venta Web)");
 					return false;
 				}
 			} else {
@@ -267,16 +276,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					} // Cierra if ... CODIGO_PUBLICADO.equals
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
-					return false;
+					throw new JsonViewerException("No ha sido posible realizar el cambio de publicación con este activo. Se ha producido un error interno.");
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-					return false;
+					throw new JsonViewerException("No ha sido posible realizar el cambio de publicación con este activo. Se ha producido un error interno.");
 				}
 			} // Cierra comprobacion ANTERIOR <> ACTUAL
 			
 		// filtro = null (Detectado un cambio de estado NO CONTROLADO (valores DTO no corresponden con nuevo estado))
 		} else {
-			return false;
+			throw new JsonViewerException("No ha sido posible realizar el cambio de publicación con este activo. Estado de publicación inexistente.");
 		} // Cierra if(!Checks.esNulo(filtro))
 		return true;
     }
@@ -369,7 +378,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return dto;
 	}
 	
-	private boolean publicarActivoProcedure(Long idActivo, String username) throws SQLException{
+	private boolean publicarActivoProcedure(Long idActivo, String username) throws SQLException, JsonViewerException{
 
 		int esError = activoDao.publicarActivo(idActivo, username);
 		if (esError != 1){

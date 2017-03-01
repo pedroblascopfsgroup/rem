@@ -1929,6 +1929,10 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (SQLException e) {
 			model.put("success", false);
 			logger.error(e);
+		} catch (JsonViewerException jViewEx) {
+			logger.error(jViewEx);
+			model.put("success", false);
+			model.put("msgError", jViewEx.getMessage());
 		}
 
 		return createModelAndViewJson(model);

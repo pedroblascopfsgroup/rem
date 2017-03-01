@@ -715,7 +715,11 @@ public class AgrupacionController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.publicarActivosAgrupacion(agrupacionID, activosID);
 			model.put("success", success);
-
+			
+		} catch (JsonViewerException jViewEx){
+			logger.error(jViewEx.getMessage());
+			model.put("msg", jViewEx.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
 			if (e.getMessage().equals(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG)) {
 				model.put("msg", AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
@@ -739,7 +743,11 @@ public class AgrupacionController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.publicarSubdivisionesActivosAgrupacion(agrupacionID, activosID);
 			model.put("success", success);
-
+			
+		} catch (JsonViewerException jViewEx){
+			logger.error(jViewEx.getMessage());
+			model.put("msg", jViewEx.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
 			if (e.getMessage().equals(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG)) {
 				model.put("msg", AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);

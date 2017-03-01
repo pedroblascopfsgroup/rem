@@ -174,6 +174,7 @@ import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
+import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Service("activoManager")
@@ -1665,19 +1666,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public boolean publicarActivo(Long idActivo) throws SQLException {
+	public boolean publicarActivo(Long idActivo) throws SQLException, JsonViewerException {
 		return publicarActivo(idActivo, null);
 	}
 
 	@Override
-	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException {
+	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException, JsonViewerException {
+		return publicarActivo(idActivo, motivo, null);
+	}
+	
+	@Override
+	public boolean publicarActivo(Long idActivo, String motivo, ActivoPublicacionValidator validacionesPublicacion) throws SQLException, JsonViewerException {
 
 		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
 		dtoCambioEstadoPublicacion.setActivo(idActivo);
 		dtoCambioEstadoPublicacion.setMotivoPublicacion(motivo);
 		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
 
-		return activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
+		return activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion, validacionesPublicacion);
 	}
 
 	@Override

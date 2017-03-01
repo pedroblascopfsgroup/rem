@@ -16,6 +16,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -53,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
+import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
 
 public interface ActivoApi {
 
@@ -390,7 +392,7 @@ public interface ActivoApi {
 	 * @return
 	 * @throws SQLException
 	 */
-	boolean publicarActivo(Long idActivo) throws SQLException;
+	public boolean publicarActivo(Long idActivo) throws SQLException, JsonViewerException;
 
 	/**
 	 * Igual que publicarActivo pero con motivo de publicacion
@@ -400,7 +402,18 @@ public interface ActivoApi {
 	 * @return
 	 * @throws SQLException
 	 */
-	boolean publicarActivo(Long idActivo, String motivo) throws SQLException;
+	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException, JsonViewerException;
+
+	/**
+	 * Igual que publicarActivo pero seleccionando las validaciones de publicacion a realizar
+	 * @param idActivo
+	 * @param motivo
+	 * @param validacionesPublicacion
+	 * @return
+	 * @throws SQLException
+	 * @throws JsonViewerException
+	 */
+	public boolean publicarActivo(Long idActivo, String motivo, ActivoPublicacionValidator validacionesPublicacion) throws SQLException, JsonViewerException;
 
 	/**
 	 * Inserta o actualiza una visita aun activo

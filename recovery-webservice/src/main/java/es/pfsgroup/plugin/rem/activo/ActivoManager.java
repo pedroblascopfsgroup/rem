@@ -136,6 +136,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -374,7 +375,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (Exception ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 			resultado = false;
 		}
 
@@ -419,7 +420,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			genericDao.update(Oferta.class, oferta);
 
 		} catch (Exception ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 			resultado = false;
 		}
 
@@ -490,7 +491,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
 
 		} catch (Exception ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 			return false;
 		}
 
@@ -671,7 +672,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (Exception ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 			return false;
 		}
 
@@ -795,7 +796,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("Error en activoManager",e);
 		}
 
 		return null;
@@ -1000,7 +1001,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			activoDao.save(activo);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error en activoManager",e);
 		}
 
 		return null;
@@ -1326,9 +1327,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							condicion.getUsuarioBaja().getUsername());
 				}
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 
 			listaDtoCondicionesEspecificas.add(dtoCondicionEspecifica);
@@ -1360,9 +1361,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 		}
 
 		genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
@@ -1380,9 +1381,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			try {
 				beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 
 			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
@@ -1404,9 +1405,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(condicionEspecifica, "fechaHasta", new Date());
 				beanUtilNotNull.copyProperty(condicionEspecifica, "usuarioBaja", adapter.getUsuarioLogado());
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 
 			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
@@ -1484,11 +1485,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "diasPeriodo", dias);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 
 			listaDtoEstadosPublicacion.add(dtoEstadoPublicacion);
@@ -1516,9 +1517,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "motivo", estado.getMotivo());
 				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "fecha", estado.getFecha());
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 
 			listaDtoEstadosInfoComercial.add(dtoEstadosInfoComercial);
@@ -1527,6 +1528,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return listaDtoEstadosInfoComercial;
 	}
 
+	public boolean isInformeComercialAceptado(Activo activo){
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Order order = new Order(OrderType.DESC, "id");
+		List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
+		if(!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
+			ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
+			
+			if(historico.getEstadoInformeComercial().getCodigo().equals(
+					DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION) ) 
+				return true;
+		}
+		
+		return false;
+	}
+	
+	
 	@Override
 	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
@@ -1554,9 +1571,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							historico.getMediadorInforme().getEmail());
 				}
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 
 			listaDtoHistoricoMediador.add(dtoHistoricoMediador);
@@ -1619,10 +1636,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		}
 
@@ -1720,7 +1737,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							Long diferenciaDias = diferenciaMilis / (1000 * 60 * 60 * 24);
 							dias += Integer.valueOf(diferenciaDias.intValue());
 						} catch (ParseException e) {
-							e.printStackTrace();
+							logger.error("Error en activoManager",e);
 						}
 					}
 				}
@@ -1752,9 +1769,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(nuevoDto, "activoVinculadoID", vinculado.getActivoVinculado().getId());
 				beanUtilNotNull.copyProperty(nuevoDto, "totalCount", p.getTotalCount());
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 
 			if (!Checks.esNulo(nuevoDto)) {
@@ -1782,9 +1799,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(propuestaActivosVinculados, "activoOrigen", activoOrigen);
 			beanUtilNotNull.copyProperty(propuestaActivosVinculados, "activoVinculado", activoVinculado);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 		}
 
 		genericDao.save(PropuestaActivosVinculados.class, propuestaActivosVinculados);
@@ -1800,7 +1817,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			id = Long.parseLong(dto.getId());
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		}
 
@@ -1900,8 +1917,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (Exception ex) {
-			logger.error(ex.getMessage());
-			ex.printStackTrace();
+			logger.error("Error en activoManager",ex);
 		}
 
 		return perimetroActivo;
@@ -1976,8 +1992,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (Exception ex) {
-			logger.error(ex.getMessage());
-			ex.printStackTrace();
+			logger.error("Error en activoManager",ex);
 		}
 
 		return activoBancario;
@@ -2034,15 +2049,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isActivoVendido(Activo activo) {
 
-		if (!Checks.estaVacio(activo.getOfertas())) {
-			for (ActivoOferta activoOferta : activo.getOfertas()) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
-						activoOferta.getPrimaryKey().getOferta().getId());
-				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
-
-				if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getFormalizacion())
-						&& !Checks.esNulo(expediente.getFormalizacion().getFechaEscritura())) {
-					return true;
+		if(!Checks.esNulo(activo.getFechaVentaExterna()))
+			return true;
+		else{
+			if (!Checks.estaVacio(activo.getOfertas())) {
+				for (ActivoOferta activoOferta : activo.getOfertas()) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
+							activoOferta.getPrimaryKey().getOferta().getId());
+					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+	
+	//				if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getFormalizacion())
+	//						&& !Checks.esNulo(expediente.getFormalizacion().getFechaEscritura())) {
+	//					return true;
+	//				}
+					if(!Checks.esNulo(expediente)){
+						if(!Checks.esNulo(expediente.getFechaVenta()))
+							return true;
+					}
+					
+					
 				}
 			}
 		}
@@ -2284,7 +2309,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (Exception ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 			return false;
 		}
 
@@ -2377,7 +2402,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				return false;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
 		}
 
@@ -2406,7 +2431,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 				throw new Exception("Error al procesar su solicitud");
 			}
 		} else {
@@ -2430,9 +2455,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoTasacion.getAuditoria().getUsuarioCrear());
 				beanUtilNotNull.copyProperty(dtoTasacion, "externoID", activoTasacion.getIdExterno());
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 		}
 
@@ -2554,9 +2579,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				reglasDto.add(nuevoDto);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 		}
 		return reglasDto;
@@ -2585,10 +2610,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(arpa, "subtipoActivo", subtipo);
 			}
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		}
 
@@ -2615,10 +2640,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(arpa, "auditoria.fechaBorrar", new Date());
 			beanUtilNotNull.copyProperty(arpa, "auditoria.usuarioBorrar", adapter.getUsuarioLogado().getUsername());
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		}
 
@@ -2728,9 +2753,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			ExpedienteComercial nuevoExpediente) {
 
 		GastosExpediente gastoExpediente = new GastosExpediente();
-		gastoExpediente.setNombre(oferta.getCustodio().getNombre());
-		gastoExpediente.setCodigo(oferta.getCustodio().getCodProveedorUvem());
-		gastoExpediente.setProveedor(oferta.getCustodio());
+		if(!Checks.esNulo(oferta.getCustodio()))
+		{
+			gastoExpediente.setNombre(oferta.getCustodio().getNombre());
+			gastoExpediente.setCodigo(oferta.getCustodio().getCodProveedorUvem());
+			gastoExpediente.setProveedor(oferta.getCustodio());
+		}
 		gastoExpediente.setAccionGastos(accionGasto);
 		gastoExpediente.setExpediente(nuevoExpediente);
 
@@ -2775,9 +2803,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en activoManager",e);
 			}
 
 			dtoList.add(dto);
@@ -2834,7 +2862,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		}
 
@@ -3009,9 +3037,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (IllegalAccessException ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 		} catch (InvocationTargetException ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 		}
 
 		return dtoLLave;
@@ -3057,9 +3085,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (IllegalAccessException ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 		} catch (InvocationTargetException ex) {
-			logger.error(ex.getMessage());
+			logger.error("Error en activoManager",ex);
 		}
 
 		return dtoMov;
@@ -3187,9 +3215,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 		}
 
 		return dto;
@@ -3215,10 +3243,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 			return false;
 		}
 		if (!Checks.esNulo(dto.getImporteVenta())) {
@@ -3323,9 +3351,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en activoManager",e);
 		}
 
 		activoCargasApi.saveOrUpdate(cargaSeleccionada);
@@ -3375,4 +3403,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(dto);
 		}
 	}
+	
+	@Override
+	public boolean checkComercializable(Long idActivo){
+		PerimetroActivo perimetroActivo = this.getPerimetroByIdActivo(idActivo);
+		return perimetroActivo.getAplicaComercializar()==1;	
+	}
+	
+	@Override
+	public boolean checkVendido(Long idActivo){
+		Activo activo = this.get(idActivo);
+		return this.isActivoVendido(activo);
+	}
+	
 }

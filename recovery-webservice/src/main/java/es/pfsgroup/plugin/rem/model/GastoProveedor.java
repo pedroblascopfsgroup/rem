@@ -137,7 +137,10 @@ public class GastoProveedor implements Serializable, Auditable {
     @OneToMany(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    private List<AdjuntoGasto> adjuntos;
+    /**
+     * Lista de adjuntos que se adjuntan sin servicio del gestor documental
+     */
+    private List<AdjuntoGasto> adjuntos;   
     
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
@@ -173,6 +176,11 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	@Column(name="NUM_GASTO_DESTINATARIO")
 	private String numGastoDestinatario;
+	
+	@Column(name="GPV_EXISTE_DOCUMENTO")
+	private Integer existeDocumento;
+	
+	
     
 	@Version   
 	private Long version;
@@ -373,7 +381,6 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setAdjuntos(List<AdjuntoGasto> adjuntos) {
 		this.adjuntos = adjuntos;
 	}
-	
 	/**
      * devuelve el adjunto por Id.
      * @param id id
@@ -386,18 +393,6 @@ public class GastoProveedor implements Serializable, Auditable {
         return null;
     }
     
-	/**
-     * devuelve el adjunto por Id.
-     * @param id id
-     * @return adjunto
-     */
-    public AdjuntoGasto getAdjuntoGD(Long idDocRestClient) {
-        for (AdjuntoGasto adj : getAdjuntos()) {
-        	if(!Checks.esNulo(adj.getIdDocRestClient()) && adj.getIdDocRestClient().equals(idDocRestClient)) { return adj; }
-        }
-        return null;
-    }
-
 	public DDEstadoGasto getEstadoGasto() {
 		return estadoGasto;
 	}
@@ -460,6 +455,14 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public boolean esAutorizadoSinActivos() {
 		return new Integer(1).equals(this.gastoSinActivos);
+	}
+
+	public Integer getExisteDocumento() {
+		return existeDocumento;
+	}
+
+	public void setExisteDocumento(Integer existeDocumento) {
+		this.existeDocumento = existeDocumento;
 	}
 
 }

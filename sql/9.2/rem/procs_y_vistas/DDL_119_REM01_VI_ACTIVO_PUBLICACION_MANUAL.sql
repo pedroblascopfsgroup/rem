@@ -1,10 +1,10 @@
  --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170109
+--## FECHA_CREACION=20170224
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1297
+--## INCIDENCIA_LINK=HREOS-1584
 --## PRODUCTO=NO
 --## Finalidad: DDL creación de la vista de filtro de activos para publicar automáticamente.
 --##           
@@ -68,7 +68,7 @@ BEGIN
 			AND vista.PRECIO = 1 -- Que el activo tenga el check de precios.
 --			AND vista.INFORME_COMERCIAL = 1 -- Que tenga IC aceptado se evalua directamente en el procedure ACTIVO_PUBLICACION_AUTO
 			AND vista.ACT_ID = activo.ACT_ID -- Que el ID de la vista y el activo se correspondan.
-			AND (vista.ESTADO_PUBLICACION_CODIGO IS NULL OR vista.ESTADO_PUBLICACION_CODIGO NOT IN (''01'', ''03'', ''04'', ''05'')) -- Que el activo no se encuentre en ningun tipo de publicacion ordinaria o despublicado forzado.
+			AND (vista.ESTADO_PUBLICACION_CODIGO IS NULL OR vista.ESTADO_PUBLICACION_CODIGO NOT IN (''01'', ''03'', ''04'')) -- Que el activo no se encuentre en ningun tipo de publicacion ordinaria o despublicado forzado.
 		';
 
   DBMS_OUTPUT.PUT_LINE('Vista creada OK');

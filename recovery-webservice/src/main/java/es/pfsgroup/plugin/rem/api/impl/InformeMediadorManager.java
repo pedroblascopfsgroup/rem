@@ -1437,11 +1437,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				// Actualizamos el rating del activo
 				activoApi.calcularRatingActivo(informeEntity.getActivo().getId());
 
-				map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
-				map.put("idinformeMediadorRem", informeEntity.getId());
+				map.put("idInformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
+				map.put("idInformeMediadorRem", informeEntity.getId());
 				map.put("success", new Boolean(true));
 			} else {
-				map.put("idinformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
+				map.put("idInformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 				map.put("success", new Boolean(false));
 				map.put("invalidFields", errorsList);
 			}

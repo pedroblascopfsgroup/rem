@@ -46,9 +46,10 @@ public interface PropuestaOfertaApi{
 	 * 
 	 * @param activoOferta
 	 * @param model
+	 * @param selfUrl
 	 * @return List<Object>
 	 */
-    public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model) throws Exception;
+    public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model, String selfUrl) throws Exception;
     
     
     public File getPDFFile(Map<String, Object> params, List<Object> dataSource, String template, ModelMap model) throws JRException, IOException, Exception;

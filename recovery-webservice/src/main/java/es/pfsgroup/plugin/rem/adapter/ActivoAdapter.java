@@ -3395,8 +3395,6 @@ public class ActivoAdapter {
 
 		try {
 			Oferta oferta = new Oferta();
-			//ActivoOferta activoOferta = new ActivoOferta();
-			//ActivoOfertaPk activoOfertaPk = new ActivoOfertaPk();
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			/*
@@ -3434,15 +3432,6 @@ public class ActivoAdapter {
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
-
-			
-			
-/*			activoOfertaPk.setActivo(activo);
-			activoOfertaPk.setOferta(oferta);
-			activoOferta.setPrimaryKey(activoOfertaPk);
-			activoOferta.setPorcentajeParticipacion(100.00);
-			activoOferta.setImporteActivoOferta(oferta.getImporteOferta());
-			listaActivosOfertas.add(activoOferta);*/
 			
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
 			oferta.setActivosOferta(listaActOfr);

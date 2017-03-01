@@ -1131,31 +1131,6 @@ public class AgrupacionAdapter {
 			oferta.setFechaAlta(new Date());
 			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 
-			/*//Mapa con los valores Tasacion/Aprobado venta de cada activo
-			Map<String,Double> valoresTasacion = new HashMap<String,Double>();
-			valoresTasacion = activoAgrupacionApi.asignarValoresTasacionAprobadoVenta(agrupacion.getActivos());
-			
-			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
-
-			if(!Checks.estaVacio(valoresTasacion)) {
-				//En cada activo de la agrupacion se añade una oferta en la tabla ACT_OFR
-				for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
-	
-					ActivoOferta activoOferta= new ActivoOferta();
-					ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
-	
-					activoOfertaPk.setActivo(activos.getActivo());
-					activoOfertaPk.setOferta(oferta);
-					activoOferta.setPrimaryKey(activoOfertaPk);
-					
-					if(!Checks.estaVacio(valoresTasacion)) {
-						String participacion = String.valueOf(activoAgrupacionApi.asignarPorcentajeParticipacionEntreActivos(activos, valoresTasacion, valoresTasacion.get("total")));
-						activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
-						activoOferta.setImporteActivoOferta((oferta.getImporteOferta()*Double.parseDouble(participacion))/100);
-					}
-					listaActivosOfertas.add(activoOferta);
-				}
-			}*/
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 			
 			oferta.setActivosOferta(listaActOfr);

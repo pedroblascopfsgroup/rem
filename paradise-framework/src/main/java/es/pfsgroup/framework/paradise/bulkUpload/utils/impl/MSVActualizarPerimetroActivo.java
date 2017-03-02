@@ -538,14 +538,15 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	private List<Integer> getComercializarConOfertasVivas(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-		/* Validacion que evalua en el caso de poner valor N en Comercializar.
+		/* Validacion que evalua en el caso de poner valor N en Comercializar (o en Perimetro).
 		 * Comprueba que el activo NO tenga ofertas vivas, para poder quitarlo de comercialización.
 		 */
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();				
-					if("N".equals(valorConComercial) ) {
+					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();	
+					String valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
+					if("N".equals(valorConComercial) || "N".equals(valorEnPerimetro)) {
 						
 						if(particularValidator.existeActivoConOfertaViva(exc.dameCelda(i, 0)))
 							listaFilas.add(i);
@@ -565,14 +566,16 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	private List<Integer> getFormalizarConExpedienteVivo(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-		/* Validacion que evalua en el caso de poner valor N en Formalizar.
+		/* Validacion que evalua en el caso de poner valor N en Formalizar (o en Comercializar, o en Perimetro)
 		 * Comprueba que el activo NO tenga un expediente comercial vivo (con tareas activas), para poder sacarlo de formalización.
 		 */
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					String valorConFormalizar= exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();				
-					if("N".equals(valorConFormalizar) ) {
+					String valorConFormalizar= exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
+					String valorEnPerimetro = exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN).trim().toUpperCase();
+					String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();	
+					if("N".equals(valorConFormalizar) || "N".equals(valorEnPerimetro) || "N".equals(valorConComercial)) {
 						
 						if(particularValidator.existeActivoConExpedienteComercialVivo(exc.dameCelda(i, 0)))
 							listaFilas.add(i);

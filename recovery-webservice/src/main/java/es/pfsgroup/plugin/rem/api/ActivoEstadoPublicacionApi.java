@@ -4,7 +4,10 @@ import java.sql.SQLException;
 
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 
 public interface ActivoEstadoPublicacionApi {
 
@@ -38,4 +41,17 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return
 	 */
 	public String getMensajeExceptionProcedure(InvalidDataAccessResourceUsageException e);
+	
+	/**
+	 * Cambia al NUEVO ESTADO DE PUBLICACION y REGISTRA EN EL HISTORICO DE PUBLICACION
+	 * @param activo
+	 * @param motivo
+	 * @param filtro
+	 * @param estadoPublicacionActual
+	 * @param isPublicacionForzada
+	 * @param isPublicacionOrdinaria
+	 * @return
+	 */
+	public boolean cambiarEstadoPublicacionAndRegistrarHistorico(Activo activo, String motivo, Filter filtro, DDEstadoPublicacion estadoPublicacionActual,
+			Boolean isPublicacionForzada, Boolean isPublicacionOrdinaria);
 }

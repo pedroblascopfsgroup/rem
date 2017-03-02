@@ -5,10 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -31,7 +33,6 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -51,11 +52,15 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
+    @Resource
+    MessageService messageServices;
+    
     private static final String COMBO_FIRMA = "comboFirma";
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_NO_FIRMA = "motivoNoFirma";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_POSICIONAMIENTOYFIRMA = "T013_PosicionamientoYFirma";
+    private static final String MOTIVO_ESTADO_PUBLICACION_ACTIVO_VENDIDO = "activo.motivo.tramite.vendido.no.publicar";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -86,6 +91,10 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, filtroSituacionComercial));
 														
 							activo.setBloqueoPrecioFechaIni(new Date());
+							
+							//Al venderse el activo, actualizamos el estado de publicación a 'No publicado'.
+							String[] numTrabajoMotivo = {String.valueOf(tramite.getTrabajo().getNumTrabajo())};
+							activoApi.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_ESTADO_PUBLICACION_ACTIVO_VENDIDO, numTrabajoMotivo));
 							
 							genericDao.save(Activo.class, activo);
 						}

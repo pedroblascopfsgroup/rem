@@ -2289,6 +2289,11 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			model.put("success", activoApi.saveComercialActivo(dto));
+			
+		} catch (JsonViewerException jvex) {
+			logger.error("error en activoController.saveComercialActivo", jvex);
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);

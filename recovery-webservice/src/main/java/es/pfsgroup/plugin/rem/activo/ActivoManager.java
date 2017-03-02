@@ -3219,7 +3219,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveComercialActivo(DtoComercialActivo dto) {
+	public boolean saveComercialActivo(DtoComercialActivo dto) throws JsonViewerException {
 
 		if (Checks.esNulo(dto.getId())) {
 			return false;
@@ -3239,9 +3239,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager",e);
 			return false;
 		} catch (InvocationTargetException e) {
-			logger.error("Error en activoManager",e);
-			return false;
-		} catch (JsonViewerException e) {
 			logger.error("Error en activoManager",e);
 			return false;
 		} catch (SQLException e) {

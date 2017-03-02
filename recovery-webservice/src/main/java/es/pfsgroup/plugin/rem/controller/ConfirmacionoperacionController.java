@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ConfirmacionOpDto;
 import es.pfsgroup.plugin.rem.rest.dto.ConfirmacionOpRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Controller
 public class ConfirmacionoperacionController {
@@ -31,6 +32,9 @@ public class ConfirmacionoperacionController {
 
 	@Autowired
 	private ConfirmarOperacionApi confirmarOperacionApi;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 
 	
 
@@ -73,7 +77,10 @@ public class ConfirmacionoperacionController {
 						confirmarOperacionApi.anularCobroVenta(confirmacionOpDto);
 					}else if(confirmacionOpDto.getAccion().equalsIgnoreCase(ConfirmarOperacionApi.ANUL_DEVOLUCION_RESERVA)){
 						confirmarOperacionApi.anularDevolucionReserva(confirmacionOpDto);
-					}	
+					}					
+					// Actualizamos la situacion comercial del activo
+					updaterState.updaterStateDisponibilidadComercialAndSave(confirmacionOpDto.getActivo());
+					
 				}
 
 				model.put("id", jsonFields.get("id"));

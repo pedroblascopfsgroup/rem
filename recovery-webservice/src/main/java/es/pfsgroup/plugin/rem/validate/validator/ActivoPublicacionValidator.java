@@ -3,13 +3,15 @@ package es.pfsgroup.plugin.rem.validate.validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.beans.Service;
+import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.validate.ActivoPublicacionValidatorApi;
 
-@Component
-public class ActivoPublicacionValidator implements ActivoPublicacionValidatorApi {
+@Service
+public class ActivoPublicacionValidator extends BusinessOperationOverrider<ActivoPublicacionValidatorApi> implements ActivoPublicacionValidatorApi {
 
 	@Autowired
     private ActivoApi activoApi;
@@ -85,6 +87,11 @@ public class ActivoPublicacionValidator implements ActivoPublicacionValidatorApi
 				(validarOKPrecio ? tieneOkPrecios() : true) &&
 				(validarInfComercialTiposIguales ? tieneInfComercialTiposIguales() : true) &&
 				(validarInfComercialAceptado ? tieneInfComercialAceptado() : true);
+	}
+
+	@Override
+	public String managerName() {
+		return "activoPublicacionValidator";
 	}
 
 }

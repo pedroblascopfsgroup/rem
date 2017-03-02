@@ -923,4 +923,13 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public boolean isActivoConOfertasVivas(Activo activo);
+	
+	/**
+	 * Cambia el Estado de publicación a 'No publicado' y registra el cambio en el histórico
+	 * @param activo
+	 * @param motivo
+	 * @throws SQLException 
+	 * @throws JsonViewerException 
+	 */
+	public void setActivoToNoPublicado(Activo activo, String motivo) throws JsonViewerException, SQLException;
 }

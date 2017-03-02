@@ -36,6 +36,7 @@ public class DtoOfertasFilter extends WebDto {
 	private String numDocumentoCliente;
 	private String tipoDocumento;
 	private Boolean deDerechoTanteo;
+	private String codigoPrescriptor;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -181,14 +182,17 @@ public class DtoOfertasFilter extends WebDto {
 	public void setTipoDocumento(String tipoDocumento) {
 		this.tipoDocumento = tipoDocumento;
 	}
-	
 	public Boolean getDeDerechoTanteo() {
 		return deDerechoTanteo;
 	}
 	public void setDeDerechoTanteo(Boolean deDerechoTanteo) {
 		this.deDerechoTanteo = deDerechoTanteo;
 	}
-	
-	
+	public String getCodigoPrescriptor() {
+		return codigoPrescriptor;
+	}
+	public void setCodigoPrescriptor(String codigoPrescriptor) {
+		this.codigoPrescriptor = codigoPrescriptor;
+	}
 	
 }

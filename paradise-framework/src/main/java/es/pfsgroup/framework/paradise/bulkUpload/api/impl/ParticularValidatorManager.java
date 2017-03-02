@@ -762,4 +762,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+	
+	@Override
+	public Boolean existeActivoConExpedienteComercialVivo(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "	  	FROM VI_OFERTAS_ACTIVOS_AGRUPACION v "
+				+ " 	INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON v.ECO_ID = eco.ECO_ID "
+				+ "  	INNER JOIN ACT_TBJ_TRABAJO tbj ON eco.TBJ_ID = tbj.TBJ_ID "
+				+ "  	INNER JOIN ACT_TRA_TRAMITE tra ON tbj.TBJ_ID = tra.TBJ_ID "
+				+ "  	INNER JOIN TAC_TAREAS_ACTIVOS tac ON tra.TRA_ID = tac.TRA_ID "
+				+ "  	INNER JOIN TAR_TAREAS_NOTIFICACIONES tar ON tac.TAR_ID = TAR.TAR_ID "
+				+ " 	WHERE V.ACTIVOS LIKE '%''"+numActivo+"''%' "
+				+ "    	AND tar.TAR_FECHA_FIN IS NULL "
+				+ "     AND ROWNUM=1 ");
+		
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 }

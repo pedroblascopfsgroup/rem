@@ -3,11 +3,14 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
@@ -35,6 +38,8 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
     private static final Integer CHECK_VALOR_NO = 0;
     private static final Integer CHECK_NO_CAMBIAR = -1;
     
+    private static final String MOTIVO_ACTIVO_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
+    
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 		
@@ -49,6 +54,9 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+	
+	@Resource
+    MessageService messageServices;
 	
 	@Override
 	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
@@ -174,11 +182,15 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 							utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, tmpTipoAlquiler.substring(0, 2)));
 				
 				
-				//Aplica Formalizar			---------------------------
-				//Si Comercializar es NO, forzamos también a NO => Formalizar (por si no venía informado)
-				if(CHECK_VALOR_NO.equals(tmpAplicaComercializar))
+				if(CHECK_VALOR_NO.equals(tmpAplicaComercializar)) {
+					//Si Comercializar es NO, forzamos también a NO => Formalizar (por si no venía informado)
 					tmpAplicaFormalizar = CHECK_VALOR_NO;
+					
+					//Comrprobamos si es necesario actualizar el estado de publicación del activo, y si lo es, se cambia.
+					activoApi.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_ACTIVO_NO_PUBLICADO));
+				}
 				
+				//Aplica Formalizar			---------------------------
 				if(!CHECK_NO_CAMBIAR.equals(tmpAplicaFormalizar)){
 					perimetroActivo.setAplicaFormalizar(tmpAplicaFormalizar);
 					perimetroActivo.setFechaAplicaFormalizar(new Date());					

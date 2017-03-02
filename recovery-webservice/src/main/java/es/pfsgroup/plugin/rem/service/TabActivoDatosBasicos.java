@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -40,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -57,6 +59,8 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 public class TabActivoDatosBasicos implements TabActivoService {
 	
 	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
+	public static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
+	public static final String MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
     
 
 	@Autowired
@@ -199,8 +203,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		if(activo.getEstadoPublicacion() != null){
+			// Si el activo contiene datos de publicación.
 			BeanUtils.copyProperty(activoDto, "estadoPublicacionDescripcion", activo.getEstadoPublicacion().getDescripcion());
 			BeanUtils.copyProperty(activoDto, "estadoPublicacionCodigo", activo.getEstadoPublicacion().getCodigo());
+		} else {
+			// Si el activo no contiene datos de publicación se trata como NO PUBLICADO.
+			DDEstadoPublicacion estadoPublicacion = (DDEstadoPublicacion) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
+			if(!Checks.esNulo(estadoPublicacion)) {
+				activoDto.setEstadoPublicacionDescripcion(estadoPublicacion.getDescripcion());
+			}
+			activoDto.setEstadoPublicacionCodigo(DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 		}
 		
 		if(activo.getTipoComercializar() != null){
@@ -535,16 +547,24 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaComercializar(new Date());
 					
+					//Acciones al desmarcar check comercializar
 					if(!dto.getAplicaComercializar()) {
-						String error = validarPerimetroComercializarActivo(activo);
-						
-						if(!Checks.esNulo(error))
-							throw new JsonViewerException(error);
+						try {
+							this.accionesDesmarcarComercializar(activo);
+						} catch (SQLException e) {
+							new JsonViewerException("Error en BBDD: ".concat(e.getMessage()));
+							e.printStackTrace();
+						}
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
 					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaFormalizar(new Date());
+					
+					//Validacion al desmarcar check formalizar
+					if(!dto.getAplicaFormalizar()) {
+						this.validarPerimetroActivo(activo,2);;
+					}
 				}
 				if(!Checks.esNulo(dto.getAplicaGestion())) {
 					perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
@@ -660,18 +680,48 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	}
 	
 	/**
-	 * Comprueba que el activo no tenga ofertas activas
+	 * Acciones al desmarcar check Comercializar
+	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
+	 * 2. Si puede, hay que poner el activo en estado publicación a 'No publicado'
+	 * @param activo
+	 * @throws SQLException 
+	 * @throws JsonViewerException 
+	 */
+	private void accionesDesmarcarComercializar(Activo activo) throws JsonViewerException, SQLException {
+		this.validarPerimetroActivo(activo,1);
+		//Si se permite desmarcar, cambiamos el estado de publicación del activo a 'No Publicado'
+		String motivo = messageServices.getMessage(MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO);
+		activoApi.setActivoToNoPublicado(activo, motivo);
+	}
+	
+	/**
+	 * Valida condiciones del perimitro, según se marque/desmarque los checks.
+	 * case 1: Al desmarcar check comercializar, no se puede hacer si el activo tiene ofertas vivas. (estado != rechazada)
+	 * case 2: Al desmarcar check formalizar, no se puede hacer si el activo tiene un exp. comercial vivo (tareas activas)
 	 * @param activo
 	 * @return
 	 */
-	private String validarPerimetroComercializarActivo(Activo activo) {
+	private void validarPerimetroActivo(Activo activo, Integer numVal) {
 		
 		String error = null;
 		
-		if(activoApi.isActivoConOfertasVivas(activo)) {
-			error = messageServices.getMessage(MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS);
+		switch(numVal) {
+			case 1: {
+				if(activoApi.isActivoConOfertasVivas(activo))
+					error = messageServices.getMessage(MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS);
+				break;
+			}
+			case 2: {
+				if(expedienteComercialApi.isExpedienteComercialVivoByActivo(activo))
+					error = messageServices.getMessage(MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO);
+				break;
+			}
+			default:
+				break;
 		}
 		
-		return error;
+		if(!Checks.esNulo(error))
+			throw new JsonViewerException(error);
 	}
+	
 }

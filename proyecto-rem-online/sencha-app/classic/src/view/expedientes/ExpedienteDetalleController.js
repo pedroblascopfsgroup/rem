@@ -363,8 +363,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		idCliente = record.get("id"),
 		expediente= me.getViewModel().get("expediente");
 		var storeGrid= gridView.store;
-	//	me.getView().fireEvent('openModalWindow',"HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid});
-	    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid, expediente: expediente }).show();
+		var edicion = $AU.userHasFunction(['TAB_COMPRADORES_EXP_DETALLES_COMPRADOR']);
+	    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
 	},
 
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){

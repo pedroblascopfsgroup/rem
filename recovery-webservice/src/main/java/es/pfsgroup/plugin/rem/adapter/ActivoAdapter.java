@@ -45,6 +45,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -53,6 +54,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -75,8 +77,8 @@ import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -116,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
@@ -139,7 +142,6 @@ import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
@@ -220,6 +222,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ProveedoresApi proveedoresApi;
 
 	@Resource
 	MessageService messageServices;
@@ -1944,17 +1949,48 @@ public class ActivoAdapter {
 						beanUtilNotNull.copyProperty(cargaDto, "subtipoCargaCodigo",
 								activoCarga.getSubtipoCarga().getCodigo());
 					}
-					if (activoCarga.getCargaBien().getSituacionCarga() != null) {
-						beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-								activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
-						beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-								activoCarga.getCargaBien().getSituacionCarga().getCodigo());
-					}
-					if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
-						beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
-								activoCarga.getCargaBien().getSituacionCargaEconomica().getDescripcion());
-						beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",
-								activoCarga.getCargaBien().getSituacionCargaEconomica().getCodigo());
+					if (activoCarga.getCargaBien() != null) {
+						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el estado Cancelado (independientemente del registrado en DD_SIC_ID)
+						if( !activoCarga.getCargaBien().isEconomica() && 
+								(!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion()))) {
+							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
+									DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion", situacionCancelada.getDescripcion());									
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
+							
+							// Fecha de cancelacion de una carga registral
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacion", activoCarga.getCargaBien().getFechaCancelacion());
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacionRegistral", activoCarga.getCargaBien().getFechaCancelacion());
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacionEconomica", null);
+						} else {
+							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
+								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
+										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
+								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
+										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
+							}
+						}
+
+						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el estado Cancelado (independientemente del registrado en DD_SIC_ID)
+						if( activoCarga.getCargaBien().isEconomica() && 
+								(!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion()))) {
+							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
+									DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion", situacionCancelada.getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo", situacionCancelada.getCodigo());
+							
+							// Fecha de cancelacion de una carga economica
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacion", activoCarga.getCargaBien().getFechaCancelacion());
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacionEconomica", activoCarga.getCargaBien().getFechaCancelacion());
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacionRegistral", null);
+						} else {
+							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
+								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
+										activoCarga.getCargaBien().getSituacionCargaEconomica().getDescripcion());
+								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",
+										activoCarga.getCargaBien().getSituacionCargaEconomica().getCodigo());
+							}
+						}
 					}
 
 				} catch (IllegalAccessException e) {
@@ -2005,17 +2041,44 @@ public class ActivoAdapter {
 			}
 
 			if (cargaSeleccionada.getCargaBien().getSituacionCarga() != null) {
-				beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo",
-						cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
-				beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica",
-						cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
+				// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el estado Cancelado (independientemente del registrado en DD_SIC_ID)
+				// REG
+				if( !cargaSeleccionada.getCargaBien().isEconomica() && 
+						(!Checks.esNulo(cargaSeleccionada.getCargaBien().getFechaCancelacion()))) {
+					DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
+							DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo", situacionCancelada.getCodigo());
+
+					// Fecha de cancelacion de una carga registral
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacion", cargaSeleccionada.getCargaBien().getFechaCancelacion());
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionRegistral", cargaSeleccionada.getCargaBien().getFechaCancelacion());
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionEconomica", null);
+				} else {
+					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo",
+							cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
+				}
+				
+				// ECO
+				if( cargaSeleccionada.getCargaBien().isEconomica() && 
+						(!Checks.esNulo(cargaSeleccionada.getCargaBien().getFechaCancelacion()))) {
+					DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
+							DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica", situacionCancelada.getCodigo());
+
+					// Fecha de cancelacion de una carga economica
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacion", cargaSeleccionada.getCargaBien().getFechaCancelacion());
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionEconomica", cargaSeleccionada.getCargaBien().getFechaCancelacion());
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionRegistral", null);
+				} else {
+					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica",
+							cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
+				}
 			}
 
 			beanUtilNotNull.copyProperty(dtoCarga, "titularEconomica", cargaSeleccionada.getCargaBien().getTitular());
 			beanUtilNotNull.copyProperty(dtoCarga, "importeEconomicoEconomica",
 					cargaSeleccionada.getCargaBien().getImporteEconomico());
-			beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionEconomica",
-					cargaSeleccionada.getCargaBien().getFechaCancelacion());
+
 			beanUtilNotNull.copyProperty(dtoCarga, "descripcionCargaEconomica",
 					cargaSeleccionada.getDescripcionCarga());
 
@@ -3367,6 +3430,8 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean createOfertaActivo(DtoOfertasFilter dto) throws Exception {
+		List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
+		
 		Activo activo = activoApi.get(dto.getIdActivo());
 
 		// Comprobar el tipo de destino comercial que tiene actualmente el
@@ -3389,8 +3454,6 @@ public class ActivoAdapter {
 
 		try {
 			Oferta oferta = new Oferta();
-			ActivoOferta activoOferta = new ActivoOferta();
-			ActivoOfertaPk activoOfertaPk = new ActivoOfertaPk();
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			/*
@@ -3428,21 +3491,19 @@ public class ActivoAdapter {
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
-
-			List<ActivoOferta> listaActivosOfertas = new ArrayList<ActivoOferta>();
-			activoOfertaPk.setActivo(activo);
-			activoOfertaPk.setOferta(oferta);
-			activoOferta.setPrimaryKey(activoOfertaPk);
-			activoOferta.setPorcentajeParticipacion(100.00);
-			activoOferta.setImporteActivoOferta(oferta.getImporteOferta());
-			listaActivosOfertas.add(activoOferta);
-			oferta.setActivosOferta(listaActivosOfertas);
+			
+			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
+			oferta.setActivosOferta(listaActOfr);
 
 			oferta.setCliente(clienteComercial);
+			
+			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 
 			genericDao.save(Oferta.class, oferta);
+			// Actualizamos la situacion comercial del activo
+			updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error en activoAdapter",ex);
 			return false;
 		}
 

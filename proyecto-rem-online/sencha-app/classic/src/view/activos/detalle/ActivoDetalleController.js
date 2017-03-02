@@ -1110,7 +1110,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeEstadoPublicacion: function(field){
     	var me = this;
     	var view = me.getView();
-    	var codigo = this.getViewModel().getData().getEstadoPublicacionCodigo;
+    	var codigo = me.getViewModel().getData().getEstadoPublicacionCodigo;
 
     	switch (codigo){
     	case "01": // Publicado.
@@ -2487,6 +2487,58 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 		
 		
+	},
+	buscarPrescriptor: function(field, e){
+		
+		var me= this;
+		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigo');
+		var codPrescriptor = field.getValue();
+		var data;
+		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$)).*$");
+
+		
+		Ext.Ajax.request({
+		    			
+		 		url: url,
+		   		params: {codigoUnicoProveedor : codPrescriptor},
+		    		
+		    	success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+		    		var buscadorPrescriptor = field.up('formBase').down('[name=buscadorPrescriptores]'),
+		    		nombrePrescriptorField = field.up('formBase').down('[name=nombrePrescriptor]');
+		    		
+			    	if(!Utils.isEmptyJSON(data.data)){
+						var id= data.data.id;
+						var tipoProveedorCodigo = data.data.tipoProveedor.codigo;
+						
+		    		    var nombrePrescriptor= data.data.nombre;
+		    		    
+		    		    if(re.test(tipoProveedorCodigo)){
+			    		    if(!Ext.isEmpty(buscadorPrescriptor)) {
+			    		    	buscadorPrescriptor.setValue(codPrescriptor);
+			    		    }
+			    		    if(!Ext.isEmpty(nombrePrescriptorField)) {
+			    		    	nombrePrescriptorField.setValue(nombrePrescriptor);
+	
+				    		}
+		    		    }else{
+		    		    	nombrePrescriptorField.setValue('');
+		    				me.fireEvent("errorToast", "El código del Proveedor introducido no es un Prescriptor");
+		    			}
+			    	} else {
+			    		if(!Ext.isEmpty(nombrePrescriptorField)) {
+			    			nombrePrescriptorField.setValue('');
+		    		    }
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));
+			    		buscadorPrescriptor.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.proveedor.codigo"));		    		    
+			    	}		    		    	 
+		    	},
+		    	failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	},
+		    	callback: function(options, success, response){
+				}   		     
+		});		
 	}
 		
 });

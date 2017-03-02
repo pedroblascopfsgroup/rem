@@ -158,4 +158,11 @@ public interface  ParticularValidatorApi {
 	 * @return
 	 */
 	public Boolean existeActivoConOfertaViva(String numActivo);
+	
+	/**
+	 * Comprueba que el activo no este en un expediente comercial vivo (con trámites en activo)
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean existeActivoConExpedienteComercialVivo(String numActivo);
 }

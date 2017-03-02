@@ -252,13 +252,13 @@ public class UvemManager implements UvemManagerApi {
 			logger.info("NumeroIdentificadorDeTasacionlnuita2: " + servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2());
 			
 		}catch (WIMetaServiceException  e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}catch (WIException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}catch (TipoDeDatoException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}
 		
@@ -431,7 +431,7 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 		}catch (WIException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}
 		return numCliente;
@@ -701,7 +701,7 @@ public class UvemManager implements UvemManagerApi {
 			}
 			
 		}catch (WIException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}
 		return datos;
@@ -725,7 +725,7 @@ public class UvemManager implements UvemManagerApi {
 		try {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);
 		} catch (WIException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}
 		return instancia;
@@ -745,7 +745,7 @@ public class UvemManager implements UvemManagerApi {
 		try {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}
 		return instancia;
@@ -765,7 +765,7 @@ public class UvemManager implements UvemManagerApi {
 		try {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION);
 		} catch (WIException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}
 		return instancia;
@@ -1004,7 +1004,7 @@ public class UvemManager implements UvemManagerApi {
 			logger.info("CodigoDeOfertaHayacoofhx2: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
 
 		}catch (WIException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}
 		
@@ -1150,7 +1150,7 @@ public class UvemManager implements UvemManagerApi {
 			}
 			
 		}catch (WIException e) {
-			logger.error(e);
+			logger.error("error en UvemManager",e);
 			throw e;
 		}
 		return importe.getImporteComoLong();

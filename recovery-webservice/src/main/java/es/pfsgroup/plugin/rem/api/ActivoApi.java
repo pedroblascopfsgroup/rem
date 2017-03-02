@@ -102,7 +102,7 @@ public interface ActivoApi {
 	 * @param fileItem
 	 * @return
 	 */
-	public String uploadFoto(File fileItem);
+	public String uploadFoto(File fileItem) throws Exception;
 
 	/**
 	 * Recupera la lista completa de Activos
@@ -420,6 +420,13 @@ public interface ActivoApi {
 	 */
 	public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo);
 
+	/**
+	 * Validacion TRUE o FALSE que indica si el ultimo estado del INF. Comercial es ACEPTADO
+	 * @param activo
+	 * @return
+	 */
+	public boolean isInformeComercialAceptado(Activo activo);
+	
 	/**
 	 * Este método obtiene los estados, el historial, del mediador de la pestaña
 	 * informe comercial.
@@ -904,4 +911,29 @@ public interface ActivoApi {
 	public void calcularSingularRetailActivo(Long idActivo);
 	
 	public String getCodigoTipoComercializarByActivo(Long idActivo);
+	/** Comprueba que el activo en el perímetro es comercializable
+	 * @param idActivo
+	 * @return
+	 */
+	public boolean checkComercializable(Long idActivo);
+	
+	/**
+	 * Comprueba que el activo no está vendido
+	 * @param idActivo
+	 * @return
+	 */
+	public boolean checkVendido(Long idActivo);
+	 
+	/** Comprueba si el activo tiene alguna oferta viva (Estado != Rechazada)
+	 * @param activo
+	 * @return
+	 */
+	public boolean isActivoConOfertasVivas(Activo activo);
+	
+	/**
+	 * Cambia el Estado de publicación a 'No publicado' y registra el cambio en el histórico
+	 * @param activo
+	 * @param motivo
+	 */
+	public void setActivoToNoPublicado(Activo activo, String motivo);
 }

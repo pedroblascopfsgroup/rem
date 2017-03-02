@@ -427,6 +427,21 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 			   }
 		});
     },
+    
+    setTopBar: function(topBar) {
+    	var me = this;
+    	me.topBar = topBar;
+    	//if(!me.topBar) {
+    		var toolbarDockItem = me.dockedItems.filterBy(
+	    		function (item, key) {
+	    			return item.tipo == "toolbaredicion";
+	    		}
+	    	);
+    		if(!Ext.isEmpty(toolbarDockItem) && toolbarDockItem.items.length > 0 ) {
+    			toolbarDockItem.items[0].setVisible(topBar);
+    		}
+    	//}
+    },
 
     disablePagingToolBar: function(disabled) {
     	var me = this,

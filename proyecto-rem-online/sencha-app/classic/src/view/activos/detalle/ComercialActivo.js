@@ -77,5 +77,6 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 		var me = this;
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
+		me.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
     }
 });

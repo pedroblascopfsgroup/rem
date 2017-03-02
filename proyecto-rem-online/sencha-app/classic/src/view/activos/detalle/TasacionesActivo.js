@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 
 	listeners: {
     	boxready: function() {
-    		me = this;
+    		var me = this;
     		me.lookupController().cargarTabData(me);
     	}
     },

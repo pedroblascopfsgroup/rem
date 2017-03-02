@@ -1,12 +1,14 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
@@ -51,7 +53,7 @@ public interface ActivoAgrupacionApi {
     @BusinessOperationDefinition("activoAgrupacionManager.uploadFoto")
     public String uploadFoto(WebFileItem fileItem);
     
-    public String uploadFoto(File fileItem);
+    public String uploadFoto(File fileItem) throws Exception;
     
     @BusinessOperationDefinition("activoAgrupacionManager.getFotosActivosAgrupacionById")
     public List<ActivoFoto> getFotosActivosAgrupacionById(Long id);
@@ -59,7 +61,7 @@ public interface ActivoAgrupacionApi {
     @BusinessOperationDefinition("activoAgrupacionManager.uploadFotoSubdivision")
 	String uploadFotoSubdivision(WebFileItem fileItem);
     
-    public String uploadFotoSubdivision(File fileItem);
+    public String uploadFotoSubdivision(File fileItem) throws Exception;
 
 	public boolean createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion);
 
@@ -75,5 +77,22 @@ public interface ActivoAgrupacionApi {
 	public List<ActivoFoto> getFotosSubdivision(DtoSubdivisiones subdivision);
 
 	public List<ActivoFoto> getFotosAgrupacionById(Long id);
+	
+	/**
+	 * Asignacion de valores (tasacion y sino, Aprobado venta) por activo, y el total de todos ellos
+	 * @param activos lista de ActivoAgrupacionActivo a calcular el valor
+	 * @return Map<String,Double> mapa con el valor de tasación/aprobado venta de cada activo. 
+	 * El total es null si alguno de los activos no tienen el valor de tasación/aprobado venta
+	 */
+	public Map<String,Double> asignarValoresTasacionAprobadoVenta(List<ActivoAgrupacionActivo> activos) throws Exception;
+	
+	/**
+	 * Devuelve el porcentaje correspondiente según el valor por activo
+	 * @param activo
+	 * @param valores
+	 * @param total
+	 * @return Float porcentaje correspondiente de un activo
+	 */
+	public Float asignarPorcentajeParticipacionEntreActivos(ActivoAgrupacionActivo activo, Map<String,Double> valores, Double total) throws Exception;
 		
 }

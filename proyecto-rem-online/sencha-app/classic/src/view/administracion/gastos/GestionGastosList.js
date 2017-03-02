@@ -117,10 +117,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     	width: 30,
 	    	                     	menuDisabled: true,
 	    	                     	hideable: false,
-	    	                     	dataIndex: 'tieneDocAdjuntos',
-	    	                     	renderer: function(tieneDocAdjuntos) {
+	    	                     	dataIndex: 'existeDocumento',
+	    	                     	renderer: function(existeDocumento) {
 	    	                     		var css = "";
-	    	                     		if(tieneDocAdjuntos) {
+	    	                     		if(existeDocumento) {
 	    	                     			css = "x-fa fa-paperclip";
 	    	                     		}
 	    	                     		

@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators;
@@ -49,13 +48,13 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
-	private static final String ERROR_TAMANYO_MINIMO = "El fichero tiene que tener un mÌnimo de dos filas";
+	private static final String ERROR_TAMANYO_MINIMO = "El fichero tiene que tener un m√≠nimo de dos filas";
 	private static final String ERROR_TAMANYO_MAXIMO = "El fichero tiene mas filas de las permitidas";
 	private static final String ERROR_SIN_CABECERA = "No se encuentran las cabeceras en el excel";
 	private static final String ERROR_FICHERO_NOT_FOUND = "No se ha podido recuperar el fichero excel";
 	private static final String ERROR_NOMBRES_CABECERA = "El nombre de las columnas no es correcto";
 
-	public static final String ACTIVE_DUPLICATED = "Este activo ya pertenece a esta agrupaciÛn.";
+	public static final String ACTIVE_DUPLICATED = "Este activo ya pertenece a esta agrupaci√≥n.";
 	
 	private DecimalFormat format;
 
@@ -284,11 +283,11 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	private ResultadoValidacion validaCelda(String validacion, String contenidoCelda, String cabecera) {
 
 		String inicioTextoError = "El campo '" + cabecera + "' ";
-		String errObligatorio = inicioTextoError + "no puede estar vacÌ≠o. ";
-		String errNumerico = inicioTextoError + "debe ser numÈrico. ";
-		String errImporte = inicioTextoError + "no es un importe v·lido. ";
-		String errFecha = inicioTextoError + "no es una fecha v·lida. ";
-		String errLongitud = inicioTextoError + "debe tener una longitud m·xima de ";
+		String errObligatorio = inicioTextoError + "no puede estar vac√≠o. ";
+		String errNumerico = inicioTextoError + "debe ser num√©rico. ";
+		String errImporte = inicioTextoError + "no es un importe v√°lido. ";
+		String errFecha = inicioTextoError + "no es una fecha v√°lida. ";
+		String errLongitud = inicioTextoError + "debe tener una longitud m√°xima de ";
 		String errBooleano = inicioTextoError + "debe ser uno de estos valores 'S', 'SI', 'N' o 'NO' ";
 
 		ResultadoValidacion resultado = new ResultadoValidacion();

@@ -738,6 +738,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  			
 				  success: function(response,opts){
 					  //Si se puede crear la propuesta, la crea
+					  boton = me.lookupReference("botonGenerarPropuesta");
 					  if(Ext.JSON.decode(response.responseText).success == "true") {
 					    	params.nombrePropuesta = text;
 					    	params.idTrabajo = idTrabajo;
@@ -746,6 +747,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 							config.url= $AC.getRemoteUrl('trabajo/createPropuestaPreciosFromTrabajo');
 							
 							me.fireEvent("downloadFile", config);
+							boton.setDisabled(true);
 					  }
 					  else {
 						  me.fireEvent("errorToast", Ext.JSON.decode(response.responseText).mensaje); 
@@ -764,6 +766,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		messageBox.textField.mon(messageBox.textField.el, 'keypress', messageBox.textField.filterKeys, messageBox.textField);
 		
      },
+     
+     comprobarExistePropuestaTrabajo: function(){
+     	var me = this, params = {},
+       	idTrabajo = me.getViewModel().get('trabajo').get('id');
+     	//LLamada para comprobar si se puede crear la propuesta
+     	var url = $AC.getRemoteUrl('trabajo/comprobarCreacionPropuesta');
+ 	    Ext.Ajax.request({
+ 		  url:url,
+ 		  params:  {idTrabajo : idTrabajo},
+ 		  			
+ 		  success: function(response,opts){
+ 			  boton = me.lookupReference("botonGenerarPropuesta");
+ 			  //Si se puede crear la propuesta, activa el boton sino lo desactiva
+ 			  if(Ext.JSON.decode(response.responseText).success == "true") {
+ 				  boton.setDisabled(false);
+ 			  }
+ 			  else {
+ 				  boton.setDisabled(true);
+ 			  }		
+ 		  }
+     	});
+      },
      
      onClickBotonDescargarPlantilla: function(btn) {
     	var me = this,

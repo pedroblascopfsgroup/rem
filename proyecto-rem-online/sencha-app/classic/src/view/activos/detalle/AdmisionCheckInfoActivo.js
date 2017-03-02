@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
     
     listeners: {
     	boxready: function() {
-    		me = this;
+    		var me = this;
     		me.lookupController().cargarTabData(me);
     		me.evaluarEdicion();
     	}

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.updaterstate;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,7 +96,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			return error;
 		}
 		
-		if(Checks.estaVacio(gasto.getAdjuntos())) {
+		if(Checks.esNulo(gasto.getExisteDocumento()) || !BooleanUtils.toBoolean(gasto.getExisteDocumento())) {
 			error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
 			return error;
 		}

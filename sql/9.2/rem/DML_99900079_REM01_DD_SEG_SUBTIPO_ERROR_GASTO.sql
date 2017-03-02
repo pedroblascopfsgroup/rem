@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Teresa Alonso
---## FECHA_CREACION=20161031
+--## FECHA_CREACION=20170223
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=HREOS-1086
+--## INCIDENCIA_LINK=HREOS-1086-HREOS-1508
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_SEG_SUBTIPO_ERROR_GASTO los tipos de error definidos en gestorias 
@@ -12,6 +12,7 @@
 --##        0.1 Versión inicial
 --##        0.2 Gustavo Mora: quitamos letra a códigos subtipo gasto
 --##        0.3 Diego Crespo: Añadimos códigos nuevos al subtipo '04' 
+--## 	    0.4 Joaquin Arnal: Actualizamos codigos del tipo 03
 --##########################################
 --*/
 
@@ -52,20 +53,21 @@ DECLARE
         T_TIPO_DATA('02' , '06' , 'No procede pago plus' , 'No procede pago plusvalía'),
         T_TIPO_DATA('02' , '07' , 'Abono gasto no exist' , 'Abono de gasto que no existe, está anulado, no está pagado o ya está abonado' ),
         
-        T_TIPO_DATA('03' , '01' , '% vta no suman 100  ', 'Los porcentajes de la venta conjunta no suman 100' ),
-        T_TIPO_DATA('03' , '02' , 'Fra Rechaz (ASPRO)  ' , 'Factura Recibida Rechazada por Contabilidad (ASPRO)'  ),
-        T_TIPO_DATA('03' , '03' , 'Fra sin Inmuebles   ' , 'Factura sin Inmuebles'),
-        T_TIPO_DATA('03' , '04' , 'Fra sin Detalle(Lín)' , 'Factura sin Detalle (Líneas)'),
-        T_TIPO_DATA('03' , '05' , 'Cte sin Población   ' , 'Cliente sin Población'  ),
-        T_TIPO_DATA('03' , '06' , 'Fra Rectifica no inf' , 'Factura Rectificativa que no tiene informado la fac. corregida' ),
-        T_TIPO_DATA('03' , '07' , 'Imp arras en fra vta' , 'Importe arras incluido en factura de venta'),
-        T_TIPO_DATA('03' , '08' , 'Forma pago incorrect' , 'Forma de pago incorrecta' ),
-        T_TIPO_DATA('03' , '09' , 'Dif Imp  KC10-KC11  ' , 'Diferencia de Importes en Facturas Recibidas KC10-KC11' ),
-        T_TIPO_DATA('03' , '10' , 'Fra mismo prov(ASPRO' , 'Factura ya introducida para el mismo proveedor. (ASPRO)'),
-      	T_TIPO_DATA('03' , '11' , 'Act no dispo SdadPag' , 'Activo no disponible en la Sociedad Pagadora' ) ,
-      	T_TIPO_DATA('03' , '12' , 'Sdad Pagad no defini' , 'Sociedad Pagadora no definida' ),
-        T_TIPO_DATA('03' , '13' , 'Dif Imp  KC10-KC12  ' , 'Diferencia de Importes en Facturas Recibidas KC10-KC12'  ),
-        T_TIPO_DATA('03' , '14' , 'Faltan datos cliente' , 'Faltan datos de cliente' ),
+	T_TIPO_DATA('03' , '000' , 'Factura correcta'     , 'Factura correcta'),
+        T_TIPO_DATA('03' , '001' , '% vta no suman 100'	  , 'Los porcentajes de la venta conjunta no suman 100' ),
+        T_TIPO_DATA('03' , '009' , 'Fra Rechaz (ASPRO)'   , 'Factura Recibida Rechazada por Contabilidad (ASPRO)'),
+        T_TIPO_DATA('03' , '002' , 'Fra sin Inmuebles' 	  , 'Factura sin Inmuebles'),
+        T_TIPO_DATA('03' , '003' , 'Fra sin Detalle(Lín)' , 'Factura sin Detalle (Líneas)'),
+        T_TIPO_DATA('03' , '004' , 'Cliente sin Poblaci'  , 'Cliente sin Población'),
+        T_TIPO_DATA('03' , '010' , 'Fra Rectifica no inf' , 'Factura Rectificativa que no tiene informado la fac. corregida'),
+        T_TIPO_DATA('03' , '005' , 'Imp arras en fra vta' , 'Importe arras incluido en factura de venta'),
+        T_TIPO_DATA('03' , '006' , 'Forma pago incorrect' , 'Forma de pago incorrecta'),
+        T_TIPO_DATA('03' , '007' , 'Dif Imp  KC10-KC11  ' , 'Diferencia de Importes en Facturas Recibidas KC10-KC11'),
+        T_TIPO_DATA('03' , '008' , 'Fra mismo prov(ASPRO' , 'Factura ya introducida para el mismo proveedor. (ASPRO)'),
+      	T_TIPO_DATA('03' , '015' , 'Act no dispo SdadPag' , 'Activo no disponible en la Sociedad Pagadora') ,
+      	T_TIPO_DATA('03' , '016' , 'Sdad Pagad no defini' , 'Sociedad Pagadora no definida'),
+        T_TIPO_DATA('03' , '014' , 'Dif Impor KC10-KC12'  , 'Diferencia de Importes en Facturas Recibidas KC10-KC12'),
+        T_TIPO_DATA('03' , '017' , 'Faltan datos cliente' , 'Faltan datos de cliente'),
         
         T_TIPO_DATA('04' , '01' , 'Agr no tip ProviFond' , 'Agrupación no es del tipo provisión de fondos' ),
         T_TIPO_DATA('04' , '02' , 'Fech anula sin gasto' , 'Llega fecha de anulación y no existe gasto en la tabla' ),
@@ -440,37 +442,23 @@ DECLARE
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+	
+	--Comprobamos el dato a insertar
+        V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET BORRADO = 1,  USUARIOBORRAR = ''DML'', FECHABORRAR = sysdate';
+        EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO]: BORRADO LOGICO A TODO LA TABLA: '||V_TEXT_TABLA||'] ');
+
 
 	-- LOOP para insertar los valores en la tabla indicada
     	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA||'] ');
     	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       	LOOP
-             	V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
---              Buscar el campo DD_TEG_ID a partir del campo DD_TEG_CODIGO en la tabla DD_TEG_TIPO_ERROR_GASTO. 
---              Identificar si existe el tipo de error en la tabla DD_TEG_TIPO_ERROR_GASTO.
-                V_MSQL := 'SELECT COUNT(1) FROM '|| V_ESQUEMA ||'.'|| V_TEXT_TABLA_AUX || ' WHERE DD_TEG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''';
-                EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TIPO;
+		--Comprobamos el dato a insertar
+        	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''' ||
+			' AND DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID  = (SELECT DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID FROM '||V_TEXT_TABLA_AUX||' WHERE DD_'||V_TRES_LETRAS_TABLA_AUX||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
 
-                IF V_NUM_TIPO  > 0 THEN				
-
-                   V_MSQL := 'SELECT DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID FROM '|| V_ESQUEMA ||'.'|| V_TEXT_TABLA_AUX || ' WHERE DD_'||V_TRES_LETRAS_TABLA_AUX||'_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''';
-                   EXECUTE IMMEDIATE V_MSQL INTO V_TEG_ID;
---                 DBMS_OUTPUT.PUT_LINE(V_MSQL);  
---                 DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'|| V_TEXT_TABLA_AUX || '.DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID =' || V_TEG_ID ||'');
-   
-                ELSE		
-
-                   DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'|| V_TEXT_TABLA_AUX || '. No existe el tipo error '|| TRIM(V_TMP_TIPO_DATA(1)) ||'');
-                END IF;
-      
-
-	        --Recuperamos el id del tipo de error a insertar
---        	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
---        	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-   
-	        --Comprobamos el dato a insertar
-        	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
         	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
 	        --Si existe lo modificamos
@@ -478,15 +466,16 @@ BEGIN
 			DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''');
 
 	       	  	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-		        		'SET DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID = '''||TRIM( V_TEG_ID )||''''|| 
-					', DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION = SUBSTR('''||TRIM(V_TMP_TIPO_DATA(3))||''',1, 20)'|| 
+		        		'SET DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION = SUBSTR('''||TRIM(V_TMP_TIPO_DATA(3))||''',1, 20)'|| 
 					', DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+					', USUARIOBORRAR = null , FECHABORRAR = null, BORRADO = 0 '||
+					'WHERE DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+					' AND DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID  = (SELECT DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID FROM '||V_TEXT_TABLA_AUX||' WHERE DD_'||V_TRES_LETRAS_TABLA_AUX||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
          
 		  	EXECUTE IMMEDIATE V_MSQL;
 
-		  	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+		  	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE. [DD_'||V_TRES_LETRAS_TABLA_AUX||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''', DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''']');
 
           	--Si no existe, lo insertamos   
        		ELSE
@@ -496,12 +485,15 @@ BEGIN
 	       		EXECUTE IMMEDIATE V_MSQL INTO V_ID;
 	
           		V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (' ||
-                      		     'DD_'||V_TRES_LETRAS_TABLA||'_ID, DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID, DD_'||V_TRES_LETRAS_TABLA||'_CODIGO, DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION, DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA,' ||
-  				     'VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      		'SELECT ' || V_ID || ',' || V_TEG_ID || ','''||TRIM(V_TMP_TIPO_DATA(2))||''',SUBSTR('''||TRIM(V_TMP_TIPO_DATA(3))||''', 1, 20) ,'''||TRIM(V_TMP_TIPO_DATA(4))||''',' ||
+                      	'DD_'||V_TRES_LETRAS_TABLA||'_ID, DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID, DD_'||V_TRES_LETRAS_TABLA||'_CODIGO, DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION, DD_'||V_TRES_LETRAS_TABLA||'_DESCRIPCION_LARGA,' ||
+  			'VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      	'SELECT ' || V_ID || ','||
+	 		'(SELECT DD_'||V_TRES_LETRAS_TABLA_AUX||'_ID FROM '||V_TEXT_TABLA_AUX||' WHERE DD_'||V_TRES_LETRAS_TABLA_AUX||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')'||				
+
+				','''||TRIM(V_TMP_TIPO_DATA(2))||''',SUBSTR('''||TRIM(V_TMP_TIPO_DATA(3))||''', 1, 20) ,'''||TRIM(V_TMP_TIPO_DATA(4))||''',' ||
                     		'0, ''DML'',SYSDATE,0 FROM DUAL';
         		EXECUTE IMMEDIATE V_MSQL;
-          		DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+          		DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE. [DD_'||V_TRES_LETRAS_TABLA_AUX||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''', DD_'||V_TRES_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''']');
 
         	END IF;
       	END LOOP;

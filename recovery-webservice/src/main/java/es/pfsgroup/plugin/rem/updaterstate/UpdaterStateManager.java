@@ -90,6 +90,19 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 	
 	@Override
+	public void updaterStateDisponibilidadComercialAndSave(Long idActivo) {
+		Activo activo = activoApi.get(idActivo);
+		this.updaterStateDisponibilidadComercialAndSave(activo);
+		
+	}
+
+	@Override
+	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
+		this.updaterStateDisponibilidadComercial(activo);
+		genericDao.update(Activo.class, activo);		
+	}
+	
+	@Override
 	public void updaterStateDisponibilidadComercial(Activo activo) {
 		
 		String codigoSituacion = this.getCodigoSituacionComercialFromActivo(activo);
@@ -98,6 +111,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigoSituacion));
 		}
 	}
+	
+	
 	
 	private String getCodigoSituacionComercialFromActivo(Activo activo) {
 		
@@ -116,7 +131,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
 		}
-		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).isCondicionado()) {
+		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;
 		}
 		else if (!Checks.esNulo(activo.getTipoComercializacion())) {
@@ -231,6 +246,6 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 		
 		return codigoTipoComercializacion;
-	}
+	}	
 
 }

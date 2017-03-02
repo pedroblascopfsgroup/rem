@@ -14,7 +14,10 @@ Ext.define('HreRem.model.BusquedaTrabajo', {
     			name:'numTrabajo'
     		},
     		{
-    			name: 'numActivoAgrupacion'
+    			name: 'numActivoAgrupacion',
+    			convert: function(value) {
+    				return value == -1? '-' : value;
+    			}
     		}, 
     		{
     			name:'numActivo'

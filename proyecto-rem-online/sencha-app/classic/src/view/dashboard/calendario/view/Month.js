@@ -148,7 +148,7 @@ Ext.define('Ext.calendar.view.Month', {
     // private
     forceSize: function() {
     	//debugger;
-    	me = this;
+    	var me = this;
         // Compensate for the week link gutter width if visible
         
         // Comentado por problema al hacer dos instancias del calendario

@@ -2,13 +2,15 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -16,8 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -54,6 +56,10 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class TabActivoDatosBasicos implements TabActivoService {
+	
+	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
+	public static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
+	public static final String MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
     
 
 	@Autowired
@@ -73,6 +79,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Resource
+    MessageService messageServices;
 
 	@Override
 	public String[] getKeys() {
@@ -193,8 +202,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		if(activo.getEstadoPublicacion() != null){
+			// Si el activo contiene datos de publicación.
 			BeanUtils.copyProperty(activoDto, "estadoPublicacionDescripcion", activo.getEstadoPublicacion().getDescripcion());
 			BeanUtils.copyProperty(activoDto, "estadoPublicacionCodigo", activo.getEstadoPublicacion().getCodigo());
+		} else {
+			// Si el activo no contiene datos de publicación se trata como NO PUBLICADO.
+			DDEstadoPublicacion estadoPublicacion = (DDEstadoPublicacion) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
+			if(!Checks.esNulo(estadoPublicacion)) {
+				activoDto.setEstadoPublicacionDescripcion(estadoPublicacion.getDescripcion());
+			}
+			activoDto.setEstadoPublicacionCodigo(DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 		}
 		
 		if(activo.getTipoComercializar() != null){
@@ -225,14 +242,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 		}
 
-		// Obtener estado de aceptación del informe comercial.
-		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		Order order = new Order(OrderType.DESC, "id");
-		List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
-		if(!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
-			ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
-				BeanUtils.copyProperty(activoDto, "informeComercialAceptado", historico.getEstadoInformeComercial().getCodigo().equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION) ? true : false);
-		}
+		// Obtener si el ultimo estado del informe comercial es ACEPTADO.
+		BeanUtils.copyProperty(activoDto, "informeComercialAceptado", activoApi.isInformeComercialAceptado(activo));
+
 
 		//HREOS-843 Situacion Comercial del activo
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
@@ -326,7 +338,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	}
 
 	@Override
-	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
 		
 		try {
@@ -462,7 +474,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
 				DDTipoUsoDestino tipoUsoDestino = (DDTipoUsoDestino) diccionarioApi.dameValorDiccionarioByCod(DDTipoUsoDestino.class,  dto.getTipoUsoDestinoCodigo());
-				activo.setTipoUsoDestino(tipoUsoDestino);
+				activo.setTipoUsoDestino(tipoUsoDestino);				
 				//Actualizar el tipoComercialización del activo
 				updaterState.updaterStateTipoComercializacion(activo);
 			}
@@ -492,7 +504,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 				reiniciarPBC = true;
 			}
-
+			
 			// Perimetro -------
 			// Solo se guardan los datos si el usuario ha cambiado algun campo de perimetros
 			// El control de cambios se realiza revisando los datos que transporta el dto
@@ -533,10 +545,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getAplicaComercializar())) {
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaComercializar(new Date());
+					
+					//Acciones al desmarcar check comercializar
+					if(!dto.getAplicaComercializar()) {
+						this.accionesDesmarcarComercializar(activo);
+					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
 					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaFormalizar(new Date());
+					
+					//Validacion al desmarcar check formalizar
+					if(!dto.getAplicaFormalizar()) {
+						this.validarPerimetroActivo(activo,2);;
+					}
 				}
 				if(!Checks.esNulo(dto.getAplicaGestion())) {
 					perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
@@ -650,4 +672,48 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		return activo;
 	}
+	
+	/**
+	 * Acciones al desmarcar check Comercializar
+	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
+	 * 2. Si puede, hay que poner el activo en estado publicación a 'No publicado'
+	 * @param activo
+	 */
+	private void accionesDesmarcarComercializar(Activo activo) {
+		this.validarPerimetroActivo(activo,1);
+		//Si se permite desmarcar, cambiamos el estado de publicación del activo a 'No Publicado'
+		String motivo = messageServices.getMessage(MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO);
+		activoApi.setActivoToNoPublicado(activo, motivo);
+	}
+	
+	/**
+	 * Valida condiciones del perimitro, según se marque/desmarque los checks.
+	 * case 1: Al desmarcar check comercializar, no se puede hacer si el activo tiene ofertas vivas. (estado != rechazada)
+	 * case 2: Al desmarcar check formalizar, no se puede hacer si el activo tiene un exp. comercial vivo (tareas activas)
+	 * @param activo
+	 * @return
+	 */
+	private void validarPerimetroActivo(Activo activo, Integer numVal) {
+		
+		String error = null;
+		
+		switch(numVal) {
+			case 1: {
+				if(activoApi.isActivoConOfertasVivas(activo))
+					error = messageServices.getMessage(MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS);
+				break;
+			}
+			case 2: {
+				if(expedienteComercialApi.isExpedienteComercialVivoByActivo(activo))
+					error = messageServices.getMessage(MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO);
+				break;
+			}
+			default:
+				break;
+		}
+		
+		if(!Checks.esNulo(error))
+			throw new JsonViewerException(error);
+	}
+	
 }

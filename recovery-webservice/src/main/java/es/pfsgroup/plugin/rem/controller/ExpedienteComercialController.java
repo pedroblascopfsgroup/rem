@@ -460,7 +460,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
-			model.put("errores", e.getCause());
+			model.put("errores", e.getMessage());
 		}
 		
 		return createModelAndViewJson(model);

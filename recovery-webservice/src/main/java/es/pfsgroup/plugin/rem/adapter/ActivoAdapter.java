@@ -1951,12 +1951,17 @@ public class ActivoAdapter {
 					}
 					if (activoCarga.getCargaBien() != null) {
 						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el estado Cancelado (independientemente del registrado en DD_SIC_ID)
-						if( activoCarga.getCargaBien().getRegistral() && 
+						if( !activoCarga.getCargaBien().isEconomica() && 
 								(!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion()))) {
 							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
 									DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion", situacionCancelada.getDescripcion());									
 							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
+							
+							// Fecha de cancelacion de una carga registral
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacion", activoCarga.getCargaBien().getFechaCancelacion());
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacionRegistral", activoCarga.getCargaBien().getFechaCancelacion());
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacionEconomica", null);
 						} else {
 							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
@@ -1973,6 +1978,11 @@ public class ActivoAdapter {
 									DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion", situacionCancelada.getDescripcion());
 							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo", situacionCancelada.getCodigo());
+							
+							// Fecha de cancelacion de una carga economica
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacion", activoCarga.getCargaBien().getFechaCancelacion());
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacionEconomica", activoCarga.getCargaBien().getFechaCancelacion());
+							beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacionRegistral", null);
 						} else {
 							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
@@ -2033,11 +2043,16 @@ public class ActivoAdapter {
 			if (cargaSeleccionada.getCargaBien().getSituacionCarga() != null) {
 				// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el estado Cancelado (independientemente del registrado en DD_SIC_ID)
 				// REG
-				if( cargaSeleccionada.getCargaBien().getRegistral() && 
+				if( !cargaSeleccionada.getCargaBien().isEconomica() && 
 						(!Checks.esNulo(cargaSeleccionada.getCargaBien().getFechaCancelacion()))) {
 					DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
 							DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
 					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo", situacionCancelada.getCodigo());
+
+					// Fecha de cancelacion de una carga registral
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacion", cargaSeleccionada.getCargaBien().getFechaCancelacion());
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionRegistral", cargaSeleccionada.getCargaBien().getFechaCancelacion());
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionEconomica", null);
 				} else {
 					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo",
 							cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
@@ -2049,6 +2064,11 @@ public class ActivoAdapter {
 					DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
 							DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
 					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica", situacionCancelada.getCodigo());
+
+					// Fecha de cancelacion de una carga economica
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacion", cargaSeleccionada.getCargaBien().getFechaCancelacion());
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionEconomica", cargaSeleccionada.getCargaBien().getFechaCancelacion());
+					beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionRegistral", null);
 				} else {
 					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica",
 							cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
@@ -2058,8 +2078,7 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoCarga, "titularEconomica", cargaSeleccionada.getCargaBien().getTitular());
 			beanUtilNotNull.copyProperty(dtoCarga, "importeEconomicoEconomica",
 					cargaSeleccionada.getCargaBien().getImporteEconomico());
-			beanUtilNotNull.copyProperty(dtoCarga, "fechaCancelacionEconomica",
-					cargaSeleccionada.getCargaBien().getFechaCancelacion());
+
 			beanUtilNotNull.copyProperty(dtoCarga, "descripcionCargaEconomica",
 					cargaSeleccionada.getDescripcionCarga());
 

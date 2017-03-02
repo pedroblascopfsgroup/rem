@@ -30,6 +30,7 @@ public class DtoActivoCargas {
     private Date fechaInscripcion;
     private Date fechaCancelacion;
     private Date fechaCancelacionRegistral;
+    private Date fechaCancelacionEconomica;
     private String ordenCarga;
     private String estadoCodigo;
     private String estadoDescripcion;
@@ -109,6 +110,12 @@ public class DtoActivoCargas {
 	}
 	public void setFechaCancelacionRegistral(Date fechaCancelacionRegistral) {
 		this.fechaCancelacionRegistral = fechaCancelacionRegistral;
+	}
+	public Date getFechaCancelacionEconomica() {
+		return fechaCancelacionEconomica;
+	}
+	public void setFechaCancelacionEconomica(Date fechaCancelacionEconomica) {
+		this.fechaCancelacionEconomica = fechaCancelacionEconomica;
 	}
 	public String getSubtipoCargaCodigo() {
 		return subtipoCargaCodigo;

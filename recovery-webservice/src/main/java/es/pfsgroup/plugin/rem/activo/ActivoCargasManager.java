@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.pfs.users.FuncionManager;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoCargasDao;
@@ -25,9 +22,6 @@ public class ActivoCargasManager extends BusinessOperationOverrider<ActivoCargas
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	
 	protected static final Log logger = LogFactory.getLog(ActivoCargasManager.class);
-	
-	@Autowired
-	private Executor executor;
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -35,16 +29,10 @@ public class ActivoCargasManager extends BusinessOperationOverrider<ActivoCargas
 	@Autowired
 	private ActivoCargasDao ActivoCargasDao;
 
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-
 	@Override
 	public String managerName() {
 		return "activoCargasManager";
 	}
-
-	@Autowired
-	private FuncionManager funcionManager;
 
 	@Override
 	@BusinessOperation(overrides = "activoCargasManager.get")
@@ -58,6 +46,12 @@ public class ActivoCargasManager extends BusinessOperationOverrider<ActivoCargas
 	public boolean saveOrUpdate(ActivoCargas activoCargas) {
 		ActivoCargasDao.saveOrUpdate(activoCargas);
 		return true;
+	}
+
+	@Override
+	public boolean esActivoConCargasNoCanceladas(Long idActivo) {
+		
+		return ActivoCargasDao.esActivoConCargasNoCanceladas(idActivo);
 	}
 
 }

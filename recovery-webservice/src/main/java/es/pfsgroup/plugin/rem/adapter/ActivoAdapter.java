@@ -3500,8 +3500,10 @@ public class ActivoAdapter {
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 
 			genericDao.save(Oferta.class, oferta);
+			// Actualizamos la situacion comercial del activo
+			updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error en activoAdapter",ex);
 			return false;
 		}
 

@@ -3436,6 +3436,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return this.isActivoVendido(activo);
 	}
 	
+	@Override
 	public boolean isActivoConOfertasVivas(Activo activo) {
 		
 		List<ActivoOferta> listaActivoOferta = activo.getOfertas();
@@ -3451,6 +3452,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
+	@Override
 	public void setActivoToNoPublicado(Activo activo, String motivo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 		

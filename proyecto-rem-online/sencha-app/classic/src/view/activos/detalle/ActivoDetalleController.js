@@ -1110,7 +1110,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeEstadoPublicacion: function(field){
     	var me = this;
     	var view = me.getView();
-    	var codigo = this.getViewModel().getData().getEstadoPublicacionCodigo;
+    	var codigo = me.getViewModel().getData().getEstadoPublicacionCodigo;
 
     	switch (codigo){
     	case "01": // Publicado.

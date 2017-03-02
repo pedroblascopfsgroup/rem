@@ -100,10 +100,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     @Override
     @Transactional(readOnly = false)
     public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException{
-    	ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
+    //	ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
 		Filter filtro = null;
-		DDEstadoPublicacion estadoPublicacion= null;
+	//	DDEstadoPublicacion estadoPublicacion= null;
 		DDEstadoPublicacion estadoPublicacionActual = null;
 		String motivo = null;
 		
@@ -198,8 +198,29 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(!Checks.esNulo(filtro)){
 		// 2.) Comprueba si el NUEVO ESTADO al que cambiar es el MISMO QUE el ACTUAL
 		//     Solo realiza cambios si el estado de cambio es distinto al actual
-			if (!estadoPublicacionActual.getCodigo().equals(filtro.getPropertyValue())){
-			// ANTERIOR <> ACTUAL
+				return this.cambiarEstadoPublicacionAndRegistrarHistorico(activo, motivo, filtro, estadoPublicacionActual, 
+								dtoCambioEstadoPublicacion.getPublicacionForzada(), dtoCambioEstadoPublicacion.getPublicacionOrdinaria());
+		} else {
+			return false;
+		}
+    }
+    
+    /**
+     * Cambia al NUEVO ESTADO DE PUBLICACION y REGISTRA EN EL HISTORICO DE PUBLICACION
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public boolean cambiarEstadoPublicacionAndRegistrarHistorico(Activo activo, String motivo, Filter filtro, DDEstadoPublicacion estadoPublicacionActual,
+    			Boolean isPublicacionForzada, Boolean isPublicacionOrdinaria) {
+    	
+    	if(Checks.esNulo(estadoPublicacionActual))
+			estadoPublicacionActual = (DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
+    	
+    	if (Checks.esNulo(activo.getEstadoPublicacion()) || !estadoPublicacionActual.getCodigo().equals(filtro.getPropertyValue())){
+    		ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
+    		DDEstadoPublicacion estadoPublicacion= null;
+			
+    		// ANTERIOR <> ACTUAL
 				estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
 				activo.setEstadoPublicacion(estadoPublicacion);
 
@@ -209,7 +230,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				try {
 					if(!DDEstadoPublicacion.CODIGO_PUBLICADO.equals(filtro.getPropertyValue())){
 						// Si existen otros registros en historico
-						ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
+						ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(activo.getId());
 						if(!Checks.esNulo(ultimoHistorico) ){
 			
 							// Establecer la fecha de hoy en el campo 'Fecha Hasta' del anterior/último histórico y el usuario que lo ha modificado.
@@ -252,11 +273,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "fechaDesde" , new Date());
 						beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "estadoPublicacion", estadoPublicacion);
 						
-						if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionForzada()) && dtoCambioEstadoPublicacion.getPublicacionForzada()) {
+						if(!Checks.esNulo(isPublicacionForzada) && isPublicacionForzada) {
 							Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_FORZADA);
 							DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
 							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
-						} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) && dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) {
+						} else if(!Checks.esNulo(isPublicacionOrdinaria) && isPublicacionOrdinaria) {
 							Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_ORDINARIA);
 							DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
 							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
@@ -266,19 +287,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 					} // Cierra if ... CODIGO_PUBLICADO.equals
 				} catch (IllegalAccessException e) {
+					logger.error(e);
 					e.printStackTrace();
 					return false;
 				} catch (InvocationTargetException e) {
+					logger.error(e);
 					e.printStackTrace();
 					return false;
 				}
-			} // Cierra comprobacion ANTERIOR <> ACTUAL
-			
-		// filtro = null (Detectado un cambio de estado NO CONTROLADO (valores DTO no corresponden con nuevo estado))
-		} else {
-			return false;
-		} // Cierra if(!Checks.esNulo(filtro))
-		return true;
+			}
+    	
+    	return true;
     }
 
 	@Override

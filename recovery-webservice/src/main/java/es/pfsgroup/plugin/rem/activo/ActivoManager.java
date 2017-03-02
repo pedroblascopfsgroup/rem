@@ -263,6 +263,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	private static final String AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL = "activo.aviso.aceptatar.oferta.activo.dentro.lote.comercial";
+	private static final String MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO = "activo.motivo.vendido.no.publicar";
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.get")
@@ -3235,13 +3236,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		try {
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
-			if (!Checks.esNulo(activo.getFechaVentaExterna())) {
-				DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_VENDIDO);
-				if (!Checks.esNulo(situacionComercial)) {
-					activo.setSituacionComercial(situacionComercial);
-				}
-			}
+			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
+			
+			//Si se ha introducido valores en fecha o importe de venta, se actualiza la situación comercial y estado publicación del activo
+			if(!Checks.esNulo(dto.getFechaVenta()) || !Checks.esNulo(dto.getImporteVenta()))
+				this.setSituacionComercialAndEstadoPublicacion(activo);
+			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager",e);
 			return false;
@@ -3249,21 +3249,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager",e);
 			return false;
 		}
-		if (!Checks.esNulo(dto.getImporteVenta())) {
-			activo.setImporteVentaExterna(dto.getImporteVenta());
-			DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_VENDIDO);
-			if (!Checks.esNulo(situacionComercial)) {
-				activo.setSituacionComercial(situacionComercial);
-			}
-		} else {
-			activo.setImporteVentaExterna(null);
-		}
-		activo.setObservacionesVentaExterna(dto.getObservaciones());
 
+		activo.setObservacionesVentaExterna(dto.getObservaciones());
 		activoDao.save(activo);
 
 		return true;
+	}
+	
+	/**
+	 * Cambia la situacion Comercial a 'Vendido' y el estado Publicación a 'No Publicado', al vender el activo
+	 * (insertar valor en fecha venta o importe venta del activo)
+	 * @param activo
+	 * @param dto
+	 */
+	private void setSituacionComercialAndEstadoPublicacion(Activo activo) {
+		if(!Checks.esNulo(activo.getFechaVentaExterna()) || !Checks.esNulo(activo.getImporteVentaExterna()))  {
+			// Situación comercial --------
+			DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_VENDIDO);
+			
+			if (!Checks.esNulo(situacionComercial)) 
+				activo.setSituacionComercial(situacionComercial);
+			
+			//Estado publicación ----------
+			this.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO));
+		}
 	}
 
 	public boolean isIntegradoAgrupacionObraNuevaOrAsistida(Activo activo) {
@@ -3429,5 +3439,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+	
+	public void setActivoToNoPublicado(Activo activo, String motivo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
+		
+		activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, motivo, filtro, activo.getEstadoPublicacion(), null, null);
 	}
 }

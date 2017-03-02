@@ -725,7 +725,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (oferta.getActivosOferta() != null && oferta.getActivosOferta().size() > 0) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				updaterState.updaterStateDisponibilidadComercial(activo);
+				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 			}
 		}
 	}

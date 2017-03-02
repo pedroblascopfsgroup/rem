@@ -12,6 +12,16 @@ public interface ActivoCargasApi {
 	    @BusinessOperationDefinition("activoCargasManager.saveOrUpdate")
 	    public boolean saveOrUpdate(ActivoCargas activoCargas);
 	    
+	    /**
+	     * Este método obtiene el estado de las cargas del activo que no estén
+	     * canceladas.
+	     * 
+	     * @param idActivo : ID del activo al que corresponden las cargas.
+	     * @return Devuelve True si el activo posee cargas no canceladas,
+	     * False si no posee cargas o están canceladas.
+	     */
+	    public boolean esActivoConCargasNoCanceladas(Long idActivo);
+	    
     }
 
 

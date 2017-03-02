@@ -45,6 +45,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -1948,17 +1949,38 @@ public class ActivoAdapter {
 						beanUtilNotNull.copyProperty(cargaDto, "subtipoCargaCodigo",
 								activoCarga.getSubtipoCarga().getCodigo());
 					}
-					if (activoCarga.getCargaBien().getSituacionCarga() != null) {
-						beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-								activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
-						beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-								activoCarga.getCargaBien().getSituacionCarga().getCodigo());
-					}
-					if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
-						beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
-								activoCarga.getCargaBien().getSituacionCargaEconomica().getDescripcion());
-						beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",
-								activoCarga.getCargaBien().getSituacionCargaEconomica().getCodigo());
+					if (activoCarga.getCargaBien() != null) {
+						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el estado Cancelado (independientemente del registrado en DD_SIC_ID)
+						if( activoCarga.getCargaBien().getRegistral() && 
+								(!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion()))) {
+							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
+									DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion", situacionCancelada.getDescripcion());									
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
+						} else {
+							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
+								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
+										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
+								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
+										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
+							}
+						}
+
+						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el estado Cancelado (independientemente del registrado en DD_SIC_ID)
+						if( activoCarga.getCargaBien().isEconomica() && 
+								(!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion()))) {
+							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
+									DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion", situacionCancelada.getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo", situacionCancelada.getCodigo());
+						} else {
+							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
+								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
+										activoCarga.getCargaBien().getSituacionCargaEconomica().getDescripcion());
+								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",
+										activoCarga.getCargaBien().getSituacionCargaEconomica().getCodigo());
+							}
+						}
 					}
 
 				} catch (IllegalAccessException e) {
@@ -2009,10 +2031,28 @@ public class ActivoAdapter {
 			}
 
 			if (cargaSeleccionada.getCargaBien().getSituacionCarga() != null) {
-				beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo",
-						cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
-				beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica",
-						cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
+				// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el estado Cancelado (independientemente del registrado en DD_SIC_ID)
+				// REG
+				if( cargaSeleccionada.getCargaBien().getRegistral() && 
+						(!Checks.esNulo(cargaSeleccionada.getCargaBien().getFechaCancelacion()))) {
+					DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
+							DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo", situacionCancelada.getCodigo());
+				} else {
+					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigo",
+							cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
+				}
+				
+				// ECO
+				if( cargaSeleccionada.getCargaBien().isEconomica() && 
+						(!Checks.esNulo(cargaSeleccionada.getCargaBien().getFechaCancelacion()))) {
+					DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi.dameValorDiccionarioByCod(
+							DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica", situacionCancelada.getCodigo());
+				} else {
+					beanUtilNotNull.copyProperty(dtoCarga, "situacionCargaCodigoEconomica",
+							cargaSeleccionada.getCargaBien().getSituacionCarga().getCodigo());
+				}
 			}
 
 			beanUtilNotNull.copyProperty(dtoCarga, "titularEconomica", cargaSeleccionada.getCargaBien().getTitular());

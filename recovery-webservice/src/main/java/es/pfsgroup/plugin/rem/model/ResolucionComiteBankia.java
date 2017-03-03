@@ -26,6 +26,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 
 
 
@@ -56,6 +57,10 @@ public class ResolucionComiteBankia implements Serializable, Auditable {
 	@OneToOne
     @JoinColumn(name = "ECO_ID")
     private ExpedienteComercial expediente;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TRE_ID")
+    private DDTipoResolucion tipoResolucion;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_COS_ID")
@@ -141,6 +146,15 @@ public class ResolucionComiteBankia implements Serializable, Auditable {
 
 	public void setImporteContraoferta(Double importeContraoferta) {
 		this.importeContraoferta = importeContraoferta;
+	}
+
+	
+	public DDTipoResolucion getTipoResolucion() {
+		return tipoResolucion;
+	}
+
+	public void setTipoResolucion(DDTipoResolucion tipoResolucion) {
+		this.tipoResolucion = tipoResolucion;
 	}
 
 	public Long getVersion() {

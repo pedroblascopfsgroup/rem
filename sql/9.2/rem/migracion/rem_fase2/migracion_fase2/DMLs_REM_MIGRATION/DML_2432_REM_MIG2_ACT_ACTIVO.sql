@@ -176,7 +176,7 @@ BEGIN
                   ON ACT_OFR.ACT_ID = ACT.ACT_ID
                 INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
                   ON ECO.OFR_ID = ACT_OFR.OFR_ID
-                where ECO.DD_EEC_ID = 8) 
+                where ECO.DD_EEC_ID = (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC WHERE EEC.DD_EEC_CODIGO = ''08'')) 
                 WHERE ORDEN = 1 ) AUX
                 ON (ECO.ECO_ID = AUX.ECO_ID)
                 WHEN MATCHED THEN UPDATE SET

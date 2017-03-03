@@ -10,6 +10,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -37,7 +38,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	//private static final String CODIGO_T013_DEVOLUCION_LLAVES = "T013_DevolucionLlaves";
 	//private static final String CODIGO_T013_DOCUMENTOS_POSTVENTA = "T013_DocumentosPostVenta";
 
-	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -68,12 +70,12 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		
 		if(!Checks.esNulo(activo)) {
 			//Si el tipo es nulo, por defecto, se entiende como tipo RETAIL 
-			String codigoComercializacionActivo = Checks.esNulo(activo.getTipoComercializar()) ? DDTipoComercializar.CODIGO_RETAIL : activo.getTipoComercializar().getCodigo();
+			String codigoComercializacionActivo = activoApi.getCodigoTipoComercializarByActivo(activo.getId());
 			
-			if(codigoComercializacionActivo.equals(DDTipoComercializar.CODIGO_RETAIL)) {
+			if(DDTipoComercializar.CODIGO_RETAIL.equals(codigoComercializacionActivo)) {
 				filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_GESTOR_COMERCIAL_RETAIL);
 			} 
-			else if(codigoComercializacionActivo.equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+			else if(DDTipoComercializar.CODIGO_SINGULAR.equals(codigoComercializacionActivo)) {
 				filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_GESTOR_COMERCIAL_SINGULAR);
 			}
 		}

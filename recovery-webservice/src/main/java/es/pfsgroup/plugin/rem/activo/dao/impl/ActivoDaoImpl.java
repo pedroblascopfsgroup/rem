@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -25,6 +26,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -47,6 +49,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
 
+	@Autowired
+	private MSVRawSQLDao rawDao;
+	
 	@Resource
 	private PaginationManager paginationManager;
 
@@ -716,6 +721,31 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		.setParameter("username", username);
 
 		query.executeUpdate();
+	}
+	
+	@Override
+	public void actualizarSingularRetailActivo(Long idActivo, String username, Integer all_activos, Integer ingore_block) {
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query = session.createSQLQuery(
+		"CALL CALCULO_SINGULAR_RETAIL_AUTO(:idActivo, :username, :all_activos, :ingore_block)")
+		.setParameter("idActivo", idActivo)
+		.setParameter("username", username)
+		.setParameter("all_activos", all_activos)
+		.setParameter("ingore_block", ingore_block);
+
+		query.executeUpdate();
+	}
+	
+	@Override
+	public String getCodigoTipoComercializarByActivo(Long idActivo) {
+		String codComercializar = rawDao.getExecuteSQL("SELECT tcr.DD_TCR_CODIGO "
+				+ "		  FROM ACT_ACTIVO act"
+				+ "			INNER JOIN DD_TCR_TIPO_COMERCIALIZAR tcr ON act.dd_tcr_id = tcr.dd_tcr_id"
+				+ "			WHERE act.ACT_ID = "+idActivo
+				+ "			AND act.BORRADO = 0"				
+				+ "         AND ROWNUM = 1 ");
+		
+		return codComercializar;
 	}
 
 }

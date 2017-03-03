@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
-import java.util.HashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -159,6 +157,18 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Override
 	public void updaterStateTipoComercializacion(Activo activo) {
+		
+		String codigoComercializacionActual = !Checks.esNulo(activo.getTipoComercializar()) ? activo.getTipoComercializar().getCodigo() : "";
+		activoApi.calcularSingularRetailActivo(activo.getId());
+		
+		String activoModificado = activoApi.getCodigoTipoComercializarByActivo(activo.getId());
+		String codigoComercializacionNuevo = !Checks.esNulo(activoModificado) ? activoModificado : "";
+		
+		if(!codigoComercializacionActual.equals(codigoComercializacionNuevo))
+			gestorActivoApi.actualizarTareas(activo.getId());
+		/*
+		 * TODO: Se deja así, hasta que se definan los siguientes cambios por funconales.
+		 *	
 		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 		//Si el activo tiene activado el bloqueo para el cambio automático o No es comercializable, no hará nada
 		if(!activo.getBloqueoTipoComercializacionAutomatico() && (Checks.esNulo(perimetro) || perimetro.getAplicaComercializar() == 1)) {
@@ -183,7 +193,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 					activo.setTipoComercializar((DDTipoComercializar)utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class,codigoTipoComercializacion));
 				}
 			}
-		}
+		}*/
 	}
 	
 	/**
@@ -193,6 +203,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	 * @param activo
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private String getCodigoTipoComercializacionFromActivo(Activo activo) {
 		
 		String codigoTipoComercializacion = null;

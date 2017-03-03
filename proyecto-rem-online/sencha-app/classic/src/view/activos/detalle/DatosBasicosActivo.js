@@ -427,8 +427,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
 								reference: 'chkbxPerimetroFormalizar',
 								bind: {
-									readOnly: '{!activo.aplicaComercializar}',
 									value: '{activo.aplicaFormalizar}'
+									
 								},
 								listeners: {
 									change: 'onChkbxPerimetroChange'

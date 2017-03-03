@@ -905,9 +905,35 @@ public interface ActivoApi {
 	public void calcularRatingActivo(Long idActivo);
 	
 	/**
-	 * Comprueba si el activo tiene alguna oferta viva (Estado != Rechazada)
+	 * Actualiza el tipo comercializar (Singular/Retail) del activo
+	 * @param idActivo
+	 */
+	public void calcularSingularRetailActivo(Long idActivo);
+	
+	public String getCodigoTipoComercializarByActivo(Long idActivo);
+	/** Comprueba que el activo en el perímetro es comercializable
+	 * @param idActivo
+	 * @return
+	 */
+	public boolean checkComercializable(Long idActivo);
+	
+	/**
+	 * Comprueba que el activo no está vendido
+	 * @param idActivo
+	 * @return
+	 */
+	public boolean checkVendido(Long idActivo);
+	 
+	/** Comprueba si el activo tiene alguna oferta viva (Estado != Rechazada)
 	 * @param activo
 	 * @return
 	 */
 	public boolean isActivoConOfertasVivas(Activo activo);
+	
+	/**
+	 * Cambia el Estado de publicación a 'No publicado' y registra el cambio en el histórico
+	 * @param activo
+	 * @param motivo
+	 */
+	public void setActivoToNoPublicado(Activo activo, String motivo);
 }

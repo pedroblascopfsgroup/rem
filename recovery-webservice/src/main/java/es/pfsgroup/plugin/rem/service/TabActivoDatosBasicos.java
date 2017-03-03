@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -58,6 +59,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
 	public static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
+	public static final String MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
     
 
 	@Autowired
@@ -200,8 +202,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		if(activo.getEstadoPublicacion() != null){
+			// Si el activo contiene datos de publicación.
 			BeanUtils.copyProperty(activoDto, "estadoPublicacionDescripcion", activo.getEstadoPublicacion().getDescripcion());
 			BeanUtils.copyProperty(activoDto, "estadoPublicacionCodigo", activo.getEstadoPublicacion().getCodigo());
+		} else {
+			// Si el activo no contiene datos de publicación se trata como NO PUBLICADO.
+			DDEstadoPublicacion estadoPublicacion = (DDEstadoPublicacion) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
+			if(!Checks.esNulo(estadoPublicacion)) {
+				activoDto.setEstadoPublicacionDescripcion(estadoPublicacion.getDescripcion());
+			}
+			activoDto.setEstadoPublicacionCodigo(DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 		}
 		
 		if(activo.getTipoComercializar() != null){
@@ -536,9 +546,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaComercializar(new Date());
 					
-					//Validacion al desmarcar check comercializar
+					//Acciones al desmarcar check comercializar
 					if(!dto.getAplicaComercializar()) {
-						this.validarPerimetroActivo(activo,1);
+						this.accionesDesmarcarComercializar(activo);
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
@@ -661,6 +671,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		return activo;
+	}
+	
+	/**
+	 * Acciones al desmarcar check Comercializar
+	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
+	 * 2. Si puede, hay que poner el activo en estado publicación a 'No publicado'
+	 * @param activo
+	 */
+	private void accionesDesmarcarComercializar(Activo activo) {
+		this.validarPerimetroActivo(activo,1);
+		//Si se permite desmarcar, cambiamos el estado de publicación del activo a 'No Publicado'
+		String motivo = messageServices.getMessage(MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO);
+		activoApi.setActivoToNoPublicado(activo, motivo);
 	}
 	
 	/**

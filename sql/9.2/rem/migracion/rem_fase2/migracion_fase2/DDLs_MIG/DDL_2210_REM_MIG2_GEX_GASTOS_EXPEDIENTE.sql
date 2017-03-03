@@ -45,18 +45,20 @@ END IF;
 EXECUTE IMMEDIATE '
 CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
 (
-        GEX_COD_OFERTA                          NUMBER(16,0)                NOT NULL,     
+        GEX_COD_OFERTA                  NUMBER(16,0)                NOT NULL,     
         GEX_COD_CONCEPTO_GASTO          VARCHAR2(20 CHAR),     
-        GEX_CODIGO                                      VARCHAR2(50 CHAR),
-        GEX_NOMBRE                                      VARCHAR2(50 CHAR),
+        GEX_CODIGO                      VARCHAR2(50 CHAR),
+        GEX_NOMBRE                      VARCHAR2(50 CHAR),
         GEX_COD_TIPO_CALCULO            VARCHAR2(20 CHAR),
-        GEX_IMPORTE_CALCULO                     NUMBER(16,2),
-        GEX_IMPORTE_FINAL                       NUMBER(16,2),
-        GEX_IND_PAGADOR                         NUMBER(1,0),
-        GEX_IND_APROBADO                        NUMBER(1,0),
-        GEX_WEBCOM_ID                           NUMBER(16,0),
-        GEX_COD_PROVEEDOR                       VARCHAR2(50 CHAR),
-        GEX_COD_DESTINATARIO            VARCHAR2(20 CHAR)
+        GEX_IMPORTE_CALCULO             NUMBER(16,2),
+        GEX_IMPORTE_FINAL               NUMBER(16,2),
+        GEX_IND_PAGADOR                 NUMBER(1,0),
+        GEX_IND_APROBADO                NUMBER(1,0),
+        GEX_WEBCOM_ID                   NUMBER(16,0),
+        GEX_COD_PROVEEDOR               VARCHAR2(50 CHAR),
+        GEX_COD_DESTINATARIO            VARCHAR2(20 CHAR),
+        GEX_ACT_NUMERO_ACTIVO			NUMBER(16,0)
+        
 )'
 ;
 

@@ -725,7 +725,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (oferta.getActivosOferta() != null && oferta.getActivosOferta().size() > 0) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				updaterState.updaterStateDisponibilidadComercial(activo);
+				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 			}
 		}
 	}
@@ -969,9 +969,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean checkCompradores(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		if (!Checks.esNulo(ofertaAceptada)) {
-			ExpedienteComercial expediente = expedienteComercialApi
-					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return (!Checks.estaVacio(expediente.getCompradores()));
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			List<CompradorExpediente> listaCex = expediente.getCompradores();
+			Double total = new Double(0);
+			for (CompradorExpediente cex : listaCex) {
+				total += cex.getPorcionCompra();
+			}
+			return total.equals(new Double(100));
+			//return (!Checks.estaVacio(expediente.getCompradores()));
 		}
 		return false;
 	}

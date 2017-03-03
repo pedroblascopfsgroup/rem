@@ -206,7 +206,7 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 													{
 														xtype:'datefieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.fecha.cancelacion.economica.carga'),
-										            	bind:		'{carga.fechaCancelacion}'
+										            	bind:		'{carga.fechaCancelacionEconomica}'
 										            	
 													},
 													{

@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service("informeMediadorManager")
 public class InformeMediadorManager implements InformeMediadorApi {
@@ -67,6 +68,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Autowired
 	private GenericaRestDaoImp genericaRestDaoImp;
+
+	@Autowired
+	private UpdaterStateApi updaterState;
 
 	public InformeMediadorManager() {
 		obligatorios = new HashMap<String, HashMap<String, Boolean>>();
@@ -1436,6 +1440,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 				// Actualizamos el rating del activo
 				activoApi.calcularRatingActivo(informeEntity.getActivo().getId());
+				// Actualizamos la situacion comercial del activo
+				updaterState.updaterStateDisponibilidadComercialAndSave(informeEntity.getActivo());
 
 				map.put("idInformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 				map.put("idInformeMediadorRem", informeEntity.getId());

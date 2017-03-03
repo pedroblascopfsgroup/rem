@@ -418,7 +418,6 @@ public interface OfertaApi {
 	 */
 	public boolean checkImpuestos(TareaExterna tareaExterna);
 	
-	
 	/**
 	 * Este método construye una lista de ActivoOferta para la creación de ofertas.
 	 * @param activo a incluir en la oferta

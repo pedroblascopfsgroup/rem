@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +24,11 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
@@ -64,6 +68,8 @@ public class ReservaController {
 		JSONObject jsonFields = null;
 		Map<String, Object> respuesta = new HashMap<String, Object>();
 		HashMap<String, String> errorList = null;
+		Oferta oferta = null;
+		
 		try{
 			jsonFields = request.getJsonObject();
 			jsonData = (ReservaRequestDto) request.getRequestData(ReservaRequestDto.class);
@@ -73,7 +79,28 @@ public class ReservaController {
 			if (errorList != null && errorList.isEmpty()) {
 				
 				Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
-				Oferta oferta = activoApi.tieneOfertaAceptada(activo);
+				
+				//HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la última oferta rechazada.
+				if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_DEVOLUCION_RESERVA)) {
+					DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
+					dtoOfertasFilter.setNumActivo(activo.getNumActivo());
+					dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
+					
+					List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
+					if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
+						Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
+						if(!Checks.esNulo(idOferta)){
+							oferta = ofertaApi.getOfertaById(idOferta);
+						}
+					}						
+				}else{
+					//Para el resto de acciones hay que buscar la última oferta aceptada.
+					oferta = activoApi.tieneOfertaAceptada(activo);					
+				}
+				if(Checks.esNulo(oferta)){
+					throw new Exception("El activo no tiene ofertas.");
+				}
+				
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 				
 				OfertaUVEMDto ofertaUVEM = expedienteComercialApi.createOfertaOVEM(oferta, expedienteComercial);				

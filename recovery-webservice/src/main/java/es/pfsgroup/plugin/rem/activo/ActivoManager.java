@@ -2056,15 +2056,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isActivoVendido(Activo activo) {
 
-		if (!Checks.estaVacio(activo.getOfertas())) {
-			for (ActivoOferta activoOferta : activo.getOfertas()) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
-						activoOferta.getPrimaryKey().getOferta().getId());
-				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
-
-				if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getFormalizacion())
-						&& !Checks.esNulo(expediente.getFormalizacion().getFechaEscritura())) {
-					return true;
+		if(!Checks.esNulo(activo.getFechaVentaExterna()))
+			return true;
+		else{
+			if (!Checks.estaVacio(activo.getOfertas())) {
+				for (ActivoOferta activoOferta : activo.getOfertas()) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
+							activoOferta.getPrimaryKey().getOferta().getId());
+					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+	
+	//				if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getFormalizacion())
+	//						&& !Checks.esNulo(expediente.getFormalizacion().getFechaEscritura())) {
+	//					return true;
+	//				}
+					if(!Checks.esNulo(expediente)){
+						if(!Checks.esNulo(expediente.getFechaVenta()))
+							return true;
+					}
+					
+					
 				}
 			}
 		}
@@ -2750,9 +2760,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			ExpedienteComercial nuevoExpediente) {
 
 		GastosExpediente gastoExpediente = new GastosExpediente();
-		gastoExpediente.setNombre(oferta.getCustodio().getNombre());
-		gastoExpediente.setCodigo(oferta.getCustodio().getCodProveedorUvem());
-		gastoExpediente.setProveedor(oferta.getCustodio());
+		if(!Checks.esNulo(oferta.getCustodio()))
+		{
+			gastoExpediente.setNombre(oferta.getCustodio().getNombre());
+			gastoExpediente.setCodigo(oferta.getCustodio().getCodProveedorUvem());
+			gastoExpediente.setProveedor(oferta.getCustodio());
+		}
 		gastoExpediente.setAccionGastos(accionGasto);
 		gastoExpediente.setExpediente(nuevoExpediente);
 
@@ -3413,6 +3426,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
+	public void calcularSingularRetailActivo(Long idActivo) {
+		activoDao.actualizarSingularRetailActivo(idActivo, usuarioApi.getUsuarioLogado().getUsername(),0,0);
+	}
+	
+	@Override
+	public String getCodigoTipoComercializarByActivo(Long idActivo) {
+		return activoDao.getCodigoTipoComercializarByActivo(idActivo);
+	}
+	
+	@Override
+	public boolean checkComercializable(Long idActivo){
+		PerimetroActivo perimetroActivo = this.getPerimetroByIdActivo(idActivo);
+		return perimetroActivo.getAplicaComercializar()==1;	
+	}
+	
+	@Override
+	public boolean checkVendido(Long idActivo){
+		Activo activo = this.get(idActivo);
+		return this.isActivoVendido(activo);
+	}
+	
+	@Override
 	public boolean isActivoConOfertasVivas(Activo activo) {
 		
 		List<ActivoOferta> listaActivoOferta = activo.getOfertas();
@@ -3428,6 +3463,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
+	@Override
 	public void setActivoToNoPublicado(Activo activo, String motivo) throws JsonViewerException, SQLException {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 		

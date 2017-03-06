@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "SE INICIA EL PROCESO DE RENOMBRADO DE LOS FICHEROS F1 Y F2"
+cd Renombrado_ficheros
 
 echo "Descomprimiendo ficheros"
 unzip *_FaseI_*.zip
@@ -79,5 +80,6 @@ mv Fich_Gastos_Provision.dat											../rem_fase2/migracion_fase2/CTLs_DATs/DA
 mv Fich_Subsanaciones.dat												../rem_fase2/migracion_fase2/CTLs_DATs/DATs/SUBSANACIONES.dat
 mv Fich_Propietarios_Historico.dat										../rem_fase2/migracion_fase2/CTLs_DATs/DATs/PROPIETARIOS_HISTORICO.dat
 
+cd ..
 echo "Nombres cambiados, verificar cambios"
 

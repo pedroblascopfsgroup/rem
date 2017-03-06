@@ -440,6 +440,14 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkImpuestos(tareaExterna);
 			}
+			def checkComercializable = {
+            	def activoManager = ctx.getBean("activoManager");
+            	return activoManager.checkComercializable(idActivo);
+            }
+            def checkVendido = {
+            	def activoManager = ctx.getBean("activoManager");
+            	return activoManager.checkVendido(idActivo);
+            }
   			 ]]></value>
   		</list>
   	</property>

@@ -546,6 +546,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoConPropietario (String sqlNumActivoRem){
+		if(Checks.esNulo(sqlNumActivoRem))
+			return false;
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			    FROM ACT_PAC_PROPIETARIO_ACTIVO pac, "
 				+ "			      ACT_ACTIVO act "
@@ -631,6 +634,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean isActivoNoComercializable(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO act"
 				+ "		INNER JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
@@ -720,6 +726,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeActivoEnPropuesta(String numActivo, String numPropuesta) {
+		if(Checks.esNulo(numActivo) || Checks.esNulo(numPropuesta))
+			return false;
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO ACT "
 				+ " 	JOIN ACT_PRP APR ON ACT.ACT_ID = APR.ACT_ID "
@@ -750,6 +759,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeActivoConOfertaViva(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		FROM ACT_ACTIVO ACT "
 				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
@@ -765,6 +777,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeActivoConExpedienteComercialVivo(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "	  	FROM VI_OFERTAS_ACTIVOS_AGRUPACION v "
 				+ " 	INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON v.ECO_ID = eco.ECO_ID "

@@ -146,7 +146,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "entidad.cartera.codigo", activo.getCartera().getCodigo());
 		}
 		hb.appendWhere("proveedor.tipoProveedor.codigo = " + DDTipoProveedor.COD_MEDIADOR);
-		hb.appendWhere("territorial.provincia.codigo in (select loc.provincia.codigo from Localidad loc where loc.codigo = " + activo.getMunicipio() + ")");
+		hb.appendWhere("territorial.provincia.codigo in (select loc.provincia.codigo from Localidad loc where loc.codigo = '" + activo.getMunicipio() + "')");
 		hb.appendWhere("proveedor.homologado = 1");
 		
 		return HibernateQueryUtils.list(this, hb);

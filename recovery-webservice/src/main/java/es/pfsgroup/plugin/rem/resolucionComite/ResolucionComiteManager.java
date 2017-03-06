@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.api.impl;
+package es.pfsgroup.plugin.rem.resolucionComite;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,10 +26,13 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
+import es.pfsgroup.plugin.rem.resolucionComite.dao.ResolucionComiteDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
@@ -58,6 +61,8 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private ResolucionComiteDao resolucionComiteDao;
 
 	@Override
 	public String managerName() {
@@ -165,49 +170,154 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 	
 	
 	
-
-
+	
+	
+	
 	@Override
-	@Transactional(readOnly = false)
-	public ResolucionComiteBankia saveResolucionComite(ResolucionComiteDto resolucionComiteDto) throws Exception {
-		ResolucionComiteBankia resol = null;
+	public List<ResolucionComiteBankia> getResolucionesComiteByExpedienteTipoRes(ResolucionComiteBankiaDto resolDto) throws Exception {
+		ResolucionComiteBankiaDto dtoParamsBusqueda = null;
+		List<ResolucionComiteBankia> listaResol = null;
+		
+		if (Checks.esNulo(resolDto)) {
+			throw new Exception("Error en los parámetros de entrada.");
+		} 
+				
+		if(Checks.esNulo(resolDto.getExpediente())){
+			throw new Exception("Error en los parámetros de entrada. Expediente obligatorio.");
+		}
+		
+		if(Checks.esNulo(resolDto.getTipoResolucion())){
+			throw new Exception("Error en los parámetros de entrada. Tipo de Resolucion obligatorio.");
+		}
+		
+		//Obtenemos la lista de resoluciones por expediente y tipo (debería devolver sólo 1)
+		dtoParamsBusqueda = new ResolucionComiteBankiaDto();
+		dtoParamsBusqueda.setExpediente(resolDto.getExpediente());
+		dtoParamsBusqueda.setTipoResolucion(resolDto.getTipoResolucion());	
+		listaResol = resolucionComiteDao.getListaResolucionComite(dtoParamsBusqueda);
 
-		resol = new ResolucionComiteBankia();
-		beanUtilNotNull.copyProperties(resol, resolucionComiteDto);
+		return listaResol;		
 
+	}
+	
+	
+	
+	
+	
+	@Override
+	public ResolucionComiteBankiaDto getResolucionComiteBankiaDtoFromResolucionComiteDto(ResolucionComiteDto resolucionComiteDto) throws Exception{
+		ResolucionComiteBankiaDto resolDto = null;
+		
+		resolDto = new ResolucionComiteBankiaDto();
+		beanUtilNotNull.copyProperties(resolDto, resolucionComiteDto);
 		
 		if (!Checks.esNulo(resolucionComiteDto.getOfertaHRE())) {
 			Oferta oferta = (Oferta) genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", resolucionComiteDto.getOfertaHRE()));
 			if (!Checks.esNulo(oferta)) {
 				ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(eco)) {
-					resol.setExpediente(eco);
+					resolDto.setExpediente(eco);
 				}
 			}
 		}
 		if (!Checks.esNulo(resolucionComiteDto.getCodigoComite())) {
 			DDComiteSancion comite = (DDComiteSancion) genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getCodigoComite()));
 			if (!Checks.esNulo(comite)) {
-				resol.setComite(comite);
+				resolDto.setComite(comite);
 			}
 		}
 		if (!Checks.esNulo(resolucionComiteDto.getCodigoResolucion())) {
 			DDEstadoResolucion estadoResol = (DDEstadoResolucion) genericDao.get(DDEstadoResolucion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getCodigoResolucion()));
 			if (!Checks.esNulo(estadoResol)) {
-				resol.setEstadoResolucion(estadoResol);
+				resolDto.setEstadoResolucion(estadoResol);
 			}
 		}
 		if (!Checks.esNulo(resolucionComiteDto.getCodigoDenegacion())) {
 			DDMotivoDenegacionResolucion motivoDenegacion = (DDMotivoDenegacionResolucion) genericDao.get(DDMotivoDenegacionResolucion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getCodigoDenegacion()));
 			if (!Checks.esNulo(motivoDenegacion)) {
-				resol.setMotivoDenegacion(motivoDenegacion);;
+				resolDto.setMotivoDenegacion(motivoDenegacion);;
 			}
+		}	
+		if (!Checks.esNulo(resolucionComiteDto.getCodigoTipoResolucion())) {
+			DDTipoResolucion tipoResolucion = (DDTipoResolucion) genericDao.get(DDTipoResolucion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getCodigoTipoResolucion()));
+			if (!Checks.esNulo(tipoResolucion)) {
+				resolDto.setTipoResolucion(tipoResolucion);
+			}
+		}
+		
+		return resolDto;
+	}
+	
+	
+	
+	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public ResolucionComiteBankia saveOrUpdateResolucionComite(ResolucionComiteDto resolucionComiteDto) throws Exception{
+		ResolucionComiteBankiaDto resolDto = null;
+		List<ResolucionComiteBankia> listaResol = null;
+		ResolucionComiteBankia resolucionBankia = null;
+		
+		resolDto = this.getResolucionComiteBankiaDtoFromResolucionComiteDto(resolucionComiteDto);
+		if(Checks.esNulo(resolDto)){
+			throw new Exception("Se ha producido un error en la búsqueda de resoluciones.");
+		}
+		
+		//Obtenemos la lista de resoluciones por expediente y tipo si existe
+		listaResol = this.getResolucionesComiteByExpedienteTipoRes(resolDto);
+		if(Checks.esNulo(listaResol) || (!Checks.esNulo(listaResol) && listaResol.size()==0)){
+			//Si no existen resoluciones por expediente y tipo, se crea nueva
+			resolucionBankia = this.saveResolucionComite(resolDto);
+		}else{
+			//Si ya existen resoluciones por expediente y tipo, se marcan como borradas
+			if(!Checks.esNulo(listaResol) && listaResol.size()>0){
+				for(int i = 0; i< listaResol.size(); i++){					
+					resolucionComiteDao.delete(listaResol.get(i));
+				}
+			}
+			//Si ya existe, se borra y se inserta una nueva
+			resolucionBankia = this.saveResolucionComite(resolDto);
+		}
+
+		return resolucionBankia;
+	}
+	
+
+	
+	
+
+	@Override
+	@Transactional(readOnly = false)
+	public ResolucionComiteBankia saveResolucionComite(ResolucionComiteBankiaDto resolDto) throws Exception {
+		ResolucionComiteBankia resol = null;
+
+		
+		resol = new ResolucionComiteBankia();
+		beanUtilNotNull.copyProperties(resol, resolDto);
+
+		
+		if (!Checks.esNulo(resolDto.getExpediente())) {
+			resol.setExpediente(resolDto.getExpediente());			
+		}
+		if (!Checks.esNulo(resolDto.getComite())) {
+			resol.setComite(resolDto.getComite());
+		}
+		if (!Checks.esNulo(resolDto.getEstadoResolucion())) {
+			resol.setEstadoResolucion(resolDto.getEstadoResolucion());
+		}
+		if (!Checks.esNulo(resolDto.getMotivoDenegacion())) {
+			resol.setMotivoDenegacion(resolDto.getMotivoDenegacion());	
+		}	
+		if (!Checks.esNulo(resolDto.getTipoResolucion())) {
+			resol.setTipoResolucion(resolDto.getTipoResolucion());			
 		}
 		
 		resol = genericDao.save(ResolucionComiteBankia.class, resol);
 		
 		return resol;
 	}
+	
 	
 
 }

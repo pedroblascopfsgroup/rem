@@ -34,7 +34,7 @@ public class ResolucionComiteDto implements Serializable{
 	private String codigoDenegacion;
 	private Date fechaAnulacion;
 	private Double importeContraoferta;
-	
+	private String codigoTipoResolucion;
 	
 	
 	public Long getOfertaHRE() {
@@ -78,6 +78,12 @@ public class ResolucionComiteDto implements Serializable{
 	}
 	public void setImporteContraoferta(Double importeContraoferta) {
 		this.importeContraoferta = importeContraoferta;
+	}
+	public String getCodigoTipoResolucion() {
+		return codigoTipoResolucion;
+	}
+	public void setCodigoTipoResolucion(String codigoTipoResolucion) {
+		this.codigoTipoResolucion = codigoTipoResolucion;
 	}
 
 	

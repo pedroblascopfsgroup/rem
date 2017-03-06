@@ -1563,7 +1563,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaHasta", historico.getFechaHasta());
 				if (!Checks.esNulo(historico.getMediadorInforme())) {
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "codigo",
-							historico.getMediadorInforme().getId());
+							historico.getMediadorInforme().getCodigoProveedorRem());
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "mediador",
 							historico.getMediadorInforme().getNombre());
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "telefono",

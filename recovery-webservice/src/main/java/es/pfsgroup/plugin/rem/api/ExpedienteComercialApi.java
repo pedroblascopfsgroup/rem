@@ -609,4 +609,23 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean isExpedienteComercialVivoByActivo(Activo activo);
+
+	/**
+	 * Este método obtiene una lista de clientes URSUS en base al número de documento
+	 * y el tipo de documento.
+	 * 
+	 * @param numeroDocumento : número de documento del cliente.
+	 * @param tipoDocumento : tipo de documento del cliente.
+	 * @return Devuelve una lista con los clientes encontrados por el servicio.
+	 */
+	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento);
+
+	/**
+	 * Este método obtiene los detalles de cliente en base al número URSUS recibido.
+	 * 
+	 * @param numeroUrsus : número URSUS del cliente.
+	 * @return Devuelve todos los detalles del cliente encontrados por el servicio.
+	 * @throws Exception Devuelve excepcion si la conexion no ha sido satisfactoria.
+	 */
+	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus) throws Exception;
 }

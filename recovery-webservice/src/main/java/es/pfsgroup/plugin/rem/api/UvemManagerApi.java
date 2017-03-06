@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 
@@ -97,6 +99,11 @@ public interface UvemManagerApi {
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
 	public Integer ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	
+	
+	public List<DatosClienteDto> ejecutarNumClienteTest(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	
+	public DatosClienteDto ejecutarDatosClienteTest(Integer numcliente, String qcenre)  throws Exception;
 
 
 	/**
@@ -109,9 +116,7 @@ public interface UvemManagerApi {
 	 */
 	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre)  throws Exception;
 
-	
-	
-	
+
 	
 	
 /*******************************************INSTANCIA DECISION***************************************************/

@@ -379,6 +379,13 @@ public interface ActivoApi {
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
 
 	/**
+	 * Obtiene el último estado de publicacion ordinaria en el que estuvo un activo (ordinaria, oculto, precio oculto)
+	 * @param activoID
+	 * @return
+	 */
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID);
+	
+	/**
 	 * Ejecuta los pasos necesarios para publicar activos de forma ordinaria
 	 * (con validaciones de publicacion) para un activo dado. Retorna TRUE si la
 	 * ejecucion se ha producido sin errores. 1.) Rellena un dto con los

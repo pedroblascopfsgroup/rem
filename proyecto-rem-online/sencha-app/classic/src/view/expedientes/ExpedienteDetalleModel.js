@@ -348,6 +348,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}   	
 	    },
 	    
+	    comboClienteUrsus: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/buscarClientesUrsus',
+				extraParams: {numeroDocumento: null, tipoDocumento: null}
+			}   	
+	    },
+	    
 	    comboDestinoActivo: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {

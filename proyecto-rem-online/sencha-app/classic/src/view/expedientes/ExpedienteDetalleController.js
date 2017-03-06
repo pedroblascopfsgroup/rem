@@ -1041,52 +1041,66 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			     }
 	    	});
 	},
-
-	buscarNumeroUrsus: function(field, e){
-		var me= this;
-		var url =  $AC.getRemoteUrl('expedientecomercial/buscarNumeroUrsus');
-		var parent= field.up('datoscompradorwindow');
+	
+	buscarClientesUrsus: function(field, e){
+		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/buscarClientesUrsus');
+		var parent = field.up('datoscompradorwindow');
 		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
 		var numeroDocumento= field.up('formBase').down('[reference=numeroDocumento]').getValue();
-		var data;
-
-		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento)){
-
-			Ext.Ajax.request({
-			    		     url: url,
-			    		     params: {numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento},
-			    			method: 'GET',
-			    		     success: function(response, opts) {
-			    		    	 data = Ext.decode(response.responseText);
-			    		    	 
-			    		    	 if(!Utils.isEmptyJSON(data.data)){
-			    		    	 	var numeroCliente= data.data.numeroClienteUrsus;
-			    		    	 	var form= parent.down('formBase');
-			    		    	 	var fieldNumeroClienteUrsus= form.down('[reference=numeroClienteUrsusRef]');
-			    		    	 	if(Ext.isEmpty(numeroCliente)){
-			    		    	 			fieldNumeroClienteUrsus.setValue('');
-			    		    	 	}
-			    		    	 	else{
-			    		    	 		fieldNumeroClienteUrsus.setValue(numeroCliente);
-			    		    	 	}
-			    		    	 	me.abrirDatosClienteUrsus(data.data, parent);
-			
-			    		    	 }
-			    		    	 else{
-			    		    	 	me.fireEvent("errorToast", data.msg);
-			    		    	 }
-			    		    	 
-			    		     },
-			    		     failure: function(response) {
-								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			    		     },
-			    		     callback: function(options, success, response){
-			    		     }
-			});
-		}
-		else{
+		
+		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento)) {
+			var form = parent.down('formBase');
+    	 	var fieldClientesUrsus = form.down('[reference=seleccionClienteUrsus]');
+    	 	var store = fieldClientesUrsus.getStore();
+    	 	
+    	 	if(Ext.isEmpty(store.getData().items) || fieldClientesUrsus.recargarField) {
+    	 		store.removeAll();
+    	 		store.getProxy().setExtraParams({numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento});    
+        	 	store.load();
+        	 	fieldClientesUrsus.recargarField = false;
+    	 	}
+		} else {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));	
 		}
+	},
+	
+	onNumeroDocumentoChange: function(field, e) {
+		var me = this;
+		var fieldClientesUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]');
+		fieldClientesUrsus.reset();
+		fieldClientesUrsus.recargarField = true;
+	},
+	
+	establecerNumClienteURSUS: function(field, e) {
+		var me = this;
+		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
+	 	var fieldNumeroClienteUrsus = field.up('formBase').down('[reference=numeroClienteUrsusRef]');
+	 	fieldNumeroClienteUrsus.setValue(numeroUrsus);
+	},
+
+	mostrarDetallesClienteUrsus: function(field, newValue ,oldValue ,eOpts){
+		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus');
+		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
+		var parent = field.up('datoscompradorwindow');
+
+		Ext.Ajax.request({
+		     url: url,
+		     params: {numeroUrsus: numeroUrsus},
+			 method: 'GET',
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 if(!Utils.isEmptyJSON(data.data)){
+		    	 	me.abrirDatosClienteUrsus(data.data, parent);
+		    	 } else {
+		    	 	me.fireEvent("errorToast", data.msg);
+		    	 }
+		     },
+		     failure: function(response) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		     }
+		});
 	},
 
 	abrirDatosClienteUrsus: function(datosClienteUrsus, parent) {

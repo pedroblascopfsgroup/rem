@@ -115,7 +115,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		if (infoTablas == null) {
 			throw new IllegalArgumentException(INFO_TABLAS_NO_PUEDE_SER_NULL);
 		}
-
+		
+		//Session session =this.getSessionFactory().getCurrentSession();
 		Session session = this.sesionFactoryFacade.getSession(this);
 		cambios.clear();
 

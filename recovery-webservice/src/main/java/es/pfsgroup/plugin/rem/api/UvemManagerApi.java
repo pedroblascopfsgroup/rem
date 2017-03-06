@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 
@@ -96,7 +98,7 @@ public interface UvemManagerApi {
 	 *            Otros persona física. J Otros persona jurídica.
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	public Integer ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	public List<DatosClienteDto> ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
 
 
 	/**

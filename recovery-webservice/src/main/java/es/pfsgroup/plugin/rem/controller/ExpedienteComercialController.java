@@ -771,7 +771,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView deleteEntregaReserva(DtoEntregaReserva dto, @RequestParam Long idEntrega, ModelMap model) {
 		try {		
 			
-			model.put("success", expedienteComercialApi.deleteEntregaReserva(dto, idEntrega));
+			model.put("success", expedienteComercialApi.deleteEntregaReserva(idEntrega));
 			
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -371,12 +371,10 @@ public interface ExpedienteComercialApi {
 
 	/**
 	 * Método que elimina una entrega de reserva
-	 * 
-	 * @param dto
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+	public boolean deleteEntregaReserva(Long idEntrega);
 
 	/**
 	 * Función que devuelve la propuesta de un comité para un expediente

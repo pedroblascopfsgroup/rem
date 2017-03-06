@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +40,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
     
-
+	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -355,7 +358,17 @@ public class TabActivoInformeComercial implements TabActivoService {
 	private void getDatosByTipoActivo(Activo activo, DtoActivoInformeComercial activoInformeDto) {
 		
 		try {
-			switch(Integer.parseInt(activo.getTipoActivo().getCodigo())) {
+			
+			String codigoTipoActivo = null;
+			if(!Checks.esNulo(activo.getInfoComercial()) &&
+					!Checks.esNulo(activo.getInfoComercial().getTipoActivo()) &&
+					!Checks.esNulo(activo.getInfoComercial().getTipoActivo().getCodigo())){
+				codigoTipoActivo = activo.getInfoComercial().getTipoActivo().getCodigo();
+			} else {
+				codigoTipoActivo = activo.getTipoActivo().getCodigo();
+			}
+			
+			switch(Integer.parseInt(codigoTipoActivo)) {
 				case 1:
 					break;
 				case 2:
@@ -389,7 +402,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 					break;
 				
 			}
-		
+
+		} catch (ClassCastException e){
+			logger.error(e.getMessage());
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

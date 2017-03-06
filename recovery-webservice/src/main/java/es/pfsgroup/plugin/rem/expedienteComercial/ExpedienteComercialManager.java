@@ -2297,7 +2297,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega){
+	public boolean deleteEntregaReserva(Long idEntrega){
 
 			try {
 				genericDao.deleteById(EntregaReserva.class, idEntrega);

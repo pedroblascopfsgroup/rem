@@ -179,9 +179,8 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 
 						} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)){
 							
-							  if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.APROBADO) &&
-								 !expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.RESERVADO)) {
-								  hashErrores.put("activo", "El expediente comercial debe estar en el estado Aprobado/Reservado.");
+							  if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.VENDIDO)) {
+								  hashErrores.put("activo", "El expediente comercial debe estar en el estado vendido.");
 
 							  } else if (expedienteComercial.getFechaContabilizacionPropietario()!=null) {
 								  hashErrores.put("activo", "El cobro ya se ha realizado");

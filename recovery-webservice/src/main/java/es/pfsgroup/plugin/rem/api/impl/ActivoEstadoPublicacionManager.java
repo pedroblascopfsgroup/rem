@@ -57,6 +57,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private ActivoDao activoDao;
 	
 	@Autowired
+	private ActivoPublicacionValidator activoPublicacionValidator;
+	
+	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
@@ -113,14 +116,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
 		Filter filtro = null;
-	//	DDEstadoPublicacion estadoPublicacion= null;
 		DDEstadoPublicacion estadoPublicacionActual = null;
 		String motivo = null;
 		
 		//Para hacer un cambio en estados de publicacion es necesario saber que validaciones es necesario aplicar
 		//Si no se indicaron por parametro, por defecto se aplican todas las validaciones de publicacion
 		if(Checks.esNulo(validacionesPublicacion))
-			validacionesPublicacion = (new ActivoPublicacionValidator()).initPublicacionValidator(activo); // Todas las condiciones necesarias para T. de publicacion
+			validacionesPublicacion = activoPublicacionValidator.initPublicacionValidator(activo); // Todas las condiciones necesarias para T. de publicacion
 		
 		boolean cumpleCondicionesPublicar = validacionesPublicacion.cumpleValidaciones();
 

@@ -43,6 +43,9 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
     private ActivoApi activoApi;
     
     @Autowired
+    private ActivoPublicacionValidator activoPublicacionValidator;
+    
+    @Autowired
     private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
     
     @Resource
@@ -128,7 +131,7 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 								activoApi.publicarActivo(
 										activo.getId(),
 										messageService.getMessage("tramite.publicacion.publicar.sin.correccion.datos.IC"),
-										(new ActivoPublicacionValidator()).initPublicacionValidator(activo, true, true, true, true, false));
+										activoPublicacionValidator.initPublicacionValidator(activo, true, true, true, true, false));
 							} catch (SQLException e) {
 								e.printStackTrace();
 							} catch (JsonViewerException jViewEx){

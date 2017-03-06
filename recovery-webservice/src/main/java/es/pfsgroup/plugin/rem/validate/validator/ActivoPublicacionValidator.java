@@ -10,8 +10,8 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.validate.ActivoPublicacionValidatorApi;
 
-@Service
-public class ActivoPublicacionValidator extends BusinessOperationOverrider<ActivoPublicacionValidatorApi> implements ActivoPublicacionValidatorApi {
+@Component
+public class ActivoPublicacionValidator implements ActivoPublicacionValidatorApi {
 
 	@Autowired
     private ActivoApi activoApi;
@@ -87,11 +87,6 @@ public class ActivoPublicacionValidator extends BusinessOperationOverrider<Activ
 				(validarOKPrecio ? tieneOkPrecios() : true) &&
 				(validarInfComercialTiposIguales ? tieneInfComercialTiposIguales() : true) &&
 				(validarInfComercialAceptado ? tieneInfComercialAceptado() : true);
-	}
-
-	@Override
-	public String managerName() {
-		return "activoPublicacionValidator";
 	}
 
 }

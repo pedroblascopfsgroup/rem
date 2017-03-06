@@ -2297,7 +2297,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega){
+	public boolean deleteEntregaReserva(Long idEntrega){
 
 			try {
 				genericDao.deleteById(EntregaReserva.class, idEntrega);
@@ -2842,7 +2842,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		try {
-			lista = uvemManagerApi.ejecutarNumClienteTest(numeroDocumento, tipoDoc, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+			lista = uvemManagerApi.ejecutarNumCliente(numeroDocumento, tipoDoc, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2862,7 +2862,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			e.printStackTrace();
 		}
 		
-		return uvemManagerApi.ejecutarDatosClienteTest(numURSUS, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+		return uvemManagerApi.ejecutarDatosCliente(numURSUS, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
 	}
 
 	@SuppressWarnings("unchecked")

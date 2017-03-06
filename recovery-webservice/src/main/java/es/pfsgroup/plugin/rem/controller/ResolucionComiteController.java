@@ -15,8 +15,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
-
 //import org.codehaus.jackson.map.JsonMappingException;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -36,7 +34,9 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.NotificatorApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -89,6 +89,7 @@ public class ResolucionComiteController {
 		Boolean ratificacion = false;
 		String cuerpo = "";
 		Long unidadGestion = null;
+		ActivoTramite tramite = null;
 		
 		try {
 
@@ -104,101 +105,109 @@ public class ResolucionComiteController {
 				errorsList = resolucionComiteApi.validateResolucionPostRequestData(resolucionComiteDto, jsonFields);
 				
 				if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {
-					resol = resolucionComiteApi.saveResolucionComite(resolucionComiteDto);				
 					
-					//Envío correo/notificación
-					if(!Checks.esNulo(resol)){
-						
-						Oferta ofr = ofertaApi.getOfertaByNumOfertaRem(resolucionComiteDto.getOfertaHRE());
-						if(Checks.esNulo(ofr) || (!Checks.esNulo(ofr) && !ofr.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA))){
-							throw new Exception("No existe la oferta o no esta aceptada.");
-						}
-						
-						ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
-						if(Checks.esNulo(eco)){
-							throw new Exception("No existe el expediente comercial de la oferta.");
-						}
-						
-						List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
-						if(Checks.esNulo(listaTramites) || listaTramites.size() == 0){
+					Oferta ofr = ofertaApi.getOfertaByNumOfertaRem(resolucionComiteDto.getOfertaHRE());
+					if(Checks.esNulo(ofr) || (!Checks.esNulo(ofr) && !ofr.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA))){
+						throw new Exception("No existe la oferta o no esta aceptada.");
+					}
+					
+					ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
+					if(Checks.esNulo(eco)){
+						throw new Exception("No existe el expediente comercial de la oferta.");
+					}
+					
+					List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+					if(Checks.esNulo(listaTramites) || listaTramites.size() == 0){
+						throw new Exception("No se ha podido recuperar el trámite de la oferta.");
+					}else{
+						tramite = listaTramites.get(0);
+						if(Checks.esNulo(tramite)){
 							throw new Exception("No se ha podido recuperar el trámite de la oferta.");
 						}
-						
-						//Averiguamos en que estado se encuentra el tramite de la oferta para enviar aviso/correo
-						ActivoTramite tramite = listaTramites.get(0);
-						List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
-						for(int i=0;i< listaTareas.size(); i++){
-							TareaProcedimiento tarea = listaTareas.get(i);						
-							if(!Checks.esNulo(tarea) && tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")){
+					}
+					
+					
+					//Si existe la tarea T013_RatificacionComite, se trata de una ratificación
+					List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasByIdTramite(tramite.getId());
+					for(int i=0;i< listaTareas.size(); i++){
+						TareaProcedimiento tarea = listaTareas.get(i);						
+						if(!Checks.esNulo(tarea)){
+							if(tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")){
 								ratificacion = true;
 								break;
 							}
 						}
+					}
+					
+					if(ratificacion){
+						usu = gestorActivoApi.userFromTarea("T013_RatificacionComite", tramite.getId());
+						resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
+					}else{
+						usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
+						resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+					}
+					
+					resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);				
+					
+					//Envío correo/notificación
+					if(!Checks.esNulo(resol) && !Checks.esNulo(usu)){
+							
+						notif = new Notificacion();
+						Activo actPpal = eco.getOferta().getActivoPrincipal();
+						ActivoAgrupacion agrup = eco.getOferta().getAgrupacion();
 						
-						if(ratificacion){
-							usu = gestorActivoApi.userFromTarea("T013_RatificacionComite", tramite.getId());
+						//Construimos cuerpo correo/aviso
+						cuerpo = ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_INITMSG.concat("\n");
+						if(!Checks.esNulo(eco) && 
+						   !Checks.esNulo(eco.getOferta()) &&
+						   !Checks.esNulo(eco.getOferta().getNumOferta())){
+							cuerpo += "Oferta HRE: " + eco.getOferta().getNumOferta() + ".\n";
+						}
+						if(!Checks.esNulo(agrup)){
+							unidadGestion = agrup.getNumAgrupRem();
+							cuerpo += "Lote: " + agrup.getNumAgrupRem() + ".\n";
 						}else{
-							usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
+							unidadGestion = actPpal.getNumActivo();
+							cuerpo += "Activo: " + actPpal.getNumActivo() + ".\n";
+						}												
+						if(!Checks.esNulo(resol.getComite()) &&
+						   !Checks.esNulo(resol.getComite().getDescripcion())){
+							cuerpo +=  "Comité decisor: " + resol.getComite().getDescripcion() + ".\n";
+						}
+						if(!Checks.esNulo(resol.getEstadoResolucion()) &&
+						   !Checks.esNulo(resol.getEstadoResolucion().getDescripcion())){
+							cuerpo +=  "Resolución: " + resol.getEstadoResolucion().getDescripcion() + ".\n";
+						}
+						if(!Checks.esNulo(resol.getMotivoDenegacion()) && 
+						   !Checks.esNulo(resol.getMotivoDenegacion().getDescripcion())){
+							cuerpo +=  "Motivo denegación: " + resol.getMotivoDenegacion().getDescripcion() + ".\n";
+						}
+						if(!Checks.esNulo(resol.getFechaAnulacion())){
+							cuerpo +=  "Fecha anulación: " + resol.getFechaAnulacion() + ".\n";
+						}
+						if(!Checks.esNulo(resol.getImporteContraoferta())){
+							cuerpo +=  "Importe contraoferta: " + resol.getImporteContraoferta() + ".\n";
 						}
 						
-						if(!Checks.esNulo(usu)){
-			
-							notif = new Notificacion();
-							Activo actPpal = eco.getOferta().getActivoPrincipal();
-							ActivoAgrupacion agrup = eco.getOferta().getAgrupacion();
-							
-							//Construimos cuerpo correo/aviso
-							cuerpo = ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_INITMSG.concat("\n");
-							if(!Checks.esNulo(eco) && 
-							   !Checks.esNulo(eco.getOferta()) &&
-							   !Checks.esNulo(eco.getOferta().getNumOferta())){
-								cuerpo += "Oferta HRE: " + eco.getOferta().getNumOferta() + ".\n";
-							}
-							if(!Checks.esNulo(agrup)){
-								unidadGestion = agrup.getNumAgrupRem();
-								cuerpo += "Lote: " + agrup.getNumAgrupRem() + ".\n";
-							}else{
-								unidadGestion = actPpal.getNumActivo();
-								cuerpo += "Activo: " + actPpal.getNumActivo() + ".\n";
-							}												
-							if(!Checks.esNulo(resol.getComite()) &&
-							   !Checks.esNulo(resol.getComite().getDescripcion())){
-								cuerpo +=  "Comité decisor: " + resol.getComite().getDescripcion() + ".\n";
-							}
-							if(!Checks.esNulo(resol.getEstadoResolucion()) &&
-							   !Checks.esNulo(resol.getEstadoResolucion().getDescripcion())){
-								cuerpo +=  "Resolución: " + resol.getEstadoResolucion().getDescripcion() + ".\n";
-							}
-							if(!Checks.esNulo(resol.getMotivoDenegacion()) && 
-							   !Checks.esNulo(resol.getMotivoDenegacion().getDescripcion())){
-								cuerpo +=  "Motivo denegación: " + resol.getMotivoDenegacion().getDescripcion() + ".\n";
-							}
-							if(!Checks.esNulo(resol.getFechaAnulacion())){
-								cuerpo +=  "Fecha anulación: " + resol.getFechaAnulacion() + ".\n";
-							}
-							if(!Checks.esNulo(resol.getImporteContraoferta())){
-								cuerpo +=  "Importe contraoferta: " + resol.getImporteContraoferta() + ".\n";
-							}
-							
-							cuerpo += ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_ENDMSG;
-									
-							notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resolucionComiteDto.getOfertaHRE() + " del activo/lote " + unidadGestion);
-							notif.setDescripcion(cuerpo);
-							notif.setIdActivo(actPpal.getId());
-							notif.setDestinatario(usu.getId());	
-							notif.setFecha(null);
-							
-							notifrem = anotacionApi.saveNotificacion(notif);
-							if(Checks.esNulo(notifrem)){
-								errorsList.put("error", "Se ha producido un error al enviar la notificación.");
-							}else{
-								notif.setPara(usu.getEmail());
-								notificatorApi.notificator(resol,notif);
-								logger.debug("\tEnviando correo a: " + notif.getPara());
-							}
+						cuerpo += ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_ENDMSG;
+								
+						notif.setTitulo(ResolucionComiteApi.NOTIF_RESOL_COMITE_TITEL_MSG + resolucionComiteDto.getOfertaHRE() + " del activo/lote " + unidadGestion);
+						notif.setDescripcion(cuerpo);
+						notif.setIdActivo(actPpal.getId());
+						notif.setDestinatario(usu.getId());	
+						notif.setFecha(null);
+						
+						notifrem = anotacionApi.saveNotificacion(notif);
+						if(Checks.esNulo(notifrem)){
+							errorsList.put("error", "Se ha producido un error al enviar la notificación.");
+						}else{
+							notif.setPara(usu.getEmail());
+							notificatorApi.notificator(resol,notif);
+							logger.debug("\tEnviando correo a: " + notif.getPara());
 						}
 					}
 				}
+				
 			}
 			
 			if(!Checks.esNulo(notifrem)){

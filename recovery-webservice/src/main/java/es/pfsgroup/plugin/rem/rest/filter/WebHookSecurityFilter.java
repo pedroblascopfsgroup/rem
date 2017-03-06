@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
 public class WebHookSecurityFilter implements Filter {
@@ -40,16 +41,22 @@ public class WebHookSecurityFilter implements Filter {
 		PeticionRest peticion = null;
 		try {
 			restApi.doSessionConfig(WORKINGCODE);
+			String ipClient = restApi.getClientIpAddr(request);
+			Broker broker = restApi.getBrokerByIp(ipClient);
+			if (broker == null) {
+				broker = restApi.getBrokerDefault("");
+				broker.setIp(ipClient);
+			}
 			String authHeader = ((HttpServletRequest) request).getHeader("AUTHORIZATION");
 			restRequest = new RestRequestWrapper((HttpServletRequest) request);
 			peticion = restApi.crearPeticionObj(restRequest);
 			peticion.setSignature(authHeader);
-			if (restApi.validateWebhookSignature(request, authHeader)) {
+			if (broker.getValidarFirma().equals(new Long(0)) || restApi.validateWebhookSignature(request, authHeader)) {
 				restRequest.setPeticionRest(peticion);
 				chain.doFilter(restRequest, response);
 			} else {
 				logger.error("Petición webhook no autorizada");
-				peticion.setResult(RestApi.CODE_ERROR);				
+				peticion.setResult(RestApi.CODE_ERROR);
 			}
 
 		} catch (Exception e) {

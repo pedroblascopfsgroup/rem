@@ -29,7 +29,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		        },
 		        {
 		            dataIndex: 'codigo',
-		            text: HreRem.i18n('title.publicaciones.mediador.id'),
+		            text: HreRem.i18n('title.publicaciones.mediador.codigo'),
 		            flex: 0.5
 		        },
 		        {

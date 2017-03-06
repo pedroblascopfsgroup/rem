@@ -1065,22 +1065,22 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 				    	})
 				    },
 				    
-					T013_ResolucionExpedienteValidacion: function(){
-						var me = this;
-
-						me.deshabilitarCampo(me.down('[name=tipoArras]'));
-						me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
-						
-						me.down('[name=comboProcede]').addListener('change', function(combo){
-							if(combo.value == '01'){
-								me.habilitarCampo(me.down('[name=tipoArras]'));
-								me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
-							}else{
-								me.deshabilitarCampo(me.down('[name=tipoArras]'));
-								me.habilitarCampo(me.down('[name=motivoAnulacion]'));
-							}
-						})
-					},
+//					T013_ResolucionExpedienteValidacion: function(){
+//						var me = this;
+//
+//						me.deshabilitarCampo(me.down('[name=tipoArras]'));
+//						me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+//						
+//						me.down('[name=comboProcede]').addListener('change', function(combo){
+//							if(combo.value == '01'){
+//								me.habilitarCampo(me.down('[name=tipoArras]'));
+//								me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+//							}else{
+//								me.deshabilitarCampo(me.down('[name=tipoArras]'));
+//								me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+//							}
+//						})
+//					},
 						
 					T014_PosicionamientoFirmaValidacion: function(){
 						var me = this;

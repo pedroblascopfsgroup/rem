@@ -116,8 +116,7 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 			//Si la propuesta ya ha sido cargada, no se realizan el resto de comprobaciones
 			if(mapaErrores.get(PROPUESTA_YA_CARGADA).isEmpty()) {
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				if(mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty())
-					mapaErrores.put(ACTIVE_NOT_INCLUDED_IN_PROPUESTA, isActiveNotIncludesInPropuestaRows(exc));
+				mapaErrores.put(ACTIVE_NOT_INCLUDED_IN_PROPUESTA, isActiveNotIncludesInPropuestaRows(exc));
 				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZE_NAN), getNANPrecioIncorrectoRows(exc));
 				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED), getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
 				mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
@@ -412,7 +411,8 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 		
 		try{
 			for(int i=EXCEL_FILA_INICIAL; i<this.numFilasHoja;i++){
-				if(!particularValidator.existeActivoEnPropuesta(exc.dameCeldaByHoja(i, EXCEL_COL_NUMACTIVO, 1),exc.dameCeldaByHoja(1, 2, 1)))
+				String numActivo = exc.dameCeldaByHoja(i, EXCEL_COL_NUMACTIVO, 1);
+				if(!Checks.esNulo(numActivo) && !particularValidator.existeActivoEnPropuesta(numActivo,exc.dameCeldaByHoja(1, 2, 1)))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {

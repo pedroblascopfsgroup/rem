@@ -18,7 +18,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 
 DECLARE
-    err_num NUMBER; -- Numero de errores.
+    err_num NUMBER; -- Numero de error.
     err_msg VARCHAR2(2048); -- Mensaje de error.
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas.
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas.

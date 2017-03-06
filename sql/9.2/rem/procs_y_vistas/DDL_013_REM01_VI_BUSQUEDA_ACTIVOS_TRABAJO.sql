@@ -1,10 +1,10 @@
   --/*
 --##########################################
---## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170201
+--## AUTOR=DANIEL GUTIERREZ
+--## FECHA_CREACION=20170306
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1463
+--## INCIDENCIA_LINK=HREOS-9999
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -53,7 +53,7 @@ BEGIN
 		
 	AS	
   SELECT
-      ROWNUM as VAT_ID,
+      ACT.ACT_ID as VAT_ID,
       TBJ.TBJ_ID,
       TBJ.TBJ_FECHA_SOLICITUD,
       EST.DD_EST_CODIGO,

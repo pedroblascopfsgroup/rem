@@ -28,7 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 @Component
 public class UpdaterServicePublicacionRevisionInformeComercial implements UpdaterService {
@@ -41,9 +41,6 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
     
     @Autowired
     private ActivoApi activoApi;
-    
-    @Autowired
-    private ActivoPublicacionValidator activoPublicacionValidator;
     
     @Autowired
     private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
@@ -128,10 +125,14 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 						if(activoApi.getDptoPrecio(activo)){
 							// 3.) Se publica el activo, quitando la validacion de Informe Comercial, puesto que se ha aceptado antes
 							try {
+								DtoPublicacionValidaciones dtoPublicacionValidaciones = new DtoPublicacionValidaciones();
+								dtoPublicacionValidaciones.setActivo(activo);
+								dtoPublicacionValidaciones.setValidacionesTramite();
+								
 								activoApi.publicarActivo(
 										activo.getId(),
 										messageService.getMessage("tramite.publicacion.publicar.sin.correccion.datos.IC"),
-										activoPublicacionValidator.initPublicacionValidator(activo, true, true, true, true, false));
+										dtoPublicacionValidaciones);
 							} catch (SQLException e) {
 								e.printStackTrace();
 							} catch (JsonViewerException jViewEx){

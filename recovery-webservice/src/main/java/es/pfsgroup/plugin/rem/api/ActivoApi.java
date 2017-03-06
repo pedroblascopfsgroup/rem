@@ -54,7 +54,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
-import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 public interface ActivoApi {
 
@@ -413,7 +413,7 @@ public interface ActivoApi {
 	 * @throws SQLException
 	 * @throws JsonViewerException
 	 */
-	public boolean publicarActivo(Long idActivo, String motivo, ActivoPublicacionValidator validacionesPublicacion) throws SQLException, JsonViewerException;
+	public boolean publicarActivo(Long idActivo, String motivo, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException;
 
 	/**
 	 * Inserta o actualiza una visita aun activo

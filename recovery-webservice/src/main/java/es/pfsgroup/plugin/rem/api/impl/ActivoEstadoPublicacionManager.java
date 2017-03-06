@@ -37,7 +37,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
-import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
@@ -55,9 +55,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired 
 	private ActivoDao activoDao;
-	
-	@Autowired
-	private ActivoPublicacionValidator activoPublicacionValidator;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -112,7 +109,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     		
     @Override
     @Transactional(readOnly = false)
-    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, ActivoPublicacionValidator validacionesPublicacion) throws SQLException, JsonViewerException{
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, DtoPublicacionValidaciones dtoValidacionesPublicacion) throws SQLException, JsonViewerException{
 
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
 		Filter filtro = null;
@@ -121,10 +118,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		//Para hacer un cambio en estados de publicacion es necesario saber que validaciones es necesario aplicar
 		//Si no se indicaron por parametro, por defecto se aplican todas las validaciones de publicacion
-		if(Checks.esNulo(validacionesPublicacion))
-			validacionesPublicacion = activoPublicacionValidator.initPublicacionValidator(activo); // Todas las condiciones necesarias para T. de publicacion
+		if(Checks.esNulo(dtoValidacionesPublicacion) || Checks.esNulo(dtoValidacionesPublicacion.getActivo())){
+			dtoValidacionesPublicacion = new DtoPublicacionValidaciones(); // Todas las condiciones necesarias para T. de publicacion
+			dtoValidacionesPublicacion.setActivo(activo);
+			dtoValidacionesPublicacion.setValidacionesTodas();
+		}
 		
-		boolean cumpleCondicionesPublicar = validacionesPublicacion.cumpleValidaciones();
+		boolean cumpleCondicionesPublicar = verificaValidacionesPublicacion(dtoValidacionesPublicacion);
 
 		//Iniciativa: Si el activo no tuviera estado de publicación (null), debe tomarse como "NO PUBLICADO"
 		estadoPublicacionActual = activo.getEstadoPublicacion();
@@ -163,9 +163,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			// Se revisa el historico para ver si el activo YA se encuentra en estado "Publicado Ordinario"
 			// en cuyo caso NO se hace nada por recibir un cambio a "publicar ordinario"
 			ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
-			if(!Checks.esNulo(ultimoHistorico) && !Checks.esNulo(ultimoHistorico.getEstadoPublicacion())
-					&& !DDEstadoPublicacion.CODIGO_PUBLICADO.equals(ultimoHistorico.getEstadoPublicacion().getCodigo()) ){
-				// Si cumple condiciones de publicar o ya estaba como Publicable, se publica el activo
+			if(Checks.esNulo(ultimoHistorico) || Checks.esNulo(ultimoHistorico.getEstadoPublicacion()) ||
+					(!Checks.esNulo(ultimoHistorico) && !Checks.esNulo(ultimoHistorico.getEstadoPublicacion())
+					&& !DDEstadoPublicacion.CODIGO_PUBLICADO.equals(ultimoHistorico.getEstadoPublicacion().getCodigo())) ){
+
+				// Si se publica por primera vez o el estado anterior no era ya "publicado ordinario"
+				// Si cumple condiciones de publicar, se publica el activo
 				if(cumpleCondicionesPublicar){
 					// Si el activo NO tenia "Fecha publicable"(indicador), se le asigna una
 					// Se marca el activo con el indicador de publicable porque va a publicarse
@@ -174,20 +177,21 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						activoApi.saveOrUpdate(activo);
 					}
 					
-					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
-					motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
-					
 					// Ademas, se publica el activo lanzando el procedure para este
 					publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
+					
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
+					motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
 					
 				// Si en publicacion ordinaria no se cumplen condiciones, devuelve error
 				} else {
 					new JsonViewerException("No es posible publicar el activo. Revise condiciones (Gestion, Admision, Inf. Comercial, Precio venta Web)");
 					return false;
 				}
+				
 			} else {
 				// No se hace nada si el activo ya estaba publicado ordinario y se intenta publicar ordinario
-				return true;
+				return true;				
 			}
 			
 		// NO PUBLICADO: Deseleccionada cualquier opción DTO (ni ordinaria, ni forzada, ni precio oculto, ni despublicar).
@@ -436,5 +440,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			mensajeError = messageServices.getMessage("activo.publicacion.error.publicar.ordinario");
 
 		return mensajeError;
+	}
+	
+	public boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){
+
+		if(!Checks.esNulo(dtoPublicacionValidaciones) && !Checks.esNulo(dtoPublicacionValidaciones.getActivo())){
+			boolean tieneOkGestion = dtoPublicacionValidaciones.getActivo().getAdmision(); // Tiene OK de admision
+			boolean tieneOkAdmision = dtoPublicacionValidaciones.getActivo().getGestion(); // Tiene OK de gestion
+			boolean tieneOkPrecios = activoApi.getDptoPrecio(dtoPublicacionValidaciones.getActivo()); // Tiene OK de precios
+			boolean tieneInfComercialTiposIguales = !activoApi.checkTiposDistintos(dtoPublicacionValidaciones.getActivo()); // Tipos activo Inf. comercial iguales
+			boolean tieneInfComercialAceptado = activoApi.isInformeComercialAceptado(dtoPublicacionValidaciones.getActivo()); // Tiene Inf. comercial aceptado
+		
+			return 
+					(dtoPublicacionValidaciones.isValidarOKGestion() ? tieneOkGestion : true) &&
+					(dtoPublicacionValidaciones.isValidarOKAdmision() ? tieneOkAdmision : true) &&
+					(dtoPublicacionValidaciones.isValidarOKPrecio() ? tieneOkPrecios : true) &&
+					(dtoPublicacionValidaciones.isValidarInfComercialTiposIguales() ? tieneInfComercialTiposIguales : true) &&
+					(dtoPublicacionValidaciones.isValidarInfComercialAceptado() ? tieneInfComercialAceptado : true);
+		}
+		return false;
 	}
 }

@@ -9,7 +9,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 
 public interface ActivoEstadoPublicacionApi {
@@ -37,7 +37,7 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, ActivoPublicacionValidator validacionesPublicacion) throws SQLException, JsonViewerException;
+	public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException;
 	/**
 	 * Método que obtiene el estado de publicación por el ID del activo, así como su motivo y las observaciones si tuviese.
 	 * 

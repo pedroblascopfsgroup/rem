@@ -174,7 +174,7 @@ import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
-import es.pfsgroup.plugin.rem.validate.validator.ActivoPublicacionValidator;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Service("activoManager")
@@ -1677,7 +1677,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public boolean publicarActivo(Long idActivo, String motivo, ActivoPublicacionValidator validacionesPublicacion) throws SQLException, JsonViewerException {
+	public boolean publicarActivo(Long idActivo, String motivo, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException {
 
 		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
 		dtoCambioEstadoPublicacion.setActivo(idActivo);

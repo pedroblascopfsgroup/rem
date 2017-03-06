@@ -276,6 +276,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											            	valueField: 'numeroClienteUrsus',
 											            	displayField: 'nombreYApellidosTitularDeOferta',
 											            	recargarField: false,
+											            	queryMode: 'local',
 											            	autoLoadOnValue: false,
 											            	loadOnBind: false,
 											            	allowBlank:true

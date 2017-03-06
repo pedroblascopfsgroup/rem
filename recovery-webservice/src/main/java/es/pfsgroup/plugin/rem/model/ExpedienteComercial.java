@@ -178,6 +178,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_FECHA_VENTA")
     private Date fechaVenta;
     
+    @OneToMany(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<ResolucionComiteBankia> resolucionesComite;
     
      
 	@Version   
@@ -516,6 +520,15 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setFechaVenta(Date fechaVenta) {
 		this.fechaVenta = fechaVenta;
+	}
+
+	public List<ResolucionComiteBankia> getResolucionesComite() {
+		return resolucionesComite;
+	}
+
+	public void setResolucionesComite(
+			List<ResolucionComiteBankia> resolucionesComite) {
+		this.resolucionesComite = resolucionesComite;
 	}
 	
     

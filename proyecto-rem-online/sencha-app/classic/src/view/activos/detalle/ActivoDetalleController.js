@@ -1854,8 +1854,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			textFieldPerimetroGestion.reset();
 			break;
 			
-		case 'chkbxPerimetroFormalizar':			
-			textFieldFormalizar.reset();
+		case 'chkbxPerimetroFormalizar':
+			if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
+				chkbxFormalizar.setValue(false);
+				me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
+			}
+			else {
+				textFieldFormalizar.reset();
+			}
 			break;
 		default:
 			break;

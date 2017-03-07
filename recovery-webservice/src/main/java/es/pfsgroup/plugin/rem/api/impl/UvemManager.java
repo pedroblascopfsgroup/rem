@@ -51,6 +51,7 @@ import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
+import es.pfsgroup.plugin.rem.rest.dto.ClienteUrsusRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -269,6 +270,9 @@ public class UvemManager implements UvemManagerApi {
 		return servicioGMPETS07_INS;
 	}
 
+	
+	
+	
 	/**
 	 * Invoca al servicio GMPAJC11_INS de BANKIA para solicitar los datos de un
 	 * cliente
@@ -284,11 +288,99 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	@Override
-	public List<DatosClienteDto> ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre)
+	public List<DatosClienteDto> ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception {
+		
+		ClienteUrsusRequestDto clienteUrsusRequestDto = new ClienteUrsusRequestDto();
+		List<DatosClienteDto> listaClientes = null;
+		List<DatosClienteDto> listaClientesFinal = new ArrayList<DatosClienteDto>();
+		DatosClienteDto clientesDto = null;
+		Boolean paginar = false;
+		int ite = 0;
+		
+		logger.info("\nLlamada iteración: " + ite);
+		//System.out.println("\nLlamada iteración: " + ite);
+		clienteUrsusRequestDto = this.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre, String.valueOf(0));	
+		logger.info("Contiene: " + clienteUrsusRequestDto.getData().size()  + " clientes.");
+		//System.out.println("Contiene: " + clienteUrsusRequestDto.getData().size()  + " clientes.");
+		
+		if(!Checks.esNulo(clienteUrsusRequestDto) && !Checks.esNulo(clienteUrsusRequestDto.getData())){
+			listaClientes = clienteUrsusRequestDto.getData();	
+			//Añadimos los clientes de la primera llamada
+			listaClientesFinal.addAll(listaClientes);
+			
+			
+			logger.info("Paginación: " + clienteUrsusRequestDto.getIndicadorPaginacion());
+			//System.out.println("Paginación: " + clienteUrsusRequestDto.getIndicadorPaginacion());
+			if(!Checks.esNulo(clienteUrsusRequestDto.getIndicadorPaginacion()) && clienteUrsusRequestDto.getIndicadorPaginacion() > 0){
+				paginar = true;
+			}
+			
+			while(paginar){
+				
+				//Por defecto no paginamos para evitar bucles infinitos
+				paginar = false;
+				ite++;
+				if(!Checks.esNulo(clienteUrsusRequestDto) && !Checks.esNulo(clienteUrsusRequestDto.getData())){
+									
+					listaClientes = clienteUrsusRequestDto.getData();		
+					if(!Checks.esNulo(listaClientes) && listaClientes.size()>0){
+						String ultimoNumCliente = listaClientes.get(listaClientes.size()-1).getNumeroClienteUrsus();
+						
+						logger.info("\nLlamada iteración: " + ite);
+						//System.out.println("\nLlamada iteración: " + ite);
+						clienteUrsusRequestDto = this.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre, String.valueOf(ultimoNumCliente));	
+						logger.info("Contiene: " + clienteUrsusRequestDto.getData().size()  + " clientes.");
+						//System.out.println("Contiene: " + clienteUrsusRequestDto.getData().size()  + " clientes.");
+						
+						if(!Checks.esNulo(clienteUrsusRequestDto) && !Checks.esNulo(clienteUrsusRequestDto.getData())){						
+							listaClientes = clienteUrsusRequestDto.getData();
+							//Añadimos los clientes de las sucesivas llamadas
+							listaClientesFinal.addAll(listaClientes);
+							
+							logger.info("Paginación: " + clienteUrsusRequestDto.getIndicadorPaginacion());
+							//System.out.println("Paginación: " + clienteUrsusRequestDto.getIndicadorPaginacion());
+							if(!Checks.esNulo(clienteUrsusRequestDto.getIndicadorPaginacion()) && clienteUrsusRequestDto.getIndicadorPaginacion() > 0){
+								paginar = true;
+							}
+						}
+					}
+				}			
+			}
+		}
+
+		logger.info("\nRespuesta Final Devuelta NUMCLIENTE:");
+		//System.out.println("\nRespuesta Final Devuelta NUMCLIENTE:");
+		for (int i = 0; i < listaClientesFinal.size(); i++) {
+			clientesDto = listaClientesFinal.get(i);
+			if(!Checks.esNulo(clientesDto)){			
+				logger.info("NumeroClienteUrsus: "+ clientesDto.getNumeroClienteUrsus());
+				logger.info("DniNifDelTitularDeLaOferta: "+ clientesDto.getDniNifDelTitularDeLaOferta());
+				logger.info("NombreYApellidosTitularDeOferta: "+ clientesDto.getNombreYApellidosTitularDeOferta());
+				
+				/*System.out.println("NumeroClienteUrsus: "+ clientesDto.getNumeroClienteUrsus());
+				System.out.println("DniNifDelTitularDeLaOferta: "+ clientesDto.getDniNifDelTitularDeLaOferta());
+				System.out.println("NombreYApellidosTitularDeOferta: "+ clientesDto.getNombreYApellidosTitularDeOferta());*/
+			}
+		}
+		
+		return listaClientesFinal;
+	}
+	
+	
+	/**
+	 * Invoca al servicio GMPAJC11_INS de BANKIA para solicitar los datos de un cliente
+	 * @param nDocumento
+	 * @param tipoDocumento
+	 * @param qcenre
+	 * @param idClienteClow 0 para la primera llamada. Último idClienteClow si tiene paginación
+	 * @return
+	 */
+	private ClienteUrsusRequestDto ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre, String idClienteClow)
 			throws Exception {
 		logger.info("------------ LLAMADA WS NUMCLIENTE -----------------");
 		ArrayList<DatosClienteDto> resultado = new ArrayList<DatosClienteDto>();
-
+		ClienteUrsusRequestDto clienteUrsusDto = new ClienteUrsusRequestDto();
+		
 		try {
 
 			leerConfiguracion();
@@ -364,48 +456,55 @@ public class UvemManager implements UvemManagerApi {
 				request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 			}
 			servicioGMPAJC11_INS.setidSesionWL(request != null ? request.getSession().getId() : "");
-			servicioGMPAJC11_INS.setIdentificadorClienteOfertaidclow(0);// <----?????????
+			//Para la primera pagina se pone el idClow = 0. 
+			//Para consultar el resto de paginas, hay que pasar el último idClow de cada página
+			servicioGMPAJC11_INS.setIdentificadorClienteOfertaidclow(Integer.parseInt(idClienteClow));
 			servicioGMPAJC11_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
 
 			// logueamos parametros enviados
+			logger.info("\nLogueamos parametros entrada.\n");
 			logger.info("CodigoObjetoAccesocopace: " + servicioGMPAJC11_INS.getCodigoObjetoAccesocopace());
-			logger.info("ClaseDeDocumentoIdentificadorcocldo: "
-					+ servicioGMPAJC11_INS.getClaseDeDocumentoIdentificadorcocldo());
-			logger.info(
-					"DniNifDelTitularDeLaOfertanudnio: " + servicioGMPAJC11_INS.getDniNifDelTitularDeLaOfertanudnio());
+			logger.info("ClaseDeDocumentoIdentificadorcocldo: "+ servicioGMPAJC11_INS.getClaseDeDocumentoIdentificadorcocldo());
+			logger.info("DniNifDelTitularDeLaOfertanudnio: " + servicioGMPAJC11_INS.getDniNifDelTitularDeLaOfertanudnio());
 			logger.info("NumeroCliente: " + servicioGMPAJC11_INS.getnumeroCliente());
 			logger.info("NumeroUsuario: " + servicioGMPAJC11_INS.getnumeroUsuario());
 			logger.info("idSesionWL: " + servicioGMPAJC11_INS.getidSesionWL());
-			logger.info(
-					"IdentificadorClienteOfertaidclow: " + servicioGMPAJC11_INS.getIdentificadorClienteOfertaidclow());
-			logger.info("CodEntidadRepresntClienteUrsusqcenre: "
-					+ servicioGMPAJC11_INS.getCodEntidadRepresntClienteUrsusqcenre());
+			logger.info("IdentificadorClienteOfertaidclow: " + servicioGMPAJC11_INS.getIdentificadorClienteOfertaidclow());
+			logger.info("CodEntidadRepresntClienteUrsusqcenre: " + servicioGMPAJC11_INS.getCodEntidadRepresntClienteUrsusqcenre());
 
-			/*
-			 * System.out.println("CodigoObjetoAccesocopace: " +
-			 * servicioGMPAJC11_INS.getCodigoObjetoAccesocopace());
-			 * System.out.println("ClaseDeDocumentoIdentificadorcocldo: " +
-			 * servicioGMPAJC11_INS.getClaseDeDocumentoIdentificadorcocldo());
-			 * System.out.println( "DniNifDelTitularDeLaOfertanudnio: " +
-			 * servicioGMPAJC11_INS.getDniNifDelTitularDeLaOfertanudnio());
-			 * System.out.println("NumeroCliente: " +
-			 * servicioGMPAJC11_INS.getnumeroCliente()); System.out.println(
-			 * "NumeroUsuario: " + servicioGMPAJC11_INS.getnumeroUsuario());
-			 * System.out.println("idSesionWL: " +
-			 * servicioGMPAJC11_INS.getidSesionWL()); System.out.println(
-			 * "IdentificadorClienteOfertaidclow: " +
-			 * servicioGMPAJC11_INS.getIdentificadorClienteOfertaidclow());
-			 * System.out.println("CodEntidadRepresntClienteUrsusqcenre: " +
-			 * servicioGMPAJC11_INS.getCodEntidadRepresntClienteUrsusqcenre());
+			/*System.out.println("\nLogueamos parametros entrada.\n");
+			System.out.println("CodigoObjetoAccesocopace: " + servicioGMPAJC11_INS.getCodigoObjetoAccesocopace());
+			System.out.println("ClaseDeDocumentoIdentificadorcocldo: " + servicioGMPAJC11_INS.getClaseDeDocumentoIdentificadorcocldo());
+			System.out.println( "DniNifDelTitularDeLaOfertanudnio: " +servicioGMPAJC11_INS.getDniNifDelTitularDeLaOfertanudnio());
+			System.out.println("NumeroCliente: " +servicioGMPAJC11_INS.getnumeroCliente()); 
+			System.out.println("NumeroUsuario: " + servicioGMPAJC11_INS.getnumeroUsuario());
+			System.out.println("idSesionWL: " + servicioGMPAJC11_INS.getidSesionWL()); 
+			System.out.println( "IdentificadorClienteOfertaidclow: " +servicioGMPAJC11_INS.getIdentificadorClienteOfertaidclow());
+			System.out.println("CodEntidadRepresntClienteUrsusqcenre: " +servicioGMPAJC11_INS.getCodEntidadRepresntClienteUrsusqcenre());
 			 */
 
 			servicioGMPAJC11_INS.setAlias(ALIAS);
 			servicioGMPAJC11_INS.execute();
-
+			
+			logger.info("\nLogueamos la respuesta.\n");
+			logger.info("Paginacion: " + servicioGMPAJC11_INS.getIndicadorDePaginacionindipg());
+			
+			/*System.out.println("\nLogueamos la respuesta.\n");
+			System.out.println("Paginacion: " + servicioGMPAJC11_INS.getIndicadorDePaginacionindipg());*/
+			
 			if (servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size() > 0) {
 				for (int i = 0; i < servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size(); i++) {
-					StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = servicioGMPAJC11_INS
-							.getNumeroDeOcurrenciasnumocu().getStructGMPAJC11_INS_NumeroDeOcurrenciasnumocuAt(i);
+					StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().getStructGMPAJC11_INS_NumeroDeOcurrenciasnumocuAt(i);
+					
+					// logueamos la respuesta
+					logger.info("NumeroClienteUrsus: "+ struct.getIdentificadorClienteOfertaidclow2());
+					logger.info("DniNifDelTitularDeLaOferta: "+ struct.getDniNifDelTitularDeLaOfertanudnio2());
+					logger.info("NombreYApellidosTitularDeOferta: "+ struct.getNombreYApellidosTitularDeOfertanotiof());
+					
+					/*System.out.println("NumeroClienteUrsus: "+ struct.getIdentificadorClienteOfertaidclow2());
+					System.out.println("DniNifDelTitularDeLaOferta: "+ struct.getDniNifDelTitularDeLaOfertanudnio2());
+					System.out.println("NombreYApellidosTitularDeOferta: "+ struct.getNombreYApellidosTitularDeOfertanotiof());*/
+					
 					if (struct.getIdentificadorClienteOfertaidclow2() > 0) {
 						DatosClienteDto aux = new DatosClienteDto();
 						aux.setNumeroClienteUrsus(String.valueOf(struct.getIdentificadorClienteOfertaidclow2()));
@@ -417,15 +516,21 @@ public class UvemManager implements UvemManagerApi {
 						}
 						resultado.add(aux);
 					}
-
-				}
+				}	
 			}
+			
+			if(!Checks.esNulo(servicioGMPAJC11_INS.getIndicadorDePaginacionindipg())){
+				clienteUrsusDto.setIndicadorPaginacion(servicioGMPAJC11_INS.getIndicadorDePaginacionindipg());
+			}else{
+				clienteUrsusDto.setIndicadorPaginacion(0);
+			}
+			clienteUrsusDto.setData(resultado);
 
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			throw e;
 		}
-		return resultado;
+		return clienteUrsusDto;
 
 	}
 

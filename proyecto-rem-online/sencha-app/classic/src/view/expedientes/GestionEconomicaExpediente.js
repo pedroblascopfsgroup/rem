@@ -34,7 +34,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
             	
                 	{
 					    xtype		: 'gridBaseEditableRow',
-					    topBar: true,
+					    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),
 					    reference: 'listadohoronarios',
 					    idPrincipal : 'expediente.id',
 						cls	: 'panel-base shadow-panel',

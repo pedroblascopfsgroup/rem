@@ -1,7 +1,6 @@
 Ext.define('HreRem.view.publicacion.configuracion.ConfiguracionPublicacionList', {
     extend: 'HreRem.view.common.GridBaseEditableRow',
     xtype: 'configuracionpublicacionlist',
-    topBar: true,
     editOnSelect: false,
     idPrincipal : 'id',
 
@@ -14,6 +13,8 @@ Ext.define('HreRem.view.publicacion.configuracion.ConfiguracionPublicacionList',
      	var me = this;
 
      	me.setTitle(HreRem.i18n('title.configuracion.publicacion.grid'));
+     	
+     	me.topBar = $AU.userHasFunction(['EDITAR_TAB_CONFIGURACION_PUBLICACION']);
 
 	    me.columns = [
 	    

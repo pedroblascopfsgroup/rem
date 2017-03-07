@@ -288,6 +288,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 												            bind: {
 												            	hidden: '{!esCarteraBankia}'
 												            },
+												            disabled: true,
 												            cls: 'search-button-buscador',
 															iconCls: 'app-buscador-ico ico-search'
 							                            }

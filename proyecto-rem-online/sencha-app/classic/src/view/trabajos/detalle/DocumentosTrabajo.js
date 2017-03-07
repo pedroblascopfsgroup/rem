@@ -13,7 +13,7 @@ Ext.define('HreRem.view.trabajos.detalle.DocumentosTrabajo', {
     	me.items= [
     	          {			
 				    xtype		: 'gridBase',
-				    topBar		: true,
+				    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS_TRABAJO']),
 				    features: [{ftype:'grouping'}],
 				    reference: 'listadoDocumentosTrabajo',
 					cls	: 'panel-base shadow-panel',

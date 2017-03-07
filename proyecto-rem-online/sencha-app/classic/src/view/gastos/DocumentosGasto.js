@@ -14,7 +14,7 @@ Ext.define('HreRem.view.gastos.DocumentosGasto', {
     	
     	          {			
 					    xtype		: 'gridBase',
-					    topBar		: true,
+					    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS']),
 					    features: [{ftype:'grouping'}],
 					    reference: 'listadoDocumentosGasto',
 						cls	: 'panel-base shadow-panel',

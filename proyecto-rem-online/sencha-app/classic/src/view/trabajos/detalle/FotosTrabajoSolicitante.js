@@ -137,9 +137,9 @@ Ext.define('HreRem.view.trabajos.detalle.FotosTrabajoSolicitante', {
 		    buttonAlign: 'left',
 		    dock: 'top',
 		    items: [
-		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoClick', secFunPermToEnable: 'SUBIR_FOTOS_TRABAJO_SOLICITANTE'},
-		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick', secFunPermToEnable: 'SUBIR_FOTOS_TRABAJO_SOLICITANTE'},
-		        { iconCls:'x-fa fa-download', itemId:'downloadButton', handler: 'onDownloadFotoClick', secFunPermToEnable: 'SUBIR_FOTOS_TRABAJO_SOLICITANTE'}
+		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_SOLICITANTE_TRABAJO'},
+		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_SOLICITANTE_TRABAJO'},
+		        { iconCls:'x-fa fa-download', itemId:'downloadButton', handler: 'onDownloadFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_SOLICITANTE_TRABAJO'}
 		        //Se deja planteado para fase 2
 		        /*,
 		        { iconCls:'x-fa fa-print', itemId:'printButton', handler: 'onPrintFotoClick'}*/

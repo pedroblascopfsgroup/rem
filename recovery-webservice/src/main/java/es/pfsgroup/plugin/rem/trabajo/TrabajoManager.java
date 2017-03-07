@@ -1983,13 +1983,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Trabajo trabajo = findOne(idTrabajo);
 		Activo activo = trabajo.getActivo();
-		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getProvincia())) {
+		if(!Checks.esNulo(activo)){
+			if(!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getProvincia())) {
 			
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera", activo.getCartera().getCodigo());
-			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigoProvincia", activo.getProvincia());
-			Order orden = new Order(OrderType.ASC,"nombreComercial");
-			
-			return (List<VProveedores>) genericDao.getListOrdered(VProveedores.class, orden, filtro1, filtro2);
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera", activo.getCartera().getCodigo());
+				//Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigoProvincia", activo.getProvincia());
+				Order orden = new Order(OrderType.ASC,"nombreComercial");
+				
+				return (List<VProveedores>) genericDao.getListOrdered(VProveedores.class, orden, filtro1/*, filtro2*/);
+			}
 		}
 		
 		return new ArrayList<VProveedores>();

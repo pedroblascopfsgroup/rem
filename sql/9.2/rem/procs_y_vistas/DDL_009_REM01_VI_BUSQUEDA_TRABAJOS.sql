@@ -98,7 +98,7 @@ BEGIN
           LEFT JOIN ' || V_ESQUEMA || '.bie_localizacion bieloc ON loc.bie_loc_id = bieloc.bie_loc_id
           LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_loc_localidad ddloc ON bieloc.dd_loc_id = ddloc.dd_loc_id
           LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_prv_provincia ddprv ON bieloc.dd_prv_id = ddprv.dd_prv_id
-          LEFT JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr ON (ttr.dd_ttr_id = tbj.dd_ttr_id and ttr.dd_ttr_filtrar IS NULL)
+          JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr ON (ttr.dd_ttr_id = tbj.dd_ttr_id and ttr.dd_ttr_filtrar IS NULL)
           LEFT JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str ON str.dd_str_id = tbj.dd_str_id
           LEFT JOIN ' || V_ESQUEMA || '.dd_est_estado_trabajo est ON tbj.dd_est_id = est.dd_est_id
           INNER JOIN ' || V_ESQUEMA || '.dd_cra_cartera cra ON cra.dd_cra_id = act.dd_cra_id

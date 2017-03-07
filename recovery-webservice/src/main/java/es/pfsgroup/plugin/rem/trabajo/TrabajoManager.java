@@ -1984,7 +1984,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = findOne(idTrabajo);
 		Activo activo = trabajo.getActivo();
 		if(!Checks.esNulo(activo)){
-			if(!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getProvincia())) {
+			if(!Checks.esNulo(activo.getCartera()) /*&& !Checks.esNulo(activo.getProvincia())*/) {
 			
 				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera", activo.getCartera().getCodigo());
 				//Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigoProvincia", activo.getProvincia());

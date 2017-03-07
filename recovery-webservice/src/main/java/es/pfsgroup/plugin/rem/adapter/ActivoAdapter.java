@@ -2031,12 +2031,13 @@ public class ActivoAdapter {
 							}
 
 						} else {
-
-							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
+							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
 										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
 										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
+							}
+							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
 										activoCarga.getCargaBien().getSituacionCargaEconomica().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",

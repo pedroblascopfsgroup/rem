@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,6 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -94,7 +96,15 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							
 							//Al venderse el activo, actualizamos el estado de publicación a 'No publicado'.
 							String[] numTrabajoMotivo = {String.valueOf(tramite.getTrabajo().getNumTrabajo())};
-							activoApi.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_ESTADO_PUBLICACION_ACTIVO_VENDIDO, numTrabajoMotivo));
+							try {
+								activoApi.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_ESTADO_PUBLICACION_ACTIVO_VENDIDO, numTrabajoMotivo));
+							} catch (JsonViewerException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							
 							genericDao.save(Activo.class, activo);
 						}

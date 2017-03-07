@@ -69,6 +69,9 @@ public class VBusquedaActivosTrabajo implements Serializable {
 	@Column(name="DD_EST_ESTADO_CONTABLE")
 	private String estadoContable;
 	
+	@Column(name="ACT_TBJ_PARTICIPACION")
+	private Float participacion;
+	
 	public String getIdVista() {
 		return idVista;
 	}
@@ -210,6 +213,11 @@ public class VBusquedaActivosTrabajo implements Serializable {
 		return serialVersionUID;
 	}
 
-	
+	public Float getParticipacion() {
+		return participacion;
+	}
 
+	public void setParticipacion(Float participacion) {
+		this.participacion = participacion;
+	}
 }

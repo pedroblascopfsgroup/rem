@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Repository("ActivoDao")
@@ -515,6 +516,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {
 		
 		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
+		
+		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
+		 
+		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID) {
+		
+		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? " +
+				" and historico.estadoPublicacion.codigo in ("+DDEstadoPublicacion.CODIGO_PUBLICADO + ","
+				+ DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO + ","
+				+ DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO +") " +
+				" and auditoria.borrado = false order by historico.id desc";
 		
 		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
 		 

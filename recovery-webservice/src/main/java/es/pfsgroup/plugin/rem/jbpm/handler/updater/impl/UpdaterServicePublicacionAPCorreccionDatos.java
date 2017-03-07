@@ -27,6 +27,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -145,6 +146,8 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 							activoApi.publicarActivo(activo.getId(), messageService.getMessage("tramite.publicacion.publicar.con.correccion.datos.IC.sin.cambio"));
 						} catch (SQLException e) {
 							e.printStackTrace();
+						} catch (JsonViewerException jViewEx){
+							jViewEx.printStackTrace();
 						}
 					}
 				}

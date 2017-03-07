@@ -1,7 +1,6 @@
 Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'ofertascomercialagrupacionlist',
-    topBar: true,
     bind: {
         store: '{storeOfertasAgrupacion}',
         topBar: '{agrupacionficha.esEditable}',
@@ -13,6 +12,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     initComponent: function () {
     	        
         var me = this;
+        
+        me.topBar = $AU.userHasFunction(['EDITAR_TAB_COMERCIAL_AGRUPACION']);
         
         me.columns= [
         

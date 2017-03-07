@@ -1228,4 +1228,120 @@ public class UvemManager implements UvemManagerApi {
 
 	}
 
+
+
+
+	@Override
+	public List<DatosClienteDto> ejecutarNumClienteTest(String nDocumento, String tipoDocumento, String qcenre)
+			throws Exception {
+
+		List<DatosClienteDto> lista = new ArrayList<DatosClienteDto>();
+		
+		DatosClienteDto cliente1 = new DatosClienteDto();
+		cliente1.setNumeroClienteUrsus("578773");
+		cliente1.setDniNifDelTitularDeLaOferta("1111111A");
+		cliente1.setNombreYApellidosTitularDeOferta("Primero de la Lista");
+		lista.add(cliente1);
+		
+		DatosClienteDto cliente2 = new DatosClienteDto();
+		cliente2.setNumeroClienteUrsus("247311");
+		cliente2.setDniNifDelTitularDeLaOferta("2222222B");
+		cliente2.setNombreYApellidosTitularDeOferta("Segundo de la Lista");
+		lista.add(cliente2);
+		
+		return lista;
+	}
+
+
+
+
+	@Override
+	public DatosClienteDto ejecutarDatosClienteTest(Integer numcliente, String qcenre) throws Exception {
+		DatosClienteDto dto = new DatosClienteDto();
+		
+		if(numcliente == 578773){
+			dto.setBarrioColoniaOApartado("BARRIO DE LA ESTACION");
+			dto.setClaseDeDocumentoIdentificador("1");
+			dto.setCodigoDeProvincia("28");
+			dto.setCodigoDeSituacionDelCliente("0");
+			dto.setCodigoEstadoCivil("1");
+			dto.setCodigoPostal("28820");
+			dto.setCodigoTipoDeVia("1");
+			dto.setDELEGACION("none");
+			dto.setDatosComplementariosDelDomicilio("nyan nyan");
+			dto.setDenominacionTipoDeViaTrabajo("CA");
+			dto.setDniNifDelTitularDeLaOferta("1111111A");
+			dto.setESCALERA("1");
+			dto.setEdadDelCliente("51");
+			dto.setEstadoCivilActual("SOLTERO");
+			dto.setFechaDeNacimientoOConstitucion("1965-05-02");
+			dto.setNombreComercialDeLaEmpresa("none");
+			dto.setNombreDeLaProvincia("MADRID");
+			dto.setNombreDeLaProvinciaNacimiento("MADRID");
+			dto.setNombreDeLaSituacionDelCliente("none");
+			dto.setNombreDeLaVia("ARGENTINA");
+			dto.setNombreDePaisDelDomicilio("ESPAÑA");
+			dto.setNombreDePaisNacionalidad("ESPAÑA");
+			dto.setNombreDePaisResidencia("ESPAÑA");
+			dto.setNombreDePoblacionDeNacimiento("MADRID");
+			dto.setNombreDelCliente("TIN");
+			dto.setNombreDelMunicipio("PARQUE DE BOADILLA");
+			dto.setNombreDelPaisDeNacimiento("ESPAÑA");
+			dto.setNombreYApellidosTitularDeOferta("TIN TUN CHANG");
+			dto.setNumeroClienteUrsus("578773");
+			dto.setNumeroClienteUrsusConyuge("0");
+			dto.setNumeroDeHijos("0");
+			dto.setNumeroDePuerta("A");
+			dto.setPISO("03");
+			dto.setPORTAL("0020");
+			dto.setPrimerApellido("TUN");
+			dto.setSEXO("V");
+			dto.setSegundoApellido("CHANG");
+			dto.setSubsectorDeActividadEconomica("HOGARES Y EMPRESARIOS INDIVIDUALES");
+			dto.setTipoDeSociedad("none");
+		} else if(numcliente == 247311) {
+			dto.setBarrioColoniaOApartado("Un bonito lugar");
+			dto.setClaseDeDocumentoIdentificador("1");
+			dto.setCodigoDeProvincia("28");
+			dto.setCodigoDeSituacionDelCliente("0");
+			dto.setCodigoEstadoCivil("1");
+			dto.setCodigoPostal("46820");
+			dto.setCodigoTipoDeVia("1");
+			dto.setDELEGACION("none");
+			dto.setDatosComplementariosDelDomicilio("mismo");
+			dto.setDenominacionTipoDeViaTrabajo("CA");
+			dto.setDniNifDelTitularDeLaOferta("2222222B");
+			dto.setESCALERA("3");
+			dto.setEdadDelCliente("37");
+			dto.setEstadoCivilActual("SOLTERO");
+			dto.setFechaDeNacimientoOConstitucion("1980-05-02");
+			dto.setNombreComercialDeLaEmpresa("none");
+			dto.setNombreDeLaProvincia("VALENCIA");
+			dto.setNombreDeLaProvinciaNacimiento("VALENCIA");
+			dto.setNombreDeLaSituacionDelCliente("none");
+			dto.setNombreDeLaVia("de los santos");
+			dto.setNombreDePaisDelDomicilio("ESPAÑA");
+			dto.setNombreDePaisNacionalidad("ESPAÑA");
+			dto.setNombreDePaisResidencia("ESPAÑA");
+			dto.setNombreDePoblacionDeNacimiento("VALENCIA");
+			dto.setNombreDelCliente("Enrique");
+			dto.setNombreDelMunicipio("paterna");
+			dto.setNombreDelPaisDeNacimiento("ESPAÑA");
+			dto.setNombreYApellidosTitularDeOferta("Enrique cidocon avecrem");
+			dto.setNumeroClienteUrsus("247311");
+			dto.setNumeroClienteUrsusConyuge("0");
+			dto.setNumeroDeHijos("0");
+			dto.setNumeroDePuerta("B");
+			dto.setPISO("01");
+			dto.setPORTAL("0020");
+			dto.setPrimerApellido("cidocon");
+			dto.setSEXO("V");
+			dto.setSegundoApellido("avecrem");
+			dto.setSubsectorDeActividadEconomica("Cocinero masterchef");
+			dto.setTipoDeSociedad("none");
+		}
+		
+		return dto;
+	}
+
 }

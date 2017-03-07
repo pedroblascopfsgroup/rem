@@ -1929,7 +1929,11 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion));
 		} catch (SQLException e) {
 			model.put("success", false);
-			logger.error("error en activoController", e);
+			logger.error("Error en ActivoController: ", e);
+		} catch (JsonViewerException jViewEx) {
+			logger.error("Error en ActivoController", jViewEx);
+			model.put("success", false);
+			model.put("msgError", jViewEx.getMessage());
 		}
 
 		return createModelAndViewJson(model);
@@ -2285,6 +2289,11 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			model.put("success", activoApi.saveComercialActivo(dto));
+			
+		} catch (JsonViewerException jvex) {
+			logger.error("error en activoController.saveComercialActivo", jvex);
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);

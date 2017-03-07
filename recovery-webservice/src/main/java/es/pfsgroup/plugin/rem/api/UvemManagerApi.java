@@ -85,8 +85,11 @@ public interface UvemManagerApi {
 	 */
 	DatosClienteDto ejecutarDatosClientePorDocumento(DtoClienteUrsus dtoCliente) throws Exception;
 	
+
 	
-		
+	
+	
+
 	/**
 	 * Servicio GMPAJC11_INS que a partir del nº y tipo de documento, así como Entidad del
 	 * Cliente (y tipo) devolverá el/los nº cliente/s Ursus coincidentes
@@ -100,6 +103,8 @@ public interface UvemManagerApi {
 	 */
 	public List<DatosClienteDto> ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
 
+	//TODO: cuando se pruebe borrar este método.
+	public List<DatosClienteDto> ejecutarNumClienteTest(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
 
 	/**
 	 * Servicio GMPAJC93_INS que a partir del nº cliente URSUS se devuelvan
@@ -111,9 +116,9 @@ public interface UvemManagerApi {
 	 */
 	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre)  throws Exception;
 
-	
-	
-	
+	//TODO: cuando se pruebe borrar este método.
+	public DatosClienteDto ejecutarDatosClienteTest(Integer numcliente, String qcenre)  throws Exception;
+
 	
 	
 /*******************************************INSTANCIA DECISION***************************************************/

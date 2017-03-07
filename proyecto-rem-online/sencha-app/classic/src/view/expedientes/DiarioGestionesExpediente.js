@@ -15,7 +15,7 @@ Ext.define('HreRem.view.expedientes.DiarioGestionesExpediente', {
 			{
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal : 'expediente.id',
-			    topBar: true,
+			    topBar: $AU.userHasFunction(['EDITAR_TAB_DIARIO_GESTIONES_EXPEDIENTES']),
 			    reference: 'listadoObservaciones',
 				cls	: 'panel-base shadow-panel',
 				bind: {

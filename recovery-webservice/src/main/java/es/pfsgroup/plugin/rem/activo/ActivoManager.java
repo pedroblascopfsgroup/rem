@@ -174,6 +174,7 @@ import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Service("activoManager")
@@ -1668,21 +1669,32 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return activoDao.getUltimoHistoricoEstadoPublicacion(activoID);
 	}
+	
+	@Override
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID) {
+
+		return activoDao.getUltimoHistoricoEstadoPublicado(activoID);
+	}
 
 	@Override
-	public boolean publicarActivo(Long idActivo) throws SQLException {
+	public boolean publicarActivo(Long idActivo) throws SQLException, JsonViewerException {
 		return publicarActivo(idActivo, null);
 	}
 
 	@Override
-	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException {
+	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException, JsonViewerException {
+		return publicarActivo(idActivo, motivo, null);
+	}
+	
+	@Override
+	public boolean publicarActivo(Long idActivo, String motivo, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException {
 
 		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
 		dtoCambioEstadoPublicacion.setActivo(idActivo);
 		dtoCambioEstadoPublicacion.setMotivoPublicacion(motivo);
 		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
 
-		return activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
+		return activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion, validacionesPublicacion);
 	}
 
 	@Override
@@ -3231,7 +3243,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveComercialActivo(DtoComercialActivo dto) {
+	public boolean saveComercialActivo(DtoComercialActivo dto) throws JsonViewerException {
 
 		if (Checks.esNulo(dto.getId())) {
 			return false;
@@ -3254,6 +3266,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (InvocationTargetException e) {
 			logger.error("Error en activoManager", e);
 			return false;
+		} catch (SQLException e) {
+			logger.error("Error en activoManager",e);
+			return false;
 		}
 
 		activo.setObservacionesVentaExterna(dto.getObservaciones());
@@ -3269,8 +3284,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	 * 
 	 * @param activo
 	 * @param dto
+	 * @throws SQLException 
+	 * @throws JsonViewerException 
 	 */
-	private void setSituacionComercialAndEstadoPublicacion(Activo activo) {
+	private void setSituacionComercialAndEstadoPublicacion(Activo activo) throws JsonViewerException, SQLException {
 		if (!Checks.esNulo(activo.getFechaVentaExterna()) || !Checks.esNulo(activo.getImporteVentaExterna())) {
 			// Situación comercial --------
 			DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi
@@ -3461,7 +3478,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public void setActivoToNoPublicado(Activo activo, String motivo) {
+	public void setActivoToNoPublicado(Activo activo, String motivo) throws JsonViewerException, SQLException {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 
 		activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, motivo, filtro,

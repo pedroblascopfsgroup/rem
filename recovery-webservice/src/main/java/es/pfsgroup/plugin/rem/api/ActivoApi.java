@@ -16,6 +16,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -53,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 public interface ActivoApi {
 
@@ -377,6 +379,13 @@ public interface ActivoApi {
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
 
 	/**
+	 * Obtiene el último estado de publicacion ordinaria en el que estuvo un activo (ordinaria, oculto, precio oculto)
+	 * @param activoID
+	 * @return
+	 */
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID);
+	
+	/**
 	 * Ejecuta los pasos necesarios para publicar activos de forma ordinaria
 	 * (con validaciones de publicacion) para un activo dado. Retorna TRUE si la
 	 * ejecucion se ha producido sin errores. 1.) Rellena un dto con los
@@ -390,7 +399,7 @@ public interface ActivoApi {
 	 * @return
 	 * @throws SQLException
 	 */
-	boolean publicarActivo(Long idActivo) throws SQLException;
+	public boolean publicarActivo(Long idActivo) throws SQLException, JsonViewerException;
 
 	/**
 	 * Igual que publicarActivo pero con motivo de publicacion
@@ -400,7 +409,18 @@ public interface ActivoApi {
 	 * @return
 	 * @throws SQLException
 	 */
-	boolean publicarActivo(Long idActivo, String motivo) throws SQLException;
+	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException, JsonViewerException;
+
+	/**
+	 * Igual que publicarActivo pero seleccionando las validaciones de publicacion a realizar
+	 * @param idActivo
+	 * @param motivo
+	 * @param validacionesPublicacion
+	 * @return
+	 * @throws SQLException
+	 * @throws JsonViewerException
+	 */
+	public boolean publicarActivo(Long idActivo, String motivo, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException;
 
 	/**
 	 * Inserta o actualiza una visita aun activo
@@ -934,6 +954,8 @@ public interface ActivoApi {
 	 * Cambia el Estado de publicación a 'No publicado' y registra el cambio en el histórico
 	 * @param activo
 	 * @param motivo
+	 * @throws SQLException 
+	 * @throws JsonViewerException 
 	 */
-	public void setActivoToNoPublicado(Activo activo, String motivo);
+	public void setActivoToNoPublicado(Activo activo, String motivo) throws JsonViewerException, SQLException;
 }

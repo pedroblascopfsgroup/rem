@@ -134,12 +134,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		var separador = {xtype: 'tbfill'};
 
 		// Se configura manualmente la Top-Bar con los botones especificados anteriormente.
-		me.tbar = {
-    		xtype: 'toolbar',
-    		dock: 'top',
-    		items: [configAddBtn, configRemoveBtn, separador, configGridMenu]
-		};
-
+		if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION'])) {
+			me.tbar = {
+	    		xtype: 'toolbar',
+	    		dock: 'top',
+	    		items: [configAddBtn, configRemoveBtn, separador, configGridMenu]
+			};
+    	}
         me.columns= [
         	{
 		        xtype: 'actioncolumn',

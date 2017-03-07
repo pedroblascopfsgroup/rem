@@ -129,8 +129,8 @@ Ext.define('HreRem.view.trabajos.detalle.FotosTrabajoProveedor', {
 		    buttonAlign: 'left',
 		    dock: 'top',
 		    items: [
-		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoClick', secFunPermToEnable: 'TRABAJO_FOTOPROV_ADD'},
-		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick', secFunPermToEnable: 'TRABAJO_FOTOPROV_ADD'},
+		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_PROVEEDOR_TRABAJO'},
+		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_PROVEEDOR_TRABAJO'},
 		        { iconCls:'x-fa fa-download', itemId:'downloadButton', handler: 'onDownloadFotoClick'}
 		        //Se deja planteado para fase 2
 		        /*,

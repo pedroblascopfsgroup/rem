@@ -21,7 +21,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									    xtype		: 'gridBase',
 									    idPrincipal : 'activo.id',
 									    colspan: 3,
-									    topBar: true,
+									    topBar: $AU.userHasFunction('EDITAR_DATOS_COMUNIDAD_ACTIVO'),
 									    removeButton: false,
 									    reference: 'listadoEntidadesref',
 										cls	: 'panel-base shadow-panel',

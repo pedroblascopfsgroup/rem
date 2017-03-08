@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -137,9 +138,13 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id, ModelMap model) {
 
 		Page page = adapter.getListActivosAgrupacionById(filtro, id);
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
-
+		if(!Checks.esNulo(page)) {
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+		} else {
+			model.put("success", false);
+		}
 		return createModelAndViewJson(model);
 	}
 

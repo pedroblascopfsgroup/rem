@@ -14,6 +14,61 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosAgrupacion', {
         sytle: 'padding-left: 15px !important',
         defaultType: 'displayfield'
     },
+    
+    listeners	: {
+    	boxready: function (tabPanel) {   		
+			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
+				var tab = tabPanel.items.items[0];
+				tabPanel.setActiveTab(tab);
+			}
+			
+			if(tab.ocultarBotonesEdicion) {
+				tabPanel.down("[itemId=botoneditarfoto]").setVisible(false);
+			} else {
+            	tabPanel.evaluarBotonesEdicion(tab);
+			}
+    	},
+
+    	beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+        	tabPanel.down("[itemId=botoneditarfoto]").setVisible(false);	            	
+        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
+        	if (tabCurrent != null) {
+            	if (tabPanel.lookupController().getViewModel().get("editingfotos")) {
+            		Ext.Msg.show({
+            			   title: HreRem.i18n('title.descartar.cambios'),
+            			   msg: HreRem.i18n('msg.desea.descartar'),
+            			   buttons: Ext.MessageBox.YESNO,
+            			   fn: function(buttonId) {
+            			        if (buttonId == 'yes') {
+            			        	var btn = tabPanel.down('button[itemId=botoncancelarfoto]');
+            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+            			        	tabPanel.getLayout().setActiveItem(tabNext);		            			        	
+						            // Si la pestaña necesita botones de edición
+
+				   					if(!tabNext.ocultarBotonesEdicion) {
+					            		tabPanel.evaluarBotonesEdicion(tabNext);
+				   					} else {
+				   						tabPanel.down("[itemId=botoneditarfoto]").setVisible(false);
+				   					}
+            			        }
+            			   }
+        			});
+
+            		return false;
+            	}
+
+            	// Si la pestaña necesita botones de edición
+				if(!tabNext.ocultarBotonesEdicion) {
+            		tabPanel.evaluarBotonesEdicion(tabNext);
+				} else {
+						tabPanel.down("[itemId=botoneditar]").setVisible(false);
+					}
+
+            	return true;
+        	}
+        }
+    },
+    
     tabBar: {
 		items: [
         		{
@@ -49,37 +104,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosAgrupacion', {
 
         var me = this;
         me.setTitle(HreRem.i18n('title.fotos'));      
-        
-       /* var items= [
 
-			{				
-			    xtype		: 'tabpanel',
-			    flex 		: 3,
-				cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
-			    reference	: 'tabpanelfotosactivo',
-
-			    layout: 'fit',
-			    items: [
-			    		
-			    		{
-			    			xtype: 'fotoswebagrupacion'
-			    		}
-
-			     ]				
-			}
-
-    	];   	
-		me.addPlugin({ptype: 'lazyitems', items: items });
-
-    	me.callParent();
-    	
-    	var me = this;
-*/
         me.items = [];
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebagrupacion'})}, ['TAB_FOTOS_AGRUPACION']);
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebagrupacion', funPermEdition: ['EDITAR_TAB_FOTOS_AGRUPACION']})}, ['TAB_FOTOS_AGRUPACION']);
        
         me.callParent();
-    	
     },
     
      /**
@@ -99,6 +128,20 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosAgrupacion', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
-    } 
-    
+    },
+
+    evaluarBotonesEdicion: function(tab) {
+		var me = this;
+		me.down("[itemId=botoneditarfoto]").setVisible(false);
+		var editionEnabled = function() {
+			me.down("[itemId=botoneditarfoto]").setVisible(true);
+		}
+
+		// Si la pestaña recibida no tiene asignados roles de edicion 
+		if(Ext.isEmpty(tab.funPermEdition)) {
+    		editionEnabled();
+    	} else {
+    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+    	}
+    }
 });

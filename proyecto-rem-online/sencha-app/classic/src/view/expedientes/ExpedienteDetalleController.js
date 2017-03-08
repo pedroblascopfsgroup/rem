@@ -1068,7 +1068,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onNumeroDocumentoChange: function(field, e) {
 		var me = this;
 		var fieldClientesUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]');
+		var fieldNumeroClienteUrsus = field.up('formBase').down('[reference=numeroClienteUrsusRef]');
 		fieldClientesUrsus.reset();
+		fieldNumeroClienteUrsus.setDisabled(true);
 		fieldClientesUrsus.recargarField = true;
 	},
 	
@@ -1076,6 +1078,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
 	 	var fieldNumeroClienteUrsus = field.up('formBase').down('[reference=numeroClienteUrsusRef]');
+	 	fieldNumeroClienteUrsus.setDisabled(false);
 	 	fieldNumeroClienteUrsus.setValue(numeroUrsus);
 	},
 

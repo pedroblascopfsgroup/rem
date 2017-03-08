@@ -12,7 +12,52 @@ Ext.define('HreRem.view.activos.detalle.FotosActivoTabPanel', {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
-    	}
+			
+			if(tab.ocultarBotonesEdicion) {
+				tabPanel.down("[itemId=botoneditar]").setVisible(false);
+			} else {
+            	tabPanel.evaluarBotonesEdicion(tab);
+			}
+    	},
+
+    	beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
+        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
+        	if (tabCurrent != null) {
+            	if (tabPanel.lookupController().getViewModel().get("editing")) {
+            		Ext.Msg.show({
+            			   title: HreRem.i18n('title.descartar.cambios'),
+            			   msg: HreRem.i18n('msg.desea.descartar'),
+            			   buttons: Ext.MessageBox.YESNO,
+            			   fn: function(buttonId) {
+            			        if (buttonId == 'yes') {
+            			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
+            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+            			        	tabPanel.getLayout().setActiveItem(tabNext);		            			        	
+						            // Si la pestaña necesita botones de edición
+
+				   					if(!tabNext.ocultarBotonesEdicion) {
+					            		tabPanel.evaluarBotonesEdicion(tabNext);
+				   					} else {
+				   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
+				   					}
+            			        }
+            			   }
+        			});
+
+            		return false;
+            	}
+
+            	// Si la pestaña necesita botones de edición
+				if(!tabNext.ocultarBotonesEdicion) {
+            		tabPanel.evaluarBotonesEdicion(tabNext);
+				} else {
+						tabPanel.down("[itemId=botoneditar]").setVisible(false);
+					}
+
+            	return true;
+        	}
+        }
     },
     tabBar: {
 		items: [
@@ -49,9 +94,24 @@ Ext.define('HreRem.view.activos.detalle.FotosActivoTabPanel', {
         var me = this;
 
         me.items = [];
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebactivo'})}, ['TAB_FOTOS_ACTIVO_WEB']);
-        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostecnicasactivo'})}, ['TAB_FOTOS_ACTIVO_TECNICAS']);
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebactivo', funPermEdition: ['EDITAR_TAB_FOTOS_ACTIVO_WEB']})}, ['TAB_FOTOS_ACTIVO_WEB']);
+        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostecnicasactivo', funPermEdition: ['EDITAR_TAB_FOTOS_ACTIVO_TECNICAS']})}, ['TAB_FOTOS_ACTIVO_TECNICAS']);
 
         me.callParent();
+    },
+
+    evaluarBotonesEdicion: function(tab) {
+		var me = this;
+		me.down("[itemId=botoneditar]").setVisible(false);
+		var editionEnabled = function() {
+			me.down("[itemId=botoneditar]").setVisible(true);
+		}
+
+		// Si la pestaña recibida no tiene asignados roles de edicion 
+		if(Ext.isEmpty(tab.funPermEdition)) {
+    		editionEnabled();
+    	} else {
+    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+    	}
     }
 });

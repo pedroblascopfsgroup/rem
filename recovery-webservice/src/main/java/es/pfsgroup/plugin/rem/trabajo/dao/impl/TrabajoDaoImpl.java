@@ -91,7 +91,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
  
     public Long getNextNumTrabajo() {
 		String sql = "SELECT S_TBJ_NUM_TRABAJO.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal)this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 
 	@Override

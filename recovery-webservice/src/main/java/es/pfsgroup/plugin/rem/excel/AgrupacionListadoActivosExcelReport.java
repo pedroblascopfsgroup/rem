@@ -26,7 +26,7 @@ public class AgrupacionListadoActivosExcelReport extends AbstractExcelReport imp
 		listaCabeceras.add("Mínimo autorizado");
 		listaCabeceras.add("Aprobado de venta (web)");
 		listaCabeceras.add("Descuento publicado (web)");
-		listaCabeceras.add("SUperficie construida");
+		listaCabeceras.add("Superficie construida");
 
 		return listaCabeceras;
 	}
@@ -47,15 +47,23 @@ public class AgrupacionListadoActivosExcelReport extends AbstractExcelReport imp
 			fila.add(activoAgrupacion.getSituacionComercial());
 			if(activoAgrupacion.getImporteMinimoAutorizado() != null) {
 				fila.add(activoAgrupacion.getImporteMinimoAutorizado().toString());
+			} else {
+				fila.add(null);
 			}
 			if(activoAgrupacion.getImporteAprobadoVenta() != null) {
 				fila.add(activoAgrupacion.getImporteAprobadoVenta().toString());
+			} else {
+				fila.add(null);
 			}
 			if(activoAgrupacion.getImporteDescuentoPublicado() != null) {
 				fila.add(activoAgrupacion.getImporteDescuentoPublicado().toString());
+			} else {
+				fila.add(null);
 			}
 			if(activoAgrupacion.getSuperficieConstruida() != null) {
 				fila.add(activoAgrupacion.getSuperficieConstruida().toString());
+			} else {
+				fila.add(null);
 			}
 
 			valores.add(fila);

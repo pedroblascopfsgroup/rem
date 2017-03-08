@@ -80,23 +80,24 @@ Ext.define('HreRem.view.login.Login', {
 										            listeners: {
 										                specialKey: 'onSpecialKey',
 										                afterrender: function() {
-										                	this.inputEl.set({autocomplete: 'none'});
+										                	this.focus();
 										                }
 										            }
 											     },
 											     {
 										            xtype: 'textfield',
 										            name: 'j_password',
-										            //inputType: 'password',
+										            inputType: 'password',
+										            readOnly: true,
 										            fieldLabel: !Ext.isEmpty(HreRem.i18n) ? HreRem.i18n("fieldlabel.password") : "fieldlabel.password",
 										            allowBlank: false,
 										            enableKeyEvents: true,
 										            cls: 'password',
 										            listeners: {
 										                specialKey: 'onSpecialKey',
-									                	afterrender: function() {
-									                		this.inputEl.set({autocomplete: 'none'});
-									                	}									                
+										                focus: function() {
+										                	this.setReadOnly(false);
+										                }
 										            }
 				        						  }
 				        				],
@@ -108,12 +109,7 @@ Ext.define('HreRem.view.login.Login', {
 					            									click: 'onLoginClick'
 					        							}
 				    								}
-				    					],
-				    					listeners: {
-						                	afterrender: function() {
-						                		this.el.set({autocomplete: 'off'});
-						                	}									                
-										}
+				    					]
 
     								}
 						]

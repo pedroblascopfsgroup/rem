@@ -44,7 +44,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "necesarias", activo.getLlavesNecesarias());
 			BeanUtils.copyProperty(activoDto, "llaveHre", activo.getLlavesHre());
 			BeanUtils.copyProperty(activoDto, "fechaRecepcionLlave", activo.getFechaRecepcionLlaves());
-			BeanUtils.copyProperty(activoDto, "numJuegos", activo.getNumJuegosLlaves());
+			BeanUtils.copyProperty(activoDto, "numJuegos", activo.getLlaves().size());
 		}
 		
 		if (activo.getSituacionPosesoria() != null) {

@@ -43,6 +43,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -57,6 +58,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 /**
  * Clase abstracta de la cual heredan los métodos útiles
@@ -68,6 +70,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     private static final long serialVersionUID = 1L;
 
     public static final String SALTO_CIERRE_ECONOMICO = "saltoCierreEconomico";
+    private static final String GESTOR_ACTIVO_CODIGO = "GACT";
+    private static final String SUPERVISOR_ACTIVO_CODIGO = "SUPACT";
     
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -75,6 +79,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     
     @Autowired
     private GenericABMDao genericDao;
+    
+	@Autowired
+	private GenericAdapter adapter;
 
     @Autowired
     private ActivoTramiteApi activoTramiteManagerApi;
@@ -97,9 +104,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     @Autowired
     NotificatorServiceFactoryApi notificatorServiceFactoryApi;
 
-//    @Autowired
-//    protected TareaNotificacionManager tareaNotificacionManager;
-
     @Autowired
     protected JBPMProcessManagerApi processUtils;
     
@@ -109,9 +113,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     @Autowired
     protected JBPMActivoScriptExecutorApi jbpmMActivoScriptExecutorApi;
 
-//    @Autowired
-//    private PlazoTareaExternaPlazaManager plazoTareaExternaPlazaManager;
-
     @Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
 
@@ -120,10 +121,10 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 	
 	@Autowired
 	private ExtendedProcessManager extendedProcessManager;
-	
+
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-
+	
 	
     /**
      * Método que recupera el ID del BPM asociado a la ejecución.
@@ -714,23 +715,54 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
     	//TareaActivo tareaActivo  = tareaActivoApi.getByIdTareaExterna(idTarea);
 		TareaExterna tareaExterna = activoTareaExternaManagerApi.get(idTarea);
+		TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
 		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
+		Usuario usuarioLogado = null;
+		String nombreUsuarioWS = RestApi.REST_LOGGED_USER_USERNAME;
 		
+			
+		// Factoria asignador gestores por tarea
     	UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
-
+		
 		Usuario gestor = userAssigantionService.getUser(tareaExterna);
 		Usuario supervisor = userAssigantionService.getSupervisor(tareaExterna);
-		//Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tareaProcedimiento.getTipoGestor().getId());
 		
+		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		if(!Checks.esNulo(gestor)){
-			TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
 			tareaActivo.setUsuario(gestor);
-		}
-		if(!Checks.esNulo(supervisor)){
-			TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
-			tareaActivo.setSupervisorActivo(supervisor);
+		} else {
+			// HREOS-1714 Si el asignador de usuarios NO encuentra el gestor correspondiente:
+			// - Las tareas que se generen por usuario WS, deben asignarse al gestor y supervisor de activo
+			// - Para este mismo caso, el resto de usuarios registraran al usuario logado
+			usuarioLogado = adapter.getUsuarioLogado();
+			if(!Checks.esNulo(usuarioLogado)){			
+				if(nombreUsuarioWS.equals(usuarioLogado.getUsername())){
+					Usuario gestorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GESTOR_ACTIVO_CODIGO);
+					if(!Checks.esNulo(gestorWS))
+						tareaActivo.setUsuario(gestorWS);
+				} else {
+					tareaActivo.setUsuario(usuarioLogado);
+				}
+			}
 		}
 		
+		// Asignador de SUPERVISOR por factoria - Supervisores encontrados por tarea-Activo
+		if(!Checks.esNulo(supervisor)){
+			tareaActivo.setSupervisorActivo(supervisor);
+		} else {
+			// HREOS-1714 Igual con supervisor
+			usuarioLogado = adapter.getUsuarioLogado();
+			if(!Checks.esNulo(usuarioLogado)){			
+				if(nombreUsuarioWS.equals(usuarioLogado.getUsername())){
+					Usuario supervisorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), SUPERVISOR_ACTIVO_CODIGO);
+					if(!Checks.esNulo(supervisorWS))
+						tareaActivo.setUsuario(supervisorWS);
+				} else {
+					tareaActivo.setUsuario(usuarioLogado);
+				}
+			}
+		}
+			
     }
     
     /**

@@ -522,7 +522,11 @@ public class RestManagerImpl implements RestApi {
 		return jsonResp;
 	}
 
-	public void doSessionConfig(String workingCode) throws Exception {
+	public void doSessionConfig() throws Exception {
+		
+		
+		String workingCode = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.REST_WORKINGCODE, "2038");
 		// Obtenemos la entidad partiendo del working code y establecemos el
 		// contextholder
 		// necesario para acceder al esquema de la entidad

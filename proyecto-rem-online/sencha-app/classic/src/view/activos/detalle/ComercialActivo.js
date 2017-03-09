@@ -39,8 +39,9 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	xtype: 'datefieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
 				        	reference: 'dtFechaVenta',
+				        	allowBlank: false,
 				        	bind : {
-				        		readOnly: '{comercial.expedienteComercialVivo}',
+				        		//readOnly: '{comercial.expedienteComercialVivo}',
 				        		value: '{comercial.fechaVenta}'
 				        	}
 						},
@@ -58,8 +59,9 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							   xtype: 'currencyfieldbase',
 							   fieldLabel: HreRem.i18n('fieldlabel.importe.venta'),
 							   reference: 'cncyImporteVenta',
+							   allowBlank: false,
 							   bind : {
-					        		readOnly: '{comercial.expedienteComercialVivo}',
+					        		//readOnly: '{comercial.expedienteComercialVivo}',
 					        		value: '{comercial.importeVenta}'
 							   }
 						}

@@ -2181,7 +2181,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			try {
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);	
 				
-				if(!Checks.esNulo(dto.getEstadoPbc()) || !Checks.esNulo(dto.getConflictoIntereses()) || !Checks.esNulo(dto.getRiesgoReputacional())) {
+				if(Checks.esNulo(dto.getEstadoPbc()) || !Checks.esNulo(dto.getConflictoIntereses()) || !Checks.esNulo(dto.getRiesgoReputacional())) {
 					ofertaApi.resetPBC(expedienteComercial);
 				}
 

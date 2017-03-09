@@ -61,11 +61,6 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 												name: 'facturado',
 												value: 0,
 												hidden: true
-											},
-											{
-												name: 'anulado',
-												value: 1,
-												hidden: true
 											}
 							]
 				    },

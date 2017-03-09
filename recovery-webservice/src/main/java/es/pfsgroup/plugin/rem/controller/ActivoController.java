@@ -2,7 +2,11 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1663,15 +1667,13 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 	/**
-	 * Método que recupera la foto principal de un activo
+	 * Método que recupera la foto principal de un activo en forma thumbnail
 	 * 
 	 * @param id
 	 * @param model
 	 * @param request
 	 * @param response
 	 */
-	// TODO: Cuando esté el gestor documental, hacer que si el activo no tiene
-	// foto devuelva una imagen tipo "Sin imagenes" por defecto.
 	@RequestMapping(method = RequestMethod.GET)
 	public void getFotoPrincipalById(Long id, ModelMap model, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -1679,9 +1681,26 @@ public class ActivoController extends ParadiseJsonController {
 		List<ActivoFoto> listaActivoFoto = adapter.getListFotosActivoByIdOrderPrincipal(id);
 
 		if (listaActivoFoto != null && !listaActivoFoto.isEmpty()) {
-
-			FileItem fileItem = listaActivoFoto.get(0).getAdjunto().getFileItem();
 			try {
+				//HREOS-1719 En primera instancia obtener la foto de la URL
+				String requestUrl = listaActivoFoto.get(0).getUrlThumbnail();
+				URL url;
+				URLConnection URLconn = null;
+				String URLcontentType = null;
+				try {
+					url = new URL(requestUrl);
+					URLconn = url.openConnection();
+					URLcontentType = URLconn.getContentType();
+				} catch (MalformedURLException me) {
+					logger.error(me.getMessage());
+					me.printStackTrace();
+				} catch (IOException ioe) {
+					logger.error(ioe.getMessage());
+					ioe.printStackTrace();
+				}
+				
+				// FileItem fileItem = listaActivoFoto.get(0).getAdjunto().getFileItem();
+
 				ServletOutputStream salida = response.getOutputStream();
 
 				response.setHeader("Content-disposition", "inline");
@@ -1692,14 +1711,16 @@ public class ActivoController extends ParadiseJsonController {
 				response.setDateHeader("Expires", 0); // prevents caching at the
 														// proxy
 
-				if (fileItem.getContentType() != null) {
-					response.setContentType(fileItem.getContentType());
+				if (!Checks.esNulo(URLcontentType)){
+					response.setContentType(URLcontentType);
+					FileUtils.copy(URLconn.getInputStream(), salida);
 				} else {
 					response.setContentType("Content-type: image/jpeg");
+					File file = new File(getClass().getResource("/").getPath() + "sin_imagen.png");
+					file.createNewFile();
+					FileUtils.copy((new FileInputStream(file)), salida);
 				}
-
 				// Write
-				FileUtils.copy(fileItem.getInputStream(), salida);
 				salida.flush();
 				salida.close();
 

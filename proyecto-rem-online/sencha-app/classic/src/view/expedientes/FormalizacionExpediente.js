@@ -152,7 +152,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 			        {
 		        		xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
-						reference: 'fechaInicioFinanciacion',
+						reference: 'fechaInicioExpediente',
 			        	fieldLabel: HreRem.i18n('fieldlabel.inicio.expediente'),
 			        	bind: '{financiacion.fechaInicioExpediente}',
 			        	maxValue: null

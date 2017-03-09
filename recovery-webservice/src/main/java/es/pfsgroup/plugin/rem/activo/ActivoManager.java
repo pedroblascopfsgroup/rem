@@ -3257,7 +3257,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			// Si se ha introducido valores en fecha o importe de venta, se
 			// actualiza la situación comercial y estado publicación del activo
-			if (!Checks.esNulo(dto.getFechaVenta()) || !Checks.esNulo(dto.getImporteVenta()))
+			if (!Checks.esNulo(dto.getFechaVenta()) && !Checks.esNulo(dto.getImporteVenta()))
 				this.setSituacionComercialAndEstadoPublicacion(activo);
 
 		} catch (IllegalAccessException e) {

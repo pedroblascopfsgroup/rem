@@ -626,9 +626,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		Filter proveedorID = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoPersonaContacto.getProveedorID()));
 		Filter principal = genericDao.createFilter(FilterType.EQUALS, "principal", 1);
 		List<ActivoProveedorContacto> personasContactos = genericDao.getList(ActivoProveedorContacto.class, proveedorID, principal);
+		boolean algunaPersonaPrincipal = false;
+		ActivoProveedorContacto personaPrincipal = null;
 		
 		if(!Checks.estaVacio(personasContactos)) {
 			for(ActivoProveedorContacto persona : personasContactos){
+				if(persona.getPrincipal()!=0){
+					algunaPersonaPrincipal=true;
+					personaPrincipal = persona;
+				}
 				persona.setPrincipal(0);
 				genericDao.save(ActivoProveedorContacto.class, persona);
 			}
@@ -637,14 +643,16 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		// Establecer la persona actual como principal.
 		Filter personaID = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getId()));
 		ActivoProveedorContacto personaContacto = genericDao.get(ActivoProveedorContacto.class, personaID);
-
-		if(!Checks.esNulo(personaContacto)) {
-			personaContacto.setPrincipal(1);
-			genericDao.save(ActivoProveedorContacto.class, personaContacto);
-			return true;
-		} else {
-			return false;
+		if(!algunaPersonaPrincipal || !personaPrincipal.equals(personaContacto)){
+			if(!Checks.esNulo(personaContacto)) {
+				personaContacto.setPrincipal(1);
+				genericDao.save(ActivoProveedorContacto.class, personaContacto);
+				return true;
+			} else {
+				return false;
+			}
 		}
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -54,9 +54,9 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
    		
-   		if(!Checks.esNulo(dto.getAnulado()) && BooleanUtils.toBoolean(dto.getAnulado())) {
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.importeTotal", 0);
-   		}
+//   		if(!Checks.esNulo(dto.getAnulado()) && BooleanUtils.toBoolean(dto.getAnulado())) {
+//   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.importeTotal", 0);
+//   		}
 
    		if(Checks.esNulo(dto.getNumActivo()) && Checks.esNulo(dto.getIdActivo())) {
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);

@@ -59,7 +59,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	public void deleteCompradorExpediente(Long idExpediente, Long idComprador) {
 
 		StringBuilder sb = new StringBuilder("delete from CompradorExpediente ce where ce.primaryKey.comprador = "+idComprador+" and ce.primaryKey.expediente= "+idExpediente);		
-		getSession().createQuery(sb.toString()).executeUpdate();
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
 	
 	@Override

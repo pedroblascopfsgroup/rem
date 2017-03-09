@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170223
+--## AUTOR=DANIEL GUTIERREZ
+--## FECHA_CREACION=20170308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1619
@@ -84,7 +84,7 @@ BEGIN
 			usu.usu_username AS gestor_activo, 
 			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS con_cierre_economico,
           	tbj.tbj_fecha_cierre_economico, 
-			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, 0, 1) AS facturado, 
+			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS facturado, 
 			ttr.dd_ttr_filtrar
 
      FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id

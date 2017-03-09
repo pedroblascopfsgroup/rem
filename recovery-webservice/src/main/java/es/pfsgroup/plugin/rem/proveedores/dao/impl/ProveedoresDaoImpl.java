@@ -135,7 +135,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	@Override
 	public Long getNextNumCodigoProveedor() {
 		String sql = "SELECT S_PVE_COD_REM.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 
 	@Override

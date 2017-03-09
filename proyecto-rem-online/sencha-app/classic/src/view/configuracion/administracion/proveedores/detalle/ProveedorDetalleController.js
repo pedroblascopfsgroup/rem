@@ -247,40 +247,47 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     onMarcarPrincipalClick: function(grid, rowIndex, colIndex, item, e, rec) {
     	var me = this;
     	me.gridOrigen = grid;
-		
-		if (rec.data.activoPrincipal != 1) {
-			Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.activo.principal'),
-				   msg: HreRem.i18n('msg.confirmar.persona.principal'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {	
-							me.getView().mask();
-							var url =  $AC.getRemoteUrl('proveedores/setPersonaContactoPrincipal');
-							Ext.Ajax.request({
-							     url: url,
-							     params: {
-							     			id: rec.data.id,
-							     			proveedorID: rec.data.proveedorID
-							     		}
-								
-							    ,success: function (a, operation, context) {
-					
-					                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-										me.getView().unmask();
-										me.gridOrigen.getStore().load();
-					            },
-					            
-					            failure: function (a, operation, context) {
-					            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-									 me.getView().unmask();
-					            }
-						     
-							});
-						}
-					}
-				});
-		}
+    	var titulo="",message="";
+    	if (rec.data.personaPrincipal != 1) {
+    		titulo = HreRem.i18n('title.confirmar.persona.marcar.principal');
+    		message = HreRem.i18n('msg.confirmar.persona.marcar.principal');
+    	}else{
+    		titulo = HreRem.i18n('title.confirmar.persona.desmarcar.principal');
+    		message = HreRem.i18n('msg.confirmar.persona.desmarcar.principal');
+    	}
+
+		Ext.Msg.show({
+			title: titulo,
+			msg: message,  	
+			buttons: Ext.MessageBox.YESNO,
+			fn: function(buttonId) {
+				if (buttonId == 'yes') {	
+					me.getView().mask();
+					var url =  $AC.getRemoteUrl('proveedores/setPersonaContactoPrincipal');
+					Ext.Ajax.request({
+					     url: url,
+					     params: {
+					     			id: rec.data.id,
+					     			proveedorID: rec.data.proveedorID
+					     		}
+						
+					    ,success: function (a, operation, context) {
+			
+			                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								me.getView().unmask();
+								me.gridOrigen.getStore().load();
+			            },
+			            
+			            failure: function (a, operation, context) {
+			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							 me.getView().unmask();
+			            }
+				     
+					});
+				}
+			}
+		});
+
     },
     
     /**

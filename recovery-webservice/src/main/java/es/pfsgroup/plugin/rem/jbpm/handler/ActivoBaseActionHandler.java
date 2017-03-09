@@ -736,7 +736,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			// - Para este mismo caso, el resto de usuarios registraran al usuario logado
 			usuarioLogado = adapter.getUsuarioLogado();
 			if(!Checks.esNulo(usuarioLogado)){			
-				if(nombreUsuarioWS.equals(usuarioLogado.getUsername())){
+				if(nombreUsuarioWS.equals(usuarioLogado)){
 					Usuario gestorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GESTOR_ACTIVO_CODIGO);
 					if(!Checks.esNulo(gestorWS))
 						tareaActivo.setUsuario(gestorWS);
@@ -753,7 +753,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			// HREOS-1714 Igual con supervisor
 			usuarioLogado = adapter.getUsuarioLogado();
 			if(!Checks.esNulo(usuarioLogado)){			
-				if(nombreUsuarioWS.equals(usuarioLogado.getUsername())){
+				if(nombreUsuarioWS.equals(usuarioLogado)){
 					Usuario supervisorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), SUPERVISOR_ACTIVO_CODIGO);
 					if(!Checks.esNulo(supervisorWS))
 						tareaActivo.setUsuario(supervisorWS);

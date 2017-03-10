@@ -91,6 +91,9 @@ public class RestLlamada implements Serializable, Auditable {
 	@Column(name = "RST_MS_INSERTAR_HIST")
 	private Long msInsertarHistorico;
 	
+	@Column(name = "RST_REFRESCO_TIME")
+	private Long msRefrescoVista;
+	
 	@Transient
 	private ArrayList<JSONObject> datosErroneos;
 	
@@ -232,6 +235,11 @@ public class RestLlamada implements Serializable, Auditable {
 		this.msInsertarHistorico = System.currentTimeMillis() - this.startTime;
 
 	}
+	
+	public void logTiempoRefrescoVista() {
+		this.msRefrescoVista = System.currentTimeMillis() - this.startTime;
+
+	}
 
 	public Long getStartTime() {
 		return startTime;
@@ -303,6 +311,14 @@ public class RestLlamada implements Serializable, Auditable {
 
 	public void setDatosErroneos(ArrayList<JSONObject> datosErroneos) {
 		this.datosErroneos = datosErroneos;
+	}
+
+	public Long getMsRefrescoVista() {
+		return msRefrescoVista;
+	}
+
+	public void setMsRefrescoVista(Long msRefrescoVista) {
+		this.msRefrescoVista = msRefrescoVista;
 	}
 
 }

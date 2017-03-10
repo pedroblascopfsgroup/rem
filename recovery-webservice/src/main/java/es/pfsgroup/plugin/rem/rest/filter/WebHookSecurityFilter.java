@@ -26,8 +26,7 @@ public class WebHookSecurityFilter implements Filter {
 	@Autowired
 	private RestApi restApi;
 
-	private String WORKINGCODE = "2038";
-
+	
 	@Override
 	public void destroy() {
 		logger.debug("webhook listener detenido");
@@ -40,7 +39,7 @@ public class WebHookSecurityFilter implements Filter {
 		RestRequestWrapper restRequest = null;
 		PeticionRest peticion = null;
 		try {
-			restApi.doSessionConfig(WORKINGCODE);
+			restApi.doSessionConfig();
 			String ipClient = restApi.getClientIpAddr(request);
 			Broker broker = restApi.getBrokerByIp(ipClient);
 			if (broker == null) {

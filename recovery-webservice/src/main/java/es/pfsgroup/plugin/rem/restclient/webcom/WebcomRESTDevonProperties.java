@@ -33,6 +33,8 @@ public class WebcomRESTDevonProperties {
 	// Esta property se usa en el fichero de configuración de Spring
 	// ac-rem-deteccion-cambios-bd.xml
 	public static final String CRON_EXPRESSION_TRIGGER_CHANGE_DETECTION = "rest.client.chrone.rem.time.trigger";
+	
+	public static final String REST_WORKINGCODE = "rest.server.workingcode";
 
 	public static String extractDevonProperty(Properties appProperties, String key, String defaultValue) {
 		return (appProperties != null ? appProperties.getProperty(key, defaultValue) : defaultValue);

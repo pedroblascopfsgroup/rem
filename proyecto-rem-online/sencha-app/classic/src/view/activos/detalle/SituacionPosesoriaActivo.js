@@ -272,6 +272,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		    			            }
 		    			        }
 		    			    ]
+		    				
 		    			}
 					
 					]
@@ -368,6 +369,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                	bind:		'{situacionPosesoria.fechaRecepcionLlave}'
 		                },
 		                {
+		                	xtype: 'displayfieldbase',
 		                	maskRe: /^\d*$/,
 		                	minValue: 1,
 		                	colspan: 3,

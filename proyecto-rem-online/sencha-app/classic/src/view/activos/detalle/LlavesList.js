@@ -144,6 +144,21 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
 		            }
 		        }
 		    ];
+		    
+		    
+		    me.saveSuccessFn = function() {
+		    	var me = this;
+		    	debugger;
+		    	me.up('situacionposesoriaactivo').funcionRecargar();
+		    	return true;
+		    },
+		    
+		    me.deleteSuccessFn = function() {
+		    	var me = this;
+		    	debugger;
+		    	me.up('situacionposesoriaactivo').funcionRecargar();
+		    	return true;
+		    }
 
 		    me.callParent();
    }

@@ -51,7 +51,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	@Autowired
 	private RestApi restApi;
-	
+
 	@Autowired
 	private ServletContext servletContext;
 
@@ -194,7 +194,17 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * Actualiza la vista materializada
 	 */
 	public void actualizarVistaMaterializada() {
+		this.actualizarVistaMaterializada(null);
+	}
+
+	/**
+	 * Actualiza la vista materializada
+	 */
+	public void actualizarVistaMaterializada(RestLlamada registro) {
 		dao.refreshMaterializedView(this);
+		if (registro != null) {
+			registro.logTiempoRefrescoVista();
+		}
 	}
 
 	private CambiosList extractDtos(Class<?> dtoClass, DataAccessOperation dao) {
@@ -319,13 +329,13 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	public void closeSession() {
 		SecurityContextHolder.clearContext();
 	}
-	
+
 	/**
 	 * Devuelve true si la apirest esta cerrada
 	 * 
 	 * @return
 	 */
-	public boolean isApiRestCerrada(){
+	public boolean isApiRestCerrada() {
 		boolean restLocked = false;
 		if (servletContext.getAttribute(RestApi.REST_API_WEBCOM) != null
 				&& (Boolean) servletContext.getAttribute(RestApi.REST_API_WEBCOM)) {

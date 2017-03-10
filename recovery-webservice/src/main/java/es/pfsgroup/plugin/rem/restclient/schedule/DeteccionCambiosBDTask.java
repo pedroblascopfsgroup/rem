@@ -158,12 +158,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
 							Class control = handler.getDtoClass();
 							CambiosList listPendientes = new CambiosList(tamanyoBloque);
-							handler.actualizarVistaMaterializada();
+							RestLlamada registro = new RestLlamada();
+							handler.actualizarVistaMaterializada(registro);
 							Boolean marcarComoEnviado = false;
 							Integer contError = 0;
 							do {
 								boolean somethingdone = false;
-								RestLlamada registro = new RestLlamada();
 								registro.setIteracion(iteracion);
 								try {
 									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
@@ -236,6 +236,9 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 										llamadas.add(registro);
 									}
 								}
+								registro = new RestLlamada();
+								//en la segunda pagina el tiempo de refresco es 0
+								registro.setMsRefrescoVista(new Long(0));
 							} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
 									|| (contError > 0 && contError < MAXIMO_INTENTOS));
 

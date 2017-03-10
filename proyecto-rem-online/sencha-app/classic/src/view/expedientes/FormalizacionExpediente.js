@@ -458,7 +458,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 //						   }
 //					    ],
 //					    onAddClick: function (btn) {
-//							debugger;
 //							var me = this;  	
 //							Ext.create('HreRem.view.expedientes.BuscarCompareciente',{}).show();
 //							

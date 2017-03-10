@@ -88,7 +88,10 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
     			dateFormat: 'c'
     		},
     		{
-    			name:'numJuegos'
+    			name:'numJuegos'/*,
+    			calculate: function(){
+    				return Ext.getStore('storeLlaves').getCount();
+    			}*/
     		}
     		
     ],

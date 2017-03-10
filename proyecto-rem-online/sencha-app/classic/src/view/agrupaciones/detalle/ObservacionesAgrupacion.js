@@ -14,7 +14,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion', {
 
 			{
 			    xtype		: 'gridBaseEditableRow',
-			    topBar: true,
+			    topBar		: $AU.userHasFunction(['EDITAR_TAB_OBSERVACIONES_AGRUPACION']),
 			    idPrincipal : 'agrupacionficha.id',
 			   	secFunToEdit: 'EDITAR_AGRUPACION',				
 				secButtons: {

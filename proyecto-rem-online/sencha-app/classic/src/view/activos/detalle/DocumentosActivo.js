@@ -19,7 +19,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     	var items= [
     	         {
 				    xtype		: 'gridBase',
-				    topBar		: true,
+				    topBar		: $AU.userHasFunction('EDITAR_TAB_ACTIVO_DOCUMENTOS'),
 				    features: [{ftype:'grouping'}],
 				    reference: 'listadoDocumentosActivo',
 					cls	: 'panel-base shadow-panel',

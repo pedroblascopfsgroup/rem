@@ -16,7 +16,7 @@ public class ReservaDaoImpl extends AbstractEntityDao<Reserva, Long> implements 
 	@Override
 	public Long getNextNumReservaRem() {
 		String sql = "SELECT S_RES_NUM_RESERVA.NEXTVAL FROM DUAL";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 
 

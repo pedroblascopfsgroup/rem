@@ -14,7 +14,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
     	
     	          {			
 					    xtype		: 'gridBase',
-					    topBar		: true,
+					    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS_PROVEEDORES']),
 					    features: [{ftype:'grouping'}],
 					    reference: 'listadoDocumentosProveedor',
 						cls	: 'panel-base shadow-panel',

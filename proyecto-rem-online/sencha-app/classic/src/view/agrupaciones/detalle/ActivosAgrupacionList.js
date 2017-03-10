@@ -133,13 +133,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		var configGridMenu = {iconCls:'x-fa fa-bars', cls:'boton-cabecera', itemId:'menuGridBtn', arrowVisible: false, menuAlign: 'tr-br', menu: me.menu};
 		var separador = {xtype: 'tbfill'};
 
-		// Se configura manualmente la Top-Bar con los botones especificados anteriormente.
-		me.tbar = {
-    		xtype: 'toolbar',
-    		dock: 'top',
-    		items: [configAddBtn, configRemoveBtn, separador, configGridMenu]
-		};
-
+		// Se configura manualmente la Top-Bar mostrándola si se dispone de alguno de los siguientes permisos.
+		if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION', 'EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION'])) {
+			me.tbar = {
+	    		xtype: 'toolbar',
+	    		dock: 'top'
+			};
+			
+			// Insertar elementos a la Top-Bar según permisos.
+			me.tbar.items = [];
+			if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION'])) {
+				me.tbar.items.push(configAddBtn);
+				me.tbar.items.push(configRemoveBtn);
+			}
+			if($AU.userHasFunction(['EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION'])) {
+				me.tbar.items.push(separador);
+				me.tbar.items.push(configGridMenu);
+			}
+    	}
+		
         me.columns= [
         	{
 		        xtype: 'actioncolumn',

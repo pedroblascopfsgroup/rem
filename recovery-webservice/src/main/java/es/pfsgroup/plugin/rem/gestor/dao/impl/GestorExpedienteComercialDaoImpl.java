@@ -25,7 +25,7 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb,  "gec.expedienteComercial.id", expediente.getId());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gec.tipoGestor.codigo", codigoTipoGestor);
 		
-		Query query = getSession().createQuery(hb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<Usuario> listado = query.list();
 		

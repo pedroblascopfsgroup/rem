@@ -164,6 +164,9 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		value: '{comprador.numDocumento}'
 									            	},
+									            	listeners: {
+									            		change: 'onNumeroDocumentoChange'
+									            	},
 									            	allowBlank: false
 						                		},
 												{ 
@@ -257,29 +260,50 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	xtype      : 'container',
 							                        layout: 'box',
 							                        items: [
-							                            {
-							                            	xtype: 'textfieldbase',
-							                            	width: 360,
-													        fieldLabel:  HreRem.i18n('header.numero.ursus'),
-													        reference: 'numeroClienteUrsusRef',
-													        bind: {
-												            	value: '{comprador.numeroClienteUrsus}',
-												            	hidden: '{!esCarteraBankia}'
-												            },
-												            editable: false
-							                            }, 
+							                        	{ 
+															xtype: 'comboboxfieldbase',
+															width: 360,
+												        	fieldLabel: HreRem.i18n('title.windows.datos.cliente.ursus'),
+															reference: 'seleccionClienteUrsus',
+												        	bind: {
+											            		store: '{comboClienteUrsus}',
+											            		hidden: '{!esCarteraBankia}'
+											            	},
+											            	listeners: {
+											            		change: 'establecerNumClienteURSUS',
+											            		expand: 'buscarClientesUrsus'
+											            	},
+											            	valueField: 'numeroClienteUrsus',
+											            	displayField: 'nombreYApellidosTitularDeOferta',
+											            	recargarField: false,
+											            	queryMode: 'local',
+											            	autoLoadOnValue: false,
+											            	loadOnBind: false,
+											            	allowBlank:true
+												        },
 							                            {
 							                                xtype: 'button',
 //												            cls: 'searchfield-input sf-con-borde',
-												            handler: 'buscarNumeroUrsus',
+												            handler: 'mostrarDetallesClienteUrsus',
 												            bind: {
 												            	hidden: '{!esCarteraBankia}'
 												            },
+												            disabled: true,
 												            cls: 'search-button-buscador',
 															iconCls: 'app-buscador-ico ico-search'
 							                            }
 							                        ]
-										        }
+										        },
+										        {
+					                            	xtype: 'textfieldbase',
+											        fieldLabel:  HreRem.i18n('header.numero.ursus'),
+											        reference: 'numeroClienteUrsusRef',
+											        bind: {
+										            	value: '{comprador.numeroClienteUrsus}',
+										            	hidden: '{!esCarteraBankia}'
+										            },
+										            editable: false
+					                            }
 //										        {
 //													xtype: 'textfieldbase',
 //													fieldLabel:  HreRem.i18n('header.numero.ursus'),

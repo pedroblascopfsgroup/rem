@@ -62,6 +62,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
 	
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID);
+	
 	public int publicarActivo(Long idActivo, String username);
 	
     public Long getNextNumOferta();

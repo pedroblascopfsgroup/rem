@@ -135,7 +135,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	@Override
 	public Long getNextNumCodigoProveedor() {
 		String sql = "SELECT S_PVE_COD_REM.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "entidad.cartera.codigo", activo.getCartera().getCodigo());
 		}
 		hb.appendWhere("proveedor.tipoProveedor.codigo = " + DDTipoProveedor.COD_MEDIADOR);
-		hb.appendWhere("territorial.provincia.codigo in (select loc.provincia.codigo from Localidad loc where loc.codigo = " + activo.getMunicipio() + ")");
+		hb.appendWhere("territorial.provincia.codigo in (select loc.provincia.codigo from Localidad loc where loc.codigo = '" + activo.getMunicipio() + "')");
 		hb.appendWhere("proveedor.homologado = 1");
 		
 		return HibernateQueryUtils.list(this, hb);

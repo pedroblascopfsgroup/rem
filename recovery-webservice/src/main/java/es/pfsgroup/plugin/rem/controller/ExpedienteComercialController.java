@@ -774,7 +774,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView deleteEntregaReserva(DtoEntregaReserva dto, @RequestParam Long idEntrega, ModelMap model) {
 		try {		
 			
-			model.put("success", expedienteComercialApi.deleteEntregaReserva(dto, idEntrega));
+			model.put("success", expedienteComercialApi.deleteEntregaReserva(idEntrega));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -889,7 +889,45 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		}
 		
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarDatosClienteNumeroUrsus(@RequestParam String numeroUrsus, ModelMap model) {
+		try {		
+			model.put("data", expedienteComercialApi.buscarDatosClienteNumeroUrsus(numeroUrsus));
+			model.put("success", true);
+			
+		} 
+		catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+			
+		}	catch (Exception e) {
+			model.put("success", false);
+			model.put("msg", "Servicio no disponible");
+		}
 		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarClientesUrsus(@RequestParam String numeroDocumento,@RequestParam String tipoDocumento, ModelMap model) {
+		try {		
+			model.put("data", expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento));
+			model.put("success", true);
+			
+		}  catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+			
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("msg", "Servicio no disponible");
+		}
+		
+		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")

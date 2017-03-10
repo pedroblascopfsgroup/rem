@@ -22,13 +22,16 @@ import es.pfsgroup.plugin.rem.api.ReintegroApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ConfirmacionOpDto;
@@ -55,6 +58,10 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ReservaDao reservaDao;
+	
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -409,15 +416,74 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 	/**
 	 * Anula el cobro de la reserva si es en el mismo día que el cobro.
 	 * Borra de entregas a cuentas la reserva,
-	 * Actualiza fecha firma reserva y fecha envío reserva a null
+	 * Borrar fecha firma reserva y fecha envío reserva. Poner a null
 	 * Actualiza el estado del expediente como "Aprobado" y el estado de la reserva a "Pendiente firma"
 	 * @param ConfirmacionOpDto con los datos necesarios para registrar el cobro de la reserva
 	 * @return void
 	 */
 	@Override
-	public void anularCobroReserva(ConfirmacionOpDto confirmacionOpDto)
-			throws Exception {
-		// TODO Auto-generated method stub
+	public void anularCobroReserva(ConfirmacionOpDto confirmacionOpDto) throws Exception {
+		Double importeReserva = null;
+		List<EntregaReserva> listaEntregas = null;
+		
+		// Estas validaciones ya se realizan en el metodo validador del ws
+		Activo activo = activoApi.getByNumActivoUvem(confirmacionOpDto.getActivo());
+		if (Checks.esNulo(activo)) {
+			throw new Exception("No existe el activo");
+		}
+		Oferta oferta = activoApi.tieneOfertaAceptada(activo);
+		if (Checks.esNulo(oferta)) {
+			throw new Exception("El activo no tiene ofertas aceptadas.");
+		}
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+		if (Checks.esNulo(expedienteComercial)) {
+			throw new Exception("No existe expediente comercial para esta activo.");
+		}
+		Reserva reserva = expedienteComercial.getReserva();
+		if (Checks.esNulo(reserva)) {
+			throw new Exception("El activo no tiene reserva");
+		}
+
+		
+		//Borrar de entregas a cuentas la reserva. Borramos todas las entregas cuyo importe sea igual al importe de la reserva
+		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+		if (!Checks.esNulo(condExp)) {
+			importeReserva = condExp.getImporteReserva();
+			listaEntregas = reserva.getEntregas();	
+			if(!Checks.esNulo(listaEntregas) && listaEntregas.size()>0){
+				for(int i=0; i< listaEntregas.size(); i++){
+					EntregaReserva entrega = listaEntregas.get(i);
+					if(!Checks.esNulo(entrega) && entrega.getImporte().equals(importeReserva)){
+						expedienteComercialApi.deleteEntregaReserva(entrega.getId());
+					}
+				}
+			}	
+		}
+		
+
+		// Borrar la fecha firma reserva y fecha envío reserva. Poner a NULL
+		reserva.setFechaFirma(null);
+		reserva.setFechaEnvio(null);
+
+		
+		// Actualiza el estado de la reserva a "Pendiente firma"
+		DDEstadosReserva estReserva = reservaApi.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA);
+		if (estReserva == null) {
+			throw new Exception("Error al actualizar el estado de la reserva.");
+		}
+		reserva.setEstadoReserva(estReserva);
+		expedienteComercial.setReserva(reserva);
+
+		// Actualizar estado del expediente como "Aprobado"
+		DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
+				.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
+		if (Checks.esNulo(estadoExpCom)) {
+			throw new Exception("Error al actualizar el estado del expediente comercial.");
+		}
+		expedienteComercial.setEstado(estadoExpCom);
+		if (!expedienteComercialApi.update(expedienteComercial)) {
+			throw new Exception("Error al actualizar el expediente comercial.");
+		}
 		
 	}
 
@@ -427,30 +493,184 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 	/**
 	 * Anula el cobro de la venta si es en el mismo día que el cobro.
 	 * Borra de entregas a cuentas la venta,
-	 * Actualiza fecha contabilizacionPropietario y fecha venta a null
+	 * Borrar fecha contabilizacionPropietario y fecha venta. Poner a null
 	 * @param ConfirmacionOpDto con los datos necesarios para registrar el cobro de la venta
 	 * @return void 
 	 */
 	@Override
-	public void anularCobroVenta(ConfirmacionOpDto confirmacionOpDto)
-			throws Exception {
-		// TODO Auto-generated method stub
+	public void anularCobroVenta(ConfirmacionOpDto confirmacionOpDto) throws Exception {
+		Double importeReserva = null;
+		Double importeTotal = null;
+		List<EntregaReserva> listaEntregas = null;
+		
+		// Estas validaciones ya se realizan en el metodo validador del ws
+		Activo activo = activoApi.getByNumActivoUvem(confirmacionOpDto.getActivo());
+		if (Checks.esNulo(activo)) {
+			throw new Exception("No existe el activo");
+		}
+		Oferta oferta = activoApi.tieneOfertaAceptada(activo);
+		if (Checks.esNulo(oferta)) {
+			throw new Exception("El activo no tiene ofertas aceptadas.");
+		}
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+		if (Checks.esNulo(expedienteComercial)) {
+			throw new Exception("No existe expediente comercial para esta activo.");
+		}
+		Reserva reserva = expedienteComercial.getReserva();
+		if (Checks.esNulo(reserva)) {
+			throw new Exception("El activo no tiene reserva");
+		}
+
+		// Importe Reserva:
+		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+		if (!Checks.esNulo(condExp)) {
+			importeReserva = condExp.getImporteReserva();
+		}
+		// Importe Total:
+		importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() - importeReserva
+				: oferta.getImporteContraOferta() - importeReserva;
+
+		
+		//Borra de entregas a cuentas la venta.
+		if(!Checks.esNulo(importeTotal)){
+			listaEntregas = reserva.getEntregas();	
+			if(!Checks.esNulo(listaEntregas) && listaEntregas.size()>0){
+				for(int i=0; i< listaEntregas.size(); i++){
+					EntregaReserva entrega = listaEntregas.get(i);
+					if(!Checks.esNulo(entrega) && entrega.getImporte().equals(importeTotal)){
+						expedienteComercialApi.deleteEntregaReserva(entrega.getId());
+					}
+				}
+			}	
+		}
+		
+
+		// Borrar fecha contabilizacionPropietario y fecha venta. Poner a null
+		expedienteComercial.setFechaContabilizacionPropietario(null);
+		expedienteComercial.setFechaVenta(null);
+		if (!expedienteComercialApi.update(expedienteComercial)) {
+			throw new Exception("Error al actualizar el expediente comercial.");
+		}
 		
 	}
 
+	
+	
+	
+	
 	
 	/**
 	 * Anula la devolución del cobro de la reserva si es en el mismo día que la devolución. 
 	 * Borra de entregas a cuentas la devolución.
 	 * Actualiza estado reserva a "Pendiente de devolución", el estado de la oferta "Aceptada", el estado del expediente "En devolución",
-	 * Poner fecha de devolución e importe devolución a null,
+	 * Borrar fecha de devolución e importe devolución. Poner a null.
 	 * @param ConfirmacionOpDto con los datos necesarios para registrar la devolución de la reserva
 	 * @return void
 	 */
 	@Override
-	public void anularDevolucionReserva(ConfirmacionOpDto confirmacionOpDto)
-			throws Exception {
-		// TODO Auto-generated method stub
+	public void anularDevolucionReserva(ConfirmacionOpDto confirmacionOpDto) throws Exception {
+		Double importeReserva = null;
+		Double importeDevuelto = null;
+		Oferta oferta = null;
+		List<EntregaReserva> listaEntregas = null;
+		
+		// Estas validaciones ya se realizan en el metodo validador del ws
+		Activo activo = activoApi.getByNumActivoUvem(confirmacionOpDto.getActivo());
+		if (Checks.esNulo(activo)) {
+			throw new Exception("No existe el activo");
+		}
+		
+		//HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la última oferta rechazada.
+		DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
+		dtoOfertasFilter.setNumActivo(activo.getNumActivo());
+		dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
+		
+		List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
+		if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
+			Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
+			if(!Checks.esNulo(idOferta)){
+				oferta = ofertaApi.getOfertaById(idOferta);
+			}
+		}					
+		if (Checks.esNulo(oferta)) {
+			throw new Exception("El activo no tiene ofertas rechazadas.");
+		}
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+		if (Checks.esNulo(expedienteComercial)) {
+			throw new Exception("No existe expediente comercial para esta activo.");
+		}
+		Reserva reserva = expedienteComercial.getReserva();
+		if (Checks.esNulo(reserva)) {
+			throw new Exception("El activo no tiene reserva");
+		}
+
+		//Borra de entregas a cuentas la devolución.
+		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+		if (!Checks.esNulo(condExp)) {
+			importeReserva = condExp.getImporteReserva();
+		}
+
+		if(!Checks.esNulo(importeReserva)){
+			importeDevuelto = importeReserva * Double.valueOf(-1);
+			listaEntregas = reserva.getEntregas();	
+			if(!Checks.esNulo(listaEntregas) && listaEntregas.size()>0){
+				for(int i=0; i< listaEntregas.size(); i++){
+					EntregaReserva entrega = listaEntregas.get(i);
+					if(!Checks.esNulo(entrega) && entrega.getImporte().equals(importeDevuelto)){
+						expedienteComercialApi.deleteEntregaReserva(entrega.getId());
+					}
+				}
+			}	
+		}
+				
+			
+		// Actualiza estado reserva a CODIGO_PENDIENTE_DEVOLUCION,
+		DDEstadosReserva estReserva = reservaApi.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
+		if (Checks.esNulo(estReserva)) {
+			throw new Exception("Error al actualizar el estado de la reserva.");
+		}
+		reserva.setEstadoReserva(estReserva);
+		expedienteComercial.setReserva(reserva);
+		
+		
+		// Actualiza estado de la oferta CODIGO_ACEPTADA
+		DDEstadoOferta estOferta = ofertaApi.getDDEstadosOfertaByCodigo(DDEstadoOferta.CODIGO_ACEPTADA);
+		if (Checks.esNulo(estOferta)) {
+			throw new Exception("Error al actualizar el estado de la oferta.");
+		}
+		oferta.setEstadoOferta(estOferta);
+		expedienteComercial.setOferta(oferta);
+		
+		
+		// Actualiza estado del expediente comercial EN_DEVOLUCION
+		DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
+				.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.EN_DEVOLUCION);
+		if (Checks.esNulo(estadoExpCom)) {
+			throw new Exception("Error al actualizar el estado del expediente comercial.");
+		}
+		expedienteComercial.setEstado(estadoExpCom);
+
+		// Congela el resto de ofertas del activo
+		List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(expedienteComercial.getTrabajo());
+		if (!Checks.esNulo(listaOfertas)) {
+			for (Oferta ofr : listaOfertas) {
+				if ((DDEstadoOferta.CODIGO_PENDIENTE.equals(ofr.getEstadoOferta().getCodigo()))) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDEstadoOferta.CODIGO_CONGELADA);
+					DDEstadoOferta estadoOfr = genericDao.get(DDEstadoOferta.class, filtro);
+					ofr.setEstadoOferta(estadoOfr);
+					genericDao.save(Oferta.class, ofr);
+				}
+			}
+		}
+
+		// Borrar fecha de devolución e importe devolución. Poner a null.
+		expedienteComercial.setFechaDevolucionEntregas(null);
+		expedienteComercial.setImporteDevolucionEntregas(null);
+
+		if (!expedienteComercialApi.update(expedienteComercial)) {
+			throw new Exception("Error al actualizar el expediente comercial.");
+		}
 		
 	}
 

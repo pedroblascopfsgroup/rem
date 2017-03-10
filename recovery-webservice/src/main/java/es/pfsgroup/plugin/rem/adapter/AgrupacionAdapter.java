@@ -1633,6 +1633,9 @@ public class AgrupacionAdapter {
 			} catch (SQLException e) {
 				logger.error("error en agrupacionAdapter", e);
 				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
+				return false;
 			}
 		}
 
@@ -1734,6 +1737,9 @@ public class AgrupacionAdapter {
 			} catch (SQLException e) {
 				logger.error("error en agrupacionAdapter", e);
 				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
+				return false;
 			}
 		}
 
@@ -1809,6 +1815,9 @@ public class AgrupacionAdapter {
 				activoEstadoPublicacionApi.publicacionChangeState(dtoPublicacion);
 			} catch (SQLException e) {
 				logger.error("error en agrupacionAdapter", e);
+				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
 				return false;
 			}
 		}

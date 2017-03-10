@@ -47,6 +47,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 	public static final String ACTIVO_OFERTAS_ACEPTADAS = "msg.error.masivo.agrupar.activos.asistida.oferta.aceptada";
 	public static final String ACTIVO_VENDIDO = "msg.error.masivo.agrupar.activos.asistida.activo.vendido";
 	public static final String ACTIVO_SIN_PROPIETARIO = "msg.error.masivo.agrupar.activos.asistida.activo.sinPropietario";
+	public static final String ACTIVO_NO_COMERCIALIZABLE = "msg.error.masivo.agrupar.activos.no.comercializables";
 
 	// Validaciones de activo NO utilizadas porque no esta definido como validar en esos casos al incluir en lotes comerciales
 	/*
@@ -121,6 +122,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS), activosConVentaOfertaRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_VENDIDO), activosVendidosRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO), activosSinPropietariosRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE), activosNoComercializablesRows(exc));
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_NO_FINANCIERO),activosFinancierosRows(exc));
 			
@@ -132,13 +134,12 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			
 			try{
 				if(!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty() ||
-						// !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO)).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE)).isEmpty() ||
 						// !mapaErrores.get(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO)).isEmpty() ||
-						// !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_ASISTIDO)).isEmpty() ||
 						// !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_FINANCIERO)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError)).isEmpty() ||
@@ -257,6 +258,24 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 		return numFilaError;
 	}
 	
+	private List<Integer> activosNoComercializablesRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
 // Validaciones para activos de la lista excel	
 	private List<Integer> activesNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
@@ -309,8 +328,8 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = Long.parseLong(exc.dameCelda(i, 0));
 				numActivo = Long.parseLong(exc.dameCelda(i, 1));
-				//Valida que el activo no este en una agrupacion de obra nueva(01) o que ya este en una asistida(13)
-				if(particularValidator.esActivoEnOtraAgrupacionNoCompatible(numActivo, numAgrupacion, "01,14"))
+				// Valida que el activo no esté actualmente en una agrupacion comercial(14).
+				if(particularValidator.esActivoEnOtraAgrupacionNoCompatible(numActivo, numAgrupacion, "14"))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {

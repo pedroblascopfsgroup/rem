@@ -2221,7 +2221,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			try {
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);	
 				
-				if(!Checks.esNulo(dto.getEstadoPbc()) || !Checks.esNulo(dto.getConflictoIntereses()) || !Checks.esNulo(dto.getRiesgoReputacional())) {
+				if(Checks.esNulo(dto.getEstadoPbc()) || !Checks.esNulo(dto.getConflictoIntereses()) || !Checks.esNulo(dto.getRiesgoReputacional())) {
 					ofertaApi.resetPBC(expedienteComercial);
 				}
 
@@ -2337,7 +2337,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega){
+	public boolean deleteEntregaReserva(Long idEntrega){
 
 			try {
 				genericDao.deleteById(EntregaReserva.class, idEntrega);
@@ -2856,6 +2856,53 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		return dtoDatosCliente;
 		
+	}
+	
+	@Override
+	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento) {
+		List<DatosClienteDto> lista = new ArrayList<DatosClienteDto>();
+		String tipoDoc = null;
+		
+		if(Checks.esNulo(numeroDocumento) || Checks.esNulo(tipoDocumento)) {
+			return lista;
+		}
+		
+		if(!Checks.esNulo(tipoDocumento)){
+			if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;	
+			if (DDTiposDocumentos.CIF.equals(tipoDocumento))  tipoDoc = DtoClienteUrsus.CIF;
+			if (DDTiposDocumentos.NIF.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;
+			if (DDTiposDocumentos.TARJETA_RESIDENTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_RESIDENTE;
+			if (DDTiposDocumentos.PASAPORTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.PASAPORTE;
+			if (DDTiposDocumentos.CIF_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.CIF_EXTRANJERO;
+			if (DDTiposDocumentos.DNI_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI_EXTRANJERO;
+			if (DDTiposDocumentos.TARJETA_DIPLOMATICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_DIPLOMATICA;
+			if (DDTiposDocumentos.MENOR.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.MENOR;
+			if (DDTiposDocumentos.OTROS_PERSONA_FISICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PERSONA_FISICA;
+			if (DDTiposDocumentos.OTROS_PESONA_JURIDICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
+		}
+		
+		try {
+			lista = uvemManagerApi.ejecutarNumCliente(numeroDocumento, tipoDoc, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return lista;
+	}
+	
+	@Override
+	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus) throws Exception {
+		Integer numURSUS = null;
+		
+		try {
+			numURSUS = Integer.parseInt(numeroUrsus);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return uvemManagerApi.ejecutarDatosCliente(numURSUS, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
 	}
 
 	@SuppressWarnings("unchecked")

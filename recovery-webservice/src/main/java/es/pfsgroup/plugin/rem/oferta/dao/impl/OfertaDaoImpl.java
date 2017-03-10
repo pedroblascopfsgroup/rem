@@ -80,7 +80,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	@Override
 	public Long getNextNumOfertaRem() {
 		String sql = "SELECT S_OFR_NUM_OFERTA.NEXTVAL FROM DUAL";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 
 	@Override
@@ -103,7 +103,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if(Checks.esNulo(idProveedor)) {
 			idProveedor=-1L;
 		}
-		Query callFunctionSql = this.getSession().createSQLQuery(functionHQL.toString());
+		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(functionHQL.toString());
+
 		callFunctionSql.setParameter("OFR_ID", idOferta);
 		callFunctionSql.setParameter("ACT_ID", idActivo);
 		callFunctionSql.setParameter("PVE_ID", idProveedor);

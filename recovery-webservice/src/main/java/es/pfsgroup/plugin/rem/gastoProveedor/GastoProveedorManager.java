@@ -868,29 +868,72 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				
 					for(ActivoAgrupacionActivo activoAgrupacion: agrupacion.getActivos()){
-						
 						Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 						Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activoAgrupacion.getActivo().getNumActivo());
 						GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtroG, filtroA);
 						
-						if(!Checks.esNulo(gastoActivo)) {
+						if(Checks.esNulo(gastoActivo)) {
+						
+							filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", activoAgrupacion.getActivo().getNumActivo());
+							activo= genericDao.get(Activo.class, filtro);
 							
-							Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
-							Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-							List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+							if(Checks.esNulo(activo)) {
+								throw new JsonViewerException("Este activo no existe");	
+							} else {
 							
-							GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
-							gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
-							gastoProveedorActivo.setGastoProveedor(gasto);
-							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
-							
-							gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
-							
-							genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
-						}
+								filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+								gasto= genericDao.get(GastoProveedor.class, filtroGasto);
+//								
+//								if(!Checks.esNulo(gasto.getPropietario())) {
+//
+//									propietario = activo.getPropietarioPrincipal();
+//									if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+//										throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
+//									}
+//									
+//									
+//									
+//								}
+								
+								Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+								Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+								List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+								
+								GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
+								gastoProveedorActivo.setActivo(activo);
+								gastoProveedorActivo.setGastoProveedor(gasto);
+								if(!Checks.estaVacio(activosCatastro)) {
+									gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+								}
+								
+								gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
+								
+								genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+							}
+						
+//						Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+//						Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activoAgrupacion.getActivo().getNumActivo());
+//						GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtroG, filtroA);
+//						
+//						if(!Checks.esNulo(gastoActivo)) {
+//							
+//							Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
+//							Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+//							List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+//							
+//							GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
+//							gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
+//							gastoProveedorActivo.setGastoProveedor(gasto);
+//							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+//							
+//							gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
+//							
+//							genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+//						}
 					}
 				}
 
+			}
 			}
 
 		} else {

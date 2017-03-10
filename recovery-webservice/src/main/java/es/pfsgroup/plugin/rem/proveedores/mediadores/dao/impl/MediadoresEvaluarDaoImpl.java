@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.proveedores.mediadores.dao.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -12,13 +11,10 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
 import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
-import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.VListMediadoresEvaluar;
-import es.pfsgroup.plugin.rem.model.VStatsCarteraMediadores;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresEvaluarDao;
 
@@ -88,7 +84,7 @@ public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresE
 		updateHQLRetireCal.append(" where pve.calificacionProveedorPropuesta = ");
 		updateHQLRetireCal.append(" (select cpr1.id from DDCalificacionProveedorRetirar cpr1 where cpr1.codigo = :codigoRetirar ) ");
 		
-        Query queryUpdateRetireCal = this.getSession().createQuery(updateHQLRetireCal.toString());
+        Query queryUpdateRetireCal = this.getSessionFactory().getCurrentSession().createQuery(updateHQLRetireCal.toString());
         queryUpdateRetireCal.setParameter("codigoRetirar", DDCalificacionProveedorRetirar.CPR_CODIGO_RETIRAR);
         queryUpdateRetireCal.executeUpdate();
         
@@ -98,7 +94,7 @@ public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresE
 		updateHQLRemoveRetire.append(" where pve.calificacionProveedorPropuesta = ");
 		updateHQLRemoveRetire.append(" (select cpr1.id from DDCalificacionProveedorRetirar cpr1 where cpr1.codigo = :codigoRetirar) ");
 		
-        Query queryUpdateRemoveRetire = this.getSession().createQuery(updateHQLRemoveRetire.toString());
+        Query queryUpdateRemoveRetire = this.getSessionFactory().getCurrentSession().createQuery(updateHQLRemoveRetire.toString());
         queryUpdateRemoveRetire.setParameter("codigoRetirar", DDCalificacionProveedorRetirar.CPR_CODIGO_RETIRAR);
         queryUpdateRemoveRetire.executeUpdate();
         
@@ -107,7 +103,7 @@ public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresE
 		updateHQLCal.append(" set pve.calificacionProveedor = pve.calificacionProveedorPropuesta ");
 		updateHQLCal.append(" where pve.calificacionProveedorPropuesta is not null ");
 		
-        Query queryUpdateCal = this.getSession().createQuery(updateHQLCal.toString());
+        Query queryUpdateCal = this.getSessionFactory().getCurrentSession().createQuery(updateHQLCal.toString());
         queryUpdateCal.executeUpdate();
         
         // Actualiza Top vigentes copiando los datos de propuestos
@@ -115,7 +111,7 @@ public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresE
 		updateHQLTop.append(" set pve.top = pve.topPropuesto ");
 		updateHQLTop.append(" where pve.topPropuesto is not null ");
 		
-        Query queryUpdateTop = this.getSession().createQuery(updateHQLTop.toString());
+        Query queryUpdateTop = this.getSessionFactory().getCurrentSession().createQuery(updateHQLTop.toString());
         queryUpdateTop.executeUpdate();
         
 
@@ -124,7 +120,7 @@ public class MediadoresEvaluarDaoImpl extends AbstractEntityDao<VListMediadoresE
 		updateHQLKiller.append(" set pve.calificacionProveedorPropuesta = null ");
 		updateHQLKiller.append("   , pve.topPropuesto = null ");
 		
-        Query queryUpdateKiller = this.getSession().createQuery(updateHQLKiller.toString());
+        Query queryUpdateKiller = this.getSessionFactory().getCurrentSession().createQuery(updateHQLKiller.toString());
         queryUpdateKiller.executeUpdate();
         
         return true;

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.impl.GestorEntidadDaoImpl;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -24,7 +23,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.activo.id", activo.getId());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.tipoGestor.id", idTipoGestor);
 		
-		Query query = getSession().createQuery(hb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<Usuario> listado = query.list();
 		
@@ -40,7 +39,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb,  "gee.activo.id", activo.getId());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.tipoGestor.codigo", codigoTipoGestor);
 		
-		Query query = getSession().createQuery(hb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<Usuario> listado = query.list();
 		

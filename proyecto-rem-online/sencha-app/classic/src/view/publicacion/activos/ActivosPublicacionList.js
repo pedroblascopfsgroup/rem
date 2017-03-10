@@ -8,7 +8,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionList', {
     initComponent: function () {
      	
      	var me = this;
-     	me.setTitle(HreRem.i18n('title.publicaciones.activos.grid'));
+     	me.setTitle(HreRem.i18n('title.publicaciones.activos.comercializables.grid'));
 	    me.listeners = {	    	
 			rowdblclick: 'onActivosPublicacionListDobleClick'
 	    };

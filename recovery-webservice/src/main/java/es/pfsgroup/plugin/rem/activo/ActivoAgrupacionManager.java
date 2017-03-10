@@ -189,6 +189,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String uploadFoto(File fileItem) throws Exception {
 		if (fileItem.getMetadata().get("id_agrupacion_haya") == null) {
 			throw new Exception("La foto no tiene agrupacion");
@@ -225,11 +226,11 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setFechaDocumento(fechaSubida);
 
-				Auditoria.save(activoFoto);
+				//Auditoria.save(activoFoto);
 
-				agrupacion.getFotos().add(activoFoto);
+				//agrupacion.getFotos().add(activoFoto);
 
-				genericDao.save(ActivoAgrupacion.class, agrupacion);
+				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
 				throw new Exception("La foto esta asociada a una agrupacion inexistente");
@@ -292,6 +293,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		return "success";
 	}
 
+	@Transactional(readOnly = false)
 	public String uploadFotoSubdivision(File fileItem) throws Exception {
 		if (fileItem.getMetadata().get("id_subdivision_haya") == null) {
 			throw new Exception("La foto no tiene subdivision");
@@ -339,11 +341,11 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setOrden(orden);
 
-				Auditoria.save(activoFoto);
+				//Auditoria.save(activoFoto);
 
-				agrupacion.getFotos().add(activoFoto);
+				//agrupacion.getFotos().add(activoFoto);
 
-				genericDao.save(ActivoAgrupacion.class, agrupacion);
+				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
 				throw new Exception("La foto esta asociada a una subdivision inexsitente");

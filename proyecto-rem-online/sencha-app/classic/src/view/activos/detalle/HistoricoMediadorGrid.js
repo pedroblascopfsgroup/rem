@@ -40,6 +40,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		            	xtype: 'combobox',
 			            displayField: 'nombreProveedor',
 			            valueField: 'idProveedor',
+			            allowBlank: false,
 			            bind: {
 			            	store: '{storeMediadorListFiltered}'
 			            },

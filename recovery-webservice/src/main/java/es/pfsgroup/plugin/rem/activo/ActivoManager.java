@@ -1625,7 +1625,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(historicoMediador, "fechaDesde", new Date());
 			beanUtilNotNull.copyProperty(historicoMediador, "activo", activo);
 
-			if (!Checks.esNulo(dto.getMediador())) {
+			if (!Checks.esNulo(dto.getMediador()) || !dto.getMediador().equals("")) { // si no se selecciona mediador en el combo, se devuelve mediador "", no null.
 				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id",
 						Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
@@ -1637,6 +1637,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorInforme", proveedor);
 					genericDao.save(Activo.class, activo);
 				}
+			}
+			else{
+				return false; // si el mediador esta vacio se devuelve false
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
@@ -3257,7 +3260,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			// Si se ha introducido valores en fecha o importe de venta, se
 			// actualiza la situación comercial y estado publicación del activo
-			if (!Checks.esNulo(dto.getFechaVenta()) || !Checks.esNulo(dto.getImporteVenta()))
+			if (!Checks.esNulo(dto.getFechaVenta()) && !Checks.esNulo(dto.getImporteVenta()))
 				this.setSituacionComercialAndEstadoPublicacion(activo);
 
 		} catch (IllegalAccessException e) {

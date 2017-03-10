@@ -254,9 +254,8 @@ public interface RestApi {
 	 * Realiza la configuracion de la sesión
 	 * 
 	 * @param response
-	 * @param workingCode
 	 * @throws Exception
 	 */
-	public void doSessionConfig(String workingCode) throws Exception;
+	public void doSessionConfig() throws Exception;
 
 }

@@ -157,27 +157,20 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									        {		                
 							                	xtype: 'checkboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.renuncia.exencion'),
-							                	readOnly: false,
-							                	disabled: true,
 							                	bind: {
-					        						disabled:'{!esOfertaVenta}',
-					        						value: '{condiciones.renunciaExencion}'
+					        						value: '{condiciones.renunciaExencion}',
+							                		readOnly:'{!esOfertaVenta}'
 			            						}
 		                					},
-									        
 									        {		                
 							                	xtype: 'checkboxfieldbase',
+							                	reference: 'mycheck',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.reserva.con.impuesto'),
-							                	readOnly: false,
-							                	disabled: true,
-							                	bind:	{
+							                	bind: {
 							                		value: '{condiciones.reservaConImpuesto}',
-							                		disabled:'{!esOfertaVenta}'
+							                		readOnly:'{!esOfertaVenta}'
 							                	}
 		                					}
-									        
-									        
-											
 										]
 						        	}
 						        ]

@@ -195,6 +195,19 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 									combo.msgTarget = me.campos[i].msgTarget;
 									camposFiltrados.push(combo);
 									break;
+								
+								case 'comboboxinicialedi':
+									var combo = {};
+									combo.xtype = 'genericcombo';
+									combo.name = me.campos[i].name;
+									combo.diccionario = me.campos[i].store;
+									combo.fieldLabel = me.campos[i].fieldLabel;
+									combo.value = me.campos[i].value;
+									combo.allowBlank = me.campos[i].noObligatorio;
+									combo.blankText =  me.campos[i].blankText;
+									combo.msgTarget = me.campos[i].msgTarget;
+									camposFiltrados.push(combo);
+									break;
 									
 								case 'numberfield':
 									me.campos[i].hideTrigger = true;
@@ -1018,14 +1031,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 					
 					T013_ResolucionComiteValidacion: function() {
 						var me = this;
-						
-						me.deshabilitarCampo(me.down('[name=numImporte]'));
+						if(me.down('[name=comboResolucion]').getValue() != '03'){
+							me.deshabilitarCampo(me.down('[name=numImporteContra]'));
+						}
 						
 						me.down('[name=comboResolucion]').addListener('change', function(combo){
 							if(combo.value == '03'){
-								me.habilitarCampo(me.down('[name=numImporte]'));
+								me.habilitarCampo(me.down('[name=numImporteContra]'));
 							}else{
-								me.deshabilitarCampo(me.down('[name=numImporte]'));
+								me.deshabilitarCampo(me.down('[name=numImporteContra]'));
 							}
 						})
 					},

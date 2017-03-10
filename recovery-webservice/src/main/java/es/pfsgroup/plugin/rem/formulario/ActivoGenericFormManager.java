@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.formulario;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
@@ -47,9 +49,14 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 @Service
@@ -59,6 +66,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	public static final String TIPO_CAMPO_FECHA = "date";
 	public static final String TIPO_CAMPO_HORA = "time";
 	public static final String TIPO_COMBOBOX_INICIAL = "comboini";
+	public static final String TIPO_COMBOBOX_INICIAL_ED = "comboinied";
+	public static final String TIPO_CAMPO_NUMBER = "number";
 	public static final String NO_APLICA = "No aplica";
 	
     protected final Log logger = LogFactory.getLog(getClass());
@@ -98,6 +107,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
     @Autowired
 	private TrabajoApi trabajoApi;
+    
+    @Autowired
+    private ResolucionComiteApi resolucionComiteApi;
 
     
     /**
@@ -418,7 +430,103 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}
             		}
-            		            		
+            	}
+            	if(item.getType().equals(TIPO_COMBOBOX_INICIAL_ED))
+            	{
+            		if(item.getNombre().equals("comboResolucion"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(ofertaAceptada)){
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente)){
+            					//Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+            					
+            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
+            					resolDto.setExpediente(expediente);
+            					
+            					Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
+            					
+            					resolDto.setTipoResolucion(tipoResolucion);
+								try {
+									List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+									
+									ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
+									if(!Checks.esNulo(resolucionComite)){
+										item.setValue(this.getMapaEREtoRCO().get(resolucionComite.getEstadoResolucion().getCodigo()));
+									}
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+            					
+            					//ResolucionComiteBankia resolucion = genericDao.get(ResolucionComiteBankia.class, filtroExpediente);
+
+            				}
+            			}
+            		}   
+            		if(item.getNombre().equals("comboRatificacion"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(ofertaAceptada)){
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente)){
+            					//Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+            					
+            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
+            					resolDto.setExpediente(expediente);
+            					
+            					Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
+            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
+            					
+            					resolDto.setTipoResolucion(tipoResolucion);
+								try {
+									List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+									
+									ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
+									if(!Checks.esNulo(resolucionComite)){
+										item.setValue(this.getMapaEREtoSiNo().get(resolucionComite.getEstadoResolucion().getCodigo()));
+									}
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+            					
+            					//ResolucionComiteBankia resolucion = genericDao.get(ResolucionComiteBankia.class, filtroExpediente);
+
+            				}
+            			}
+            		}  
+            	}
+            	if(item.getType().equals(TIPO_CAMPO_NUMBER))
+            	{
+            		if(item.getNombre().equals("numImporteContra"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(ofertaAceptada)){
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente)){
+            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
+            					resolDto.setExpediente(expediente);
+            					
+            					Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
+            					
+            					resolDto.setTipoResolucion(tipoResolucion);
+            					try{
+            						List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+            						
+            						ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
+            						if(!Checks.esNulo(resolucionComite)){
+            							if(!Checks.esNulo(resolucionComite.getImporteContraoferta()))
+            								item.setValue(resolucionComite.getImporteContraoferta().toString());
+            						}
+            					} catch (Exception e){
+            						e.printStackTrace();
+            					}
+            				}
+            			}
+            		}
             	}
             }
         }
@@ -456,5 +564,26 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             item.setValues(values);
         }
     }
+    
+	private HashMap<String,String> getMapaEREtoRCO() {
+		
+		HashMap<String,String> mapa = new HashMap<String,String>();
+		
+		mapa.put(DDEstadoResolucion.CODIGO_ERE_APROBADA, DDResolucionComite.CODIGO_APRUEBA);
+		mapa.put(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA, DDResolucionComite.CODIGO_CONTRAOFERTA);
+		mapa.put(DDEstadoResolucion.CODIGO_ERE_DENEGADA, DDResolucionComite.CODIGO_RECHAZA);
+		
+		return mapa;
+	}
+	
+	private HashMap<String,String> getMapaEREtoSiNo() {
+		HashMap<String,String> mapa = new HashMap<String,String>();
+		
+		mapa.put(DDEstadoResolucion.CODIGO_ERE_APROBADA, DDSiNo.SI);
+		mapa.put(DDEstadoResolucion.CODIGO_ERE_DENEGADA, DDSiNo.NO);
+		
+		return mapa;
+	}
+	
 
 }

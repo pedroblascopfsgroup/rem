@@ -87,9 +87,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
 		esOfertaVenta: function(get){
 			var me= this;
-	     	var expediente= me.getData().expediente;
-	     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
-	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
+
+			var tipoOferta= get('expediente.tipoExpedienteDescripcion');
+
 	     	if(tipoOferta=='Venta'){
 	     		return true;
 	     	}

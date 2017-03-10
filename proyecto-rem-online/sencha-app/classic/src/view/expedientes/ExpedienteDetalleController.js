@@ -534,7 +534,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 //	},
 //	
 //	onClickBotonBuscarCompareciente: function(btn){
-//		debugger;
 //		var me= this;
 //		var initialData = {};
 //
@@ -867,12 +866,29 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
+	onSelectComboActivoHonorarios: function(combo, recordSelected) {
+		
+		var me = this;
+		var grid = me.lookupReference('listadohoronarios');
+		var record = Ext.isDefined(grid.rowEditing.context) ? grid.rowEditing.context.record : null;
+		var importeParticipacionActivo = recordSelected.get("importeParticipacion");
+		
+		if(Ext.isEmpty(importeParticipacionActivo)) {
+			grid.rowEditing.cancelEdit();
+			me.fireEvent("errorToast", HreRem.i18n("msg.necesaria.participacion.calculo.honorario"));				
+		} else {
+			record.set("participacionActivo",importeParticipacionActivo);
+		}
+		
+	},
+	
 	onHaCambiadoImporteCalculo: function(field, value, oldValue){
 		var me= this;
 		var tipoCalculoField= me.lookupReference('tipoCalculoHonorario')
 		var importeField= me.lookupReference('importeCalculoHonorario')
 		var tipoCalculo= me.lookupReference('tipoCalculoHonorario').value;
-		
+		var record = Ext.isDefined(me.lookupReference('listadohoronarios').rowEditing.context) ? me.lookupReference('listadohoronarios').rowEditing.context.record : null;
+
 		if(CONST.TIPOS_CALCULO['FIJO'] == tipoCalculo){//importe fijo
 			var honorarios= me.lookupReference('honorarios');
 			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
@@ -883,17 +899,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		else if(CONST.TIPOS_CALCULO['PORCENTAJE'] == tipoCalculo){//porcentaje
 			var honorarios= me.lookupReference('honorarios');
 			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
-			var importeOferta = parseFloat(me.getViewModel().get('expediente.importe')).toFixed(2);
-			honorarios.setValue((importeOferta*importeCalculoHonorario)/100);
-			importeField.setMaxValue(100);//maxValue: '100';
-		}
+			var importeParticipacion = Ext.isEmpty(record) ?  null : record.get("participacionActivo");
+			var honorario;
+			if(!Ext.isEmpty(record) && Ext.isEmpty(importeParticipacion)) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.necesaria.participacion.calculo.honorario"));
+			} else {				
+				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
+				honorario = (importeParticipacion*importeCalculoHonorario)/100;
+				honorarios.setValue(honorario);
+				importeField.setMaxValue(100);
+			}
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+honorario+"]");
+		}/*
 		
 		else if(tipoCalculo=='Importe fijo'){
 			tipoCalculoField.setValue(CONST.TIPOS_CALCULO['FIJO']);
 		}
 		else if(tipoCalculo=='Porcentaje'){
 			tipoCalculoField.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
-		}
+		}*/
 		
 	},
 	
@@ -1105,44 +1129,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	changeComboTipoProveedor: function(combo,value,c){
 		var me= this;
-		if(combo.getValue()==CONST.TIPOS_PROVEEDOR_ESPEDIENTE['CAT'] || combo.getValue()==CONST.TIPOS_PROVEEDOR_ESPEDIENTE['MEDIADOR_OFICINA']){
-				me.lookupReference('proveedorRef').setValue();
-				me.lookupReference('proveedorRef').setDisabled(true);
-		}
-		else{
+		if(combo.getValue()==CONST.TIPOS_PROVEEDOR_EXPEDIENTE['CAT'] || combo.getValue()==CONST.TIPOS_PROVEEDOR_EXPEDIENTE['MEDIADOR_OFICINA']){
+			me.lookupReference('proveedorRef').setValue(null);
+			me.lookupReference('proveedorRef').setDisabled(true);
+		} else {
 			me.lookupReference('proveedorRef').setDisabled(false);
-			var ges= combo.up('gestioneconomicaexpediente');
-			me.lookupReference('proveedorRef').setValue();
-
- 			var activoID = me.getViewModel().getData().expediente.getData().idActivo
-			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':value.getData().codigo, 'nombreBusqueda': '', 'idActivo':activoID});
-			ges.storeProveedores.load();
 		}
 	},
 
-	changeComboProveedor: function(combo){
-		var me= this;
-		var ges= combo.up('gestioneconomicaexpediente');
-		if(!Ext.isEmpty(combo.getValue()) && combo.getValue().length>=3){
-			var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
-			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': combo.getValue()});
-			ges.storeProveedores.load();
-		}
-		else{
-			var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
-			ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': ''});
-			ges.storeProveedores.load();
-		}
-	},
 
-	expandeComboProveedor: function (field, o){
-		var me= this;
-		var ges= field.up('gestioneconomicaexpediente');
-		var codigoTipoProveedor= me.lookupReference('tipoProveedorRef').value;
-		var nombreBusqueda= me.lookupReference('proveedorVistaRef').value;
-		ges.storeProveedores.getProxy().setExtraParams({'codigoTipoProveedor':codigoTipoProveedor, 'nombreBusqueda': nombreBusqueda});
-		ges.storeProveedores.load();
-	},
 
 	borrarComprador: function(grid, record) {
 		var me = this;

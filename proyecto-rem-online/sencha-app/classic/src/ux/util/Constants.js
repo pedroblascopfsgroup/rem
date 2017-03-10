@@ -186,7 +186,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	ALQUILER: '02'
     },
     
-    TIPOS_PROVEEDOR_ESPEDIENTE: {
+    TIPOS_PROVEEDOR_EXPEDIENTE: {
     	CAT : '28',
     	MEDIADOR_OFICINA: '29'
     },

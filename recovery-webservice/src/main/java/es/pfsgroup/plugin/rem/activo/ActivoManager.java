@@ -106,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -158,7 +159,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -427,7 +427,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return resultado;
 	}
-
+	
+	@Transactional(readOnly = false)
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo) {
 
 		try {
@@ -482,10 +483,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoExpediente.setFechaAlta(new Date());
 
 			crearCompradores(oferta, nuevoExpediente);
-
+			
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
-
-			crearGastosExpediente(nuevoExpediente, oferta);
+			
+			crearGastosExpediente(oferta, nuevoExpediente);
 
 			// Se asigna un gestor de Formalización al crear un nuevo
 			// expediente.
@@ -2076,9 +2077,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
-	public boolean crearGastosExpediente(ExpedienteComercial nuevoExpediente, Oferta oferta) {
+	private List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
 
-		try {
+
+		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+
+		String[] acciones = {DDAccionGastos.CODIGO_COLABORACION,DDAccionGastos.CODIGO_PRESCRIPCION,DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE};
+		
+		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
+			
+			Activo activo = activoOferta.getPrimaryKey().getActivo();
+			
+			for(int i=0; i<acciones.length;i++) {
+				GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo,  acciones[i]);
+				gastosExpediente.add(gex);
+			}
+		}
+		
+		
+		/*try {
+
 			List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
 			DDTipoProveedorHonorario tipoProveedorMediador = (DDTipoProveedorHonorario) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDTipoProveedorHonorario.class,
@@ -2312,9 +2330,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (Exception ex) {
 			logger.error("Error en activoManager",ex);
 			return false;
-		}
+		}*/
 
-		return true;
+		return gastosExpediente;
 	}
 
 	@Override

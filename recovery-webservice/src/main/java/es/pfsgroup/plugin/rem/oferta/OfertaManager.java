@@ -59,11 +59,11 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -94,8 +94,17 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
 
 	protected static final Log logger = LogFactory.getLog(OfertaManager.class);
-	private static final String HONORARIO_TIPO_COLABORACION = "C";
-	private static final String HONORARIO_TIPO_PRESCRIPCION = "P";
+	
+	
+	//private static final String HONORARIO_TIPO_COLABORACION = "C";
+	//private static final String HONORARIO_TIPO_PRESCRIPCION = "P";
+	
+	private static final Map<String, String> TIPO_HONORARIOS = new HashMap<String, String>(){
+        {
+            put(DDAccionGastos.CODIGO_COLABORACION, "C");
+            put(DDAccionGastos.CODIGO_PRESCRIPCION, "P");
+        }
+    };
 
 	@Resource
 	MessageService messageServices;
@@ -1250,13 +1259,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return listaOfertantes;
 	}
-
+	
 	@Override
 	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta) {
 
 		List<DtoHonorariosOferta> listaHonorarios = new ArrayList<DtoHonorariosOferta>();
 
-		if (Checks.esNulo(dtoHonorariosOferta.getOfertaID())) {
+		/*if (Checks.esNulo(dtoHonorariosOferta.getOfertaID())) {
 			return listaHonorarios;
 		}
 
@@ -1395,9 +1404,124 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				listaHonorarios.add(dtoPrescripcion);
 			}
+		}*/
+
+		return listaHonorarios;
+	}
+
+	@Override
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(DtoGastoExpediente dto) {
+		
+		String[] acciones = {DDAccionGastos.CODIGO_COLABORACION,DDAccionGastos.CODIGO_PRESCRIPCION,DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE};
+		
+		List<DtoGastoExpediente> listaHonorarios = new ArrayList<DtoGastoExpediente>();
+
+		if (Checks.esNulo(dto.getIdOferta()) || Checks.esNulo(dto.getIdActivo())) {
+			return listaHonorarios;
+		}
+
+		// Obtener la oferta y comprobar su estado, si el estado de la oferta es
+		// aceptado obtener un listado de gastos expediente. Si no existen
+		// expediente asociado a la oferta calcular los gastos.
+		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
+		Filter filterActivoID = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo());
+		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
+		Activo activo = genericDao.get(Activo.class, filterActivoID);
+		if (!Checks.esNulo(oferta)) {
+			if (!Checks.esNulo(oferta.getEstadoOferta())
+					&& oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {				
+				// Si la oferta está aceptada, tendremos expediente y los honorarios guardados....
+				listaHonorarios = expedienteComercialApi.getHonorariosActivoByOfertaAceptada(oferta, activo);
+					
+			} else {
+				for(int i=0; i<acciones.length;i++) {
+					listaHonorarios.add(calculaHonorario(oferta, acciones[i], activo));		
+				}
+				
+			}
 		}
 
 		return listaHonorarios;
+	}
+
+	@Override
+	public DtoGastoExpediente calculaHonorario(Oferta oferta, String accion, Activo activo) {
+		
+		DtoGastoExpediente dto = new DtoGastoExpediente();
+		ActivoProveedor proveedor = null;
+		
+		// Los honorarios de colaboración serán asignados al FDV de la oferta si existe, 
+		// sino al custodio de la oferta si existe, 
+		// sino al mediador del activo.
+		if(accion.equals(DDAccionGastos.CODIGO_COLABORACION)) {
+			
+			if (!Checks.esNulo(oferta.getFdv())) {
+				proveedor = oferta.getFdv();
+			} else if (!Checks.esNulo(oferta.getCustodio())) {
+				proveedor = oferta.getCustodio();
+			} else if(!Checks.esNulo(activo.getInfoComercial())) {
+				proveedor = activo.getInfoComercial().getMediadorInforme();
+			}
+		// Los gastos de prescripcion serán asignados al al prescriptor de la oferta
+		} else if(accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION)) {
+			
+			if (!Checks.esNulo(oferta.getPrescriptor())) {
+				proveedor = oferta.getPrescriptor();
+			}
+		}
+		// TODO: Falta definir a quien asignar los honorarios para CODIGO_RESPONSABLE_CLIENTE (Doble prescripción)
+		
+		// Información del receptor del honorario 
+		if(!Checks.esNulo(proveedor)) {						
+			
+			if (!Checks.esNulo(proveedor.getTipoProveedor())) {
+				dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());
+			}
+			dto.setProveedor(proveedor.getNombre());
+			dto.setIdProveedor(proveedor.getCodigoProveedorRem());
+		} 
+			
+		// Información del tipo de honorario
+		DDAccionGastos accionGastoC = (DDAccionGastos) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDAccionGastos.class, accion);
+		if (!Checks.esNulo(accionGastoC)) {
+			dto.setCodigoTipoComision(accionGastoC.getCodigo());
+			dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
+		}
+		
+		// Información del tipo de cálculo. Por defecto siempre son porcentajes
+		DDTipoCalculo tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+		
+		if (!Checks.esNulo(tipoCalculoC)) {
+			dto.setTipoCalculo(tipoCalculoC.getDescripcion());
+			dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
+		}
+		
+		Long idProveedor = !Checks.esNulo(proveedor) ? proveedor.getId() : null;
+		
+		// Información del cálculo de la comisión
+		BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion), activo.getId(), idProveedor);
+		if (!Checks.esNulo(calculoComision)) {
+			Double calculoImporteC = calculoComision.doubleValue();
+			dto.setImporteCalculo(calculoImporteC);
+
+			if (!Checks.esNulo(activo)) {
+				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo);
+				if (!Checks.esNulo(tasacion)) {
+					Double tasacionFin = tasacion.getImporteTasacionFin();
+					Double result = (tasacionFin * calculoImporteC / 100);
+					dto.setHonorarios(result);
+				}
+			}
+		}/* else {
+			// Si el importe calculo está vacío mostrar 'Sin
+			// Honorarios'.
+			dto.setTipoCalculo("-");
+			dto.setHonorarios("Sin Honorarios");
+		}*/
+
+		return dto;
 	}
 
 	@Override
@@ -1575,5 +1699,4 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
-
 }

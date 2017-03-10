@@ -88,16 +88,12 @@ Ext.define('HreRem.view.login.Login', {
 										            xtype: 'textfield',
 										            name: 'j_password',
 										            inputType: 'password',
-										            readOnly: true,
 										            fieldLabel: !Ext.isEmpty(HreRem.i18n) ? HreRem.i18n("fieldlabel.password") : "fieldlabel.password",
 										            allowBlank: false,
 										            enableKeyEvents: true,
 										            cls: 'password',
 										            listeners: {
-										                specialKey: 'onSpecialKey',
-										                focus: function() {
-										                	this.setReadOnly(false);
-										                }
+										                specialKey: 'onSpecialKey'
 										            }
 				        						  }
 				        				],

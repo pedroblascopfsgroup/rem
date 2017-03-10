@@ -98,11 +98,15 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	}
 
 	@Override
-	public BigDecimal getImporteCalculo(Long idOferta, String tipoComision) {
-		StringBuilder functionHQL = new StringBuilder("SELECT CALCULAR_HONORARIO(:OFR_ID, :TIPO_COMISION) FROM DUAL");
-
+	public BigDecimal getImporteCalculo(Long idOferta, String tipoComision, Long idActivo, Long idProveedor) {
+		StringBuilder functionHQL = new StringBuilder("SELECT CALCULAR_HONORARIO(:OFR_ID, :ACT_ID, :PVE_ID, :TIPO_COMISION) FROM DUAL");
+		if(Checks.esNulo(idProveedor)) {
+			idProveedor=-1L;
+		}
 		Query callFunctionSql = this.getSession().createSQLQuery(functionHQL.toString());
 		callFunctionSql.setParameter("OFR_ID", idOferta);
+		callFunctionSql.setParameter("ACT_ID", idActivo);
+		callFunctionSql.setParameter("PVE_ID", idProveedor);
 		callFunctionSql.setParameter("TIPO_COMISION", tipoComision);
 
 		return (BigDecimal) callFunctionSql.uniqueResult();

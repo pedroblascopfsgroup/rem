@@ -102,6 +102,11 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<Posicionamiento> posicionamientos;
     
+    @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<GastosExpediente> honorarios;
+    
     @Column(name="ECO_FECHA_ANULACION")
     private Date fechaAnulacion;
     
@@ -529,6 +534,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setResolucionesComite(
 			List<ResolucionComiteBankia> resolucionesComite) {
 		this.resolucionesComite = resolucionesComite;
+	}
+
+	public List<GastosExpediente> getHonorarios() {
+		return honorarios;
+	}
+
+	public void setHonorarios(List<GastosExpediente> honorarios) {
+		this.honorarios = honorarios;
 	}
 	
     

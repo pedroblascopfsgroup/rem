@@ -20,7 +20,7 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 		        	hidden:true
 		        },
 		        {
-		        	dataIndex: 'tipoComision',
+		        	dataIndex: 'descripcionTipoComision',
 		        	text: HreRem.i18n('fieldlabel.tipoComision'),
 		        	flex:1
 		        },
@@ -30,14 +30,9 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 		        	flex:1
 		        },
 		        {
-		        	dataIndex: 'nombre',
+		        	dataIndex: 'proveedor',
 		        	text: HreRem.i18n('header.personas.contacto.nombre'),
 		        	flex:2
-		        },
-		        {
-		        	dataIndex: 'idProveedor',
-		        	text: HreRem.i18n('fieldlabel.proveedores.id'),
-		        	flex:0.5
 		        },
 		        {
 		        	dataIndex: 'tipoCalculo',
@@ -45,6 +40,7 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 		        	flex:1
 		        },
 		        {
+		        	xtype: 'numbercolumn',
 		        	dataIndex: 'importeCalculo',
 		        	text: HreRem.i18n('header.oferta.detalle.importe.calculo'),
 		        	flex:1
@@ -52,11 +48,12 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 		        {
 		        	dataIndex: 'honorarios',
 		        	text: HreRem.i18n('title.horonarios'),
-		        	flex:1
+		        	flex:1,
+		        	renderer: Utils.rendererCurrency
 		        }
 	    ];
 
-	    me.dockedItems = [
+	    /*me.dockedItems = [
 	        {
 	            xtype: 'pagingtoolbar',
 	            dock: 'bottom',
@@ -67,7 +64,7 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 	                store: '{storeHonorariosOfertaDetalle}'
 	            }
 	        }
-	    ];
+	    ];*/
 
 	    me.callParent();
    }

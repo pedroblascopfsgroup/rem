@@ -11,7 +11,6 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -33,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -307,6 +307,14 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean saveReserva(DtoReserva dto, Long idEntidad);
+	
+	
+	/**
+	 * Método que obtiene los honorarios(gastos) por activo y oferta aceptada
+	 * @param idOferta
+	 * @return
+	 */
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaAceptada(Oferta oferta, Activo activo);
 
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
@@ -314,7 +322,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public DtoPage getHonorarios(Long idExpediente);
+	public List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
 
 	/**
 	 * Método que guarda los honorarios(gastos) del expediente
@@ -449,9 +457,9 @@ public interface ExpedienteComercialApi {
 	 * @param nombreBusqueda
 	 * @param idActivo
 	 * @param dto
-	 * @return List<ActivoProveedor>
+	 * @return Page
 	 */
-	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto);
+	public Page getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto);
 	
 	/**
 	 * Crea un registro de honorarios (gasto_expediente)
@@ -609,4 +617,21 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean isExpedienteComercialVivoByActivo(Activo activo);
+
+	/**
+	 * Crea un gasto expediente
+	 * @param expediente
+	 * @param oferta
+	 * @param activo
+	 * @param codigoColaboracion
+	 * @return
+	 */
+	public GastosExpediente creaGastoExpediente(ExpedienteComercial expediente,  Oferta oferta, Activo activo, String codigoColaboracion);
+
+	/**
+	 * Devuelve los activos de un expediente dado, para mostrarlos en un combo
+	 * @param idExpediente
+	 * @return
+	 */
+	public List<DtoActivosExpediente> getComboActivos(Long idExpediente);
 }

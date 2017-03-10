@@ -2251,10 +2251,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		form = grid.up("form"),
 		model = Ext.create('HreRem.model.DetalleOfertaModel'),
-		idOferta = null;
+		idOferta = null,
+		idActivo = null;
 
 		if(!Ext.isEmpty(grid.selection)){
 			idOferta = record.get("idOferta");
+			idActivo = record.get("idActivo");
     	}
 
 		var fieldset =  me.lookupReference('detalleOfertaFieldsetref');
@@ -2271,7 +2273,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		// Cargar grid 'honorarios'.
 		var storeHonorarios = me.getViewModel().getData().storeHonorariosOfertaDetalle;
-		storeHonorarios.getProxy().getExtraParams().ofertaID = idOferta;
+		storeHonorarios.getProxy().getExtraParams().idOferta = idOferta;
+		storeHonorarios.getProxy().getExtraParams().idActivo = idActivo;
+		
 		storeHonorarios.load({
 			success: function(record) {	
 				me.lookupReference('honorarioslistdetalleofertaref').refresh();

@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -351,10 +352,19 @@ public interface OfertaApi {
 	/**
 	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
 	 *
+	 * @param DtoGastoExpediente : Dto con los datos de oferta y activo para filtrar.
+	 * @return Devuelve una lista de DtoGastoExpediente.
+	 */
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(DtoGastoExpediente dto);
+	
+	/**
+	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
+	 *
 	 * @param dtoHonorariosOferta : dto con el ID de la oferta a filtrar.
 	 * @return Devuelve una lista de DtoHonorariosOferta por cada honorario encontrado.
 	 */
 	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta);
+	
 
 	/**
 	 * Método que comprueba si se ejerce el tanteo
@@ -426,6 +436,15 @@ public interface OfertaApi {
 	 * @return List<ActivoOferta> 
 	 */
 	public List<ActivoOferta> buildListaActivoOferta(Activo activo, ActivoAgrupacion agrupacion, Oferta oferta) throws Exception;
+
+	/**
+	 * 
+	 * @param oferta
+	 * @param accion
+	 * @param activo
+	 * @return
+	 */
+	public DtoGastoExpediente calculaHonorario(Oferta oferta, String accion,Activo activo);
 
 }
 

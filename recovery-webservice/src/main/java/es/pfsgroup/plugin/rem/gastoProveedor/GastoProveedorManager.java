@@ -1365,6 +1365,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
     @BusinessOperationDefinition("gastoProveedorManager.getAdjuntosGasto")
+	@Transactional(readOnly = false)
 	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException {
 		
 		GastoProveedor gasto = findOne(id);

@@ -1029,7 +1029,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			model: 'HreRem.model.HonorariosOfertaDetalleModel',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'ofertas/getHonorariosByOfertaId'
+				remoteUrl: 'ofertas/getHonorariosByActivoOferta'
 			}
 		},
 		comboTipoProveedor: {

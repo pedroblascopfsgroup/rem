@@ -38,6 +38,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -79,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -622,6 +624,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		Oferta ofertaAcepted = null;
 		Boolean inLoteComercial = false;
+		Boolean incompatible = false;
 		
 		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
 		restApi.doLogin(usuarioSecurity);
@@ -631,19 +634,35 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
 			ActivoOferta actOfr = listaActivoOferta.get(0);
 			if (!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())) {
-				// ofertaAcepted =
-				// getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+				// ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
 				ofertaAcepted = getOfertaAceptadaExpdteAprobado(actOfr.getPrimaryKey().getActivo());
 			}
 		}
 		
-		//HREOS-1674 - Si 1 activo pertenece a un lote comercial, ésta debe crearse siempre congelada.
+		
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
 			for (ActivoOferta activoOferta : listaActivoOferta) {
-				if (!Checks.esNulo(activoOferta.getPrimaryKey().getActivo()) &&
-						activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activoOferta.getPrimaryKey().getActivo().getId())){
-					inLoteComercial = true;
-					break;
+				Activo act = activoOferta.getPrimaryKey().getActivo();
+				if (!Checks.esNulo(act)){
+					
+					//HREOS-1674 - Si 1 activo pertenece a un lote comercial, ésta debe crearse siempre congelada.
+					if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(act.getId())){
+						inLoteComercial = true;
+					}
+					
+					//HREOS-1669 - Validar el tipo destino comercial
+					if (!Checks.esNulo(act.getTipoComercializacion()) && !Checks.esNulo(oferta.getTipoOferta())) {
+						String comercializacion = act.getTipoComercializacion().getCodigo();
+						
+						if ((DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) && 
+							(!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion) && 
+							!DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) || 
+							(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) && 
+							(!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion) && 
+							!DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion)))){ 
+							incompatible = true;
+						}
+					}
 				}
 			}
 		}
@@ -665,14 +684,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
 			for (ActivoOferta activoOferta : listaActivoOferta) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				if ((activo.getEstadoPublicacion() != null
-						&& activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO))
-						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
-								.equals(DDSituacionComercial.CODIGO_VENDIDO))
-						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
-								.equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE))
-						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
-								.equals(DDSituacionComercial.CODIGO_TRASPASADO))) {
+				if (incompatible ||
+					(activo.getEstadoPublicacion() != null && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO)) || 
+					(activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) || 
+					(activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)) || 
+					(activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_TRASPASADO))) {
 					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 				}

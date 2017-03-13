@@ -467,40 +467,40 @@ BEGIN
 			)
 	)
 	SELECT 
-	ACT.REG_ID          										REG_ID,
+	ACT.REG_ID          												REG_ID,
 	(SELECT ACT_ID
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)         ACT_ID,
-	ACT.BIE_DREG_ID									          BIE_DREG_ID,
-	MIG.REG_IDUFIR                                            REG_IDUFIR,
-	MIG.REG_NUM_DEPARTAMENTO                                  REG_NUM_DEPARTAMENTO,
-	MIG.REG_HAN_CAMBIADO                                      REG_HAN_CAMBIADO,
+	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)         			ACT_ID,
+	ACT.BIE_DREG_ID									          			BIE_DREG_ID,
+	MIG.REG_IDUFIR                                            			REG_IDUFIR,
+	MIG.REG_NUM_DEPARTAMENTO                                  			REG_NUM_DEPARTAMENTO,
+	MIG.REG_HAN_CAMBIADO                                      			REG_HAN_CAMBIADO,
 	(SELECT DD_LOC_ID
 	FROM '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD
-	WHERE DD_LOC_CODIGO = MIG.MUNICIPIO_REG_ANTERIOR)         DD_LOC_ID_ANTERIOR,
-	MIG.REG_NUM_ANTERIOR                                      REG_NUM_ANTERIOR,
-	MIG.REG_NUM_FINCA_ANTERIOR                                REG_NUM_FINCA_ANTERIOR,
-	MIG.REG_SUPERFICIE_UTIL                                   REG_SUPERFICIE_UTIL,
-	MIG.REG_SUPERFICIE_ELEM_COMUN                             REG_SUPERFICIE_ELEM_COMUN,
-	MIG.REG_SUPERFICIE_PARCELA                                REG_SUPERFICIE_PARCELA,
-	MIG.REG_SUPERFICIE_BAJO_RASANTE                           REG_SUPERFICIE_BAJO_RASANTE,
-	MIG.REG_SUPERFICIE_SOBRE_RASANTE                          REG_SUPERFICIE_SOBRE_RASANTE,
-	MIG.REG_DIV_HOR_INSCRITO                                  REG_DIV_HOR_INSCRITO,
+	WHERE DD_LOC_CODIGO = MIG.MUNICIPIO_REG_ANTERIOR)         			DD_LOC_ID_ANTERIOR,
+	MIG.REG_NUM_ANTERIOR                                      			REG_NUM_ANTERIOR,
+	MIG.REG_NUM_FINCA_ANTERIOR                                			REG_NUM_FINCA_ANTERIOR,
+	MIG.REG_SUPERFICIE_UTIL                                   			REG_SUPERFICIE_UTIL,
+	MIG.REG_SUPERFICIE_ELEM_COMUN                            			REG_SUPERFICIE_ELEM_COMUN,
+	MIG.REG_SUPERFICIE_PARCELA                                			REG_SUPERFICIE_PARCELA,
+	MIG.REG_SUPERFICIE_BAJO_RASANTE                           			REG_SUPERFICIE_BAJO_RASANTE,
+	MIG.REG_SUPERFICIE_SOBRE_RASANTE                          			REG_SUPERFICIE_SOBRE_RASANTE,
+	NULL                                  					  			REG_DIV_HOR_INSCRITO,
 	(SELECT DD_EDH_ID
 	FROM '||V_ESQUEMA||'.DD_EDH_ESTADO_DIV_HORIZONTAL
-	WHERE DD_EDH_CODIGO = MIG.ESTADO_DIVISION_HORIZONTAL)     DD_EDH_ID,
+	WHERE DD_EDH_CODIGO = MIG.ESTADO_DIVISION_HORIZONTAL)     			DD_EDH_ID,
 	(SELECT DD_EON_ID
 	FROM '||V_ESQUEMA||'.DD_EON_ESTADO_OBRA_NUEVA
-	WHERE DD_EON_CODIGO = MIG.ESTADO_OBRA_NUEVA)              DD_EON_ID,
-	MIG.REG_FECHA_CFO                                         REG_FECHA_CFO,
-	''0''                                                     VERSION,
+	WHERE DD_EON_CODIGO = MIG.ESTADO_OBRA_NUEVA)              			DD_EON_ID,
+	MIG.REG_FECHA_CFO                                         			REG_FECHA_CFO,
+	''0''                                                     			VERSION,
 	''MIGRAREM01BNK''                                                   USUARIOCREAR,
-	SYSDATE                                                   FECHACREAR,
-	NULL                                                      USUARIOMODIFICAR,
-	NULL                                                      FECHAMODIFICAR,
-	NULL                                                      USUARIOBORRAR,
-	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO
+	SYSDATE                                                   			FECHACREAR,
+	NULL                                                      			USUARIOMODIFICAR,
+	NULL                                                     			FECHAMODIFICAR,
+	NULL                                                      			USUARIOBORRAR,
+	NULL                                                      			FECHABORRAR,
+	0                                                         			BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
 	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
 	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO

@@ -477,7 +477,7 @@ BEGIN
             OR (TGA.DD_TGA_CODIGO = ''10'' AND TPR.DD_TPR_CODIGO IN (''03''))            
             OR (TGA.DD_TGA_CODIGO = ''11'' AND STG.DD_STG_CODIGO = ''51'' AND TPR.DD_TPR_CODIGO = ''02'')
             OR (TGA.DD_TGA_CODIGO = ''11'' AND STG.DD_STG_CODIGO = ''50'' AND TPR.DD_TPR_CODIGO = ''05'')
-            OR (TGA.DD_TGA_CODIGO = ''11'' AND STG.DD_STG_CODIGO IN (''45'', ''46'', ''47'', ''48'', ''49'', ''52'') AND TPR.DD_TPR_CODIGO = ''19'')
+            OR (TGA.DD_TGA_CODIGO = ''11'' AND STG.DD_STG_CODIGO IN (''45'', ''95'', ''96'', ''97'', ''46'', ''47'', ''48'', ''49'', ''52'') AND TPR.DD_TPR_CODIGO = ''19'')
             OR (TGA.DD_TGA_CODIGO = ''11'' AND STG.DD_STG_CODIGO = ''44'' AND TPR.DD_TPR_CODIGO = ''21'')
             OR (TGA.DD_TGA_CODIGO = ''11'' AND STG.DD_STG_CODIGO = ''43'' AND TPR.DD_TPR_CODIGO = ''24'')
             OR (TGA.DD_TGA_CODIGO = ''12'' AND TPR.DD_TPR_CODIGO IN (''01''))

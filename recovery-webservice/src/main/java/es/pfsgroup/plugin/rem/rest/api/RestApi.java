@@ -59,6 +59,7 @@ public interface RestApi {
 	public static final String REST_API_ALL = "TODOS";
 	public static final String REST_API_WEBCOM = "WEBCOM";
 	public static final String REST_API_BANKIA = "BANKIA";
+	public static final String REST_API_ENVIAR_CAMBIOS = "CAMBIOS";
 
 	/**
 	 * Valida la firma

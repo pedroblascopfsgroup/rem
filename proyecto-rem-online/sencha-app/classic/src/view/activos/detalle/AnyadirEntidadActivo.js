@@ -105,7 +105,9 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
 												value: '{activoIntegrado.participacion}'
 											},
 											decimalPrecision: 4,
-											maxLength:8
+											maxLength: 8,
+											maxValue: 100,
+											minValue: 0
 											
 										},
 							        	{

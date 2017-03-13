@@ -338,7 +338,8 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	public boolean isApiRestCerrada() {
 		boolean restLocked = false;
 		if (servletContext.getAttribute(RestApi.REST_API_WEBCOM) != null
-				&& (Boolean) servletContext.getAttribute(RestApi.REST_API_WEBCOM)) {
+				&& ((Boolean) servletContext.getAttribute(RestApi.REST_API_WEBCOM)
+						|| (Boolean) servletContext.getAttribute(RestApi.REST_API_ENVIAR_CAMBIOS))) {
 			restLocked = true;
 		}
 		return restLocked;

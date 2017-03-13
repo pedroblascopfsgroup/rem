@@ -112,7 +112,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 		Integer tamanyoBloque = null;
 		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
-				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : null;
+				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : "500";
 		try {
 			if (tamanyoBloqueProperties != null) {
 				tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
@@ -162,6 +162,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							handler.actualizarVistaMaterializada(registro);
 							Boolean marcarComoEnviado = false;
 							Integer contError = 0;
+						
 							do {
 								boolean somethingdone = false;
 								registro.setIteracion(iteracion);
@@ -232,6 +233,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									break;
 								} finally {
 									if (somethingdone && (registroLlamadas != null)) {
+										registro.logTiempoBorrarHistorico();
+										registro.logTiempoInsertarHistorico();
 										registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
 										llamadas.add(registro);
 									}

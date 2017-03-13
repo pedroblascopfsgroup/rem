@@ -37,6 +37,7 @@ import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -156,6 +157,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Override
 	public String managerName() {
@@ -617,7 +621,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) {
 
 		Oferta ofertaAcepted = null;
-
+		Boolean inLoteComercial = false;
+		
 		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
 		restApi.doLogin(usuarioSecurity);
 
@@ -631,14 +636,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ofertaAcepted = getOfertaAceptadaExpdteAprobado(actOfr.getPrimaryKey().getActivo());
 			}
 		}
+		
+		//HREOS-1674 - Si 1 activo pertenece a un lote comercial, ésta debe crearse siempre congelada.
+		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
+			for (ActivoOferta activoOferta : listaActivoOferta) {
+				if (!Checks.esNulo(activoOferta.getPrimaryKey().getActivo()) &&
+						activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activoOferta.getPrimaryKey().getActivo().getId())){
+					inLoteComercial = true;
+					break;
+				}
+			}
+		}
 
-		if (!Checks.esNulo(ofertaAcepted)) {
+		if (!Checks.esNulo(ofertaAcepted) || inLoteComercial) {
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
 		} else {
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+			
 		}
+
 
 		oferta.setFechaAlta(fechaAccion);
 

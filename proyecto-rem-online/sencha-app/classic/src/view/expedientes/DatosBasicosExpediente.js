@@ -198,6 +198,9 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
                 xtype:'fieldsettable',
 				defaultType: 'displayfield',
 				title: HreRem.i18n('title.anulacion'),
+				defaults: {
+					readOnly: true
+				},
 				items: [
 						{
 							xtype:'datefieldbase',

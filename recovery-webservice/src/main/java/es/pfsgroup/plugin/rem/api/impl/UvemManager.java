@@ -49,6 +49,7 @@ import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteUrsusRequestDto;
@@ -110,12 +111,10 @@ public class UvemManager implements UvemManagerApi {
 	 * @param email
 	 * @param telefono
 	 * @return
-	 * @throws WIMetaServiceException
-	 * @throws WIException
-	 * @throws TipoDeDatoException
+	 * @throws Exception
 	 */
 	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName, String email, String telefono)
-			throws WIMetaServiceException, WIException, TipoDeDatoException {
+			throws Exception {
 		Usuario usuario = new Usuario();
 		usuario.setUsername(userName);
 		usuario.setEmail(email);
@@ -132,7 +131,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor)
-			throws WIMetaServiceException, WIException, TipoDeDatoException {
+			throws Exception {
 		logger.info("------------ LLAMADA WS SOLICITAR TASACION -----------------");
 		int numeroIdentificadorTasacion = -1;
 
@@ -254,13 +253,13 @@ public class UvemManager implements UvemManagerApi {
 
 		} catch (WIMetaServiceException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		} catch (TipoDeDatoException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 
 		return numeroIdentificadorTasacion;
@@ -528,7 +527,7 @@ public class UvemManager implements UvemManagerApi {
 
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 		return clienteUrsusDto;
 
@@ -859,7 +858,7 @@ public class UvemManager implements UvemManagerApi {
 
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 		return datos;
 
@@ -880,7 +879,7 @@ public class UvemManager implements UvemManagerApi {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 		return instancia;
 	}
@@ -900,7 +899,7 @@ public class UvemManager implements UvemManagerApi {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 		return instancia;
 	}
@@ -920,7 +919,7 @@ public class UvemManager implements UvemManagerApi {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 		return instancia;
 	}
@@ -1181,7 +1180,7 @@ public class UvemManager implements UvemManagerApi {
 
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 
 		return result;
@@ -1313,21 +1312,17 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC34_INS.setAlias(ALIAS);
 			servicioGMPAJC34_INS.execute();
 
-			if (servicioGMPAJC34_INS == null) {
-				throw new WIException("GMPAJC34_SERVICE_NOT_WORKING");
-			}
-
 			importe = servicioGMPAJC34_INS.getImporteMonetarioConcedido();
 
 			logger.info("ImporteMonetarioConcedido: " + servicioGMPAJC34_INS.getImporteMonetarioConcedido());
 
 			if (importe == null) {
-				throw new WIException("GMPAJC34_NO_RESULT_AVAILABLE");
+				throw new WIException("No se han encontrado datos con la información suministrada");
 			}
 
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 		return importe.getImporteComoLong();
 

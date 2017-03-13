@@ -558,7 +558,7 @@ public interface ExpedienteComercialApi {
 	 * Este método recibe un expediente comercial, llama al WS para obtener los datos del préstamo y los guarda en el expediente.
 	 * @param dto
 	 */
-	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto);
+	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception;
 
 	/**
 	 * Este método obtiene los datos del apartado 'Financiación' de la tab 'Formalización' del expediente.

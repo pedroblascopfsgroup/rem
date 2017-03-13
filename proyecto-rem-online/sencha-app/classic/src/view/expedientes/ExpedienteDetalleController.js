@@ -276,10 +276,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	},
 	
-	refrescarExpediente: function(refrescarPestañaActiva) {
+	refrescarExpediente: function(refrescarTabActiva) {
 		
 		var me = this,
-		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
+		refrescarTabActiva = Ext.isEmpty(refrescarTabctiva) ? false: refrescarTabActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
   		
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
@@ -290,7 +290,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
   		});
   		
   		// Actualizamos la pestaña actual si tiene función de recargar 
-		if(refrescarPestañaActiva && activeTab.funcionRecargar) {
+		if(refrescarTabActiva && activeTab.funcionRecargar) {
   			activeTab.funcionRecargar();
 		}
 		
@@ -821,7 +821,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				   me.lookupReference('formalizacionExpediente').funcionRecargar();
 			   }else {
 			   		//me.fireEvent("errorToast", data.msg);
-				   me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			   		if (Ext.isDefined(data.msg)) {
+               			me.fireEvent("errorToast", data.msg);
+			   		} else {		
+				   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			   		}
 			   }
 		     },
 
@@ -831,13 +835,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                	data = Ext.decode(response.responseText);
                }
                catch (e){ };
-               if (!Ext.isEmpty(data.msg)) {
+               if (Ext.isDefined(data.msg)) {
                	me.fireEvent("errorToast", data.msg);
                } else {
                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                }
 		     },
-
 		     callback: function() {
 		     	me.getView().unmask();
 		     }

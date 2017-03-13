@@ -2,12 +2,8 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
-import com.gfi.webIntegrator.WIException;
-import com.gfi.webIntegrator.WIMetaServiceException;
-
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -33,12 +29,10 @@ public interface UvemManagerApi {
 	 * @param email
 	 * @param telefono
 	 * @return
-	 * @throws WIMetaServiceException
-	 * @throws WIException
-	 * @throws TipoDeDatoException
+	 * @throws Exception
 	 */
 	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName,String email,String telefono)
-			throws WIMetaServiceException, WIException, TipoDeDatoException;
+			throws Exception;
 
 	
 	/**
@@ -48,12 +42,10 @@ public interface UvemManagerApi {
 	 * @param nombreGestor
 	 * @param gestion
 	 * @return
-	 * @throws WIMetaServiceException
-	 * @throws WIException
-	 * @throws TipoDeDatoException
+	 * @throws Exception
 	 */
 	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor)
-			throws WIMetaServiceException, WIException, TipoDeDatoException;
+			throws Exception;
 	
 	
 	

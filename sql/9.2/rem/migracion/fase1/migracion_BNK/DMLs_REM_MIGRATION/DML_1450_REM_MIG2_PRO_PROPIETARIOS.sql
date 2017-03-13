@@ -55,7 +55,7 @@ BEGIN
       --Inicio del proceso de volcado sobre ACT_PRO_PROPIETARIO
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
-      V_SENTENCIA := '
+      /*V_SENTENCIA := '
         MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' PRO
         USING ( SELECT DISTINCT 
                                 MIG.PRO_PROPIETARIO_CODIGO_UVEM,
@@ -79,7 +79,7 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS :=SQL%ROWCOUNT;
+      V_REG_INSERTADOS :=SQL%ROWCOUNT;*/
       
       
        V_SENTENCIA := '
@@ -104,7 +104,6 @@ BEGIN
 			,PRO.USUARIOMODIFICAR = ''MIG2''
 			,PRO.FECHAMODIFICAR = SYSDATE
 		WHERE PRO.USUARIOCREAR = ''MIG''
-		AND DD_CRA_ID IS NULL
       '
       ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;

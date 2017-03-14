@@ -834,7 +834,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                try {
                	data = Ext.decode(response.responseText);
                }
-               catch (e){ };
+               catch (e){data = {};};
                if (Ext.isDefined(data.msg)) {
                	me.fireEvent("errorToast", data.msg);
                } else {

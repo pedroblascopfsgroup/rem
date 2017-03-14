@@ -75,7 +75,7 @@ public class UpdaterServiceComunObtencionGestor implements UpdaterService {
 				List<ActivoAdmisionDocumento> listaDocumentos = tramite.getActivo().getAdmisionDocumento();
 				for(ActivoAdmisionDocumento documento : listaDocumentos){
 					if(subtipoTrabajo.getCodigo().equals(diccionarioTargetClassMap.getSubtipoTrabajo(documento.getConfigDocumento().getTipoDocumentoActivo().getCodigo()))) {
-						documento.setNumDocumento(Integer.parseInt(valor.getValor()));
+						documento.setNumDocumento(valor.getValor());
 						Auditoria.save(documento);
 					}
 				}

@@ -37,7 +37,9 @@ import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.dto.File;
+import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
+import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
 
 @Service("activoAgrupacionManager")
 public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
@@ -386,13 +388,53 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Override
 	public List<ActivoFoto> getFotosSubdivision(DtoSubdivisiones subdivision) {
-		return activoAgrupacionDao.getFotosSubdivision(subdivision);
+		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
+		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
+			FileListResponse fileListResponse = null;
+			try {
+				FileSearch fileSearch = new FileSearch();
+				HashMap<String, String> metadata = new HashMap<String, String>();
+				metadata.put("propiedad", "subdivision");
+				metadata.put("id_subdivision_haya",  String.valueOf(subdivision.getId()));
+				metadata.put("id_agrupacion_haya", String.valueOf(subdivision.getAgrId()));
+				fileSearch.setMetadata(metadata);
+				fileListResponse = gestorDocumentalFotos.get(fileSearch);
+
+				if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+					for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+						this.uploadFoto(fileGD);
+					}
+					listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
+				}
+			} catch (Exception e) {
+				logger.error("Error obteniedno las fotos del CDN",e);
+			}
+			
+		}
+		return listaFotos;
 	}
 
 	@Override
 	public List<ActivoFoto> getFotosAgrupacionById(Long id) {
 
-		return activoAgrupacionDao.getFotosAgrupacionById(id);
+		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
+		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
+			FileListResponse fileListResponse = null;
+			try {
+				fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.AGRUPACION, id);
+
+				if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+					for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+						this.uploadFoto(fileGD);
+					}
+					listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
+				}
+			} catch (Exception e) {
+				logger.error("Error obteniedno las fotos del CDN",e);
+			}
+			
+		}
+		return listaFotos;
 
 	}
 

@@ -46,7 +46,6 @@ import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
-import es.pfsgroup.plugin.rem.model.DtoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -878,8 +877,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numeroDocumento, tipoDocumento));
 			model.put("success", true);
 			
-		} 
-		catch (JsonViewerException e) {
+		} catch (JsonViewerException e) {
 			model.put("success", false);
 			model.put("msg", e.getMessage());
 			
@@ -898,8 +896,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("data", expedienteComercialApi.buscarDatosClienteNumeroUrsus(numeroUrsus));
 			model.put("success", true);
 			
-		} 
-		catch (JsonViewerException e) {
+		} catch (JsonViewerException e) {
 			model.put("success", false);
 			model.put("msg", e.getMessage());
 			
@@ -1072,10 +1069,14 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView obtencionDatosPrestamo(ModelMap model, DtoObtencionDatosFinanciacion dto) {
 		try {
 			model.put("success", expedienteComercialApi.obtencionDatosPrestamo(dto));
+		} catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("msg", e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
 			model.put("success", false);
 		}	
+
+		
 
 		return createModelAndViewJson(model);
 	}

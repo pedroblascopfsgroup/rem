@@ -1712,7 +1712,7 @@ public class ActivoController extends ParadiseJsonController {
 														// proxy
 
 				if (!Checks.esNulo(URLcontentType)){
-					response.setContentType(URLcontentType);
+					response.setContentType("Content-type: image/jpeg");
 					FileUtils.copy(URLconn.getInputStream(), salida);
 				} else {
 					response.setContentType("Content-type: image/jpeg");
@@ -2044,9 +2044,10 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model) {
 		try {
 			model.put("success", activoApi.solicitarTasacion(idActivo));
+		} catch (JsonViewerException jve) {
+			model.put("success", false);
+			model.put("msg", jve.getMessage());
 		} catch (Exception e) {
-			logger.error("error en activoController", e);
-			model.put("msg", e.getMessage());
 			model.put("success", false);
 		}
 
@@ -2056,9 +2057,16 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getSolicitudTasacionBankia(Long id, ModelMap model) {
-
-		model.put("data", activoApi.getSolicitudTasacionBankia(id));
-		model.put("success", true);
+		
+		try {
+			model.put("data", activoApi.getSolicitudTasacionBankia(id));
+			model.put("success", true);
+		} catch (JsonViewerException jve) {
+			model.put("success", false);
+			model.put("msg", jve.getMessage());
+		} catch (Exception e) {
+			model.put("success", false);
+		}
 
 		return createModelAndViewJson(model);
 	}

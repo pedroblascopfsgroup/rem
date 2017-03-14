@@ -76,6 +76,7 @@ public class UpdaterServiceComunObtencionGestor implements UpdaterService {
 				for(ActivoAdmisionDocumento documento : listaDocumentos){
 					if(subtipoTrabajo.getCodigo().equals(diccionarioTargetClassMap.getSubtipoTrabajo(documento.getConfigDocumento().getTipoDocumentoActivo().getCodigo()))) {
 						documento.setNumDocumento(Integer.parseInt(valor.getValor()));
+//HREOS-1618						documento.setNumDocumento(valor.getValor());
 						Auditoria.save(documento);
 					}
 				}

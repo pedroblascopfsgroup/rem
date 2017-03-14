@@ -2046,7 +2046,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", activoApi.solicitarTasacion(idActivo));
 		} catch (JsonViewerException jve) {
 			model.put("success", false);
-			model.put("msg", jve.getMessage());
+			model.put("msgError", jve.getMessage());
 		} catch (Exception e) {
 			model.put("success", false);
 		}

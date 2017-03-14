@@ -1509,14 +1509,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		    } else {
     		    	me.fireEvent("errorToast", obj.msg); 
     		    }
+    		    me.getView().unmask();
     		},
     		
-		 	failure: function(record, operation) {
-		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-		    },
-		    
-		    callback: function(record, operation) {
-    			me.getView().unmask();
+		 	failure: function(record, opts) {
+		 		Utils.defaultRequestFailure(request, opts);
 		    }
     	});
 	},

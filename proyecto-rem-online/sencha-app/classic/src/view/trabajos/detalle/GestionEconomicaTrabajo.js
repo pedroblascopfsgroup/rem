@@ -266,7 +266,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    					hidden: true,
 	    					bind: {
 	    						hidden: '{!showPresupuesto}',
-	    						disabled: '{disablePresupuestos}'
+	    						disabled: '{disablePresupuesto}'
 	    					},	
 	    					reference: 'fieldsetpresupuestoref',
 	    	            	title: HreRem.i18n('title.listado.presupuestos.presentados.proveedores'),
@@ -521,6 +521,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		            	xtype: 'fieldsettable',
 		            	defaultType: 'textfieldbase',
 		            	title: HreRem.i18n('title.penalizacion.retraso'),
+						bind: {
+							disabled: '{disablePorCierreEconomico}'
+						},
 		            	items: [
 							{
 								xtype: 'datefieldbase',
@@ -579,6 +582,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						xtype: 'fieldsettable',
 		            	defaultType: 'textfieldbase',
 		            	title: HreRem.i18n('title.recargos.favor.proveedor'),
+						bind: {
+							disabled: '{disablePorCierreEconomico}'
+						},
 		            	items: [
 							{
 							    xtype		: 'gridBaseEditableRow',
@@ -720,7 +726,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		            	xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
 		            	title: HreRem.i18n('title.provisiones.suplidos'),
-					    
+						bind: {
+							disabled: '{disablePorCierreEconomico}'
+						},	
 		            	items: [
 		    	            {
 		    				    xtype		: 'gridBaseEditableRow',

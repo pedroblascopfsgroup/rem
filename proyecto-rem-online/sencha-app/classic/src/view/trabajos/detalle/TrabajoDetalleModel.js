@@ -39,20 +39,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    
 		disableTarificacion: function (get) {   	
 	     	
+			 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
 	    	 var esTarificado = get('gestionEconomica.esTarificado');
-	    	 if (esTarificado)
-	    		 return false;
-	    	 else
+	    	 
+	    	 if (!Ext.isEmpty(fechaCierreEco))
 	    		 return true;
+	    	 else {
+		    	 if (esTarificado)
+		    		 return false;
+		    	 else
+		    		 return true;
+	    	 }
 	    	 
 	    },
 	    
 	    disablePresupuesto: function (get) {
+	    	
+	    	 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
 	    	 var esTarificado = get('gestionEconomica.esTarificado');
-	    	 if (esTarificado || Ext.isEmpty(esTarificado))
+	    	
+	    	 if (!Ext.isEmpty(fechaCierreEco))
 	    		 return true;
-	    	 else
-	    		 return false;
+	    	 else {
+		    	 if (esTarificado || Ext.isEmpty(esTarificado))
+		    		 return true;
+		    	 else
+		    		 return false;
+	    	 }
 	    },
 	    
 	    enableAddPresupuesto: function(get) {
@@ -61,7 +74,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		 return true;
 	    	 else
 	    		 return false;
+	    },
+	    
+	    disablePorCierreEconomico: function(get) {
+	    	var fechaCierreEco = get('trabajo.fechaCierreEconomico');
+	    	if (!Ext.isEmpty(fechaCierreEco))
+	    		 return true;
+	    	 else
+	    		 return false;
 	    }
+	    
     },
     
     stores: {

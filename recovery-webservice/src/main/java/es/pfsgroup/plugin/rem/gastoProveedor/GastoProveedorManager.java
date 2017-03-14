@@ -1256,6 +1256,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						// Actualizamos el estado del gasto a anulado
 						updaterStateApi.updaterStates(gasto, DDEstadoGasto.ANULADO);
 						
+						List<GastoProveedorTrabajo> listaGastoTrabajo = gasto.getGastoProveedorTrabajos();
+						for(GastoProveedorTrabajo gastoTrabajo : listaGastoTrabajo){
+							Trabajo trabajo = gastoTrabajo.getTrabajo();
+							trabajo.setFechaEmisionFactura(null);
+							genericDao.save(Trabajo.class, trabajo);
+						}
+						
 					}
 					if(!Checks.esNulo(dtoGestionGasto.getComboMotivoRetenerPago())){
 						DDMotivoRetencionPago retenerPago= (DDMotivoRetencionPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencionPago.class, dtoGestionGasto.getComboMotivoRetenerPago());
@@ -1352,6 +1359,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		for(Long idTrabajo : trabajos) {
 			
 			Trabajo trabajo = trabajoApi.findOne(idTrabajo);
+			//Marcamos la fecha de emisión de factura en el trabajo
+			trabajo.setFechaEmisionFactura(new Date());
+			genericDao.save(Trabajo.class, trabajo);
+			
 			// Asignamos el trabajo al gasto
 			GastoProveedorTrabajo gastoTrabajo = new GastoProveedorTrabajo();
 			gastoTrabajo.setTrabajo(trabajo);
@@ -1648,7 +1659,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro);
 			gasto.getGastoProveedorTrabajos().remove(gastoTrabajoEliminado);
-			gastoDao.deleteGastoTrabajoById(id);			
+			gastoDao.deleteGastoTrabajoById(id);
+
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			Trabajo trabajo = genericDao.get(Trabajo.class, filtroTrabajo);
+			trabajo.setFechaEmisionFactura(null);
+			genericDao.save(Trabajo.class, trabajo);
 		}
 		
 		// Desasignamos TODOS los activos

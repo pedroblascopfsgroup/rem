@@ -2949,16 +2949,15 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Override
 	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus) throws Exception {
 		Integer numURSUS = null;
-		
+		DatosClienteDto datosClienteDto=null;
 		try {
 			numURSUS = Integer.parseInt(numeroUrsus);
+			datosClienteDto = uvemManagerApi.ejecutarDatosCliente(numURSUS, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return uvemManagerApi.ejecutarDatosCliente(numURSUS, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+		return datosClienteDto;
 	}
 
 	@Override
@@ -3336,7 +3335,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) {
+	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception {
 		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getIdExpediente()));
 		
 		
@@ -3363,8 +3362,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					}
 				} catch (NumberFormatException e) {
 					logger.error("Error en la obtención de datos de préstamo.",e);
-				} catch (Exception e) {
-					logger.error("Error en la obtención de datos de préstamo", e);
 				}
 
 			}

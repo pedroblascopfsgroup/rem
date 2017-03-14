@@ -1747,8 +1747,65 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			formalizacionDto= formalizacionToDto(listaResolucionFormalizacion.get(0));
 		}
 		
-		return formalizacionDto;
+		// Comprobar si se habilita el botón de 'generación hoja de datos'.
+		Boolean permitirGenerarHoja = true;
+		
+		if(!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
+			permitirGenerarHoja = false;
+		}
+		if(!Checks.esNulo(expediente.getUltimoPosicionamiento()) && new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
+			permitirGenerarHoja = false;
+		}
+		List<BloqueoActivoFormalizacion> bloqueos = genericDao.getList(BloqueoActivoFormalizacion.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
+		if(!Checks.estaVacio(bloqueos)) { 
+			permitirGenerarHoja = false;
+		}
 
+		CondicionanteExpediente condiciones = expediente.getCondicionante();
+		Activo activoPrincipal= expediente.getOferta().getActivoPrincipal();
+		if(!Checks.esNulo(activoPrincipal.getSituacionPosesoria())){
+			
+			// Comprobar fecha toma posesión.
+			if(!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(condiciones.getPosesionInicial()) && condiciones.getPosesionInicial() != 1) {
+				permitirGenerarHoja = false;
+			} else if(Checks.esNulo(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(condiciones.getPosesionInicial()) && condiciones.getPosesionInicial() != 0) {
+				permitirGenerarHoja = false;
+			} else if(Checks.esNulo(condiciones.getPosesionInicial())) {
+				permitirGenerarHoja = false;
+			}
+			
+			// Comprobar estado del título.
+			if(!Checks.esNulo(condiciones.getEstadoTitulo()) && Checks.esNulo(activoPrincipal.getTitulo().getEstado())) {
+				permitirGenerarHoja = false;
+			} else if(Checks.esNulo(condiciones.getEstadoTitulo()) && !Checks.esNulo(activoPrincipal.getTitulo().getEstado())) {
+				permitirGenerarHoja = false;
+			} else if(!Checks.esNulo(condiciones.getEstadoTitulo()) && !Checks.esNulo(activoPrincipal.getTitulo().getEstado()) &&
+					!condiciones.getEstadoTitulo().equals(activoPrincipal.getTitulo().getEstado())) {
+				permitirGenerarHoja = false;
+			}
+			
+			// Comprobar ocupación y con título.
+			if(Checks.esNulo(condiciones.getSituacionPosesoria()) && 
+					(!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getOcupado()) || !Checks.esNulo(activoPrincipal.getSituacionPosesoria().getConTitulo()))){
+				permitirGenerarHoja = false;
+			} else if(!Checks.esNulo(condiciones.getSituacionPosesoria()) && 
+					(Checks.esNulo(activoPrincipal.getSituacionPosesoria().getOcupado()) && Checks.esNulo(activoPrincipal.getSituacionPosesoria().getConTitulo()))){
+				permitirGenerarHoja = false;
+			} else if(!Checks.esNulo(condiciones.getSituacionPosesoria()) && condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE) && 
+					(activoPrincipal.getSituacionPosesoria().getOcupado() != 0 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 0)) {
+				permitirGenerarHoja = false;
+			} else  if(!Checks.esNulo(condiciones.getSituacionPosesoria()) && condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO) && 
+					(activoPrincipal.getSituacionPosesoria().getOcupado() != 1 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 1)) {
+				permitirGenerarHoja = false;
+			} else  if(!Checks.esNulo(condiciones.getSituacionPosesoria()) && condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO) && 
+					(activoPrincipal.getSituacionPosesoria().getOcupado() != 1 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 0)) {
+				permitirGenerarHoja = false;
+			}
+		}
+
+		formalizacionDto.setGeneracionHojaDatos(permitirGenerarHoja);
+
+		return formalizacionDto;
 	}
 	
 	public DtoFormalizacionResolucion formalizacionToDto(Formalizacion formalizacion){
@@ -1876,8 +1933,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		// TODO filtrar por activo si lo recibimos
 		ExpedienteComercial expediente= findOne(idExpediente);		
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+
 		List<GastosExpediente> gastosExpediente= expediente.getHonorarios();
 		
 		//Añadir al dto
@@ -2904,7 +2960,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return datosClienteDto;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Page getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto){
 

@@ -126,7 +126,7 @@ public class OperacionVentaController {
 			
 			//GENERACION DEL DOCUMENTO EN PDF		
 			if (model.get("error")==null || model.get("error")=="") {
-				fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model);
+				fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model, numExpediente);
 			}
 
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
@@ -144,7 +144,7 @@ public class OperacionVentaController {
 //			}
 		}
 		
-		@SuppressWarnings("unchecked")
+
 		@RequestMapping(method = RequestMethod.GET)
 		public void operacionVentaFacturaPDF(Long numExpediente, HttpServletRequest request, HttpServletResponse response) {
 			
@@ -156,7 +156,6 @@ public class OperacionVentaController {
 				reportApi.sendReport(file, response);
 			
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

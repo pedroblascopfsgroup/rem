@@ -1699,7 +1699,7 @@ public class ActivoController extends ParadiseJsonController {
 														// proxy
 
 				if (!Checks.esNulo(URLcontentType)) {
-					response.setContentType(URLcontentType);
+					response.setContentType("Content-type: image/jpeg");
 					FileUtils.copy(URLconn.getInputStream(), salida);
 				} else {
 					response.setContentType("Content-type: image/jpeg");

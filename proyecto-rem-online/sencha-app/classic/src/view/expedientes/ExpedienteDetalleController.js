@@ -279,7 +279,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	refrescarExpediente: function(refrescarTabActiva) {
 		
 		var me = this,
-		refrescarTabActiva = Ext.isEmpty(refrescarTabctiva) ? false: refrescarTabActiva,
+		refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false: refrescarTabActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
   		
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
@@ -834,7 +834,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                try {
                	data = Ext.decode(response.responseText);
                }
-               catch (e){ };
+               catch (e){data = {};};
                if (Ext.isDefined(data.msg)) {
                	me.fireEvent("errorToast", data.msg);
                } else {

@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Ramon Llinares
+--## AUTOR=JOSEVI JIMENEZ
 --## FECHA_CREACION=20170314
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
@@ -52,7 +52,7 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         
 	    -- Comprobamos si existe columna 
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and DATA_TYPE = '''||TRIM(V_TMP_TIPO_DATA(2))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 		
 		IF V_NUM_TABLAS = 1 THEN

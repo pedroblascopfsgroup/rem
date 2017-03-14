@@ -158,11 +158,11 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 		this.aplica = aplica;
 	}
 
-	public Integer getNumDocumento() {
+	public String getNumDocumento() {
 		return numDocumento;
 	}
 
-	public void setNumDocumento(Integer numDocumento) {
+	public void setNumDocumento(String numDocumento) {
 		this.numDocumento = numDocumento;
 	}
 

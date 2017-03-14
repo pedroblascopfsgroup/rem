@@ -272,6 +272,8 @@ public class AgendaAdapter {
     		return "timefield";
     	}else if(campoTfi.equals("comboini")){
     		return "comboboxinicial";
+    	}else if(campoTfi.equals("comboinied")){
+    	 		return "comboboxinicialedi";
     	}
 		return campoTfi;
     }    

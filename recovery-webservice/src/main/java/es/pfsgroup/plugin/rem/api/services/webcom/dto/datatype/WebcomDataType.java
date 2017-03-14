@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -166,13 +167,11 @@ public abstract class WebcomDataType<T> {
 		Object val = valueOf(o);
 		if ((val != null) && (val instanceof Number) && (format != null)) {
 			String valString = null;
-			if (val instanceof Double) {
-				// si el numero es muy pequenyo o muy grante el toString nos
-				// devolvera el numero en notacion cientifica.
-				// esto no lo queremos
-				DecimalFormat num = new DecimalFormat("###.#######");
-				valString = num.format((Double) val);
-			} else {
+			try {
+				if (val != null) {
+					valString = new BigDecimal(val.toString()).toPlainString();
+				}
+			} catch (Exception e) {
 				valString = val.toString();
 			}
 			String[] split = valString.split("\\" + SEPARDOR_DECIMALES);

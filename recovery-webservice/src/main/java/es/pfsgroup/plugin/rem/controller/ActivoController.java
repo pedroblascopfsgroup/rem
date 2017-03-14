@@ -97,8 +97,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
-import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
@@ -277,8 +275,8 @@ public class ActivoController extends ParadiseJsonController {
 	 * boolean success = adapter.saveActivo(activoDto, id); model.put("success",
 	 * success);
 	 * 
-	 * } catch (Exception e) { logger.error("error en activoController", e); model.put("success", false); }
-	 * return createModelAndViewJson(model);
+	 * } catch (Exception e) { logger.error("error en activoController", e);
+	 * model.put("success", false); } return createModelAndViewJson(model);
 	 * 
 	 * }
 	 */
@@ -999,21 +997,8 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getFotosById(Long id, String tipoFoto, WebDto webDto, ModelMap model,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		Activo activo = activoApi.get(id);
 		try {
 			List<ActivoFoto> listaActivoFoto = adapter.getListFotosActivoById(id);
-
-			// si no tenmos fotos consultamos al gestor documental...
-			if (gestorDocumentalFotos.isActive() && (listaActivoFoto == null || listaActivoFoto.isEmpty())) {
-				FileListResponse fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, activo.getNumActivo());
-				if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
-					for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-						activoApi.uploadFoto(fileGD);
-					}
-				}
-				listaActivoFoto = adapter.getListFotosActivoById(id);
-			}
-
 			List<DtoFoto> listaFotos = new ArrayList<DtoFoto>();
 
 			if (listaActivoFoto != null) {
@@ -1680,9 +1665,10 @@ public class ActivoController extends ParadiseJsonController {
 
 		List<ActivoFoto> listaActivoFoto = adapter.getListFotosActivoByIdOrderPrincipal(id);
 
-		if (listaActivoFoto != null && !listaActivoFoto.isEmpty()) {
+		if (listaActivoFoto != null && !listaActivoFoto.isEmpty() && listaActivoFoto.get(0).getUrlThumbnail() != null
+				&& !listaActivoFoto.get(0).getUrlThumbnail().isEmpty()) {
 			try {
-				//HREOS-1719 En primera instancia obtener la foto de la URL
+				// HREOS-1719 En primera instancia obtener la foto de la URL
 				String requestUrl = listaActivoFoto.get(0).getUrlThumbnail();
 				URL url;
 				URLConnection URLconn = null;
@@ -1698,8 +1684,9 @@ public class ActivoController extends ParadiseJsonController {
 					logger.error(ioe.getMessage());
 					ioe.printStackTrace();
 				}
-				
-				// FileItem fileItem = listaActivoFoto.get(0).getAdjunto().getFileItem();
+
+				// FileItem fileItem =
+				// listaActivoFoto.get(0).getAdjunto().getFileItem();
 
 				ServletOutputStream salida = response.getOutputStream();
 
@@ -1711,7 +1698,7 @@ public class ActivoController extends ParadiseJsonController {
 				response.setDateHeader("Expires", 0); // prevents caching at the
 														// proxy
 
-				if (!Checks.esNulo(URLcontentType)){
+				if (!Checks.esNulo(URLcontentType)) {
 					response.setContentType("Content-type: image/jpeg");
 					FileUtils.copy(URLconn.getInputStream(), salida);
 				} else {
@@ -2057,7 +2044,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getSolicitudTasacionBankia(Long id, ModelMap model) {
-		
+
 		try {
 			model.put("data", activoApi.getSolicitudTasacionBankia(id));
 			model.put("success", true);
@@ -2318,7 +2305,7 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			model.put("success", activoApi.saveComercialActivo(dto));
-			
+
 		} catch (JsonViewerException jvex) {
 			logger.error("error en activoController.saveComercialActivo", jvex);
 			model.put("success", false);

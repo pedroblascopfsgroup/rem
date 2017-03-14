@@ -65,13 +65,13 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	
 	@Column(name = "ADO_APLICA")
 	private Boolean aplica;
-	
-	@Column(name = "ADO_NUM_DOC")
-	private Integer numDocumento;
 
-//HREOS-1618	
-//	@Column(name = "ADO_REF_DOC")
-//	private String numDocumento;
+//HREOS-1618
+//	@Column(name = "ADO_NUM_DOC")
+//	private Integer numDocumento;
+
+	@Column(name = "ADO_REF_DOC")
+	private String numDocumento;
 	
 	@Column(name = "ADO_FECHA_VERIFICADO")
 	private Date fechaVerificado;

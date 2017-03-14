@@ -66,8 +66,12 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	@Column(name = "ADO_APLICA")
 	private Boolean aplica;
 	
-	@Column(name = "ADO_REF_DOC")
-	private String numDocumento;
+	@Column(name = "ADO_NUM_DOC")
+	private Integer numDocumento;
+
+//HREOS-1618	
+//	@Column(name = "ADO_REF_DOC")
+//	private String numDocumento;
 	
 	@Column(name = "ADO_FECHA_VERIFICADO")
 	private Date fechaVerificado;
@@ -154,11 +158,11 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 		this.aplica = aplica;
 	}
 
-	public String getNumDocumento() {
+	public Integer getNumDocumento() {
 		return numDocumento;
 	}
 
-	public void setNumDocumento(String numDocumento) {
+	public void setNumDocumento(Integer numDocumento) {
 		this.numDocumento = numDocumento;
 	}
 

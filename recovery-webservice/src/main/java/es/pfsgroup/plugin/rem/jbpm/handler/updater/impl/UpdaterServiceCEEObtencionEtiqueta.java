@@ -61,7 +61,8 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
 			}
 			
 			if(REFERENCIA_ETIQUETA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-				documentoCEE.setNumDocumento(valor.getValor());
+				documentoCEE.setNumDocumento(Integer.parseInt(valor.getValor()));
+//HREOS-1618				documentoCEE.setNumDocumento(valor.getValor());
 			}
 						
 			// TODO: En el funcional se especifica que si se indica que no procede, en la columna FECHA EMISION del bloque documentación administrativa de la pestaña

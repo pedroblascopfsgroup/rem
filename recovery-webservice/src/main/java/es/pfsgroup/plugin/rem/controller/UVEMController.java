@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.gfi.webIntegrator.WIException;
-
-import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
@@ -50,12 +47,10 @@ public class UVEMController {
 			int numeroIdentificadorTasacion = uvemManagerApi.resultadoSolicitarTasacion()
 					.getNumeroIdentificadorDeTasacionlnuita2();
 			model.put("numeroIdentificadorTasacion", numeroIdentificadorTasacion);
-		} catch (WIException e) {
+		} catch (Exception e) {
 			logger.error("error en UVEMController",e);
 			model.put("error", true);
 			model.put("errorDesc", e.getMessage());
-		} catch (TipoDeDatoException e) {
-			logger.error(e.getMessage());
 		}
 
 		return new ModelAndView("jsonView", model);

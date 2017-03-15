@@ -54,7 +54,7 @@ public class TrabajoUserAssigantionService implements UserAssigantionService {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		
 		//TODO: ¡Hay que cambiar el método para que no pida ID sino código!
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 		
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());

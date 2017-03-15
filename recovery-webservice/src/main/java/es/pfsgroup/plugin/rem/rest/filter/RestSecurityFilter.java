@@ -114,8 +114,8 @@ public class RestSecurityFilter implements Filter {
 					if (!restApi.validateId(broker, id)) {
 						logger.error("REST: El id de la petición ya se ha ejecutado previamente");
 						peticion.setResult(RestApi.CODE_ERROR);
-						peticion.setErrorDesc(RestApi.REST_MSG_REPETEAD_REQUEST);
-						restApi.throwRestException(response, RestApi.REST_MSG_REPETEAD_REQUEST, jsonFields,
+						peticion.setErrorDesc(RestApi.REST_MSG_REPEATED_REQUEST);
+						restApi.throwRestException(response, RestApi.REST_MSG_REPEATED_REQUEST, jsonFields,
 								restRequest);
 
 					} else if (!restRequest.getBody().contains("data")) {

@@ -18,11 +18,10 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
-public class EmisionCEEUserAssigantionService implements UserAssigantionService {
+public class CedulaHabitabilidadUserAssigantionService implements UserAssigantionService {
 
-	private static final String CODIGO_T003_EMISION_CERTIFICADO = "T003_EmisionCertificado";
-	private static final String CODIGO_T003_SOLICITUD_ETIQUETA = "T003_SolicitudEtiqueta";
-	private static final String CODIGO_T003_OBTENCION_ETIQUETA = "T003_ObtencionEtiqueta";
+	private static final String CODIGO_T008_SOLICITUD_DOCUMENTO = "T008_SolicitudDocumento";
+	private static final String CODIGO_T008_OBTENCION_DOCUMENTO = "T008_ObtencionDocumento";
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -38,7 +37,7 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T003_EMISION_CERTIFICADO, CODIGO_T003_SOLICITUD_ETIQUETA, CODIGO_T003_OBTENCION_ETIQUETA};
+		return new String[]{CODIGO_T008_SOLICITUD_DOCUMENTO, CODIGO_T008_OBTENCION_DOCUMENTO};
 	}
 
 	@Override
@@ -62,10 +61,13 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 					return usuProveedorBankiaSareb;
 
 			} else {
-			//Otras carteras, el gestor de las tareas es el proveedor del trabajo
-				ActivoProveedorContacto proveedor = tareaActivo.getTramite().getTrabajo().getProveedorContacto();
-				if(!Checks.esNulo(proveedor))
-					return proveedor.getUsuario();
+			//Otras carteras, el gestor de las tareas es GESTOR ACTIVOS
+				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+				EXTDDTipoGestor tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+
+				if(!Checks.esNulo(tipoGestorActivo.getId()))
+					return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
+
 			}
 		}
 

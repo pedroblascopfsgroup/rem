@@ -60,19 +60,19 @@ public class DefaultUserAssigantionService implements UserAssigantionService {
 		 * 
 		 */
 		
-		if("GADM".equals(tareaProcedimiento.getTipoGestor().getCodigo())){
+		if(GestorActivoApi.CODIGO_GESTOR_ADMISION.equals(tareaProcedimiento.getTipoGestor().getCodigo())){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_ADMISION);
 			gestor = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), genericDao.get(EXTDDTipoGestor.class, filtro).getId());
 		} else{
-			if("GACT".equals(tareaProcedimiento.getTipoGestor().getCodigo())){
+			if(GestorActivoApi.CODIGO_GESTOR_ACTIVO.equals(tareaProcedimiento.getTipoGestor().getCodigo())){
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 				gestor = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), genericDao.get(EXTDDTipoGestor.class, filtro).getId());
 			}else{
-				if("GGADM".equals(tareaProcedimiento.getTipoGestor().getCodigo())){
+				if(GestorActivoApi.CODIGO_GESTORIA_ADMISION.equals(tareaProcedimiento.getTipoGestor().getCodigo())){
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 					gestor = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), genericDao.get(EXTDDTipoGestor.class, filtro).getId());
 				}else{
-					if("UPROV".equals(tareaProcedimiento.getTipoGestor().getCodigo())){
+					if(GestorActivoApi.CODIGO_PROVEEDOR.equals(tareaProcedimiento.getTipoGestor().getCodigo())){
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 						gestor = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), genericDao.get(EXTDDTipoGestor.class, filtro).getId());
 					}

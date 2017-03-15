@@ -70,8 +70,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     private static final long serialVersionUID = 1L;
 
     public static final String SALTO_CIERRE_ECONOMICO = "saltoCierreEconomico";
-    private static final String GESTOR_ACTIVO_CODIGO = "GACT";
-    private static final String SUPERVISOR_ACTIVO_CODIGO = "SUPACT";
     
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -737,7 +735,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			usuarioLogado = adapter.getUsuarioLogado();
 			if(!Checks.esNulo(usuarioLogado)){			
 				if(nombreUsuarioWS.equals(usuarioLogado)){
-					Usuario gestorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GESTOR_ACTIVO_CODIGO);
+					Usuario gestorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 					if(!Checks.esNulo(gestorWS))
 						tareaActivo.setUsuario(gestorWS);
 				} else {
@@ -754,7 +752,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			usuarioLogado = adapter.getUsuarioLogado();
 			if(!Checks.esNulo(usuarioLogado)){			
 				if(nombreUsuarioWS.equals(usuarioLogado)){
-					Usuario supervisorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), SUPERVISOR_ACTIVO_CODIGO);
+					Usuario supervisorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 					if(!Checks.esNulo(supervisorWS))
 						tareaActivo.setUsuario(supervisorWS);
 				} else {

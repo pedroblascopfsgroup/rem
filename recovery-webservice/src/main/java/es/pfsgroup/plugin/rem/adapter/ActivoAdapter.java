@@ -2573,22 +2573,25 @@ public class ActivoAdapter {
 		Order order = new Order(OrderType.ASC, "orden");
 
 		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
+		Activo activo = this.getActivoById(id);
 
-		if (gestorDocumentalFotos.isActive() && (listaActivoFoto == null || listaActivoFoto.isEmpty())) {
-			FileListResponse fileListResponse = null;
-			try {
-				fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, id);
+		if (activo != null) {
+			if (gestorDocumentalFotos.isActive() && (listaActivoFoto == null || listaActivoFoto.isEmpty())) {
+				FileListResponse fileListResponse = null;
+				try {
+					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, activo.getNumActivo());
 
-				if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
-					for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-						activoApi.uploadFoto(fileGD);
+					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+							activoApi.uploadFoto(fileGD);
+						}
+						listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 					}
-					listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
-				}				
-			} catch (Exception e) {
-				logger.error("Error obteniedno las fotos del CDN",e);
+				} catch (Exception e) {
+					logger.error("Error obteniedno las fotos del CDN", e);
+				}
+
 			}
-			
 		}
 		return listaActivoFoto;
 

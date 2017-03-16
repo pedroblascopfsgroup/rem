@@ -11,6 +11,14 @@ Ext.define('HreRem.controller.WindowsController', {
     modalWindows: [],
     
     listen: {
+    	
+    	global: {
+    			infoToast: 'infoToast',
+	    		warnToast: 'warnToast',
+	    		errorToast: 'errorToast'
+    	},
+
+    	
     	controller : {
     		'*': {
     		

@@ -1506,17 +1506,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		    if (obj.success == 'true') {
     		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
         			btn.up('tasacionesactivo').funcionRecargar();
+        			me.getView().unmask();
     		    } else {
-    		    	me.fireEvent("errorToast", obj.msg); 
+    		    	Utils.defaultRequestFailure(response, opts);
     		    }
+    		    
     		},
     		
-		 	failure: function(record, operation) {
-		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-		    },
-		    
-		    callback: function(record, operation) {
-    			me.getView().unmask();
+		 	failure: function(response, opts) {
+		 		Utils.defaultRequestFailure(response, opts);
 		    }
     	});
 	},

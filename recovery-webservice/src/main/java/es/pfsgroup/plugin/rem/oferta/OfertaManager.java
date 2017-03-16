@@ -36,6 +36,7 @@ import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -1148,7 +1149,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
-
+	
 	@Override
 	public boolean altaComite(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
@@ -1204,6 +1205,75 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;
+		}
+
+	}
+
+	@Override
+	public String altaComiteProcess(TareaExterna tareaExterna) {
+		
+		try {
+		
+			Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Long porcentajeImpuesto = null;
+			if (!Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					// porcentajeImpuesto =
+					// Long.parseLong(String.format("%.0f",expediente.getCondicionante().getTipoAplicable()));
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				} else {
+					logger.debug("Datos insuficientes para dar de alta un comité");
+					throw new JsonViewerException("No ha sido posible realizar la operación");					
+				}
+			}
+
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi
+					.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
+			String codigoComite = resultadoDto.getCodigoComite();
+			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+			expediente.setComiteSancion(comite);
+			genericDao.save(ExpedienteComercial.class, expediente);
+
+			return null;
+		} catch (JsonViewerException jve) {
+			return "Error alta comité: "+jve.getMessage();
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return "No ha sido posible realizar la operación";
+		}
+
+	}
+	
+	@Override
+	public String ratificacionComiteProcess(TareaExterna tareaExterna) {
+		
+		try {
+			
+			Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Long porcentajeImpuesto = null;
+			if (!Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					// porcentajeImpuesto =
+					// Long.parseLong(String.format("%.0f",expediente.getCondicionante().getTipoAplicable()));
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				} else {
+					logger.debug("Datos insuficientes para ratificar comité");
+					throw new JsonViewerException("No ha sido posible realizar la operación");
+				}
+			}
+
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi
+					.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
+			return null;
+		} catch (JsonViewerException jve) {
+			return "Error ratificación comité: "+jve.getMessage();
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return "No ha sido posible realizar la operación";
 		}
 
 	}

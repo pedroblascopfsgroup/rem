@@ -113,8 +113,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName, String email, String telefono)
-			throws Exception {
+	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName, String email, String telefono) throws Exception {
 		Usuario usuario = new Usuario();
 		usuario.setUsername(userName);
 		usuario.setEmail(email);
@@ -130,8 +129,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @param gestion
 	 * @return
 	 */
-	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor)
-			throws Exception {
+	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor) throws Exception {
 		logger.info("------------ LLAMADA WS SOLICITAR TASACION -----------------");
 		int numeroIdentificadorTasacion = -1;
 
@@ -374,8 +372,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @param idClienteClow 0 para la primera llamada. Último idClienteClow si tiene paginación
 	 * @return
 	 */
-	private ClienteUrsusRequestDto ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre, String idClienteClow)
-			throws Exception {
+	private ClienteUrsusRequestDto ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre, String idClienteClow)	throws Exception {
 		logger.info("------------ LLAMADA WS NUMCLIENTE -----------------");
 		ArrayList<DatosClienteDto> resultado = new ArrayList<DatosClienteDto>();
 		ClienteUrsusRequestDto clienteUrsusDto = new ClienteUrsusRequestDto();
@@ -892,8 +889,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	@Override
-	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto)
-			throws Exception {
+	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
@@ -932,256 +928,249 @@ public class UvemManager implements UvemManagerApi {
 	 * @param accion:
 	 *            ALTA/CONS/MODI
 	 * @return
+	 * @throws WIException 
 	 */
-	public ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion)
-			throws WIException {
+	public ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion) throws WIException {
 		logger.info("------------ LLAMADA WS INSTANCIADECISION -----------------");
 		ResultadoInstanciaDecisionDto result = null;
 
-		try {
+		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
 
-			VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-
-			List<InstanciaDecisionDataDto> instanciaListData = instanciaDecisionDto.getData();
-			if (Checks.esNulo(instanciaListData)
-					|| (!Checks.esNulo(instanciaListData) && instanciaListData.size() == 0)) {
-				throw new WIException("El campo data de la instancia es obligatorio.");
-			}
-
-			// Bucle para cargar el array numOcurrencias con la info de cada
-			// activo
-			for (int i = 0; i < instanciaListData.size(); i++) {
-				InstanciaDecisionDataDto instanciaData = instanciaListData.get(i);
-				StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-
-				// IdentificadorActivoEspecial
-				if (instanciaData.getIdentificadorActivoEspecial() != null) {
-					struct.setIdentificadorActivoEspecialcoacew(instanciaData.getIdentificadorActivoEspecial());
-				}
-
-				// TipoDeImpuesto
-				struct.setTipoDeImpuestocotimw(instanciaData.getTipoDeImpuesto());
-
-				// ImporteMonetarioOfertaBISA
-				if (instanciaData.getImporteConSigno() == null) {
-					throw new WIException("El importe con signo no puede estar vacio.");
-				} else {
-					ImporteMonetario importeMonetario = new ImporteMonetario();
-					importeMonetario.setImporteConSigno(instanciaData.getImporteConSigno());
-					es.cajamadrid.servicios.ARQ.Moneda moneda = new es.cajamadrid.servicios.ARQ.Moneda();
-					moneda.setDivisa("D");
-					moneda.setDigitoControlDivisa('-');
-					importeMonetario.setMonedaBISA(moneda);
-					importeMonetario.setNumeroDecimalesImporte('-');
-					struct.setImporteMonetarioOfertaBISA(importeMonetario);
-				}
-
-				// PorcentajeImpuestoBISA
-				Porcentaje9 porcentajeImpuesto = null;
-				porcentajeImpuesto = new Porcentaje9();
-				if (!Checks.esNulo(instanciaData.getPorcentajeImpuesto())) {
-					porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto());
-					porcentajeImpuesto.setNumDecimales("BC");
-					struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
-				}
-
-				// IndicadorTratamientoImpuesto
-				struct.setIndicadorTratamientoImpuestobitrim('A'); // 'A' or 'B'
-																	// or
-																	// '\'
-
-				// Es un array al que se le meteran cada activo de la oferta
-				numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
-			}
-
-			// Este codigo de BANKIA aunque parezca setear una variable, esta
-			// haciendo una add a un Array.
-			// El vector numeroOcurrencias debe tener 40 elementos si o si. Para
-			// ello, rellenamos el resto de ocurrencias con structuras vacías.
-			StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu structEmpty = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
-			for (int i = 0; i < 40 - instanciaListData.size(); i++) {
-				numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(structEmpty);
-			}
-
-			logger.info("------------ LLAMADA WS INSTANCIADECISION (" + accion + ") -----------------");
-			leerConfiguracion();
-			// parametros iniciales
-			Hashtable<String, String> htInitParams = new Hashtable<String, String>();
-			htInitParams.put(WIService.WORFLOW_PARAM, URL);
-			htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
-
-			WIService.init(htInitParams);
-
-			// Creamos cabeceras
-			es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraFuncionalPeticion();
-			es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica();
-			StructCabeceraAplicacionGMPDJB13_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPDJB13_INS();
-
-			servicioGMPDJB13_INS = new GMPDJB13_INS();
-
-			// Seteamos cabeceras
-			servicioGMPDJB13_INS.setcabeceraAplicacion(cabeceraAplicacion);
-			servicioGMPDJB13_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
-			servicioGMPDJB13_INS.setcabeceraTecnica(cabeceraTecnica);
-
-			cabeceraFuncional.setIDDSAQ(accion);
-			cabeceraFuncional.setCOFRAQ("168");
-			cabeceraFuncional.setCOSFAQ("00");
-			cabeceraFuncional.setCOAQAQ("AQ");
-			cabeceraFuncional.setCORPAQ("WW0071");
-			cabeceraFuncional.setCLCDAQ("0370");
-			cabeceraFuncional.setCOENAQ("0000");
-			cabeceraFuncional.setCOCDAQ("0551");
-			cabeceraFuncional.setCOSBAQ("00");
-			cabeceraFuncional.setNUPUAQ("00");
-			cabeceraTecnica.setCLORAQ("71");
-
-			// logueamos parametros cabecera
-			logger.info("\nParámetros INSTANCIADECISION:");
-			logger.info("IDDSAQ: " + cabeceraFuncional.getIDDSAQ());
-			logger.info("COFRAQ: " + cabeceraFuncional.getCOFRAQ());
-			logger.info("COSFAQ: " + cabeceraFuncional.getCOSFAQ());
-			logger.info("COAQAQ: " + cabeceraFuncional.getCOAQAQ());
-			logger.info("CORPAQ: " + cabeceraFuncional.getCORPAQ());
-			logger.info("CLCDAQ: " + cabeceraFuncional.getCLCDAQ());
-			logger.info("COENAQ: " + cabeceraFuncional.getCOENAQ());
-			logger.info("COCDAQ: " + cabeceraFuncional.getCOCDAQ());
-			logger.info("COSBAQ: " + cabeceraFuncional.getCOSBAQ());
-			logger.info("NUPUAQ: " + cabeceraFuncional.getNUPUAQ());
-			logger.info("CLORAQ: " + cabeceraTecnica.getCLORAQ());
-
-			/*
-			 * System.out.println("\nParámetros INSTANCIADECISION:");
-			 * System.out.println("IDDSAQ: " + cabeceraFuncional.getIDDSAQ());
-			 * System.out.println("COFRAQ: " + cabeceraFuncional.getCOFRAQ());
-			 * System.out.println("COSFAQ: " + cabeceraFuncional.getCOSFAQ());
-			 * System.out.println("COAQAQ: " + cabeceraFuncional.getCOAQAQ());
-			 * System.out.println("CORPAQ: " + cabeceraFuncional.getCORPAQ());
-			 * System.out.println("CLCDAQ: " + cabeceraFuncional.getCLCDAQ());
-			 * System.out.println("COENAQ: " + cabeceraFuncional.getCOENAQ());
-			 * System.out.println("COCDAQ: " + cabeceraFuncional.getCOCDAQ());
-			 * System.out.println("COSBAQ: " + cabeceraFuncional.getCOSBAQ());
-			 * System.out.println("NUPUAQ: " + cabeceraFuncional.getNUPUAQ());
-			 * System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());
-			 */
-
-			// seteamos parametros
-			servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PAHY0170");
-			servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(
-					StringUtils.leftPad(instanciaDecisionDto.getCodigoDeOfertaHaya(), 16, "0"));
-			if (instanciaDecisionDto.isFinanciacionCliente()) {
-				servicioGMPDJB13_INS
-						.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_SI);
-			} else {
-				servicioGMPDJB13_INS
-						.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_NO);
-			}
-			// Según llamada telefonica con Antonio Rios Muñoz(Atos Origin)
-			if (accion.equals(INSTANCIA_DECISION_MODIFICACION)) {
-				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONTRAOFERTA);
-			} else {
-				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
-			}
-
-			if (numeroOcurrencias != null) {
-				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
-			}
-			// Requeridos por el servicio
-			servicioGMPDJB13_INS.setnumeroCliente(0);
-			servicioGMPDJB13_INS.setnumeroUsuario("");
-			servicioGMPDJB13_INS.setidSesionWL("");
-
-			// logueamos parametros enviados
-			logger.info("CodigoObjetoAccesocopace: " + servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
-			logger.info("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
-			logger.info("IndicadorDeFinanciacionClientebificl: "
-					+ servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
-			logger.info("TipoPropuestacotprw: " + servicioGMPDJB13_INS.getTipoPropuestacotprw());
-			logger.info("NumeroCliente: " + servicioGMPDJB13_INS.getnumeroCliente());
-			logger.info("NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
-			logger.info("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());
-
-			/*
-			 * System.out.println("CodigoObjetoAccesocopace: " +
-			 * servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
-			 * System.out.println("CodigoDeOfertaHayacoofhx: " +
-			 * servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
-			 * System.out.println("IndicadorDeFinanciacionClientebificl: "+
-			 * servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
-			 * System.out.println("TipoPropuestacotprw: " +
-			 * servicioGMPDJB13_INS.getTipoPropuestacotprw());
-			 * System.out.println("NumeroCliente: " +
-			 * servicioGMPDJB13_INS.getnumeroCliente()); System.out.println(
-			 * "NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
-			 * System.out.println("IdSesionWL: " +
-			 * servicioGMPDJB13_INS.getidSesionWL());
-			 */
-			for (int i = 0; i < instanciaListData.size(); i++) {
-				logger.info("IdentificadorActivoEspecialcoacew: " + numeroOcurrencias
-						.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIdentificadorActivoEspecialcoacew());
-				logger.info("ImporteConSigno: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
-						.getImporteMonetarioOfertaBISA().getImporteConSigno());
-				logger.info("TipoDeImpuestocotimw: " + numeroOcurrencias
-						.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getTipoDeImpuestocotimw());
-				logger.info("Porcentaje: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
-						.getPorcentajeImpuestoBISA().getPorcentaje());
-				logger.info("PorcentajeNumDecimales: "
-						+ numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
-								.getPorcentajeImpuestoBISA().getNumDecimales());
-				logger.info("IndicadorTratamientoImpuestobitrim: " + numeroOcurrencias
-						.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIndicadorTratamientoImpuestobitrim());
-
-				/*
-				 * System.out.println("IdentificadorActivoEspecialcoacew: " +
-				 * numeroOcurrencias
-				 * .getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).
-				 * getIdentificadorActivoEspecialcoacew()); System.out.println(
-				 * "ImporteConSigno: " + numeroOcurrencias.
-				 * getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
-				 * .getImporteMonetarioOfertaBISA().getImporteConSigno());
-				 * System.out.println("TipoDeImpuestocotimw: " +
-				 * numeroOcurrencias.
-				 * getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).
-				 * getTipoDeImpuestocotimw()); System.out.println("Porcentaje: "
-				 * + numeroOcurrencias.
-				 * getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
-				 * .getPorcentajeImpuestoBISA().getPorcentaje());
-				 * System.out.println( "PorcentajeNumDecimales: " +
-				 * numeroOcurrencias.
-				 * getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
-				 * .getPorcentajeImpuestoBISA().getNumDecimales());
-				 * System.out.println("IndicadorTratamientoImpuestobitrim: " +
-				 * numeroOcurrencias
-				 * .getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).
-				 * getIndicadorTratamientoImpuestobitrim());
-				 */
-			}
-
-			servicioGMPDJB13_INS.setAlias(ALIAS);
-			servicioGMPDJB13_INS.execute();
-
-			/*
-			 * System.out.println("--RESULTADOS LLAMADA--"); System.out.println(
-			 * "Resultado llamada Longitud Mensaje De Salida: " +
-			 * servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
-			 * System.out.println( "Resultado llamada Codigo De Oferta Haya: " +
-			 * servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
-			 * System.out.println("Resultado llamada Codigo Comite: " +
-			 * servicioGMPDJB13_INS.getCodigoComitecocom7());
-			 */
-
-			result = new ResultadoInstanciaDecisionDto();
-			result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
-			result.setCodigoComite(servicioGMPDJB13_INS.getCodigoComitecocom7() + "");
-			result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
-
-			logger.info("CodigoComitecocom7: " + servicioGMPDJB13_INS.getCodigoComitecocom7());
-			logger.info("CodigoDeOfertaHayacoofhx2: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
-
-		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
-			throw new JsonViewerException(e.getMessage());
+		List<InstanciaDecisionDataDto> instanciaListData = instanciaDecisionDto.getData();
+		if (Checks.esNulo(instanciaListData)
+				|| (!Checks.esNulo(instanciaListData) && instanciaListData.size() == 0)) {
+			throw new WIException("El campo data de la instancia es obligatorio.");
 		}
+
+		// Bucle para cargar el array numOcurrencias con la info de cada
+		// activo
+		for (int i = 0; i < instanciaListData.size(); i++) {
+			InstanciaDecisionDataDto instanciaData = instanciaListData.get(i);
+			StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+
+			// IdentificadorActivoEspecial
+			if (instanciaData.getIdentificadorActivoEspecial() != null) {
+				struct.setIdentificadorActivoEspecialcoacew(instanciaData.getIdentificadorActivoEspecial());
+			}
+
+			// TipoDeImpuesto
+			struct.setTipoDeImpuestocotimw(instanciaData.getTipoDeImpuesto());
+
+			// ImporteMonetarioOfertaBISA
+			if (instanciaData.getImporteConSigno() == null) {
+				throw new WIException("El importe con signo no puede estar vacio.");
+			} else {
+				ImporteMonetario importeMonetario = new ImporteMonetario();
+				importeMonetario.setImporteConSigno(instanciaData.getImporteConSigno());
+				es.cajamadrid.servicios.ARQ.Moneda moneda = new es.cajamadrid.servicios.ARQ.Moneda();
+				moneda.setDivisa("D");
+				moneda.setDigitoControlDivisa('-');
+				importeMonetario.setMonedaBISA(moneda);
+				importeMonetario.setNumeroDecimalesImporte('-');
+				struct.setImporteMonetarioOfertaBISA(importeMonetario);
+			}
+
+			// PorcentajeImpuestoBISA
+			Porcentaje9 porcentajeImpuesto = null;
+			porcentajeImpuesto = new Porcentaje9();
+			if (!Checks.esNulo(instanciaData.getPorcentajeImpuesto())) {
+				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto());
+				porcentajeImpuesto.setNumDecimales("BC");
+				struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
+			}
+
+			// IndicadorTratamientoImpuesto
+			struct.setIndicadorTratamientoImpuestobitrim('A'); // 'A' or 'B'
+																// or
+																// '\'
+
+			// Es un array al que se le meteran cada activo de la oferta
+			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);
+		}
+
+		// Este codigo de BANKIA aunque parezca setear una variable, esta
+		// haciendo una add a un Array.
+		// El vector numeroOcurrencias debe tener 40 elementos si o si. Para
+		// ello, rellenamos el resto de ocurrencias con structuras vacías.
+		StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu structEmpty = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+		for (int i = 0; i < 40 - instanciaListData.size(); i++) {
+			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(structEmpty);
+		}
+
+		logger.info("------------ LLAMADA WS INSTANCIADECISION (" + accion + ") -----------------");
+		leerConfiguracion();
+		// parametros iniciales
+		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
+		htInitParams.put(WIService.WORFLOW_PARAM, URL);
+		htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
+
+		WIService.init(htInitParams);
+
+		// Creamos cabeceras
+		es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraFuncionalPeticion();
+		es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica();
+		StructCabeceraAplicacionGMPDJB13_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPDJB13_INS();
+
+		servicioGMPDJB13_INS = new GMPDJB13_INS();
+
+		// Seteamos cabeceras
+		servicioGMPDJB13_INS.setcabeceraAplicacion(cabeceraAplicacion);
+		servicioGMPDJB13_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
+		servicioGMPDJB13_INS.setcabeceraTecnica(cabeceraTecnica);
+
+		cabeceraFuncional.setIDDSAQ(accion);
+		cabeceraFuncional.setCOFRAQ("168");
+		cabeceraFuncional.setCOSFAQ("00");
+		cabeceraFuncional.setCOAQAQ("AQ");
+		cabeceraFuncional.setCORPAQ("WW0071");
+		cabeceraFuncional.setCLCDAQ("0370");
+		cabeceraFuncional.setCOENAQ("0000");
+		cabeceraFuncional.setCOCDAQ("0551");
+		cabeceraFuncional.setCOSBAQ("00");
+		cabeceraFuncional.setNUPUAQ("00");
+		cabeceraTecnica.setCLORAQ("71");
+
+		// logueamos parametros cabecera
+		logger.info("\nParámetros INSTANCIADECISION:");
+		logger.info("IDDSAQ: " + cabeceraFuncional.getIDDSAQ());
+		logger.info("COFRAQ: " + cabeceraFuncional.getCOFRAQ());
+		logger.info("COSFAQ: " + cabeceraFuncional.getCOSFAQ());
+		logger.info("COAQAQ: " + cabeceraFuncional.getCOAQAQ());
+		logger.info("CORPAQ: " + cabeceraFuncional.getCORPAQ());
+		logger.info("CLCDAQ: " + cabeceraFuncional.getCLCDAQ());
+		logger.info("COENAQ: " + cabeceraFuncional.getCOENAQ());
+		logger.info("COCDAQ: " + cabeceraFuncional.getCOCDAQ());
+		logger.info("COSBAQ: " + cabeceraFuncional.getCOSBAQ());
+		logger.info("NUPUAQ: " + cabeceraFuncional.getNUPUAQ());
+		logger.info("CLORAQ: " + cabeceraTecnica.getCLORAQ());
+
+		/*
+		 * System.out.println("\nParámetros INSTANCIADECISION:");
+		 * System.out.println("IDDSAQ: " + cabeceraFuncional.getIDDSAQ());
+		 * System.out.println("COFRAQ: " + cabeceraFuncional.getCOFRAQ());
+		 * System.out.println("COSFAQ: " + cabeceraFuncional.getCOSFAQ());
+		 * System.out.println("COAQAQ: " + cabeceraFuncional.getCOAQAQ());
+		 * System.out.println("CORPAQ: " + cabeceraFuncional.getCORPAQ());
+		 * System.out.println("CLCDAQ: " + cabeceraFuncional.getCLCDAQ());
+		 * System.out.println("COENAQ: " + cabeceraFuncional.getCOENAQ());
+		 * System.out.println("COCDAQ: " + cabeceraFuncional.getCOCDAQ());
+		 * System.out.println("COSBAQ: " + cabeceraFuncional.getCOSBAQ());
+		 * System.out.println("NUPUAQ: " + cabeceraFuncional.getNUPUAQ());
+		 * System.out.println("CLORAQ: " + cabeceraTecnica.getCLORAQ());
+		 */
+
+		// seteamos parametros
+		servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PAHY0170");
+		servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(
+				StringUtils.leftPad(instanciaDecisionDto.getCodigoDeOfertaHaya(), 16, "0"));
+		if (instanciaDecisionDto.isFinanciacionCliente()) {
+			servicioGMPDJB13_INS
+					.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_SI);
+		} else {
+			servicioGMPDJB13_INS
+					.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_NO);
+		}
+		// Según llamada telefonica con Antonio Rios Muñoz(Atos Origin)
+		if (accion.equals(INSTANCIA_DECISION_MODIFICACION)) {
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONTRAOFERTA);
+		} else {
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
+		}
+
+		if (numeroOcurrencias != null) {
+			servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
+		}
+		// Requeridos por el servicio
+		servicioGMPDJB13_INS.setnumeroCliente(0);
+		servicioGMPDJB13_INS.setnumeroUsuario("");
+		servicioGMPDJB13_INS.setidSesionWL("");
+
+		// logueamos parametros enviados
+		logger.info("CodigoObjetoAccesocopace: " + servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
+		logger.info("CodigoDeOfertaHayacoofhx: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
+		logger.info("IndicadorDeFinanciacionClientebificl: "
+				+ servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
+		logger.info("TipoPropuestacotprw: " + servicioGMPDJB13_INS.getTipoPropuestacotprw());
+		logger.info("NumeroCliente: " + servicioGMPDJB13_INS.getnumeroCliente());
+		logger.info("NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
+		logger.info("IdSesionWL: " + servicioGMPDJB13_INS.getidSesionWL());
+
+		/*
+		 * System.out.println("CodigoObjetoAccesocopace: " +
+		 * servicioGMPDJB13_INS.getCodigoObjetoAccesocopace());
+		 * System.out.println("CodigoDeOfertaHayacoofhx: " +
+		 * servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx());
+		 * System.out.println("IndicadorDeFinanciacionClientebificl: "+
+		 * servicioGMPDJB13_INS.getIndicadorDeFinanciacionClientebificl());
+		 * System.out.println("TipoPropuestacotprw: " +
+		 * servicioGMPDJB13_INS.getTipoPropuestacotprw());
+		 * System.out.println("NumeroCliente: " +
+		 * servicioGMPDJB13_INS.getnumeroCliente()); System.out.println(
+		 * "NumeroUsuario: " + servicioGMPDJB13_INS.getnumeroUsuario());
+		 * System.out.println("IdSesionWL: " +
+		 * servicioGMPDJB13_INS.getidSesionWL());
+		 */
+		for (int i = 0; i < instanciaListData.size(); i++) {
+			logger.info("IdentificadorActivoEspecialcoacew: " + numeroOcurrencias
+					.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIdentificadorActivoEspecialcoacew());
+			logger.info("ImporteConSigno: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
+					.getImporteMonetarioOfertaBISA().getImporteConSigno());
+			logger.info("TipoDeImpuestocotimw: " + numeroOcurrencias
+					.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getTipoDeImpuestocotimw());
+			logger.info("Porcentaje: " + numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
+					.getPorcentajeImpuestoBISA().getPorcentaje());
+			logger.info("PorcentajeNumDecimales: "
+					+ numeroOcurrencias.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
+							.getPorcentajeImpuestoBISA().getNumDecimales());
+			logger.info("IndicadorTratamientoImpuestobitrim: " + numeroOcurrencias
+					.getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).getIndicadorTratamientoImpuestobitrim());
+
+			/*
+			 * System.out.println("IdentificadorActivoEspecialcoacew: " +
+			 * numeroOcurrencias
+			 * .getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).
+			 * getIdentificadorActivoEspecialcoacew()); System.out.println(
+			 * "ImporteConSigno: " + numeroOcurrencias.
+			 * getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
+			 * .getImporteMonetarioOfertaBISA().getImporteConSigno());
+			 * System.out.println("TipoDeImpuestocotimw: " +
+			 * numeroOcurrencias.
+			 * getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).
+			 * getTipoDeImpuestocotimw()); System.out.println("Porcentaje: "
+			 * + numeroOcurrencias.
+			 * getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
+			 * .getPorcentajeImpuestoBISA().getPorcentaje());
+			 * System.out.println( "PorcentajeNumDecimales: " +
+			 * numeroOcurrencias.
+			 * getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i)
+			 * .getPorcentajeImpuestoBISA().getNumDecimales());
+			 * System.out.println("IndicadorTratamientoImpuestobitrim: " +
+			 * numeroOcurrencias
+			 * .getStructGMPDJB13_INS_NumeroDeOcurrenciasnumocuAt(i).
+			 * getIndicadorTratamientoImpuestobitrim());
+			 */
+		}
+
+		servicioGMPDJB13_INS.setAlias(ALIAS);
+		servicioGMPDJB13_INS.execute();
+
+		/*
+		 * System.out.println("--RESULTADOS LLAMADA--"); System.out.println(
+		 * "Resultado llamada Longitud Mensaje De Salida: " +
+		 * servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
+		 * System.out.println( "Resultado llamada Codigo De Oferta Haya: " +
+		 * servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
+		 * System.out.println("Resultado llamada Codigo Comite: " +
+		 * servicioGMPDJB13_INS.getCodigoComitecocom7());
+		 */
+
+		result = new ResultadoInstanciaDecisionDto();
+		result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
+		result.setCodigoComite(servicioGMPDJB13_INS.getCodigoComitecocom7() + "");
+		result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
+
+		logger.info("CodigoComitecocom7: " + servicioGMPDJB13_INS.getCodigoComitecocom7());
+		logger.info("CodigoDeOfertaHayacoofhx2: " + servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
 
 		return result;
 	}
@@ -1195,7 +1184,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 */
 	@Override
-	public Long consultaDatosPrestamo(String numExpedienteRiesgo12, int tipoRiesgo) throws WIException {
+	public Long consultaDatosPrestamo(String numExpedienteRiesgo12, int tipoRiesgo) {
 		logger.info("------------ LLAMADA WS CONSULTA_DATOS_PRESTAMO -----------------");
 		es.cm.arq.tda.tiposdedatosbase.ImporteMonetario importe = null;
 
@@ -1318,12 +1307,13 @@ public class UvemManager implements UvemManagerApi {
 
 			if (importe == null) {
 				throw new WIException("No se han encontrado datos con la información suministrada");
-			}
-
-		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
-			throw new JsonViewerException(e.getMessage());
+			}			
+			
+		} catch (WIException wie) {
+			logger.error("error en UvemManager", wie);
+			throw new JsonViewerException(wie.getMessage());
 		}
+		
 		return importe.getImporteComoLong();
 
 	}

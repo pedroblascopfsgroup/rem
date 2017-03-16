@@ -810,9 +810,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("codigo", expedienteComercialApi.consultarComiteSancionador(idExpediente));
 			model.put("success", true);
 			
+		} catch (JsonViewerException jve) {
+			model.put("success", false);
+			model.put("msgError", jve.getMessage());
+			
 		} catch (Exception e) {
 			model.put("success", false);
-			model.put("msg", "Servicio no disponible");
 		}	
 		
 		return createModelAndViewJson(model);
@@ -898,11 +901,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			
 		} catch (JsonViewerException e) {
 			model.put("success", false);
-			model.put("msg", e.getMessage());
+			model.put("msgError", e.getMessage());
 			
 		}	catch (Exception e) {
 			model.put("success", false);
-			model.put("msg", "Servicio no disponible");
 		}
 		
 		return createModelAndViewJson(model);
@@ -917,11 +919,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			
 		}  catch (JsonViewerException e) {
 			model.put("success", false);
-			model.put("msg", e.getMessage());
+			model.put("msgError", e.getMessage());
 			
 		} catch (Exception e) {
 			model.put("success", false);
-			model.put("msg", "Servicio no disponible");
 		}
 		
 		return createModelAndViewJson(model);
@@ -1071,13 +1072,11 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("success", expedienteComercialApi.obtencionDatosPrestamo(dto));
 		} catch (JsonViewerException e) {
 			model.put("success", false);
-			model.put("msg", e.getMessage());
+			model.put("msgError", e.getMessage());
 		} catch (Exception e) {
 			model.put("success", false);
-		}	
-
+		}
 		
-
 		return createModelAndViewJson(model);
 	}
 	

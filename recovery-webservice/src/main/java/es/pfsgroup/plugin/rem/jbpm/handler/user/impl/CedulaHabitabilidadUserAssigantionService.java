@@ -51,14 +51,13 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 			
 			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
 			
-			// Si la cartera es BANKIA o SAREB, el gestor de las tareas es TINSA CERTIFY
+			// Si la cartera es BANKIA o SAREB, el gestor de las tareas es GESTOR DE CEDULA
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())){
-				//Usuario del Proveedor Tinsa para asignar a tareas (encontrado por CIF)
-				Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
-				Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
-				
-				if(!Checks.esNulo(usuProveedorBankiaSareb))
-					return usuProveedorBankiaSareb;
+				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
+				EXTDDTipoGestor tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+
+				if(!Checks.esNulo(tipoGestorActivo.getId()))
+					return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
 
 			} else {
 			//Otras carteras, el gestor de las tareas es GESTOR ACTIVOS

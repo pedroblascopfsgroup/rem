@@ -77,8 +77,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 				List<ActivoAdmisionDocumento> listaDocumentos = tramite.getActivo().getAdmisionDocumento();
 				for(ActivoAdmisionDocumento documento : listaDocumentos){
 					if(subtipoTrabajo.getCodigo().equals(diccionarioTargetClassMap.getSubtipoTrabajo(documento.getConfigDocumento().getTipoDocumentoActivo().getCodigo()))) {
-						documento.setNumDocumento(Integer.parseInt(valor.getValor()));
-//HREOS-1618						documento.setNumDocumento(valor.getValor());
+						documento.setNumDocumento(valor.getValor());
 						genericDao.save(ActivoAdmisionDocumento.class, documento);
 					}
 				}

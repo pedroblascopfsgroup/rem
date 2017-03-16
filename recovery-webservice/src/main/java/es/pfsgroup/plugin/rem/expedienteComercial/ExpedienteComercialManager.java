@@ -537,7 +537,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(dto.getImporteOferta())) {
 			ofertaApi.resetPBC(expedienteComercial);
 		}
-		
+
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
 		} catch (IllegalAccessException e) {
@@ -556,10 +556,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		
 		// Si se ha modificado el importe de la oferta o de la contraoferta actualizamos el listado de activos.
+		// También se actualiza el importe de la reserva.
 		if(!Checks.esNulo(dto.getImporteOferta()) || !Checks.esNulo(dto.getImporteContraOferta())) {		
-			this.updateParticipacionActivosOferta(oferta);			
+			this.updateParticipacionActivosOferta(oferta);
+			this.actualizarImporteReservaPorExpediente(expedienteComercial);
 		}
-		
 		
 		return true;
 	}
@@ -3616,6 +3617,37 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return listaActivos;
+		
+	}
+
+	@Transactional(readOnly = false)
+	@Override
+	public void actualizarImporteReservaPorExpediente(ExpedienteComercial expediente) {
+		// Si el expediente tiene reserva.
+		if(!Checks.esNulo(expediente.getReserva())) {
+			// El cálculo de reserva es del tipo porcentaje.
+			CondicionanteExpediente condicionanteExpediente = expediente.getCondicionante();
+			if(!Checks.esNulo(condicionanteExpediente) &&
+					!Checks.esNulo(condicionanteExpediente.getTipoCalculoReserva()) && 
+					condicionanteExpediente.getTipoCalculoReserva().getCodigo().equals(DDTipoCalculo.TIPO_CALCULO_PORCENTAJE)) {
+				// Comprobar si tiene importe contraoferta, en su defecto, usar importe oferta.
+				if(!Checks.esNulo(expediente.getOferta().getImporteContraOferta())) {
+					Double importeContraOferta = expediente.getOferta().getImporteContraOferta();
+					Double porcentajeReserva = condicionanteExpediente.getPorcentajeReserva();
+					porcentajeReserva = porcentajeReserva / 100;
+					Double resultado = porcentajeReserva * importeContraOferta;
+					condicionanteExpediente.setImporteReserva(resultado);
+					genericDao.save(CondicionanteExpediente.class, condicionanteExpediente);
+				} else {
+					Double importeOferta = expediente.getOferta().getImporteOferta();
+					Double porcentajeReserva = condicionanteExpediente.getPorcentajeReserva();
+					porcentajeReserva = porcentajeReserva / 100;
+					Double resultado = porcentajeReserva * importeOferta;
+					condicionanteExpediente.setImporteReserva(resultado);
+					genericDao.save(CondicionanteExpediente.class, condicionanteExpediente);
+				}
+			}
+		}
 		
 	}
 }

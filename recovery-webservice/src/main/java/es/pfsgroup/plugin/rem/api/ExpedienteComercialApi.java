@@ -651,5 +651,16 @@ public interface ExpedienteComercialApi {
 	 * @throws Exception Devuelve excepcion si la conexion no ha sido satisfactoria.
 	 */
 	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus) throws Exception;
+	
+	/**
+	 * Este método calcula el importe de reserva para un expediente si se dan las condiciones:
+	 * El expediente tiene reserva.
+	 * La reserva tiene el cálculo de tipo porcentaje.
+	 * Entonces mira si la oferta tiene importe contraoferta y utiliza éste importe, si no
+	 * utiliza el importe de la oferta.
+	 * 
+	 * @param expediente : expediente comercial.
+	 */
+	public void actualizarImporteReservaPorExpediente(ExpedienteComercial expediente);
 
 }

@@ -18,7 +18,7 @@ public class DtoAdmisionDocumento extends WebDto {
 	private Long idAdmisionDoc;
 	private Long idActivo;
 	private Long idConfiguracionDoc;
-	private Integer numDocumento;
+	private String numDocumento;
 	private Date fechaSolicitud;
 	private Date fechaEmision;
 	private Date fechaCaducidad;
@@ -60,11 +60,11 @@ public class DtoAdmisionDocumento extends WebDto {
 		this.idConfiguracionDoc = idConfiguracionDoc;
 	}
 
-	public Integer getNumDocumento() {
+	public String getNumDocumento() {
 		return numDocumento;
 	}
 
-	public void setNumDocumento(Integer numDocumento) {
+	public void setNumDocumento(String numDocumento) {
 		this.numDocumento = numDocumento;
 	}
 

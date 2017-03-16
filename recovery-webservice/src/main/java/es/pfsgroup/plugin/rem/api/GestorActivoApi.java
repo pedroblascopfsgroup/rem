@@ -10,6 +10,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_ACTIVO = "GACT";
 	public static final String CODIGO_GESTOR_ADMISION = "GADM";
 	public static final String CODIGO_GESTORIA_ADMISION = "GGADM";
+	public static final String CODIGO_GESTORIA_CEDULAS = "GTOCED";
 	public static final String CODIGO_PROVEEDOR = "UPROV";
 	public static final String CODIGO_SUPERVISOR_ADMISION = "SUPADM";
 	public static final String CODIGO_SUPERVISOR_ACTIVOS = "SUPACT";
@@ -27,6 +28,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTORIA_FORMALIZACION = "GIAFORM";
 	public static final String CODIGO_SUPERVISOR_FORMALIZACION = "SFORM";
 	public static final String CODIGO_GESTOR_BACKOFFICE = "GCBO";
+	public static final String CIF_PROVEEDOR_BANKIA_SAREB_TINSA = "B86689494";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

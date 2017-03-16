@@ -3,7 +3,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     xtype: 'datosgeneralesgasto',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
-    disableValidation: true,
+    disableValidation: false,
     reference: 'datosgeneralesgastoref',
     scrollable	: 'y',
 	recordName: "gasto",
@@ -245,9 +245,25 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 						                { 
 											xtype: 'comboboxfieldbase',
 							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.periodicidad'),
+							               	reference: 'cboxPeriodicidad',
+							               	editable: true,
 									      	bind: {
 								           		store: '{comboPeriodicidad}',
 								           		value: '{gasto.periodicidad}'
+								         	},
+								         	//allowBlank: false,
+								         	listeners: {
+								         		edit: function(){
+								         			var combo=me.up('gastodetallemain').lookupReference('cboxPeriodicidad');
+								         			if(Ext.isEmpty(me.up('gastodetallemain').getViewModel().get('gasto').get('numGastoGestoria')))
+								         				combo.allowBlank=false;
+								         			else
+								         				combo.allowBlank=true;
+								         		}/*,
+								         		update: function(){
+								         			var combo=me.up('gastodetallemain').lookupReference('cboxPeriodicidad');
+								         			combo.validate();
+								         		}*/
 								         	}
 									    },
 																			

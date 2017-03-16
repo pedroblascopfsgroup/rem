@@ -2028,12 +2028,12 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model) {
+	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model){
 		try {
 			model.put("success", activoApi.solicitarTasacion(idActivo));
 		} catch (JsonViewerException jve) {
 			model.put("success", false);
-			model.put("msg", jve.getMessage());
+			model.put("msgError", jve.getMessage());
 		} catch (Exception e) {
 			model.put("success", false);
 		}

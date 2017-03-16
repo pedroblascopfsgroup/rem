@@ -412,6 +412,14 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.ratificacionComite(tareaExterna);
 			}
+			def altaComiteProcess = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.altaComiteProcess(tareaExterna);
+			}
+			def ratificacionComiteProcess = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.ratificacionComiteProcess(tareaExterna);
+			}
 			def checkPoliticaCorporativa = {
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkPoliticaCorporativa(tareaExterna);

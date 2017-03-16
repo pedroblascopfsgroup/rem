@@ -446,5 +446,19 @@ public interface OfertaApi {
 	 */
 	public DtoGastoExpediente calculaHonorario(Oferta oferta, String accion,Activo activo);
 
+	/**
+	 * Método que ratifica el comité de Bankia
+	 * @param tareaExterna
+	 * @return String Error o null
+	 */
+	String ratificacionComiteProcess(TareaExterna tareaExterna);
+
+	/**
+	 * Método que da de alta un comité
+	 * @param tareaExterna
+	 * @return String Error o null
+	 */
+	String altaComiteProcess(TareaExterna tareaExterna);
+
 }
 

@@ -814,35 +814,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			   var data = {};
 			   try {
 			   	data = Ext.decode(response.responseText);
-			   }  catch (e){ };
-			   
+			   }  catch (e){
+			   	data = {};
+			   };			   
 			   if(data.success === "true") {
-				   //me.getView().funcionRecargar();
-				   me.lookupReference('formalizacionExpediente').funcionRecargar();
+				   	me.lookupReference('formalizacionExpediente').funcionRecargar();
+				   	me.getView().unmask();
 			   }else {
-			   		//me.fireEvent("errorToast", data.msg);
-			   		if (Ext.isDefined(data.msg)) {
-               			me.fireEvent("errorToast", data.msg);
-			   		} else {		
-				   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			   		}
+			   		Utils.defaultRequestFailure(response, opts);
 			   }
 		     },
-
 		     failure: function(response) {
-	     		var data = {};
-               try {
-               	data = Ext.decode(response.responseText);
-               }
-               catch (e){data = {};};
-               if (Ext.isDefined(data.msg)) {
-               	me.fireEvent("errorToast", data.msg);
-               } else {
-               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-               }
-		     },
-		     callback: function() {
-		     	me.getView().unmask();
+					Utils.defaultRequestFailure(response, opts);
 		     }
    	});
 	},
@@ -1046,21 +1029,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	                if(data.success === "true") {
 	                	comboComitePropuesto.setValue(data.codigo);           	
 	                }else {
-	                	me.fireEvent("errorToast", data.msg);
+	                	Utils.defaultRequestFailure(response, opts);
 	                }
 			     },
 
-			     failure: function(response) {
-		     		var data = {};
-	                try {
-	                	data = Ext.decode(response.responseText);
-	                }
-	                catch (e){ };
-	                if (!Ext.isEmpty(data.msg)) {
-	                	me.fireEvent("errorToast", data.msg);
-	                } else {
-	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	                }
+			     failure: function(response, opts) {
+		     		Utils.defaultRequestFailure(response, opts);
 			     },
 
 			     callback: function() {
@@ -1084,8 +1058,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	 	if(Ext.isEmpty(store.getData().items) || fieldClientesUrsus.recargarField) {
     	 		store.removeAll();
     	 		store.getProxy().setExtraParams({numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento});    
-        	 	store.load();
-        	 	fieldClientesUrsus.recargarField = false;
+        	 	store.load({
+        	 		callback: function(records, operation, success) {
+				        if(!success) {
+				        	Utils.defaultRequestFailure(operation.getResponse());
+				        	fieldClientesUrsus.recargarField = false;
+				        }				        	
+				    }      	 	
+        	 	});
     	 	}
 		} else {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));	
@@ -1117,20 +1097,27 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
 		var parent = field.up('datoscompradorwindow');
 
+		parent.mask(HreRem.i18n("msg.mask.loading"));
+		
 		Ext.Ajax.request({
 		     url: url,
 		     params: {numeroUrsus: numeroUrsus},
 			 method: 'GET',
 		     success: function(response, opts) {
-		    	 data = Ext.decode(response.responseText);
-		    	 if(!Utils.isEmptyJSON(data.data)){
-		    	 	me.abrirDatosClienteUrsus(data.data, parent);
-		    	 } else {
-		    	 	me.fireEvent("errorToast", data.msg);
-		    	 }
+		     	var data = {}
+		     	try {
+		     		data = Ext.decode(response.responseText);
+		     	} catch(e) {
+		     		data = {};	
+		     	}
+    		    if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
+    		    	me.abrirDatosClienteUrsus(data.data, parent);
+    		    } else {
+    		    	Utils.defaultRequestFailure(response, opts);
+    		    }
 		     },
 		     failure: function(response) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				Utils.defaultRequestFailure(response, opts);
 		     }
 		});
 	},

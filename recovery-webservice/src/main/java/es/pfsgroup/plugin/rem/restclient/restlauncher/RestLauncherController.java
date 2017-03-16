@@ -48,10 +48,121 @@ public class RestLauncherController {
 		return "default";
 	}
 
+	
 	/*
 	 * 
 	 * 
-	 * STOCK
+	 * PROVEEDORES (9999)
+	 * 
+	 */
+	@RequestMapping
+	public String enviarCompletoProveedoresWebcom() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoProveedoresWebcom();
+		}
+
+		return "default";
+	}
+
+	@RequestMapping
+	public String enviarProveedoresWebcom() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarProveedoresWebcom();
+		}
+
+		return "default";
+	}
+	
+	
+	/*
+	 * 
+	 * 
+	 * USUARIOS (9998)
+	 * 
+	 */
+
+	@RequestMapping
+	public String enviarCompletoUsuariosWebcom() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoUsuariosWebcom();
+		}
+
+		return "default";
+	}
+
+	@RequestMapping
+	public String enviarUsuariosWebcom() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarUsuariosWebcom();
+		}
+
+		return "default";
+	}
+	
+	
+	/*
+	 * 
+	 * 
+	 * OBRAS NUEVAS CAMPANYAS (9997)
+	 * 
+	 */
+
+	@RequestMapping
+	public String enviarCompletoObrasNuevasCampanyas() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoObrasNuevasCampanyas();
+		}
+
+		return "default";
+	}
+
+	@RequestMapping
+	public String enviarObrasNuevasCampanyas() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarObrasNuevasCampanyas();
+		}
+
+		return "default";
+	}
+	
+	
+	/*
+	 * 
+	 * 
+	 * CABECERAS (9996)
+	 * 
+	 */
+
+	@RequestMapping
+	public String enviarCompletoCabecerasObrasNuevas() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoCabecerasObrasNuevas();
+		}
+
+		return "default";
+	}
+
+	@RequestMapping
+	public String enviarCabecerasObrasNuevas() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCabecerasObrasNuevas();
+		}
+
+		return "default";
+	}
+	
+	/*
+	 * 
+	 * 
+	 * STOCK (9995)
 	 * 
 	 */
 
@@ -75,63 +186,12 @@ public class RestLauncherController {
 		return "default";
 	}
 
-	/*
-	 * 
-	 * 
-	 * USUARIOS
-	 * 
-	 */
 
-	@RequestMapping
-	public String enviarCompletoUsuariosWebcom() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarCompletoUsuariosWebcom();
-		}
-
-		return "default";
-	}
-
-	@RequestMapping
-	public String enviarUsuariosWebcom() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarUsuariosWebcom();
-		}
-
-		return "default";
-	}
 
 	/*
 	 * 
 	 * 
-	 * PROVEEDORES
-	 * 
-	 */
-	@RequestMapping
-	public String enviarCompletoProveedoresWebcom() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarCompletoProveedoresWebcom();
-		}
-
-		return "default";
-	}
-
-	@RequestMapping
-	public String enviarProveedoresWebcom() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarProveedoresWebcom();
-		}
-
-		return "default";
-	}
-
-	/*
-	 * 
-	 * 
-	 * OBRAS NUEVAS
+	 * ACTIVOS AGRUPACIONES CABECERAS (9994)
 	 * 
 	 */
 
@@ -155,64 +215,11 @@ public class RestLauncherController {
 		return "default";
 	}
 
+	
 	/*
 	 * 
 	 * 
-	 * CABECERAS
-	 * 
-	 */
-
-	@RequestMapping
-	public String enviarCompletoCabecerasObrasNuevas() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarCompletoCabecerasObrasNuevas();
-		}
-
-		return "default";
-	}
-
-	@RequestMapping
-	public String enviarCabecerasObrasNuevas() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarCabecerasObrasNuevas();
-		}
-
-		return "default";
-	}
-
-	/*
-	 * 
-	 * 
-	 * INFORME MEDIADOR
-	 * 
-	 */
-
-	@RequestMapping
-	public String enviarCompletoEstadosInformeMediador() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarCompletoEstadosInformeMediador();
-		}
-
-		return "default";
-	}
-
-	@RequestMapping
-	public String enviarEstadosInformeMediador() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarEstadosInformeMediador();
-		}
-
-		return "default";
-	}
-
-	/*
-	 * 
-	 * 
-	 * NOTIFICACIONES
+	 * NOTIFICACIONES (9993)
 	 * 
 	 */
 
@@ -236,37 +243,11 @@ public class RestLauncherController {
 		return "default";
 	}
 
+	
 	/*
 	 * 
 	 * 
-	 * ESTADO OFERTA
-	 * 
-	 */
-
-	@RequestMapping
-	public String enviarCompletoEstadoOferta() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarCompletoEstadoOferta();
-		}
-
-		return "default";
-	}
-
-	@RequestMapping
-	public String enviarEstadoOferta() throws ErrorServicioWebcom {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarEstadoOferta();
-		}
-
-		return "default";
-	}
-
-	/*
-	 * 
-	 * 
-	 * PETICION TRABAJO
+	 * PETICION TRABAJO (9992) 
 	 * 
 	 */
 
@@ -290,37 +271,70 @@ public class RestLauncherController {
 		return "default";
 	}
 
+	
+	
 	/*
 	 * 
 	 * 
-	 * OBRAS NUEVAS CAMPANYAS
+	 * ESTADO OFERTA (9991)
 	 * 
 	 */
 
 	@RequestMapping
-	public String enviarCompletoObrasNuevasCampanyas() throws ErrorServicioWebcom {
+	public String enviarCompletoEstadoOferta() throws ErrorServicioWebcom {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarCompletoObrasNuevasCampanyas();
+			launcher.enviarCompletoEstadoOferta();
 		}
 
 		return "default";
 	}
 
 	@RequestMapping
-	public String enviarObrasNuevasCampanyas() throws ErrorServicioWebcom {
+	public String enviarEstadoOferta() throws ErrorServicioWebcom {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		if (genericAdapter.isSuper(usuarioLogado)) {
-			launcher.enviarObrasNuevasCampanyas();
+			launcher.enviarEstadoOferta();
 		}
 
 		return "default";
 	}
 
+
 	/*
 	 * 
 	 * 
-	 * VENTAS Y COMISIONES
+	 * INFORME MEDIADOR (9990)
+	 * 
+	 */
+
+	@RequestMapping
+	public String enviarCompletoEstadosInformeMediador() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarCompletoEstadosInformeMediador();
+		}
+
+		return "default";
+	}
+
+	@RequestMapping
+	public String enviarEstadosInformeMediador() throws ErrorServicioWebcom {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (genericAdapter.isSuper(usuarioLogado)) {
+			launcher.enviarEstadosInformeMediador();
+		}
+
+		return "default";
+	}
+
+	
+	
+
+	/*
+	 * 
+	 * 
+	 * VENTAS Y COMISIONES (9989)
 	 * 
 	 */
 

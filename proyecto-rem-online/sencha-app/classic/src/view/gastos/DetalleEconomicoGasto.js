@@ -148,7 +148,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.operacion.exenta'),
 										                	bind: {
 //								        						disabled:'{!esOfertaVenta}',
-								        						value: '{detalleeconomico.impuestoIndirectoExento}',								        						
+								        						value: '{detalleeconomico.impuestoIndirectoExento}'							        						
 						            						},
 						            						listeners:{
 						            							afterbind: 'onChangeOperacionExenta'/*,

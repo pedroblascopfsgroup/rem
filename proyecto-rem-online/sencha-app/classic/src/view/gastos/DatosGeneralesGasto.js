@@ -310,19 +310,18 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
    
 			           {   
 							xtype:'fieldsettable',
-						defaultType: 'textfieldbase',				
+						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.gasto.trabjos.incluidos.factura'),
 						items :
 							[
 								{
-							    xtype		: 'gridBase',
+							    xtype: 'gridBase',
 							    reference: 'listadoTrabajosIncluidosFactura',
 								cls	: 'panel-base shadow-panel',
 								bind: {
 									store: '{storeTrabajosAfectados}'
 								},
 								listeners: {
-
 									rowdblclick: 'onRowDblClickListadoTrabajosGasto'
 								},
 								tbar : {
@@ -368,7 +367,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								   }
 							    ]
 							}
-							
 							]
 					}
     	];

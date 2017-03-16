@@ -250,7 +250,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this,
 		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
 		tabPanel = me.getView().down("tabpanel");
-		
+
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {
@@ -762,8 +762,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		         ventanaSeleccionTrabajos.unmask();		         
 		         ventanaSeleccionTrabajos.destroy();
 		         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		         ventanaSeleccionTrabajos.parent.funcionRecargar();
-		         
+				 me.refrescarGastoAlIncluirTrabajo(ventanaSeleccionTrabajos.up('gastodetallemain'));
 		     },
 		     failure: function(response) {
 		     	ventanaSeleccionTrabajos.unmask();
@@ -780,6 +779,29 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		     }
 	    		     
 	    });
+	},
+	
+	refrescarGastoAlIncluirTrabajo: function(view) {	
+		var me = this;
+		var tabPanel = view.down("tabpanel");
+
+		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
+		Ext.Array.each(view.query('component[funcionRecargar]'), function(component) {
+  			if(component.rendered) {
+  				component.recargar=true;
+  			}
+  		});
+
+  		if(!Ext.isEmpty(tabPanel)) {	  		
+			var activeTab = tabPanel.getActiveTab();
+
+			if(activeTab.funcionRecargar) {
+  				activeTab.funcionRecargar();
+			}
+
+			var callbackFn = function() {view.down("tabpanel").evaluarBotonesEdicion(activeTab);};
+			view.fireEvent("refrescarGasto", view, callbackFn);
+  		}
 	},
 	
 	cancelarSeleccionTrabajosGasto: function(btn) {

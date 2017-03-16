@@ -2599,23 +2599,28 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Override
 	public String consultarComiteSancionador(Long idExpediente) throws Exception {
 		
-		ExpedienteComercial expediente = findOne(idExpediente);
-		//InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
-		InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
-		String codigoComite = null;
-			
-		ResultadoInstanciaDecisionDto resultadoDto;
 		try {
+			
+			ExpedienteComercial expediente = findOne(idExpediente);
+			//InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
+			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
+			String codigoComite = null;
+				
+			ResultadoInstanciaDecisionDto resultadoDto;
+			
 			resultadoDto = uvemManagerApi.consultarInstanciaDecision(instancia);
+
+			codigoComite = resultadoDto.getCodigoComite();			
+			return codigoComite;
+			
+		} catch (JsonViewerException jve) {
+			throw jve;
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager",e);
-			throw new Exception(e);
+			throw e;
 		}
 		
-		codigoComite = resultadoDto.getCodigoComite();
-			
-		
-		return codigoComite;	
+	
 		
 	}
 	
@@ -2678,12 +2683,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		Oferta oferta = expediente.getOferta();
 		if(Checks.esNulo(oferta)){
-			throw new Exception("No existe oferta para el expediente.");
+			throw new JsonViewerException("No existe oferta para el expediente.");
 		}
 					
 		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
 		if(Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size()==0)){
-			throw new Exception("No hay activos para la oferta indicada.");
+			throw new JsonViewerException("No hay activos para la oferta indicada.");
 		}
 		
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();	
@@ -2692,11 +2697,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		for(int i=0; i< listaActivos.size(); i++){
 			Activo activo = listaActivos.get(i).getPrimaryKey().getActivo();
 			if(Checks.esNulo(activo)){
-				throw new Exception("No se ha podido obtener el activo.");
+				throw new JsonViewerException("No se ha podido obtener el activo.");
 			}
 			
 			if(Checks.esNulo(activo.getNumActivoUvem())){
-				throw new Exception("El activo no tiene número de UVEM.");
+				throw new JsonViewerException("El activo no tiene número de UVEM.");
 			}
 			
 			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
@@ -2704,6 +2709,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				importeXActivo = (importeTotal * porcentajeParti)/100;
 			}else{
 				importeXActivo = new Double(0);
+				porcentajeParti = new Double(0);
 			}
 			
 			sumatorioImporte += importeXActivo;
@@ -2729,7 +2735,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		if(!sumatorioImporte.equals(importeTotal)){
-			throw new Exception("La suma de los importes es diferente al importe de la oferta");
+			throw new JsonViewerException("La suma de los importes es diferente al importe de la oferta");
 		}
 		
 		
@@ -2915,32 +2921,35 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	}
 	
 	@Override
-	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento) {
+	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento) throws Exception {
 		List<DatosClienteDto> lista = new ArrayList<DatosClienteDto>();
 		String tipoDoc = null;
 		
-		if(Checks.esNulo(numeroDocumento) || Checks.esNulo(tipoDocumento)) {
-			return lista;
-		}
-		
-		if(!Checks.esNulo(tipoDocumento)){
-			if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;	
-			if (DDTiposDocumentos.CIF.equals(tipoDocumento))  tipoDoc = DtoClienteUrsus.CIF;
-			if (DDTiposDocumentos.NIF.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;
-			if (DDTiposDocumentos.TARJETA_RESIDENTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_RESIDENTE;
-			if (DDTiposDocumentos.PASAPORTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.PASAPORTE;
-			if (DDTiposDocumentos.CIF_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.CIF_EXTRANJERO;
-			if (DDTiposDocumentos.DNI_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI_EXTRANJERO;
-			if (DDTiposDocumentos.TARJETA_DIPLOMATICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_DIPLOMATICA;
-			if (DDTiposDocumentos.MENOR.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.MENOR;
-			if (DDTiposDocumentos.OTROS_PERSONA_FISICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PERSONA_FISICA;
-			if (DDTiposDocumentos.OTROS_PESONA_JURIDICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
-		}
-		
 		try {
+			
+			if(Checks.esNulo(numeroDocumento) || Checks.esNulo(tipoDocumento)) {
+				return lista;
+			}
+			
+			if(!Checks.esNulo(tipoDocumento)){
+				if (DDTiposDocumentos.DNI.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;	
+				if (DDTiposDocumentos.CIF.equals(tipoDocumento))  tipoDoc = DtoClienteUrsus.CIF;
+				if (DDTiposDocumentos.NIF.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI;
+				if (DDTiposDocumentos.TARJETA_RESIDENTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_RESIDENTE;
+				if (DDTiposDocumentos.PASAPORTE.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.PASAPORTE;
+				if (DDTiposDocumentos.CIF_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.CIF_EXTRANJERO;
+				if (DDTiposDocumentos.DNI_EXTRANJERO.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.DNI_EXTRANJERO;
+				if (DDTiposDocumentos.TARJETA_DIPLOMATICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.TARJETA_DIPLOMATICA;
+				if (DDTiposDocumentos.MENOR.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.MENOR;
+				if (DDTiposDocumentos.OTROS_PERSONA_FISICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PERSONA_FISICA;
+				if (DDTiposDocumentos.OTROS_PESONA_JURIDICA.equals(tipoDocumento)) tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
+			}
+
 			lista = uvemManagerApi.ejecutarNumCliente(numeroDocumento, tipoDoc, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+					
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en expedienteComercialManager",e);
+			throw e;
 		}
 		
 		return lista;
@@ -2953,8 +2962,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		try {
 			numURSUS = Integer.parseInt(numeroUrsus);
 			datosClienteDto = uvemManagerApi.ejecutarDatosCliente(numURSUS, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
+		} catch (NumberFormatException nfe) {
+			logger.error("error en expedienteComercialManager", nfe);
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager", e);
+			throw e;
 		}
 		
 		return datosClienteDto;
@@ -3336,35 +3348,40 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Override
 	@Transactional(readOnly = false)
 	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception {
-		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getIdExpediente()));
 		
-		
-		Formalizacion formalizacion = expediente.getFormalizacion();
-		if(!Checks.esNulo(formalizacion)){
+		try {
+			ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getIdExpediente()));
 			
-			String numExpedienteRiesgo = dto.getNumExpediente();			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodTipoRiesgo());
-			DDTipoRiesgoClase tipoRiesgo = genericDao.get(DDTipoRiesgoClase.class, filtro);
-			
-			if(!Checks.esNulo(numExpedienteRiesgo) && !Checks.esNulo(tipoRiesgo)){
-				Long capitalConcedido;
-				try {
-					capitalConcedido = uvemManagerApi.consultaDatosPrestamo(numExpedienteRiesgo, Integer.parseInt(tipoRiesgo.getCodigo()));
-					
-					if(!Checks.esNulo(capitalConcedido)){
-						formalizacion.setCapitalConcedido(capitalConcedido.doubleValue()/100);
+			Formalizacion formalizacion = expediente.getFormalizacion();
+			if(!Checks.esNulo(formalizacion)){
+				
+				String numExpedienteRiesgo = dto.getNumExpediente();			
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodTipoRiesgo());
+				DDTipoRiesgoClase tipoRiesgo = genericDao.get(DDTipoRiesgoClase.class, filtro);
+				
+				if(!Checks.esNulo(numExpedienteRiesgo) && !Checks.esNulo(tipoRiesgo)){
+					Long capitalConcedido;
+					try {
+						capitalConcedido = uvemManagerApi.consultaDatosPrestamo(numExpedienteRiesgo, Integer.parseInt(tipoRiesgo.getCodigo()));
 						
-						formalizacion.setNumExpediente(numExpedienteRiesgo);
-						formalizacion.setTipoRiesgoClase(tipoRiesgo);
-
-						genericDao.save(Formalizacion.class, formalizacion);
-						return true;
+						if(!Checks.esNulo(capitalConcedido)){
+							formalizacion.setCapitalConcedido(capitalConcedido.doubleValue()/100);
+							
+							formalizacion.setNumExpediente(numExpedienteRiesgo);
+							formalizacion.setTipoRiesgoClase(tipoRiesgo);
+	
+							genericDao.save(Formalizacion.class, formalizacion);
+							return true;
+						}
+					} catch (NumberFormatException e) {
+						logger.error("Error en la obtención de datos de préstamo.",e);
 					}
-				} catch (NumberFormatException e) {
-					logger.error("Error en la obtención de datos de préstamo.",e);
+	
 				}
-
-			}
+			}			
+		} catch(Exception e) {
+			logger.error("Error en la obtención de datos de préstamo.", e);
+			throw e;
 		}
 		return false;
 	}

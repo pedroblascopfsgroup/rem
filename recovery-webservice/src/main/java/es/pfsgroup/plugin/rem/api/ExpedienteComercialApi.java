@@ -641,7 +641,7 @@ public interface ExpedienteComercialApi {
 	 * @param tipoDocumento : tipo de documento del cliente.
 	 * @return Devuelve una lista con los clientes encontrados por el servicio.
 	 */
-	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento);
+	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento) throws Exception;
 
 	/**
 	 * Este método obtiene los detalles de cliente en base al número URSUS recibido.

@@ -336,6 +336,62 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		  });
 		
 	},
+	onChangeOperacionExenta: function(field, value){
+		var me = this;
+		//debugger;
+		var operacion = me.lookupReference('cbOperacionExenta');
+		var renuncia = me.lookupReference('cbRenunciaExencion');
+		var tipoImpositivo = me.lookupReference('tipoImpositivo');
+		var cuota = me.lookupReference('cbCuota');
+		if(operacion.getValue()){
+			renuncia.setReadOnly(false);
+			tipoImpositivo.setDisabled(true);
+			cuota.setDisabled(true);
+		}else{			
+			tipoImpositivo.setDisabled(false);
+			tipoImpositivo.allowBlank = false;
+			cuota.setDisabled(false);
+			cuota.allowBlank = false;
+			renuncia.setValue(false);
+			renuncia.setReadOnly(true);
+		}
+		//operacion.validate();
+		//renuncia.validate();
+		//tipoImpositivo.validate();
+		//cuota.validate();
+
+	},
+	
+	onChangeRenunciaExencion: function(field, value){
+		var me = this;
+		//debugger;
+		var operacion = me.lookupReference('cbOperacionExenta');
+		var renuncia = me.lookupReference('cbRenunciaExencion'); 
+		var tipoImpositivo = me.lookupReference('tipoImpositivo');
+		var cuota = me.lookupReference('cbCuota');
+		if(operacion.getValue() && !renuncia.getValue()){
+			tipoImpositivo.setDisabled(true);
+			cuota.setDisabled(true);
+		}else{
+			tipoImpositivo.setDisabled(false);
+			tipoImpositivo.allowBlank = false;
+			cuota.setDisabled(false);
+			cuota.allowBlank = false;
+		}
+		//renuncia.validate();
+		//tipoImpositivo.validate();
+		//cuota.validate();
+	},
+	
+	estaExento: function(get){
+     	var me= this;
+     	if(get('detalleeconomico.impuestoIndirectoExento')=="true" || get('detalleeconomico.abonoCuenta')==true){
+     		return true;
+     	}
+     	else{
+     		return false;
+     	}
+     },
 		
 	onChangeImportePrincipalSujeto: function(field, e){
 		var me= this;

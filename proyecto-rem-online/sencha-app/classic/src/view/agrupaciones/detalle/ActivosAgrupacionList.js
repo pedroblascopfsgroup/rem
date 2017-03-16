@@ -101,37 +101,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 			$AU.confirmRolesToFunctionExecution(addRowPluginFunction, me.rowPluginSecurity);
 		}
 
-        // Submenu del Grid.
-        me.menu = Ext.create("Ext.menu.Menu", {
-		    cls: 'menu-favoritos',
-		    plain: true,
-		    floating: true,
-	    	items: [
-	    		{
-	    			text: HreRem.i18n('grid.submenu.msg.publicar.agrupacion'),
-	    			handler: 'onClickPublicarAgrupacionSubmenuGrid'
-	    		},
-	    		{
-	    			text: HreRem.i18n('grid.submenu.msg.publicar.activos.seleccionados'),
-	    			handler: 'onClickPublicarActivosSeleccionadosSubmenuGrid',
-	    			reference: 'submenugridpublicaractivosbtn',
-	    			disabled: true
-	    		},
-	    		{
-	    			text: HreRem.i18n('grid.menu.msg.publicar.subdivisiones.activos.seleccionados'),
-	    			handler: 'onClickPublicarSubdivisionesActivosSeleccioandosSubmenuGrid',
-	    			reference: 'submenugridpublicarsubdivisionesbtn',
-	    			disabled: true
-	    		}
-	    	]
-	    	
-	    });
-
-        // Botones de la barra del grid.
+        // Botones genéricos de la barra del grid.
         var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this};
 		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true};
-		var configGridMenu = {iconCls:'x-fa fa-bars', cls:'boton-cabecera', itemId:'menuGridBtn', arrowVisible: false, menuAlign: 'tr-br', menu: me.menu};
-		var separador = {xtype: 'tbfill'};
 
 		// Se configura manualmente la Top-Bar mostrándola si se dispone de alguno de los siguientes permisos.
 		if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION', 'EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION'])) {
@@ -140,13 +112,47 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	    		dock: 'top'
 			};
 			
-			// Insertar elementos a la Top-Bar según permisos.
+			// Insertar elementos a la Top-Bar según permisos y tipos de agrupación.
 			me.tbar.items = [];
+			
 			if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION'])) {
 				me.tbar.items.push(configAddBtn);
 				me.tbar.items.push(configRemoveBtn);
 			}
-			if($AU.userHasFunction(['EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION'])) {
+			
+			var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+			if($AU.userHasFunction(['EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION']) &&
+					(tipoAgrupacion==CONST.TIPOS_AGRUPACION['OBRA_NUEVA'] || tipoAgrupacion==CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
+				// Submenu del Grid.
+		        me.menu = Ext.create("Ext.menu.Menu", {
+				    cls: 'menu-favoritos',
+				    plain: true,
+				    floating: true,
+			    	items: [
+			    		{
+			    			text: HreRem.i18n('grid.submenu.msg.publicar.agrupacion'),
+			    			handler: 'onClickPublicarAgrupacionSubmenuGrid'
+			    		},
+			    		{
+			    			text: HreRem.i18n('grid.submenu.msg.publicar.activos.seleccionados'),
+			    			handler: 'onClickPublicarActivosSeleccionadosSubmenuGrid',
+			    			reference: 'submenugridpublicaractivosbtn',
+			    			disabled: true
+			    		},
+			    		{
+			    			text: HreRem.i18n('grid.menu.msg.publicar.subdivisiones.activos.seleccionados'),
+			    			handler: 'onClickPublicarSubdivisionesActivosSeleccioandosSubmenuGrid',
+			    			reference: 'submenugridpublicarsubdivisionesbtn',
+			    			disabled: true
+			    		}
+			    	]
+			    	
+			    });
+		        
+		        // Botones de submenú de la barra del grid.
+		        var configGridMenu = {iconCls:'x-fa fa-bars', cls:'boton-cabecera', itemId:'menuGridBtn', arrowVisible: false, menuAlign: 'tr-br', menu: me.menu};
+		        var separador = {xtype: 'tbfill'};
+				
 				me.tbar.items.push(separador);
 				me.tbar.items.push(configGridMenu);
 			}
@@ -486,7 +492,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		var menuItemPublicarActivos = me.up('agrupacionesdetallemain').lookupReference('submenugridpublicaractivosbtn');
 		var menuItemPublicarSubdivisionesActivos = me.up('agrupacionesdetallemain').lookupReference('submenugridpublicarsubdivisionesbtn');
 
-		if(Ext.isDefined(menuItemPublicarActivos) && Ext.isDefined(menuItemPublicarSubdivisionesActivos)) {
+		if(!Ext.isEmpty(menuItemPublicarActivos) && !Ext.isEmpty(menuItemPublicarSubdivisionesActivos)) {
 			if(disabled){
 				menuItemPublicarActivos.setDisabled(true);
 				menuItemPublicarSubdivisionesActivos.setDisabled(true);

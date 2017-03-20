@@ -458,7 +458,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			Double valor = null;
 			ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo.getActivo());
 			if (!Checks.esNulo(tasacion)) {
-				valor = Double.parseDouble(tasacion.getValoracionBien().getImporteValorTasacion().toString());
+				valor = Double.parseDouble(tasacion.getImporteTasacionFin().toString());
 			} else {
 				ActivoValoraciones valoracion = activoApi.getValoracionAprobadoVenta(activo.getActivo());
 				if (!Checks.esNulo(valoracion)) {

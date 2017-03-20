@@ -257,7 +257,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 							logger.trace("Map de cambios vacío, nada que notificar");
 						}
 					} catch (Exception e) {
-						logger.error(e);
+						logger.error("Error gestionando la fusion de cambios en DetectorCambiosBD",e);
 					}
 				} // fin main loop
 

@@ -84,6 +84,7 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 						},
 						{
 							fieldLabel:  HreRem.i18n('fieldlabel.subtipo.trabajo'),
+							reference: 'comboSubtipoTrabajoTarificadoRef',
 							flex: 1,
 							//width: 		260,
 							bind: {
@@ -151,5 +152,10 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
     	me.getViewModel().set('trabajo.carteraCodigo', me.carteraCodigo);
     	me.getViewModel().set('trabajo.tipoTrabajoCodigo', me.tipoTrabajoCodigo);
     	me.getViewModel().set('trabajo.subtipoTrabajoCodigo', me.subtipoTrabajoCodigo);
+    	
+    	// Refresca el combo y el grid para los nuevos parametros
+    	me.lookupReference("comboSubtipoTrabajoTarificadoRef").getStore().load();
+    	me.lookupReference("gridselecciontarifas").getStore().load();
+    	
     }
 });

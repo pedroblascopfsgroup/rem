@@ -1214,6 +1214,16 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model) {
+
+		model.put("data", adapter.getListTasacionByIdGrid(id));
+
+		return createModelAndViewJson(model);
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

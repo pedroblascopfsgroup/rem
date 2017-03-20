@@ -95,7 +95,7 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 				//HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la última oferta rechazada.
 				if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_DEVOLUCION_RESERVA)) {
 					DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
-					dtoOfertasFilter.setNumActivo(activo.getNumActivo());
+					dtoOfertasFilter.setIdActivo(activo.getId());
 					dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
 					
 					List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);

@@ -2855,9 +2855,10 @@ public class ActivoAdapter {
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tasacionDto.getCodigoFirma());
-				DDTasadora tasadora = genericDao.get(DDTasadora.class, filtro);
-				tasacionDto.setNomTasador(tasadora.getDescripcion());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", tasacionDto.getCodigoFirma());
+				ActivoProveedor tasadora = genericDao.get(ActivoProveedor.class, filtro);
+				if(!Checks.esNulo(tasadora))
+					tasacionDto.setNomTasador(tasadora.getNombre());
 				listaDtoTasacion.add(tasacionDto);
 			}
 		}

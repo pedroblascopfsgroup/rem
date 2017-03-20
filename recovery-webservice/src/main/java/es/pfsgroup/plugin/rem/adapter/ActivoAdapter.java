@@ -2823,6 +2823,45 @@ public class ActivoAdapter {
 		return listaDtoTasacion;
 
 	}
+	
+	public List<DtoTasacion> getListTasacionByIdGrid(Long id) {
+
+		Activo activo = activoApi.get(id);
+		List<DtoTasacion> listaDtoTasacion = new ArrayList<DtoTasacion>();
+
+		if (activo.getTasacion() != null) {
+			for (int i = 0; i < activo.getTasacion().size(); i++) {
+
+				DtoTasacion tasacionDto = new DtoTasacion();
+				try {
+					BeanUtils.copyProperties(tasacionDto, activo.getTasacion().get(i));
+					if (activo.getTasacion().get(i).getTipoTasacion() != null) {
+						BeanUtils.copyProperty(tasacionDto, "tipoTasacionCodigo",
+								activo.getTasacion().get(i).getTipoTasacion().getCodigo());
+						BeanUtils.copyProperty(tasacionDto, "tipoTasacionDescripcion",
+								activo.getTasacion().get(i).getTipoTasacion().getDescripcion());
+					}
+					if (activo.getTasacion().get(i).getValoracionBien() != null) {
+						BeanUtils.copyProperty(tasacionDto, "fechaValorTasacion",
+								activo.getTasacion().get(i).getValoracionBien().getFechaValorTasacion());
+						BeanUtils.copyProperty(tasacionDto, "fechaSolicitudTasacion",
+								activo.getTasacion().get(i).getValoracionBien().getFechaSolicitudTasacion());
+						BeanUtils.copyProperty(tasacionDto, "importeValorTasacion",
+								activo.getTasacion().get(i).getValoracionBien().getImporteValorTasacion());
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				tasacionDto.setNomTasador(activoDao.getTasadora(tasacionDto.getCodigoFirma()));
+				listaDtoTasacion.add(tasacionDto);
+			}
+		}
+
+		return listaDtoTasacion;
+
+	}
 
 	public DtoTramite getTramite(Long idTramite) {
 		DtoTramite dtoTramite = new DtoTramite();

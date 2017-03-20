@@ -1764,7 +1764,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 		CondicionanteExpediente condiciones = expediente.getCondicionante();
 		Activo activoPrincipal= expediente.getOferta().getActivoPrincipal();
-		if(!Checks.esNulo(activoPrincipal.getSituacionPosesoria())){
+		if(!Checks.esNulo(activoPrincipal.getSituacionPosesoria()) && !Checks.esNulo(condiciones)){
 			
 			// Comprobar fecha toma posesión.
 			if(!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(condiciones.getPosesionInicial()) && condiciones.getPosesionInicial() != 1) {

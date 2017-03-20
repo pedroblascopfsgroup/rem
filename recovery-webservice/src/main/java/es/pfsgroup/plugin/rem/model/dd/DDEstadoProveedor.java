@@ -31,6 +31,14 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDEstadoProveedor implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String ESTADO_PTE_CONSTITUCION_TRAMITAR= "01";
+	public static final String ESTADO_PTE_CONSTITUCION_NO_TRAMITAR= "02";
+	public static final String ESTADO_PROCESO_LIQUIDACION = "03";
+	public static final String ESTADO_BIGENTE = "04";
+	public static final String ESTADO_LIQUIDACION = "05";
+	public static final String ESTADO_DISUELTA = "06";
+	public static final String ESTADO_BAJA_PROVEEDOR = "07";
 
 	@Id
 	@Column(name = "DD_EPR_ID")

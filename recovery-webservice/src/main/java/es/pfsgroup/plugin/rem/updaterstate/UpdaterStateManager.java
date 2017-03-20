@@ -234,7 +234,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				Double valorActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 				
 				if(Checks.esNulo(valorActivo))
-					valorActivo = activoApi.getTasacionMasReciente(activo).getValoracionBien().getImporteValorTasacion().doubleValue();
+					valorActivo = activoApi.getTasacionMasReciente(activo).getImporteTasacionFin().doubleValue();
 				
 				if(!Checks.esNulo(valorActivo)) {
 					if(valorActivo <= importeLimite)

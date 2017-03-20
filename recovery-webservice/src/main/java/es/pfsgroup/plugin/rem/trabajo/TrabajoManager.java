@@ -59,8 +59,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
@@ -178,12 +176,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private ActivoApi activoApi;
-
-	@Autowired
-	private OfertaApi ofertaApi;
-
-	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
 	private PropuestaPrecioDao propuestaDao;
@@ -1687,7 +1679,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return tarifas;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
 		
@@ -1736,7 +1727,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return hayPresupuestoAutorizado;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean checkSuperaDelegacion(TareaExterna tarea) {
 		String PRESUPUESTO_AUTORIZADO = "02";
@@ -2017,9 +2007,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera", activo.getCartera().getCodigo());
 				//Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigoProvincia", activo.getProvincia());
+				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "baja", 0);
 				Order orden = new Order(OrderType.ASC,"nombreComercial");
 				
-				return (List<VProveedores>) genericDao.getListOrdered(VProveedores.class, orden, filtro1/*, filtro2*/);
+				return (List<VProveedores>) genericDao.getListOrdered(VProveedores.class, orden, filtro1, filtro3/*, filtro2*/);
 			}
 		}
 		

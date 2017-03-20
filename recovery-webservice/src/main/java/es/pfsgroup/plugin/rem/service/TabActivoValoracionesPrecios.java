@@ -144,7 +144,7 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 						}
 					}
 			}
-			beanUtilNotNull.copyProperty(valoracionesDto, "importeValorTasacion", tasacionMasReciente.getValoracionBien().getImporteValorTasacion());
+			beanUtilNotNull.copyProperty(valoracionesDto, "importeValorTasacion", tasacionMasReciente.getImporteTasacionFin());
 			beanUtilNotNull.copyProperty(valoracionesDto, "fechaValorTasacion", tasacionMasReciente.getValoracionBien().getFechaValorTasacion());
 			if (tasacionMasReciente.getTipoTasacion() != null){
 				beanUtilNotNull.copyProperty(valoracionesDto, "tipoTasacionDescripcion", tasacionMasReciente.getTipoTasacion().getDescripcion());

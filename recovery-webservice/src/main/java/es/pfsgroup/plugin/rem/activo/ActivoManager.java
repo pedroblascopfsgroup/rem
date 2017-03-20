@@ -3148,16 +3148,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.estaVacio(activo.getTasacion())) {
 			tasacionMasReciente = activo.getTasacion().get(0);
-			Date fechaValorTasacionMasReciente = new Date();
-			if (tasacionMasReciente.getValoracionBien().getFechaValorTasacion() != null) {
-				fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
-			}
-			for (int i = 0; i < activo.getTasacion().size(); i++) {
-				ActivoTasacion tas = activo.getTasacion().get(i);
-				if (tas.getValoracionBien().getFechaValorTasacion() != null) {
-					if (tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {
-						fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
-						tasacionMasReciente = tas;
+			if (tasacionMasReciente != null) {
+				Date fechaValorTasacionMasReciente = new Date();
+				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())
+						&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())) {
+					fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
+				}
+				for (int i = 0; i < activo.getTasacion().size(); i++) {
+					ActivoTasacion tas = activo.getTasacion().get(i);
+					if (tas.getValoracionBien().getFechaValorTasacion() != null) {
+						if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien())
+								&& !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())
+								&& tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {
+							fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
+							tasacionMasReciente = tas;
+						}
 					}
 				}
 			}

@@ -763,5 +763,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return codComercializar;
 	}
+	
+	@Override
+	public String getTasadora(String codFirma) {
+		String nombreTasadora = rawDao.getExecuteSQL("SELECT DISTINCT TRA.DD_TRA_DESCRIPCION FROM DD_TRA_TASADORA TRA WHERE TRA.DD_TRA_CODIGO = TO_CHAR("+codFirma+")");
+		
+		return nombreTasadora;
+	}
 
 }

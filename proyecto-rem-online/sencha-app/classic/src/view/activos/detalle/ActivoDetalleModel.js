@@ -521,6 +521,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {id: '{activo.id}'}
 				 }
     		},
+    		
+    		storeTasacionesGrid: {
+				 model: 'HreRem.model.ActivoTasacion',
+				 sorters: [{ property: 'fechaValorTasacion', direction: 'DESC' }],
+				 proxy: {
+				    type: 'uxproxy',
+					remoteUrl: 'activo/getListTasacionByIdGrid',
+					extraParams: {id: '{activo.id}'}
+				 }
+    		},
 
     		storeTramites: {
     			 model: 'HreRem.model.Tramite',

@@ -41,7 +41,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
     
     private static final String COMBO_RESPUESTA = "comboResolucion";
     private static final String FECHA_RESPUESTA = "fechaRespuesta";
-    private static final String IMPORTE_CONTRAOFERTA = "numImporte";
+    private static final String IMPORTE_CONTRAOFERTA = "numImporteContra";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
    	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 
@@ -114,6 +114,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 					
 					// Actualizamos la participación de los activos en la oferta;
 					expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
+					expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 				}
 				
 				genericDao.save(ExpedienteComercial.class, expediente);

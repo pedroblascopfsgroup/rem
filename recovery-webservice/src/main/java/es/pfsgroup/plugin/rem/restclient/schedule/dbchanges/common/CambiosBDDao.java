@@ -208,6 +208,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 
 		Session session = this.sesionFactoryFacade.getSession(this);
+		
+		cambios.clear();
 
 		FieldInfo[] fields = getDtoFields(dtoClass);
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());

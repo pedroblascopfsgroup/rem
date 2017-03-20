@@ -67,9 +67,9 @@ public class GenericaRestDaoImp extends AbstractEntityDao<Serializable, Serializ
 		query.setParameter("ID", informeComerical);
 		query.executeUpdate();
 		
-		query = this.getSessionFactory().getCurrentSession().createQuery("delete ActivoAnejo where infoComercial=:ID");
-		query.setParameter("ID", informeComerical);
-		query.executeUpdate();
+		//query = this.getSessionFactory().getCurrentSession().createQuery("delete ActivoAnejo where infoComercial=:ID");
+		//query.setParameter("ID", informeComerical);
+		//query.executeUpdate();
 		
 		query = this.getSessionFactory().getCurrentSession().createQuery("delete ActivoInfoComercial where id=:ID");
 		query.setParameter("ID", informeComerical.getId());

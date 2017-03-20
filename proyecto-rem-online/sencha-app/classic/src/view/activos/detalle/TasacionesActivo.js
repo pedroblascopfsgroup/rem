@@ -103,7 +103,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 								xtype: 'gridBase',
 			   					cls	: 'panel-base shadow-panel',
 			   					bind: {
-			   						store: '{storeTasaciones}'
+			   						store: '{storeTasacionesGrid}'
 			   					},
 			   					colspan: 3,
 			   					columns: [
@@ -133,7 +133,8 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        	text: HreRem.i18n('header.listado.tasacion.nomTasadora'),
 			   				        	dataIndex:	'nomTasador',
 			   				        	flex:3
-			   				        }    	        
+			   				        }
+							    	        
 			   				    ],
 			   				    dockedItems : [
 			   				        {
@@ -141,7 +142,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				            dock: 'bottom',
 			   				            displayInfo: true,
 			   				            bind: {
-			   				                store: '{storeTasaciones}'
+			   				                store: '{storeTasacionesGrid}'
 			   				            }
 			   				        }
 			   				    ],

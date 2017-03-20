@@ -1736,7 +1736,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if(!Checks.esNulo(trabajo.getEsTarificado()) && trabajo.getEsTarificado()){
 			DtoGestionEconomicaTrabajo filtroTarifas = new DtoGestionEconomicaTrabajo();
-			filtroTarifas.setLimit(5000000); // Limite de paginacion - Maximo soportado 5mill de tarifas por trabajo
+			filtroTarifas.setLimit(5000000); // Limite de paginacion de resultados - Maximo soportado 5mill de tarifas por trabajo
 			filtroTarifas.setStart(0);
 			List<DtoTarifaTrabajo> listaTarifas = (List<DtoTarifaTrabajo>) getListDtoTarifaTrabajo(filtroTarifas, trabajo.getId());
 			

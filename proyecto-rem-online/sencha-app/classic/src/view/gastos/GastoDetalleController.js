@@ -190,7 +190,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     
 	onClickBotonGuardar: function(btn) {
 		var me = this;
-		
+
 		var success = function (a, operation, c) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
@@ -514,6 +514,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var form= window.down('formBase');
     	var detalle= btn.up().up().down('anyadirnuevogastoactivodetalle');
     	var idGasto = detalle.up().idGasto;
+    	window.mask(HreRem.i18n("msg.mask.loading"));;
     	if(!Ext.isEmpty(detalle.getBindRecord())){
 	    	
 	    	var numeroActivo= detalle.getBindRecord().numActivo;
@@ -545,6 +546,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    				},
 	    				callback: function(records, operation, success) {
 	    					form.reset();
+	    					window.unmask();
 	    					window.parent.funcionRecargar();
 	    					window.close();
 	    				}

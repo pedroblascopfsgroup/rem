@@ -398,6 +398,18 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			beanUtilNotNull.copyProperty(proveedor, "criterioCajaIVA", dto.getCriterioCajaIVA());
 			beanUtilNotNull.copyProperty(proveedor, "fechaEjercicioOpcion", dto.getFechaEjercicioOpcion());
+			
+			// Si viene fecha de baja, asignar el estado de proveedor a 'baja como proveedor'.
+			Date fechaEnBlanco = new Date();
+			fechaEnBlanco.setTime(0);
+			if(!Checks.esNulo(dto.getFechaBajaProveedor()) && dto.getFechaBajaProveedor().after(fechaEnBlanco)) {
+				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR);
+				beanUtilNotNull.copyProperty(proveedor, "estadoProveedor", estadoProveedor);
+			}
+			// Si viene estado de proveedor como 'baja como proveedor', establecer fecha de baja a hoy.
+			if(!Checks.esNulo(dto.getEstadoProveedorCodigo()) && dto.getEstadoProveedorCodigo().equals(DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR)) {
+				beanUtilNotNull.copyProperty(proveedor, "fechaBaja", new Date());
+			}
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -1152,6 +1164,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			if(!Checks.esNulo(proveedor.getTipoProveedor())) {
 				beanUtilNotNull.copyProperty(dtoProveedor, "subtipoProveedorDescripcion", proveedor.getTipoProveedor().getDescripcion());
 			}
+			beanUtilNotNull.copyProperty(dtoProveedor, "fechaBaja", proveedor.getFechaBaja());
 			
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

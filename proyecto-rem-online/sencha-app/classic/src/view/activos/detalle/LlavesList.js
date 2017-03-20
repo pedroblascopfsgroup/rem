@@ -20,6 +20,7 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
      	
     	me.listeners = {	    	
  			rowclick: 'onLlavesListClick',
+ 			canceledit: 'onLlavesListClick',
  			rowdblclick: 'valdacionesEdicionLlavesList',
  			beforeedit: 'valdacionesEdicionLlavesList'
  	    };

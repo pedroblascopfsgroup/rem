@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -2816,6 +2817,47 @@ public class ActivoAdapter {
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
+				listaDtoTasacion.add(tasacionDto);
+			}
+		}
+
+		return listaDtoTasacion;
+
+	}
+	
+	public List<DtoTasacion> getListTasacionByIdGrid(Long id) {
+
+		Activo activo = activoApi.get(id);
+		List<DtoTasacion> listaDtoTasacion = new ArrayList<DtoTasacion>();
+
+		if (activo.getTasacion() != null) {
+			for (int i = 0; i < activo.getTasacion().size(); i++) {
+
+				DtoTasacion tasacionDto = new DtoTasacion();
+				try {
+					BeanUtils.copyProperties(tasacionDto, activo.getTasacion().get(i));
+					if (activo.getTasacion().get(i).getTipoTasacion() != null) {
+						BeanUtils.copyProperty(tasacionDto, "tipoTasacionCodigo",
+								activo.getTasacion().get(i).getTipoTasacion().getCodigo());
+						BeanUtils.copyProperty(tasacionDto, "tipoTasacionDescripcion",
+								activo.getTasacion().get(i).getTipoTasacion().getDescripcion());
+					}
+					if (activo.getTasacion().get(i).getValoracionBien() != null) {
+						BeanUtils.copyProperty(tasacionDto, "fechaValorTasacion",
+								activo.getTasacion().get(i).getValoracionBien().getFechaValorTasacion());
+						BeanUtils.copyProperty(tasacionDto, "fechaSolicitudTasacion",
+								activo.getTasacion().get(i).getValoracionBien().getFechaSolicitudTasacion());
+						BeanUtils.copyProperty(tasacionDto, "importeValorTasacion",
+								activo.getTasacion().get(i).getValoracionBien().getImporteValorTasacion());
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tasacionDto.getCodigoFirma());
+				DDTasadora tasadora = genericDao.get(DDTasadora.class, filtro);
+				tasacionDto.setNomTasador(tasadora.getDescripcion());
 				listaDtoTasacion.add(tasacionDto);
 			}
 		}

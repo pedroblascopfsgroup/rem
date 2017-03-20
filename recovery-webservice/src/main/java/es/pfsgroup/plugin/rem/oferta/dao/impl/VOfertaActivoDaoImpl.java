@@ -29,8 +29,8 @@ public class VOfertaActivoDaoImpl extends AbstractEntityDao<VOfertasActivosAgrup
 		if (!Checks.esNulo(dtoOfertasFilter.getNumAgrupacion())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion", dtoOfertasFilter.getNumAgrupacion().toString());
 		}
-		if (!Checks.esNulo(dtoOfertasFilter.getNumActivo())) {
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.activos", dtoOfertasFilter.getNumActivo().toString());
+		if (!Checks.esNulo(dtoOfertasFilter.getIdActivo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", dtoOfertasFilter.getIdActivo().toString());
 		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoEstadoOferta", dtoOfertasFilter.getEstadoOferta());

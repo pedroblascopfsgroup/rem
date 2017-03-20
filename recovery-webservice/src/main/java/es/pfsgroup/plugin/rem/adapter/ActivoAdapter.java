@@ -3387,9 +3387,10 @@ public class ActivoAdapter {
 						.getResults();
 				presupuesto.setDispuesto(new Double(0));
 				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
-
-					presupuesto.setDispuesto(
-							presupuesto.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
+					if(activoTrabajoTemp.getEjercicio().equals(presupuesto.getEjercicioAnyo())) {
+						presupuesto.setDispuesto(
+								presupuesto.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
+					}
 				}
 
 			} else {

@@ -1669,7 +1669,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public DtoPage getTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
+	public List<DtoTarifaTrabajo> getListDtoTarifaTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setIdTrabajo(idTrabajo);
@@ -1684,7 +1684,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tarifas.add(dtoTarifaTrabajo);
 		}
 
-		return new DtoPage(tarifas, page.getTotalCount());
+		return tarifas;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public DtoPage getTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
+		
+		List<DtoTarifaTrabajo> listaTarifasTrabajo = getListDtoTarifaTrabajo(filtro, idTrabajo);
+		return new DtoPage(listaTarifasTrabajo, listaTarifasTrabajo.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1728,21 +1736,42 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return hayPresupuestoAutorizado;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean checkSuperaDelegacion(TareaExterna tarea) {
 		String PRESUPUESTO_AUTORIZADO = "02";
-
-		Boolean hayPresupuestoAutorizado = false;
+		Long limiteDelegacion = 5000L; //Importe maximo para Delegacion a Capa Control Bankia
 
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
 
-		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);
-
-		for (PresupuestoTrabajo presupuestoTrabajo : presupuestosTrabajo) {
-			if (PRESUPUESTO_AUTORIZADO.equals(presupuestoTrabajo.getEstadoPresupuesto().getCodigo())) {
-				if(presupuestoTrabajo.getImporte()>5000L)
+		if(!Checks.esNulo(trabajo.getEsTarificado()) && trabajo.getEsTarificado()){
+			DtoGestionEconomicaTrabajo filtroTarifas = new DtoGestionEconomicaTrabajo();
+			filtroTarifas.setLimit(5000000); // Limite de paginacion - Maximo soportado 5mill de tarifas por trabajo
+			filtroTarifas.setStart(0);
+			List<DtoTarifaTrabajo> listaTarifas = (List<DtoTarifaTrabajo>) getListDtoTarifaTrabajo(filtroTarifas, trabajo.getId());
+			
+			// Acumulado por tarifas
+			BigDecimal importeTotalTarifas = new BigDecimal(0);
+			
+			for(DtoTarifaTrabajo tarifaTrabajo : listaTarifas){
+				importeTotalTarifas = importeTotalTarifas.add(new BigDecimal(tarifaTrabajo.getPrecioUnitario()));
+				
+				// Si el acumulado de tarifas hasta ahora, supera limite de delegacion - Supera delegacion - a Capa Control
+				if(importeTotalTarifas.compareTo(new BigDecimal(limiteDelegacion)) == 1){
 					return true;
+				}
+			}
+
+		} else {
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+			List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);
+	
+			for (PresupuestoTrabajo presupuestoTrabajo : presupuestosTrabajo) {
+				if (PRESUPUESTO_AUTORIZADO.equals(presupuestoTrabajo.getEstadoPresupuesto().getCodigo())) {
+					//Si el presupuesto del trabajo supera limite de delegacion - Supera delegacion - a Capa Control 
+					if(presupuestoTrabajo.getImporte()>limiteDelegacion)
+						return true;
+				}
 			}
 		}
 

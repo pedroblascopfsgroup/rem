@@ -39,12 +39,10 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -95,8 +93,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoProveedorManager")
@@ -119,16 +115,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
-	private OfertaDao ofertaDao;
-	
-	@Autowired
-	private ReservaDao reservaDao;
-	
-	@Autowired
 	private ProveedoresApi proveedores;	
-	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -141,9 +128,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private GastoDao gastoDao;
-	
-	@Autowired
-	private ActivoAdapter activoAdapter;
 	
 	@Autowired
 	private UpdaterStateGastoApi updaterStateApi;

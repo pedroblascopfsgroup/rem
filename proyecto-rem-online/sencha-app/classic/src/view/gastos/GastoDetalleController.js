@@ -190,7 +190,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     
 	onClickBotonGuardar: function(btn) {
 		var me = this;
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
 		var success = function (a, operation, c) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
@@ -338,7 +338,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 	onChangeOperacionExenta: function(field, value){
 		var me = this;
-		//debugger;
+
 		var operacion = me.lookupReference('cbOperacionExenta');
 		var renuncia = me.lookupReference('cbRenunciaExencion');
 		var tipoImpositivo = me.lookupReference('tipoImpositivo');
@@ -364,7 +364,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	onChangeRenunciaExencion: function(field, value){
 		var me = this;
-		//debugger;
+		
 		var operacion = me.lookupReference('cbOperacionExenta');
 		var renuncia = me.lookupReference('cbRenunciaExencion'); 
 		var tipoImpositivo = me.lookupReference('tipoImpositivo');
@@ -612,89 +612,92 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickBotonGuardarGasto: function(btn){
 		var me =this;
 		var window= btn.up('window'),
-		form= window.down('formBase'),
-		url =  $AC.getRemoteUrl('gastosproveedor/existeGasto');
+		form= window.down('formBase');
 		
 		if(form.isFormValid() && !form.disableValidation || form.disableValidation) {
-		
-			Ext.Ajax.request({		    			
-			 		url: url,
-			   		params: form.getBindRecord().getData(),		    		
-			    	success: function(response, opts) {
-			    		var data = {};
-			            try {
-			            	data = Ext.decode(response.responseText);
-			            }
-			            catch (e){ };
-			            
-			            if(!Ext.isEmpty(data) && data.success == "true") {
-			            	
-			            	if(data.existeGasto == "true") {
-			            		
-			            		Ext.Msg.show({
-								   title: HreRem.i18n('title.mensaje.confirmacion'),
-								   msg: HreRem.i18n('msg.desea.crear.gasto.duplicado'),
-								   buttons: Ext.MessageBox.YESNO,
-								   fn: function(buttonId) {
-								        if (buttonId == 'yes') {
-								        	
-								        	var success = function(record, operation) {
-												me.getView().unmask();
-										    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-										    	window.parent.funcionRecargar();
-										    	var data = {};
-									            try {
-									            	data = Ext.decode(operation._response.responseText);
-									            }
-									            catch (e){ };
-									            
-									            record.set("id", data.id);
-									            
-										    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
-										    	
-										    	window.destroy();  	
-					            			};
-							    			me.onSaveFormularioCompleto(null, form, success);
-								        	
-								        }
-								   }
-			            		});
-			            	} else if (data.existeGasto == "false") {
-			            		
-			            		var success = function(record, operation) {
-									me.getView().unmask();
-							    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-							    	window.parent.funcionRecargar();
-							    	var data = {};
-						            try {
-						            	data = Ext.decode(operation._response.responseText);
-						            }
-						            catch (e){ };
-						            
-						            record.set("id", data.id);
-						            
-							    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
-							    	
-							    	window.destroy();  	
-			            		};
-					    		me.onSaveFormularioCompleto(null, form, success);
-			            		
-			            	}
-			            	
-			            
-			            	
-			            } else if (!Ext.isEmpty(data) && data.success == "false"){		            		
-							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			            }	
-			    	}
-			});
-			
+			// Comprobar si el proveedor está dado de baja para notificarlo.
+			var combo = window.lookupReference('comboProveedores');
+			var fechaBaja = combo.getSelection().getData().fechaBaja;
+			if(!Ext.isEmpty(fechaBaja)) {
+				Ext.Msg.show({
+					   title: HreRem.i18n('title.mensaje.confirmacion'),
+					   msg: HreRem.i18n('msg.desea.crear.proveedor.baja'),
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes') {
+					        	me.onGuardarGastoComprobarExisteGasto(window, form);
+					        }
+					   }
+	     		});
+			} else {
+				me.onGuardarGastoComprobarExisteGasto(window, form);
+			}
 		} else {
-		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
+	},
 	
-				
+	onGuardarGastoComprobarExisteGasto: function(window, form) {
+		var me = this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/existeGasto');
+		
+		Ext.Ajax.request({		    			
+	 		url: url,
+	   		params: form.getBindRecord().getData(),		    		
+	    	success: function(response, opts) {
+	    		var data = {};
+	            try {
+	            	data = Ext.decode(response.responseText);
+	            }
+	            catch (e){ };
+	            
+	            if(!Ext.isEmpty(data) && data.success == "true") {
+	            	
+	            	if(data.existeGasto == "true") {
+	            		
+	            		Ext.Msg.show({
+						   title: HreRem.i18n('title.mensaje.confirmacion'),
+						   msg: HreRem.i18n('msg.desea.crear.gasto.duplicado'),
+						   buttons: Ext.MessageBox.YESNO,
+						   fn: function(buttonId) {
+						        if (buttonId == 'yes') {
+						        	me.onGuardarGasto(window, form);
+						        }
+						   }
+	            		});
+	            		
+	            	} else if (data.existeGasto == "false") {
+	            		me.onGuardarGasto(window, form);
+	            	}
+	            	
+	            } else if (!Ext.isEmpty(data) && data.success == "false"){		            		
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	            }	
+	    	}
+		});
+	},
+	
+	onGuardarGasto: function(window, form) {
+		var me = this;
+		
+		var success = function(record, operation) {
+			me.getView().unmask();
+	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	window.parent.funcionRecargar();
+	    	var data = {};
+            try {
+            	data = Ext.decode(operation._response.responseText);
+            }
+            catch (e){ };
+            
+            record.set("id", data.id);
+            
+	    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
+	    	
+	    	window.destroy();  	
+		};
+		
+		me.onSaveFormularioCompleto(null, form, success);
 	},
 	
 	onClickBotonAsignarTrabajosGasto: function(btn) {

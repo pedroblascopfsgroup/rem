@@ -190,7 +190,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     
 	onClickBotonGuardar: function(btn) {
 		var me = this;
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
 		var success = function (a, operation, c) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();

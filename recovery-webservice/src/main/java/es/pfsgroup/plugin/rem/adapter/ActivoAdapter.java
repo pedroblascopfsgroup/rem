@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -2854,7 +2855,9 @@ public class ActivoAdapter {
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
-				tasacionDto.setNomTasador(activoDao.getTasadora(tasacionDto.getCodigoFirma()));
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tasacionDto.getCodigoFirma());
+				DDTasadora tasadora = genericDao.get(DDTasadora.class, filtro);
+				tasacionDto.setNomTasador(tasadora.getDescripcion());
 				listaDtoTasacion.add(tasacionDto);
 			}
 		}

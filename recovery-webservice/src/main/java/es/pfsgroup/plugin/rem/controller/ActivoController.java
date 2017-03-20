@@ -238,13 +238,6 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 
-			if (dtoActivoFiltro.getSort() != null) {
-				if (dtoActivoFiltro.getSort().equals("via")) {
-					dtoActivoFiltro.setSort("tipoViaCodigo, nombreVia, numActivo");
-				} else {
-					dtoActivoFiltro.setSort(dtoActivoFiltro.getSort() + ",numActivo");
-				}
-			}
 			Page page = adapter.getActivos(dtoActivoFiltro);
 
 			model.put("data", page.getResults());

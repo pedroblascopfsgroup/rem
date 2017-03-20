@@ -238,13 +238,6 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 
-			if (dtoActivoFiltro.getSort() != null) {
-				if (dtoActivoFiltro.getSort().equals("via")) {
-					dtoActivoFiltro.setSort("tipoViaCodigo, nombreVia, numActivo");
-				} else {
-					dtoActivoFiltro.setSort(dtoActivoFiltro.getSort() + ",numActivo");
-				}
-			}
 			Page page = adapter.getActivos(dtoActivoFiltro);
 
 			model.put("data", page.getResults());
@@ -1217,6 +1210,16 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getListTasacionById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListTasacionById(id));
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model) {
+
+		model.put("data", adapter.getListTasacionByIdGrid(id));
 
 		return createModelAndViewJson(model);
 

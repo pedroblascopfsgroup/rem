@@ -114,4 +114,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return
 	 */
 	public String getCodigoTipoComercializarByActivo(Long idActivo);
+
+	public String getTasadora(String codigoFirma);
 }

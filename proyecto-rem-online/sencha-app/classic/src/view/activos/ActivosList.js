@@ -174,9 +174,17 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'via',
+		            dataIndex: 'nombreVia',
 		            text: HreRem.i18n('header.via'),
-		            flex: 1
+		            flex: 1,
+		            renderer: function(value, cell, record) {
+
+		            	var tipoVia = record.get("tipoVia");
+		            	if(!Ext.isEmpty(tipoVia)) {
+		            		return value + ", " + Ext.util.Format.capitalize(data.tipoVia.descripcion.toLowerCase())
+		            	}
+		            	return value
+		            }
 		        },
 		        {
 		            dataIndex: 'localidadDescripcion',

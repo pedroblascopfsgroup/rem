@@ -125,50 +125,48 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	}
 
 	//  --- Mapas con la relación Tarea - Tipo Gestor/supervisor  -------------------------------------------------
-	@SuppressWarnings("static-access")	
 	private HashMap<String,String> getMapCodigoTipoGestor() {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		
-		mapa.put(this.CODIGO_T013_DEFINICION_OFERTA, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RESOLUCION_COMITE, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RESPUESTA_OFERTANTE, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_INSTRUCCIONES_RESERVA, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RESOLUCION_EXPEDIENTE, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_FIRMA_PROPIETARIO, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RATIFICACION_COMITE, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_CIERRE_ECONOMICO, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_DOCUMENTOS_POSTVENTA, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_RESULTADO_PBC, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_INFORME_JURIDICO, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_RESOLUCION_TANTEO, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_DEVOLUCION_LLAVES, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_POSICIONAMIENTO_FIRMA, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		
 		return mapa;
 	}
 	
-	@SuppressWarnings("static-access")
 	private HashMap<String,String> getMapCodigoTipoSupervisor() {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		
-		mapa.put(this.CODIGO_T013_DEFINICION_OFERTA, gestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RESOLUCION_COMITE, gestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RESPUESTA_OFERTANTE, gestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_INSTRUCCIONES_RESERVA, gestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RESOLUCION_EXPEDIENTE, gestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_FIRMA_PROPIETARIO, gestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RATIFICACION_COMITE, gestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_CIERRE_ECONOMICO, gestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_DOCUMENTOS_POSTVENTA, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_RESULTADO_PBC, gestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_INFORME_JURIDICO, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_RESOLUCION_TANTEO, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_DEVOLUCION_LLAVES, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_POSICIONAMIENTO_FIRMA, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		
 		return mapa;
 	}
@@ -177,25 +175,24 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	 * La entidad 01 para activos o lotes restringidos tiene una configuración diferente
 	 * @return
 	 */
-	@SuppressWarnings("static-access")
 	private HashMap<String,String> getMapCodigoTipoGestorActivoAndLoteRestEntidad01() {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		
-		mapa.put(this.CODIGO_T013_DEFINICION_OFERTA, gestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
-		mapa.put(this.CODIGO_T013_RESOLUCION_COMITE, gestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
-		mapa.put(this.CODIGO_T013_RESPUESTA_OFERTANTE, gestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
-		mapa.put(this.CODIGO_T013_INSTRUCCIONES_RESERVA, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_RESOLUCION_EXPEDIENTE, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_FIRMA_PROPIETARIO, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_CIERRE_ECONOMICO, gestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(this.CODIGO_T013_DOCUMENTOS_POSTVENTA, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_RESULTADO_PBC, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_INFORME_JURIDICO, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_RESOLUCION_TANTEO, gestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_DEVOLUCION_LLAVES, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(this.CODIGO_T013_POSICIONAMIENTO_FIRMA, gestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		
 		return mapa;
 	}

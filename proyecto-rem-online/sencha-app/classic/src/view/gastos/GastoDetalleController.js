@@ -190,7 +190,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     
 	onClickBotonGuardar: function(btn) {
 		var me = this;
-		
+
 		var success = function (a, operation, c) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					me.getView().unmask();
@@ -250,7 +250,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this,
 		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
 		tabPanel = me.getView().down("tabpanel");
-		
+
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {
@@ -336,6 +336,62 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		  });
 		
 	},
+	onChangeOperacionExenta: function(field, value){
+		var me = this;
+
+		var operacion = me.lookupReference('cbOperacionExenta');
+		var renuncia = me.lookupReference('cbRenunciaExencion');
+		var tipoImpositivo = me.lookupReference('tipoImpositivo');
+		var cuota = me.lookupReference('cbCuota');
+		if(operacion.getValue()){
+			renuncia.setReadOnly(false);
+			tipoImpositivo.setDisabled(true);
+			cuota.setDisabled(true);
+		}else{			
+			tipoImpositivo.setDisabled(false);
+			tipoImpositivo.allowBlank = false;
+			cuota.setDisabled(false);
+			cuota.allowBlank = false;
+			renuncia.setValue(false);
+			renuncia.setReadOnly(true);
+		}
+		//operacion.validate();
+		//renuncia.validate();
+		//tipoImpositivo.validate();
+		//cuota.validate();
+
+	},
+	
+	onChangeRenunciaExencion: function(field, value){
+		var me = this;
+		
+		var operacion = me.lookupReference('cbOperacionExenta');
+		var renuncia = me.lookupReference('cbRenunciaExencion'); 
+		var tipoImpositivo = me.lookupReference('tipoImpositivo');
+		var cuota = me.lookupReference('cbCuota');
+		if(operacion.getValue() && !renuncia.getValue()){
+			tipoImpositivo.setDisabled(true);
+			cuota.setDisabled(true);
+		}else{
+			tipoImpositivo.setDisabled(false);
+			tipoImpositivo.allowBlank = false;
+			cuota.setDisabled(false);
+			cuota.allowBlank = false;
+		}
+		//renuncia.validate();
+		//tipoImpositivo.validate();
+		//cuota.validate();
+	},
+	
+	estaExento: function(get){
+     	var me= this;
+     	if(get('detalleeconomico.impuestoIndirectoExento')=="true" || get('detalleeconomico.abonoCuenta')==true){
+     		return true;
+     	}
+     	else{
+     		return false;
+     	}
+     },
 		
 	onChangeImportePrincipalSujeto: function(field, e){
 		var me= this;
@@ -458,6 +514,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var form= window.down('formBase');
     	var detalle= btn.up().up().down('anyadirnuevogastoactivodetalle');
     	var idGasto = detalle.up().idGasto;
+    	window.mask(HreRem.i18n("msg.mask.loading"));;
     	if(!Ext.isEmpty(detalle.getBindRecord())){
 	    	
 	    	var numeroActivo= detalle.getBindRecord().numActivo;
@@ -489,6 +546,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    				},
 	    				callback: function(records, operation, success) {
 	    					form.reset();
+	    					window.unmask();
 	    					window.parent.funcionRecargar();
 	    					window.close();
 	    				}
@@ -554,89 +612,92 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickBotonGuardarGasto: function(btn){
 		var me =this;
 		var window= btn.up('window'),
-		form= window.down('formBase'),
-		url =  $AC.getRemoteUrl('gastosproveedor/existeGasto');
+		form= window.down('formBase');
 		
 		if(form.isFormValid() && !form.disableValidation || form.disableValidation) {
-		
-			Ext.Ajax.request({		    			
-			 		url: url,
-			   		params: form.getBindRecord().getData(),		    		
-			    	success: function(response, opts) {
-			    		var data = {};
-			            try {
-			            	data = Ext.decode(response.responseText);
-			            }
-			            catch (e){ };
-			            
-			            if(!Ext.isEmpty(data) && data.success == "true") {
-			            	
-			            	if(data.existeGasto == "true") {
-			            		
-			            		Ext.Msg.show({
-								   title: HreRem.i18n('title.mensaje.confirmacion'),
-								   msg: HreRem.i18n('msg.desea.crear.gasto.duplicado'),
-								   buttons: Ext.MessageBox.YESNO,
-								   fn: function(buttonId) {
-								        if (buttonId == 'yes') {
-								        	
-								        	var success = function(record, operation) {
-												me.getView().unmask();
-										    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-										    	window.parent.funcionRecargar();
-										    	var data = {};
-									            try {
-									            	data = Ext.decode(operation._response.responseText);
-									            }
-									            catch (e){ };
-									            
-									            record.set("id", data.id);
-									            
-										    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
-										    	
-										    	window.destroy();  	
-					            			};
-							    			me.onSaveFormularioCompleto(null, form, success);
-								        	
-								        }
-								   }
-			            		});
-			            	} else if (data.existeGasto == "false") {
-			            		
-			            		var success = function(record, operation) {
-									me.getView().unmask();
-							    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-							    	window.parent.funcionRecargar();
-							    	var data = {};
-						            try {
-						            	data = Ext.decode(operation._response.responseText);
-						            }
-						            catch (e){ };
-						            
-						            record.set("id", data.id);
-						            
-							    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
-							    	
-							    	window.destroy();  	
-			            		};
-					    		me.onSaveFormularioCompleto(null, form, success);
-			            		
-			            	}
-			            	
-			            
-			            	
-			            } else if (!Ext.isEmpty(data) && data.success == "false"){		            		
-							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			            }	
-			    	}
-			});
-			
+			// Comprobar si el proveedor está dado de baja para notificarlo.
+			var combo = window.lookupReference('comboProveedores');
+			var fechaBaja = combo.getSelection().getData().fechaBaja;
+			if(!Ext.isEmpty(fechaBaja)) {
+				Ext.Msg.show({
+					   title: HreRem.i18n('title.mensaje.confirmacion'),
+					   msg: HreRem.i18n('msg.desea.crear.proveedor.baja'),
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes') {
+					        	me.onGuardarGastoComprobarExisteGasto(window, form);
+					        }
+					   }
+	     		});
+			} else {
+				me.onGuardarGastoComprobarExisteGasto(window, form);
+			}
 		} else {
-		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
+	},
 	
-				
+	onGuardarGastoComprobarExisteGasto: function(window, form) {
+		var me = this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/existeGasto');
+		
+		Ext.Ajax.request({		    			
+	 		url: url,
+	   		params: form.getBindRecord().getData(),		    		
+	    	success: function(response, opts) {
+	    		var data = {};
+	            try {
+	            	data = Ext.decode(response.responseText);
+	            }
+	            catch (e){ };
+	            
+	            if(!Ext.isEmpty(data) && data.success == "true") {
+	            	
+	            	if(data.existeGasto == "true") {
+	            		
+	            		Ext.Msg.show({
+						   title: HreRem.i18n('title.mensaje.confirmacion'),
+						   msg: HreRem.i18n('msg.desea.crear.gasto.duplicado'),
+						   buttons: Ext.MessageBox.YESNO,
+						   fn: function(buttonId) {
+						        if (buttonId == 'yes') {
+						        	me.onGuardarGasto(window, form);
+						        }
+						   }
+	            		});
+	            		
+	            	} else if (data.existeGasto == "false") {
+	            		me.onGuardarGasto(window, form);
+	            	}
+	            	
+	            } else if (!Ext.isEmpty(data) && data.success == "false"){		            		
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	            }	
+	    	}
+		});
+	},
+	
+	onGuardarGasto: function(window, form) {
+		var me = this;
+		
+		var success = function(record, operation) {
+			me.getView().unmask();
+	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	window.parent.funcionRecargar();
+	    	var data = {};
+            try {
+            	data = Ext.decode(operation._response.responseText);
+            }
+            catch (e){ };
+            
+            record.set("id", data.id);
+            
+	    	window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
+	    	
+	    	window.destroy();  	
+		};
+		
+		me.onSaveFormularioCompleto(null, form, success);
 	},
 	
 	onClickBotonAsignarTrabajosGasto: function(btn) {
@@ -762,8 +823,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		         ventanaSeleccionTrabajos.unmask();		         
 		         ventanaSeleccionTrabajos.destroy();
 		         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		         ventanaSeleccionTrabajos.parent.funcionRecargar();
-		         
+				 me.refrescarGastoAlIncluirTrabajo(ventanaSeleccionTrabajos.up('gastodetallemain'));
 		     },
 		     failure: function(response) {
 		     	ventanaSeleccionTrabajos.unmask();
@@ -780,6 +840,29 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		     }
 	    		     
 	    });
+	},
+	
+	refrescarGastoAlIncluirTrabajo: function(view) {	
+		var me = this;
+		var tabPanel = view.down("tabpanel");
+
+		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
+		Ext.Array.each(view.query('component[funcionRecargar]'), function(component) {
+  			if(component.rendered) {
+  				component.recargar=true;
+  			}
+  		});
+
+  		if(!Ext.isEmpty(tabPanel)) {	  		
+			var activeTab = tabPanel.getActiveTab();
+
+			if(activeTab.funcionRecargar) {
+  				activeTab.funcionRecargar();
+			}
+
+			var callbackFn = function() {view.down("tabpanel").evaluarBotonesEdicion(activeTab);};
+			view.fireEvent("refrescarGasto", view, callbackFn);
+  		}
 	},
 	
 	cancelarSeleccionTrabajosGasto: function(btn) {

@@ -106,7 +106,6 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -2429,53 +2428,48 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean solicitarTasacion(Long idActivo) throws Exception {
+		
 		int tasacionID;
-
-		try {
-			Activo activo = activoDao.get(idActivo);
-			if (!Checks.esNulo(activo)) {
-				// Se especifica bankia por que tan solo se va a poder demandar
-				// la tasación desde bankia.
-				tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(activo.getNumActivoUvem(),
-						adapter.getUsuarioLogado());
-			} else {
-				return false;
-			}
-		} catch (Exception e) {
-			logger.error("Error en activoManager", e);
-			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
+		Activo activo = activoDao.get(idActivo);
+		
+		if (!Checks.esNulo(activo)) {
+			// Se especifica bankia por que tan solo se va a poder demandar
+			// la tasación desde bankia.
+			tasacionID = uvemManagerApi.ejecutarSolicitarTasacion(activo.getNumActivoUvem(),
+					adapter.getUsuarioLogado());
+		} else {
+			return false;
 		}
+		
 
 		if (!Checks.esNulo(tasacionID)) {
 			try {
-				Activo activo = activoDao.get(idActivo);
 
-				if (!Checks.esNulo(activo)) {
-					// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
-					NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
-					valoracionBien.setBien(activo.getBien());
-					valoracionBien = genericDao.save(NMBValoracionesBien.class, valoracionBien);
-
-					if (!Checks.esNulo(valoracionBien)) {
-						// Generar una tasacion con el ID de activo y el ID de
-						// la valoracion del bien.
-						ActivoTasacion tasacion = new ActivoTasacion();
-
-						beanUtilNotNull.copyProperty(tasacion, "idExterno", tasacionID);
-						beanUtilNotNull.copyProperty(tasacion, "activo", activo);
-						beanUtilNotNull.copyProperty(tasacion, "valoracionBien", valoracionBien);
-
-						genericDao.save(ActivoTasacion.class, tasacion);
-						// Actualizar el tipoComercialización del activo
-						updaterState.updaterStateTipoComercializacion(activo);
-					}
+				// Generar un 'BIE_VALORACION' con el 'BIEN_ID' del activo.
+				NMBValoracionesBien valoracionBien = new NMBValoracionesBien();
+				valoracionBien.setBien(activo.getBien());
+				valoracionBien = genericDao.save(NMBValoracionesBien.class, valoracionBien);
+	
+				if (!Checks.esNulo(valoracionBien)) {
+					// Generar una tasacion con el ID de activo y el ID de
+					// la valoracion del bien.
+					ActivoTasacion tasacion = new ActivoTasacion();
+	
+					beanUtilNotNull.copyProperty(tasacion, "idExterno", tasacionID);
+					beanUtilNotNull.copyProperty(tasacion, "activo", activo);
+					beanUtilNotNull.copyProperty(tasacion, "valoracionBien", valoracionBien);
+	
+					genericDao.save(ActivoTasacion.class, tasacion);
+					// Actualizar el tipoComercialización del activo
+					updaterState.updaterStateTipoComercializacion(activo);
 				}
+				
 			} catch (Exception e) {
 				logger.error("Error en activoManager", e);
-				throw new Exception("Error al procesar su solicitud");
+				throw new JsonViewerException("Error al procesar su solicitud");
 			}
 		} else {
-			throw new Exception("El servicio de solicitud de tasaciones no está disponible en estos momentos");
+			throw new JsonViewerException("El servicio de solicitud de tasaciones no está disponible en estos momentos");
 		}
 
 		return true;
@@ -3154,16 +3148,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.estaVacio(activo.getTasacion())) {
 			tasacionMasReciente = activo.getTasacion().get(0);
-			Date fechaValorTasacionMasReciente = new Date();
-			if (tasacionMasReciente.getValoracionBien().getFechaValorTasacion() != null) {
-				fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
-			}
-			for (int i = 0; i < activo.getTasacion().size(); i++) {
-				ActivoTasacion tas = activo.getTasacion().get(i);
-				if (tas.getValoracionBien().getFechaValorTasacion() != null) {
-					if (tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {
-						fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
-						tasacionMasReciente = tas;
+			if (tasacionMasReciente != null) {
+				Date fechaValorTasacionMasReciente = new Date();
+				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())
+						&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())) {
+					fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
+				}
+				for (int i = 0; i < activo.getTasacion().size(); i++) {
+					ActivoTasacion tas = activo.getTasacion().get(i);
+					if (tas.getValoracionBien().getFechaValorTasacion() != null) {
+						if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien())
+								&& !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())
+								&& tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {
+							fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
+							tasacionMasReciente = tas;
+						}
 					}
 				}
 			}

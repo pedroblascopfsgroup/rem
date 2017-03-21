@@ -238,13 +238,6 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 
-			if (dtoActivoFiltro.getSort() != null) {
-				if (dtoActivoFiltro.getSort().equals("via")) {
-					dtoActivoFiltro.setSort("tipoViaCodigo, nombreVia, numActivo");
-				} else {
-					dtoActivoFiltro.setSort(dtoActivoFiltro.getSort() + ",numActivo");
-				}
-			}
 			Page page = adapter.getActivos(dtoActivoFiltro);
 
 			model.put("data", page.getResults());
@@ -1221,6 +1214,16 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model) {
+
+		model.put("data", adapter.getListTasacionByIdGrid(id));
+
+		return createModelAndViewJson(model);
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2028,12 +2031,12 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model) {
+	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model){
 		try {
 			model.put("success", activoApi.solicitarTasacion(idActivo));
 		} catch (JsonViewerException jve) {
 			model.put("success", false);
-			model.put("msg", jve.getMessage());
+			model.put("msgError", jve.getMessage());
 		} catch (Exception e) {
 			model.put("success", false);
 		}

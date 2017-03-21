@@ -451,8 +451,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 								try {
 									List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
 									
-									ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
-									if(!Checks.esNulo(resolucionComite)){
+									if(!Checks.estaVacio(listaResoluciones)){
+										ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
 										item.setValue(this.getMapaEREtoRCO().get(resolucionComite.getEstadoResolucion().getCodigo()));
 									}
 								} catch (Exception e) {
@@ -516,8 +516,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					try{
             						List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
             						
-            						ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
-            						if(!Checks.esNulo(resolucionComite)){
+            						if(!Checks.estaVacio(listaResoluciones)){
+            							ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
             							if(!Checks.esNulo(resolucionComite.getImporteContraoferta()))
             								item.setValue(resolucionComite.getImporteContraoferta().toString());
             						}

@@ -125,8 +125,11 @@ public class GenerarFacturaVentaActivosManager extends GenerateJasperPdfServiceM
 	
 	private void rellenarDatosGeneralesActivo(ExpedienteComercial expediente, Map<String, Object> mapaValores) {
 		
-		mapaValores.put("numExpediente", expediente.getNumExpediente().toString());
-		mapaValores.put("numActivo", !Checks.esNulo(expediente.getOferta().getActivoPrincipal().getNumActivoUvem()) ? expediente.getOferta().getActivoPrincipal().getNumActivoUvem().toString() : "-");	
+		Activo activo = expediente.getOferta().getActivoPrincipal();
+		if(!Checks.esNulo(activo)) {
+			mapaValores.put("numExpediente",!Checks.esNulo(activo.getNumInmovilizadoBnk()) ? String.valueOf(activo.getNumInmovilizadoBnk()) : "-");
+			mapaValores.put("numActivo", !Checks.esNulo(activo.getNumActivoUvem()) ? String.valueOf(activo.getNumActivoUvem()) : "-");	
+		}
 	}
 	
 	private void rellenarInfoRegistralActivo(ExpedienteComercial expediente, Map<String, Object> mapaValores, Double porcentajeCompra) throws Exception {

@@ -44,15 +44,14 @@ public class PreciosUserAssignationService implements UserAssigantionService {
 
 	
 	@Override
-	@SuppressWarnings("static-access")
 	public Usuario getUser(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_GESTOR_PRECIOS);
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_PRECIOS);
 		String codigoSubtipoTrabajo = tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo();
 		
 		if(codigoSubtipoTrabajo.equals(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS_DESCUENTO) || codigoSubtipoTrabajo.equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO)) {
-			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_GESTOR_MARKETING);
+			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_MARKETING);
 		}
 		
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
@@ -61,15 +60,14 @@ public class PreciosUserAssignationService implements UserAssigantionService {
 	}
 
 	@Override
-	@SuppressWarnings("static-access")
 	public Usuario getSupervisor(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_SUPERVISOR_PRECIOS);
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_PRECIOS);
 		String codigoSubtipoTrabajo = tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo();
 		
 		if(codigoSubtipoTrabajo.equals(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS_DESCUENTO) || codigoSubtipoTrabajo.equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO)) {
-			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_SUPERVISOR_MARKETING);
+			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_MARKETING);
 		}
 		
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);

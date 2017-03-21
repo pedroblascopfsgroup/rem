@@ -1047,7 +1047,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 							String nombreCompleto = datosComprador.getNombreRazonSocial();
 							if(!Checks.esNulo(nombreCompleto) && !nombreCompleto.equalsIgnoreCase("") &&
 							   !Checks.esNulo(datosComprador.getApellidos()) && !datosComprador.getApellidos().equalsIgnoreCase("")){
-								nombreCompleto = nombreCompleto.concat(datosComprador.getApellidos());
+								nombreCompleto = nombreCompleto.concat(" ").concat(datosComprador.getApellidos());
 							}
 							cliente.setNombreCliente(FileUtilsREM.stringify(nombreCompleto));
 							String direccion = "";
@@ -1059,7 +1059,11 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 								direccion += datosComprador.getCodigoPostal();
 							}
 							if (datosComprador.getMunicipioDescripcion() != null) {
-								direccion = direccion + "(" + datosComprador.getMunicipioDescripcion() + ")";
+								direccion += " ";
+								direccion += datosComprador.getMunicipioDescripcion();
+							}
+							if (datosComprador.getProvinciaDescripcion() != null) {
+								direccion = direccion + " (" + datosComprador.getProvinciaDescripcion() + ")";
 							}
 							cliente.setDireccionCliente(direccion);
 							cliente.setDniCliente(FileUtilsREM.stringify(datosComprador.getNumDocumento()));

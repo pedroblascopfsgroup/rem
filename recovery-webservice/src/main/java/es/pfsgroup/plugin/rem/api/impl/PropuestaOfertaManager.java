@@ -1047,7 +1047,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 							String nombreCompleto = datosComprador.getNombreRazonSocial();
 							if(!Checks.esNulo(nombreCompleto) && !nombreCompleto.equalsIgnoreCase("") &&
 							   !Checks.esNulo(datosComprador.getApellidos()) && !datosComprador.getApellidos().equalsIgnoreCase("")){
-								nombreCompleto = nombreCompleto.concat(", ").concat(datosComprador.getApellidos());
+								nombreCompleto = nombreCompleto.concat(datosComprador.getApellidos());
 							}
 							cliente.setNombreCliente(FileUtilsREM.stringify(nombreCompleto));
 							String direccion = "";

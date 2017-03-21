@@ -19,6 +19,7 @@ public class DtoActivoProveedor extends WebDto {
 	private String tipoProveedorCodigo;
 	private String nombreComercialProveedor;
 	private Date fechaBajaProveedor;
+	private Date fechaBaja; // Lo mismo que 'fechaBajaProveedor', usado en nuevo gasto solo.
 	private String subtipoProveedorCodigo;
 	private String nifProveedor;
 	private String tipoDocumentoCodigo;
@@ -309,5 +310,11 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setTipoDocumentoCodigo(String tipoDocumentoCodigo) {
 		this.tipoDocumentoCodigo = tipoDocumentoCodigo;
+	}
+	public Date getFechaBaja() {
+		return fechaBaja;
+	}
+	public void setFechaBaja(Date fechaBaja) {
+		this.fechaBaja = fechaBaja;
 	}
 }

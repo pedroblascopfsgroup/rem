@@ -518,30 +518,15 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}
 
 		if (!Checks.estaVacio(activo.getTasacion())) {
-			// De la lista de tasaciones que tiene el activo cogemos la más
-			// reciente
-			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
-			if (tasacionMasReciente != null) {
-				Date fechaValorTasacionMasReciente = new Date();
-				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())
-						&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())) {
-					fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
-				}
-				for (int i = 0; i < activo.getTasacion().size(); i++) {
-					ActivoTasacion tas = activo.getTasacion().get(i);
-					if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien())
-							&& !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())
-							&& tas.getValoracionBien().getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {
-						fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
-						tasacionMasReciente = tas;
-					}
-				}
+			// De la lista de tasaciones que tiene el activo cogemos la más reciente
+			ActivoTasacion tasacionMasReciente = activoApi.getTasacionMasReciente(activo);
+			if (tasacionMasReciente != null) {				
 				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())) {
-					if (!Checks.esNulo(tasacionMasReciente.getValoracionBien().getImporteValorTasacion())) {
+					if (!Checks.esNulo(tasacionMasReciente.getImporteTasacionFin())) {
 						mapaValores
 								.put("ValorTasacion",
 										FileUtilsREM.stringify(
-												tasacionMasReciente.getValoracionBien().getImporteValorTasacion())
+												tasacionMasReciente.getImporteTasacionFin())
 												+ "€");
 					} else {
 						mapaValores.put("ValorTasacion", FileUtilsREM.stringify(null));
@@ -554,11 +539,11 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 					}
 
 					if (!Checks.esNulo(oferta.getImporteOferta())
-							&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getImporteValorTasacion())
-							&& !tasacionMasReciente.getValoracionBien().getImporteValorTasacion()
+							&& !Checks.esNulo(tasacionMasReciente.getImporteTasacionFin())
+							&& !tasacionMasReciente.getImporteTasacionFin()
 									.equals(Double.valueOf(0.0))) {
 
-						Double importeTasacion = tasacionMasReciente.getValoracionBien().getImporteValorTasacion()
+						Double importeTasacion = tasacionMasReciente.getImporteTasacionFin()
 								.doubleValue();
 						Double valorTasacionDto = 100 * (1 - (oferta.getImporteOferta() / importeTasacion));
 						if (!Checks.esNulo(valorTasacionDto)) {
@@ -1059,7 +1044,12 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 						if (!Checks.esNulo(datosComprador)) {
 							cliente = new DtoCliente();
-							cliente.setNombreCliente(FileUtilsREM.stringify(datosComprador.getNombreRazonSocial()));
+							String nombreCompleto = datosComprador.getNombreRazonSocial();
+							if(!Checks.esNulo(nombreCompleto) && !nombreCompleto.equalsIgnoreCase("") &&
+							   !Checks.esNulo(datosComprador.getApellidos()) && !datosComprador.getApellidos().equalsIgnoreCase("")){
+								nombreCompleto = nombreCompleto.concat(" ").concat(datosComprador.getApellidos());
+							}
+							cliente.setNombreCliente(FileUtilsREM.stringify(nombreCompleto));
 							String direccion = "";
 							if (datosComprador.getDireccion() != null) {
 								direccion += datosComprador.getDireccion();
@@ -1069,7 +1059,11 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 								direccion += datosComprador.getCodigoPostal();
 							}
 							if (datosComprador.getMunicipioDescripcion() != null) {
-								direccion = direccion + "(" + datosComprador.getMunicipioDescripcion() + ")";
+								direccion += " ";
+								direccion += datosComprador.getMunicipioDescripcion();
+							}
+							if (datosComprador.getProvinciaDescripcion() != null) {
+								direccion = direccion + " (" + datosComprador.getProvinciaDescripcion() + ")";
 							}
 							cliente.setDireccionCliente(direccion);
 							cliente.setDniCliente(FileUtilsREM.stringify(datosComprador.getNumDocumento()));

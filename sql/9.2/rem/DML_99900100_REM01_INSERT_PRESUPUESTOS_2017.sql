@@ -20,8 +20,8 @@ SET SERVEROUTPUT ON;
 DECLARE
     err_num NUMBER; -- Numero de error.
     err_msg VARCHAR2(2048); -- Mensaje de error.
-    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas.
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas.
     V_MSQL VARCHAR2(4000 CHAR);
     V_MAX_PTO_ID NUMBER(16,0);
     V_EJE_ID NUMBER(16,0);

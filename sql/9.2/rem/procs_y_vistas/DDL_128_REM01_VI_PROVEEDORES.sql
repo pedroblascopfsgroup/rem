@@ -1,13 +1,14 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20170306
+--## AUTOR=Kevin Fernández
+--## FECHA_CREACION=20170320
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --## Finalidad: DDL
---##           
+--## Comentario: Se ha añadido la opción de mostrar si el proveedor está dado de baja.
+--##            
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -60,7 +61,8 @@ BEGIN
 			CRA.DD_CRA_CODIGO,
 			CRA.DD_CRA_DESCRIPCION,
 			NULL AS DD_PRV_CODIGO,
-			NULL AS DD_PRV_DESCRIPCION			
+			NULL AS DD_PRV_DESCRIPCION,
+			NVL2(PVE.PVE_FECHA_BAJA, 1 ,0) AS BAJA
 
 			  
 		FROM ' || V_ESQUEMA || '.ACT_PVE_PROVEEDOR PVE

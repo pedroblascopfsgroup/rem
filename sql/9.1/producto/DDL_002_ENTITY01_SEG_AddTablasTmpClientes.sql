@@ -13,9 +13,7 @@
 --##        0.1 Versión inicial
 --##########################################
 
-whenever sqlerror exit sql.sqlcode;
-
-
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 
 DECLARE

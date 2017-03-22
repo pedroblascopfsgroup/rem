@@ -203,7 +203,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 		// HEADER
 		mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
-		mapaValores.put("Activo", activo.getNumActivoRem().toString());
+		mapaValores.put("Activo", activo.getNumActivo().toString());
 		mapaValores.put("FRecepOf", FileUtilsREM.stringify(oferta.getFechaAlta()));
 		mapaValores.put("FProp", FileUtilsREM.stringify(new Date()));
 

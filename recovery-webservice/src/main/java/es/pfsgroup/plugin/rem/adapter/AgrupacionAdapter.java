@@ -466,7 +466,14 @@ public class AgrupacionAdapter {
 					&& activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException(AgrupacionValidator.ERROR_OBRANUEVA_NO_ASISTIDA);
 			}
-
+			
+			// Si la agrupación es de tipo comercial y contiene ofertas, en cualquier estado, rechazar el activo.
+			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
+				if(!Checks.estaVacio(ofertasAgrupacion)) {
+					throw new JsonViewerException("No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
+				}
+			}
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos
 			if (num == 0) {
@@ -691,11 +698,43 @@ public class AgrupacionAdapter {
 
 		ActivoAgrupacionActivo activoAgrupacionActivo = activoAgrupacionActivoApi.getByIdActivoAndIdAgrupacion(idActivo,
 				idAgrupacion);
+
 		if (!Checks.esNulo(activoAgrupacionActivo)) {
-			activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+			// Para los activos pertenecientes a una agrupación de tipo lote comercial.
+			if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+				// Solo continuar si la agrupación no contiene ofetas vivas.
+				List<Oferta> ofertasAgrupacion = activoAgrupacionActivo.getAgrupacion().getOfertas();
+				if(Checks.estaVacio(ofertasAgrupacion)) {
+					List<ActivoOferta> ofertasActivo = activoAgrupacionActivo.getActivo().getOfertas();
+					if (!Checks.estaVacio(ofertasActivo)) {
+						// En cada oferta asignada al activo.
+						for (ActivoOferta ofertaActivo : ofertasActivo) {
+							if (!Checks.esNulo(ofertaActivo.getPrimaryKey())
+									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta())
+									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())) {
+								// Si su estado es 'congelada' asignar nuevo estado
+								// a 'pendiente'.
+								if (ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo()
+										.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
+									DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+											.dameValorDiccionarioByCod(DDEstadoOferta.class,
+													DDEstadoOferta.CODIGO_PENDIENTE);
+									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
+								}
+							}
+						}
+					}
+					activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+				} else {
+					throw new JsonViewerException("No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
+				}
+			} else {
+				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+			}
+
 			return true;
 		} else {
-			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación.");
+			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación");
 		}
 	}
 

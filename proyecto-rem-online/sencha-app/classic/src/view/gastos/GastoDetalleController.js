@@ -708,7 +708,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 	
 	onClickBotonDesasignarTrabajosGasto: function(btn) {
-		
+
 		var me = this,
 		form = btn.up('form'),		
 		grid = btn.up('grid'),
@@ -720,7 +720,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(!Ext.isEmpty(trabajos)) {
 			// Recuperamos todos los ids de los trabajos seleccionados
 			Ext.Array.each(trabajos, function(trabajo, index) {
-			    idTrabajos.push(trabajo.get("id"));
+			    idTrabajos.push(trabajo.get("idTrabajo"));
 			});		
 			
 			grid.mask(HreRem.i18n("msg.mask.loading"));

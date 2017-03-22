@@ -1640,11 +1640,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		//Desasignamos los trabajo del gasto
 		for(Long id : ids) {
 
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro);
-			gasto.getGastoProveedorTrabajos().remove(gastoTrabajoEliminado);
-			gastoDao.deleteGastoTrabajoById(id);
-
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", id);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro, filtro2);
+			if(!Checks.esNulo(gastoTrabajoEliminado)) {
+				gastoDao.deleteGastoTrabajoById(gastoTrabajoEliminado.getId());
+			}
+			
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			Trabajo trabajo = genericDao.get(Trabajo.class, filtroTrabajo);
 			trabajo.setFechaEmisionFactura(null);

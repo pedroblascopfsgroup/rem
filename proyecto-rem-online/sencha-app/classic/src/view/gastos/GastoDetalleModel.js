@@ -48,8 +48,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     ocultarBotonesTrabajos: function(get) {
-	     	return get('gasto.autorizado') || get('gasto.asignadoAActivos');
-
+	    	 var codigoEstadoCodigo = get('gasto.estadoGastoCodigo');
+	    	 
+	    	 if(codigoEstadoCodigo==CONST.ESTADOS_GASTO['INCOMPLETO'] ||
+	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['RECHAZADO'] ||
+	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']) {
+	    		 return false;
+	    	 } else {
+	    		 return true;
+	    	 }
 	     },
 	     
 	     ocultarBotonesActivos: function(get) {

@@ -280,6 +280,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			mapaValores.put("SociedadPatrimonial", FileUtilsREM.stringify(null));
 		}
 
+		//NEGOCIACION URBANISTICA
 		if (!Checks.esNulo(activo.getInfoAdministrativa())
 				&& !Checks.esNulo(activo.getInfoAdministrativa().getTipoVpo())) {
 			mapaValores.put("regimenProteccion",
@@ -287,6 +288,19 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		} else {
 			mapaValores.put("regimenProteccion", FileUtilsREM.stringify(null));
 		}
+		
+		if(condExp.getProcedeDescalificacion()!=null && condExp.getProcedeDescalificacion().equals(new Integer(1))){
+			mapaValores.put("procederDescalificacion", "si");
+		}else{
+			mapaValores.put("procederDescalificacion", "no");
+		}
+		mapaValores.put("licencia", FileUtilsREM.stringify(condExp.getLicencia()));
+		if(condExp.getTipoPorCuentaLicencia()!=null){
+			mapaValores.put("cargo", FileUtilsREM.stringify(condExp.getTipoPorCuentaLicencia().getDescripcion()));
+		}else{
+			mapaValores.put("cargo", FileUtilsREM.stringify(null));
+		}
+				
 
 		NMBBien bien = activo.getBien();
 		if (!Checks.esNulo(bien) && !Checks.esNulo(bien.getDatosRegistrales())) {

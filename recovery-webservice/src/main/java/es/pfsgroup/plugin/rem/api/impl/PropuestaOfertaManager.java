@@ -256,8 +256,10 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				if (!Checks.esNulo(admisionDocumento)
 						&& !Checks.esNulo(admisionDocumento.getTipoCalificacionEnergetica())
 						&& !Checks.esNulo(admisionDocumento.getEstadoDocumento())
-						&& DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO
-								.equals(admisionDocumento.getEstadoDocumento().getCodigo())) {
+						&& (DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO
+								.equals(admisionDocumento.getEstadoDocumento().getCodigo())
+								|| DDEstadoDocumento.CODIGO_ESTADO_EN_TRAMITE
+										.equals(admisionDocumento.getEstadoDocumento().getCodigo()))) {
 					mapaValores.put("CertificadoEnergetico",
 							admisionDocumento.getTipoCalificacionEnergetica().getDescripcionLarga());
 					isFoundCalificacion = true;
@@ -280,7 +282,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			mapaValores.put("SociedadPatrimonial", FileUtilsREM.stringify(null));
 		}
 
-		//NEGOCIACION URBANISTICA
+		// NEGOCIACION URBANISTICA
 		if (!Checks.esNulo(activo.getInfoAdministrativa())
 				&& !Checks.esNulo(activo.getInfoAdministrativa().getTipoVpo())) {
 			mapaValores.put("regimenProteccion",
@@ -288,19 +290,18 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		} else {
 			mapaValores.put("regimenProteccion", FileUtilsREM.stringify(null));
 		}
-		
-		if(condExp.getProcedeDescalificacion()!=null && condExp.getProcedeDescalificacion().equals(new Integer(1))){
+
+		if (condExp.getProcedeDescalificacion() != null && condExp.getProcedeDescalificacion().equals(new Integer(1))) {
 			mapaValores.put("procederDescalificacion", "si");
-		}else{
+		} else {
 			mapaValores.put("procederDescalificacion", "no");
 		}
 		mapaValores.put("licencia", FileUtilsREM.stringify(condExp.getLicencia()));
-		if(condExp.getTipoPorCuentaLicencia()!=null){
+		if (condExp.getTipoPorCuentaLicencia() != null) {
 			mapaValores.put("cargo", FileUtilsREM.stringify(condExp.getTipoPorCuentaLicencia().getDescripcion()));
-		}else{
+		} else {
 			mapaValores.put("cargo", FileUtilsREM.stringify(null));
 		}
-				
 
 		NMBBien bien = activo.getBien();
 		if (!Checks.esNulo(bien) && !Checks.esNulo(bien.getDatosRegistrales())) {
@@ -532,16 +533,14 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}
 
 		if (!Checks.estaVacio(activo.getTasacion())) {
-			// De la lista de tasaciones que tiene el activo cogemos la más reciente
+			// De la lista de tasaciones que tiene el activo cogemos la más
+			// reciente
 			ActivoTasacion tasacionMasReciente = activoApi.getTasacionMasReciente(activo);
-			if (tasacionMasReciente != null) {				
+			if (tasacionMasReciente != null) {
 				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())) {
 					if (!Checks.esNulo(tasacionMasReciente.getImporteTasacionFin())) {
-						mapaValores
-								.put("ValorTasacion",
-										FileUtilsREM.stringify(
-												tasacionMasReciente.getImporteTasacionFin())
-												+ "€");
+						mapaValores.put("ValorTasacion",
+								FileUtilsREM.stringify(tasacionMasReciente.getImporteTasacionFin()) + "€");
 					} else {
 						mapaValores.put("ValorTasacion", FileUtilsREM.stringify(null));
 					}
@@ -554,11 +553,9 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 					if (!Checks.esNulo(oferta.getImporteOferta())
 							&& !Checks.esNulo(tasacionMasReciente.getImporteTasacionFin())
-							&& !tasacionMasReciente.getImporteTasacionFin()
-									.equals(Double.valueOf(0.0))) {
+							&& !tasacionMasReciente.getImporteTasacionFin().equals(Double.valueOf(0.0))) {
 
-						Double importeTasacion = tasacionMasReciente.getImporteTasacionFin()
-								.doubleValue();
+						Double importeTasacion = tasacionMasReciente.getImporteTasacionFin().doubleValue();
 						Double valorTasacionDto = 100 * (1 - (oferta.getImporteOferta() / importeTasacion));
 						if (!Checks.esNulo(valorTasacionDto)) {
 							mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(valorTasacionDto) + "%");
@@ -1059,8 +1056,9 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 						if (!Checks.esNulo(datosComprador)) {
 							cliente = new DtoCliente();
 							String nombreCompleto = datosComprador.getNombreRazonSocial();
-							if(!Checks.esNulo(nombreCompleto) && !nombreCompleto.equalsIgnoreCase("") &&
-							   !Checks.esNulo(datosComprador.getApellidos()) && !datosComprador.getApellidos().equalsIgnoreCase("")){
+							if (!Checks.esNulo(nombreCompleto) && !nombreCompleto.equalsIgnoreCase("")
+									&& !Checks.esNulo(datosComprador.getApellidos())
+									&& !datosComprador.getApellidos().equalsIgnoreCase("")) {
 								nombreCompleto = nombreCompleto.concat(" ").concat(datosComprador.getApellidos());
 							}
 							cliente.setNombreCliente(FileUtilsREM.stringify(nombreCompleto));
@@ -1334,8 +1332,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		if (listaActivoFoto != null && !listaActivoFoto.isEmpty()) {
 			for (ActivoFoto foto : listaActivoFoto) {
 				if (foto.getUrlThumbnail() == null || foto.getUrlThumbnail().isEmpty()) {
-					foto.setUrlThumbnail(selfUrl.concat("/webhook/fotos/download?idFoto=")
-							.concat(String.valueOf(foto.getId())));
+					foto.setUrlThumbnail(
+							selfUrl.concat("/webhook/fotos/download?idFoto=").concat(String.valueOf(foto.getId())));
 				}
 				if (foto.getTipoFoto() != null && foto.getTipoFoto().getCodigo().equals(DDTipoFoto.COD_WEB)) {
 					switch (fotowebCont) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-03-22T10:54:43 -->
+<!-- 2017-03-22T13:37:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucionActivoLote" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
@@ -320,7 +320,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
-					<text><![CDATA[Superficie costruida:]]></text>
+					<text><![CDATA[Superficie construida:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="234" y="26" width="42" height="13" uuid="1fef19df-e4b9-4029-a778-6a61e1e3f41a"/>
@@ -348,7 +348,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
-					<text><![CDATA[-Situacion de Cargas:]]></text>
+					<text><![CDATA[-Situación de Cargas:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="234" y="196" width="109" height="13" uuid="8fb8c487-e54c-47e4-aec9-dcba69fd2780"/>
@@ -460,7 +460,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
-					<text><![CDATA[-Situacion Liquidacion/inscripción:]]></text>
+					<text><![CDATA[-Situación Liquidacion/inscripción:]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="277" y="120" width="271" height="13" uuid="ba3447df-caab-4a40-890c-d214442bca33"/>
@@ -544,7 +544,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
-					<text><![CDATA[-Situacion Procesal:]]></text>
+					<text><![CDATA[-Situación Procesal:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="234" y="45" width="53" height="13" uuid="ad36c3f1-622d-43a4-971c-c659139b6a5c"/>
@@ -561,6 +561,20 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<textFieldExpression><![CDATA[$P{Entrada}]]></textFieldExpression>
 				</textField>
 			</elementGroup>
+			<staticText>
+				<reportElement x="395" y="45" width="85" height="13" uuid="90eb0fc3-36ac-4702-8b6a-8af7c28cc500"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cer. energético:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="480" y="45" width="72" height="13" uuid="4cc9a911-db6e-40c1-ac00-f24b927df591"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CertificadoEnergetico}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="79">
 			<elementGroup>

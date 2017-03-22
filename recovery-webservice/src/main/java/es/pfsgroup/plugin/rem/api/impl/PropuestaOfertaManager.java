@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
@@ -1302,8 +1303,24 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 					} else {
 						tasacion.setImporteTasacion(FileUtilsREM.stringify(null));
 					}
-					tasacion.setFechaTasacion(FileUtilsREM.stringify(tas.getFechaRecepcionTasacion()));
-					tasacion.setFirmaTasacion(FileUtilsREM.stringify(tas.getCodigoFirma()));
+					tasacion.setFechaTasacion(FileUtilsREM.stringify(tas.getValoracionBien().getFechaValorTasacion()));
+					 
+					if(!Checks.esNulo(tas.getCodigoFirma())){
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", tas.getCodigoFirma().toString());
+						List<ActivoProveedor> tasadoras = genericDao.getList(ActivoProveedor.class, filtro);
+						if(!Checks.estaVacio(tasadoras)){
+							ActivoProveedor  tasadora = tasadoras.get(0);
+							if(!Checks.esNulo(tasadora)){
+								tasacion.setFirmaTasacion(FileUtilsREM.stringify(tasadora.getNombre()));
+							}else{
+								tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
+							}
+						} else{
+							tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
+						}
+					}else{
+						tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
+					}
 					listaTasacion.add(tasacion);
 				}
 			}

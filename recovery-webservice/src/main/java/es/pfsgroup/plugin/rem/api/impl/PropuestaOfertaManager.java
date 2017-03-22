@@ -374,8 +374,10 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}
 		if (!Checks.esNulo(oferta.getImporteOferta())) {
 			mapaValores.put("ImporteInicial", FileUtilsREM.stringify(oferta.getImporteOferta()) + "€");
+			mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(oferta.getImporteOferta()) + "€");
 		} else {
 			mapaValores.put("ImporteInicial", FileUtilsREM.stringify(null));
+			mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(null));
 		}
 		if (!Checks.esNulo(oferta.getFechaContraoferta())) {
 			mapaValores.put("FechaContraoferta", FileUtilsREM.stringify(oferta.getFechaContraoferta()));

@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
+--## AUTOR=JORGE ROS
 --## FECHA_CREACION=20170203
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2

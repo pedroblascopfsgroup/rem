@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-28T16:45:07 -->
+<!-- 2017-03-22T10:08:16 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucionActivoSimple" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="1.026316236461414"/>
 	<property name="ireport.x" value="0"/>
@@ -160,6 +160,9 @@
 	<parameter name="ActivoPlazas" class="java.lang.String"/>
 	<parameter name="ActivoSuperficie" class="java.lang.String"/>
 	<parameter name="regimenProteccion" class="java.lang.String"/>
+	<parameter name="procederDescalificacion" class="java.lang.String"/>
+	<parameter name="cargo" class="java.lang.String"/>
+	<parameter name="licencia" class="java.lang.String"/>
 	<field name="listaCliente" class="java.util.List"/>
 	<field name="listaOferta" class="java.util.List"/>
 	<field name="listaTasacion" class="java.util.List"/>
@@ -1100,10 +1103,10 @@ TIPO DE PROPUESTA VENTA]]></text>
 			</elementGroup>
 		</band>
 		<band height="418">
+			<rectangle>
+				<reportElement mode="Transparent" x="2" y="25" width="555" height="49" uuid="d78851d0-f838-41cf-9897-bee1dbcf1b9d"/>
+			</rectangle>
 			<elementGroup>
-				<rectangle>
-					<reportElement x="0" y="26" width="555" height="49" uuid="d78851d0-f838-41cf-9897-bee1dbcf1b9d"/>
-				</rectangle>
 				<staticText>
 					<reportElement x="2" y="12" width="145" height="13" uuid="e31bd94f-3011-4c6c-94df-97aed13974cb"/>
 					<textElement>
@@ -1112,7 +1115,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<text><![CDATA[Negociación Urbanística]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="117" y="26" width="134" height="13" uuid="d15b457d-3835-4934-a5de-63947e2957de"/>
+					<reportElement x="117" y="26" width="146" height="13" uuid="d15b457d-3835-4934-a5de-63947e2957de"/>
 					<textElement textAlignment="Left">
 						<font fontName="Verdana" size="8"/>
 					</textElement>
@@ -1524,6 +1527,41 @@ TIPO DE PROPUESTA VENTA]]></text>
 			<break>
 				<reportElement x="0" y="88" width="96" height="1" uuid="0f49d5ef-ac27-4afb-a8f7-d7d09821ffad"/>
 			</break>
+			<textField>
+				<reportElement x="407" y="26" width="150" height="13" uuid="75ef1042-588b-47f0-8c1e-91c5ad679fd2"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{procederDescalificacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="407" y="39" width="150" height="13" uuid="b1054507-431c-44cd-b0d0-c2a88525258b"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cargo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="263" y="39" width="144" height="13" uuid="fcf611a6-80f3-47eb-a9ef-79d7dcccdd70"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cargo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="39" width="113" height="13" uuid="8b4e7226-9ed8-4d25-8b89-b40a1e644592"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tipo de licencia:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="117" y="39" width="146" height="13" uuid="d7a435d6-4df3-47bb-b2fb-a82f234a87c1"/>
+				<textElement textAlignment="Left">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{licencia}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="542">
 			<elementGroup>

@@ -119,7 +119,7 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 		List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(idTrabajo);
 
 		for (ActivoTramite tramite : listaTramites) {
-			List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(tramite.getId());
+			List<TareaExterna> listaTareas = activoTareaExternaApi.getActivasByIdTramiteTodas(tramite.getId());
 			for(TareaExterna tareaExterna : listaTareas){
 				EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
 				

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20170203
+--## AUTOR=JORGE ROS
+--## FECHA_CREACION=20170322
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1337
@@ -42,21 +42,12 @@ DECLARE
     /* TABLA: TFI_TAREAS_FOR_ITEMS */
     TYPE T_TFI IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TFI;
-/*
-    V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-    			 --TAP_CODIGO 								--TFI_TIPO 			--TFI_NOMBRE 			--TFI_BUSINESS_OP				--TFI_LABEL 								--TFI_ERROR_VALIDACION													--TFI_VALIDACION
-		T_TFI(   'T013_InstruccionesReserva',   			'combo',			'Tipo de arras',	  	'DDTipoArras',					'Tipo de arras',							'Debe indicar el tipo de arras',										'false' ),
-		T_TFI(   'T013_InstruccionesReserva',   			'date',   			'fechaEnvio',	  		'',								'Fecha de envío',							'',																		'' ),
-		T_TFI(   'T013_InstruccionesReserva',   			'textarea',   		'observaciones',		'',								'',											'',																		'' )
-		);
-      V_TMP_T_TFI T_TFI;
-*/
-
+--				TAP_CODIGO 						--TFI_TIPO 			--TFI_NOMBRE 			--TFI_LABEL						--TFI_ERROR_VALIDACION											--TFI_VALIDACION							--TFI_BUSINESS_OPERATION
   	  V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-        T_TFI('T003_AutorizacionBankia'            ,'1'        ,'date'     ,'fecha'                ,'Fecha'                                                                                                                                                                                                                                                                                                        ,'Debe indicar la fecha de autorizaci&oacute;n'                 ,'false'                                        ,''                 ),
-        T_TFI('T003_AutorizacionBankia'            ,'2'        ,'combo'    ,'comboAmpliacion'      ,'Ampliación del presupuesto'                                                                                                                                                                                                                                                                                   ,'Debe indicar si autoriza el incremento de presupuesto'        ,'false'                                        ,'DDSiNo'           ),
-        T_TFI('T003_AutorizacionBankia'            ,'3'        ,'textinf'  ,'numIncremento'        ,'Importe del incremento'                                                                                                                                                                                                                                                                                       ,''                                                             ,''                                             ,''                 ),
-        T_TFI('T003_AutorizacionBankia'            ,'4'        ,'textarea' ,'observaciones'        ,'Observaciones'                                                                                                                                                                                                                                                                                                ,''                                                             ,''                                             ,''                 )
+        T_TFI('T003_AutorizacionBankia'			,'date'     		,'fecha'                ,'Fecha'                         ,'Debe indicar la fecha de autorizaci&oacute;n'                 ,'false'                                        ,''                 ),
+        T_TFI('T003_AutorizacionBankia'			,'combo'    		,'comboAmpliacion'      ,'Ampliación del presupuesto'    ,'Debe indicar si autoriza el incremento de presupuesto'        ,'false'                                        ,'DDSiNo'           ),
+        T_TFI('T003_AutorizacionBankia'			,'textinf'  		,'numIncremento'        ,'Importe del incremento'        ,''                                                             ,''                                             ,''                 ),
+        T_TFI('T003_AutorizacionBankia'			,'textarea' 		,'observaciones'        ,'Observaciones'                 ,''                                                             ,''                                             ,''                 )
         );
       V_TMP_T_TFI T_TFI;
 
@@ -70,12 +61,12 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] Insertando datos de TFI_TAREAS_FORM_ITEMS - remapeo de tarea T003_AutorizacionBankia en T. EMISION CEE');
 
-	V_SQL := '
+	V_MSQL := '
 		SELECT COUNT(1) FROM '||V_ESQUEMA||'.tfi_tareas_form_items WHERE tfi_nombre <> ''titulo''  
 			AND tap_id = (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo = '''||V_TAP_CODIGO||''' )
 	';
 	--DBMS_OUTPUT.PUT_LINE(V_SQL);
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_ENLACES;
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_ENLACES;
 
 
 	IF (V_NUM_ENLACES > 0) THEN
@@ -106,7 +97,7 @@ BEGIN
 
 
 		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS ' ||
-					  ' (tfi_id, tap_id, tfi_orden, tfi_tipo, tfi_nombre, tfi_business_operation, tfi_label, TFI_ERROR_VALIDACION, TFI_VALIDACION, usuariocrear, fechacrear ) '||
+					  ' (tfi_id, tap_id, tfi_orden, tfi_tipo, tfi_nombre, tfi_label, TFI_ERROR_VALIDACION, TFI_VALIDACION, tfi_business_operation, usuariocrear, fechacrear ) '||
 					  ' VALUES (
 					  		s_tfi_tareas_form_items.nextval,
 					  		(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '||''''||V_TMP_T_TFI(1)||''''||'),

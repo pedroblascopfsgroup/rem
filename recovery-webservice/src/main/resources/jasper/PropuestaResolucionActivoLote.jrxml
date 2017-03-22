@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-28T16:45:18 -->
+<!-- 2017-03-22T10:54:43 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucionActivoLote" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
@@ -134,6 +134,9 @@
 	<parameter name="ActivoSuperficie" class="java.lang.String"/>
 	<parameter name="Lote" class="java.lang.String"/>
 	<parameter name="regimenProteccion" class="java.lang.String"/>
+	<parameter name="procederDescalificacion" class="java.lang.String"/>
+	<parameter name="licencia" class="java.lang.String"/>
+	<parameter name="cargo" class="java.lang.String"/>
 	<field name="listaCliente" class="java.util.List"/>
 	<field name="listaOferta" class="java.util.List"/>
 	<field name="listaTasacion" class="java.util.List"/>
@@ -1118,20 +1121,6 @@ TIPO DE PROPUESTA VENTA]]></text>
 				<rectangle>
 					<reportElement x="0" y="22" width="555" height="49" uuid="68f6c1db-6e13-40ae-8e38-52aaa973447a"/>
 				</rectangle>
-				<staticText>
-					<reportElement x="4" y="22" width="113" height="13" uuid="1e4c09d8-038b-4ea6-a126-26e747f6d18e"/>
-					<textElement>
-						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
-					</textElement>
-					<text><![CDATA[Régimen de Protección:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="263" y="22" width="144" height="13" uuid="7fcc14a9-620c-4d2a-afbf-51b1a665ffdf"/>
-					<textElement>
-						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
-					</textElement>
-					<text><![CDATA[Proceder a su descalificación]]></text>
-				</staticText>
 			</elementGroup>
 			<elementGroup>
 				<staticText>
@@ -1524,6 +1513,62 @@ TIPO DE PROPUESTA VENTA]]></text>
 			<break>
 				<reportElement x="0" y="78" width="100" height="1" uuid="64cae42b-1362-4db0-a6fa-5a6d220776ce"/>
 			</break>
+			<textField>
+				<reportElement x="117" y="39" width="146" height="13" uuid="d9bf838e-3cfd-4a9d-8dda-f69469831f71"/>
+				<textElement textAlignment="Left">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{licencia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="407" y="26" width="150" height="13" uuid="1fc8e219-b249-40c8-8ab0-b3b316cf0c75"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{procederDescalificacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="263" y="39" width="144" height="13" uuid="8e1ba035-ffe3-4694-b21f-a49841daf4de"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cargo:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="407" y="39" width="150" height="13" uuid="e0f31de9-54d8-4b69-89de-1cf1b16d1a5d"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cargo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="263" y="26" width="144" height="13" uuid="11a8521e-5e8c-49bd-81a0-0a110e248da1"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Proceder a su descalificación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="39" width="113" height="13" uuid="dad20184-49be-4dc5-bbe0-362e4b2953d0"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tipo de licencia:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="26" width="113" height="13" uuid="d9c2f602-38c6-46c3-a09c-77e0a9ae6050"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Régimen de Protección:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="117" y="26" width="146" height="13" uuid="c56e610e-5239-4e9d-8fa5-856b55d32cd4"/>
+				<textElement textAlignment="Left">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{regimenProteccion}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="70">
 			<elementGroup>

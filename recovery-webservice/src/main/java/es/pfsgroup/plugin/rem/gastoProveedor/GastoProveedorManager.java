@@ -1885,6 +1885,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		GastoProveedor gasto = findOne(idGasto);
 		
+		//Se activa el borrado de los gastos-trabajo, y dejamos el trabajo como diponible para un futuro nuevo gasto
+		this.reactivarTrabajoParaGastos(gasto.getGastoProveedorTrabajos());
+		
 		GastoGestion gastoGestion =  gasto.getGastoGestion();
 		gastoGestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
@@ -1898,6 +1901,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		genericDao.update(GastoProveedor.class, gasto);
 		
 		return true;
+	}
+	
+	/*
+	 * Deja el Trabajo disponible para que sea asignable a un gasto, y activa el borrado lógico
+	 * de la relación gastoProveedor-Trabajo
+	 */
+	private void reactivarTrabajoParaGastos(List<GastoProveedorTrabajo> listaGastoTrabajo) {
+		
+		if(!Checks.estaVacio(listaGastoTrabajo)) {
+			for(GastoProveedorTrabajo gpvTrabajo : listaGastoTrabajo) {
+				
+				Trabajo trabajo = gpvTrabajo.getTrabajo();
+				if(!Checks.esNulo(trabajo)) {
+					trabajo.setFechaEmisionFactura(null);
+					genericDao.update(Trabajo.class, trabajo);
+				}
+				
+				genericDao.deleteById(GastoProveedorTrabajo.class, gpvTrabajo.getId());
+			}
+		}
 	}
 	
 	public GastoProveedor asignarPropietarioGasto(GastoProveedor gasto) {

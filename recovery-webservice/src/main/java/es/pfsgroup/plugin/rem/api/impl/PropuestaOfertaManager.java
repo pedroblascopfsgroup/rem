@@ -1316,21 +1316,17 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 						tasacion.setImporteTasacion(FileUtilsREM.stringify(null));
 					}
 					tasacion.setFechaTasacion(FileUtilsREM.stringify(tas.getValoracionBien().getFechaValorTasacion()));
-					 
-					if(!Checks.esNulo(tas.getCodigoFirma())){
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", tas.getCodigoFirma().toString());
-						List<ActivoProveedor> tasadoras = genericDao.getList(ActivoProveedor.class, filtro);
-						if(!Checks.estaVacio(tasadoras)){
-							ActivoProveedor  tasadora = tasadoras.get(0);
-							if(!Checks.esNulo(tasadora)){
-								tasacion.setFirmaTasacion(FileUtilsREM.stringify(tasadora.getNombre()));
-							}else{
-								tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
-							}
-						} else{
+
+					if (!Checks.esNulo(tas.getCodigoFirma())) {
+						ActivoProveedor tasadora = activoAdapter
+								.getTasadoraByCodProveedorUvem(tas.getCodigoFirma().toString());
+						if (!Checks.esNulo(tasadora)) {
+							tasacion.setFirmaTasacion(FileUtilsREM.stringify(tasadora.getNombre()));
+						} else {
 							tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
 						}
-					}else{
+
+					} else {
 						tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
 					}
 					listaTasacion.add(tasacion);

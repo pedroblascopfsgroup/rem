@@ -819,7 +819,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 						mapaValores.put("ActivoPorche", NOT_AVAILABLE_ROOM);
 					}
 					if (salon != null) {
-						mapaValores.put("ActivoSalon", FileUtilsREM.stringify(salon + " m2"));
+						mapaValores.put("ActivoSalon", FileUtilsREM.stringify(salon).concat(" m2"));
 					} else {
 						mapaValores.put("ActivoSalon", NOT_AVAILABLE_ROOM);
 					}

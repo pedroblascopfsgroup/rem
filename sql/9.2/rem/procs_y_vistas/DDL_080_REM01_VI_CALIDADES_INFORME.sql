@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20161002
+--## FECHA_CREACION=20170222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-1787
 --## PRODUCTO=NO
---## Finalidad: Tabla para almacentar el historico de los informes enviadas a webcom.
+--## Finalidad: Vista Materializada exclusiva para el informeMediador que contiene las calidades enviadas a webcom.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,7 +33,8 @@ DECLARE
     V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
     V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_CALIDADES_INFORME'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_MSQL VARCHAR2(4000 CHAR); 
-
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Vista Materializada exclusiva para el informeMediador que contiene las calidades enviadas a webcom.'; -- Vble. para los comentarios de las tablas
+    
     CUENTA NUMBER;
     
 BEGIN
@@ -261,9 +262,19 @@ BEGIN
 			LEFT JOIN '||V_ESQUEMA||'.ACT_ZCO_ZONA_COMUN ZCO ON ZCO.ICO_ID = ICO.ICO_ID
 			LEFT JOIN '||V_ESQUEMA||'.DD_ECV_ESTADO_CONSERVACION DDECV ON DDECV.DD_ECV_ID = EDI.DD_ECV_ID';
 
-   
-   	 	
- 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
+ 	DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
+ 		
+ 		
+ 	--Creamos indice
+    --V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_VISTA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_VISTA||'(ICO_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	--EXECUTE IMMEDIATE V_MSQL;
+	--DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_VISTA||'_IDX... Indice creado.');
+	
+	
+    -- Creamos comentario	
+	--V_MSQL := 'COMMENT ON MATERIALIZED VIEW '||V_ESQUEMA||'.'||V_TEXT_VISTA||' IS '''||V_COMMENT_TABLE||'''';		
+	--EXECUTE IMMEDIATE V_MSQL;
+	--DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_VISTA||'... Comentario creado.');
 
 	COMMIT;
 

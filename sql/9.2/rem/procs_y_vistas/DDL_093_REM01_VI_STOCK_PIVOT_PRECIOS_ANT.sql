@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170203
+--## FECHA_CREACION=20170322
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1478
+--## INCIDENCIA_LINK=HREOS-1787
 --## PRODUCTO=NO
---## Finalidad: DDL con vista del anterior precio por activo.
+--## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con anterior precio AprobadoVenta, AprobadoRenta y DescuentoWeb
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -28,7 +28,11 @@ DECLARE
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
-    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'V_PIVOT_PRECIOS_ACTIVOS_ANT'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
+    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_STOCK_PIVOT_PRECIOS_ANT'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Vista Materializada exclusiva para Stock que contiene la relación de activos con anterior precio AprobadoVenta, AprobadoRenta y DescuentoWeb'; -- Vble. para los comentarios de las tablas
+    
+    
     V_MSQL VARCHAR2(4000 CHAR); 
 
     CUENTA NUMBER;
@@ -50,41 +54,41 @@ BEGIN
   END IF;
 
   DBMS_OUTPUT.PUT_LINE('CREATING VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...');
-  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
+  EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
 	AS
   		WITH PIVOT_DATA AS (
 			SELECT * FROM (
-				SELECT HVAL.ACT_ID, DD.DD_TPC_CODIGO, HVAL.HVA_FECHA_INICIO, HVAL.HVA_FECHA_FIN, HVAL.HVA_IMPORTE,
-				ROW_NUMBER() OVER (PARTITION BY HVAL.ACT_ID, HVAL.DD_TPC_ID ORDER BY HVAL.HVA_ID DESC) ORDEN
+				SELECT HVAL.ACT_ID, DD.DD_TPC_CODIGO, HVAL.HVA_IMPORTE,
+				ROW_NUMBER() OVER (PARTITION BY HVAL.ACT_ID, HVAL.DD_TPC_ID ORDER BY HVAL.HVA_FECHA_INICIO DESC) ORDEN
 				FROM '||V_ESQUEMA||'.ACT_HVA_HIST_VALORACIONES HVAL
-		        LEFT JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO DD ON DD.DD_TPC_ID = HVAL.DD_TPC_ID
+		        JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO DD ON DD.DD_TPC_ID = HVAL.DD_TPC_ID AND DD.DD_TPC_CODIGO IN (''02'',''03'')
 		        WHERE HVAL.BORRADO = 0) AUX
 			WHERE AUX.ORDEN = 1
 		)
-		SELECT * FROM PIVOT_DATA
-		PIVOT (MAX(HVA_FECHA_INICIO)						AS F_INI,
-		MAX(HVA_FECHA_FIN) 									AS F_FIN,
-		MAX(HVA_IMPORTE) FOR DD_TPC_CODIGO IN (	
-			''01'' AS "VNC",
-			''02'' AS "APROBADO_VENTA_WEB",
-			''03'' AS "APROBADO_RENTA_WEB",
-			''04'' AS "MINIMO_AUTORIZADO",
-			''07'' AS "DESCUENTO_APROBADO",
-			''09'' AS "VALOR_VPO",
-			''11'' AS "VALOR_ESTIMADO_VENTA",
-			''12'' AS "VALOR_ESTIMADO_RENTA",
-			''13'' AS "DESCUENTO_PUBLICADO",
-			''14'' AS "VALOR_REF",
-			''15'' AS "PT",
-			''16'' AS "VALOR_ASESORADO_LIQ",
-			''17'' AS "VACBE",
-			''18'' AS "COSTE_ADIQUISICION",
-			''19'' AS "FSV_VENTA",
-			''20'' AS "FSV_RENTA"))';
+		SELECT ACT_ID, APROBADO_VENTA_WEB, APROBADO_RENTA_WEB 
+		FROM PIVOT_DATA
+		PIVOT (
+			MAX(HVA_IMPORTE) FOR DD_TPC_CODIGO IN (	
+				''02'' AS "APROBADO_VENTA_WEB",
+				''03'' AS "APROBADO_RENTA_WEB"
+			)
+		)';
 				
 
-  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
+ 	 DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
   
+ 	 
+ 	--Creamos indice
+  	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_VISTA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_VISTA||'(ACT_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_VISTA||'_IDX... Indice creado.');
+	
+	
+    -- Creamos comentario	
+	V_MSQL := 'COMMENT ON MATERIALIZED VIEW '||V_ESQUEMA||'.'||V_TEXT_VISTA||' IS '''||V_COMMENT_TABLE||'''';		
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_VISTA||'... Comentario creado.');
+	
 EXCEPTION
      WHEN OTHERS THEN 
          DBMS_OUTPUT.PUT_LINE('KO!');

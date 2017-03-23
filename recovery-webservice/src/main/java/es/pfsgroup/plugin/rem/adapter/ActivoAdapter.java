@@ -1499,12 +1499,14 @@ public class ActivoAdapter {
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", tasacionDto.getCodigoFirma());
-				List<ActivoProveedor> tasadoras = genericDao.getList(ActivoProveedor.class, filtro);
-				if(!Checks.estaVacio(tasadoras)){
-					ActivoProveedor tasadora = tasadoras.get(0);
-					if(!Checks.esNulo(tasadora)){
-						tasacionDto.setNomTasador(tasadora.getNombre());
+				if(!Checks.esNulo(tasacionDto.getCodigoFirma())){
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", tasacionDto.getCodigoFirma());
+					List<ActivoProveedor> tasadoras = genericDao.getList(ActivoProveedor.class, filtro);
+					if(!Checks.estaVacio(tasadoras)){
+						ActivoProveedor tasadora = tasadoras.get(0);
+						if(!Checks.esNulo(tasadora)){
+							tasacionDto.setNomTasador(tasadora.getNombre());
+						}
 					}
 				}
 				listaDtoTasacion.add(tasacionDto);

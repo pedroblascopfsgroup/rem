@@ -58,4 +58,9 @@ public class DetectorWebcomEstadoPeticionTrabajo extends DetectorCambiosBD<Estad
 		return "ID_TRABAJO_REM";
 	}
 
+	@Override
+	public List<String> vistasAuxiliares() {
+		return null;
+	}
+
 }

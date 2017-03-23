@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,15 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	@Override
 	public String clavePrimariaJson() {
 		return "ID_ACTIVO_HAYA";
+	}
+
+	@Override
+	public List<String> vistasAuxiliares() {
+		ArrayList<String> vistasAuxiliares = new ArrayList<String>();
+		//vistasAuxiliares.add("VI_AUX_1");<-------- Primera vista auxiliar
+		// ...
+		//vistasAuxiliares.add("VI_AUX_N");<-------- N vista auxiliar
+		return vistasAuxiliares;
 	}
 
 }

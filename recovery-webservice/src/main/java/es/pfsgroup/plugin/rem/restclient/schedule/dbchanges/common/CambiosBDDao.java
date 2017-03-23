@@ -115,8 +115,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		if (infoTablas == null) {
 			throw new IllegalArgumentException(INFO_TABLAS_NO_PUEDE_SER_NULL);
 		}
-		
-		//Session session =this.getSessionFactory().getCurrentSession();
+
+		// Session session =this.getSessionFactory().getCurrentSession();
 		Session session = this.sesionFactoryFacade.getSession(this);
 		cambios.clear();
 
@@ -208,7 +208,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 
 		Session session = this.sesionFactoryFacade.getSession(this);
-		
+
 		cambios.clear();
 
 		FieldInfo[] fields = getDtoFields(dtoClass);
@@ -519,17 +519,30 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	}
 
 	private void refreshMaterializedView(InfoTablasBD infoTablas, Session session) {
-		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + infoTablas.nombreVistaDatosActuales()
-				+ "','C'); end;";
 		try {
 			if (logger.isDebugEnabled()) {
 				logger.trace("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
 			}
-			queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
+
+			// antes de refrescar la vista principal refrescamos las auxiliares
+			if (infoTablas.vistasAuxiliares() != null) {
+				for (String vistaAux : infoTablas.vistasAuxiliares()) {
+					if(!vistaAux.isEmpty()){
+						this.refreshMaterializedView(vistaAux, session);
+					}
+				}
+			}
+
+			this.refreshMaterializedView(infoTablas.nombreVistaDatosActuales(), session);
 		} catch (Throwable t) {
-			throw new CambiosBDDaoError("No se ha podido refrescar la vista materializada", sqlRefreshViews, infoTablas,
-					t);
+			throw new CambiosBDDaoError(
+					"No se ha podido actualizar la vista materializada " + infoTablas.nombreVistaDatosActuales());
 		}
+	}
+
+	private void refreshMaterializedView(String nombreVista, Session session) {
+		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + nombreVista + "','C'); end;";
+		queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
 	}
 
 }

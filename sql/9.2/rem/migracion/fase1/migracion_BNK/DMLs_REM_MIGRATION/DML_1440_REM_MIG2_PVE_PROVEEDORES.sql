@@ -229,8 +229,12 @@ BEGIN
       ) SQLI 
       ON (PVE.PVE_COD_UVEM = SQLI.PVE_COD_API_PROVEEDOR AND PVE.DD_TPR_ID = SQLI.DD_TPR_ID)
       WHEN MATCHED THEN UPDATE SET
-            PVE.DD_TPC_ID = SQLI.DD_TPC_ID
+             PVE.DD_TPC_ID = SQLI.DD_TPC_ID
             ,PVE.DD_TPE_ID = SQLI.DD_TPE_ID
+            ,PVE.DD_TDI_ID = SQLI.DD_TDI_ID
+            ,PVE.PVE_NOMBRE = SQLI.PVE_NOMBRE
+            ,PVE.PVE_NOMBRE_COMERCIAL = SQLI.PVE_NOMBRE_COMERCIAL
+            ,PVE.PVE_DOCIDENTIF = SQLI.PVE_DOCUMENTO_ID
             ,PVE.PVE_NIF = SQLI.PVE_RAZON_SOCIAL
             ,PVE.PVE_FECHA_ALTA = SQLI.PVE_FECHA_ALTA
             ,PVE.PVE_FECHA_BAJA = SQLI.PVE_FECHA_BAJA
@@ -254,7 +258,7 @@ BEGIN
       '
       ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] 1-  '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
       
       --ACTUALIZAMOS LOS CODIGOS UVEM
@@ -321,8 +325,195 @@ BEGIN
       '
       ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] 2- '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
+
+      --ACTUALIZAMOS PROVEEDORES POR TIPO Y NIF
+      EXECUTE IMMEDIATE '
+      MERGE INTO '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
+      USING 
+      ( 
+            SELECT
+                  MIG.PVE_COD_UVEM,
+                  TPR.DD_TPR_ID,
+                  MIG.PVE_NOMBRE,
+                  MIG.PVE_NOMBRE_COMERCIAL,
+                  TDI.DD_TDI_ID,
+                  MIG.PVE_DOCUMENTO_ID,
+                  ZNG.DD_ZNG_ID,
+                  PRV.DD_PRV_ID,
+                  LOC.DD_LOC_ID,
+                  MIG.PVE_COD_POSTAL,
+                  MIG.PVE_DIRECCION,
+                  MIG.PVE_TELEFONO1,
+                  MIG.PVE_TELEFONO2,
+                  MIG.PVE_FAX,
+                  MIG.PVE_EMAIL,
+                  MIG.PVE_PAGINA_WEB,
+                  MIG.PVE_IND_FRANQUICIA,
+                  MIG.PVE_IND_IVA_CAJA,
+                  MIG.PVE_NUM_CUENTA,
+                  TPC.DD_TPC_ID,
+                  TPE.DD_TPE_ID,
+                  MIG.PVE_RAZON_SOCIAL,
+                  MIG.PVE_FECHA_ALTA,
+                  MIG.PVE_FECHA_BAJA,
+                  MIG.PVE_IND_LOCALIZADO,
+                  EPR.DD_EPR_ID,
+                  MIG.PVE_FECHA_CONSTITUCION,
+                  MIG.PVE_AMBITO,
+                  MIG.PVE_OBSERVACIONES,
+                  MIG.PVE_IND_HOMOLOGADO,
+                  CPR.DD_CPR_ID,
+                  MIG.PVE_TOP,
+                  MIG.PVE_TITULAR,
+                  MIG.PVE_IND_RETENER,
+                  MRE.DD_MRE_ID,
+                  MIG.PVE_FECHA_RETENCION,
+                  MIG.PVE_FECHA_PBC,
+                  RPB.DD_RPB_ID,
+                  MIG.PVE_COD_API_PROVEEDOR,
+                  ROW_NUMBER() OVER (PARTITION BY PVE_DOCUMENTO_ID,DD_TPR_ID ORDER BY PVE_FECHA_BAJA DESC) N
+            FROM '||V_ESQUEMA||'.MIG2_PVE_PROVEEDORES MIG
+                  INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_CODIGO = MIG.PVE_COD_TIPO_PROVEEDOR
+                  LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG.PVE_COD_TIPO_DOCUMENTO
+                  LEFT JOIN '||V_ESQUEMA||'.DD_ZNG_ZONA_GEOGRAFICA ZNG ON ZNG.DD_ZNG_CODIGO = MIG.PVE_CON_ZONA_GEOGRAFICA
+                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = MIG.PVE_COD_PROVINCIA
+                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = LPAD(MIG.PVE_COD_LOCALIDAD,5,0) 
+                  LEFT JOIN '||V_ESQUEMA||'.DD_TPC_TIPOS_COLABORADOR TPC ON TPC.DD_TPC_CODIGO = MIG.PVE_COD_TIPO_COLABORADOR
+                  LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = MIG.PVE_COD_TIPO_PERSONA
+                  LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON EPR.DD_EPR_CODIGO = MIG.PVE_COD_ESTADO
+                  LEFT JOIN '||V_ESQUEMA||'.DD_CPR_CALIFICACION_PROVEEDOR CPR ON CPR.DD_CPR_CODIGO = MIG.PVE_COD_CALIFICACION
+                  LEFT JOIN '||V_ESQUEMA||'.DD_MRE_MOTIVO_RETENCION MRE ON MRE.DD_MRE_CODIGO = MIG.PVE_COD_MOTIVO_RETENCION
+                  LEFT JOIN '||V_ESQUEMA||'.DD_RPB_RES_PROCESO_BLANQUEO RPB ON RPB.DD_RPB_CODIGO = MIG.PVE_COD_RES_PROCESO_BLANQUEO		
+      ) SQLI 
+      ON (PVE.PVE_DOCIDENTIF = SQLI.PVE_DOCUMENTO_ID AND PVE.DD_TPR_ID = SQLI.DD_TPR_ID AND PVE.USUARIOCREAR = ''MIG'' AND SQLI.N = 1)
+      WHEN MATCHED THEN UPDATE SET
+             PVE.PVE_COD_UVEM = SQLI.PVE_COD_UVEM
+            ,PVE.DD_TPC_ID = SQLI.DD_TPC_ID
+            ,PVE.DD_TPE_ID = SQLI.DD_TPE_ID
+            ,PVE.DD_TDI_ID = SQLI.DD_TDI_ID            
+            ,PVE.PVE_NOMBRE = SQLI.PVE_NOMBRE
+            ,PVE.PVE_NOMBRE_COMERCIAL = SQLI.PVE_NOMBRE_COMERCIAL
+            ,PVE.PVE_NIF = SQLI.PVE_RAZON_SOCIAL
+            ,PVE.PVE_FECHA_ALTA = SQLI.PVE_FECHA_ALTA
+            ,PVE.PVE_FECHA_BAJA = SQLI.PVE_FECHA_BAJA
+            ,PVE.PVE_LOCALIZADA = SQLI.PVE_IND_LOCALIZADO
+            ,PVE.DD_EPR_ID = SQLI.DD_EPR_ID
+            ,PVE.PVE_FECHA_CONSTITUCION = SQLI.PVE_FECHA_CONSTITUCION
+            ,PVE.PVE_AMBITO = SQLI.PVE_AMBITO
+            ,PVE.PVE_OBSERVACIONES = SQLI.PVE_OBSERVACIONES
+            ,PVE.PVE_HOMOLOGADO = SQLI.PVE_IND_HOMOLOGADO
+            ,PVE.DD_CPR_ID = SQLI.DD_CPR_ID
+            ,PVE.PVE_TOP = SQLI.PVE_TOP
+            ,PVE.PVE_TITULAR_CUENTA = SQLI.PVE_TITULAR
+            ,PVE.PVE_RETENER = SQLI.PVE_IND_RETENER
+            ,PVE.DD_MRE_ID = SQLI.DD_MRE_ID
+            ,PVE.PVE_FECHA_RETENCION = SQLI.PVE_FECHA_RETENCION
+            ,PVE.PVE_FECHA_PBC = SQLI.PVE_FECHA_PBC
+            ,PVE.DD_RPB_ID = SQLI.DD_RPB_ID
+            ,PVE.USUARIOMODIFICAR = ''MIG2''
+            ,PVE.FECHAMODIFICAR = SYSDATE
+            ,PVE_COD_API_PROVEEDOR = SQLI.PVE_COD_API_PROVEEDOR      
+      '
+      ;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] 3- '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+
+
+      
+       --UPDATEAMOS PROVEEDORES
+      EXECUTE IMMEDIATE '
+      MERGE INTO '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
+      USING 
+      ( 
+            SELECT
+                  MIG.PVE_COD_UVEM,
+                  TPR.DD_TPR_ID,
+                  MIG.PVE_NOMBRE,
+                  MIG.PVE_NOMBRE_COMERCIAL,
+                  TDI.DD_TDI_ID,
+                  MIG.PVE_DOCUMENTO_ID,
+                  ZNG.DD_ZNG_ID,
+                  PRV.DD_PRV_ID,
+                  LOC.DD_LOC_ID,
+                  MIG.PVE_COD_POSTAL,
+                  MIG.PVE_DIRECCION,
+                  MIG.PVE_TELEFONO1,
+                  MIG.PVE_TELEFONO2,
+                  MIG.PVE_FAX,
+                  MIG.PVE_EMAIL,
+                  MIG.PVE_PAGINA_WEB,
+                  MIG.PVE_IND_FRANQUICIA,
+                  MIG.PVE_IND_IVA_CAJA,
+                  MIG.PVE_NUM_CUENTA,
+                  TPC.DD_TPC_ID,
+                  TPE.DD_TPE_ID,
+                  MIG.PVE_RAZON_SOCIAL,
+                  MIG.PVE_FECHA_ALTA,
+                  MIG.PVE_FECHA_BAJA,
+                  MIG.PVE_IND_LOCALIZADO,
+                  EPR.DD_EPR_ID,
+                  MIG.PVE_FECHA_CONSTITUCION,
+                  MIG.PVE_AMBITO,
+                  MIG.PVE_OBSERVACIONES,
+                  MIG.PVE_IND_HOMOLOGADO,
+                  CPR.DD_CPR_ID,
+                  MIG.PVE_TOP,
+                  MIG.PVE_TITULAR,
+                  MIG.PVE_IND_RETENER,
+                  MRE.DD_MRE_ID,
+                  MIG.PVE_FECHA_RETENCION,
+                  MIG.PVE_FECHA_PBC,
+                  RPB.DD_RPB_ID,
+                  MIG.PVE_COD_API_PROVEEDOR,
+                  ROW_NUMBER() OVER (PARTITION BY PVE_DOCUMENTO_ID,DD_TPR_ID ORDER BY PVE_FECHA_BAJA DESC) N                  
+            FROM '||V_ESQUEMA||'.MIG2_PVE_PROVEEDORES MIG
+                  INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_CODIGO = MIG.PVE_COD_TIPO_PROVEEDOR
+                  LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG.PVE_COD_TIPO_DOCUMENTO
+                  LEFT JOIN '||V_ESQUEMA||'.DD_ZNG_ZONA_GEOGRAFICA ZNG ON ZNG.DD_ZNG_CODIGO = MIG.PVE_CON_ZONA_GEOGRAFICA
+                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = MIG.PVE_COD_PROVINCIA
+                  LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = LPAD(MIG.PVE_COD_LOCALIDAD,5,0) 
+                  LEFT JOIN '||V_ESQUEMA||'.DD_TPC_TIPOS_COLABORADOR TPC ON TPC.DD_TPC_CODIGO = MIG.PVE_COD_TIPO_COLABORADOR
+                  LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = MIG.PVE_COD_TIPO_PERSONA
+                  LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON EPR.DD_EPR_CODIGO = MIG.PVE_COD_ESTADO
+                  LEFT JOIN '||V_ESQUEMA||'.DD_CPR_CALIFICACION_PROVEEDOR CPR ON CPR.DD_CPR_CODIGO = MIG.PVE_COD_CALIFICACION
+                  LEFT JOIN '||V_ESQUEMA||'.DD_MRE_MOTIVO_RETENCION MRE ON MRE.DD_MRE_CODIGO = MIG.PVE_COD_MOTIVO_RETENCION
+                  LEFT JOIN '||V_ESQUEMA||'.DD_RPB_RES_PROCESO_BLANQUEO RPB ON RPB.DD_RPB_CODIGO = MIG.PVE_COD_RES_PROCESO_BLANQUEO		
+      ) SQLI 
+      ON (PVE.PVE_COD_UVEM = SQLI.PVE_COD_UVEM AND PVE.DD_TPR_ID = SQLI.DD_TPR_ID AND PVE.USUARIOCREAR = ''MIG'' AND SQLI.N = 1)
+     WHEN MATCHED THEN UPDATE SET
+             PVE.DD_TPC_ID = SQLI.DD_TPC_ID
+            ,PVE.DD_TPE_ID = SQLI.DD_TPE_ID
+            ,PVE.DD_TDI_ID = SQLI.DD_TDI_ID            
+            ,PVE.PVE_NOMBRE = SQLI.PVE_NOMBRE
+            ,PVE.PVE_NOMBRE_COMERCIAL = SQLI.PVE_NOMBRE_COMERCIAL
+            ,PVE.PVE_NIF = SQLI.PVE_RAZON_SOCIAL
+            ,PVE.PVE_FECHA_ALTA = SQLI.PVE_FECHA_ALTA
+            ,PVE.PVE_FECHA_BAJA = SQLI.PVE_FECHA_BAJA
+            ,PVE.PVE_LOCALIZADA = SQLI.PVE_IND_LOCALIZADO
+            ,PVE.DD_EPR_ID = SQLI.DD_EPR_ID
+            ,PVE.PVE_FECHA_CONSTITUCION = SQLI.PVE_FECHA_CONSTITUCION
+            ,PVE.PVE_AMBITO = SQLI.PVE_AMBITO
+            ,PVE.PVE_OBSERVACIONES = SQLI.PVE_OBSERVACIONES
+            ,PVE.PVE_HOMOLOGADO = SQLI.PVE_IND_HOMOLOGADO
+            ,PVE.DD_CPR_ID = SQLI.DD_CPR_ID
+            ,PVE.PVE_TOP = SQLI.PVE_TOP
+            ,PVE.PVE_TITULAR_CUENTA = SQLI.PVE_TITULAR
+            ,PVE.PVE_RETENER = SQLI.PVE_IND_RETENER
+            ,PVE.DD_MRE_ID = SQLI.DD_MRE_ID
+            ,PVE.PVE_FECHA_RETENCION = SQLI.PVE_FECHA_RETENCION
+            ,PVE.PVE_FECHA_PBC = SQLI.PVE_FECHA_PBC
+            ,PVE.DD_RPB_ID = SQLI.DD_RPB_ID
+            ,PVE.USUARIOMODIFICAR = ''MIG2''
+            ,PVE.FECHAMODIFICAR = SYSDATE
+            ,PVE_COD_API_PROVEEDOR = SQLI.PVE_COD_API_PROVEEDOR      
+      
+      '
+      ;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] 4- '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+
       
        --INSERTAMOS LOS NUEVOS PROVEEDORES
       EXECUTE IMMEDIATE '
@@ -368,7 +559,8 @@ BEGIN
                   MIG.PVE_FECHA_RETENCION,
                   MIG.PVE_FECHA_PBC,
                   RPB.DD_RPB_ID,
-                  MIG.PVE_COD_API_PROVEEDOR
+                  MIG.PVE_COD_API_PROVEEDOR,
+                  ROW_NUMBER() OVER (PARTITION BY PVE_DOCUMENTO_ID,DD_TPR_ID ORDER BY PVE_FECHA_BAJA DESC) N                  
             FROM '||V_ESQUEMA||'.MIG2_PVE_PROVEEDORES MIG
                   INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_CODIGO = MIG.PVE_COD_TIPO_PROVEEDOR
                   LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG.PVE_COD_TIPO_DOCUMENTO
@@ -383,8 +575,9 @@ BEGIN
                   LEFT JOIN '||V_ESQUEMA||'.DD_RPB_RES_PROCESO_BLANQUEO RPB ON RPB.DD_RPB_CODIGO = MIG.PVE_COD_RES_PROCESO_BLANQUEO		
       ) SQLI 
       ON (PVE.PVE_COD_UVEM = SQLI.PVE_COD_UVEM AND PVE.DD_TPR_ID = SQLI.DD_TPR_ID)
+      
       WHEN NOT MATCHED THEN INSERT (
-            PVE_ID
+             PVE_ID
             ,PVE.PVE_COD_UVEM
             ,PVE.DD_TPR_ID
             ,PVE.PVE_NOMBRE
@@ -480,8 +673,8 @@ BEGIN
       '
       ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
+      DBMS_OUTPUT.PUT_LINE('[INFO] 5- '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+       
       
        --ACTUALIZAMOS EL CODIGO UVEM Y API DE LOS PROVEEDORES QUE NO LLEGAN EN MIGRACION
       EXECUTE IMMEDIATE '
@@ -510,7 +703,7 @@ BEGIN
       '
       ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] 6 - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
       COMMIT;
       

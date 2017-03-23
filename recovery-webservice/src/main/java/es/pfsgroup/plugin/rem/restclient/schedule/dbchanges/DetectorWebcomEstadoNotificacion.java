@@ -58,4 +58,9 @@ public class DetectorWebcomEstadoNotificacion extends DetectorCambiosBD<Notifica
 		return "ID_NOTIFICACION_REM";
 	}
 
+	@Override
+	public List<String> vistasAuxiliares() {
+		return null;
+	}
+
 }

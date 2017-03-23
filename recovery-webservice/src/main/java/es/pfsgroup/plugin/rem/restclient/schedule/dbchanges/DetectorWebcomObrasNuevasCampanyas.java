@@ -58,4 +58,9 @@ public class DetectorWebcomObrasNuevasCampanyas  extends DetectorCambiosBD<Campa
 		return "ID_AGRUPACION_REM";
 	}
 
+	@Override
+	public List<String> vistasAuxiliares() {
+		return null;
+	}
+
 }

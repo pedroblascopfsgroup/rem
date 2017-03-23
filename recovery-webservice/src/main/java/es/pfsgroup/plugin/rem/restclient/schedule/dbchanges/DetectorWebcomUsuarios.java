@@ -58,4 +58,9 @@ public class DetectorWebcomUsuarios  extends DetectorCambiosBD<UsuarioDto> {
 		return "ID_USUARIO_REM";
 	}
 
+	@Override
+	public List<String> vistasAuxiliares() {
+		return null;
+	}
+
 }

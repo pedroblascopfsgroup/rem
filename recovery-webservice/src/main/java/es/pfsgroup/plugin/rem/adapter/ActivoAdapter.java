@@ -46,7 +46,6 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -134,6 +133,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
@@ -1499,16 +1499,34 @@ public class ActivoAdapter {
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", tasacionDto.getCodigoFirma());
-				ActivoProveedor tasadora = genericDao.get(ActivoProveedor.class, filtro);
-				if(!Checks.esNulo(tasadora))
+				
+				ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionDto.getCodigoFirma());
+				if(!Checks.esNulo(tasadora)){
 					tasacionDto.setNomTasador(tasadora.getNombre());
+				}
 				listaDtoTasacion.add(tasacionDto);
 			}
 		}
 
 		return listaDtoTasacion;
 
+	}
+	
+	/**
+	 * Obtiene la tasadora dado un codProveedorUvem
+	 * 
+	 * @param codProveedorUvem
+	 * @return
+	 */
+	public ActivoProveedor getTasadoraByCodProveedorUvem(String codProveedorUvem) {
+		ActivoProveedor tasadora = null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", codProveedorUvem);
+		Filter filtroTasadora = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_TASADORA);
+		List<ActivoProveedor> tasadoras = genericDao.getList(ActivoProveedor.class, filtro,filtroTasadora);
+		if (!Checks.estaVacio(tasadoras)) {
+			tasadora = tasadoras.get(0);
+		}
+		return tasadora;
 	}
 
 	public DtoTramite getTramite(Long idTramite) {

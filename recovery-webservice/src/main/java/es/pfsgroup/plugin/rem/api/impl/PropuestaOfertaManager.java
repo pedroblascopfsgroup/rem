@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
@@ -202,7 +203,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 		// HEADER
 		mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
-		mapaValores.put("Activo", activo.getNumActivoUvem().toString());
+		mapaValores.put("Activo", activo.getNumActivo().toString());
 		mapaValores.put("FRecepOf", FileUtilsREM.stringify(oferta.getFechaAlta()));
 		mapaValores.put("FProp", FileUtilsREM.stringify(new Date()));
 
@@ -389,8 +390,10 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}
 		if (!Checks.esNulo(oferta.getImporteOferta())) {
 			mapaValores.put("ImporteInicial", FileUtilsREM.stringify(oferta.getImporteOferta()) + "€");
+			mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(oferta.getImporteOferta()) + "€");
 		} else {
 			mapaValores.put("ImporteInicial", FileUtilsREM.stringify(null));
+			mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(null));
 		}
 		if (!Checks.esNulo(oferta.getFechaContraoferta())) {
 			mapaValores.put("FechaContraoferta", FileUtilsREM.stringify(oferta.getFechaContraoferta()));
@@ -816,7 +819,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 						mapaValores.put("ActivoPorche", NOT_AVAILABLE_ROOM);
 					}
 					if (salon != null) {
-						mapaValores.put("ActivoSalon", FileUtilsREM.stringify(salon + " m2"));
+						mapaValores.put("ActivoSalon", FileUtilsREM.stringify(salon).concat(" m2"));
 					} else {
 						mapaValores.put("ActivoSalon", NOT_AVAILABLE_ROOM);
 					}
@@ -1312,8 +1315,20 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 					} else {
 						tasacion.setImporteTasacion(FileUtilsREM.stringify(null));
 					}
-					tasacion.setFechaTasacion(FileUtilsREM.stringify(tas.getFechaRecepcionTasacion()));
-					tasacion.setFirmaTasacion(FileUtilsREM.stringify(tas.getCodigoFirma()));
+					tasacion.setFechaTasacion(FileUtilsREM.stringify(tas.getValoracionBien().getFechaValorTasacion()));
+
+					if (!Checks.esNulo(tas.getCodigoFirma())) {
+						ActivoProveedor tasadora = activoAdapter
+								.getTasadoraByCodProveedorUvem(tas.getCodigoFirma().toString());
+						if (!Checks.esNulo(tasadora)) {
+							tasacion.setFirmaTasacion(FileUtilsREM.stringify(tasadora.getNombre()));
+						} else {
+							tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
+						}
+
+					} else {
+						tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
+					}
 					listaTasacion.add(tasacion);
 				}
 			}

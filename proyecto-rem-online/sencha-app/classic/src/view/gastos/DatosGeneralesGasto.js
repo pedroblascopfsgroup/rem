@@ -238,21 +238,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									      	bind: {
 								           		store: '{comboPeriodicidad}',
 								           		value: '{gasto.periodicidad}'
-								         	},
-								         	//allowBlank: false,
-								         	listeners: {
-								         		edit: function(){
-								         			var combo=me.up('gastodetallemain').lookupReference('cboxPeriodicidad');
-								         			if(Ext.isEmpty(me.up('gastodetallemain').getViewModel().get('gasto').get('numGastoGestoria')))
-								         				combo.allowBlank=false;
-								         			else
-								         				combo.allowBlank=true;
-								         		}/*,
-								         		update: function(){
-								         			var combo=me.up('gastodetallemain').lookupReference('cboxPeriodicidad');
-								         			combo.validate();
-								         		}*/
-								         	}
+								         	}								         	
 									    },
 										{
 											xtype: 'textfieldbase',

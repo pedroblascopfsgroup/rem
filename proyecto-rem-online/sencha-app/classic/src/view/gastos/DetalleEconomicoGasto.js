@@ -398,7 +398,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										       	maxValue: null,
 										       	listeners: {
 										       		change: 'onChangeFechaTopePago'
-										       	},
+										       	}
 										       	//allowBlank: false
 										    },
 										    { 

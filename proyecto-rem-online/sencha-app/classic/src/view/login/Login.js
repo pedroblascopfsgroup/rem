@@ -78,9 +78,12 @@ Ext.define('HreRem.view.login.Login', {
 										            enableKeyEvents: true,
 										           	//style: {marginBottom: '10px !important'},
 										            listeners: {
-										                specialKey: 'onSpecialKey'
+										                specialKey: 'onSpecialKey',
+										                afterrender: function() {
+										                	this.focus();
+										                }
 										            }
-											     }, 
+											     },
 											     {
 										            xtype: 'textfield',
 										            name: 'j_password',

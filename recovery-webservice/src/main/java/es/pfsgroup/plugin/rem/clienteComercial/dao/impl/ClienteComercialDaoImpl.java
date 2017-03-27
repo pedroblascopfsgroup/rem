@@ -19,7 +19,7 @@ public class ClienteComercialDaoImpl extends AbstractEntityDao<ClienteComercial,
 	@Override
 	public Long getNextClienteRemId() {
 		String sql = "SELECT S_CLC_REM_ID.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 	
 	

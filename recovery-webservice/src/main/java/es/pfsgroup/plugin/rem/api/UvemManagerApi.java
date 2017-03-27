@@ -1,11 +1,9 @@
 package es.pfsgroup.plugin.rem.api;
 
-import com.gfi.webIntegrator.WIException;
-import com.gfi.webIntegrator.WIMetaServiceException;
+import java.util.List;
 
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -31,12 +29,10 @@ public interface UvemManagerApi {
 	 * @param email
 	 * @param telefono
 	 * @return
-	 * @throws WIMetaServiceException
-	 * @throws WIException
-	 * @throws TipoDeDatoException
+	 * @throws Exception
 	 */
 	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName,String email,String telefono)
-			throws WIMetaServiceException, WIException, TipoDeDatoException;
+			throws Exception;
 
 	
 	/**
@@ -46,12 +42,10 @@ public interface UvemManagerApi {
 	 * @param nombreGestor
 	 * @param gestion
 	 * @return
-	 * @throws WIMetaServiceException
-	 * @throws WIException
-	 * @throws TipoDeDatoException
+	 * @throws Exception
 	 */
 	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor)
-			throws WIMetaServiceException, WIException, TipoDeDatoException;
+			throws Exception;
 	
 	
 	
@@ -83,8 +77,11 @@ public interface UvemManagerApi {
 	 */
 	DatosClienteDto ejecutarDatosClientePorDocumento(DtoClienteUrsus dtoCliente) throws Exception;
 	
+
 	
-		
+	
+	
+
 	/**
 	 * Servicio GMPAJC11_INS que a partir del nº y tipo de documento, así como Entidad del
 	 * Cliente (y tipo) devolverá el/los nº cliente/s Ursus coincidentes
@@ -96,8 +93,10 @@ public interface UvemManagerApi {
 	 *            Otros persona física. J Otros persona jurídica.
 	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
 	 */
-	public Integer ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	public List<DatosClienteDto> ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
 
+	//TODO: cuando se pruebe borrar este método.
+	public List<DatosClienteDto> ejecutarNumClienteTest(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
 
 	/**
 	 * Servicio GMPAJC93_INS que a partir del nº cliente URSUS se devuelvan
@@ -109,9 +108,9 @@ public interface UvemManagerApi {
 	 */
 	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre)  throws Exception;
 
-	
-	
-	
+	//TODO: cuando se pruebe borrar este método.
+	public DatosClienteDto ejecutarDatosClienteTest(Integer numcliente, String qcenre)  throws Exception;
+
 	
 	
 /*******************************************INSTANCIA DECISION***************************************************/

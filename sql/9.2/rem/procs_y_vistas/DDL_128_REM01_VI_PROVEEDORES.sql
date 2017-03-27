@@ -1,13 +1,14 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160323
+--## AUTOR=Kevin Fernández
+--## FECHA_CREACION=20170320
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --## Finalidad: DDL
---##           
+--## Comentario: Se ha añadido la opción de mostrar si el proveedor está dado de baja.
+--##            
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -59,15 +60,15 @@ BEGIN
 			TPR.DD_TPR_DESCRIPCION,
 			CRA.DD_CRA_CODIGO,
 			CRA.DD_CRA_DESCRIPCION,
-			PRV.DD_PRV_CODIGO,
-			PRV.DD_PRV_DESCRIPCION			
+			NULL AS DD_PRV_CODIGO,
+			NULL AS DD_PRV_DESCRIPCION,
+			NVL2(PVE.PVE_FECHA_BAJA, 1 ,0) AS BAJA
 
 			  
 		FROM ' || V_ESQUEMA || '.ACT_PVE_PROVEEDOR PVE
 		INNER JOIN ' || V_ESQUEMA || '.ACT_ETP_ENTIDAD_PROVEEDOR ETP ON PVE.PVE_ID = ETP.PVE_ID
 		INNER JOIN ' || V_ESQUEMA || '.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID AND TPR.BORRADO = 0
 		INNER JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON ETP.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
-		INNER JOIN ' || V_ESQUEMA_M || '.DD_PRV_PROVINCIA PRV ON PVE.DD_PRV_ID = PRV.DD_PRV_ID AND PRV.BORRADO = 0
 		WHERE PVE.BORRADO = 0';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_PROVEEDORES...Creada OK');

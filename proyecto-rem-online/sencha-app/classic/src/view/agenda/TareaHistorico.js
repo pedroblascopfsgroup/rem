@@ -47,7 +47,7 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 						}
 						     
 						//Elimina los enlaces, si existen
-						//Los enlaces siempre van a continuación de los campos
+						//Los enlaces siempre van a continuaciï¿½n de los campos
 						for (var i = 0; i < numEnlaces; i++) {
 							me.campos.pop();
 						}
@@ -110,6 +110,16 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 								combo.diccionario = me.campos[i].store;
 								combo.fieldLabel = me.campos[i].fieldLabel;
 								combo.readOnly = true;
+								combo.value = me.campos[i].value;
+								camposFiltrados.push(combo);
+								break;
+							
+							case 'comboboxinicialedi':
+								var combo = {};
+								combo.xtype = 'genericcombo';
+								combo.name = me.campos[i].name;
+								combo.diccionario = me.campos[i].store;
+								combo.fieldLabel = me.campos[i].fieldLabel;
 								combo.value = me.campos[i].value;
 								camposFiltrados.push(combo);
 								break;

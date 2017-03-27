@@ -42,6 +42,8 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_PRIZE_NAN = "msg.error.masivo.actualizar.precios.fsv.activo.importe.formato.incorrecto";
 	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor FSV de Renta no puede ser mayor al valor FSV de Renta (FSV Venta >= FSV Renta) o uno de estos valores no tiene un formato correcto";
+	public static final String ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Venta.importe.no.mayor.cero";
+	public static final String ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Renta.importe.no.mayor.cero";
 	
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
 	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
@@ -96,26 +98,28 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		}
 				
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-//			if (!isActiveExists(exc)){
-				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
-				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZE_NAN), getNANPrecioIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED, getLimitePreciosVentaRentaIncorrectoRows(exc));
-				
-				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED).isEmpty() ){
-						dtoValidacionContenido.setFicheroTieneErrores(true);
-						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+			mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZE_NAN), getNANPrecioIncorrectoRows(exc));
+			mapaErrores.put(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED, getLimitePreciosVentaRentaIncorrectoRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO), isPrecioVentaMayorCero(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO), isPrecioRentaMayorCero(exc));
+			
+			try{
+				if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO)).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO)).isEmpty() ){
+					dtoValidacionContenido.setFicheroTieneErrores(true);
+					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 				}
-//			}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		exc.cerrar();
 		
@@ -317,4 +321,61 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		return listaFilas;
 	}
 	
+	private List<Integer> isPrecioVentaMayorCero(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double valorFSVVenta = null;
+		
+		// Validacion que evalua si el precio FSV Venta es > 0
+		try {
+			for(int i=1; i<this.numFilasHoja;i++){
+				try{
+					valorFSVVenta = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
+
+					if(!Checks.esNulo(valorFSVVenta) && 
+							(valorFSVVenta.compareTo(0.0D) <= 0)){
+						if (!listaFilas.contains(i))
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isPrecioRentaMayorCero(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double valorFSVRenta = null;
+		
+		// Validacion que evalua si el precio FSV Renta es > 0
+		try {
+			for(int i=1; i<this.numFilasHoja;i++){
+				try{
+					valorFSVRenta = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;
+					
+					if(!Checks.esNulo(valorFSVRenta) &&
+							(valorFSVRenta.compareTo(0.0D) <= 0)){
+						if (!listaFilas.contains(i))
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
 }

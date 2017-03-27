@@ -263,7 +263,15 @@ public interface TrabajoApi {
 			String subtipoTrabajo);
 
 	/**
-	 * Devuelve las tarifas aplicadas a un trabajo determinado
+	 * Devuelve una lista de tarifas aplicadas al trabajo determinado
+	 * @param filtro
+	 * @param idTrabajo
+	 * @return
+	 */
+	public List<DtoTarifaTrabajo> getListDtoTarifaTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo);
+	
+	/**
+	 * Devuelve un DtoPage con la lista de tarifas aplicadas a un trabajo determinado
 	 * 
 	 * @param filtro
 	 * @param idTrabajo

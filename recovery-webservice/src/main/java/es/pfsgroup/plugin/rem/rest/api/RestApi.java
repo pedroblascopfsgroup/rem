@@ -38,7 +38,7 @@ public interface RestApi {
 	public static final String CODE_OK = "OK";
 	public static final String REST_MSG_BROKER_NOT_EXIST = "BROKER_NOT_EXIST";
 	public static final String REST_MSG_INVALID_SIGNATURE = "INVALID_SIGNATURE";
-	public static final String REST_MSG_REPETEAD_REQUEST = "REPETEAD_REQUEST";
+	public static final String REST_MSG_REPEATED_REQUEST = "REPEATED_REQUEST";
 	public static final String REST_MSG_MISSING_REQUIRED_FIELDS = "MISSING_REQUIRED_FIELDS";
 	public static final String REST_NO_RELATED_OFFER = "NO_EXISTE_OFERTA_RELACIONADA";
 	public static final String REST_NO_RELATED_OFFER_ACCEPTED = "NO_EXISTE_OFERTA_ACEPTADA_RELACIONADA";
@@ -59,6 +59,7 @@ public interface RestApi {
 	public static final String REST_API_ALL = "TODOS";
 	public static final String REST_API_WEBCOM = "WEBCOM";
 	public static final String REST_API_BANKIA = "BANKIA";
+	public static final String REST_API_ENVIAR_CAMBIOS = "CAMBIOS";
 
 	/**
 	 * Valida la firma
@@ -254,9 +255,8 @@ public interface RestApi {
 	 * Realiza la configuracion de la sesión
 	 * 
 	 * @param response
-	 * @param workingCode
 	 * @throws Exception
 	 */
-	public void doSessionConfig(String workingCode) throws Exception;
+	public void doSessionConfig() throws Exception;
 
 }

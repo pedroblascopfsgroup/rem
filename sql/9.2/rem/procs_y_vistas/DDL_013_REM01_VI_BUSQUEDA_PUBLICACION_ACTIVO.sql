@@ -1,12 +1,13 @@
  --/*
 --##########################################
---## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170113
+--## AUTOR=Kevin Fernádez
+--## FECHA_CREACION=20170309
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1378
 --## PRODUCTO=NO
 --## Finalidad: DDL creación de la vista busqueda publicación activo con correccion al filtrar con historico de inf comercial
+--## Comentario1: Se adapta la vista para filtrar por valoracion sin borrar y que diferencie entre el destino comercial del activo.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -47,38 +48,51 @@ BEGIN
   
   DBMS_OUTPUT.PUT_LINE('Crear nueva vista: '|| V_ESQUEMA ||'.V_BUSQUEDA_PUBLICACION_ACTIVO..');
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_PUBLICACION_ACTIVO 
-	AS
+	AS		  
 		SELECT
-			ACT.ACT_ID,
-			ACT.ACT_NUM_ACTIVO AS ACT_NUM_ACTIVO,
-			TPA.DD_TPA_CODIGO AS TIPO_ACTIVO_CODIGO,
-			TPA.DD_TPA_DESCRIPCION AS TIPO_ACTIVO_DESCRIPCION,
-			SAC.DD_SAC_CODIGO AS SUBTIPO_ACTIVO_CODIGO,
-			SAC.DD_SAC_DESCRIPCION AS SUBTIPO_ACTIVO_DESCRIPCION,
-		  (TVI.DD_TVI_DESCRIPCION || '' '' || LOC.BIE_LOC_NOMBRE_VIA || '' '' || LOC.BIE_LOC_NUMERO_DOMICILIO || '' '' || LOC.BIE_LOC_PUERTA) AS DIRECCION,
-			CRA.DD_CRA_CODIGO AS CARTERA_CODIGO,
-			EPU.DD_EPU_CODIGO AS ESTADO_PUBLICACION_CODIGO,
-			EPU.DD_EPU_DESCRIPCION AS ESTADO_PUBLICACION_DESCRIPCION,
-			ACT.ACT_ADMISION AS ADMISION,
-			ACT.ACT_GESTION AS GESTION,
-     	DECODE(AIC.DD_AIC_CODIGO, ''02'',1,0) INFORME_COMERCIAL,
-			(CASE WHEN ACT.ACT_FECHA_IND_PUBLICABLE IS NOT NULL THEN 1 ELSE 0 END) AS PUBLICACION,
-     	(CASE WHEN VPPA.APROBADO_VENTA_WEB IS NULL AND VPPA.APROBADO_RENTA_WEB IS NULL THEN 0 ELSE 1 END) AS PRECIO
-		FROM ' || V_ESQUEMA || '.ACT_ACTIVO ACT
-		LEFT JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-		LEFT JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = ACT.DD_SAC_ID
-	  LEFT JOIN ' || V_ESQUEMA || '.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID
-		LEFT JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION LOC ON ACT.BIE_ID = LOC.BIE_ID
-	  LEFT JOIN ' || V_ESQUEMA_MASTER || '.DD_TVI_TIPO_VIA TVI ON LOC.DD_TVI_ID = TVI.DD_TVI_ID
-		LEFT JOIN ' || V_ESQUEMA || '.DD_EPU_ESTADO_PUBLICACION EPU ON ACT.DD_EPU_ID = EPU.DD_EPU_ID
-		LEFT JOIN ' || V_ESQUEMA || '.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID=ICO.ACT_ID AND ICO.BORRADO=0
-		LEFT JOIN ' || V_ESQUEMA || '.ACT_PAC_PERIMETRO_ACTIVO PAC ON ACT.ACT_ID=PAC.ACT_ID AND PAC.BORRADO=0
-		LEFT JOIN ' || V_ESQUEMA || '.ACT_HIC_EST_INF_COMER_HIST HIC ON ACT.ACT_ID = HIC.ACT_ID 
-    LEFT JOIN ' || V_ESQUEMA || '.DD_AIC_ACCION_INF_COMERCIAL AIC ON HIC.DD_AIC_ID = AIC.DD_AIC_ID
-		LEFT JOIN ' || V_ESQUEMA || '.V_PIVOT_PRECIOS_ACTIVOS VPPA ON VPPA.ACT_ID = ACT.ACT_ID
-		WHERE (PAC.PAC_ID IS NULL OR PAC.PAC_CHECK_COMERCIALIZAR = 1) 
-		  AND (HIC.HIC_FECHA IS NULL OR HIC.HIC_FECHA = (SELECT MAX(HIST2.HIC_FECHA) FROM ACT_HIC_EST_INF_COMER_HIST HIST2 WHERE ACT.ACT_ID = HIST2.ACT_ID))';
+		  	act.act_id,
+		  	act.act_num_activo AS act_num_activo,
+		  	tpa.dd_tpa_codigo AS tipo_activo_codigo,
+		  	tpa.dd_tpa_descripcion AS tipo_activo_descripcion,
+		  	sac.dd_sac_codigo AS subtipo_activo_codigo,
+          	sac.dd_sac_descripcion AS subtipo_activo_descripcion,
+          	(tvi.dd_tvi_descripcion || '' '' || loc.bie_loc_nombre_via || '' '' || loc.bie_loc_numero_domicilio || '' '' || loc.bie_loc_puerta) AS direccion,
+          	cra.dd_cra_codigo AS cartera_codigo,
+          	epu.dd_epu_codigo AS estado_publicacion_codigo,
+          	epu.dd_epu_descripcion AS estado_publicacion_descripcion,
+          	act.act_admision AS admision,
+          	act.act_gestion AS gestion,
+          	DECODE (aic.dd_aic_codigo, ''02'', 1, 0) informe_comercial,
+          	(CASE WHEN act.act_fecha_ind_publicable IS NOT NULL THEN 1 ELSE 0 END) AS publicacion,
+            (CASE WHEN val1.val_id_venta IS NOT NULL OR val2.val_id_renta IS NOT NULL THEN
+                    CASE 
+                        WHEN val1.val_id_venta IS NOT NULL AND act.dd_tco_id IN (select tco.dd_tco_id from '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco where tco.dd_tco_codigo in (''01'', ''02'', ''04'')) THEN 1
+                        WHEN val2.val_id_renta IS NOT NULL AND act.dd_tco_id IN (select tco.dd_tco_id from '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco where tco.dd_tco_codigo in (''02'', ''03'', ''04'')) THEN 1
+                    ELSE
+                        0
+                    END
+             ELSE
+                    0 
+             END) AS precio
 
+       	FROM '|| V_ESQUEMA ||'.act_activo act
+       		LEFT JOIN '|| V_ESQUEMA ||'.dd_cra_cartera cra ON cra.dd_cra_id = act.dd_cra_id
+			LEFT JOIN '|| V_ESQUEMA ||'.dd_sac_subtipo_activo sac ON sac.dd_sac_id = act.dd_sac_id
+			LEFT JOIN '|| V_ESQUEMA ||'.dd_tpa_tipo_activo tpa ON tpa.dd_tpa_id = act.dd_tpa_id
+			LEFT JOIN '|| V_ESQUEMA ||'.bie_localizacion loc ON act.bie_id = loc.bie_id
+			LEFT JOIN '|| V_ESQUEMA_MASTER ||'.dd_tvi_tipo_via tvi ON loc.dd_tvi_id = tvi.dd_tvi_id
+			LEFT JOIN '|| V_ESQUEMA ||'.dd_epu_estado_publicacion epu ON act.dd_epu_id = epu.dd_epu_id
+			LEFT JOIN '|| V_ESQUEMA ||'.act_ico_info_comercial ico ON act.act_id = ico.act_id AND ico.borrado = 0
+			LEFT JOIN '|| V_ESQUEMA ||'.act_pac_perimetro_activo pac ON act.act_id = pac.act_id AND pac.borrado = 0
+			LEFT JOIN '|| V_ESQUEMA ||'.act_hic_est_inf_comer_hist hic ON act.act_id = hic.act_id
+			LEFT JOIN '|| V_ESQUEMA ||'.dd_aic_accion_inf_comercial aic ON hic.dd_aic_id = aic.dd_aic_id
+			left join (select val_id as val_id_venta, act_id as act_id_val_venta from '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL
+				JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON (VAL.DD_TPC_ID = TPC.DD_TPC_ID and tpc.DD_TPC_CODIGO = ''02'' and VAL.borrado = 0)) val1 on val1.act_id_val_venta = act.act_id
+			left join (select val_id as val_id_renta, act_id as act_id_val_renta from '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL
+				JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON (VAL.DD_TPC_ID = TPC.DD_TPC_ID and tpc.DD_TPC_CODIGO = ''03'' and VAL.borrado = 0)) val2 on val2.act_id_val_renta = act.act_id
+   		WHERE (pac.pac_id IS NULL OR pac.pac_check_comercializar = 1) AND (hic.hic_fecha IS NULL OR hic.hic_fecha = (SELECT MAX (hist2.hic_fecha)
+                                                                                                                   FROM act_hic_est_inf_comer_hist hist2
+                                                                                                                  WHERE act.act_id = hist2.act_id))';
 
   DBMS_OUTPUT.PUT_LINE('Vista creada OK');
   

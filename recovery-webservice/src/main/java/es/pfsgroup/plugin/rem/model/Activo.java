@@ -391,6 +391,9 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_BLOQUEO_TIPO_COMERCIALIZAR")
     private Boolean bloqueoTipoComercializacionAutomatico;
     
+    @Column(name = "ACT_NUM_INMOVILIZADO_BNK")
+    private Integer numInmovilizadoBnk;
+    
 	@Version   
 	private Long version;
 
@@ -1530,6 +1533,14 @@ public class Activo implements Serializable, Auditable {
 			Boolean bloqueoTipoComercializacionAutomatico) {
 		this.bloqueoTipoComercializacionAutomatico = bloqueoTipoComercializacionAutomatico;
 
+	}
+
+	public Integer getNumInmovilizadoBnk() {
+		return numInmovilizadoBnk;
+	}
+
+	public void setNumInmovilizadoBnk(Integer numInmovilizadoBnk) {
+		this.numInmovilizadoBnk = numInmovilizadoBnk;
 	}
 	
 	

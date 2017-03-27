@@ -74,7 +74,13 @@ Ext.define('HreRem.model.ActivoTasacion', {
     			name:'codigoFirma'
     		},
     		{
-    			name:'nomTasador'
+    			name:'nomTasador',
+    			convert: function(value){
+    				if(value)
+    					return value;
+    				else
+    					return '-';
+    			}
     		},
     		{
     			name:'importeTasacionFin'

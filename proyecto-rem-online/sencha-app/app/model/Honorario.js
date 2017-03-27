@@ -26,6 +26,9 @@ Ext.define('HreRem.model.Honorario', {
     			name: 'tipoCalculo'
     		},
     		{
+    			name: 'codigoTipoCalculo'
+    		},
+    		{
     			name: 'importeCalculo'
     		},
     		{
@@ -48,7 +51,19 @@ Ext.define('HreRem.model.Honorario', {
     			name: 'codigoTipoProveedor'
     		},
     		{
-    			name: 'participacion'
+    			name: 'codigoTipoComision'
+    		},
+    		{
+    			name: 'descripcionTipoComision'
+    		},
+    		{
+    			name: 'storeHoronarios'
+    		},
+    		{
+    			name: 'idActivo'
+    		},
+    		{
+    			name: 'participacionActivo'
     		}
     ],
     

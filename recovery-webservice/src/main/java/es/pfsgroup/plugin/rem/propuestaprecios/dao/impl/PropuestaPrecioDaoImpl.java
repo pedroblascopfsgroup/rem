@@ -37,7 +37,7 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
     @Override
     public Long getNextNumPropuestaPrecio(){
 		String sql = "SELECT S_PRP_NUM_PROPUESTA.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
     }
     
     @Override
@@ -106,7 +106,7 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
     	
     	String sql = "select count(1) from PRP_PROPUESTAS_PRECIOS prp where prp.TBJ_ID = " + idTrabajo;
 
-    	return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue() == 1;
+    	return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() == 1;
 
 	}
     
@@ -115,7 +115,7 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
 	public List<BigDecimal> getActivosFromTrabajo(Long idTrabajo) {
     	String sql = "select act_id from V_BUSQUEDA_ACTIVOS_TRABAJO prp where prp.TBJ_ID = " + idTrabajo;
     	
-    	return (List<BigDecimal>) getSession().createSQLQuery(sql).list();
+    	return (List<BigDecimal>) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).list();
     	
     }
 	

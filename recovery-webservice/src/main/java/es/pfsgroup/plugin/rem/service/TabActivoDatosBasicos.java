@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -548,7 +549,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					
 					//Acciones al desmarcar check comercializar
 					if(!dto.getAplicaComercializar()) {
-						this.accionesDesmarcarComercializar(activo);
+						try {
+							this.accionesDesmarcarComercializar(activo);
+						} catch (SQLException e) {
+							new JsonViewerException("Error en BBDD: ".concat(e.getMessage()));
+							e.printStackTrace();
+						}
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
@@ -678,8 +684,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
 	 * 2. Si puede, hay que poner el activo en estado publicación a 'No publicado'
 	 * @param activo
+	 * @throws SQLException 
+	 * @throws JsonViewerException 
 	 */
-	private void accionesDesmarcarComercializar(Activo activo) {
+	private void accionesDesmarcarComercializar(Activo activo) throws JsonViewerException, SQLException {
 		this.validarPerimetroActivo(activo,1);
 		//Si se permite desmarcar, cambiamos el estado de publicación del activo a 'No Publicado'
 		String motivo = messageServices.getMessage(MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO);

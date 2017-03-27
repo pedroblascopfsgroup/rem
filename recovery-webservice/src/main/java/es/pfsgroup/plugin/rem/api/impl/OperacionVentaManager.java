@@ -31,10 +31,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
@@ -58,17 +55,8 @@ import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 @Service("operacionVentaManager")
 public class OperacionVentaManager implements ParamReportsApi{
 	
-	@Autowired 
-	private OfertaApi ofertaApi;
-	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
-	@Autowired
-	private ActivoApi activoApi;
-	
-	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -76,6 +64,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 	@Autowired
 	private ActivoDao activoDao;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> paramsHojaDatos(ActivoOferta activoOferta, ModelMap model) {
 		Activo activo = null;
@@ -364,16 +353,14 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("OtrosImporteOferta", FileUtilsREM.stringify(null));
 			}
 
-
-			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return mapaValores;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model) {
 		Activo activo = null;
@@ -442,8 +429,9 @@ public class OperacionVentaManager implements ParamReportsApi{
 		return array;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public File getPDFFile(Map<String, Object> params, List<Object> dataSource, String template, ModelMap model) {
+	public File getPDFFile(Map<String, Object> params, List<Object> dataSource, String template, ModelMap model, Long numExpediente) {
 				
 		String ficheroPlantilla = "jasper/"+template+".jrxml";
 		
@@ -463,7 +451,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 				JasperPrint print = JasperFillManager.fillReport(report, params,  new JRBeanCollectionDataSource(dataSource));
 
 				//Exportar el informe a PDF
-				fileSalidaTemporal = File.createTempFile("jasper", ".pdf");
+				fileSalidaTemporal = File.createTempFile("Hoja Datos Exp." + String.valueOf(numExpediente) + " - ", ".pdf");
 				fileSalidaTemporal.deleteOnExit();
 				if (fileSalidaTemporal.exists()) {
 					JasperExportManager.exportReportToPdfStream(print, new FileOutputStream(fileSalidaTemporal));

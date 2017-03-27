@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -27,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 @Component
 public class UpdaterServicePublicacionRevisionInformeComercial implements UpdaterService {
@@ -121,11 +123,20 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 						
 						//Comprobamos que tenga precio para publicar
 						if(activoApi.getDptoPrecio(activo)){
-							// 3.) Se publica el activo
+							// 3.) Se publica el activo, quitando la validacion de Informe Comercial, puesto que se ha aceptado antes
 							try {
-								activoApi.publicarActivo(activo.getId(), messageService.getMessage("tramite.publicacion.publicar.sin.correccion.datos.IC"));
+								DtoPublicacionValidaciones dtoPublicacionValidaciones = new DtoPublicacionValidaciones();
+								dtoPublicacionValidaciones.setActivo(activo);
+								dtoPublicacionValidaciones.setValidacionesTramite();
+								
+								activoApi.publicarActivo(
+										activo.getId(),
+										messageService.getMessage("tramite.publicacion.publicar.sin.correccion.datos.IC"),
+										dtoPublicacionValidaciones);
 							} catch (SQLException e) {
 								e.printStackTrace();
+							} catch (JsonViewerException jViewEx){
+								jViewEx.printStackTrace();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

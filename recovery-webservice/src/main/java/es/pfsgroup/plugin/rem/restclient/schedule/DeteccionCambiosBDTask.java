@@ -112,7 +112,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 		Integer tamanyoBloque = null;
 		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
-				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : null;
+				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : "500";
 		try {
 			if (tamanyoBloqueProperties != null) {
 				tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
@@ -158,12 +158,13 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
 							Class control = handler.getDtoClass();
 							CambiosList listPendientes = new CambiosList(tamanyoBloque);
-							handler.actualizarVistaMaterializada();
+							RestLlamada registro = new RestLlamada();
+							handler.actualizarVistaMaterializada(registro);
 							Boolean marcarComoEnviado = false;
 							Integer contError = 0;
+						
 							do {
 								boolean somethingdone = false;
-								RestLlamada registro = new RestLlamada();
 								registro.setIteracion(iteracion);
 								try {
 									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
@@ -232,10 +233,15 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									break;
 								} finally {
 									if (somethingdone && (registroLlamadas != null)) {
+										registro.logTiempoBorrarHistorico();
+										registro.logTiempoInsertarHistorico();
 										registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
 										llamadas.add(registro);
 									}
 								}
+								registro = new RestLlamada();
+								//en la segunda pagina el tiempo de refresco es 0
+								registro.setMsRefrescoVista(new Long(0));
 							} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
 									|| (contError > 0 && contError < MAXIMO_INTENTOS));
 

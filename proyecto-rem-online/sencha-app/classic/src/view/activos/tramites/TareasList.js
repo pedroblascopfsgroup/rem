@@ -26,7 +26,8 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	           	 text: 'Avanzar a Cierre Económico',
 	          	 handler: 'saltoCierreEconomico',
 	          	 bind: {
-	          		 hidden: '{tramite.ocultarBotonCierre}'
+	          		 hidden: '{tramite.ocultarBotonCierre}',
+	          		 disabled: '{!listadoTareasTramite.selection}'
 	          	 }
              },
              {
@@ -35,7 +36,8 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	           	 text: 'Avanzar a Resolución Expediente',
 	          	 handler: 'saltoResolucionExpediente',
 	          	 bind: {
-	          		 hidden: '{tramite.ocultarBotonResolucion}'
+	          		 hidden: '{tramite.ocultarBotonResolucion}',
+	          		 disabled: '{!listadoTareasTramite.selection}'
 	          	 }
              }
    		];

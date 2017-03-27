@@ -36,8 +36,6 @@ public class RestSecurityFilter implements Filter {
 	@Autowired
 	private ServletContext servletContext;
 
-	public static String WORKINGCODE = "2038";
-
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		logger.debug("rest api iniciada");
@@ -70,7 +68,7 @@ public class RestSecurityFilter implements Filter {
 			logger.debug(restRequest.getBody());
 
 			jsonFields = restRequest.getJsonObject();
-			restApi.doSessionConfig(RestSecurityFilter.WORKINGCODE);
+			restApi.doSessionConfig();
 
 			String signature = ((HttpServletRequest) request).getHeader("signature");
 			peticion.setSignature(signature);
@@ -116,8 +114,8 @@ public class RestSecurityFilter implements Filter {
 					if (!restApi.validateId(broker, id)) {
 						logger.error("REST: El id de la petición ya se ha ejecutado previamente");
 						peticion.setResult(RestApi.CODE_ERROR);
-						peticion.setErrorDesc(RestApi.REST_MSG_REPETEAD_REQUEST);
-						restApi.throwRestException(response, RestApi.REST_MSG_REPETEAD_REQUEST, jsonFields,
+						peticion.setErrorDesc(RestApi.REST_MSG_REPEATED_REQUEST);
+						restApi.throwRestException(response, RestApi.REST_MSG_REPEATED_REQUEST, jsonFields,
 								restRequest);
 
 					} else if (!restRequest.getBody().contains("data")) {

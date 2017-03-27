@@ -101,8 +101,10 @@ public class GastosExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPH_ID")
 	private DDTipoProveedorHonorario tipoProveedor;
-
     
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private Activo activo;    
     
 	@Version   
 	private Long version;
@@ -248,6 +250,14 @@ public class GastosExpediente implements Serializable, Auditable {
 
 	public void setTipoProveedor(DDTipoProveedorHonorario tipoProveedor) {
 		this.tipoProveedor = tipoProveedor;
+	}
+
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
 	}
 
      

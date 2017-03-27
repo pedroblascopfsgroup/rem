@@ -82,8 +82,4 @@ EXCEPTION
  
 END;
 /
-EXIT
-
-
-SE
-
+EXIT;

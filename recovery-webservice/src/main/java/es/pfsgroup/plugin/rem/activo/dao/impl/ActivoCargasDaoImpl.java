@@ -28,10 +28,10 @@ public class ActivoCargasDaoImpl extends AbstractEntityDao<ActivoCargas, Long> i
 	@Override
 	public Boolean esActivoConCargasNoCanceladas(Long idActivo) {
 
-		HQLBuilder hb = new HQLBuilder(" from ActivoCargas ac");
+		HQLBuilder hb = new HQLBuilder(" from ActivoCargas ac join ac.cargaBien cb");
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ac.activo.id", idActivo);
-		hb.appendWhere("ac.fechaCancelacionRegistral IS NULL");
+		hb.appendWhere("ac.fechaCancelacionRegistral IS NULL AND cb.fechaCancelacion IS NULL");
 		
 		List<ActivoCargas> lista = HibernateQueryUtils.list(this, hb);
 		

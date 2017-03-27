@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,11 +19,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
@@ -45,6 +50,9 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 	private ActivoApi activoApi;
 
 	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Override
@@ -62,17 +70,53 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 
 		hashErrores = restApi.validateRequestObject(reservaDto, TIPO_VALIDACION.INSERT);
 
-		if (!Checks.esNulo(reservaDto.getActivo())) {
+		if (Checks.esNulo(reservaDto.getAccion())) {
+			hashErrores.put("accion", RestApi.REST_MSG_MISSING_REQUIRED);
+			
+		} else if (!reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA)
+				&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)
+				&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)
+				&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_COBRO_RESERVA)
+				&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_COBRO_VENTA)
+				&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_DEVOLUCION_RESERVA)) {
+			hashErrores.put("accion", RestApi.REST_MSG_UNKNOWN_KEY);		
+			
+		} else if (Checks.esNulo(reservaDto.getActivo())) {
+			hashErrores.put("accion", RestApi.REST_MSG_MISSING_REQUIRED);	
+			
+		} else {
+			
 			Activo activo = activoApi.getByNumActivoUvem(reservaDto.getActivo());
 			if (Checks.esNulo(activo)) {
 				hashErrores.put("activo", "El activo no existe.");
-
+				
 			} else {
-				oferta = activoApi.tieneOfertaAceptada(activo);
-				if (Checks.esNulo(oferta)) {
-					hashErrores.put("activo", "El activo no tiene ofertas aceptadas.");
-
-				} else {
+				
+				//HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la última oferta rechazada.
+				if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_DEVOLUCION_RESERVA)) {
+					DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
+					dtoOfertasFilter.setIdActivo(activo.getId());
+					dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
+					
+					List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
+					if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
+						Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
+						if(!Checks.esNulo(idOferta)){
+							oferta = ofertaApi.getOfertaById(idOferta);
+						}
+					}					
+					if(Checks.esNulo(oferta)){
+						hashErrores.put("activo", "No se ha podido obtener la oferta. El activo no tiene ofertas rechazadas.");		
+					}			
+				}else{
+					//Para el resto de acciones hay que buscar la última oferta aceptada.
+					oferta = activoApi.tieneOfertaAceptada(activo);
+					if(Checks.esNulo(oferta)){
+						hashErrores.put("activo", "No se ha podido obtener la oferta. El activo no tiene ofertas aceptadas.");
+					}	
+				}
+					
+				if(!Checks.esNulo(oferta)){				
 					ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 					if (Checks.esNulo(expedienteComercial)) {
 						hashErrores.put("activo", "No existe expediente comercial para esta activo.");
@@ -85,142 +129,122 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 						hashErrores.put("accion", "No existe reserva para esta activo.");
 						
 					}else{
+								
+						if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA) ||
+							reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)){
+							
+							if( Checks.esNulo(expedienteComercial.getReserva())) {
+								hashErrores.put("activo", "El activo no tiene reserva");
+							}
+	
+							CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+							if(Checks.esNulo(condExp)){
+								hashErrores.put("activo", "No se han podido obtener los datos de la reserva para el activo.");
+							
+							}else if(Checks.esNulo(condExp.getImporteReserva())){
+								hashErrores.put("activo", "No se ha podido obtener el importe de la reserva.");
+							}
+						}
 						
-						if (!Checks.esNulo(reservaDto.getAccion())) {
-							if (!reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA)
-									&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)
-									&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)
-									&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_COBRO_RESERVA)
-									&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_COBRO_VENTA)
-									&& !reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_DEVOLUCION_RESERVA)) {
-								hashErrores.put("accion", RestApi.REST_MSG_UNKNOWN_KEY);
+							
+						
+						if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA)){
+							
+							if(expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.RESERVADO)) {
+								hashErrores.put("activo", "Ya se ha relizado el cobro de la reserva.");
+	
+							} else if (!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)) {
+								hashErrores.put("activo", "La reserva debe estar en el estado Pendiente de firma.");
+	
+							} else if (!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.APROBADO)) {
+								hashErrores.put("activo", "El expediente comercial debe estar Aprobado.");
+							}
+							
+							
 
-							} else {
+						} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)){
+							
+							if(expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_RESUELTA) ||
+							   expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA)) {
+								   hashErrores.put("activo", "Ya se ha realizado la devolución de la reserva.");
+
+							} else if (!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION)) {
+								hashErrores.put("activo","La reserva debe estar en el estado Pendiente de devolucion.");
 								
-								if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA) ||
-									reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)){
-									
-									if( Checks.esNulo(expedienteComercial.getReserva())) {
-										hashErrores.put("activo", "El activo no tiene reserva");
-									}
-			
-									CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
-									if(Checks.esNulo(condExp)){
-										hashErrores.put("activo", "No se han podido obtener los datos de la reserva para el activo.");
-									
-									}else if(Checks.esNulo(condExp.getImporteReserva())){
-										hashErrores.put("activo", "No se ha podido obtener el importe de la reserva.");
-									}
-								}
+							} else if (!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.EN_DEVOLUCION)) {
+								hashErrores.put("activo","El expediente comercial debe estar en el estado En devolución.");	
+							}
+
+							
+
+						} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)){
+							
+							  /*if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.VENDIDO)) {
+								  hashErrores.put("activo", "El expediente comercial debe estar en el estado vendido.");
+
+							  } else if (expedienteComercial.getFechaContabilizacionPropietario()!=null) {
+								  hashErrores.put("activo", "El cobro ya se ha realizado");
+							  }*/
+
+							  if (expedienteComercial.getFechaContabilizacionPropietario()!=null) {
+								  hashErrores.put("activo", "El cobro ya se ha realizado");
+							  }
+
+							  
+						} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_COBRO_RESERVA)){
+							
+							Boolean tieneJustif =  expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial
+									(expedienteComercial.getTrabajo().getId(), DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_RESERVA);
+							Date now = new Date();
+							
+							if(Checks.esNulo(expedienteComercial.getReserva())) {
+								hashErrores.put("activo", "No existe reserva para este activo.");
 								
-									
-								if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA)
-										&& expedienteComercial.getEstado().getCodigo()
-												.equals(DDEstadosExpedienteComercial.RESERVADO)) {
-									hashErrores.put("activo", "Ya se ha relizado el cobro de la reserva.");
-
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA)
-										&& !expedienteComercial.getReserva().getEstadoReserva().getCodigo()
-												.equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)) {
-									hashErrores.put("activo", "La reserva debe estar en el estado Pendiente de firma.");
-
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_RESERVA)
-										&& !expedienteComercial.getEstado().getCodigo()
-												.equals(DDEstadosExpedienteComercial.APROBADO)) {
-									hashErrores.put("activo", "El expediente comercial debe estar Aprobado.");
-									
-									
-
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)
-										&& (expedienteComercial.getReserva().getEstadoReserva().getCodigo()
-												.equals(DDEstadosReserva.CODIGO_RESUELTA) ||
-											expedienteComercial.getReserva().getEstadoReserva().getCodigo()
-												.equals(DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA)	)) {
-									hashErrores.put("activo", "Ya se ha realizado la devolución de la reserva.");
-
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)
-										&& !expedienteComercial.getReserva().getEstadoReserva().getCodigo()
-												.equals(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION)) {
-									hashErrores.put("activo","La reserva debe estar en el estado Pendiente de devolucion.");
-									
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)
-										&& !expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.EN_DEVOLUCION)) {
-									hashErrores.put("activo","El expediente comercial debe estar en el estado En devolución.");
-									
-									
-
-
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA) &&
-										  !expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.APROBADO) &&
-										   !expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.RESERVADO)) {
-									hashErrores.put("activo", "El expediente comercial debe estar en el estado Aprobado/Reservado.");
-
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)
-										&& expedienteComercial.getFechaContabilizacionPropietario()!=null) {
-									hashErrores.put("activo", "El cobro ya se ha realizado");
-
+							} else if (Checks.esNulo(expedienteComercial.getTrabajo()) || (!Checks.esNulo(expedienteComercial.getTrabajo()) && tieneJustif)) {
+								hashErrores.put("activo", "Justificante de ingreso de la reserva entregado. No se puede anular el cobro de reserva.");
 								
-									
-									
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_COBRO_RESERVA)){
-									
-									Boolean tieneJustif =  expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial
-											(expedienteComercial.getTrabajo().getId(), DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_RESERVA);
-									Date now = new Date();
-									
-									if(Checks.esNulo(expedienteComercial.getReserva())) {
-										hashErrores.put("activo", "No existe reserva para este activo.");
-										
-									} else if (Checks.esNulo(expedienteComercial.getTrabajo()) || (!Checks.esNulo(expedienteComercial.getTrabajo()) && tieneJustif)) {
-										hashErrores.put("activo", "Justificante de ingreso de la reserva entregado. No se puede anular el cobro de reserva.");
-										
-									} else if(Checks.esNulo(expedienteComercial.getReserva().getFechaFirma())){
-										hashErrores.put("activo", "No se ha realizado el cobro de la reserva.");
-										
-									} else if(!isSameDay(expedienteComercial.getReserva().getFechaFirma(), now)){					
-										hashErrores.put("activo", "Ha pasado más de 1 día desde el cobro de la reserva.");
-
-									}
-									
-									
-									
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_COBRO_VENTA)){
-									
-									Boolean tieneJustif =  expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial
-											(expedienteComercial.getTrabajo().getId(), DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_COMPRAVENTA);
-									Date now = new Date();
-									
-									if(Checks.esNulo(expedienteComercial.getReserva())) {
-										hashErrores.put("activo", "No se han podido obtener los datos de la venta.");
-										
-									} else if (Checks.esNulo(expedienteComercial.getTrabajo()) || (!Checks.esNulo(expedienteComercial.getTrabajo()) && tieneJustif)) {
-										hashErrores.put("activo", "Justificante de ingreso de la compraventa entregado. No se puede anular el cobro de la venta.");
-										
-									} else if(Checks.esNulo(expedienteComercial.getFechaVenta())){
-										hashErrores.put("activo", "No se ha realizado el cobro de la venta.");
-										
-									} else if(!isSameDay(expedienteComercial.getFechaVenta(), now)){					
-										hashErrores.put("activo", "Ha pasado más de 1 día desde el cobro de la venta.");
-
-									}
+							} else if(Checks.esNulo(expedienteComercial.getReserva().getFechaFirma())){
+								hashErrores.put("activo", "No se ha realizado el cobro de la reserva.");
 								
-									
-									
-								} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_DEVOLUCION_RESERVA)){
-									
-									Date now = new Date();
-									
-									if(Checks.esNulo(expedienteComercial.getReserva())) {
-										hashErrores.put("activo", "No existe reserva para este activo.");
-										
-									} else if(Checks.esNulo(expedienteComercial.getFechaDevolucionEntregas())){
-										hashErrores.put("activo", "No se ha realizado la devolución del cobro de la reserva.");
-										
-									} else if(!isSameDay(expedienteComercial.getFechaDevolucionEntregas(), now)){					
-										hashErrores.put("activo", "Ha pasado más de 1 día desde la devolución del cobro de la reserva.");
-
-									}
-								}
+							} else if(!isSameDay(expedienteComercial.getReserva().getFechaFirma(), now)){					
+								hashErrores.put("activo", "Ha pasado más de 1 día desde el cobro de la reserva.");
+							}
+							
+							
+							
+						} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_COBRO_VENTA)){
+							
+							Boolean tieneJustif =  expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial
+									(expedienteComercial.getTrabajo().getId(), DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_COMPRAVENTA);
+							Date now = new Date();
+							
+							if(Checks.esNulo(expedienteComercial.getReserva())) {
+								hashErrores.put("activo", "No se han podido obtener los datos de la venta.");
+								
+							} else if (Checks.esNulo(expedienteComercial.getTrabajo()) || (!Checks.esNulo(expedienteComercial.getTrabajo()) && tieneJustif)) {
+								hashErrores.put("activo", "Justificante de ingreso de la compraventa entregado. No se puede anular el cobro de la venta.");
+								
+							} else if(Checks.esNulo(expedienteComercial.getFechaVenta())){
+								hashErrores.put("activo", "No se ha realizado el cobro de la venta.");
+								
+							} else if(!isSameDay(expedienteComercial.getFechaVenta(), now)){					
+								hashErrores.put("activo", "Ha pasado más de 1 día desde el cobro de la venta.");
+							}
+						
+							
+							
+						} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_DEVOLUCION_RESERVA)){
+							
+							Date now = new Date();
+							
+							if(Checks.esNulo(expedienteComercial.getReserva())) {
+								hashErrores.put("activo", "No existe reserva para este activo.");
+								
+							} else if(Checks.esNulo(expedienteComercial.getFechaDevolucionEntregas())){
+								hashErrores.put("activo", "No se ha realizado la devolución del cobro de la reserva.");
+								
+							} else if(!isSameDay(expedienteComercial.getFechaDevolucionEntregas(), now)){					
+								hashErrores.put("activo", "Ha pasado más de 1 día desde la devolución del cobro de la reserva.");
 							}
 						}
 					}

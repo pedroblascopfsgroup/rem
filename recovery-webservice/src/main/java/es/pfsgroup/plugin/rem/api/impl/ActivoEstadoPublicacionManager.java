@@ -23,6 +23,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -36,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
@@ -99,20 +101,30 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     
     @Override
     @Transactional(readOnly = false)
-    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException{
-    //	ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
+
+    
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException, JsonViewerException {
+    	return publicacionChangeState(dtoCambioEstadoPublicacion, null);
+    }
+    		
+    @Override
+    @Transactional(readOnly = false)
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, DtoPublicacionValidaciones dtoValidacionesPublicacion) throws SQLException, JsonViewerException{
+
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
 		Filter filtro = null;
-	//	DDEstadoPublicacion estadoPublicacion= null;
 		DDEstadoPublicacion estadoPublicacionActual = null;
 		String motivo = null;
 		
-		boolean cumpleCondicionesPublicar = 
-				activo.getAdmision() // Tiene OK de admision
-				&& activo.getGestion() // Tiene OK de gestion
-				&& activoApi.getDptoPrecio(activo) // Tiene OK de precios
-				&& !activoApi.checkTiposDistintos(activo) // Tipos activo Inf. comercial iguales
-				&& activoApi.isInformeComercialAceptado(activo); // Tiene Inf. comercial aceptado
+		//Para hacer un cambio en estados de publicacion es necesario saber que validaciones es necesario aplicar
+		//Si no se indicaron por parametro, por defecto se aplican todas las validaciones de publicacion
+		if(Checks.esNulo(dtoValidacionesPublicacion) || Checks.esNulo(dtoValidacionesPublicacion.getActivo())){
+			dtoValidacionesPublicacion = new DtoPublicacionValidaciones(); // Todas las condiciones necesarias para T. de publicacion
+			dtoValidacionesPublicacion.setActivo(activo);
+			dtoValidacionesPublicacion.setValidacionesTodas();
+		}
+		
+		boolean cumpleCondicionesPublicar = verificaValidacionesPublicacion(dtoValidacionesPublicacion);
 
 		//Iniciativa: Si el activo no tuviera estado de publicación (null), debe tomarse como "NO PUBLICADO"
 		estadoPublicacionActual = activo.getEstadoPublicacion();
@@ -151,30 +163,48 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			// Se revisa el historico para ver si el activo YA se encuentra en estado "Publicado Ordinario"
 			// en cuyo caso NO se hace nada por recibir un cambio a "publicar ordinario"
 			ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
-			if(!Checks.esNulo(ultimoHistorico) && !Checks.esNulo(ultimoHistorico.getEstadoPublicacion())
-					&& !DDEstadoPublicacion.CODIGO_PUBLICADO.equals(ultimoHistorico.getEstadoPublicacion().getCodigo()) ){
-				// Si cumple condiciones de publicar o ya estaba como Publicable, se publica el activo
-				if(cumpleCondicionesPublicar){
-					// Si el activo NO tenia "Fecha publicable"(indicador), se le asigna una
-					// Se marca el activo con el indicador de publicable porque va a publicarse
-					if(Checks.esNulo(activo.getFechaPublicable())) {
-						activo.setFechaPublicable(new Date());
-						activoApi.saveOrUpdate(activo);
+			if(Checks.esNulo(ultimoHistorico) || Checks.esNulo(ultimoHistorico.getEstadoPublicacion()) ||
+					(!Checks.esNulo(ultimoHistorico) && !Checks.esNulo(ultimoHistorico.getEstadoPublicacion())
+					&& !DDEstadoPublicacion.CODIGO_PUBLICADO.equals(ultimoHistorico.getEstadoPublicacion().getCodigo())) ){
+
+				// Si se publica por primera vez (no historico) o el estado anterior no era ya "publicado ordinario"
+				// Si cumple condiciones de publicar, se publica el activo en el ultimo estado en que se encontraba
+				// (ordinario, oculto, precio oculto)
+				ActivoHistoricoEstadoPublicacion ultimoHistoricoPublicado = activoApi.getUltimoHistoricoEstadoPublicado(dtoCambioEstadoPublicacion.getIdActivo());
+				
+				// Ultimo historico: PUBLICADO ORDINARIO ó NO hay historico
+				if(Checks.esNulo(ultimoHistoricoPublicado) ||
+						DDEstadoPublicacion.CODIGO_PUBLICADO.equals(ultimoHistoricoPublicado.getEstadoPublicacion().getCodigo()) ){
+					if(cumpleCondicionesPublicar){
+						// Si el activo NO tenia "Fecha publicable"(indicador), se le asigna una
+						// Se marca el activo con el indicador de publicable porque va a publicarse
+						if(Checks.esNulo(activo.getFechaPublicable())) {
+							activo.setFechaPublicable(new Date());
+							activoApi.saveOrUpdate(activo);
+						}
+						
+						// Ademas, se publica el activo lanzando el procedure para este
+						publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
+						
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
+						motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
+						
+					// Si en publicacion ordinaria no se cumplen condiciones, devuelve error
+					} else {
+						new JsonViewerException("No es posible publicar el activo. Revise condiciones (Gestion, Admision, Inf. Comercial, Precio venta Web)");
+						return false;
 					}
 					
-					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
-					motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
-					
-					// Ademas, se publica el activo lanzando el procedure para este
-					publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
-					
-				// Si en publicacion ordinaria no se cumplen condiciones, devuelve error
+				// Ultimo historico: PUBLICADO OCULTO o PUBLICADO PRECIO OCULTO
 				} else {
-					return false;
+					
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", ultimoHistoricoPublicado.getEstadoPublicacion().getCodigo());
+					motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
 				}
+				
 			} else {
 				// No se hace nada si el activo ya estaba publicado ordinario y se intenta publicar ordinario
-				return true;
+				return true;				
 			}
 			
 		// NO PUBLICADO: Deseleccionada cualquier opción DTO (ni ordinaria, ni forzada, ni precio oculto, ni despublicar).
@@ -193,16 +223,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 
 		// Cambia al NUEVO ESTADO DE PUBLICACION y REGISTRA EN EL HISTORICO DE PUBLICACION -------------
-		
-		// 1.) Comprueba si hay NUEVO ESTADO al que cambiar (filtro != null)
-		if(!Checks.esNulo(filtro)){
-		// 2.) Comprueba si el NUEVO ESTADO al que cambiar es el MISMO QUE el ACTUAL
-		//     Solo realiza cambios si el estado de cambio es distinto al actual
-				return this.cambiarEstadoPublicacionAndRegistrarHistorico(activo, motivo, filtro, estadoPublicacionActual, 
-								dtoCambioEstadoPublicacion.getPublicacionForzada(), dtoCambioEstadoPublicacion.getPublicacionOrdinaria());
-		} else {
-			return false;
-		}
+		return this.cambiarEstadoPublicacionAndRegistrarHistorico(activo, motivo, filtro, estadoPublicacionActual, 
+						dtoCambioEstadoPublicacion.getPublicacionForzada(), dtoCambioEstadoPublicacion.getPublicacionOrdinaria());
     }
     
     /**
@@ -211,93 +233,102 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     @Override
     @Transactional(readOnly = false)
     public boolean cambiarEstadoPublicacionAndRegistrarHistorico(Activo activo, String motivo, Filter filtro, DDEstadoPublicacion estadoPublicacionActual,
-    			Boolean isPublicacionForzada, Boolean isPublicacionOrdinaria) {
+    			Boolean isPublicacionForzada, Boolean isPublicacionOrdinaria) throws SQLException, JsonViewerException{
     	
-    	if(Checks.esNulo(estadoPublicacionActual))
-			estadoPublicacionActual = (DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
-    	
-    	if (Checks.esNulo(activo.getEstadoPublicacion()) || !estadoPublicacionActual.getCodigo().equals(filtro.getPropertyValue())){
-    		ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
-    		DDEstadoPublicacion estadoPublicacion= null;
+		// 1.) Comprueba si hay NUEVO ESTADO al que cambiar (filtro != null)
+		if(!Checks.esNulo(filtro)){
 			
-    		// ANTERIOR <> ACTUAL
-				estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
-				activo.setEstadoPublicacion(estadoPublicacion);
+	    	if(Checks.esNulo(estadoPublicacionActual))
+				estadoPublicacionActual = (DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 
-				// Registra el cambio de estado de publicacion en el HISTORICO de PUBLICACION
-				// - Debe registrar cualquier cambio de estado a excepcion del cambio a estado PUBLICADO 
-				//   el cual ya se ha registrado por el procedure de publicacion
-				try {
-					if(!DDEstadoPublicacion.CODIGO_PUBLICADO.equals(filtro.getPropertyValue())){
-						// Si existen otros registros en historico
-						ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(activo.getId());
-						if(!Checks.esNulo(ultimoHistorico) ){
-			
-							// Establecer la fecha de hoy en el campo 'Fecha Hasta' del anterior/último histórico y el usuario que lo ha modificado.
-							// Situado al principio en caso de que todavía no existan historicos para el el Activo en concreto.
-							if(!Checks.esNulo(ultimoHistorico)) {
-								Date ahora = new Date(System.currentTimeMillis());
-								ultimoHistorico.setFechaHasta(ahora);
-								Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-								ultimoHistorico.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
-							}
-						// Se registra en el historico por primera vez
-						} else {
-							activoHistoricoEstadoPublicacion.setEstadoPublicacion(estadoPublicacion);
-						}
-						
-						// Calcula el DDPortal en relación a los condicionantes
-						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
-						VCondicionantesDisponibilidad condicionantesDisponibilidad = (VCondicionantesDisponibilidad) genericDao.get(VCondicionantesDisponibilidad.class, filtroActivo);
-						if(!Checks.esNulo(condicionantesDisponibilidad)) {
-							if(!condicionantesDisponibilidad.getRuina() &&
-									!condicionantesDisponibilidad.getPendienteInscripcion() &&
-									!condicionantesDisponibilidad.getObraNuevaSinDeclarar() &&
-									!condicionantesDisponibilidad.getSinTomaPosesionInicial() &&
-									!condicionantesDisponibilidad.getProindiviso() &&
-									!condicionantesDisponibilidad.getObraNuevaEnConstruccion() &&
-									!condicionantesDisponibilidad.getOcupadoConTitulo() &&
-									!condicionantesDisponibilidad.getTapiado() &&
-									!condicionantesDisponibilidad.getPortalesExternos() &&
-									!condicionantesDisponibilidad.getOcupadoSinTitulo() &&
-									!condicionantesDisponibilidad.getDivHorizontalNoInscrita()) {
-								activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
+		// 2.) Comprueba si el NUEVO ESTADO al que cambiar es el MISMO QUE el ACTUAL
+		//     Solo realiza cambios si el estado de cambio es distinto al actual
+	    	if (Checks.esNulo(activo.getEstadoPublicacion()) || !estadoPublicacionActual.getCodigo().equals(filtro.getPropertyValue())){
+	    		ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
+	    		DDEstadoPublicacion estadoPublicacion= null;
+				
+	    		// ANTERIOR <> ACTUAL
+					estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
+					activo.setEstadoPublicacion(estadoPublicacion);
+	
+					// Registra el cambio de estado de publicacion en el HISTORICO de PUBLICACION
+					// - Debe registrar cualquier cambio de estado a excepcion del cambio a estado PUBLICADO 
+					//   el cual ya se ha registrado por el procedure de publicacion
+					try {
+						if(!DDEstadoPublicacion.CODIGO_PUBLICADO.equals(filtro.getPropertyValue())){
+							// Si existen otros registros en historico
+							ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(activo.getId());
+							if(!Checks.esNulo(ultimoHistorico) ){
+				
+								// Establecer la fecha de hoy en el campo 'Fecha Hasta' del anterior/último histórico y el usuario que lo ha modificado.
+								// Situado al principio en caso de que todavía no existan historicos para el el Activo en concreto.
+								if(!Checks.esNulo(ultimoHistorico)) {
+									Date ahora = new Date(System.currentTimeMillis());
+									ultimoHistorico.setFechaHasta(ahora);
+									Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+									ultimoHistorico.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
+								}
+							// Se registra en el historico por primera vez
 							} else {
-								activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_INVERSORES));
+								activoHistoricoEstadoPublicacion.setEstadoPublicacion(estadoPublicacion);
 							}
-						} else {
-							activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
-						}
-						activoHistoricoEstadoPublicacion.setActivo(activo);
-						beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "motivo", motivo);
-						beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "fechaDesde" , new Date());
-						beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "estadoPublicacion", estadoPublicacion);
-						
-						if(!Checks.esNulo(isPublicacionForzada) && isPublicacionForzada) {
-							Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_FORZADA);
-							DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
-							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
-						} else if(!Checks.esNulo(isPublicacionOrdinaria) && isPublicacionOrdinaria) {
-							Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_ORDINARIA);
-							DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
-							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
-						}
-		
-						genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
-
-					} // Cierra if ... CODIGO_PUBLICADO.equals
-				} catch (IllegalAccessException e) {
-					logger.error(e);
-					e.printStackTrace();
-					return false;
-				} catch (InvocationTargetException e) {
-					logger.error(e);
-					e.printStackTrace();
-					return false;
-				}
-			}
-    	
-    	return true;
+							
+							// Calcula el DDPortal en relación a los condicionantes
+							Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+							VCondicionantesDisponibilidad condicionantesDisponibilidad = (VCondicionantesDisponibilidad) genericDao.get(VCondicionantesDisponibilidad.class, filtroActivo);
+							if(!Checks.esNulo(condicionantesDisponibilidad)) {
+								if(!condicionantesDisponibilidad.getRuina() &&
+										!condicionantesDisponibilidad.getPendienteInscripcion() &&
+										!condicionantesDisponibilidad.getObraNuevaSinDeclarar() &&
+										!condicionantesDisponibilidad.getSinTomaPosesionInicial() &&
+										!condicionantesDisponibilidad.getProindiviso() &&
+										!condicionantesDisponibilidad.getObraNuevaEnConstruccion() &&
+										!condicionantesDisponibilidad.getOcupadoConTitulo() &&
+										!condicionantesDisponibilidad.getTapiado() &&
+										!condicionantesDisponibilidad.getPortalesExternos() &&
+										!condicionantesDisponibilidad.getOcupadoSinTitulo() &&
+										!condicionantesDisponibilidad.getDivHorizontalNoInscrita()) {
+									activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
+								} else {
+									activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_INVERSORES));
+								}
+							} else {
+								activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
+							}
+							activoHistoricoEstadoPublicacion.setActivo(activo);
+							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "motivo", motivo);
+							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "fechaDesde" , new Date());
+							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "estadoPublicacion", estadoPublicacion);
+							
+							if(!Checks.esNulo(isPublicacionForzada) && isPublicacionForzada) {
+								Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_FORZADA);
+								DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
+								beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
+							} else if(!Checks.esNulo(isPublicacionOrdinaria) && isPublicacionOrdinaria) {
+								Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_ORDINARIA);
+								DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
+								beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
+							}
+			
+							genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
+	
+						} // Cierra if ... CODIGO_PUBLICADO.equals
+					} catch (IllegalAccessException e) {
+						logger.error(e);
+						e.printStackTrace();
+						throw new JsonViewerException("No ha sido posible realizar el cambio de publicación con este activo. Se ha producido un error interno.");
+					} catch (InvocationTargetException e) {
+						logger.error(e);
+						e.printStackTrace();
+						throw new JsonViewerException("No ha sido posible realizar el cambio de publicación con este activo. Se ha producido un error interno.");
+					}
+	    	}
+	    	
+		// filtro = null (Detectado un cambio de estado NO CONTROLADO (valores DTO no corresponden con nuevo estado))
+		} else {
+			throw new JsonViewerException("No ha sido posible realizar el cambio de publicación con este activo. Estado de publicación inexistente.");
+		} // Cierra if(!Checks.esNulo(filtro))
+		return true;
     }
 
 	@Override
@@ -388,7 +419,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return dto;
 	}
 	
-	private boolean publicarActivoProcedure(Long idActivo, String username) throws SQLException{
+	private boolean publicarActivoProcedure(Long idActivo, String username) throws SQLException, JsonViewerException{
 
 		int esError = activoDao.publicarActivo(idActivo, username);
 		if (esError != 1){
@@ -422,5 +453,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			mensajeError = messageServices.getMessage("activo.publicacion.error.publicar.ordinario");
 
 		return mensajeError;
+	}
+	
+	public boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){
+
+		if(!Checks.esNulo(dtoPublicacionValidaciones) && !Checks.esNulo(dtoPublicacionValidaciones.getActivo())){
+			boolean tieneOkGestion = dtoPublicacionValidaciones.getActivo().getAdmision(); // Tiene OK de admision
+			boolean tieneOkAdmision = dtoPublicacionValidaciones.getActivo().getGestion(); // Tiene OK de gestion
+			boolean tieneOkPrecios = activoApi.getDptoPrecio(dtoPublicacionValidaciones.getActivo()); // Tiene OK de precios
+			boolean tieneInfComercialTiposIguales = !activoApi.checkTiposDistintos(dtoPublicacionValidaciones.getActivo()); // Tipos activo Inf. comercial iguales
+			boolean tieneInfComercialAceptado = activoApi.isInformeComercialAceptado(dtoPublicacionValidaciones.getActivo()); // Tiene Inf. comercial aceptado
+		
+			return 
+					(dtoPublicacionValidaciones.isValidarOKGestion() ? tieneOkGestion : true) &&
+					(dtoPublicacionValidaciones.isValidarOKAdmision() ? tieneOkAdmision : true) &&
+					(dtoPublicacionValidaciones.isValidarOKPrecio() ? tieneOkPrecios : true) &&
+					(dtoPublicacionValidaciones.isValidarInfComercialTiposIguales() ? tieneInfComercialTiposIguales : true) &&
+					(dtoPublicacionValidaciones.isValidarInfComercialAceptado() ? tieneInfComercialAceptado : true);
+		}
+		return false;
 	}
 }

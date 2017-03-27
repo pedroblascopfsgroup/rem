@@ -1,21 +1,19 @@
 Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'datosgeneralesgasto',    
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
-    disableValidation: true,
-    reference: 'datosgeneralesgastoref',
-    scrollable	: 'y',
-	recordName: "gasto",
-	
-	recordClass: "HreRem.model.GastoProveedor",
-    
-    requires: ['HreRem.model.GastoProveedor'],
-        
+    extend			: 'HreRem.view.common.FormBase',
+    xtype			: 'datosgeneralesgasto',    
+    cls				: 'panel-base shadow-panel',
+    collapsed		: false,
+    disableValidation: false,
+    reference		: 'datosgeneralesgastoref',
+    scrollable		: 'y',
+	recordName		: "gasto",
+	recordClass		: "HreRem.model.GastoProveedor",
+    requires		: ['HreRem.model.GastoProveedor'],
+
     initComponent: function () {
 
         var me = this;
-        
+
         var storeEmisoresGasto = new Ext.data.Store({  
     		model: 'HreRem.model.Proveedor',
 			proxy: {
@@ -24,16 +22,13 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 				remoteUrl: 'gastosproveedor/searchProveedoresByNif'
 			}   	
     	}); 
-        
+
 		me.setTitle(HreRem.i18n('title.gasto.datos.generales'));
         me.items = [
-       
 					{   
 						xtype:'fieldsettable',
 						title: HreRem.i18n('title.gasto.datos.generales'),
-						items :
-							[
-				                
+						items : [
 							{
 								xtype: 'fieldset',
 								title: HreRem.i18n('title.identificacion'),
@@ -68,8 +63,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 						                bind:		'{gasto.referenciaEmisor}',
 						                allowBlank: false
 									},
-									
-									
 									{ 
 										xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
@@ -95,10 +88,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 						                	select: 'onChangeChainedCombo'
 						            	},
 							         	allowBlank: false
-							    	}				    	
-								
+							    	}
 								]
-								
 							},
 							{
 								xtype: 'fieldset',
@@ -108,7 +99,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								margin: '0 10 10 0',
 								collapsible: false,
 								items: [
-								
 										{
 											xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
@@ -213,7 +203,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										readOnly: true
 									}
 								]
-								
 							},	
 							{
 								xtype: 'fieldset',
@@ -241,20 +230,20 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								         	},
 								         	readOnly: true
 									    },
-									   
 						                { 
 											xtype: 'comboboxfieldbase',
 							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.periodicidad'),
+							               	reference: 'cboxPeriodicidad',
+							               	editable: true,
 									      	bind: {
 								           		store: '{comboPeriodicidad}',
 								           		value: '{gasto.periodicidad}'
-								         	}
+								         	}								         	
 									    },
-																			
 										{
 											xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.gasto.concepto'),
-											bind:		'{gasto.concepto}'
+											bind: '{gasto.concepto}'
 										},
 									    { 
 											xtype: 'comboboxfieldbase',
@@ -264,7 +253,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								           		value: '{gasto.tipoOperacionCodigo}'
 								         	}
 									    },
-
 										{
 											xtype: 'numberfieldbase',
 											fieldLabel:  HreRem.i18n('fieldlabel.gasto.id.gasto.abonado'),
@@ -273,23 +261,21 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												value: '{gasto.numGastoAbonado}'
 											},
 											triggers: {
-												
 													buscarEmisor: {
 											            cls: Ext.baseCSSPrefix + 'form-search-trigger',
 											             handler: 'buscarGasto'
 											        }
-											        
 											},
 											cls: 'searchfield-input sf-con-borde',
 											emptyText:  HreRem.i18n('txt.buscar.gasto'),
 											enableKeyEvents: true,
 									        listeners: {
-										        	specialKey: function(field, e) {
-										        		if (e.getKey() === e.ENTER) {
-										        			field.lookupController().buscarGasto(field);											        			
-										        		}
-										        	}
-										        }
+									        	specialKey: function(field, e) {
+									        		if (e.getKey() === e.ENTER) {
+									        			field.lookupController().buscarGasto(field);											        			
+									        		}
+									        	}
+										    }
 						                },
 						                {
 											xtype: 'numberfieldbase',
@@ -297,92 +283,84 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											name: 'idGastoAbonado',
 											bind:{
 												value: '{gasto.idGastoAbonado}'													
-												},
-												hidden: true
-											}											
+											},
+											hidden: true
+										}											
 									]
-									
 								}
-
-									
 							]
 			           },
-   
 			           {   
 							xtype:'fieldsettable',
-						defaultType: 'textfieldbase',				
-						title: HreRem.i18n('title.gasto.trabjos.incluidos.factura'),
-						items :
-							[
+							defaultType: 'textfieldbase',
+							title: HreRem.i18n('title.gasto.trabjos.incluidos.factura'),
+							items: [
 								{
-							    xtype		: 'gridBase',
-							    reference: 'listadoTrabajosIncluidosFactura',
-								cls	: 'panel-base shadow-panel',
-								bind: {
-									store: '{storeTrabajosAfectados}'
-								},
-								listeners: {
-
-									rowdblclick: 'onRowDblClickListadoTrabajosGasto'
-								},
-								tbar : {
-										xtype: 'toolbar',
-										dock: 'top',
-										items: [
-												{itemId: 'addButton',iconCls:'x-fa fa-plus', handler: 'onClickBotonAsignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}},
-												{itemId: 'removeButton',iconCls:'x-fa fa-minus', handler: 'onClickBotonDesasignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}}
-										]
-								},
-								columns: [
-								   {    text: HreRem.i18n('header.gasto.id.trabajo'),
-							        	dataIndex: 'idTrabajo',
-							        	flex: 1,
-							        	hidden: true,
-								        hideable: false
-							       },
-							       {
-						            	text	 : HreRem.i18n('header.numero.trabajo'),
-						                flex	 : 1,
-						                dataIndex: 'numTrabajo'
-						           },  
-								   {
-							            text: HreRem.i18n('header.subtipo'),
-							            dataIndex: 'descripcionSubtipo',
-							            flex: 1
-								   },
-								   {
-								   		text: HreRem.i18n('header.fecha.ejecutado'),
-							            dataIndex: 'fechaEjecutado',
-							            formatter: 'date("d/m/Y")',
-							            flex: 1
-								   },						   
-								   {
-								   		text: HreRem.i18n('header.gasto.cubierto.seguro'),
-							            dataIndex: 'cubreSeguro',
-							            flex: 1	
-								   },
-								   {
-								   		text: HreRem.i18n('header.importe.total'),
-							            dataIndex: 'importeTotal',
-							            flex: 1						   
-								   }
-							    ]
-							}
-							
+								    xtype: 'gridBase',
+								    reference: 'listadoTrabajosIncluidosFactura',
+									cls	: 'panel-base shadow-panel',
+									bind: {
+										store: '{storeTrabajosAfectados}'
+									},
+									listeners: {
+										rowdblclick: 'onRowDblClickListadoTrabajosGasto'
+									},
+									tbar : {
+											xtype: 'toolbar',
+											dock: 'top',
+											items: [
+													{itemId: 'addButton',iconCls:'x-fa fa-plus', handler: 'onClickBotonAsignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}},
+													{itemId: 'removeButton',iconCls:'x-fa fa-minus', handler: 'onClickBotonDesasignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}}
+											]
+									},
+									columns: [
+									   {    text: HreRem.i18n('header.gasto.id.trabajo'),
+								        	dataIndex: 'idTrabajo',
+								        	flex: 1,
+								        	hidden: true,
+									        hideable: false
+								       },
+								       {
+							            	text	 : HreRem.i18n('header.numero.trabajo'),
+							                flex	 : 1,
+							                dataIndex: 'numTrabajo'
+							           },  
+									   {
+								            text: HreRem.i18n('header.subtipo'),
+								            dataIndex: 'descripcionSubtipo',
+								            flex: 1
+									   },
+									   {
+									   		text: HreRem.i18n('header.fecha.ejecutado'),
+								            dataIndex: 'fechaEjecutado',
+								            formatter: 'date("d/m/Y")',
+								            flex: 1
+									   },						   
+									   {
+									   		text: HreRem.i18n('header.gasto.cubierto.seguro'),
+								            dataIndex: 'cubreSeguro',
+								            flex: 1	
+									   },
+									   {
+									   		text: HreRem.i18n('header.importe.total'),
+								            dataIndex: 'importeTotal',
+								            flex: 1						   
+									   }
+								    ]
+								}
 							]
-					}
+			           }
     	];
-	    
+
 	    me.callParent(); 
     },
-    
+
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;		
 		//me.lookupController().cargarTabData(me);
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
-  		});	
-    	
+  		});
     }
 });

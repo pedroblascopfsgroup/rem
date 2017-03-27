@@ -37,7 +37,9 @@ import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.dto.File;
+import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
+import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
 
 @Service("activoAgrupacionManager")
 public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
@@ -189,6 +191,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String uploadFoto(File fileItem) throws Exception {
 		if (fileItem.getMetadata().get("id_agrupacion_haya") == null) {
 			throw new Exception("La foto no tiene agrupacion");
@@ -225,11 +228,11 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setFechaDocumento(fechaSubida);
 
-				Auditoria.save(activoFoto);
+				// Auditoria.save(activoFoto);
 
-				agrupacion.getFotos().add(activoFoto);
+				// agrupacion.getFotos().add(activoFoto);
 
-				genericDao.save(ActivoAgrupacion.class, agrupacion);
+				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
 				throw new Exception("La foto esta asociada a una agrupacion inexistente");
@@ -292,6 +295,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		return "success";
 	}
 
+	@Transactional(readOnly = false)
 	public String uploadFotoSubdivision(File fileItem) throws Exception {
 		if (fileItem.getMetadata().get("id_subdivision_haya") == null) {
 			throw new Exception("La foto no tiene subdivision");
@@ -339,17 +343,17 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setOrden(orden);
 
-				Auditoria.save(activoFoto);
+				// Auditoria.save(activoFoto);
 
-				agrupacion.getFotos().add(activoFoto);
+				// agrupacion.getFotos().add(activoFoto);
 
-				genericDao.save(ActivoAgrupacion.class, agrupacion);
+				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
 				throw new Exception("La foto esta asociada a una subdivision inexsitente");
 			}
 		} catch (Exception e) {
-			logger.error("Error guardando la foto de la subdivision",e);
+			logger.error("Error guardando la foto de la subdivision", e);
 			throw new Exception(e.getMessage());
 		}
 		return "success";
@@ -384,57 +388,106 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Override
 	public List<ActivoFoto> getFotosSubdivision(DtoSubdivisiones subdivision) {
-		return activoAgrupacionDao.getFotosSubdivision(subdivision);
+		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
+		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
+			FileListResponse fileListResponse = null;
+			try {
+				FileSearch fileSearch = new FileSearch();
+				HashMap<String, String> metadata = new HashMap<String, String>();
+				metadata.put("propiedad", "subdivision");
+				metadata.put("id_subdivision_haya", String.valueOf(subdivision.getId()));
+				metadata.put("id_agrupacion_haya", String.valueOf(subdivision.getAgrId()));
+				fileSearch.setMetadata(metadata);
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", subdivision.getAgrId());
+				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+
+				if (agrupacion != null) {
+					fileListResponse = gestorDocumentalFotos.get(fileSearch);
+
+					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+							this.uploadFoto(fileGD);
+						}
+						listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
+					}
+				}
+			} catch (Exception e) {
+				logger.error("Error obteniedno las fotos del CDN", e);
+			}
+
+		}
+		return listaFotos;
 	}
 
 	@Override
 	public List<ActivoFoto> getFotosAgrupacionById(Long id) {
 
-		return activoAgrupacionDao.getFotosAgrupacionById(id);
+		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
+		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
+			FileListResponse fileListResponse = null;
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+			try {
+				if (agrupacion != null) {
+					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.AGRUPACION, agrupacion.getNumAgrupRem());
+
+					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+							this.uploadFoto(fileGD);
+						}
+						listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
+					}
+				}
+			} catch (Exception e) {
+				logger.error("Error obteniedno las fotos del CDN", e);
+			}
+
+		}
+		return listaFotos;
 
 	}
 
 	@Override
-	public Map<String,Double> asignarValoresTasacionAprobadoVenta(List<ActivoAgrupacionActivo> activos) throws Exception{
-		
-		Map<String,Double> valores = new HashMap<String,Double>();
+	public Map<String, Double> asignarValoresTasacionAprobadoVenta(List<ActivoAgrupacionActivo> activos)
+			throws Exception {
+
+		Map<String, Double> valores = new HashMap<String, Double>();
 		Double total = 0.0;
-		
-		for(ActivoAgrupacionActivo activo : activos) {
+
+		for (ActivoAgrupacionActivo activo : activos) {
 			Double valor = null;
 			ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo.getActivo());
-			if(!Checks.esNulo(tasacion)) {
-				valor = Double.parseDouble(tasacion.getValoracionBien().getImporteValorTasacion().toString());
-			}
-			else {
+			if (!Checks.esNulo(tasacion)) {
+				valor = Double.parseDouble(tasacion.getImporteTasacionFin().toString());
+			} else {
 				ActivoValoraciones valoracion = activoApi.getValoracionAprobadoVenta(activo.getActivo());
-				if(!Checks.esNulo(valoracion)) {
+				if (!Checks.esNulo(valoracion)) {
 					valor = valoracion.getImporte();
-				}
-				else {
-					//Con que haya un activo sin valor tasacion o valor aprobado venta, no se haran las asignaciones de ninguno.
+				} else {
+					// Con que haya un activo sin valor tasacion o valor
+					// aprobado venta, no se haran las asignaciones de ninguno.
 					return null;
 				}
 			}
 			valores.put(activo.getActivo().getId().toString(), valor);
 			total = total + valor;
 		}
-		
+
 		valores.put("total", total);
 		return valores;
 	}
 
 	@Override
-	public Float asignarPorcentajeParticipacionEntreActivos(ActivoAgrupacionActivo activo, Map<String,Double> valores, Double total) throws Exception{
-		
-		if(total <= 0)
+	public Float asignarPorcentajeParticipacionEntreActivos(ActivoAgrupacionActivo activo, Map<String, Double> valores,
+			Double total) throws Exception {
+
+		if (total <= 0)
 			return (float) 0;
-		
+
 		Float porcentaje = (float) (valores.get(activo.getActivo().getId().toString()) * 100);
 		porcentaje = (float) (porcentaje / total);
-		
+
 		return porcentaje;
 	}
-
 
 }

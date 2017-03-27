@@ -1,4 +1,4 @@
-cd $DIR_DESTINO
+cd $DIR_INPUT_AUX
 rm -f $2.*
 
 lftp -u rm01,R@59rp21 sftp://10.126.128.130 <<EOF

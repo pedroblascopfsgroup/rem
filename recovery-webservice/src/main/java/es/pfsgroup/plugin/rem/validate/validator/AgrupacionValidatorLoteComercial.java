@@ -155,7 +155,7 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 	}
 	
 	private boolean esCarteraValida(Activo activo, Activo primerActivo) {
-		if(!Checks.esNulo(activo.getCartera()) || !Checks.esNulo(primerActivo.getCartera())){
+		if(Checks.esNulo(activo.getCartera()) || Checks.esNulo(primerActivo.getCartera())){
 			return false;
 		}
 		

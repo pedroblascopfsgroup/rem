@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 
+import java.util.List;
+
 /**
  * Es necesario implemnetar esta interfaz para proporcionar datos
  * {@link CambiosBDDao} sobre la BD
@@ -8,6 +10,14 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
  *
  */
 public interface InfoTablasBD {
+
+	/**
+	 * Es necesario implementar este método para indicar el nombre de la vistas
+	 * auxiliares que necesita la vista principal
+	 * 
+	 * @return
+	 */
+	List<String> vistasAuxiliares();
 
 	/**
 	 * Es necesario implementar este método para indicar el nombre de la vista
@@ -33,9 +43,10 @@ public interface InfoTablasBD {
 	 * @return
 	 */
 	String clavePrimaria();
-	
+
 	/**
 	 * Registro identificador unico en el json
+	 * 
 	 * @return
 	 */
 	String clavePrimariaJson();

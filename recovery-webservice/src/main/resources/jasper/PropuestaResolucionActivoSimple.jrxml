@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-03-22T12:51:06 -->
+<!-- 2017-03-23T16:57:30 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucionActivoSimple" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="1.026316236461414"/>
 	<property name="ireport.x" value="0"/>
@@ -723,11 +723,11 @@ TIPO DE PROPUESTA VENTA]]></text>
 								<textFieldExpression><![CDATA[$F{conceptoHonorarios}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement stretchType="RelativeToTallestObject" x="337" y="4" width="100" height="14" uuid="89ff38d4-b59d-4584-8394-7c266a04c059"/>
+								<reportElement stretchType="RelativeToTallestObject" x="337" y="4" width="63" height="14" uuid="89ff38d4-b59d-4584-8394-7c266a04c059"/>
 								<textFieldExpression><![CDATA[$F{porcentajeHonorarios}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement stretchType="RelativeToTallestObject" x="449" y="4" width="100" height="14" uuid="d92bc224-20d1-47e6-b1dc-a1140ccb00ae"/>
+								<reportElement stretchType="RelativeToTallestObject" x="410" y="4" width="139" height="14" uuid="d92bc224-20d1-47e6-b1dc-a1140ccb00ae"/>
 								<textFieldExpression><![CDATA[$F{importeHonorarios}]]></textFieldExpression>
 							</textField>
 						</jr:listContents>
@@ -741,7 +741,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<text><![CDATA[Concepto]]></text>
 				</staticText>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="343" y="336" width="87" height="11" uuid="8925483c-7f15-4155-9d89-1366e368d5d2"/>
+					<reportElement stretchType="RelativeToTallestObject" x="313" y="336" width="87" height="11" uuid="8925483c-7f15-4155-9d89-1366e368d5d2"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
@@ -755,7 +755,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<text><![CDATA[Nombre Colaborador]]></text>
 				</staticText>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="463" y="336" width="87" height="11" uuid="e05a0641-cec2-45fb-ae97-8bde114adb6d"/>
+					<reportElement stretchType="RelativeToTallestObject" x="410" y="336" width="87" height="11" uuid="e05a0641-cec2-45fb-ae97-8bde114adb6d"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
@@ -1929,28 +1929,28 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<text><![CDATA[Nº Tasación]]></text>
 				</staticText>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="101" y="28" width="149" height="11" uuid="79bc30c4-d179-430c-a723-64a19e4dc6ed"/>
+					<reportElement stretchType="RelativeToTallestObject" x="101" y="28" width="77" height="11" uuid="79bc30c4-d179-430c-a723-64a19e4dc6ed"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[Tipo]]></text>
 				</staticText>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="258" y="28" width="87" height="11" uuid="a0a4b1e7-69c7-43a0-a7cc-c8412132eab0"/>
+					<reportElement stretchType="RelativeToTallestObject" x="216" y="28" width="50" height="11" uuid="a0a4b1e7-69c7-43a0-a7cc-c8412132eab0"/>
 					<textElement textAlignment="Right">
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[Importe]]></text>
 				</staticText>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="374" y="29" width="58" height="11" uuid="fb8ca664-63ea-47ac-b70d-b983dae6d63a"/>
+					<reportElement stretchType="RelativeToTallestObject" x="271" y="29" width="58" height="11" uuid="fb8ca664-63ea-47ac-b70d-b983dae6d63a"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[F. Tasación]]></text>
 				</staticText>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="455" y="29" width="97" height="11" uuid="87c25f1a-e4dd-473b-8d3e-962502202cb8"/>
+					<reportElement stretchType="RelativeToTallestObject" x="332" y="29" width="97" height="11" uuid="87c25f1a-e4dd-473b-8d3e-962502202cb8"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
@@ -1964,35 +1964,35 @@ TIPO DE PROPUESTA VENTA]]></text>
 						</datasetRun>
 						<jr:listContents height="16" width="551">
 							<textField>
-								<reportElement stretchType="RelativeToTallestObject" x="4" y="3" width="83" height="13" uuid="269340f8-f964-4b98-8a53-1b12facabb2c"/>
+								<reportElement stretchType="RelativeToTallestObject" x="2" y="2" width="77" height="14" uuid="269340f8-f964-4b98-8a53-1b12facabb2c"/>
 								<textElement>
 									<font fontName="Verdana" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{numTasacion}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement stretchType="RelativeToTallestObject" x="256" y="2" width="88" height="13" uuid="c83988ec-149b-4867-b300-341d2ea996dd"/>
+								<reportElement stretchType="RelativeToTallestObject" x="163" y="2" width="104" height="13" uuid="c83988ec-149b-4867-b300-341d2ea996dd"/>
 								<textElement textAlignment="Right">
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{importeTasacion}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement stretchType="RelativeToTallestObject" x="100" y="2" width="149" height="13" uuid="2406dd13-5afd-4627-87e8-b8037b3c2147"/>
+								<reportElement stretchType="RelativeToTallestObject" x="81" y="2" width="80" height="13" uuid="2406dd13-5afd-4627-87e8-b8037b3c2147"/>
 								<textElement>
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{tipoTasacion}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement stretchType="RelativeToTallestObject" x="373" y="2" width="58" height="13" uuid="0f73a2c8-b421-4cdd-a73d-ce5c9e236945"/>
+								<reportElement stretchType="RelativeToTallestObject" x="269" y="2" width="58" height="13" uuid="0f73a2c8-b421-4cdd-a73d-ce5c9e236945"/>
 								<textElement>
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{fechaTasacion}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement stretchType="RelativeToTallestObject" x="454" y="2" width="97" height="13" uuid="3cd3859c-cae3-4b32-b796-1817c4330c9e"/>
+								<reportElement stretchType="RelativeToTallestObject" x="330" y="2" width="221" height="13" uuid="3cd3859c-cae3-4b32-b796-1817c4330c9e"/>
 								<textElement>
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>

@@ -58,4 +58,9 @@ public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoO
 		return "ID_AGRUPACION_REM";
 	}
 
+	@Override
+	public List<String> vistasAuxiliares() {
+		return null;
+	}
+
 }

@@ -64,7 +64,11 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 				        							edit: function(){
 							        					if(this.getValue()==0)
 							        						this.setValue('');								        					
-							        				}
+							        				},							        				
+													update: function(){
+														if(Ext.isEmpty(this.getValue()))
+															this.setValue(0);
+													}
 				        						},
 												items :
 													[
@@ -74,12 +78,16 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                reference: 'importePrincipalSujeto',
 											                //allowBlank: false,
 											                listeners:{
+											                	edit: function(){
+											                		if(this.getValue()==0)
+											                			this.setValue('');
+										        				},											                
 										        				change: function(){	
 										        					var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
-										        					var principal=me.up('gastodetallemain').lookupReference('importePrincipalSujeto');
-										        					field.clearInvalid();
-										        					if(this.getValue()>0 || this.getValue()!=''){
-										        						if(field.getValue()==0)
+										        					//var principal=me.up('gastodetallemain').lookupReference('importePrincipalSujeto');
+										        					//field.clearInvalid();
+										        					if(this.getValue()!='' && this.getValue()>0){
+										        						if(field.getValue()!='' && field.getValue()>0)
 											        						field.validate();
 										        						else
 										        							field.clearInvalid();
@@ -92,7 +100,11 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										        						this.setReadOnly(true);
 										        					else
 										        						this.setReadOnly(false);
-										        				}
+										        				},							        				
+																update: function(){
+																	if(Ext.isEmpty(this.getValue()))
+																		this.setValue(0);
+																}
 											                }
 														},
 														{ 
@@ -150,6 +162,11 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											               	bind: {
 												           		store: '{comboTipoImpuesto}',
 												           		value: '{detalleeconomico.impuestoIndirectoTipoCodigo}'
+												         	},
+												         	listeners:{
+												         		edit: function(){
+												         			this.validate();
+												         		}
 												         	}
 													    },
 													    {		                
@@ -197,39 +214,32 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                validator: function(v) {
 											                	var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
 											                	var principal=me.up('gastodetallemain').lookupReference('importePrincipalSujeto');											                	
-											                	if (Ext.isEmpty(field.getValue()))
+											                	if (Ext.isEmpty(this.getValue())){
+											                		this.clearInvalid();
 									                            	return "";
-											                	else
-											                		field.clearInvalid();
-											                	if(principal.getValue()>0 || principal.getValue()!=''){
-									                            	if(v <= 0)
+											                	}else
+											                		this.clearInvalid();
+											                	if(principal.getValue()!='' && principal.getValue()>0){
+									                            	if(this.getValue() <= 0)
 										                            	return "La cuota debe ser mayor que 0";
 									                            	else
-												                		field.clearInvalid();									                            	
+												                		this.clearInvalid();									                            	
 									                            }else
-											                		field.clearInvalid();
+											                		this.clearInvalid();
 									                            return true;
 									                        },
 											                listeners:{
 										        				change: function(){	
 										        					var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
 										        					var principal=me.up('gastodetallemain').lookupReference('importePrincipalSujeto');
-										        					this.clearInvalid();
-										        					if(this.getValue()==0 || this.getValue()==''){
-										        						if(principal.getValue()>0)
-											        						this.markInvalid();	
+										        					//this.clearInvalid();
+										        					if(this.getValue()=='' || this.getValue()==0){
+										        						if(principal.getValue()!='' && principal.getValue()>0)
+											        						this.markInvalid();
+										        						else
+										        							this.clearInvalid();
 											        				}
-										        					//this.validate();
-										        				},
-																update: function(){
-																	if(Ext.isEmpty(this.getValue())){
-																		this.setValue(0);
-																		//this.validate();
-																	}
-																},
-																edit: function(){
-										        					if(this.getValue()==0)
-										        						this.setValue('');								        					
+										        					this.validate();
 										        				}
 										        			}
 														},

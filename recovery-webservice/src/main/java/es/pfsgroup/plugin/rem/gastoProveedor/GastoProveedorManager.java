@@ -674,10 +674,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 					}
 					
-					/*if(!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())){*/
+					if(!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())){
 						DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipoCodigo());
 						detalleGasto.setImpuestoIndirectoTipo(tipoImpuesto);
-					/*}*/
+					}
 					
 					if(!Checks.esNulo(dto.getDestinatariosPagoCodigo())){
 						DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class, dto.getDestinatariosPagoCodigo());

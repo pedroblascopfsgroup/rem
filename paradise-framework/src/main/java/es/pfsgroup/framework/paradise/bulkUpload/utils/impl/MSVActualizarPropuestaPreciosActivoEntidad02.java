@@ -61,6 +61,7 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 	public static final String ACTIVE_NOT_INCLUDED_IN_PROPUESTA = "El activo no pertece a la propuesta cargada";
 	public static final String ACTIVE_PRIZE_NAN = "msg.error.masivo.actualizar.propuesta.precios.activo.activoPrecioNaN";
 	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED = "msg.error.masivo.actualizar.propuesta.precios.activo.entidad02.activoPrecioVentaMinimoLimiteExcedido";
+	public static final String ACTIVE_PRIZES_NOT_GREATER_ZERO = "msg.error.masivo.comunes.importe.no.mayor.cero";
 	public static final String ACTIVE_PAV_DATE_INIT_EXCEEDED = "La fecha de inicio del precio web referencia no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
 	public static final String ACTIVE_MIN_DATE_INIT_EXCEEDED = "msg.error.masivo.actualizar.propuesta.precios.activo.entidad02.activoPMAFechaExcedida";
 	public static final String ACTIVE_PAR_DATE_INIT_EXCEEDED = "La fecha de inicio del precio renta referencia no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";	
@@ -116,10 +117,10 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 			//Si la propuesta ya ha sido cargada, no se realizan el resto de comprobaciones
 			if(mapaErrores.get(PROPUESTA_YA_CARGADA).isEmpty()) {
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				if(mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty())
-					mapaErrores.put(ACTIVE_NOT_INCLUDED_IN_PROPUESTA, isActiveNotIncludesInPropuestaRows(exc));
+				mapaErrores.put(ACTIVE_NOT_INCLUDED_IN_PROPUESTA, isActiveNotIncludesInPropuestaRows(exc));
 				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZE_NAN), getNANPrecioIncorrectoRows(exc));
 				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED), getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
+				mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_NOT_GREATER_ZERO), isPreciosMayorCeroRows(exc));
 				mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
 				mapaErrores.put(ACTIVE_PAR_DATE_INIT_EXCEEDED, getFechaInicioAprobadoRentaIncorrectaRows(exc));
 				mapaErrores.put(messageServices.getMessage(ACTIVE_MIN_DATE_INIT_EXCEEDED), getFechaMINIncorrectaRows(exc));
@@ -131,6 +132,7 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 						!mapaErrores.get(ACTIVE_NOT_INCLUDED_IN_PROPUESTA).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED)).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_NOT_GREATER_ZERO)).isEmpty() ||
 						!mapaErrores.get(ACTIVE_PAV_DATE_INIT_EXCEEDED).isEmpty() ||
 						!mapaErrores.get(ACTIVE_PAR_DATE_INIT_EXCEEDED).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVE_MIN_DATE_INIT_EXCEEDED)).isEmpty()) 
@@ -238,6 +240,50 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 						(!Checks.esNulo(valorEstimadoVenta) && valorEstimadoVenta.isNaN()) ||
 						(!Checks.esNulo(valorReferencia) && valorReferencia.isNaN()) ||
 						(!Checks.esNulo(valorTransferencia) && valorTransferencia.isNaN()))
+							listaFilas.add(i);
+				} catch (NumberFormatException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage()+" in method: getNANPrecioIncorrectoRows()");
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(EXCEL_FILA_INICIAL);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isPreciosMayorCeroRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double precioVNC = null;
+		Double precioVentaAprobado = null;
+		Double precioRentaAprobado = null;
+		Double precioMinimoAuth = null;
+		Double valorEstimadoVenta = null;
+		Double valorReferencia = null;
+		Double valorTransferencia = null;
+		
+		// Validacion que evalua si los precios son mayores que cero
+		try {
+			for(int i=EXCEL_FILA_INICIAL; i<this.numFilasHoja;i++){
+				try{
+					precioVNC = !Checks.esNulo(exc.dameCelda(i, COL_VAL_VNC)) ? Double.parseDouble(exc.dameCelda(i, COL_VAL_VNC)) : null;
+					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, COL_VAL_PAV)) ? Double.parseDouble(exc.dameCelda(i, COL_VAL_PAV)) : null;
+					precioRentaAprobado = !Checks.esNulo(exc.dameCelda(i, COL_VAL_PAR)) ? Double.parseDouble(exc.dameCelda(i, COL_VAL_PAR)) : null;
+					precioMinimoAuth = !Checks.esNulo(exc.dameCelda(i, COL_VAL_MIN)) ? Double.parseDouble(exc.dameCelda(i, COL_VAL_MIN)) : null;
+					valorEstimadoVenta = !Checks.esNulo(exc.dameCelda(i, COL_VAL_VEV)) ? Double.parseDouble(exc.dameCelda(i, COL_VAL_VEV)) : null;
+					valorReferencia = !Checks.esNulo(exc.dameCelda(i, COL_VAL_VRF)) ? Double.parseDouble(exc.dameCelda(i, COL_VAL_VRF)) : null;
+					valorTransferencia = !Checks.esNulo(exc.dameCelda(i, COL_VAL_VTF)) ? Double.parseDouble(exc.dameCelda(i, COL_VAL_VTF)) : null;
+					
+					if((!Checks.esNulo(precioVNC) && precioVNC.compareTo(0.0D) <= 0) ||
+						(!Checks.esNulo(precioVentaAprobado) && precioVentaAprobado.compareTo(0.0D) <= 0) ||
+						(!Checks.esNulo(precioRentaAprobado) && precioRentaAprobado.compareTo(0.0D) <= 0) ||
+						(!Checks.esNulo(precioMinimoAuth) && precioMinimoAuth.compareTo(0.0D) <= 0) ||
+						(!Checks.esNulo(valorEstimadoVenta) && valorEstimadoVenta.compareTo(0.0D) <= 0) ||
+						(!Checks.esNulo(valorReferencia) && valorReferencia.compareTo(0.0D) <= 0) ||
+						(!Checks.esNulo(valorTransferencia) && valorTransferencia.compareTo(0.0D) <= 0))
 							listaFilas.add(i);
 				} catch (NumberFormatException e) {
 					listaFilas.add(i);
@@ -412,7 +458,8 @@ public class MSVActualizarPropuestaPreciosActivoEntidad02 extends MSVExcelValida
 		
 		try{
 			for(int i=EXCEL_FILA_INICIAL; i<this.numFilasHoja;i++){
-				if(!particularValidator.existeActivoEnPropuesta(exc.dameCeldaByHoja(i, EXCEL_COL_NUMACTIVO, 1),exc.dameCeldaByHoja(1, 2, 1)))
+				String numActivo = exc.dameCeldaByHoja(i, EXCEL_COL_NUMACTIVO, 1);
+				if(!Checks.esNulo(numActivo) && !particularValidator.existeActivoEnPropuesta(numActivo,exc.dameCeldaByHoja(1, 2, 1)))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {

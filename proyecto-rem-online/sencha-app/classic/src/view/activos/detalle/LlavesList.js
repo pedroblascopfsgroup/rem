@@ -20,6 +20,7 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
      	
     	me.listeners = {	    	
  			rowclick: 'onLlavesListClick',
+ 			canceledit: 'onLlavesListClick',
  			rowdblclick: 'valdacionesEdicionLlavesList',
  			beforeedit: 'valdacionesEdicionLlavesList'
  	    };
@@ -144,6 +145,19 @@ Ext.define('HreRem.view.activos.detalle.LlavesList', {
 		            }
 		        }
 		    ];
+		    
+		    
+		    me.saveSuccessFn = function() {
+		    	var me = this;
+		    	me.up('situacionposesoriaactivo').funcionRecargar();
+		    	return true;
+		    },
+		    
+		    me.deleteSuccessFn = function() {
+		    	var me = this;
+		    	me.up('situacionposesoriaactivo').funcionRecargar();
+		    	return true;
+		    }
 
 		    me.callParent();
    }

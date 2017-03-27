@@ -40,7 +40,6 @@ import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecover
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Service("gestorDocumentalAdapterManager")
 public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterApi, Downloader {
@@ -195,7 +194,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				cliente = gasto.getPropietario().getCartera().getDescripcion();				
 			}
 		}		
-		String descripcionExpediente = gasto.getConcepto();	
+		String descripcionExpediente =  !Checks.esNulo(gasto.getConcepto()) ? gasto.getConcepto() :  "";
 		
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
 		CrearGastoDto crearGastoDto = recoveryToGestorAssembler.getCrearGastoDto(gasto.getNumGastoHaya().toString(), gasto.getNumGastoHaya().toString(), idReo, fechaGasto , cliente, descripcionExpediente, usuarioLogado);

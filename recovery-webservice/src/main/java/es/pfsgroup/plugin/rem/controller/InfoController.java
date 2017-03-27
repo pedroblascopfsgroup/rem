@@ -32,15 +32,19 @@ public class InfoController {
 			@RequestParam(required = true) String servicios) {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		if (genericAdapter.isSuper(usuarioLogado)) {
-			if (!servicios.isEmpty() && (!servicios.equals(RestApi.REST_API_ALL)
-					&& !servicios.equals(RestApi.REST_API_BANKIA) && !servicios.equals(RestApi.REST_API_WEBCOM))) {
-				model.put("result", "Servicios, valores posibles: " + RestApi.REST_API_ALL + ","
-						+ RestApi.REST_API_BANKIA + "," + RestApi.REST_API_WEBCOM);
+			if (!servicios.isEmpty()
+					&& (!servicios.equals(RestApi.REST_API_ALL) && !servicios.equals(RestApi.REST_API_BANKIA)
+							&& !servicios.equals(RestApi.REST_API_WEBCOM))
+					&& !servicios.equals(RestApi.REST_API_ENVIAR_CAMBIOS)) {
+				model.put("result",
+						"Servicios, valores posibles: " + RestApi.REST_API_ALL + "," + RestApi.REST_API_BANKIA + ","
+								+ RestApi.REST_API_WEBCOM + "," + RestApi.REST_API_ENVIAR_CAMBIOS);
 			} else {
-				if(servicios.equals(RestApi.REST_API_ALL)){
+				if (servicios.equals(RestApi.REST_API_ALL)) {
 					servletContext.setAttribute(RestApi.REST_API_BANKIA, true);
 					servletContext.setAttribute(RestApi.REST_API_WEBCOM, true);
-					
+					servletContext.setAttribute(RestApi.REST_API_ENVIAR_CAMBIOS, true);
+
 				}
 				servletContext.setAttribute(servicios, true);
 				model.put("result", "REST API CERRADA. Servicios: ".concat(servicios));
@@ -56,20 +60,24 @@ public class InfoController {
 			@RequestParam(required = true) String servicios) {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		if (genericAdapter.isSuper(usuarioLogado)) {
-			if (!servicios.isEmpty() && (!servicios.equals(RestApi.REST_API_ALL)
-					&& !servicios.equals(RestApi.REST_API_BANKIA) && !servicios.equals(RestApi.REST_API_WEBCOM))) {
-				model.put("result", "Servicios, valores posibles: " + RestApi.REST_API_ALL + ","
-						+ RestApi.REST_API_BANKIA + "," + RestApi.REST_API_WEBCOM);
+			if (!servicios.isEmpty()
+					&& (!servicios.equals(RestApi.REST_API_ALL) && !servicios.equals(RestApi.REST_API_BANKIA)
+							&& !servicios.equals(RestApi.REST_API_WEBCOM))
+					&& !servicios.equals(RestApi.REST_API_ENVIAR_CAMBIOS)) {
+				model.put("result",
+						"Servicios, valores posibles: " + RestApi.REST_API_ALL + "," + RestApi.REST_API_BANKIA + ","
+								+ RestApi.REST_API_WEBCOM + "," + RestApi.REST_API_ENVIAR_CAMBIOS);
 			} else {
-				if(servicios.equals(RestApi.REST_API_ALL)){
+				if (servicios.equals(RestApi.REST_API_ALL)) {
 					servletContext.setAttribute(RestApi.REST_API_BANKIA, false);
 					servletContext.setAttribute(RestApi.REST_API_WEBCOM, false);
-					
+					servletContext.setAttribute(RestApi.REST_API_ENVIAR_CAMBIOS, false);
+
 				}
 				servletContext.setAttribute(servicios, false);
-				model.put("result", "REST API "+servicios+" ABIERTA");
+				model.put("result", "REST API " + servicios + " ABIERTA");
 			}
-			
+
 		}
 		restApi.sendResponse(response, model, null);
 	}

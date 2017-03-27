@@ -398,6 +398,18 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			beanUtilNotNull.copyProperty(proveedor, "criterioCajaIVA", dto.getCriterioCajaIVA());
 			beanUtilNotNull.copyProperty(proveedor, "fechaEjercicioOpcion", dto.getFechaEjercicioOpcion());
+			
+			// Si viene fecha de baja, asignar el estado de proveedor a 'baja como proveedor'.
+			Date fechaEnBlanco = new Date();
+			fechaEnBlanco.setTime(0);
+			if(!Checks.esNulo(dto.getFechaBajaProveedor()) && dto.getFechaBajaProveedor().after(fechaEnBlanco)) {
+				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR);
+				beanUtilNotNull.copyProperty(proveedor, "estadoProveedor", estadoProveedor);
+			}
+			// Si viene estado de proveedor como 'baja como proveedor', establecer fecha de baja a hoy.
+			if(!Checks.esNulo(dto.getEstadoProveedorCodigo()) && dto.getEstadoProveedorCodigo().equals(DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR)) {
+				beanUtilNotNull.copyProperty(proveedor, "fechaBaja", new Date());
+			}
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -626,9 +638,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		Filter proveedorID = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", Long.parseLong(dtoPersonaContacto.getProveedorID()));
 		Filter principal = genericDao.createFilter(FilterType.EQUALS, "principal", 1);
 		List<ActivoProveedorContacto> personasContactos = genericDao.getList(ActivoProveedorContacto.class, proveedorID, principal);
+		boolean algunaPersonaPrincipal = false;
+		ActivoProveedorContacto personaPrincipal = null;
 		
 		if(!Checks.estaVacio(personasContactos)) {
 			for(ActivoProveedorContacto persona : personasContactos){
+				if(persona.getPrincipal()!=0){
+					algunaPersonaPrincipal=true;
+					personaPrincipal = persona;
+				}
 				persona.setPrincipal(0);
 				genericDao.save(ActivoProveedorContacto.class, persona);
 			}
@@ -637,14 +655,16 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		// Establecer la persona actual como principal.
 		Filter personaID = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoPersonaContacto.getId()));
 		ActivoProveedorContacto personaContacto = genericDao.get(ActivoProveedorContacto.class, personaID);
-
-		if(!Checks.esNulo(personaContacto)) {
-			personaContacto.setPrincipal(1);
-			genericDao.save(ActivoProveedorContacto.class, personaContacto);
-			return true;
-		} else {
-			return false;
+		if(!algunaPersonaPrincipal || !personaPrincipal.equals(personaContacto)){
+			if(!Checks.esNulo(personaContacto)) {
+				personaContacto.setPrincipal(1);
+				genericDao.save(ActivoProveedorContacto.class, personaContacto);
+				return true;
+			} else {
+				return false;
+			}
 		}
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1144,6 +1164,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			if(!Checks.esNulo(proveedor.getTipoProveedor())) {
 				beanUtilNotNull.copyProperty(dtoProveedor, "subtipoProveedorDescripcion", proveedor.getTipoProveedor().getDescripcion());
 			}
+			beanUtilNotNull.copyProperty(dtoProveedor, "fechaBaja", proveedor.getFechaBaja());
 			
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

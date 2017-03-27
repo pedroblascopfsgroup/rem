@@ -131,6 +131,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										xtype: 'textfieldbase',
 										fieldLabel: HreRem.i18n('header.visita.detalle.proveedor.presriptor.codigo.rem'),
 										name: 'buscadorPrescriptores',
+										maskRe: /[0-9.]/,
 										//disabled: true,
 										bind: {
 											value: '{oferta.codigoPrescriptor}'

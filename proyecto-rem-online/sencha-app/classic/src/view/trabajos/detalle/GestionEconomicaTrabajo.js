@@ -139,7 +139,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				    	carteraCodigo = me.up('gestioneconomicatrabajo').getBindRecord().get('carteraCodigo'),
 	    				    	tipoTrabajoCodigo = me.up('gestioneconomicatrabajo').getBindRecord().get('tipoTrabajoCodigo'),
 	    				    	subtipoTrabajoCodigo = me.up('gestioneconomicatrabajo').getBindRecord().get('subtipoTrabajoCodigo');
-	    				    	me.up('formBase').fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo",{idTrabajo: idTrabajo, carteraCodigo: carteraCodigo, tipoTrabajoCodigo: tipoTrabajoCodigo, subtipoTrabajoCodigo: subtipoTrabajoCodigo, parent: me.up('gestioneconomicatrabajo')});
+	    				    	// HREOS-1811 Errores modalwindow seleccion tarifas por esconder la ventana y abrir entre 2 trabajos distintos
+	    				    	// me.up('formBase').fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo",{idTrabajo: idTrabajo, carteraCodigo: carteraCodigo, tipoTrabajoCodigo: tipoTrabajoCodigo, subtipoTrabajoCodigo: subtipoTrabajoCodigo, parent: me.up('gestioneconomicatrabajo')});
+	    				    	Ext.create("HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo",{idTrabajo: idTrabajo, carteraCodigo: carteraCodigo, tipoTrabajoCodigo: tipoTrabajoCodigo, subtipoTrabajoCodigo: subtipoTrabajoCodigo, parent: me.up('gestioneconomicatrabajo')}).show();
 		    					
 	    					},		    					
 	    					saveSuccessFn: function () {
@@ -266,7 +268,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    					hidden: true,
 	    					bind: {
 	    						hidden: '{!showPresupuesto}',
-	    						disabled: '{disablePresupuestos}'
+	    						disabled: '{disablePresupuesto}'
 	    					},	
 	    					reference: 'fieldsetpresupuestoref',
 	    	            	title: HreRem.i18n('title.listado.presupuestos.presentados.proveedores'),
@@ -521,6 +523,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		            	xtype: 'fieldsettable',
 		            	defaultType: 'textfieldbase',
 		            	title: HreRem.i18n('title.penalizacion.retraso'),
+						bind: {
+							disabled: '{disablePorCierreEconomico}'
+						},
 		            	items: [
 							{
 								xtype: 'datefieldbase',
@@ -579,6 +584,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						xtype: 'fieldsettable',
 		            	defaultType: 'textfieldbase',
 		            	title: HreRem.i18n('title.recargos.favor.proveedor'),
+						bind: {
+							disabled: '{disablePorCierreEconomico}'
+						},
 		            	items: [
 							{
 							    xtype		: 'gridBaseEditableRow',
@@ -720,7 +728,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		            	xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
 		            	title: HreRem.i18n('title.provisiones.suplidos'),
-					    
+						bind: {
+							disabled: '{disablePorCierreEconomico}'
+						},	
 		            	items: [
 		    	            {
 		    				    xtype		: 'gridBaseEditableRow',

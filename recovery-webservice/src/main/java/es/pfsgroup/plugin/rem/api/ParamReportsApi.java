@@ -17,7 +17,7 @@ public interface ParamReportsApi {
     public List<Object> dataSourceHojaDatos(ActivoOferta activoOferta, ModelMap model);
     
     
-    public File getPDFFile(Map<String, Object> params, List<Object> dataSource, String template, ModelMap model);
+    public File getPDFFile(Map<String, Object> params, List<Object> dataSource, String template, ModelMap model, Long numExpediente);
   
 
 }

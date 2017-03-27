@@ -24,8 +24,6 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 	private static final String CODIGO_T003_SOLICITUD_ETIQUETA = "T003_SolicitudEtiqueta";
 	private static final String CODIGO_T003_OBTENCION_ETIQUETA = "T003_ObtencionEtiqueta";
 	
-	private static final String CIF_PROVEEDOR_BANKIA_SAREB_TINSA = "B86689494";
-	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 	
@@ -57,7 +55,7 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 			// Si la cartera es BANKIA o SAREB, el gestor de las tareas es TINSA CERTIFY
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())){
 				//Usuario del Proveedor Tinsa para asignar a tareas (encontrado por CIF)
-				Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
+				Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
 				Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 				
 				if(!Checks.esNulo(usuProveedorBankiaSareb))
@@ -81,7 +79,7 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		
 		//TODO: ¡Hay que cambiar el método para que no pida ID sino código!
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 		
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());

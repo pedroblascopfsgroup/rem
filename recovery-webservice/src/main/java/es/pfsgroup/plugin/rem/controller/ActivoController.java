@@ -2,7 +2,11 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,8 +97,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
-import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
@@ -236,13 +238,6 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 
-			if (dtoActivoFiltro.getSort() != null) {
-				if (dtoActivoFiltro.getSort().equals("via")) {
-					dtoActivoFiltro.setSort("tipoViaCodigo, nombreVia, numActivo");
-				} else {
-					dtoActivoFiltro.setSort(dtoActivoFiltro.getSort() + ",numActivo");
-				}
-			}
 			Page page = adapter.getActivos(dtoActivoFiltro);
 
 			model.put("data", page.getResults());
@@ -273,8 +268,8 @@ public class ActivoController extends ParadiseJsonController {
 	 * boolean success = adapter.saveActivo(activoDto, id); model.put("success",
 	 * success);
 	 * 
-	 * } catch (Exception e) { logger.error("error en activoController", e); model.put("success", false); }
-	 * return createModelAndViewJson(model);
+	 * } catch (Exception e) { logger.error("error en activoController", e);
+	 * model.put("success", false); } return createModelAndViewJson(model);
 	 * 
 	 * }
 	 */
@@ -995,21 +990,8 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getFotosById(Long id, String tipoFoto, WebDto webDto, ModelMap model,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		Activo activo = activoApi.get(id);
 		try {
 			List<ActivoFoto> listaActivoFoto = adapter.getListFotosActivoById(id);
-
-			// si no tenmos fotos consultamos al gestor documental...
-			if (gestorDocumentalFotos.isActive() && (listaActivoFoto == null || listaActivoFoto.isEmpty())) {
-				FileListResponse fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, activo.getNumActivo());
-				if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
-					for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-						activoApi.uploadFoto(fileGD);
-					}
-				}
-				listaActivoFoto = adapter.getListFotosActivoById(id);
-			}
-
 			List<DtoFoto> listaFotos = new ArrayList<DtoFoto>();
 
 			if (listaActivoFoto != null) {
@@ -1228,6 +1210,16 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getListTasacionById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListTasacionById(id));
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model) {
+
+		model.put("data", adapter.getListTasacionByIdGrid(id));
 
 		return createModelAndViewJson(model);
 
@@ -1663,25 +1655,42 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 	/**
-	 * Método que recupera la foto principal de un activo
+	 * Método que recupera la foto principal de un activo en forma thumbnail
 	 * 
 	 * @param id
 	 * @param model
 	 * @param request
 	 * @param response
 	 */
-	// TODO: Cuando esté el gestor documental, hacer que si el activo no tiene
-	// foto devuelva una imagen tipo "Sin imagenes" por defecto.
 	@RequestMapping(method = RequestMethod.GET)
 	public void getFotoPrincipalById(Long id, ModelMap model, HttpServletRequest request,
 			HttpServletResponse response) {
 
 		List<ActivoFoto> listaActivoFoto = adapter.getListFotosActivoByIdOrderPrincipal(id);
 
-		if (listaActivoFoto != null && !listaActivoFoto.isEmpty()) {
-
-			FileItem fileItem = listaActivoFoto.get(0).getAdjunto().getFileItem();
+		if (listaActivoFoto != null && !listaActivoFoto.isEmpty() && listaActivoFoto.get(0).getUrlThumbnail() != null
+				&& !listaActivoFoto.get(0).getUrlThumbnail().isEmpty()) {
 			try {
+				// HREOS-1719 En primera instancia obtener la foto de la URL
+				String requestUrl = listaActivoFoto.get(0).getUrlThumbnail();
+				URL url;
+				URLConnection URLconn = null;
+				String URLcontentType = null;
+				try {
+					url = new URL(requestUrl);
+					URLconn = url.openConnection();
+					URLcontentType = URLconn.getContentType();
+				} catch (MalformedURLException me) {
+					logger.error(me.getMessage());
+					me.printStackTrace();
+				} catch (IOException ioe) {
+					logger.error(ioe.getMessage());
+					ioe.printStackTrace();
+				}
+
+				// FileItem fileItem =
+				// listaActivoFoto.get(0).getAdjunto().getFileItem();
+
 				ServletOutputStream salida = response.getOutputStream();
 
 				response.setHeader("Content-disposition", "inline");
@@ -1692,14 +1701,16 @@ public class ActivoController extends ParadiseJsonController {
 				response.setDateHeader("Expires", 0); // prevents caching at the
 														// proxy
 
-				if (fileItem.getContentType() != null) {
-					response.setContentType(fileItem.getContentType());
+				if (!Checks.esNulo(URLcontentType)) {
+					response.setContentType("Content-type: image/jpeg");
+					FileUtils.copy(URLconn.getInputStream(), salida);
 				} else {
 					response.setContentType("Content-type: image/jpeg");
+					File file = new File(getClass().getResource("/").getPath() + "sin_imagen.png");
+					file.createNewFile();
+					FileUtils.copy((new FileInputStream(file)), salida);
 				}
-
 				// Write
-				FileUtils.copy(fileItem.getInputStream(), salida);
 				salida.flush();
 				salida.close();
 
@@ -1929,7 +1940,11 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion));
 		} catch (SQLException e) {
 			model.put("success", false);
-			logger.error("error en activoController", e);
+			logger.error("Error en ActivoController: ", e);
+		} catch (JsonViewerException jViewEx) {
+			logger.error("Error en ActivoController", jViewEx);
+			model.put("success", false);
+			model.put("msgError", jViewEx.getMessage());
 		}
 
 		return createModelAndViewJson(model);
@@ -2016,12 +2031,13 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model) {
+	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model){
 		try {
 			model.put("success", activoApi.solicitarTasacion(idActivo));
+		} catch (JsonViewerException jve) {
+			model.put("success", false);
+			model.put("msgError", jve.getMessage());
 		} catch (Exception e) {
-			logger.error("error en activoController", e);
-			model.put("msg", e.getMessage());
 			model.put("success", false);
 		}
 
@@ -2032,8 +2048,15 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getSolicitudTasacionBankia(Long id, ModelMap model) {
 
-		model.put("data", activoApi.getSolicitudTasacionBankia(id));
-		model.put("success", true);
+		try {
+			model.put("data", activoApi.getSolicitudTasacionBankia(id));
+			model.put("success", true);
+		} catch (JsonViewerException jve) {
+			model.put("success", false);
+			model.put("msg", jve.getMessage());
+		} catch (Exception e) {
+			model.put("success", false);
+		}
 
 		return createModelAndViewJson(model);
 	}
@@ -2285,6 +2308,11 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			model.put("success", activoApi.saveComercialActivo(dto));
+
+		} catch (JsonViewerException jvex) {
+			logger.error("error en activoController.saveComercialActivo", jvex);
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);

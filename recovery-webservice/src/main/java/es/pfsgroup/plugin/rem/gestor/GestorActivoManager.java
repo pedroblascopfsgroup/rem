@@ -121,7 +121,7 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		List<ActivoTramite> listaTramites = activoTramiteApi.getListaTramitesActivo(idActivo);
 
 		for (ActivoTramite tramite : listaTramites) {
-			List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(tramite.getId());
+			List<TareaExterna> listaTareas = activoTareaExternaApi.getActivasByIdTramiteTodas(tramite.getId());
 			for(TareaExterna tareaExterna : listaTareas){
 				EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
 				

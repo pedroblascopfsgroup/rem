@@ -52,10 +52,9 @@ public class DDTipoProveedorHonorario implements Auditable, Dictionary {
 	
 	public static final String CODIGO_MEDIADOR = "04";
 	public static final String CODIGO_FVD = "18";
-	public static final String CODIGO_CAT = "28";
-	public static final String CODIGO_MEDIADOR_OFICINA = "29";
-	public static final String CODIGO_OFICINA_BANKIA = "30";
-	public static final String CODIGO_OFICINA_CAJAMAR = "31";
+	public static final String CODIGO_CAT = "31";
+	public static final String CODIGO_OFICINA_BANKIA = "28";
+	public static final String CODIGO_OFICINA_CAJAMAR = "29";
 	    
 	
 	    

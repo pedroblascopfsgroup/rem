@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Repository("ActivoDao")
@@ -429,7 +430,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public void deleteValoracionById(Long id) {
 	
 		StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = "+id);		
-		getSession().createQuery(sb.toString()).executeUpdate();
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
 	}
     
@@ -506,7 +507,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaPublicacionActivo activopubli");
 		hb.appendWhere("activopubli.numActivo = " + activo.getNumActivo());
 		
-		VBusquedaPublicacionActivo busquedaActivo = (VBusquedaPublicacionActivo) getSession().createQuery(hb.toString()).uniqueResult();
+		VBusquedaPublicacionActivo busquedaActivo = (VBusquedaPublicacionActivo) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).uniqueResult();
 		return busquedaActivo.getPrecio();
 	}
 	
@@ -520,6 +521,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		 
 		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID) {
+		
+		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? " +
+				" and historico.estadoPublicacion.codigo in ("+DDEstadoPublicacion.CODIGO_PUBLICADO + ","
+				+ DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO + ","
+				+ DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO +") " +
+				" and auditoria.borrado = false order by historico.id desc";
+		
+		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
+		 
+		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
+	}
 	
 	@Override
 	public int publicarActivo(Long idActivo, String username){
@@ -528,7 +544,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		procedureHQL.append("   ACTIVO_PUBLICACION_AUTO(:idActivoParam, :usernameParam); ");
 		procedureHQL.append(" END; ");
 		
-		Query callProcedureSql = this.getSession().createSQLQuery(procedureHQL.toString());
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL.toString());
 		callProcedureSql.setParameter("idActivoParam", idActivo);
 		callProcedureSql.setParameter("usernameParam", username);
 		
@@ -537,17 +553,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
     public Long getNextNumExpedienteComercial() {
 		String sql = "SELECT S_ECO_NUM_EXPEDIENTE.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
     
     public Long getNextNumOferta() {
 		String sql = "SELECT S_OFR_NUM_OFERTA.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
     
     public Long getNextClienteRemId() {
 		String sql = "SELECT S_CLC_REM_ID.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
     
     private void agregarFiltroFecha(HQLBuilder hb, String fechaD, String fechaH, String tipoFecha) {
@@ -595,7 +611,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(" from PropuestaActivosVinculados activosVinculados");
 		hb.appendWhere("activosVinculados.id = " + id);
 		
-		return (PropuestaActivosVinculados) getSession().createQuery(hb.toString()).uniqueResult();
+		return (PropuestaActivosVinculados) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).uniqueResult();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -606,7 +622,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		hb.appendWhere(" tas.fechaRecepcionTasacion is null");
 		hb.orderBy("tas.id", HQLBuilder.ORDER_DESC);
 		
-		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) getSession().createQuery(hb.toString()).list();
+		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 		
 		if(!Checks.estaVacio(activoTasacionList)) {
 			return activoTasacionList.get(0);
@@ -620,8 +636,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo){
 		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
 		hb.appendWhere(" tas.activo.id = " + idActivo);
-		hb.orderBy("tas.id", HQLBuilder.ORDER_DESC);
-		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) getSession().createQuery(hb.toString()).list();
+		hb.orderBy("tas.valoracionBien.fechaValorTasacion", HQLBuilder.ORDER_DESC);
+		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 		return activoTasacionList;
 	}
 	
@@ -706,7 +722,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		hb.appendWhere("voa.activos like ('%''"+numActivo+"''%')");
 		
-		return (List<VOfertasActivosAgrupacion>) getSession().createQuery(hb.toString()).list();
+		return (List<VOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 				
 		
 	}
@@ -747,5 +763,5 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return codComercializar;
 	}
-
+	
 }

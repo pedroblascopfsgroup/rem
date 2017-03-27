@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,16 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Service
@@ -64,15 +68,30 @@ public class GenericAdapter {
 	public List<Dictionary> getDiccionario(String diccionario) {
 		
 		Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
-		
+		List lista = null;
 		try {
 			if(!Checks.esNulo(clase.getField("auditoria"))) {
-				return diccionarioApi.dameValoresDiccionario(clase);
+				lista = diccionarioApi.dameValoresDiccionario(clase);
 			}
-		} catch (Exception e) {			
+		} catch (Exception e) {	
 		}
+		lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
 		
-		return diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
+		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
+//		if(clase.equals(DDTipoPeriocidad.class)){
+//			List listaPeriodicidad = new ArrayList();
+//			for(int i=1; i<=lista.size();i++){
+//				String cod;
+//				if(i<10)
+//					cod = "0"+i;
+//				else
+//					cod = ""+i;
+//				listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
+//			}
+//			lista = listaPeriodicidad;
+//		}
+			
+		return lista;
 		
 		
 		

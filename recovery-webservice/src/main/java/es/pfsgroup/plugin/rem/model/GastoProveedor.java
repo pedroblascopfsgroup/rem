@@ -144,6 +144,7 @@ public class GastoProveedor implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<GastoProveedorTrabajo> gastoProveedorTrabajos;
     
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)

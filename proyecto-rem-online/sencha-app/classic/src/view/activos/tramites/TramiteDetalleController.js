@@ -179,14 +179,13 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
 		
 		var me = this;
-		var grid = tableView.up('grid');
-		var record = grid.store.getAt(indiceFila);
-		
-		grid.setSelection(record);
+		//var grid = tableView.up('grid');
+		//var record = grid.store.getAt(indiceFila);
+		idActivo = me.getViewModel().get("tramite.idActivo");
+		//grid.setSelection(record);
 		
 		//grid.fireEvent("abriractivo", record);
-		me.getView().fireEvent('abrirDetalleActivoPrincipal', record.get('numActivoRem'));
-		
+		me.getView().fireEvent('abrirDetalleActivoPrincipal', idActivo);
 	}, 
 
 	solicitarAutoprorroga: function(button){

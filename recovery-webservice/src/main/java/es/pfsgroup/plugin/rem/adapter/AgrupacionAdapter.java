@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -58,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -133,6 +135,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	protected TipoProcedimientoManager tipoProcedimiento;
+	
+	@Autowired
+	private ProveedoresApi proveedoresApi;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -461,7 +466,14 @@ public class AgrupacionAdapter {
 					&& activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException(AgrupacionValidator.ERROR_OBRANUEVA_NO_ASISTIDA);
 			}
-
+			
+			// Si la agrupación es de tipo comercial y contiene ofertas, en cualquier estado, rechazar el activo.
+			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
+				if(!Checks.estaVacio(ofertasAgrupacion)) {
+					throw new JsonViewerException("No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
+				}
+			}
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos
 			if (num == 0) {
@@ -686,11 +698,43 @@ public class AgrupacionAdapter {
 
 		ActivoAgrupacionActivo activoAgrupacionActivo = activoAgrupacionActivoApi.getByIdActivoAndIdAgrupacion(idActivo,
 				idAgrupacion);
+
 		if (!Checks.esNulo(activoAgrupacionActivo)) {
-			activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+			// Para los activos pertenecientes a una agrupación de tipo lote comercial.
+			if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+				// Solo continuar si la agrupación no contiene ofetas vivas.
+				List<Oferta> ofertasAgrupacion = activoAgrupacionActivo.getAgrupacion().getOfertas();
+				if(Checks.estaVacio(ofertasAgrupacion)) {
+					List<ActivoOferta> ofertasActivo = activoAgrupacionActivo.getActivo().getOfertas();
+					if (!Checks.estaVacio(ofertasActivo)) {
+						// En cada oferta asignada al activo.
+						for (ActivoOferta ofertaActivo : ofertasActivo) {
+							if (!Checks.esNulo(ofertaActivo.getPrimaryKey())
+									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta())
+									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())) {
+								// Si su estado es 'congelada' asignar nuevo estado
+								// a 'pendiente'.
+								if (ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo()
+										.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
+									DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+											.dameValorDiccionarioByCod(DDEstadoOferta.class,
+													DDEstadoOferta.CODIGO_PENDIENTE);
+									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
+								}
+							}
+						}
+					}
+					activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+				} else {
+					throw new JsonViewerException("No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
+				}
+			} else {
+				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+			}
+
 			return true;
 		} else {
-			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación.");
+			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación");
 		}
 	}
 
@@ -1246,6 +1290,7 @@ public class AgrupacionAdapter {
 
 			oferta.setActivosOferta(listaActOfr);
 			oferta.setCliente(clienteComercial);
+			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -1627,6 +1672,9 @@ public class AgrupacionAdapter {
 			} catch (SQLException e) {
 				logger.error("error en agrupacionAdapter", e);
 				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
+				return false;
 			}
 		}
 
@@ -1728,6 +1776,9 @@ public class AgrupacionAdapter {
 			} catch (SQLException e) {
 				logger.error("error en agrupacionAdapter", e);
 				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
+				return false;
 			}
 		}
 
@@ -1803,6 +1854,9 @@ public class AgrupacionAdapter {
 				activoEstadoPublicacionApi.publicacionChangeState(dtoPublicacion);
 			} catch (SQLException e) {
 				logger.error("error en agrupacionAdapter", e);
+				return false;
+			} catch (JsonViewerException jViewEx) {
+				jViewEx.printStackTrace();
 				return false;
 			}
 		}

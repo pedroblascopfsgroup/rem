@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Jorge Ros
---## FECHA_CREACION=20170227
+--## AUTOR=Daniel Gutiérrez
+--## FECHA_CREACION=20170320
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1563
+--## INCIDENCIA_LINK=HREOS-1814
 --## PRODUCTO=NO
 --## Finalidad: Actualiza el tipo comercializar (Singular/Retail) del activo
 --##           
@@ -71,10 +71,8 @@ AUTHID CURRENT_USER IS
 	IS
 		SELECT count(1)
 			FROM #ESQUEMA#.ACT_TAS_TASACION tas
-			INNER JOIN #ESQUEMA#.BIE_VALORACIONES val ON val.bie_val_id = tas.bie_val_id
-				WHERE tas.act_id = p_act_id
-				AND val.bie_importe_valor_tasacion <= p_importe_limite
-				AND rownum=1;
+			WHERE tas.TAS_IMPORTE_TAS_FIN <= p_importe_limite
+			AND rownum=1;
 	
 	-- Comprueba que el activo tenga asociado el tipo de gestor pasado por parametro
 	CURSOR crs_activo_with_gestor(p_act_id #ESQUEMA#.act_activo.act_id%TYPE, p_cod_gestor VARCHAR2)

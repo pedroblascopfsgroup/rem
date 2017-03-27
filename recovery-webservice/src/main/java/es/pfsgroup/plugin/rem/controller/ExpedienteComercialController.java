@@ -30,7 +30,6 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -591,10 +590,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView getHonorarios(ModelMap model, Long idExpediente) {
 		
 		try {
-			DtoPage dto= expedienteComercialApi.getHonorarios(idExpediente);
+			List<DtoGastoExpediente> list = expedienteComercialApi.getHonorarios(idExpediente, null);
 			
-			model.put("data", dto.getResults());
-			model.put("totalCount", dto.getTotalCount());
+			model.put("data", list);
 			model.put("success", true);
 			
 		} catch (Exception e) {
@@ -707,7 +705,11 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		try {
 			boolean success = expedienteComercialApi.saveHonorario(dtoGastoExpediente);
-			model.put("success", success);			
+			model.put("success", success);	
+			
+		} catch (JsonViewerException jve) {
+			model.put("msg", jve.getMessage());	
+			model.put("success", false);	
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -771,7 +773,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView deleteEntregaReserva(DtoEntregaReserva dto, @RequestParam Long idEntrega, ModelMap model) {
 		try {		
 			
-			model.put("success", expedienteComercialApi.deleteEntregaReserva(dto, idEntrega));
+			model.put("success", expedienteComercialApi.deleteEntregaReserva(idEntrega));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -808,9 +810,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("codigo", expedienteComercialApi.consultarComiteSancionador(idExpediente));
 			model.put("success", true);
 			
+		} catch (JsonViewerException jve) {
+			model.put("success", false);
+			model.put("msgError", jve.getMessage());
+			
 		} catch (Exception e) {
 			model.put("success", false);
-			model.put("msg", "Servicio no disponible");
 		}	
 		
 		return createModelAndViewJson(model);
@@ -875,8 +880,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numeroDocumento, tipoDocumento));
 			model.put("success", true);
 			
-		} 
-		catch (JsonViewerException e) {
+		} catch (JsonViewerException e) {
 			model.put("success", false);
 			model.put("msg", e.getMessage());
 			
@@ -886,7 +890,42 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		}
 		
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarDatosClienteNumeroUrsus(@RequestParam String numeroUrsus, ModelMap model) {
+		try {		
+			model.put("data", expedienteComercialApi.buscarDatosClienteNumeroUrsus(numeroUrsus));
+			model.put("success", true);
+			
+		} catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("msgError", e.getMessage());
+			
+		}	catch (Exception e) {
+			model.put("success", false);
+		}
 		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarClientesUrsus(@RequestParam String numeroDocumento,@RequestParam String tipoDocumento, ModelMap model) {
+		try {		
+			model.put("data", expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento));
+			model.put("success", true);
+			
+		}  catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("msgError", e.getMessage());
+			
+		} catch (Exception e) {
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -894,8 +933,8 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView getComboProveedoresExpediente(@RequestParam(required = false) String codigoTipoProveedor, @RequestParam(required = false) String nombreBusqueda, @RequestParam(required = false) String idActivo,WebDto dto, ModelMap model) {
 		
 		try {
-			List<ActivoProveedor> proveedores = expedienteComercialApi.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, idActivo, dto);
-			model.put("data", proveedores);
+			Page proveedores = expedienteComercialApi.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, idActivo, dto);
+			model.put("data", proveedores.getResults());
 			model.put("success", true);
 		}catch (JsonViewerException e) {
 			e.printStackTrace();
@@ -1031,11 +1070,13 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView obtencionDatosPrestamo(ModelMap model, DtoObtencionDatosFinanciacion dto) {
 		try {
 			model.put("success", expedienteComercialApi.obtencionDatosPrestamo(dto));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (JsonViewerException e) {
 			model.put("success", false);
-		}	
-
+			model.put("msgError", e.getMessage());
+		} catch (Exception e) {
+			model.put("success", false);
+		}
+		
 		return createModelAndViewJson(model);
 	}
 	
@@ -1113,4 +1154,13 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		model.put("data", expedienteComercialApi.getComboTipoGestor());
 		return new ModelAndView("jsonView", model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboActivos(Long idExpediente, WebDto webDto, ModelMap model){
+		
+		model.put("data", expedienteComercialApi.getComboActivos(idExpediente));
+		return new ModelAndView("jsonView", model);
+	}
+	
 }

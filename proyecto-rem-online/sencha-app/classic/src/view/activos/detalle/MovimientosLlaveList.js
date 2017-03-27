@@ -9,7 +9,8 @@ Ext.define('HreRem.view.activos.detalle.MovimientosLlaveList', {
     
     listeners: { 	
     	edit: 'onClickEditRowMovimientosLlaveList',
-		boxready:'quitarEdicionEnGridEditablePorFueraPerimetro'
+		boxready:'quitarEdicionEnGridEditablePorFueraPerimetro',
+		beforeedit: 'comprobarFechasMinimasMovimientosLlaveList'
     },
     
     initComponent: function () {
@@ -82,7 +83,12 @@ Ext.define('HreRem.view.activos.detalle.MovimientosLlaveList', {
 		        	flex: 1,
 	            	editor: {
 		            	xtype: 'datefield',
-		            	allowBlank: false
+		            	reference: 'datefieldEntrega',
+		            	maxValue: $AC.getCurrentDate(),
+		            	allowBlank: false,
+		            	listeners: { 
+		            		change: 'onChangeFechasMinimaMovimientosLlaveList'
+		            	}
 		            }
 		        },
 		        {
@@ -91,7 +97,9 @@ Ext.define('HreRem.view.activos.detalle.MovimientosLlaveList', {
 		            formatter: 'date("d/m/Y")',
 		        	flex: 1,
 	            	editor: {
-		            	xtype: 'datefield'
+		            	xtype: 'datefield',
+		            	reference: 'datefieldDevolucion',
+		            	maxValue: $AC.getCurrentDate()
 		            }
 		        }
 		    ];
@@ -110,5 +118,42 @@ Ext.define('HreRem.view.activos.detalle.MovimientosLlaveList', {
 		    ];
 
 		    me.callParent();
+	    
+   },
+   
+   onAddClick: function (btn) {
+	   
+	   var me = this;
+	   var puedeAgregarMovimiento = !me.existenLlavesSinDevolver(me.getStore().getData().items);
+	   
+	   if(puedeAgregarMovimiento) {
+		   var rec = Ext.create(me.getStore().config.model);
+		   me.getStore().sorters.clear();
+		   me.editPosition = 0;
+	       me.getStore().insert(me.editPosition, rec);
+	       me.rowEditing.isNew = true;
+	       me.rowEditing.startEdit(me.editPosition, 0);
+	       me.disableAddButton(true);
+	       me.disablePagingToolBar(true);
+	       me.disableRemoveButton(true);
+	   }
+	   else {
+		   me.fireEvent("errorToast", HreRem.i18n("msg.error.agregar.movimiento.llave.sin.devolver"));
+	   }
+   },
+   
+   //Comprueba si hay alguno movimiento sin fecha devolucion
+   existenLlavesSinDevolver: function(movimientos) {
+	   var existen = false;
+	   
+	   for(var i=0; i< movimientos.length; i++) {
+		   var mov = movimientos[i].data;
+		   if(Ext.isEmpty(mov.fechaDevolucion)) {
+			   existen = true;
+			   break;
+		   }
+	   }
+	   
+	   return existen;
    }
 });

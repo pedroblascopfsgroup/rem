@@ -186,7 +186,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	ALQUILER: '02'
     },
     
-    TIPOS_PROVEEDOR_ESPEDIENTE: {
+    TIPOS_PROVEEDOR_EXPEDIENTE: {
     	CAT : '28',
     	MEDIADOR_OFICINA: '29'
     },
@@ -215,8 +215,14 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     ESTADOS_GASTO: {
-    	PAGADO: '06',
-    	ANULADO: '05',
+    	INCOMPLETO: '12',
+    	SUBSANADO_GESTOR: '11',
+    	SUBSANADO: '10',
+    	AUTORIZADO_PROPIETARIO: '09',
+    	RECHAZADO_PROPIETARIO: '08',
+    	RETENIDO: '07',
+    	ANULADO: '06',
+    	PAGADO: '05',
     	CONTABILIZADO: '04',
     	AUTORIZADO: '03',
     	RECHAZADO: '02',

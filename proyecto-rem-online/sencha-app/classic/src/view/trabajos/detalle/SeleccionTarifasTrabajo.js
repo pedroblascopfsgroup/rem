@@ -27,11 +27,12 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
     parent: null, 
     
     listeners: {
-    	
-		show: function() {			
-			var me = this;
-			me.resetWindow();			
-		},
+
+// HREOS-1811 Errores modalwindow seleccion tarifas por esconder la ventana y abrir entre 2 trabajos distintos
+//		show: function() {			
+//			var me = this;
+//			me.resetWindow();			
+//		},
 		
 		boxready: function(window) {
 			
@@ -44,6 +45,15 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 						if(index == 0) field.focus();
 					}
 			);
+			
+	    	//me.getViewModel().set('trabajo.idTrabajo', me.idTrabajo);
+	    	me.getViewModel().set('trabajo.carteraCodigo', me.carteraCodigo);
+	    	me.getViewModel().set('trabajo.tipoTrabajoCodigo', me.tipoTrabajoCodigo);
+	    	me.getViewModel().set('trabajo.subtipoTrabajoCodigo', me.subtipoTrabajoCodigo);
+	    	
+	    	// Refresca el combo y el grid para los nuevos parametros
+	    	me.lookupReference("comboSubtipoTrabajoTarificadoRef").getStore().load();
+	    	me.lookupReference("gridselecciontarifas").getStore().load();
 		}
 		
 	},
@@ -84,6 +94,7 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 						},
 						{
 							fieldLabel:  HreRem.i18n('fieldlabel.subtipo.trabajo'),
+							reference: 'comboSubtipoTrabajoTarificadoRef',
 							flex: 1,
 							//width: 		260,
 							bind: {
@@ -144,12 +155,24 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
     	
     	me.callParent();
     },
+  
+// HREOS-1811 Errores modalwindow seleccion tarifas por esconder la ventana y abrir entre 2 trabajos distintos    
+//    resetWindow: function() {
+//    	var me = this;
+//    	//me.getViewModel().set('trabajo.idTrabajo', me.idTrabajo);
+//    	me.getViewModel().set('trabajo.carteraCodigo', me.carteraCodigo);
+//    	me.getViewModel().set('trabajo.tipoTrabajoCodigo', me.tipoTrabajoCodigo);
+//    	me.getViewModel().set('trabajo.subtipoTrabajoCodigo', me.subtipoTrabajoCodigo);
+//    	
+//    	// Refresca el combo y el grid para los nuevos parametros
+//    	me.lookupReference("comboSubtipoTrabajoTarificadoRef").getStore().load();
+//    	me.lookupReference("gridselecciontarifas").getStore().load();
+//    	
+//    },
     
-    resetWindow: function() {
+    closeWindow: function() {
     	var me = this;
-    	//me.getViewModel().set('trabajo.idTrabajo', me.idTrabajo);
-    	me.getViewModel().set('trabajo.carteraCodigo', me.carteraCodigo);
-    	me.getViewModel().set('trabajo.tipoTrabajoCodigo', me.tipoTrabajoCodigo);
-    	me.getViewModel().set('trabajo.subtipoTrabajoCodigo', me.subtipoTrabajoCodigo);
+    	me.close();
+    	me.destroy;
     }
 });

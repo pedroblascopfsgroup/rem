@@ -30,6 +30,10 @@ public class DDTipoCargaActivo implements  Auditable, Dictionary {
 
 	private static final long serialVersionUID = -4497097910086775262L;
 
+	public static final String CODIGO_TIPO_CARGA_REG = "REG";
+	public static final String CODIGO_TIPO_CARGA_ECO = "ECO";
+	public static final String CODIGO_TIPO_CARGA_REGECO = "REGECO";
+	
 	@Id
     @Column(name = "DD_TCA_ID")
     private Long id;

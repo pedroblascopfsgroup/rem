@@ -14,7 +14,7 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
     	
 	          {			
 				    xtype		: 'gridBase',
-				    topBar		: true,
+				    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS_EXPEDIENTES']),
 				    features: [{ftype:'grouping'}],
 				    reference: 'listadoDocumentosExpediente',
 					cls	: 'panel-base shadow-panel',

@@ -434,7 +434,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
          	storeMovimientosLlave: {
          		pageSize: 10,
          		model: 'HreRem.model.MovimientosLlave',
-         		sorters: [{ property: 'numLlave', direction: 'DESC' }],
+         		sorters: [{ property: 'fechaDevolucion', direction: 'DESC' }],
          		proxy: {
          			type: 'uxproxy',
          			remoteUrl: 'activo/getListMovimientosLlaveByLlave',
@@ -518,6 +518,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'activo/getListTasacionById',
+					extraParams: {id: '{activo.id}'}
+				 }
+    		},
+    		
+    		storeTasacionesGrid: {
+				 model: 'HreRem.model.ActivoTasacion',
+				 sorters: [{ property: 'fechaValorTasacion', direction: 'DESC' }],
+				 proxy: {
+				    type: 'uxproxy',
+					remoteUrl: 'activo/getListTasacionByIdGrid',
 					extraParams: {id: '{activo.id}'}
 				 }
     		},
@@ -1029,7 +1039,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			model: 'HreRem.model.HonorariosOfertaDetalleModel',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'ofertas/getHonorariosByOfertaId'
+				remoteUrl: 'ofertas/getHonorariosByActivoOferta'
 			}
 		},
 		comboTipoProveedor: {

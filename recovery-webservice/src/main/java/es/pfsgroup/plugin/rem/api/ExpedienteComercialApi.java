@@ -11,7 +11,6 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -33,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -307,6 +307,14 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean saveReserva(DtoReserva dto, Long idEntidad);
+	
+	
+	/**
+	 * Método que obtiene los honorarios(gastos) por activo y oferta aceptada
+	 * @param idOferta
+	 * @return
+	 */
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaAceptada(Oferta oferta, Activo activo);
 
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
@@ -314,7 +322,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public DtoPage getHonorarios(Long idExpediente);
+	public List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
 
 	/**
 	 * Método que guarda los honorarios(gastos) del expediente
@@ -371,12 +379,10 @@ public interface ExpedienteComercialApi {
 
 	/**
 	 * Método que elimina una entrega de reserva
-	 * 
-	 * @param dto
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean deleteEntregaReserva(DtoEntregaReserva dto, Long idEntrega);
+	public boolean deleteEntregaReserva(Long idEntrega);
 
 	/**
 	 * Función que devuelve la propuesta de un comité para un expediente
@@ -449,9 +455,9 @@ public interface ExpedienteComercialApi {
 	 * @param nombreBusqueda
 	 * @param idActivo
 	 * @param dto
-	 * @return List<ActivoProveedor>
+	 * @return Page
 	 */
-	public List<ActivoProveedor> getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto);
+	public Page getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto);
 	
 	/**
 	 * Crea un registro de honorarios (gasto_expediente)
@@ -552,7 +558,7 @@ public interface ExpedienteComercialApi {
 	 * Este método recibe un expediente comercial, llama al WS para obtener los datos del préstamo y los guarda en el expediente.
 	 * @param dto
 	 */
-	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto);
+	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception;
 
 	/**
 	 * Este método obtiene los datos del apartado 'Financiación' de la tab 'Formalización' del expediente.
@@ -609,4 +615,52 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean isExpedienteComercialVivoByActivo(Activo activo);
+
+	/**
+	 * Crea un gasto expediente
+	 * @param expediente
+	 * @param oferta
+	 * @param activo
+	 * @param codigoColaboracion
+	 * @return
+	 */
+	public GastosExpediente creaGastoExpediente(ExpedienteComercial expediente,  Oferta oferta, Activo activo, String codigoColaboracion);
+
+	/**
+	 * Devuelve los activos de un expediente dado, para mostrarlos en un combo
+	 * @param idExpediente
+	 * @return
+	 */
+	public List<DtoActivosExpediente> getComboActivos(Long idExpediente);
+
+	/**
+	 * Este método obtiene una lista de clientes URSUS en base al número de documento
+	 * y el tipo de documento.
+	 * 
+	 * @param numeroDocumento : número de documento del cliente.
+	 * @param tipoDocumento : tipo de documento del cliente.
+	 * @return Devuelve una lista con los clientes encontrados por el servicio.
+	 */
+	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento) throws Exception;
+
+	/**
+	 * Este método obtiene los detalles de cliente en base al número URSUS recibido.
+	 * 
+	 * @param numeroUrsus : número URSUS del cliente.
+	 * @return Devuelve todos los detalles del cliente encontrados por el servicio.
+	 * @throws Exception Devuelve excepcion si la conexion no ha sido satisfactoria.
+	 */
+	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus) throws Exception;
+	
+	/**
+	 * Este método calcula el importe de reserva para un expediente si se dan las condiciones:
+	 * El expediente tiene reserva.
+	 * La reserva tiene el cálculo de tipo porcentaje.
+	 * Entonces mira si la oferta tiene importe contraoferta y utiliza éste importe, si no
+	 * utiliza el importe de la oferta.
+	 * 
+	 * @param expediente : expediente comercial.
+	 */
+	public void actualizarImporteReservaPorExpediente(ExpedienteComercial expediente);
+
 }

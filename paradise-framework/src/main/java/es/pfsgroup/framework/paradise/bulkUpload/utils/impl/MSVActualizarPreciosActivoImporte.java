@@ -11,12 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
@@ -43,6 +46,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	public static final String ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED = "El precio de descuento aprobado no puede ser mayor al precio de descuento publicado (P.Descuento <= P.Descuento Pub.) o uno de estos precios no tiene un formato correcto";
 	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED = "El precio aprobado de venta no puede ser menor al precio mínimo autorizado (P.Minimo <= P.Aprobado Venta) o uno de estos precios no tiene un formato correcto";
 	public static final String ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED = "El precio de descuento publicado no puede ser mayor al precio aprobado de venta (P.Descuento Pub. <= P.Aprobado Venta) o uno de estos precios no tiene un formato correcto";
+	public static final String ACTIVE_PRIZES_NOT_GREATER_ZERO = "msg.error.masivo.comunes.importe.no.mayor.cero";
 	public static final String ACTIVE_PAV_DATE_INIT_EXCEEDED = "La fecha de inicio del precio aprobado de venta no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
 	public static final String ACTIVE_PMA_DATE_INIT_EXCEEDED = "La fecha de inicio del precio mínimo autorizado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
 	public static final String ACTIVE_PAR_DATE_INIT_EXCEEDED = "La fecha de inicio del precio aprobado de renta no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
@@ -65,8 +69,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	public static final String ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE = "La fecha de inicio del precio descuento publicado no puede ser anterior a la fecha inicio del precio aprobado venta";
 	public static final String ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio descuento aprobado";
 	public static final String ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio aprobado venta";
-	public static final String ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB = "Los precios especificados no cumplen las reglas al ser introducidos junto con los precios actuales del activo";
-	public static final String ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB = "Las fechas especificadas no cumplen las reglas al ser introducidas junto con las fechas actuales de los precios del activo";
+	public static final String ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB = "Los precios especificados no cumplen las reglas al ser introducidos junto con los actuales precios";
+	public static final String ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB = "Las fechas especificadas no cumplen las reglas al ser introducidas junto con las actuales fechas";
 
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -88,6 +92,9 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Resource
+    MessageService messageServices;
 	
 	private Integer numFilasHoja;
 
@@ -115,72 +122,72 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 			e.printStackTrace();
 		}
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-//			if (!isActiveExists(exc)){
-				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
-			// Comprobaciones para contrastar los datos contenidos en el propio excel.
-				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				mapaErrores.put(ACTIVE_PRIZE_NAN, getNANPrecioIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED, getLimitePreciosDescAprobDescWebIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED, getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
-				mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_PAR_DATE_INIT_EXCEEDED, getFechaInicioAprobadoRentaIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_PMA_DATE_INIT_EXCEEDED, getFechaInicioMinimoAuthIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_PMA_BEGIN_DATE_TODAY, getFechaInicioMinimoPosteriorHoy(exc));
-				mapaErrores.put(ACTIVE_PMA_END_DATE_TODAY, getFechaFinMinimoInferiorHoy(exc));
-				mapaErrores.put(ACTIVE_PDA_DATE_INIT_EXCEEDED, getFechaInicioDescuentoAprobIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_PDP_DATE_INIT_EXCEEDED, getFechaInicioDescuentoPubIncorrectaRows(exc));
-				mapaErrores.put(ACTIVE_PDA_BEGIN_DATE_NOT_EXISTS, getFechaInicioDescuentoAprobNoEstablecida(exc));
-				mapaErrores.put(ACTIVE_PDP_BEGIN_DATE_NOT_EXISTS, getFechaInicioDescuentoPubNoEstablecida(exc));
-				mapaErrores.put(ACTIVE_PDA_END_DATE_NOT_EXISTS, getFechaFinDescuentoAprobNoEstablecida(exc));
-				mapaErrores.put(ACTIVE_PDP_END_DATE_NOT_EXISTS, getFechaFinDescuentoPubNoEstablecida(exc));
-				mapaErrores.put(ACTIVE_PAV_END_DATE_LESS_PMA_END_DATE, getFechaFinAprovadoVentaMenorFechaFinMinimoAutorizado(exc));
-				mapaErrores.put(ACTIVE_PAV_BEGIN_DATE_GREATER_PMA_BEGIN_DATE, getFechaInicioAprovadoVentaMayorFechaInicioMinimoAutorizado(exc));
-				mapaErrores.put(ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE, getFechaFinDescuentoAprobadoMayorFechaFinMinimoAutorizado(exc));
-				mapaErrores.put(ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE, getFechaInicioDescuentoAprobadoMenorFechaInicioMinimoAutorizado(exc));
-				mapaErrores.put(ACTIVE_PDW_BEGIN_DATE_LESS_PDA_BEGIN_DATE, getFechaInicioDescuentoWebMenorFechaInicioDescuentoAprobado(exc));
-				mapaErrores.put(ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE, getFechaInicioDescuentoWebMenorFechaInicioAprovadoVenta(exc));
-				mapaErrores.put(ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE, getFechaFinDescuentoWebMayorFechaFinDescuentoAprobado(exc));
-				mapaErrores.put(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE, getFechaFinDescuentoWebMayorFechaFinAprovadoVenta(exc));
-			// Comprobaciones para contrastar datos del excel con los datos actuales en la DB.
-				mapaErrores.put(ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB, getComparacionDePreciosExcelDDBB(exc));
-				mapaErrores.put(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB, getComparacionDeFechasExcelDDBB(exc));
-
-				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZE_NAN).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED).isEmpty() || 
-							!mapaErrores.get(ACTIVE_PAV_DATE_INIT_EXCEEDED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PMA_DATE_INIT_EXCEEDED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PAR_DATE_INIT_EXCEEDED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PDA_DATE_INIT_EXCEEDED).isEmpty() || 
-							!mapaErrores.get(ACTIVE_PDP_DATE_INIT_EXCEEDED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PDA_BEGIN_DATE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PDP_BEGIN_DATE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PDA_END_DATE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PDP_END_DATE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PAV_END_DATE_LESS_PMA_END_DATE).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PAV_BEGIN_DATE_GREATER_PMA_BEGIN_DATE).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE).isEmpty() ||
-						    !mapaErrores.get(ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE).isEmpty() ||
-						    !mapaErrores.get(ACTIVE_PDW_BEGIN_DATE_LESS_PDA_BEGIN_DATE).isEmpty() ||
-						    !mapaErrores.get(ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE).isEmpty() ||
-						    !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE).isEmpty() ||
-						    !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE).isEmpty() ||
-						    !mapaErrores.get(ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB).isEmpty() ||
-						    !mapaErrores.get(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB).isEmpty() ){
-						dtoValidacionContenido.setFicheroTieneErrores(true);
-						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+		// Comprobaciones para contrastar los datos contenidos en el propio excel.
+			mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
+			mapaErrores.put(ACTIVE_PRIZE_NAN, getNANPrecioIncorrectoRows(exc));
+			mapaErrores.put(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED, getLimitePreciosDescAprobDescWebIncorrectoRows(exc));
+			mapaErrores.put(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED, getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
+			mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_NOT_GREATER_ZERO), isPreciosMayorCeroRows(exc));
+			mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
+			mapaErrores.put(ACTIVE_PAR_DATE_INIT_EXCEEDED, getFechaInicioAprobadoRentaIncorrectaRows(exc));
+			mapaErrores.put(ACTIVE_PMA_DATE_INIT_EXCEEDED, getFechaInicioMinimoAuthIncorrectaRows(exc));
+			mapaErrores.put(ACTIVE_PMA_BEGIN_DATE_TODAY, getFechaInicioMinimoPosteriorHoy(exc));
+			mapaErrores.put(ACTIVE_PMA_END_DATE_TODAY, getFechaFinMinimoInferiorHoy(exc));
+			mapaErrores.put(ACTIVE_PDA_DATE_INIT_EXCEEDED, getFechaInicioDescuentoAprobIncorrectaRows(exc));
+			mapaErrores.put(ACTIVE_PDP_DATE_INIT_EXCEEDED, getFechaInicioDescuentoPubIncorrectaRows(exc));
+			mapaErrores.put(ACTIVE_PDA_BEGIN_DATE_NOT_EXISTS, getFechaInicioDescuentoAprobNoEstablecida(exc));
+			mapaErrores.put(ACTIVE_PDP_BEGIN_DATE_NOT_EXISTS, getFechaInicioDescuentoPubNoEstablecida(exc));
+			mapaErrores.put(ACTIVE_PDA_END_DATE_NOT_EXISTS, getFechaFinDescuentoAprobNoEstablecida(exc));
+			mapaErrores.put(ACTIVE_PDP_END_DATE_NOT_EXISTS, getFechaFinDescuentoPubNoEstablecida(exc));
+			mapaErrores.put(ACTIVE_PAV_END_DATE_LESS_PMA_END_DATE, getFechaFinAprovadoVentaMenorFechaFinMinimoAutorizado(exc));
+			mapaErrores.put(ACTIVE_PAV_BEGIN_DATE_GREATER_PMA_BEGIN_DATE, getFechaInicioAprovadoVentaMayorFechaInicioMinimoAutorizado(exc));
+			mapaErrores.put(ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE, getFechaFinDescuentoAprobadoMayorFechaFinMinimoAutorizado(exc));
+			mapaErrores.put(ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE, getFechaInicioDescuentoAprobadoMenorFechaInicioMinimoAutorizado(exc));
+			mapaErrores.put(ACTIVE_PDW_BEGIN_DATE_LESS_PDA_BEGIN_DATE, getFechaInicioDescuentoWebMenorFechaInicioDescuentoAprobado(exc));
+			mapaErrores.put(ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE, getFechaInicioDescuentoWebMenorFechaInicioAprovadoVenta(exc));
+			mapaErrores.put(ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE, getFechaFinDescuentoWebMayorFechaFinDescuentoAprobado(exc));
+			mapaErrores.put(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE, getFechaFinDescuentoWebMayorFechaFinAprovadoVenta(exc));
+		// Comprobaciones para contrastar datos del excel con los datos actuales en la DB.
+			mapaErrores.put(ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB, getComparacionDePreciosExcelDDBB(exc));
+			mapaErrores.put(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB, getComparacionDeFechasExcelDDBB(exc));
+	
+			try{
+				if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PRIZE_NAN).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_NOT_GREATER_ZERO)).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PAV_DATE_INIT_EXCEEDED).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PMA_DATE_INIT_EXCEEDED).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PAR_DATE_INIT_EXCEEDED).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PDA_DATE_INIT_EXCEEDED).isEmpty() || 
+						!mapaErrores.get(ACTIVE_PDP_DATE_INIT_EXCEEDED).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PDA_BEGIN_DATE_NOT_EXISTS).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PDP_BEGIN_DATE_NOT_EXISTS).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PDA_END_DATE_NOT_EXISTS).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PDP_END_DATE_NOT_EXISTS).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PAV_END_DATE_LESS_PMA_END_DATE).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PAV_BEGIN_DATE_GREATER_PMA_BEGIN_DATE).isEmpty() ||
+						!mapaErrores.get(ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE).isEmpty() ||
+					    !mapaErrores.get(ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE).isEmpty() ||
+					    !mapaErrores.get(ACTIVE_PDW_BEGIN_DATE_LESS_PDA_BEGIN_DATE).isEmpty() ||
+					    !mapaErrores.get(ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE).isEmpty() ||
+					    !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE).isEmpty() ||
+					    !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE).isEmpty() ||
+					    !mapaErrores.get(ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB).isEmpty() ||
+					    !mapaErrores.get(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB).isEmpty() ){
+					dtoValidacionContenido.setFicheroTieneErrores(true);
+					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 				}
-//			}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		exc.cerrar();
 
@@ -668,6 +675,44 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						if (!listaFilas.contains(i))
 							listaFilas.add(i);
 					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isPreciosMayorCeroRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double precioVentaAprobado = null;
+		Double precioMinimoAuth = null;
+		Double precioRentaAprobado = null;
+		Double precioDescuentoAprobado = null;
+		Double precioDescuentoPublicado = null;
+		
+		// Validacion que evalua si los precios son mayores que cero
+		try {
+			for(int i=1; i<this.numFilasHoja;i++){
+				try{
+					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
+					precioMinimoAuth = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
+					precioRentaAprobado = !Checks.esNulo(exc.dameCelda(i, 7)) ? Double.parseDouble(exc.dameCelda(i, 7)) : null;
+					precioDescuentoAprobado = !Checks.esNulo(exc.dameCelda(i, 10)) ? Double.parseDouble(exc.dameCelda(i, 10)) : null;
+					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, 13)) ? Double.parseDouble(exc.dameCelda(i, 13)) :null ;
+					
+					if((!Checks.esNulo(precioVentaAprobado) && precioVentaAprobado.compareTo(0.0D) <= 0) ||
+							(!Checks.esNulo(precioMinimoAuth) && precioMinimoAuth.compareTo(0.0D) <= 0) ||
+							(!Checks.esNulo(precioRentaAprobado) && precioRentaAprobado.compareTo(0.0D) <= 0) ||
+							(!Checks.esNulo(precioDescuentoAprobado) && precioDescuentoAprobado.compareTo(0.0D) <= 0) ||
+							(!Checks.esNulo(precioDescuentoPublicado) && precioDescuentoPublicado.compareTo(0.0D) <= 0) )
+						listaFilas.add(i);	
 				} catch (ParseException e) {
 					listaFilas.add(i);
 					logger.error(e.getMessage());

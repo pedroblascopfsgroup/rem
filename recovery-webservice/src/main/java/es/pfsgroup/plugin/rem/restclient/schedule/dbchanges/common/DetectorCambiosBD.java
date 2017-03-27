@@ -16,7 +16,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.filter.RestSecurityFilter;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
@@ -52,7 +51,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	@Autowired
 	private RestApi restApi;
-	
+
 	@Autowired
 	private ServletContext servletContext;
 
@@ -195,7 +194,17 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * Actualiza la vista materializada
 	 */
 	public void actualizarVistaMaterializada() {
+		this.actualizarVistaMaterializada(null);
+	}
+
+	/**
+	 * Actualiza la vista materializada
+	 */
+	public void actualizarVistaMaterializada(RestLlamada registro) {
 		dao.refreshMaterializedView(this);
+		if (registro != null) {
+			registro.logTiempoRefrescoVista();
+		}
 	}
 
 	private CambiosList extractDtos(Class<?> dtoClass, DataAccessOperation dao) {
@@ -248,7 +257,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 							logger.trace("Map de cambios vacío, nada que notificar");
 						}
 					} catch (Exception e) {
-						logger.error(e);
+						logger.error("Error gestionando la fusion de cambios en DetectorCambiosBD", e);
 					}
 				} // fin main loop
 
@@ -311,7 +320,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * @throws Exception
 	 */
 	public void setdbContext() throws Exception {
-		restApi.doSessionConfig(RestSecurityFilter.WORKINGCODE);
+		restApi.doSessionConfig();
 	}
 
 	/**
@@ -320,16 +329,18 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	public void closeSession() {
 		SecurityContextHolder.clearContext();
 	}
-	
+
 	/**
 	 * Devuelve true si la apirest esta cerrada
 	 * 
 	 * @return
 	 */
-	public boolean isApiRestCerrada(){
+	public boolean isApiRestCerrada() {
 		boolean restLocked = false;
 		if (servletContext.getAttribute(RestApi.REST_API_WEBCOM) != null
-				&& (Boolean) servletContext.getAttribute(RestApi.REST_API_WEBCOM)) {
+				&& ((Boolean) servletContext.getAttribute(RestApi.REST_API_WEBCOM))
+				|| (servletContext.getAttribute(RestApi.REST_API_ENVIAR_CAMBIOS) != null
+						&& (Boolean) servletContext.getAttribute(RestApi.REST_API_ENVIAR_CAMBIOS))) {
 			restLocked = true;
 		}
 		return restLocked;

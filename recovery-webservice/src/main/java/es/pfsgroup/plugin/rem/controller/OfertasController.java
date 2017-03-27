@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -186,6 +187,21 @@ public class OfertasController {
 
 		try {
 			model.put("data", ofertaApi.getHonorariosByOfertaId(dtoHonorariosOferta));
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error("Error en ofertasController",e);
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHonorariosByActivoOferta(DtoGastoExpediente dto, ModelMap model) {
+
+		try {
+			model.put("data", ofertaApi.getHonorariosActivoByOfertaId(dto));
 			model.put("success", true);			
 		} catch (Exception e) {
 			logger.error("Error en ofertasController",e);

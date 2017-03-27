@@ -39,12 +39,10 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -95,8 +93,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoProveedorManager")
@@ -119,16 +115,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
-	private OfertaDao ofertaDao;
-	
-	@Autowired
-	private ReservaDao reservaDao;
-	
-	@Autowired
 	private ProveedoresApi proveedores;	
-	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -141,9 +128,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private GastoDao gastoDao;
-	
-	@Autowired
-	private ActivoAdapter activoAdapter;
 	
 	@Autowired
 	private UpdaterStateGastoApi updaterStateApi;
@@ -868,29 +852,72 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				
 					for(ActivoAgrupacionActivo activoAgrupacion: agrupacion.getActivos()){
-						
 						Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 						Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activoAgrupacion.getActivo().getNumActivo());
 						GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtroG, filtroA);
 						
-						if(!Checks.esNulo(gastoActivo)) {
+						if(Checks.esNulo(gastoActivo)) {
+						
+							filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", activoAgrupacion.getActivo().getNumActivo());
+							activo= genericDao.get(Activo.class, filtro);
 							
-							Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
-							Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-							List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+							if(Checks.esNulo(activo)) {
+								throw new JsonViewerException("Este activo no existe");	
+							} else {
 							
-							GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
-							gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
-							gastoProveedorActivo.setGastoProveedor(gasto);
-							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
-							
-							gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
-							
-							genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
-						}
+								filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+								gasto= genericDao.get(GastoProveedor.class, filtroGasto);
+//								
+//								if(!Checks.esNulo(gasto.getPropietario())) {
+//
+//									propietario = activo.getPropietarioPrincipal();
+//									if(!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+//										throw new JsonViewerException("Propietario diferente al propietario actual del gasto");	
+//									}
+//									
+//									
+//									
+//								}
+								
+								Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+								Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+								List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+								
+								GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
+								gastoProveedorActivo.setActivo(activo);
+								gastoProveedorActivo.setGastoProveedor(gasto);
+								if(!Checks.estaVacio(activosCatastro)) {
+									gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+								}
+								
+								gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
+								
+								genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+							}
+						
+//						Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+//						Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activoAgrupacion.getActivo().getNumActivo());
+//						GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtroG, filtroA);
+//						
+//						if(!Checks.esNulo(gastoActivo)) {
+//							
+//							Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
+//							Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+//							List<ActivoCatastro> activosCatastro= genericDao.getListOrdered(ActivoCatastro.class, order,filtroCatastro);
+//							
+//							GastoProveedorActivo gastoProveedorActivo= new GastoProveedorActivo();
+//							gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
+//							gastoProveedorActivo.setGastoProveedor(gasto);
+//							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+//							
+//							gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
+//							
+//							genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+//						}
 					}
 				}
 
+			}
 			}
 
 		} else {
@@ -1213,6 +1240,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						// Actualizamos el estado del gasto a anulado
 						updaterStateApi.updaterStates(gasto, DDEstadoGasto.ANULADO);
 						
+						List<GastoProveedorTrabajo> listaGastoTrabajo = gasto.getGastoProveedorTrabajos();
+						for(GastoProveedorTrabajo gastoTrabajo : listaGastoTrabajo){
+							Trabajo trabajo = gastoTrabajo.getTrabajo();
+							trabajo.setFechaEmisionFactura(null);
+							genericDao.save(Trabajo.class, trabajo);
+						}
+						
 					}
 					if(!Checks.esNulo(dtoGestionGasto.getComboMotivoRetenerPago())){
 						DDMotivoRetencionPago retenerPago= (DDMotivoRetencionPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencionPago.class, dtoGestionGasto.getComboMotivoRetenerPago());
@@ -1309,6 +1343,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		for(Long idTrabajo : trabajos) {
 			
 			Trabajo trabajo = trabajoApi.findOne(idTrabajo);
+			//Marcamos la fecha de emisión de factura en el trabajo
+			trabajo.setFechaEmisionFactura(new Date());
+			genericDao.save(Trabajo.class, trabajo);
+			
 			// Asignamos el trabajo al gasto
 			GastoProveedorTrabajo gastoTrabajo = new GastoProveedorTrabajo();
 			gastoTrabajo.setTrabajo(trabajo);
@@ -1365,6 +1403,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
     @BusinessOperationDefinition("gastoProveedorManager.getAdjuntosGasto")
+	@Transactional(readOnly = false)
 	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException {
 		
 		GastoProveedor gasto = findOne(id);
@@ -1601,10 +1640,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		//Desasignamos los trabajo del gasto
 		for(Long id : ids) {
 
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro);
-			gasto.getGastoProveedorTrabajos().remove(gastoTrabajoEliminado);
-			gastoDao.deleteGastoTrabajoById(id);			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", id);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro, filtro2);
+			if(!Checks.esNulo(gastoTrabajoEliminado)) {
+				gastoDao.deleteGastoTrabajoById(gastoTrabajoEliminado.getId());
+			}
+			
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			Trabajo trabajo = genericDao.get(Trabajo.class, filtroTrabajo);
+			trabajo.setFechaEmisionFactura(null);
+			genericDao.save(Trabajo.class, trabajo);
 		}
 		
 		// Desasignamos TODOS los activos
@@ -1839,6 +1885,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		GastoProveedor gasto = findOne(idGasto);
 		
+		//Se activa el borrado de los gastos-trabajo, y dejamos el trabajo como diponible para un futuro nuevo gasto
+		this.reactivarTrabajoParaGastos(gasto.getGastoProveedorTrabajos());
+		
 		GastoGestion gastoGestion =  gasto.getGastoGestion();
 		gastoGestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
@@ -1852,6 +1901,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		genericDao.update(GastoProveedor.class, gasto);
 		
 		return true;
+	}
+	
+	/*
+	 * Deja el Trabajo disponible para que sea asignable a un gasto, y activa el borrado lógico
+	 * de la relación gastoProveedor-Trabajo
+	 */
+	private void reactivarTrabajoParaGastos(List<GastoProveedorTrabajo> listaGastoTrabajo) {
+		
+		if(!Checks.estaVacio(listaGastoTrabajo)) {
+			for(GastoProveedorTrabajo gpvTrabajo : listaGastoTrabajo) {
+				
+				Trabajo trabajo = gpvTrabajo.getTrabajo();
+				if(!Checks.esNulo(trabajo)) {
+					trabajo.setFechaEmisionFactura(null);
+					genericDao.update(Trabajo.class, trabajo);
+				}
+				
+				genericDao.deleteById(GastoProveedorTrabajo.class, gpvTrabajo.getId());
+			}
+		}
 	}
 	
 	public GastoProveedor asignarPropietarioGasto(GastoProveedor gasto) {

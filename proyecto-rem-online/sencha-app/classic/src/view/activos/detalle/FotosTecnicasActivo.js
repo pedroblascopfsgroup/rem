@@ -155,8 +155,8 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
 		    dock: 'top',
 		    items: [
 		        //Desactivado para fase 1
-		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoClick', secFunPermToEnable: 'EDITAR_FOTOS_TECNICAS_ACTIVO'},
-		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick', secFunPermToEnable: 'EDITAR_FOTOS_TECNICAS_ACTIVO'},
+		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'},
+		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'},
 		        { iconCls:'x-fa fa-download', itemId:'downloadButton', handler: 'onDownloadFotoClick'}
 		        //Se deja planteado para fase 2
 		        /*,

@@ -46,6 +46,9 @@ public class VProveedores implements Serializable {
 	@Column(name = "DD_PRV_DESCRIPCION")
 	private String provinciaDescripcion ;
 	
+	@Column(name = "BAJA")
+	private Integer baja ;
+	
 
 	public Long getIdProveedor() {
 		return idProveedor;
@@ -117,6 +120,14 @@ public class VProveedores implements Serializable {
 
 	public void setProvinciaDescripcion(String provinciaDescripcion) {
 		this.provinciaDescripcion = provinciaDescripcion;
+	}
+
+	public Integer getBaja() {
+		return baja;
+	}
+
+	public void setBaja(Integer baja) {
+		this.baja = baja;
 	}
 
 }

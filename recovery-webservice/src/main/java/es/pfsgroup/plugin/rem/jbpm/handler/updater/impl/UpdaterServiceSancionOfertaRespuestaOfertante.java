@@ -47,6 +47,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
    	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
    	private static final String MOTIVO_COMPRADOR_NO_INTERES = "100"; //EL COMPRADOR NO ESTÁ INTERESADO EN LA OPERACIÓN
+   	private static final String IMPORTE_CONTRAOFERTA = "numImporteContra";
+   	private static final String FECHA_CONTRAOFERTA = "fechaRespuesta";
+   	
 //   	private static final String MOTIVO_ANULACION = "El comprador no acepta la contraoferta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -108,9 +111,10 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 						expediente.setMotivoAnulacion(motivoAnulacionExpediente);
 
 					}
-					
-					genericDao.save(ExpedienteComercial.class, expediente);
+
 				}
+				
+				genericDao.save(ExpedienteComercial.class, expediente);
 				
 			}
 		}

@@ -144,7 +144,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	public Long getNextNumGasto() {
 
 		String sql = "SELECT S_GPV_NUM_GASTO_HAYA.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 		
 	}
 	
@@ -152,7 +152,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	public void deleteGastoTrabajoById(Long id) {
 		
 		StringBuilder sb = new StringBuilder("delete from GastoProveedorTrabajo gpt where gpt.id = "+id);		
-		getSession().createQuery(sb.toString()).executeUpdate();
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
 	}
 	

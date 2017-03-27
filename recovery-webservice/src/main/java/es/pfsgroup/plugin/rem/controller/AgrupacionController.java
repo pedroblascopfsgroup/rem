@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -137,9 +138,13 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id, ModelMap model) {
 
 		Page page = adapter.getListActivosAgrupacionById(filtro, id);
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
-
+		if(!Checks.esNulo(page)) {
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+		} else {
+			model.put("success", false);
+		}
 		return createModelAndViewJson(model);
 	}
 
@@ -206,7 +211,6 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (JsonViewerException jvex) {
-			jvex.printStackTrace();
 			model.put("success", false);
 			model.put("msg", jvex.getMessage());
 		} catch (Exception e) {
@@ -715,7 +719,11 @@ public class AgrupacionController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.publicarActivosAgrupacion(agrupacionID, activosID);
 			model.put("success", success);
-
+			
+		} catch (JsonViewerException jViewEx){
+			logger.error(jViewEx.getMessage());
+			model.put("msg", jViewEx.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
 			if (e.getMessage().equals(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG)) {
 				model.put("msg", AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
@@ -739,7 +747,11 @@ public class AgrupacionController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.publicarSubdivisionesActivosAgrupacion(agrupacionID, activosID);
 			model.put("success", success);
-
+			
+		} catch (JsonViewerException jViewEx){
+			logger.error(jViewEx.getMessage());
+			model.put("msg", jViewEx.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
 			if (e.getMessage().equals(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG)) {
 				model.put("msg", AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);

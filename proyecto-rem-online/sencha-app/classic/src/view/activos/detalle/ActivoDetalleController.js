@@ -1506,17 +1506,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		    if (obj.success == 'true') {
     		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
         			btn.up('tasacionesactivo').funcionRecargar();
+        			me.getView().unmask();
     		    } else {
-    		    	me.fireEvent("errorToast", obj.msg); 
+    		    	Utils.defaultRequestFailure(response, opts);
     		    }
+    		    
     		},
     		
-		 	failure: function(record, operation) {
-		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-		    },
-		    
-		    callback: function(record, operation) {
-    			me.getView().unmask();
+		 	failure: function(response, opts) {
+		 		Utils.defaultRequestFailure(response, opts);
 		    }
     	});
 	},
@@ -1854,8 +1852,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			textFieldPerimetroGestion.reset();
 			break;
 			
-		case 'chkbxPerimetroFormalizar':			
-			textFieldFormalizar.reset();
+		case 'chkbxPerimetroFormalizar':
+			if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
+				chkbxFormalizar.setValue(false);
+				me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
+			}
+			else {
+				textFieldFormalizar.reset();
+			}
 			break;
 		default:
 			break;
@@ -2092,13 +2096,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	onLlavesListClick: function() {
+	onLlavesListClick: function(grid, record) {
 		var me = this;
 		
 		me.lookupReference('fieldsetmovimientosllavelist').expand();	
 		me.lookupReference('movimientosllavelistref').getStore().loadPage(1);
 		
-		me.lookupReference('movimientosllavelistref').disableAddButton(false);
+		if(!Ext.isEmpty(record.id))
+			me.lookupReference('movimientosllavelistref').disableAddButton(false);
 	},
 	
 	beforeLoadMovimientosLlave: function(store, operation, opts) {
@@ -2115,13 +2120,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 		else {
 			store.getProxy().extraParams = {idActivo: this.getViewModel().get('activo').id};
+			me.lookupReference('movimientosllavelistref').disableAddButton(true);
 			return true;
 		}
 	},
 	
 	onClickEditRowMovimientosLlaveList: function(editor, context, eOpts) {
 		var me = this;
-		
+
 		if(context.rowIdx == 0) {
 			var idLlave = me.getViewModel().get('llaveslistref').selection.id;
 			context.record.data.idLlave = idLlave;
@@ -2245,10 +2251,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		form = grid.up("form"),
 		model = Ext.create('HreRem.model.DetalleOfertaModel'),
-		idOferta = null;
+		idOferta = null,
+		idActivo = null;
 
 		if(!Ext.isEmpty(grid.selection)){
 			idOferta = record.get("idOferta");
+			idActivo = record.get("idActivo");
     	}
 
 		var fieldset =  me.lookupReference('detalleOfertaFieldsetref');
@@ -2265,7 +2273,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		// Cargar grid 'honorarios'.
 		var storeHonorarios = me.getViewModel().getData().storeHonorariosOfertaDetalle;
-		storeHonorarios.getProxy().getExtraParams().ofertaID = idOferta;
+		storeHonorarios.getProxy().getExtraParams().idOferta = idOferta;
+		storeHonorarios.getProxy().getExtraParams().idActivo = idActivo;
+		
 		storeHonorarios.load({
 			success: function(record) {	
 				me.lookupReference('honorarioslistdetalleofertaref').refresh();
@@ -2539,6 +2549,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    	callback: function(options, success, response){
 				}   		     
 		});		
+	},
+	
+	onChangeFechasMinimaMovimientosLlaveList: function() {
+		var me = this;
+		var dateDevolucion = me.lookupReference('datefieldDevolucion');
+		var dateEntrega = me.lookupReference('datefieldEntrega');
+		
+		me.setFechaMinimaDevolucionMovimientoLlave(dateEntrega.getValue(),dateDevolucion);
+	},
+	
+	comprobarFechasMinimasMovimientosLlaveList: function(editor, context, eOpts) {
+		var me = this;
+		var fila = context.view.getStore().getData().items[context.rowIdx].getData();	
+		var dateDevolucion = me.lookupReference('datefieldDevolucion');
+		
+		me.setFechaMinimaDevolucionMovimientoLlave(fila.fechaEntrega,dateDevolucion);
+	},
+	
+	// Establece fecha mínima en Devolución en función de la fecha de Entrega
+	setFechaMinimaDevolucionMovimientoLlave: function(valorFecha, dateDevolucion) {
+		
+		if(!Ext.isEmpty(valorFecha)) {
+			dateDevolucion.setDisabled(false);
+			dateDevolucion.setMinValue(valorFecha);
+		}
+		else {
+			dateDevolucion.setDisabled(true);
+			dateDevolucion.setValue();
+		}
 	}
 		
 });

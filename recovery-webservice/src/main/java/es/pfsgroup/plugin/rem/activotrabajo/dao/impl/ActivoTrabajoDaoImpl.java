@@ -18,7 +18,7 @@ public class ActivoTrabajoDaoImpl extends AbstractEntityDao<ActivoTrabajo, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "activo", idActivo);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "trabajo", idTrabajo);
 		
-		Query q = getSession().createQuery(hql.toString());
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
 		HQLBuilder.parametrizaQuery(q, hql);
 		
 		return (ActivoTrabajo) q.uniqueResult();

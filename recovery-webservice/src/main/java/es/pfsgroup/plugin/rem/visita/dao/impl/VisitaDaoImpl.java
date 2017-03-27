@@ -72,7 +72,7 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 	public Long getNextNumVisitaRem() {
 		String sql = "SELECT S_VIS_NUM_VISITA.NEXTVAL FROM DUAL";
 
-		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 
 	@Override

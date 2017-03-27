@@ -36,7 +36,9 @@ import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -59,11 +61,11 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -78,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -94,8 +97,17 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
 
 	protected static final Log logger = LogFactory.getLog(OfertaManager.class);
-	private static final String HONORARIO_TIPO_COLABORACION = "C";
-	private static final String HONORARIO_TIPO_PRESCRIPCION = "P";
+	
+	
+	//private static final String HONORARIO_TIPO_COLABORACION = "C";
+	//private static final String HONORARIO_TIPO_PRESCRIPCION = "P";
+	
+	private static final Map<String, String> TIPO_HONORARIOS = new HashMap<String, String>(){
+        {
+            put(DDAccionGastos.CODIGO_COLABORACION, "C");
+            put(DDAccionGastos.CODIGO_PRESCRIPCION, "P");
+        }
+    };
 
 	@Resource
 	MessageService messageServices;
@@ -147,6 +159,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Override
 	public String managerName() {
@@ -608,7 +623,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) {
 
 		Oferta ofertaAcepted = null;
-
+		Boolean inLoteComercial = false;
+		Boolean incompatible = false;
+		
 		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
 		restApi.doLogin(usuarioSecurity);
 
@@ -617,19 +634,48 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
 			ActivoOferta actOfr = listaActivoOferta.get(0);
 			if (!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())) {
-				// ofertaAcepted =
-				// getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
+				// ofertaAcepted = getOfertaAceptadaByActivo(actOfr.getPrimaryKey().getActivo());
 				ofertaAcepted = getOfertaAceptadaExpdteAprobado(actOfr.getPrimaryKey().getActivo());
 			}
 		}
+		
+		
+		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
+			for (ActivoOferta activoOferta : listaActivoOferta) {
+				Activo act = activoOferta.getPrimaryKey().getActivo();
+				if (!Checks.esNulo(act)){
+					
+					//HREOS-1674 - Si 1 activo pertenece a un lote comercial, ésta debe crearse siempre congelada.
+					if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(act.getId())){
+						inLoteComercial = true;
+					}
+					
+					//HREOS-1669 - Validar el tipo destino comercial
+					if (!Checks.esNulo(act.getTipoComercializacion()) && !Checks.esNulo(oferta.getTipoOferta())) {
+						String comercializacion = act.getTipoComercializacion().getCodigo();
+						
+						if ((DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) && 
+							(!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion) && 
+							!DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) || 
+							(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) && 
+							(!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion) && 
+							!DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion)))){ 
+							incompatible = true;
+						}
+					}
+				}
+			}
+		}
 
-		if (!Checks.esNulo(ofertaAcepted)) {
+		if (!Checks.esNulo(ofertaAcepted) || inLoteComercial) {
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
 		} else {
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+			
 		}
+
 
 		oferta.setFechaAlta(fechaAccion);
 
@@ -638,14 +684,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
 			for (ActivoOferta activoOferta : listaActivoOferta) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				if ((activo.getEstadoPublicacion() != null
-						&& activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO))
-						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
-								.equals(DDSituacionComercial.CODIGO_VENDIDO))
-						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
-								.equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE))
-						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
-								.equals(DDSituacionComercial.CODIGO_TRASPASADO))) {
+				if (incompatible ||
+					(activo.getEstadoPublicacion() != null && activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO)) || 
+					(activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) || 
+					(activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)) || 
+					(activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_TRASPASADO))) {
 					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 				}
@@ -1105,7 +1148,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
-
+	
 	@Override
 	public boolean altaComite(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
@@ -1161,6 +1204,75 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;
+		}
+
+	}
+
+	@Override
+	public String altaComiteProcess(TareaExterna tareaExterna) {
+		
+		try {
+		
+			Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Long porcentajeImpuesto = null;
+			if (!Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					// porcentajeImpuesto =
+					// Long.parseLong(String.format("%.0f",expediente.getCondicionante().getTipoAplicable()));
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				} else {
+					logger.debug("Datos insuficientes para dar de alta un comité");
+					throw new JsonViewerException("No ha sido posible realizar la operación");					
+				}
+			}
+
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi
+					.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
+			String codigoComite = resultadoDto.getCodigoComite();
+			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+			expediente.setComiteSancion(comite);
+			genericDao.save(ExpedienteComercial.class, expediente);
+
+			return null;
+		} catch (JsonViewerException jve) {
+			return "Error alta comité: "+jve.getMessage();
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return "No ha sido posible realizar la operación";
+		}
+
+	}
+	
+	@Override
+	public String ratificacionComiteProcess(TareaExterna tareaExterna) {
+		
+		try {
+			
+			Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			Long porcentajeImpuesto = null;
+			if (!Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					// porcentajeImpuesto =
+					// Long.parseLong(String.format("%.0f",expediente.getCondicionante().getTipoAplicable()));
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				} else {
+					logger.debug("Datos insuficientes para ratificar comité");
+					throw new JsonViewerException("No ha sido posible realizar la operación");
+				}
+			}
+
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi
+					.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
+			return null;
+		} catch (JsonViewerException jve) {
+			return "Error ratificación comité: "+jve.getMessage();
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return "No ha sido posible realizar la operación";
 		}
 
 	}
@@ -1250,13 +1362,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return listaOfertantes;
 	}
-
+	
 	@Override
 	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta) {
 
 		List<DtoHonorariosOferta> listaHonorarios = new ArrayList<DtoHonorariosOferta>();
 
-		if (Checks.esNulo(dtoHonorariosOferta.getOfertaID())) {
+		/*if (Checks.esNulo(dtoHonorariosOferta.getOfertaID())) {
 			return listaHonorarios;
 		}
 
@@ -1395,9 +1507,124 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				listaHonorarios.add(dtoPrescripcion);
 			}
+		}*/
+
+		return listaHonorarios;
+	}
+
+	@Override
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(DtoGastoExpediente dto) {
+		
+		String[] acciones = {DDAccionGastos.CODIGO_COLABORACION,DDAccionGastos.CODIGO_PRESCRIPCION,DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE};
+		
+		List<DtoGastoExpediente> listaHonorarios = new ArrayList<DtoGastoExpediente>();
+
+		if (Checks.esNulo(dto.getIdOferta()) || Checks.esNulo(dto.getIdActivo())) {
+			return listaHonorarios;
+		}
+
+		// Obtener la oferta y comprobar su estado, si el estado de la oferta es
+		// aceptado obtener un listado de gastos expediente. Si no existen
+		// expediente asociado a la oferta calcular los gastos.
+		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
+		Filter filterActivoID = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo());
+		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
+		Activo activo = genericDao.get(Activo.class, filterActivoID);
+		if (!Checks.esNulo(oferta)) {
+			if (!Checks.esNulo(oferta.getEstadoOferta())
+					&& oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {				
+				// Si la oferta está aceptada, tendremos expediente y los honorarios guardados....
+				listaHonorarios = expedienteComercialApi.getHonorariosActivoByOfertaAceptada(oferta, activo);
+					
+			} else {
+				for(int i=0; i<acciones.length;i++) {
+					listaHonorarios.add(calculaHonorario(oferta, acciones[i], activo));		
+				}
+				
+			}
 		}
 
 		return listaHonorarios;
+	}
+
+	@Override
+	public DtoGastoExpediente calculaHonorario(Oferta oferta, String accion, Activo activo) {
+		
+		DtoGastoExpediente dto = new DtoGastoExpediente();
+		ActivoProveedor proveedor = null;
+		
+		// Los honorarios de colaboración serán asignados al FDV de la oferta si existe, 
+		// sino al custodio de la oferta si existe, 
+		// sino al mediador del activo.
+		if(accion.equals(DDAccionGastos.CODIGO_COLABORACION)) {
+			
+			if (!Checks.esNulo(oferta.getFdv())) {
+				proveedor = oferta.getFdv();
+			} else if (!Checks.esNulo(oferta.getCustodio())) {
+				proveedor = oferta.getCustodio();
+			} else if(!Checks.esNulo(activo.getInfoComercial())) {
+				proveedor = activo.getInfoComercial().getMediadorInforme();
+			}
+		// Los gastos de prescripcion serán asignados al al prescriptor de la oferta
+		} else if(accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION)) {
+			
+			if (!Checks.esNulo(oferta.getPrescriptor())) {
+				proveedor = oferta.getPrescriptor();
+			}
+		}
+		// TODO: Falta definir a quien asignar los honorarios para CODIGO_RESPONSABLE_CLIENTE (Doble prescripción)
+		
+		// Información del receptor del honorario 
+		if(!Checks.esNulo(proveedor)) {						
+			
+			if (!Checks.esNulo(proveedor.getTipoProveedor())) {
+				dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());
+			}
+			dto.setProveedor(proveedor.getNombre());
+			dto.setIdProveedor(proveedor.getCodigoProveedorRem());
+		} 
+			
+		// Información del tipo de honorario
+		DDAccionGastos accionGastoC = (DDAccionGastos) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDAccionGastos.class, accion);
+		if (!Checks.esNulo(accionGastoC)) {
+			dto.setCodigoTipoComision(accionGastoC.getCodigo());
+			dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
+		}
+		
+		// Información del tipo de cálculo. Por defecto siempre son porcentajes
+		DDTipoCalculo tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+		
+		if (!Checks.esNulo(tipoCalculoC)) {
+			dto.setTipoCalculo(tipoCalculoC.getDescripcion());
+			dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
+		}
+		
+		Long idProveedor = !Checks.esNulo(proveedor) ? proveedor.getId() : null;
+		
+		// Información del cálculo de la comisión
+		BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion), activo.getId(), idProveedor);
+		if (!Checks.esNulo(calculoComision)) {
+			Double calculoImporteC = calculoComision.doubleValue();
+			dto.setImporteCalculo(calculoImporteC);
+
+			if (!Checks.esNulo(activo)) {
+				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo);
+				if (!Checks.esNulo(tasacion)) {
+					Double tasacionFin = tasacion.getImporteTasacionFin();
+					Double result = (tasacionFin * calculoImporteC / 100);
+					dto.setHonorarios(result);
+				}
+			}
+		}/* else {
+			// Si el importe calculo está vacío mostrar 'Sin
+			// Honorarios'.
+			dto.setTipoCalculo("-");
+			dto.setHonorarios("Sin Honorarios");
+		}*/
+
+		return dto;
 	}
 
 	@Override
@@ -1575,5 +1802,4 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
-
 }

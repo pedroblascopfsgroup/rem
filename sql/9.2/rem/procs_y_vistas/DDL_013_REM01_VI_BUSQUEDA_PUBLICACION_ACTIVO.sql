@@ -1,10 +1,10 @@
  --/*
 --##########################################
---## AUTOR=Kevin Fernádez
---## FECHA_CREACION=20170309
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170328
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1378
+--## INCIDENCIA_LINK=HREOS-1566
 --## PRODUCTO=NO
 --## Finalidad: DDL creación de la vista busqueda publicación activo con correccion al filtrar con historico de inf comercial
 --## Comentario1: Se adapta la vista para filtrar por valoracion sin borrar y que diferencie entre el destino comercial del activo.
@@ -86,6 +86,7 @@ BEGIN
 			LEFT JOIN '|| V_ESQUEMA ||'.act_pac_perimetro_activo pac ON act.act_id = pac.act_id AND pac.borrado = 0
 			LEFT JOIN '|| V_ESQUEMA ||'.act_hic_est_inf_comer_hist hic ON act.act_id = hic.act_id
 			LEFT JOIN '|| V_ESQUEMA ||'.dd_aic_accion_inf_comercial aic ON hic.dd_aic_id = aic.dd_aic_id
+			JOIN '|| V_ESQUEMA ||'.dd_scm_situacion_comercial scm ON act.dd_scm_id = scm.dd_scm_id AND scm.dd_scm_codigo != ''01'' AND scm.dd_scm_codigo != ''05''
 			left join (select val_id as val_id_venta, act_id as act_id_val_venta from '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL
 				JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON (VAL.DD_TPC_ID = TPC.DD_TPC_ID and tpc.DD_TPC_CODIGO = ''02'' and VAL.borrado = 0)) val1 on val1.act_id_val_venta = act.act_id
 			left join (select val_id as val_id_renta, act_id as act_id_val_renta from '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL

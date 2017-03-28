@@ -155,10 +155,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
 
-
-      --Pedido en HREOS-1800
-      EXECUTE IMMEDIATE('update '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL set CLC_WEBCOM_ID = CLC_REM_ID where usuariocrear = ''MIG2''');
-
       
       --VALIDACION DE DUPLICADOS
       V_SENTENCIA := '

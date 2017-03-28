@@ -395,8 +395,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				} else {
 					visita.setCliente(null);
 				}
-			} else {
-				visita.setCliente(null);
 			}
 
 			if (((JSONObject) jsonFields).containsKey("idActivoHaya")) {
@@ -557,7 +555,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error en validateVisitaDeleteRequestData",e);
 			listaErrores.add("Ha ocurrido un error al validar los parámetros de la visita idVisitaWebcom: "
 					+ visitaDto.getIdVisitaWebcom() + ". Traza: " + e.getMessage());
 			return listaErrores;

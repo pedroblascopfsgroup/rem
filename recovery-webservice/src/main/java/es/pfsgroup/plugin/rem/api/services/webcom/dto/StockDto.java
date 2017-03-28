@@ -122,6 +122,9 @@ public class StockDto implements WebcomRESTDto{
 	//HREOS-1630
 	private StringDataType codSubtipoTitulo;
 	
+	//HREOS-1809
+	private StringDataType codSubCartera;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -612,8 +615,11 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodSubtipoTitulo(StringDataType codSubtipoTitulo) {
 		this.codSubtipoTitulo = codSubtipoTitulo;
 	}
-
+	public StringDataType getCodSubCartera() {
+		return codSubCartera;
+	}
+	public void setCodSubCartera(StringDataType codSubCartera) {
+		this.codSubCartera = codSubCartera;
+	}	
 	
-	
-			
 }

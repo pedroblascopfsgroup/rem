@@ -2426,15 +2426,26 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			compradorExpediente.setPrimaryKey(pk);
 			compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
 			
-			Filter filtroRegimenMatrimonial = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoRegimenMatrimonial());
-			DDRegimenesMatrimoniales regimenMatrimonial = genericDao.get(DDRegimenesMatrimoniales.class, filtroRegimenMatrimonial);
-			if(!Checks.esNulo(regimenMatrimonial))
-				compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
+			if(!Checks.esNulo(dto.getCodigoRegimenMatrimonial())){
+				Filter filtroRegimenMatrimonial = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoRegimenMatrimonial());
+				DDRegimenesMatrimoniales regimenMatrimonial = genericDao.get(DDRegimenesMatrimoniales.class, filtroRegimenMatrimonial);
+				if(!Checks.esNulo(regimenMatrimonial))
+					compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
+			}
 			
-			Filter filtroEstadoCivil = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodEstadoCivil());
-			DDEstadosCiviles estadoCivil = genericDao.get(DDEstadosCiviles.class, filtroEstadoCivil);
-			if(!Checks.esNulo(estadoCivil))
-				compradorExpediente.setEstadoCivil(estadoCivil);
+			if(!Checks.esNulo(dto.getCodEstadoCivil())){
+				Filter filtroEstadoCivil = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodEstadoCivil());
+				DDEstadosCiviles estadoCivil = genericDao.get(DDEstadosCiviles.class, filtroEstadoCivil);
+				if(!Checks.esNulo(estadoCivil))
+					compradorExpediente.setEstadoCivil(estadoCivil);
+			}
+			
+			if(!Checks.esNulo(dto.getTitularContratacion())){
+				compradorExpediente.setTitularContratacion(dto.getTitularContratacion());;
+			
+			}else{
+				compradorExpediente.setTitularContratacion(0);
+			}
 			
 			expediente.getCompradores().add(compradorExpediente);
 			
@@ -2599,12 +2610,16 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Override
 	public String consultarComiteSancionador(Long idExpediente) throws Exception {
-		
+		Long porcentajeImpuesto = null;
 		try {
 			
 			ExpedienteComercial expediente = findOne(idExpediente);
-			//InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
-			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecision(expediente);
+			if (!Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				}
+			}
+			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
 			String codigoComite = null;
 				
 			ResultadoInstanciaDecisionDto resultadoDto;
@@ -2632,6 +2647,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return comiteSancion;
 	}
 
+	@Deprecated
 	private InstanciaDecisionDto expedienteComercialToInstanciaDecision(ExpedienteComercial expediente) {
 		
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
@@ -3159,10 +3175,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 
 			if(!Checks.esNulo(compradorExpediente)){
-				if(compradorExpediente.getTitularContratacion()==0){
-					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
-					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
-					ofertaApi.resetPBC(expediente);
+				if(!Checks.esNulo(compradorExpediente.getTitularContratacion())){
+					if(compradorExpediente.getTitularContratacion()==0){
+						expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
+						ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
+						ofertaApi.resetPBC(expediente);
+					}
 				} else {
 					throw new JsonViewerException("Operación no permitida, por ser el titular de la contratación");
 				}

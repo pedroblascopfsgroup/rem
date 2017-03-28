@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Gustavo Mora
---## FECHA_CREACION=20161004
+--## FECHA_CREACION=20170328
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-XXX
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Se añade campo FECHA_PAGO_NO_REAL_DE_LA_FACTU de tabla APR_AUX_I_RU_FACT_SIN_PROV
 --#########################################
 --*/
 
@@ -82,7 +83,8 @@ BEGIN
                            , COD_ENTIDAD_CONEXION              NUMBER(4)
                            , COD_OFICINA_EMISION_CONEXION      NUMBER(4)
                            , NUM_CONEXION                  	   NUMBER(13)
-                           , FILLER                            VARCHAR2(77 CHAR)        
+                           , FECHA_PAGO_NO_REAL_DE_LA_FACTU	   DATE
+                           , FILLER                            VARCHAR2(69 CHAR)
                    	)';
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');  

@@ -8,7 +8,7 @@ if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
 fi
 rm -f ${DIR_DESTINO}URSTOCK*
 
-mascara='_'$1
+#mascara='_'$1
 #extensionSem=".sem"
 #extensionZip=".dat"
 extensionTxt=".txt"
@@ -26,7 +26,7 @@ for fichero in $arrayFicheros
 do
 #    ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
 #    ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-     ficheroTxt=$DIR_INPUT_AUX$fichero$mascara$extensionTxt
+     ficheroTxt=$DIR_INPUT_AUX$fichero$extensionTxt
 
     echo "$ficheroTxt"
     if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
@@ -50,7 +50,7 @@ else
    do
 #            ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
 #            ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-            ficheroTxt=$DIR_INPUT_AUX$fichero$mascara$extensionTxt
+            ficheroTxt=$DIR_INPUT_AUX$fichero$extensionTxt
 
             sed -i 's/ //g' $ficheroTxt
             mv $ficheroTxt $DIR_DESTINO

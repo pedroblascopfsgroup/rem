@@ -8,7 +8,6 @@ if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
 fi
 rm -f ${DIR_DESTINO}URVFFAC*
 
-mascara='_'$1
 extensionTxt=".txt"
 
 OIFS=$IFS
@@ -22,7 +21,7 @@ echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
 do
-     ficheroTxt=$DIR_INPUT_AUX$fichero$mascara$extensionTxt
+     ficheroTxt=$DIR_INPUT_AUX$fichero$extensionTxt
 
     echo "$ficheroTxt"
     if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
@@ -44,7 +43,7 @@ then
 else
    for fichero in $arrayFicheros
    do
-            ficheroTxt=$DIR_INPUT_AUX$fichero$mascara$extensionTxt
+            ficheroTxt=$DIR_INPUT_AUX$fichero$extensionTxt
 
             sed -i 's/ //g' $ficheroTxt
             mv $ficheroTxt $DIR_DESTINO

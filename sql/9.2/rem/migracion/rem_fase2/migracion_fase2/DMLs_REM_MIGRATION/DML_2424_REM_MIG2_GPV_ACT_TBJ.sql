@@ -253,22 +253,23 @@ BEGIN
       V_REG_INSERTADOS_1 := SQL%ROWCOUNT;
       
        V_SENTENCIA := '
-        MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_1||' GPV
+        MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_1||' GAS
         USING ( 
                                 WITH SUMATORIO AS(
-                                        SELECT GPT_ACT_NUMERO_ACTIVO, SUM(GPT_BASE_IMPONIBLE) AS SUMA
+                                        SELECT GPT_ACT_NUMERO_ACTIVO, nvl(SUM(GPT_BASE_IMPONIBLE),1) AS SUMA
                                         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
                                         GROUP BY GPT_ACT_NUMERO_ACTIVO
                                 )
-                                SELECT MIG2.GPT_GPV_ID, ACT.ACT_ID, GPT_BASE_IMPONIBLE, ROUND(100*GPT_BASE_IMPONIBLE/OPERACION.SUMA,4) AS SUMA FROM MIG2_GPV_ACT_TBJ MIG2
+                                SELECT GPV.GPV_ID, ACT.ACT_ID, GPT_BASE_IMPONIBLE, ROUND(100*GPT_BASE_IMPONIBLE/OPERACION.SUMA,4) AS SUMA FROM MIG2_GPV_ACT_TBJ MIG2
                                 INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
                                   ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO
                                 INNER JOIN SUMATORIO OPERACION
                                   ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO                                       
+                                INNER JOIN  '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
                           ) AUX
-                ON (GPV.ACT_ID = AUX.ACT_ID AND GPV.GPV_ID = AUX.GPT_GPV_ID)
+                ON (GAS.ACT_ID = AUX.ACT_ID AND GAS.GPV_ID = AUX.GPV_ID)
                 WHEN MATCHED THEN UPDATE SET
-                  GPV.GPV_PARTICIPACION_GASTO = AUX.SUMA
+                  GAS.GPV_PARTICIPACION_GASTO = AUX.SUMA
       '
       ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;

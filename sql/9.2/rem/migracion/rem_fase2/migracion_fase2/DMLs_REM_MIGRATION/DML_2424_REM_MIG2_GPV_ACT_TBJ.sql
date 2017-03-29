@@ -256,7 +256,7 @@ BEGIN
         MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_1||' GAS
         USING ( 
                                 WITH SUMATORIO AS(
-                                        SELECT GPT_ACT_NUMERO_ACTIVO, nvl(SUM(GPT_BASE_IMPONIBLE),1) AS SUMA
+                                        SELECT GPT_ACT_NUMERO_ACTIVO, GREATEST(SUM(GPT_BASE_IMPONIBLE),1) AS SUMA
                                         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
                                         GROUP BY GPT_ACT_NUMERO_ACTIVO
                                 )
@@ -290,13 +290,16 @@ BEGIN
                 GPV_TBJ_ID,
                 GPV_ID,
                 TBJ_ID,
+                USUARIOCREAR,
                 VERSION
                 )
                 SELECT
                 '||V_ESQUEMA||'.S_'||V_TABLA_2||'.NEXTVAL                               GPV_TBJ_ID, 
                 GPV.GPV_ID                                                                                                              GPV_ID,
                 TBJ.TBJ_ID                                                                              TBJ_ID,
+                ''MIG2'' AS USUARIOCREAR,
                 0                                                                               VERSION
+                
                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
                         ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID

@@ -606,7 +606,7 @@ BEGIN
   -- Diccionarios rechazados
   COMMIT;
   
-  EXECUTE IMMEDIATE V_SENTENCIA INTO V_COD;*/
+
   V_COD := 0;
 
   -- Observaciones

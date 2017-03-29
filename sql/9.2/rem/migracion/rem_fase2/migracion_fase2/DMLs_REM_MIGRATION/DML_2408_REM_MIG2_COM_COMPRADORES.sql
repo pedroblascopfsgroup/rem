@@ -130,6 +130,11 @@ BEGIN
                           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
                           GROUP BY COM_COD_COMPRADOR 
                           HAVING COUNT(1) > 1
+          ),
+          DUPLICADOS_COM_DOCUMENTO  AS(
+			SELECT COM_DOCUMENTO FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
+			GROUP BY COM_DOCUMENTO
+			HAVING COUNT(1)>1
           )
           SELECT
             '||V_ESQUEMA||'.S_COM_COMPRADOR.NEXTVAL                                                           AS COM_ID,
@@ -171,6 +176,10 @@ BEGIN
 				WHERE DUP.COM_COD_COMPRADOR = MIG2.COM_COD_COMPRADOR)
             AND MIG2.COM_DOCUMENTO NOT IN (
 				SELECT COM.COM_DOCUMENTO FROM COM_COMPRADOR COM)
+			AND NOT EXISTS (
+				SELECT 1
+				FROM DUPLICADOS_COM_DOCUMENTO DUP2
+				WHERE DUP2.COM_DOCUMENTO = MIG2.COM_DOCUMENTO)
           ) AUX      
       '
       ;

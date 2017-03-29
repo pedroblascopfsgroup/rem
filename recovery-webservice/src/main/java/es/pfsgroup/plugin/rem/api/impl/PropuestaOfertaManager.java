@@ -208,17 +208,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		mapaValores.put("FProp", FileUtilsREM.stringify(new Date()));
 
 		// Si el tipo es nulo, por defecto, se entiende como tipo RETAIL
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
-				GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		String codigoComercializacionActivo = Checks.esNulo(activo.getTipoComercializar())
-				? DDTipoComercializar.CODIGO_RETAIL : activo.getTipoComercializar().getCodigo();
-		if (codigoComercializacionActivo.equals(DDTipoComercializar.CODIGO_RETAIL)) {
-			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
-					GestorActivoApi.CODIGO_GESTOR_COMERCIAL_RETAIL);
-		} else if (codigoComercializacionActivo.equals(DDTipoComercializar.CODIGO_SINGULAR)) {
-			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
-					GestorActivoApi.CODIGO_GESTOR_COMERCIAL_SINGULAR);
-		}
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 		if (!Checks.esNulo(tipoGestor)) {
 			mapaValores.put("Gestor", FileUtilsREM.stringify(null));

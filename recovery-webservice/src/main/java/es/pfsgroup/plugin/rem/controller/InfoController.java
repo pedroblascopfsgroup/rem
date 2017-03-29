@@ -5,15 +5,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
@@ -22,16 +23,16 @@ public class InfoController {
 	@Autowired
 	private RestApi restApi;
 	@Autowired
-	private GenericAdapter genericAdapter;
-	@Autowired
 	private ServletContext servletContext;
+
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void closeRest(HttpServletRequest request, ModelMap model, HttpServletResponse response,
 			@RequestParam(required = true) String servicios) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
+		try {
+			restApi.simulateRestFilter(request);
 			if (!servicios.isEmpty()
 					&& (!servicios.equals(RestApi.REST_API_ALL) && !servicios.equals(RestApi.REST_API_BANKIA)
 							&& !servicios.equals(RestApi.REST_API_WEBCOM))
@@ -50,6 +51,10 @@ public class InfoController {
 				model.put("result", "REST API CERRADA. Servicios: ".concat(servicios));
 			}
 
+		} catch (Exception e) {
+			model.put("result", e.getMessage());
+			logger.error("Error en infocontroller", e);
+			SecurityContextHolder.clearContext();
 		}
 		restApi.sendResponse(response, model, null);
 	}
@@ -58,8 +63,8 @@ public class InfoController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void openRest(HttpServletRequest request, ModelMap model, HttpServletResponse response,
 			@RequestParam(required = true) String servicios) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
+		try {
+			restApi.simulateRestFilter(request);
 			if (!servicios.isEmpty()
 					&& (!servicios.equals(RestApi.REST_API_ALL) && !servicios.equals(RestApi.REST_API_BANKIA)
 							&& !servicios.equals(RestApi.REST_API_WEBCOM))
@@ -77,8 +82,12 @@ public class InfoController {
 				servletContext.setAttribute(servicios, false);
 				model.put("result", "REST API " + servicios + " ABIERTA");
 			}
-
+		} catch (Exception e) {
+			model.put("result", e.getMessage());
+			logger.error("Error en infocontroller", e);
+			SecurityContextHolder.clearContext();
 		}
+
 		restApi.sendResponse(response, model, null);
 	}
 
@@ -92,8 +101,16 @@ public class InfoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void getInfo(HttpServletRequest request, ModelMap model, HttpServletResponse response) {
-		String miIp = restApi.getClientIpAddr(request);
-		model.put("request ip", miIp);
+		try {
+			restApi.simulateRestFilter(request);
+			String miIp = restApi.getClientIpAddr(request);
+			model.put("request ip", miIp);
+
+		} catch (Exception e) {
+			model.put("result", e.getMessage());
+			logger.error("Error en infocontroller", e);
+			SecurityContextHolder.clearContext();
+		}
 		restApi.sendResponse(response, model, null);
 	}
 
@@ -102,8 +119,8 @@ public class InfoController {
 	public void getPeticionInfo(HttpServletRequest request, ModelMap model, HttpServletResponse response,
 			@RequestParam(required = true) String id) {
 
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
+		try {
+			restApi.simulateRestFilter(request);
 			PeticionRest peticion = restApi.getLastPeticionByToken(id);
 			if (peticion != null) {
 				model.put("ip", peticion.getIp());
@@ -119,6 +136,10 @@ public class InfoController {
 			} else {
 				model.put("error", "No existe la petición");
 			}
+		} catch (Exception e) {
+			model.put("result", e.getMessage());
+			logger.error("Error en infocontroller", e);
+			SecurityContextHolder.clearContext();
 		}
 		restApi.sendResponse(response, model, null);
 	}
@@ -128,8 +149,8 @@ public class InfoController {
 	public void getLlamadaInfo(HttpServletRequest request, ModelMap model, HttpServletResponse response,
 			@RequestParam(required = true) String id) {
 
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		if (genericAdapter.isSuper(usuarioLogado)) {
+		try {
+			restApi.simulateRestFilter(request);
 			PeticionRest peticion = restApi.getLastPeticionByToken(id);
 			if (peticion != null) {
 				model.put("ip", peticion.getIp());
@@ -145,6 +166,10 @@ public class InfoController {
 			} else {
 				model.put("error", "No existe la petición");
 			}
+		} catch (Exception e) {
+			model.put("result", e.getMessage());
+			logger.error("Error en infocontroller", e);
+			SecurityContextHolder.clearContext();
 		}
 		restApi.sendResponse(response, model, null);
 	}

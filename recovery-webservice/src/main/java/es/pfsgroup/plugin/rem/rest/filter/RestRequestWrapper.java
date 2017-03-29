@@ -27,12 +27,10 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 	private final String body;
 	protected static final Log logger = LogFactory.getLog(RestRequestWrapper.class);
 	private PeticionRest peticionRest = null;
-	
+
 	private long tiempoInicio;
 	private long tiempoFin;
 	private boolean trace = true;
-	
-	
 
 	public RestRequestWrapper(HttpServletRequest request) throws IOException, Exception {
 		super(request);
@@ -64,8 +62,10 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 
 		if (stringBuilder.toString() != null && !stringBuilder.toString().isEmpty()) {
 			body = stringBuilder.toString();
-		} else {
+		} else if (request.getParameter("data") != null && !request.getParameter("data").isEmpty()){
 			body = request.getParameter("data");
+		}else{
+			body = "";
 		}
 	}
 
@@ -147,6 +147,6 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 
 	public void setTrace(boolean trace) {
 		this.trace = trace;
-	}	
+	}
 
 }

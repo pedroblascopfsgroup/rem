@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.Authentication;
+import org.springframework.security.AuthorizationServiceException;
 import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider;
@@ -83,20 +84,24 @@ public class RestManagerImpl implements RestApi {
 	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		boolean resultado = false;
-		String peticion = restRequest.getBody();
-		ALGORITMO_FIRMA algoritmoFirma = this.obtenerAlgoritmoFirma(restRequest);
-		if (broker == null || signature == null || signature.isEmpty() || peticion == null) {
-			resultado = false;
+		if (broker.getValidarFirma().equals(new Long(0))) {
+			resultado = true;
 		} else {
-			String firma = "";
-			if (algoritmoFirma.equals(ALGORITMO_FIRMA.DEFAULT)) {
-				firma = WebcomSignatureUtils.computeSignatue(broker.getKey(), broker.getIp(), peticion);
-			} else if (algoritmoFirma.equals(ALGORITMO_FIRMA.NO_IP)) {
-				firma = WebcomSignatureUtils.computeSignatue(broker.getKey(), null, peticion);
-			}
+			String peticion = restRequest.getBody();
+			ALGORITMO_FIRMA algoritmoFirma = this.obtenerAlgoritmoFirma(restRequest);
+			if (broker == null || signature == null || signature.isEmpty() || peticion == null) {
+				resultado = false;
+			} else {
+				String firma = "";
+				if (algoritmoFirma.equals(ALGORITMO_FIRMA.DEFAULT)) {
+					firma = WebcomSignatureUtils.computeSignatue(broker.getKey(), broker.getIp(), peticion);
+				} else if (algoritmoFirma.equals(ALGORITMO_FIRMA.NO_IP)) {
+					firma = WebcomSignatureUtils.computeSignatue(broker.getKey(), null, peticion);
+				}
 
-			if (firma.equals(signature) || broker.getValidarFirma().equals(new Long(0))) {
-				resultado = true;
+				if (firma.equals(signature)) {
+					resultado = true;
+				}
 			}
 		}
 		return resultado;
@@ -523,8 +528,7 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	public void doSessionConfig() throws Exception {
-		
-		
+
 		String workingCode = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
 				WebcomRESTDevonProperties.REST_WORKINGCODE, "2038");
 		// Obtenemos la entidad partiendo del working code y establecemos el
@@ -589,5 +593,22 @@ public class RestManagerImpl implements RestApi {
 			}
 		}
 		return resultado;
+	}
+
+	@Override
+	public void simulateRestFilter(ServletRequest req) throws Exception {
+		this.doSessionConfig();
+		RestRequestWrapper restRequest = new RestRequestWrapper((HttpServletRequest) req);
+		String ipClient = this.getClientIpAddr(req);
+		String signature = ((HttpServletRequest) req).getHeader("signature");
+		Broker broker = this.getBrokerByIp(ipClient);
+		if (broker == null) {
+			broker = this.getBrokerDefault("");
+			broker.setIp(ipClient);
+		}
+		if (!this.validateSignature(broker, signature, restRequest)) {
+			throw new AuthorizationServiceException("No tiene permisos para ejecutar este servicio");
+		}
+
 	}
 }

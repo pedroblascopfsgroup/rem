@@ -258,5 +258,11 @@ public interface RestApi {
 	 * @throws Exception
 	 */
 	public void doSessionConfig() throws Exception;
+	
+	/**
+	 * 
+	 * @param req
+	 */
+	public void simulateRestFilter(ServletRequest req) throws Exception;
 
 }

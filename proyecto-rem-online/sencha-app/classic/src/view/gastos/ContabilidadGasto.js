@@ -36,6 +36,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														xtype:'comboboxfieldbase',
 														fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
 														labelWidth: 200,
+														reference: 'comboboxfieldFechaEjercicio',
 										        		bind: {
 									            			store: '{comboEjercicioContabilidad}',
 									            			value: '{contabilidad.ejercicioImputaGasto}'
@@ -59,7 +60,12 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														xtype: 'datefieldbase',
 														labelWidth: 200,
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.devengo'),
+														reference: 'fechaDevengoEspecial',
 														bind:		'{contabilidad.fechaDevengoEspecial}',
+														listeners: {
+										                	change: 'onChangeFechaDevengoEspecial'
+										            	},
+										            	editable: false,
 														formatter: 'date("d/m/Y")'
 													},
 													{ 

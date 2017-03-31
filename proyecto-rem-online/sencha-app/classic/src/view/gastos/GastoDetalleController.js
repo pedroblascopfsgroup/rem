@@ -95,18 +95,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && !form.disableValidation || form.disableValidation) {
-			var fechaMax = new Date();
-			fechaMax.setMonth(fechaMax.getMonth()+1);
-			var fechaDevengo = me.lookupReference('fechaDevengoEspecial').value;
-			var anyoCombobox = me.lookupReference('comboboxfieldFechaEjercicio').lastMutatedValue;
-			var anyoFechaDevengo = fechaDevengo.getFullYear();
-			
-			if(anyoCombobox.indexOf(anyoFechaDevengo) == -1){
-
-				me.fireEvent("errorToast", HreRem.i18n("msg.error.validacion.fechas"));
-
-			}else{
-				
+//			var fechaMax = new Date();
+//			fechaMax.setMonth(fechaMax.getMonth()+1);
+//			var fechaDevengo = me.lookupReference('fechaDevengoEspecial').value;
+//			var anyoCombobox = me.lookupReference('comboboxfieldFechaEjercicio').lastMutatedValue;
+//			var anyoFechaDevengo = fechaDevengo.getFullYear();
+//			
+//			if(anyoCombobox.indexOf(anyoFechaDevengo) == -1){
+//
+//				me.fireEvent("errorToast", HreRem.i18n("msg.error.validacion.fechas"));
+//
+//			}else{
+//				
 				
 				Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 							function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -154,7 +154,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 						}
 
 
-			}
+//			}
 		} else {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));

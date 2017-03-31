@@ -754,9 +754,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				if(nombreUsuarioWS.equals(usuarioLogado)){
 					Usuario supervisorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 					if(!Checks.esNulo(supervisorWS))
-						tareaActivo.setUsuario(supervisorWS);
+						tareaActivo.setSupervisorActivo(supervisorWS);
 				} else {
-					tareaActivo.setUsuario(usuarioLogado);
+					tareaActivo.setSupervisorActivo(usuarioLogado);
 				}
 			}
 		}

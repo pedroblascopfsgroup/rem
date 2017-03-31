@@ -796,4 +796,59 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+
+	@Override
+	public Boolean existeSociedadAcreedora(String sociedadAcreedoraNIF) {
+		if(Checks.esNulo(sociedadAcreedoraNIF)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PDV_PLAN_DIN_VENTAS WHERE"
+				+ "		 	PDV_ACREEDOR_NIF = '"+sociedadAcreedoraNIF+"' "
+				+ "		 	AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public Boolean existePropietario(String propietarioNIF) {
+		if(Checks.esNulo(propietarioNIF)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PRO_PROPIETARIO WHERE"
+				+ "		 	PRO_DOCIDENTIF = '"+propietarioNIF+"' "
+				+ "		 	AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public Boolean existeProveedorMediadorByNIF(String proveedorMediadorNIF) {
+		if(Checks.esNulo(proveedorMediadorNIF)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PVE_PROVEEDOR WHERE"
+				+ "		 PVE_DOCIDENTIF = '" + proveedorMediadorNIF + "'"
+				+ " 	 AND DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '04')" // Mediador-Colaborador-API.
+				+ "		 AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }

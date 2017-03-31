@@ -49,6 +49,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarPreciosFSVActivoImporte actualizarPrecioFSVActivo;
 	
 	@Autowired
+	private MSVAltaActivosExcelValidator altaActvos;
+	
+	@Autowired
 	private MSVActualizarPreciosActivoBloqueo actualizarBloqueoPrecioActivo;
 
 	@Autowired
@@ -68,6 +71,8 @@ public class MSVExcelValidatorFactoryImpl {
 				return agrupacionAsistidaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL.equals(codTipoOperacion)) {
 				return agrupacionLoteComercialExcelValidator;
+			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS.equals(codTipoOperacion)) {
+				return altaActvos;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(codTipoOperacion)) {
 				return listadoActivosExcelValidator;
 			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_PROPUESTA_PRECIOS_ACTIVO.equals(codTipoOperacion)) {

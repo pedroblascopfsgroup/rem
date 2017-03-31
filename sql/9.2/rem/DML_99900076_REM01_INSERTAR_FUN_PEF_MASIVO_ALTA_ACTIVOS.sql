@@ -36,7 +36,7 @@ DECLARE
       T_FUNCION('ALTA_ACTIVOS_FINAN')
     ); 
     V_TMP_FUNCION T_FUNCION;
-    V_PERFILES VARCHAR2(100 CHAR) := 'Super';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
+    V_PERFILES VARCHAR2(100 CHAR) := 'HAYASUPER';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
                                                -- POR DEFECTO SE AGREGA PERFIL DE SUPER A LAS NUEVAS FUNCIONES
     V_MSQL_1 VARCHAR2(4000 CHAR);
 
@@ -55,7 +55,7 @@ BEGIN
 						' (FUN_ID, PEF_ID, FP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' || 
 						' SELECT FUN.FUN_ID, PEF_ID, '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, 0, ''DML'', SYSDATE, 0' ||
 						' FROM '||V_ESQUEMA||'.PEF_PERFILES, '||V_ESQUEMA_M||'.FUN_FUNCIONES FUN' ||
-						' WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(1))||''' AND PEF_DESCRIPCION LIKE ('''||V_PERFILES||''') ';
+						' WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(1))||''' AND PEF_CODIGO LIKE ('''||V_PERFILES||''') ';
 	    	
 			EXECUTE IMMEDIATE V_MSQL_1;
 			DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.FUN_PEF insertados correctamente.');

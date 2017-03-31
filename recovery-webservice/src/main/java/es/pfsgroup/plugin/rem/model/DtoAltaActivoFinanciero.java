@@ -1,13 +1,16 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 public final class DtoAltaActivoFinanciero {
 // DATOS BÁSICOS ACTIVO
 
 	// IDENTIFICACIÓN
 	private Long numActivoHaya;
 	private String carteraCodigo;
-	private Long numActivoCartera;
-	private Long numBienRecovery;
+	private String subtipoTituloCodigo;
+	private Long numActivoCartera; // número activo según cartera.
+	private Long numBienRecovery; // (NMBBIEN - sarebId)'BIE_ENTIDAD_ID'
 	private Long idAsuntoRecovery;
 	private String tipoActivoCodigo;
 	private String subtipoActivoCodigo;
@@ -28,55 +31,61 @@ public final class DtoAltaActivoFinanciero {
 	private String codigoPostal;
 
 	// COMERCIALIZACION
-	private String tipoComercializacionCodigo;
 	private String destinoComercialCodigo;
 	private String tipoAlquilerCodigo;
 
 	// DATOS PRESTAMO QUE GRAVA EL ACTIVO
-	private String numExpedienteRiesgoAsociado;
+	private String numPrestamo;
 	private String estadoExpedienteRiesgoCodigo;
-	private String tipoProducto;
 	private String nifSociedadAcreedora;
+	private Long codigoSociedadAcreedora;
 	private String nombreSociedadAcreedora;
-	private String numSociedadAcreedora;
+	private String direccionSociedadAcreedora;
 	private Double importeDeuda;
-
+	private Long idGarantia;
 
 // TITULO E INFORMACION REGISTRAL
 
 	// INSCRIPCION
-	private String provinciaRegistroCodigo;
 	private String poblacionRegistroCodigo;
 	private String numRegistro;
-	private int tomoRegistro;
-	private int libroRegistro;
-	private int folioRegistro;
+	private Integer tomoRegistro;
+	private Integer libroRegistro;
+	private Integer folioRegistro;
 	private String fincaRegistro;
 	private String idufirCruRegistro;
-	private int superficieConstruidaRegistro;
-	private int superficieUtilRegistro;
-	private int superficieRepercusionEECCRegistro;
-	private String parcelaRegistro;
+	private Float superficieConstruidaRegistro;
+	private Float superficieUtilRegistro;
+	private Float superficieRepercusionEECCRegistro;
+	private Float parcelaRegistro;
 	private Boolean esIntegradoDivHorizontalRegistro;
 
 	// TITULO
 	private String nifPropietario;
-	private String nombrePropietario;
 	private String gradoPropiedadCodigo;
-	private int percentParticipacionPropiedad;
+	private Integer percentParticipacionPropiedad;
 
 
-// INFORMACION ADMINISTRATIVA
+// INFORMACION ADMINISTRATIVA 
 	private String referenciaCatastral;
 	private Boolean esVPO;
-
+	private String calificacionCeeCodigo;
 
 // INFORMACION COMERCIAL
-	private int numPlantasVivienda;
-	private int numBanyosVivienda;
-	private int numAseosVivienda;
-	private int numDormitoriosVivienda;
-	private Boolean esLocalConGarageTrastero;
+	private String nifMediador;
+	private Integer numPlantasVivienda;
+	private Integer numBanyosVivienda;
+	private Integer numAseosVivienda;
+	private Integer numDormitoriosVivienda;
+	private Boolean trasteroAnejo;
+	private Boolean garajeAnejo;
+	private Boolean ascensor;
+	
+// PRECIOS
+	private Double precioMinimo;
+	private Double precioVentaWeb;
+	private Double valorTasacion;
+	private Date fechaTasacion;
 	
 	
 // Getters Setters
@@ -200,12 +209,6 @@ public final class DtoAltaActivoFinanciero {
 	public void setCodigoPostal(String codigoPostal) {
 		this.codigoPostal = codigoPostal;
 	}
-	public String getTipoComercializacionCodigo() {
-		return tipoComercializacionCodigo;
-	}
-	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
-		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
-	}
 	public String getDestinoComercialCodigo() {
 		return destinoComercialCodigo;
 	}
@@ -218,23 +221,11 @@ public final class DtoAltaActivoFinanciero {
 	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
 		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
 	}
-	public String getNumExpedienteRiesgoAsociado() {
-		return numExpedienteRiesgoAsociado;
-	}
-	public void setNumExpedienteRiesgoAsociado(String numExpedienteRiesgoAsociado) {
-		this.numExpedienteRiesgoAsociado = numExpedienteRiesgoAsociado;
-	}
 	public String getEstadoExpedienteRiesgoCodigo() {
 		return estadoExpedienteRiesgoCodigo;
 	}
 	public void setEstadoExpedienteRiesgoCodigo(String estadoExpedienteRiesgoCodigo) {
 		this.estadoExpedienteRiesgoCodigo = estadoExpedienteRiesgoCodigo;
-	}
-	public String getTipoProducto() {
-		return tipoProducto;
-	}
-	public void setTipoProducto(String tipoProducto) {
-		this.tipoProducto = tipoProducto;
 	}
 	public String getNifSociedadAcreedora() {
 		return nifSociedadAcreedora;
@@ -242,29 +233,29 @@ public final class DtoAltaActivoFinanciero {
 	public void setNifSociedadAcreedora(String nifSociedadAcreedora) {
 		this.nifSociedadAcreedora = nifSociedadAcreedora;
 	}
+	public Long getCodigoSociedadAcreedora() {
+		return codigoSociedadAcreedora;
+	}
+	public void setCodigoSociedadAcreedora(Long codigoSociedadAcreedora) {
+		this.codigoSociedadAcreedora = codigoSociedadAcreedora;
+	}
 	public String getNombreSociedadAcreedora() {
 		return nombreSociedadAcreedora;
 	}
 	public void setNombreSociedadAcreedora(String nombreSociedadAcreedora) {
 		this.nombreSociedadAcreedora = nombreSociedadAcreedora;
 	}
-	public String getNumSociedadAcreedora() {
-		return numSociedadAcreedora;
+	public String getDireccionSociedadAcreedora() {
+		return direccionSociedadAcreedora;
 	}
-	public void setNumSociedadAcreedora(String numSociedadAcreedora) {
-		this.numSociedadAcreedora = numSociedadAcreedora;
+	public void setDireccionSociedadAcreedora(String direccionSociedadAcreedora) {
+		this.direccionSociedadAcreedora = direccionSociedadAcreedora;
 	}
 	public Double getImporteDeuda() {
 		return importeDeuda;
 	}
 	public void setImporteDeuda(Double importeDeuda) {
 		this.importeDeuda = importeDeuda;
-	}
-	public String getProvinciaRegistroCodigo() {
-		return provinciaRegistroCodigo;
-	}
-	public void setProvinciaRegistroCodigo(String provinciaRegistroCodigo) {
-		this.provinciaRegistroCodigo = provinciaRegistroCodigo;
 	}
 	public String getPoblacionRegistroCodigo() {
 		return poblacionRegistroCodigo;
@@ -278,22 +269,22 @@ public final class DtoAltaActivoFinanciero {
 	public void setNumRegistro(String numRegistro) {
 		this.numRegistro = numRegistro;
 	}
-	public int getTomoRegistro() {
+	public Integer getTomoRegistro() {
 		return tomoRegistro;
 	}
-	public void setTomoRegistro(int tomoRegistro) {
+	public void setTomoRegistro(Integer tomoRegistro) {
 		this.tomoRegistro = tomoRegistro;
 	}
-	public int getLibroRegistro() {
+	public Integer getLibroRegistro() {
 		return libroRegistro;
 	}
-	public void setLibroRegistro(int libroRegistro) {
+	public void setLibroRegistro(Integer libroRegistro) {
 		this.libroRegistro = libroRegistro;
 	}
-	public int getFolioRegistro() {
+	public Integer getFolioRegistro() {
 		return folioRegistro;
 	}
-	public void setFolioRegistro(int folioRegistro) {
+	public void setFolioRegistro(Integer folioRegistro) {
 		this.folioRegistro = folioRegistro;
 	}
 	public String getFincaRegistro() {
@@ -308,28 +299,28 @@ public final class DtoAltaActivoFinanciero {
 	public void setIdufirCruRegistro(String idufirCruRegistro) {
 		this.idufirCruRegistro = idufirCruRegistro;
 	}
-	public int getSuperficieConstruidaRegistro() {
+	public Float getSuperficieConstruidaRegistro() {
 		return superficieConstruidaRegistro;
 	}
-	public void setSuperficieConstruidaRegistro(int superficieConstruidaRegistro) {
+	public void setSuperficieConstruidaRegistro(Float superficieConstruidaRegistro) {
 		this.superficieConstruidaRegistro = superficieConstruidaRegistro;
 	}
-	public int getSuperficieUtilRegistro() {
+	public Float getSuperficieUtilRegistro() {
 		return superficieUtilRegistro;
 	}
-	public void setSuperficieUtilRegistro(int superficieUtilRegistro) {
+	public void setSuperficieUtilRegistro(Float superficieUtilRegistro) {
 		this.superficieUtilRegistro = superficieUtilRegistro;
 	}
-	public int getSuperficieRepercusionEECCRegistro() {
+	public Float getSuperficieRepercusionEECCRegistro() {
 		return superficieRepercusionEECCRegistro;
 	}
-	public void setSuperficieRepercusionEECCRegistro(int superficieRepercusionEECCRegistro) {
+	public void setSuperficieRepercusionEECCRegistro(Float superficieRepercusionEECCRegistro) {
 		this.superficieRepercusionEECCRegistro = superficieRepercusionEECCRegistro;
 	}
-	public String getParcelaRegistro() {
+	public Float getParcelaRegistro() {
 		return parcelaRegistro;
 	}
-	public void setParcelaRegistro(String parcelaRegistro) {
+	public void setParcelaRegistro(Float parcelaRegistro) {
 		this.parcelaRegistro = parcelaRegistro;
 	}
 	public Boolean getEsIntegradoDivHorizontalRegistro() {
@@ -344,22 +335,16 @@ public final class DtoAltaActivoFinanciero {
 	public void setNifPropietario(String nifPropietario) {
 		this.nifPropietario = nifPropietario;
 	}
-	public String getNombrePropietario() {
-		return nombrePropietario;
-	}
-	public void setNombrePropietario(String nombrePropietario) {
-		this.nombrePropietario = nombrePropietario;
-	}
 	public String getGradoPropiedadCodigo() {
 		return gradoPropiedadCodigo;
 	}
 	public void setGradoPropiedadCodigo(String gradoPropiedadCodigo) {
 		this.gradoPropiedadCodigo = gradoPropiedadCodigo;
 	}
-	public int getPercentParticipacionPropiedad() {
+	public Integer getPercentParticipacionPropiedad() {
 		return percentParticipacionPropiedad;
 	}
-	public void setPercentParticipacionPropiedad(int percentParticipacionPropiedad) {
+	public void setPercentParticipacionPropiedad(Integer percentParticipacionPropiedad) {
 		this.percentParticipacionPropiedad = percentParticipacionPropiedad;
 	}
 	public String getReferenciaCatastral() {
@@ -374,35 +359,101 @@ public final class DtoAltaActivoFinanciero {
 	public void setEsVPO(Boolean esVPO) {
 		this.esVPO = esVPO;
 	}
-	public int getNumPlantasVivienda() {
+	public Integer getNumPlantasVivienda() {
 		return numPlantasVivienda;
 	}
-	public void setNumPlantasVivienda(int numPlantasVivienda) {
+	public void setNumPlantasVivienda(Integer numPlantasVivienda) {
 		this.numPlantasVivienda = numPlantasVivienda;
 	}
-	public int getNumBanyosVivienda() {
+	public Integer getNumBanyosVivienda() {
 		return numBanyosVivienda;
 	}
-	public void setNumBanyosVivienda(int numBanyosVivienda) {
+	public void setNumBanyosVivienda(Integer numBanyosVivienda) {
 		this.numBanyosVivienda = numBanyosVivienda;
 	}
-	public int getNumAseosVivienda() {
+	public Integer getNumAseosVivienda() {
 		return numAseosVivienda;
 	}
-	public void setNumAseosVivienda(int numAseosVivienda) {
+	public void setNumAseosVivienda(Integer numAseosVivienda) {
 		this.numAseosVivienda = numAseosVivienda;
 	}
-	public int getNumDormitoriosVivienda() {
+	public Integer getNumDormitoriosVivienda() {
 		return numDormitoriosVivienda;
 	}
-	public void setNumDormitoriosVivienda(int numDormitoriosVivienda) {
+	public void setNumDormitoriosVivienda(Integer numDormitoriosVivienda) {
 		this.numDormitoriosVivienda = numDormitoriosVivienda;
 	}
-	public Boolean getEsLocalConGarageTrastero() {
-		return esLocalConGarageTrastero;
+	public String getSubtipoTituloCodigo() {
+		return subtipoTituloCodigo;
 	}
-	public void setEsLocalConGarageTrastero(Boolean esLocalConGarageTrastero) {
-		this.esLocalConGarageTrastero = esLocalConGarageTrastero;
+	public void setSubtipoTituloCodigo(String subtipoTituloCodigo) {
+		this.subtipoTituloCodigo = subtipoTituloCodigo;
+	}
+	public String getNumPrestamo() {
+		return numPrestamo;
+	}
+	public void setNumPrestamo(String numPrestamo) {
+		this.numPrestamo = numPrestamo;
+	}
+	public Long getIdGarantia() {
+		return idGarantia;
+	}
+	public void setIdGarantia(Long idGarantia) {
+		this.idGarantia = idGarantia;
+	}
+	public String getCalificacionCeeCodigo() {
+		return calificacionCeeCodigo;
+	}
+	public void setCalificacionCeeCodigo(String calificacionCeeCodigo) {
+		this.calificacionCeeCodigo = calificacionCeeCodigo;
+	}
+	public String getNifMediador() {
+		return nifMediador;
+	}
+	public void setNifMediador(String nifMediador) {
+		this.nifMediador = nifMediador;
+	}
+	public Boolean getTrasteroAnejo() {
+		return trasteroAnejo;
+	}
+	public void setTrasteroAnejo(Boolean trasteroAnejo) {
+		this.trasteroAnejo = trasteroAnejo;
+	}
+	public Boolean getGarajeAnejo() {
+		return garajeAnejo;
+	}
+	public void setGarajeAnejo(Boolean garajeAnejo) {
+		this.garajeAnejo = garajeAnejo;
+	}
+	public Boolean getAscensor() {
+		return ascensor;
+	}
+	public void setAscensor(Boolean ascensor) {
+		this.ascensor = ascensor;
+	}
+	public Double getPrecioMinimo() {
+		return precioMinimo;
+	}
+	public void setPrecioMinimo(Double precioMinimo) {
+		this.precioMinimo = precioMinimo;
+	}
+	public Double getPrecioVentaWeb() {
+		return precioVentaWeb;
+	}
+	public void setPrecioVentaWeb(Double precioVentaWeb) {
+		this.precioVentaWeb = precioVentaWeb;
+	}
+	public Double getValorTasacion() {
+		return valorTasacion;
+	}
+	public void setValorTasacion(Double valorTasacion) {
+		this.valorTasacion = valorTasacion;
+	}
+	public Date getFechaTasacion() {
+		return fechaTasacion;
+	}
+	public void setFechaTasacion(Date fechaTasacion) {
+		this.fechaTasacion = fechaTasacion;
 	}
 
 }

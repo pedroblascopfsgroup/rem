@@ -458,8 +458,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){
 
 		if(!Checks.esNulo(dtoPublicacionValidaciones) && !Checks.esNulo(dtoPublicacionValidaciones.getActivo())){
-			boolean tieneOkGestion = dtoPublicacionValidaciones.getActivo().getAdmision(); // Tiene OK de admision
-			boolean tieneOkAdmision = dtoPublicacionValidaciones.getActivo().getGestion(); // Tiene OK de gestion
+			boolean tieneOkGestion = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getAdmision()) ? false :  dtoPublicacionValidaciones.getActivo().getAdmision(); // Tiene OK de admision
+			boolean tieneOkAdmision = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getGestion()) ? false :  dtoPublicacionValidaciones.getActivo().getGestion(); // Tiene OK de gestion
 			boolean tieneOkPrecios = activoApi.getDptoPrecio(dtoPublicacionValidaciones.getActivo()); // Tiene OK de precios
 			boolean tieneInfComercialTiposIguales = !activoApi.checkTiposDistintos(dtoPublicacionValidaciones.getActivo()); // Tipos activo Inf. comercial iguales
 			boolean tieneInfComercialAceptado = activoApi.isInformeComercialAceptado(dtoPublicacionValidaciones.getActivo()); // Tiene Inf. comercial aceptado

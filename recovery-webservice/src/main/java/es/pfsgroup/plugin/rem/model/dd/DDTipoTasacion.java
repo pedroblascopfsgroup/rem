@@ -30,6 +30,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoTasacion implements Auditable, Dictionary {
 
+	public static String TIPO_ASESORAMIENTO_COMERCIAL = "03";
 	public static String TIPO_DACION = "04";
 	
 	/**

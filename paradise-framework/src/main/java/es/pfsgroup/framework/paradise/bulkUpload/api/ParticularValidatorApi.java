@@ -165,4 +165,31 @@ public interface  ParticularValidatorApi {
 	 * @return
 	 */
 	public Boolean existeActivoConExpedienteComercialVivo(String numActivo);
+
+	/**
+	 * Este método indica si el NIF de la sociedad acreedora existe en la DB o no.
+	 * 
+	 * @param sociedadAcreedoraNIF : NIF de la sociedad acreedora a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no
+	 * existe coincidencia.
+	 */
+	public Boolean existeSociedadAcreedora(String sociedadAcreedoraNIF);
+
+	/**
+	 * Este método indica si el NIF del propietario existe en la DB o no.
+	 * 
+	 * @param propietarioNIF : NIF del propietario a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no
+	 * existe coincidencia.
+	 */
+	public Boolean existePropietario(String propietarioNIF);
+
+	/**
+	 * Este método indica si el NIF del proveedor mediador existe en la DB o no.
+	 * 
+	 * @param proveedorMediadorNIF : NIF del proveedor mediador a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no
+	 * existe coincidencia.
+	 */
+	public Boolean existeProveedorMediadorByNIF(String proveedorMediadorNIF);
 }

@@ -13,7 +13,8 @@
 --##        0.1 Versión inicial
 --##########################################
 
-whenever sqlerror exit sql.sqlcode;
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
 
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE

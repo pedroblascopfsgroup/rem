@@ -58,4 +58,10 @@ public class DetectorWebcomEstadoInformeMediador  extends DetectorCambiosBD<Info
 		return "ID_INFORME_MEDIADOR_WEBCOM";
 	}
 
+	@Override
+	public List<String> vistasAuxiliares() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

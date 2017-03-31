@@ -95,50 +95,65 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && !form.disableValidation || form.disableValidation) {
+			var fechaMax = new Date();
+			fechaMax.setMonth(fechaMax.getMonth()+1);
+			var fechaDevengo = me.lookupReference('fechaDevengoEspecial').value;
+			var anyoCombobox = me.lookupReference('comboboxfieldFechaEjercicio').lastMutatedValue;
+			var anyoFechaDevengo = fechaDevengo.getFullYear();
+			
+			if(anyoCombobox.indexOf(anyoFechaDevengo) == -1){
 
-			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
-				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
-			);
-			
-			if(!Ext.isEmpty(btn)) {
-				btn.hide();
-				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
-				btn.up('tabbar').down('button[itemId=botoneditar]').show();
-				me.getViewModel().set("editing", false);
-			}
-			
-			if (!form.saveMultiple) {
-				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
-					// Si la API tiene metodo de escritura (create or update).
-					me.getView().mask(HreRem.i18n("msg.mask.loading"));
-					
-					form.getBindRecord().save({
-						success: success,				            
-			            failure: function (a, operation) {
-			            	var data = {};
-                            try {
-                            	data = Ext.decode(operation._response.responseText);
-                            }
-                            catch (e){ };
-                            if (!Ext.isEmpty(data.msg)) {
-                            	me.fireEvent("errorToast", data.msg);
-                            } else {
-                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                            }
-							me.getView().unmask();
-							if(form)
-							me.refrescarGasto(form.refreshAfterSave);
-							Ext.Array.each(form.query('field[isReadOnlyEdit]'),
-								function (field, index){field.fireEvent('edit');}
-							);
-			            }
-					});
-				}
-			//Guardamos múltiples records	
-			} else {
-				var records = form.getBindRecords();
-				var contador = 0;
-				me.saveMultipleRecords(contador, records);
+				me.fireEvent("errorToast", HreRem.i18n("msg.error.validacion.fechas"));
+
+			}else{
+				
+				
+				Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+							function (field, index){field.fireEvent('update'); field.fireEvent('save');}
+						);
+						
+						if(!Ext.isEmpty(btn)) {
+							btn.hide();
+							btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+							btn.up('tabbar').down('button[itemId=botoneditar]').show();
+							me.getViewModel().set("editing", false);
+						}
+						
+						if (!form.saveMultiple) {
+							if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+								// Si la API tiene metodo de escritura (create or update).
+								me.getView().mask(HreRem.i18n("msg.mask.loading"));
+								
+								form.getBindRecord().save({
+									success: success,				            
+						            failure: function (a, operation) {
+						            	var data = {};
+			                            try {
+			                            	data = Ext.decode(operation._response.responseText);
+			                            }
+			                            catch (e){ };
+			                            if (!Ext.isEmpty(data.msg)) {
+			                            	me.fireEvent("errorToast", data.msg);
+			                            } else {
+			                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                            }
+										me.getView().unmask();
+										if(form)
+										me.refrescarGasto(form.refreshAfterSave);
+										Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+											function (field, index){field.fireEvent('edit');}
+										);
+						            }
+								});
+							}
+						//Guardamos múltiples records	
+						} else {
+							var records = form.getBindRecords();
+							var contador = 0;
+							me.saveMultipleRecords(contador, records);
+						}
+
+
 			}
 		} else {
 		
@@ -185,7 +200,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 								field.fireEvent('edit');});
 								
 		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
-		
+		me.afterCargaCombo();
 	},
     
 	onClickBotonGuardar: function(btn) {
@@ -708,7 +723,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 	
 	onClickBotonDesasignarTrabajosGasto: function(btn) {
-		
+
 		var me = this,
 		form = btn.up('form'),		
 		grid = btn.up('grid'),
@@ -720,7 +735,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(!Ext.isEmpty(trabajos)) {
 			// Recuperamos todos los ids de los trabajos seleccionados
 			Ext.Array.each(trabajos, function(trabajo, index) {
-			    idTrabajos.push(trabajo.get("id"));
+			    idTrabajos.push(trabajo.get("idTrabajo"));
 			});		
 			
 			grid.mask(HreRem.i18n("msg.mask.loading"));
@@ -1204,6 +1219,31 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		   }
 		});
     	
+    },
+    
+    onChangeFechaDevengoEspecial: function(calendario){
+    	var me = this;
+    	var fecha = new Date(calendario.value);
+    	var anyo = fecha.getFullYear();
+    	var combo = me.lookupReference('comboboxfieldFechaEjercicio');
+    	if(combo.getStore().byText.map){
+    		combo.value= combo.getStore().byText.map[anyo].id;
+    		combo.bindStore(combo.getStore());
+    	}else{
+    		console.log(HreRem.i18n('msg.info.fecha.devengoEspecial'));
+    	}
+    },
+    
+    afterCargaCombo: function(){
+    	var me = this;    	
+    	var fechaActual = new Date();
+    	var combobox = me.lookupReference('comboboxfieldFechaEjercicio');
+    	var anyo = combobox.getStore().getAt(0).data.anyo;
+    	var fechaMin = new Date(anyo);
+    	fechaActual.setMonth(fechaActual.getMonth()+1);
+    	fechaField = me.lookupReference('fechaDevengoEspecial');
+    	fechaField.setMinValue(fechaMin);
+    	fechaField.setMaxValue(fechaActual);
     }
 
 });

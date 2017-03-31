@@ -41,8 +41,11 @@ public class FormalizacionExpedienteUserAssigantionService implements UserAssiga
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T013_CIERRE_ECONOMICO, CODIGO_T013_INFORME_JURIDICO, CODIGO_T013_RESOLUCION_TANTEO, CODIGO_T013_RESULTADO_PBC,
-				CODIGO_T013_POSICIONAMIENTO_FIRMA, CODIGO_T013_DEVOLUCION_LLAVES, CODIGO_T013_DOCUMENTOS_POSTVENTA};
+		//return new String[]{CODIGO_T013_CIERRE_ECONOMICO, CODIGO_T013_INFORME_JURIDICO, CODIGO_T013_RESOLUCION_TANTEO, CODIGO_T013_RESULTADO_PBC,
+		//		CODIGO_T013_POSICIONAMIENTO_FIRMA, CODIGO_T013_DEVOLUCION_LLAVES, CODIGO_T013_DOCUMENTOS_POSTVENTA};
+		
+		// TODO: Tira del asignador ComercialUserAssignationService. Revisar.
+		return new String[]{};
 	}
 
 	@Override

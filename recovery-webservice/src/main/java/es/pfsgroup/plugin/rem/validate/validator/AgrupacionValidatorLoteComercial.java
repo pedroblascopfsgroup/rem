@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -27,9 +26,6 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 
     @Autowired 
     private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
-    
-    @Autowired 
-    private ActivoAgrupacionApi activoAgrupacionApi;
 
     @Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -52,7 +48,8 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 	public String getValidationError(Activo activo, ActivoAgrupacion agrupacion) {
 
 		// Validación estado venta.
-		if(!Checks.esNulo(activo.getSituacionComercial()) && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) {
+		if(!Checks.esNulo(activo.getSituacionComercial()) && activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)
+				|| !Checks.esNulo(activo.getFechaVentaExterna())) {
 			return ERROR_ACTIVO_VENDIDO;
 		}
 		
@@ -132,6 +129,13 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 		} else if(!isValidOwner(activo, primerActivo)) {	
 			return ERROR_PROPIETARIO_NOT_EQUAL;
 		}
+		
+		// Validación cartera.
+		if (Checks.esNulo(activo.getCartera())) {
+			return ERROR_CARTERA_NULL;
+		} else if(!esCarteraValida(activo, primerActivo)) {	
+			return ERROR_CARTERA_NOT_EQUAL;
+		}
 
 		return "";
 	}
@@ -148,5 +152,20 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 			}
 		}
 		return false;
+	}
+	
+	private boolean esCarteraValida(Activo activo, Activo primerActivo) {
+		if(Checks.esNulo(activo.getCartera()) || Checks.esNulo(primerActivo.getCartera())){
+			return false;
+		}
+		
+		String codCarteraNuevoActivo = activo.getCartera().getCodigo();
+		String codCarteraPrimerActivoAgr = primerActivo.getCartera().getCodigo();
+		
+		if(codCarteraNuevoActivo.equals(codCarteraPrimerActivoAgr)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

@@ -1,17 +1,16 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170114
+--## FECHA_CREACION=20170222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1398
+--## INCIDENCIA_LINK=HREOS-1787
 --## PRODUCTO=NO
---## Finalidad: DDL
+--## Finalidad: Vista Materializada exclusiva para el informeMediador que contiene el estado del informe del mediador.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 20161006 Versión inicial 
---##        0.2 20161221 Gustavo Mora: incluimos campo trasteros
 --##########################################
 --*/
 
@@ -29,9 +28,11 @@ DECLARE
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
-    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_VALORES_PRECIOS_INFMED'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
+    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_ESTADO_ACTUAL_INFMED'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_MSQL VARCHAR2(4000 CHAR); 
-
+	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Vista Materializada exclusiva para el informeMediador que contiene el estado del informe del mediador.'; -- Vble. para los comentarios de las tablas
+    
     CUENTA NUMBER;
     
 BEGIN
@@ -54,17 +55,28 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||'
 	AS
 		SELECT AUX.* FROM (
-				SELECT ICO.ICO_ID, ACT.ACT_ID, VAL.DD_TPC_ID, DD.DD_TPC_CODIGO, VAL.VAL_IMPORTE, VAL.VAL_FECHA_INICIO, VAL.VAL_FECHA_FIN,
-				ROW_NUMBER() OVER (PARTITION BY VAL.ACT_ID, VAL.DD_TPC_ID ORDER BY VAL.VAL_FECHA_INICIO DESC) ORDEN
-				FROM '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL
-				INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = VAL.ACT_ID
-				INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
-				INNER JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO DD ON DD.DD_TPC_ID = VAL.DD_TPC_ID ) AUX
-			WHERE AUX.ORDEN = 1';
+			  SELECT ICO.ICO_ID, HIC.ACT_ID, DDAIC.DD_AIC_CODIGO, HIC.HIC_FECHA, HIC.HIC_MOTIVO, 
+			  ROW_NUMBER() OVER (PARTITION BY HIC.ACT_ID ORDER BY HIC.HIC_FECHA DESC) REF
+			  FROM '||V_ESQUEMA||'.ACT_HIC_EST_INF_COMER_HIST HIC
+			  INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = HIC.ACT_ID
+			  INNER JOIN '||V_ESQUEMA||'.DD_AIC_ACCION_INF_COMERCIAL DDAIC ON DDAIC.DD_AIC_ID = HIC.DD_AIC_ID
+			  ) AUX
+			WHERE AUX.REF = 1';
 
 
-  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
+  	DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
   
+	--Creamos indice
+	--V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_VISTA||'_IDX ON '||V_ESQUEMA|| '.'||V_TEXT_VISTA||'(ICO_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	--EXECUTE IMMEDIATE V_MSQL;
+	--DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_VISTA||'_IDX... Indice creado.');
+	
+	
+	-- Creamos comentario	
+	--V_MSQL := 'COMMENT ON MATERIALIZED VIEW '||V_ESQUEMA||'.'||V_TEXT_VISTA||' IS '''||V_COMMENT_TABLE||'''';		
+	--EXECUTE IMMEDIATE V_MSQL;
+	--DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_VISTA||'... Comentario creado.');
+	  
 END;
 /
 

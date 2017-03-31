@@ -211,7 +211,6 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (JsonViewerException jvex) {
-			jvex.printStackTrace();
 			model.put("success", false);
 			model.put("msg", jvex.getMessage());
 		} catch (Exception e) {

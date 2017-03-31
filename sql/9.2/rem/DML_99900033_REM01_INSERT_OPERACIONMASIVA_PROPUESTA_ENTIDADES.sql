@@ -36,9 +36,9 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('CPPA_01', 'Precios: Carga de propuesta de precios (CAJAMAR)', 'Precios: Carga de propuesta de precios para activos de la cartera de Cajamar', 'MASIVO_PROPUESTA_PRECIOS', 's'),
-	  T_FUNCION('CPPA_02', 'Precios: Carga de propuesta de precios (SAREB)', 'Precios: Carga de propuesta de precios para activos de la cartera de Sareb', 'MASIVO_PROPUESTA_PRECIOS', 's'),
-	  T_FUNCION('CPPA_03', 'Precios: Carga de propuesta de precios (BANKIA)', 'Precios: Carga de propuesta de precios para activos de la cartera de Bankia', 'MASIVO_PROPUESTA_PRECIOS', 's')
+	  T_FUNCION('CPPA_01', 'Precios: Carga de propuesta de precios (CAJAMAR)', 'Precios: Carga de propuesta de precios para activos de la cartera de Cajamar', 'MASIVO_PROPUESTA_PRECIOS', 's*'),
+	  T_FUNCION('CPPA_02', 'Precios: Carga de propuesta de precios (SAREB)', 'Precios: Carga de propuesta de precios para activos de la cartera de Sareb', 'MASIVO_PROPUESTA_PRECIOS', 's*'),
+	  T_FUNCION('CPPA_03', 'Precios: Carga de propuesta de precios (BANKIA)', 'Precios: Carga de propuesta de precios para activos de la cartera de Bankia', 'MASIVO_PROPUESTA_PRECIOS', 's*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

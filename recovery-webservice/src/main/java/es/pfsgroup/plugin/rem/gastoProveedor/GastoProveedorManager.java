@@ -674,10 +674,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 					}
 					
-					/*if(!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())){*/
+					if(!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())){
 						DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipoCodigo());
 						detalleGasto.setImpuestoIndirectoTipo(tipoImpuesto);
-					/*}*/
+					}
 					
 					if(!Checks.esNulo(dto.getDestinatariosPagoCodigo())){
 						DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class, dto.getDestinatariosPagoCodigo());
@@ -1640,11 +1640,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		//Desasignamos los trabajo del gasto
 		for(Long id : ids) {
 
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro);
-			gasto.getGastoProveedorTrabajos().remove(gastoTrabajoEliminado);
-			gastoDao.deleteGastoTrabajoById(id);
-
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", id);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+			GastoProveedorTrabajo gastoTrabajoEliminado = genericDao.get(GastoProveedorTrabajo.class, filtro, filtro2);
+			if(!Checks.esNulo(gastoTrabajoEliminado)) {
+				gastoDao.deleteGastoTrabajoById(gastoTrabajoEliminado.getId());
+			}
+			
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			Trabajo trabajo = genericDao.get(Trabajo.class, filtroTrabajo);
 			trabajo.setFechaEmisionFactura(null);
@@ -1883,6 +1885,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		GastoProveedor gasto = findOne(idGasto);
 		
+		//Se activa el borrado de los gastos-trabajo, y dejamos el trabajo como diponible para un futuro nuevo gasto
+		this.reactivarTrabajoParaGastos(gasto.getGastoProveedorTrabajos());
+		
 		GastoGestion gastoGestion =  gasto.getGastoGestion();
 		gastoGestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
@@ -1896,6 +1901,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		genericDao.update(GastoProveedor.class, gasto);
 		
 		return true;
+	}
+	
+	/*
+	 * Deja el Trabajo disponible para que sea asignable a un gasto, y activa el borrado lógico
+	 * de la relación gastoProveedor-Trabajo
+	 */
+	private void reactivarTrabajoParaGastos(List<GastoProveedorTrabajo> listaGastoTrabajo) {
+		
+		if(!Checks.estaVacio(listaGastoTrabajo)) {
+			for(GastoProveedorTrabajo gpvTrabajo : listaGastoTrabajo) {
+				
+				Trabajo trabajo = gpvTrabajo.getTrabajo();
+				if(!Checks.esNulo(trabajo)) {
+					trabajo.setFechaEmisionFactura(null);
+					genericDao.update(Trabajo.class, trabajo);
+				}
+				
+				genericDao.deleteById(GastoProveedorTrabajo.class, gpvTrabajo.getId());
+			}
+		}
 	}
 	
 	public GastoProveedor asignarPropietarioGasto(GastoProveedor gasto) {

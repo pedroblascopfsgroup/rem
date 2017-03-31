@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
@@ -202,22 +203,13 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 		// HEADER
 		mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
-		mapaValores.put("Activo", activo.getNumActivoUvem().toString());
+		mapaValores.put("Activo", activo.getNumActivo().toString());
 		mapaValores.put("FRecepOf", FileUtilsREM.stringify(oferta.getFechaAlta()));
 		mapaValores.put("FProp", FileUtilsREM.stringify(new Date()));
 
 		// Si el tipo es nulo, por defecto, se entiende como tipo RETAIL
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
-				GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		String codigoComercializacionActivo = Checks.esNulo(activo.getTipoComercializar())
-				? DDTipoComercializar.CODIGO_RETAIL : activo.getTipoComercializar().getCodigo();
-		if (codigoComercializacionActivo.equals(DDTipoComercializar.CODIGO_RETAIL)) {
-			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
-					GestorActivoApi.CODIGO_GESTOR_COMERCIAL_RETAIL);
-		} else if (codigoComercializacionActivo.equals(DDTipoComercializar.CODIGO_SINGULAR)) {
-			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
-					GestorActivoApi.CODIGO_GESTOR_COMERCIAL_SINGULAR);
-		}
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 		if (!Checks.esNulo(tipoGestor)) {
 			mapaValores.put("Gestor", FileUtilsREM.stringify(null));
@@ -256,8 +248,10 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				if (!Checks.esNulo(admisionDocumento)
 						&& !Checks.esNulo(admisionDocumento.getTipoCalificacionEnergetica())
 						&& !Checks.esNulo(admisionDocumento.getEstadoDocumento())
-						&& DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO
-								.equals(admisionDocumento.getEstadoDocumento().getCodigo())) {
+						&& (DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO
+								.equals(admisionDocumento.getEstadoDocumento().getCodigo())
+								|| DDEstadoDocumento.CODIGO_ESTADO_EN_TRAMITE
+										.equals(admisionDocumento.getEstadoDocumento().getCodigo()))) {
 					mapaValores.put("CertificadoEnergetico",
 							admisionDocumento.getTipoCalificacionEnergetica().getDescripcionLarga());
 					isFoundCalificacion = true;
@@ -280,12 +274,25 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			mapaValores.put("SociedadPatrimonial", FileUtilsREM.stringify(null));
 		}
 
+		// NEGOCIACION URBANISTICA
 		if (!Checks.esNulo(activo.getInfoAdministrativa())
 				&& !Checks.esNulo(activo.getInfoAdministrativa().getTipoVpo())) {
 			mapaValores.put("regimenProteccion",
 					FileUtilsREM.stringify(activo.getInfoAdministrativa().getTipoVpo().getDescripcion()));
 		} else {
 			mapaValores.put("regimenProteccion", FileUtilsREM.stringify(null));
+		}
+
+		if (condExp.getProcedeDescalificacion() != null && condExp.getProcedeDescalificacion().equals(new Integer(1))) {
+			mapaValores.put("procederDescalificacion", "si");
+		} else {
+			mapaValores.put("procederDescalificacion", "no");
+		}
+		mapaValores.put("licencia", FileUtilsREM.stringify(condExp.getLicencia()));
+		if (condExp.getTipoPorCuentaLicencia() != null) {
+			mapaValores.put("cargo", FileUtilsREM.stringify(condExp.getTipoPorCuentaLicencia().getDescripcion()));
+		} else {
+			mapaValores.put("cargo", FileUtilsREM.stringify(null));
 		}
 
 		NMBBien bien = activo.getBien();
@@ -374,8 +381,10 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}
 		if (!Checks.esNulo(oferta.getImporteOferta())) {
 			mapaValores.put("ImporteInicial", FileUtilsREM.stringify(oferta.getImporteOferta()) + "€");
+			mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(oferta.getImporteOferta()) + "€");
 		} else {
 			mapaValores.put("ImporteInicial", FileUtilsREM.stringify(null));
+			mapaValores.put("ImportePropuesta", FileUtilsREM.stringify(null));
 		}
 		if (!Checks.esNulo(oferta.getFechaContraoferta())) {
 			mapaValores.put("FechaContraoferta", FileUtilsREM.stringify(oferta.getFechaContraoferta()));
@@ -518,16 +527,14 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		}
 
 		if (!Checks.estaVacio(activo.getTasacion())) {
-			// De la lista de tasaciones que tiene el activo cogemos la más reciente
+			// De la lista de tasaciones que tiene el activo cogemos la más
+			// reciente
 			ActivoTasacion tasacionMasReciente = activoApi.getTasacionMasReciente(activo);
-			if (tasacionMasReciente != null) {				
+			if (tasacionMasReciente != null) {
 				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())) {
 					if (!Checks.esNulo(tasacionMasReciente.getImporteTasacionFin())) {
-						mapaValores
-								.put("ValorTasacion",
-										FileUtilsREM.stringify(
-												tasacionMasReciente.getImporteTasacionFin())
-												+ "€");
+						mapaValores.put("ValorTasacion",
+								FileUtilsREM.stringify(tasacionMasReciente.getImporteTasacionFin()) + "€");
 					} else {
 						mapaValores.put("ValorTasacion", FileUtilsREM.stringify(null));
 					}
@@ -540,11 +547,9 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 					if (!Checks.esNulo(oferta.getImporteOferta())
 							&& !Checks.esNulo(tasacionMasReciente.getImporteTasacionFin())
-							&& !tasacionMasReciente.getImporteTasacionFin()
-									.equals(Double.valueOf(0.0))) {
+							&& !tasacionMasReciente.getImporteTasacionFin().equals(Double.valueOf(0.0))) {
 
-						Double importeTasacion = tasacionMasReciente.getImporteTasacionFin()
-								.doubleValue();
+						Double importeTasacion = tasacionMasReciente.getImporteTasacionFin().doubleValue();
 						Double valorTasacionDto = 100 * (1 - (oferta.getImporteOferta() / importeTasacion));
 						if (!Checks.esNulo(valorTasacionDto)) {
 							mapaValores.put("ValorTasacionDto", FileUtilsREM.stringify(valorTasacionDto) + "%");
@@ -805,7 +810,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 						mapaValores.put("ActivoPorche", NOT_AVAILABLE_ROOM);
 					}
 					if (salon != null) {
-						mapaValores.put("ActivoSalon", FileUtilsREM.stringify(salon + " m2"));
+						mapaValores.put("ActivoSalon", FileUtilsREM.stringify(salon).concat(" m2"));
 					} else {
 						mapaValores.put("ActivoSalon", NOT_AVAILABLE_ROOM);
 					}
@@ -1045,9 +1050,10 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 						if (!Checks.esNulo(datosComprador)) {
 							cliente = new DtoCliente();
 							String nombreCompleto = datosComprador.getNombreRazonSocial();
-							if(!Checks.esNulo(nombreCompleto) && !nombreCompleto.equalsIgnoreCase("") &&
-							   !Checks.esNulo(datosComprador.getApellidos()) && !datosComprador.getApellidos().equalsIgnoreCase("")){
-								nombreCompleto = nombreCompleto.concat(datosComprador.getApellidos());
+							if (!Checks.esNulo(nombreCompleto) && !nombreCompleto.equalsIgnoreCase("")
+									&& !Checks.esNulo(datosComprador.getApellidos())
+									&& !datosComprador.getApellidos().equalsIgnoreCase("")) {
+								nombreCompleto = nombreCompleto.concat(" ").concat(datosComprador.getApellidos());
 							}
 							cliente.setNombreCliente(FileUtilsREM.stringify(nombreCompleto));
 							String direccion = "";
@@ -1059,7 +1065,11 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 								direccion += datosComprador.getCodigoPostal();
 							}
 							if (datosComprador.getMunicipioDescripcion() != null) {
-								direccion = direccion + "(" + datosComprador.getMunicipioDescripcion() + ")";
+								direccion += " ";
+								direccion += datosComprador.getMunicipioDescripcion();
+							}
+							if (datosComprador.getProvinciaDescripcion() != null) {
+								direccion = direccion + " (" + datosComprador.getProvinciaDescripcion() + ")";
 							}
 							cliente.setDireccionCliente(direccion);
 							cliente.setDniCliente(FileUtilsREM.stringify(datosComprador.getNumDocumento()));
@@ -1296,8 +1306,20 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 					} else {
 						tasacion.setImporteTasacion(FileUtilsREM.stringify(null));
 					}
-					tasacion.setFechaTasacion(FileUtilsREM.stringify(tas.getFechaRecepcionTasacion()));
-					tasacion.setFirmaTasacion(FileUtilsREM.stringify(tas.getCodigoFirma()));
+					tasacion.setFechaTasacion(FileUtilsREM.stringify(tas.getValoracionBien().getFechaValorTasacion()));
+
+					if (!Checks.esNulo(tas.getCodigoFirma())) {
+						ActivoProveedor tasadora = activoAdapter
+								.getTasadoraByCodProveedorUvem(tas.getCodigoFirma().toString());
+						if (!Checks.esNulo(tasadora)) {
+							tasacion.setFirmaTasacion(FileUtilsREM.stringify(tasadora.getNombre()));
+						} else {
+							tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
+						}
+
+					} else {
+						tasacion.setFirmaTasacion(FileUtilsREM.stringify(null));
+					}
 					listaTasacion.add(tasacion);
 				}
 			}
@@ -1316,8 +1338,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		if (listaActivoFoto != null && !listaActivoFoto.isEmpty()) {
 			for (ActivoFoto foto : listaActivoFoto) {
 				if (foto.getUrlThumbnail() == null || foto.getUrlThumbnail().isEmpty()) {
-					foto.setUrlThumbnail(selfUrl.concat("/webhook/fotos/download?idFoto=")
-							.concat(String.valueOf(foto.getId())));
+					foto.setUrlThumbnail(
+							selfUrl.concat("/webhook/fotos/download?idFoto=").concat(String.valueOf(foto.getId())));
 				}
 				if (foto.getTipoFoto() != null && foto.getTipoFoto().getCodigo().equals(DDTipoFoto.COD_WEB)) {
 					switch (fotowebCont) {

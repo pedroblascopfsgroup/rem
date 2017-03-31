@@ -1240,8 +1240,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
 					.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
 
-			if (infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
-					&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo())) {
+			if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
+					&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
+					|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)) {
 				// BeanUtils.copyProperties(((ActivoInfoComercial) objeto),
 				// infoAux);
 				genericaRestDaoImp.deleteInformeMediador(infoAux);
@@ -1263,17 +1264,17 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			map = new HashMap<String, Object>();
 			HashMap<String, String> errorsList = null;
 			if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
-				errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.INSERT);
-			} else {
 				errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.UPDATE);
+			} else {
+				errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.INSERT);
 			}
 			if (informe.getPlantas() != null) {
 				for (PlantaDto planta : informe.getPlantas()) {
 					HashMap<String, String> errorsListPlanta = null;
 					if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
-						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
-					} else {
 						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.UPDATE);
+					} else {
+						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
 					}
 					errorsList.putAll(errorsListPlanta);
 				}

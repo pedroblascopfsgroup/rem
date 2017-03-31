@@ -636,7 +636,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo){
 		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
 		hb.appendWhere(" tas.activo.id = " + idActivo);
-		hb.orderBy("tas.id", HQLBuilder.ORDER_DESC);
+		hb.orderBy("tas.valoracionBien.fechaValorTasacion", HQLBuilder.ORDER_DESC);
 		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 		return activoTasacionList;
 	}

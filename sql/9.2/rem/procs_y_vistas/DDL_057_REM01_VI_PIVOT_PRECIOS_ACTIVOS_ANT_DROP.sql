@@ -1,16 +1,16 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170114
+--## FECHA_CREACION=20170322
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1398
+--## INCIDENCIA_LINK=HREOS-1787
 --## PRODUCTO=NO
---## Finalidad: DDL
+--## Finalidad: DDL con vista del anterior precio por activo.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 20161006 Versión inicial 
+--##        0.1 Versión inicial
 --##########################################
 --*/
 
@@ -28,7 +28,9 @@ DECLARE
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
-    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_ESTADO_ACTUAL_INFMED'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'V_PIVOT_PRECIOS_ACTIVOS_ANT'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    
+    
     V_MSQL VARCHAR2(4000 CHAR); 
 
     CUENTA NUMBER;
@@ -48,22 +50,20 @@ BEGIN
     EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||'';  
     DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... borrada OK');
   END IF;
-
-  DBMS_OUTPUT.PUT_LINE('CREATING VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...');
-  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||'
-	AS
-		SELECT AUX.* FROM (
-			  SELECT ICO.ICO_ID, HIC.ACT_ID, DDAIC.DD_AIC_CODIGO, HIC.HIC_FECHA, HIC.HIC_MOTIVO, 
-			  ROW_NUMBER() OVER (PARTITION BY HIC.ACT_ID ORDER BY HIC.HIC_FECHA DESC) REF
-			  FROM '||V_ESQUEMA||'.ACT_HIC_EST_INF_COMER_HIST HIC
-			  INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = HIC.ACT_ID
-			  INNER JOIN '||V_ESQUEMA||'.DD_AIC_ACCION_INF_COMERCIAL DDAIC ON DDAIC.DD_AIC_ID = HIC.DD_AIC_ID
-			  ) AUX
-			WHERE AUX.REF = 1';
-
-
-  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
   
+EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
 END;
 /
 

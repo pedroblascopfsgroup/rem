@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-03-22T11:48:23 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucionAgrupacion" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="0.9330147604194688"/>
 	<property name="ireport.x" value="0"/>
@@ -146,6 +148,9 @@
 	<parameter name="numActVar" class="java.lang.String"/>
 	<parameter name="numDispJuridica" class="java.lang.String"/>
 	<parameter name="regimenProteccion" class="java.lang.String"/>
+	<parameter name="procederDescalificacion" class="java.lang.String"/>
+	<parameter name="licencia" class="java.lang.String"/>
+	<parameter name="cargo" class="java.lang.String"/>
 	<field name="listaCliente" class="java.util.List"/>
 	<field name="listaOferta" class="java.util.List"/>
 	<field name="listaTasacion" class="java.util.List"/>
@@ -1053,27 +1058,6 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<reportElement x="0" y="24" width="555" height="55" uuid="7b8d2dc8-25a3-4e25-bf97-9c2697dffd41"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="279" y="25" width="144" height="13" uuid="9575b05d-b053-474f-a86c-48c38e54d61c"/>
-					<textElement>
-						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
-					</textElement>
-					<text><![CDATA[Proceder a su descalificación]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="4" y="25" width="112" height="13" uuid="592d812b-7de8-4802-b182-9990feeb2c11"/>
-					<textElement>
-						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
-					</textElement>
-					<text><![CDATA[Régimen de Protección:]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="118" y="25" width="154" height="13" uuid="1ce6a460-382c-4d44-a2d2-d9e1da864147"/>
-					<textElement textAlignment="Left">
-						<font fontName="Verdana" size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{regimenProteccion}]]></textFieldExpression>
-				</textField>
-				<staticText>
 					<reportElement x="2" y="11" width="145" height="13" uuid="5b62e9a3-d3f6-4c6a-93fc-fb55ad11962b"/>
 					<textElement>
 						<font fontName="Verdana" isBold="true" isItalic="true"/>
@@ -1081,6 +1065,62 @@ TIPO DE PROPUESTA VENTA]]></text>
 					<text><![CDATA[Negociación Urbanística]]></text>
 				</staticText>
 			</elementGroup>
+			<staticText>
+				<reportElement x="4" y="26" width="113" height="13" uuid="13650b23-ade9-4582-b307-e25c2d2ae0ca"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Régimen de Protección:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="117" y="26" width="146" height="13" uuid="08f9a30c-3217-40d1-97d9-25acc2da58d8"/>
+				<textElement textAlignment="Left">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{regimenProteccion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="263" y="26" width="144" height="13" uuid="bd74f65a-9620-440c-833c-621432b9beb1"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Proceder a su descalificación]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="407" y="26" width="150" height="13" uuid="72b34fcb-7559-41fe-a5fc-2dfefb9807d7"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{procederDescalificacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="407" y="39" width="150" height="13" uuid="de9f7769-bd73-4c48-9083-68b0ef5db94a"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cargo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="263" y="39" width="144" height="13" uuid="90f24bb1-6189-4681-a736-601dbfa0a7dc"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cargo:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="117" y="39" width="146" height="13" uuid="8f595903-db01-4a35-aa31-b32b312c31cd"/>
+				<textElement textAlignment="Left">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{licencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="39" width="113" height="13" uuid="f68ff2df-bc86-44ff-9822-d36977e26d0f"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tipo de licencia:]]></text>
+			</staticText>
 		</band>
 		<band height="532">
 			<break>

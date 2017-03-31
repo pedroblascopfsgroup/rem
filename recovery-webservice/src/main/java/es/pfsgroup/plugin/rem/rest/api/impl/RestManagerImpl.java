@@ -198,7 +198,7 @@ public class RestManagerImpl implements RestApi {
 		}
 		if (!constraintViolations.isEmpty()) {
 			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
-
+				logger.error("Error en el dto: "+visitaFailure.getMessage());
 				if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType().equals(NotNull.class)) {
 					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_MISSING_REQUIRED);
 				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()

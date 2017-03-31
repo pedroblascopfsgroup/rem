@@ -28,13 +28,13 @@ public class ClienteDto implements Serializable{
 	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteWebcom;
 	private Long idClienteRem;
-	@Size(max=50,groups = { Insert.class, Update.class })
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String razonSocial;
 	@NotNull(groups = { Insert.class})
-	@Size(max=25,groups = { Insert.class, Update.class })
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String nombre;
 	@NotNull(groups = { Insert.class})
-	@Size(max=50,groups = { Insert.class, Update.class })
+	@Size(max=250,groups = { Insert.class, Update.class })
 	private String apellidos;
 	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumento no existe", groups = { Insert.class,

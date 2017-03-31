@@ -45,7 +45,6 @@ Ext.define('HreRem.model.GastoContabilidad', {
     	{
     		name: 'contabilizadoPor'
     	}
-    		
     ],
     
 	proxy: {

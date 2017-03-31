@@ -285,12 +285,12 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 				if(data.success == 'true') {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				} else {
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.saltoresolucion"));
 				}
 				me.onClickBotonRefrescar(button);
 			},
 			failure: function(options, success, response){
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.saltoresolucion"));
 			},
 			callback: function(options, success, response){
 				me.getView().unmask();

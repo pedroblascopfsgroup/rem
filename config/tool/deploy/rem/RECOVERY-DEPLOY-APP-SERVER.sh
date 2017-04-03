@@ -26,8 +26,8 @@ echo "Copiando fichero de configuración ..."
 cp config/$1/devon.properties $BASE_DIR/
 
 echo "Copiando ficheros WAR ..."
-if [ -f war/pfs.war ]; then
-    cp war/pfs.war $BASE_DIR/pfs-rec-web.war
+if [ -f war/pfs*.war ]; then
+    cp war/pfs*.war $BASE_DIR/pfs-rec-web.war
 fi
 
 cd $LOCAL_PATH

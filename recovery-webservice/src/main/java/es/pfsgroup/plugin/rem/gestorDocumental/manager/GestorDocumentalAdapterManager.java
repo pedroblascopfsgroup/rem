@@ -96,16 +96,23 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	
 	@Override
 	public Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception {
-		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		String codigoEstado = Checks.esNulo(activo.getEstadoActivo()) ? null : activo.getEstadoActivo().getCodigo();
 		Long respuesta = null;
-		// FIXME Sin estado no podemos subir documentos. 
-		if(!Checks.esNulo(codigoEstado)) {
-			CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, activo.getEstadoActivo().getCodigo());
-			CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
-			RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
-			respuesta =  new Long(respuestaCrearDocumento.getIdDocumento());
+		if (!Checks.esNulo(codigoEstado)) {
+			if (!codigoEstado.equals("01") && !codigoEstado.equals("02") && !codigoEstado.equals("03")) {
+				codigoEstado = "03";
+			}
+		}else{
+			codigoEstado = "03";
 		}
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				activo.getNumActivo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin,
+				matricula);
+		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+		respuesta = new Long(respuestaCrearDocumento.getIdDocumento());
+
 		return respuesta;
 	}
 	

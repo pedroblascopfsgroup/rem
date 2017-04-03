@@ -67,29 +67,31 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     
 	@Override
 	public List<DtoAdjunto> getAdjuntosActivo(Activo activo) throws GestorDocumentalException {
-		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
-		List<DtoAdjunto> list;		
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		List<DtoAdjunto> list;
 		String codigoEstado = Checks.esNulo(activo.getEstadoActivo()) ? null : activo.getEstadoActivo().getCodigo();
-		
-		
-		// FIXME Sin estado no podemos recuperar documentos, a no ser que hagamos la llamada 
-		// que recupera todos los documentos del activo sin tener en cuenta el estado. 
-		if(!Checks.esNulo(codigoEstado)) {
-			CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
-			DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto();
-			RespuestaDocumentosExpedientes respuesta = null;
-			respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
-			list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
-			for (DtoAdjunto adjunto : list) {
-				DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
-				if (tipoDoc==null) {
-					adjunto.setDescripcionTipo("");
-				} else {
-					adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
-				}			
+		if (!Checks.esNulo(codigoEstado)) {
+			if (!codigoEstado.equals("01") && !codigoEstado.equals("02") && !codigoEstado.equals("03")) {
+				codigoEstado = "03";
 			}
 		} else {
-			list = new ArrayList<DtoAdjunto>();
+			codigoEstado = "03";
+		}
+
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				activo.getNumActivo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto();
+		RespuestaDocumentosExpedientes respuesta = null;
+		respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+		for (DtoAdjunto adjunto : list) {
+			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi
+					.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
+			if (tipoDoc == null) {
+				adjunto.setDescripcionTipo("");
+			} else {
+				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
+			}
 		}
 		return list;
 	}

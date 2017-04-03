@@ -62,10 +62,10 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.devengo'),
 														reference: 'fechaDevengoEspecial',
 														bind:		'{contabilidad.fechaDevengoEspecial}',
-														listeners: {
-										                	change: 'onChangeFechaDevengoEspecial'
-										            	},
-										            	editable: false,
+//														listeners: {
+//										                	change: 'onChangeFechaDevengoEspecial'
+//										            	},
+//										            	editable: false,
 														formatter: 'date("d/m/Y")'
 													},
 													{ 

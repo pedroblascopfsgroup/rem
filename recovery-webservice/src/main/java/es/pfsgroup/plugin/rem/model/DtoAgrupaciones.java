@@ -10,6 +10,8 @@ import es.capgemini.devon.dto.WebDto;
  */
 public class DtoAgrupaciones extends WebDto {
 
+	private static final long serialVersionUID = 8456858084936661002L;
+	
 	private String nombre;
 	private String descripcion;
 	private Date fechaAlta;
@@ -30,6 +32,7 @@ public class DtoAgrupaciones extends WebDto {
 	private String tipoAgrupacionCodigo;
 	private String estadoObraNuevaCodigo;
 	private String cartera;
+	@SuppressWarnings("unused")
 	private Boolean existeFechaBaja;
 	private Date fechaInicioVigencia;
 	private Date fechaFinVigencia;

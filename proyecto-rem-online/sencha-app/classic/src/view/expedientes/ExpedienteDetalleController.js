@@ -1060,10 +1060,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	 		store.getProxy().setExtraParams({numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento});    
         	 	store.load({
         	 		callback: function(records, operation, success) {
-				        if(!success) {
-				        	Utils.defaultRequestFailure(operation.getResponse());
+				        if(success) {
 				        	fieldClientesUrsus.recargarField = false;
-				        }				        	
+				        } else {
+				        	Utils.defaultRequestFailure(operation.getResponse());
+				        }			        	
 				    }      	 	
         	 	});
     	 	}
@@ -1104,7 +1105,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		     params: {numeroUrsus: numeroUrsus},
 			 method: 'GET',
 		     success: function(response, opts) {
-		     	var data = {}
+		     	var data = {};
+		     	parent.unmask();
 		     	try {
 		     		data = Ext.decode(response.responseText);
 		     	} catch(e) {
@@ -1117,7 +1119,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		    }
 		     },
 		     failure: function(response) {
-				Utils.defaultRequestFailure(response, opts);
+		    	 parent.unmask();
+		    	 Utils.defaultRequestFailure(response, opts);
 		     }
 		});
 	},

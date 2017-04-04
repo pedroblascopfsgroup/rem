@@ -26,6 +26,7 @@
       <!--<beans:property name="jsonWriter" value="jsonWriter"/> -->
       <property name="jsonViewFilter"><ref bean="jsonViewFilter"/></property>
       <property name="jsonWriter"><ref bean="jsonWriter" /></property>
+      <property name="contentType"><value>text/html</value></property>
     </beans:bean>
     
     <!-- MultipartResolver multipart/form-data -->

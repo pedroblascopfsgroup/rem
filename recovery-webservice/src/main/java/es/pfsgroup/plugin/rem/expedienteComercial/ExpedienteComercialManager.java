@@ -2750,8 +2750,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP;
 			}	
 			
-			if(!Checks.esNulo(tipoImpuestoCodigo)){
-				instData.setTipoDeImpuesto(tipoImpuestoCodigo);	
+			if(!Checks.esNulo(tipoDeImpuesto)){
+				instData.setTipoDeImpuesto(tipoDeImpuesto);	
 			}else{
 				throw new JsonViewerException("No se ha indicado el tipo de impuesto.");
 			}

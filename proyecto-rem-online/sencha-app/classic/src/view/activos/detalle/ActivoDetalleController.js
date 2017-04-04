@@ -1753,13 +1753,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var tipoAprobadoRentaWeb = '03';
 		var tipoDescuentoAprobado = '07';
 		var tipoDescuentoPublicadoWeb = '13';
-
-		// Recogemos los valores actuales del grid
-		var importeMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().importe;
-		var importeDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().importe;
-		var importeDecuentoPublicadoWeb = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoPublicadoWeb).getData().importe;
-		var importeAprobadoVentaWeb = grid.getStore().findRecord('codigoTipoPrecio', tipoAprobadoVentaWeb).getData().importe;
 		
+		// Recogemos los valores actuales del grid
+		var importeMinimo = parseFloat(grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().importe);
+		var importeDescuentoAprobado = parseFloat(grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().importe);
+		var importeDecuentoPublicadoWeb = parseFloat(grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoPublicadoWeb).getData().importe);
+		var importeAprobadoVentaWeb = parseFloat(grid.getStore().findRecord('codigoTipoPrecio', tipoAprobadoVentaWeb).getData().importe);
+
 		var codTipoPrecio = grid.codTipoPrecio;
 
 		switch(codTipoPrecio) {

@@ -40,8 +40,8 @@ public class MSVAltaActivosProcesar implements MSVLiberator {
 	
 	//Posicion fija de Columnas excel, para cualquier referencia por posicion
 	public static final class COL_NUM {
-		static final int FILA_CABECERA					= 3;
-		static final int DATOS_PRIMERA_FILA				= 4;
+		static final int FILA_CABECERA					= 2;
+		static final int DATOS_PRIMERA_FILA				= 3;
 				
 		static final int NUM_ACTIVO_HAYA 				= 0;
 		static final int COD_CARTERA 					= 1;
@@ -136,7 +136,7 @@ public class MSVAltaActivosProcesar implements MSVLiberator {
 		
 		try{
 			// Recorre y procesa todas las filas de datos del fichero excel
-			for (int fila = COL_NUM.FILA_CABECERA; fila < exc.getNumeroFilas(); fila++) {
+			for (int fila = COL_NUM.DATOS_PRIMERA_FILA; fila < exc.getNumeroFilas(); fila++) {
 
 				// Carga los datos de activo de la Fila excel al DTO
 				dtoAAF = filaExcelToDtoAltaActivoFinanciero(exc, dtoAAF, fila);

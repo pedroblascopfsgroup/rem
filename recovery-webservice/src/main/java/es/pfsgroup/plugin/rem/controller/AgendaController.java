@@ -93,11 +93,9 @@ public class AgendaController extends TareaController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getListTareas(DtoTareaFilter dtoTareaFiltro, ModelMap model) {
-
-		Page p = adapter.getListTareas(dtoTareaFiltro);
-		
+		Page p = adapter.getListTareas(dtoTareaFiltro);		
 		model.put("data", p.getResults());
-		model.put("totalCount", p.getTotalCount());
+		model.put("totalCount", adapter.tareasPendientes());
 		
 		return createModelAndViewJson(model);
 

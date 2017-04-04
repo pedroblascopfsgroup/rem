@@ -892,6 +892,10 @@ public class UvemManager implements UvemManagerApi {
 	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
+			//HREOS-1888 -NO se especifica código de oferta HAYA, 
+			//se consulta las facultades con los activos e importe que se alimentan al servicio de consulta, 
+			//obteniendo el comité con los datos facilitados en la entrada al servicio.
+			instanciaDecisionDto.setCodigoDeOfertaHaya("0");
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);

@@ -2691,7 +2691,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	
 	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception {
-		
+		String tipoImpuestoCodigo = null;
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		Double importeXActivo = null;
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
@@ -2706,6 +2706,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
 		if(Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size()==0)){
 			throw new JsonViewerException("No hay activos para la oferta indicada.");
+		}
+		
+		if(Checks.esNulo(porcentajeImpuesto)){
+			throw new JsonViewerException("No se ha indicado el porcentaje de impuesto en el campo Tipo aplicable.");
 		}
 		
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();	
@@ -2739,15 +2743,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			//TipoImpuesto
 			if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
-				String tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo(); 
+				tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo(); 
 				if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA;
 				if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC;
 				if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI;
 				if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP;
 			}	
-			instData.setTipoDeImpuesto(tipoDeImpuesto);	
+			
+			if(!Checks.esNulo(tipoImpuestoCodigo)){
+				instData.setTipoDeImpuesto(tipoImpuestoCodigo);	
+			}else{
+				throw new JsonViewerException("No se ha indicado el tipo de impuesto.");
+			}
+			
 			//PorcentajeImpuesto
-			instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+			if(!Checks.esNulo(porcentajeImpuesto)){
+				instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+			}		
 			instanciaList.add(instData);
 		}
 		

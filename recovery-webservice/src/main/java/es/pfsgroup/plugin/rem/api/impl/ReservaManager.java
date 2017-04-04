@@ -153,12 +153,15 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 							if(expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.RESERVADO)) {
 								hashErrores.put("activo", "Ya se ha relizado el cobro de la reserva.");
 	
-							} else if (!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)) {
+							} 
+							
+							//HREOS-1888 - Se quitan validaciones para puesta en marcha por orden de Hector
+							/*else if (!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)) {
 								hashErrores.put("activo", "La reserva debe estar en el estado Pendiente de firma.");
 	
 							} else if (!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.APROBADO)) {
 								hashErrores.put("activo", "El expediente comercial debe estar Aprobado.");
-							}
+							}*/
 							
 							
 
@@ -168,12 +171,14 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 							   expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA)) {
 								   hashErrores.put("activo", "Ya se ha realizado la devolución de la reserva.");
 
-							} else if (!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION)) {
+							} 
+							//HREOS-1888 - Se quitan validaciones para puesta en marcha por orden de Hector
+							/*else if (!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION)) {
 								hashErrores.put("activo","La reserva debe estar en el estado Pendiente de devolucion.");
 								
 							} else if (!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.EN_DEVOLUCION)) {
 								hashErrores.put("activo","El expediente comercial debe estar en el estado En devolución.");	
-							}
+							}*/
 
 							
 

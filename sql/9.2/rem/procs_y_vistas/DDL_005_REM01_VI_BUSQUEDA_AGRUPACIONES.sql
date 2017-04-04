@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20161008
+--## FECHA_CREACION=20170304
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --## Finalidad: DDL
---##           
+--##  
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -24,7 +24,7 @@ DECLARE
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_column_count number(3); -- Vble. para validar la existencia de las Columnas.    
     v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
-    err_num NUMBER; -- N?mero de errores
+    err_num NUMBER; -- Numero de errores
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_MSQL VARCHAR2(4000 CHAR); 
@@ -64,15 +64,17 @@ BEGIN
 			AGR.AGR_PUBLICADO,
 	        (SELECT COUNT(AGRACTIVO.ACT_ID) FROM ACT_AGA_AGRUPACION_ACTIVO AGRACTIVO WHERE AGRACTIVO.AGR_ID = AGR.AGR_ID AND AGR.BORRADO = 0) as activos,
 			(SELECT COUNT(AGRACTIVO.ACT_ID) FROM ACT_AGA_AGRUPACION_ACTIVO AGRACTIVO WHERE AGRACTIVO.AGR_ID = AGR.AGR_ID and AGR.AGR_PUBLICADO = 1 AND AGR.BORRADO = 0)  as publicados,
-			DECODE( OBR.DD_PRV_ID, '''', RES.DD_PRV_ID, OBR.DD_PRV_ID) provincia,
-			DECODE( OBR.DD_LOC_ID, '''', RES.DD_LOC_ID, OBR.DD_LOC_ID) localidad,
-			DECODE( OBR.ONV_DIRECCION, '''', RES.RES_DIRECCION, OBR.ONV_DIRECCION) direccion,
+			COALESCE( OBR.DD_PRV_ID, RES.DD_PRV_ID, LCO.DD_PRV_ID, ASI.DD_PRV_ID) as provincia,
+    		COALESCE( OBR.DD_LOC_ID, RES.DD_LOC_ID, LCO.DD_LOC_ID, ASI.DD_LOC_ID) as localidad,
+    		COALESCE( OBR.ONV_DIRECCION, RES.RES_DIRECCION, LCO.LCO_DIRECCION, ASI.ASI_DIRECCION) as direccion,
 			CRA.DD_CRA_CODIGO CARTERA
   			
 		FROM ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR
 		JOIN ' || V_ESQUEMA || '.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_ONV_OBRA_NUEVA OBR ON (AGR.AGR_ID=OBR.AGR_ID)
     	LEFT JOIN ' || V_ESQUEMA || '.ACT_RES_RESTRINGIDA RES ON (AGR.AGR_ID=RES.AGR_ID)
+		LEFT JOIN ' || V_ESQUEMA || '.ACT_LCO_LOTE_COMERCIAL LCO ON (AGR.AGR_ID=LCO.AGR_ID)
+      	LEFT JOIN ' || V_ESQUEMA || '.ACT_ASI_ASISTIDA ASI ON (AGR.AGR_ID=ASI.AGR_ID)
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID
     	LEFT JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID
     	LEFT JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID

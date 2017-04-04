@@ -65,7 +65,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												dataIndex: 'importe',
 												renderer: Utils.rendererCurrency,
 									        	editor: {
-									        		xtype:'numberfield',
+									        		xtype:'textfield',
 									        		maskRe: /[0-9.]/,
 									        		allowNegative: false,
 									        		minValue: 0,
@@ -74,7 +74,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 									        		mouseWheelEnable: false,
 									        		allowBlank: false,
 									        		validator: function(value){
-									        			return this.up('activosdetallemain').getController().validatePreciosVigentes(value);
+									        			return this.up('activosdetallemain').getController().validatePreciosVigentes(parseFloat(value));
 									        	    }
 									        	},
 												flex: 1

@@ -203,6 +203,20 @@ public class AgrupacionAdapter {
 				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
 
+					if (agrupacionTemp.getLocalidad() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
+								agrupacionTemp.getLocalidad().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
+								agrupacionTemp.getLocalidad().getCodigo());
+					}
+
+					if (agrupacionTemp.getProvincia() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",
+								agrupacionTemp.getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
+								agrupacionTemp.getProvincia().getCodigo());
+					}
+					
 					if (!Checks.esNulo(agrupacionTemp.getUsuarioGestoriaFormalizacion())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestoriaFormalizacion",
 								agrupacionTemp.getUsuarioGestoriaFormalizacion().getId());
@@ -1481,21 +1495,45 @@ public class AgrupacionAdapter {
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 			ActivoLoteComercial loteComercial = (ActivoLoteComercial) agrupacion;
 
-			if (!Checks.esNulo(dto.getCodigoGestoriaFormalizacion())) {
-				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestoriaFormalizacion());
-				loteComercial.setUsuarioGestoriaFormalizacion(usuario);
-			}
-			if (!Checks.esNulo(dto.getCodigoGestorComercial())) {
-				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercial());
-				loteComercial.setUsuarioGestorComercial(usuario);
-			}
-			if (!Checks.esNulo(dto.getCodigoGestorFormalizacion())) {
-				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorFormalizacion());
-				loteComercial.setUsuarioGestorFormalizacion(usuario);
-			}
-			if (!Checks.esNulo(dto.getCodigoGestorComercialBackOffice())) {
-				Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercialBackOffice());
-				loteComercial.setUsuarioGestorComercialBackOffice(usuario);
+			try {
+				beanUtilNotNull.copyProperties(loteComercial, dto);
+				
+				if (dto.getMunicipioCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+
+					loteComercial.setLocalidad(municipioNuevo);
+				}
+
+				if (dto.getProvinciaCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+					DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+
+					loteComercial.setProvincia(provinciaNueva);
+				}
+				
+				if (!Checks.esNulo(dto.getCodigoGestoriaFormalizacion())) {
+					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestoriaFormalizacion());
+					loteComercial.setUsuarioGestoriaFormalizacion(usuario);
+				}
+				if (!Checks.esNulo(dto.getCodigoGestorComercial())) {
+					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercial());
+					loteComercial.setUsuarioGestorComercial(usuario);
+				}
+				if (!Checks.esNulo(dto.getCodigoGestorFormalizacion())) {
+					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorFormalizacion());
+					loteComercial.setUsuarioGestorFormalizacion(usuario);
+				}
+				if (!Checks.esNulo(dto.getCodigoGestorComercialBackOffice())) {
+					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercialBackOffice());
+					loteComercial.setUsuarioGestorComercialBackOffice(usuario);
+				}
+				
+				activoAgrupacionApi.saveOrUpdate(loteComercial);
+
+			} catch (Exception e) {
+				logger.error("error en agrupacionAdapter", e);
+				return false;
 			}
 		}
 

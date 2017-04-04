@@ -187,7 +187,7 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	
 	@Column(name = "COE_FIN_FINANCIACION")
 	private Date fechaFinFinanciacion;
-	
+	COE_CONDICIONANTES_EXPEDIENTE
     @Column(name="COE_GASTOS_IBI")
     private Double gastosIbi;
     

@@ -2723,15 +2723,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi
 							.expedienteComercialPorOferta(ofertaAux.getId());
-					if (!Checks.esNulo(expediente)) { // Si el expediente está aprobado (o estados posteriores).
-						//HREOS-1888 - Añadir el estado Posicionado en la puesta en marcha por orden de Hector.
+					if (!Checks.esNulo(expediente)) { // Si el expediente está
+														// aprobado (o estados
+														// posteriores).
 						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
-								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())
-								|| DDEstadosExpedienteComercial.POSICIONADO.equals(expediente.getEstado().getCodigo()))
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
 							ofertaAceptada = ofertaAux;
 					}
 				}

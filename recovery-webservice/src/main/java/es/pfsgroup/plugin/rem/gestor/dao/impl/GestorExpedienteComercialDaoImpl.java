@@ -44,7 +44,9 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 		callFunctionSql.setParameter("ACT_ID", idActivo);
 		
 		BigDecimal resultado = (BigDecimal) callFunctionSql.uniqueResult();
-		return resultado.longValue();
+		if(!Checks.esNulo(resultado))
+			return resultado.longValue();
+		else return null;
 	}
 	
 	@Override
@@ -55,7 +57,9 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 		callFunctionSql.setParameter("ACT_ID", idActivo);
 		
 		BigDecimal resultado = (BigDecimal) callFunctionSql.uniqueResult();
-		return resultado.longValue();
+		if(!Checks.esNulo(resultado))
+			return resultado.longValue();
+		else return null;
 	}
 
 }

@@ -1869,7 +1869,15 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		ExpedienteComercial expedienteComercial = findOne(idExpedienteComercial);
 		Reserva reserva = expedienteComercial.getReserva();
 		if(reserva==null){
-			throw new Exception("No existe la reserva para el expediente comercial");
+			reserva = new Reserva();
+			Auditoria auditoria = Auditoria.getNewInstance();
+			reserva.setExpediente(expedienteComercial);
+			reserva.setNumReserva(reservaDao.getNextNumReservaRem());
+			reserva.setAuditoria(auditoria);
+			expedienteComercial.setReserva(reserva);
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			expedienteComercial = findOne(idExpedienteComercial);
+			reserva = expedienteComercial.getReserva();
 		}
 		entregaReserva.setReserva(reserva);
 		
